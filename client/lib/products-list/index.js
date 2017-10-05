@@ -10,7 +10,6 @@ import store from 'store';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import Emitter from 'lib/mixins/emitter';
 
 /**

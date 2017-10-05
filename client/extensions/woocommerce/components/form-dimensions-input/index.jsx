@@ -14,7 +14,6 @@ import { noop } from 'lodash';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getDimensionsUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';

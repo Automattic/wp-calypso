@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-
 import Gridicon from 'gridicons';
 
 export default class extends React.PureComponent {

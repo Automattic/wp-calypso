@@ -12,7 +12,6 @@ import {
 } from 'state/action-types';
 
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-
 import Dispatcher from 'dispatcher';
 import steps from 'signup/config/steps';
 

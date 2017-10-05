@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:action-spam' );
@@ -11,7 +10,6 @@ const debug = debugFactory( 'calypso:stats:action-spam' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 

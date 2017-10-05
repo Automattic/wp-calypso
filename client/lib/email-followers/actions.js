@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:email-followers-actions' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
 import EmailFollowersStore from 'lib/email-followers/store';
 

@@ -12,7 +12,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-
 import PollerPool from 'lib/data-poller';
 
 import { connectionLost, connectionRestored } from 'state/application/actions';

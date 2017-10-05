@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-
 import SiteIcon from 'blocks/site-icon';
 
 module.exports = {

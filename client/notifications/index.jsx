@@ -26,7 +26,6 @@ import { connect } from 'react-redux';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 

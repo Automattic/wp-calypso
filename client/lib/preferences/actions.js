@@ -9,7 +9,6 @@ var wpcom = require( 'lib/wp' ).undocumented();
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import PreferencesConstants from './constants';
 import userUtils from 'lib/user/utils';
 /**

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import classNames from 'classnames';
 import { find } from 'lodash';
 
@@ -10,7 +9,6 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import StoredCard from './stored-card';
 import NewCardForm from './new-card-form';
 import storeTransactions from 'lib/store-transactions';

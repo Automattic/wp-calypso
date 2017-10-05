@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-
 import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';

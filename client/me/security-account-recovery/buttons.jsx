@@ -2,14 +2,12 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 

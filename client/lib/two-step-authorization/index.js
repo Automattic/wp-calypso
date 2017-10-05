@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  * Internal Dependencies
  */
 import emitter from 'lib/mixins/emitter';
-
 import userSettings from 'lib/user-settings';
 import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';

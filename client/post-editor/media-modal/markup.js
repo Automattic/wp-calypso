@@ -10,7 +10,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Shortcode from 'lib/shortcode';
-
 import MediaUtils from 'lib/media/utils';
 import MediaSerialization from 'lib/media-serialization';
 

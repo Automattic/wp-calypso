@@ -11,7 +11,6 @@ import inherits from 'inherits';
  * Internal dependencies
  */
 import paygateLoader from 'lib/paygate-loader';
-
 import { validateCardDetails } from 'lib/credit-card-details';
 import transactionStepTypes from './step-types';
 

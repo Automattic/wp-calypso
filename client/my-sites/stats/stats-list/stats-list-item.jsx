@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:list-item' );
@@ -12,7 +11,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Follow from './action-follow';
-
 import Page from './action-page';
 import OpenLink from './action-link';
 import Spam from './action-spam';

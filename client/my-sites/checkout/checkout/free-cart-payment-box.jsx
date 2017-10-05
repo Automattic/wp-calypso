@@ -2,17 +2,14 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import PayButton from './pay-button';
-
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
-
 import CartToggle from './cart-toggle';
 
 var FreeCartPaymentBox = React.createClass( {

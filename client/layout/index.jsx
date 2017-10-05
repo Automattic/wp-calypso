@@ -10,7 +10,6 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
-
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import observe from 'lib/mixins/data-observe';

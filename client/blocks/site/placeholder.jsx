@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:site' );
 

@@ -9,13 +9,11 @@ import { get, find, defer } from 'lodash';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
-
 import storeTransactions from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';

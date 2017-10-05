@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Search from 'components/search';
-
 import UrlSearch from 'lib/mixins/url-search';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';

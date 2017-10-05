@@ -7,7 +7,6 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import cartValues from 'lib/cart-values';

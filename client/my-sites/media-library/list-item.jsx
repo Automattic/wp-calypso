@@ -10,14 +10,12 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-
 import Gridicon from 'gridicons';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
 import MediaUtils from 'lib/media/utils';
-
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 

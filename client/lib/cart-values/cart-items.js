@@ -24,7 +24,6 @@ import {
  * Internal dependencies
  */
 import productsValues from 'lib/products-values';
-
 import sortProducts from 'lib/products-values/sort';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 

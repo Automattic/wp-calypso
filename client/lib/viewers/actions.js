@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:viewers:actions' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
 
 var ViewersActions = {

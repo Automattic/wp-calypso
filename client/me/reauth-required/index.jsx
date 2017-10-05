@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:reauth-required' );
@@ -11,7 +10,6 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
  * Internal Dependencies
  */
 import Dialog from 'components/dialog';
-
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTelInput from 'components/forms/form-tel-input';
@@ -23,7 +21,6 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
-
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import classNames from 'classnames';

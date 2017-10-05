@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:user:profile-links' );
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import emitter from 'lib/mixins/emitter';
 
 /*

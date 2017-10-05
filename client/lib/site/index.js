@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import notices from 'notices';
 import Emitter from 'lib/mixins/emitter';
 import getAttributes from './computed-attributes';

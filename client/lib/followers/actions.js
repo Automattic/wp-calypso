@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:followers-actions' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
 import FollowersStore from 'lib/followers/store';
 

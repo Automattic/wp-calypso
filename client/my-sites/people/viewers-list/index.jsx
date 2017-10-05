@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-
 import Card from 'components/card';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ViewersActions from 'lib/viewers/actions';

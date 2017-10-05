@@ -7,7 +7,6 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from 'my-sites/controller';
-
 import pagesController from './controller';
 import config from 'config';
 

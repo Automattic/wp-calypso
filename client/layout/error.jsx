@@ -12,7 +12,6 @@ import qs from 'querystring';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import EmptyContent from 'components/empty-content';
 
 /**

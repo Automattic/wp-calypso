@@ -65,7 +65,6 @@ import {
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:actions' );
 

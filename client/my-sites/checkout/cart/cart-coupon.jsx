@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import upgradesActions from 'lib/upgrades/actions';
 
 module.exports = React.createClass( {

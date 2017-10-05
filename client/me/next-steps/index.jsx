@@ -8,7 +8,6 @@ import React from 'react';
  * Internal dependencies
  */
 import NextStepsBox from './next-steps-box';
-
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import observe from 'lib/mixins/data-observe';
 import steps from './steps';

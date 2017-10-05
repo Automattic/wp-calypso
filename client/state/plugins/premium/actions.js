@@ -2,7 +2,6 @@
  * External dependencies
  */
 import wpcom from 'lib/wp';
-
 import { get, keys } from 'lodash';
 
 /**

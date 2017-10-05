@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import config from 'config';
-
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 

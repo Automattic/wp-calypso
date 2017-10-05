@@ -6,7 +6,6 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
-
 import React from 'react';
 
 /**

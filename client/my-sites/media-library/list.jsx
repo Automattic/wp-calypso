@@ -12,7 +12,6 @@ import React from 'react';
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
-
 import MediaUtils from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';

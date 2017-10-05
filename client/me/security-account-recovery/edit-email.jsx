@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import ReactDom from 'react-dom';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -12,7 +11,6 @@ import emailValidator from 'email-validator';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
-
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

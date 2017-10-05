@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import Site from 'lib/site';
-
 import inherits from 'inherits';
 import versionCompare from 'lib/version-compare';
 import SiteUtils from 'lib/site/utils';

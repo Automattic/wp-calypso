@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:like-store:actions' ); //eslint-disable-lin
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import { key } from './utils';
 import wpcom from 'lib/wp';
 

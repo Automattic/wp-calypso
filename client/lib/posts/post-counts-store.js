@@ -17,7 +17,6 @@ const sum = obj => {
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
-
 import PostListStoreFactory from './post-list-store-factory';
 const PostListStore = PostListStoreFactory();
 import PostsStore from './posts-store';

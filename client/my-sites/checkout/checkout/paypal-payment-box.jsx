@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import cartValues from 'lib/cart-values';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import Input from 'my-sites/domains/components/form/input';

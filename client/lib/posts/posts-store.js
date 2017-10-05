@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:posts' );
  * Internal dependencies
  */
 import utils from './utils';
-
 import Dispatcher from 'dispatcher';
 
 var _posts = {},

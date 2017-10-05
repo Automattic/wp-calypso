@@ -10,7 +10,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import Card from 'components/card';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';

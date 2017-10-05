@@ -11,7 +11,6 @@ import page from 'page';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
-
 import Card from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';

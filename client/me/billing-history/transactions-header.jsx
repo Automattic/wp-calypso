@@ -11,7 +11,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import tableRows from './table-rows';
-
 import eventRecorder from 'me/event-recorder';
 
 module.exports = React.createClass( {

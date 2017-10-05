@@ -9,7 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import MediaUtils from 'lib/media/utils';
-
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
 module.exports = React.createClass( {

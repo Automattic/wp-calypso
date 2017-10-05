@@ -10,7 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import paths from 'lib/paths';
-
 import userFactory from 'lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron';          // From Electron

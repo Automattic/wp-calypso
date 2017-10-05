@@ -12,7 +12,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';

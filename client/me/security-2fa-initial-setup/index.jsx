@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
@@ -11,7 +10,6 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-
 import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {

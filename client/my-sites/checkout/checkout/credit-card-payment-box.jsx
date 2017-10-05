@@ -10,14 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PayButton from './pay-button';
-
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
 import PaymentBox from './payment-box';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import transactionStepTypes from 'lib/store-transactions/step-types';
-
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';

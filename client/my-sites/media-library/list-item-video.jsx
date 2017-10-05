@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import photon from 'photon';
 
@@ -10,7 +9,6 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-
 import Gridicon from 'gridicons';
 
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';

@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:help-search:actions' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import { action as ActionTypes } from './constants';
 import wpcom from 'lib/wp';
 

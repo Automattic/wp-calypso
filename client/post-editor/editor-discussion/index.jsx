@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
-
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostActions from 'lib/posts/actions';
 import InfoPopover from 'components/info-popover';

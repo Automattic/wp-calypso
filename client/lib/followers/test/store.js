@@ -12,7 +12,6 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import actions from './lib/mock-actions';
-
 import site from './lib/mock-site';
 
 /**

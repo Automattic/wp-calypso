@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import masking from './masking';
-
 import validation from './validation';
 
 module.exports = {

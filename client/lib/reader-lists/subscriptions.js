@@ -10,7 +10,6 @@ import Dispatcher from 'dispatcher';
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
-
 import ListStore from './lists';
 
 var lists = null,

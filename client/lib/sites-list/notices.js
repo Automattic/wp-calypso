@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import notices from 'notices';
-
 import SitesLog from 'lib/sites-list/log-store';
 import SitesListActions from 'lib/sites-list/actions';
 

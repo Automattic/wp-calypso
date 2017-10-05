@@ -11,7 +11,6 @@ import { preventWidows } from 'lib/formatting';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-
 import Button from 'components/button';
 
 module.exports = React.createClass( {

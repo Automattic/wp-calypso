@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import ButtonsLabelEditor from './label-editor';
-
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewAction from './preview-action';
 import ButtonsTray from './tray';

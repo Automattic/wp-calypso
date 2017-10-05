@@ -9,14 +9,12 @@
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';
-
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import formatting from 'lib/formatting';
-
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */

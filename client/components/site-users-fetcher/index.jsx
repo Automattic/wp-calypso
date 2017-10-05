@@ -11,7 +11,6 @@ const debug = debugFactory( 'calypso:site-users-fetcher' );
  * Internal dependencies
  */
 import UsersStore from 'lib/users/store';
-
 import UsersActions from 'lib/users/actions';
 import pollers from 'lib/data-poller';
 

@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:users:actions' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
 import UsersStore from 'lib/users/store';
 

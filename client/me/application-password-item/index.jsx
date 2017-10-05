@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-password-item' );
 import { bindActionCreators } from 'redux';
@@ -13,7 +12,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import eventRecorder from 'me/event-recorder';
-
 import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
 

@@ -7,7 +7,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,

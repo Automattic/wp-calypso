@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,

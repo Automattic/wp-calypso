@@ -12,7 +12,6 @@ import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
 import 'tinymce/plugins/colorpicker/plugin.js';
-
 import 'tinymce/plugins/directionality/plugin.js';
 import 'tinymce/plugins/hr/plugin.js';
 import 'tinymce/plugins/lists/plugin.js';

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
 
@@ -10,14 +9,12 @@ const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
  * Internal dependencies
  */
 import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Card from 'components/card';
 import eventRecorder from 'me/event-recorder';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {

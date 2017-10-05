@@ -10,7 +10,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import domainsAssembler from './../assembler';
-
 import { type as domainTypes } from './../constants';
 
 describe( 'assembler', () => {

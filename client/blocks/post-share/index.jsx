@@ -61,14 +61,11 @@ import {
 	PLAN_JETPACK_PREMIUM
 } from 'lib/plans/constants';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
-
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
-
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
-
 import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';

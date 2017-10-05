@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import page from 'page';
 
@@ -10,7 +9,6 @@ import page from 'page';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
-
 import paths from 'my-sites/domains/paths';
 import Button from 'components/button';
 

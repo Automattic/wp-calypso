@@ -7,7 +7,6 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-
 import route from 'lib/route';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 

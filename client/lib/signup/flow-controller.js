@@ -26,7 +26,6 @@ import page from 'page';
  * Internal dependencies
  */
 import SignupActions from './actions';
-
 import SignupProgressStore from './progress-store';
 import SignupDependencyStore from './dependency-store';
 import flows from 'signup/config/flows';

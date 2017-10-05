@@ -10,7 +10,6 @@ import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 import sitesListFactory from 'lib/sites-list';
 const sitesList = sitesListFactory();

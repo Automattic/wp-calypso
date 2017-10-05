@@ -10,7 +10,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import SortableList from 'components/forms/sortable-list';
-
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords' );
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-
 import AppPasswordItem from 'me/application-password-item';
 import notices from 'notices';
 import SectionHeader from 'components/section-header';

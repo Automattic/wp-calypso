@@ -11,7 +11,6 @@ import React from 'react';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-
 import FormButton from 'components/forms/form-button';
 
 const HelpModal = React.createClass( {

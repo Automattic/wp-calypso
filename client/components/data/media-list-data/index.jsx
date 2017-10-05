@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
-
 import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';

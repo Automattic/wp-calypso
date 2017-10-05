@@ -5,7 +5,6 @@ import { assign, defer } from 'lodash';
 
 // Internal dependencies
 import Dispatcher from 'dispatcher';
-
 import { action as ACTION } from './constants';
 import PostFetcher from './post-fetcher';
 import wpcom from 'lib/wp';

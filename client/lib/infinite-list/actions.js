@@ -7,7 +7,6 @@ import { isEqual, throttle } from 'lodash';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import scrollStore from 'lib/infinite-list/scroll-store';
 import positionsStore from 'lib/infinite-list/positions-store';
 

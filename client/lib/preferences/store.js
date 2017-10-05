@@ -7,7 +7,6 @@ import { forOwn } from 'lodash';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 import PreferencesConstants from './constants';
 

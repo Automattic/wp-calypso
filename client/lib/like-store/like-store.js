@@ -8,7 +8,6 @@ import config from 'config';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import Emitter from 'lib/mixins/emitter';
 import { action as FeedPostStoreActionType } from 'lib/feed-post-store/constants';
 import LikeActions from './actions';

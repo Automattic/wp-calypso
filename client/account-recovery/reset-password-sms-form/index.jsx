@@ -13,7 +13,6 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetSelectedMethod,

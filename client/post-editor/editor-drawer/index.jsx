@@ -35,7 +35,6 @@ import {
 } from 'state/sites/selectors';
 import config from 'config';
 import { areSitePermalinksEditable } from 'state/selectors';
-
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';

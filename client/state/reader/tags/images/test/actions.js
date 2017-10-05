@@ -16,7 +16,6 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-
 import sampleSuccessResponse from './sample-responses.json';
 
 describe( 'actions', () => {

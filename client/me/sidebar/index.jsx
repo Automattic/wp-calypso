@@ -13,7 +13,6 @@ const debug = debugFactory( 'calypso:me:sidebar' );
  * Internal dependencies
  */
 import Sidebar from 'layout/sidebar';
-
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
@@ -24,7 +23,6 @@ import eventRecorder from 'me/event-recorder';
 import userFactory from 'lib/user';
 const user = userFactory();
 import userUtilities from 'lib/user/utils';
-
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';

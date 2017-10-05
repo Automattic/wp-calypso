@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import TokenField from 'components/token-field';
-
 import Card from 'components/card';
 
 /**

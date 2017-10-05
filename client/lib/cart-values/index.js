@@ -10,7 +10,6 @@ import config from 'config';
  * Internal dependencies
  */
 import cartItems from './cart-items';
-
 import productsValues from 'lib/products-values';
 
 /**

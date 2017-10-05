@@ -20,7 +20,6 @@ import {
 	NOTICE_CREATE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-
 import sampleSuccessResponse from './sample-success-response.json';
 import sampleFailureResponse from './sample-failure-response.json';
 

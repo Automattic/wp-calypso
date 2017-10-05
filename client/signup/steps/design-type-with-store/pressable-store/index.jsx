@@ -24,7 +24,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-
 import HeroImage from './hero-image';
 
 class PressableStoreStep extends Component {

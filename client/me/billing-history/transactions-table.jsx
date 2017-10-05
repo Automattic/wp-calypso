@@ -10,7 +10,6 @@ import { capitalPDangit } from 'lib/formatting';
  * Internal dependencies
  */
 import TransactionsHeader from './transactions-header';
-
 import tableRows from './table-rows';
 
 import SearchCard from 'components/search-card';

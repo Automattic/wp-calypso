@@ -10,7 +10,6 @@ const debug = debugFactory( 'calypso:wpcom-followers-store' );
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 
 var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)

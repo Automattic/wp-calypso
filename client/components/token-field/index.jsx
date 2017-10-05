@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import SuggestionsList from './suggestions-list';
-
 import Token from './token';
 import TokenInput from './token-input';
 

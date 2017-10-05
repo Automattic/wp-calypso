@@ -7,7 +7,6 @@ import { stubTrue, stubFalse } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,

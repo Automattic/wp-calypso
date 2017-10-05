@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import postListStoreFactory from 'lib/posts/post-list-store-factory';
-
 import PostContentImagesStore from 'lib/posts/post-content-images-store';
 import Dispatcher from 'dispatcher';
 import actions from 'lib/posts/actions';

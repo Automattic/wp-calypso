@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { warningNotice } from 'state/notices/actions';
-
 import {
 	isJetpackSite,
 	getSiteAdminUrl,

@@ -7,7 +7,6 @@ import Dispatcher from 'dispatcher';
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-
 import LocaleSuggestionActions from './actions';
 
 var localeSuggestions = null;

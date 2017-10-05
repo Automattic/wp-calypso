@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 

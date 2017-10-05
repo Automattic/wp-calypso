@@ -11,7 +11,6 @@ const debug = debugFactory( 'calypso:my-sites:people:team-list' );
  * Internal dependencies
  */
 import Card from 'components/card';
-
 import PeopleListItem from 'my-sites/people/people-list-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersActions from 'lib/users/actions';

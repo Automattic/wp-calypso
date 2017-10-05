@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
@@ -17,7 +16,6 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-
 import analytics from 'lib/analytics';
 import FormButtonBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';

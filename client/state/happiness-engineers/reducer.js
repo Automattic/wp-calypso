@@ -7,7 +7,6 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,

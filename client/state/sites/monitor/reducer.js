@@ -7,7 +7,6 @@ import { stubFalse, stubTrue } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,

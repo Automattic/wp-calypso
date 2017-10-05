@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,

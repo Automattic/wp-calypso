@@ -10,7 +10,6 @@ import store from 'store';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
 import steps from 'signup/config/steps';

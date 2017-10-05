@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-
 import Card from 'components/card';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import FollowersActions from 'lib/followers/actions';

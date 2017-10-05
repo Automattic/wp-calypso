@@ -2,7 +2,6 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import wpcom from 'lib/wp';
 
 /**

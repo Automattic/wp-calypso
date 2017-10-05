@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import cartValues from 'lib/cart-values';
-
 import SubscriptionText from './subscription-text';
 import transactionStepTypes from 'lib/store-transactions/step-types';
 

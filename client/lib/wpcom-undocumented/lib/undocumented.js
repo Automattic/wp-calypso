@@ -10,7 +10,6 @@ import url from 'url';
  * Internal dependencies.
  */
 import Site from './site';
-
 import Me from './me';
 import MailingList from './mailing-list';
 import AccountRecoveryReset from './account-recovery-reset';

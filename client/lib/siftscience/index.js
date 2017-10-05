@@ -9,7 +9,6 @@ const debug = debugFactory( 'calypso:siftscience' );
  * Internal dependencies
  */
 import loadScript from 'lib/load-script';
-
 import user from 'lib/user';
 import config from 'config';
 

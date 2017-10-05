@@ -10,7 +10,6 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import emitterClass from 'lib/mixins/emitter';
-
 import userFactory from 'lib/user';
 const user = userFactory();
 import userUtils from 'lib/user/utils';

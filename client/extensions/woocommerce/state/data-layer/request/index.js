@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,

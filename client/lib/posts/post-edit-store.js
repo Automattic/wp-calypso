@@ -10,7 +10,6 @@ import emitter from 'lib/mixins/emitter';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import { decodeEntities } from 'lib/formatting';
 import utils from './utils';
 

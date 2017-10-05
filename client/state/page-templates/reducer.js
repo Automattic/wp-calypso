@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { itemsSchema } from './schema';
 import {
 	PAGE_TEMPLATES_RECEIVE,

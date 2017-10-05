@@ -16,7 +16,6 @@ import {
 	ticketSupportConfigurationDismissError,
 } from '../actions';
 import { dummyConfiguration, dummyError } from './test-data';
-
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,

@@ -9,7 +9,6 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-
 import emitter from 'lib/mixins/emitter';
 import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
 import { action as FeedPostActionType } from './constants';

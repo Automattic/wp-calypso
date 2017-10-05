@@ -9,7 +9,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { SUPPORT_USER_TOKEN_FETCH } from 'state/action-types';
-
 import { supportUserTokenFetch } from '../actions';
 
 describe( 'actions', () => {
