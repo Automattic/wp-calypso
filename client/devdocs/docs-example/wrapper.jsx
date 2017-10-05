@@ -3,10 +3,14 @@
  *
  * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'gridicons';
 
 const renderTitle = ( unique, name, url ) =>
 	unique ? (
@@ -14,6 +18,7 @@ const renderTitle = ( unique, name, url ) =>
 	) : (
 		<a className="docs-example__wrapper-header-title" href={ url }>
 			{ name }
+			<Gridicon icon="link" />
 		</a>
 	);
 
