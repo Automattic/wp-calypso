@@ -20,7 +20,6 @@ import RecoveryPhone from './recovery-phone';
 import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
-
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,

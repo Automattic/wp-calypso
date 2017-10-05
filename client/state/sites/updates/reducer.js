@@ -7,7 +7,6 @@ import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-
 import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,

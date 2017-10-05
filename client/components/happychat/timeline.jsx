@@ -29,7 +29,8 @@ import {
 	setUrlScheme,
 } from 'lib/url';
 
-const debug = require( 'debug' )( 'calypso:happychat:timeline' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 

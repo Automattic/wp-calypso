@@ -11,7 +11,6 @@ import qs from 'qs';
  * Internal dependencies
  */
 import ErrorScreen from 'account-recovery/error-screen';
-
 import {
 	updatePasswordResetUserData,
 	setResetMethod,

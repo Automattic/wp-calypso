@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,

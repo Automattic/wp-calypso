@@ -10,7 +10,6 @@ import { assert } from 'chai';
  */
 import reducer from '../reducer';
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
-
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,

@@ -15,7 +15,6 @@ import {
 	saveRequests as saveRequestsReducer,
 } from '../reducer';
 import { settings as SETTINGS_FIXTURE, requests as REQUESTS_FIXTURE } from './fixture';
-
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,

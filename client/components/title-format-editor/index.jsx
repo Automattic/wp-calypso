@@ -99,7 +99,6 @@ import { CompositeDecorator, Editor, EditorState, Entity, Modifier, SelectionSta
 
 // Parser also requires draft-js. Lets load it after the polyfills are created too.
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
-
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';

@@ -9,7 +9,6 @@ import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form-footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-
 import config from 'config';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';

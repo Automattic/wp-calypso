@@ -8,7 +8,6 @@ import { assign, map, partial } from 'lodash';
  * Internal Dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,

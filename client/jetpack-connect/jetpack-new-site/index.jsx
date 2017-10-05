@@ -17,7 +17,6 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SiteUrlInput from '../site-url-input';
 import ReaderBack from 'blocks/reader-full-post/back';
-
 import WordPressLogo from 'components/wordpress-logo';
 import JetpackLogo from 'components/jetpack-logo';
 

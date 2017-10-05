@@ -8,7 +8,6 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
-
 import {
 	settingsSchema,
 	systemSchema,

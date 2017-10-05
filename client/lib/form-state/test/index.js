@@ -4,12 +4,12 @@
  * External dependencies
  */
 import { assign, constant, mapValues, zipObject } from 'lodash';
-const assert = require( 'assert' );
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
-var formState = require( '../' );
+import formState from '../';
 
 function checkNthState( n, callback ) {
 	var count = 0;

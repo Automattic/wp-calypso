@@ -55,7 +55,6 @@ import {
 	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
 import purchasesPaths from 'me/purchases/paths';
-
 import { dispatchSuccess, dispatchError } from './utils';
 
 import {

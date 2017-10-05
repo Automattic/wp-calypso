@@ -12,7 +12,6 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const controller = {

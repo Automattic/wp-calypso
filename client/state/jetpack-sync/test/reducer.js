@@ -10,7 +10,6 @@ import { expect } from 'chai';
  */
 import reducer, { syncStatus, fullSyncRequest } from '../reducer';
 import { getExpectedResponseKeys } from '../utils';
-
 import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,

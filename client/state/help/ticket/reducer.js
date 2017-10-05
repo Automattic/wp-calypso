@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,

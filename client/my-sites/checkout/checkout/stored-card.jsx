@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 module.exports = React.createClass( {
 	displayName: 'StoredCard',

@@ -4,13 +4,13 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-const expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-const domainsAssembler = require( './../assembler' ),
-	domainTypes = require( './../constants' ).type;
+import domainsAssembler from './../assembler';
+import { type as domainTypes } from './../constants';
 
 describe( 'assembler', () => {
 	const DOMAIN_NAME = 'Name',

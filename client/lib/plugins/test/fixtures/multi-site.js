@@ -1,4 +1,8 @@
-var plugins = require( './plugins' );
+/**
+ * Internal dependencies
+ */
+import plugins from './plugins';
+
 module.exports = {
 	ID: 91234567890,
 	URL: 'http://example.com/site1',

@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
-
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';

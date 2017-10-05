@@ -4,7 +4,7 @@
 import React from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import PreviewRequired from './preview-required';
 

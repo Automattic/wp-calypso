@@ -1,5 +1,4 @@
 import request from 'superagent'
-
 import Dispatcher from 'dispatcher'
 import { actions } from './constants'
 

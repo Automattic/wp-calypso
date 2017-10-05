@@ -2,20 +2,22 @@
  * External dependencies
  */
 import { forOwn } from 'lodash';
-var store = require( 'store' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( './constants' ),
-	userUtils = require( 'lib/user/utils' );
+import Dispatcher from 'dispatcher';
+import PreferencesConstants from './constants';
+import userUtils from 'lib/user/utils';
+import wp from 'lib/wp';
+
 /**
  * Module variables
  */
-var PreferencesActions = {},
-	_pendingUpdates = 0;
+const wpcom = wp.undocumented();
+const PreferencesActions = {};
+let	_pendingUpdates = 0;
 
 function getLocalStorage() {
 	return store.get( PreferencesConstants.LOCALSTORAGE_KEY );

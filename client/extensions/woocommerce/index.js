@@ -10,7 +10,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import App from './app';
-
 import controller from 'my-sites/controller';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';

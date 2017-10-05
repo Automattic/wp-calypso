@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,

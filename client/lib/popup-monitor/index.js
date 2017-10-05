@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * PopupMonitor component

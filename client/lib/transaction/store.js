@@ -8,7 +8,6 @@ import update from 'react-addons-update';
  * Internal dependencies
  */
 import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-
 import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';

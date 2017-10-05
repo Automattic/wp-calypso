@@ -2,13 +2,16 @@
  * External dependencies
  */
 import { filter, find } from 'lodash';
-var debug = require( 'debug' )( 'calypso:connected-applications-data' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:connected-applications-data' );
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented();
+import Emitter from 'lib/mixins/emitter';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /**
  * Initialize ConnectedApplications with defaults

@@ -11,7 +11,6 @@ import deepFreeze from 'deep-freeze';
  */
 import { items as itemsReducer, requests as requestsReducer } from '../reducer';
 import { modules as MODULES_FIXTURE, requests as REQUESTS_FIXTURE } from './fixture';
-
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,

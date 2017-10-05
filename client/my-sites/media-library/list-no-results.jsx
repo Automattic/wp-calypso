@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var NoResults = require( 'my-sites/no-results' );
+import NoResults from 'my-sites/no-results';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListNoResults',

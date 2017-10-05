@@ -13,7 +13,6 @@ import FormRadio from 'components/forms/form-radio';
 import Label from 'components/forms/form-label';
 import Select from './select';
 import Tooltip from 'components/tooltip';
-
 import { setPostType } from 'state/site-settings/exporter/actions';
 import {
 	getSelectedPostType,

@@ -17,7 +17,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
 import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
 import { abtest } from 'lib/abtest';
-
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 class DesignTypeWithStoreStep extends Component {

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { find } from 'lodash';
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies

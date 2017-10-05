@@ -10,7 +10,7 @@
 /**
  * External dependencies
  */
-var tinymce = require( 'tinymce/tinymce' );
+import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
 	var settings = editor.settings, oldSize = 0;

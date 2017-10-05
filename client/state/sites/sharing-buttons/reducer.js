@@ -7,7 +7,6 @@ import { uniqBy } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { items as itemSchemas } from './schema';
 import {
 	SHARING_BUTTONS_RECEIVE,

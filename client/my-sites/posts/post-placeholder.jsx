@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
 
 module.exports = React.createClass( {
 

@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 

@@ -27,7 +27,6 @@ import SiteIcon from 'blocks/site-icon';
 import helpers from '../helpers';
 import utils from 'lib/posts/utils';
 import classNames from 'classnames';
-
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import {

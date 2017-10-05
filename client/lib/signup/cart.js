@@ -6,10 +6,10 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	productsList = require( 'lib/products-list' )(),
-	cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems;
+import wpcom from 'lib/wp';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {
@@ -18,7 +18,7 @@ function addProductsToCart( cart, newCartItems ) {
 		} );
 		const addFunction = cartItems.add( cartItem );
 
-		cart = cartValues.fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
+		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
 	} );
 
 	return cart;

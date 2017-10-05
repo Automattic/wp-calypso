@@ -7,7 +7,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-
 import {
 	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_ERROR_CLEAR,

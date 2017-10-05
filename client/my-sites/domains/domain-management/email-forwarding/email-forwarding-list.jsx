@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var EmailForwardingItem = require( './email-forwarding-item' );
+import EmailForwardingItem from './email-forwarding-item';
 
 var EmailForwardingList = React.createClass( {
 	render: function() {

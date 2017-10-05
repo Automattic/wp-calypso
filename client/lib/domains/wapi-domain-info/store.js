@@ -3,7 +3,6 @@
  */
 import { createReducerStore } from 'lib/store';
 import DomainsStore from 'lib/domains/store';
-
 import { initialDomainState, reducer } from './reducer';
 
 const WapiDomainInfoStore = createReducerStore( reducer, {}, [ DomainsStore.dispatchToken ] );

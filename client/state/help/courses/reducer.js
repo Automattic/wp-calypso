@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import {
 	HELP_COURSES_RECEIVE,
 } from 'state/action-types';

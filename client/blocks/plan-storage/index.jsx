@@ -17,7 +17,6 @@ import {
 	isJetpackSite
 } from 'state/sites/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-
 import PlanStorageBar from './bar';
 
 class PlanStorage extends Component {

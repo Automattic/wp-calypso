@@ -6,7 +6,7 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-var path = require( './path' );
+import path from './path';
 
 module.exports = assign( {
 	untrailingslashit: require( './untrailingslashit' ),

@@ -2,19 +2,20 @@
  * External dependencies
  */
 // only require keymaster if this is a browser environment
-var keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
+const keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
+import Emitter from 'lib/mixins/emitter';
+import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 /**
  * Module variables
  */
-var flatKeyBindings = [];
+let flatKeyBindings = [];
+const keyBindings = KeyBindings.get();
 
 // flatten the key-bindings object to create an array of key-bindings
 Object.keys( keyBindings ).forEach( function( category ) {

@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,

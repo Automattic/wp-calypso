@@ -11,8 +11,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
-
-const config = require( 'config' );
+import config from 'config';
 const user = userFactory();
 
 const JetpackPlanDetails = ( { selectedSite } ) => {

@@ -10,8 +10,11 @@ import sinon from 'sinon';
  */
 import * as actions from '../actions';
 import { tracks } from 'lib/analytics';
-import { undocumented } from 'lib/wp';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
+import wp from 'lib/wp';
+
+const undocumented = wp.undocumented;
+
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: require( 'sinon' ).spy(),

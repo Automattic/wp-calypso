@@ -2,13 +2,16 @@
  * External dependencies
  */
 import { map, merge, pick, random, sample } from 'lodash';
-const debug = require( 'debug' )( 'calypso:password-generator' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:password-generator' );
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	makeEmitter = require( 'lib/mixins/emitter' );
+import makeEmitter from 'lib/mixins/emitter';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /**
  * Initialize AccountPasswordData with defaults

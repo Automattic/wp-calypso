@@ -16,7 +16,6 @@ import {
 } from '../actions';
 import { requestSiteUpdates } from '../utils';
 import useNock from 'test/helpers/use-nock';
-
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'utils', () => {

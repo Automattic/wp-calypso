@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	support = require( 'lib/url/support' ),
-	Gridicon = require( 'gridicons' );
+import analytics from 'lib/analytics';
+import support from 'lib/url/support';
+import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
 	displayName: 'TermsOfService',
