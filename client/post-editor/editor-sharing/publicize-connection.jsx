@@ -20,8 +20,7 @@ import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-export default localize(React.createClass({
-	displayName: 'EditorSharingPublicizeConnection',
+export const EditorSharingPublicizeConnection = React.createClass( {
 
 	propTypes: {
 		post: PropTypes.object,
@@ -116,4 +115,6 @@ export default localize(React.createClass({
 			</div>
 		);
 	},
-}));
+} );
+
+export default localize( EditorSharingPublicizeConnection );
