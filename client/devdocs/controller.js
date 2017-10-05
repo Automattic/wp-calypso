@@ -159,8 +159,7 @@ const devdocs = {
 		);
 	},
 
-	pleaseLogIn: function( context ) {
-		// eslint-disable-line no-unused-vars
+	pleaseLogIn: function() {
 		const currentUrl = url.parse( location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 
@@ -184,8 +183,7 @@ const devdocs = {
 	},
 
 	// Welcome screen
-	welcome: function( context ) {
-		// eslint-disable-line no-unused-vars
+	welcome: function() {
 		ReactDom.render( React.createElement( DevWelcome, {} ), document.getElementById( 'primary' ) );
 	},
 };
