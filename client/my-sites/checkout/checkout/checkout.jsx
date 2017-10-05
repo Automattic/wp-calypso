@@ -31,7 +31,10 @@ import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import supportPaths from 'lib/url/support';
 import { themeItem } from 'lib/cart-values/cart-items';
-import transactionStepTypes from 'lib/store-transactions/step-types';
+import {
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_WPCOM_REQUEST,
+} from 'lib/store-transactions/step-types';
 import upgradesActions from 'lib/upgrades/actions';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import {
@@ -197,11 +200,11 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( transactionStepTypes.SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
+		if ( SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
 			return false;
 		}
 
-		if ( transactionStepTypes.RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
+		if ( RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
 			// If the cart is emptied by the server after the transaction is
 			// complete without errors, do not redirect as we're waiting for
 			// some post-transaction requests to complete.
