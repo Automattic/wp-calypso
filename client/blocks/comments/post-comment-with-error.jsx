@@ -48,7 +48,7 @@ export default class PostCommentWithError extends React.Component {
 PostCommentWithError.propTypes = {
 	post: PropTypes.object.isRequired,
 	repliesList: PropTypes.object,
-	commentsTree: PropTypes.object,
+	commentsTree: PropTypes.object.isRequired,
 	onUpdateCommentText: PropTypes.func.isRequired,
 	commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 };
