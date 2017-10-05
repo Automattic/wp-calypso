@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
+import { getSiteFragment } from 'lib/route/path';
 import { getSites } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -26,6 +28,25 @@ export const Sites = React.createClass( {
 
 	propTypes: {
 		path: PropTypes.string.isRequired
+	},
+
+	componentWillMount() {
+		// If we have a selected site already, and an un-registered
+		// path we want to handle, do a redirect rather than show
+		// the site site selector.
+		if ( this.props.selectedSite ) {
+			const siteFragment = getSiteFragment( page.current );
+			const path = this.props.path.toLowerCase().split( '?' )[ 0 ].split( '/' )[ 1 ];
+
+			switch ( path ) {
+				case 'sites':
+					page.redirect( `/stats/insights/${ siteFragment }` );
+					break;
+				case 'settings':
+					page.redirect( `/settings/general/${ siteFragment }` );
+					break;
+			}
+		}
 	},
 
 	filterSites( site ) {
@@ -126,9 +147,16 @@ export const Sites = React.createClass( {
 } );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
-	const path = ( rawPath === '/sites' )
-		? '/stats/insights'
-		: rawPath;
+	let path = rawPath.toLowerCase();
+
+	if ( startsWith( path, '/sites' ) ) {
+		path = '/stats/insights';
+	}
+
+	if ( startsWith( path, '/settings' ) ) {
+		path = '/settings/general';
+	}
+
 	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
 };
 
