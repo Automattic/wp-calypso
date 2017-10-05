@@ -29,7 +29,6 @@ import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySites from 'components/data/query-sites';
 import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import {
 	canCurrentUser,
@@ -371,7 +370,6 @@ const SinglePlugin = React.createClass( {
 		return (
 			<MainComponent>
 				<NonSupportedJetpackVersionNotice />
-				<QuerySites allSites />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<div className="plugin__page">
