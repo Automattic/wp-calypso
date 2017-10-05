@@ -48,9 +48,8 @@ self.addEventListener( 'push', function( event ) {
 			} )
 			.then( function() {
 				if ( notification.note_opened_pixel ) {
-					fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) {
-						// eslint-disable-line no-unused-vars
-						console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
+					fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function() {
+						console.log( 'Could not load the pixel %s', notification.note_opened_pixel ); //eslint-disable-line no-console
 					} );
 				}
 			} )

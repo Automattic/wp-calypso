@@ -86,8 +86,7 @@ NetworkConnectionApp = {
 			.head( '/version?' + new Date().getTime() )
 			.timeout( STATUS_CHECK_INTERVAL / 2 )
 			.end(
-				function( error, response ) {
-					// eslint-disable-line no-unused-vars
+				function( error ) {
 					if ( error ) {
 						this.emitDisconnected();
 					} else {
