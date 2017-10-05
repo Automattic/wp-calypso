@@ -19,6 +19,21 @@
 	}
 }
 
+.zoninator__zone-list-item.is-placeholder {
+	border: 0;
+	margin-bottom: 3px;
+
+	.section-header__label-text {
+		display: block;
+		height: 23px;
+		width: 60%;
+		margin: 3px 0;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;		
+	}
+}
+
+
 .zoninator__zone-text {
 	font-size: 14px;
 	font-weight: 400;

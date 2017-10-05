@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { findIndex, map } from 'lodash';
+import { findIndex, map, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,12 +15,14 @@ import { findIndex, map } from 'lodash';
 import FormFieldset from 'components/forms/form-fieldset';
 import SortableList from 'components/forms/sortable-list';
 import PostCard from './post-card';
+import PostPlaceholder from './post-placeholder';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
 
 class PostsList extends Component {
 	static propTypes = {
 		fields: PropTypes.object.isRequired,
+		requesting: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -53,9 +55,8 @@ class PostsList extends Component {
 	};
 
 	render() {
-		const { fields, translate } = this.props;
+		const { fields, requesting, translate } = this.props;
 		const posts = fields.getAll() || [];
-		const showPosts = posts.length > 0;
 
 		const explanationTextClass = 'zoninator__zone-text';
 
@@ -78,7 +79,7 @@ class PostsList extends Component {
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ showPosts && (
+				{ !! posts.length && ! requesting && (
 					<FormFieldset>
 						<p className={ explanationTextClass }>
 							{ translate(
@@ -92,6 +93,8 @@ class PostsList extends Component {
 						</SortableList>
 					</FormFieldset>
 				) }
+
+				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
 			</div>
 		);
 	}
