@@ -222,7 +222,7 @@ class PostComment extends React.PureComponent {
 								onEditCommentCancel={ this.props.onEditCommentCancel }
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
-								onCommentSubmit={ this.props.resetActiveReplyComment }
+								onCommentSubmit={ this.props.onCommentSubmit }
 							/>
 						) ) }
 					</ol>
