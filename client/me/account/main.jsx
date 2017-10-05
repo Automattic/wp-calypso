@@ -56,7 +56,7 @@ const user = _user();
  */
 const debug = debugFactory( 'calypso:me:account' );
 
-const Account = React.createClass( {
+const Account = localize(React.createClass( {
 	displayName: 'Account',
 
 	mixins: [ formBase, observe( 'userSettings', 'username' ), eventRecorder ],
@@ -288,13 +288,13 @@ const Account = React.createClass( {
 	renderHolidaySnow() {
 		// Note that years and months below are zero indexed
 		const { translate } = this.props;
-		const today = this.moment();
-		const startDate = this.moment( {
+		const today = this.props.moment();
+		const startDate = this.props.moment( {
 			year: today.year(),
 			month: 11,
 			day: 1,
 		} );
-		const endDate = this.moment( {
+		const endDate = this.props.moment( {
 			year: today.year(),
 			month: 0,
 			day: 4,
@@ -743,7 +743,7 @@ const Account = React.createClass( {
 			</Main>
 		);
 	},
-} );
+} ));
 
 export default compose(
 	connect(

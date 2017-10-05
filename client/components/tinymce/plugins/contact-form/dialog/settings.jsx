@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -19,7 +20,7 @@ import FormTextValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { validateSettingsToEmail } from './validations';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'ContactFormDialogFormSettings',
 
 	propTypes: {
@@ -42,23 +43,23 @@ export default React.createClass( {
 		const emailValidationError = ! validateSettingsToEmail( this.props.to );
 
 		return (
-			<div className="editor-contact-form-modal-settings">
-				<SectionHeader label={ this.translate( 'Contact Form Notification Settings' ) } />
+            <div className="editor-contact-form-modal-settings">
+				<SectionHeader label={ this.props.translate( 'Contact Form Notification Settings' ) } />
 				<Card>
 					<p>
 						{ this.props.postType === 'post' ? (
-							this.translate(
+							this.props.translate(
 								'If you don’t make any changes here, feedback will be sent to the author of the post and the subject will be the name of this post.'
 							)
 						) : (
-							this.translate(
+							this.props.translate(
 								'If you don’t make any changes here, feedback will be sent to the author of the page and the subject will be the name of this page.'
 							)
 						) }
 					</p>
 
 					<FormFieldset>
-						<FormLabel>{ this.translate( 'Enter your email address' ) }</FormLabel>
+						<FormLabel>{ this.props.translate( 'Enter your email address' ) }</FormLabel>
 						<FormTextInput
 							value={ this.props.to }
 							placeholder={ this.props.email }
@@ -68,13 +69,13 @@ export default React.createClass( {
 						{ emailValidationError && (
 							<FormTextValidation
 								isError={ true }
-								text={ this.translate( '%(email)s is not a valid email address.', {
+								text={ this.props.translate( '%(email)s is not a valid email address.', {
 									args: { email: this.props.to },
 								} ) }
 							/>
 						) }
 						<FormSettingExplanation>
-							{ this.translate(
+							{ this.props.translate(
 								'You can enter multiple email addresses in the Email address field, and separate them with commas.' +
 									' A notification email will then be sent to each email address.'
 							) }
@@ -82,7 +83,7 @@ export default React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>{ this.translate( 'What should the subject line be?' ) }</FormLabel>
+						<FormLabel>{ this.props.translate( 'What should the subject line be?' ) }</FormLabel>
 						<FormTextInput
 							value={ this.props.subject }
 							placeholder={ this.props.title }
@@ -91,6 +92,6 @@ export default React.createClass( {
 					</FormFieldset>
 				</Card>
 			</div>
-		);
+        );
 	},
-} );
+}));

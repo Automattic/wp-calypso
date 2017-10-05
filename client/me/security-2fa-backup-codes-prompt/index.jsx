@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
@@ -22,7 +23,7 @@ import analytics from 'lib/analytics';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'Security2faBackupCodesPrompt',
 
 	mixins: [ LinkedStateMixin ],
@@ -70,14 +71,14 @@ module.exports = React.createClass( {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
 			this.setState( {
-				lastError: this.translate( 'Unable to validate codes right now. Please try again later.' ),
+				lastError: this.props.translate( 'Unable to validate codes right now. Please try again later.' ),
 			} );
 			return;
 		}
 
 		if ( ! data.success ) {
 			this.setState( {
-				lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
 			} );
 			return;
 		}
@@ -105,16 +106,16 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<FormButton
+            <FormButton
 				className="security-2fa-backup-codes-prompt__print"
 				disabled={ this.state.submittingCode }
 				isPrimary={ false }
 				onClick={ this.onClickPrintButton }
 				type="button"
 			>
-				{ this.translate( "Didn't Print The Codes?" ) }
+				{ this.props.translate( "Didn't Print The Codes?" ) }
 			</FormButton>
-		);
+        );
 	},
 
 	possiblyRenderError: function() {
@@ -133,10 +134,10 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
+            <form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
 					<FormLabel htmlFor="backup-code-entry">
-						{ this.translate( 'Type a Backup Code to Verify' ) }
+						{ this.props.translate( 'Type a Backup Code to Verify' ) }
 					</FormLabel>
 					<FormTelInput
 						disabled={ this.state.submittingCode }
@@ -166,12 +167,12 @@ module.exports = React.createClass( {
 					} }
 				>
 					{ this.state.submittingCode ? (
-						this.translate( 'Verifying…' )
+						this.props.translate( 'Verifying…' )
 					) : (
-						this.translate( 'Verify' )
+						this.props.translate( 'Verify' )
 					) }
 				</FormButton>
 			</form>
-		);
+        );
 	},
-} );
+} ));

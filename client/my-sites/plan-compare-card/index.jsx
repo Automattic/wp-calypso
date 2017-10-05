@@ -5,6 +5,7 @@
  */
 
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
@@ -18,7 +19,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'PlanCompareCard',
 
 	propTypes: {
@@ -51,8 +52,8 @@ export default React.createClass( {
 			'is-current': this.props.currentPlan,
 		} );
 		return (
-			<div className={ classes }>
-				{ this.props.popularRibbon && <Ribbon>{ this.translate( 'popular' ) }</Ribbon> }
+            <div className={ classes }>
+				{ this.props.popularRibbon && <Ribbon>{ this.props.translate( 'popular' ) }</Ribbon> }
 				<Card className="plan-compare-card__header">
 					<div className="plan-compare-card__title">{ this.props.title }</div>
 					<div className="plan-compare-card__line">{ this.props.line }</div>
@@ -74,6 +75,6 @@ export default React.createClass( {
 					</Button>
 				</Card>
 			</div>
-		);
+        );
 	},
-} );
+}));

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
@@ -80,7 +81,7 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 		}
 
 		return (
-			<Popover
+            <Popover
 				onClose={ () => this.dismiss() }
 				context={ renderContext }
 				position="bottom"
@@ -93,7 +94,7 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 							<Gridicon icon="image-multiple" size={ 20 } />
 						</span>
 						<span className="editor-media-modal__gallery-help-text">
-							{ this.translate( 'Select more than one image to create a gallery.' ) }
+							{ this.props.translate( 'Select more than one image to create a gallery.' ) }
 						</span>
 					</div>
 					<div className="editor-media-modal__gallery-help-actions">
@@ -102,13 +103,13 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 								checked={ this.state.rememberDismiss }
 								onChange={ this.toggleRememberDismiss }
 							/>
-							<span>{ this.translate( "Don't show again" ) }</span>
+							<span>{ this.props.translate( "Don't show again" ) }</span>
 						</label>
 						<Button
 							onClick={ () => this.dismiss( { remember: this.state.rememberDismiss } ) }
 							compact
 						>
-							{ this.translate( 'Got it', {
+							{ this.props.translate( 'Got it', {
 								context: 'Button label',
 								comment: 'User clicks this to confirm that he has understood the text',
 							} ) }
@@ -116,7 +117,7 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 					</div>
 				</div>
 			</Popover>
-		);
+        );
 	},
 
 	render() {
@@ -157,4 +158,4 @@ export default connect(
 			},
 			dispatch
 		)
-)( EditorMediaModalGalleryHelp );
+)( localize(EditorMediaModalGalleryHelp) );

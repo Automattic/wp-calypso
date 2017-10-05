@@ -5,6 +5,7 @@
  */
 
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -147,12 +148,12 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-			<Notice
+            <Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
 				status="is-warning"
 			>
-				{ this.translate(
+				{ this.props.translate(
 					'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 						'Please check your email to confirm your address.',
 					{
@@ -163,7 +164,7 @@ const CheckoutThankYou = React.createClass( {
 					}
 				) }
 			</Notice>
-		);
+        );
 	},
 
 	isDataLoaded() {
@@ -284,26 +285,26 @@ const CheckoutThankYou = React.createClass( {
 			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
-				<Main className="checkout-thank-you">
+                <Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
 						name={ domainName }
 						price={ this.props.receipt.data.displayPrice }
-						heading={ this.translate( 'Thank you for your purchase!' ) }
-						description={ this.translate(
+						heading={ this.props.translate( 'Thank you for your purchase!' ) }
+						description={ this.props.translate(
 							"That looks like a great domain. Now it's time to get it all set up."
 						) }
 						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ this.translate( 'Go To Your Domain' ) }
+						buttonText={ this.props.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
-			);
+            );
 		}
 
 		const goBackText = this.props.selectedSite
-			? this.translate( 'Back to my site' )
-			: this.translate( 'Register Domain' );
+			? this.props.translate( 'Back to my site' )
+			: this.props.translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
@@ -459,4 +460,4 @@ export default connect(
 			},
 		};
 	}
-)( CheckoutThankYou );
+)( localize(CheckoutThankYou) );

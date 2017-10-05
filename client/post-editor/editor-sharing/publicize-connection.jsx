@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { includes } from 'lodash';
 import Gridicon from 'gridicons';
@@ -19,7 +20,7 @@ import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'EditorSharingPublicizeConnection',
 
 	propTypes: {
@@ -84,18 +85,18 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice
+            <Notice
 				isCompact
 				className="editor-sharing__broken-publicize-connection"
 				status="is-warning"
 				showDismiss={ false }
 			>
-				{ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+				{ this.props.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
 				<NoticeAction onClick={ this.props.onRefresh }>
 					Reconnect <Gridicon icon="external" size={ 18 } />
 				</NoticeAction>
 			</Notice>
-		);
+        );
 	},
 
 	render() {
@@ -115,4 +116,4 @@ export default React.createClass( {
 			</div>
 		);
 	},
-} );
+}));

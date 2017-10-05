@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:stats:action-follow' );
@@ -18,7 +19,7 @@ import observe from 'lib/mixins/data-observe';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],
@@ -53,10 +54,10 @@ module.exports = React.createClass( {
 				following: following,
 			} ),
 			label = following
-				? this.translate( 'Following', {
+				? this.props.translate( 'Following', {
 						context: 'Stats: Follow action / Following status',
 					} )
-				: this.translate( 'Follow', {
+				: this.props.translate( 'Follow', {
 						context: 'Stats: Follow action / Following status',
 					} ),
 			gridiconType = following ? 'reader-following' : 'reader-follow',
@@ -65,13 +66,13 @@ module.exports = React.createClass( {
 		wrapperClassSet = classNames( wrapperClass );
 
 		return (
-			<li className="module-content-list-item-action">
+            <li className="module-content-list-item-action">
 				<a
 					href="#"
 					onClick={ this.clickHandler }
 					className={ wrapperClassSet }
 					title={ site.blog_domain }
-					aria-label={ this.translate( 'Follow or unfollow user', {
+					aria-label={ this.props.translate( 'Follow or unfollow user', {
 						textOnly: true,
 						context: 'Stats ARIA label: Follow/Unfollow action',
 					} ) }
@@ -82,10 +83,10 @@ module.exports = React.createClass( {
 					</span>
 					<span className="module-content-list-item-action-label unfollow">
 						<Gridicon icon="cross" size={ 18 } />
-						{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }
+						{ this.props.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }
 					</span>
 				</a>
 			</li>
-		);
+        );
 	},
-} );
+} ));

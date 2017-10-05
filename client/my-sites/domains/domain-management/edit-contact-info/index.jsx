@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
@@ -39,16 +40,16 @@ const EditContactInfo = React.createClass( {
 		}
 
 		return (
-			<Main className="domain-management-edit-contact-info">
+            <Main className="domain-management-edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ this.translate( 'Edit Contact Info' ) }
+					{ this.props.translate( 'Edit Contact Info' ) }
 				</Header>
 				{ this.getCard() }
 			</Main>
-		);
+        );
 	},
 
 	isDataLoading() {
@@ -72,15 +73,15 @@ const EditContactInfo = React.createClass( {
 		}
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
+            <div>
+				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
 				/>
 			</div>
-		);
+        );
 	},
 
 	goToContactsPrivacy() {
@@ -93,4 +94,4 @@ const EditContactInfo = React.createClass( {
 	},
 } );
 
-export default EditContactInfo;
+export default localize(EditContactInfo);

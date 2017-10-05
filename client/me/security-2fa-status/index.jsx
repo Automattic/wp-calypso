@@ -5,10 +5,11 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'Security2faStatus',
 
 	componentDidMount: function() {
@@ -21,9 +22,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<p>
+            <p>
 				{ this.props.twoStepEnabled ? (
-					this.translate(
+					this.props.translate(
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
 						{
 							components: {
@@ -33,7 +34,7 @@ module.exports = React.createClass( {
 						}
 					)
 				) : (
-					this.translate(
+					this.props.translate(
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
 						{
 							components: {
@@ -44,6 +45,6 @@ module.exports = React.createClass( {
 					)
 				) }
 			</p>
-		);
+        );
 	},
-} );
+} ));

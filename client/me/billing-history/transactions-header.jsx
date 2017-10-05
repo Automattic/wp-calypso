@@ -5,6 +5,7 @@
  */
 
 import { last, map, range, uniq } from 'lodash';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import React from 'react';
 import closest from 'component-closest';
@@ -16,7 +17,7 @@ import classNames from 'classnames';
 import tableRows from './table-rows';
 import eventRecorder from 'me/event-recorder';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'TransactionsHeader',
 
 	mixins: [ eventRecorder ],
@@ -76,7 +77,7 @@ module.exports = React.createClass( {
 				'is-popped': isVisible,
 			} ),
 			previousMonths = range( 6 ).map( function( n ) {
-				return this.moment().subtract( n, 'months' );
+				return this.props.moment().subtract( n, 'months' );
 			}, this ),
 			monthPickers = previousMonths.map( function( month, index ) {
 				var analyticsEvent = 'Current Month';
@@ -96,7 +97,7 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={ classes }>
+            <div className={ classes }>
 				<strong
 					className="filter-popover-toggle date-toggle"
 					onClick={ this.recordClickEvent(
@@ -104,7 +105,7 @@ module.exports = React.createClass( {
 						this.togglePopover.bind( this, 'date' )
 					) }
 				>
-					{ this.translate( 'Date' ) }
+					{ this.props.translate( 'Date' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content datepicker">
@@ -112,26 +113,26 @@ module.exports = React.createClass( {
 						<table>
 							<thead>
 								<tr>
-									<th colSpan="2">{ this.translate( 'Recent Transactions' ) }</th>
+									<th colSpan="2">{ this.props.translate( 'Recent Transactions' ) }</th>
 								</tr>
 							</thead>
 							<tbody>
-								{ this.renderDatePicker( '5 Newest', this.translate( '5 Newest' ), { newest: 5 } ) }
-								{ this.renderDatePicker( '10 Newest', this.translate( '10 Newest' ), {
+								{ this.renderDatePicker( '5 Newest', this.props.translate( '5 Newest' ), { newest: 5 } ) }
+								{ this.renderDatePicker( '10 Newest', this.props.translate( '10 Newest' ), {
 									newest: 10,
 								} ) }
 							</tbody>
 							<thead>
 								<tr>
-									<th>{ this.translate( 'By Month' ) }</th>
+									<th>{ this.props.translate( 'By Month' ) }</th>
 									<th className="transactions-header__count">
-										{ this.translate( 'Transactions' ) }
+										{ this.props.translate( 'Transactions' ) }
 									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{ monthPickers }
-								{ this.renderDatePicker( 'Older', this.translate( 'Older' ), {
+								{ this.renderDatePicker( 'Older', this.props.translate( 'Older' ), {
 									before: last( previousMonths ),
 								} ) }
 							</tbody>
@@ -139,7 +140,7 @@ module.exports = React.createClass( {
 					</div>
 				</div>
 			</div>
-		);
+        );
 	},
 
 	togglePopover: function( name ) {
@@ -218,7 +219,7 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={ classes }>
+            <div className={ classes }>
 				<strong
 					className="filter-popover-toggle app-toggle"
 					onClick={ this.recordClickEvent(
@@ -226,25 +227,25 @@ module.exports = React.createClass( {
 						this.togglePopover.bind( this, 'apps' )
 					) }
 				>
-					{ this.translate( 'All Apps' ) }
+					{ this.props.translate( 'All Apps' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content app-list">
 					<table>
 						<thead>
 							<tr>
-								<th>{ this.translate( 'App Name' ) }</th>
-								<th>{ this.translate( 'Transactions' ) }</th>
+								<th>{ this.props.translate( 'App Name' ) }</th>
+								<th>{ this.props.translate( 'Transactions' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
-							{ this.renderAppPicker( this.translate( 'All Apps' ), 'all' ) }
+							{ this.renderAppPicker( this.props.translate( 'All Apps' ), 'all' ) }
 							{ appPickers }
 						</tbody>
 					</table>
 				</div>
 			</div>
-		);
+        );
 	},
 
 	getApps: function() {
@@ -272,4 +273,4 @@ module.exports = React.createClass( {
 			</tr>
 		);
 	},
-} );
+} ));

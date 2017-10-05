@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
@@ -15,7 +16,7 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'StatsInfoPanel',
 
 	mixins: [ PureRenderMixin ],
@@ -41,7 +42,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Learn more about your site’s visibility by looking at the websites and search engines that send the most traffic your way.'
 							) }
 						</p>
@@ -54,7 +55,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/stats/#marking-spam-referrers"
 								>
 									<Gridicon icon="help-outline" />
-									{ this.translate( 'How do I mark a referrer as spam?' ) }
+									{ this.props.translate( 'How do I mark a referrer as spam?' ) }
 								</a>
 							</li>
 							<li>
@@ -65,7 +66,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/stats/#referrers"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Referrers' ) }
+									{ this.props.translate( 'About Referrers' ) }
 								</a>
 							</li>
 						</ul>
@@ -77,7 +78,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'When your content includes links to other sites, you’ll see which ones your visitors click on the most.'
 							) }
 						</p>
@@ -90,7 +91,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/stats/#clicks"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Clicks' ) }
+									{ this.props.translate( 'About Clicks' ) }
 								</a>
 							</li>
 						</ul>
@@ -102,7 +103,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Learn more about your search traffic by looking at the terms your visitors searched for to find your site.',
 								{ context: 'Stats: search terms info module' }
 							) }
@@ -116,7 +117,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/stats/#search-engine-terms"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Search Terms', {
+									{ this.props.translate( 'About Search Terms', {
 										context: 'Stats: search terms info module documentation link',
 									} ) }
 								</a>
@@ -130,7 +131,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Get an overview of the most popular topics on your site, as reflected in your top posts and pages from the past week.'
 							) }
 						</p>
@@ -143,7 +144,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/#use-appropriate-tags"
 								>
 									<Gridicon icon="help-outline" />
-									{ this.translate( 'How do I tag content effectively?' ) }
+									{ this.props.translate( 'How do I tag content effectively?' ) }
 								</a>
 							</li>
 							<li>
@@ -154,7 +155,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/posts/categories-vs-tags/"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Tags & Categories' ) }
+									{ this.props.translate( 'About Tags & Categories' ) }
 								</a>
 							</li>
 						</ul>
@@ -166,7 +167,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Discover what your most-viewed content is, and check how individual posts and pages perform over time.',
 								{
 									context: 'Stats: Posts & Pages info box description',
@@ -174,7 +175,7 @@ export default React.createClass( {
 							) }
 						</p>
 						<p className="legend published">
-							{ this.translate( '= The post or page was published within the selected period', {
+							{ this.props.translate( '= The post or page was published within the selected period', {
 								context: 'Legend for the posts & pages panel in Stats',
 								comment: 'A vertical, orange bar is displayed to the left of the = sign.',
 							} ) }
@@ -188,7 +189,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/"
 								>
 									<Gridicon icon="help-outline" />
-									{ this.translate( 'How do I get more visitors?', {
+									{ this.props.translate( 'How do I get more visitors?', {
 										context: 'Stats: Posts & Pages info box documentation link',
 									} ) }
 								</a>
@@ -201,7 +202,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/stats/#top-posts-pages"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Posts & Pages', {
+									{ this.props.translate( 'About Posts & Pages', {
 										context: 'Stats: Posts & Pages info box documentation link',
 									} ) }
 								</a>
@@ -215,7 +216,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Track the views on each contributor’s posts or pages, and zoom in to discover the most popular content by each author.'
 							) }
 						</p>
@@ -228,7 +229,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/adding-users/"
 								>
 									<Gridicon icon="help-outline" />
-									{ this.translate( 'How do I invite someone to my website?' ) }
+									{ this.props.translate( 'How do I invite someone to my website?' ) }
 								</a>
 							</li>
 							<li>
@@ -239,7 +240,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/category/users/"
 								>
 									<Gridicon icon="folder" />
-									{ this.translate( 'About Users' ) }
+									{ this.props.translate( 'About Users' ) }
 								</a>
 							</li>
 						</ul>
@@ -251,7 +252,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'If you’ve uploaded videos using VideoPress, find out how many times they’ve been watched.'
 							) }
 						</p>
@@ -264,7 +265,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/videos/"
 								>
 									<Gridicon icon="folder" />
-									{ this.translate( 'About Videos on WordPress.com' ) }
+									{ this.props.translate( 'About Videos on WordPress.com' ) }
 								</a>
 							</li>
 						</ul>
@@ -276,7 +277,7 @@ export default React.createClass( {
 				infoView = (
 					<div className={ infoPanelClass }>
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'Keep track of your followers from various social networking services using publicize.'
 							) }
 						</p>
@@ -289,7 +290,7 @@ export default React.createClass( {
 									href="http://en.support.wordpress.com/publicize/"
 								>
 									<Gridicon icon="info-outline" />
-									{ this.translate( 'About Publicize' ) }
+									{ this.props.translate( 'About Publicize' ) }
 								</a>
 							</li>
 						</ul>
@@ -299,4 +300,4 @@ export default React.createClass( {
 		}
 		return infoView;
 	},
-} );
+}));

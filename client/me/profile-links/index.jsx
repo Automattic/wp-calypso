@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
 /**
@@ -20,7 +21,7 @@ import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'ProfileLinks',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -126,16 +127,16 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice
+            <Notice
 				className="profile-links__error"
 				status="is-error"
 				onDismissClick={ this.clearLastError }
 			>
-				{ this.translate(
+				{ this.props.translate(
 					'An error occurred while attempting to remove the link. Please try again later.'
 				) }
 			</Notice>
-		);
+        );
 	},
 
 	renderProfileLinksList() {
@@ -158,12 +159,12 @@ export default React.createClass( {
 
 	renderNoProfileLinks() {
 		return (
-			<p className="profile-links__no-links">
-				{ this.translate(
+            <p className="profile-links__no-links">
+				{ this.props.translate(
 					"You have no sites in your profile links. You may add sites if you'd like."
 				) }
 			</p>
-		);
+        );
 	},
 
 	renderPlaceholders() {
@@ -194,13 +195,13 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
-				<p>{ this.translate( 'Manage which sites appear in your profile.' ) }</p>
+            <div>
+				<p>{ this.props.translate( 'Manage which sites appear in your profile.' ) }</p>
 
 				{ this.possiblyRenderError() }
 				{ links }
 			</div>
-		);
+        );
 	},
 
 	renderForm() {
@@ -225,8 +226,8 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Profile Links' ) }>
+            <div>
+				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
 						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ !! this.state.showingForm }
@@ -239,6 +240,6 @@ export default React.createClass( {
 				</SectionHeader>
 				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 			</div>
-		);
+        );
 	},
-} );
+}));

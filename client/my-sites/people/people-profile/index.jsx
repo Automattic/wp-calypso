@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { omit } from 'lodash';
@@ -14,7 +15,7 @@ import { omit } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'PeopleProfile',
 
 	mixins: [ PureRenderMixin ],
@@ -38,26 +39,26 @@ module.exports = React.createClass( {
 
 		switch ( role ) {
 			case 'super admin':
-				text = this.translate( 'Super Admin', {
+				text = this.props.translate( 'Super Admin', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'administrator':
-				text = this.translate( 'Admin', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Admin', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'editor':
-				text = this.translate( 'Editor', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Editor', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'author':
-				text = this.translate( 'Author', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Author', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'contributor':
-				text = this.translate( 'Contributor', {
+				text = this.props.translate( 'Contributor', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'subscriber':
-				text = this.translate( 'Subscriber', {
+				text = this.props.translate( 'Subscriber', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
@@ -77,7 +78,7 @@ module.exports = React.createClass( {
 		const user = this.props.user;
 		let name;
 		if ( ! user ) {
-			name = this.translate( 'Loading Users', {
+			name = this.props.translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
 		} else if ( user.name ) {
@@ -96,7 +97,7 @@ module.exports = React.createClass( {
 	renderLogin() {
 		let login;
 		if ( ! this.props.user ) {
-			login = this.translate( 'Loading Users', {
+			login = this.props.translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
 		} else if ( this.props.user.login ) {
@@ -151,15 +152,15 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="people-profile__subscribed">
-				{ this.translate( 'Since %(formattedDate)s', {
+            <div className="people-profile__subscribed">
+				{ this.props.translate( 'Since %(formattedDate)s', {
 					context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
 					args: {
-						formattedDate: this.moment( this.props.user.date_subscribed ).format( 'll' ),
+						formattedDate: this.props.moment( this.props.user.date_subscribed ).format( 'll' ),
 					},
 				} ) }
 			</div>
-		);
+        );
 	},
 
 	isFollowerType() {
@@ -185,4 +186,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	},
-} );
+} ));
