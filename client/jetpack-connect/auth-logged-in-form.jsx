@@ -9,6 +9,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -169,13 +170,10 @@ class LoggedInForm extends Component {
 	}
 
 	isFromJpo() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-
-		if ( ! queryObject || ! queryObject.from || 'string' !== typeof queryObject.from ) {
-			return false;
-		}
-
-		return 0 === queryObject.from.indexOf( 'jpo' );
+		return startsWith(
+			get( this.props, [ 'jetpackConnectAuthorize', 'queryObject', 'from' ] ),
+			'jpo'
+		);
 	}
 
 	handleClickDisclaimer = () => {
