@@ -85,6 +85,8 @@
 .is-section-woocommerce {
 	// overwrite notice styles due to sticky bar
 	.global-notices {
+		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
+
 		@include breakpoint( ">660px" ) {
 			top: 115px;
 		}

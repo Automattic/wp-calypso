@@ -166,6 +166,7 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
+		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
 		'.webpack-build-monitor': 99999999,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),
