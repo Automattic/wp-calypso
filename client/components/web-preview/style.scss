@@ -319,3 +319,19 @@ a.web-preview__external.button {
 	width: 100%;
 	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
 }
+
+.web-preview__seo-checkbox {
+	width: 24px;
+	&:before {
+
+	}
+}
+
+.web-preview__seo-label {
+	max-width: 80px;
+	word-wrap: break-word;
+
+	@include breakpoint( "<960px" ) {
+		display: none;
+	}
+}

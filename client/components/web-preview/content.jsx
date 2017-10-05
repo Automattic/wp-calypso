@@ -247,13 +247,15 @@ export class WebPreviewContent extends PureComponent {
 			this.state.device !== 'seo'
 		);
 
+		const switcherLimitedToResponsive = isWithinBreakpoint( '<960px' );
+
 		return (
 			<div className={ className } ref={ this.setWrapperElement }>
 				<Toolbar setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					switcherLimitedToResponsive={ switcherLimitedToResponsive }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
