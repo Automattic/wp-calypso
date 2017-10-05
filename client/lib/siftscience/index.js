@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:siftscience' );
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
+import { loadScript } from 'lib/load-script';
 import user from 'lib/user';
 import config from 'config';
 
@@ -32,7 +32,7 @@ module.exports = {
 			window._sift.push( [ '_trackPageview' ] );
 
 			hasLoaded = true;
-			loadScript.loadScript( SIFTSCIENCE_URL, function( error ) {
+			loadScript( SIFTSCIENCE_URL, function( error ) {
 				if ( error ) {
 					debug( 'Error loading siftscience' );
 				} else {

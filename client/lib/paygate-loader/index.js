@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:paygate' );
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
+import { loadjQueryDependentScript } from 'lib/load-script';
 
 /**
  * PaygateLoader component
@@ -39,7 +39,7 @@ PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
 		return callback( null, window.Paygate );
 	}
 
-	loadScript.loadjQueryDependentScript(
+	loadjQueryDependentScript(
 		paygateUrl,
 		function( error ) {
 			if ( error ) {
