@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import { noop } from 'lodash';
 
@@ -23,7 +26,7 @@ export default class EmbedDialogExample extends PureComponent {
 		this.setState( { showDialog: false } );
 	};
 
-	onUpdate = ( newUrl ) => {
+	onUpdate = newUrl => {
 		this.setState( {
 			embedUrl: newUrl,
 			showDialog: false,
@@ -33,9 +36,7 @@ export default class EmbedDialogExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				<Button onClick={ this.openDialog }>
-					Open Embed Dialog
-				</Button>
+				<Button onClick={ this.openDialog }>Open Embed Dialog</Button>
 
 				<EmbedDialog
 					embedUrl={ this.state.embedUrl }
@@ -46,4 +47,4 @@ export default class EmbedDialogExample extends PureComponent {
 			</Card>
 		);
 	}
-};
+}

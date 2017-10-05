@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -51,8 +54,12 @@ class PostTrendsMonth extends Component {
 	render() {
 		return (
 			<div className="post-trends__month">
-				<div key="weeks" className="post-trends__weeks">{ this.getWeekComponents() }</div>
-				<div key="label" className="post-trends__label">{ this.props.startDate.format( 'MMM' ) }</div>
+				<div key="weeks" className="post-trends__weeks">
+					{ this.getWeekComponents() }
+				</div>
+				<div key="label" className="post-trends__label">
+					{ this.props.startDate.format( 'MMM' ) }
+				</div>
 			</div>
 		);
 	}

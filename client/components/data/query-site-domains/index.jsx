@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -23,9 +26,11 @@ class QuerySiteDomains extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingSiteDomains ||
+		if (
+			nextProps.requestingSiteDomains ||
 			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
+			this.props.siteId === nextProps.siteId
+		) {
 			return;
 		}
 		this.requestSiteDomains( nextProps );
@@ -45,17 +50,17 @@ class QuerySiteDomains extends Component {
 QuerySiteDomains.propTypes = {
 	siteId: PropTypes.number,
 	requestingSiteDomains: PropTypes.bool,
-	fetchSiteDomains: PropTypes.func
+	fetchSiteDomains: PropTypes.func,
 };
 
 QuerySiteDomains.defaultProps = {
-	fetchSiteDomains: () => {}
+	fetchSiteDomains: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingSiteDomains: isRequestingSiteDomains( state, ownProps.siteId )
+			requestingSiteDomains: isRequestingSiteDomains( state, ownProps.siteId ),
 		};
 	},
 	dispatch => {

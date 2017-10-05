@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import orders from './orders/reducer';
 import payments from './payments/reducer';
 import products from './products/reducer';

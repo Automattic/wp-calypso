@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -38,23 +41,29 @@ export const createPages = ( { dispatch }, action ) => {
 	dispatch( removeNotice( createPagesNotice ) );
 
 	titles.forEach( title => {
-		dispatch( http( {
-			method: 'POST',
-			path: `/sites/${ siteId }/posts/new`,
-			body: {
-				title,
-				type: 'page',
-			}
-		}, action ) );
+		dispatch(
+			http(
+				{
+					method: 'POST',
+					path: `/sites/${ siteId }/posts/new`,
+					body: {
+						title,
+						type: 'page',
+					},
+				},
+				action
+			)
+		);
 	} );
 };
 
 export const announceFailure = ( dispatch, siteId ) => {
 	dispatch( createPagesError( siteId ) );
-	dispatch( errorNotice(
-		translate( 'There was a problem creating the page(s). Please try again.' ),
-		{ id: createPagesNotice }
-	) );
+	dispatch(
+		errorNotice( translate( 'There was a problem creating the page(s). Please try again.' ), {
+			id: createPagesNotice,
+		} )
+	);
 };
 
 export const areRequestsComplete = () => errorCount + successCount >= totalPages;
@@ -88,35 +97,51 @@ export const handleFailure = ( { dispatch }, { siteId } ) => {
 export const fetchSetupStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
-	dispatch( http( {
-		method: 'GET',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			path: '/wpjm/v1/status/run_page_setup',
-		},
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					path: '/wpjm/v1/status/run_page_setup',
+				},
+			},
+			action
+		)
+	);
 };
 
-export const updateSetupStatus = ( { dispatch }, { siteId }, { data } ) => dispatch( updateStatus( siteId, data ) );
+export const updateSetupStatus = ( { dispatch }, { siteId }, { data } ) =>
+	dispatch( updateStatus( siteId, data ) );
 
-export const fetchSetupStatusError = ( { dispatch }, { siteId } ) => dispatch( fetchStatusError( siteId ) );
+export const fetchSetupStatusError = ( { dispatch }, { siteId } ) =>
+	dispatch( fetchStatusError( siteId ) );
 
 export const saveSetupStatus = ( { dispatch }, action ) => {
 	const { setupStatus, siteId } = action;
 
-	dispatch( http( {
-		method: 'POST',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			body: JSON.stringify( setupStatus ),
-			json: true,
-			path: '/wpjm/v1/status/run_page_setup',
-		},
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+				query: {
+					body: JSON.stringify( setupStatus ),
+					json: true,
+					path: '/wpjm/v1/status/run_page_setup',
+				},
+			},
+			action
+		)
+	);
 };
 
 const dispatchCreatePagesRequest = dispatchRequest( createPages, handleSuccess, handleFailure );
-const dispatchFetchSetupStatusRequest = dispatchRequest( fetchSetupStatus, updateSetupStatus, fetchSetupStatusError );
+const dispatchFetchSetupStatusRequest = dispatchRequest(
+	fetchSetupStatus,
+	updateSetupStatus,
+	fetchSetupStatusError
+);
 const dispatchSaveSetupStatusRequest = dispatchRequest( saveSetupStatus, noop, noop );
 
 export default {

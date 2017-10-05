@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getSite } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
 
@@ -11,10 +14,10 @@ import createSelector from 'lib/create-selector';
  * @return {Array}        Site objects
  */
 export default createSelector(
-	( state ) => {
+	state => {
 		return Object.values( state.sites.items )
 			.filter( site => ! site.is_private )
 			.map( site => getSite( state, site.ID ) );
 	},
-	( state ) => [ state.sites.items, state.currentUser.capabilities ]
+	state => [ state.sites.items, state.currentUser.capabilities ]
 );

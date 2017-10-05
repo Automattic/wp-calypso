@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -15,7 +18,7 @@ import {
 	isGoogleApps,
 	isTheme,
 	isMonthly,
-	isPlan
+	isPlan,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -25,11 +28,16 @@ import { localize } from 'i18n-calypso';
 const getIncludedDomain = cartItems.getIncludedDomain;
 
 export class CartItem extends React.Component {
-	removeFromCart = ( event ) => {
+	removeFromCart = event => {
 		event.preventDefault();
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Remove From Cart Icon', 'Product ID', this.props.cartItem.product_id );
+		analytics.ga.recordEvent(
+			'Upgrades',
+			'Clicked Remove From Cart Icon',
+			'Product ID',
+			this.props.cartItem.product_id
+		);
 		upgradesActions.removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
-	}
+	};
 
 	price() {
 		const { cart, cartItem, translate } = this.props;
@@ -51,8 +59,8 @@ export class CartItem extends React.Component {
 		return translate( '%(cost)s %(currency)s', {
 			args: {
 				cost: cost,
-				currency: cartItem.currency
-			}
+				currency: cartItem.currency,
+			},
 		} );
 	}
 
@@ -78,8 +86,8 @@ export class CartItem extends React.Component {
 		return this.props.translate( '(%(monthlyPrice)f %(currency)s x 12 months)', {
 			args: {
 				monthlyPrice: +( cost / 12 ).toFixed( currency === 'JPY' ? 0 : 2 ),
-				currency
-			}
+				currency,
+			},
 		} );
 	}
 
@@ -87,7 +95,9 @@ export class CartItem extends React.Component {
 		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					<span className="cart__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
+					<span className="cart__free-with-plan">
+						{ cartItem.product_cost } { cartItem.currency }
+					</span>
 					<span className="cart__free-text">{ this.props.translate( 'Free with your plan' ) }</span>
 				</span>
 			);
@@ -98,18 +108,15 @@ export class CartItem extends React.Component {
 
 	getFreeTrialPrice() {
 		const freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
-			args: { days: '14' }
+			args: { days: '14' },
 		} );
 
-		return (
-			<span>
-				{ freeTrialText }
-			</span>
-		);
+		return <span>{ freeTrialText }</span>;
 	}
 
 	getProductInfo() {
-		const domain = this.props.cartItem.meta || ( this.props.selectedSite && this.props.selectedSite.domain );
+		const domain =
+			this.props.cartItem.meta || ( this.props.selectedSite && this.props.selectedSite.domain );
 		let info = null;
 
 		if ( isGoogleApps( this.props.cartItem ) && this.props.cartItem.extra.google_apps_users ) {
@@ -147,12 +154,8 @@ export class CartItem extends React.Component {
 				</div>
 
 				<div className="secondary-details">
-					<span className="product-price">
-						{ this.price() }
-					</span>
-					<span className="product-monthly-price">
-						{ this.monthlyPrice() }
-					</span>
+					<span className="product-price">{ this.price() }</span>
+					<span className="product-monthly-price">{ this.monthlyPrice() }</span>
 					{ this.removeButton() }
 				</div>
 			</li>
@@ -175,12 +178,11 @@ export class CartItem extends React.Component {
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
 				case 'gapps':
-					return this.props.translate(
-						'%(productName)s (1 User)', {
-							args: {
-								productName: cartItem.product_name
-							}
-						} );
+					return this.props.translate( '%(productName)s (1 User)', {
+						args: {
+							productName: cartItem.product_name,
+						},
+					} );
 
 				default:
 					return cartItem.product_name;
@@ -207,14 +209,14 @@ export class CartItem extends React.Component {
 	removeButton() {
 		if ( canRemoveFromCart( this.props.cart, this.props.cartItem ) ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			return <button className="remove-item noticon noticon-close" onClick={ this.removeFromCart }></button>;
+			return (
+				<button className="remove-item noticon noticon-close" onClick={ this.removeFromCart } />
+			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 	}
 }
 
-export default connect(
-	state => ( {
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-	} )
-)( localize( CartItem ) );
+export default connect( state => ( {
+	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+} ) )( localize( CartItem ) );

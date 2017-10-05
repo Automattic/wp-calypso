@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { defer } from 'lodash';
 
 /**
@@ -20,7 +23,7 @@ const SignupActions = {
 		defer( () => {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
-				data: step
+				data: step,
 			} );
 		} );
 	},
@@ -32,7 +35,7 @@ const SignupActions = {
 			type: 'SUBMIT_SIGNUP_STEP',
 			data: step,
 			errors: undefined === errors ? [] : errors,
-			providedDependencies: providedDependencies
+			providedDependencies: providedDependencies,
 		} );
 	},
 
@@ -43,7 +46,7 @@ const SignupActions = {
 				type: 'PROCESS_SIGNUP_STEP',
 				data: step,
 				errors: undefined === errors ? [] : errors,
-				providedDependencies: providedDependencies
+				providedDependencies: providedDependencies,
 			} );
 		} );
 	},
@@ -55,7 +58,7 @@ const SignupActions = {
 			type: 'PROCESSED_SIGNUP_STEP',
 			data: step,
 			errors: undefined === errors ? [] : errors,
-			providedDependencies: providedDependencies
+			providedDependencies: providedDependencies,
 		} );
 	},
 
@@ -67,9 +70,9 @@ const SignupActions = {
 	provideDependencies( providedDependencies ) {
 		Dispatcher.handleViewAction( {
 			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
-			providedDependencies
+			providedDependencies,
 		} );
-	}
+	},
 };
 
 export default SignupActions;

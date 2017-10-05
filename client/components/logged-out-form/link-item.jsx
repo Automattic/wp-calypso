@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -10,7 +13,7 @@ export default React.createClass( {
 	displayName: 'LoggedOutFormLinkItem',
 
 	propTypes: {
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	render() {
@@ -22,5 +25,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</a>
 		);
-	}
+	},
 } );

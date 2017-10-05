@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,16 +21,10 @@ export default React.createClass( {
 
 	propTypes: {
 		src: PropTypes.string,
-		width: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number
-		] ),
-		height: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number
-		] ),
+		width: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		onLoad: PropTypes.func,
-		onResize: PropTypes.func
+		onResize: PropTypes.func,
 	},
 
 	getInitialState: function() {
@@ -37,7 +34,7 @@ export default React.createClass( {
 	getDefaultProps: function() {
 		return {
 			onLoad: noop,
-			onResize: noop
+			onResize: noop,
 		};
 	},
 
@@ -176,7 +173,8 @@ export default React.createClass( {
 				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }
-				height={ this.props.height || this.state.height } />
+				height={ this.props.height || this.state.height }
+			/>
 		);
-	}
+	},
 } );

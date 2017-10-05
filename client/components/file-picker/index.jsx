@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { assign, noop } from 'lodash';
@@ -41,5 +44,5 @@ FilePicker.defaultProps = {
 	directory: false,
 	accept: null,
 	onClick: noop,
-	onPick: noop
+	onPick: noop,
 };

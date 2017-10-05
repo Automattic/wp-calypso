@@ -1,16 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
-import {
-	assign,
-	defer,
-	isEmpty,
-	isNull,
-	omitBy,
-	pick,
-	startsWith
-} from 'lodash';
+import { assign, defer, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
@@ -19,7 +14,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp' ;
+import wpcom from 'lib/wp';
 /* eslint-disable no-restricted-imports */
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
@@ -29,9 +24,7 @@ const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
-import {
-	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
-} from 'state/action-types';
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -59,46 +52,65 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainChoiceCart.push(
 				cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
-					source: 'signup'
+					source: 'signup',
 				} )
 			);
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, error => callback( error, providedDependencies ) );
+		SignupCart.createCart( cartKey, domainChoiceCart, error =>
+			callback( error, providedDependencies )
+		);
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
 
-		SignupCart.createCart( siteId, omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ), error => {
-			callback( error, providedDependencies );
-			page.redirect( `/checkout/${ siteSlug }` );
-		} );
+		SignupCart.createCart(
+			siteId,
+			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			error => {
+				callback( error, providedDependencies );
+				page.redirect( `/checkout/${ siteSlug }` );
+			}
+		);
 	} else {
 		const newSiteData = {
 			cartItem,
 			domainItem,
 			isPurchasingItem: true,
 			siteUrl,
-			themeSlugWithRepo
+			themeSlugWithRepo,
 		};
 
-		createSiteWithCart( ( errors, providedDependencies ) => {
-			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
-		}, dependencies, newSiteData, reduxStore );
+		createSiteWithCart(
+			( errors, providedDependencies ) => {
+				callback(
+					errors,
+					pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] )
+				);
+			},
+			dependencies,
+			newSiteData,
+			reduxStore
+		);
 	}
 }
 
-function createSiteWithCart( callback, dependencies, {
-	cartItem,
-	domainItem,
-	googleAppsCartItem,
-	isPurchasingItem,
-	siteUrl,
-	themeSlugWithRepo,
-	themeItem
-}, reduxStore ) {
+function createSiteWithCart(
+	callback,
+	dependencies,
+	{
+		cartItem,
+		domainItem,
+		googleAppsCartItem,
+		isPurchasingItem,
+		siteUrl,
+		themeSlugWithRepo,
+		themeItem,
+	},
+	reduxStore
+) {
 	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
@@ -115,7 +127,7 @@ function createSiteWithCart( callback, dependencies, {
 			vertical: surveyVertical || undefined,
 		},
 		validate: false,
-		find_available_url: isPurchasingItem
+		find_available_url: isPurchasingItem,
 	}, function( error, response ) {
 		if ( error ) {
 			callback( error );
@@ -132,14 +144,14 @@ function createSiteWithCart( callback, dependencies, {
 			siteId,
 			siteSlug,
 			domainItem,
-			themeItem
+			themeItem,
 		};
 		const addToCartAndProceed = () => {
 			let privacyItem = null;
 			if ( domainItem ) {
 				privacyItem = cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
-					source: 'signup'
+					source: 'signup',
 				} );
 			}
 
@@ -163,7 +175,11 @@ function createSiteWithCart( callback, dependencies, {
 		if ( ! user.get() && isFreeThemePreselected ) {
 			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ), reduxStore );
+			fetchSitesAndUser(
+				siteSlug,
+				setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+				reduxStore
+			);
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 		} else {
@@ -198,24 +214,26 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 	// to call `then`.
 	debug( 'fetchReduxSite: requesting all sites', siteSlug );
 	requestSites()( dispatch ).then( () =>
-		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) );
+		fetchReduxSite( siteSlug, { dispatch, getState }, callback )
+	);
 }
 
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
-	async.parallel( [
-		callback => {
-			fetchSitesUntilSiteAppears( siteSlug, callback );
-		},
-		callback => {
-			user.once( 'change', callback );
-			user.fetch();
-		},
-		callback => {
-			reduxStore
-				? fetchReduxSite( siteSlug, reduxStore, callback )
-				: callback();
-		},
-	], onComplete );
+	async.parallel(
+		[
+			callback => {
+				fetchSitesUntilSiteAppears( siteSlug, callback );
+			},
+			callback => {
+				user.once( 'change', callback );
+				user.fetch();
+			},
+			callback => {
+				reduxStore ? fetchReduxSite( siteSlug, reduxStore, callback ) : callback();
+			},
+		],
+		onComplete
+	);
 }
 
 function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
@@ -225,9 +243,11 @@ function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		return;
 	}
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom
+		.undocumented()
+		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
+			callback( isEmpty( errors ) ? undefined : [ errors ] );
+		} );
 }
 
 /**
@@ -244,13 +264,13 @@ function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 function getUsernameSuggestion( username, reduxState ) {
 	const fields = {
 		givesuggestions: 1,
-		username: username
+		username: username,
 	};
 
 	// Clear out the local storage variable before sending the call.
 	reduxState.dispatch( {
 		type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
-		data: ''
+		data: '',
 	} );
 
 	wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
@@ -287,7 +307,7 @@ function getUsernameSuggestion( username, reduxState ) {
 		// Save the suggested username for later use
 		reduxState.dispatch( {
 			type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
-			data: resultingUsername
+			data: resultingUsername,
 		} );
 	} );
 }
@@ -307,10 +327,17 @@ module.exports = {
 
 		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
+		SignupCart.addToCart( siteId, newCartItems, error =>
+			callback( error, { cartItem, privacyItem } )
+		);
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup }, reduxStore ) {
+	createAccount(
+		callback,
+		dependencies,
+		{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
+		reduxStore
+	) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
@@ -322,9 +349,10 @@ module.exports = {
 				id_token,
 				signup_flow_name: flowName,
 			}, ( error, response ) => {
-				const errors = error && error.error
-					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
-					: undefined;
+				const errors =
+					error && error.error
+						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
+						: undefined;
 
 				if ( errors ) {
 					callback( errors );
@@ -334,7 +362,9 @@ module.exports = {
 			} );
 		} else {
 			wpcom.undocumented().usersNew( assign(
-				{}, userData, {
+				{},
+				userData,
+				{
 					ab_test_variations: getSavedVariations(),
 					validate: false,
 					signup_flow_name: flowName,
@@ -342,14 +372,18 @@ module.exports = {
 					nux_q_question_primary: surveyVertical,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
-				}, oauth2Signup ? {
-					oauth2_client_id: queryArgs.oauth2_client_id,
-					// url of the WordPress.com authorize page for this OAuth2 client
-					// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
-					oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-				} : null
+				},
+				oauth2Signup
+					? {
+							oauth2_client_id: queryArgs.oauth2_client_id,
+							// url of the WordPress.com authorize page for this OAuth2 client
+							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
+							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
+						}
+					: null
 			), ( error, response ) => {
-				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
+				const errors =
+						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
 
 				if ( ! errors ) {
@@ -377,7 +411,7 @@ module.exports = {
 			blog_name: site,
 			blog_title: '',
 			options: { theme: themeSlugWithRepo },
-			validate: false
+			validate: false,
 		};
 
 		wpcom.undocumented().sitesNew( data, function( errors, response ) {
@@ -404,5 +438,5 @@ module.exports = {
 
 	setThemeOnSite: setThemeOnSite,
 
-	getUsernameSuggestion: getUsernameSuggestion
+	getUsernameSuggestion: getUsernameSuggestion,
 };

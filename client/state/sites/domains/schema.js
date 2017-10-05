@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -36,9 +37,9 @@ export const itemsSchema = {
 					registrar: { type: 'string' },
 					registrationDate: { type: 'string' },
 					subscriptionId: { type: [ 'null', 'string' ] },
-					type: { type: 'string' }
-				}
-			}
-		}
-	}
+					type: { type: 'string' },
+				},
+			},
+		},
+	},
 };

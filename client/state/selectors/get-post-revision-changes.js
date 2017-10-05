@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { findIndex, get, isUndefined, map, omitBy } from 'lodash';
 
 /**
@@ -25,7 +28,7 @@ const getPostRevisionChanges = createSelector(
 			change => omitBy( change, isUndefined )
 		);
 	},
-	( state ) => [ state.posts.revisions.revisions ],
+	state => [ state.posts.revisions.revisions ]
 );
 
 export default getPostRevisionChanges;

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -24,9 +27,7 @@ const CommentCount = ( { count, translate } ) => {
 
 	return (
 		<div className="comments__comment-count">
-			<span className="comments__comment-count-phrase">
-				{ countPhrase }
-			</span>
+			<span className="comments__comment-count-phrase">{ countPhrase }</span>
 			{ count === 0 && translate( ' - Add the first! ' ) }
 		</div>
 	);

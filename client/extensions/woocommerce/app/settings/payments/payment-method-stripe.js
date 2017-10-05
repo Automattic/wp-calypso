@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 import React, { Component } from 'react';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
@@ -55,7 +58,7 @@ class PaymentMethodStripe extends Component {
 			isActivated: false,
 			lastName: '',
 			logo: '',
-		}
+		},
 	};
 
 	constructor( props ) {
@@ -70,7 +73,7 @@ class PaymentMethodStripe extends Component {
 	////////////////////////////////////////////////////////////////////////////
 	// Misc helpers
 
-	onEditFieldHandler = ( e ) => {
+	onEditFieldHandler = e => {
 		// Limit the statement descriptor field to 22 characters
 		// since that is all Stripe will accept
 		if ( e.target && 'statement_descriptor' === e.target.name ) {
@@ -80,22 +83,18 @@ class PaymentMethodStripe extends Component {
 		}
 		// All others may continue
 		this.props.onEditField( e.target.name, e.target.value );
-	}
+	};
 
 	////////////////////////////////////////////////////////////////////////////
 	// Dialog action button methods, including the links that let the user force a flow
 
 	onUserRequestsKeyFlow = () => {
-		this.setState(
-			{ userRequestedKeyFlow: true, userRequestedConnectFlow: false }
-		);
-	}
+		this.setState( { userRequestedKeyFlow: true, userRequestedConnectFlow: false } );
+	};
 
 	onUserRequestsConnectFlow = () => {
-		this.setState(
-			{ userRequestedKeyFlow: false, userRequestedConnectFlow: true }
-		);
-	}
+		this.setState( { userRequestedKeyFlow: false, userRequestedConnectFlow: true } );
+	};
 
 	////////////////////////////////////////////////////////////////////////////
 	// And render brings it all together
@@ -104,7 +103,9 @@ class PaymentMethodStripe extends Component {
 		const { method, onCancel, onDone, site, stripeConnectAccount } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
-		const connectFlowsEnabled = config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' );
+		const connectFlowsEnabled = config.isEnabled(
+			'woocommerce/extension-settings-stripe-connect-flows'
+		);
 
 		let dialog = 'key-based';
 
@@ -156,7 +157,9 @@ class PaymentMethodStripe extends Component {
 				onCancel={ onCancel }
 				onDone={ onDone }
 				onEditField={ this.onEditFieldHandler }
-				onUserRequestsConnectFlow={ connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined }
+				onUserRequestsConnectFlow={
+					connectFlowsEnabled ? this.onUserRequestsConnectFlow : undefined
+				}
 			/>
 		);
 	}

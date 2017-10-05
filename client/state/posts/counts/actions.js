@@ -1,12 +1,15 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcom from 'lib/wp';
 import {
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
-	POST_COUNTS_REQUEST_FAILURE
+	POST_COUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -23,7 +26,7 @@ export function receivePostCounts( siteId, postType, counts ) {
 		type: POST_COUNTS_RECEIVE,
 		siteId,
 		postType,
-		counts
+		counts,
 	};
 }
 
@@ -36,29 +39,34 @@ export function receivePostCounts( siteId, postType, counts ) {
  * @return {Function}          Action thunk
  */
 export function requestPostCounts( siteId, postType ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_COUNTS_REQUEST,
 			postType,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().site( siteId ).postCounts( {
-			type: postType
-		} ).then( ( data ) => {
-			dispatch( receivePostCounts( siteId, postType, data.counts ) );
-			dispatch( {
-				type: POST_COUNTS_REQUEST_SUCCESS,
-				siteId,
-				postType
+		return wpcom
+			.undocumented()
+			.site( siteId )
+			.postCounts( {
+				type: postType,
+			} )
+			.then( data => {
+				dispatch( receivePostCounts( siteId, postType, data.counts ) );
+				dispatch( {
+					type: POST_COUNTS_REQUEST_SUCCESS,
+					siteId,
+					postType,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_COUNTS_REQUEST_FAILURE,
+					siteId,
+					postType,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_COUNTS_REQUEST_FAILURE,
-				siteId,
-				postType,
-				error
-			} );
-		} );
 	};
 }

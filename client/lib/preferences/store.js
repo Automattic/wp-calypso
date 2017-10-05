@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { forOwn } from 'lodash';
 
 /**
@@ -14,7 +17,7 @@ import PreferencesConstants from './constants';
  * Module variables
  */
 var PreferencesStore = {
-	_preferences: undefined
+	_preferences: undefined,
 };
 
 emitter( PreferencesStore );

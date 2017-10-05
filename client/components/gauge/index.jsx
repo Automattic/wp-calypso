@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -16,7 +19,7 @@ module.exports = React.createClass( {
 		height: PropTypes.number,
 		colors: PropTypes.array,
 		lineWidth: PropTypes.number,
-		metric: PropTypes.string.isRequired
+		metric: PropTypes.string.isRequired,
 	},
 
 	getDefaultProps: function() {
@@ -25,7 +28,7 @@ module.exports = React.createClass( {
 			height: 118,
 			lineWidth: 9,
 			labelSize: 32,
-			colors: [ '#e9eff3', '#00aadc' ]
+			colors: [ '#e9eff3', '#00aadc' ],
 		};
 	},
 
@@ -43,13 +46,13 @@ module.exports = React.createClass( {
 
 	drawArcs: function() {
 		var canvas = this.refs.canvas,
-			x = ( this.props.width / 2 ),
-			y = ( this.props.height / 2 ),
+			x = this.props.width / 2,
+			y = this.props.height / 2,
 			ctx = canvas.getContext( '2d' ),
-			startAngle = ( 0.8 * Math.PI ),
-			endAngle = ( 2.2 * Math.PI ),
-			valueEndAngle = ( 0.8 + ( 1.4 * ( this.props.percentage / 100 ) ) ) * Math.PI,
-			radius = x - ( this.props.lineWidth / 2 ),
+			startAngle = 0.8 * Math.PI,
+			endAngle = 2.2 * Math.PI,
+			valueEndAngle = ( 0.8 + 1.4 * ( this.props.percentage / 100 ) ) * Math.PI,
+			radius = x - this.props.lineWidth / 2,
 			angleData = [ endAngle, valueEndAngle ];
 
 		angleData.forEach( function( angle, idx ) {
@@ -65,18 +68,18 @@ module.exports = React.createClass( {
 	render: function() {
 		var wrapperStyles = {
 				width: this.props.width,
-				height: this.props.height
+				height: this.props.height,
 			},
 			labelStyles = {
 				color: this.props.colors[ 1 ],
-				fontSize: this.props.labelSize + 'px'
+				fontSize: this.props.labelSize + 'px',
 			},
 			labelTop,
 			label = this.props.percentage + '%';
 
 		// style the label
 		labelStyles.color = this.props.colors[ 1 ];
-		labelTop = ( this.props.height / 2 ) + this.props.labelSize;
+		labelTop = this.props.height / 2 + this.props.labelSize;
 		labelStyles.top = '-' + labelTop + 'px';
 
 		return (
@@ -88,5 +91,5 @@ module.exports = React.createClass( {
 				</span>
 			</div>
 		);
-	}
+	},
 } );

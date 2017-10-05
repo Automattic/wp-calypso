@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -37,7 +40,7 @@ class CurrentSite extends Component {
 		setLayoutFocus: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
-		anySiteSelected: PropTypes.array
+		anySiteSelected: PropTypes.array,
 	};
 
 	componentWillMount() {
@@ -62,18 +65,18 @@ class CurrentSite extends Component {
 		}
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
-		if ( cartItems.hasStaleItem( CartStore.get() ) && this.props.staleCartItemNoticeLastTimeShown < Date.now() - ( 10 * 60 * 1000 ) ) {
-			this.props.infoNotice(
-				this.props.translate( 'Your site deserves a boost!' ),
-				{
-					id: staleCartItemNoticeId,
-					isPersistent: false,
-					duration: 10000,
-					button: this.props.translate( 'Complete your purchase' ),
-					href: '/checkout/' + selectedSite.slug,
-					onClick: this.clickStaleCartItemsNotice
-				}
-			);
+		if (
+			cartItems.hasStaleItem( CartStore.get() ) &&
+			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
+		) {
+			this.props.infoNotice( this.props.translate( 'Your site deserves a boost!' ), {
+				id: staleCartItemNoticeId,
+				isPersistent: false,
+				duration: 10000,
+				button: this.props.translate( 'Complete your purchase' ),
+				href: '/checkout/' + selectedSite.slug,
+				onClick: this.clickStaleCartItemsNotice,
+			} );
 		}
 	};
 
@@ -81,7 +84,7 @@ class CurrentSite extends Component {
 		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
 	};
 
-	switchSites = ( event ) => {
+	switchSites = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -89,26 +92,20 @@ class CurrentSite extends Component {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
-	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
+	previewSite = event => this.props.onClick && this.props.onClick( event );
 
 	renderSiteViewLink() {
 		if ( config.isEnabled( 'standalone-site-preview' ) ) {
 			return;
 		}
 
-		const {
-			isPreviewShowing,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { isPreviewShowing, selectedSite, translate } = this.props;
 
 		const viewText = selectedSite.is_previewable
 			? translate( 'Site Preview' )
 			: translate( 'View site' );
 
-		const viewIcon = selectedSite.is_previewable
-			? 'computer'
-			: 'external';
+		const viewIcon = selectedSite.is_previewable ? 'computer' : 'external';
 
 		return (
 			<a
@@ -120,9 +117,7 @@ class CurrentSite extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<span className="current-site__view-site-text">
-					{ viewText }
-				</span>
+				<span className="current-site__view-site-text">{ viewText }</span>
 				<Gridicon icon={ viewIcon } />
 			</a>
 		);
@@ -135,9 +130,7 @@ class CurrentSite extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
-					{ this.props.siteCount > 1 &&
-						<span className="current-site__switch-sites">&nbsp;</span>
-					}
+					{ this.props.siteCount > 1 && <span className="current-site__switch-sites">&nbsp;</span> }
 
 					<div className="site">
 						<a className="site__content">
@@ -154,22 +147,23 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 &&
+				{ this.props.siteCount > 1 && (
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 18 } />
 							{ translate( 'Switch Site' ) }
 						</Button>
 					</span>
-				}
+				) }
 
-				{ selectedSite
-					? <div>
+				{ selectedSite ? (
+					<div>
 						<Site site={ selectedSite } />
 						{ this.renderSiteViewLink() }
 					</div>
-					: <AllSites />
-				}
+				) : (
+					<AllSites />
+				) }
 
 				<AsyncLoad require="my-sites/current-site/domain-warnings" noPlaceholder={ null } />
 
@@ -180,7 +174,7 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const user = getCurrentUser( state );
 
 		return {
@@ -191,5 +185,5 @@ export default connect(
 			sectionName: getSectionName( state ),
 		};
 	},
-	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent },
+	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
 )( localize( CurrentSite ) );

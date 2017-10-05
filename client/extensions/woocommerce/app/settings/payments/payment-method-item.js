@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -65,25 +68,21 @@ class PaymentMethodItem extends Component {
 
 	onCancel = () => {
 		this.props.cancelEditingPaymentMethod( this.props.site.ID, this.props.method.id );
-	}
+	};
 
 	onEdit = () => {
 		this.props.openPaymentMethodForEdit( this.props.site.ID, this.props.method.id );
-	}
+	};
 
 	onEditField = ( field, value ) => {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
-	}
+	};
 
-	onChangeEnabled = ( e ) => {
+	onChangeEnabled = e => {
 		const { method, site } = this.props;
 
 		const enabled = 'yes' === e.target.value;
-		this.props.changePaymentMethodEnabled(
-			site.ID,
-			method.id,
-			enabled
-		);
+		this.props.changePaymentMethodEnabled( site.ID, method.id, enabled );
 
 		if ( enabled ) {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
@@ -94,27 +93,23 @@ class PaymentMethodItem extends Component {
 				payment_method: method.id,
 			} );
 		}
-	}
+	};
 
 	onDone = () => {
 		const { method, site } = this.props;
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
-	}
+	};
 
 	onDoneAndEnable = () => {
 		const { method, site } = this.props;
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
 		if ( ! method.enabled ) {
-			this.props.changePaymentMethodEnabled(
-				site.ID,
-				method.id,
-				true
-			);
+			this.props.changePaymentMethodEnabled( site.ID, method.id, true );
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
 				payment_method: method.id,
 			} );
 		}
-	}
+	};
 
 	outputEditComponent = () => {
 		const { currentlyEditingMethod, method, site } = this.props;
@@ -124,7 +119,8 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
+					onDone={ this.onDone }
+				/>
 			);
 		}
 		if ( method.id === 'stripe' ) {
@@ -134,7 +130,8 @@ class PaymentMethodItem extends Component {
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
 					onDone={ this.onDoneAndEnable }
-					site={ site } />
+					site={ site }
+				/>
 			);
 		}
 		if ( method.id === 'cheque' ) {
@@ -143,7 +140,8 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
+					onDone={ this.onDone }
+				/>
 			);
 		}
 		return (
@@ -151,30 +149,35 @@ class PaymentMethodItem extends Component {
 				method={ currentlyEditingMethod }
 				onCancel={ this.onCancel }
 				onEditField={ this.onEditField }
-				onDone={ this.onDone } />
+				onDone={ this.onDone }
+			/>
 		);
-	}
+	};
 
-	renderEnabledField = ( method ) => 	{
+	renderEnabledField = method => {
 		const { translate } = this.props;
 		let showEnableField = true;
 		if ( method.id === 'stripe' ) {
 			showEnableField = hasStripeKeyPairForMode( method );
 		}
 
-		return showEnableField &&
-			<div>
-				<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
-				<PaymentMethodEditFormToggle
-					checked={ method.enabled }
-					name="enabled"
-					onChange={ this.onChangeEnabled } />
-			</div>;
-	}
+		return (
+			showEnableField && (
+				<div>
+					<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+					<PaymentMethodEditFormToggle
+						checked={ method.enabled }
+						name="enabled"
+						onChange={ this.onChangeEnabled }
+					/>
+				</div>
+			)
+		);
+	};
 
 	render() {
-		const currentlyEditingId = this.props.currentlyEditingMethod &&
-			this.props.currentlyEditingMethod.id;
+		const currentlyEditingId =
+			this.props.currentlyEditingMethod && this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
 		if ( method.id === 'stripe' && hasStripeKeyPairForMode( method ) ) {
@@ -188,28 +191,18 @@ class PaymentMethodItem extends Component {
 		return (
 			<ListItem>
 				<ListItemField className="payments__method-method-suggested-container">
-					{
-						method.isSuggested &&
-						(
-							<p className="payments__method-suggested">
-								{ translate( 'Suggested Method' ) }
-							</p>
-						)
-					}
+					{ method.isSuggested && (
+						<p className="payments__method-suggested">{ translate( 'Suggested Method' ) }</p>
+					) }
 					<p className={ methodTitle }>{ method.title }</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
-					{ method.fees && (
-						<p className="payments__method-information">{ method.fees }</p>
-					) }
+					{ method.fees && <p className="payments__method-information">{ method.fees }</p> }
 					{ method.informationUrl && (
 						<p className="payments__method-information">
-							<a href={ method.informationUrl }>
-								{ translate( 'More Information' ) }
-							</a>
+							<a href={ method.informationUrl }>{ translate( 'More Information' ) }</a>
 						</p>
 					) }
-
 				</ListItemField>
 				<ListItemField className="payments__method-enable-container">
 					<FormFieldset className="payments__method-enable">
@@ -221,9 +214,7 @@ class PaymentMethodItem extends Component {
 						{ editButtonText }
 					</Button>
 				</ListItemField>
-				{ currentlyEditingId === method.id && (
-					this.outputEditComponent()
-				) }
+				{ currentlyEditingId === method.id && this.outputEditComponent() }
 			</ListItem>
 		);
 	}
@@ -251,6 +242,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );

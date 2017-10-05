@@ -1,18 +1,21 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createInitialFormState, createNullFieldValues, initializeFields } from '../';
 
 function asyncInitialize( { fieldNames, loadFunction } ) {
 	return {
 		initialize() {
-			return ( dispatch ) => {
+			return dispatch => {
 				dispatch( { type: 'INITIALIZE_START' } );
 
 				loadFunction( ( error, fieldValues ) => {
 					dispatch( {
 						type: 'INITIALIZE_SUCCESS',
-						fieldValues
+						fieldValues,
 					} );
 				} );
 			};
@@ -35,7 +38,7 @@ function asyncInitialize( { fieldNames, loadFunction } ) {
 			}
 
 			return next;
-		}
+		},
 	};
 }
 

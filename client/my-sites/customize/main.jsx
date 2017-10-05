@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -36,7 +39,7 @@ class Customize extends React.Component {
 		this.state = {
 			iframeLoaded: false,
 			errorFromIframe: false,
-			timeoutError: false
+			timeoutError: false,
 		};
 	}
 
@@ -51,12 +54,12 @@ class Customize extends React.Component {
 		isJetpack: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		domain: '',
-		prevPath: null
-	}
+		prevPath: null,
+	};
 
 	componentWillMount() {
 		this.redirectIfNeeded( this.props.pathname );
@@ -81,7 +84,7 @@ class Customize extends React.Component {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
-	redirectIfNeeded = ( pathname ) => {
+	redirectIfNeeded = pathname => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
@@ -89,12 +92,12 @@ class Customize extends React.Component {
 		if ( isJetpack ) {
 			page( customizerUrl );
 		}
-	}
+	};
 
 	canUserCustomizeDomain = () => {
 		const { site } = this.props;
 		if ( ! site ) {
-			debug( 'domain is not in the user\'s site list', this.props.domain );
+			debug( "domain is not in the user's site list", this.props.domain );
 			return false;
 		}
 		if ( site.capabilities && site.capabilities.edit_theme_options ) {
@@ -102,7 +105,7 @@ class Customize extends React.Component {
 		}
 		debug( 'user cannot customize domain', this.props.domain );
 		return false;
-	}
+	};
 
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
@@ -113,7 +116,7 @@ class Customize extends React.Component {
 			}
 		}
 		return path;
-	}
+	};
 
 	goBack = () => {
 		const path = this.getPreviousPath();
@@ -122,19 +125,19 @@ class Customize extends React.Component {
 
 		debug( 'returning to previous page', path );
 		page.back( path );
-	}
+	};
 
 	waitForLoading = () => {
 		debug( 'waiting for iframe to load' );
 		this.cancelWaitingTimer();
 		loadingTimer = setTimeout( this.cancelCustomizer, 25000 );
-	}
+	};
 
 	cancelWaitingTimer = () => {
 		if ( loadingTimer ) {
 			clearTimeout( loadingTimer );
 		}
-	}
+	};
 
 	cancelCustomizer = () => {
 		if ( this.state.iframeLoaded ) {
@@ -142,7 +145,7 @@ class Customize extends React.Component {
 		}
 		debug( 'iframe loading timed out' );
 		this.setState( { timeoutError: true } );
-	}
+	};
 
 	getUrl = () => {
 		const { site } = this.props;
@@ -159,12 +162,12 @@ class Customize extends React.Component {
 			return site.options.admin_url + 'customize.php?' + this.buildCustomizerQuery();
 		}
 		return domain + '/wp-admin/customize.php?' + this.buildCustomizerQuery();
-	}
+	};
 
 	buildCustomizerQuery = () => {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );
-		const { panel, site } = this.props;
+		const { panel, site } = this.props;
 
 		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
@@ -183,14 +186,14 @@ class Customize extends React.Component {
 		}
 
 		return Qs.stringify( query );
-	}
+	};
 
 	listenToCustomizer = () => {
 		window.removeEventListener( 'message', this.onMessage, false );
 		window.addEventListener( 'message', this.onMessage, false );
-	}
+	};
 
-	onMessage = ( event ) => {
+	onMessage = event => {
 		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
@@ -200,7 +203,10 @@ class Customize extends React.Component {
 		const parsedOrigin = url.parse( event.origin, true );
 		const parsedSite = url.parse( site.options.unmapped_url );
 
-		if ( parsedOrigin.hostname !== this.props.domain && parsedOrigin.hostname !== parsedSite.hostname ) {
+		if (
+			parsedOrigin.hostname !== this.props.domain &&
+			parsedOrigin.hostname !== parsedSite.hostname
+		) {
 			debug( 'ignoring message received from iframe with incorrect origin', event.origin );
 			return;
 		}
@@ -247,9 +253,9 @@ class Customize extends React.Component {
 					break;
 			}
 		}
-	}
+	};
 
-	renderErrorPage = ( error ) => {
+	renderErrorPage = error => {
 		return (
 			<div className="main main-column customize" role="main">
 				<SidebarNavigation />
@@ -262,7 +268,7 @@ class Customize extends React.Component {
 				/>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		if ( this.state.timeoutError ) {
@@ -272,14 +278,14 @@ class Customize extends React.Component {
 				action: this.props.translate( 'Try again' ),
 				actionCallback: function() {
 					window.location.reload();
-				}
+				},
 			} );
 		}
 
 		if ( this.state.errorFromIframe ) {
 			this.cancelWaitingTimer();
 			return this.renderErrorPage( {
-				title: this.state.errorFromIframe
+				title: this.state.errorFromIframe,
 			} );
 		}
 
@@ -294,7 +300,9 @@ class Customize extends React.Component {
 		if ( ! this.canUserCustomizeDomain() ) {
 			this.cancelWaitingTimer();
 			return this.renderErrorPage( {
-				title: this.props.translate( 'Sorry, you do not have enough permissions to customize this site' )
+				title: this.props.translate(
+					'Sorry, you do not have enough permissions to customize this site'
+				),
 			} );
 		}
 
@@ -323,13 +331,13 @@ class Customize extends React.Component {
 			action: this.props.translate( 'Try again' ),
 			actionCallback: function() {
 				window.location.reload();
-			}
+			},
 		} );
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
 		return {

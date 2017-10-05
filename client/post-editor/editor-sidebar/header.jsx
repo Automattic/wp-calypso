@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -11,13 +14,13 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
-import {
-	NESTED_SIDEBAR_NONE,
-	NESTED_SIDEBAR_REVISIONS,
-	NestedSidebarPropType,
-} from './constants';
+import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from './constants';
 
-const EditorSidebarHeader = ( { nestedSidebar = NESTED_SIDEBAR_NONE, toggleSidebar, translate } ) => (
+const EditorSidebarHeader = ( {
+	nestedSidebar = NESTED_SIDEBAR_NONE,
+	toggleSidebar,
+	translate,
+} ) => (
 	<div className="editor-sidebar__header">
 		{ nestedSidebar === NESTED_SIDEBAR_REVISIONS && (
 			<span>
@@ -29,18 +32,15 @@ const EditorSidebarHeader = ( { nestedSidebar = NESTED_SIDEBAR_NONE, toggleSideb
 				>
 					<EditorPostType isSettings />
 				</Button>
-				<span>
-					→ { translate( 'Revisions' ) }
-				</span>
+				<span>→ { translate( 'Revisions' ) }</span>
 			</span>
 		) }
 
-		{ nestedSidebar === NESTED_SIDEBAR_NONE && (
-			<EditorPostType isSettings />
-		) }
+		{ nestedSidebar === NESTED_SIDEBAR_NONE && <EditorPostType isSettings /> }
 
 		<Button
-			compact borderless
+			compact
+			borderless
 			className="editor-sidebar__back"
 			onClick={ toggleSidebar }
 			title={ translate( 'Close sidebar' ) }
@@ -53,7 +53,7 @@ const EditorSidebarHeader = ( { nestedSidebar = NESTED_SIDEBAR_NONE, toggleSideb
 EditorSidebarHeader.propTypes = {
 	translate: PropTypes.func.isRequired,
 	toggleSidebar: PropTypes.func,
-	nestedSidebar: NestedSidebarPropType
+	nestedSidebar: NestedSidebarPropType,
 };
 
 export default localize( EditorSidebarHeader );

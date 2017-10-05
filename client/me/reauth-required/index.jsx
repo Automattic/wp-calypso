@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
@@ -26,16 +29,15 @@ import constants from 'me/constants';
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'ReauthRequired',
 
 	mixins: [ LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
 
 	getInitialState: function() {
 		return {
-			remember2fa: false,      // Should the 2fa be remembered for 30 days?
-			code: '',                // User's generated 2fa code
-			smsRequestsAllowed: true // Can the user request another SMS code?
+			remember2fa: false, // Should the 2fa be remembered for 30 days?
+			code: '', // User's generated 2fa code
+			smsRequestsAllowed: true, // Can the user request another SMS code?
 		};
 	},
 
@@ -45,13 +47,14 @@ module.exports = React.createClass( {
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			codeMessage = this.translate(
 				'Please check your text messages at the phone number ending with {{strong}}%(smsLastFour)s{{/strong}} ' +
-				'and enter the verification code below.', {
+					'and enter the verification code below.',
+				{
 					args: {
-						smsLastFour: this.props.twoStepAuthorization.getSMSLastFour()
+						smsLastFour: this.props.twoStepAuthorization.getSMSLastFour(),
 					},
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				}
 			);
 		} else {
@@ -70,7 +73,7 @@ module.exports = React.createClass( {
 		this.props.twoStepAuthorization.validateCode(
 			{
 				code: this.state.code,
-				remember2fa: this.state.remember2fa
+				remember2fa: this.state.remember2fa,
 			},
 			function( error, data ) {
 				this.setState( { validatingCode: false } );
@@ -109,21 +112,33 @@ module.exports = React.createClass( {
 	renderSendSMSButton: function() {
 		var button;
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			button = <FormButton
-				disabled={ ! this.state.smsRequestsAllowed }
-				isPrimary={ false }
-				onClick={ this.recordClickEvent( 'Resend SMS Code Button on Reauth Required', this.sendSMSCode ) }
-				type="button">
-				{ this.translate( 'Resend SMS Code' ) }
-			</FormButton>;
+			button = (
+				<FormButton
+					disabled={ ! this.state.smsRequestsAllowed }
+					isPrimary={ false }
+					onClick={ this.recordClickEvent(
+						'Resend SMS Code Button on Reauth Required',
+						this.sendSMSCode
+					) }
+					type="button"
+				>
+					{ this.translate( 'Resend SMS Code' ) }
+				</FormButton>
+			);
 		} else {
-			button = <FormButton
-				disabled={ ! this.state.smsRequestsAllowed }
-				isPrimary={ false }
-				onClick={ this.recordClickEvent( 'Send SMS Code Button on Reauth Required', this.sendSMSCode ) }
-				type="button">
-				{ this.translate( 'Send SMS Code' ) }
-			</FormButton>;
+			button = (
+				<FormButton
+					disabled={ ! this.state.smsRequestsAllowed }
+					isPrimary={ false }
+					onClick={ this.recordClickEvent(
+						'Send SMS Code Button on Reauth Required',
+						this.sendSMSCode
+					) }
+					type="button"
+				>
+					{ this.translate( 'Send SMS Code' ) }
+				</FormButton>
+			);
 		}
 
 		return button;
@@ -135,7 +150,10 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<FormInputValidation isError text={ this.translate( 'You entered an invalid code. Please try again.' ) } />
+			<FormInputValidation
+				isError
+				text={ this.translate( 'You entered an invalid code. Please try again.' ) }
+			/>
 		);
 	},
 
@@ -150,7 +168,8 @@ module.exports = React.createClass( {
 					showDismiss={ false }
 					text={ this.translate(
 						'SMS codes are limited to once per minute. Please wait and try again.'
-					) } />
+					) }
+				/>
 			</div>
 		);
 	},
@@ -174,13 +193,16 @@ module.exports = React.createClass( {
 				<p>
 					<a
 						className="reauth-required__sign-out"
-						onClick={ this.recordClickEvent( 'Reauth Required Log Out Link', userUtilities.logout ) }
+						onClick={ this.recordClickEvent(
+							'Reauth Required Log Out Link',
+							userUtilities.logout
+						) }
 					>
 						{ this.translate( 'Not you? Sign Out' ) }
 					</a>
 				</p>
 
-				<form onSubmit={ this.submitForm } >
+				<form onSubmit={ this.submitForm }>
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.translate( 'Verification Code' ) }</FormLabel>
 						<FormTelInput
@@ -190,7 +212,8 @@ module.exports = React.createClass( {
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
-							valueLink={ this.linkState( 'code' ) } />
+							valueLink={ this.linkState( 'code' ) }
+						/>
 
 						{ this.renderFailedValidationMsg() }
 					</FormFieldset>
@@ -201,7 +224,8 @@ module.exports = React.createClass( {
 								checkedLink={ this.linkState( 'remember2fa' ) }
 								id="remember2fa"
 								name="remember2fa"
-								onClick={ this.recordCheckboxEvent( 'Remember 2fa' ) } />
+								onClick={ this.recordCheckboxEvent( 'Remember 2fa' ) }
+							/>
 							<span>{ this.translate( 'Remember for 30 days.' ) }</span>
 						</FormLabel>
 					</FormFieldset>
@@ -221,5 +245,5 @@ module.exports = React.createClass( {
 				</form>
 			</Dialog>
 		);
-	}
+	},
 } );

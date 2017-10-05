@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -31,18 +34,18 @@ export default class PostTrackback extends React.Component {
 						<Gridicon icon="link" size={ 24 } />
 					</div>
 
-					{ get( comment, 'author.URL' )
-						? <a
-								href={ comment.author.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								className="comments__comment-username"
-							>
-								{ unescapedAuthorName }
-							</a>
-						: <strong className="comments__comment-username">
-								{ unescapedAuthorName }
-							</strong> }
+					{ get( comment, 'author.URL' ) ? (
+						<a
+							href={ comment.author.URL }
+							target="_blank"
+							rel="noopener noreferrer"
+							className="comments__comment-username"
+						>
+							{ unescapedAuthorName }
+						</a>
+					) : (
+						<strong className="comments__comment-username">{ unescapedAuthorName }</strong>
+					) }
 
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>

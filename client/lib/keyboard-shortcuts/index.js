@@ -1,8 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 // only require keymaster if this is a browser environment
-const keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
+const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
@@ -114,7 +117,10 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			keys = keys.join( '+' );
 			keymaster( keys, function( event, handler ) {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
-				if ( self.isNotificationsOpen && ( self._getKey( event ) !== 'n' && event.keyCode !== 27 ) ) {
+				if (
+					self.isNotificationsOpen &&
+					( self._getKey( event ) !== 'n' && event.keyCode !== 27 )
+				) {
 					return;
 				}
 

@@ -1,12 +1,13 @@
+/** @format */
 export default {
 	me: () => ( {
-		get: () => {}
+		get: () => {},
 	} ),
 	site: () => ( {
 		post: () => ( {
 			add: ( query, attributes, callback ) => {
 				callback( null, attributes );
-			}
-		} )
-	} )
+			},
+		} ),
+	} ),
 };

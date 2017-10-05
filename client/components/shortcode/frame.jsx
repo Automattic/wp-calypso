@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isEqual, omit } from 'lodash';
@@ -20,18 +23,18 @@ export default React.createClass( {
 		scripts: PropTypes.object,
 		style: PropTypes.object,
 		onLoad: PropTypes.func,
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
-			onLoad: () => {}
+			onLoad: () => {},
 		};
 	},
 
 	getInitialState: function() {
 		return {
-			html: ''
+			html: '',
 		};
 	},
 
@@ -51,15 +54,18 @@ export default React.createClass( {
 
 	updateHtmlState( props ) {
 		this.setState( {
-			html: generateEmbedFrameMarkup( props )
+			html: generateEmbedFrameMarkup( props ),
 		} );
 	},
 
 	onFrameLoad( event ) {
 		// Transmit message to assign frame markup
-		event.target.contentWindow.postMessage( JSON.stringify( {
-			content: this.state.html
-		} ), '*' );
+		event.target.contentWindow.postMessage(
+			JSON.stringify( {
+				content: this.state.html,
+			} ),
+			'*'
+		);
 
 		this.props.onLoad( event );
 	},
@@ -84,7 +90,8 @@ export default React.createClass( {
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"
 				sandbox="allow-scripts"
-				className={ classes } />
+				className={ classes }
+			/>
 		);
-	}
+	},
 } );

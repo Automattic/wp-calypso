@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -13,19 +16,10 @@ import page from 'page';
  */
 import notices from 'notices';
 import { login } from 'lib/paths';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-} from 'state/login/magic-login/constants';
-import {
-	getMagicLoginCurrentView,
-} from 'state/selectors';
-import {
-	hideMagicLoginRequestForm,
-} from 'state/login/magic-login/actions';
-import {
-	recordPageView,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
+import { getMagicLoginCurrentView } from 'state/selectors';
+import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
@@ -53,10 +47,7 @@ class MagicLogin extends React.Component {
 	};
 
 	render() {
-		const {
-			showCheckYourEmail,
-			translate,
-		} = this.props;
+		const { showCheckYourEmail, translate } = this.props;
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
@@ -80,7 +71,7 @@ class MagicLogin extends React.Component {
 	}
 }
 
-const mapState = ( state ) => ( {
+const mapState = state => ( {
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 } );
 

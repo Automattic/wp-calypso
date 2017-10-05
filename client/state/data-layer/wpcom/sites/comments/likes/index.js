@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import mine from './mine';
 import newLike from './new';
 import { mergeHandlers } from 'state/action-watchers/utils';

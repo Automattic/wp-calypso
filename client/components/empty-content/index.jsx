@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
@@ -115,13 +118,13 @@ class EmptyContent extends Component {
 	render() {
 		const action = this.props.action && this.primaryAction();
 		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
-		const illustration =
-			this.props.illustration &&
+		const illustration = this.props.illustration && (
 			<img
 				src={ this.props.illustration }
 				width={ this.props.illustrationWidth }
 				className="empty-content__illustration"
-			/>;
+			/>
+		);
 
 		return (
 			<div

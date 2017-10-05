@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -19,7 +22,6 @@ import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class EditorMediaModalGalleryPreview extends Component {
-
 	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
@@ -46,12 +48,14 @@ class EditorMediaModalGalleryPreview extends Component {
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: false } ) }>
+					onClick={ () => this.setState( { isEditing: false } ) }
+				>
 					{ translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
 					selected={ this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: true } ) }>
+					onClick={ () => this.setState( { isEditing: true } ) }
+				>
 					{ translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
@@ -76,17 +80,10 @@ class EditorMediaModalGalleryPreview extends Component {
 		}
 
 		if ( 'individual' === settings.type ) {
-			return (
-				<EditorMediaModalGalleryPreviewIndividual
-					items={ settings.items } />
-			);
+			return <EditorMediaModalGalleryPreviewIndividual items={ settings.items } />;
 		}
 
-		return (
-			<EditorMediaModalGalleryPreviewShortcode
-				siteId={ site.ID }
-				settings={ settings } />
-		);
+		return <EditorMediaModalGalleryPreviewShortcode siteId={ site.ID } settings={ settings } />;
 	}
 
 	render() {
@@ -95,13 +92,17 @@ class EditorMediaModalGalleryPreview extends Component {
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
-					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
+					<Notice
+						status="is-warning"
+						onDismissClick={ this.props.onDismissInvalidItemDropped }
+						isCompact
+					>
+						{ translate(
+							'Galleries can only include images. All other uploads will be added to your media library.'
+						) }
 					</Notice>
 				) }
-				<div className="editor-media-modal-gallery__preview-wrapper">
-					{ this.renderPreview() }
-				</div>
+				<div className="editor-media-modal-gallery__preview-wrapper">{ this.renderPreview() }</div>
 				{ this.renderPreviewModeToggle() }
 			</div>
 		);
@@ -111,4 +112,3 @@ class EditorMediaModalGalleryPreview extends Component {
 EditorMediaModalGalleryPreview.displayName = 'EditorMediaModalGalleryPreview';
 
 export default localize( EditorMediaModalGalleryPreview );
-

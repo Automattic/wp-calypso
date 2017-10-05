@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -21,10 +24,7 @@ class CartBody extends React.PureComponent {
 
 		return (
 			<div className="cart-body">
-				<CartItems
-					collapse={ collapse }
-					cart={ cart }
-					selectedSite={ selectedSite } />
+				<CartItems collapse={ collapse } cart={ cart } selectedSite={ selectedSite } />
 				<CartTotal cart={ cart } />
 				{ showCoupon && <CartCoupon cart={ cart } /> }
 			</div>
@@ -33,12 +33,12 @@ class CartBody extends React.PureComponent {
 }
 
 CartBody.propTypes = {
-	collapse: PropTypes.bool
+	collapse: PropTypes.bool,
 };
 
 CartBody.defaultProps = {
 	collapse: false,
-	showCoupon: false
+	showCoupon: false,
 };
 
 export default CartBody;

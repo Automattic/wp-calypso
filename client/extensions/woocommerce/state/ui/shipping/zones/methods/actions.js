@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -10,7 +13,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
-	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -39,7 +42,7 @@ export const openShippingZoneMethod = ( siteId, methodId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const cancelShippingZoneMethod = ( siteId ) => {
+export const cancelShippingZoneMethod = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL, siteId };
 };
 
@@ -48,7 +51,7 @@ export const cancelShippingZoneMethod = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const closeShippingZoneMethod = ( siteId ) => {
+export const closeShippingZoneMethod = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId };
 };
 

@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -16,7 +19,7 @@ import WPSuperCache from './main';
 
 export function settings( context ) {
 	const siteId = getSiteFragment( context.path );
-	const { tab = '' } = context.params;
+	const { tab = '' } = context.params;
 
 	context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
 

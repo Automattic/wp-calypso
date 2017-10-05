@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -25,17 +28,27 @@ module.exports = React.createClass( {
 	render() {
 		return (
 			<div>
-				<HeaderCake onClick={ noop }>
-					Subsection Header aka Header Cake
-				</HeaderCake>
+				<HeaderCake onClick={ noop }>Subsection Header aka Header Cake</HeaderCake>
 				<p>Clicking header cake returns to previous section.</p>
-				<HeaderCake onClick={ noop } actionIcon="status" actionText="Action" actionOnClick={ action }>
+				<HeaderCake
+					onClick={ noop }
+					actionIcon="status"
+					actionText="Action"
+					actionOnClick={ action }
+				>
 					Header Cake with optional Action Button
 				</HeaderCake>
-				<HeaderCake onClick={ noop } actionButton={ <Button compact primary onClick={ action }>An action</Button> }>
+				<HeaderCake
+					onClick={ noop }
+					actionButton={
+						<Button compact primary onClick={ action }>
+							An action
+						</Button>
+					}
+				>
 					Header Cake with a custom action button
 				</HeaderCake>
 			</div>
 		);
-	}
+	},
 } );

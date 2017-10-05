@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { defer } from 'lodash';
 
 /**
@@ -24,7 +27,7 @@ var CustomizeActions = {
 			Dispatcher.handleViewAction( {
 				type: 'THEME_PURCHASE_WITH_CUSTOMIZER',
 				id: id,
-				site: site
+				site: site,
 			} );
 		} );
 	},
@@ -48,9 +51,9 @@ var CustomizeActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'CLOSED_CUSTOMIZER',
-			previousPath: previousPath
+			previousPath: previousPath,
 		} );
-	}
+	},
 };
 
 module.exports = CustomizeActions;

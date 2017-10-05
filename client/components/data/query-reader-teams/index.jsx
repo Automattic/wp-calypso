@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,10 +24,7 @@ class QueryReaderTeams extends Component {
 }
 
 QueryReaderTeams.propTypes = {
-	request: PropTypes.func
+	request: PropTypes.func,
 };
 
-export default connect(
-	null,
-	{ requestTeams },
-)( QueryReaderTeams );
+export default connect( null, { requestTeams } )( QueryReaderTeams );

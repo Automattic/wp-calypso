@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getRawSite } from 'state/sites/selectors';
 
 /**

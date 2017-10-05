@@ -1,15 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import {
-	cartItems,
-	isPaidForFullyInCredits,
-} from 'lib/cart-values';
+import { cartItems, isPaidForFullyInCredits } from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
 import {
 	BEFORE_SUBMIT,
@@ -71,7 +71,7 @@ var PayButton = React.createClass( {
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
 			return this.translate( 'Start %(days)s Day Free Trial', {
 				args: { days: '14' },
-				context: 'Pay button for free trials on /checkout'
+				context: 'Pay button for free trials on /checkout',
 			} );
 		}
 
@@ -80,26 +80,26 @@ var PayButton = React.createClass( {
 				if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 					return this.translate( 'Purchase %(price)s subscription with Credits', {
 						args: { price: cart.total_cost_display },
-						context: 'Renew button on /checkout'
+						context: 'Renew button on /checkout',
 					} );
 				}
 
 				return this.translate( 'Pay %(price)s with Credits', {
 					args: { price: cart.total_cost_display },
-					context: 'Pay button on /checkout'
+					context: 'Pay button on /checkout',
 				} );
 			}
 
 			if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 				return this.translate( 'Renew subscription - %(price)s', {
 					args: { price: cart.total_cost_display },
-					context: 'Renew button on /checkout'
+					context: 'Renew button on /checkout',
 				} );
 			}
 
 			return this.translate( 'Pay %(price)s', {
 				args: { price: cart.total_cost_display },
-				context: 'Pay button on /checkout'
+				context: 'Pay button on /checkout',
 			} );
 		}
 
@@ -109,27 +109,31 @@ var PayButton = React.createClass( {
 	beforeSubmit: function() {
 		return {
 			disabled: false,
-			text: this.beforeSubmitText()
+			text: this.beforeSubmitText(),
 		};
 	},
 
 	sending: function() {
 		return {
 			disabled: true,
-			text: this.translate( 'Sending your purchase', { context: 'Loading state on /checkout' } )
+			text: this.translate( 'Sending your purchase', { context: 'Loading state on /checkout' } ),
 		};
 	},
 
 	completing: function() {
 		var text;
 		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Starting your free trial…', {
+				context: 'Loading state on /checkout',
+			} );
 		} else {
-			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Completing your purchase', {
+				context: 'Loading state on /checkout',
+			} );
 		}
 		return {
 			disabled: true,
-			text: text
+			text: text,
 		};
 	},
 
@@ -138,13 +142,17 @@ var PayButton = React.createClass( {
 
 		return (
 			<span className="pay-button">
-				<button type="submit" className="button is-primary button-pay pay-button__button" disabled={ buttonState.disabled }>
+				<button
+					type="submit"
+					className="button is-primary button-pay pay-button__button"
+					disabled={ buttonState.disabled }
+				>
 					{ buttonState.text }
 				</button>
 				<SubscriptionText cart={ this.props.cart } />
 			</span>
 		);
-	}
+	},
 } );
 
 module.exports = PayButton;

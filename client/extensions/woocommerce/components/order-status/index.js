@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
@@ -38,7 +41,9 @@ function OrderStatus( { showPayment = true, showShipping = true, status, transla
 
 	return (
 		<span className={ classes }>
-			{ ( shippingLabel && showShipping ) ? <span className="order-status__shipping">{ shippingLabel }</span> : null }
+			{ shippingLabel && showShipping ? (
+				<span className="order-status__shipping">{ shippingLabel }</span>
+			) : null }
 			{ showPayment ? <span className="order-status__payment">{ paymentLabel }</span> : null }
 		</span>
 	);

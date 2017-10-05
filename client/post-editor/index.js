@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -23,7 +26,7 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:type', sitesController.siteSelection, sitesController.sites );
-		page( '/edit/:type/new', ( context ) => page.redirect( `/edit/${ context.params.type }` ) );
+		page( '/edit/:type/new', context => page.redirect( `/edit/${ context.params.type }` ) );
 		page( '/edit/:type/:site?/:post?', sitesController.siteSelection, controller.post );
 		page.exit( '/edit/:type/:site?/:post?', controller.exitPost );
 	}

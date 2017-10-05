@@ -1,13 +1,12 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import lyrics from './lyrics';
 import { HELLO_DOLLY_NEXT_LYRIC } from './action-types';
-import {
-	ROUTE_SET,
-	SECTION_SET,
-	SITE_SETTINGS_SAVE,
-} from 'state/action-types.js';
+import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'state/action-types.js';
 
 export default function lyricIndex( state = 0, action ) {
 	switch ( action.type ) {

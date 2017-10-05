@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -8,9 +11,7 @@ import React from 'react';
  */
 import LoginBlock from 'blocks/login';
 
-const LoginExample = () => (
-	<LoginBlock title={ 'Sign in to connect to WordPress.com' } />
-);
+const LoginExample = () => <LoginBlock title={ 'Sign in to connect to WordPress.com' } />;
 
 LoginExample.displayName = 'Login';
 

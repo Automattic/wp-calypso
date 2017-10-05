@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import React from 'react';
 import debugFactory from 'debug';
@@ -17,20 +20,19 @@ import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { areAllSitesSingleUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 module.exports = {
-
 	posts: function( context ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 
 		var Posts = require( 'my-sites/posts/main' ),
 			siteID = route.getSiteFragment( context.path ),
-			author = ( context.params.author === 'my' ) ? getCurrentUserId( state ) : null,
-			statusSlug = ( author ) ? context.params.status : context.params.author,
+			author = context.params.author === 'my' ? getCurrentUserId( state ) : null,
+			statusSlug = author ? context.params.status : context.params.author,
 			search = context.query.s,
 			category = context.query.category,
 			tag = context.query.tag,
@@ -53,12 +55,10 @@ module.exports = {
 		debug( 'siteID: `%s`', siteID );
 		debug( 'author: `%s`', author );
 
-		statusSlug = ( ! statusSlug || statusSlug === 'my' || statusSlug === siteID )
-			? ''
-			: statusSlug;
+		statusSlug = ! statusSlug || statusSlug === 'my' || statusSlug === siteID ? '' : statusSlug;
 		debug( 'statusSlug: `%s`', statusSlug );
 
-		search = ( 'undefined' !== typeof search ) ? search : '';
+		search = 'undefined' !== typeof search ? search : '';
 		debug( 'search: `%s`', search );
 
 		if ( shouldRedirectMyPosts() ) {
@@ -96,10 +96,10 @@ module.exports = {
 					baseAnalyticsPath,
 					analyticsPageTitle,
 					'Posts'
-				)
+				),
 			} ),
 			'primary',
 			context.store
 		);
-	}
+	},
 };

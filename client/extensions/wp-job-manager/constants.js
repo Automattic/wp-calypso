@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 
 export const Tabs = {
@@ -15,5 +18,5 @@ export const Tabs = {
 	PAGES: {
 		label: translate( 'Pages' ),
 		slug: 'pages',
-	}
+	},
 };

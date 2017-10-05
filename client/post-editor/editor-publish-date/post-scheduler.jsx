@@ -1,9 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent } from 'react';
+
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 
 /**
@@ -15,11 +18,9 @@ import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
 
-const PostScheduleWithOtherPostsIndicated = connect(
-	( state, { site, query } ) => ( {
-		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
-	} )
-)( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
+const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
+	posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
+} ) )( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
 	return (
 		<PostSchedule
 			displayInputChrono={ false }
@@ -38,12 +39,12 @@ export default class PostScheduler extends PureComponent {
 		post: PropTypes.object,
 		setPostDate: PropTypes.func,
 		site: PropTypes.object,
-	}
+	};
 
 	state = {
 		firstDayOfTheMonth: this.getFirstDayOfTheMonth( this.props.initialDate ),
 		lastDayOfTheMonth: this.getLastDayOfTheMonth( this.props.initialDate ),
-	}
+	};
 
 	getFirstDayOfTheMonth( date ) {
 		const tz = siteUtils.timezone( this.props.site );
@@ -65,12 +66,12 @@ export default class PostScheduler extends PureComponent {
 			.second( -1 );
 	}
 
-	setCurrentMonth = ( date ) => {
+	setCurrentMonth = date => {
 		this.setState( {
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
+			lastDayOfTheMonth: this.getLastDayOfTheMonth( date ),
 		} );
-	}
+	};
 
 	render() {
 		const { post, setPostDate, site } = this.props;
@@ -84,15 +85,12 @@ export default class PostScheduler extends PureComponent {
 		return (
 			<div>
 				{ ! postUtils.isPage( post ) && (
-					<QueryPosts
-						siteId={ get( site, 'ID' ) }
-						query={ query }
-					/>
+					<QueryPosts siteId={ get( site, 'ID' ) } query={ query } />
 				) }
 				<PostScheduleWithOtherPostsIndicated
 					onDateChange={ setPostDate }
 					onMonthChange={ this.setCurrentMonth }
-					query={ query }
+					query={ query }
 					selectedDay={ get( post, 'date' ) }
 					site={ site }
 				/>

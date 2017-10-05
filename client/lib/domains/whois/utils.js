@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find } from 'lodash';
 
 /**
@@ -18,5 +21,5 @@ function findPrivacyServiceWhois( whoisContacts ) {
 
 export default {
 	findRegistrantWhois,
-	findPrivacyServiceWhois
+	findPrivacyServiceWhois,
 };

@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
@@ -38,25 +41,30 @@ class ReviewReplyCreate extends Component {
 		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
 
-	bindTextareaRef = ( textarea ) => {
+	bindTextareaRef = textarea => {
 		this.textarea = textarea;
-	}
+	};
 
 	calculateTextareaHeight = () => {
 		const textareaScrollHeight = this.textarea.scrollHeight;
-		const textareaHeight = Math.min( TEXTAREA_MAX_HEIGHT, textareaScrollHeight + TEXTAREA_VERTICAL_BORDER );
+		const textareaHeight = Math.min(
+			TEXTAREA_MAX_HEIGHT,
+			textareaScrollHeight + TEXTAREA_VERTICAL_BORDER
+		);
 		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
-	}
+	};
 
 	getTextareaPlaceholder = () => {
 		const { review, translate } = this.props;
 		if ( 'approved' === review.status ) {
 			return translate( 'Reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } );
 		}
-		return translate( 'Approve and reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } );
-	}
+		return translate( 'Approve and reply to %(reviewAuthor)s…', {
+			args: { reviewAuthor: review.name },
+		} );
+	};
 
-	onTextChange = ( event ) => {
+	onTextChange = event => {
 		const { value } = event.target;
 
 		const textareaHeight = this.calculateTextareaHeight();
@@ -64,19 +72,21 @@ class ReviewReplyCreate extends Component {
 			commentText: value,
 			textareaHeight,
 		} );
-	}
+	};
 
-	setFocus = () => this.setState( {
-		hasFocus: true,
-		textareaHeight: this.calculateTextareaHeight(),
-	} );
+	setFocus = () =>
+		this.setState( {
+			hasFocus: true,
+			textareaHeight: this.calculateTextareaHeight(),
+		} );
 
-	unsetFocus = () => this.setState( {
-		hasFocus: false,
-		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
-	} );
+	unsetFocus = () =>
+		this.setState( {
+			hasFocus: false,
+			textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
+		} );
 
-	onSubmit = ( event ) => {
+	onSubmit = event => {
 		event.preventDefault();
 		const { siteId, review, translate } = this.props;
 		const { commentText } = this.state;
@@ -90,11 +100,8 @@ class ReviewReplyCreate extends Component {
 			commentText: '',
 		} );
 
-		this.props.successNotice(
-			translate( 'Reply submitted.' ),
-			{ duration: 5000 }
-		);
-	}
+		this.props.successNotice( translate( 'Reply submitted.' ), { duration: 5000 } );
+	};
 
 	render() {
 		const { translate, currentUser } = this.props;
@@ -135,23 +142,14 @@ class ReviewReplyCreate extends Component {
 					value={ commentText }
 				/>
 
-				<Gravatar
-					className={ gravatarClasses }
-					size={ 24 }
-					user={ currentUser }
-				/>
+				<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
 
-				<button
-					className={ buttonClasses }
-					disabled={ ! hasCommentText }
-					onClick={ this.onSubmit }
-				>
+				<button className={ buttonClasses } disabled={ ! hasCommentText } onClick={ this.onSubmit }>
 					{ translate( 'Send' ) }
 				</button>
 			</form>
 		);
 	}
-
 }
 
 function mapStateToProps( state ) {

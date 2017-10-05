@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 
 module.exports = require( './utils.js' );

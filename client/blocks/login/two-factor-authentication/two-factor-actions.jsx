@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,9 +14,7 @@ import page from 'page';
  */
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
-import {
-	isTwoFactorAuthTypeSupported,
-} from 'state/login/selectors';
+import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
 import { login } from 'lib/paths';
@@ -28,7 +29,7 @@ class TwoFactorActions extends Component {
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
 
-	sendSmsCode = ( event ) => {
+	sendSmsCode = event => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
@@ -38,7 +39,7 @@ class TwoFactorActions extends Component {
 		this.props.sendSmsCode();
 	};
 
-	recordAuthenticatorLinkClick = ( event ) => {
+	recordAuthenticatorLinkClick = event => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
@@ -47,15 +48,11 @@ class TwoFactorActions extends Component {
 	};
 
 	render() {
-		const {
-			isAuthenticatorSupported,
-			isSmsSupported,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { isAuthenticatorSupported, isSmsSupported, translate, twoFactorAuthType } = this.props;
 
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
-		const isAuthenticatorAvailable = isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+		const isAuthenticatorAvailable =
+			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
 
 		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
 			return null;
@@ -63,9 +60,7 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Card className="two-factor-authentication__form-action is-compact">
-				<p>
-					{ translate( 'Or continue to your account using:' ) }
-				</p>
+				<p>{ translate( 'Or continue to your account using:' ) }</p>
 
 				{ isSmsAvailable && (
 					<p>
@@ -88,7 +83,7 @@ class TwoFactorActions extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 	} ),

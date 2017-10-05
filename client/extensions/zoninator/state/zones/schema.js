@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -11,8 +12,8 @@ export const itemsSchema = {
 					name: { type: 'string' },
 					slug: { type: 'string' },
 					description: { type: 'string' },
-				}
-			}
-		}
-	}
+				},
+			},
+		},
+	},
 };

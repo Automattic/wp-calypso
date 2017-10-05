@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	found: 4,
 	viewers: [
@@ -9,7 +10,7 @@ module.exports = {
 			name: 'Test Person501',
 			nice_name: 'test501',
 			profile_URL: 'http://en.gravatar.com',
-			site_ID: 501
+			site_ID: 501,
 		},
 		{
 			ID: 502,
@@ -19,7 +20,7 @@ module.exports = {
 			name: 'Test Person502',
 			nice_name: 'test502',
 			profile_URL: 'http://en.gravatar.com',
-			site_ID: 502
-		}
-	]
+			site_ID: 502,
+		},
+	],
 };

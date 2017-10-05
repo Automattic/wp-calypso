@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:stats-data:local-list' );
@@ -30,7 +33,6 @@ function StatsDataLocalList( options ) {
 	this.limit = options.limit || 10;
 	return this;
 }
-
 
 /**
  * Get the data from localStorage
@@ -69,7 +71,7 @@ StatsDataLocalList.prototype.set = function( key, value ) {
 
 	debug( 'storing data locally ' + key, value );
 	newLocalData = localData.filter( function( cachedRecord ) {
-		return cachedRecord && ( cachedRecord.key !== key );
+		return cachedRecord && cachedRecord.key !== key;
 	} );
 
 	newLocalData.push( record );
@@ -82,7 +84,6 @@ StatsDataLocalList.prototype.set = function( key, value ) {
 	store.set( this.localStoreKey, newLocalData );
 	return record;
 };
-
 
 /**
  * Finds 'value' for the 'key' in localStorage

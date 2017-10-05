@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,11 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import DocumentHead from 'components/data/document-head';
-import {
-	getSiteSlug,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
@@ -65,7 +64,7 @@ export const Sharing = ( {
 			<DocumentHead title={ translate( 'Sharing' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
-			{ filters.length > 0 &&
+			{ filters.length > 0 && (
 				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
 						{ filters.map( ( { id, route, title } ) => (
@@ -75,7 +74,7 @@ export const Sharing = ( {
 						) ) }
 					</NavTabs>
 				</SectionNav>
-			}
+			) }
 			<UpgradeNudge
 				event="sharing_no_ads"
 				feature="no-adverts"
@@ -98,18 +97,18 @@ Sharing.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' ) && isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const hasSharedaddy =
+		isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
+		isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 
-		return {
-			showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-			showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
-			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-		};
-	},
-)( localize( Sharing ) );
+	return {
+		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
+		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} )( localize( Sharing ) );

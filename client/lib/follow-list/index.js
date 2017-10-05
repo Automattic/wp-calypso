@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find } from 'lodash';
 
 /**
@@ -19,7 +22,6 @@ function FollowList() {
 	}
 	this.data = [];
 }
-
 
 /**
  * Adds a new follower object to the data store

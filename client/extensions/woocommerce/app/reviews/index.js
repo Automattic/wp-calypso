@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -30,7 +33,7 @@ class Reviews extends Component {
 		return (
 			<Main className={ classes }>
 				<SidebarNavigation />
-				<ActionHeader breadcrumbs={ ( <span>{ translate( 'Reviews' ) }</span> ) } />
+				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
 				<ReviewsList
 					productId={ params && params.productId && Number( params.productId ) }
 					currentStatus={ params && params.filter }

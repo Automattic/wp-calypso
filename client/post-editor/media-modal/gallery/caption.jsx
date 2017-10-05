@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -15,12 +18,12 @@ export default React.createClass( {
 
 	propTypes: {
 		siteId: PropTypes.number,
-		item: PropTypes.object
+		item: PropTypes.object,
 	},
 
 	getInitialState() {
 		return {
-			caption: null
+			caption: null,
 		};
 	},
 
@@ -36,7 +39,7 @@ export default React.createClass( {
 
 	setCaption( event ) {
 		this.setState( {
-			caption: event.target.value
+			caption: event.target.value,
 		} );
 	},
 
@@ -62,8 +65,9 @@ export default React.createClass( {
 				placeholder={ this.translate( 'Caption this image…' ) }
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
-				onMouseDown={ ( event ) => event.stopPropagation() }
-				className="editor-media-modal-gallery__caption" />
+				onMouseDown={ event => event.stopPropagation() }
+				className="editor-media-modal-gallery__caption"
+			/>
 		);
-	}
+	},
 } );

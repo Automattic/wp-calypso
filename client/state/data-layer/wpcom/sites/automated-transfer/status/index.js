@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 import { delay, noop } from 'lodash';
 
@@ -21,14 +24,23 @@ import {
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
-	dispatch( http( {
-		method: 'GET',
-		path: `/sites/${ siteId }/automated-transfers/status`,
-		apiVersion: '1',
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/automated-transfers/status`,
+				apiVersion: '1',
+			},
+			action
+		)
+	);
 };
 
-export const receiveStatus = ( { dispatch, getState }, { siteId }, { status, uploaded_plugin_slug, transfer_id } ) => {
+export const receiveStatus = (
+	{ dispatch, getState },
+	{ siteId },
+	{ status, uploaded_plugin_slug, transfer_id }
+) => {
 	const pluginId = uploaded_plugin_slug;
 
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
@@ -37,27 +49,27 @@ export const receiveStatus = ( { dispatch, getState }, { siteId }, { status, upl
 	}
 
 	if ( status === 'complete' ) {
-		dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', {
-			context: 'plugin_upload',
-			transfer_id,
-			uploaded_plugin_slug,
-		} ) );
+		dispatch(
+			recordTracksEvent( 'calypso_automated_transfer_complete', {
+				context: 'plugin_upload',
+				transfer_id,
+				uploaded_plugin_slug,
+			} )
+		);
 
 		// Update the now-atomic site to ensure plugin page displays correctly.
 		dispatch( requestSite( siteId ) );
-		dispatch( successNotice(
-			translate( "You've successfully uploaded the %(pluginId)s plugin.", {
-				args: { pluginId }
-			} ),
-			{ duration: 8000 }
-		) );
+		dispatch(
+			successNotice(
+				translate( "You've successfully uploaded the %(pluginId)s plugin.", {
+					args: { pluginId },
+				} ),
+				{ duration: 8000 }
+			)
+		);
 	}
 };
 
 export default {
-	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest(
-		requestStatus,
-		receiveStatus,
-		noop
-	) ]
+	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest( requestStatus, receiveStatus, noop ) ],
 };

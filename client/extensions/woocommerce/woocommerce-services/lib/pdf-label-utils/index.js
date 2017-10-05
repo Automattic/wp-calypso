@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 import querystring from 'querystring';
 import { includes, reduce, filter, map } from 'lodash';
@@ -13,7 +16,7 @@ import getPDFSupport from '../utils/pdf-support';
 const PAPER_SIZES = {
 	a4: {
 		name: translate( 'A4' ),
-		exclude: ( country ) => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
+		exclude: country => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
 	},
 	label: {
 		name: translate( 'Label (4"x6")' ),
@@ -26,14 +29,17 @@ const PAPER_SIZES = {
 	},
 };
 
-export const getPaperSizes = ( country ) => (
-	reduce( PAPER_SIZES, ( result, { name, exclude }, key ) => {
-		if ( ! exclude || ! exclude( country ) ) {
-			result[ key ] = name;
-		}
-		return result;
-	}, {} )
-);
+export const getPaperSizes = country =>
+	reduce(
+		PAPER_SIZES,
+		( result, { name, exclude }, key ) => {
+			if ( ! exclude || ! exclude( country ) ) {
+				result[ key ] = name;
+			}
+			return result;
+		},
+		{}
+	);
 
 const _getPDFURL = ( paperSize, labels, baseURL, nonce ) => {
 	if ( ! PAPER_SIZES[ paperSize ] ) {

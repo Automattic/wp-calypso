@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,7 +20,7 @@ class QueryActiveTheme extends Component {
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestActiveTheme: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );

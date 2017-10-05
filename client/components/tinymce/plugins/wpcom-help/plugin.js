@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -14,9 +17,7 @@ function wpcomHelpPlugin( editor ) {
 	var node;
 
 	editor.on( 'init', function() {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', function() {
@@ -36,7 +37,7 @@ function wpcomHelpPlugin( editor ) {
 				React.createElement( HelpModal, {
 					showDialog: visibility === 'show' ? true : false,
 					onClose: onClose,
-					macosx: tinymce.Env.mac
+					macosx: tinymce.Env.mac,
 				} ),
 				node
 			);

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -39,13 +42,13 @@ class PreSetupView extends Component {
 		} ),
 	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		if ( ! this.state.userBeganEditing ) {
 			this.setState( { address: newProps.address } );
 		}
-	}
+	};
 
-	onChange = ( event ) => {
+	onChange = event => {
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
 
@@ -59,9 +62,9 @@ class PreSetupView extends Component {
 		}
 
 		this.setState( { address, userBeganEditing: true } );
-	}
+	};
 
-	onNext = ( event ) => {
+	onNext = event => {
 		const { site, translate } = this.props;
 		event.preventDefault();
 		this.setState( { isSaving: true } );
@@ -76,14 +79,19 @@ class PreSetupView extends Component {
 
 		const onFailure = () => {
 			this.setState( { isSaving: false } );
-			return errorNotice( translate( 'There was a problem saving the store address. Please try again.' ) );
+			return errorNotice(
+				translate( 'There was a problem saving the store address. Please try again.' )
+			);
 		};
 
 		// Provides fallbacks if the country & state options were never changed/toggled,
 		// or if an unsupported country was set in state (like WC's default GB country)
 		let country = null;
 		let state = null;
-		if ( ! this.state.address.country || ! find( getCountries(), { code: this.state.address.country } ) ) {
+		if (
+			! this.state.address.country ||
+			! find( getCountries(), { code: this.state.address.country } )
+		) {
 			country = 'US';
 			const countryData = getCountryData( country );
 			state = this.state.address.state ? this.state.address.state : countryData.defaultState;
@@ -103,7 +111,7 @@ class PreSetupView extends Component {
 			onSuccess,
 			onFailure
 		);
-	}
+	};
 
 	render = () => {
 		const { loaded, site, translate } = this.props;
@@ -130,12 +138,12 @@ class PreSetupView extends Component {
 				<SetupFooter
 					disabled={ this.state.isSaving }
 					onClick={ this.onNext }
-					label={ translate( 'Let\'s Go!' ) }
+					label={ translate( "Let's Go!" ) }
 					primary
 				/>
 			</div>
 		);
-	}
+	};
 }
 
 function mapStateToProps( state, ownProps ) {

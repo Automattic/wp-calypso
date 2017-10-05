@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,7 +12,7 @@ import { some, partial, map, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import PostActions from 'lib/posts/actions';
 import { generateGalleryShortcode } from 'lib/media/utils';
@@ -21,12 +24,12 @@ class EditorMediaModal extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		onInsertMedia: PropTypes.func,
-		onClose: PropTypes.func
+		onClose: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onInsertMedia: () => {},
-		onClose: () => {}
+		onClose: () => {},
 	};
 
 	insertMedia( { type, items, settings } ) {
@@ -67,7 +70,7 @@ class EditorMediaModal extends Component {
 		this.props.onClose();
 	}
 
-	onClose = ( value ) => {
+	onClose = value => {
 		if ( value ) {
 			this.insertMedia( value );
 		} else {
@@ -80,17 +83,15 @@ class EditorMediaModal extends Component {
 
 		return (
 			<MediaLibrarySelectedData siteId={ get( site, 'ID' ) }>
-				<MediaModal
-					{ ...this.props }
-					onClose={ this.onClose } />
+				<MediaModal { ...this.props } onClose={ this.onClose } />
 			</MediaLibrarySelectedData>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
-		site: getSelectedSite( state )
+	state => ( {
+		site: getSelectedSite( state ),
 	} ),
 	{ bumpStat }
 )( EditorMediaModal );

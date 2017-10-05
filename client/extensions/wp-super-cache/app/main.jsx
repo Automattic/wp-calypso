@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,7 +72,7 @@ class WPSuperCache extends Component {
 		} = this.props;
 		const mainClassName = 'wp-super-cache__main';
 
-		const currentTab = find( Tabs, t => ( t.slug === tab ) );
+		const currentTab = find( Tabs, t => t.slug === tab );
 		// Required minimum version for the extension is WPSC_MIN_VERSION, but some tabs require later versions.
 		const minVersion = get( currentTab, 'minVersion', WPSC_MIN_VERSION );
 
@@ -82,18 +85,21 @@ class WPSuperCache extends Component {
 
 		return (
 			<Main className={ mainClassName }>
-				<ExtensionRedirect pluginId="wp-super-cache"
-					minimumVersion={ minVersion }
-					siteId={ siteId }
-					redirectUrl={ redirectUrl } />
+				<ExtensionRedirect
+					pluginId="wp-super-cache"
+					minimumVersion={ minVersion }
+					siteId={ siteId }
+					redirectUrl={ redirectUrl }
+				/>
 				<QueryStatus siteId={ siteId } />
 
-				{ cacheDisabled &&
-				<Notice
-					showDismiss={ false }
-					status="is-error"
-					text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) } />
-				}
+				{ cacheDisabled && (
+					<Notice
+						showDismiss={ false }
+						status="is-error"
+						text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) }
+					/>
+				) }
 
 				<Navigation activeTab={ tab } siteId={ siteId } />
 				{ this.renderTab( !! cacheDisabled ) }
@@ -102,17 +108,15 @@ class WPSuperCache extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
 
-		return {
-			status: getStatus( state, siteId ),
-			siteId,
-			siteSlug
-		};
-	}
-);
+	return {
+		status: getStatus( state, siteId ),
+		siteId,
+		siteSlug,
+	};
+} );
 
 export default connectComponent( localize( WPSuperCache ) );

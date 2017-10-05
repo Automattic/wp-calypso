@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 
 /**
@@ -21,12 +24,16 @@ class Example extends Component {
 
 	onToggleCompact = () => {
 		this.setState( { isCompact: ! this.state.isCompact } );
-	}
+	};
 
 	render() {
 		const titles = (
 			<TableRow isHeader>
-				{ [ 'Title', '', 'Qty', 'Total' ].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 0 === i }>{ item }</TableItem> ) }
+				{ [ 'Title', '', 'Qty', 'Total' ].map( ( item, i ) => (
+					<TableItem isHeader key={ i } isTitle={ 0 === i }>
+						{ item }
+					</TableItem>
+				) ) }
 			</TableRow>
 		);
 		const link = <a href="#">An internal Link!</a>;
@@ -43,18 +50,18 @@ class Example extends Component {
 			[ link, externalLink, <Gridicon icon="cog" size={ 18 } />, 8 ],
 		];
 		const middleColValues = [
-			[ <FormInputCheckbox/>, 'Thing 1', 65 ],
-			[ <FormInputCheckbox/>, 'Thing 2', 66 ],
-			[ <FormInputCheckbox/>, 'Thing 3', 67 ],
-			[ <FormInputCheckbox/>, 'Thing 4', <Gridicon icon="cog" size={ 18 } /> ],
+			[ <FormInputCheckbox />, 'Thing 1', 65 ],
+			[ <FormInputCheckbox />, 'Thing 2', 66 ],
+			[ <FormInputCheckbox />, 'Thing 3', 67 ],
+			[ <FormInputCheckbox />, 'Thing 4', <Gridicon icon="cog" size={ 18 } /> ],
 		];
 		const middleColTitles = (
 			<TableRow isHeader>
-				{ [
-					<FormInputCheckbox/>,
-					'Description',
-					'Total'
-				].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 1 === i } alignRight={ 2 === i }>{ item }</TableItem> ) }
+				{ [ <FormInputCheckbox />, 'Description', 'Total' ].map( ( item, i ) => (
+					<TableItem isHeader key={ i } isTitle={ 1 === i } alignRight={ 2 === i }>
+						{ item }
+					</TableItem>
+				) ) }
 			</TableRow>
 		);
 
@@ -69,7 +76,9 @@ class Example extends Component {
 					{ values.map( ( row, i ) => (
 						<TableRow key={ i }>
 							{ row.map( ( item, j ) => (
-								<TableItem key={ j } isTitle={ 0 == j }>{ item }</TableItem>
+								<TableItem key={ j } isTitle={ 0 == j }>
+									{ item }
+								</TableItem>
 							) ) }
 						</TableRow>
 					) ) }
@@ -95,7 +104,9 @@ class Example extends Component {
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
-									<TableItem key={ j } isRowHeader={ 0 === j } isTitle={ 0 === j }>{ item }</TableItem>
+									<TableItem key={ j } isRowHeader={ 0 === j } isTitle={ 0 === j }>
+										{ item }
+									</TableItem>
 								) ) }
 							</TableRow>
 						) ) }
@@ -106,7 +117,9 @@ class Example extends Component {
 						{ values.map( ( row, i ) => (
 							<TableRow key={ i }>
 								{ row.map( ( item, j ) => (
-									<TableItem key={ j } isTitle={ 0 === j }>{ item }</TableItem>
+									<TableItem key={ j } isTitle={ 0 === j }>
+										{ item }
+									</TableItem>
 								) ) }
 							</TableRow>
 						) ) }
@@ -114,7 +127,7 @@ class Example extends Component {
 				</div>
 			</div>
 		);
-	};
+	}
 }
 
 Example.displayName = 'WooTable';

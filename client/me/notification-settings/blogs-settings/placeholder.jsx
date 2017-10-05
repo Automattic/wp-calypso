@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -22,11 +25,15 @@ export default React.createClass( {
 					<div className="notification-settings-blog-settings-placeholder__blog">
 						<div className="notification-settings-blog-settings-placeholder__blog__content">
 							<div className="notification-settings-blog-settings-placeholder__blog__content__icon">
-									<span className="notification-settings-blog-settings-placeholder__blog__content__icon__noticon noticon noticon-website" />
+								<span className="notification-settings-blog-settings-placeholder__blog__content__icon__noticon noticon noticon-website" />
 							</div>
 							<div className="notification-settings-blog-settings-placeholder__blog__info">
-								<div className="notification-settings-blog-settings-placeholder__blog__info__title">&nbsp;</div>
-								<div className="notification-settings-blog-settings-placeholder__blog__info__domain">&nbsp;</div>
+								<div className="notification-settings-blog-settings-placeholder__blog__info__title">
+									&nbsp;
+								</div>
+								<div className="notification-settings-blog-settings-placeholder__blog__info__domain">
+									&nbsp;
+								</div>
 							</div>
 						</div>
 					</div>
@@ -36,5 +43,5 @@ export default React.createClass( {
 				</header>
 			</CompactCard>
 		);
-	}
+	},
 } );

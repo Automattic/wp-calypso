@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
@@ -18,19 +21,18 @@ const ITEM_WIDTH = 110;
 const OptionShape = PropTypes.shape( {
 	label: PropTypes.string.isRequired,
 	uri: PropTypes.string.isRequired,
-	icon: PropTypes.string
+	icon: PropTypes.string,
 } );
 
 export default class Navbar extends Component {
-
 	static propTypes = {
 		selected: OptionShape,
-		options: PropTypes.arrayOf( OptionShape )
+		options: PropTypes.arrayOf( OptionShape ),
 	};
 
 	state = {
 		collapsed: true,
-		foldable: false
+		foldable: false,
 	};
 
 	componentDidMount() {
@@ -44,15 +46,13 @@ export default class Navbar extends Component {
 	}
 
 	render() {
-		const className = classNames(
-			'sub-masterbar-nav__navbar',
-			{ 'is-collapsed': this.state.collapsed }
-		);
+		const className = classNames( 'sub-masterbar-nav__navbar', {
+			'is-collapsed': this.state.collapsed,
+		} );
 
-		const ellipsisClass = classNames(
-			'sub-masterbar-nav__ellipsis',
-			{ 'is-open': ! this.state.collapsed }
-		);
+		const ellipsisClass = classNames( 'sub-masterbar-nav__ellipsis', {
+			'is-open': ! this.state.collapsed,
+		} );
 
 		return (
 			<div className={ className }>
@@ -63,13 +63,9 @@ export default class Navbar extends Component {
 				</div>
 				{ this.state.foldable && (
 					<div className="sub-masterbar-nav__switch">
-						<Gridicon
-							icon="ellipsis"
-							className={ ellipsisClass }
-							onClick={ this.toggleList }
-						/>
+						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList } />
 					</div>
-				)}
+				) }
 			</div>
 		);
 	}
@@ -84,19 +80,19 @@ export default class Navbar extends Component {
 				href={ item.uri }
 			/>
 		);
-	}
+	};
 
 	toggleList = () => {
-		this.setState( ( state ) => ( {
-			collapsed: ! state.collapsed
+		this.setState( state => ( {
+			collapsed: ! state.collapsed,
 		} ) );
-	}
+	};
 
 	onResize = () => {
 		const width = findDOMNode( this ).offsetWidth;
 
 		this.setState( ( state, props ) => ( {
-			foldable: width < props.options.length * ITEM_WIDTH + SIDE_PADDING
+			foldable: width < props.options.length * ITEM_WIDTH + SIDE_PADDING,
 		} ) );
-	}
+	};
 }

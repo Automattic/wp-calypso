@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
@@ -15,12 +18,12 @@ class MasterbarItem extends Component {
 		icon: PropTypes.string,
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
-		preloadSection: PropTypes.func
+		preloadSection: PropTypes.func,
 	};
 
 	static defaultProps = {
 		icon: '',
-		onClick: noop
+		onClick: noop,
 	};
 
 	_preloaded = false;
@@ -45,11 +48,10 @@ class MasterbarItem extends Component {
 				title={ this.props.tooltip }
 				className={ itemClasses }
 				onTouchStart={ this.preload }
-				onMouseEnter={ this.preload }>
+				onMouseEnter={ this.preload }
+			>
 				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
-				<span className="masterbar__item-content">
-					{ this.props.children }
-				</span>
+				<span className="masterbar__item-content">{ this.props.children }</span>
 			</a>
 		);
 	}

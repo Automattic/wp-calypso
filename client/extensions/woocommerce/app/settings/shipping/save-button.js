@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -24,16 +27,15 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 
 class ShippingSettingsSaveButton extends Component {
-
 	componentDidMount = () => {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
@@ -42,7 +44,7 @@ class ShippingSettingsSaveButton extends Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
 		}
-	}
+	};
 
 	save = () => {
 		if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
@@ -51,23 +53,22 @@ class ShippingSettingsSaveButton extends Component {
 
 		const { translate } = this.props;
 
-		const successAction = successNotice(
-			translate( 'Shipping settings saved' ),
-			{ duration: 4000 }
-		);
+		const successAction = successNotice( translate( 'Shipping settings saved' ), {
+			duration: 4000,
+		} );
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving the shipping settings. Please try again.' )
 		);
 
 		this.props.createWcsShippingSaveActionList( successAction, failureAction );
-	}
+	};
 
 	redirect = () => {
 		const { site } = this.props;
 		this.save();
 		page.redirect( getLink( '/store/:site', site ) );
-	}
+	};
 
 	render() {
 		const { translate, loading, site, finishedInitialSetup, isSaving } = this.props;
@@ -78,12 +79,18 @@ class ShippingSettingsSaveButton extends Component {
 		}
 
 		if ( finishedInitialSetup ) {
-			return wcsEnabled
-				? <Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>{ translate( 'Save' ) }</Button>
-				: null;
+			return wcsEnabled ? (
+				<Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>
+					{ translate( 'Save' ) }
+				</Button>
+			) : null;
 		}
-		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( 'I\'m Finished' );
-		return <Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>{ label }</Button>;
+		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
+		return (
+			<Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>
+				{ label }
+			</Button>
+		);
 	}
 }
 
@@ -109,4 +116,6 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingSettingsSaveButton ) );
+export default connect( mapStateToProps, mapDispatchToProps )(
+	localize( ShippingSettingsSaveButton )
+);

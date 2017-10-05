@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	page: 1,
 	pages: 2,
@@ -6,12 +7,12 @@ module.exports = {
 		{
 			ID: 90570226,
 			avatar: 'https://1.gravatar.com/avatar/',
-			label: 'test601@testing.com'
+			label: 'test601@testing.com',
 		},
 		{
 			ID: 91865116,
 			avatar: 'https://1.gravatar.com/avatar/',
-			label: 'test602@testing.com'
-		}
-	]
+			label: 'test602@testing.com',
+		},
+	],
 };

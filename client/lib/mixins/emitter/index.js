@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign } from 'lodash';
 
 // Here we make sure we’re not using Node’s core events module,

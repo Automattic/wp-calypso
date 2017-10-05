@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -13,9 +14,9 @@ export const itemsSchema = {
 					enabled: { type: 'boolean' },
 					key: { type: 'string' },
 					title: { type: 'string' },
-					url: { type: 'string' },
-				}
-			}
-		}
-	}
+					url: { type: 'string' },
+				},
+			},
+		},
+	},
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -19,7 +22,6 @@ import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 
 class PaymentMethodStripeConnectedDialog extends Component {
-
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		method: PropTypes.shape( {
@@ -52,19 +54,19 @@ class PaymentMethodStripeConnectedDialog extends Component {
 
 	onSelectLive = () => {
 		this.props.onEditField( { target: { name: 'testmode', value: 'no' } } );
-	}
+	};
 
 	onSelectTest = () => {
 		this.props.onEditField( { target: { name: 'testmode', value: 'no' } } );
-	}
+	};
 
 	onSelectAuthOnly = () => {
 		this.props.onEditField( { target: { name: 'capture', value: 'no' } } );
-	}
+	};
 
 	onSelectCapture = () => {
 		this.props.onEditField( { target: { name: 'capture', value: 'yes' } } );
-	}
+	};
 
 	renderMoreSettings = () => {
 		const { domain, method, onEditField, translate } = this.props;
@@ -78,36 +80,35 @@ class PaymentMethodStripeConnectedDialog extends Component {
 					onSelectCapture={ this.onSelectCapture }
 				/>
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Descriptor' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Descriptor' ) }</FormLabel>
 					<FormTextInput
 						name="statement_descriptor"
 						onChange={ onEditField }
 						value={ method.settings.statement_descriptor.value }
-						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) } />
+						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) }
+					/>
 					<FormSettingExplanation>
-						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
+						{ translate(
+							"Appears on your customer's credit card statement. 22 characters maximum"
+						) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="stripe__method-edit-field-container">
-					<FormLabel>
-						{ translate( 'Use Apple Pay' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Use Apple Pay' ) }</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
 						name="apple_pay"
-						onChange={ onEditField } />
+						onChange={ onEditField }
+					/>
 					<span>
 						{ translate(
-							'By using Apple Pay you agree to Stripe and ' +
-							'Apple\'s terms of service'
+							'By using Apple Pay you agree to Stripe and ' + "Apple's terms of service"
 						) }
 					</span>
 				</FormFieldset>
 			</div>
 		);
-	}
+	};
 
 	getButtons = () => {
 		const { onCancel, onDone, stripeConnectAccount, translate } = this.props;
@@ -121,19 +122,19 @@ class PaymentMethodStripeConnectedDialog extends Component {
 				action: 'save',
 				label: translate( 'Done' ),
 				onClick: onDone,
-				isPrimary: true
+				isPrimary: true,
 			} );
 		} else {
 			buttons.push( {
 				action: 'cancel',
 				label: translate( 'Close' ),
 				onClick: onCancel,
-				isPrimary: true
+				isPrimary: true,
 			} );
 		}
 
 		return buttons;
-	}
+	};
 
 	render() {
 		const { stripeConnectAccount, translate } = this.props;
@@ -142,14 +143,11 @@ class PaymentMethodStripeConnectedDialog extends Component {
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.getButtons() }
-				isVisible>
-				<div className="stripe__method-edit-header">
-					{ translate( 'Manage Stripe' ) }
-				</div>
-				<StripeConnectAccount
-					stripeConnectAccount={ stripeConnectAccount }
-				/>
-			{ stripeConnectAccount.isActivated && this.renderMoreSettings() }
+				isVisible
+			>
+				<div className="stripe__method-edit-header">{ translate( 'Manage Stripe' ) }</div>
+				<StripeConnectAccount stripeConnectAccount={ stripeConnectAccount } />
+				{ stripeConnectAccount.isActivated && this.renderMoreSettings() }
 			</Dialog>
 		);
 	}

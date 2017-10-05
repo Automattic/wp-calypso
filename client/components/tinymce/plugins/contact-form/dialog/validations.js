@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { every } from 'lodash';
 import emailValidator from 'email-validator';
 

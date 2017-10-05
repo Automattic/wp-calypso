@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { find, includes, some } from 'lodash';
 
 /**

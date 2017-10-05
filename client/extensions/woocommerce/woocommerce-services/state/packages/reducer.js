@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { cloneDeep, concat, difference, omitBy, omit, trim, uniq } from 'lodash';
 
 /**
@@ -30,14 +33,13 @@ export const initialState = {
 	pristine: true,
 };
 
-const isNullOrEmpty = ( value ) => null === value || '' === trim( value );
+const isNullOrEmpty = value => null === value || '' === trim( value );
 
 const reducers = {};
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = ( state ) => {
-	const selectedPredefinedPackages = state.packages && state.packages.predefined
-		? state.packages.predefined
-		: {};
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = state => {
+	const selectedPredefinedPackages =
+		state.packages && state.packages.predefined ? state.packages.predefined : {};
 
 	const newState = {
 		...state,
@@ -63,7 +65,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE ] = ( state, action ) => {
 	} );
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ] = state => {
 	return Object.assign( {}, state, {
 		modalErrors: {},
 		showModal: false,
@@ -122,7 +124,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE ] = ( state, action ) => {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS ] = state => {
 	return {
 		...state,
 		showOuterDimensions: true,
@@ -143,12 +145,19 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE ] = ( state, action ) => 
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED ] = ( state, { serviceId, groupId, checked } ) => {
-	const groupPackages = state.predefinedSchema[ serviceId ][ groupId ].definitions.map( ( def ) => def.id );
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED ] = (
+	state,
+	{ serviceId, groupId, checked }
+) => {
+	const groupPackages = state.predefinedSchema[ serviceId ][ groupId ].definitions.map(
+		def => def.id
+	);
 	const selected = state.currentlyEditingPredefinedPackages[ serviceId ];
-	const newSelected = checked ? uniq( concat( selected, groupPackages ) ) : difference( selected, groupPackages );
+	const newSelected = checked
+		? uniq( concat( selected, groupPackages ) )
+		: difference( selected, groupPackages );
 
-	const newPredefined = {	...state.currentlyEditingPredefinedPackages };
+	const newPredefined = { ...state.currentlyEditingPredefinedPackages };
 	newPredefined[ serviceId ] = newSelected;
 
 	return {
@@ -158,8 +167,11 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED ] = ( state, { ser
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED ] = ( state, { serviceId, packageId } ) => {
-	const newPredefined = {	...state.currentlyEditingPredefinedPackages };
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED ] = (
+	state,
+	{ serviceId, packageId }
+) => {
+	const newPredefined = { ...state.currentlyEditingPredefinedPackages };
 	const newSelected = [ ...( newPredefined[ serviceId ] || [] ) ];
 	const packageIndex = newSelected.indexOf( packageId );
 
@@ -178,8 +190,11 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED ] = ( state, { service
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED ] = ( state, { serviceId, packageId } ) => {
-	const newPredefined = {	...state.packages.predefined };
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED ] = (
+	state,
+	{ serviceId, packageId }
+) => {
+	const newPredefined = { ...state.packages.predefined };
 	const newSelected = [ ...( newPredefined[ serviceId ] || [] ) ];
 	const packageIndex = newSelected.indexOf( packageId );
 
@@ -199,7 +214,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED ] = ( state, { service
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED ] = state => {
 	const predefined = state.currentlyEditingPredefinedPackages;
 
 	state = reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ]( state );
@@ -227,19 +242,18 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING ] = ( state, action ) => {
 };
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING ] = ( state, { isFetching } ) => {
-	return { ...state,
+	return {
+		...state,
 		isFetching,
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM ] = ( state, {
-	packages,
-	dimensionUnit,
-	weightUnit,
-	packageSchema,
-	predefinedSchema
-} ) => {
-	return { ...state,
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM ] = (
+	state,
+	{ packages, dimensionUnit, weightUnit, packageSchema, predefinedSchema }
+) => {
+	return {
+		...state,
 		packages,
 		dimensionUnit,
 		weightUnit,

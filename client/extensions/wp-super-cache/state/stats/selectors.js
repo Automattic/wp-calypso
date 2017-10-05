@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 function getStatsState( state ) {

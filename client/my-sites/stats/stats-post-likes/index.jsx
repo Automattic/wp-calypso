@@ -1,10 +1,13 @@
 /**
  * External dependencies
- **/
+ *
+ * @format
+ */
+
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -52,8 +55,14 @@ export const StatsPostLikes = props => {
 						<a
 							href="#"
 							className="module-header-action-link"
-							aria-label={ translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) }
-							title={ translate( 'Show or hide panel information', { textOnly: true, context: 'Stats panel action' } ) }
+							aria-label={ translate( 'Show or hide panel information', {
+								textOnly: true,
+								context: 'Stats panel action',
+							} ) }
+							title={ translate( 'Show or hide panel information', {
+								textOnly: true,
+								context: 'Stats panel action',
+							} ) }
 							onClick={ toggle }
 						>
 							<Gridicon icon={ infoIcon } />
@@ -73,22 +82,16 @@ export const StatsPostLikes = props => {
 };
 
 StatsPostLikes.defaultProps = {
-	postType: 'post'
+	postType: 'post',
 };
 
-const connectComponent = connect(
-	( state, { siteId, postId } ) => {
-		const isRequesting = isRequestingPostLikes( state, siteId, postId );
-		const countLikes = countPostLikes( state, siteId, postId );
-		return {
-			countLikes,
-			isRequesting,
-		};
-	}
-);
+const connectComponent = connect( ( state, { siteId, postId } ) => {
+	const isRequesting = isRequestingPostLikes( state, siteId, postId );
+	const countLikes = countPostLikes( state, siteId, postId );
+	return {
+		countLikes,
+		isRequesting,
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	toggleInfo,
-	localize
-)( StatsPostLikes );
+export default flowRight( connectComponent, toggleInfo, localize )( StatsPostLikes );

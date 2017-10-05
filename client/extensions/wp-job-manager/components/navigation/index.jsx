@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -30,7 +33,7 @@ class Navigation extends Component {
 
 	getSettingsPath() {
 		const sections = sectionsModule.get();
-		const section = find( sections, ( value => value.name === 'wp-job-manager' ) );
+		const section = find( sections, value => value.name === 'wp-job-manager' );
 
 		return get( section, 'settings_path' );
 	}
@@ -48,10 +51,7 @@ class Navigation extends Component {
 		}
 
 		return (
-			<SectionNavTabItem
-				key={ slug }
-				path={ path }
-				selected={ activeTab === slug }>
+			<SectionNavTabItem key={ slug } path={ path } selected={ activeTab === slug }>
 				{ label }
 			</SectionNavTabItem>
 		);
@@ -60,25 +60,18 @@ class Navigation extends Component {
 	render() {
 		return (
 			<SectionNav selectedText="Settings">
-				<SectionNavTabs>
-					{ values( Tabs ).map( tab => this.renderTabItem( tab ) ) }
-				</SectionNavTabs>
+				<SectionNavTabs>{ values( Tabs ).map( tab => this.renderTabItem( tab ) ) }</SectionNavTabs>
 			</SectionNav>
 		);
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteSlug: getSiteSlug( state, siteId ),
-		};
-	}
-);
+	return {
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( Navigation );
+export default flowRight( connectComponent, localize )( Navigation );

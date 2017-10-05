@@ -1,3 +1,4 @@
+/** @format */
 export const wordadsUnsafeValues = [ false, 'mature', 'private', 'spam', 'other' ];
 export const wordadsStatusSchema = {
 	type: 'object',
@@ -10,9 +11,9 @@ export const wordadsStatusSchema = {
 				URL: { type: 'string' },
 				approved: { type: 'boolean' },
 				active: { type: 'boolean' },
-				unsafe: { enum: wordadsUnsafeValues }
-			}
-		}
+				unsafe: { enum: wordadsUnsafeValues },
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

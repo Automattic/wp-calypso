@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -16,7 +19,7 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		className: PropTypes.string,
-		item: PropTypes.object.isRequired
+		item: PropTypes.object.isRequired,
 	},
 
 	render() {
@@ -26,11 +29,6 @@ module.exports = React.createClass( {
 
 		const classes = classNames( this.props.className, 'is-video' );
 
-		return (
-			<video
-				src={ MediaUtils.url( this.props.item ) }
-				controls
-				className={ classes } />
-		);
-	}
+		return <video src={ MediaUtils.url( this.props.item ) } controls className={ classes } />;
+	},
 } );

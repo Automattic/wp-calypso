@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -25,18 +28,18 @@ module.exports = React.createClass( {
 		storedEmail: PropTypes.string,
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
-		onDelete: PropTypes.func
+		onDelete: PropTypes.func,
 	},
 
 	getDefaultProps: function() {
 		return {
-			storedEmail: null
+			storedEmail: null,
 		};
 	},
 
 	getInitialState: function() {
 		return {
-			email: this.props.storedEmail || null
+			email: this.props.storedEmail || null,
 		};
 	},
 
@@ -47,12 +50,7 @@ module.exports = React.createClass( {
 	renderValidation: function() {
 		var validation = null;
 		if ( this.state.validation ) {
-			validation = (
-				<FormInputValidation
-					isError
-					text={ this.state.validation }
-					/>
-			);
+			validation = <FormInputValidation isError text={ this.state.validation } />;
 		}
 		return validation;
 	},
@@ -64,13 +62,11 @@ module.exports = React.createClass( {
 		if ( this.props.primaryEmail ) {
 			text = this.translate( 'Your primary email address is {{email/}}', {
 				components: {
-					email: <strong>{ this.props.primaryEmail }</strong>
-				}
+					email: <strong>{ this.props.primaryEmail }</strong>,
+				},
 			} );
 
-			explanation = (
-				<FormSettingExplanation>{ text }</FormSettingExplanation>
-			);
+			explanation = <FormSettingExplanation>{ text }</FormSettingExplanation>;
 		}
 		return explanation;
 	},
@@ -85,7 +81,7 @@ module.exports = React.createClass( {
 						onKeyUp={ this.onKeyUp }
 						name="recovery-email"
 						ref="email"
-						/>
+					/>
 
 					{ this.renderValidation() }
 					{ this.renderExplanation() }
@@ -98,7 +94,7 @@ module.exports = React.createClass( {
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
 					onCancel={ this.onCancel }
-					/>
+				/>
 			</div>
 		);
 	},
@@ -132,9 +128,12 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		if ( this.props.primaryEmail &&
-				email === this.props.primaryEmail ) {
-			this.setState( { validation: this.translate( 'You have entered your primary email address. Please enter a different email address.' ) } );
+		if ( this.props.primaryEmail && email === this.props.primaryEmail ) {
+			this.setState( {
+				validation: this.translate(
+					'You have entered your primary email address. Please enter a different email address.'
+				),
+			} );
 			return;
 		}
 
@@ -153,5 +152,5 @@ module.exports = React.createClass( {
 
 	onDelete: function() {
 		this.props.onDelete();
-	}
+	},
 } );

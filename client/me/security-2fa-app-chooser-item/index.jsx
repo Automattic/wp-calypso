@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
@@ -11,12 +14,11 @@ const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
 import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faAppChooserItem',
 
 	getInitialState: function() {
 		return {
-			downloadCodeDisplayed: false
+			downloadCodeDisplayed: false,
 		};
 	},
 
@@ -34,18 +36,15 @@ module.exports = React.createClass( {
 	},
 
 	possiblyRenderDownloadQRCode: function( appURL ) {
-		var imgURL = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' + encodeURIComponent( appURL );
+		var imgURL =
+			'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' +
+			encodeURIComponent( appURL );
 
 		if ( ! this.state.downloadCodeDisplayed ) {
 			return null;
 		}
 
-		return (
-			<img
-				className="security-2fa-app-chooser-item__qrcode"
-				src={ imgURL }
-			/>
-		);
+		return <img className="security-2fa-app-chooser-item__qrcode" src={ imgURL } />;
 	},
 
 	render: function() {
@@ -54,15 +53,15 @@ module.exports = React.createClass( {
 				<p>
 					{ this.translate(
 						'You selected {{strong}}%(deviceName)s{{/strong}}. If you do not ' +
-						'already have an authentication app on your smartphone, you will ' +
-						'need to choose from one of the following options:',
+							'already have an authentication app on your smartphone, you will ' +
+							'need to choose from one of the following options:',
 						{
 							args: {
-								deviceName: this.props.app.deviceName
+								deviceName: this.props.app.deviceName,
 							},
 							components: {
-								strong: <strong/>
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
@@ -70,54 +69,58 @@ module.exports = React.createClass( {
 					<li>
 						{ this.translate(
 							'{{downloadLink}}Download %(appName)s to this device ' +
-							'from %(appStoreName)s.{{/downloadLink}}',
+								'from %(appStoreName)s.{{/downloadLink}}',
 							{
 								args: {
 									appName: this.props.app.appName,
-									appStoreName: this.props.app.storeName
+									appStoreName: this.props.app.storeName,
 								},
 								components: {
-									downloadLink: <a
-										href={ this.props.app.appURL }
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ function() {
-											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download ' + this.props.app.appName + ' Link' );
-										}.bind( this ) }
-									/>
-								}
+									downloadLink: (
+										<a
+											href={ this.props.app.appURL }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ function() {
+												analytics.ga.recordEvent(
+													'Me',
+													'Clicked On 2fa Download ' + this.props.app.appName + ' Link'
+												);
+											}.bind( this ) }
+										/>
+									),
+								},
 							}
 						) }
 					</li>
 					<li>
-						{ this.translate(
-							'Search for %(appName)s on %(appStoreName)s.',
-							{
-								args: {
-									appName: this.props.app.appName,
-									appStoreName: this.props.app.storeName
-								}
-							}
-						) }
+						{ this.translate( 'Search for %(appName)s on %(appStoreName)s.', {
+							args: {
+								appName: this.props.app.appName,
+								appStoreName: this.props.app.storeName,
+							},
+						} ) }
 					</li>
 					<li>
 						{ this.translate(
 							'{{codeRevealAnchor}}Scan this code{{/codeRevealAnchor}} with your ' +
-							'device to be directed to %(appName)s on %(appStoreName)s.',
+								'device to be directed to %(appName)s on %(appStoreName)s.',
 							{
 								args: {
 									appName: this.props.app.appName,
-									appStoreName: this.props.app.storeName
+									appStoreName: this.props.app.storeName,
 								},
 								components: {
-									codeRevealAnchor: <a
-										href="#"
-										onClick={ function( event ) {
-											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Scan This Code Link' );
-											this.onCodeToggle( event );
-										}.bind( this ) }
-									/>
-								}
+									codeRevealAnchor: (
+										<a
+											href="#"
+											onClick={ function( event ) {
+												analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Scan This Code Link' );
+												this.onCodeToggle( event );
+											}.bind( this ) }
+										/>
+									),
+								},
 							}
 						) }
 						{ this.possiblyRenderDownloadQRCode( this.props.app.appURL ) }
@@ -125,5 +128,5 @@ module.exports = React.createClass( {
 				</ul>
 			</div>
 		);
-	}
+	},
 } );

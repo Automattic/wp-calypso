@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 /**
  * Internal dependencies
@@ -8,7 +11,11 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const getLabelSettingsForm = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'labelSettings' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'labelSettings' ],
+		null
+	);
 };
 
 export const getLabelSettingsFormData = ( state, siteId = getSelectedSiteId( state ) ) => {

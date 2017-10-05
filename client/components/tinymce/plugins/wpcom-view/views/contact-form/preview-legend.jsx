@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -12,6 +15,11 @@ export default React.createClass( {
 	displayName: 'PreviewLegend',
 
 	render() {
-		return ( <legend>{ this.props.label }<PreviewRequired { ...this.props } /></legend> );
-	}
+		return (
+			<legend>
+				{ this.props.label }
+				<PreviewRequired { ...this.props } />
+			</legend>
+		);
+	},
 } );

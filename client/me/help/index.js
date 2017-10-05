@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import config from 'config';
 import meController from 'me/controller';

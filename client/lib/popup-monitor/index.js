@@ -1,5 +1,7 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
 /**
@@ -52,14 +54,14 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
-	var screenTop = ( typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY ),
-		screenLeft = ( typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX );
+	var screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
 		'width=' + width,
 		'height=' + height,
-		'top=' + ( screenTop + ( window.innerHeight / 2 ) - ( height / 2 ) ),
-		'left=' + ( screenLeft + ( window.innerWidth / 2 ) - ( width / 2 ) )
+		'top=' + ( screenTop + window.innerHeight / 2 - height / 2 ),
+		'left=' + ( screenLeft + window.innerWidth / 2 - width / 2 ),
 	].join();
 };
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -65,7 +68,9 @@ module.exports = React.createClass( {
 		}
 		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
 
-		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${type}` ).join();
+		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
+			.map( type => `.${ type }` )
+			.join();
 	},
 
 	render: function() {
@@ -80,8 +85,9 @@ module.exports = React.createClass( {
 					multiple
 					onChange={ this.uploadFiles }
 					onClick={ this.onClick }
-					className="media-library__upload-button-input" />
+					className="media-library__upload-button-input"
+				/>
 			</form>
 		);
-	}
+	},
 } );

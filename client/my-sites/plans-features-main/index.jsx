@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -47,7 +50,7 @@ class PlansFeaturesMain extends Component {
 			basePlansPath,
 			selectedFeature,
 			displayJetpackPlans,
-			domainName
+			domainName,
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -56,7 +59,7 @@ class PlansFeaturesMain extends Component {
 				PLAN_JETPACK_FREE,
 				PLAN_JETPACK_PERSONAL_MONTHLY,
 				PLAN_JETPACK_PREMIUM_MONTHLY,
-				PLAN_JETPACK_BUSINESS_MONTHLY
+				PLAN_JETPACK_BUSINESS_MONTHLY,
 			];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -72,7 +75,7 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						site={ site }
 						domainName={ domainName }
-						displayJetpackPlans = { displayJetpackPlans }
+						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -83,7 +86,7 @@ class PlansFeaturesMain extends Component {
 				PLAN_JETPACK_FREE,
 				PLAN_JETPACK_PERSONAL,
 				PLAN_JETPACK_PREMIUM,
-				PLAN_JETPACK_BUSINESS
+				PLAN_JETPACK_BUSINESS,
 			];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -99,7 +102,7 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						site={ site }
 						domainName={ domainName }
-						displayJetpackPlans = { displayJetpackPlans }
+						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -110,7 +113,7 @@ class PlansFeaturesMain extends Component {
 				hideFreePlan ? null : PLAN_FREE,
 				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
 				PLAN_PREMIUM,
-				PLAN_BUSINESS
+				PLAN_BUSINESS,
 			],
 			value => !! value
 		);
@@ -126,7 +129,7 @@ class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					site={ site }
 					domainName={ domainName }
-					displayJetpackPlans = { displayJetpackPlans }
+					displayJetpackPlans={ displayJetpackPlans }
 				/>
 			</div>
 		);
@@ -141,8 +144,8 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'I signed up and paid. What’s next?' ) }
 					answer={ translate(
 						'Our premium features are powered by a few of our other plugins. After purchasing you will' +
-						' need to install the Akismet and VaultPress plugins. Just follow the guide' +
-						' after you complete your purchase.'
+							' need to install the Akismet and VaultPress plugins. Just follow the guide' +
+							' after you complete your purchase.'
 					) }
 				/>
 
@@ -150,8 +153,8 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'What are the hosting requirements?' ) }
 					answer={ translate(
 						'You should be running the latest version of WordPress and be using a web host that runs' +
-						' PHP 5 or higher. You will also need a WordPress.com account (you can register' +
-						' during the connection process) and a publicly-accessible site with XML-RPC enabled.'
+							' PHP 5 or higher. You will also need a WordPress.com account (you can register' +
+							' during the connection process) and a publicly-accessible site with XML-RPC enabled.'
 					) }
 				/>
 
@@ -159,8 +162,8 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Does this work with a multisite network?' ) }
 					answer={ translate(
 						'Yes, Jetpack and all of its premium features are compatible with WordPress Multisite' +
-						' networks. If you manage a Multisite network you will need to make sure you have a' +
-						' subscription for each site you wish to cover with premium features.'
+							' networks. If you manage a Multisite network you will need to make sure you have a' +
+							' subscription for each site you wish to cover with premium features.'
 					) }
 				/>
 
@@ -168,9 +171,9 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Why do I need a WordPress.com account?' ) }
 					answer={ translate(
 						"Many of Jetpack's core features make use of the WordPress.com cloud. In order to make sure" +
-						' everything works correctly, Jetpack requires you to connect a (free) WordPress.com' +
-						" account. If you don't already have an account you can easily create one during the" +
-						' connection process.'
+							' everything works correctly, Jetpack requires you to connect a (free) WordPress.com' +
+							" account. If you don't already have an account you can easily create one during the" +
+							' connection process.'
 					) }
 				/>
 
@@ -186,12 +189,19 @@ class PlansFeaturesMain extends Component {
 					answer={ translate(
 						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
 						{
-							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" /> }
+							components: {
+								a: (
+									<a
+										href="https://jetpack.com/contact-support/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				/>
 			</FAQ>
-
 		);
 	}
 
@@ -204,16 +214,18 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you sell domains?' ) }
 					answer={ translate(
 						'Yes! The Personal, Premium, and Business plans include a free custom domain. That includes new' +
-						' domains purchased through WordPress.com or your own existing domain that you can map' +
-						' to your WordPress.com site. Does not apply to premium domains. {{a}}Find out more about domains.{{/a}}',
+							' domains purchased through WordPress.com or your own existing domain that you can map' +
+							' to your WordPress.com site. Does not apply to premium domains. {{a}}Find out more about domains.{{/a}}',
 						{
 							components: {
-								a: <a
-									href="https://en.support.wordpress.com/all-about-domains/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							}
+								a: (
+									<a
+										href="https://en.support.wordpress.com/all-about-domains/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				/>
@@ -222,10 +234,10 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Can I install plugins?' ) }
 					answer={ translate(
 						'Yes! With the WordPress.com Business plan you can search for and install external plugins.' +
-						' All plans already come with a custom set of plugins tailored just for them.' +
-						' {{a}}Check out all included plugins{{/a}}.',
+							' All plans already come with a custom set of plugins tailored just for them.' +
+							' {{a}}Check out all included plugins{{/a}}.',
 						{
-							components: { a: <a href={ `/plugins/${ site.slug }` } /> }
+							components: { a: <a href={ `/plugins/${ site.slug }` } /> },
 						}
 					) }
 				/>
@@ -233,11 +245,11 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Can I upload my own theme?' ) }
 					answer={ translate(
-						'Yes! With the WordPress.com Business plan you can upload any theme you\'d like.' +
-						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
-						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
+						"Yes! With the WordPress.com Business plan you can upload any theme you'd like." +
+							' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
+							' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 						{
-							components: { a: <a href={ `/themes/${ site.slug }` } /> }
+							components: { a: <a href={ `/themes/${ site.slug }` } /> },
 						}
 					) }
 				/>
@@ -246,8 +258,8 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do I need another web host?' ) }
 					answer={ translate(
 						'No. All WordPress.com sites include our specially tailored WordPress hosting to ensure' +
-						' your site stays available and secure at all times. You can even use your own domain' +
-						' when you upgrade to the Personal, Premium, or Business plan.'
+							' your site stays available and secure at all times. You can even use your own domain' +
+							' when you upgrade to the Personal, Premium, or Business plan.'
 					) }
 				/>
 
@@ -255,16 +267,18 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
 						'Yes. If you register a new domain with our Personal, Premium, or Business plans, you can' +
-						' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
-						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
+							' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
+							' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
 							components: {
-								a: <a
-									href="https://en.support.wordpress.com/add-email/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							}
+								a: (
+									<a
+										href="https://en.support.wordpress.com/add-email/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				/>
@@ -273,17 +287,19 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'What’s included with advanced custom design?' ) }
 					answer={ translate(
 						'Custom design is a toolset you can use to personalize your blog’s look and feel with' +
-						' custom colors & backgrounds, custom fonts, and even a CSS editor that you can use for' +
-						' more precise control of your site’s' +
-						' design. {{a}}Find out more about custom design{{/a}}.',
+							' custom colors & backgrounds, custom fonts, and even a CSS editor that you can use for' +
+							' more precise control of your site’s' +
+							' design. {{a}}Find out more about custom design{{/a}}.',
 						{
 							components: {
-								a: <a
-									href="https://en.support.wordpress.com/custom-design/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							}
+								a: (
+									<a
+										href="https://en.support.wordpress.com/custom-design/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				/>
@@ -292,7 +308,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Will upgrading affect my content?' ) }
 					answer={ translate(
 						'Plans add extra features to your site, but they do not affect the content of your site' +
-						" or your site's followers."
+							" or your site's followers."
 					) }
 				/>
 
@@ -300,9 +316,9 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Can I cancel my subscription?' ) }
 					answer={ translate(
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
-						' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
+							' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
 						{
-							components: { a: <a href={ purchasesPaths.purchasesRoot() } /> }
+							components: { a: <a href={ purchasesPaths.purchasesRoot() } /> },
 						}
 					) }
 				/>
@@ -311,9 +327,13 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
 						'Need help deciding which plan works for you? Our happiness engineers are available for' +
-						' any questions you may have. {{a}}Get help{{/a}}.',
+							' any questions you may have. {{a}}Get help{{/a}}.',
 						{
-							components: { a: <a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" /> }
+							components: {
+								a: (
+									<a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" />
+								),
+							},
 						}
 					) }
 				/>
@@ -322,16 +342,8 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getIntervalTypeToggle() {
-		const {
-			translate,
-			intervalType,
-			site,
-			basePlansPath,
-		} = this.props;
-		const segmentClasses = classNames(
-			'plan-features__interval-type',
-			'price-toggle'
-		);
+		const { translate, intervalType, site, basePlansPath } = this.props;
+		const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
 
 		let plansUrl = '/plans';
 		if ( basePlansPath ) {
@@ -346,36 +358,27 @@ class PlansFeaturesMain extends Component {
 					selected={ intervalType === 'monthly' }
 					path={ plansLink( plansUrl, site, 'monthly' ) }
 				>
-					{ isInBillingButtonTest
-						? translate( 'Monthly' )
-						: translate( 'Monthly billing' )
-					}
+					{ isInBillingButtonTest ? translate( 'Monthly' ) : translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
 					path={ plansLink( plansUrl, site, 'yearly' ) }
 				>
-					{ isInBillingButtonTest
-						? translate( 'Yearly (Cheaper)' )
-						: translate( 'Yearly billing' )
-					}
+					{ isInBillingButtonTest ? (
+						translate( 'Yearly (Cheaper)' )
+					) : (
+						translate( 'Yearly billing' )
+					) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
 	}
 
 	render() {
-		const {
-			site,
-			displayJetpackPlans,
-			isInSignup
-		} = this.props;
+		const { site, displayJetpackPlans, isInSignup } = this.props;
 
-		const renderFAQ = () =>
-			displayJetpackPlans
-				? this.getJetpackFAQ()
-				: this.getFAQ( site );
+		const renderFAQ = () => ( displayJetpackPlans ? this.getJetpackFAQ() : this.getFAQ( site ) );
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -404,7 +407,7 @@ PlansFeaturesMain.propTypes = {
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool.isRequired
+	displayJetpackPlans: PropTypes.bool.isRequired,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -412,7 +415,7 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true
+	showFAQ: true,
 };
 
 export default localize( PlansFeaturesMain );

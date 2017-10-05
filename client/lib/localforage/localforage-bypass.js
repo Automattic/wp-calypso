@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugModule from 'debug';
 
 const debug = debugModule( 'calypso:support-user' );
@@ -20,7 +23,7 @@ function _initStorage( options ) {
 	if ( options ) {
 		for ( let i in options ) {
 			dbInfo[ i ] = options[ i ];
-		};
+		}
 	}
 
 	dbInfo.db = {};
@@ -34,17 +37,19 @@ function clear( callback ) {
 	debug( 'localForage bypass', 'clear' );
 
 	const promise = new Promise( ( resolve, reject ) => {
-		this.ready().then( () => {
-			const db = this._dbInfo.db;
+		this.ready()
+			.then( () => {
+				const db = this._dbInfo.db;
 
-			for ( let key in db ) {
-				if ( db.hasOwnProperty( key ) ) {
-					delete db[ key ];
+				for ( let key in db ) {
+					if ( db.hasOwnProperty( key ) ) {
+						delete db[ key ];
+					}
 				}
-			}
 
-			resolve();
-		} ).catch( reject );
+				resolve();
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -60,16 +65,18 @@ function getItem( key, callback ) {
 	}
 
 	const promise = new Promise( ( resolve, reject ) => {
-		this.ready().then( () => {
-			try {
-				const db = this._dbInfo.db;
-				const result = db[ key ];
+		this.ready()
+			.then( () => {
+				try {
+					const db = this._dbInfo.db;
+					const result = db[ key ];
 
-				resolve( result );
-			} catch ( e ) {
-				reject( e );
-			}
-		} ).catch( reject );
+					resolve( result );
+				} catch ( e ) {
+					reject( e );
+				}
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -78,21 +85,23 @@ function getItem( key, callback ) {
 
 function iterate( callback ) {
 	const promise = new Promise( ( resolve, reject ) => {
-		this.ready().then( () => {
-			try {
-				const db = this._dbInfo.db;
+		this.ready()
+			.then( () => {
+				try {
+					const db = this._dbInfo.db;
 
-				for ( let key in db ) {
-					const result = db[ key ];
+					for ( let key in db ) {
+						const result = db[ key ];
 
-					callback( result, key );
+						callback( result, key );
+					}
+
+					resolve();
+				} catch ( e ) {
+					reject( e );
 				}
-
-				resolve();
-			} catch ( e ) {
-				reject( e );
-			}
-		} ).catch( reject );
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -101,23 +110,25 @@ function iterate( callback ) {
 
 function _key( n, callback ) {
 	const promise = new Promise( ( resolve, reject ) => {
-		this.ready().then( () => {
-			const db = this._dbInfo.db;
-			let result = null;
-			let index = 0;
+		this.ready()
+			.then( () => {
+				const db = this._dbInfo.db;
+				let result = null;
+				let index = 0;
 
-			for ( let key in db ) {
-				if ( db.hasOwnProperty( key ) && db[ key ] !== undefined ) {
-					if ( n === index ) {
-						result = key;
-						break;
+				for ( let key in db ) {
+					if ( db.hasOwnProperty( key ) && db[ key ] !== undefined ) {
+						if ( n === index ) {
+							result = key;
+							break;
+						}
+						index++;
 					}
-					index++;
 				}
-			}
 
-			resolve( result );
-		} ).catch( reject );
+				resolve( result );
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -126,18 +137,20 @@ function _key( n, callback ) {
 
 function _keys( callback ) {
 	const promise = new Promise( ( resolve, reject ) => {
-		this.ready().then( () => {
-			const db = this._dbInfo.db;
-			const keys = [ ];
+		this.ready()
+			.then( () => {
+				const db = this._dbInfo.db;
+				const keys = [];
 
-			for ( let key in db ) {
-				if ( db.hasOwnProperty( key ) ) {
-					keys.push( key );
+				for ( let key in db ) {
+					if ( db.hasOwnProperty( key ) ) {
+						keys.push( key );
+					}
 				}
-			}
 
-			resolve( keys );
-		} ).catch( reject );
+				resolve( keys );
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -146,9 +159,11 @@ function _keys( callback ) {
 
 function length( callback ) {
 	const promise = new Promise( ( resolve, reject ) => {
-		this.keys().then( ( keys ) => {
-			resolve( keys.length );
-		} ).catch( reject );
+		this.keys()
+			.then( keys => {
+				resolve( keys.length );
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -163,14 +178,16 @@ function removeItem( key, callback ) {
 			return reject();
 		}
 
-		this.ready().then( () => {
-			const db = this._dbInfo.db;
-			if ( db.hasOwnProperty( key ) ) {
-				delete db[ key ];
-			}
+		this.ready()
+			.then( () => {
+				const db = this._dbInfo.db;
+				if ( db.hasOwnProperty( key ) ) {
+					delete db[ key ];
+				}
 
-			resolve();
-		} ).catch( reject );
+				resolve();
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -185,20 +202,22 @@ function setItem( key, value, callback ) {
 			return reject();
 		}
 
-		this.ready().then( () => {
-			// Convert undefined values to null.
-			// https://github.com/mozilla/localForage/pull/42
-			if ( value === undefined ) {
-				value = null;
-			}
+		this.ready()
+			.then( () => {
+				// Convert undefined values to null.
+				// https://github.com/mozilla/localForage/pull/42
+				if ( value === undefined ) {
+					value = null;
+				}
 
-			// Save the original value to pass to the callback.
-			const originalValue = value;
+				// Save the original value to pass to the callback.
+				const originalValue = value;
 
-			let db = this._dbInfo.db;
-			db[ key ] = value;
-			resolve( originalValue );
-		} ).catch( reject );
+				let db = this._dbInfo.db;
+				db[ key ] = value;
+				resolve( originalValue );
+			} )
+			.catch( reject );
 	} );
 
 	executeCallback( promise, callback );
@@ -207,11 +226,14 @@ function setItem( key, value, callback ) {
 
 function executeCallback( promise, callback ) {
 	if ( callback ) {
-		promise.then( ( result ) => {
-			callback( null, result );
-		}, ( error ) => {
-			callback( error );
-		} );
+		promise.then(
+			result => {
+				callback( null, result );
+			},
+			error => {
+				callback( error );
+			}
+		);
 	}
 }
 
@@ -226,5 +248,5 @@ export default {
 	clear: clear,
 	length: length,
 	key: _key,
-	keys: _keys
+	keys: _keys,
 };

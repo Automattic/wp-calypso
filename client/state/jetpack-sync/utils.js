@@ -1,9 +1,12 @@
 /**
  * Returns an array of keys that are expected to be returned
  * from the API when checking sync status for a site.
+ * 
  *
+ * @format
  * @return {Array} Array of strings that are expected keys in API response.
  */
+
 export function getExpectedResponseKeys() {
 	return [
 		'started',
@@ -18,6 +21,6 @@ export function getExpectedResponseKeys() {
 		'queue_size',
 		'queue_lag',
 		'full_queue_size',
-		'full_queue_lag'
+		'full_queue_lag',
 	];
 }

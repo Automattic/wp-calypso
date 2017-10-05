@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:help-search:actions' );
@@ -26,10 +29,10 @@ var HelpSearchActions = {
 
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SET_HELP_LINKS,
-				helpLinks: helpLinks
+				helpLinks: helpLinks,
 			} );
 		} );
-	}
+	},
 };
 
 module.exports = HelpSearchActions;

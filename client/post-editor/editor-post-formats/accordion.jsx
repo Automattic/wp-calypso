@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -52,14 +55,14 @@ const EditorPostFormatsAccordion = React.createClass( {
 		}
 
 		return this.translate( 'Standard', {
-			context: 'Post format'
+			context: 'Post format',
 		} );
 	},
 
 	render() {
 		const { className, post, postFormats } = this.props;
 		const classes = classNames( 'editor-post-formats__accordion', className, {
-			'is-loading': ! post || ! postFormats
+			'is-loading': ! post || ! postFormats,
 		} );
 
 		return (
@@ -70,24 +73,23 @@ const EditorPostFormatsAccordion = React.createClass( {
 						title={ this.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
 						className={ classes }
-						e2eTitle="post-format">
+						e2eTitle="post-format"
+					>
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>
 				) }
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			site: getSelectedSite( state ),
-			postFormats: getPostFormats( state, siteId ),
-			defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
-		};
-	}
-)( EditorPostFormatsAccordion );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		postFormats: getPostFormats( state, siteId ),
+		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
+	};
+} )( EditorPostFormatsAccordion );

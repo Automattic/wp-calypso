@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -22,7 +25,6 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faCodePrompt',
 
 	mixins: [ LinkedStateMixin ],
@@ -34,7 +36,7 @@ module.exports = React.createClass( {
 			action: false,
 			requestSMSOnMount: false,
 			showCancelButton: true,
-			showSMSButton: true
+			showSMSButton: true,
 		};
 	},
 
@@ -43,7 +45,7 @@ module.exports = React.createClass( {
 		onCancel: PropTypes.func,
 		onSuccess: PropTypes.func.isRequired,
 		requestSMSOnMount: PropTypes.bool,
-		showCancelButton: PropTypes.bool
+		showCancelButton: PropTypes.bool,
 	},
 
 	componentDidMount: function() {
@@ -74,7 +76,7 @@ module.exports = React.createClass( {
 			lastError: false,
 			lastErrorType: false,
 			submittingCode: false,
-			verificationCode: ''
+			verificationCode: '',
 		};
 	},
 
@@ -95,26 +97,24 @@ module.exports = React.createClass( {
 	},
 
 	requestCode: function() {
-		this.setState(
-			{
-				codeRequestsAllowed: false,
-				codeRequestPerformed: true,
-				lastError: false
-			}
-		);
+		this.setState( {
+			codeRequestsAllowed: false,
+			codeRequestPerformed: true,
+			lastError: false,
+		} );
 		twoStepAuthorization.sendSMSCode( this.onCodeRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
 	},
 
 	onCodeRequestResponse: function( error ) {
 		if ( error ) {
-			this.setState(
-				{
-					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
-					lastErrorType: 'is-info'
-				}
-			);
+			this.setState( {
+				codeRequestPerformed: false,
+				lastError: this.translate(
+					'Unable to request a code via SMS right now. Please try again after one minute.'
+				),
+				lastErrorType: 'is-info',
+			} );
 		}
 	},
 
@@ -125,7 +125,7 @@ module.exports = React.createClass( {
 
 	onBeginCodeValidation: function() {
 		var args = {
-			code: this.state.verificationCode
+			code: this.state.verificationCode,
 		};
 
 		if ( this.props.action ) {
@@ -139,19 +139,15 @@ module.exports = React.createClass( {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else if ( ! data.success ) {
-			this.setState(
-				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else {
 			this.props.onSuccess();
 		}
@@ -162,13 +158,19 @@ module.exports = React.createClass( {
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
+				label = this.state.submittingCode
+					? this.translate( 'Disabling Two-Step…' )
+					: this.translate( 'Disable Two-Step' );
 				break;
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
+				label = this.state.submittingCode
+					? this.translate( 'Enabling Two-Step…' )
+					: this.translate( 'Enable Two-Step' );
 				break;
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				label = this.state.submittingCode
+					? this.translate( 'Submitting…' )
+					: this.translate( 'Submit' );
 		}
 
 		return label;
@@ -179,7 +181,7 @@ module.exports = React.createClass( {
 	},
 
 	getFormDisabled: function() {
-		return ( this.state.submittingCode || 6 > this.state.verificationCode.trim().length );
+		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
 	},
 
 	possiblyRenderError: function() {
@@ -204,7 +206,9 @@ module.exports = React.createClass( {
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
+					<FormLabel htmlFor="verification-code">
+						{ this.translate( 'Verification Code' ) }
+					</FormLabel>
 					<FormTelInput
 						autoFocus
 						className="security-2fa-code-prompt__verification-code"
@@ -217,20 +221,14 @@ module.exports = React.createClass( {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
 					/>
-					{
-						this.state.codeRequestPerformed
-						? (
-							<FormSettingExplanation>
-								{
-									this.translate(
-										'A code has been sent to your device via SMS.  ' +
-										'You may request another code after one minute.'
-									)
-								}
-							</FormSettingExplanation>
-						)
-						: null
-					}
+					{ this.state.codeRequestPerformed ? (
+						<FormSettingExplanation>
+							{ this.translate(
+								'A code has been sent to your device via SMS.  ' +
+									'You may request another code after one minute.'
+							) }
+						</FormSettingExplanation>
+					) : null }
 					{ this.possiblyRenderError() }
 				</FormFieldset>
 				<FormButtonsBar className="security-2fa-code-prompt__buttons-bar">
@@ -244,42 +242,41 @@ module.exports = React.createClass( {
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{
-						this.props.showSMSButton
-						? (
-							<FormButton
-								className="security-2fa-code-prompt__send-code"
-								disabled={ ! this.state.codeRequestsAllowed }
-								isPrimary={ false }
-								onClick={ function( event ) {
-									analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
-									this.onRequestCode( event );
-								}.bind( this ) }
-							>
-								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
-							</FormButton>
-						)
-						: null
-					}
+					{ this.props.showSMSButton ? (
+						<FormButton
+							className="security-2fa-code-prompt__send-code"
+							disabled={ ! this.state.codeRequestsAllowed }
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent(
+									'Me',
+									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
+								);
+								this.onRequestCode( event );
+							}.bind( this ) }
+						>
+							{ this.state.codeRequestPerformed ? (
+								this.translate( 'Resend Code' )
+							) : (
+								this.translate( 'Send Code via SMS' )
+							) }
+						</FormButton>
+					) : null }
 
-					{
-						this.props.showCancelButton
-						? (
-							<FormButton
-								className="security-2fa-code-prompt__cancel"
-								isPrimary={ false }
-								onClick={ function( event ) {
-									analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
-									this.onCancel( event );
-								}.bind( this ) }
-							>
-								{ this.translate( 'Cancel' ) }
-							</FormButton>
-						)
-						: null
-					}
+					{ this.props.showCancelButton ? (
+						<FormButton
+							className="security-2fa-code-prompt__cancel"
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+								this.onCancel( event );
+							}.bind( this ) }
+						>
+							{ this.translate( 'Cancel' ) }
+						</FormButton>
+					) : null }
 				</FormButtonsBar>
 			</form>
 		);
-	}
+	},
 } );

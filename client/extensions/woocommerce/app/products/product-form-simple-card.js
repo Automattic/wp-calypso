@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -21,21 +24,21 @@ import FormWeightInput from 'woocommerce/components/form-weight-input';
 import PriceInput from 'woocommerce/components/price-input';
 
 const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
-	const setDimension = ( e ) => {
+	const setDimension = e => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
 		editProduct( siteId, product, { dimensions } );
 	};
 
-	const setWeight = ( e ) => {
+	const setWeight = e => {
 		const weight = e.target.value;
 		Number( weight ) >= 0 && editProduct( siteId, product, { weight } );
 	};
 
-	const setPrice = ( e ) => {
+	const setPrice = e => {
 		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
-	const setStockQuantity = ( e ) => {
+	const setStockQuantity = e => {
 		let stock_quantity;
 		let manage_stock;
 		if ( e.target.value !== '' ) {
@@ -48,14 +51,15 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
-	const setBackorders = ( e ) => {
+	const setBackorders = e => {
 		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 
 	const renderPrice = () => (
 		<Card className="products__product-form-price">
 			<FormLabel>{ translate( 'Price' ) }</FormLabel>
-			<PriceInput noWrap
+			<PriceInput
+				noWrap
 				value={ product.regular_price || '' }
 				name="price"
 				onChange={ setPrice }
@@ -70,25 +74,21 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 			<div className="products__product-dimensions-weight">
 				<FormFieldSet className="products__product-dimensions-input">
 					<FormLabel>{ translate( 'Dimensions' ) }</FormLabel>
-					<FormDimensionsInput
-						dimensions={ product.dimensions }
-						onChange={ setDimension }
-					/>
+					<FormDimensionsInput dimensions={ product.dimensions } onChange={ setDimension } />
 				</FormFieldSet>
 				<FormFieldSet className="products__product-weight-input">
 					<FormLabel>{ translate( 'Weight' ) }</FormLabel>
-					<FormWeightInput
-						value={ product.weight }
-						onChange={ setWeight }
-					/>
+					<FormWeightInput value={ product.weight } onChange={ setWeight } />
 				</FormFieldSet>
 			</div>
-			<FormSettingExplanation>{ translate(
-				'Dimensions are used to calculate shipping. Enter the ' +
-				'size of the product as you’d put it in a package. For ' +
-				'a shirt, this would mean the size it is when folded. ' +
-				'For a vase, this would mean including bubble wrap.'
-			) }</FormSettingExplanation>
+			<FormSettingExplanation>
+				{ translate(
+					'Dimensions are used to calculate shipping. Enter the ' +
+						'size of the product as you’d put it in a package. For ' +
+						'a shirt, this would mean the size it is when folded. ' +
+						'For a vase, this would mean including bubble wrap.'
+				) }
+			</FormSettingExplanation>
 		</Card>
 	);
 
@@ -116,15 +116,21 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 				{ product.manage_stock && (
 					<div className="products__product-backorders-wrapper">
 						<FormLabel>{ translate( 'Backorders' ) }</FormLabel>
-						<FormSelect name="backorders" onChange={ setBackorders } value={ product.backorders || 'no' } >
+						<FormSelect
+							name="backorders"
+							onChange={ setBackorders }
+							value={ product.backorders || 'no' }
+						>
 							<option value="no">{ translate( 'Do not allow' ) }</option>
 							<option value="notify">{ translate( 'Allow, but notify customer' ) }</option>
 							<option value="yes">{ translate( 'Allow' ) }</option>
 						</FormSelect>
 
-						<FormSettingExplanation>{ translate(
-							'Backorders allow customers to purchase products that are out of stock.'
-						) }</FormSettingExplanation>
+						<FormSettingExplanation>
+							{ translate(
+								'Backorders allow customers to purchase products that are out of stock.'
+							) }
+						</FormSettingExplanation>
 					</div>
 				) }
 			</div>

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -28,7 +31,7 @@ class SurveyStep extends React.Component {
 	};
 
 	static defaultProps = {
-		surveySiteType: 'site'
+		surveySiteType: 'site',
 	};
 
 	state = {
@@ -37,8 +40,14 @@ class SurveyStep extends React.Component {
 	};
 
 	getOtherWriteIn = () => {
-		return this.state.otherWriteIn ||
-			get( find( this.props.signupProgress, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
+		return (
+			this.state.otherWriteIn ||
+			get(
+				find( this.props.signupProgress, { stepName: this.props.stepName } ),
+				'otherWriteIn',
+				''
+			)
+		);
 	};
 
 	renderVertical = vertical => {
@@ -73,7 +82,9 @@ class SurveyStep extends React.Component {
 					onAction={ this.handleVerticalOther }
 					onChange={ this.handleOtherWriteIn }
 				/>
-				<p className="survey__other-copy">{ this.props.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
+				<p className="survey__other-copy">
+					{ this.props.translate( 'e.g. ’yoga’, ‘classic cars’' ) }
+				</p>
 			</div>
 		);
 	};
@@ -91,26 +102,40 @@ class SurveyStep extends React.Component {
 	};
 
 	render() {
-		const blogHeaderText = this.props.translate( 'Let\'s create your new WordPress.com blog!' );
-		const siteHeaderText = this.props.translate( 'Let\'s create your new WordPress.com site!' );
-		const blogSubHeaderText = this.props.translate( 'To get started, tell us what your blog is about.' );
-		const siteSubHeaderText = this.props.translate( 'To get started, tell us what your blog or website is about.' );
+		const blogHeaderText = this.props.translate( "Let's create your new WordPress.com blog!" );
+		const siteHeaderText = this.props.translate( "Let's create your new WordPress.com site!" );
+		const blogSubHeaderText = this.props.translate(
+			'To get started, tell us what your blog is about.'
+		);
+		const siteSubHeaderText = this.props.translate(
+			'To get started, tell us what your blog or website is about.'
+		);
 
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
+			? signupUtils.getStepUrl(
+					this.props.flowName,
+					this.props.stepName,
+					undefined,
+					this.props.locale
+				)
 			: undefined;
 
 		return (
 			<StepWrapper
-					flowName={ this.props.flowName }
-					stepName={ this.props.stepName }
-					stepSectionName={ this.props.stepSectionName }
-					backUrl={ backUrl }
-					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
-					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
-					signupProgress={ this.props.signupProgress }
-					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				stepSectionName={ this.props.stepSectionName }
+				backUrl={ backUrl }
+				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
+				subHeaderText={
+					this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText
+				}
+				signupProgress={ this.props.signupProgress }
+				stepContent={
+					this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList()
+				}
+			/>
 		);
 	}
 
@@ -120,14 +145,14 @@ class SurveyStep extends React.Component {
 	};
 
 	handleOther = () => {
-		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
+		page(
+			signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale )
+		);
 	};
 
 	handleVerticalOther = otherTextValue => {
 		const otherText = otherTextValue.replace( /^\W+|\W+$/g, '' );
-		const otherWriteIn = otherText.length !== 0
-			? otherText
-			: undefined;
+		const otherWriteIn = otherText.length !== 0 ? otherText : undefined;
 
 		this.submitStep( 'Uncategorized', 'a8c.24', otherWriteIn );
 	};
@@ -167,7 +192,4 @@ class SurveyStep extends React.Component {
 	};
 }
 
-export default connect(
-	null,
-	{ setSurvey }
-)( localize( SurveyStep ) );
+export default connect( null, { setSurvey } )( localize( SurveyStep ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -18,7 +21,7 @@ class DnsRecord extends React.Component {
 	static propTypes = {
 		onDeleteDns: PropTypes.func.isRequired,
 		dnsRecord: PropTypes.object.isRequired,
-		selectedDomainName: PropTypes.string.isRequired
+		selectedDomainName: PropTypes.string.isRequired,
 	};
 
 	handledBy() {
@@ -40,37 +43,38 @@ class DnsRecord extends React.Component {
 			case 'AAAA':
 				return translate( 'Points to %(data)s', {
 					args: {
-						data
-					}
+						data,
+					},
 				} );
 
 			case 'CNAME':
 				return translate( 'Alias of %(data)s', {
 					args: {
-						data
-					}
+						data,
+					},
 				} );
 
 			case 'MX':
 				return translate( 'Mail handled by %(data)s with priority %(aux)s', {
 					args: {
 						data,
-						aux
-					}
+						aux,
+					},
 				} );
 
 			case 'SRV':
 				return translate(
 					'Service %(service)s (%(protocol)s) on target %(target)s:%(port)s, ' +
-					'with priority %(aux)s and weight %(weight)s', {
+						'with priority %(aux)s and weight %(weight)s',
+					{
 						args: {
 							service,
 							protocol,
 							target,
 							port,
 							aux,
-							weight
-						}
+							weight,
+						},
 					}
 				);
 		}
@@ -119,17 +123,11 @@ class DnsRecord extends React.Component {
 		return (
 			<li className={ classes }>
 				<div className="dns__list-type">
-					<label>
-						{ dnsRecord.type }
-					</label>
+					<label>{ dnsRecord.type }</label>
 				</div>
 				<div className="dns__list-info">
-					<strong>
-						{ this.getName() }
-					</strong>
-					<em>
-						{ this.handledBy() }
-					</em>
+					<strong>{ this.getName() }</strong>
+					<em>{ this.handledBy() }</em>
 				</div>
 				<div className="dns__list-remove">
 					{ isAllowedToBeRemoved && this.renderRemoveButton() }

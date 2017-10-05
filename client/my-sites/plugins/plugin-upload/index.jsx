@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -35,15 +38,12 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer
-} from 'state/automated-transfer/selectors';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 
 class PluginUpload extends React.Component {
 	state = {
 		showEligibility: this.props.showEligibility,
-	}
+	};
 
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
@@ -67,16 +67,18 @@ class PluginUpload extends React.Component {
 
 	back = () => {
 		page.back();
-	}
+	};
 
 	onProceedClick = () => {
 		this.setState( { showEligibility: false } );
-	}
+	};
 
 	renderUploadCard() {
 		const { inProgress, complete, isJetpack } = this.props;
 
-		const uploadAction = isJetpack ? this.props.uploadPlugin : this.props.initiateAutomatedTransferWithPluginZip;
+		const uploadAction = isJetpack
+			? this.props.uploadPlugin
+			: this.props.initiateAutomatedTransferWithPluginZip;
 
 		return (
 			<Card>
@@ -120,28 +122,28 @@ class PluginUpload extends React.Component {
 	}
 
 	render() {
-		const {
-			translate,
-			isJetpackMultisite,
-			upgradeJetpack,
-			siteId,
-			siteSlug,
-		} = this.props;
+		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
 
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
-				{ upgradeJetpack && <JetpackManageErrorPage
-					template="updateJetpack"
-					siteId={ siteId }
-					featureExample={ this.renderUploadCard() }
-					version="5.1" /> }
+				{ upgradeJetpack && (
+					<JetpackManageErrorPage
+						template="updateJetpack"
+						siteId={ siteId }
+						featureExample={ this.renderUploadCard() }
+						version="5.1"
+					/>
+				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
-				{ showEligibility && <EligibilityWarnings
-					backUrl={ `/plugins/${ siteSlug }` }
-					onProceed={ this.onProceedClick } /> }
+				{ showEligibility && (
+					<EligibilityWarnings
+						backUrl={ `/plugins/${ siteSlug }` }
+						onProceed={ this.onProceedClick }
+					/>
+				) }
 				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
@@ -149,7 +151,7 @@ class PluginUpload extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
@@ -160,8 +162,7 @@ export default connect(
 		// before data has loaded.
 		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 		const hasEligibilityMessages = ! (
-			isEmpty( eligibilityHolds ) &&
-			isEmpty( eligibilityWarnings )
+			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 		);
 
 		return {
@@ -175,7 +176,8 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
-			upgradeJetpack: isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			upgradeJetpack:
+				isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
 			isJetpackMultisite,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
@@ -183,4 +185,3 @@ export default connect(
 	},
 	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip }
 )( localize( PluginUpload ) );
-

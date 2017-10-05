@@ -1,29 +1,37 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
-const Card = ( props ) => {
+const Card = props => {
 	const { href, tagName, target, compact, children, highlight } = props;
 
 	const highlightClass = highlight ? 'is-' + highlight : false;
 
-	const className = classnames( 'card', props.className, {
-		'is-card-link': !! href,
-		'is-compact': compact,
-	}, highlightClass );
+	const className = classnames(
+		'card',
+		props.className,
+		{
+			'is-card-link': !! href,
+			'is-compact': compact,
+		},
+		highlightClass
+	);
 
-	const omitProps = [ 'compact', 'highlight', 'tagName' ];
+	const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 	let linkIndicator;
 	if ( href ) {
-		linkIndicator = <Gridicon
-			className="card__link-indicator"
-			icon={ target ? 'external' : 'chevron-right' } />;
+		linkIndicator = (
+			<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+		);
 	} else {
 		omitProps.push( 'href', 'target' );
 	}
@@ -43,13 +51,7 @@ Card.propTypes = {
 	target: PropTypes.string,
 	compact: PropTypes.bool,
 	children: PropTypes.node,
-	highlight: PropTypes.oneOf( [
-		false,
-		'error',
-		'info',
-		'success',
-		'warning',
-	] ),
+	highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
 };
 
 Card.defaultProps = {

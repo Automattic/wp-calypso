@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getLanguage } from 'lib/i18n-utils';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 

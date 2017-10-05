@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isString } from 'lodash';
 
 /**
@@ -8,13 +11,8 @@ import { isString } from 'lodash';
  */
 import { getAccountRecoveryResetUserData } from './';
 
-export default ( state ) => {
-	const {
-		user,
-		firstname,
-		lastname,
-		url,
-	} = getAccountRecoveryResetUserData( state );
+export default state => {
+	const { user, firstname, lastname, url } = getAccountRecoveryResetUserData( state );
 
 	return isString( user ) || [ firstname, lastname, url ].every( isString );
 };

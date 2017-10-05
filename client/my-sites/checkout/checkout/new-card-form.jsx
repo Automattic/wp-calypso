@@ -1,3 +1,4 @@
+/** @format */
 import { isEmpty } from 'lodash';
 
 /**
@@ -20,7 +21,7 @@ class NewCardForm extends Component {
 	static propTypes = {
 		countriesList: PropTypes.object.isRequired,
 		hasStoredCards: PropTypes.bool.isRequired,
-		transaction: PropTypes.object.isRequired
+		transaction: PropTypes.object.isRequired,
 	};
 
 	isFieldInvalid = fieldName => {
@@ -28,7 +29,9 @@ class NewCardForm extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'all-fields-required', { 'has-saved-cards': this.props.hasStoredCards } );
+		const classes = classNames( 'all-fields-required', {
+			'has-saved-cards': this.props.hasStoredCards,
+		} );
 
 		return (
 			<div className="new-card">
@@ -37,9 +40,11 @@ class NewCardForm extends Component {
 				</button>
 
 				<div className="new-card-fields">
-					{ this.props.hasStoredCards ?
-						<h6 className="checkout__new-card-header">{ this.props.translate( 'Use New Credit/Debit Card' ) }:</h6> : null
-					}
+					{ this.props.hasStoredCards ? (
+						<h6 className="checkout__new-card-header">
+							{ this.props.translate( 'Use New Credit/Debit Card' ) }:
+						</h6>
+					) : null }
 
 					<span className={ classes }>{ this.props.translate( 'All fields required' ) }</span>
 
@@ -48,7 +53,8 @@ class NewCardForm extends Component {
 						countriesList={ this.props.countriesList }
 						eventFormName="Checkout Form"
 						isFieldInvalid={ this.isFieldInvalid }
-						onFieldChange={ this.handleFieldChange } />
+						onFieldChange={ this.handleFieldChange }
+					/>
 				</div>
 			</div>
 		);
@@ -57,7 +63,7 @@ class NewCardForm extends Component {
 	handleFieldChange = ( rawDetails, maskedDetails ) => {
 		upgradesActions.setNewCreditCardDetails( {
 			rawDetails: rawDetails,
-			maskedDetails: maskedDetails
+			maskedDetails: maskedDetails,
 		} );
 	};
 }

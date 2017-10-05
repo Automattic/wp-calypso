@@ -1,6 +1,9 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ *
+ * @format
+ */
+
 import React, { PureComponent } from 'react';
 
 /**
@@ -17,7 +20,9 @@ class SectionHeaderExample extends PureComponent {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Team' ) } count={ 10 }>
-					<Button compact primary>{ translate( 'Primary Action' ) }</Button>
+					<Button compact primary>
+						{ translate( 'Primary Action' ) }
+					</Button>
 					<Button compact>{ translate( 'Manage' ) }</Button>
 					<Button
 						compact
@@ -31,8 +36,11 @@ class SectionHeaderExample extends PureComponent {
 
 				<h3>{ translate( 'Clickable SectionHeader' ) }</h3>
 
-				<SectionHeader label={ translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
-				</SectionHeader>
+				<SectionHeader
+					label={ translate( 'Team' ) }
+					count={ 10 }
+					href="/devdocs/design/section-header"
+				/>
 
 				<h3>{ translate( 'Empty SectionHeader' ) }</h3>
 				<SectionHeader />

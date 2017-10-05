@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers } from 'state/utils';
 import general from './general/reducer';
 import products from './products/reducer';

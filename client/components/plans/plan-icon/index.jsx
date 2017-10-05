@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
@@ -20,7 +23,7 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
-	getPlanClass
+	getPlanClass,
 } from 'lib/plans/constants';
 
 export default class PlanIcon extends Component {
@@ -70,6 +73,6 @@ PlanIcon.propTypes = {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_PERSONAL
-	] ).isRequired
+		PLAN_PERSONAL,
+	] ).isRequired,
 };

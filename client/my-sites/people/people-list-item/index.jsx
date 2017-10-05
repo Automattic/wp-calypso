@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -15,7 +18,6 @@ import analytics from 'lib/analytics';
 import config from 'config';
 
 export default React.createClass( {
-
 	displayName: 'PeopleListItem',
 
 	mixins: [ PureRenderMixin ],
@@ -51,20 +53,27 @@ export default React.createClass( {
 				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
-				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
-				onClick={ canLinkToProfile && this.navigateToUser }>
+				href={
+					canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login
+				}
+				onClick={ canLinkToProfile && this.navigateToUser }
+			>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
 				</div>
-				{
-				this.props.onRemove &&
-				<div className="people-list-item__actions">
-					<button className="button is-link people-list-item__remove-button" onClick={ this.props.onRemove }>
-						{ this.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
-					</button>
-				</div>
-				}
+				{ this.props.onRemove && (
+					<div className="people-list-item__actions">
+						<button
+							className="button is-link people-list-item__remove-button"
+							onClick={ this.props.onRemove }
+						>
+							{ this.translate( 'Remove', {
+								context: 'Verb: Remove a user or follower from the blog.',
+							} ) }
+						</button>
+					</div>
+				) }
 			</CompactCard>
 		);
-	}
+	},
 } );

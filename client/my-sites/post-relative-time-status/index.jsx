@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -11,7 +14,6 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 module.exports = React.createClass( {
-
 	displayName: 'PostRelativeTime',
 
 	mixins: [ PureRenderMixin ],
@@ -20,14 +22,14 @@ module.exports = React.createClass( {
 		post: PropTypes.object.isRequired,
 		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
-		target: PropTypes.string
+		target: PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
 			includeNonDraftStatuses: false,
 			link: null,
-			target: null
+			target: null,
 		};
 	},
 
@@ -95,9 +97,7 @@ module.exports = React.createClass( {
 			return (
 				<span className={ statusClassName }>
 					<Gridicon icon={ statusIcon } size={ 18 } />
-					<span className="post-relative-time-status__status-text">
-						{ statusText }
-					</span>
+					<span className="post-relative-time-status__status-text">{ statusText }</span>
 				</span>
 			);
 		}
@@ -106,14 +106,26 @@ module.exports = React.createClass( {
 	render: function() {
 		var timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
-			relativeTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
-			innerText = ( <span>{ timeText }{ statusText }</span> ),
+			relativeTimeClass = timeText ? 'post-relative-time-status' : null,
+			innerText = (
+				<span>
+					{ timeText }
+					{ statusText }
+				</span>
+			),
 			time = this.getTimestamp();
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
 			innerText = (
-				<a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a>
+				<a
+					href={ this.props.link }
+					target={ this.props.target }
+					rel={ rel }
+					onClick={ this.props.onClick }
+				>
+					{ innerText }
+				</a>
 			);
 		}
 
@@ -122,5 +134,5 @@ module.exports = React.createClass( {
 				{ innerText }
 			</p>
 		);
-	}
+	},
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -25,11 +28,8 @@ class Transfer extends React.Component {
 	static propTypes = {
 		domains: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
-		wapiDomainInfo: PropTypes.object.isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		wapiDomainInfo: PropTypes.object.isRequired,
 	};
 
 	renderSection() {
@@ -59,9 +59,7 @@ class Transfer extends React.Component {
 
 		return (
 			<Main className="domain-management-transfer">
-				<Header
-					onClick={ this.goToEdit }
-					selectedDomainName={ this.props.selectedDomainName }>
+				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>
 				{ this.renderSection() }
@@ -70,10 +68,9 @@ class Transfer extends React.Component {
 	}
 
 	goToEdit = () => {
-		page( paths.domainManagementTransfer(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		) );
+		page(
+			paths.domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
 	};
 
 	isDataLoading() {

@@ -1,19 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	FIRST_VIEW_HIDE
-} from 'state/action-types';
+import { FIRST_VIEW_HIDE } from 'state/action-types';
 
-import {
-	bumpStat,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -39,7 +37,6 @@ export function hideView( { enabled } ) {
 			time_spent: timeBucket,
 		} );
 
-
 		dispatch( bumpStat( 'calypso_first_view_dismissed', enabled ? 'show_again' : 'dont_show' ) );
 		dispatch( bumpStat( 'calypso_first_view_duration', timeBucket ) );
 		dispatch( tracksEvent );
@@ -50,10 +47,11 @@ export function hideView( { enabled } ) {
 
 function persistToPreferences( { getState, view, disabled } ) {
 	return savePreference( 'firstViewHistory', [
-		...filter( getPreference( getState(), 'firstViewHistory' ), item => item.view !== view ), {
+		...filter( getPreference( getState(), 'firstViewHistory' ), item => item.view !== view ),
+		{
 			view,
 			timestamp: Date.now(),
 			disabled,
-		}
+		},
 	] );
 }

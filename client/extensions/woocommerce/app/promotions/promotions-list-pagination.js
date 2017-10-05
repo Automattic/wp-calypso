@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -22,7 +25,7 @@ const PromotionsListPagination = ( {
 	}
 
 	if ( ! site || ! promotionsLoaded ) {
-		return ( <div className="promotions__list-placeholder pagination"></div> );
+		return <div className="promotions__list-placeholder pagination" />;
 	}
 
 	return (
@@ -45,4 +48,3 @@ PromotionsListPagination.propTypes = {
 };
 
 export default PromotionsListPagination;
-

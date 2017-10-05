@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -24,15 +27,9 @@ const ifSimpleSiteThenRedirectTo = path => ( context, next ) => {
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page( '/plugins/setup',
-			controller.siteSelection,
-			pluginsController.setupPlugins
-		);
+		page( '/plugins/setup', controller.siteSelection, pluginsController.setupPlugins );
 
-		page( '/plugins/setup/:site',
-			controller.siteSelection,
-			pluginsController.setupPlugins
-		);
+		page( '/plugins/setup/:site', controller.siteSelection, pluginsController.setupPlugins );
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
@@ -63,20 +60,23 @@ module.exports = function() {
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
 			page( '/plugins/upload', controller.sites );
-			page( '/plugins/upload/:site_id',
+			page(
+				'/plugins/upload/:site_id',
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.upload
 			);
 		}
 
-		page( '/plugins',
+		page(
+			'/plugins',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.browsePlugins
 		);
 
-		page( '/plugins/manage/:site?',
+		page(
+			'/plugins/manage/:site?',
 			controller.siteSelection,
 			controller.navigation,
 			ifSimpleSiteThenRedirectTo( '/plugins' ),
@@ -84,24 +84,27 @@ module.exports = function() {
 			controller.sites
 		);
 
-		[ 'active', 'inactive', 'updates' ].forEach( filter => (
-			page( `/plugins/${ filter }/:site_id?`,
+		[ 'active', 'inactive', 'updates' ].forEach( filter =>
+			page(
+				`/plugins/${ filter }/:site_id?`,
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
 				pluginsController.plugins.bind( null, filter ),
 				controller.sites
 			)
-		) );
+		);
 
-		page( '/plugins/:plugin/:site_id?',
+		page(
+			'/plugins/:plugin/:site_id?',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.maybeBrowsePlugins,
 			pluginsController.plugin
 		);
 
-		page( '/plugins/:plugin/eligibility/:site_id',
+		page(
+			'/plugins/:plugin/eligibility/:site_id',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.eligibility

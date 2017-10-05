@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, cloneDeep, merge } from 'lodash';
 import update from 'react-addons-update';
 
@@ -12,7 +15,7 @@ import { cartItems } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 import Emitter from 'lib/mixins/emitter';
 import Dispatcher from 'dispatcher';
-import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
+import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
 import { hasDomainDetails } from 'lib/store-transactions';
 
 var _transaction = createInitialTransaction();
@@ -20,7 +23,7 @@ var _transaction = createInitialTransaction();
 var TransactionStore = {
 	get: function() {
 		return _transaction;
-	}
+	},
 };
 
 Emitter( TransactionStore );
@@ -35,7 +38,7 @@ function createInitialTransaction() {
 		errors: {},
 		newCardFormFields: {},
 		step: { name: BEFORE_SUBMIT },
-		domainDetails: null
+		domainDetails: null,
 	};
 }
 
@@ -52,10 +55,12 @@ function setPayment( payment ) {
 }
 
 function setStep( step ) {
-	replaceData( assign( {}, _transaction, {
-		step: step,
-		errors: ( step.error ? step.error.message : {} )
-	} ) );
+	replaceData(
+		assign( {}, _transaction, {
+			step: step,
+			errors: step.error ? step.error.message : {},
+		} )
+	);
 }
 
 function setNewCreditCardDetails( options ) {
@@ -65,7 +70,7 @@ function setNewCreditCardDetails( options ) {
 
 	var newTransaction = update( _transaction, {
 		payment: { newCardDetails: { $merge: options.rawDetails } },
-		newCardFormFields: { $merge: options.maskedDetails }
+		newCardFormFields: { $merge: options.maskedDetails },
 	} );
 
 	replaceData( newTransaction );
@@ -86,7 +91,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
-				maskedDetails: action.maskedDetails
+				maskedDetails: action.maskedDetails,
 			} );
 			break;
 
@@ -101,7 +106,10 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
-			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {
+			if (
+				! cartItems.hasDomainRegistration( CartStore.get() ) &&
+				hasDomainDetails( TransactionStore.get() )
+			) {
 				setDomainDetails( null );
 			}
 			break;

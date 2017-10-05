@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { includes, concat, compact, reject } from 'lodash';
 
 /**
@@ -48,7 +51,7 @@ export const items = createReducer(
 				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
 			};
 		},
-	},
+	}
 );
 
 export default combineReducers( {

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { some } from 'lodash';
@@ -24,9 +27,9 @@ import {
 } from 'state/purchases/selectors';
 import notices from 'notices';
 
-const trackDeleteSiteOption = ( option ) => {
+const trackDeleteSiteOption = option => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {
-		option: option
+		option: option,
 	} );
 };
 
@@ -34,7 +37,7 @@ class SiteTools extends Component {
 	state = {
 		showDialog: false,
 		showStartOverDialog: false,
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.purchasesError ) {
@@ -61,18 +64,17 @@ class SiteTools extends Component {
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
-		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
+		const themeSetupText = translate( "Automatically make your site look like your theme's demo." );
 		const changeSiteAddress = translate( 'Change your site address' );
 		const themeSetup = translate( 'Theme setup' );
 		const startOver = translate( 'Delete your content' );
 		const startOverText = translate(
-			'Keep your site\'s address and current theme, but remove all posts, ' +
-			'pages, and media so you can start fresh.'
+			"Keep your site's address and current theme, but remove all posts, " +
+				'pages, and media so you can start fresh.'
 		);
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
-			'Delete all your posts, pages, media and data, ' +
-			'and give up your site\'s address.'
+			'Delete all your posts, pages, media and data, ' + "and give up your site's address."
 		);
 		const manageConnectionTitle = translate( 'Manage your connection' );
 		const manageConnectionText = translate(
@@ -84,7 +86,7 @@ class SiteTools extends Component {
 		const exportTitle = translate( 'Export' );
 		const exportText = translate( 'Export content from your site. You own your data.' );
 
-		let changeAddressText = translate( 'Register a new domain or change your site\'s address.' );
+		let changeAddressText = translate( "Register a new domain or change your site's address." );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			changeAddressText = translate( 'Change your site address.' );
 		}
@@ -92,41 +94,33 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
-				{ showChangeAddress &&
+				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
 						title={ changeSiteAddress }
 						description={ changeAddressText }
 					/>
-				}
-				<SiteToolsLink
-					href={ importUrl }
-					title={ importTitle }
-					description={ importText }
-				/>
-				<SiteToolsLink
-					href={ exportUrl }
-					title={ exportTitle }
-					description={ exportText }
-				/>
-				{ showThemeSetup &&
+				) }
+				<SiteToolsLink href={ importUrl } title={ importTitle } description={ importText } />
+				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
+				{ showThemeSetup && (
 					<SiteToolsLink
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
 						title={ themeSetup }
 						description={ themeSetupText }
 					/>
-				}
-				{ showDeleteContent &&
+				) }
+				{ showDeleteContent && (
 					<SiteToolsLink
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
 						title={ startOver }
 						description={ startOverText }
 					/>
-				}
-				{ showDeleteSite &&
+				) }
+				{ showDeleteSite && (
 					<SiteToolsLink
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
@@ -134,17 +128,15 @@ class SiteTools extends Component {
 						description={ deleteSiteText }
 						isWarning
 					/>
-				}
-				{ showManageConnection &&
+				) }
+				{ showManageConnection && (
 					<SiteToolsLink
 						href={ manageConnectionLink }
 						title={ manageConnectionTitle }
 						description={ manageConnectionText }
 					/>
-				}
-				<DeleteSiteWarningDialog
-					isVisible={ this.state.showDialog }
-					onClose={ this.closeDialog } />
+				) }
+				<DeleteSiteWarningDialog isVisible={ this.state.showDialog } onClose={ this.closeDialog } />
 			</div>
 		);
 	}
@@ -161,7 +153,7 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'start-over' );
 	}
 
-	checkForSubscriptions = ( event ) => {
+	checkForSubscriptions = event => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( ! some( this.props.sitePurchases, 'active' ) ) {
@@ -170,40 +162,38 @@ class SiteTools extends Component {
 
 		event.preventDefault();
 		this.setState( { showDialog: true } );
-	}
+	};
 
 	closeDialog = () => {
 		this.setState( { showDialog: false } );
-	}
+	};
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSelectedSiteSlug( state );
-		const isAtomic = isSiteAutomatedTransfer( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isVip = isVipSite( state, siteId );
-		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isVip = isVipSite( state, siteId );
+	const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
-		let importUrl = `/settings/import/${ siteSlug }`;
-		let exportUrl = `/settings/export/${ siteSlug }`;
-		if ( isJetpack ) {
-			importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
-			exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
-		}
-
-		return {
-			siteSlug,
-			sitePurchases: getSitePurchases( state, siteId ),
-			purchasesError: getPurchasesError( state ),
-			importUrl,
-			exportUrl,
-			showChangeAddress: ! isJetpack && ! isVip,
-			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			showDeleteContent: ! isJetpack && ! isVip,
-			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
-			showManageConnection: isJetpack && ! isAtomic,
-		};
+	let importUrl = `/settings/import/${ siteSlug }`;
+	let exportUrl = `/settings/export/${ siteSlug }`;
+	if ( isJetpack ) {
+		importUrl = getSiteAdminUrl( state, siteId, 'import.php' );
+		exportUrl = getSiteAdminUrl( state, siteId, 'export.php' );
 	}
-)( localize( SiteTools ) );
+
+	return {
+		siteSlug,
+		sitePurchases: getSitePurchases( state, siteId ),
+		purchasesError: getPurchasesError( state ),
+		importUrl,
+		exportUrl,
+		showChangeAddress: ! isJetpack && ! isVip,
+		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+		showDeleteContent: ! isJetpack && ! isVip,
+		showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
+		showManageConnection: isJetpack && ! isAtomic,
+	};
+} )( localize( SiteTools ) );

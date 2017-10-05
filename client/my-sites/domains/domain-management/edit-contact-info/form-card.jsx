@@ -1,19 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-	deburr,
-	endsWith,
-	get,
-	includes,
-	isEqual,
-	keys,
-	omit,
-	pick,
-	snakeCase,
-} from 'lodash';
+import { deburr, endsWith, get, includes, isEqual, keys, omit, pick, snakeCase } from 'lodash';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -51,11 +44,8 @@ class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
 		contactInformation: PropTypes.object.isRequired,
 		selectedDomain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
-		currentUser: PropTypes.object.isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		currentUser: PropTypes.object.isRequired,
 	};
 
 	constructor( props ) {
@@ -82,48 +72,55 @@ class EditContactInfoFormCard extends React.Component {
 			formSubmitting: false,
 			hasUnmounted: false,
 			transferLock: true,
-			showNonDaConfirmationDialog: false
+			showNonDaConfirmationDialog: false,
 		};
 	}
 
 	componentWillMount() {
-		const contactInformation = omit( this.props.contactInformation, [ 'countryName', 'stateName' ] );
+		const contactInformation = omit( this.props.contactInformation, [
+			'countryName',
+			'stateName',
+		] );
 
 		this.formStateController = formState.Controller( {
 			initialFields: contactInformation,
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
-			onError: this.handleFormControllerError
+			onError: this.handleFormControllerError,
 		} );
 
 		this.setState( {
 			form: this.formStateController.getInitialState(),
 			hasUnmounted: false,
-			transferLock: true
+			transferLock: true,
 		} );
 	}
 
 	componentWillUnmount() {
 		this.setState( {
-			hasUnmounted: true
+			hasUnmounted: true,
 		} );
 	}
 
 	validate = ( formValues, onComplete ) => {
-		wpcom.validateDomainContactInformation( formValues, [ this.props.selectedDomain.name ], ( error, data ) => {
-			if ( error ) {
-				onComplete( error );
-			} else {
-				onComplete( null, data.messages || {} );
+		wpcom.validateDomainContactInformation(
+			formValues,
+			[ this.props.selectedDomain.name ],
+			( error, data ) => {
+				if ( error ) {
+					onComplete( error );
+				} else {
+					onComplete( null, data.messages || {} );
+				}
 			}
-		} );
-	}
+		);
+	};
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 
-		this.fieldNames.forEach( ( fieldName ) => {
+		this.fieldNames.forEach( fieldName => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
 				// TODO: Deep
 				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
@@ -134,9 +131,9 @@ class EditContactInfoFormCard extends React.Component {
 		} );
 
 		onComplete( sanitizedFieldValues );
-	}
+	};
 
-	setFormState = ( state ) => {
+	setFormState = state => {
 		if ( this.state.hasUnmounted ) {
 			return;
 		}
@@ -147,7 +144,7 @@ class EditContactInfoFormCard extends React.Component {
 			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
 			this.setState( {
 				form: state,
-				notice: notice
+				notice: notice,
 			} );
 		} else {
 			if ( this.state.notice ) {
@@ -155,10 +152,10 @@ class EditContactInfoFormCard extends React.Component {
 			}
 			this.setState( {
 				form: state,
-				notice: null
+				notice: null,
 			} );
 		}
-	}
+	};
 
 	requiresConfirmation() {
 		const { firstName, lastName, organization, email } = this.props.contactInformation,
@@ -173,18 +170,20 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	hasEmailChanged() {
-		return this.props.contactInformation.email !== formState.getFieldValue( this.state.form, 'email' );
+		return (
+			this.props.contactInformation.email !== formState.getFieldValue( this.state.form, 'email' )
+		);
 	}
 
-	handleFormControllerError = ( error ) => {
+	handleFormControllerError = error => {
 		if ( error ) {
 			throw error;
 		}
-	}
+	};
 
 	handleDialogClose = () => {
 		this.setState( { showNonDaConfirmationDialog: false } );
-	}
+	};
 
 	renderTransferLockOptOut() {
 		return (
@@ -193,17 +192,20 @@ class EditContactInfoFormCard extends React.Component {
 					<FormCheckbox
 						name="transfer-lock-opt-out"
 						disabled={ this.state.formSubmitting }
-						onChange={ this.onTransferLockOptOutChange } />
+						onChange={ this.onTransferLockOptOutChange }
+					/>
 					<span>
-						{ this.props.translate(
-							'Opt-out of the {{link}}60-day transfer lock{{/link}}.',
-							{
-								components: {
-									link:
-										<a href={ support.UPDATE_CONTACT_INFORMATION } target="_blank" rel="noopener noreferrer" />
-								}
-							}
-						) }
+						{ this.props.translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
+							components: {
+								link: (
+									<a
+										href={ support.UPDATE_CONTACT_INFORMATION }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
 					</span>
 				</FormLabel>
 			</div>
@@ -215,13 +217,18 @@ class EditContactInfoFormCard extends React.Component {
 			wpcomEmail = this.props.currentUser.email,
 			strong = <strong />;
 
-		return <p>{ this.props.translate(
-			'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
-			'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.', {
-				args: { currentEmail, wpcomEmail },
-				components: { strong }
-			}
-		) }</p>;
+		return (
+			<p>
+				{ this.props.translate(
+					'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
+						'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.',
+					{
+						args: { currentEmail, wpcomEmail },
+						components: { strong },
+					}
+				) }
+			</p>
+		);
 	}
 
 	renderDialog() {
@@ -230,14 +237,14 @@ class EditContactInfoFormCard extends React.Component {
 			buttons = [
 				{
 					action: 'cancel',
-					label: this.props.translate( 'Cancel' )
+					label: this.props.translate( 'Cancel' ),
 				},
 				{
 					action: 'confirm',
 					label: this.props.translate( 'Request Confirmation' ),
 					onClick: this.saveContactInfo,
-					isPrimary: true
-				}
+					isPrimary: true,
+				},
 			],
 			currentEmail = this.props.contactInformation.email,
 			wpcomEmail = this.props.currentUser.email;
@@ -248,18 +255,22 @@ class EditContactInfoFormCard extends React.Component {
 
 			text = translate(
 				'We’ll email you at {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} ' +
-				'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
+					'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
 				{ args: { oldEmail: currentEmail, newEmail }, components: { strong } }
 			);
 		} else {
 			text = translate(
 				'We’ll email you at {{strong}}%(currentEmail)s{{/strong}} with a link to confirm the new details. ' +
-				'The change won\'t go live until we receive confirmation from this email.',
+					"The change won't go live until we receive confirmation from this email.",
 				{ args: { currentEmail }, components: { strong } }
 			);
 		}
 		return (
-			<Dialog isVisible={ this.state.showNonDaConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
+			<Dialog
+				isVisible={ this.state.showNonDaConfirmationDialog }
+				buttons={ buttons }
+				onClose={ this.handleDialogClose }
+			>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
 				<p>{ text }</p>
 				{ currentEmail !== wpcomEmail && this.renderBackupEmail() }
@@ -272,8 +283,12 @@ class EditContactInfoFormCard extends React.Component {
 		const saveButtonLabel = translate( 'Save Contact Info' );
 		const canUseDesignatedAgent = this.props.selectedDomain.transferLockOnWhoisUpdateOptional;
 		const currentContactInformation = formState.getAllFieldValues( this.state.form );
-		const initialContactInformation = pick( this.props.contactInformation, keys( currentContactInformation ) );
-		const isSaveButtonDisabled = this.state.formSubmitting || isEqual( initialContactInformation, currentContactInformation );
+		const initialContactInformation = pick(
+			this.props.contactInformation,
+			keys( currentContactInformation )
+		);
+		const isSaveButtonDisabled =
+			this.state.formSubmitting || isEqual( initialContactInformation, currentContactInformation );
 
 		return (
 			<Card>
@@ -284,87 +299,89 @@ class EditContactInfoFormCard extends React.Component {
 							autoFocus: true,
 							label: translate( 'First Name', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'last-name',
 							label: translate( 'Last Name', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'organization',
 							label: translate( 'Organization', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'email',
 							label: translate( 'Email', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'phone',
 							label: translate( 'Phone', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
-						{ this.hasFaxField() ? this.getField( FormInput, {
-							name: 'fax',
-							label: translate( 'Fax', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true
+						{ this.hasFaxField() ? (
+							this.getField( FormInput, {
+								name: 'fax',
+								label: translate( 'Fax', {
+									context: 'Domain Edit Contact Info form.',
+									textOnly: true,
+								} ),
 							} )
-						} ) : null }
+						) : null }
 						{ this.getField( FormCountrySelect, {
 							countriesList,
 							name: 'country-code',
 							label: translate( 'Country', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'address-1',
 							label: translate( 'Address', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'address-2',
 							label: translate( 'Address Line 2', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'city',
 							label: translate( 'City', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormStateSelect, {
 							countryCode: formState.getFieldValue( this.state.form, 'countryCode' ),
 							name: 'state',
 							label: translate( 'State', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 						{ this.getField( FormInput, {
 							name: 'postal-code',
 							label: translate( 'Postal Code', {
 								context: 'Domain Edit Contact Info form.',
-								textOnly: true
-							} )
+								textOnly: true,
+							} ),
 						} ) }
 					</div>
 
@@ -374,7 +391,14 @@ class EditContactInfoFormCard extends React.Component {
 					<FormFooter>
 						<FormButton
 							disabled={ isSaveButtonDisabled }
-							onClick={ this.requiresConfirmation() ? this.showNonDaConfirmationDialog : this.saveContactInfo }>
+							onClick={
+								this.requiresConfirmation() ? (
+									this.showNonDaConfirmationDialog
+								) : (
+									this.saveContactInfo
+								)
+							}
+						>
 							{ saveButtonLabel }
 						</FormButton>
 
@@ -382,7 +406,8 @@ class EditContactInfoFormCard extends React.Component {
 							type="button"
 							isPrimary={ false }
 							disabled={ this.state.formSubmitting }
-							onClick={ this.goToContactsPrivacy }>
+							onClick={ this.goToContactsPrivacy }
+						>
 							{ translate( 'Cancel' ) }
 						</FormButton>
 					</FormFooter>
@@ -394,8 +419,13 @@ class EditContactInfoFormCard extends React.Component {
 
 	getField( Component, props ) {
 		const { name } = props;
-		const unmodifiableFields = get( this.props, [ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ], [] );
-		const isDisabled = this.state.formSubmitting ||
+		const unmodifiableFields = get(
+			this.props,
+			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
+			[]
+		);
+		const isDisabled =
+			this.state.formSubmitting ||
 			formState.isFieldDisabled( this.state.form, name ) ||
 			includes( unmodifiableFields, snakeCase( name ) );
 
@@ -406,17 +436,21 @@ class EditContactInfoFormCard extends React.Component {
 				disabled={ isDisabled }
 				isError={ formState.isFieldInvalid( this.state.form, name ) }
 				value={ formState.getFieldValue( this.state.form, name ) }
-				onChange={ this.onChange } />
+				onChange={ this.onChange }
+			/>
 		);
 	}
 
 	hasFaxField() {
 		const NETHERLANDS_TLD = '.nl';
 
-		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || this.props.contactInformation.fax;
+		return (
+			endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) ||
+			this.props.contactInformation.fax
+		);
 	}
 
-	onChange = ( event ) => {
+	onChange = event => {
 		const { name, value } = event.target;
 
 		if ( this.isCountryField( name ) ) {
@@ -425,13 +459,13 @@ class EditContactInfoFormCard extends React.Component {
 
 		this.formStateController.handleFieldChange( {
 			name,
-			value
+			value,
 		} );
-	}
+	};
 
-	onTransferLockOptOutChange = ( event ) => {
+	onTransferLockOptOutChange = event => {
 		this.setState( { transferLock: ! event.target.checked } );
-	}
+	};
 
 	isCountryField( name ) {
 		return name === 'country-code';
@@ -441,15 +475,20 @@ class EditContactInfoFormCard extends React.Component {
 		this.formStateController.handleFieldChange( {
 			name: 'state',
 			value: '',
-			hideError: true
+			hideError: true,
 		} );
 	}
 
 	goToContactsPrivacy = () => {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomain.name ) );
-	}
+		page(
+			paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomain.name
+			)
+		);
+	};
 
-	saveContactInfo = ( event ) => {
+	saveContactInfo = event => {
 		event.preventDefault && event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -458,10 +497,10 @@ class EditContactInfoFormCard extends React.Component {
 
 		this.setState( {
 			formSubmitting: true,
-			showNonDaConfirmationDialog: false
+			showNonDaConfirmationDialog: false,
 		} );
 
-		this.formStateController.handleSubmit( ( hasErrors ) => {
+		this.formStateController.handleSubmit( hasErrors => {
 			if ( hasErrors ) {
 				this.setState( { formSubmitting: false } );
 				return;
@@ -473,21 +512,23 @@ class EditContactInfoFormCard extends React.Component {
 				this.onWhoisUpdate
 			);
 		} );
-	}
+	};
 
-	showNonDaConfirmationDialog = ( event ) => {
+	showNonDaConfirmationDialog = event => {
 		event.preventDefault();
 		this.setState( { showNonDaConfirmationDialog: true } );
-	}
+	};
 
 	onWhoisUpdate = ( error, data ) => {
 		this.setState( { formSubmitting: false } );
 		if ( data && data.success ) {
 			if ( ! this.requiresConfirmation() ) {
-				this.props.successNotice( this.props.translate(
-					'The contact info has been updated. ' +
-					'There may be a short delay before the changes show up in the public records.'
-				) );
+				this.props.successNotice(
+					this.props.translate(
+						'The contact info has been updated. ' +
+							'There may be a short delay before the changes show up in the public records.'
+					)
+				);
 				return;
 			}
 
@@ -500,19 +541,19 @@ class EditContactInfoFormCard extends React.Component {
 
 				message = this.props.translate(
 					'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
-					'Please ensure they\'re both confirmed to finish this process.',
+						"Please ensure they're both confirmed to finish this process.",
 					{
 						args: { oldEmail: currentEmail, newEmail },
-						components: { strong }
+						components: { strong },
 					}
 				);
 			} else {
 				message = this.props.translate(
 					'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
-					'Please confirm it to finish this process.',
+						'Please confirm it to finish this process.',
 					{
 						args: { email: currentEmail },
-						components: { strong }
+						components: { strong },
 					}
 				);
 			}
@@ -521,11 +562,14 @@ class EditContactInfoFormCard extends React.Component {
 		} else if ( error && error.message ) {
 			notices.error( error.message );
 		} else {
-			notices.error( this.props.translate(
-				'There was a problem updating your contact info. ' +
-				'Please try again later or contact support.' ) );
+			notices.error(
+				this.props.translate(
+					'There was a problem updating your contact info. ' +
+						'Please try again later or contact support.'
+				)
+			);
 		}
-	}
+	};
 }
 
 export default connect(

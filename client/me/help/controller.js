@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -61,11 +64,7 @@ export default {
 
 		analytics.pageView.record( basePath, 'Help > Courses' );
 
-		renderWithReduxStore(
-			<CoursesComponent />,
-			'primary',
-			context.store
-		);
+		renderWithReduxStore( <CoursesComponent />, 'primary', context.store );
 	},
 
 	contact( context ) {
@@ -83,5 +82,5 @@ export default {
 			'primary',
 			context.store
 		);
-	}
+	},
 };

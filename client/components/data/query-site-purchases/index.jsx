@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -23,9 +26,7 @@ class QuerySitePurchases extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requesting ||
-			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
+		if ( nextProps.requesting || ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}
 		this.requestSitePurchases( nextProps );
@@ -39,13 +40,13 @@ class QuerySitePurchases extends Component {
 QuerySitePurchases.propTypes = {
 	siteId: PropTypes.number,
 	requesting: PropTypes.bool,
-	fetchSitePurchases: PropTypes.func.isRequired
+	fetchSitePurchases: PropTypes.func.isRequired,
 };
 
 export default connect(
 	state => {
 		return {
-			requesting: isFetchingSitePurchases( state )
+			requesting: isFetchingSitePurchases( state ),
 		};
 	},
 	{ fetchSitePurchases }

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -15,7 +18,7 @@ var stores = [ TransactionStore, CartStore ];
 function getStateFromStores() {
 	return {
 		transaction: TransactionStore.get(),
-		cart: CartStore.get()
+		cart: CartStore.get(),
 	};
 }
 
@@ -26,7 +29,7 @@ var CheckoutData = React.createClass( {
 				{ this.props.children }
 			</StoreConnection>
 		);
-	}
+	},
 } );
 
 module.exports = CheckoutData;

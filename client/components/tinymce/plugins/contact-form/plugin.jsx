@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import tinymce from 'tinymce/tinymce';
 import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
@@ -18,7 +21,7 @@ import {
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,
-	settingsUpdate
+	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -28,9 +31,7 @@ const wpcomContactForm = editor => {
 	const store = editor.getParam( 'redux_store' );
 
 	editor.on( 'init', () => {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', () => {
@@ -82,7 +83,7 @@ const wpcomContactForm = editor => {
 					},
 					onSettingsUpdate( settings ) {
 						store.dispatch( settingsUpdate( settings ) );
-					}
+					},
 				} ),
 				node,
 				store
@@ -97,12 +98,14 @@ const wpcomContactForm = editor => {
 		title: i18n.translate( 'Add Contact Form' ),
 		cmd: 'wpcomContactForm',
 		onPostRender() {
-			this.innerHtml( renderToStaticMarkup(
-				<button type="button" role="presentation">
-					<Gridicon icon="mention" />
-				</button>
-			) );
-		}
+			this.innerHtml(
+				renderToStaticMarkup(
+					<button type="button" role="presentation">
+						<Gridicon icon="mention" />
+					</button>
+				)
+			);
+		},
 	} );
 };
 

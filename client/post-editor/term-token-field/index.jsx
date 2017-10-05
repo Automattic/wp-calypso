@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -25,7 +28,7 @@ const debug = _debug( 'calypso:post-editor:editor-terms' );
 const DEFAULT_NON_HIERARCHICAL_QUERY = {
 	number: 1000,
 	order_by: 'count',
-	order: 'DESC'
+	order: 'DESC',
 };
 const MAX_TERMS_SUGGESTIONS = 20;
 
@@ -51,8 +54,8 @@ class TermTokenField extends React.Component {
 		const { siteId, postId, taxonomyName } = this.props;
 		this.props.editPost( siteId, postId, {
 			terms: {
-				[ taxonomyName ]: selectedTerms
-			}
+				[ taxonomyName ]: selectedTerms,
+			},
 		} );
 	}
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { find, findIndex, identity, noop, times } from 'lodash';
 import Gridicon from 'gridicons';
@@ -28,7 +31,7 @@ import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
 	PRIMARY_DOMAIN_CHANGE_FAIL,
 	PRIMARY_DOMAIN_REVERT_FAIL,
-	PRIMARY_DOMAIN_REVERT_SUCCESS
+	PRIMARY_DOMAIN_REVERT_SUCCESS,
 } from './constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -38,11 +41,7 @@ import { isDomainOnlySite } from 'state/selectors';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class List extends React.Component {
 	static defaultProps = {
@@ -55,24 +54,26 @@ export class List extends React.Component {
 	state = {
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		notice: null
+		notice: null,
 	};
 
 	domainWarnings() {
 		if ( this.props.domains.hasLoadedFromServer ) {
-			return <DomainWarnings
-				domains={ this.props.domains.list }
-				position="domain-list"
-				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [
-					'newDomainsWithPrimary',
-					'newDomains',
-					'unverifiedDomainsCanManage',
-					'pendingGappsTosAcceptanceDomains',
-					'unverifiedDomainsCannotManage',
-					'wrongNSMappedDomains'
-				] }
-			/>;
+			return (
+				<DomainWarnings
+					domains={ this.props.domains.list }
+					position="domain-list"
+					selectedSite={ this.props.selectedSite }
+					ruleWhiteList={ [
+						'newDomainsWithPrimary',
+						'newDomains',
+						'unverifiedDomainsCanManage',
+						'pendingGappsTosAcceptanceDomains',
+						'unverifiedDomainsCannotManage',
+						'wrongNSMappedDomains',
+					] }
+				/>
+			);
 		}
 	}
 
@@ -88,8 +89,12 @@ export class List extends React.Component {
 				status="is-info"
 				showDismiss={ false }
 				text={ translate( 'Free domain available' ) }
-				icon="globe">
-				<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
+				icon="globe"
+			>
+				<NoticeAction
+					onClick={ this.props.clickClaimDomainNotice }
+					href={ `/domains/add/${ this.props.selectedSite.slug }` }
+				>
 					{ translate( 'Claim Free Domain' ) }
 					<TrackComponentView
 						eventName={ 'calypso_domain_credit_reminder_impression' }
@@ -125,14 +130,13 @@ export class List extends React.Component {
 				<UpgradesNavigation
 					path={ this.props.context.path }
 					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+				/>
 				{ this.domainWarnings() }
 
 				{ this.domainCreditsInfoNotice() }
 
-				<SectionHeader label={ headerText }>
-					{ this.headerButtons() }
-				</SectionHeader>
+				<SectionHeader label={ headerText }>{ this.headerButtons() }</SectionHeader>
 
 				<div className="domain-management-list__items">
 					{ this.notice() }
@@ -146,11 +150,18 @@ export class List extends React.Component {
 
 	isFreshDomainOnlyRegistration() {
 		const domainName = this.props.selectedSite.domain;
-		const domain = this.props.domains.hasLoadedFromServer &&
+		const domain =
+			this.props.domains.hasLoadedFromServer &&
 			find( this.props.domains.list, ( { name } ) => name === domainName );
 
-		return domain && domain.registrationMoment &&
-			this.props.moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
+		return (
+			domain &&
+			domain.registrationMoment &&
+			this.props
+				.moment()
+				.subtract( 1, 'day' )
+				.isBefore( domain.registrationMoment )
+		);
 	}
 
 	hideNotice = () => {
@@ -170,7 +181,8 @@ export class List extends React.Component {
 				onDismissClick={ this.hideNotice }
 				onUndoClick={ this.undoSetPrimaryDomain }
 				domainName={ notice.domainName }
-			/> );
+			/>
+		);
 	}
 
 	undoSetPrimaryDomain = () => {
@@ -180,35 +192,38 @@ export class List extends React.Component {
 
 		const { previousDomainName } = this.state.notice;
 
-		this.setPrimaryDomain( previousDomainName ).then( () => {
-			this.setState( {
-				primaryDomainIndex: -1,
-				settingPrimaryDomain: false,
-				changePrimaryDomainModeEnabled: false,
-				notice: {
-					type: PRIMARY_DOMAIN_REVERT_SUCCESS,
-					domainName: previousDomainName
-				}
-			} );
-		}, ( error ) => {
-			this.setState( {
-				notice: {
+		this.setPrimaryDomain( previousDomainName ).then(
+			() => {
+				this.setState( {
 					primaryDomainIndex: -1,
 					settingPrimaryDomain: false,
 					changePrimaryDomainModeEnabled: false,
-					type: PRIMARY_DOMAIN_REVERT_FAIL,
-					domainName: previousDomainName,
-					error
-				}
-			} );
-		} );
+					notice: {
+						type: PRIMARY_DOMAIN_REVERT_SUCCESS,
+						domainName: previousDomainName,
+					},
+				} );
+			},
+			error => {
+				this.setState( {
+					notice: {
+						primaryDomainIndex: -1,
+						settingPrimaryDomain: false,
+						changePrimaryDomainModeEnabled: false,
+						type: PRIMARY_DOMAIN_REVERT_FAIL,
+						domainName: previousDomainName,
+						error,
+					},
+				} );
+			}
+		);
 		const previousDomainIndex = findIndex( this.props.domains.list, { name: previousDomainName } );
 
 		this.setState( {
 			notice: null,
 			changePrimaryDomainModeEnabled: true,
 			primaryDomainIndex: previousDomainIndex,
-			settingPrimaryDomain: true
+			settingPrimaryDomain: true,
 		} );
 
 		this.props.undoChangePrimary( this.props.domains.list[ previousDomainIndex ] );
@@ -223,7 +238,7 @@ export class List extends React.Component {
 		this.props.enablePrimaryDomainMode();
 		this.setState( {
 			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: findIndex( this.props.domains.list, { isPrimary: true } )
+			primaryDomainIndex: findIndex( this.props.domains.list, { isPrimary: true } ),
 		} );
 	};
 
@@ -231,7 +246,7 @@ export class List extends React.Component {
 		this.props.disablePrimaryDomainMode();
 		this.setState( {
 			changePrimaryDomainModeEnabled: false,
-			primaryDomainIndex: -1
+			primaryDomainIndex: -1,
 		} );
 	};
 
@@ -249,7 +264,7 @@ export class List extends React.Component {
 					compact
 					onClick={ this.disableChangePrimaryDomainMode }
 				>
-						<Gridicon icon="cross" size={ 24 } />
+					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 			);
 		}
@@ -270,8 +285,11 @@ export class List extends React.Component {
 			<Button
 				compact
 				className="domain-management-list__change-primary-button"
-				onClick={ this.enableChangePrimaryDomainMode }>
-				{ this.props.translate( 'Change Primary', { context: 'Button label for changing primary domain' } ) }
+				onClick={ this.enableChangePrimaryDomainMode }
+			>
+				{ this.props.translate( 'Change Primary', {
+					context: 'Button label for changing primary domain',
+				} ) }
 			</Button>
 		);
 	}
@@ -313,42 +331,45 @@ export class List extends React.Component {
 
 		this.props.changePrimary( domain );
 		const currentPrimaryIndex = findIndex( this.props.domains.list, { isPrimary: true } ),
-			currentPrimaryName = this.props.domains.list [ currentPrimaryIndex ].name;
+			currentPrimaryName = this.props.domains.list[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
 			this.setState( {
-				changePrimaryDomainModeEnabled: false
+				changePrimaryDomainModeEnabled: false,
 			} );
 			return;
 		}
 
 		this.setState( {
 			primaryDomainIndex: index,
-			settingPrimaryDomain: true
+			settingPrimaryDomain: true,
 		} );
 
-		return this.setPrimaryDomain( domain.name ).then( () => {
-			this.setState( {
-				settingPrimaryDomain: false,
-				changePrimaryDomainModeEnabled: false,
-				notice: {
-					type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
-					domainName: domain.name,
-					previousDomainName: currentPrimaryName
-				}
-			} );
-		}, error => {
-			this.setState( {
-				settingPrimaryDomain: false,
-				primaryDomainIndex: currentPrimaryIndex,
-				notice: {
-					type: PRIMARY_DOMAIN_CHANGE_FAIL,
-					domainName: domain.name,
-					error
-				}
-			} );
-		} );
+		return this.setPrimaryDomain( domain.name ).then(
+			() => {
+				this.setState( {
+					settingPrimaryDomain: false,
+					changePrimaryDomainModeEnabled: false,
+					notice: {
+						type: PRIMARY_DOMAIN_CHANGE_SUCCESS,
+						domainName: domain.name,
+						previousDomainName: currentPrimaryName,
+					},
+				} );
+			},
+			error => {
+				this.setState( {
+					settingPrimaryDomain: false,
+					primaryDomainIndex: currentPrimaryIndex,
+					notice: {
+						type: PRIMARY_DOMAIN_CHANGE_FAIL,
+						domainName: domain.name,
+						error,
+					},
+				} );
+			}
+		);
 	};
 
 	listItems() {
@@ -369,10 +390,9 @@ export class List extends React.Component {
 					isSelected={ index === this.state.primaryDomainIndex }
 					selectionIndex={ index }
 					busy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
-					busyMessage={ this.props.translate(
-						'Setting Primary Domain…',
-						{ context: 'Shows up when the primary domain is changing and the user is waiting' }
-					) }
+					busyMessage={ this.props.translate( 'Setting Primary Domain…', {
+						context: 'Shows up when the primary domain is changing and the user is waiting',
+					} ) }
 					onSelect={ this.handleUpdatePrimaryDomain }
 					onClick={ this.goToEditDomainRoot }
 				/>
@@ -380,87 +400,81 @@ export class List extends React.Component {
 		} );
 	}
 
-	goToEditDomainRoot = ( domain ) => {
+	goToEditDomainRoot = domain => {
 		page( paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 	};
 }
 
-const addDomainClick = () => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Add Domain" Button in List'
-	),
-	recordTracksEvent(
-		'calypso_domain_management_list_add_domain_click'
-	),
-);
+const addDomainClick = () =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
+		recordTracksEvent( 'calypso_domain_management_list_add_domain_click' )
+	);
 
-const enablePrimaryDomainMode = () => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Change Primary" button in List'
-	),
-	recordTracksEvent(
-		'calypso_domain_management_list_enable_primary_domain_mode_click'
-	),
-);
+const enablePrimaryDomainMode = () =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Management', 'Clicked "Change Primary" button in List' ),
+		recordTracksEvent( 'calypso_domain_management_list_enable_primary_domain_mode_click' )
+	);
 
-const disablePrimaryDomainMode = () => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "X" button to disable change primary mode in List'
-	),
-	recordTracksEvent(
-		'calypso_domain_management_list_disable_primary_mode_click'
-	),
-);
+const disablePrimaryDomainMode = () =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "X" button to disable change primary mode in List'
+		),
+		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
+	);
 
-const changePrimary = ( domain ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Changed Primary Domain to in List',
-		'Domain Name',
-		domain.name
-	),
-	recordTracksEvent(
-		'calypso_domain_management_list_change_primary_domain_click',
-		{ section: domain.type }
-	),
-);
+const changePrimary = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Changed Primary Domain to in List',
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_list_change_primary_domain_click', {
+			section: domain.type,
+		} )
+	);
 
-const undoChangePrimary = ( domain ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Undo change Primary Domain in List',
-		'Domain Name (Reverted to)',
-		domain.name
-	),
-	recordTracksEvent(
-		'calypso_domain_management_list_undo_change_primary_domain_click',
-		{ section: domain.type }
-	),
-);
+const undoChangePrimary = domain =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Undo change Primary Domain in List',
+			'Domain Name (Reverted to)',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_list_undo_change_primary_domain_click', {
+			section: domain.type,
+		} )
+	);
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.selectedSite.ID;
+export default connect(
+	( state, ownProps ) => {
+		const siteId = ownProps.selectedSite.ID;
 
-	return {
-		hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
-		isDomainOnly: isDomainOnlySite( state, siteId ),
-	};
-}, ( dispatch ) => {
-	return {
-		clickClaimDomainNotice: () => dispatch( recordTracksEvent(
-			'calypso_domain_credit_reminder_click',
-			{
-				cta_name: 'domain_info_notice'
-			}
-		) ),
-		setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
-		addDomainClick: () => dispatch( addDomainClick() ),
-		enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
-		disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
-		changePrimary: ( domain ) => dispatch( changePrimary( domain ) ),
-		undoChangePrimary: ( domain ) => dispatch( undoChangePrimary( domain ) ),
-	};
-} )( localize( List ) );
+		return {
+			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+			isDomainOnly: isDomainOnlySite( state, siteId ),
+		};
+	},
+	dispatch => {
+		return {
+			clickClaimDomainNotice: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
+						cta_name: 'domain_info_notice',
+					} )
+				),
+			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
+			addDomainClick: () => dispatch( addDomainClick() ),
+			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
+			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
+			changePrimary: domain => dispatch( changePrimary( domain ) ),
+			undoChangePrimary: domain => dispatch( undoChangePrimary( domain ) ),
+		};
+	}
+)( localize( List ) );

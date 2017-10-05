@@ -1,14 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import {
-	get,
-} from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 class CartPlanAd extends Component {
-	addToCartAndRedirect = ( event ) => {
+	addToCartAndRedirect = event => {
 		event.preventDefault();
 		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
@@ -31,9 +32,11 @@ class CartPlanAd extends Component {
 	shouldDisplayAd = () => {
 		const { cart, isDomainOnly, selectedSite } = this.props;
 		const domainRegistrations = cartItems.getDomainRegistrations( cart );
-		const isDomainPremium = domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
+		const isDomainPremium =
+			domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
 
-		return ! isDomainOnly &&
+		return (
+			! isDomainOnly &&
 			cart.hasLoadedFromServer &&
 			! cart.hasPendingServerUpdates &&
 			! cartItems.hasDomainCredit( cart ) &&
@@ -41,7 +44,8 @@ class CartPlanAd extends Component {
 			! isDomainPremium &&
 			selectedSite &&
 			selectedSite.plan &&
-			! isPlan( selectedSite.plan );
+			! isPlan( selectedSite.plan )
+		);
 	};
 
 	render() {
@@ -51,13 +55,15 @@ class CartPlanAd extends Component {
 
 		return (
 			<CartAd>
-				{
-					this.props.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
-						components: { strong: <strong /> }
-					} )
-				}
-				{ ' ' }
-				<a href="" onClick={ this.addToCartAndRedirect }>{ this.props.translate( 'Upgrade Now' ) }</a>
+				{ this.props.translate(
+					'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!',
+					{
+						components: { strong: <strong /> },
+					}
+				) }{' '}
+				<a href="" onClick={ this.addToCartAndRedirect }>
+					{ this.props.translate( 'Upgrade Now' ) }
+				</a>
 			</CartAd>
 		);
 	}
@@ -66,18 +72,13 @@ class CartPlanAd extends Component {
 CartPlanAd.propTypes = {
 	cart: PropTypes.object.isRequired,
 	isDomainOnly: PropTypes.bool,
-	selectedSite: PropTypes.oneOfType( [
-		PropTypes.bool,
-		PropTypes.object
-	] )
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
 
-		return {
-			isDomainOnly: isDomainOnlySite( state, selectedSiteId )
-		};
-	}
-)( localize( CartPlanAd ) );
+	return {
+		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
+	};
+} )( localize( CartPlanAd ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -20,14 +23,14 @@ module.exports = React.createClass( {
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		enabled: PropTypes.bool,
 		onMouseOver: PropTypes.func,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
 	},
 
 	getDefaultProps: function() {
 		return {
 			style: 'icon',
 			enabled: true,
-			onClick: function() {}
+			onClick: function() {},
 		};
 	},
 
@@ -40,14 +43,21 @@ module.exports = React.createClass( {
 			'jetpack-whatsapp': 'whatsapp',
 			'press-this': 'wordpress',
 			twitter: 'twitter-alt',
-			more: 'share'
-		}
+			more: 'share',
+		};
 		if ( ! this.props.button.custom ) {
 			const icon = shortnameToSocialLogo[ this.props.button.ID ] || this.props.button.shortname;
 
 			return <SocialLogo icon={ icon } size={ 18 } />;
 		} else if ( 'string' === typeof this.props.button.icon ) {
-			return <span className="sharing-buttons-preview-button__custom-icon" style={ { backgroundImage: 'url(' + photon( this.props.button.icon, { width: 16 } ) + ')' } }></span>;
+			return (
+				<span
+					className="sharing-buttons-preview-button__custom-icon"
+					style={ {
+						backgroundImage: 'url(' + photon( this.props.button.icon, { width: 16 } ) + ')',
+					} }
+				/>
+			);
 		}
 	},
 
@@ -57,15 +67,21 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'sharing-buttons-preview-button', 'style-' + this.props.style, 'share-' + this.props.button.ID, {
-			'is-enabled': this.props.enabled,
-			'is-custom': this.props.button.custom
-		} );
+		var classes = classNames(
+			'sharing-buttons-preview-button',
+			'style-' + this.props.style,
+			'share-' + this.props.button.ID,
+			{
+				'is-enabled': this.props.enabled,
+				'is-custom': this.props.button.custom,
+			}
+		);
 
 		return (
 			<div className={ classes } onClick={ this.onClick } onMouseOver={ this.props.onMouseOver }>
-				{ this.getIcon() }<span className="sharing-buttons-preview-button__service">{ this.props.button.name }</span>
+				{ this.getIcon() }
+				<span className="sharing-buttons-preview-button__service">{ this.props.button.name }</span>
 			</div>
 		);
-	}
+	},
 } );

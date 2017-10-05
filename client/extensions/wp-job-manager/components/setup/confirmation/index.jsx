@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -20,36 +23,42 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 const Confirmation = ( { slug, translate } ) => (
 	<div>
 		<FormattedHeader
-			headerText={ translate( 'You\'re ready to start using WP Job Manager!' ) }
-			subHeaderText={ translate( 'Wondering what to do now? Here are some of the most common next steps:' ) } />
+			headerText={ translate( "You're ready to start using WP Job Manager!" ) }
+			subHeaderText={ translate(
+				'Wondering what to do now? Here are some of the most common next steps:'
+			) }
+		/>
 
 		<ConfirmationLink
 			href={ `/extensions/wp-job-manager/${ slug }` }
-			text={ translate( 'Tweak your settings' ) } />
+			text={ translate( 'Tweak your settings' ) }
+		/>
 
-		<ConfirmationLink
-			href="#"
-			text={ translate( 'Add a job using the admin dashboard' ) } />
+		<ConfirmationLink href="#" text={ translate( 'Add a job using the admin dashboard' ) } />
 
 		<ConfirmationLink
 			href="https://wpjobmanager.com/document/shortcode-reference/#section-1"
 			target="_blank"
-			text={ translate( 'Add job listings to a page using the [jobs] shortcode' ) } />
+			text={ translate( 'Add job listings to a page using the [jobs] shortcode' ) }
+		/>
 
 		<ConfirmationLink
 			href="https://wpjobmanager.com/document/the-job-submission-form/"
 			target="_blank"
-			text={ translate( 'Learn to use the front-end job submission board' ) } />
+			text={ translate( 'Learn to use the front-end job submission board' ) }
+		/>
 
 		<ConfirmationLink
 			href="https://wpjobmanager.com/document/the-job-dashboard/"
 			target="_blank"
-			text={ translate( 'Learn to use the front-end job dashboard' ) } />
+			text={ translate( 'Learn to use the front-end job dashboard' ) }
+		/>
 
 		<Card>
 			<p className="confirmation__help">
-				{ translate( 'If you need help, you can find more detail in our {{docs}}support documentation{{/docs}}' +
-					'or post your question on the {{forums}}WP Job Manager support forums{{/forums}}. Happy hiring!',
+				{ translate(
+					'If you need help, you can find more detail in our {{docs}}support documentation{{/docs}}' +
+						'or post your question on the {{forums}}WP Job Manager support forums{{/forums}}. Happy hiring!',
 					{
 						components: {
 							docs: (
@@ -66,18 +75,20 @@ const Confirmation = ( { slug, translate } ) => (
 									href="https://wordpress.org/support/plugin/wp-job-manager"
 								/>
 							),
-						}
+						},
 					}
 				) }
 			</p>
 		</Card>
 
-		<SectionHeader label={ translate( 'Support WP Job Manager\'s Ongoing Development' ) } />
+		<SectionHeader label={ translate( "Support WP Job Manager's Ongoing Development" ) } />
 		<Card>
 			<p>
-				{ translate( 'There are lots of ways you can support open source software projects like this one: ' +
-					'contributing code, fixing a bug, assisting with non-English translation, or just telling your ' +
-					'friends about WP Job Manager to help spread the word. We appreciate your support!' ) }
+				{ translate(
+					'There are lots of ways you can support open source software projects like this one: ' +
+						'contributing code, fixing a bug, assisting with non-English translation, or just telling your ' +
+						'friends about WP Job Manager to help spread the word. We appreciate your support!'
+				) }
 			</p>
 
 			{ translate(
@@ -86,7 +97,7 @@ const Confirmation = ( { slug, translate } ) => (
 					'{{li}} {{globe}}{{/globe}} {{localize}}Contribute a localization{{/localize}} {{/li}}' +
 					'{{li}} {{cog}}{{/cog}} {{contribute}}Contribute code or report a bug{{/contribute}} {{/li}}' +
 					'{{li}} {{help}}{{/help}} {{forums}}Help other users on the forums{{/forums}} {{/li}}' +
-				'{{/ul}}',
+					'{{/ul}}',
 				{
 					components: {
 						ul: <ul className="confirmation__support" />,
@@ -123,7 +134,7 @@ const Confirmation = ( { slug, translate } ) => (
 								href="https://wordpress.org/support/plugin/wp-job-manager"
 							/>
 						),
-					}
+					},
 				}
 			) }
 		</Card>

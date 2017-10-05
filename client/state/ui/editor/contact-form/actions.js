@@ -1,25 +1,28 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	EDITOR_CONTACT_FORM_CLEAR,
 	EDITOR_CONTACT_FORM_LOAD,
 	EDITOR_CONTACT_FORM_FIELD_ADD,
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
-	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
+	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 export function formClear() {
 	return {
-		type: EDITOR_CONTACT_FORM_CLEAR
-	}
+		type: EDITOR_CONTACT_FORM_CLEAR,
+	};
 }
 
 export function formLoad( contactForm ) {
 	return {
 		type: EDITOR_CONTACT_FORM_LOAD,
-		contactForm
+		contactForm,
 	};
 }
 
@@ -30,21 +33,21 @@ export function fieldAdd() {
 export function fieldRemove( index ) {
 	return {
 		type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
-		index
-	}
+		index,
+	};
 }
 
 export function fieldUpdate( index, field ) {
 	return {
 		type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
 		index,
-		field
-	}
+		field,
+	};
 }
 
 export function settingsUpdate( settings ) {
 	return {
 		type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
-		settings
-	}
+		settings,
+	};
 }

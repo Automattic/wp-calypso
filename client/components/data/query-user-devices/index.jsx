@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,8 +15,8 @@ import { requestUserDevices } from 'state/user-devices/actions';
 
 class QueryUserDevices extends Component {
 	static propTypes = {
-		requestUserDevices: PropTypes.func
-	}
+		requestUserDevices: PropTypes.func,
+	};
 
 	componentDidMount() {
 		this.props.requestUserDevices();
@@ -24,7 +27,4 @@ class QueryUserDevices extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestUserDevices }
-)( QueryUserDevices );
+export default connect( null, { requestUserDevices } )( QueryUserDevices );

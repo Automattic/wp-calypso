@@ -1,6 +1,9 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ *
+ * @format
+ */
+
 import { forEach } from 'lodash';
 
 /**
@@ -15,7 +18,7 @@ import {
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
@@ -63,7 +66,7 @@ export function plugins( state = {}, action ) {
 		case PLUGIN_SETUP_ERROR:
 			if ( typeof state[ action.siteId ] !== 'undefined' ) {
 				return Object.assign( {}, state, {
-					[ action.siteId ]: pluginsForSite( state[ action.siteId ], action )
+					[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),
 				} );
 			}
 			return state;
@@ -71,7 +74,7 @@ export function plugins( state = {}, action ) {
 			const processedState = {};
 			// Save the error state as a string message.
 			forEach( state, ( pluginList, key ) => {
-				processedState[ key ] = pluginList.map( ( item ) => {
+				processedState[ key ] = pluginList.map( item => {
 					if ( item.error !== null ) {
 						return Object.assign( {}, item, { error: item.error.toString() } );
 					}
@@ -121,7 +124,7 @@ function plugin( state, action ) {
 				return state;
 			}
 			return Object.assign( {}, state, {
-				status: pluginStatus( state.status, action )
+				status: pluginStatus( state.status, action ),
 			} );
 		case PLUGIN_SETUP_ERROR:
 			if ( state.slug !== action.slug ) {
@@ -129,7 +132,7 @@ function plugin( state, action ) {
 			}
 			return Object.assign( {}, state, {
 				status: pluginStatus( state.status, action ),
-				error: action.error
+				error: action.error,
 			} );
 		default:
 			return state;
@@ -157,5 +160,5 @@ function pluginStatus( state, action ) {
 export default combineReducers( {
 	isRequesting,
 	hasRequested,
-	plugins
+	plugins,
 } );

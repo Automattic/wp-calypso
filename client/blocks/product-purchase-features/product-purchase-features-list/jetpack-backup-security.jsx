@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -19,7 +22,8 @@ export default localize( ( { translate } ) => {
 					'Your site is being securely backed up and scanned with real-time sync.'
 				) }
 				buttonText={ translate( 'Visit security dashboard' ) }
-				href="https://dashboard.vaultpress.com/" />
+				href="https://dashboard.vaultpress.com/"
+			/>
 		</div>
 	);
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { find, debounce, isNumber } from 'lodash';
@@ -15,7 +18,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import TokenField from 'components/token-field';
 
 class ProductVariationTypesForm extends Component {
-
 	state = {
 		attributeNames: {},
 	};
@@ -34,7 +36,8 @@ class ProductVariationTypesForm extends Component {
 	componentWillMount() {
 		const { product } = this.props;
 
-		const attributes = ( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+		const attributes =
+			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
 		if ( ! attributes.length ) {
 			this.addType();
 		}
@@ -53,32 +56,34 @@ class ProductVariationTypesForm extends Component {
 	addType = () => {
 		const { siteId, product, editProductAttribute } = this.props;
 		editProductAttribute( siteId, product, null, this.getNewFields() );
-	}
+	};
 
-	updateNameHandler = ( e ) => {
+	updateNameHandler = e => {
 		const attributeNames = { ...this.state.attributeNames };
 		attributeNames[ e.target.id ] = e.target.value;
 		this.setState( { attributeNames } );
 		this.debouncedUpdateName( e.target.id, e.target.value );
-	}
+	};
 
 	updateName( attributeId, name ) {
 		const { siteId, product, editProductAttribute } = this.props;
-		const attribute = product.attributes && find( product.attributes, function( a ) {
-			return a.uid === attributeId;
-		} );
+		const attribute =
+			product.attributes &&
+			find( product.attributes, function( a ) {
+				return a.uid === attributeId;
+			} );
 		editProductAttribute( siteId, product, attribute, { name } );
 	}
 
 	updateValues = ( values, attribute ) => {
 		const { siteId, product, editProductAttribute } = this.props;
 		editProductAttribute( siteId, product, attribute, { options: values } );
-	}
+	};
 
 	renderInputs( attribute, index ) {
 		const { translate } = this.props;
 		const { attributeNames } = this.state;
-		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
+		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
 		return (
 			<div key={ index } className="products__variation-types-form-fieldset">
 				<FormTextInput
@@ -94,7 +99,7 @@ class ProductVariationTypesForm extends Component {
 					value={ attribute.options }
 					name="values"
 					/* eslint-disable react/jsx-no-bind */
-					onChange={ ( values ) => this.updateValues( values, attribute ) }
+					onChange={ values => this.updateValues( values, attribute ) }
 				/>
 			</div>
 		);
@@ -103,32 +108,35 @@ class ProductVariationTypesForm extends Component {
 	render() {
 		const { product, translate } = this.props;
 		const { attributes } = product;
-		const variationTypes = ( attributes && attributes.filter( attribute => attribute.variation ) ) || [];
+		const variationTypes =
+			( attributes && attributes.filter( attribute => attribute.variation ) ) || [];
 		const inputs = variationTypes.map( this.renderInputs, this );
 
 		return (
 			<div className="products__variation-types-form-wrapper">
-				{ ! isNumber( product.id ) && ( <strong>{ translate( 'Let\'s add some variations!' ) }</strong> ) }
+				{ ! isNumber( product.id ) && (
+					<strong>{ translate( "Let's add some variations!" ) }</strong>
+				) }
 				<p>
-					{ translate(
-						'Variations let you sell one item in various different options.',
-						{ components: { em: <em /> } }
-					) }
+					{ translate( 'Variations let you sell one item in various different options.', {
+						components: { em: <em /> },
+					} ) }
 				</p>
 
 				<div className="products__variation-types-form-group">
 					<div className="products__variation-types-form-labels">
-						<FormLabel className="products__variation-types-form-label">{ translate( 'Variation type' ) }</FormLabel>
+						<FormLabel className="products__variation-types-form-label">
+							{ translate( 'Variation type' ) }
+						</FormLabel>
 						<FormLabel>{ translate( 'Values' ) }</FormLabel>
 					</div>
-					{inputs}
+					{ inputs }
 				</div>
 
 				<Button onClick={ this.addType }>{ translate( 'Add another variation' ) }</Button>
-		</div>
+			</div>
 		);
 	}
-
 }
 
 export default localize( ProductVariationTypesForm );

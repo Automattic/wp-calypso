@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -17,17 +20,16 @@ const PrimaryDomainButton = React.createClass( {
 
 	propTypes: {
 		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
-		settingPrimaryDomain: PropTypes.bool.isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		settingPrimaryDomain: PropTypes.bool.isRequired,
 	},
 
 	handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
-		page( paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
+		page(
+			paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name )
+		);
 	},
 
 	render() {
@@ -45,14 +47,15 @@ const PrimaryDomainButton = React.createClass( {
 				<Button
 					compact
 					className="domain-details-card__make-primary-button"
-					onClick={ this.handleClick }>
+					onClick={ this.handleClick }
+				>
 					{ label }
 				</Button>
 			);
 		}
 
 		return null;
-	}
+	},
 } );
 
 module.exports = PrimaryDomainButton;

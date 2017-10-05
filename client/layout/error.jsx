@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debug from 'debug';
 import { assign } from 'lodash';
 import ReactDom from 'react-dom';
@@ -20,7 +23,6 @@ import EmptyContent from 'components/empty-content';
 const log = debug( 'calypso:layout' );
 
 var LoadingError = React.createClass( {
-
 	statics: {
 		isRetry: function() {
 			var parsed = url.parse( location.href, true );
@@ -46,17 +48,17 @@ var LoadingError = React.createClass( {
 				React.createElement( LoadingError, {} ),
 				document.getElementById( 'primary' )
 			);
-		}
+		},
 	},
 
 	render: function() {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
+				title={ this.translate( "We're sorry, but an unexpected error has occurred" ) }
+			/>
 		);
-	}
-
+	},
 } );
 
 module.exports = LoadingError;

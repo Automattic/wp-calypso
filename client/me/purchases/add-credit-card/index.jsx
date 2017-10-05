@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { curry } from 'lodash';
 import page from 'page';

@@ -28,7 +28,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 describe( 'LoginTest', function() {
-	const page = shallow( <Login translate={ identity } /> );
+	const page = shallow( <Login translate={ identity } /> );
 
 	it( 'OTP is not present on first render', function( done ) {
 		page.setState( { requires2fa: false }, function() {

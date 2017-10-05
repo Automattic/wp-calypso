@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -18,7 +21,7 @@ class EditorDrawerWell extends Component {
 		label: PropTypes.node,
 		onClick: PropTypes.func,
 		customDropZone: PropTypes.node,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -30,31 +33,22 @@ class EditorDrawerWell extends Component {
 
 	render() {
 		const { empty, onClick, disabled, icon, label, children, isHidden } = this.props;
-		const classes = classNames(
-			'editor-drawer-well',
-			{
-				'is-empty': empty,
-				'is-hidden': isHidden,
-			},
-		);
+		const classes = classNames( 'editor-drawer-well', {
+			'is-empty': empty,
+			'is-hidden': isHidden,
+		} );
 
 		return (
 			<div className={ classes }>
-				<div className="editor-drawer-well__content">
-					{ children }
-				</div>
+				<div className="editor-drawer-well__content">{ children }</div>
 				{ empty && (
 					<button
 						type="button"
 						onClick={ onClick }
 						disabled={ disabled }
-						className="editor-drawer-well__placeholder">
-						{ icon && (
-							<Gridicon
-								icon={ icon }
-								className="editor-drawer-well__icon"
-							/>
-						) }
+						className="editor-drawer-well__placeholder"
+					>
+						{ icon && <Gridicon icon={ icon } className="editor-drawer-well__icon" /> }
 						<span className="editor-drawer-well__button button is-secondary is-compact">
 							{ label }
 						</span>

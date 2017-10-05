@@ -46,7 +46,7 @@ const countriesList = forSms();
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,
-	label: `${ code } ${ symbol }`
+	label: `${ code } ${ symbol }`,
 } ) );
 
 class FormFields extends React.PureComponent {
@@ -83,14 +83,14 @@ class FormFields extends React.PureComponent {
 	handleCurrencyChange = event => {
 		const { value: currency } = event.currentTarget;
 		this.setState( state => ( {
-			currencyInput: { ...state.currencyInput, currency }
+			currencyInput: { ...state.currencyInput, currency },
 		} ) );
 	};
 
 	handlePriceChange = event => {
 		const { value } = event.currentTarget;
 		this.setState( state => ( {
-			currencyInput: { ...state.currencyInput, value }
+			currencyInput: { ...state.currencyInput, value },
 		} ) );
 	};
 
@@ -301,13 +301,23 @@ class FormFields extends React.PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="telInput_valid">Form Tel Input</FormLabel>
-						<FormTelInput name="telInput" id="telInput_valid" placeholder="Placeholder text..." isValid />
+						<FormTelInput
+							name="telInput"
+							id="telInput_valid"
+							placeholder="Placeholder text..."
+							isValid
+						/>
 						<FormInputValidation text="The phone number can be saved." />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="telInput_error">Form Tel Input</FormLabel>
-						<FormTelInput name="telInput" id="telInput_error" placeholder="Placeholder text..." isError />
+						<FormTelInput
+							name="telInput"
+							id="telInput_error"
+							placeholder="Placeholder text..."
+							isError
+						/>
 						<FormInputValidation isError text="The phone number is invalid." />
 					</FormFieldset>
 
@@ -379,7 +389,9 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="currency_input_editable">Editable Form Currency Input (customized list)</FormLabel>
+						<FormLabel htmlFor="currency_input_editable">
+							Editable Form Currency Input (customized list)
+						</FormLabel>
 						<FormCurrencyInput
 							name="currency_input_editable"
 							id="currency_input_editable"
@@ -399,13 +411,23 @@ class FormFields extends React.PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="textarea_valid">Form Textarea</FormLabel>
-						<FormTextarea name="textarea" id="textarea_valid" placeholder="Placeholder text..." isValid />
+						<FormTextarea
+							name="textarea"
+							id="textarea_valid"
+							placeholder="Placeholder text..."
+							isValid
+						/>
 						<FormInputValidation text="Your text can be saved." />
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel htmlFor="textarea_error">Form Textarea</FormLabel>
-						<FormTextarea name="textarea" id="textarea_error" placeholder="Placeholder text..." isError />
+						<FormTextarea
+							name="textarea"
+							id="textarea_error"
+							placeholder="Placeholder text..."
+							isError
+						/>
 						<FormInputValidation isError text="Your text is invalid." />
 					</FormFieldset>
 

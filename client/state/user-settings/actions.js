@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 import { get } from 'lodash';
 
@@ -24,7 +27,7 @@ const debug = debugFactory( 'calypso:user:settings' );
  * @returns {Object} Action object
  */
 export const fetchUserSettings = () => ( {
-	type: USER_SETTINGS_REQUEST
+	type: USER_SETTINGS_REQUEST,
 } );
 
 /**
@@ -33,9 +36,9 @@ export const fetchUserSettings = () => ( {
  * @param {Object} settingsOverride - default settings object
  * @return {Object} Action object
  */
-export const saveUserSettings = ( settingsOverride ) => ( {
+export const saveUserSettings = settingsOverride => ( {
 	type: USER_SETTINGS_SAVE,
-	settingsOverride
+	settingsOverride,
 } );
 
 /**
@@ -44,14 +47,14 @@ export const saveUserSettings = ( settingsOverride ) => ( {
  * @param  {Object} settingValues Setting values (the subset of keys to be updated)
  * @return {Object}               Action object
  */
-export const updateUserSettings = ( settingValues ) => ( {
+export const updateUserSettings = settingValues => ( {
 	type: USER_SETTINGS_UPDATE,
-	settingValues
+	settingValues,
 } );
 
 export const cancelPendingEmailChange = () => ( {
 	type: USER_SETTINGS_SAVE,
-	settingsOverride: { user_email_change_pending: false }
+	settingsOverride: { user_email_change_pending: false },
 } );
 
 export const clearUnsavedUserSettings = ( settingNames = null ) => ( {
@@ -62,12 +65,12 @@ export const clearUnsavedUserSettings = ( settingNames = null ) => ( {
 export const setUnsavedUserSetting = ( settingName, value ) => ( {
 	type: USER_SETTINGS_UNSAVED_SET,
 	settingName,
-	value
+	value,
 } );
 
-export const removeUnsavedUserSetting = ( settingName ) => ( {
+export const removeUnsavedUserSetting = settingName => ( {
 	type: USER_SETTINGS_UNSAVED_REMOVE,
-	settingName
+	settingName,
 } );
 
 /**

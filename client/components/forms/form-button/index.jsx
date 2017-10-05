@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -30,7 +33,7 @@ class FormButton extends React.Component {
 
 		return (
 			<Button
-				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
+				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
 				primary={ isPrimary }
 				className={ buttonClasses }
 			>

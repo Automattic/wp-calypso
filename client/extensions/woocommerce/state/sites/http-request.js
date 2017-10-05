@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 /**
@@ -54,13 +57,16 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 			};
 	}
 
-	return http( {
-		apiVersion: '1.1',
-		method: requestMethod,
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: requestQuery,
-		body: requestBody,
-	}, action );
+	return http(
+		{
+			apiVersion: '1.1',
+			method: requestMethod,
+			path: `/jetpack-blogs/${ siteId }/rest-api/`,
+			query: requestQuery,
+			body: requestBody,
+		},
+		action
+	);
 };
 
 /**
@@ -88,20 +94,19 @@ const _requestWithHeaders = ( method, path, siteId, body, action, namespace ) =>
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
 export default ( siteId, action, namespace = '/wc/v3' ) => ( {
-
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { API data }`
 	 */
-	get: ( path ) => _request( 'GET', path, siteId, null, action, namespace ),
+	get: path => _request( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a GET request to the API that will return with headers
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json-/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { status: <code>, body: { API data }, headers: { API response headers } }`
 	 */
-	getWithHeaders: ( path ) => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
+	getWithHeaders: path => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API
@@ -128,5 +133,5 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	del: ( path ) => _request( 'DELETE', path, siteId, null, action, namespace ),
+	del: path => _request( 'DELETE', path, siteId, null, action, namespace ),
 } );

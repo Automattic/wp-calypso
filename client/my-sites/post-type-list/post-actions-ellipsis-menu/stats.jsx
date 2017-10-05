@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -27,7 +30,8 @@ function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, is
 		<PopoverMenuItem
 			href={ `/stats/post/${ postId }/${ siteSlug }` }
 			onClick={ bumpStat }
-			icon="stats-alt">
+			icon="stats-alt"
+		>
 			{ translate( 'Stats' ) }
 		</PopoverMenuItem>
 	);
@@ -39,7 +43,7 @@ PostActionsEllipsisMenuStats.propTypes = {
 	siteSlug: PropTypes.string,
 	postId: PropTypes.number,
 	status: PropTypes.string,
-	isStatsActive: PropTypes.bool
+	isStatsActive: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -52,6 +56,6 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: getSiteSlug( state, post.site_ID ),
 		postId: post.ID,
 		status: post.status,
-		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' )
+		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' ),
 	};
 } )( localize( PostActionsEllipsisMenuStats ) );

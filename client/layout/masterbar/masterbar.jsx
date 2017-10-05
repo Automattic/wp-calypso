@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -13,7 +16,7 @@ const Masterbar = ( { children } ) => (
 Masterbar.displayName = 'Masterbar';
 
 Masterbar.propTypes = {
-	children: PropTypes.node.isRequired
+	children: PropTypes.node.isRequired,
 };
 
 export default Masterbar;

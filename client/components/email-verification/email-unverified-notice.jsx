@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -17,7 +20,6 @@ import userFactory from 'lib/user';
 const userLib = userFactory();
 
 export default class EmailUnverifiedNotice extends React.Component {
-
 	state = {
 		pendingRequest: false,
 		emailSent: false,
@@ -27,19 +29,19 @@ export default class EmailUnverifiedNotice extends React.Component {
 	static propTypes = {
 		userEmail: PropTypes.string,
 		noticeText: PropTypes.node,
-		noticeStatus: PropTypes.string
+		noticeStatus: PropTypes.string,
 	};
 
 	static defaultProps = {
 		noticeText: null,
-		noticeStatus: ''
+		noticeStatus: '',
 	};
 
 	handleDismiss = () => {
 		this.setState( { error: null, emailSent: false } );
 	};
 
-	handleSendVerificationEmail = ( e ) => {
+	handleSendVerificationEmail = e => {
 		e.preventDefault();
 
 		if ( this.state.pendingRequest ) {
@@ -47,7 +49,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 		}
 
 		this.setState( {
-			pendingRequest: true
+			pendingRequest: true,
 		} );
 
 		userLib.sendVerificationEmail( ( error, response ) => {
@@ -61,27 +63,26 @@ export default class EmailUnverifiedNotice extends React.Component {
 
 	renderEmailSendPending() {
 		return (
-			<Notice
-				icon="mail"
-				showDismiss={ false }
-				text={ i18n.translate( 'Sending…' ) }>
-				<NoticeAction><Spinner /></NoticeAction>
+			<Notice icon="mail" showDismiss={ false } text={ i18n.translate( 'Sending…' ) }>
+				<NoticeAction>
+					<Spinner />
+				</NoticeAction>
 			</Notice>
 		);
 	}
 
 	renderEmailSendSuccess() {
-		const noticeText = i18n.translate(
-			'We sent another confirmation email to %(email)s.',
-			{ args: { email: this.props.userEmail } }
-		);
+		const noticeText = i18n.translate( 'We sent another confirmation email to %(email)s.', {
+			args: { email: this.props.userEmail },
+		} );
 
 		return (
 			<Notice
 				text={ noticeText }
 				status="is-success"
 				onDismissClick={ this.handleDismiss }
-				className="email-verification-notice" />
+				className="email-verification-notice"
+			/>
 		);
 	}
 
@@ -92,16 +93,19 @@ export default class EmailUnverifiedNotice extends React.Component {
 			this.state.error.message,
 		];
 
-		return <Notice
-			text={ noticeText }
-			icon="notice"
-			onDismissClick={ this.handleDismiss }
-			status="is-warning"
-			className="email-verification-notice">
-			<NoticeAction onClick={ this.handleSendVerificationEmail }>
-				{ i18n.translate( 'Try Again' ) }
-			</NoticeAction>
-		</Notice>;
+		return (
+			<Notice
+				text={ noticeText }
+				icon="notice"
+				onDismissClick={ this.handleDismiss }
+				status="is-warning"
+				className="email-verification-notice"
+			>
+				<NoticeAction onClick={ this.handleSendVerificationEmail }>
+					{ i18n.translate( 'Try Again' ) }
+				</NoticeAction>
+			</Notice>
+		);
 	}
 
 	render() {
@@ -117,42 +121,38 @@ export default class EmailUnverifiedNotice extends React.Component {
 			return this.renderEmailSendSuccess();
 		}
 
-		const noticeText = this.props.noticeText
-			? this.props.noticeText
-			: (
-				<div>
-					<p>
-						<strong>
-							{ i18n.translate( 'Please confirm your email address' ) }
-						</strong>
-					</p>
-					<p>
+		const noticeText = this.props.noticeText ? (
+			this.props.noticeText
+		) : (
+			<div>
+				<p>
+					<strong>{ i18n.translate( 'Please confirm your email address' ) }</strong>
+				</p>
+				<p>
+					{ i18n.translate(
+						'To post and keep using WordPress.com you need to confirm your email address. ' +
+							'Please click the link in the email we sent at %(email)s.',
 						{
-							i18n.translate(
-								'To post and keep using WordPress.com you need to confirm your email address. ' +
-								'Please click the link in the email we sent at %(email)s.', {
-									args: {
-										email: this.props.userEmail
-									}
-								}
-							)
+							args: {
+								email: this.props.userEmail,
+							},
 						}
-					</p>
-					<p>
+					) }
+				</p>
+				<p>
+					{ i18n.translate(
+						'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
+							'or {{changeButton}}change the email address on your account{{/changeButton}}.',
 						{
-							i18n.translate(
-								'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
-								'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
-									components: {
-										requestButton: <a href="#" onClick={ this.handleSendVerificationEmail } />,
-										changeButton: <a href="/me/account" />
-									}
-								}
-							)
+							components: {
+								requestButton: <a href="#" onClick={ this.handleSendVerificationEmail } />,
+								changeButton: <a href="/me/account" />,
+							},
 						}
-					</p>
-				</div>
-			);
+					) }
+				</p>
+			</div>
+		);
 
 		return (
 			<Notice
@@ -160,13 +160,13 @@ export default class EmailUnverifiedNotice extends React.Component {
 				icon="info"
 				showDismiss={ false }
 				status={ this.props.noticeStatus }
-				className="email-unverified-notice">
-				{
-					this.props.noticeText &&
+				className="email-unverified-notice"
+			>
+				{ this.props.noticeText && (
 					<NoticeAction onClick={ this.handleSendVerificationEmail }>
 						{ i18n.translate( 'Resend Email' ) }
 					</NoticeAction>
-				}
+				) }
 			</Notice>
 		);
 	}

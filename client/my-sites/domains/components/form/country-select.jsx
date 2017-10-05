@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -23,7 +26,10 @@ export default React.createClass( {
 
 	recordCountrySelectClick() {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
+			analytics.ga.recordEvent(
+				'Upgrades',
+				`Clicked ${ this.props.eventFormName } Country Select`
+			);
 		}
 	},
 
@@ -45,16 +51,22 @@ export default React.createClass( {
 		} else {
 			options = options.concat( [
 				{ key: 'select-country', label: this.translate( 'Select Country' ), value: '' },
-				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' }
+				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' },
 			] );
 
-			options = options.concat( countriesList.map( ( country, index ) => {
-				if ( isEmpty( country.code ) ) {
-					return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
-				}
+			options = options.concat(
+				countriesList.map( ( country, index ) => {
+					if ( isEmpty( country.code ) ) {
+						return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
+					}
 
-				return { key: `country-select-${ index }-${ country.code }`, label: country.name, value: country.code };
-			} ) );
+					return {
+						key: `country-select-${ index }-${ country.code }`,
+						label: country.name,
+						value: country.code,
+					};
+				} )
+			);
 		}
 
 		return (
@@ -69,21 +81,20 @@ export default React.createClass( {
 						ref="input"
 						onChange={ this.props.onChange }
 						onClick={ this.recordCountrySelectClick }
-						isError={ this.props.isError }>
+						isError={ this.props.isError }
+					>
 						{ options.map( option => (
-							<option
-								key={ option.key }
-								value={ option.value }
-								disabled={ option.disabled }
-							>
+							<option key={ option.key } value={ option.value } disabled={ option.disabled }>
 								{ option.label }
 							</option>
 						) ) }
 					</FormSelect>
 				</div>
 
-				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
+				{ this.props.errorMessage && (
+					<FormInputValidation text={ this.props.errorMessage } isError />
+				) }
 			</div>
 		);
-	}
+	},
 } );

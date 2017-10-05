@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -12,12 +15,12 @@ export default React.createClass( {
 	displayName: 'PhoneInputCountryFlag',
 
 	propTypes: {
-		countryCode: PropTypes.string.isRequired
+		countryCode: PropTypes.string.isRequired,
 	},
 	getInitialState() {
 		return {
 			ready: false,
-			error: false
+			error: false,
 		};
 	},
 
@@ -68,5 +71,5 @@ export default React.createClass( {
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
-	}
+	},
 } );

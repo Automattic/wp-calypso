@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -35,44 +38,30 @@ class ARecord extends React.Component {
 		const isDataValid = isValid( 'data' );
 		const isAaaaRecord = fieldValues.type === 'AAAA';
 
-		let namePlaceholder = translate(
-			'Enter subdomain (optional)',
-			{
-				context: 'Placeholder shown when entering the optional subdomain part of a new DNS record'
-			}
-		);
-		let dataPlaceholder = translate(
-			'e.g. %(example)s',
-			{
-				args: {
-					example: '123.45.78.9'
-				}
-			}
-		);
+		let namePlaceholder = translate( 'Enter subdomain (optional)', {
+			context: 'Placeholder shown when entering the optional subdomain part of a new DNS record',
+		} );
+		let dataPlaceholder = translate( 'e.g. %(example)s', {
+			args: {
+				example: '123.45.78.9',
+			},
+		} );
 
 		if ( isAaaaRecord ) {
-			namePlaceholder = translate(
-				'Enter subdomain (required)',
-				{
-					context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
-				}
-			);
-			dataPlaceholder = translate(
-				'e.g. %(example)s',
-				{
-					args: {
-						example: '2001:500:84::b'
-					}
-				}
-			);
+			namePlaceholder = translate( 'Enter subdomain (required)', {
+				context: 'Placeholder shown when entering the required subdomain part of a new DNS record',
+			} );
+			dataPlaceholder = translate( 'e.g. %(example)s', {
+				args: {
+					example: '2001:500:84::b',
+				},
+			} );
 		}
 
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Name', { context: 'Dns Record' } ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ namePlaceholder }
@@ -81,18 +70,11 @@ class ARecord extends React.Component {
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Name' ) }
-							isError
-						/>
-					}
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Points To' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Points To' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
@@ -100,12 +82,7 @@ class ARecord extends React.Component {
 						value={ fieldValues.data }
 						placeholder={ dataPlaceholder }
 					/>
-					{ ! isDataValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid IP' ) }
-							isError
-						/>
-					}
+					{ ! isDataValid && <FormInputValidation text={ translate( 'Invalid IP' ) } isError /> }
 				</FormFieldset>
 			</div>
 		);

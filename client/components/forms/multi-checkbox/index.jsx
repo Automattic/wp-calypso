@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { includes, omit } from 'lodash';
@@ -48,7 +51,7 @@ export default class MultiCheckbox extends Component {
 				className="multi-checkbox"
 				{ ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }
 			>
-				{ options.map( option =>
+				{ options.map( option => (
 					<label key={ option.value }>
 						<input
 							name={ name + '[]' }
@@ -58,11 +61,9 @@ export default class MultiCheckbox extends Component {
 							onChange={ this.handleChange }
 							disabled={ disabled }
 						/>
-						<span>
-							{ option.label }
-						</span>
+						<span>{ option.label }</span>
 					</label>
-				) }
+				) ) }
 			</div>
 		);
 	}

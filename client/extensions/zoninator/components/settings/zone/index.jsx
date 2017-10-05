@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -25,7 +28,6 @@ import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
 
 class Zone extends Component {
-
 	static propTypes = {
 		deleteZone: PropTypes.func.isRequired,
 		feed: PropTypes.array,
@@ -37,11 +39,11 @@ class Zone extends Component {
 		translate: PropTypes.func.isRequired,
 		zone: PropTypes.object,
 		zoneId: PropTypes.number,
-	}
+	};
 
 	state = {
 		showDeleteDialog: false,
-	}
+	};
 
 	showDeleteDialog = () => this.setState( { showDeleteDialog: true } );
 
@@ -49,9 +51,11 @@ class Zone extends Component {
 
 	deleteZone = () => this.props.deleteZone( this.props.siteId, this.props.zoneId );
 
-	saveZoneDetails = ( form, data ) => this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
+	saveZoneDetails = ( form, data ) =>
+		this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
 
-	saveZoneFeed = ( form, data ) => this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
+	saveZoneFeed = ( form, data ) =>
+		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
 
 	renderContent() {
 		const { feed, siteSlug, translate, zone } = this.props;
@@ -63,23 +67,25 @@ class Zone extends Component {
 
 		return (
 			<div>
-				{
-					showDeleteDialog &&
+				{ showDeleteDialog && (
 					<DeleteZoneDialog
 						zoneName={ zone.name }
 						onConfirm={ this.deleteZone }
-						onCancel={ this.hideDeleteDialog } />
-				}
+						onCancel={ this.hideDeleteDialog }
+					/>
+				) }
 
 				<ZoneDetailsForm
 					label={ translate( 'Zone label' ) }
 					onSubmit={ this.saveZoneDetails }
-					initialValues={ zone } />
+					initialValues={ zone }
+				/>
 
 				<ZoneContentForm
 					label={ translate( 'Zone content' ) }
 					onSubmit={ this.saveZoneFeed }
-					initialValues={ { posts: feed } } />
+					initialValues={ { posts: feed } }
+				/>
 			</div>
 		);
 	}
@@ -99,7 +105,8 @@ class Zone extends Component {
 
 				<HeaderCake
 					backHref={ `${ settingsPath }/${ siteSlug }` }
-					actionButton={ zone && deleteButton } >
+					actionButton={ zone && deleteButton }
+				>
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
@@ -121,10 +128,7 @@ const connectComponent = connect(
 			feed: getFeed( state, siteId, zoneId ),
 		};
 	},
-	{ deleteZone, saveZone, saveFeed },
+	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( Zone );
+export default flowRight( connectComponent, localize )( Zone );

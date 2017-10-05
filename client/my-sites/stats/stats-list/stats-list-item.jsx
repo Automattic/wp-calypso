@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -26,7 +29,7 @@ module.exports = React.createClass( {
 		return {
 			active: this.props.active,
 			actionMenuOpen: false,
-			disabled: false
+			disabled: false,
 		};
 	},
 
@@ -47,7 +50,7 @@ module.exports = React.createClass( {
 	closeMenu: function() {
 		this.removeMenuListener();
 		this.setState( {
-			actionMenuOpen: false
+			actionMenuOpen: false,
 		} );
 	},
 
@@ -58,7 +61,7 @@ module.exports = React.createClass( {
 		if ( ! this.state.actionMenuOpen ) {
 			this.addMenuListener();
 			this.setState( {
-				actionMenuOpen: true
+				actionMenuOpen: true,
 			} );
 		} else {
 			this.closeMenu();
@@ -80,7 +83,7 @@ module.exports = React.createClass( {
 				gaEvent = moduleState + moduleName;
 
 				this.setState( {
-					active: ! this.state.active
+					active: ! this.state.active,
 				} );
 			}
 
@@ -106,7 +109,7 @@ module.exports = React.createClass( {
 
 	spamHandler: function( isSpammed ) {
 		this.setState( {
-			disabled: isSpammed
+			disabled: isSpammed,
 		} );
 	},
 
@@ -114,10 +117,9 @@ module.exports = React.createClass( {
 		var data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
-			actionClassSet = classNames(
-				'module-content-list-item-actions',
-				{ collapsed: actionMenu && ! this.state.disabled }
-			),
+			actionClassSet = classNames( 'module-content-list-item-actions', {
+				collapsed: actionMenu && ! this.state.disabled,
+			} ),
 			actionList;
 
 		// If we have more than a default action build out actions ul
@@ -131,17 +133,30 @@ module.exports = React.createClass( {
 					case 'follow':
 						if ( action.data && this.props.followList ) {
 							var followSite = this.props.followList.add( action.data );
-							actionItem = <Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />;
+							actionItem = (
+								<Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />
+							);
 						}
 						break;
 					case 'page':
-						actionItem = <Page page={ action.page } key={ action.type } moduleName={ moduleName } />;
+						actionItem = (
+							<Page page={ action.page } key={ action.type } moduleName={ moduleName } />
+						);
 						break;
 					case 'spam':
-						actionItem = <Spam data={ action.data } key={ action.type } afterChange={ this.spamHandler } moduleName={ moduleName } />;
+						actionItem = (
+							<Spam
+								data={ action.data }
+								key={ action.type }
+								afterChange={ this.spamHandler }
+								moduleName={ moduleName }
+							/>
+						);
 						break;
 					case 'link':
-						actionItem = <OpenLink href={ action.data } key={ action.type } moduleName={ moduleName } />;
+						actionItem = (
+							<OpenLink href={ action.data } key={ action.type } moduleName={ moduleName } />
+						);
 						break;
 				}
 
@@ -151,7 +166,7 @@ module.exports = React.createClass( {
 			}, this );
 
 			if ( actionItems.length > 0 ) {
-				actionList = ( <ul className={ actionClassSet }>{ actionItems }</ul> );
+				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;
 			}
 		}
 
@@ -168,7 +183,9 @@ module.exports = React.createClass( {
 			labelData = [ data ];
 		}
 
-		wrapperClassSet = classNames( { 'module-content-list-item-label-section': labelData.length > 1 } );
+		wrapperClassSet = classNames( {
+			'module-content-list-item-label-section': labelData.length > 1,
+		} );
 
 		label = labelData.map( function( labelItem, i ) {
 			var iconClassSetOptions = { avatar: true },
@@ -177,7 +194,7 @@ module.exports = React.createClass( {
 				itemLabel;
 
 			if ( labelItem.labelIcon ) {
-				gridiconSpan = ( <Gridicon icon={ labelItem.labelIcon } /> );
+				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
 			}
 
 			if ( labelItem.icon ) {
@@ -186,7 +203,7 @@ module.exports = React.createClass( {
 				}
 
 				icon = (
-					<span className='icon'>
+					<span className="icon">
 						<img alt="" src={ labelItem.icon } className={ classNames( iconClassSetOptions ) } />
 					</span>
 				);
@@ -194,16 +211,26 @@ module.exports = React.createClass( {
 
 			if ( labelItem.backgroundImage ) {
 				const style = { backgroundImage: `url( ${ labelItem.backgroundImage } )` };
-				icon = ( <span className="stats-list__flag-icon" style={ style } /> );
+				icon = <span className="stats-list__flag-icon" style={ style } />;
 			}
 
 			if ( data.link ) {
-				itemLabel = ( <a onClick={ this.preventDefaultOnClick } href={ data.link } >{ labelItem.label }</a> );
+				itemLabel = (
+					<a onClick={ this.preventDefaultOnClick } href={ data.link }>
+						{ labelItem.label }
+					</a>
+				);
 			} else {
-				itemLabel = ( <Emojify>{ labelItem.label }</Emojify> );
+				itemLabel = <Emojify>{ labelItem.label }</Emojify>;
 			}
 
-			return ( <span className={ wrapperClassSet } key={ i } >{ gridiconSpan }{ icon }{ itemLabel } </span> );
+			return (
+				<span className={ wrapperClassSet } key={ i }>
+					{ gridiconSpan }
+					{ icon }
+					{ itemLabel }{' '}
+				</span>
+			);
 		}, this );
 
 		return label;
@@ -217,7 +244,7 @@ module.exports = React.createClass( {
 		if ( 'object' !== typeof valueData || ! valueData.type ) {
 			valueData = {
 				type: 'number',
-				value: valueData
+				value: valueData,
 			};
 		}
 
@@ -237,14 +264,14 @@ module.exports = React.createClass( {
 	render: function() {
 		var data = this.props.data,
 			rightClassOptions = {
-				'module-content-list-item-right': true
+				'module-content-list-item-right': true,
 			},
 			toggleOptions = {
 				'module-content-list-item-actions-toggle': true,
-				show: data.actionMenu && ! this.state.disabled
+				show: data.actionMenu && ! this.state.disabled,
 			},
 			actions = this.buildActions(),
-			toggleGridicon = ( <Gridicon icon="chevron-down" /> ),
+			toggleGridicon = <Gridicon icon="chevron-down" />,
 			toggleIcon = this.props.children ? toggleGridicon : null,
 			mobileActionToggle,
 			groupClassOptions,
@@ -255,7 +282,7 @@ module.exports = React.createClass( {
 			disabled: this.state.disabled,
 			'module-content-list-item-link': this.props.children || data.link || data.page,
 			'module-content-list-item-toggle': this.props.children,
-			'is-expanded': this.state.active
+			'is-expanded': this.state.active,
 		};
 
 		if ( data.className ) {
@@ -267,15 +294,10 @@ module.exports = React.createClass( {
 				<a
 					href="#"
 					onClick={ this.actionMenuClick }
-					className={
-						classNames( toggleOptions )
-					}
-					title={
-						this.translate(
-							'Show Actions',
-							{ context: 'Label for hidden menu in a list on the Stats page.' }
-						)
-					}
+					className={ classNames( toggleOptions ) }
+					title={ this.translate( 'Show Actions', {
+						context: 'Label for hidden menu in a list on the Stats page.',
+					} ) }
 				>
 					<Gridicon icon="ellipsis" />
 				</a>
@@ -287,16 +309,21 @@ module.exports = React.createClass( {
 
 		return (
 			<li key={ this.key } data-group={ this.key } className={ groupClassName }>
-				<span className='module-content-list-item-wrapper' onClick={ this.onClick } tabIndex="0">
+				<span className="module-content-list-item-wrapper" onClick={ this.onClick } tabIndex="0">
 					<span className={ classNames( rightClassOptions ) }>
 						{ mobileActionToggle }
 						{ actions }
-						<span className="module-content-list-item-value">{ data.value ? this.buildValue() : null }</span>
+						<span className="module-content-list-item-value">
+							{ data.value ? this.buildValue() : null }
+						</span>
 					</span>
-					<span className="module-content-list-item-label">{ toggleIcon }{ this.buildLabel() }</span>
+					<span className="module-content-list-item-label">
+						{ toggleIcon }
+						{ this.buildLabel() }
+					</span>
 				</span>
 				{ this.props.children }
 			</li>
 		);
-	}
+	},
 } );

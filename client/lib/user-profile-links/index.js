@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { reject, some } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user:profile-links' );
@@ -44,7 +47,7 @@ UserProfileLinks.prototype.isSiteInProfileLinks = function( site ) {
 
 	return some( this.profileLinks, function( profileLink ) {
 		// the regex below is used to strip any leading scheme from the profileLink's URL
-		return ( site.domain === profileLink.value.replace( /^.*:\/\//, '' ) );
+		return site.domain === profileLink.value.replace( /^.*:\/\//, '' );
 	} );
 };
 
@@ -70,25 +73,27 @@ UserProfileLinks.prototype.fetchProfileLinks = function() {
 	this.fetchingProfileLinks = true;
 	debug( 'Fetching profile links for user' );
 	wpcom
-	.me()
-	.settings()
-	.profileLinks()
-	.get( function( error, data ) {
-		this.fetchingProfileLinks = false;
-		if ( error ) {
-			debug( 'Something went wrong fetching the profile links for the user.' );
-			if ( ( 'error' in error ) && ( 'reauthorization_required' === error.error ) ) {
-				this.reAuthRequired = true;
-			}
-			this.emit( 'change' );
-			return;
-		}
-		this.profileLinks = data.profile_links;
-		this.initialized = true;
-		this.emit( 'change' );
+		.me()
+		.settings()
+		.profileLinks()
+		.get(
+			function( error, data ) {
+				this.fetchingProfileLinks = false;
+				if ( error ) {
+					debug( 'Something went wrong fetching the profile links for the user.' );
+					if ( 'error' in error && 'reauthorization_required' === error.error ) {
+						this.reAuthRequired = true;
+					}
+					this.emit( 'change' );
+					return;
+				}
+				this.profileLinks = data.profile_links;
+				this.initialized = true;
+				this.emit( 'change' );
 
-		debug( 'Profile links successfully retrieved' );
-	}.bind( this ) );
+				debug( 'Profile links successfully retrieved' );
+			}.bind( this )
+		);
 };
 
 /*
@@ -96,17 +101,20 @@ UserProfileLinks.prototype.fetchProfileLinks = function() {
  */
 UserProfileLinks.prototype.addProfileLinks = function( profileLinks, callback ) {
 	wpcom
-	.me()
-	.settings()
-	.profileLinks()
-	.add( profileLinks, function( error, data ) {
-		if ( data && data.profile_links ) {
-			this.profileLinks = data.profile_links;
-			this.emit( 'change' );
-		}
-		// Let the form know whether the save was completely successful or not
-		callback( error, data );
-	}.bind( this ) );
+		.me()
+		.settings()
+		.profileLinks()
+		.add(
+			profileLinks,
+			function( error, data ) {
+				if ( data && data.profile_links ) {
+					this.profileLinks = data.profile_links;
+					this.emit( 'change' );
+				}
+				// Let the form know whether the save was completely successful or not
+				callback( error, data );
+			}.bind( this )
+		);
 };
 
 /*
@@ -114,18 +122,21 @@ UserProfileLinks.prototype.addProfileLinks = function( profileLinks, callback ) 
  */
 UserProfileLinks.prototype.deleteProfileLinkBySlug = function( slug, callback ) {
 	wpcom
-	.me()
-	.settings()
-	.profileLinks()
-	.del( slug, function( error, data ) {
-		if ( ! error ) {
-			this.profileLinks = reject( this.profileLinks, { link_slug: slug } );
-			this.emit( 'change' );
-		}
+		.me()
+		.settings()
+		.profileLinks()
+		.del(
+			slug,
+			function( error, data ) {
+				if ( ! error ) {
+					this.profileLinks = reject( this.profileLinks, { link_slug: slug } );
+					this.emit( 'change' );
+				}
 
-		// Let the form know whether the deletion was successful or not
-		callback( error, data );
-	}.bind( this ) );
+				// Let the form know whether the deletion was successful or not
+				callback( error, data );
+			}.bind( this )
+		);
 };
 
 /*

@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 

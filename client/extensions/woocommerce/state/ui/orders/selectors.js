@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, isObject, merge } from 'lodash';
 
 /**
@@ -15,7 +18,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @return {Number|Object} The ID of the current order (or object placeholder, if a new order)
  */
 export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'currentlyEditingId' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'currentlyEditingId' ],
+		null
+	);
 };
 
 /**
@@ -24,7 +31,11 @@ export const getCurrentlyEditingOrderId = ( state, siteId = getSelectedSiteId( s
  * @return {Number} The current page being shown to the user. Defaults to 1.
  */
 export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentPage' ], 1 );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentPage' ],
+		1
+	);
 };
 
 /**
@@ -33,7 +44,11 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
  * @return {String} The current search term being shown to the user. Defaults to "".
  */
 export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentSearch' ], '' );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'list', 'currentSearch' ],
+		''
+	);
 };
 
 /**
@@ -42,7 +57,11 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
  * @return {Object} The local edits made to the current order
  */
 export const getOrderEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'changes' ], {} );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'edits', 'changes' ],
+		{}
+	);
 };
 
 /**

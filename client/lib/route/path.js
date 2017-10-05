@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { includes } from 'lodash';
 
 /**
@@ -17,7 +20,7 @@ const statsLocationsByTab = {
 	week: '/stats/week/',
 	month: '/stats/month/',
 	year: '/stats/year/',
-	insights: '/stats/insights/'
+	insights: '/stats/insights/',
 };
 
 function getSiteFragment( path ) {
@@ -53,7 +56,7 @@ function addSiteFragment( path, site ) {
 	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
 		// Editor-style URL; insert the site as either the 2nd or 3rd piece of
 		// the URL ( '/post/:site' or '/edit/:cpt/:site' )
-		const sitePos = ( 'edit' === pieces[ 1 ] ? 3 : 2 );
+		const sitePos = 'edit' === pieces[ 1 ] ? 3 : 2;
 		pieces.splice( sitePos, 0, site );
 	} else {
 		// Somewhere else in Calypso; add /:site onto the end
@@ -68,11 +71,11 @@ function sectionifyWithRoutes( path, routes ) {
 	if ( ! routes || ! Array.isArray( routes ) ) {
 		return {
 			routePath: sectionify( path, routes ),
-			routeParams
+			routeParams,
 		};
 	}
 
-	let routePath = path.split( '?' )[ 0 ];
+	let routePath = path.split( '?' )[ 0 ];
 	for ( const route of routes ) {
 		if ( route.match( routePath, routeParams ) ) {
 			routePath = route.path;
@@ -82,12 +85,12 @@ function sectionifyWithRoutes( path, routes ) {
 
 	return {
 		routePath: untrailingslashit( routePath ),
-		routeParams
+		routeParams,
 	};
 }
 
 function sectionify( path, siteFragment ) {
-	let basePath = path.split( '?' )[ 0 ];
+	let basePath = path.split( '?' )[ 0 ];
 
 	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
 	// For example, when the `:site` parameter is not the last or second-last part of the route
@@ -144,15 +147,15 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
 function mapPostStatus( status ) {
 	switch ( status ) {
 		// Drafts
-		case 'drafts' :
+		case 'drafts':
 			return 'draft,pending';
 		// Posts scheduled in the future
-		case 'scheduled' :
+		case 'scheduled':
 			return 'future';
 		// Trashed posts
-		case 'trashed' :
+		case 'trashed':
 			return 'trash';
-		default :
+		default:
 			return 'publish,private';
 	}
 }
@@ -169,5 +172,5 @@ module.exports = {
 	sectionify: sectionify,
 	sectionifyWithRoutes: sectionifyWithRoutes,
 	mapPostStatus: mapPostStatus,
-	externalRedirect: externalRedirect
+	externalRedirect: externalRedirect,
 };

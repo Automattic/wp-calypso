@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
@@ -11,16 +14,19 @@ import {
 
 // TODO: Handle error
 
-export default createReducer( {}, {
-	[ WOOCOMMERCE_SETUP_CHOICES_REQUEST ]: () => {
-		return LOADING;
-	},
+export default createReducer(
+	{},
+	{
+		[ WOOCOMMERCE_SETUP_CHOICES_REQUEST ]: () => {
+			return LOADING;
+		},
 
-	[ WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
+		[ WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return data;
+		},
 
-	[ WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
-} );
+		[ WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return data;
+		},
+	}
+);

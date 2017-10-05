@@ -1,5 +1,7 @@
 /**
- * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http://github.com/webmodules/jsonp
+ * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
+ *
+ * @format
  */
 
 /**
@@ -23,7 +25,7 @@ var count = 0;
 /**
  * Noop function. Does nothing.
  */
-function noop() { }
+function noop() {}
 
 /**
  * JSONP handler
@@ -42,7 +44,7 @@ function jsonp( url, query, fn ) {
 		id;
 
 	// generate a unique id for this request
-	id = prefix + ( count++ );
+	id = prefix + count++;
 
 	if ( timeout ) {
 		timer = setTimeout( function() {

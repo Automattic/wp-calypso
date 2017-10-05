@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import tinymce from 'tinymce/tinymce';
 import closest from 'component-closest';
 import userModule from 'lib/user';
@@ -60,7 +63,10 @@ function editorButtonAnalytics( editor ) {
 	 * of `document.body` (not a descendant of `editor.container`).
 	 */
 	function trackBodyClick( event ) {
-		if ( editorEventAncestor( event, '.mce-colorbutton' ) && ! editorEventAncestor( event, '.mce-open' ) ) {
+		if (
+			editorEventAncestor( event, '.mce-colorbutton' ) &&
+			! editorEventAncestor( event, '.mce-open' )
+		) {
 			// This could be a click on the foreground color button to apply
 			// the previously selected foreground color.  Unfortunately this
 			// line is never executed - there must be another event handler
@@ -77,7 +83,10 @@ function editorButtonAnalytics( editor ) {
 			const locale = currentUser ? currentUser.localeSlug : 'en';
 			if ( locale === 'en' ) {
 				const text = closest( event.target, '.mce-menu-item', true ).textContent;
-				const menuItemName = text.toLowerCase().trim().replace( /[^a-z0-9]+/g, '_' );
+				const menuItemName = text
+					.toLowerCase()
+					.trim()
+					.replace( /[^a-z0-9]+/g, '_' );
 				recordTinyMCEButtonClick( 'format_dropdown_' + menuItemName );
 			} else {
 				recordTinyMCEButtonClick( 'format_dropdown_non_english' );

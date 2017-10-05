@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -18,7 +21,7 @@ class AuthCaptureToggle extends Component {
 		isAuthOnlyMode: PropTypes.bool.isRequired,
 		onSelectAuthOnly: PropTypes.func.isRequired,
 		onSelectCapture: PropTypes.func.isRequired,
-	}
+	};
 
 	render = () => {
 		const { isAuthOnlyMode, onSelectAuthOnly, onSelectCapture, translate } = this.props;
@@ -31,20 +34,24 @@ class AuthCaptureToggle extends Component {
 						name="capture"
 						value="yes"
 						checked={ ! isAuthOnlyMode }
-						onChange={ onSelectCapture } />
-					<span>{ translate( 'Authorize and charge the customers credit card automatically' ) }</span>
+						onChange={ onSelectCapture }
+					/>
+					<span>
+						{ translate( 'Authorize and charge the customers credit card automatically' ) }
+					</span>
 				</FormLabel>
 				<FormLabel>
 					<FormRadio
 						name="capture"
 						value="no"
 						checked={ isAuthOnlyMode }
-						onChange={ onSelectAuthOnly } />
-					<span>{ translate( 'Authorize the customer\'s credit card but charge manually' ) }</span>
+						onChange={ onSelectAuthOnly }
+					/>
+					<span>{ translate( "Authorize the customer's credit card but charge manually" ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
-	}
+	};
 }
 
 export default localize( AuthCaptureToggle );

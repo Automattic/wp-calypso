@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,10 +19,7 @@ import upgradesActions from 'lib/upgrades/actions';
 class AddButton extends React.PureComponent {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	render() {
@@ -28,10 +28,7 @@ class AddButton extends React.PureComponent {
 		}
 
 		return (
-			<button
-				type="button"
-				className="button is-primary"
-				onClick={ this.addPrivacyProtection }>
+			<button type="button" className="button is-primary" onClick={ this.addPrivacyProtection }>
 				{ this.props.translate( 'Add Privacy Protection' ) }
 			</button>
 		);
@@ -43,7 +40,7 @@ class AddButton extends React.PureComponent {
 		);
 
 		page( '/checkout/' + this.props.selectedSite.slug );
-	}
+	};
 }
 
 export default localize( AddButton );

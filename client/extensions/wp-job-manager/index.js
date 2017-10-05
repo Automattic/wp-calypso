@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import { get } from 'lodash';
 
@@ -25,11 +28,24 @@ export default function() {
 
 	page( '/extensions/wp-job-manager', sites );
 	page( '/extensions/wp-job-manager/:site', siteSelection, navigation, renderTab( JobListings ) );
-	page( `/extensions/wp-job-manager/${ jobSubmissionSlug }/:site`, siteSelection, navigation,
-		renderTab( JobSubmission, jobSubmissionSlug ) );
-	page( `/extensions/wp-job-manager/${ pagesSlug }/:site`, siteSelection, navigation,
-		renderTab( Pages, pagesSlug ) );
-	page( '/extensions/wp-job-manager/setup/:site/:stepName?', siteSelection, navigation, renderSetupWizard );
+	page(
+		`/extensions/wp-job-manager/${ jobSubmissionSlug }/:site`,
+		siteSelection,
+		navigation,
+		renderTab( JobSubmission, jobSubmissionSlug )
+	);
+	page(
+		`/extensions/wp-job-manager/${ pagesSlug }/:site`,
+		siteSelection,
+		navigation,
+		renderTab( Pages, pagesSlug )
+	);
+	page(
+		'/extensions/wp-job-manager/setup/:site/:stepName?',
+		siteSelection,
+		navigation,
+		renderSetupWizard
+	);
 }
 
 initExtension();

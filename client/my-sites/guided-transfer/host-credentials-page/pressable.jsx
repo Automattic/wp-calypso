@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -9,31 +12,18 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import {
-	Email,
-	Password,
-	CreateAccountTip,
-	SubmitSection,
-	WPOrgURL,
-} from './fields';
+import { Email, Password, CreateAccountTip, SubmitSection, WPOrgURL } from './fields';
 
 class Pressable extends Component {
 	static propTypes = {
 		hostInfo: PropTypes.shape( {
 			label: PropTypes.string.isRequired,
-			url: PropTypes.string.isRequired
-		} ).isRequired
+			url: PropTypes.string.isRequired,
+		} ).isRequired,
 	};
 
 	render() {
-		const {
-			hostInfo,
-			translate,
-			fieldValues,
-			onFieldChange,
-			isSubmitting,
-			submit,
-		} = this.props;
+		const { hostInfo, translate, fieldValues, onFieldChange, isSubmitting, submit } = this.props;
 
 		return (
 			<div>
@@ -41,7 +31,8 @@ class Pressable extends Component {
 					<p>
 						{ translate(
 							'Please enter your account details. They will be stored securely so that one ' +
-							'of our Happiness Engineers can get the transfer going for you.' ) }
+								'of our Happiness Engineers can get the transfer going for you.'
+						) }
 					</p>
 					<div>
 						<Email
@@ -57,20 +48,14 @@ class Pressable extends Component {
 							disabled={ isSubmitting }
 						/>
 					</div>
-					<CreateAccountTip
-						hostLabel={ hostInfo.label }
-						hostUrl={ hostInfo.url }
-					/>
+					<CreateAccountTip hostLabel={ hostInfo.label } hostUrl={ hostInfo.url } />
 					<WPOrgURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
 						disabled={ isSubmitting }
 					/>
 				</CompactCard>
-				<SubmitSection
-					submit={ submit }
-					isSubmitting={ isSubmitting }
-				/>
+				<SubmitSection submit={ submit } isSubmitting={ isSubmitting } />
 			</div>
 		);
 	}

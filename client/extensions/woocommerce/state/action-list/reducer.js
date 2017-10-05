@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { pick } from 'lodash';
 
 /**
@@ -27,9 +30,8 @@ function handleActionListAnnotate( actionlist, action ) {
 	const pickNames = [ 'description', 'startTime', 'endTime' ];
 
 	return {
-		prevSteps: ( prevSteps || [] ).map( ( step ) => pick( step, pickNames ) ),
-		currentStep: ( currentStep ? pick( currentStep, pickNames ) : null ),
-		nextSteps: nextSteps.map( ( step ) => pick( step, pickNames ) ),
+		prevSteps: ( prevSteps || [] ).map( step => pick( step, pickNames ) ),
+		currentStep: currentStep ? pick( currentStep, pickNames ) : null,
+		nextSteps: nextSteps.map( step => pick( step, pickNames ) ),
 	};
 }
-

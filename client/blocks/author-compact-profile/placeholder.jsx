@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -14,9 +17,7 @@ const AuthorCompactProfilePlaceholder = () => {
 			<div className="author-compact-profile__avatar-link">
 				<ReaderAvatar showPlaceholder={ true } />
 			</div>
-			<div className="author-compact-profile__site-link is-placeholder">
-				Site name
-			</div>
+			<div className="author-compact-profile__site-link is-placeholder">Site name</div>
 			<div className="author-compact-profile__follow">
 				<div className="author-compact-profile__follow-count is-placeholder">
 					Number of followers

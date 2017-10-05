@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 
 /**
@@ -15,7 +18,7 @@ import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 export function setMediaModalView( view ) {
 	return {
 		type: MEDIA_MODAL_VIEW_SET,
-		view
+		view,
 	};
 }
 

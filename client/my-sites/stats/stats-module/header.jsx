@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -24,7 +27,7 @@ export default React.createClass( {
 		isCollapsed: PropTypes.bool,
 		showActions: PropTypes.bool,
 		showCollapse: PropTypes.bool,
-		onActionClick: PropTypes.func
+		onActionClick: PropTypes.func,
 	},
 
 	getDefaultProps() {
@@ -32,8 +35,8 @@ export default React.createClass( {
 			showCollapse: true,
 			showModule: true,
 			showActions: true,
-			onActionClick: () => {}
-		}
+			onActionClick: () => {},
+		};
 	},
 
 	toggleInfo: function( event ) {
@@ -47,7 +50,7 @@ export default React.createClass( {
 		}
 
 		onActionClick( {
-			showInfo: ! showInfo
+			showInfo: ! showInfo,
 		} );
 	},
 
@@ -61,7 +64,7 @@ export default React.createClass( {
 		}
 
 		onActionClick( {
-			showModule: ! showModule
+			showModule: ! showModule,
 		} );
 	},
 
@@ -76,10 +79,15 @@ export default React.createClass( {
 		return (
 			<ul className="module-header-actions">
 				<li className="module-header-action toggle-info">
-					<a href="#"
+					<a
+						href="#"
 						className="module-header-action-link"
-						aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
-						title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						aria-label={ this.translate( 'Show or hide panel information', {
+							context: 'Stats panel action',
+						} ) }
+						title={ this.translate( 'Show or hide panel information', {
+							context: 'Stats panel action',
+						} ) }
 						onClick={ this.toggleInfo }
 					>
 						<Gridicon icon={ infoIcon } />
@@ -96,21 +104,11 @@ export default React.createClass( {
 				<a
 					href="#"
 					className="module-header-action-link"
-					aria-label={
-						this.translate(
-							'Expand or collapse panel',
-							{ context: 'Stats panel action' }
-						)
-					}
-					title={
-						this.translate(
-							'Expand or collapse panel',
-							{ context: 'Stats panel action' }
-						)
-					}
-					onClick={
-						this.toggleModule
-					}
+					aria-label={ this.translate( 'Expand or collapse panel', {
+						context: 'Stats panel action',
+					} ) }
+					title={ this.translate( 'Expand or collapse panel', { context: 'Stats panel action' } ) }
+					onClick={ this.toggleModule }
 				>
 					<Gridicon icon="chevron-down" />
 				</a>
@@ -144,5 +142,5 @@ export default React.createClass( {
 				{ this.renderActions() }
 			</div>
 		);
-	}
+	},
 } );

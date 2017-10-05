@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -18,7 +21,7 @@ export default React.createClass( {
 
 	propTypes: {
 		stream: PropTypes.string,
-		title: PropTypes.string
+		title: PropTypes.string,
 	},
 
 	renderTitle() {
@@ -33,5 +36,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import reset from './reset/reducer';
 import { combineReducers, createReducer } from 'state/utils';
 import settings from './settings/reducer';

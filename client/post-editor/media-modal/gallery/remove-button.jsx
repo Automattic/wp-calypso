@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import { reject } from 'lodash';
 import Gridicon from 'gridicons';
@@ -16,10 +19,9 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class RemoveButton extends PureComponent {
-
 	static propTypes = {
 		siteId: PropTypes.number,
-		itemId: PropTypes.number
+		itemId: PropTypes.number,
 	};
 
 	remove = () => {
@@ -29,7 +31,7 @@ class RemoveButton extends PureComponent {
 		}
 
 		const selected = MediaLibrarySelectedStore.getAll( siteId );
-		const items = reject( selected, ( item ) => item.ID === itemId );
+		const items = reject( selected, item => item.ID === itemId );
 
 		MediaActions.setLibrarySelectedItems( siteId, items );
 	};
@@ -40,7 +42,7 @@ class RemoveButton extends PureComponent {
 		return (
 			<button
 				onClick={ this.remove }
-				onMouseDown={ ( event ) => event.stopPropagation() }
+				onMouseDown={ event => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
 				<span className="screen-reader-text">{ translate( 'Remove' ) }</span>

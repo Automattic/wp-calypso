@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { memoize } from 'lodash';
 
 module.exports = memoize( function( src ) {

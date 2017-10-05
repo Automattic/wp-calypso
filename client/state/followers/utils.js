@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import deterministicStringify from 'json-stable-stringify';
 import { omit } from 'lodash';
 

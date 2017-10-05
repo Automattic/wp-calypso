@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
+import { flowRight, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +26,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-	hasSiteStatsQueryFailed
+	hasSiteStatsQueryFailed,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -32,7 +35,7 @@ class StatModuleFollowers extends Component {
 		activeFilter: 'wpcom-followers',
 	};
 
-	changeFilter = ( selection ) => {
+	changeFilter = selection => {
 		const filter = selection.value;
 		let gaEvent;
 		if ( filter !== this.state.activeFilter ) {
@@ -49,7 +52,7 @@ class StatModuleFollowers extends Component {
 			}
 
 			this.setState( {
-				activeFilter: filter
+				activeFilter: filter,
 			} );
 		}
 	};
@@ -65,12 +68,12 @@ class StatModuleFollowers extends Component {
 		const options = [
 			{
 				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com Followers' )
+				label: this.props.translate( 'WordPress.com Followers' ),
 			},
 			{
 				value: 'email-followers',
-				label: this.props.translate( 'Email Followers' )
-			}
+				label: this.props.translate( 'Email Followers' ),
+			},
 		];
 
 		return <StatsModuleSelectDropdown options={ options } onSelect={ this.changeFilter } />;
@@ -89,7 +92,7 @@ class StatModuleFollowers extends Component {
 			translate,
 			numberFormat,
 			emailQuery,
-			wpcomQuery
+			wpcomQuery,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -105,70 +108,86 @@ class StatModuleFollowers extends Component {
 			{
 				'is-loading': isLoading,
 				'has-no-data': noData,
-				'is-showing-error': hasError || noData
-			}
+				'is-showing-error': hasError || noData,
+			},
 		];
 
 		const summaryPageSlug = siteSlug || '';
-		const summaryPageLink = 'email-followers' === activeFilter
-			? '/people/email-followers/' + summaryPageSlug
-			: '/people/followers/' + summaryPageSlug;
+		const summaryPageLink =
+			'email-followers' === activeFilter
+				? '/people/email-followers/' + summaryPageSlug
+				: '/people/followers/' + summaryPageSlug;
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } /> }
-				{ siteId && <QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } /> }
+				{ siteId && (
+					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } />
+				) }
+				{ siteId && (
+					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
+				) }
 				<SectionHeader label={ translate( 'Followers' ) } href={ summaryPageLink } />
 				<Card className={ classNames( ...classes ) }>
 					<div className="followers">
 						<div className="module-content">
-							{ noData && ! hasError && ! isLoading &&
+							{ noData &&
+							! hasError &&
+							! isLoading && (
 								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-							}
+							) }
 
 							{ this.filterSelect() }
 
 							<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
 								<div className="module-content-text module-content-text-stat">
-									{ wpcomData && !! wpcomData.total_wpcom &&
-										<p>{ translate( 'Total WordPress.com Followers' ) }: { numberFormat( wpcomData.total_wpcom ) }</p>
-									}
+									{ wpcomData &&
+									!! wpcomData.total_wpcom && (
+										<p>
+											{ translate( 'Total WordPress.com Followers' ) }:{' '}
+											{ numberFormat( wpcomData.total_wpcom ) }
+										</p>
+									) }
 								</div>
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
-								{ hasWpcomFollowers &&
-									<StatsList moduleName="wpcomFollowers"
+								{ hasWpcomFollowers && (
+									<StatsList
+										moduleName="wpcomFollowers"
 										data={ wpcomData.subscribers }
 										followList={ this.props.followList }
 									/>
-								}
+								) }
 								{ hasWpcomQueryFailed && <ErrorPanel className="is-error" /> }
 							</div>
 
 							<div className="tab-content email-followers stats-async-metabox-wrapper">
 								<div className="module-content-text module-content-text-stat">
-									{ emailData && !! emailData.total_email &&
-										<p>{ translate( 'Total Email Followers' ) }: { numberFormat( emailData.total_email ) }</p>
-									}
+									{ emailData &&
+									!! emailData.total_email && (
+										<p>
+											{ translate( 'Total Email Followers' ) }:{' '}
+											{ numberFormat( emailData.total_email ) }
+										</p>
+									) }
 								</div>
 
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
-								{ hasEmailFollowers && <StatsList moduleName="EmailFollowers" data={ emailData.subscribers } /> }
+								{ hasEmailFollowers && (
+									<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
+								) }
 								{ hasEmailQueryFailed && <ErrorPanel className={ 'network-error' } /> }
 							</div>
 
 							<StatsModulePlaceholder isLoading={ isLoading } />
 						</div>
-						{ (
-								( wpcomData && wpcomData.subscribers.length !== wpcomData.total_wpcom ) ||
-								( emailData && emailData.subscribers.length !== emailData.total_email )
-							) &&
+						{ ( ( wpcomData && wpcomData.subscribers.length !== wpcomData.total_wpcom ) ||
+							( emailData && emailData.subscribers.length !== emailData.total_email ) ) && (
 							<div key="view-all" className="module-expand">
 								<a href={ summaryPageLink }>
 									{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
-									<span className="right"></span>
+									<span className="right" />
 								</a>
 							</div>
-						}
+						) }
 					</div>
 				</Card>
 			</div>
@@ -177,29 +196,36 @@ class StatModuleFollowers extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const emailQuery = { type: 'email', max: 10 };
 		const wpcomQuery = { type: 'wpcom', max: 10 };
 
 		return {
-			requestingEmailFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsFollowers', emailQuery ),
+			requestingEmailFollowers: isRequestingSiteStatsForQuery(
+				state,
+				siteId,
+				'statsFollowers',
+				emailQuery
+			),
 			emailData: getSiteStatsNormalizedData( state, siteId, 'statsFollowers', emailQuery ),
 			hasEmailQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsFollowers', emailQuery ),
-			requestingWpcomFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsFollowers', wpcomQuery ),
+			requestingWpcomFollowers: isRequestingSiteStatsForQuery(
+				state,
+				siteId,
+				'statsFollowers',
+				wpcomQuery
+			),
 			wpcomData: getSiteStatsNormalizedData( state, siteId, 'statsFollowers', wpcomQuery ),
 			hasWpcomQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsFollowers', wpcomQuery ),
 			emailQuery,
 			wpcomQuery,
 			siteId,
-			siteSlug
+			siteSlug,
 		};
 	},
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatModuleFollowers );
+export default flowRight( connectComponent, localize )( StatModuleFollowers );

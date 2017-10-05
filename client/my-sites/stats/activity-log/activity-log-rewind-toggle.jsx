@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
@@ -33,20 +36,13 @@ class ActivityLogRewindToggle extends Component {
 	};
 
 	activateRewind = () => {
-		const {
-			activateRewind,
-			siteId,
-		} = this.props;
+		const { activateRewind, siteId } = this.props;
 
 		activateRewind( siteId );
 	};
 
 	render() {
-		const {
-			isActivating,
-			siteId,
-			translate,
-		} = this.props;
+		const { isActivating, siteId, translate } = this.props;
 
 		const isSiteKnown = !! siteId;
 
@@ -69,7 +65,8 @@ class ActivityLogRewindToggle extends Component {
 export default connect(
 	( state, { siteId } ) => ( {
 		isActivating: isRewindActivating( state, siteId ),
-	} ), {
+	} ),
+	{
 		activateRewind: activateRewindAction,
 	}
 )( localize( ActivityLogRewindToggle ) );

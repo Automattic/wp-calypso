@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import Dispatcher from 'dispatcher';
 
 /**
@@ -36,7 +39,7 @@ function decrementSiteCount() {
 	var data = _user.get(),
 		attributes = {
 			visible_site_count: data.visible_site_count - 1,
-			site_count: data.site_count - 1
+			site_count: data.site_count - 1,
 		};
 	_user.set( attributes );
 }
@@ -45,7 +48,7 @@ function incrementSiteCount() {
 	const data = _user.get(),
 		attributes = {
 			visible_site_count: data.visible_site_count + 1,
-			site_count: data.site_count + 1
+			site_count: data.site_count + 1,
 		};
 	_user.set( attributes );
 }

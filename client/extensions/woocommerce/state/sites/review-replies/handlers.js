@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 
 /**
@@ -25,31 +28,37 @@ import {
 } from 'woocommerce/state/action-types';
 
 export default {
-	[ WOOCOMMERCE_REVIEW_REPLIES_REQUEST ]: [ dispatchRequest(
-		handleReviewRepliesRequest,
-		handleReviewRepliesRequestSuccess,
-		handleReviewRepliesRequestError
-	) ],
-	[ WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST ]: [ dispatchRequest(
-		handleReviewReplyCreate,
-		handleReviewReplyCreateSuccess,
-		announceCreateFailure,
-	) ],
-	[ WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST ]: [ dispatchRequest(
-		handleDeleteReviewReply,
-		announceDeleteSuccess,
-		announceDeleteFailure
-	) ],
-	[ WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST ]: [ dispatchRequest(
-		handleReviewReplyUpdate,
-		handleReviewReplyUpdateSuccess,
-		announceReviewReplyUpdateFailure
-	) ],
+	[ WOOCOMMERCE_REVIEW_REPLIES_REQUEST ]: [
+		dispatchRequest(
+			handleReviewRepliesRequest,
+			handleReviewRepliesRequestSuccess,
+			handleReviewRepliesRequestError
+		),
+	],
+	[ WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST ]: [
+		dispatchRequest(
+			handleReviewReplyCreate,
+			handleReviewReplyCreateSuccess,
+			announceCreateFailure
+		),
+	],
+	[ WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST ]: [
+		dispatchRequest( handleDeleteReviewReply, announceDeleteSuccess, announceDeleteFailure ),
+	],
+	[ WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST ]: [
+		dispatchRequest(
+			handleReviewReplyUpdate,
+			handleReviewReplyUpdateSuccess,
+			announceReviewReplyUpdateFailure
+		),
+	],
 };
 
 export function handleReviewRepliesRequest( { dispatch }, action ) {
 	const { siteId, reviewId } = action;
-	dispatch( request( siteId, action, '/wp/v2' ).get( `comments?parent=${ reviewId }&order=asc&per_page=15` ) );
+	dispatch(
+		request( siteId, action, '/wp/v2' ).get( `comments?parent=${ reviewId }&order=asc&per_page=15` )
+	);
 }
 
 export function handleReviewRepliesRequestSuccess( { dispatch }, action, { data } ) {
@@ -78,16 +87,18 @@ export function handleReviewReplyCreate( { dispatch }, action ) {
 
 	// TODO - Update to use /wp/v2/comments again if possible. POST `/wp/v2/comments`
 	// has been timing out on creates for a couple test sites, so we will use the .com endpoint in the meantime.
-	dispatch( http( {
-		method: 'POST',
-		apiVersion: '1.1',
-		path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
-		body: {
-			content: replyText
-		},
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			apiVersion: '1.1',
+			path: `/sites/${ siteId }/comments/${ reviewId }/replies/new`,
+			body: {
+				content: replyText,
+			},
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 }
 
 export function handleReviewReplyCreateSuccess( { dispatch, getState }, action ) {
@@ -103,12 +114,7 @@ export function handleReviewReplyCreateSuccess( { dispatch, getState }, action )
 }
 
 export function announceCreateFailure( { dispatch } ) {
-	dispatch(
-		errorNotice(
-			translate( 'Your reply couldn\'t be posted.' ),
-			{ duration: 5000 }
-		)
-	);
+	dispatch( errorNotice( translate( "Your reply couldn't be posted." ), { duration: 5000 } ) );
 }
 
 export function handleDeleteReviewReply( { dispatch }, action ) {
@@ -126,21 +132,11 @@ export function announceDeleteSuccess( { dispatch, getState }, action ) {
 		replyId,
 	} );
 
-	dispatch(
-		successNotice(
-			translate( 'Reply deleted.' ),
-			{ duration: 5000 }
-		)
-	);
+	dispatch( successNotice( translate( 'Reply deleted.' ), { duration: 5000 } ) );
 }
 
 export function announceDeleteFailure( { dispatch } ) {
-	dispatch(
-		errorNotice(
-			translate( "We couldn't delete this reply." ),
-			{ duration: 5000 }
-		)
-	);
+	dispatch( errorNotice( translate( "We couldn't delete this reply." ), { duration: 5000 } ) );
 }
 
 export function handleReviewReplyUpdate( { dispatch }, action ) {
@@ -156,17 +152,21 @@ export function handleReviewReplyUpdateSuccess( { dispatch }, action, { data } )
 		siteId,
 		reviewId,
 		replyId,
-		reply: data
+		reply: data,
 	} );
 
 	dispatch( clearReviewReplyEdits( siteId ) );
-	dispatch( successNotice( translate( 'Reply updated.' ), {
-		duration: 5000,
-	} ) );
+	dispatch(
+		successNotice( translate( 'Reply updated.' ), {
+			duration: 5000,
+		} )
+	);
 }
 
 export function announceReviewReplyUpdateFailure( { dispatch } ) {
-	dispatch( successNotice( translate( "We couldn't update this reply." ), {
-		duration: 5000,
-	} ) );
+	dispatch(
+		successNotice( translate( "We couldn't update this reply." ), {
+			duration: 5000,
+		} )
+	);
 }

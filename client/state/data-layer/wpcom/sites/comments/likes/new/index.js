@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 
 /**
@@ -20,16 +23,12 @@ export const likeComment = ( { dispatch }, action ) => {
 				apiVersion: '1.1',
 				path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`,
 			},
-			action,
-		),
+			action
+		)
 	);
 };
 
-export const updateCommentLikes = (
-	{ dispatch },
-	{ siteId, postId, commentId },
-	{ like_count },
-) =>
+export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, { like_count } ) =>
 	dispatch(
 		bypassDataLayer( {
 			type: COMMENTS_LIKE,
@@ -37,7 +36,7 @@ export const updateCommentLikes = (
 			postId,
 			commentId,
 			like_count,
-		} ),
+		} )
 	);
 
 /***

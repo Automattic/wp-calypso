@@ -1,6 +1,9 @@
 /**
  * Internal Dependencies
+ *
+ * @format
  */
+
 import analytics from 'lib/analytics';
 
 module.exports = function( path, title, category, page ) {

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { forEach, omit } from 'lodash';
 import React, { PureComponent } from 'react';
 
@@ -25,12 +28,12 @@ class SectionNavigation extends PureComponent {
 			'Weeks',
 			{
 				name: 'Months',
-				count: 45
+				count: 45,
 			},
 			{
 				name: 'Years',
-				count: 11
-			}
+				count: 11,
+			},
 		],
 		manyTabs: [
 			'Staff Picks',
@@ -38,60 +41,60 @@ class SectionNavigation extends PureComponent {
 			'Blog',
 			{
 				name: 'Business',
-				count: 8761
+				count: 8761,
 			},
 			'Food',
 			'Music',
 			{
 				name: 'Travel',
-				count: 761
+				count: 761,
 			},
 			'Wedding',
 			'Minimal',
 			'Magazine',
-			'Photography'
+			'Photography',
 		],
 		siblingTabs: [
 			{
 				name: 'Published',
-				count: 8
+				count: 8,
 			},
 			'Scheduled',
 			'Drafts',
-			'Trashed'
+			'Trashed',
 		],
-		siblingSegmented: [
-			'Only Me',
-			'Everyone'
-		]
+		siblingSegmented: [ 'Only Me', 'Everyone' ],
 	};
 
 	state = {
 		basicTabsSelectedIndex: 0,
 		manyTabsSelectedIndex: 0,
 		siblingTabsSelectedIndex: 0,
-		siblingSegmentedSelectedIndex: 0
+		siblingSegmentedSelectedIndex: 0,
 	};
 
 	render() {
 		var demoSections = {};
 
-		forEach( omit( this.props, 'isolated', 'uniqueInstance' ), function( prop, key ) {
-			demoSections[ key ] = [];
+		forEach(
+			omit( this.props, 'isolated', 'uniqueInstance' ),
+			function( prop, key ) {
+				demoSections[ key ] = [];
 
-			prop.forEach( function( item, index ) {
-				demoSections[ key ].push( (
-					<NavItem
-						key={ key + '-' + index }
-						count={ item.count }
-						selected={ this.state[ key + 'SelectedIndex' ] === index }
-						onClick={ this.handleNavItemClick( key, index ) }
-					>
-						{ 'object' === typeof item ? item.name : item }
-					</NavItem>
-				) );
-			}, this );
-		}.bind( this ) );
+				prop.forEach( function( item, index ) {
+					demoSections[ key ].push(
+						<NavItem
+							key={ key + '-' + index }
+							count={ item.count }
+							selected={ this.state[ key + 'SelectedIndex' ] === index }
+							onClick={ this.handleNavItemClick( key, index ) }
+						>
+							{ 'object' === typeof item ? item.name : item }
+						</NavItem>
+					);
+				}, this );
+			}.bind( this )
+		);
 
 		return (
 			<div>
@@ -100,9 +103,7 @@ class SectionNavigation extends PureComponent {
 					selectedText={ this.getSelectedText( 'basicTabs' ) }
 					selectedCount={ this.getSelectedCount( 'basicTabs' ) }
 				>
-					<NavTabs>
-						{ demoSections.basicTabs }
-					</NavTabs>
+					<NavTabs>{ demoSections.basicTabs }</NavTabs>
 				</SectionNav>
 
 				<h3>Many Tabs</h3>
@@ -110,9 +111,7 @@ class SectionNavigation extends PureComponent {
 					selectedText={ this.getSelectedText( 'manyTabs' ) }
 					selectedCount={ this.getSelectedCount( 'manyTabs' ) }
 				>
-					<NavTabs>
-						{ demoSections.manyTabs }
-					</NavTabs>
+					<NavTabs>{ demoSections.manyTabs }</NavTabs>
 				</SectionNav>
 
 				<h3>Sibling Control Groups</h3>
@@ -125,9 +124,7 @@ class SectionNavigation extends PureComponent {
 						{ demoSections.siblingTabs }
 					</NavTabs>
 
-					<NavSegmented label="author">
-						{ demoSections.siblingSegmented }
-					</NavSegmented>
+					<NavSegmented label="author">{ demoSections.siblingSegmented }</NavSegmented>
 
 					<Search
 						pinned
@@ -151,9 +148,7 @@ class SectionNavigation extends PureComponent {
 		var selected = this.state[ section + 'SelectedIndex' ],
 			selectedItem = this.props[ section ][ selected ];
 
-		return 'object' === typeof selectedItem
-			? selectedItem.count || null
-			: null;
+		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	};
 
 	getSiblingDemoSelectedText = () => {
@@ -165,7 +160,7 @@ class SectionNavigation extends PureComponent {
 		);
 	};
 
-	handleNavItemClick = (section, index) => {
+	handleNavItemClick = ( section, index ) => {
 		return function() {
 			var stateUpdate = {};
 

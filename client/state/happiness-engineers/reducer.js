@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { map } from 'lodash';
 
 /**
@@ -12,7 +15,7 @@ import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
-	HAPPINESS_ENGINEERS_FETCH_SUCCESS
+	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -26,7 +29,7 @@ import {
 export const requesting = createReducer( false, {
 	[ HAPPINESS_ENGINEERS_FETCH ]: () => true,
 	[ HAPPINESS_ENGINEERS_FETCH_FAILURE ]: () => false,
-	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => false
+	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => false,
 } );
 
 /**
@@ -38,13 +41,17 @@ export const requesting = createReducer( false, {
  * @param  {Object} action Action object
  * @return {Array}         Updated state
  */
-export const items = createReducer( null, {
-	[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
-		return map( happinessEngineers, 'avatar_URL' );
-	}
-}, itemsSchema );
+export const items = createReducer(
+	null,
+	{
+		[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
+			return map( happinessEngineers, 'avatar_URL' );
+		},
+	},
+	itemsSchema
+);
 
 export default combineReducers( {
 	requesting,
-	items
+	items,
 } );

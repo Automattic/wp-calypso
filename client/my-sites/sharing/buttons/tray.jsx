@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, filter, find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -24,12 +27,12 @@ module.exports = React.createClass( {
 		onButtonChange: PropTypes.func,
 		onClose: PropTypes.func,
 		active: PropTypes.bool,
-		limited: PropTypes.bool
+		limited: PropTypes.bool,
 	},
 
 	getInitialState: function() {
 		return {
-			isReordering: false
+			isReordering: false,
 		};
 	},
 
@@ -48,34 +51,62 @@ module.exports = React.createClass( {
 			onButtonChange: function() {},
 			onClose: function() {},
 			active: false,
-			limited: false
+			limited: false,
 		};
 	},
 
 	getHeadingText: function() {
 		if ( 'visible' === this.props.visibility ) {
-			return this.translate( 'Edit visible buttons', { context: 'Sharing: Buttons editor heading' } );
+			return this.translate( 'Edit visible buttons', {
+				context: 'Sharing: Buttons editor heading',
+			} );
 		} else {
-			return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons editor heading' } );
+			return this.translate( 'Edit “More” buttons', {
+				context: 'Sharing: Buttons editor heading',
+			} );
 		}
 	},
 
 	getInstructionText: function() {
 		var labels = {
-			touch: this.translate( 'Tap the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
-			notouch: this.translate( 'Click the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
-			'touch-reorder': this.translate( 'Tap the button you would like to move. Then tap the desired arrow.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
-			'notouch-reorder': this.translate( 'Drag and drop to reorder the buttons.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } )
+			touch: this.translate( 'Tap the buttons you would like to add or remove.', {
+				textOnly: true,
+				context: 'Sharing: Buttons editor instructions',
+			} ),
+			notouch: this.translate( 'Click the buttons you would like to add or remove.', {
+				textOnly: true,
+				context: 'Sharing: Buttons editor instructions',
+			} ),
+			'touch-reorder': this.translate(
+				'Tap the button you would like to move. Then tap the desired arrow.',
+				{ textOnly: true, context: 'Sharing: Buttons editor instructions' }
+			),
+			'notouch-reorder': this.translate( 'Drag and drop to reorder the buttons.', {
+				textOnly: true,
+				context: 'Sharing: Buttons editor instructions',
+			} ),
 		};
 
 		return Object.keys( labels ).map( function( context ) {
 			var label = labels[ context ];
 
 			if ( 'hidden' === this.props.visibility ) {
-				label += ' ' + this.translate( 'These will be shown in a dropdown under the “More” button.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } );
+				label +=
+					' ' +
+					this.translate( 'These will be shown in a dropdown under the “More” button.', {
+						textOnly: true,
+						context: 'Sharing: Buttons editor instructions',
+					} );
 			}
 
-			return <span key={ context } className={ 'sharing-buttons-preview__panel-instruction-text is-' + context + '-context' }>{ label }</span>;
+			return (
+				<span
+					key={ context }
+					className={ 'sharing-buttons-preview__panel-instruction-text is-' + context + '-context' }
+				>
+					{ label }
+				</span>
+			);
 		}, this );
 	},
 
@@ -90,9 +121,11 @@ module.exports = React.createClass( {
 			buttons[ order[ i ] ] = button;
 		}, this );
 
-		buttons = buttons.concat( this.props.buttons.filter( function( button ) {
-			return button.visibility !== this.props.visibility;
-		}, this ) );
+		buttons = buttons.concat(
+			this.props.buttons.filter( function( button ) {
+				return button.visibility !== this.props.visibility;
+			}, this )
+		);
 
 		this.props.onButtonsChange( buttons );
 	},
@@ -114,7 +147,7 @@ module.exports = React.createClass( {
 
 		assign( currentButton, {
 			enabled: isEnabled,
-			visibility: this.props.visibility
+			visibility: this.props.visibility,
 		} );
 
 		if ( ! isEnabled ) {
@@ -136,7 +169,7 @@ module.exports = React.createClass( {
 			return (
 				<em className="sharing-buttons-preview__panel-notice">
 					{ this.translate( 'Sharing options are limited on private sites.', {
-						context: 'Sharing: Buttons'
+						context: 'Sharing: Buttons',
 					} ) }
 				</em>
 			);
@@ -146,36 +179,74 @@ module.exports = React.createClass( {
 	getButtonElements: function() {
 		if ( this.state.isReordering ) {
 			var buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
-				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style={ this.props.style }/>;
+				return (
+					<ButtonsPreviewButton
+						key={ button.ID }
+						button={ button }
+						enabled={ true }
+						style={ this.props.style }
+					/>
+				);
 			}, this );
 
 			return <SortableList onChange={ this.onButtonsReordered }>{ buttons }</SortableList>;
 		} else {
-			return <ButtonsPreviewButtons buttons={ this.props.buttons } visibility={ this.props.visibility } style={ this.props.style } showMore={ false } onButtonClick={ this.onButtonClick } />;
+			return (
+				<ButtonsPreviewButtons
+					buttons={ this.props.buttons }
+					visibility={ this.props.visibility }
+					style={ this.props.style }
+					showMore={ false }
+					onButtonClick={ this.onButtonClick }
+				/>
+			);
 		}
 	},
 
 	render: function() {
-		var classes = classNames( 'sharing-buttons-preview__panel', 'is-bottom', 'sharing-buttons-tray', 'buttons-' + this.props.visibility, {
-			'is-active': this.props.active,
-			'is-reordering': this.state.isReordering
-		} );
+		var classes = classNames(
+			'sharing-buttons-preview__panel',
+			'is-bottom',
+			'sharing-buttons-tray',
+			'buttons-' + this.props.visibility,
+			{
+				'is-active': this.props.active,
+				'is-reordering': this.state.isReordering,
+			}
+		);
 
 		return (
 			<div className={ classes }>
 				<div className="sharing-buttons-preview__panel-content">
 					<h3 className="sharing-buttons-preview__panel-heading">{ this.getHeadingText() }</h3>
-					<p className="sharing-buttons-preview__panel-instructions">{ this.getInstructionText() }</p>
+					<p className="sharing-buttons-preview__panel-instructions">
+						{ this.getInstructionText() }
+					</p>
 					<div className="sharing-buttons-tray__buttons">{ this.getButtonElements() }</div>
 					{ this.getLimitedButtonsNoticeElement() }
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
-					<button type="button" className="button sharing-buttons-preview__panel-action is-left" onClick={ this.toggleReorder } disabled={ this.getButtonsOfCurrentVisibility().length <= 1 }>
-						{ this.state.isReordering ? this.translate( 'Add / Remove' ) : this.translate( 'Reorder' ) }
+					<button
+						type="button"
+						className="button sharing-buttons-preview__panel-action is-left"
+						onClick={ this.toggleReorder }
+						disabled={ this.getButtonsOfCurrentVisibility().length <= 1 }
+					>
+						{ this.state.isReordering ? (
+							this.translate( 'Add / Remove' )
+						) : (
+							this.translate( 'Reorder' )
+						) }
 					</button>
-					<button type="button" className="button sharing-buttons-preview__panel-action" onClick={ this.props.onClose }>{ this.translate( 'Close' ) }</button>
+					<button
+						type="button"
+						className="button sharing-buttons-preview__panel-action"
+						onClick={ this.props.onClose }
+					>
+						{ this.translate( 'Close' ) }
+					</button>
 				</footer>
 			</div>
 		);
-	}
+	},
 } );

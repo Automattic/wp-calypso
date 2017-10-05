@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:poller' );
 
@@ -42,9 +45,12 @@ function Poller( dataStore, fetcher, options ) {
 	}
 
 	// Defer setting initialized until stack is cleared
-	setTimeout( function() {
-		this.initialized = true;
-	}.bind( this ), 0 );
+	setTimeout(
+		function() {
+			this.initialized = true;
+		}.bind( this ),
+		0
+	);
 }
 
 Poller.prototype.start = function() {

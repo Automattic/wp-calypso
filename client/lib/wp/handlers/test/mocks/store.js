@@ -1,3 +1,4 @@
+/** @format */
 let storeData = {};
 
 export default {
@@ -15,5 +16,5 @@ export default {
 
 	clear() {
 		storeData = {};
-	}
+	},
 };

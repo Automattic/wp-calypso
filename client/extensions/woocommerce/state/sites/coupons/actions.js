@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_COUPONS_REQUEST,
 	WOOCOMMERCE_COUPONS_UPDATED,
@@ -16,4 +19,3 @@ export function fetchCoupons( siteId, params ) {
 export function couponsUpdated( siteId, params, coupons, totalPages, totalCoupons ) {
 	return { type: WOOCOMMERCE_COUPONS_UPDATED, siteId, params, coupons, totalPages, totalCoupons };
 }
-

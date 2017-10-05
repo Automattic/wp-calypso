@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, omitBy, omit } from 'lodash';
 import qs from 'querystring';
 import { translate } from 'i18n-calypso';
@@ -13,7 +16,10 @@ import { DEFAULT_QUERY } from './utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
-import { getReviewsCurrentPage, getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
+import {
+	getReviewsCurrentPage,
+	getReviewsCurrentSearch,
+} from 'woocommerce/state/ui/reviews/selectors';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
@@ -23,21 +29,19 @@ import {
 } from 'woocommerce/state/action-types';
 
 export default {
-	[ WOOCOMMERCE_REVIEWS_REQUEST ]: [ dispatchRequest(
-		handleReviewsRequest,
-		handleReviewsRequestSuccess,
-		handleReviewsRequestError
-	) ],
-	[ WOOCOMMERCE_REVIEW_STATUS_CHANGE ]: [ dispatchRequest(
-		handleChangeReviewStatus,
-		handleChangeReviewStatusSuccess,
-		announceStatusChangeFailure
-	) ],
-	[ WOOCOMMERCE_REVIEW_DELETE ]: [ dispatchRequest(
-		handleDeleteReview,
-		announceDeleteSuccess,
-		announceDeleteFailure
-	) ],
+	[ WOOCOMMERCE_REVIEWS_REQUEST ]: [
+		dispatchRequest( handleReviewsRequest, handleReviewsRequestSuccess, handleReviewsRequestError ),
+	],
+	[ WOOCOMMERCE_REVIEW_STATUS_CHANGE ]: [
+		dispatchRequest(
+			handleChangeReviewStatus,
+			handleChangeReviewStatusSuccess,
+			announceStatusChangeFailure
+		),
+	],
+	[ WOOCOMMERCE_REVIEW_DELETE ]: [
+		dispatchRequest( handleDeleteReview, announceDeleteSuccess, announceDeleteFailure ),
+	],
 };
 
 export function handleReviewsRequest( { dispatch }, action ) {
@@ -56,7 +60,7 @@ export function handleReviewsRequestSuccess( store, action, { data } ) {
 	// so that we can get the X-WP-TotalPages and X-WP-Total headers back from the end-site. This means we will always get a 200
 	// status back, and the real status of the request will be stored in the response. This checks the real status.
 	if ( status !== 200 ) {
-		return handleReviewsRequestError( store, action, ( body.code || status ) );
+		return handleReviewsRequestError( store, action, body.code || status );
 	}
 
 	const total = headers[ 'X-WP-Total' ];
@@ -86,7 +90,9 @@ export function handleChangeReviewStatus( { dispatch, getState }, action ) {
 	// https://github.com/woocommerce/wc-api-dev/issues/51
 	// We can use the WP-API comments endpoint for now with no issue. The only difference is pending vs hold.
 	const statusToPass = 'pending' === newStatus ? 'hold' : newStatus;
-	dispatch( request( siteId, action, '/wp/v2' ).post( `comments/${ reviewId }`, { status: statusToPass } ) );
+	dispatch(
+		request( siteId, action, '/wp/v2' ).post( `comments/${ reviewId }`, { status: statusToPass } )
+	);
 }
 
 export function handleChangeReviewStatusSuccess( { dispatch, getState }, action ) {
@@ -96,7 +102,12 @@ export function handleChangeReviewStatusSuccess( { dispatch, getState }, action 
 	// Refreshes the review list if dealing with trash and spam.
 	// otherwise pending/approved reviews stay in their current lists.
 	// This matches the behavior of comments management.
-	if ( 'spam' === currentStatus || 'spam' === newStatus || 'trash' === currentStatus || 'trash' === newStatus ) {
+	if (
+		'spam' === currentStatus ||
+		'spam' === newStatus ||
+		'trash' === currentStatus ||
+		'trash' === newStatus
+	) {
 		const currentPage = getReviewsCurrentPage( state, siteId );
 		const currentSearch = getReviewsCurrentSearch( state, siteId );
 		const query = {
@@ -120,9 +131,11 @@ export function handleChangeReviewStatusSuccess( { dispatch, getState }, action 
 	};
 	const defaultMessage = translate( 'Review status updated' );
 
-	dispatch( successNotice( get( message, newStatus, defaultMessage ), {
-		duration: 5000,
-	} ) );
+	dispatch(
+		successNotice( get( message, newStatus, defaultMessage ), {
+			duration: 5000,
+		} )
+	);
 }
 
 export function announceStatusChangeFailure( { dispatch }, action ) {
@@ -144,9 +157,11 @@ export function announceStatusChangeFailure( { dispatch }, action ) {
 	};
 	const defaultErrorMessage = translate( "We couldn't update this review." );
 
-	dispatch( errorNotice( get( errorMessage, currentStatus, defaultErrorMessage ), {
-		id: `review-notice-error-${ reviewId }`,
-	} ) );
+	dispatch(
+		errorNotice( get( errorMessage, currentStatus, defaultErrorMessage ), {
+			id: `review-notice-error-${ reviewId }`,
+		} )
+	);
 }
 
 export function handleDeleteReview( { dispatch }, action ) {
@@ -160,19 +175,9 @@ export function announceDeleteSuccess( { dispatch, getState }, action ) {
 	const currentPage = getReviewsCurrentPage( state, siteId );
 	dispatch( fetchReviews( siteId, { search: '', page: currentPage, status: 'trash' } ) );
 
-	dispatch(
-		successNotice(
-			translate( 'Review deleted permanently.' ),
-			{ duration: 5000 }
-		)
-	);
+	dispatch( successNotice( translate( 'Review deleted permanently.' ), { duration: 5000 } ) );
 }
 
 export function announceDeleteFailure( { dispatch } ) {
-	dispatch(
-		errorNotice(
-			translate( "We couldn't delete this review." ),
-			{ duration: 5000 }
-		)
-	);
+	dispatch( errorNotice( translate( "We couldn't delete this review." ), { duration: 5000 } ) );
 }

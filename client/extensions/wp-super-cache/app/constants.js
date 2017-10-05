@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 
 export const WPSC_MIN_VERSION = '1.5.4';
@@ -34,5 +37,5 @@ export const Tabs = {
 	DEBUG: {
 		label: translate( 'Debug' ),
 		slug: 'debug',
-	}
+	},
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find } from 'lodash';
 
 /**
@@ -23,11 +26,13 @@ function getConnectionIdsByPattern( metadata, pattern ) {
 		return [];
 	}
 
-	return metadata.filter( function( meta ) {
-		return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
-	} ).map( function( meta ) {
-		return parseInt( meta.key.match( pattern )[ 1 ], 10 );
-	} );
+	return metadata
+		.filter( function( meta ) {
+			return pattern.test( meta.key ) && 1 === parseInt( meta.value, 10 );
+		} )
+		.map( function( meta ) {
+			return parseInt( meta.key.match( pattern )[ 1 ], 10 );
+		} );
 }
 
 PostMetadata = {
@@ -130,7 +135,7 @@ PostMetadata = {
 		if ( latitude && longitude ) {
 			return [ latitude, longitude ];
 		}
-	}
+	},
 };
 
 module.exports = PostMetadata;

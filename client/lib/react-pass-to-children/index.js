@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign } from 'lodash';
 import React from 'react';
 

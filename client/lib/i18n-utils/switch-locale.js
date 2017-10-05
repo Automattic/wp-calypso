@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -36,7 +39,9 @@ export default function switchLocale( localeSlug ) {
 	// Note: i18n is a singleton that will be shared between all server requests!
 	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
 		if ( error ) {
-			debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' );
+			debug(
+				'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.'
+			);
 			return;
 		}
 
@@ -45,7 +50,9 @@ export default function switchLocale( localeSlug ) {
 		if ( typeof document !== 'undefined' ) {
 			document.documentElement.lang = localeSlug;
 			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-			const cssUrl = language.rtl ? window.app.staticUrls[ 'style-rtl.css' ] : window.app.staticUrls[ 'style.css' ];
+			const cssUrl = language.rtl
+				? window.app.staticUrls[ 'style-rtl.css' ]
+				: window.app.staticUrls[ 'style.css' ];
 			switchCSS( 'main-css', cssUrl );
 		}
 	} );

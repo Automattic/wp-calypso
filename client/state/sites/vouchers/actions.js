@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcomBase from 'lib/wp';
 import { injectHandler } from 'lib/wp/handlers/http-envelope-normalizer';
 import {
@@ -31,7 +34,7 @@ const wpcom = injectHandler( wpcomBase );
 export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
 	type: SITE_VOUCHERS_RECEIVE,
 	siteId,
-	vouchers
+	vouchers,
 } );
 
 /**
@@ -44,46 +47,46 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  */
 export const vouchersRequestAction = siteId => ( {
 	type: SITE_VOUCHERS_REQUEST,
-	siteId
+	siteId,
 } );
 
 export const vouchersRequestSuccessAction = siteId => ( {
 	type: SITE_VOUCHERS_REQUEST_SUCCESS,
-	siteId
+	siteId,
 } );
 
 export const vouchersRequestFailureAction = ( siteId, error ) => ( {
 	type: SITE_VOUCHERS_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
 export const vouchersAssignReceiveAction = ( siteId, serviceType, voucher ) => ( {
 	type: SITE_VOUCHERS_ASSIGN_RECEIVE,
 	siteId,
 	serviceType,
-	voucher
+	voucher,
 } );
 
 export const vouchersAssignRequestAction = ( siteId, serviceType ) => {
 	return {
 		type: SITE_VOUCHERS_ASSIGN_REQUEST,
 		siteId,
-		serviceType
+		serviceType,
 	};
 };
 
 export const vouchersAssignRequestSuccessAction = ( siteId, serviceType ) => ( {
 	type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
 	siteId,
-	serviceType
+	serviceType,
 } );
 
 export const vouchersAssignRequestFailureAction = ( siteId, serviceType, error ) => ( {
 	type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
 	siteId,
 	serviceType,
-	error
+	error,
 } );
 
 /**
@@ -106,9 +109,7 @@ export function requestSiteVouchers( siteId ) {
 				dispatch( vouchersReceiveAction( siteId, vouchers ) );
 			} )
 			.catch( error => {
-				const message = error instanceof Error
-					? error.message
-					: error;
+				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersRequestFailureAction( siteId, message ) );
 			} );
@@ -136,9 +137,7 @@ export function assignSiteVoucher( siteId, serviceType ) {
 				dispatch( vouchersAssignReceiveAction( siteId, serviceType, voucher ) );
 			} )
 			.catch( error => {
-				const message = error instanceof Error
-					? error.message
-					: error;
+				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersAssignRequestFailureAction( siteId, serviceType, message ) );
 			} );

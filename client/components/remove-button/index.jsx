@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,20 +26,10 @@ export class RemoveButton extends React.Component {
 		const { onRemove, translate } = this.props;
 
 		return (
-			<Button
-				onClick={ onRemove }
-				compact
-				className="remove-button"
-			>
-				<span className="remove-button__label screen-reader-text">
-					{ translate( 'Remove' ) }
-				</span>
+			<Button onClick={ onRemove } compact className="remove-button">
+				<span className="remove-button__label screen-reader-text">{ translate( 'Remove' ) }</span>
 
-				<Gridicon
-					icon="cross"
-					size={ 24 }
-					className="remove-button__icon"
-				/>
+				<Gridicon icon="cross" size={ 24 } className="remove-button__icon" />
 			</Button>
 		);
 	}

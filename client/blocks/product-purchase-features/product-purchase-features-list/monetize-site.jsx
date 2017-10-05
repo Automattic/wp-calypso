@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -15,12 +18,10 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon="speaker"
 				title={ translate( 'Easily monetize your site' ) }
-				description={
-					translate(
-						'Take advantage of WordAds instant activation on your upgraded site. ' +
+				description={ translate(
+					'Take advantage of WordAds instant activation on your upgraded site. ' +
 						'WordAds lets you earn money by displaying promotional content.'
-					)
-				}
+				) }
 				buttonText={ translate( 'Start earning' ) }
 				href={ '/ads/settings/' + selectedSite.slug }
 			/>

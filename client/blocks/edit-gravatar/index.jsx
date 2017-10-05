@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -18,12 +21,8 @@ import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Gravatar from 'components/gravatar';
-import {
-	isCurrentUserUploadingGravatar,
-} from 'state/current-user/gravatar-status/selectors';
-import {
-	resetAllImageEditorState
-} from 'state/ui/editor/image-editor/actions';
+import { isCurrentUserUploadingGravatar } from 'state/current-user/gravatar-status/selectors';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import Spinner from 'components/spinner';
 import {
 	receiveGravatarImageFailed,
@@ -34,18 +33,14 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import DropZone from 'components/drop-zone';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 export class EditGravatar extends Component {
 	state = {
 		isEditingImage: false,
 		image: false,
 		showEmailVerificationNotice: false,
-	}
+	};
 
 	static propTypes = {
 		isUploading: PropTypes.bool,
@@ -58,13 +53,14 @@ export class EditGravatar extends Component {
 		recordReceiveImageEvent: PropTypes.func,
 	};
 
-	onReceiveFile = ( files ) => {
+	onReceiveFile = files => {
 		const {
 			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
 			translate,
 			recordReceiveImageEvent,
 		} = this.props;
-		const extension = path.extname( files[ 0 ].name )
+		const extension = path
+			.extname( files[ 0 ].name )
 			.toLowerCase()
 			.substring( 1 );
 
@@ -76,14 +72,16 @@ export class EditGravatar extends Component {
 			if ( extension ) {
 				errorMessage = translate(
 					'Sorry, %s files are not supported' +
-					' — please make sure your image is in JPG, GIF, or PNG format.',
+						' — please make sure your image is in JPG, GIF, or PNG format.',
 					{
-						args: extension
+						args: extension,
 					}
 				);
 			} else {
-				errorMessage = translate( 'Sorry, images of that filetype are not supported ' +
-				'— please make sure your image is in JPG, GIF, or PNG format.' );
+				errorMessage = translate(
+					'Sorry, images of that filetype are not supported ' +
+						'— please make sure your image is in JPG, GIF, or PNG format.'
+				);
 			}
 
 			receiveGravatarImageFailedAction( {
@@ -96,7 +94,7 @@ export class EditGravatar extends Component {
 		const imageObjectUrl = URL.createObjectURL( files[ 0 ] );
 		this.setState( {
 			isEditingImage: true,
-			image: imageObjectUrl
+			image: imageObjectUrl,
 		} );
 	};
 
@@ -105,7 +103,7 @@ export class EditGravatar extends Component {
 			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
 			translate,
 			uploadGravatar: uploadGravatarAction,
-			user
+			user,
 		} = this.props;
 
 		this.hideImageEditor();
@@ -123,24 +121,19 @@ export class EditGravatar extends Component {
 	};
 
 	hideImageEditor = () => {
-		const {
-			resetAllImageEditorState: resetAllImageEditorStateAction
-		} = this.props;
+		const { resetAllImageEditorState: resetAllImageEditorStateAction } = this.props;
 		resetAllImageEditorStateAction();
 		URL.revokeObjectURL( this.state.image );
 		this.setState( {
 			isEditingImage: false,
-			image: false
+			image: false,
 		} );
 	};
 
 	renderImageEditor() {
 		if ( this.state.isEditingImage ) {
 			return (
-				<Dialog
-					additionalClassNames={ 'edit-gravatar-modal' }
-					isVisible={ true }
-				>
+				<Dialog additionalClassNames={ 'edit-gravatar-modal' } isVisible={ true }>
 					<ImageEditor
 						allowedAspectRatios={ [ AspectRatios.ASPECT_1X1 ] }
 						media={ { src: this.state.image } }
@@ -161,54 +154,44 @@ export class EditGravatar extends Component {
 		}
 
 		this.setState( {
-			showEmailVerificationNotice: true
+			showEmailVerificationNotice: true,
 		} );
 	};
 
 	closeVerifyEmailDialog = () => {
 		this.setState( {
-			showEmailVerificationNotice: false
+			showEmailVerificationNotice: false,
 		} );
 	};
 
 	render() {
-		const {
-			isUploading,
-			translate,
-			user
-		} = this.props;
+		const { isUploading, translate, user } = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
-		const icon = ( user.email_verified ? 'cloud-upload' : 'notice' );
-		const buttonText = ( user.email_verified
+		const icon = user.email_verified ? 'cloud-upload' : 'notice';
+		const buttonText = user.email_verified
 			? translate( 'Click to change photo' )
-			: translate( 'Verify your email' )
-		);
+			: translate( 'Verify your email' );
 		return (
 			<div
-				className={
-					classnames( 'edit-gravatar',
-						{ 'is-unverified': ! user.email_verified },
-						{ 'is-uploading': isUploading }
-					)
-				}
+				className={ classnames(
+					'edit-gravatar',
+					{ 'is-unverified': ! user.email_verified },
+					{ 'is-uploading': isUploading }
+				) }
 			>
 				<div onClick={ this.handleUnverifiedUserClick }>
-					{ this.state.showEmailVerificationNotice &&
-						<VerifyEmailDialog
-							onClose={ this.closeVerifyEmailDialog }
-						/>
-					}
+					{ this.state.showEmailVerificationNotice && (
+						<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+					) }
 					{ this.renderImageEditor() }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
-							className={
-								classnames( 'edit-gravatar__image-container',
-									{ 'is-uploading': isUploading }
-								)
-							}
+							className={ classnames( 'edit-gravatar__image-container', {
+								'is-uploading': isUploading,
+							} ) }
 						>
 							{ user.email_verified && (
 								<DropZone
@@ -216,18 +199,14 @@ export class EditGravatar extends Component {
 									onFilesDrop={ this.onReceiveFile }
 								/>
 							) }
-							<Gravatar
-								imgSize={ GRAVATAR_IMG_SIZE }
-								size={ 150 }
-								user={ user }
-							/>
+							<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
 							{ ! isUploading && (
 								<div className="edit-gravatar__label-container">
 									<Gridicon icon={ icon } size={ 36 } />
 									<span className="edit-gravatar__label">{ buttonText }</span>
-									</div>
-								) }
-								{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
+								</div>
+							) }
+							{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
 						</div>
 					</FilePicker>
 				</div>
@@ -235,26 +214,28 @@ export class EditGravatar extends Component {
 					<p className="edit-gravatar__explanation">
 						{ translate( 'Your profile photo is public.' ) }
 					</p>
-					<InfoPopover
-						className="edit-gravatar__pop-over"
-						position="left" >
-						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
-							'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-							'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
-							'{{p}}Your image may also appear on other sites using Gravatar ' +
-							"whenever you're logged in with your email address %(email)s.{{/p}}",
+					<InfoPopover className="edit-gravatar__pop-over" position="left">
+						{ translate(
+							'{{p}}The avatar you use on WordPress.com comes ' +
+								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
+								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
+								'{{p}}Your image may also appear on other sites using Gravatar ' +
+								"whenever you're logged in with your email address %(email)s.{{/p}}",
 							{
 								components: {
-									ExternalLink: <ExternalLink
-										href={ gravatarLink }
-										target="_blank"
-										rel="noopener noreferrer"
-										icon={ true } />,
-									p: <p />
+									ExternalLink: (
+										<ExternalLink
+											href={ gravatarLink }
+											target="_blank"
+											rel="noopener noreferrer"
+											icon={ true }
+										/>
+									),
+									p: <p />,
 								},
 								args: {
-									email: user.email
-								}
+									email: user.email,
+								},
 							}
 						) }
 					</InfoPopover>
@@ -264,10 +245,11 @@ export class EditGravatar extends Component {
 	}
 }
 
-const recordClickButtonEvent = ( { isVerified } ) => composeAnalytics(
-	recordTracksEvent( 'calypso_edit_gravatar_click', { userVerified: isVerified } ),
-	recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
-);
+const recordClickButtonEvent = ( { isVerified } ) =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_edit_gravatar_click', { userVerified: isVerified } ),
+		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
+	);
 
 const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_file_receive' );
 

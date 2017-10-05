@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { map } from 'lodash';
 
 /**
@@ -14,7 +17,7 @@ import emitter from 'lib/mixins/emitter';
  * Module variables
  */
 const MediaLibrarySelectedStore = {
-	_media: {}
+	_media: {},
 };
 
 function ensureSelectedItemsForSiteId( siteId ) {
@@ -85,12 +88,9 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 	}
 
 	// Avoid keeping invalid items in the selected list.
-	return (
-		MediaLibrarySelectedStore
-			._media[ siteId ]
-			.map( itemId => MediaStore.get( siteId, itemId ) )
-			.filter( ( item ) => ( item && ( item.guid || item.transient ) ) )
-	);
+	return MediaLibrarySelectedStore._media[ siteId ]
+		.map( itemId => MediaStore.get( siteId, itemId ) )
+		.filter( item => item && ( item.guid || item.transient ) );
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {

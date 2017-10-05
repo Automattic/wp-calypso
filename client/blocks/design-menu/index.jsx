@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -31,7 +34,6 @@ import { getSiteFragment } from 'lib/route/path';
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 
 const DesignMenu = React.createClass( {
-
 	propTypes: {
 		isVisible: PropTypes.bool,
 		// These are provided by the connect method
@@ -84,8 +86,9 @@ const DesignMenu = React.createClass( {
 			return;
 		}
 		if ( this.props.isUnsaved ) {
-			const unsavedMessage =
-				this.props.translate( 'You have unsaved changes. Are you sure you want to close the preview?' );
+			const unsavedMessage = this.props.translate(
+				'You have unsaved changes. Are you sure you want to close the preview?'
+			);
 			return accept( unsavedMessage, accepted => {
 				if ( accepted ) {
 					this.cleanAndClosePreview();
@@ -98,10 +101,11 @@ const DesignMenu = React.createClass( {
 	cleanAndClosePreview() {
 		this.props.closePreview();
 		const siteFragment = getSiteFragment( page.current );
-		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
+		const isEmptyRoute =
+			includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 		// If this route has nothing but the preview, redirect to somewhere else
 		if ( isEmptyRoute ) {
-			page.redirect( `/stats/${siteFragment}` );
+			page.redirect( `/stats/${ siteFragment }` );
 		}
 	},
 
@@ -135,10 +139,14 @@ const DesignMenu = React.createClass( {
 	render() {
 		const classNames = classnames( 'design-menu', {
 			'is-visible': this.props.isVisible,
-			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar'
+			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar',
 		} );
 		if ( ! this.props.selectedSite ) {
-			return <RootChild><div className={ classNames }/></RootChild>;
+			return (
+				<RootChild>
+					<div className={ classNames } />
+				</RootChild>
+			);
 		}
 		const onShowPreview = () => this.props.setLayoutFocus( 'preview' );
 		return (
@@ -155,7 +163,7 @@ const DesignMenu = React.createClass( {
 				</div>
 			</RootChild>
 		);
-	}
+	},
 } );
 
 function mapStateToProps( state ) {
@@ -169,7 +177,11 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ clearCustomizations, fetchPreviewMarkup, saveCustomizations, setActiveDesignTool, setLayoutFocus, closePreview }
-)( localize( DesignMenu ) );
+export default connect( mapStateToProps, {
+	clearCustomizations,
+	fetchPreviewMarkup,
+	saveCustomizations,
+	setActiveDesignTool,
+	setLayoutFocus,
+	closePreview,
+} )( localize( DesignMenu ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debug from 'debug';
 import noop from 'lodash';
 
@@ -12,9 +15,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 const aDebug = debug( 'calypso:analytics:affiliate' );
 
-import {
-	AFFILIATE_REFERRAL,
-} from 'state/action-types';
+import { AFFILIATE_REFERRAL } from 'state/action-types';
 
 const trackAffiliatePageLoad = ( { dispatch }, action ) => {
 	const { affiliateId, urlPath } = action;
@@ -25,19 +26,22 @@ const trackAffiliatePageLoad = ( { dispatch }, action ) => {
 
 	aDebug( 'affiliate referrer request', action );
 
-	dispatch( http( {
-		method: 'POST',
-		url: 'https://refer.wordpress.com/clicks/67402',
-		headers: [
-			[ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ],
-		],
-		body: {
-			affiliate_id: affiliateId,
-			referrer: urlPath
-		},
-		// Needed to check and set the 'wp-affiliate-tracker' cookie
-		withCredentials: true,
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				url: 'https://refer.wordpress.com/clicks/67402',
+				headers: [ [ 'content-type', 'application/x-www-form-urlencoded; charset=UTF-8' ] ],
+				body: {
+					affiliate_id: affiliateId,
+					referrer: urlPath,
+				},
+				// Needed to check and set the 'wp-affiliate-tracker' cookie
+				withCredentials: true,
+			},
+			action
+		)
+	);
 };
 
 const trackAffiliatePageLoadSuccess = ( { dispatch }, action, rData ) => {
@@ -46,10 +50,6 @@ const trackAffiliatePageLoadSuccess = ( { dispatch }, action, rData ) => {
 
 export default {
 	[ AFFILIATE_REFERRAL ]: [
-		dispatchRequest(
-			trackAffiliatePageLoad,
-			trackAffiliatePageLoadSuccess,
-			noop
-		)
+		dispatchRequest( trackAffiliatePageLoad, trackAffiliatePageLoadSuccess, noop ),
 	],
 };

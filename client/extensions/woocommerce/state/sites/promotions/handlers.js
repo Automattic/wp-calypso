@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 /**
@@ -53,7 +56,10 @@ export function productsRequestSuccess( { dispatch }, action ) {
 	const { siteId, products, params, totalProducts } = action;
 
 	if ( undefined !== params.offset ) {
-		debug( `Products ${ params.offset + 1 }-${ params.offset + products.length } out of ${ totalProducts } received.` );
+		debug(
+			`Products ${ params.offset + 1 }-${ params.offset +
+				products.length } out of ${ totalProducts } received.`
+		);
 
 		const remainder = totalProducts - params.offset - products.length;
 		if ( remainder ) {
@@ -67,7 +73,10 @@ export function couponsUpdated( { dispatch }, action ) {
 	const { siteId, coupons, params, totalCoupons } = action;
 
 	if ( undefined !== params.offset ) {
-		debug( `Coupons ${ params.offset + 1 }-${ params.offset + coupons.length } out of ${ totalCoupons } received.` );
+		debug(
+			`Coupons ${ params.offset + 1 }-${ params.offset +
+				coupons.length } out of ${ totalCoupons } received.`
+		);
 
 		const remainder = totalCoupons - params.offset - coupons.length;
 		if ( 0 < remainder ) {
@@ -76,4 +85,3 @@ export function couponsUpdated( { dispatch }, action ) {
 		}
 	}
 }
-

@@ -1,10 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	format as formatUrl,
-	parse as parseUrl,
-} from 'url';
+
+import { format as formatUrl, parse as parseUrl } from 'url';
 import { has, isString, omit, startsWith } from 'lodash';
 
 /**
@@ -32,7 +32,11 @@ function isExternal( url ) {
 	// the url passed in might be of form `en.support.wordpress.com`
 	// so for this function we'll append double-slashes to fake it
 	// if it is a relative URL the hostname will still be empty from parseURL
-	if ( ! startsWith( url, 'http://' ) && ! startsWith( url, 'https://' ) && ! startsWith( url, '//' ) ) {
+	if (
+		! startsWith( url, 'http://' ) &&
+		! startsWith( url, 'https://' ) &&
+		! startsWith( url, '//' )
+	) {
 		url = '//' + url;
 	}
 
@@ -148,7 +152,7 @@ function resemblesUrl( query ) {
 	}
 
 	// Check for a valid-looking TLD
-	if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+	if ( parsedUrl.hostname.lastIndexOf( '.' ) > parsedUrl.hostname.length - 3 ) {
 		return false;
 	}
 

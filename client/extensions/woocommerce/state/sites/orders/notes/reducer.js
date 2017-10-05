@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { keyBy } from 'lodash';
 
 /**
@@ -30,7 +33,9 @@ export function isLoading( state = {}, action ) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST:
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE:
-			return Object.assign( {}, state, { [ action.orderId ]: WOOCOMMERCE_ORDER_NOTES_REQUEST === action.type } );
+			return Object.assign( {}, state, {
+				[ action.orderId ]: WOOCOMMERCE_ORDER_NOTES_REQUEST === action.type,
+			} );
 		default:
 			return state;
 	}
@@ -50,7 +55,9 @@ export function isSaving( state = {}, action ) {
 		case WOOCOMMERCE_ORDER_NOTE_CREATE:
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE:
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS:
-			return Object.assign( {}, state, { [ action.orderId ]: WOOCOMMERCE_ORDER_NOTE_CREATE === action.type } );
+			return Object.assign( {}, state, {
+				[ action.orderId ]: WOOCOMMERCE_ORDER_NOTE_CREATE === action.type,
+			} );
 		default:
 			return state;
 	}

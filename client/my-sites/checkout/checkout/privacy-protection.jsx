@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -41,16 +44,19 @@ class PrivacyProtection extends Component {
 
 		return (
 			<div>
-				<SectionHeader className="checkout__privacy-protection-header" label = { translate( 'Privacy Protection' ) } />
+				<SectionHeader
+					className="checkout__privacy-protection-header"
+					label={ translate( 'Privacy Protection' ) }
+				/>
 				<Card className="checkout__privacy-protection-radio">
 					<div>
 						{ translate(
 							'Domain owners have to share contact information in a public database of all domains. ' +
-							'With {{strong}}Privacy Protection{{/strong}}, we publish our own information instead of yours, ' +
-							'and privately forward any communication to you.',
+								'With {{strong}}Privacy Protection{{/strong}}, we publish our own information instead of yours, ' +
+								'and privately forward any communication to you.',
 							{
 								components: {
-									strong: <strong />
+									strong: <strong />,
 								},
 							}
 						) }
@@ -66,36 +72,25 @@ class PrivacyProtection extends Component {
 								/>
 								<p className="checkout__privacy-protection-radio-text">
 									<span>
-										{
-											translate(
-												'{{strong}}Register privately with Privacy Protection{{/strong}} (recommended)' +
+										{ translate(
+											'{{strong}}Register privately with Privacy Protection{{/strong}} (recommended)' +
 												'',
-												{
-													components: {
-														strong: <strong />,
-													},
-												}
-											)
-										}
+											{
+												components: {
+													strong: <strong />,
+												},
+											}
+										) }
 									</span>
 									<span
-										className={
-											classnames(
-												'checkout__privacy-protection-radio-price-text',
-												{ 'free-with-plan': hasOneFreePrivacy }
-											)
-										}
+										className={ classnames( 'checkout__privacy-protection-radio-price-text', {
+											'free-with-plan': hasOneFreePrivacy,
+										} ) }
 									>
-										{
-											translate(
-												'%(cost)s/year',
-												'%(cost)s per domain/year',
-												{
-													args: { cost: this.getPrivacyProtectionCost() },
-													count: numberOfDomainRegistrations
-												}
-											)
-										}
+										{ translate( '%(cost)s/year', '%(cost)s per domain/year', {
+											args: { cost: this.getPrivacyProtectionCost() },
+											count: numberOfDomainRegistrations,
+										} ) }
 									</span>
 									{ hasOneFreePrivacy && (
 										<span className="checkout__privacy-protection-free-text">
@@ -104,12 +99,10 @@ class PrivacyProtection extends Component {
 									) }
 									<br />
 									<span className="checkout__privacy-protection-radio-text-description">
-									{
-										translate(
+										{ translate(
 											'Protects your identity and prevents spam by keeping your contact information ' +
-											'off the Internet.'
-										)
-									}
+												'off the Internet.'
+										) }
 									</span>
 								</p>
 							</FormLabel>
@@ -123,25 +116,18 @@ class PrivacyProtection extends Component {
 								/>
 								<p className="checkout__privacy-protection-radio-text">
 									<span>
-									{
-										translate(
-											'{{strong}}Register publicly{{/strong}}',
-											{
-												components: {
-													strong: <strong />,
-												},
-											}
-										)
-									}
+										{ translate( '{{strong}}Register publicly{{/strong}}', {
+											components: {
+												strong: <strong />,
+											},
+										} ) }
 									</span>
 									<br />
 									<span className="checkout__privacy-protection-radio-text-description">
-									{
-										translate(
+										{ translate(
 											'Your contact information will be listed in a public database and will be ' +
-											'susceptible to spam.'
-										)
-									}
+												'susceptible to spam.'
+										) }
 									</span>
 								</p>
 							</FormLabel>

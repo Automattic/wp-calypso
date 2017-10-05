@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { keyBy, omit, isNumber } from 'lodash';
 
 /**

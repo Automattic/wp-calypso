@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -15,18 +18,10 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		total: PropTypes.number,
 		pageClick: PropTypes.func.isRequired,
-	}
+	};
 
 	getPageList = ( page, pageCount ) => {
-		let pageList = [
-			1,
-			page - 2,
-			page - 1,
-			page,
-			page + 1,
-			page + 2,
-			pageCount,
-		];
+		let pageList = [ 1, page - 2, page - 1, page, page + 1, page + 2, pageCount ];
 		pageList.sort( ( a, b ) => a - b );
 
 		// Remove pages less than 1, or greater than total number of pages, and remove duplicates
@@ -53,7 +48,7 @@ class Pagination extends Component {
 		pageList.push( 'next' ); // Append to end
 
 		return pageList;
-	}
+	};
 
 	render() {
 		const { page, pageClick, perPage, total } = this.props;
@@ -78,9 +73,7 @@ class Pagination extends Component {
 
 		return (
 			<div className="pagination">
-				<ul className="pagination__list">
-					{ pageListRendered }
-				</ul>
+				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);
 	}

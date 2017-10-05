@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import React from 'react';
 import { includes } from 'lodash';
@@ -24,7 +27,7 @@ export default {
 
 		renderWithReduxStore(
 			React.createElement( SidebarComponent, {
-				context: context
+				context: context,
 			} ),
 			document.getElementById( 'secondary' ),
 			context.store
@@ -42,12 +45,10 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
 		renderWithReduxStore(
-			React.createElement( ProfileComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
+			React.createElement( ProfileComponent, {
+				userSettings: userSettings,
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -62,12 +63,10 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Get Apps' );
 
 		renderWithReduxStore(
-			React.createElement( AppsComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
+			React.createElement( AppsComponent, {
+				userSettings: userSettings,
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -92,7 +91,7 @@ export default {
 			React.createElement( NextSteps, {
 				path: context.path,
 				isWelcome: isWelcome,
-				trophiesData: trophiesData
+				trophiesData: trophiesData,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -119,5 +118,5 @@ export default {
 
 	findFriendsRedirect() {
 		page.redirect( '/me' );
-	}
+	},
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, pick } from 'lodash';
@@ -18,7 +21,7 @@ import TaxonomyCard from './taxonomies/taxonomy-card';
 import {
 	isJetpackSite,
 	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi
+	siteSupportsJetpackSettingsUi,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
@@ -35,15 +38,16 @@ class SiteSettingsFormWriting extends Component {
 		const { isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
 			<SectionHeader label={ title }>
-				{ showButton &&
+				{ showButton && (
 					<Button
 						compact
 						primary
 						onClick={ this.props.handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }>
+						disabled={ isRequestingSettings || isSavingSettings }
+					>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
-				}
+				) }
 			</SectionHeader>
 		);
 	}
@@ -72,28 +76,24 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ this.props.handleSubmitForm }
 				className="site-settings__general-settings"
 			>
+				{ this.props.isJetpackSite &&
+				this.props.jetpackMasterbarSupported && (
+					<div>
+						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
 
-				{
-					this.props.isJetpackSite && this.props.jetpackMasterbarSupported && (
-						<div>
-							{
-								this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false )
-							}
-							<Masterbar
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-							/>
-						</div>
-					)
-				}
-
-				{ config.isEnabled( 'manage/site-settings/categories' ) &&
+				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
 						<QueryTaxonomies siteId={ siteId } postType="post" />
 						<TaxonomyCard taxonomy="category" postType="post" />
 						<TaxonomyCard taxonomy="post_tag" postType="post" />
 					</div>
-				}
+				) }
 
 				{ this.renderSectionHeader( translate( 'Composing' ) ) }
 				<Composing
@@ -108,26 +108,22 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 					updateFields={ updateFields }
 				/>
-				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
-						<div>
-							{
-								this.renderSectionHeader( translate( 'Media' ) )
-							}
-							<MediaSettings
-								siteId={ this.props.siteId }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								onChangeField={ onChangeField }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields } />
-						</div>
-					)
-				}
+				{ this.props.isJetpackSite &&
+				this.props.jetpackSettingsUISupported && (
+					<div>
+						{ this.renderSectionHeader( translate( 'Media' ) ) }
+						<MediaSettings
+							siteId={ this.props.siteId }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							onChangeField={ onChangeField }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				) }
 
-				{
-					this.renderSectionHeader( translate( 'Content types' ) )
-				}
+				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -137,39 +133,40 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 				/>
 
-				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
-						<div>
-							<QueryJetpackModules siteId={ this.props.siteId } />
+				{ this.props.isJetpackSite &&
+				this.props.jetpackSettingsUISupported && (
+					<div>
+						<QueryJetpackModules siteId={ this.props.siteId } />
 
-							<ThemeEnhancements
+						<ThemeEnhancements
+							onSubmitForm={ this.props.handleSubmitForm }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							handleAutosavingRadio={ handleAutosavingRadio }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+
+						{ config.isEnabled( 'press-this' ) && (
+							<PublishingTools
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								handleAutosavingRadio={ handleAutosavingRadio }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
 							/>
+						) }
+					</div>
+				) }
 
-							{ config.isEnabled( 'press-this' ) &&
-								<PublishingTools
-									onSubmitForm={ this.props.handleSubmitForm }
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									fields={ fields }
-								/>
-							}
-						</div>
-					)
-				}
-
-				{ config.isEnabled( 'press-this' ) && ! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
+				{ config.isEnabled( 'press-this' ) &&
+				! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
 					<div>
-						{
-							this.renderSectionHeader( translate( 'Press This', {
-								context: 'name of browser bookmarklet tool'
-							} ), false )
-						}
+						{ this.renderSectionHeader(
+							translate( 'Press This', {
+								context: 'name of browser bookmarklet tool',
+							} ),
+							false
+						) }
 
 						<PressThis />
 					</div>
@@ -180,14 +177,14 @@ class SiteSettingsFormWriting extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
 			isJetpackSite: isJetpackSite( state, siteId ),
-			siteId
+			siteId,
 		};
 	},
 	{ requestPostTypes },
@@ -240,20 +237,13 @@ const getFormSettings = settings => {
 	const gmt_offset = get( settings, 'gmt_offset' );
 	const timezone_string = get( settings, 'timezone_string' );
 
-	if (
-		! timezone_string &&
-		typeof gmt_offset === 'string' &&
-		gmt_offset.length
-	) {
-		formSettings.timezone_string = 'UTC' +
-			( /\-/.test( gmt_offset ) ? '' : '+' ) +
-			gmt_offset;
+	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
+		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
 	}
 
 	return formSettings;
 };
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormWriting );
+export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
+	SiteSettingsFormWriting
+);

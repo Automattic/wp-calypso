@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { defer } from 'lodash';
 
 function fakeLoader( url, callback ) {

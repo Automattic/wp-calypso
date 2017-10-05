@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,9 +21,11 @@ class QueryTerms extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.taxonomy === nextProps.taxonomy &&
-				shallowEqual( this.props.query, nextProps.query ) ) {
+		if (
+			this.props.siteId === nextProps.siteId &&
+			this.props.taxonomy === nextProps.taxonomy &&
+			shallowEqual( this.props.query, nextProps.query )
+		) {
 			return;
 		}
 
@@ -49,20 +54,25 @@ QueryTerms.propTypes = {
 	taxonomy: PropTypes.string.isRequired,
 	query: PropTypes.object,
 	requesting: PropTypes.bool.isRequired,
-	requestSiteTerms: PropTypes.func.isRequired
+	requestSiteTerms: PropTypes.func.isRequired,
 };
 
 QueryTerms.defaultProps = {
-	query: {}
+	query: {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requesting: isRequestingTermsForQuery( state, ownProps.siteId, ownProps.taxonomy, ownProps.query )
+			requesting: isRequestingTermsForQuery(
+				state,
+				ownProps.siteId,
+				ownProps.taxonomy,
+				ownProps.query
+			),
 		};
 	},
 	{
-		requestSiteTerms
+		requestSiteTerms,
 	}
 )( QueryTerms );

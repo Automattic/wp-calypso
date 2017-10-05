@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -35,7 +38,9 @@ const ProductReviewsWidget = ( { site, product, translate } ) => {
 
 			<div className="product-reviews-widget__container">
 				<Rating rating={ product.average_rating * 20 } size={ 16 } />
-				<a href={ getLink( `/store/reviews/${ product.id }/approved/:site`, site ) }>{ reviewLabel }</a>
+				<a href={ getLink( `/store/reviews/${ product.id }/approved/:site`, site ) }>
+					{ reviewLabel }
+				</a>
 			</div>
 		</div>
 	);
@@ -51,9 +56,9 @@ ProductReviewsWidget.propTypes = {
 	} ),
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const site = getSelectedSiteWithFallback( state );
 	return {
-		site
+		site,
 	};
 } )( localize( ProductReviewsWidget ) );
