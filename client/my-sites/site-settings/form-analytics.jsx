@@ -221,7 +221,7 @@ class GoogleAnalyticsForm extends Component {
 						{ showAnonymizeIP &&
 							<fieldset>
 								<CompactFormToggle
-									checked={ fields.wga ? fields.wga.anonymize_ip : false }
+									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ this.handleAnonymizeChange }
 								>

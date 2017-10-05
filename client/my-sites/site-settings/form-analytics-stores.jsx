@@ -23,8 +23,9 @@ class FormAnalyticsStores extends Component {
 				{
 					settings.map( setting =>
 						<CompactFormToggle
-							checked={ fields.wga ? fields.wga[ setting.key ] : false }
+							checked={ fields.wga ? Boolean( fields.wga[ setting.key ] ) : false }
 							disabled={ disableAll }
+							key={ setting.key }
 							onChange={ this.handleToggleChange( setting.key ) }>
 							{ setting.label }
 						</CompactFormToggle>
