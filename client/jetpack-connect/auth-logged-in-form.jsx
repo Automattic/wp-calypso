@@ -154,7 +154,7 @@ class LoggedInForm extends Component {
 	redirect() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( this.isFromJpo() || this.props.isSSO || this.props.isWoo ) {
+		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo() ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
