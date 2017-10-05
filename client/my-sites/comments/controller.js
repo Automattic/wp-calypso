@@ -60,7 +60,7 @@ export const comments = function( context ) {
 
 	const pageNumber = parseInt( context.query.page, 10 );
 	if ( isNaN( pageNumber ) || pageNumber === 0 ) {
-		return changePage( status, siteFragment )( 1 );
+		return changePage( context.params.status, siteFragment )( 1 );
 	}
 
 	renderWithReduxStore(
