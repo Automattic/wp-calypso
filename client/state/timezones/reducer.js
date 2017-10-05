@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { TIMEZONES_RECEIVE } from 'state/action-types';
 
 import {

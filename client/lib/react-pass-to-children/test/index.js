@@ -4,14 +4,14 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-var React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	expect = require( 'chai' ).expect;
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var passToChildren = require( '../' );
+import passToChildren from '../';
 
 /**
  * Module variables

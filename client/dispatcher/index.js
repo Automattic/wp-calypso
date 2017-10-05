@@ -1,7 +1,11 @@
-var Dispatcher = require( 'flux' ).Dispatcher,
-	debug = require( 'debug' )( 'calypso:dispatcher' );
+/**
+ * External dependencies
+ */
+import { Dispatcher } from 'flux';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:dispatcher' );
 
-var AppDispatcher = Object.assign( new Dispatcher(), {
+const AppDispatcher = Object.assign( new Dispatcher(), {
 	handleViewAction: function( action ) {
 		debug( 'Dispatching view action %s: %o', action.type, action );
 		this.dispatch( {

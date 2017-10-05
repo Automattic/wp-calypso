@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems;
+import { cartItems } from 'lib/cart-values';
 
 var CartTotal = React.createClass({
 	render: function() {

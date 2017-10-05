@@ -1,5 +1,8 @@
-var page = require( 'page' ),
-	config = require( 'config' );
+/**
+ * Internal dependencies
+ */
+import page from 'page';
+import config from 'config';
 
 module.exports = function redirect( path ) {
 	if ( config( 'env' ) === 'development' ) {

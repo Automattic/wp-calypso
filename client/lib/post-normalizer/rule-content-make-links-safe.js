@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { forEach, toArray } from 'lodash';
-
 import { safeLinkRe } from './utils';
 
 export default function makeContentLinksSafe( post, dom ) {

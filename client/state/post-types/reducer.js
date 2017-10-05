@@ -7,7 +7,6 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
-
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
 import {

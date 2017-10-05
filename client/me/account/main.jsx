@@ -50,7 +50,6 @@ import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
-
 import _user from 'lib/user';
 
 const user = _user();

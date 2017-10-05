@@ -1,6 +1,5 @@
 import React from 'react';
 import Test from './Test';
-
 import Card from 'components/card';
 
 export default React.createClass( {

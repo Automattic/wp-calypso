@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { findIndex, pick, reject } from 'lodash';
-
 import update from 'react-addons-update';
 
 /**

@@ -4,12 +4,12 @@
  * External dependencies
  */
 import { range } from 'lodash';
-const assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var ScrollHelper = require( '../scroll-helper' );
+import ScrollHelper from '../scroll-helper';
 
 function getItemRef( item ) {
 	return 'i' + item;

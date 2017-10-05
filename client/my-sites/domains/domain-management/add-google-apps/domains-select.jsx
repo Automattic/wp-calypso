@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
+import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 const DomainsSelect = React.createClass( {
 	propTypes: {

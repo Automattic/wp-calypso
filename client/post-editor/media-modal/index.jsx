@@ -35,7 +35,6 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import accept from 'lib/accept';
-
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -54,9 +53,8 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 			MediaUtils.isItemBeingUploaded( item ) && (
 				// Transients can't be handled by the editor if they are being
 				// uploaded via an external URL
-				MediaUtils.getMimePrefix( item ) !== 'image' ||
-				! MediaUtils.isTransientPreviewable( item ) ||
-				modalView === ModalViews.GALLERY
+				( MediaUtils.getMimePrefix( item ) !== 'image' ||
+				! MediaUtils.isTransientPreviewable( item ) || modalView === ModalViews.GALLERY )
 			)
 		);
 }

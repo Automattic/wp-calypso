@@ -3,7 +3,6 @@
  */
 import { bypassDataLayer } from './utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
-
 import wpcomHttpHandlers from './wpcom-http';
 import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';

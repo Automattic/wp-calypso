@@ -30,7 +30,6 @@ import { getPostPreviewUrl } from 'state/posts/selectors';
 import { isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
-
 import Comments from 'blocks/comments';
 import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';

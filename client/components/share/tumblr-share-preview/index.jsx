@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 
-/* Internal dependecies */
+/* Internal dependencies */
 import { localize } from 'i18n-calypso';
 import { truncateArticleContent } from '../helpers';
 

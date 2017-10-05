@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
 const Property = React.createClass( {
 	render() {

@@ -13,7 +13,6 @@ import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
-
 import { fetchResetOptionsByNameAndUrl } from 'state/account-recovery/reset/actions';
 
 import {

@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,

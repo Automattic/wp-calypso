@@ -5,7 +5,7 @@ import React from 'react';
 import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import shortcodeUtils from 'lib/shortcode';
 import renderField from './preview-fields';

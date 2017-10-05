@@ -20,8 +20,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp' ;
-const sites = require( 'lib/sites-list' )();
-const user = require( 'lib/user' )();
+/* eslint-disable no-restricted-imports */
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+/* eslint-enable no-restricted-imports */
+import userFactory from 'lib/user';
+const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
@@ -29,11 +33,9 @@ import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
-
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-
 import { getSiteId } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
 

@@ -1,17 +1,19 @@
 /**
- * External dependecies
+ * External dependencies
  */
-var url = require( 'url' ),
-	i18n = require( 'i18n-calypso' ),
-	moment = require( 'moment-timezone' );
+import url from 'url';
+import i18n from 'i18n-calypso';
+import moment from 'moment-timezone';
 import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var postNormalizer = require( 'lib/post-normalizer' ),
-	sites = require( 'lib/sites-list' )();
-
+import postNormalizer from 'lib/post-normalizer';
+/* eslint-disable no-restricted-imports */
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+/* eslint-enable no-restricted-imports */
 import { getFeaturedImageId } from './utils-ssr-ready';
 
 var utils = {

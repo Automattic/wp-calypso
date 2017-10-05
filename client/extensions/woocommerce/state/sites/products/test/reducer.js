@@ -19,7 +19,6 @@ import {
 	productsSearchClear,
 } from '../reducer';
 import product from './fixtures/product';
-
 import products from './fixtures/products';
 import {
 	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,

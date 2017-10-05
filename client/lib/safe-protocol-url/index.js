@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign, pick } from 'lodash';
-const urls = require( 'url' );
+import urls from 'url';
 
 module.exports = function( url ) {
 	var bits,

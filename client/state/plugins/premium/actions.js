@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const wpcom = require( 'lib/wp' );
+import wpcom from 'lib/wp';
 import { get, keys } from 'lodash';
 
 /**

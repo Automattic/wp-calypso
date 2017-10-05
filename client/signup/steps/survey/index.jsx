@@ -19,7 +19,6 @@ import verticals from './verticals';
 import Button from 'components/button';
 import signupUtils from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 class SurveyStep extends React.Component {

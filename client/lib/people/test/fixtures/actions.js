@@ -1,4 +1,7 @@
-const site = require( './site' );
+/**
+ * Internal dependencies
+ */
+import site from './site';
 
 module.exports = {
 	unauthorizedFetchingUsers: {

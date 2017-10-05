@@ -6,17 +6,22 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	emitter = require( 'lib/mixins/emitter' ),
-	cartSynchronizer = require( './cart-synchronizer' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	PollerPool = require( 'lib/data-poller' ),
-	cartAnalytics = require( './cart-analytics' ),
-	productsList = require( 'lib/products-list' )(),
-	Dispatcher = require( 'dispatcher' ),
-	cartValues = require( 'lib/cart-values' ),
-	applyCoupon = cartValues.applyCoupon,
-	cartItems = cartValues.cartItems;
+import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+import emitter from 'lib/mixins/emitter';
+import cartSynchronizer from './cart-synchronizer';
+import PollerPool from 'lib/data-poller';
+import cartAnalytics from './cart-analytics';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import Dispatcher from 'dispatcher';
+import {
+	applyCoupon,
+	cartItems,
+	fillInAllCartItemAttributes,
+} from 'lib/cart-values';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 var _cartKey = null,
 	_synchronizer = null,
@@ -74,7 +79,7 @@ function update( changeFunction ) {
 		nextCart;
 
 	wrappedFunction = flowRight(
-		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
+		partialRight( fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
 

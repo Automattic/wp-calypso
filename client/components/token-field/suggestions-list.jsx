@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { map } from 'lodash';
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' ),
-	scrollIntoView = require( 'dom-scroll-into-view' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import scrollIntoView from 'dom-scroll-into-view';
 
 var SuggestionsList = React.createClass( {
 	propTypes: {

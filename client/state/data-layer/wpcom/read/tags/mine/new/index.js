@@ -9,7 +9,6 @@ import { find } from 'lodash';
  */
 import { READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
 import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
-
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';

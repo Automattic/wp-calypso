@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-var React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import page from 'page';
 
 var CartEmpty = React.createClass({
 	render: function() {

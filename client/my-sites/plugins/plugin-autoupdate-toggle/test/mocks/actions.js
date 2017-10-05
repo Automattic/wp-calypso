@@ -1,4 +1,7 @@
-var sinon = require( 'sinon' );
+/**
+ * External dependencies
+ */
+import sinon from 'sinon';
 
 module.exports = {
 	togglePluginAutoUpdate: sinon.spy(),

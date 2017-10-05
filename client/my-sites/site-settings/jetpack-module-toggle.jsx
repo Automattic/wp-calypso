@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-
 import {
 	activateModule,
 	deactivateModule

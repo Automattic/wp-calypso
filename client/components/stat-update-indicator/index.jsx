@@ -2,9 +2,9 @@
  * External dependencies
  */
 
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies

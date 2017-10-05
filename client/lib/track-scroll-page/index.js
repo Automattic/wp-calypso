@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = function( path, title, category, page ) {
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', page );

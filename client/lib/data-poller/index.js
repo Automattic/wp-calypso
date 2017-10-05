@@ -1,7 +1,15 @@
-var debug = require( 'debug' )( 'calypso:poller' );
+/**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:poller' );
 
-var Poller = require( './poller' ),
-	_pollers = {};
+/**
+ * Internal dependencies
+ */
+import Poller from './poller';
+
+const _pollers = {};
 
 function add( dataStore, fetcher, options ) {
 	var poller = new Poller( dataStore, fetcher, options );

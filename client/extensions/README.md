@@ -58,7 +58,6 @@ const renderHelloWorld = ( context ) => {
 *Note:* you have access to all the components and blocks that Calypso offers (check out `/devdocs/design` and `/devdocs/blocks` to browse them). With those you can build an entirely new section that is consistent with the experience of the whole app. We encourage you to use them as much as possible, and to contribute back to the core project if you find issues or have suggestions for new ones.
 
 ## Imports
-
 Importing from other javascript modules can be done from one of three root contexts:
 - / (root of the Calypso repository)
 - /client (the client subdirectory)

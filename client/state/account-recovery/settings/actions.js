@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,

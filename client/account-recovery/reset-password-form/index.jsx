@@ -15,7 +15,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import ResetOptionSet from './reset-option-set';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-
 import {
 	setResetMethod,
 	requestReset,

@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Input = require( './input' );
+import Input from './input';
 
 module.exports = React.createClass( {
 	displayName: 'HiddenInput',

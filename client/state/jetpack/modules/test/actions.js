@@ -12,7 +12,6 @@ import sinon from 'sinon';
  */
 import { activateModule, deactivateModule, fetchModuleList } from '../actions';
 import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
-
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,

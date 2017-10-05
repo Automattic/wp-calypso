@@ -15,7 +15,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-
 import { translate } from 'i18n-calypso';
 
 const SignupSiteTitle = React.createClass( {

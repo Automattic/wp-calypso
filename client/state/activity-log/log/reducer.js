@@ -10,7 +10,6 @@ import { mapValues } from 'lodash';
 import ActivityQueryManager from 'lib/query-manager/activity';
 import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
-
 import { logItemsSchema } from './schema';
 
 export const logItems = createReducer(
