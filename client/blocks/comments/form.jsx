@@ -216,6 +216,7 @@ class PostCommentForm extends React.Component {
 							</pre>
 							<AutoDirection>
 								<textarea
+									className="comments__form-textarea"
 									value={ this.state.commentText }
 									placeholder={ translate( 'Enter your comment here…' ) }
 									ref={ this.handleTextAreaNode }
