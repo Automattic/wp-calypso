@@ -2,30 +2,27 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import analytics from 'lib/analytics';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-export default React.createClass( {
-	displayName: 'Input',
-
-	getDefaultProps() {
-		return { autoFocus: false, autoComplete: 'on' };
-	},
+class Input extends Component {
+	static displayName = 'Input';
+	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
 		this.autoFocusInput();
-	},
+	}
 
 	setupInputModeHandlers() {
 		const inputElement = ReactDom.findDOMNode( this.refs.input );
@@ -42,7 +39,7 @@ export default React.createClass( {
 			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
 				inputElement.addEventListener( eventName, () => inputElement.pattern = '.*' ) );
 		}
-	},
+	}
 
 	componentDidUpdate( oldProps ) {
 		if ( oldProps.disabled && ! this.props.disabled ) {
@@ -50,25 +47,25 @@ export default React.createClass( {
 			// until we receive data from the server.
 			this.autoFocusInput();
 		}
-	},
+	}
 
 	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
-	},
+	}
 
 	autoFocusInput() {
 		if ( this.props.autoFocus ) {
 			this.focus();
 		}
-	},
+	}
 
-	recordFieldClick() {
+	recordFieldClick = () => {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, this.props.classes );
@@ -94,4 +91,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( Input );
