@@ -33,7 +33,11 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isJetpackMinimumVersion, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	siteSupportsJetpackSettingsUi,
+} from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -144,7 +148,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				settingsFields,
 				siteId,
 				siteIsJetpack,
-				jetpackSettingsUISupported
+				jetpackSettingsUISupported,
 			} = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
@@ -266,7 +270,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isJetpack = isJetpackSite( state, siteId );
 			const jetpackSettingsUISupported =
 				isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
-			const jetpackSiteRequiresLegacySettingsAPI = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
+			const jetpackSiteRequiresLegacySettingsAPI =
+				isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );

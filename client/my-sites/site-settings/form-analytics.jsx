@@ -33,7 +33,7 @@ import {
 	isJetpackMinimumVersion,
 	isJetpackSite,
 	siteSupportsGoogleAnalyticsIPAnonymization,
-	siteSupportsGoogleAnalyticsBasicEcommerceTracking
+	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -52,7 +52,7 @@ class GoogleAnalyticsForm extends Component {
 		const { fields, updateFields } = this.props;
 		const updatedWgaFields = Object.assign( {}, fields.wga || {}, { [ key ]: value } );
 		updateFields( { wga: updatedWgaFields } );
-	}
+	};
 
 	handleCodeChange = event => {
 		const code = event.target.value;
@@ -63,15 +63,15 @@ class GoogleAnalyticsForm extends Component {
 		this.handleFieldChange( 'code', code );
 	};
 
-	handleToggleChange = ( key ) => {
+	handleToggleChange = key => {
 		const { fields } = this.props;
 		const value = fields.wga ? ! fields.wga[ key ] : false;
 		this.handleFieldChange( key, value );
-	}
+	};
 
 	handleAnonymizeChange = () => {
 		this.handleToggleChange( 'anonymize_ip' );
-	}
+	};
 
 	isSubmitButtonDisabled() {
 		const { isRequestingSettings, isSavingSettings } = this.props;
@@ -218,40 +218,35 @@ class GoogleAnalyticsForm extends Component {
 								{ translate( 'Where can I find my Tracking ID?' ) }
 							</ExternalLink>
 						</fieldset>
-						{ showAnonymizeIP &&
+						{ showAnonymizeIP && (
 							<fieldset>
 								<CompactFormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ this.handleAnonymizeChange }
 								>
-									{ translate(
-										'Anonymize IP addresses'
-									) }
+									{ translate( 'Anonymize IP addresses' ) }
 								</CompactFormToggle>
 								<FormSettingExplanation>
-									{
-										translate(
-											'Enabling this option is mandatory in certain countries due to national ' +
+									{ translate(
+										'Enabling this option is mandatory in certain countries due to national ' +
 											'privacy laws.'
-										)
-									}
+									) }
 								</FormSettingExplanation>
 							</fieldset>
-						}
-						{
-							showAnalyticsForStores &&
+						) }
+						{ showAnalyticsForStores && (
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
 							/>
-						}
+						) }
 						<p>
 							{ translate(
 								'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-								'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
-								'use different methods to identify and track activity on your site, so they will ' +
-								'normally show slightly different totals for your visits, views, etc.',
+									'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+									'use different methods to identify and track activity on your site, so they will ' +
+									'normally show slightly different totals for your visits, views, etc.',
 								{
 									components: {
 										a: <a href={ '/stats/' + site.domain } />,
@@ -295,7 +290,10 @@ const mapStateToProps = state => {
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );
 	const siteSupportsIPAnonymization = siteSupportsGoogleAnalyticsIPAnonymization( state, siteId );
-	const siteSupportsBasicEcommerceTracking = siteSupportsGoogleAnalyticsBasicEcommerceTracking( state, siteId );
+	const siteSupportsBasicEcommerceTracking = siteSupportsGoogleAnalyticsBasicEcommerceTracking(
+		state,
+		siteId
+	);
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled =
 		site &&
