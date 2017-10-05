@@ -93,10 +93,10 @@ class OrderCustomerInfo extends Component {
 								{ translate( 'Billing Details' ) }
 								{ isEditing ? (
 									<Button
-										borderless
 										compact
 										className="order-customer__edit-link"
 										onClick={ this.toggleDialog( 'billing' ) }
+										primary
 									>
 										{ translate( 'edit' ) }
 									</Button>
@@ -120,10 +120,10 @@ class OrderCustomerInfo extends Component {
 								{ translate( 'Shipping Details' ) }
 								{ isEditing ? (
 									<Button
-										borderless
 										compact
 										className="order-customer__edit-link"
 										onClick={ this.toggleDialog( 'shipping' ) }
+										primary
 									>
 										{ translate( 'edit' ) }
 									</Button>
