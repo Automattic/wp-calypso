@@ -6,35 +6,29 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.PureComponent {
+    static displayName = 'PostRelativeTime';
 
-	displayName: 'PostRelativeTime',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		post: PropTypes.object.isRequired,
 		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
 		target: PropTypes.string
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			includeNonDraftStatuses: false,
-			link: null,
-			target: null
-		};
-	},
+	static defaultProps = {
+		includeNonDraftStatuses: false,
+		link: null,
+		target: null
+	};
 
-	getTimestamp: function() {
+	getTimestamp = () => {
 		const status = this.props.post.status;
 
 		let time;
@@ -45,9 +39,9 @@ module.exports = localize(React.createClass( {
 		}
 
 		return time;
-	},
+	};
 
-	getRelativeTimeText: function() {
+	getRelativeTimeText = () => {
 		const time = this.getTimestamp();
 		if ( ! time ) {
 			return;
@@ -61,9 +55,9 @@ module.exports = localize(React.createClass( {
 				</time>
 			</span>
         );
-	},
+	};
 
-	getStatusText: function() {
+	getStatusText = () => {
 		var status = this.props.post.status,
 			statusClassName = 'post-relative-time-status__status',
 			statusIcon = 'aside',
@@ -104,9 +98,9 @@ module.exports = localize(React.createClass( {
 				</span>
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
 			relativeTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
@@ -126,4 +120,4 @@ module.exports = localize(React.createClass( {
 			</p>
 		);
 	}
-} ));
+});

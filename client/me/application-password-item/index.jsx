@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import debugFactory from 'debug';
@@ -19,7 +21,7 @@ import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
 
-const ApplicationPasswordsItem = React.createClass( {
+const ApplicationPasswordsItem = createReactClass({
 
 	displayName: 'ApplicationPasswordsItem',
 
@@ -72,7 +74,7 @@ const ApplicationPasswordsItem = React.createClass( {
 			</li>
         );
 	}
-} );
+});
 
 export default connect(
 	null,

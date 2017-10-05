@@ -25,20 +25,21 @@ import ListEnd from 'components/list-end';
 /**
  * Module Variables
  */
-var Team = localize(React.createClass( {
-	displayName: 'Team',
+var Team = localize(/**
+ * Module Variables
+ */
+class extends React.Component {
+    static displayName = 'Team';
 
-	getInitialState: function() {
-		return {
-			bulkEditing: false
-		};
-	},
+	state = {
+		bulkEditing: false
+	};
 
-	isLastPage() {
+	isLastPage = () => {
 		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
-	},
+	};
 
-	render: function() {
+	render() {
 		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
 			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
@@ -108,9 +109,9 @@ var Team = localize(React.createClass( {
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
-	},
+	}
 
-	_renderPerson: function( user ) {
+	_renderPerson = user => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -119,30 +120,29 @@ var Team = localize(React.createClass( {
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing } />
 		);
-	},
+	};
 
-	_fetchNextPage: function() {
+	_fetchNextPage = () => {
 		var offset = this.props.users.length;
 		var fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
 		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
 		debug( 'fetching next batch of users' );
 		UsersActions.fetchUsers( fetchOptions );
-	},
+	};
 
-	_getPersonRef: function( user ) {
+	_getPersonRef = user => {
 		return 'user-' + user.ID;
-	},
+	};
 
-	_renderLoadingPeople: function() {
+	_renderLoadingPeople = () => {
 		return <PeopleListItem key="people-list-item-placeholder" />;
-	}
+	};
+});
 
-} ));
+module.exports = localize(class extends React.Component {
+    static displayName = 'TeamList';
 
-module.exports = localize(React.createClass( {
-	displayName: 'TeamList',
-
-	render: function() {
+	render() {
 		var fetchOptions = {
 			siteId: this.props.site && this.props.site.ID,
 			order: 'ASC',
@@ -159,4 +159,4 @@ module.exports = localize(React.createClass( {
 			</SiteUsersFetcher>
 		);
 	}
-} ));
+});

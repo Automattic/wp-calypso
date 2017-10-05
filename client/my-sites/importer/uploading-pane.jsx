@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { flowRight, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -19,29 +18,25 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
 
-export const UploadingPane = localize(React.createClass( {
-	displayName: 'SiteSettingsUploadingPane',
+export const UploadingPane = localize(class extends React.PureComponent {
+    static displayName = 'SiteSettingsUploadingPane';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number
 		} )
-	},
+	};
 
-	componentWillUnmount: function() {
+	static defaultProps = { description: null };
+
+	componentWillUnmount() {
 		window.clearInterval( this.randomizeTimer );
-	},
+	}
 
-	getDefaultProps: function() {
-		return { description: null };
-	},
-
-	getMessage: function() {
+	getMessage = () => {
 		const { importerState, percentComplete = 0, filename } = this.props.importerStatus;
 
 		switch ( importerState ) {
@@ -84,41 +79,41 @@ export const UploadingPane = localize(React.createClass( {
 					</div>
                 );
 		}
-	},
+	};
 
-	initiateFromDrop: function( event ) {
+	initiateFromDrop = event => {
 		this.startUpload( event[ 0 ] );
-	},
+	};
 
-	initiateFromForm: function( event ) {
+	initiateFromForm = event => {
 		let fileSelector = this.refs.fileSelector;
 
 		event.preventDefault();
 		event.stopPropagation();
 
 		this.startUpload( fileSelector.files[ 0 ] );
-	},
+	};
 
-	isReadyForImport: function() {
+	isReadyForImport = () => {
 		const { importerState } = this.props.importerStatus;
 		const { READY_FOR_UPLOAD, UPLOAD_FAILURE } = appStates;
 
 		return includes( [ READY_FOR_UPLOAD, UPLOAD_FAILURE ], importerState );
-	},
+	};
 
-	openFileSelector: function() {
+	openFileSelector = () => {
 		let fileSelector = this.refs.fileSelector;
 
 		fileSelector.click();
-	},
+	};
 
-	startUpload: function( file ) {
+	startUpload = file => {
 		const { startUpload } = this.props;
 
 		startUpload( this.props.importerStatus, file );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>{ this.props.description }</p>
@@ -135,7 +130,7 @@ export const UploadingPane = localize(React.createClass( {
 			</div>
 		);
 	}
-} ));
+});
 
 const mapDispatchToProps = dispatch => ( {
 	startUpload: flowRight( dispatch, startUpload )

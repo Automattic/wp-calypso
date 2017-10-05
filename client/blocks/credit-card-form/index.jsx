@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 
 /**
@@ -25,8 +26,10 @@ import support from 'lib/url/support';
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
-const CreditCardForm = React.createClass( {
-	propTypes: {
+const CreditCardForm = createReactClass({
+    displayName: 'CreditCardForm',
+
+    propTypes: {
 		apiParams: PropTypes.object,
 		createPaygateToken: PropTypes.func.isRequired,
 		initialValues: PropTypes.object,
@@ -36,7 +39,7 @@ const CreditCardForm = React.createClass( {
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
 	},
 
-	getInitialState() {
+    getInitialState() {
 		return {
 			form: null,
 			formSubmitting: false,
@@ -44,9 +47,9 @@ const CreditCardForm = React.createClass( {
 		};
 	},
 
-	_mounted: false,
+    _mounted: false,
 
-	fieldNames: [
+    fieldNames: [
 		'name',
 		'number',
 		'cvv',
@@ -55,7 +58,7 @@ const CreditCardForm = React.createClass( {
 		'postalCode'
 	],
 
-	componentWillMount() {
+    componentWillMount() {
 		this._mounted = true;
 
 		const fields = this.fieldNames.reduce( ( result, fieldName ) => {
@@ -77,11 +80,11 @@ const CreditCardForm = React.createClass( {
 		} );
 	},
 
-	componentWillUnmount() {
+    componentWillUnmount() {
 		this._mounted = false;
 	},
 
-	validate( formValues, onComplete ) {
+    validate( formValues, onComplete ) {
 		if ( ! this._mounted ) {
 			return;
 		}
@@ -89,7 +92,7 @@ const CreditCardForm = React.createClass( {
 		onComplete( null, this.getValidationErrors() );
 	},
 
-	setFormState( form ) {
+    setFormState( form ) {
 		if ( ! this._mounted ) {
 			return;
 		}
@@ -114,7 +117,7 @@ const CreditCardForm = React.createClass( {
 		}
 	},
 
-	onFieldChange( rawDetails ) {
+    onFieldChange( rawDetails ) {
 		// Maps params from CreditCardFormFields component to work with formState.
 		forOwn( rawDetails, ( value, name ) => {
 			this.formStateController.handleFieldChange( {
@@ -124,7 +127,7 @@ const CreditCardForm = React.createClass( {
 		} );
 	},
 
-	onSubmit( event ) {
+    onSubmit( event ) {
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -145,7 +148,7 @@ const CreditCardForm = React.createClass( {
 		} );
 	},
 
-	saveCreditCard() {
+    saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
 		this.props.createPaygateToken( cardDetails, ( paygateError, paygateToken ) => {
@@ -207,7 +210,7 @@ const CreditCardForm = React.createClass( {
 		} );
 	},
 
-	getParamsForApi( cardDetails, paygateToken, extraParams = {} ) {
+    getParamsForApi( cardDetails, paygateToken, extraParams = {} ) {
 		return {
 			...extraParams,
 			country: cardDetails.country,
@@ -219,11 +222,11 @@ const CreditCardForm = React.createClass( {
 		};
 	},
 
-	isFieldInvalid( name ) {
+    isFieldInvalid( name ) {
 		return formState.isFieldInvalid( this.state.form, name );
 	},
 
-	getValidationErrors() {
+    getValidationErrors() {
 		const validationResult = validateCardDetails( this.getCardDetails() );
 
 		// Maps keys from credit card validator to work with formState.
@@ -232,14 +235,14 @@ const CreditCardForm = React.createClass( {
 		} );
 	},
 
-	getCardDetails() {
+    getCardDetails() {
 		// Maps keys from formState to work with CreditCardFormFields component and credit card validator.
 		return mapKeys( formState.getAllFieldValues( this.state.form ), ( value, key ) => {
 			return kebabCase( key );
 		} );
 	},
 
-	render() {
+    render() {
 		return (
             <form onSubmit={ this.onSubmit }>
 				<Card className="credit-card-form__content">
@@ -289,7 +292,8 @@ const CreditCardForm = React.createClass( {
 			</form>
         );
 	},
-	renderUsedForExistingPurchases() {
+
+    renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (
                 <div className="credit-card-form__card-terms">
@@ -301,6 +305,6 @@ const CreditCardForm = React.createClass( {
             );
 		}
 	}
-} );
+});
 
 export default localize(CreditCardForm);

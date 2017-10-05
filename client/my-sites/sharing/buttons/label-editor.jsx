@@ -13,47 +13,43 @@ import classNames from 'classnames';
  */
 import { decodeEntities } from 'lib/formatting';
 
-var SharingButtonsLabelEditor = module.exports = localize(React.createClass( {
-	displayName: 'SharingButtonsLabelEditor',
+var SharingButtonsLabelEditor = module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsLabelEditor';
 
-	propTypes: {
+	static propTypes = {
 		active: PropTypes.bool,
 		value: PropTypes.string,
 		onChange: PropTypes.func,
 		onClose: PropTypes.func,
 		hasEnabledButtons: PropTypes.bool
-	},
+	};
 
-	statics: {
-		closeKeyCodes: [
-			13, // Return
-			27  // Escape
-		]
-	},
+	static closeKeyCodes = [
+		13, // Return
+		27  // Escape
+	];
 
-	getDefaultProps: function() {
-		return {
-			active: false,
-			value: '',
-			onChange: function() {},
-			onClose: function() {},
-			hasEnabledButtons: true
-		};
-	},
+	static defaultProps = {
+		active: false,
+		value: '',
+		onChange: function() {},
+		onClose: function() {},
+		hasEnabledButtons: true
+	};
 
-	onKeyDown: function( event ) {
+	onKeyDown = event => {
 		if ( -1 !== SharingButtonsLabelEditor.closeKeyCodes.indexOf( event.keyCode ) ) {
 			event.target.blur();
 			event.preventDefault();
 			this.props.onClose();
 		}
-	},
+	};
 
-	onInputChange: function( event ) {
+	onInputChange = event => {
 		this.props.onChange( event.target.value );
-	},
+	};
 
-	getNoButtonsNoticeElement: function() {
+	getNoButtonsNoticeElement = () => {
 		if ( ! this.props.hasEnabledButtons ) {
 			return (
                 <em className="sharing-buttons-preview__panel-notice">
@@ -63,9 +59,9 @@ var SharingButtonsLabelEditor = module.exports = localize(React.createClass( {
 				</em>
             );
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'sharing-buttons-preview__panel', 'is-top', 'sharing-buttons-label-editor', {
 			'is-active': this.props.active
 		} );
@@ -88,4 +84,4 @@ var SharingButtonsLabelEditor = module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

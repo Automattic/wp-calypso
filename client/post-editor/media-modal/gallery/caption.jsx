@@ -11,21 +11,19 @@ import React from 'react';
 import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default localize(React.createClass({
-	displayName: 'EditorMediaModalGalleryCaption',
+export default localize(class extends React.Component {
+    static displayName = 'EditorMediaModalGalleryCaption';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		item: PropTypes.object
-	},
+	};
 
-	getInitialState() {
-		return {
-			caption: null
-		};
-	},
+	state = {
+		caption: null
+	};
 
-	getValue() {
+	getValue = () => {
 		if ( null !== this.state.caption ) {
 			return this.state.caption;
 		}
@@ -33,15 +31,15 @@ export default localize(React.createClass({
 		if ( this.props.item ) {
 			return this.props.item.caption;
 		}
-	},
+	};
 
-	setCaption( event ) {
+	setCaption = event => {
 		this.setState( {
 			caption: event.target.value
 		} );
-	},
+	};
 
-	saveCaption() {
+	saveCaption = () => {
 		const { siteId, item } = this.props;
 		if ( ! siteId || ! item ) {
 			return;
@@ -54,7 +52,7 @@ export default localize(React.createClass({
 		}
 
 		MediaActions.update( siteId, Object.assign( {}, item, { caption } ) );
-	},
+	};
 
 	render() {
 		return (
@@ -67,4 +65,4 @@ export default localize(React.createClass({
 				className="editor-media-modal-gallery__caption" />
         );
 	}
-}));
+});

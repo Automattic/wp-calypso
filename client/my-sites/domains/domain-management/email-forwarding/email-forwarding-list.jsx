@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import EmailForwardingItem from './email-forwarding-item';
 
-var EmailForwardingList = React.createClass( {
-	render: function() {
+class EmailForwardingList extends React.Component {
+    render() {
 		var emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
@@ -35,6 +35,6 @@ var EmailForwardingList = React.createClass( {
 
 		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>;
 	}
-} );
+}
 
 module.exports = localize(EmailForwardingList);

@@ -55,8 +55,8 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func
 } );
 
-const ThemeShowcase = React.createClass( {
-	propTypes: {
+class ThemeShowcase extends React.Component {
+    static propTypes = {
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
@@ -68,25 +68,21 @@ const ThemeShowcase = React.createClass( {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		trackATUploadClick: PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			tier: '',
-			search: '',
-			emptyContent: null,
-			showUploadButton: true
-		};
-	},
+	static defaultProps = {
+		tier: '',
+		search: '',
+		emptyContent: null,
+		showUploadButton: true
+	};
 
-	getInitialState() {
-		return {
-			page: 1,
-			showPreview: false,
-		};
-	},
+	state = {
+		page: 1,
+		showPreview: false,
+	};
 
-	doSearch( searchBoxContent ) {
+	doSearch = searchBoxContent => {
 		const filterRegex = /([\w-]*)\:([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
@@ -99,7 +95,7 @@ const ThemeShowcase = React.createClass( {
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		page( url );
-	},
+	};
 
 	/**
 	 * Returns a full showcase url from current props.
@@ -113,7 +109,7 @@ const ThemeShowcase = React.createClass( {
 	 *
 	 * @returns {String} Theme showcase url
 	 */
-	constructUrl( sections ) {
+	constructUrl = sections => {
 		const {
 			vertical,
 			tier,
@@ -131,22 +127,22 @@ const ThemeShowcase = React.createClass( {
 
 		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		return buildUrl( url, searchString );
-	},
+	};
 
-	onTierSelect( { value: tier } ) {
+	onTierSelect = ({ value: tier }) => {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
-	},
+	};
 
-	onUploadClick() {
+	onUploadClick = () => {
 		trackClick( 'upload theme' );
 		if ( this.props.atEnabled ) {
 			this.props.trackATUploadClick();
 		}
-	},
+	};
 
-	showUploadButton() {
+	showUploadButton = () => {
 		const { isMultisite, isLoggedIn } = this.props;
 
 		return (
@@ -154,7 +150,7 @@ const ThemeShowcase = React.createClass( {
 			isLoggedIn &&
 			! isMultisite
 		);
-	},
+	};
 
 	render() {
 		const {
@@ -266,7 +262,7 @@ const ThemeShowcase = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	isLoggedIn: !! getCurrentUserId( state ),

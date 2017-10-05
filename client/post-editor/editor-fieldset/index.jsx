@@ -6,23 +6,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'EditorFieldset',
+module.exports = class extends React.Component {
+    static displayName = 'EditorFieldset';
 
-	propTypes: {
+	static propTypes = {
 		legend: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.element
 		] ).isRequired
-	},
+	};
 
-	renderChildren: function() {
+	renderChildren = () => {
 		return React.Children.map( this.props.children, function( child ) {
 			return <div className="editor-fieldset__option">{ child }</div>;
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<fieldset className={ classNames( 'editor-fieldset', this.props.className ) }>
 				<legend className="editor-fieldset__legend">{ this.props.legend }</legend>
@@ -30,4 +30,4 @@ module.exports = React.createClass( {
 			</fieldset>
 		);
 	}
-} );
+};

@@ -18,10 +18,10 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import PostEditStore from 'lib/posts/post-edit-store';
 import { validateFormFields, validateSettingsToEmail } from './validations';
 
-const ContactFormDialog = React.createClass( {
-	displayName: 'ContactFormDialog',
+class ContactFormDialog extends React.Component {
+    static displayName = 'ContactFormDialog';
 
-	propTypes: {
+	static propTypes = {
 		activeTab: PropTypes.oneOf( [ 'fields', 'settings' ] ).isRequired,
 		showDialog: PropTypes.bool.isRequired,
 		isEdit: PropTypes.bool.isRequired,
@@ -37,9 +37,9 @@ const ContactFormDialog = React.createClass( {
 		onFieldRemove: PropTypes.func.isRequired,
 		onFieldUpdate: PropTypes.func.isRequired,
 		onSettingsUpdate: PropTypes.func.isRequired
-	},
+	};
 
-	getActionButtons() {
+	getActionButtons = () => {
 		const isValidForm = validateFormFields( this.props.contactForm.fields ) && validateSettingsToEmail( this.props.contactForm.to );
 		const actionButtons = [
 			<FormButton
@@ -74,7 +74,7 @@ const ContactFormDialog = React.createClass( {
 		}
 
 		return actionButtons;
-	},
+	};
 
 	render() {
 		const {
@@ -106,7 +106,7 @@ const ContactFormDialog = React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+}
 
 export default connect( state => {
 	return {

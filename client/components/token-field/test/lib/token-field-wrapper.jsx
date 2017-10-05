@@ -16,15 +16,13 @@ var suggestions = [
 	'snake', 'pipes', 'sound'
 ];
 
-var TokenFieldWrapper = React.createClass( {
-	getInitialState: function() {
-		return {
-			tokenSuggestions: suggestions,
-			tokens: Object.freeze( [ 'foo', 'bar' ] )
-		};
-	},
+class TokenFieldWrapper extends React.Component {
+    state = {
+		tokenSuggestions: suggestions,
+		tokens: Object.freeze( [ 'foo', 'bar' ] )
+	};
 
-	render: function() {
+	render() {
 		return (
 			<TokenField
 				suggestions={ this.state.tokenSuggestions }
@@ -33,11 +31,11 @@ var TokenFieldWrapper = React.createClass( {
 				onChange={ this._onTokensChange }
 				ref="tokenField" />
 		);
-	},
-
-	_onTokensChange: function( value ) {
-		this.setState( { tokens: value } );
 	}
-} );
+
+	_onTokensChange = value => {
+		this.setState( { tokens: value } );
+	};
+}
 
 module.exports = TokenFieldWrapper;

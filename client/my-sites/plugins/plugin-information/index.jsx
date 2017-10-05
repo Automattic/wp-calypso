@@ -20,28 +20,26 @@ import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
 
-export default localize(React.createClass({
-	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
+export default localize(class extends React.Component {
+    static displayName = 'PluginInformation';
 
-	displayName: 'PluginInformation',
-
-	propTypes: {
+	static propTypes = {
 		plugin: PropTypes.object.isRequired,
 		isPlaceholder: PropTypes.bool,
 		hasUpdate: PropTypes.bool,
 		pluginVersion: PropTypes.string,
 		siteVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			plugin: {
-				rating: 0,
-			}
-		};
-	},
+	static defaultProps = {
+		plugin: {
+			rating: 0,
+		}
+	};
 
-	renderHomepageLink() {
+	_WPORG_PLUGINS_URL = 'wordpress.org/plugins/';
+
+	renderHomepageLink = () => {
 		if ( ! this.props.plugin || ! this.props.plugin.plugin_url ) {
 			return;
 		}
@@ -61,9 +59,9 @@ export default localize(React.createClass({
 				{ this.props.translate( 'Plugin homepage' ) }
 			</ExternalLink>
         );
-	},
+	};
 
-	renderWporgLink() {
+	renderWporgLink = () => {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
@@ -78,9 +76,9 @@ export default localize(React.createClass({
 				{ this.props.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
         );
-	},
+	};
 
-	renderLastUpdated() {
+	renderLastUpdated = () => {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
 			const dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
 			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
@@ -92,15 +90,15 @@ export default localize(React.createClass({
                 </div>
             );
 		}
-	},
+	};
 
-	renderSiteVersion() {
+	renderSiteVersion = () => {
 		return this.props.siteVersion
 			? <Version version={ this.props.siteVersion } icon="my-sites" className="plugin-information__version" />
 			: null;
-	},
+	};
 
-	renderLimits() {
+	renderLimits = () => {
 		const limits = this.getCompatibilityLimits();
 		let versionView = null;
 		let versionCheck = null;
@@ -141,9 +139,9 @@ export default localize(React.createClass({
 				{ versionView }
 			</div>
 		);
-	},
+	};
 
-	getCompatibilityLimits() {
+	getCompatibilityLimits = () => {
 		if ( this.props.plugin.compatibility && this.props.plugin.compatibility.length ) {
 			return {
 				maxVersion: this.props.plugin.compatibility[ this.props.plugin.compatibility .length - 1 ],
@@ -151,9 +149,9 @@ export default localize(React.createClass({
 			};
 		}
 		return {};
-	},
+	};
 
-	getActionLinks( plugin ) {
+	getActionLinks = plugin => {
 		if ( ! get( plugin, 'active' ) ) {
 			return null;
 		}
@@ -179,9 +177,9 @@ export default localize(React.createClass({
 		return adminUrl
 			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
 			: null;
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true } );
 		return (
 			<div className={ classes } >
@@ -212,7 +210,7 @@ export default localize(React.createClass({
 						placeholder={ true } />
 			</div>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.isPlaceholder ) {
@@ -274,4 +272,4 @@ export default localize(React.createClass({
 			</Card>
 		);
 	}
-}));
+});

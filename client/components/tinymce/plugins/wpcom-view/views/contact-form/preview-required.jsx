@@ -5,8 +5,8 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-export default localize(React.createClass({
-	displayName: 'ContactFormViewPreviewRequired',
+export default localize(class extends React.Component {
+    static displayName = 'ContactFormViewPreviewRequired';
 
 	render() {
 		if ( this.props.required ) {
@@ -15,4 +15,4 @@ export default localize(React.createClass({
 
 		return null;
 	}
-}));
+});

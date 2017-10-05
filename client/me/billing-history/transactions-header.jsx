@@ -5,6 +5,7 @@ import { last, map, range, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import closest from 'component-closest';
 import classNames from 'classnames';
 
@@ -15,7 +16,7 @@ import tableRows from './table-rows';
 
 import eventRecorder from 'me/event-recorder';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'TransactionsHeader',
 
 	mixins: [ eventRecorder ],
@@ -232,4 +233,4 @@ module.exports = localize(React.createClass( {
 			</tr>
 		);
 	}
-} ));
+}));

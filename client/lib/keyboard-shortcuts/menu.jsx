@@ -16,39 +16,37 @@ import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
-module.exports = localize(React.createClass({
-	displayName: 'KeyboardShortcutsMenu',
+module.exports = localize(class extends React.Component {
+    static displayName = 'KeyboardShortcutsMenu';
 
-	componentDidMount: function() {
+	state = {
+		showDialog: false
+	};
+
+	componentDidMount() {
 		KeyBindings.on( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.on( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		KeyBindings.off( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.off( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			showDialog: false
-		};
-	},
-
-	handleLanguageChange: function() {
+	handleLanguageChange = () => {
 		// if the language changes, force a re-render to get the translated key-binding descriptions
 		this.forceUpdate();
-	},
+	};
 
-	closeDialog: function() {
+	closeDialog = () => {
 		this.setState( { showDialog: false } );
-	},
+	};
 
-	toggleShowDialog: function() {
+	toggleShowDialog = () => {
 		this.setState( { showDialog: ! this.state.showDialog } );
-	},
+	};
 
-	getShortcutsByCategory: function() {
+	getShortcutsByCategory = () => {
 		var allShortcuts = KeyBindings.get(),
 			shortcutsByCategory = [
 				{
@@ -101,9 +99,9 @@ module.exports = localize(React.createClass({
 				</li>
 			);
 		}, this );
-	},
+	};
 
-	getShortcutList: function( shortcuts ) {
+	getShortcutList = shortcuts => {
 		return shortcuts.map( function( shortcut ) {
 			// process the list of keys in this shortcut into individual elements
 			var keys = shortcut.description.keys.map( function( key, index ) {
@@ -117,9 +115,9 @@ module.exports = localize(React.createClass({
 				</li>
 			);
 		}, this );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
 				<h1 className="keyboard-shortcuts__title">{ this.props.translate( 'Keyboard Shortcuts' ) }</h1>
@@ -127,4 +125,4 @@ module.exports = localize(React.createClass({
 			</Dialog>
         );
 	}
-}));
+});

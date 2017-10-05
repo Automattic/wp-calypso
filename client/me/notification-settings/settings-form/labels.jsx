@@ -11,16 +11,16 @@ import React from 'react';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default localize(React.createClass({
-	displayName: 'NotificationSettingsFormLabels',
+export default localize(class extends React.Component {
+    static displayName = 'NotificationSettingsFormLabels';
 
-	propTypes: {
+	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
-	},
+	};
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
@@ -30,4 +30,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

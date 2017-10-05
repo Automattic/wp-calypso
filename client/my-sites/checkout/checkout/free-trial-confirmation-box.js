@@ -14,8 +14,8 @@ import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 
-const FreeTrialConfirmationBox = React.createClass( {
-	content() {
+class FreeTrialConfirmationBox extends React.Component {
+    content = () => {
 		return (
             <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
@@ -40,13 +40,13 @@ const FreeTrialConfirmationBox = React.createClass( {
 				</div>
 			</form>
         );
-	},
+	};
 
-	getProductName() {
+	getProductName = () => {
 		const planProduct = find( this.props.cart.products, isPlan );
 
 		return ( planProduct && planProduct.product_name ) || '';
-	},
+	};
 
 	render() {
 		return (
@@ -55,6 +55,6 @@ const FreeTrialConfirmationBox = React.createClass( {
 			</PaymentBox>
 		);
 	}
-} );
+}
 
 module.exports = localize(FreeTrialConfirmationBox);

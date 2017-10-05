@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -15,23 +14,20 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
 
-export default localize(React.createClass({
+export default localize(class extends React.PureComponent {
+    static displayName = 'PeopleListItem';
 
-	displayName: 'PeopleListItem',
-
-	mixins: [ PureRenderMixin ],
-
-	navigateToUser() {
+	navigateToUser = () => {
 		window.scrollTo( 0, 0 );
 		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
-	},
+	};
 
-	userHasPromoteCapability() {
+	userHasPromoteCapability = () => {
 		const site = this.props.site;
 		return site && site.capabilities && site.capabilities.promote_users;
-	},
+	};
 
-	canLinkToProfile() {
+	canLinkToProfile = () => {
 		const site = this.props.site,
 			user = this.props.user;
 		return (
@@ -43,7 +39,7 @@ export default localize(React.createClass({
 			this.userHasPromoteCapability() &&
 			! this.props.isSelectable
 		);
-	},
+	};
 
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
@@ -68,4 +64,4 @@ export default localize(React.createClass({
 			</CompactCard>
         );
 	}
-}));
+});

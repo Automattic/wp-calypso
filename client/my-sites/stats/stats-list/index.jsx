@@ -12,27 +12,25 @@ const debug = debugFactory('calypso:stats:list');
  */
 import StatsListItem from './stats-list-item';
 
-module.exports = React.createClass( {
-	displayName: 'StatsList',
+module.exports = class extends React.Component {
+    static displayName = 'StatsList';
 
-	getInitialState: function() {
-		return {
-			activeGroups: []
-		};
-	},
+	state = {
+		activeGroups: []
+	};
 
-	isGroupActive: function( groupName ) {
+	isGroupActive = groupName => {
 		return this.state.activeGroups.indexOf( groupName ) >= 0;
-	},
+	};
 
-	clickHandler: function( event, data ) {
+	clickHandler = (event, data) => {
 		debug( 'clickHandler' );
 		if ( 'function' === typeof this.props.clickHandler ) {
 			this.props.clickHandler( event, data );
 		}
-	},
+	};
 
-	buildLists: function( groups, parentKey ) {
+	buildLists = (groups, parentKey) => {
 		var results,
 			listClass = classNames(
 				'module-content-list',
@@ -66,10 +64,10 @@ module.exports = React.createClass( {
 		}
 
 		return ( <ul className={ listClass }>{ results }</ul> );
-	},
+	};
 
-	render: function() {
+	render() {
 		var list = this.buildLists( this.props.data );
 		return ( list );
 	}
-} );
+};

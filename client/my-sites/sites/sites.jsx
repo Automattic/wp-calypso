@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -19,7 +20,7 @@ import { getSites } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
-export const Sites = React.createClass( {
+export const Sites = createReactClass({
 	displayName: 'Sites',
 
 	mixins: [ observe( 'user' ) ],
@@ -123,7 +124,7 @@ export const Sites = React.createClass( {
 			</Main>
 		);
 	}
-} );
+});
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
 	const path = ( rawPath === '/sites' )

@@ -43,13 +43,13 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const CancelPurchase = localize(React.createClass( {
-	propTypes: {
+const CancelPurchase = localize(class extends React.Component {
+    static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-	},
+	};
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
@@ -58,18 +58,18 @@ const CancelPurchase = localize(React.createClass( {
 		}
 
 		recordPageView( 'cancel_purchase', this.props );
-	},
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
 			return;
 		}
 
 		recordPageView( 'cancel_purchase', this.props, nextProps );
-	},
+	}
 
-	isDataValid( props = this.props ) {
+	isDataValid = (props = this.props) => {
 		if ( isDataLoading( props ) ) {
 			return true;
 		}
@@ -77,9 +77,9 @@ const CancelPurchase = localize(React.createClass( {
 		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
 
 		return selectedSite && purchase && isCancelable( purchase );
-	},
+	};
 
-	redirect( props ) {
+	redirect = props => {
 		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
 
@@ -88,9 +88,9 @@ const CancelPurchase = localize(React.createClass( {
 		}
 
 		page.redirect( redirectPath );
-	},
+	};
 
-	renderFooterText() {
+	renderFooterText = () => {
 		const purchase = getPurchase( this.props ), { refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
@@ -111,7 +111,7 @@ const CancelPurchase = localize(React.createClass( {
 		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
 			args: { renewalDate },
 		} );
-	},
+	};
 
 	render() {
 		if ( ! this.isDataValid() ) {
@@ -175,8 +175,8 @@ const CancelPurchase = localize(React.createClass( {
 				</CompactCard>
 			</Main>
 		);
-	},
-} ));
+	}
+});
 
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),

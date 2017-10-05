@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,7 +19,7 @@ function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 
 	displayName: 'NuxWelcomeMessage',
 
@@ -98,4 +100,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+}));

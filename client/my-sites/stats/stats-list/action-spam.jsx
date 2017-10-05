@@ -17,16 +17,14 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
-	displayName: 'StatsActionSpam',
+module.exports = localize(class extends React.Component {
+    static displayName = 'StatsActionSpam';
 
-	getInitialState: function() {
-		return {
-			spammed: false
-		};
-	},
+	state = {
+		spammed: false
+	};
 
-	clickHandler: function( event ) {
+	clickHandler = event => {
 		var spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
 			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
 			wpcomSite;
@@ -44,9 +42,9 @@ module.exports = localize(React.createClass( {
 		wpcomSite = wpcom.site( this.props.data.siteID );
 		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
 		analytics.ga.recordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
-	},
+	};
 
-	render: function() {
+	render() {
 		var label = this.state.spammed ? this.props.translate( 'Not Spam' ) : this.props.translate( 'Spam', {
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
@@ -78,4 +76,4 @@ module.exports = localize(React.createClass( {
 			</li>
 		);
 	}
-} ));
+});

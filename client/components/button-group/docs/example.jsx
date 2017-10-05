@@ -3,8 +3,6 @@
 */
 import React from 'react';
 
-import PureRenderMixin from 'react-pure-render/mixin';
-
 /**
  * Internal dependencies
  */
@@ -14,22 +12,18 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
 
-var Buttons = React.createClass( {
-	displayName: 'ButtonGroup',
+class Buttons extends React.PureComponent {
+    static displayName = 'ButtonGroup';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		compact: false
+	};
 
-	getInitialState: function() {
-		return {
-			compact: false
-		};
-	},
-
-	toggleButtons: function() {
+	toggleButtons = () => {
 		this.setState( { compact: ! this.state.compact } );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
@@ -78,7 +72,7 @@ var Buttons = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 module.exports = Buttons;

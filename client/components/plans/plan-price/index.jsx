@@ -11,8 +11,8 @@ import { get, isUndefined } from 'lodash';
 import { isJetpackMonthlyPlan } from 'lib/products-values';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
-const PlanPrice = React.createClass( {
-	getFormattedPrice( plan ) {
+class PlanPrice extends React.Component {
+    getFormattedPrice = plan => {
 		let rawPrice, formattedPrice, months;
 
 		if ( plan ) {
@@ -40,9 +40,9 @@ const PlanPrice = React.createClass( {
 		}
 
 		return this.props.translate( 'Loading' );
-	},
+	};
 
-	getPrice() {
+	getPrice = () => {
 		const standardPrice = this.getFormattedPrice( this.props.plan ),
 			discountedPrice = this.getFormattedPrice( this.props.sitePlan );
 
@@ -51,7 +51,7 @@ const PlanPrice = React.createClass( {
 		}
 
 		return ( <span>{ standardPrice }</span> );
-	},
+	};
 
 	render() {
 		let periodLabel;
@@ -81,6 +81,6 @@ const PlanPrice = React.createClass( {
 				periodLabel={ periodLabel } />
 		);
 	}
-} );
+}
 
 export default localize(PlanPrice);

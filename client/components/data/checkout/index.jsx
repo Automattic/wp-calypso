@@ -20,14 +20,14 @@ function getStateFromStores() {
 	};
 }
 
-var CheckoutData = React.createClass( {
-	render: function() {
+class CheckoutData extends React.Component {
+    render() {
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>
 				{ this.props.children }
 			</StoreConnection>
 		);
 	}
-} );
+}
 
 module.exports = CheckoutData;

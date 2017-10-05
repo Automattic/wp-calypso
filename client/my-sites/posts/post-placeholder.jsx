@@ -10,11 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'PostPlaceholder';
 
-	displayName: 'PostPlaceholder',
-
-	render: function() {
+	render() {
 
 		return (
             <Card tagName="article" className="post is-placeholder">
@@ -42,4 +41,4 @@ module.exports = localize(React.createClass( {
         );
 
 	}
-} ));
+});

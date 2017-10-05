@@ -11,32 +11,30 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 import shortcodeUtils from 'lib/shortcode';
 import renderField from './preview-fields';
 
-export default localize(React.createClass({
-	displayName: 'ContactForm',
+export default localize(class extends React.Component {
+    static displayName = 'ContactForm';
 
-	statics: {
-		match( content ) {
-			const match = shortcodeUtils.next( 'contact-form', content );
+	static match(content) {
+		const match = shortcodeUtils.next( 'contact-form', content );
 
-			if ( match ) {
-				return {
-					index: match.index,
-					content: match.content,
-					options: {
-						shortcode: match.shortcode
-					}
-				};
-			}
-		},
-
-		serialize( content ) {
-			return encodeURIComponent( content );
-		},
-
-		edit( editor, content ) {
-			editor.execCommand( 'wpcomContactForm', content );
+		if ( match ) {
+			return {
+				index: match.index,
+				content: match.content,
+				options: {
+					shortcode: match.shortcode
+				}
+			};
 		}
-	},
+	}
+
+	static serialize(content) {
+		return encodeURIComponent( content );
+	}
+
+	static edit(editor, content) {
+		editor.execCommand( 'wpcomContactForm', content );
+	}
 
 	render() {
 		const { fields } = deserialize( this.props.content );
@@ -48,4 +46,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
@@ -31,20 +32,20 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 
-const MeSidebar = React.createClass( {
+const MeSidebar = createReactClass({
+    displayName: 'MeSidebar',
+    mixins: [ eventRecorder ],
 
-	mixins: [ eventRecorder ],
-
-	componentDidMount: function() {
+    componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
 	},
 
-	onNavigate: function() {
+    onNavigate: function() {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	},
 
-	onSignOut: function() {
+    onSignOut: function() {
 		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
@@ -69,7 +70,7 @@ const MeSidebar = React.createClass( {
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
-	render: function() {
+    render: function() {
 		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
@@ -181,7 +182,7 @@ const MeSidebar = React.createClass( {
 		);
 	},
 
-	renderNextStepsItem: function( selected ) {
+    renderNextStepsItem: function( selected ) {
 		const { currentUser, translate } = this.props;
 
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
@@ -196,7 +197,7 @@ const MeSidebar = React.createClass( {
 			);
 		}
 	}
-} );
+});
 
 const enhance = flow(
 	localize,

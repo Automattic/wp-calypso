@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,10 +20,11 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
-const RegisteredDomain = localize(React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const RegisteredDomain = localize(createReactClass({
+    displayName: 'RegisteredDomain',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	getAutoRenewalOrExpirationDate() {
+    getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
@@ -44,7 +46,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	getLabel( { status, icon, message, href } ) {
+    getLabel( { status, icon, message, href } ) {
 		return (
 			<a href={ href }>
 				<Notice
@@ -56,7 +58,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	getPrivacyProtection() {
+    getPrivacyProtection() {
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, name, pendingTransfer } = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			{ translate } = this.props,
@@ -114,11 +116,11 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	handlePaymentSettingsClick() {
+    handlePaymentSettingsClick() {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
-	domainWarnings() {
+    domainWarnings() {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			position="registered-domain"
@@ -135,7 +137,7 @@ const RegisteredDomain = localize(React.createClass( {
 			] } />;
 	},
 
-	getVerticalNav() {
+    getVerticalNav() {
 		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
 		const inNormalState = ! pendingTransfer && ! expired;
 		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
@@ -150,7 +152,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	emailNavItem() {
+    emailNavItem() {
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -163,7 +165,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	nameServersNavItem() {
+    nameServersNavItem() {
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -176,7 +178,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	contactsPrivacyNavItem() {
+    contactsPrivacyNavItem() {
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -189,7 +191,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	transferNavItem() {
+    transferNavItem() {
 		const path = paths.domainManagementTransfer(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -202,7 +204,7 @@ const RegisteredDomain = localize(React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const { domain, translate } = this.props;
 
 		return (
@@ -242,6 +244,6 @@ const RegisteredDomain = localize(React.createClass( {
 			</div>
 		);
 	}
-} ));
+}));
 
 export default localize( RegisteredDomain );

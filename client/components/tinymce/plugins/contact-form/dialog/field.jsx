@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { omit } from 'lodash';
 
 /**
@@ -30,12 +29,10 @@ import getLabel from './locales';
  */
 const fieldTypes = [ 'checkbox', 'select', 'email', 'name', 'radio', 'text', 'textarea', 'url' ];
 
-export default localize(React.createClass({
-	displayName: 'ContactFormDialogField',
+export default localize(class extends React.PureComponent {
+    static displayName = 'ContactFormDialogField';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		label: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
 		options: PropTypes.string,
@@ -43,9 +40,9 @@ export default localize(React.createClass({
 		onUpdate: PropTypes.func.isRequired,
 		onRemove: PropTypes.func.isRequired,
 		isExpanded: PropTypes.bool
-	},
+	};
 
-	renderOptions() {
+	renderOptions = () => {
 		if ( this.props.type !== 'radio' && this.props.type !== 'select' ) {
 			return;
 		}
@@ -72,19 +69,19 @@ export default localize(React.createClass({
 				<FormSettingExplanation>Insert an option and press enter.</FormSettingExplanation>
 			</FormFieldset>
         );
-	},
+	};
 
-	onLabelChange( event ) {
+	onLabelChange = event => {
 		this.props.onUpdate( { label: event.target.value } );
-	},
+	};
 
-	handleCardOpen() {
+	handleCardOpen = () => {
 		this.props.onUpdate( { isExpanded: true } );
-	},
+	};
 
-	handleCardClose() {
+	handleCardClose = () => {
 		this.props.onUpdate( { isExpanded: false } );
-	},
+	};
 
 	render() {
 		const fielLabelValidationError = ! this.props.label;
@@ -134,4 +131,4 @@ export default localize(React.createClass({
 			</FoldableCard>
         );
 	}
-}));
+});

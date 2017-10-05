@@ -15,10 +15,10 @@ import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
-module.exports = localize(React.createClass( {
-	displayName: 'SharingButtonsTray',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsTray';
 
-	propTypes: {
+	static propTypes = {
 		buttons: PropTypes.array,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		visibility: PropTypes.oneOf( [ 'visible', 'hidden' ] ),
@@ -27,42 +27,38 @@ module.exports = localize(React.createClass( {
 		onClose: PropTypes.func,
 		active: PropTypes.bool,
 		limited: PropTypes.bool
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isReordering: false
-		};
-	},
+	static defaultProps = {
+		buttons: [],
+		style: 'icon',
+		visibility: 'visible',
+		onButtonsChange: function() {},
+		onButtonChange: function() {},
+		onClose: function() {},
+		active: false,
+		limited: false
+	};
 
-	componentWillUpdate: function( nextProps ) {
+	state = {
+		isReordering: false
+	};
+
+	componentWillUpdate(nextProps) {
 		if ( this.props.visibility !== nextProps.visibility ) {
 			this.setState( { isReordering: false } );
 		}
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			buttons: [],
-			style: 'icon',
-			visibility: 'visible',
-			onButtonsChange: function() {},
-			onButtonChange: function() {},
-			onClose: function() {},
-			active: false,
-			limited: false
-		};
-	},
-
-	getHeadingText: function() {
+	getHeadingText = () => {
 		if ( 'visible' === this.props.visibility ) {
 			return this.props.translate( 'Edit visible buttons', { context: 'Sharing: Buttons editor heading' } );
 		} else {
 			return this.props.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons editor heading' } );
 		}
-	},
+	};
 
-	getInstructionText: function() {
+	getInstructionText = () => {
 		var labels = {
 			touch: this.props.translate( 'Tap the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
 			notouch: this.props.translate( 'Click the buttons you would like to add or remove.', { textOnly: true, context: 'Sharing: Buttons editor instructions' } ),
@@ -79,13 +75,13 @@ module.exports = localize(React.createClass( {
 
 			return <span key={ context } className={ 'sharing-buttons-preview__panel-instruction-text is-' + context + '-context' }>{ label }</span>;
 		}, this );
-	},
+	};
 
-	getButtonsOfCurrentVisibility: function() {
+	getButtonsOfCurrentVisibility = () => {
 		return filter( this.props.buttons, { visibility: this.props.visibility } );
-	},
+	};
 
-	onButtonsReordered: function( order ) {
+	onButtonsReordered = order => {
 		var buttons = [];
 
 		this.getButtonsOfCurrentVisibility().forEach( function( button, i ) {
@@ -97,9 +93,9 @@ module.exports = localize(React.createClass( {
 		}, this ) );
 
 		this.props.onButtonsChange( buttons );
-	},
+	};
 
-	onButtonClick: function( button ) {
+	onButtonClick = button => {
 		var buttons = this.props.buttons.slice( 0 ),
 			currentButton = find( buttons, { ID: button.ID } ),
 			isEnabled;
@@ -127,13 +123,13 @@ module.exports = localize(React.createClass( {
 		}
 
 		this.props.onButtonsChange( buttons );
-	},
+	};
 
-	toggleReorder: function() {
+	toggleReorder = () => {
 		this.setState( { isReordering: ! this.state.isReordering } );
-	},
+	};
 
-	getLimitedButtonsNoticeElement: function() {
+	getLimitedButtonsNoticeElement = () => {
 		if ( this.props.limited ) {
 			return (
                 <em className="sharing-buttons-preview__panel-notice">
@@ -143,9 +139,9 @@ module.exports = localize(React.createClass( {
 				</em>
             );
 		}
-	},
+	};
 
-	getButtonElements: function() {
+	getButtonElements = () => {
 		if ( this.state.isReordering ) {
 			var buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
 				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style={ this.props.style }/>;
@@ -155,9 +151,9 @@ module.exports = localize(React.createClass( {
 		} else {
 			return <ButtonsPreviewButtons buttons={ this.props.buttons } visibility={ this.props.visibility } style={ this.props.style } showMore={ false } onButtonClick={ this.onButtonClick } />;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'sharing-buttons-preview__panel', 'is-bottom', 'sharing-buttons-tray', 'buttons-' + this.props.visibility, {
 			'is-active': this.props.active,
 			'is-reordering': this.state.isReordering
@@ -180,4 +176,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

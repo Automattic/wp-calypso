@@ -19,10 +19,10 @@ import Buttons from './buttons';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-module.exports = localize(React.createClass( {
-	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
-	propTypes: {
+	static propTypes = {
 		storedPhone: PropTypes.shape( {
 			countryCode: PropTypes.string,
 			countryNumericCode: PropTypes.string,
@@ -32,15 +32,13 @@ module.exports = localize(React.createClass( {
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
 		onDelete: PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isInvalid: false
-		};
-	},
+	state = {
+		isInvalid: false
+	};
 
-	render: function() {
+	render() {
 		var validation = null,
 			havePhone = ! isEmpty( this.props.storedPhone );
 		if ( this.state.validation ) {
@@ -77,9 +75,9 @@ module.exports = localize(React.createClass( {
 					/>
 			</div>
         );
-	},
+	}
 
-	isSavable: function() {
+	isSavable = () => {
 		if ( ! this.state.phoneNumber ) {
 			return false;
 		}
@@ -95,19 +93,19 @@ module.exports = localize(React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	onChange: function( phoneNumber ) {
+	onChange = phoneNumber => {
 		this.setState( { phoneNumber } );
-	},
+	};
 
-	onKeyUp: function( event ) {
+	onKeyUp = event => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
-	},
+	};
 
-	onSave: function() {
+	onSave = () => {
 		var phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
@@ -122,13 +120,13 @@ module.exports = localize(React.createClass( {
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull
 		} );
-	},
+	};
 
-	onCancel: function() {
+	onCancel = () => {
 		this.props.onCancel();
-	},
+	};
 
-	onDelete: function() {
+	onDelete = () => {
 		this.props.onDelete();
-	}
-} ));
+	};
+});

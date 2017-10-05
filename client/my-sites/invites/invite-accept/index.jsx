@@ -34,16 +34,13 @@ import LocaleSuggestions from 'components/locale-suggestions';
 const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
-let InviteAccept = React.createClass( {
-
-	getInitialState() {
-		return {
-			invite: false,
-			error: false,
-			user: userModule.get(),
-			matchEmailError: false
-		}
-	},
+class InviteAccept extends React.Component {
+    state = {
+		invite: false,
+		error: false,
+		user: userModule.get(),
+		matchEmailError: false
+	};
 
 	componentWillMount() {
 		// The site ID and invite key are required, so only fetch if set
@@ -53,18 +50,18 @@ let InviteAccept = React.createClass( {
 
 		userModule.on( 'change', this.refreshUser );
 		InvitesStore.on( 'change', this.refreshInvite );
-	},
+	}
 
 	componentWillUnmount() {
 		InvitesStore.off( 'change', this.refreshInvite );
 		userModule.off( 'change', this.refreshUser );
-	},
+	}
 
-	refreshUser() {
+	refreshUser = () => {
 		this.setState( { user: userModule.get() } );
-	},
+	};
 
-	refreshInvite() {
+	refreshInvite = () => {
 		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
 		const error = InvitesStore.getInviteError( this.props.siteId, this.props.inviteKey );
 
@@ -76,27 +73,27 @@ let InviteAccept = React.createClass( {
 			} );
 		}
 		this.setState( { invite, error } );
-	},
+	};
 
-	isMatchEmailError() {
+	isMatchEmailError = () => {
 		const { invite, user } = this.state;
 		return invite && invite.forceMatchingEmail && user.email !== invite.sentTo;
-	},
+	};
 
-	isInvalidInvite() {
+	isInvalidInvite = () => {
 		return this.state.error || ! this.props.siteId || ! this.props.inviteKey;
-	},
+	};
 
-	clickedNoticeSiteLink() {
+	clickedNoticeSiteLink = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
-	},
+	};
 
-	decline() {
+	decline = () => {
 		this.props.infoNotice( this.props.translate( 'You declined to join.' ), { displayOnNextPage: true } );
 		page( '/' );
-	},
+	};
 
-	signInLink() {
+	signInLink = () => {
 		const invite = this.state.invite;
 		let loginUrl = login( { redirectTo: window.location.href } );
 
@@ -106,13 +103,13 @@ let InviteAccept = React.createClass( {
 		}
 
 		return loginUrl;
-	},
+	};
 
-	signUpLink() {
+	signUpLink = () => {
 		userUtils.logout( window.location.href );
-	},
+	};
 
-	localeSuggestions() {
+	localeSuggestions = () => {
 		if ( this.state.user || ! this.props.locale ) {
 			return;
 		}
@@ -120,9 +117,9 @@ let InviteAccept = React.createClass( {
 		return (
 			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 		);
-	},
+	};
 
-	renderForm() {
+	renderForm = () => {
 		const { invite, user } = this.state;
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
@@ -141,9 +138,9 @@ let InviteAccept = React.createClass( {
 		return user
 			? <LoggedIn { ... props } user={ this.state.user } />
 			: <LoggedOut { ... props } />;
-	},
+	};
 
-	renderError() {
+	renderError = () => {
 		const { error } = this.state;
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
@@ -188,9 +185,9 @@ let InviteAccept = React.createClass( {
 		return (
 			<EmptyContent { ...props } />
 		);
-	},
+	};
 
-	renderNoticeAction() {
+	renderNoticeAction = () => {
 		const { user, invite } = this.state;
 
 		if ( ! user && ! invite.knownUser ) {
@@ -215,7 +212,7 @@ let InviteAccept = React.createClass( {
 				{ actionText }
 			</NoticeAction>
 		);
-	},
+	};
 
 	render() {
 		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
@@ -239,7 +236,7 @@ let InviteAccept = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 export default connect(
 	null,

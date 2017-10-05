@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory('calypso:me:security:2fa-code-prompt');
@@ -26,7 +27,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 import Notice from 'components/notice';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 
 	displayName: 'Security2faCodePrompt',
 
@@ -287,4 +288,4 @@ module.exports = localize(React.createClass( {
 			</form>
         );
 	}
-} ));
+}));

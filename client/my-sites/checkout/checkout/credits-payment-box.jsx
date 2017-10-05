@@ -20,8 +20,8 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-var CreditsPaymentBox = React.createClass( {
-	content: function() {
+class CreditsPaymentBox extends React.Component {
+    content = () => {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -69,9 +69,9 @@ var CreditsPaymentBox = React.createClass( {
 				<CartToggle />
 			</form>
         );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <PaymentBox
 				classSet="credits-payment-box"
@@ -80,6 +80,6 @@ var CreditsPaymentBox = React.createClass( {
 			</PaymentBox>
         );
 	}
-} );
+}
 
 module.exports = localize(CreditsPaymentBox);

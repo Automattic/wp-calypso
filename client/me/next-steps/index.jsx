@@ -5,6 +5,8 @@ import { property, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -18,7 +20,7 @@ import productsValues from 'lib/products-values';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'NextSteps',
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
@@ -195,4 +197,4 @@ module.exports = localize(React.createClass( {
 			</div>
 		);
 	}
-} ));
+}));

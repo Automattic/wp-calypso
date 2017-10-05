@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,10 +18,11 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import paths from 'my-sites/domains/paths';
 
-const MappedDomain = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const MappedDomain = createReactClass({
+    displayName: 'MappedDomain',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	getAutoRenewalOrExpirationDate() {
+    getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
@@ -41,11 +43,11 @@ const MappedDomain = React.createClass( {
 		);
 	},
 
-	handlePaymentSettingsClick() {
+    handlePaymentSettingsClick() {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
-	domainWarnings() {
+    domainWarnings() {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			position="mapped-domain"
@@ -53,7 +55,7 @@ const MappedDomain = React.createClass( {
 			ruleWhiteList={ [ 'wrongNSMappedDomains' ] } />;
 	},
 
-	render() {
+    render() {
 		return (
 			<div>
 				{ this.domainWarnings() }
@@ -63,7 +65,7 @@ const MappedDomain = React.createClass( {
 		);
 	},
 
-	getDomainDetailsCard() {
+    getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
@@ -87,7 +89,7 @@ const MappedDomain = React.createClass( {
 		);
 	},
 
-	getVerticalNav() {
+    getVerticalNav() {
 		return (
 			<VerticalNav>
 				{ this.emailNavItem() }
@@ -96,7 +98,7 @@ const MappedDomain = React.createClass( {
 		);
 	},
 
-	emailNavItem() {
+    emailNavItem() {
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -109,7 +111,7 @@ const MappedDomain = React.createClass( {
 		);
 	},
 
-	dnsRecordsNavItem() {
+    dnsRecordsNavItem() {
 		const path = paths.domainManagementDns(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -121,7 +123,7 @@ const MappedDomain = React.createClass( {
 			</VerticalNavItem>
 		);
 	}
-} );
+});
 
 export { MappedDomain };
 export default localize( MappedDomain );

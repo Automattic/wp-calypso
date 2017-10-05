@@ -28,10 +28,10 @@ export {
 /**
  * Calls a given function on a given interval
  */
-export default React.createClass( {
-	displayName: 'Interval',
+export default class extends React.Component {
+    static displayName = 'Interval';
 
-	propTypes: {
+	static propTypes = {
 		onTick: PropTypes.func.isRequired,
 		period: PropTypes.oneOf( [
 			EVERY_SECOND,
@@ -42,37 +42,37 @@ export default React.createClass( {
 		] ).isRequired,
 		pauseWhenHidden: PropTypes.bool,
 		children: PropTypes.element
-	},
+	};
 
-	getDefaultProps: () => ( {
+	static defaultProps = {
 		pauseWhenHidden: true
-	} ),
+	};
 
-	getInitialState: () => ( {
+	state = {
 		id: null
-	} ),
+	};
 
 	componentDidMount() {
 		this.start();
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange, false );
-	},
+	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange, false );
 
 		this.stop();
-	},
+	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if ( prevProps.period === this.props.period && prevProps.onTick === this.props.onTick ) {
 			return;
 		}
 
 		this.start();
-	},
+	}
 
-	handleVisibilityChange() {
+	handleVisibilityChange = () => {
 		const { id } = this.state;
 		const { pauseWhenHidden } = this.props;
 
@@ -83,23 +83,23 @@ export default React.createClass( {
 		if ( ! document.hidden && ! id && pauseWhenHidden ) {
 			this.start();
 		}
-	},
+	};
 
-	start() {
+	start = () => {
 		const { period, onTick } = this.props;
 
 		if ( this.state.id ) {
 			remove( this.state.id );
 		}
 		this.setState( { id: add( period, onTick ) }, onTick );
-	},
+	};
 
-	stop() {
+	stop = () => {
 		remove( this.state.id );
 		this.setState( { id: null } );
-	},
+	};
 
 	render() {
 		return this.props.children ? React.cloneElement( this.props.children, omit( this.props, [ 'onTick', 'period', 'pauseWhenHidden', 'children' ] ) ) : null;
 	}
-} );
+}

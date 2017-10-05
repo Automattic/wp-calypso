@@ -16,11 +16,10 @@ import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'PluginRemoveButton';
 
-	displayName: 'PluginRemoveButton',
-
-	removeAction() {
+	removeAction = () => {
 		accept( this.props.translate( 'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}', {
 			components: {
 				em: <em />,
@@ -35,9 +34,9 @@ module.exports = localize(React.createClass( {
 			this.processRemovalConfirmation,
 			this.props.translate( 'Remove' )
 		);
-	},
+	};
 
-	processRemovalConfirmation( accepted ) {
+	processRemovalConfirmation = accepted => {
 		if ( accepted ) {
 			PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );
@@ -56,9 +55,9 @@ module.exports = localize(React.createClass( {
 				} );
 			}
 		}
-	},
+	};
 
-	getDisabledInfo() {
+	getDisabledInfo = () => {
 		if ( ! this.props.site ) { // we don't have enough info
 			return null;
 		}
@@ -116,9 +115,9 @@ module.exports = localize(React.createClass( {
 			return html;
 		}
 		return null;
-	},
+	};
 
-	renderButton() {
+	renderButton = () => {
 		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
 			'REMOVE_PLUGIN'
 		] );
@@ -148,7 +147,7 @@ module.exports = localize(React.createClass( {
 				</a>
 			</PluginAction>
 		);
-	},
+	};
 
 	render() {
 		if ( ! this.props.site.jetpack ) {
@@ -161,4 +160,4 @@ module.exports = localize(React.createClass( {
 
 		return this.renderButton();
 	}
-} ));
+});

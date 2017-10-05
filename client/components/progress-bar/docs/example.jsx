@@ -2,28 +2,22 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
 
-module.exports = React.createClass( {
+module.exports = class extends React.PureComponent {
+    static displayName = 'ProgressBar';
 
-	displayName: 'ProgressBar',
+	state = {
+		compact: false
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			compact: false
-		};
-	},
-
-	toggleCompact() {
+	toggleCompact = () => {
 		this.setState( { compact: ! this.state.compact } );
-	},
+	};
 
 	render() {
 		const toggleText = this.state.compact ? 'Normal Bar' : 'Compact Bar';
@@ -39,4 +33,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

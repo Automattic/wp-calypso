@@ -12,21 +12,19 @@ import React from 'react';
  */
 import NoResults from 'my-sites/no-results';
 
-module.exports = localize(React.createClass( {
-	displayName: 'MediaLibraryListNoResults',
+module.exports = localize(class extends React.Component {
+    static displayName = 'MediaLibraryListNoResults';
 
-	propTypes: {
+	static propTypes = {
 		filter: PropTypes.string,
 		search: PropTypes.string
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			search: ''
-		};
-	},
+	static defaultProps = {
+		search: ''
+	};
 
-	getLabel: function() {
+	getLabel = () => {
 		var label;
 
 		switch ( this.props.filter ) {
@@ -73,13 +71,13 @@ module.exports = localize(React.createClass( {
 		}
 
 		return label;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<NoResults
 				text={ this.getLabel() }
 				image="/calypso/images/pages/illustration-pages.svg" />
 		);
 	}
-} ));
+});

@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,10 +14,11 @@ import support from 'lib/url/support';
 
 import analyticsMixin from 'lib/mixins/analytics';
 
-var EmailForwardingDetails = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+var EmailForwardingDetails = createReactClass({
+    displayName: 'EmailForwardingDetails',
+    mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
-	render: function() {
+    render: function() {
 		return (
             <p className="email-forwarding__explanation">
 				{ this.props.translate( 'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.' ) }
@@ -30,9 +33,9 @@ var EmailForwardingDetails = React.createClass( {
         );
 	},
 
-	handleLearnMoreClick() {
+    handleLearnMoreClick() {
 		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName );
 	}
-} );
+});
 
 module.exports = localize(EmailForwardingDetails);

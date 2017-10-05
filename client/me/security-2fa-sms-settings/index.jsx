@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 
@@ -24,7 +25,7 @@ import { forSms } from 'lib/countries-list';
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
 
-module.exports = protectForm( localize(React.createClass( {
+module.exports = protectForm( localize(createReactClass({
 
 	displayName: 'Security2faSMSSettings',
 
@@ -243,4 +244,4 @@ module.exports = protectForm( localize(React.createClass( {
 			</div>
         );
 	}
-} )) );
+})) );

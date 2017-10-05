@@ -6,17 +6,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalFieldset',
+module.exports = class extends React.Component {
+    static displayName = 'EditorMediaModalFieldset';
 
-	propTypes: {
+	static propTypes = {
 		legend: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.element
 		] ).isRequired
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<fieldset className={ classNames( 'editor-media-modal__fieldset', this.props.className ) }>
 				<legend className="editor-media-modal__fieldset-legend">{ this.props.legend }</legend>
@@ -24,4 +24,4 @@ module.exports = React.createClass( {
 			</fieldset>
 		);
 	}
-} );
+};

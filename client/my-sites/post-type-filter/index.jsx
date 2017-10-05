@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { compact, find, includes, reduce } from 'lodash';
 
@@ -23,10 +24,11 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
 
-const PostTypeFilter = React.createClass( {
-	mixins: [ UrlSearch ],
+const PostTypeFilter = createReactClass({
+    displayName: 'PostTypeFilter',
+    mixins: [ UrlSearch ],
 
-	propTypes: {
+    propTypes: {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
 		query: PropTypes.shape( {
@@ -39,7 +41,7 @@ const PostTypeFilter = React.createClass( {
 		counts: PropTypes.object
 	},
 
-	getNavItems() {
+    getNavItems() {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
@@ -99,7 +101,7 @@ const PostTypeFilter = React.createClass( {
 		}, [] );
 	},
 
-	render() {
+    render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
@@ -146,7 +148,7 @@ const PostTypeFilter = React.createClass( {
 			</div>
         );
 	}
-} );
+});
 
 export default connect( ( state, { query } ) => {
 	const siteId = getSelectedSiteId( state );

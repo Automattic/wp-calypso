@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,15 +15,16 @@ import purchasesPaths from 'me/purchases/paths';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
 
-const BillingHistoryTable = React.createClass( {
-	mixins: [ eventRecorder ],
+const BillingHistoryTable = createReactClass({
+    displayName: 'BillingHistoryTable',
+    mixins: [ eventRecorder ],
 
-	emailReceipt( receiptId, event ) {
+    emailReceipt( receiptId, event ) {
 		event.preventDefault();
 		this.props.sendBillingReceiptEmail( receiptId );
 	},
 
-	renderEmailAction( receiptId ) {
+    renderEmailAction( receiptId ) {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
@@ -36,7 +38,7 @@ const BillingHistoryTable = React.createClass( {
 		);
 	},
 
-	renderTransaction( transaction ) {
+    renderTransaction( transaction ) {
 		const { translate } = this.props;
 
 		return (
@@ -53,7 +55,7 @@ const BillingHistoryTable = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const { translate } = this.props;
 		const emptyTableText = translate(
 			'You do not currently have any upgrades. ' +
@@ -72,8 +74,8 @@ const BillingHistoryTable = React.createClass( {
 				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction } />
 		);
-	},
-} );
+	}
+});
 
 export default connect(
 	( state ) => {

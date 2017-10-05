@@ -15,31 +15,29 @@ import Gridicon from 'gridicons';
 
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItemVideo',
+module.exports = class extends React.Component {
+    static displayName = 'MediaLibraryListItemVideo';
 
-	propTypes: {
+	static propTypes = {
 		media: PropTypes.object,
 		maxImageWidth: PropTypes.number,
 		thumbnailType: PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			maxImageWidth: 450,
-			thumbnailType: MEDIA_IMAGE_PHOTON,
-		};
-	},
+	static defaultProps = {
+		maxImageWidth: 450,
+		thumbnailType: MEDIA_IMAGE_PHOTON,
+	};
 
-	getHighestQualityThumbnail: function() {
+	getHighestQualityThumbnail = () => {
 		if ( this.props.media.thumbnails ) {
 			return this.props.media.thumbnails.fmt_hd ||
 				this.props.media.thumbnails.fmt_dvd ||
 				this.props.media.thumbnails.fmt_std;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		const thumbnail = this.getHighestQualityThumbnail();
 
 		if ( thumbnail ) {
@@ -59,4 +57,4 @@ module.exports = React.createClass( {
 			return <ListItemFileDetails { ...this.props } icon="video-camera" />;
 		}
 	}
-} );
+};

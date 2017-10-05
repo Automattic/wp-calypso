@@ -11,20 +11,18 @@ import classnames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
-export default localize(React.createClass({
-	displayName: 'CustomizerLoadingPanel',
+export default localize(class extends React.Component {
+    static displayName = 'CustomizerLoadingPanel';
 
-	propTypes: {
+	static propTypes = {
 		isLoaded: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			isLoaded: false,
-		};
-	},
+	static defaultProps = {
+		isLoaded: false,
+	};
 
-	render: function() {
+	render() {
 		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
 			'is-iframe-loaded': this.props.isLoaded
 		} );
@@ -38,4 +36,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

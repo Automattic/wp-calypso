@@ -10,15 +10,15 @@ import classNames from 'classnames';
  */
 import MediaUtils from 'lib/media/utils';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewAudio',
+module.exports = class extends React.Component {
+    static displayName = 'EditorMediaModalDetailPreviewAudio';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired
-	},
+	};
 
-	render: function() {
+	render() {
 		const classes = classNames( this.props.className, 'is-audio' );
 
 		return (
@@ -28,4 +28,4 @@ module.exports = React.createClass( {
 				className={ classes } />
 		);
 	}
-} );
+};

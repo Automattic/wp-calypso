@@ -16,11 +16,10 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
-export default localize(React.createClass({
+export default localize(class extends React.Component {
+    static displayName = 'PlanCompareCard';
 
-	displayName: 'PlanCompareCard',
-
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,
 		title: PropTypes.string.isRequired,
@@ -28,21 +27,19 @@ export default localize(React.createClass({
 		buttonName: PropTypes.string.isRequired,
 		currentPlan: PropTypes.bool,
 		popularRibbon: PropTypes.bool
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onClick: noop,
-			currentPlan: true,
-			popularRibbon: false
-		};
-	},
+	static defaultProps = {
+		onClick: noop,
+		currentPlan: true,
+		popularRibbon: false
+	};
 
-	buttonClick() {
+	buttonClick = () => {
 		if ( ! this.props.currentPlan ) {
 			this.props.onClick();
 		}
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'plan-compare-card' );
@@ -74,4 +71,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

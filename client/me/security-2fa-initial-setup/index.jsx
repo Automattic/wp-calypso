@@ -16,23 +16,22 @@ import FormButton from 'components/forms/form-button';
 
 import analytics from 'lib/analytics';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faInitialSetup';
 
-	displayName: 'Security2faInitialSetup',
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	propTypes: {
+	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
-	},
+	};
 
-	render: function() {
+	componentDidMount() {
+		debug( this.constructor.displayName + ' React component is mounted.' );
+	}
+
+	componentWillUnmount() {
+		debug( this.constructor.displayName + ' React component will unmount.' );
+	}
+
+	render() {
 		return (
             <div>
                 <p>
@@ -52,4 +51,4 @@ module.exports = localize(React.createClass( {
             </div>
         );
 	}
-} ));
+});

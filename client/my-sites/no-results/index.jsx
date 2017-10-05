@@ -3,16 +3,13 @@
  */
 import React from 'react';
 
-var noResults = React.createClass( {
+class noResults extends React.Component {
+    static defaultProps = {
+		text: 'No results',
+		image: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			text: 'No results',
-			image: false
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
 			<div className="no-results">
 				{ this.props.image ? <img className="no-results__img" src={ this.props.image } /> : null }
@@ -20,6 +17,6 @@ var noResults = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 module.exports = noResults;

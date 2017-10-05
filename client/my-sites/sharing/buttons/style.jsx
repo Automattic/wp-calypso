@@ -12,28 +12,26 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-module.exports = localize(React.createClass( {
-	displayName: 'SharingButtonsStyle',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsStyle';
 
-	propTypes: {
+	static propTypes = {
 		onChange: PropTypes.func,
 		value: PropTypes.string,
 		disabled: PropTypes.bool
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			onChange: function() {},
-			disabled: false
-		};
-	},
+	static defaultProps = {
+		onChange: function() {},
+		disabled: false
+	};
 
-	onChange: function( value ) {
+	onChange = value => {
 		this.props.onChange( value );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
-	},
+	};
 
-	getOptions: function() {
+	getOptions = () => {
 		return [
 			{ value: 'icon-text', label: this.props.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ) },
 			{ value: 'icon', label: this.props.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ) },
@@ -47,9 +45,9 @@ module.exports = localize(React.createClass( {
 				</label>
 			);
 		}, this );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">{ this.props.translate( 'Button style', { context: 'Sharing: Sharing button option heading' } ) }</legend>
@@ -57,4 +55,4 @@ module.exports = localize(React.createClass( {
 			</fieldset>
         );
 	}
-} ));
+});

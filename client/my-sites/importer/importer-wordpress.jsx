@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -19,12 +18,10 @@ const importerData = {
 	icon: 'wordpress'
 };
 
-export default localize(React.createClass({
-	displayName: 'ImporterWordPress',
+export default localize(class extends React.PureComponent {
+    static displayName = 'ImporterWordPress';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
@@ -36,9 +33,9 @@ export default localize(React.createClass({
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string
 		} )
-	},
+	};
 
-	render: function() {
+	render() {
 		importerData.description = this.props.translate(
 			'Import posts, pages, and media ' +
 			'from a WordPress export\u00A0file.'
@@ -60,4 +57,4 @@ export default localize(React.createClass({
 
 		return <FileImporter importerData={ importerData } {...this.props} />;
 	}
-}));
+});

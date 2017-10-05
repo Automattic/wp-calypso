@@ -9,10 +9,10 @@ import React from 'react'
 import FeatureExample from '../index'
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
 
-module.exports = React.createClass( {
-	displayName: 'FeatureExample',
+module.exports = class extends React.Component {
+    static displayName = 'FeatureExample';
 
-	getContent: function() {
+	getContent = () => {
 		const plugins = [ {
 			slug: 'akismet',
 			name: 'Akismet',
@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 				selectedSite={ selectedSite }
 				progress={ [] } />
 		} );
-	},
+	};
 
 	render() {
 		return (
@@ -53,5 +53,5 @@ module.exports = React.createClass( {
 			</FeatureExample>
 		);
 	}
-} );
+};
 

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import page from 'page';
 
 /**
@@ -16,10 +17,11 @@ import analyticsMixin from 'lib/mixins/analytics';
 import paths from 'my-sites/domains/paths';
 import Button from 'components/button';
 
-const PrimaryDomainButton = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const PrimaryDomainButton = createReactClass({
+    displayName: 'PrimaryDomainButton',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	propTypes: {
+    propTypes: {
 		domain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
@@ -28,13 +30,13 @@ const PrimaryDomainButton = React.createClass( {
 		settingPrimaryDomain: PropTypes.bool.isRequired
 	},
 
-	handleClick() {
+    handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
 		page( paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
 	},
 
-	render() {
+    render() {
 		const domain = this.props.domain;
 		var label;
 
@@ -57,6 +59,6 @@ const PrimaryDomainButton = React.createClass( {
 
 		return null;
 	}
-} );
+});
 
 module.exports = localize(PrimaryDomainButton);

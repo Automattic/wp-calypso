@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsPreviewAction from './preview-action';
 
-module.exports = localize(React.createClass( {
-	displayName: 'SharingButtonsPreviewPlaceholder',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsPreviewPlaceholder';
 
-	render: function() {
+	render() {
 		return (
             <div className="sharing-buttons-preview is-placeholder">
 				<ButtonsPreviewAction icon="pencil" position="top-left" disabled={ true }>
@@ -47,4 +47,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

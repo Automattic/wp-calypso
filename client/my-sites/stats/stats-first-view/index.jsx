@@ -3,17 +3,14 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import FirstView from 'components/first-view';
 
-export default localize(React.createClass({
-	displayName: 'StatsFirstView',
-
-	mixins: [ PureRenderMixin ],
+export default localize(class extends React.PureComponent {
+    static displayName = 'StatsFirstView';
 
 	render() {
 		return (
@@ -27,9 +24,9 @@ export default localize(React.createClass({
 				</div>
 			</FirstView>
         );
-	},
+	}
 
-	renderIcon() {
+	renderIcon = () => {
 		// embedded; original file: /public/images/stats/illustration-stats.svg
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
@@ -77,5 +74,5 @@ export default localize(React.createClass({
 			</div>
 		);
 		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
-	}
-}));
+	};
+});

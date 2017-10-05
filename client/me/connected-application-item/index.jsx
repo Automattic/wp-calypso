@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import debugFactory from 'debug';
@@ -19,7 +21,7 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
-export default localize(React.createClass({
+export default localize(createReactClass({
 
 	displayName: 'ConnectedApplicationItem',
 

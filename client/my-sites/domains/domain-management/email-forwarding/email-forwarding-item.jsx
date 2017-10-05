@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,10 +18,11 @@ import { successNotice } from 'state/notices/actions';
 import support from 'lib/url/support';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-const EmailForwardingItem = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+const EmailForwardingItem = createReactClass({
+    displayName: 'EmailForwardingItem',
+    mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
-	deleteItem: function() {
+    deleteItem: function() {
 		const { temporary, domain, mailbox, forward_address, email } = this.props.emailData;
 
 		if ( temporary ) {
@@ -51,7 +53,7 @@ const EmailForwardingItem = React.createClass( {
 		} );
 	},
 
-	resendVerificationEmail: function() {
+    resendVerificationEmail: function() {
 		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
 
 		if ( temporary ) {
@@ -82,7 +84,7 @@ const EmailForwardingItem = React.createClass( {
 		} );
 	},
 
-	render: function() {
+    render: function() {
 		return (
             <li>
 				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
@@ -106,7 +108,7 @@ const EmailForwardingItem = React.createClass( {
 			</li>
         );
 	}
-} );
+});
 
 export default connect(
 	null,

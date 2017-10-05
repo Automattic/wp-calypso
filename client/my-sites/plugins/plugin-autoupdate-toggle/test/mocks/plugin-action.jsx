@@ -3,10 +3,10 @@
  */
 import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'MockPluginAction',
+module.exports = class extends React.Component {
+    static displayName = 'MockPluginAction';
 
-	render: function() {
+	render() {
 		return <div className="plugin-action" onClick={ this.props.action }></div>;
 	}
-} );
+};

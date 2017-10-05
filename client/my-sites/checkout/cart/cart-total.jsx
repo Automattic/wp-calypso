@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import { cartItems } from 'lib/cart-values';
 
-var CartTotal = React.createClass({
-	render: function() {
+class CartTotal extends React.Component {
+    render() {
 		var cart = this.props.cart;
 
 		if ( cart.hasPendingServerUpdates ) {
@@ -38,9 +38,9 @@ var CartTotal = React.createClass({
 				</span>
 			</div>
 		);
-	},
+	}
 
-	totalLabel: function() {
+	totalLabel = () => {
 		var cart = this.props.cart;
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
@@ -52,7 +52,7 @@ var CartTotal = React.createClass({
 				context: 'Upgrades: Total cart cost in checkout when buying a full price upgrade'
 			} );
 		}
-	}
-});
+	};
+}
 
 module.exports = localize(CartTotal);

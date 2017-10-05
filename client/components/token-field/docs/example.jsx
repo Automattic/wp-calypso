@@ -3,8 +3,6 @@
  */
 import React from 'react';
 
-import PureRenderMixin from 'react-pure-render/mixin';
-
 /**
  * Internal dependencies
  */
@@ -22,22 +20,18 @@ var suggestions = [
 	'other', 'do', 'no', 'information', 'time', 'they', 'site', 'he', 'up', 'may', 'what', 'which', 'their'
 ];
 
-var TokenFields = React.createClass( {
-	displayName: 'TokenFields',
+class TokenFields extends React.PureComponent {
+    static displayName = 'TokenFields';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		tokenSuggestions: suggestions,
+		tokens: Object.freeze( [ 'foo', 'bar' ] ),
+		placeholderTokens: [],
+		disabledTokens: [ 'foo', 'bar' ],
+		statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
+	};
 
-	getInitialState: function() {
-		return {
-			tokenSuggestions: suggestions,
-			tokens: Object.freeze( [ 'foo', 'bar' ] ),
-			placeholderTokens: [],
-			disabledTokens: [ 'foo', 'bar' ],
-			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>
@@ -80,9 +74,9 @@ var TokenFields = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
+	}
 
-	_getStatusTokens() {
+	_getStatusTokens = () => {
 		return this.state.statusTokens.map( ( token ) => {
 			let returnToken;
 			switch ( token ) {
@@ -101,9 +95,9 @@ var TokenFields = React.createClass( {
 
 			return returnToken;
 		} );
-	},
+	};
 
-	_onStatusTokensChange( value ) {
+	_onStatusTokensChange = value => {
 		const filteredTokens = value.map( ( token ) => {
 			if ( 'object' === typeof token ) {
 				return token.value;
@@ -112,15 +106,15 @@ var TokenFields = React.createClass( {
 		} );
 
 		this.setState( { statusTokens: filteredTokens } );
-	},
+	};
 
-	_onTokensChange: function( value ) {
+	_onTokensChange = value => {
 		this.setState( { tokens: value } );
-	},
+	};
 
-	_onPlaceholderTokensChange: function( value ) {
+	_onPlaceholderTokensChange = value => {
 		this.setState( { placeholderTokens: value } );
-	},
-} );
+	};
+}
 
 module.exports = TokenFields;

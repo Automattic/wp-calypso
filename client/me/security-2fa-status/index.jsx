@@ -8,19 +8,18 @@ import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory('calypso:me:security:2fa-status');
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faStatus';
 
-	displayName: 'Security2faStatus',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
             <p>
 				{
@@ -47,4 +46,4 @@ module.exports = localize(React.createClass( {
 			</p>
         );
 	}
-} ));
+});

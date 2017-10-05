@@ -5,8 +5,8 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-export default localize(React.createClass({
-	displayName: 'BackToLibrary',
+export default localize(class extends React.Component {
+    static displayName = 'BackToLibrary';
 
 	render() {
 		return (
@@ -16,4 +16,4 @@ export default localize(React.createClass({
 			</span>
         );
 	}
-}));
+});

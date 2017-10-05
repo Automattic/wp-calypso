@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
-export default localize(React.createClass({
-	displayName: 'PostSelectorNoResults',
+export default localize(class extends React.Component {
+    static displayName = 'PostSelectorNoResults';
 
-	propTypes: {
+	static propTypes = {
 		createLink: PropTypes.string
-	},
+	};
 
 	render() {
 		let createMessage;
@@ -34,5 +34,5 @@ export default localize(React.createClass({
 				&nbsp;{ createMessage }
 			</span>
 		);
-	},
-}));
+	}
+});

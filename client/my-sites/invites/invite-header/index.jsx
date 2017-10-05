@@ -14,18 +14,18 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Gravatar from 'components/gravatar';
 
-export default localize(React.createClass({
-	displayName: 'InviteHeader',
+export default localize(class extends React.Component {
+    static displayName = 'InviteHeader';
 
-	getInviterName() {
+	getInviterName = () => {
 		return get(
 			this.props,
 			'inviter.name',
 			this.props.translate( 'User', { context: 'Placeholder text while loading an invitation.' } )
 		);
-	},
+	};
 
-	getInvitedYouText() {
+	getInvitedYouText = () => {
 		let text = '';
 
 		const inviterName = (
@@ -115,7 +115,7 @@ export default localize(React.createClass({
 		}
 
 		return text;
-	},
+	};
 
 	render() {
 		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
@@ -140,4 +140,4 @@ export default localize(React.createClass({
 			</div>
 		);
 	}
-}));
+});

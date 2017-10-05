@@ -17,24 +17,24 @@ import FormTextValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { validateSettingsToEmail } from './validations';
 
-export default localize(React.createClass({
-	displayName: 'ContactFormDialogFormSettings',
+export default localize(class extends React.Component {
+    static displayName = 'ContactFormDialogFormSettings';
 
-	propTypes: {
+	static propTypes = {
 		to: PropTypes.string,
 		subject: PropTypes.string,
 		email: PropTypes.string,
 		title: PropTypes.string,
 		onUpdate: PropTypes.func.isRequired
-	},
+	};
 
-	onToChange( event ) {
+	onToChange = event => {
 		this.props.onUpdate( { to: event.target.value } );
-	},
+	};
 
-	onSubjectChange( event ) {
+	onSubjectChange = event => {
 		this.props.onUpdate( { subject: event.target.value } );
-	},
+	};
 
 	render() {
 		const emailValidationError = ! validateSettingsToEmail( this.props.to );
@@ -74,4 +74,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

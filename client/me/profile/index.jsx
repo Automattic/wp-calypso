@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
@@ -30,7 +31,7 @@ import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
-export default protectForm( localize(React.createClass( {
+export default protectForm( localize(createReactClass({
 
 	displayName: 'Profile',
 
@@ -138,4 +139,4 @@ export default protectForm( localize(React.createClass( {
 			</Main>
         );
 	}
-} )) );
+})) );

@@ -92,9 +92,8 @@ function shouldQueryPosts( props, nextProps ) {
 		props.postListStoreId !== nextProps.postListStoreId;
 }
 
-PostListFetcher = React.createClass( {
-
-	propTypes: {
+PostListFetcher = class extends React.Component {
+    static propTypes = {
 		children: PropTypes.element.isRequired,
 		type: PropTypes.string,
 		status: PropTypes.string,
@@ -114,40 +113,38 @@ PostListFetcher = React.createClass( {
 		before: PropTypes.string,
 		after: PropTypes.string,
 		postListStoreId: PropTypes.string
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			orderBy: 'date',
-			order: 'DESC',
-			postListStoreId: 'default'
-		};
-	},
+	static defaultProps = {
+		orderBy: 'date',
+		order: 'DESC',
+		postListStoreId: 'default'
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		var postListStore = postListStoreFactory( this.props.postListStoreId );
 		postListStore.on( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.on( 'change', this.onPostsChange );
 		}
 		queryPosts( this.props );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		var postListStore = postListStoreFactory( this.props.postListStoreId );
 		this._poller = pollers.add( postListStore, actions.fetchUpdated, { interval: 60000 } );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		var postListStore = postListStoreFactory( this.props.postListStoreId );
 		pollers.remove( this._poller );
 		postListStore.off( 'change', this.onPostsChange );
 		if ( this.props.withImages ) {
 			PostContentImagesStore.off( 'change', this.onPostsChange );
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		var listenerChange;
 
 		if ( shouldQueryPosts( this.props, nextProps ) ) {
@@ -158,17 +155,16 @@ PostListFetcher = React.createClass( {
 			listenerChange = ( nextProps.withImages ) ? 'on' : 'off';
 			PostContentImagesStore[ listenerChange ]( 'change', this.onPostsChange );
 		}
-	},
+	}
 
-	onPostsChange: function() {
+	onPostsChange = () => {
 		this.setState( getPostsState( this.props.postListStoreId ) );
-	},
+	};
 
-	render: function() {
+	render() {
 		// Clone the child element along and pass along state (containing data from the stores)
 		return React.cloneElement( this.props.children, this.state );
 	}
-
-} );
+};
 
 module.exports = PostListFetcher;

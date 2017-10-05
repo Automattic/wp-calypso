@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
@@ -17,21 +18,23 @@ import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const EditorFeaturedImagePreview = React.createClass( {
-	propTypes: {
+const EditorFeaturedImagePreview = createReactClass({
+    displayName: 'EditorFeaturedImagePreview',
+
+    propTypes: {
 		siteId: PropTypes.number,
 		image: PropTypes.object,
 		maxWidth: PropTypes.number
 	},
 
-	getInitialState() {
+    getInitialState() {
 		return {
 			height: null,
 			transientSrc: null
 		};
 	},
 
-	componentWillReceiveProps( nextProps ) {
+    componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
 			return;
@@ -53,7 +56,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		this.setState( nextState );
 	},
 
-	isReceivingPersistedImage( props, nextProps ) {
+    isReceivingPersistedImage( props, nextProps ) {
 		const { siteId } = this.props;
 		if ( siteId !== nextProps.siteId ) {
 			return false;
@@ -71,7 +74,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		return media && media.ID === nextProps.image.ID;
 	},
 
-	src( props = this.props ) {
+    src( props = this.props ) {
 		if ( ! props.image ) {
 			return;
 		}
@@ -82,7 +85,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		} );
 	},
 
-	clearState() {
+    clearState() {
 		if ( ! some( this.state ) ) {
 			return;
 		}
@@ -90,7 +93,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		this.setState( this.getInitialState() );
 	},
 
-	render() {
+    render() {
 		const { height } = this.state;
 		const classes = classNames( 'editor-featured-image__preview', {
 			'is-transient': get( this.props.image, 'transient' ),
@@ -115,7 +118,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
 export default connect( ( state ) => {
 	return {

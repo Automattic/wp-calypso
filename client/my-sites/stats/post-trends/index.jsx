@@ -23,23 +23,20 @@ import {
 	getSiteStatsTotalPostsForStreakQuery
 } from 'state/stats/lists/selectors';
 
-const PostTrends = React.createClass( {
+class PostTrends extends React.Component {
+    static displayName = 'PostTrends';
 
-	displayName: 'PostTrends',
-
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		query: PropTypes.object
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			canScrollLeft: false,
-			canScrollRight: false
-		};
-	},
+	state = {
+		canScrollLeft: false,
+		canScrollRight: false
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -52,20 +49,20 @@ const PostTrends = React.createClass( {
 		this.resize = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resize );
 		this.resize();
-	},
+	}
 
 	// Remove listener
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resize );
-	},
+	}
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		// only update if the total number of posts, or query.endDate has changed
 		return nextProps.totalPosts !== this.props.totalPosts ||
 			nextProps.query.endDate !== this.props.query.endDate;
-	},
+	}
 
-	resize: function() {
+	resize = () => {
 		var scrollProps = {},
 			node = this.refs.wrapper,
 			yearNode = this.refs.year,
@@ -81,9 +78,9 @@ const PostTrends = React.createClass( {
 		}
 
 		this.setState( scrollProps );
-	},
+	};
 
-	scroll: function( direction ) {
+	scroll = direction => {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -107,17 +104,17 @@ const PostTrends = React.createClass( {
 		yearNode.style.left = left + 'px';
 
 		this.resize();
-	},
+	};
 
-	scrollLeft: function() {
+	scrollLeft = () => {
 		this.scroll( -1 );
-	},
+	};
 
-	scrollRight: function() {
+	scrollRight = () => {
 		this.scroll( 1 );
-	},
+	};
 
-	getMonthComponents: function() {
+	getMonthComponents = () => {
 		var i,
 			months = [],
 			startDate;
@@ -135,9 +132,9 @@ const PostTrends = React.createClass( {
 		}
 
 		return months;
-	},
+	};
 
-	render: function() {
+	render() {
 		const { siteId, query } = this.props;
 
 		const leftClass = classNames( 'post-trends__scroll-left', {
@@ -175,7 +172,7 @@ const PostTrends = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );

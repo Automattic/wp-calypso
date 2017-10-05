@@ -37,36 +37,36 @@ const guidedTransferHosts = {
 	}
 };
 
-export default localize(React.createClass({
-	displayName: 'GuidedTransfer',
+export default localize(class extends React.Component {
+    static displayName = 'GuidedTransfer';
 
-	propTypes: {
+	static propTypes = {
 		hostSlug: PropTypes.string,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired
-	},
+	};
 
-	showExporter() {
+	showExporter = () => {
 		page( `/settings/export/${this.props.siteSlug}` );
-	},
+	};
 
-	showHostSelection() {
+	showHostSelection = () => {
 		page( `/settings/export/guided/${this.props.siteSlug}` );
-	},
+	};
 
-	showHost( hostSlug ) {
+	showHost = hostSlug => {
 		page( `/settings/export/guided/${hostSlug}/${this.props.siteSlug}` );
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		if ( this.props.hostSlug ) {
 			this.showHostSelection();
 		} else {
 			this.showExporter();
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		const { siteId, siteSlug } = this.props;
 		if ( ! siteId ) {
 			return <Placeholder />;
@@ -109,4 +109,4 @@ export default localize(React.createClass({
 			</Main>
         );
 	}
-}));
+});

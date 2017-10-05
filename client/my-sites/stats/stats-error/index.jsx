@@ -5,17 +5,14 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-pure-render/mixin';
 
-export default localize(React.createClass({
-	displayName: 'StatsError',
+export default localize(class extends React.PureComponent {
+    static displayName = 'StatsError';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		message: PropTypes.string,
 		className: PropTypes.string
-	},
+	};
 
 	render() {
 		const message = this.props.message || this.props.translate( "Some stats didn't load in time. Please try again later." );
@@ -26,4 +23,4 @@ export default localize(React.createClass({
 			</div>
 		);
 	}
-}));
+});

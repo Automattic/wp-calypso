@@ -13,14 +13,14 @@ import analytics from 'lib/analytics';
 import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
-	displayName: 'TermsOfService',
+module.exports = localize(class extends React.Component {
+    static displayName = 'TermsOfService';
 
-	recordTermsAndConditionsClick: function() {
+	recordTermsAndConditionsClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
-	},
+	};
 
-	renderTerms: function() {
+	renderTerms = () => {
 		var message = this.props.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.', {
 			components: {
@@ -41,9 +41,9 @@ module.exports = localize(React.createClass( {
 		}
 
 		return message;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
 				<Gridicon icon="info-outline" size={ 18 } />
@@ -51,4 +51,4 @@ module.exports = localize(React.createClass( {
 			</div>
 		);
 	}
-} ));
+});

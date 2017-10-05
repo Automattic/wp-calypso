@@ -15,11 +15,10 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'PluginSiteUpdateIndicator';
 
-	displayName: 'PluginSiteUpdateIndicator',
-
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.shape( {
 			canUpdateFiles: PropTypes.bool.isRequired,
 			ID: PropTypes.number.isRequired
@@ -27,13 +26,11 @@ module.exports = localize(React.createClass( {
 		plugin: PropTypes.shape( { slug: PropTypes.string } ),
 		notices: PropTypes.object.isRequired,
 		expanded: PropTypes.bool
-	},
+	};
 
-	getDefaultProps: function() {
-		return { expanded: false };
-	},
+	static defaultProps = { expanded: false };
 
-	updatePlugin: function( ev ) {
+	updatePlugin = ev => {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
@@ -43,17 +40,17 @@ module.exports = localize(React.createClass( {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug
 		} );
-	},
+	};
 
-	getOngoingUpdates: function() {
+	getOngoingUpdates = () => {
 		return this.props.notices.inProgress.filter( log =>log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN' );
-	},
+	};
 
-	isUpdating: function() {
+	isUpdating = () => {
 		return this.getOngoingUpdates().length > 0;
-	},
+	};
 
-	renderUpdate: function() {
+	renderUpdate = () => {
 		let message,
 			ongoingUpdates = this.getOngoingUpdates(),
 			isUpdating = ongoingUpdates.length > 0;
@@ -74,9 +71,9 @@ module.exports = localize(React.createClass( {
 				</button>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return;
 		}
@@ -92,5 +89,4 @@ module.exports = localize(React.createClass( {
 		}
 		return null;
 	}
-
-} ));
+});

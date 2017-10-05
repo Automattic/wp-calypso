@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -32,7 +34,7 @@ import Card from 'components/card';
 import classNames from 'classnames';
 import { errorNotice } from 'state/notices/actions';
 
-const ApplicationPasswords = React.createClass( {
+const ApplicationPasswords = createReactClass({
 
 	displayName: 'ApplicationPasswords',
 
@@ -214,7 +216,7 @@ const ApplicationPasswords = React.createClass( {
 			</div>
         );
 	}
-} );
+});
 
 export default connect(
 	null,

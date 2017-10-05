@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import createReactClass from 'create-react-class';
 import config from 'config';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -16,7 +17,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-let PeopleSearch = React.createClass( {
+let PeopleSearch = createReactClass({
 	displayName: 'PeopleSearch',
 	mixins: [ UrlSearch ],
 
@@ -32,11 +33,12 @@ let PeopleSearch = React.createClass( {
 				analyticsGroup="People" />
 		);
 	}
-} );
+});
 
-let PeopleNavTabs = React.createClass( {
-	displayName: 'PeopleNavTabs',
-	render: function() {
+class PeopleNavTabs extends React.Component {
+    static displayName = 'PeopleNavTabs';
+
+	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
 				{ this.props.filters.map( function( filterItem ) {
@@ -52,7 +54,7 @@ let PeopleNavTabs = React.createClass( {
 			</NavTabs>
 		);
 	}
-} );
+}
 
 class PeopleSectionNav extends Component {
 

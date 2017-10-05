@@ -12,10 +12,10 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
-export default localize(React.createClass({
-	displayName: 'StatsModuleHeader',
+export default localize(class extends React.Component {
+    static displayName = 'StatsModuleHeader';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		path: PropTypes.string,
 		title: PropTypes.string,
@@ -26,18 +26,16 @@ export default localize(React.createClass({
 		showActions: PropTypes.bool,
 		showCollapse: PropTypes.bool,
 		onActionClick: PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			showCollapse: true,
-			showModule: true,
-			showActions: true,
-			onActionClick: () => {}
-		}
-	},
+	static defaultProps = {
+		showCollapse: true,
+		showModule: true,
+		showActions: true,
+		onActionClick: () => {}
+	};
 
-	toggleInfo: function( event ) {
+	toggleInfo = event => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
@@ -50,9 +48,9 @@ export default localize(React.createClass({
 		onActionClick( {
 			showInfo: ! showInfo
 		} );
-	},
+	};
 
-	toggleModule: function( event ) {
+	toggleModule = event => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';
@@ -64,9 +62,9 @@ export default localize(React.createClass({
 		onActionClick( {
 			showModule: ! showModule
 		} );
-	},
+	};
 
-	renderActions() {
+	renderActions = () => {
 		const { showCollapse, showInfo, showActions } = this.props;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
 
@@ -89,9 +87,9 @@ export default localize(React.createClass({
 				{ showCollapse ? this.renderChevron() : null }
 			</ul>
         );
-	},
+	};
 
-	renderChevron() {
+	renderChevron = () => {
 		return (
             <li className="module-header-action toggle-services">
 				<a
@@ -117,9 +115,9 @@ export default localize(React.createClass({
 				</a>
 			</li>
         );
-	},
+	};
 
-	renderTitle() {
+	renderTitle = () => {
 		const { title, titleLink } = this.props;
 
 		if ( titleLink ) {
@@ -136,7 +134,7 @@ export default localize(React.createClass({
 		}
 
 		return <h3 className="module-header-title">{ title }</h3>;
-	},
+	};
 
 	render() {
 		return (
@@ -146,4 +144,4 @@ export default localize(React.createClass({
 			</div>
 		);
 	}
-}));
+});

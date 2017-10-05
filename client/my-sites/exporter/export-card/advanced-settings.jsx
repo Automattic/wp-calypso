@@ -21,17 +21,17 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * exported. Posts and Pages can also be filtered by Authors, Statuses,
  * and Date.
  */
-const AdvancedSettings = React.createClass( {
-	displayName: 'AdvancedSettings',
+class AdvancedSettings extends React.Component {
+    static displayName = 'AdvancedSettings';
 
-	propTypes: {
+	static propTypes = {
 		// Event handlers
 		onSelectPostType: PropTypes.func.isRequired,
 		onClickExport: PropTypes.func.isRequired,
 
 		// Data
 		postType: PropTypes.string
-	},
+	};
 
 	render() {
 		return (
@@ -66,7 +66,7 @@ const AdvancedSettings = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );

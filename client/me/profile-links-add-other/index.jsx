@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
@@ -14,7 +15,7 @@ import FormButton from 'components/forms/form-button';
 import eventRecorder from 'me/event-recorder';
 import Notice from 'components/notice';
 
-export default localize(React.createClass({
+export default localize(createReactClass({
 
 	displayName: 'ProfileLinksAddOther',
 

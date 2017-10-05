@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
@@ -28,7 +30,7 @@ import constants from 'me/constants';
 
 import Notice from 'components/notice';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 
 	displayName: 'ReauthRequired',
 
@@ -223,4 +225,4 @@ module.exports = localize(React.createClass( {
 			</Dialog>
         );
 	}
-} ));
+}));

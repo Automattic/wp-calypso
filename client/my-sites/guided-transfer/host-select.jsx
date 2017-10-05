@@ -12,10 +12,10 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
-export default localize(React.createClass({
-	displayName: 'HostSelect',
+export default localize(class extends React.Component {
+    static displayName = 'HostSelect';
 
-	propTypes: {
+	static propTypes = {
 		hosts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				showHost: PropTypes.func.isRequired,
@@ -23,7 +23,7 @@ export default localize(React.createClass({
 				logo: PropTypes.string.isRequired
 			} )
 		).isRequired
-	},
+	};
 
 	render() {
 		const { hosts } = this.props;
@@ -64,4 +64,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

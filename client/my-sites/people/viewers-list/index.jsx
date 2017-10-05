@@ -5,8 +5,6 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-import PureRenderMixin from 'react-pure-render/mixin';
-
 /**
  * Internal dependencies
  */
@@ -23,32 +21,27 @@ import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
-let Viewers = localize(React.createClass( {
+let Viewers = localize(class extends React.PureComponent {
+    static displayName = 'Viewers';
 
-	displayName: 'Viewers',
+	state = {
+		bulkEditing: false
+	};
 
-	getInitialState: function() {
-		return {
-			bulkEditing: false
-		};
-	},
-
-	mixins: [ PureRenderMixin ],
-
-	renderPlaceholders() {
+	renderPlaceholders = () => {
 		return <PeopleListItem key="people-list-item-placeholder"/>;
-	},
+	};
 
-	fetchNextPage() {
+	fetchNextPage = () => {
 		var paginationData = ViewersStore.getPaginationData( this.props.siteId ),
 			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
 			page = currentPage + 1;
 
 		analytics.ga.recordEvent( 'People', 'Fetched more viewers with infinite list', 'page', page );
 		ViewersActions.fetch( this.props.siteId, page );
-	},
+	};
 
-	removeViewer: function( viewer ) {
+	removeViewer = viewer => {
 		analytics.ga.recordEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept( (
 			<div>
@@ -74,9 +67,9 @@ let Viewers = localize(React.createClass( {
 			},
 			this.props.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
-	},
+	};
 
-	renderViewer( viewer ) {
+	renderViewer = viewer => {
 		const removeThisViewer = () => {
 			this.removeViewer( viewer );
 		};
@@ -91,19 +84,19 @@ let Viewers = localize(React.createClass( {
 				onRemove={ removeThisViewer }
 			/>
 		);
-	},
+	};
 
-	getViewerRef( viewer ) {
+	getViewerRef = viewer => {
 		return 'viewer-' + viewer.ID;
-	},
+	};
 
-	onClickSiteSettings() {
+	onClickSiteSettings = () => {
 		analytics.ga.recordEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
-	},
+	};
 
-	isLastPage() {
+	isLastPage = () => {
 		return this.props.totalViewers <= this.props.viewers.length;
-	},
+	};
 
 	render() {
 		var viewers,
@@ -167,12 +160,10 @@ let Viewers = localize(React.createClass( {
 			</div>
 		);
 	}
-} ));
+});
 
-module.exports = localize(React.createClass( {
-	displayName: 'ViewersList',
-
-	mixins: [ PureRenderMixin ],
+module.exports = localize(class extends React.PureComponent {
+    static displayName = 'ViewersList';
 
 	render() {
 		return (
@@ -181,4 +172,4 @@ module.exports = localize(React.createClass( {
 			</ViewersData>
 		);
 	}
-} ));
+});

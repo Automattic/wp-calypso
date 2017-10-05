@@ -21,13 +21,10 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 
-let InviteAcceptLoggedIn = React.createClass( {
+class InviteAcceptLoggedIn extends React.Component {
+    state = { submitting: false };
 
-	getInitialState() {
-		return { submitting: false };
-	},
-
-	accept() {
+	accept = () => {
 		this.setState( { submitting: true } );
 		this.props.acceptInvite( this.props.invite, error => {
 			if ( error ) {
@@ -39,20 +36,20 @@ let InviteAcceptLoggedIn = React.createClass( {
 			}
 		} );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
-	},
+	};
 
-	decline() {
+	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
 			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
 		}
-	},
+	};
 
-	signInLink() {
+	signInLink = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
-	},
+	};
 
-	getButtonText() {
+	getButtonText = () => {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.state.submitting
@@ -65,9 +62,9 @@ let InviteAcceptLoggedIn = React.createClass( {
 		}
 
 		return text;
-	},
+	};
 
-	getJoinAsText() {
+	getJoinAsText = () => {
 		const { user } = this.props;
 		let text = '';
 
@@ -92,9 +89,9 @@ let InviteAcceptLoggedIn = React.createClass( {
 		}
 
 		return text;
-	},
+	};
 
-	renderMatchEmailError() {
+	renderMatchEmailError = () => {
 		return (
             <Card>
 				<InviteFormHeader { ... this.props.invite } user={ this.props.user } matchEmailError />
@@ -109,9 +106,9 @@ let InviteAcceptLoggedIn = React.createClass( {
 				</div>
 			</Card>
         );
-	},
+	};
 
-	renderAccept() {
+	renderAccept = () => {
 		return (
             <div>
 				<Card>
@@ -137,7 +134,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 				</LoggedOutFormLinks>
 			</div>
         );
-	},
+	};
 
 	render() {
 		return (
@@ -146,7 +143,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,

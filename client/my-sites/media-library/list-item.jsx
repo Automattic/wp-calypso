@@ -21,10 +21,10 @@ import MediaUtils from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryListItem',
+export default class extends React.Component {
+    static displayName = 'MediaLibraryListItem';
 
-	propTypes: {
+	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number.isRequired,
 		maxImageWidth: PropTypes.number,
@@ -34,32 +34,30 @@ export default React.createClass( {
 		onToggle: PropTypes.func,
 		onEditItem: PropTypes.func,
 		style: PropTypes.object,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			maxImageWidth: 450,
-			thumbnailType: MEDIA_IMAGE_PHOTON,
-			selectedIndex: -1,
-			onToggle: noop,
-			onEditItem: noop,
-		};
-	},
+	static defaultProps = {
+		maxImageWidth: 450,
+		thumbnailType: MEDIA_IMAGE_PHOTON,
+		selectedIndex: -1,
+		onToggle: noop,
+		onEditItem: noop,
+	};
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return ! ( nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
 			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
 			isEqual( nextProps.style, this.props.style ) );
-	},
+	}
 
-	clickItem: function( event ) {
+	clickItem = event => {
 		this.props.onToggle( this.props.media, event.shiftKey );
-	},
+	};
 
-	renderItem: function() {
+	renderItem = () => {
 		var component;
 
 		if ( ! this.props.media ) {
@@ -74,17 +72,17 @@ export default React.createClass( {
 		}
 
 		return React.createElement( component, this.props );
-	},
+	};
 
-	renderSpinner: function() {
+	renderSpinner = () => {
 		if ( ! this.props.media || ! this.props.media.transient ) {
 			return;
 		}
 
 		return <Spinner className="media-library__list-item-spinner" />;
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes, props, style, title;
 
 		classes = classNames( 'media-library__list-item', {
@@ -121,4 +119,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

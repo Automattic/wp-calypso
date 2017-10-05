@@ -23,39 +23,37 @@ import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
-	displayName: 'StatsListItem',
+module.exports = localize(class extends React.Component {
+    static displayName = 'StatsListItem';
 
-	getInitialState: function() {
-		return {
-			active: this.props.active,
-			actionMenuOpen: false,
-			disabled: false
-		};
-	},
+	state = {
+		active: this.props.active,
+		actionMenuOpen: false,
+		disabled: false
+	};
 
-	addMenuListener: function() {
+	addMenuListener = () => {
 		document.addEventListener( 'click', this.closeMenu );
-	},
+	};
 
-	removeMenuListener: function() {
+	removeMenuListener = () => {
 		document.removeEventListener( 'click', this.closeMenu );
-	},
+	};
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( this.props.data.actionMenu ) {
 			this.removeMenuListener();
 		}
-	},
+	}
 
-	closeMenu: function() {
+	closeMenu = () => {
 		this.removeMenuListener();
 		this.setState( {
 			actionMenuOpen: false
 		} );
-	},
+	};
 
-	actionMenuClick: function( event ) {
+	actionMenuClick = event => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -67,13 +65,13 @@ module.exports = localize(React.createClass( {
 		} else {
 			this.closeMenu();
 		}
-	},
+	};
 
-	preventDefaultOnClick: function( event ) {
+	preventDefaultOnClick = event => {
 		event.preventDefault();
-	},
+	};
 
-	onClick: function( event ) {
+	onClick = event => {
 		var gaEvent,
 			moduleName = titlecase( this.props.moduleName );
 
@@ -106,15 +104,15 @@ module.exports = localize(React.createClass( {
 				analytics.ga.recordEvent( 'Stats', gaEvent + ' in List' );
 			}
 		}
-	},
+	};
 
-	spamHandler: function( isSpammed ) {
+	spamHandler = isSpammed => {
 		this.setState( {
 			disabled: isSpammed
 		} );
-	},
+	};
 
-	buildActions: function() {
+	buildActions = () => {
 		var data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
@@ -160,9 +158,9 @@ module.exports = localize(React.createClass( {
 		}
 
 		return actionList;
-	},
+	};
 
-	buildLabel: function() {
+	buildLabel = () => {
 		var data = this.props.data,
 			labelData = data.label,
 			wrapperClassSet,
@@ -211,9 +209,9 @@ module.exports = localize(React.createClass( {
 		}, this );
 
 		return label;
-	},
+	};
 
-	buildValue: function() {
+	buildValue = () => {
 		var data = this.props.data,
 			valueData = data.value,
 			value;
@@ -236,9 +234,9 @@ module.exports = localize(React.createClass( {
 		}
 
 		return value;
-	},
+	};
 
-	render: function() {
+	render() {
 		var data = this.props.data,
 			rightClassOptions = {
 				'module-content-list-item-right': true
@@ -303,4 +301,4 @@ module.exports = localize(React.createClass( {
 			</li>
 		);
 	}
-} ));
+});

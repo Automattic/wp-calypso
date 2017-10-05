@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 
 import ReactDom from 'react-dom';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import emailValidator from 'email-validator';
 
@@ -20,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
 
 	mixins: [ LinkedStateMixin ],
@@ -158,4 +159,4 @@ module.exports = localize(React.createClass( {
 	onDelete: function() {
 		this.props.onDelete();
 	}
-} ));
+}));

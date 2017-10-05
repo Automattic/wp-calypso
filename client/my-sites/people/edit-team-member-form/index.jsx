@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
@@ -44,7 +45,7 @@ import {
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 const user = userModule();
 
-const EditUserForm = localize(React.createClass( {
+const EditUserForm = localize(createReactClass({
 	displayName: 'EditUserForm',
 
 	mixins: [ PureRenderMixin ],
@@ -239,7 +240,7 @@ const EditUserForm = localize(React.createClass( {
 			</form>
         );
 	}
-} ));
+}));
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {

@@ -16,18 +16,18 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 
-module.exports = React.createClass( {
-	displayName: 'ModuleChartBarContainer',
+module.exports = class extends React.Component {
+    static displayName = 'ModuleChartBarContainer';
 
-	propTypes: {
+	static propTypes = {
 		isTouch: PropTypes.bool,
 		data: PropTypes.array,
 		yAxisMax: PropTypes.number,
 		width: PropTypes.number,
 		barClick: PropTypes.func
-	},
+	};
 
-	buildBars: function( max ) {
+	buildBars = max => {
 		const numberBars = this.props.data.length,
 			width = this.props.chartWidth,
 			barWidth = ( width / numberBars );
@@ -52,9 +52,9 @@ module.exports = React.createClass( {
 		}, this );
 
 		return bars;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<div className="chart__bars">
@@ -64,4 +64,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

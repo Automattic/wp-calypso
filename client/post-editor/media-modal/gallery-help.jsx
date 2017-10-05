@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
@@ -22,38 +21,32 @@ import { getPreference } from 'state/preferences/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 
-const EditorMediaModalGalleryHelp =  React.createClass( {
-	displayName: 'EditorMediaModalGalleryHelp',
+class EditorMediaModalGalleryHelp extends React.PureComponent {
+    static displayName = 'EditorMediaModalGalleryHelp';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		onDismiss: PropTypes.func,
 		sectionName: PropTypes.string,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isDismissed: false,
-			rememberDismiss: true
-		};
-	},
+	static defaultProps = {
+		onDismiss: () => {}
+	};
 
-	getDefaultProps() {
-		return {
-			onDismiss: () => {}
-		};
-	},
+	state = {
+		isDismissed: false,
+		rememberDismiss: true
+	};
 
-	setRenderContext( renderContext ) {
+	setRenderContext = renderContext => {
 		if ( ! renderContext ) {
 			return;
 		}
 
 		this.setState( { renderContext } );
-	},
+	};
 
-	toggleRememberDismiss() {
+	toggleRememberDismiss = () => {
 		// This is a bit of ugly interoperability between the way React treats
 		// checkbox events and the media modal handler for preventing the modal
 		// from closing when clicking a popover.
@@ -65,14 +58,14 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 				rememberDismiss: ! this.state.rememberDismiss
 			} );
 		}, 0 );
-	},
+	};
 
-	dismiss( { remember } = {} ) {
+	dismiss = ({ remember } = {}) => {
 		this.setState( { isDismissed: true } );
 		this.props.onDismiss( { remember } );
-	},
+	};
 
-	renderPopover() {
+	renderPopover = () => {
 		const { renderContext, isDismissed } = this.state;
 		if ( ! renderContext || isDismissed ) {
 			return;
@@ -108,7 +101,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 				</div>
 			</Popover>
         );
-	},
+	};
 
 	render() {
 		// note that the post editor section is used for posts and pages
@@ -126,7 +119,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => ( {

@@ -11,21 +11,21 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-export default localize(React.createClass({
-	displayName: 'Alert',
+export default localize(class extends React.Component {
+    static displayName = 'Alert';
 
-	propTypes: {
+	static propTypes = {
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
 		message: PropTypes.string.isRequired,
-	},
+	};
 
-	splitMessage() {
+	splitMessage = () => {
 		const lines = this.props.message.split( '\n\n' );
 		return lines.map( ( line, i ) => <p key={ 'alert-' + i }>{ line }</p> );
-	},
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
 			<FormButton
 				isPrimary={ false }
@@ -35,7 +35,7 @@ export default localize(React.createClass({
 				{ this.props.translate( 'OK' ) }
 			</FormButton>
 		];
-	},
+	};
 
 	render() {
 		return (
@@ -49,4 +49,4 @@ export default localize(React.createClass({
 			</Dialog>
 		);
 	}
-}));
+});

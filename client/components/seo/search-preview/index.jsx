@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 import {
 	firstValid,
@@ -30,10 +29,8 @@ const googleSnippet = firstValid(
 
 const googleUrl = hardTruncation( 79 );
 
-export const SearchPreview = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	render() {
+export class SearchPreview extends React.PureComponent {
+    render() {
 		const {
 			snippet,
 			title,
@@ -57,7 +54,7 @@ export const SearchPreview = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 SearchPreview.propTypes = {
 	title: PropTypes.string,

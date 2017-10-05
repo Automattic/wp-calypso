@@ -31,32 +31,30 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-module.exports = localize(React.createClass( {
-	displayName: 'PaypalPaymentBox',
+module.exports = localize(class extends React.Component {
+    static displayName = 'PaypalPaymentBox';
 
-	getInitialState: function() {
-		return {
-			country: null,
-			formDisabled: false
-		};
-	},
+	state = {
+		country: null,
+		formDisabled: false
+	};
 
-	handleToggle: function( event ) {
+	handleToggle = event => {
 		event.preventDefault();
 
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Or Use Credit Card Link' );
 		analytics.tracks.recordEvent( 'calypso_checkout_switch_to_card' );
 		this.props.onToggle( 'credit-card' );
-	},
+	};
 
-	handleChange: function( event ) {
+	handleChange = event => {
 		var data = {};
 		data[ event.target.name ] = event.target.value;
 
 		this.setState( data );
-	},
+	};
 
-	setSubmitState: function( submitState ) {
+	setSubmitState = submitState => {
 		if ( submitState.error ) {
 			notices.error( submitState.error );
 		}
@@ -67,13 +65,13 @@ module.exports = localize(React.createClass( {
 		this.setState( {
 			formDisabled: submitState.disabled
 		} );
-	},
+	};
 
-	getLocationOrigin: function( l ) {
+	getLocationOrigin = l => {
 		return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
-	},
+	};
 
-	redirectToPayPal: function( event ) {
+	redirectToPayPal = event => {
 		var cart, transaction, dataForApi,
 			origin = this.getLocationOrigin( window.location );
 		event.preventDefault();
@@ -127,9 +125,9 @@ module.exports = localize(React.createClass( {
 				window.location = paypalExpressURL;
 			}
 		}.bind( this ) );
-	},
+	};
 
-	renderButtonText: function() {
+	renderButtonText = () => {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
@@ -141,9 +139,9 @@ module.exports = localize(React.createClass( {
 			args: { price: this.props.cart.total_cost_display },
 			context: 'Pay button on /checkout'
 		} );
-	},
+	};
 
-	content: function() {
+	content = () => {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
@@ -205,9 +203,9 @@ module.exports = localize(React.createClass( {
 				<CartToggle />
 			</form>
         );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <PaymentBox
 				classSet="paypal-payment-box"
@@ -216,4 +214,4 @@ module.exports = localize(React.createClass( {
 			</PaymentBox>
         );
 	}
-} ));
+});

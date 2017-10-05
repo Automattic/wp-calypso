@@ -28,13 +28,10 @@ import FormButton from 'components/forms/form-button';
  */
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
-let InviteAcceptLoggedOut = React.createClass( {
+class InviteAcceptLoggedOut extends React.Component {
+    state = { error: false, bearerToken: false, userData: false, submitting: false };
 
-	getInitialState() {
-		return { error: false, bearerToken: false, userData: false, submitting: false };
-	},
-
-	submitButtonText() {
+	submitButtonText = () => {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.props.translate( 'Sign Up & Follow' );
@@ -44,15 +41,15 @@ let InviteAcceptLoggedOut = React.createClass( {
 			text = this.props.translate( 'Sign Up & Join' );
 		}
 		return text;
-	},
+	};
 
-	clickSignInLink() {
+	clickSignInLink = () => {
 		const signInLink = login( { redirectTo: window.location.href } );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
-	},
+	};
 
-	submitForm( form, userData ) {
+	submitForm = (form, userData) => {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
@@ -74,15 +71,15 @@ let InviteAcceptLoggedOut = React.createClass( {
 			this.props.invite,
 			createAccountCallback
 		);
-	},
+	};
 
-	renderFormHeader() {
+	renderFormHeader = () => {
 		return (
 			<InviteFormHeader { ...this.props.invite } />
 		);
-	},
+	};
 
-	loginUser() {
+	loginUser = () => {
 		const { userData, bearerToken } = this.state;
 		return (
 			<WpcomLoginForm
@@ -90,9 +87,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ window.location.href } />
 		);
-	},
+	};
 
-	subscribeUserByEmailOnly() {
+	subscribeUserByEmailOnly = () => {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
 		this.props.acceptInvite(
@@ -106,9 +103,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 			}
 		);
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
-	},
+	};
 
-	renderFooterLink() {
+	renderFooterLink = () => {
 		return (
             <LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
@@ -117,9 +114,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 				{ this.renderEmailOnlySubscriptionLink() }
 			</LoggedOutFormLinks>
         );
-	},
+	};
 
-	renderEmailOnlySubscriptionLink() {
+	renderEmailOnlySubscriptionLink = () => {
 		if ( this.props.invite.role !== 'follower' || ! this.props.invite.activationKey ) {
 			return null;
 		}
@@ -129,9 +126,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 				{ this.props.translate( 'Follow by email subscription only.' ) }
 			</LoggedOutFormLinkItem>
         );
-	},
+	};
 
-	renderSignInLinkOnly() {
+	renderSignInLinkOnly = () => {
 		return (
             <div className="sign-up-form">
 				<Card className="logged-out-form">
@@ -144,7 +141,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 				</Card>
 			</div>
         );
-	},
+	};
 
 	render() {
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
@@ -169,8 +166,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 			</div>
         );
 	}
-
-} );
+}
 
 export default connect(
 	null,

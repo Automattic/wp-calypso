@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import classNames from 'classnames';
@@ -17,7 +19,7 @@ import observe from 'lib/mixins/data-observe';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],
@@ -69,4 +71,4 @@ module.exports = localize(React.createClass( {
 			</li>
         );
 	}
-} ));
+}));

@@ -18,8 +18,8 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
-	propTypes: {
+export class EditorMediaModalDetail extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		selectedIndex: PropTypes.number,
@@ -27,24 +27,22 @@ export const EditorMediaModalDetail = React.createClass( {
 		onReturnToList: PropTypes.func,
 		onEdit: PropTypes.func,
 		onRestore: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			selectedIndex: 0,
-			onSelectedIndexChange: noop
-		};
-	},
+	static defaultProps = {
+		selectedIndex: 0,
+		onSelectedIndexChange: noop
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.preloadImages();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.preloadImages();
-	},
+	}
 
-	preloadImages: function() {
+	preloadImages = () => {
 		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
 			var src = MediaUtils.url( image, {
 				photon: this.props.site && ! this.props.site.is_private
@@ -52,13 +50,13 @@ export const EditorMediaModalDetail = React.createClass( {
 
 			preloadImage( src );
 		}, this );
-	},
+	};
 
-	incrementIndex: function( increment ) {
+	incrementIndex = increment => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			items,
 			selectedIndex,
@@ -88,7 +86,7 @@ export const EditorMediaModalDetail = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),

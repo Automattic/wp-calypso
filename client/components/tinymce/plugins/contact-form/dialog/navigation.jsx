@@ -12,14 +12,14 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 
-export default localize(React.createClass({
-	displayName: 'ContactFormDialogNavigation',
+export default localize(class extends React.Component {
+    static displayName = 'ContactFormDialogNavigation';
 
-	propTypes: {
+	static propTypes = {
 		fieldCount: PropTypes.number.isRequired,
 		activeTab: PropTypes.oneOf( [ 'fields', 'settings' ] ).isRequired,
 		onChangeTabs: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
 		const tabs = [ 'fields', 'settings' ];
@@ -40,4 +40,4 @@ export default localize(React.createClass({
 			</SectionNav>
         );
 	}
-}));
+});

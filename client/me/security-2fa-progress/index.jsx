@@ -9,28 +9,27 @@ import debugFactory from 'debug';
 const debug = debugFactory('calypso:me:security:2fa-progress');
 import ProgressItem from './progress-item';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faProgress';
 
-	displayName: 'Security2faProgress',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	stepClass: function( step ) {
+	stepClass = step => {
 		var currentStep = parseInt( this.props.step, 10 );
 
 		return ( {
 			isHighlighted: step === currentStep,
 			isCompleted: step < currentStep
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <div className="security-2fa-progress__container">
 
@@ -59,4 +58,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

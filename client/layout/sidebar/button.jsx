@@ -11,24 +11,24 @@ import React from 'react';
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
-export default localize(React.createClass({
-	displayName: 'SidebarButton',
+export default localize(class extends React.Component {
+    static displayName = 'SidebarButton';
 
-	propTypes: {
+	static propTypes = {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		children: PropTypes.node
-	},
+	};
 
-	_preloaded: false,
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
-	},
+	};
 
 	render() {
 		if ( ! this.props.href ) {
@@ -49,4 +49,4 @@ export default localize(React.createClass({
 			</a>
         );
 	}
-}));
+});

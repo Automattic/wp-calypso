@@ -13,10 +13,10 @@ import { omit } from 'lodash';
 const debug = debugFactory( 'calypso:resizable-iframe' ),
 	noop = () => {};
 
-export default React.createClass( {
-	displayName: 'ResizableIframe',
+export default class extends React.Component {
+    static displayName = 'ResizableIframe';
 
-	propTypes: {
+	static propTypes = {
 		src: PropTypes.string,
 		width: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -28,41 +28,37 @@ export default React.createClass( {
 		] ),
 		onLoad: PropTypes.func,
 		onResize: PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return { width: 0, height: 0 };
-	},
+	static defaultProps = {
+		onLoad: noop,
+		onResize: noop
+	};
 
-	getDefaultProps: function() {
-		return {
-			onLoad: noop,
-			onResize: noop
-		};
-	},
+	state = { width: 0, height: 0 };
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		window.addEventListener( 'message', this.checkMessageForResize, false );
 		this.maybeConnect();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.maybeConnect();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'message', this.checkMessageForResize );
-	},
+	}
 
-	getFrameBody: function() {
+	getFrameBody = () => {
 		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
-	},
+	};
 
-	maybeConnect: function() {
+	maybeConnect = () => {
 		if ( ! this.isFrameAccessible() ) {
 			return;
 		}
@@ -124,17 +120,17 @@ export default React.createClass( {
 			} )();
 		`;
 		body.appendChild( script );
-	},
+	};
 
-	isFrameAccessible: function() {
+	isFrameAccessible = () => {
 		try {
 			return !! this.getFrameBody();
 		} catch ( e ) {
 			return false;
 		}
-	},
+	};
 
-	checkMessageForResize: function( event ) {
+	checkMessageForResize = event => {
 		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Attempt to parse the message data as JSON if passed as string
@@ -161,14 +157,14 @@ export default React.createClass( {
 			this.setState( { width, height } );
 			this.props.onResize();
 		}
-	},
+	};
 
-	onLoad: function( event ) {
+	onLoad = event => {
 		this.maybeConnect();
 		this.props.onLoad( event );
-	},
+	};
 
-	render: function() {
+	render() {
 		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
@@ -179,4 +175,4 @@ export default React.createClass( {
 				height={ this.props.height || this.state.height } />
 		);
 	}
-} );
+}

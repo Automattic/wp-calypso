@@ -5,10 +5,10 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-module.exports = localize(React.createClass( {
-	displayName: 'StoredCard',
+module.exports = localize(class extends React.Component {
+    static displayName = 'StoredCard';
 
-	render: function() {
+	render() {
 		var card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
 			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
@@ -24,4 +24,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

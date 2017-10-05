@@ -17,38 +17,36 @@ import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-export default localize(React.createClass({
-	displayName: 'EditorSharingPublicizeConnection',
+export default localize(class extends React.Component {
+    static displayName = 'EditorSharingPublicizeConnection';
 
-	propTypes: {
+	static propTypes = {
 		post: PropTypes.object,
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func,
 		label: PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onRefresh: () => {}
-		};
-	},
+	static defaultProps = {
+		onRefresh: () => {}
+	};
 
-	isConnectionSkipped() {
+	isConnectionSkipped = () => {
 		const { post, connection } = this.props;
 		return post && connection && includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID );
-	},
+	};
 
-	isConnectionDone() {
+	isConnectionDone = () => {
 		const { post, connection } = this.props;
 		return post && connection && includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID );
-	},
+	};
 
-	isDisabled() {
+	isDisabled = () => {
 		const { connection } = this.props;
 		return ! connection || connection.read_only;
-	},
+	};
 
-	onChange( event ) {
+	onChange = event => {
 		const { connection } = this.props;
 		if ( ! connection ) {
 			return;
@@ -65,9 +63,9 @@ export default localize(React.createClass({
 			PostStats.recordStat( 'sharing_disabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
 		}
-	},
+	};
 
-	renderBrokenConnection() {
+	renderBrokenConnection = () => {
 		const { connection } = this.props;
 		if ( ! connection || connection.status !== 'broken' ) {
 			return;
@@ -79,7 +77,7 @@ export default localize(React.createClass({
 				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
 			</Notice>
         );
-	},
+	};
 
 	render() {
 		const { connection, label } = this.props;
@@ -97,4 +95,4 @@ export default localize(React.createClass({
 			</div>
 		);
 	}
-}));
+});

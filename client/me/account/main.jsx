@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -60,7 +61,7 @@ const user = _user();
  */
 const debug = debugFactory( 'calypso:me:account' );
 
-const Account = localize(React.createClass( {
+const Account = localize(createReactClass({
 
 	displayName: 'Account',
 
@@ -731,7 +732,7 @@ const Account = localize(React.createClass( {
 			</Main>
 		);
 	}
-} ));
+}));
 
 export default compose(
 	connect(

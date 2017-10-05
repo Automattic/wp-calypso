@@ -13,12 +13,12 @@ import Card from 'components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
-export default localize(React.createClass({
-	displayName: 'StatsOverviewPlaceholder',
+export default localize(class extends React.Component {
+    static displayName = 'StatsOverviewPlaceholder';
 
-	propTypes: {
+	static propTypes = {
 		insights: PropTypes.bool
-	},
+	};
 
 	render() {
 		let icon;
@@ -67,4 +67,4 @@ export default localize(React.createClass({
 			</Card>
         );
 	}
-}));
+});

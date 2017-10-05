@@ -7,10 +7,10 @@ import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default localize(React.createClass({
-	displayName: 'StatsTabsTab',
+export default localize(class extends React.Component {
+    static displayName = 'StatsTabsTab';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		gridicon: PropTypes.string,
 		href: PropTypes.string,
@@ -23,16 +23,16 @@ export default localize(React.createClass({
 			PropTypes.number,
 			PropTypes.string
 		] )
-	},
+	};
 
-	clickHandler( event ) {
+	clickHandler = event => {
 		if ( this.props.tabClick ) {
 			event.preventDefault();
 			this.props.tabClick( this.props );
 		}
-	},
+	};
 
-	ensureValue( value ) {
+	ensureValue = value => {
 		const { loading, children } = this.props;
 		if ( children ) {
 			return null;
@@ -43,7 +43,7 @@ export default localize(React.createClass({
 		}
 
 		return String.fromCharCode( 8211 );
-	},
+	};
 
 	render() {
 		const { className, compact, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
@@ -77,4 +77,4 @@ export default localize(React.createClass({
 			</li>
 		);
 	}
-}));
+});

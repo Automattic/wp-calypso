@@ -30,13 +30,27 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faBackupCodesList';
 
-	displayName: 'Security2faBackupCodesList',
+	static defaultProps = {
+		backupCodes: []
+	};
 
-	popup: false,
+	static propTypes = {
+		onNextStep: PropTypes.func.isRequired
+	};
 
-	componentDidMount: function() {
+	state = {
+		userAgrees: false,
+		printCodesTooltip: false,
+		downloadCodesTooltip: false,
+		copyCodesTooltip: false
+	};
+
+	popup = false;
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 
 		// Configure clipboard to be triggered on clipboard button press
@@ -45,36 +59,17 @@ module.exports = localize(React.createClass( {
 			text: () => this.getBackupCodePlainText( this.props.backupCodes )
 		} );
 		this.clipboard.on( 'success', this.onCopy );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 
 		// Cleanup clipboard object
 		this.clipboard.destroy();
 		delete this.clipboard;
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			backupCodes: []
-		};
-	},
-
-	propTypes: {
-		onNextStep: PropTypes.func.isRequired
-	},
-
-	getInitialState: function() {
-		return {
-			userAgrees: false,
-			printCodesTooltip: false,
-			downloadCodesTooltip: false,
-			copyCodesTooltip: false
-		};
-	},
-
-	openPopup: function() {
+	openPopup = () => {
 		this.popup = window.open();
 
 		if ( null === this.popup ) {
@@ -88,9 +83,9 @@ module.exports = localize(React.createClass( {
 
 		this.setState( { lastError: false } );
 		return true;
-	},
+	};
 
-	onPrint: function() {
+	onPrint = () => {
 		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
@@ -101,14 +96,14 @@ module.exports = localize(React.createClass( {
 		} else if ( this.openPopup() ) {
 			this.doPopup( this.props.backupCodes );
 		}
-	},
+	};
 
-	onCopy: function() {
+	onCopy = () => {
 		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
 		this.setState( { isCopied: true } );
-	},
+	};
 
-	saveCodesToFile: function() {
+	saveCodesToFile = () => {
 		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 		const user = userFactory();
 		const username = user.get().username;
@@ -116,39 +111,39 @@ module.exports = localize(React.createClass( {
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
 		saveAs( toSave, `${username}-backup-codes.txt` );
-	},
+	};
 
-	getBackupCodePlainText: function( backupCodes ) {
+	getBackupCodePlainText = backupCodes => {
 		if ( backupCodes.length > 0 ) {
 			return backupCodes.join( '\n' );
 		}
-	},
+	};
 
-	enableDownloadCodesTooltip() {
+	enableDownloadCodesTooltip = () => {
 		this.setState( { downloadCodesTooltip: true } );
-	},
+	};
 
-	disableDownloadCodesTooltip() {
+	disableDownloadCodesTooltip = () => {
 		this.setState( { downloadCodesTooltip: false } );
-	},
+	};
 
-	enablePrintCodesTooltip() {
+	enablePrintCodesTooltip = () => {
 		this.setState( { printCodesTooltip: true } );
-	},
+	};
 
-	disablePrintCodesTooltip() {
+	disablePrintCodesTooltip = () => {
 		this.setState( { printCodesTooltip: false } );
-	},
+	};
 
-	enableCopyCodesTooltip() {
+	enableCopyCodesTooltip = () => {
 		this.setState( { copyCodesTooltip: true } );
-	},
+	};
 
-	disableCopyCodesTooltip() {
+	disableCopyCodesTooltip = () => {
 		this.setState( { copyCodesTooltip: false } );
-	},
+	};
 
-	getBackupCodeHTML: function( codes ) {
+	getBackupCodeHTML = codes => {
 		const datePrinted = this.props.moment().format( 'MMM DD, YYYY @ h:mm a' );
 		let row;
 		let html = '<html><head><title>';
@@ -197,9 +192,9 @@ module.exports = localize(React.createClass( {
 
 		html += '</div></body></html>';
 		return html;
-	},
+	};
 
-	doPopup: function( codes ) {
+	doPopup = codes => {
 		this.popup.document.open( 'text/html' );
 		this.popup.document.write( this.getBackupCodeHTML( codes ) );
 		this.popup.document.close();
@@ -211,14 +206,14 @@ module.exports = localize(React.createClass( {
 			this.popup.close();
 			this.popup = false;
 		}.bind( this ), 100 );
-	},
+	};
 
-	onNextStep: function( event ) {
+	onNextStep = event => {
 		event.preventDefault();
 		this.props.onNextStep();
-	},
+	};
 
-	getPlaceholders: function() {
+	getPlaceholders = () => {
 		let i;
 		const placeholders = [];
 
@@ -227,17 +222,17 @@ module.exports = localize(React.createClass( {
 		}
 
 		return placeholders;
-	},
+	};
 
-	onUserAgreesChange: function( event ) {
+	onUserAgreesChange = event => {
 		this.setState( { userAgrees: event.target.checked } );
-	},
+	};
 
-	getSubmitDisabled: function() {
+	getSubmitDisabled = () => {
 		return ! this.state.userAgrees;
-	},
+	};
 
-	renderList: function() {
+	renderList = () => {
 		const backupCodes = this.props.backupCodes.length
 							? this.props.backupCodes
 							: this.getPlaceholders();
@@ -356,13 +351,13 @@ module.exports = localize(React.createClass( {
 				</FormButtonBar>
 			</div>
         );
-	},
+	};
 
-	clearLastError: function() {
+	clearLastError = () => {
 		this.setState( { lastError: false } );
-	},
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError = () => {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -374,13 +369,13 @@ module.exports = localize(React.createClass( {
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="security-2fa-backup-codes-list">
 				{ this.renderList() }
 			</div>
 		);
 	}
-} ));
+});

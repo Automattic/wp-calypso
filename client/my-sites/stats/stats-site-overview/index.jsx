@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
@@ -17,8 +18,10 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const StatsSiteOverview = React.createClass( {
-	proptypes: {
+const StatsSiteOverview = createReactClass({
+    displayName: 'StatsSiteOverview',
+
+    proptypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		period: PropTypes.string,
@@ -30,11 +33,11 @@ const StatsSiteOverview = React.createClass( {
 		title: PropTypes.string
 	},
 
-	isValueLow( value ) {
+    isValueLow( value ) {
 		return ! value || 0 === value;
 	},
 
-	render() {
+    render() {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
@@ -75,7 +78,7 @@ const StatsSiteOverview = React.createClass( {
 			</div>
         );
 	}
-} );
+});
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, date, period, siteSlug } = ownProps;

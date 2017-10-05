@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -25,28 +24,24 @@ import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 
-const DeleteUser = React.createClass( {
-	displayName: 'DeleteUser',
+class DeleteUser extends React.PureComponent {
+    static displayName = 'DeleteUser';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		isMultisite: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		user: PropTypes.object,
 		currentUser: PropTypes.object,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			showDialog: false,
-			radioOption: false,
-			reassignUser: false
-		};
-	},
+	state = {
+		showDialog: false,
+		radioOption: false,
+		reassignUser: false
+	};
 
-	getRemoveText: function() {
+	getRemoveText = () => {
 		const { translate } = this.props;
 		if ( ! this.props.user || ! this.props.user.name ) {
 			return translate( 'Remove User' );
@@ -57,9 +52,9 @@ const DeleteUser = React.createClass( {
 				username: this.props.user.name,
 			}
 		} );
-	},
+	};
 
-	getDeleteText: function() {
+	getDeleteText = () => {
 		const { translate } = this.props;
 		if ( ! this.props.user || ! this.props.user.name ) {
 			return translate( 'Delete User' );
@@ -70,9 +65,9 @@ const DeleteUser = React.createClass( {
 				username: this.props.user.name,
 			}
 		} );
-	},
+	};
 
-	handleRadioChange: function( event ) {
+	handleRadioChange = event => {
 		const name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
@@ -81,19 +76,19 @@ const DeleteUser = React.createClass( {
 
 		this.setState( updateObj );
 		analytics.ga.recordEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
-	},
+	};
 
-	setReassignLabel( label ) {
+	setReassignLabel = label => {
 		this.reassignLabel = label;
-	},
+	};
 
-	onSelectAuthor: function( author ) {
+	onSelectAuthor = author => {
 		this.setState( {
 			reassignUser: author
 		} );
-	},
+	};
 
-	removeUser: function() {
+	removeUser = () => {
 		const { translate } = this.props;
 		accept( (
 			<div>
@@ -130,9 +125,9 @@ const DeleteUser = React.createClass( {
 			translate( 'Remove' )
 		);
 		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
-	},
+	};
 
-	deleteUser: function( event ) {
+	deleteUser = event => {
 		event.preventDefault();
 		if ( ! this.props.user.ID ) {
 			return;
@@ -145,18 +140,18 @@ const DeleteUser = React.createClass( {
 
 		UsersActions.deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
 		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
-	},
+	};
 
-	getAuthorSelectPlaceholder: function() {
+	getAuthorSelectPlaceholder = () => {
 		const { translate } = this.props;
 		return (
 			<span className="delete-user__select-placeholder">
 				{ translate( 'select a user' ) }
 			</span>
 		);
-	},
+	};
 
-	getTranslatedAssignLabel: function() {
+	getTranslatedAssignLabel = () => {
 		const { translate } = this.props;
 		return translate( 'Attribute all content to {{AuthorSelector/}}', {
 			components: {
@@ -184,17 +179,17 @@ const DeleteUser = React.createClass( {
 				)
 			}
 		} );
-	},
+	};
 
-	isDeleteButtonDisabled: function() {
+	isDeleteButtonDisabled = () => {
 		if ( 'reassign' === this.state.radioOption ) {
 			return false === this.state.reassignUser || this.state.reassignUser.ID === this.props.user.ID;
 		}
 
 		return false === this.state.radioOption;
-	},
+	};
 
-	renderSingleSite: function() {
+	renderSingleSite = () => {
 		const { translate } = this.props;
 		return (
 			<Card className="delete-user__single-site">
@@ -269,9 +264,9 @@ const DeleteUser = React.createClass( {
 				</form>
 			</Card>
 		);
-	},
+	};
 
-	renderMultisite: function() {
+	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite" >
 				<a
@@ -282,9 +277,9 @@ const DeleteUser = React.createClass( {
 				</a>
 			</CompactCard>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		// A user should not be able to remove themself.
 		if ( ! this.props.isJetpack && this.props.user.ID === this.props.currentUser.ID ) {
 			return null;
@@ -295,6 +290,6 @@ const DeleteUser = React.createClass( {
 
 		return this.props.isMultisite ? this.renderMultisite() : this.renderSingleSite();
 	}
-} );
+}
 
 export default localize( DeleteUser );

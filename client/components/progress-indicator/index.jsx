@@ -6,20 +6,18 @@ import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'ProgressIndicator',
+export default class extends React.Component {
+    static displayName = 'ProgressIndicator';
 
-	getDefaultProps: function() {
-		return {
-			status: 'inactive'
-		};
-	},
+	static defaultProps = {
+		status: 'inactive'
+	};
 
-	propTypes: {
+	static propTypes = {
 		status: PropTypes.string
-	},
+	};
 
-	render: function() {
+	render() {
 		var last = null,
 			status = this.props.status,
 			classes;
@@ -50,4 +48,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

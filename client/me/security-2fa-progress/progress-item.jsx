@@ -7,32 +7,31 @@ import debugFactory from 'debug';
 const debug = debugFactory('calypso:me:security:2fa-progress');
 import classNames from 'classnames';
 
-module.exports = React.createClass( {
+module.exports = class extends React.Component {
+    static displayName = 'Security2faProgressItem';
 
-	displayName: 'Security2faProgressItem',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	noticon: function() {
+	noticon = () => {
 		var icon = 'noticon-' + this.props.icon;
 		return classNames( 'noticon', icon );
-	},
+	};
 
-	highlight: function() {
+	highlight = () => {
 		return classNames( {
 			'security-2fa-progress__item': true,
 			'is-highlighted': this.props.step.isHighlighted,
 			'is-completed': this.props.step.isCompleted
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className={ this.highlight() }>
 
@@ -42,4 +41,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

@@ -18,16 +18,16 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getSiteDefaultPostFormat } from 'state/selectors';
 
-const EditorPostFormatsAccordion = React.createClass( {
-	propTypes: {
+class EditorPostFormatsAccordion extends React.Component {
+    static propTypes = {
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		post: PropTypes.object,
 		postFormats: PropTypes.object,
 		defaultPostFormat: PropTypes.string,
-	},
+	};
 
-	getFormatValue() {
+	getFormatValue = () => {
 		const { post, defaultPostFormat } = this.props;
 		if ( ! post ) {
 			return;
@@ -38,9 +38,9 @@ const EditorPostFormatsAccordion = React.createClass( {
 		}
 
 		return defaultPostFormat;
-	},
+	};
 
-	getSubtitle() {
+	getSubtitle = () => {
 		const formatValue = this.getFormatValue();
 		const { post, postFormats } = this.props;
 
@@ -55,7 +55,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 		return this.props.translate( 'Standard', {
 			context: 'Post format'
 		} );
-	},
+	};
 
 	render() {
 		const { className, post, postFormats } = this.props;
@@ -78,7 +78,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 			</div>
         );
 	}
-} );
+}
 
 export default connect(
 	( state ) => {

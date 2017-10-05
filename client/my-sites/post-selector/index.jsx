@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { reduce, snakeCase } from 'lodash';
 
 /**
@@ -11,12 +10,10 @@ import { reduce, snakeCase } from 'lodash';
  */
 import PostSelectorPosts from './selector';
 
-export default React.createClass( {
-	displayName: 'PostSelector',
+export default class extends React.PureComponent {
+    static displayName = 'PostSelector';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		type: PropTypes.string,
 		excludePrivateTypes: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
@@ -31,34 +28,30 @@ export default React.createClass( {
 		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
 		showTypeLabels: PropTypes.bool,
 		suppressFirstPageLoad: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			type: 'post',
-			status: 'publish,private',
-			multiple: false,
-			orderBy: 'title',
-			order: 'ASC',
-			suppressFirstPageLoad: false,
-		};
-	},
+	static defaultProps = {
+		type: 'post',
+		status: 'publish,private',
+		multiple: false,
+		orderBy: 'title',
+		order: 'ASC',
+		suppressFirstPageLoad: false,
+	};
 
-	getInitialState() {
-		return {
-			search: ''
-		};
-	},
+	state = {
+		search: ''
+	};
 
-	onSearch( term ) {
+	onSearch = term => {
 		if ( term !== this.state.search ) {
 			this.setState( {
 				search: term
 			} );
 		}
-	},
+	};
 
-	getQuery() {
+	getQuery = () => {
 		const { type, status, excludeTree, orderBy, order, excludePrivateTypes } = this.props;
 		const { search } = this.state;
 
@@ -79,7 +72,7 @@ export default React.createClass( {
 			memo[ snakeCase( key ) ] = value;
 			return memo;
 		}, {} );
-	},
+	};
 
 	render() {
 		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels, suppressFirstPageLoad } = this.props;
@@ -99,4 +92,4 @@ export default React.createClass( {
 			/>
 		);
 	}
-} );
+}

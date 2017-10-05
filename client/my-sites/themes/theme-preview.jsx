@@ -26,10 +26,10 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
 import WebPreview from 'components/web-preview';
 
-const ThemePreview = React.createClass( {
-	displayName: 'ThemePreview',
+class ThemePreview extends React.Component {
+    static displayName = 'ThemePreview';
 
-	propTypes: {
+	static propTypes = {
 		// connected props
 		demoUrl: PropTypes.string,
 		isActivating: PropTypes.bool,
@@ -38,15 +38,13 @@ const ThemePreview = React.createClass( {
 		isJetpack: PropTypes.bool,
 		themeId: PropTypes.string,
 		themeOptions: PropTypes.object,
-	},
+	};
 
-	getInitialState() {
-		return {
-			showActionIndicator: false
-		};
-	},
+	state = {
+		showActionIndicator: false
+	};
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( this.props.isActivating && ! nextProps.isActivating ) {
 			this.setState( { showActionIndicator: false } );
 			this.props.hideThemePreview();
@@ -54,30 +52,30 @@ const ThemePreview = React.createClass( {
 		if ( ! this.props.isInstalling && nextProps.isInstalling ) {
 			this.setState( { showActionIndicator: true } );
 		}
-	},
+	}
 
-	onPrimaryButtonClick() {
+	onPrimaryButtonClick = () => {
 		const option = this.getPrimaryOption();
 		option.action && option.action( this.props.themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
-	},
+	};
 
-	onSecondaryButtonClick() {
+	onSecondaryButtonClick = () => {
 		const secondary = this.getSecondaryOption();
 		secondary.action && secondary.action( this.props.themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
-	},
+	};
 
-	getPrimaryOption() {
+	getPrimaryOption = () => {
 		return this.props.themeOptions.primary;
-	},
+	};
 
-	getSecondaryOption() {
+	getSecondaryOption = () => {
 		const { isActive } = this.props;
 		return isActive ? null : this.props.themeOptions.secondary;
-	},
+	};
 
-	renderPrimaryButton() {
+	renderPrimaryButton = () => {
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
 
@@ -86,9 +84,9 @@ const ThemePreview = React.createClass( {
 				{ primaryOption.extendedLabel }
 			</Button>
 		);
-	},
+	};
 
-	renderSecondaryButton() {
+	renderSecondaryButton = () => {
 		const secondaryButton = this.getSecondaryOption();
 		if ( ! secondaryButton ) {
 			return;
@@ -99,7 +97,7 @@ const ThemePreview = React.createClass( {
 				{ secondaryButton.extendedLabel }
 			</Button>
 		);
-	},
+	};
 
 	render() {
 		const { themeId } = this.props;
@@ -125,7 +123,7 @@ const ThemePreview = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 // make all actions available to preview.
 const ConnectedThemePreview = connectOptions( ThemePreview );

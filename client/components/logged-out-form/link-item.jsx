@@ -6,12 +6,12 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
-	displayName: 'LoggedOutFormLinkItem',
+export default class extends React.Component {
+    static displayName = 'LoggedOutFormLinkItem';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string
-	},
+	};
 
 	render() {
 		return (
@@ -23,4 +23,4 @@ export default React.createClass( {
 			</a>
 		);
 	}
-} );
+}

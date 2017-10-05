@@ -72,8 +72,8 @@ const POST_TYPE_SUPPORTS = {
 	}
 };
 
-const EditorDrawer = React.createClass( {
-	propTypes: {
+class EditorDrawer extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
@@ -87,14 +87,14 @@ const EditorDrawer = React.createClass( {
 		confirmationSidebarStatus: PropTypes.string,
 		setNestedSidebar: PropTypes.func,
 		selectRevision: PropTypes.func,
-	},
+	};
 
-	onExcerptChange: function( event ) {
+	onExcerptChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
-	},
+	};
 
-	currentPostTypeSupports: function( feature ) {
+	currentPostTypeSupports = feature => {
 		const { typeObject, type } = this.props;
 
 		if ( typeObject && typeObject.supports ) {
@@ -108,14 +108,14 @@ const EditorDrawer = React.createClass( {
 
 		// Default to true until post types are known
 		return true;
-	},
+	};
 
-	recordExcerptChangeStats: function() {
+	recordExcerptChangeStats = () => {
 		recordStat( 'excerpt_changed' );
 		recordEvent( 'Changed Excerpt' );
-	},
+	};
 
-	renderTaxonomies: function() {
+	renderTaxonomies = () => {
 		const { type, canJetpackUseTaxonomies } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
@@ -138,9 +138,9 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return createFragment( { categories, taxonomies } );
-	},
+	};
 
-	renderPostFormats: function() {
+	renderPostFormats = () => {
 		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
@@ -152,18 +152,18 @@ const EditorDrawer = React.createClass( {
 				className="editor-drawer__accordion"
 			/>
 		);
-	},
+	};
 
-	renderSharing: function() {
+	renderSharing = () => {
 		return (
 			<AsyncLoad
 				require="post-editor/editor-sharing/accordion"
 				site={ this.props.site }
 				post={ this.props.post } />
 		);
-	},
+	};
 
-	renderFeaturedImage: function() {
+	renderFeaturedImage = () => {
 		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
 			return;
 		}
@@ -175,9 +175,9 @@ const EditorDrawer = React.createClass( {
 				post={ this.props.post }
 			/>
 		);
-	},
+	};
 
-	renderExcerpt: function() {
+	renderExcerpt = () => {
 		let excerpt;
 		const { translate } = this.props;
 
@@ -208,9 +208,9 @@ const EditorDrawer = React.createClass( {
 				</EditorDrawerLabel>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderLocation: function() {
+	renderLocation = () => {
 		const { translate } = this.props;
 		if ( ! this.props.site || this.props.isJetpack ) {
 			return;
@@ -229,9 +229,9 @@ const EditorDrawer = React.createClass( {
 				/>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderDiscussion: function() {
+	renderDiscussion = () => {
 		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
 			return;
 		}
@@ -246,9 +246,9 @@ const EditorDrawer = React.createClass( {
 				/>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderSeo: function() {
+	renderSeo = () => {
 		const { jetpackVersionSupportsSeo } = this.props;
 
 		if ( ! this.props.site ) {
@@ -274,18 +274,18 @@ const EditorDrawer = React.createClass( {
 				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
 			/>
 		);
-	},
+	};
 
-	renderCopyPost: function() {
+	renderCopyPost = () => {
 		const { type } = this.props;
 		if ( 'post' !== type && 'page' !== type ) {
 			return;
 		}
 
 		return <EditorMoreOptionsCopyPost type={ type } />;
-	},
+	};
 
-	renderMoreOptions: function() {
+	renderMoreOptions = () => {
 		const { isPermalinkEditable, translate } = this.props;
 
 		if (
@@ -310,17 +310,17 @@ const EditorDrawer = React.createClass( {
 				{ this.renderCopyPost() }
 			</Accordion>
 		);
-	},
+	};
 
-	renderPageOptions() {
+	renderPageOptions = () => {
 		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
 			return;
 		}
 
 		return <EditorDrawerPageOptions />;
-	},
+	};
 
-	renderStatus() {
+	renderStatus = () => {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
@@ -345,9 +345,9 @@ const EditorDrawer = React.createClass( {
 				/>
 			</Accordion>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const { site } = this.props;
 
 		return (
@@ -369,7 +369,7 @@ const EditorDrawer = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {

@@ -4,19 +4,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default React.createClass( {
-	displayName: 'EditorLocationSearchResult',
+export default class extends React.Component {
+    static displayName = 'EditorLocationSearchResult';
 
-	propTypes: {
+	static propTypes = {
 		result: PropTypes.object.isRequired,
 		onClick: PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onClick: () => {}
-		};
-	},
+	static defaultProps = {
+		onClick: () => {}
+	};
 
 	render() {
 		const { result, onClick } = this.props;
@@ -27,4 +25,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

@@ -10,20 +10,20 @@ import React from 'react';
  */
 import ExternalLink from 'components/external-link';
 
-const GoogleAppsUserItem = React.createClass( {
-	propTypes: {
+class GoogleAppsUserItem extends React.Component {
+    static propTypes = {
 		user: PropTypes.object.isRequired,
 		onClick: PropTypes.func
-	},
+	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
-	},
+	}
 
-	getLoginLink() {
+	getLoginLink = () => {
 		const { email, domain } = this.props.user;
 		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
-	},
+	};
 
 	render() {
 		return (
@@ -44,6 +44,6 @@ const GoogleAppsUserItem = React.createClass( {
 			</li>
         );
 	}
-} );
+}
 
 export default localize(GoogleAppsUserItem);

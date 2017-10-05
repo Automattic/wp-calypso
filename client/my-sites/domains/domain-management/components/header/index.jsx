@@ -10,8 +10,8 @@ import HeaderCake from 'components/header-cake';
 
 import DocumentHead from 'components/data/document-head';
 
-const DomainManagementHeader = React.createClass( {
-	render() {
+class DomainManagementHeader extends React.Component {
+    render() {
 		return (
 			<HeaderCake className="domain-management-header" onClick={ this.props.onClick } backHref={ this.props.backHref }>
 				<div className="domain-management-header__children">
@@ -23,15 +23,15 @@ const DomainManagementHeader = React.createClass( {
 				<DocumentHead title={ this.props.children } />
 			</HeaderCake>
 		);
-	},
+	}
 
-	domainName() {
+	domainName = () => {
 		if ( ! this.props.selectedDomainName ) {
 			return null;
 		}
 
 		return <span>{ this.props.selectedDomainName }: </span>;
-	}
-} );
+	};
+}
 
 module.exports = DomainManagementHeader;

@@ -16,39 +16,35 @@ import classNames from 'classnames';
  */
 var noop = () => {};
 
-export default localize(React.createClass({
-	displayName: 'PostScheduleHeader',
+export default localize(class extends React.Component {
+    static displayName = 'PostScheduleHeader';
 
-	propTypes: {
+	static propTypes = {
 		date: PropTypes.object,
 		inputChronoDisplayed: PropTypes.bool,
 		onDateChange: PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			inputChronoDisplayed: true,
-			onDateChange: noop
-		};
-	},
+	static defaultProps = {
+		inputChronoDisplayed: true,
+		onDateChange: noop
+	};
 
-	getInitialState() {
-		return {
-			showYearControls: false
-		}
-	},
+	state = {
+		showYearControls: false
+	};
 
-	setToCurrentMonth() {
+	setToCurrentMonth = () => {
 		var month = this.props.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
-	},
+	};
 
-	setToCurrentYear() {
+	setToCurrentYear = () => {
 		var year = this.props.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
-	},
+	};
 
-	setYear( modifier ) {
+	setYear = modifier => {
 		var date = this.props.moment( this.props.date );
 		date.year( date.year() + modifier );
 
@@ -57,7 +53,7 @@ export default localize(React.createClass({
 		}
 
 		this.props.onDateChange( date );
-	},
+	};
 
 	render() {
 		const headerClasses = classNames( 'post-schedule__header', { 'is-input-chrono-displayed': this.props.inputChronoDisplayed } );
@@ -93,4 +89,4 @@ export default localize(React.createClass({
 			</div>
 		);
 	}
-}));
+});

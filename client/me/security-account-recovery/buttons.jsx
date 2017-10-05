@@ -15,19 +15,19 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 
-module.exports = localize(React.createClass( {
-	displayName: 'SecurityAccountRecoveryManageContactButtons',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SecurityAccountRecoveryManageContactButtons';
 
-	propTypes: {
+	static propTypes = {
 		isSavable: PropTypes.bool,
 		isDeletable: PropTypes.bool,
 		saveText: PropTypes.string,
 		onSave: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onDelete: PropTypes.func.isRequired
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
             <FormButtonsBar>
 				<FormButton
@@ -56,4 +56,4 @@ module.exports = localize(React.createClass( {
 			</FormButtonsBar>
         );
 	}
-} ));
+});

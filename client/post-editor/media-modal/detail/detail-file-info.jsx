@@ -14,14 +14,14 @@ import classNames from 'classnames';
  */
 import MediaUtils from 'lib/media/utils';
 
-module.exports = localize(React.createClass( {
-	displayName: 'EditorMediaModalDetailFileInfo',
+module.exports = localize(class extends React.Component {
+    static displayName = 'EditorMediaModalDetailFileInfo';
 
-	propTypes: {
+	static propTypes = {
 		item: PropTypes.object
-	},
+	};
 
-	getItemValue( attribute ) {
+	getItemValue = attribute => {
 		let value;
 
 		if ( ! this.props.item ) {
@@ -54,9 +54,9 @@ module.exports = localize(React.createClass( {
 		}
 
 		return value;
-	},
+	};
 
-	renderDimensions() {
+	renderDimensions = () => {
 		if ( ! this.props.item || ( ! this.props.item.width && ! this.props.item.height ) ) {
 			return;
 		}
@@ -67,9 +67,9 @@ module.exports = localize(React.createClass( {
 				<td>{ this.getItemValue( 'dimensions' ) }</td>
 			</tr>
         );
-	},
+	};
 
-	renderDuration() {
+	renderDuration = () => {
 		if ( ! this.props.item || ! this.props.item.length ) {
 			return;
 		}
@@ -80,7 +80,7 @@ module.exports = localize(React.createClass( {
 				<td>{ this.getItemValue( 'length' ) }</td>
 			</tr>
         );
-	},
+	};
 
 	render() {
 		let classes = classNames( 'editor-media-modal-detail__file-info', {
@@ -110,4 +110,4 @@ module.exports = localize(React.createClass( {
 			</table>
         );
 	}
-} ));
+});

@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 import debugFactory from 'debug';
@@ -22,7 +24,7 @@ import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 
 import Notice from 'components/notice';
 
-module.exports = localize(React.createClass( {
+module.exports = localize(createReactClass({
 
 	displayName: 'Security2faBackupCodes',
 
@@ -173,4 +175,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+}));

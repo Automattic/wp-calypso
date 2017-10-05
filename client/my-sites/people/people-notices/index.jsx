@@ -39,23 +39,18 @@ const isMultisite = ( site ) => {
 	return site && site.is_multisite;
 };
 
-const PeopleNotices = React.createClass( {
-
-	displayName: 'PeopleNotices',
-
-	getInitialState() {
-		return this.getState();
-	},
+class PeopleNotices extends React.Component {
+    static displayName = 'PeopleNotices';
 
 	componentDidMount() {
 		PeopleLog.on( 'change', this.refreshNotices );
-	},
+	}
 
 	componentWillUnmount() {
 		PeopleLog.removeListener( 'change', this.refreshNotices );
-	},
+	}
 
-	getState() {
+	getState = () => {
 		const siteId = this.props.site ? this.props.site.ID : null;
 		const userId = this.props.user ? this.props.user.ID : null;
 
@@ -64,13 +59,13 @@ const PeopleNotices = React.createClass( {
 			inProgress: PeopleLog.getInProgress( filterBy.bind( this, siteId, userId ) ),
 			completed: PeopleLog.getCompleted( filterBy.bind( this, siteId, userId ) )
 		};
-	},
+	};
 
-	refreshNotices() {
+	refreshNotices = () => {
 		this.setState( this.getState() );
-	},
+	};
 
-	inProgressMessage() {
+	inProgressMessage = () => {
 		const log = this.state.inProgress[ 0 ];
 		switch ( log.action ) {
 			case 'UPDATE_SITE_USER':
@@ -97,9 +92,9 @@ const PeopleNotices = React.createClass( {
 					}
 				);
 		}
-	},
+	};
 
-	errorMessage() {
+	errorMessage = () => {
 		const log = this.state.errors[ this.state.errors.length - 1 ];
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_FAILURE':
@@ -134,9 +129,9 @@ const PeopleNotices = React.createClass( {
 			case 'RECEIVE_VIEWERS':
 				return i18n.translate( 'There was an error retrieving viewers' );
 		}
-	},
+	};
 
-	successMessage() {
+	successMessage = () => {
 		const log = this.state.completed[ this.state.completed.length - 1 ];
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_SUCCESS':
@@ -162,7 +157,9 @@ const PeopleNotices = React.createClass( {
 					}
 				);
 		}
-	},
+	};
+
+	state = this.getState();
 
 	render() {
 		const logNotices = this.state,
@@ -213,8 +210,8 @@ const PeopleNotices = React.createClass( {
 		}
 
 		return notice;
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

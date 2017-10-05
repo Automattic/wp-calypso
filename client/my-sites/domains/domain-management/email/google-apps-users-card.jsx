@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { find, groupBy } from 'lodash';
 
 /**
@@ -20,10 +21,11 @@ import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import support from 'lib/url/support';
 
-const GoogleAppsUsers = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
+const GoogleAppsUsers = createReactClass({
+    displayName: 'GoogleAppsUsers',
+    mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
-	propTypes: {
+    propTypes: {
 		domains: PropTypes.object.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -34,35 +36,35 @@ const GoogleAppsUsers = React.createClass( {
 		user: PropTypes.object.isRequired
 	},
 
-	getDomainsAsList() {
+    getDomainsAsList() {
 		return this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
 	},
 
-	canAddUsers() {
+    canAddUsers() {
 		return this.getDomainsAsList().some( domain =>
 			domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
 		);
 	},
 
-	isNewUser( user ) {
+    isNewUser( user ) {
 		const domain = find( this.props.domains.list, { name: user.domain } );
 
 		return this.props.moment().subtract( 1, 'day' ).isBefore( domain.googleAppsSubscription.subscribedDate );
 	},
 
-	generateClickHandler( user ) {
+    generateClickHandler( user ) {
 		return () => {
 			this.recordEvent( 'manageClick', this.props.selectedDomainName, user );
 		};
 	},
 
-	goToAddGoogleApps() {
+    goToAddGoogleApps() {
 		this.recordEvent( 'addGoogleAppsUserClick', this.props.selectedDomainName );
 	},
 
-	renderDomain( domain, users ) {
+    renderDomain( domain, users ) {
 		return (
             <div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
 				<SectionHeader
@@ -88,7 +90,7 @@ const GoogleAppsUsers = React.createClass( {
         );
 	},
 
-	renderUser( user, index ) {
+    renderUser( user, index ) {
 		if ( user.error ) {
 			let status = 'is-warning',
 				text = user.error,
@@ -121,7 +123,7 @@ const GoogleAppsUsers = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGoogleAppsUsers ),
 			usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
 
@@ -139,6 +141,6 @@ const GoogleAppsUsers = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
 export default localize(GoogleAppsUsers);

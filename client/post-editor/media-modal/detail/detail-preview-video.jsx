@@ -12,13 +12,13 @@ import MediaUtils from 'lib/media/utils';
 
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewVideo',
+module.exports = class extends React.Component {
+    static displayName = 'EditorMediaModalDetailPreviewVideo';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired
-	},
+	};
 
 	render() {
 		if ( MediaUtils.isVideoPressItem( this.props.item ) ) {
@@ -34,4 +34,4 @@ module.exports = React.createClass( {
 				className={ classes } />
 		);
 	}
-} );
+};

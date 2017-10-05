@@ -24,22 +24,20 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-export default localize(React.createClass({
-	displayName: 'EditorDiscussion',
+export default localize(class extends React.Component {
+    static displayName = 'EditorDiscussion';
 
-	propTypes: {
+	static propTypes = {
 		isNew: PropTypes.bool,
 		post: PropTypes.object,
 		site: PropTypes.object
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			isNew: false
-		};
-	},
+	static defaultProps = {
+		isNew: false
+	};
 
-	getDiscussionSetting: function() {
+	getDiscussionSetting = () => {
 		if ( this.props.post && this.props.post.discussion ) {
 			return this.props.post.discussion;
 		}
@@ -57,9 +55,9 @@ export default localize(React.createClass({
 		}
 
 		return {};
-	},
+	};
 
-	onChange: function( event ) {
+	onChange = event => {
 		var discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
 			newStatus = booleanToStatus( event.target.checked ),
 			discussionType = event.target.name,
@@ -84,9 +82,9 @@ export default localize(React.createClass({
 		PostActions.edit( {
 			discussion: discussion
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		var discussion = this.getDiscussionSetting();
 
 		return (
@@ -115,4 +113,4 @@ export default localize(React.createClass({
 			</EditorFieldset>
         );
 	}
-}));
+});

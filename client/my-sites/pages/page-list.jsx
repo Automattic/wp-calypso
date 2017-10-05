@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -87,7 +88,7 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = localize( React.createClass( {
+const Pages = localize( createReactClass({
 
 	displayName: 'Pages',
 
@@ -340,7 +341,7 @@ const Pages = localize( React.createClass( {
 		return this.renderLoading();
 	},
 
-} ) );
+}) );
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),

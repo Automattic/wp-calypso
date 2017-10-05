@@ -12,10 +12,10 @@ import React from 'react';
  */
 import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
-const DomainsSelect = React.createClass( {
-	propTypes: {
+class DomainsSelect extends React.Component {
+    static propTypes = {
 		domains: PropTypes.object.isRequired
-	},
+	};
 
 	render() {
 		let domainRegistrations,
@@ -46,6 +46,6 @@ const DomainsSelect = React.createClass( {
 			</select>
 		);
 	}
-} );
+}
 
 module.exports = localize(DomainsSelect);

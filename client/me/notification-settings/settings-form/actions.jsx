@@ -4,24 +4,21 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
 
-export default localize(React.createClass({
-	displayName: 'NotificationSettingsFormActions',
+export default localize(class extends React.PureComponent {
+    static displayName = 'NotificationSettingsFormActions';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		onSave: PropTypes.func.isRequired,
 		onSaveToAll: PropTypes.func,
 		disabled: PropTypes.bool.isRequired,
 		isApplyAllVisible: PropTypes.bool
-	},
+	};
 
 	render() {
 		return (
@@ -36,4 +33,4 @@ export default localize(React.createClass({
 			</div>
         );
 	}
-}));
+});

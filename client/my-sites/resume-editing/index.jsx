@@ -27,8 +27,8 @@ import QueryPosts from 'components/data/query-posts';
 import SiteIcon from 'blocks/site-icon';
 import Dispatcher from 'dispatcher';
 
-const ResumeEditing = React.createClass( {
-	propTypes: {
+class ResumeEditing extends React.Component {
+    static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		requesting: PropTypes.bool,
@@ -36,9 +36,9 @@ const ResumeEditing = React.createClass( {
 		editPath: PropTypes.string,
 		section: PropTypes.string,
 		translate: PropTypes.func
-	},
+	};
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed
 		// [TODO]: This becomes obsolete when we no longer rely on Flux for
@@ -55,22 +55,22 @@ const ResumeEditing = React.createClass( {
 		if ( 'draft' !== get( draft, 'status', 'draft' ) ) {
 			nextProps.resetEditorLastDraft();
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		this.unregisterDispatcher();
-	},
+	}
 
-	unregisterDispatcher() {
+	unregisterDispatcher = () => {
 		if ( ! this.dispatchToken ) {
 			return;
 		}
 
 		Dispatcher.unregister( this.dispatchToken );
 		delete this.dispatchToken;
-	},
+	};
 
-	maybeStopTrackingDraft( payload ) {
+	maybeStopTrackingDraft = payload => {
 		const { action } = payload;
 		if ( 'RECEIVE_UPDATED_POST' !== action.type ) {
 			return;
@@ -85,12 +85,12 @@ const ResumeEditing = React.createClass( {
 		if ( 'draft' !== post.status ) {
 			this.props.resetEditorLastDraft();
 		}
-	},
+	};
 
-	trackAnalytics() {
+	trackAnalytics = () => {
 		analytics.ga.recordEvent( 'Master Bar', 'Resumed Editing' );
 		analytics.mc.bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
-	},
+	};
 
 	render() {
 		const { siteId, postId, requesting, draft, editPath, section, site, translate } = this.props;
@@ -115,7 +115,7 @@ const ResumeEditing = React.createClass( {
 			</a>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {

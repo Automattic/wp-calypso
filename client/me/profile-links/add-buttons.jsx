@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 
 // Internal dependencies
@@ -13,7 +14,7 @@ import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
-export default localize(React.createClass({
+export default localize(createReactClass({
 
 	displayName: 'AddProfileLinksButtons',
 

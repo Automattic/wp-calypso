@@ -14,28 +14,24 @@ import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItemImage',
+module.exports = class extends React.Component {
+    static displayName = 'MediaLibraryListItemImage';
 
-	propTypes: {
+	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
 		maxImageWidth: PropTypes.number,
 		thumbnailType: PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			maxImageWidth: 450,
-			thumbnailType: MEDIA_IMAGE_PHOTON,
-		};
-	},
+	static defaultProps = {
+		maxImageWidth: 450,
+		thumbnailType: MEDIA_IMAGE_PHOTON,
+	};
 
-	getInitialState: function() {
-		return {};
-	},
+	state = {};
 
-	getImageDimensions: function() {
+	getImageDimensions = () => {
 		var width, height;
 
 		if ( this.props.media.width ) {
@@ -54,18 +50,18 @@ module.exports = React.createClass( {
 			width: width,
 			height: height
 		};
-	},
+	};
 
-	getImageStyle: function() {
+	getImageStyle = () => {
 		var dimensions = this.getImageDimensions();
 
 		return {
 			maxHeight: dimensions.height > dimensions.width ? 'none' : '100%',
 			maxWidth: dimensions.height < dimensions.width ? 'none' : '100%'
 		};
-	},
+	};
 
-	setUnknownImageDimensions: function( event ) {
+	setUnknownImageDimensions = event => {
 		if ( ! this.props.media.width ) {
 			this.setState( {
 				imageWidth: event.target.clientWidth
@@ -77,9 +73,9 @@ module.exports = React.createClass( {
 				imageHeight: event.target.clientHeight
 			} );
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var url = MediaUtils.url( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
 			maxWidth: this.props.maxImageWidth,
@@ -105,4 +101,4 @@ module.exports = React.createClass( {
 				draggable="false" />
 		);
 	}
-} );
+};

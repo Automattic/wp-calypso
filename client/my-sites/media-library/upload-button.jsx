@@ -16,30 +16,28 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryUploadButton',
+module.exports = class extends React.Component {
+    static displayName = 'MediaLibraryUploadButton';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		onAddMedia: PropTypes.func,
 		className: PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			onAddMedia: noop,
-			type: 'button',
-			href: null,
-		};
-	},
+	static defaultProps = {
+		onAddMedia: noop,
+		type: 'button',
+		href: null,
+	};
 
-	onClick: function() {
+	onClick = () => {
 		if ( this.props.href ) {
 			page( this.props.href );
 		}
-	},
+	};
 
-	uploadFiles: function( event ) {
+	uploadFiles = event => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
 			MediaActions.add( this.props.site.ID, event.target.files );
@@ -48,7 +46,7 @@ module.exports = React.createClass( {
 		ReactDom.findDOMNode( this.refs.form ).reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
-	},
+	};
 
 	/**
 	 * Returns a string of comma-separated file extensions supported for the
@@ -59,16 +57,16 @@ module.exports = React.createClass( {
 	 *
 	 * @return {string} Supported file extensions, as comma-separated string
 	 */
-	getInputAccept: function() {
+	getInputAccept = () => {
 		if ( ! MediaUtils.isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
 			return null;
 		}
 		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
 
 		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${type}` ).join();
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
@@ -84,4 +82,4 @@ module.exports = React.createClass( {
 			</form>
 		);
 	}
-} );
+};

@@ -5,14 +5,16 @@
 import PropTypes from 'prop-types';
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var StatUpdateIndicator = React.createClass( {
+var StatUpdateIndicator = createReactClass({
+    displayName: 'StatUpdateIndicator',
 
-	propTypes: {
+    propTypes: {
 		children: PropTypes.node.isRequired,
 		updateOn: PropTypes.oneOfType( [
 			PropTypes.string,
@@ -21,17 +23,17 @@ var StatUpdateIndicator = React.createClass( {
 		] ).isRequired
 	},
 
-	getInitialState: function() {
+    getInitialState: function() {
 		return {
 			updating: ! this.props.updateOn
 		};
 	},
 
-	componentDidMount: function() {
+    componentDidMount: function() {
 		this.clearTheUpdate();
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+    componentWillReceiveProps: function( nextProps ) {
 		if ( this.props.updateOn !== nextProps.updateOn ) {
 			clearTimeout( this.clearingUpdateTimeout );
 
@@ -42,7 +44,7 @@ var StatUpdateIndicator = React.createClass( {
 		}
 	},
 
-	clearTheUpdate: function() {
+    clearTheUpdate: function() {
 		clearTimeout( this.clearingUpdateTimeout );
 
 		this.clearingUpdateTimeout = setTimeout( function() {
@@ -56,7 +58,7 @@ var StatUpdateIndicator = React.createClass( {
 		}.bind( this ), 800 );
 	},
 
-	render: function() {
+    render: function() {
 		var className = classNames( {
 				'stat-update-indicator': true,
 				'is-updating': this.state.updating
@@ -66,6 +68,6 @@ var StatUpdateIndicator = React.createClass( {
 			<span className={ className }>{ this.props.children }</span>
 		);
 	}
-} );
+});
 
 module.exports = StatUpdateIndicator;

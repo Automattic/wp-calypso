@@ -10,6 +10,7 @@ import {
 } from 'lodash';
 import { bindActionCreators } from 'redux';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory('calypso:me:account-password');
@@ -31,7 +32,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 
-const AccountPassword = React.createClass( {
+const AccountPassword = createReactClass({
 
 	displayName: 'AccountPassword',
 
@@ -184,7 +185,7 @@ const AccountPassword = React.createClass( {
 			</form>
 		);
 	}
-} );
+});
 
 export default compose(
 	connect(

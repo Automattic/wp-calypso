@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,24 +17,20 @@ import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 
-module.exports = localize(React.createClass( {
-	displayName: 'TranslatorLauncher',
+module.exports = localize(class extends React.PureComponent {
+    static displayName = 'TranslatorLauncher';
 
-	propTypes: {
+	static propTypes = {
 		isActive: PropTypes.bool.isRequired,
 		isEnabled: PropTypes.bool.isRequired
-	},
+	};
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		infoDialogVisible: false,
+		firstActivation: true
+	};
 
-	getInitialState: function() {
-		return {
-			infoDialogVisible: false,
-			firstActivation: true
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( ! this.props.isActive && nextProps.isActive ) {
 			// Activating
 			if ( ! localStorageHelper.get( 'translator_hide_infodialog' ) ) {
@@ -47,23 +42,23 @@ module.exports = localize(React.createClass( {
 				this.setState( { firstActivation: false } );
 			}
 		}
-	},
+	}
 
-	toggleInfoCheckbox: function( event ) {
+	toggleInfoCheckbox = event => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
-	},
+	};
 
-	infoDialogClose: function() {
+	infoDialogClose = () => {
 		this.setState( { infoDialogVisible: false } );
-	},
+	};
 
-	toggle: function( event ) {
+	toggle = event => {
 		event.preventDefault();
 		analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
 		translator.toggle();
-	},
+	};
 
-	render: function() {
+	render() {
 		let launcherClasses = 'community-translator';
 		let toggleString;
 
@@ -98,4 +93,4 @@ module.exports = localize(React.createClass( {
 			</div>
         );
 	}
-} ));
+});

@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import photon from 'photon';
 import SocialLogo from 'social-logos';
@@ -12,7 +13,7 @@ import SocialLogo from 'social-logos';
  */
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+module.exports = createReactClass({
 	displayName: 'SharingButtonsPreviewButton',
 
 	propsTypes: {
@@ -68,4 +69,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
