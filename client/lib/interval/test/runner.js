@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import * as sinon from 'sinon';
 
 /**
@@ -42,17 +41,17 @@ describe( 'Interval Runner', function() {
 			const o = { counter: 0 };
 			const id = add( EVERY_SECOND, nudgeObject( o, 42 ) );
 
-			assert( 1 === id );
-			assert( 0 === o.counter );
+			expect( id ).toBe( 1 );
+			expect( o.counter ).toBe( 0 );
 
 			clock.tick( 1000 );
-			assert( 42 === o.counter );
+			expect( o.counter ).toBe( 42 );
 		} );
 
 		it( 'Should increment the next id after adding an action', function() {
 			[ 1, 2, 3, 4, 5, 6, 7, 8, 9 ].forEach( () => add( EVERY_SECOND, noop ) );
 
-			assert( 10 === add( EVERY_FIVE_SECONDS, noop ) );
+			expect( add( EVERY_FIVE_SECONDS, noop ) ).toBe( 10 );
 		} );
 
 		it( 'Should add an action to the proper slot', function() {
@@ -61,15 +60,15 @@ describe( 'Interval Runner', function() {
 
 			// plus 1 second
 			clock.tick( 1000 );
-			assert( 0 === o.counter );
+			expect( o.counter ).toBe( 0 );
 
 			// plus 5 seconds
 			clock.tick( 1000 * 4 );
-			assert( 0 === o.counter );
+			expect( o.counter ).toBe( 0 );
 
 			// plus 10 seconds
 			clock.tick( 1000 * 5 );
-			assert( 42 === o.counter );
+			expect( o.counter ).toBe( 42 );
 		} );
 
 		it( 'Should add two actions of the same interval to the same slot', function() {
@@ -79,15 +78,15 @@ describe( 'Interval Runner', function() {
 			add( EVERY_FIVE_SECONDS, nudgeObject( o, 5 ) );
 			add( EVERY_TEN_SECONDS, nudgeObject( o, 7 ) );
 
-			assert( 0 === o.counter );
+			expect( o.counter ).toBe( 0 );
 
 			// plus 5 seconds
 			clock.tick( 1000 * 5 );
-			assert( 5 === o.counter );
+			expect( o.counter ).toBe( 5 );
 
 			// plus 10 seconds
 			clock.tick( 1000 * 5 );
-			assert( 5 + 5 + 3 + 7 === o.counter );
+			expect( o.counter ).toBe( 5 + 5 + 3 + 7 );
 		} );
 	} );
 
@@ -97,11 +96,11 @@ describe( 'Interval Runner', function() {
 			const id = add( EVERY_SECOND, nudgeObject( o, 42 ) );
 
 			clock.tick( 1000 );
-			assert( 42 === o.counter );
+			expect( o.counter ).toBe( 42 );
 
 			remove( id );
 			clock.tick( 1000 );
-			assert( 42 === o.counter );
+			expect( o.counter ).toBe( 42 );
 		} );
 
 		it( 'Should not decrement the next id after removing an action', function() {
@@ -111,7 +110,7 @@ describe( 'Interval Runner', function() {
 			const id = add( EVERY_TEN_SECONDS, noop );
 			remove( id );
 
-			assert( 4 === add( EVERY_THIRTY_SECONDS, noop ) );
+			expect( add( EVERY_THIRTY_SECONDS, noop ) ).toBe( 4 );
 		} );
 	} );
 
@@ -124,7 +123,7 @@ describe( 'Interval Runner', function() {
 
 			clock.tick( 1000 );
 
-			assert( 3 + 5 === o.counter );
+			expect( o.counter ).toBe( 3 + 5 );
 		} );
 
 		it( 'Should only execute actions for the given period', function() {
@@ -135,11 +134,11 @@ describe( 'Interval Runner', function() {
 
 			// plus 1 second
 			clock.tick( 1000 );
-			assert( 3 === o.counter );
+			expect( o.counter ).toBe( 3 );
 
 			// plus 1 minute
 			clock.tick( 1000 * 59 );
-			assert( 3 * 60 + 5 === o.counter );
+			expect( o.counter ).toBe( 3 * 60 + 5 );
 		} );
 
 		it( 'Should only execute actions that remain after removal', function() {
@@ -148,14 +147,14 @@ describe( 'Interval Runner', function() {
 			const id = add( EVERY_SECOND, nudgeObject( o, 3 ) );
 
 			clock.tick( 1000 );
-			assert( 3 === o.counter );
+			expect( o.counter ).toBe( 3 );
 
 			clock.tick( 1000 );
-			assert( 6 === o.counter );
+			expect( o.counter ).toBe( 6 );
 
 			remove( id );
 			clock.tick( 1000 );
-			assert( 6 === o.counter );
+			expect( o.counter ).toBe( 6 );
 		} );
 	} );
 } );
