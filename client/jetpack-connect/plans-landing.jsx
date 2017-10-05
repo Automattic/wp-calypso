@@ -10,6 +10,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -76,6 +79,10 @@ class PlansLanding extends Component {
 		this.storeSelectedPlan( null );
 	};
 
+	handleHelpButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+	};
+
 	render() {
 		const { basePlansPath, interval } = this.props;
 
@@ -92,6 +99,11 @@ class PlansLanding extends Component {
 					onSelect={ this.storeSelectedPlan }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
+					<LoggedOutFormLinks>
+						<JetpackConnectHappychatButton>
+							<HelpButton onClick={ this.handleHelpButtonClick } />
+						</JetpackConnectHappychatButton>
+					</LoggedOutFormLinks>
 				</PlansGrid>
 			</div>
 		);
