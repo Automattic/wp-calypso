@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
@@ -14,7 +17,8 @@ import { createReducer } from 'state/utils';
 const reducers = {};
 
 reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST ] = ( state, { zoneId } ) => {
-	return { ...state,
+	return {
+		...state,
 		[ zoneId ]: LOADING,
 	};
 };
@@ -27,21 +31,29 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { dat
 		postcode: [],
 	};
 	data.forEach( ( { type, code } ) => locations[ type ].push( code ) );
-	return { ...state,
+	return {
+		...state,
 		[ zoneId ]: locations,
 	};
 };
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = ( state, { data, originatingAction: { zoneId } } ) => {
+reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = (
+	state,
+	{ data, originatingAction: { zoneId } }
+) => {
 	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ]( state, { data, zoneId } );
 };
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
+reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = (
+	state,
+	{ data, originatingAction: { zone } }
+) => {
 	if ( 'number' === typeof zone.id ) {
 		return state;
 	}
 
-	return { ...state,
+	return {
+		...state,
 		[ data.id ]: {
 			continent: [],
 			country: [],

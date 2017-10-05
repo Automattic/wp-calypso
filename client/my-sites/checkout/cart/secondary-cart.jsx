@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -25,10 +28,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 const SecondaryCart = React.createClass( {
 	propTypes: {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.bool,
-			PropTypes.object
-		] )
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
@@ -40,11 +40,13 @@ const SecondaryCart = React.createClass( {
 	},
 
 	componentWillMount() {
-		this.dispatchToken = Dispatcher.register( function( payload ) {
-			if ( payload.action.type === upgradesActionTypes.CART_ON_MOBILE_SHOW ) {
-				this.setState( { cartVisible: payload.action.show } );
-			}
-		}.bind( this ) );
+		this.dispatchToken = Dispatcher.register(
+			function( payload ) {
+				if ( payload.action.type === upgradesActionTypes.CART_ON_MOBILE_SHOW ) {
+					this.setState( { cartVisible: payload.action.show } );
+				}
+			}.bind( this )
+		);
 	},
 
 	componentWillUnmount() {
@@ -77,20 +79,12 @@ const SecondaryCart = React.createClass( {
 		return (
 			<Sidebar className={ cartClasses }>
 				<CartSummaryBar additionalClasses="cart-header" />
-				<CartPlanAd
-					selectedSite={ selectedSite }
-					cart={ cart } />
-				<CartBody
-					ref="cartBody"
-					cart={ cart }
-					selectedSite={ selectedSite }
-					showCoupon={ true } />
-				<CartPlanDiscountAd
-					cart={ cart }
-					selectedSite={ selectedSite } />
+				<CartPlanAd selectedSite={ selectedSite } cart={ cart } />
+				<CartBody ref="cartBody" cart={ cart } selectedSite={ selectedSite } showCoupon={ true } />
+				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 			</Sidebar>
 		);
-	}
+	},
 } );
 
 export default localize( SecondaryCart );

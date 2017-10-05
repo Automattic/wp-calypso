@@ -1,6 +1,9 @@
 /**
  * Internal Dependencies
+ *
+ * @format
  */
+
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 
 /**

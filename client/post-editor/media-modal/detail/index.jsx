@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -30,7 +33,7 @@ export const EditorMediaModalDetail = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			selectedIndex: 0,
-			onSelectedIndexChange: noop
+			onSelectedIndexChange: noop,
 		};
 	},
 
@@ -45,7 +48,7 @@ export const EditorMediaModalDetail = React.createClass( {
 	preloadImages: function() {
 		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
 			var src = MediaUtils.url( image, {
-				photon: this.props.site && ! this.props.site.is_private
+				photon: this.props.site && ! this.props.site.is_private,
 			} );
 
 			preloadImage( src );
@@ -82,10 +85,11 @@ export const EditorMediaModalDetail = React.createClass( {
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
 					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
+					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+				/>
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect( null, {

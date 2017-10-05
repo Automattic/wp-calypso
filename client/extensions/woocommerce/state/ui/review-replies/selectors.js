@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, isObject, merge } from 'lodash';
 
 /**
@@ -15,7 +18,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @return {Number|Object} The ID of the review reply (or object placeholder, if a new reply)
  */
 export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'currentlyEditingId' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'currentlyEditingId' ],
+		null
+	);
 };
 
 /**
@@ -24,7 +31,11 @@ export const getCurrentlyEditingReviewReplyId = ( state, siteId = getSelectedSit
  * @return {Number|Object} The ID of the review that a reply edit is associated with.
  */
 export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'reviewId' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'reviewId' ],
+		null
+	);
 };
 
 /**
@@ -33,7 +44,11 @@ export const getCurrentlyEditingReviewId = ( state, siteId = getSelectedSiteId( 
  * @return {Object} The local edits made to the reply.
  */
 export const getReviewReplyEdits = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'changes' ], {} );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'reviewReplies', siteId, 'edits', 'changes' ],
+		{}
+	);
 };
 
 /**

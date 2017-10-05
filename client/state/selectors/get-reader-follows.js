@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { values, reject } from 'lodash';
 
 /**
@@ -26,7 +29,12 @@ const getReaderFollows = createSelector(
 			feed: getFeed( state, item.feed_ID ),
 		} ) );
 	},
-	state => [ state.reader.follows.items, state.reader.feeds.items, state.reader.sites.items, state.currentUser.capabilities ]
+	state => [
+		state.reader.follows.items,
+		state.reader.feeds.items,
+		state.reader.sites.items,
+		state.currentUser.capabilities,
+	]
 );
 
 export default getReaderFollows;

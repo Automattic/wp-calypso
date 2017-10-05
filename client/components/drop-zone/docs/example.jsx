@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -21,28 +24,32 @@ export default React.createClass( {
 
 	onFilesDrop( files ) {
 		this.setState( {
-			lastDroppedFiles: files
+			lastDroppedFiles: files,
 		} );
 	},
 
 	renderContainerContent() {
 		const style = {
 			lineHeight: '100px',
-			textAlign: 'center'
+			textAlign: 'center',
 		};
 		let fileNames;
 
 		if ( this.state.lastDroppedFiles ) {
-			fileNames = this.state.lastDroppedFiles.map( function( file ) {
-				return file.name;
-			} ).join( ', ' );
+			fileNames = this.state.lastDroppedFiles
+				.map( function( file ) {
+					return file.name;
+				} )
+				.join( ', ' );
 		}
 
 		return (
 			<Card style={ style }>
-				{ fileNames
-					? this.translate( 'You dropped: %s', { args: fileNames } )
-					: this.translate( 'This is a droppable area' ) }
+				{ fileNames ? (
+					this.translate( 'You dropped: %s', { args: fileNames } )
+				) : (
+					this.translate( 'This is a droppable area' )
+				) }
 			</Card>
 		);
 	},
@@ -50,7 +57,7 @@ export default React.createClass( {
 	renderContainer() {
 		const style = {
 			position: 'relative',
-			height: '150px'
+			height: '150px',
 		};
 
 		return (
@@ -63,5 +70,5 @@ export default React.createClass( {
 
 	render() {
 		return this.renderContainer();
-	}
+	},
 } );

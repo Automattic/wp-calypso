@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
@@ -12,7 +15,7 @@ import EditorSlug from 'post-editor/editor-slug';
 
 export default class PostEditorPageSlug extends PureComponent {
 	static propTypes = {
-		path: PropTypes.string
+		path: PropTypes.string,
 	};
 
 	render() {

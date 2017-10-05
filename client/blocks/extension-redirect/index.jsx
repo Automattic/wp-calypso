@@ -1,18 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class ExtensionRedirect extends Component {
@@ -26,16 +29,18 @@ class ExtensionRedirect extends Component {
 		pluginVersion: PropTypes.string,
 		requestingPlugins: PropTypes.bool.isRequired,
 		siteSlug: PropTypes.string,
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		// Check for the following:
 		// Is the plugin active? (That implicitly also checks if the plugin is installed)
 		// Do we require a minimum version? Have we received the plugin's version? Is it sufficient?
-		if ( nextProps.pluginActive && (
-			! nextProps.minimumVersion ||
-			( nextProps.pluginVersion && versionCompare( nextProps.minimumVersion, nextProps.pluginVersion, '<=' ) )
-		) ) {
+		if (
+			nextProps.pluginActive &&
+			( ! nextProps.minimumVersion ||
+				( nextProps.pluginVersion &&
+					versionCompare( nextProps.minimumVersion, nextProps.pluginVersion, '<=' ) ) )
+		) {
 			return;
 		}
 
@@ -45,7 +50,7 @@ class ExtensionRedirect extends Component {
 			if ( nextProps.redirectUrl ) {
 				page.redirect( nextProps.redirectUrl );
 			} else {
-				page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+				page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
 			}
 		}
 	}
@@ -55,17 +60,13 @@ class ExtensionRedirect extends Component {
 			return null;
 		}
 
-		return (
-			<QueryJetpackPlugins siteIds={ [ this.props.siteId ] } />
-		);
+		return <QueryJetpackPlugins siteIds={ [ this.props.siteId ] } />;
 	}
 }
 
-export default connect(
-	( state, { pluginId, siteId } ) => ( {
-		pluginActive: get( getPluginOnSite( state, siteId, pluginId ), 'active', false ),
-		pluginVersion: get( getPluginOnSite( state, siteId, pluginId ), 'version' ),
-		requestingPlugins: isRequesting( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-	} )
-)( ExtensionRedirect );
+export default connect( ( state, { pluginId, siteId } ) => ( {
+	pluginActive: get( getPluginOnSite( state, siteId, pluginId ), 'active', false ),
+	pluginVersion: get( getPluginOnSite( state, siteId, pluginId ), 'version' ),
+	requestingPlugins: isRequesting( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
+} ) )( ExtensionRedirect );

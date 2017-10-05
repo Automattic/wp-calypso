@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -25,7 +28,7 @@ import support from 'lib/url/support';
 
 const EmailForwardingAddNew = React.createClass( {
 	propTypes: {
-		initialShowForm: PropTypes.bool
+		initialShowForm: PropTypes.bool,
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
@@ -34,7 +37,7 @@ const EmailForwardingAddNew = React.createClass( {
 		return {
 			fields: { destination: '', mailbox: '' },
 			formSubmitting: false,
-			showForm: false
+			showForm: false,
 		};
 	},
 
@@ -44,7 +47,7 @@ const EmailForwardingAddNew = React.createClass( {
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
 				onComplete( null, validateAllFields( fieldValues ) );
-			}
+			},
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
@@ -55,7 +58,10 @@ const EmailForwardingAddNew = React.createClass( {
 	},
 
 	hasReachedLimit() {
-		return this.props.emailForwarding.list.length >= emailForwardingPlanLimit( this.props.selectedSite.plan );
+		return (
+			this.props.emailForwarding.list.length >=
+			emailForwardingPlanLimit( this.props.selectedSite.plan )
+		);
 	},
 
 	onAddEmailForward( event ) {
@@ -67,7 +73,7 @@ const EmailForwardingAddNew = React.createClass( {
 
 		this.setState( { formSubmitting: true } );
 
-		this.formStateController.handleSubmit( ( hasErrors ) => {
+		this.formStateController.handleSubmit( hasErrors => {
 			if ( hasErrors ) {
 				this.setState( { formSubmitting: false } );
 				return;
@@ -75,30 +81,52 @@ const EmailForwardingAddNew = React.createClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			upgradesActions.addEmailForwarding( this.props.selectedDomainName, mailbox, destination, ( error ) => {
-				this.recordEvent( 'addNewEmailForwardClick', this.props.selectedDomainName, mailbox, destination, ! Boolean( error ) );
-
-				if ( error ) {
-					notices.error( error.message || this.translate( 'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-						{
-							components: {
-								contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
-							}
-						} )
+			upgradesActions.addEmailForwarding(
+				this.props.selectedDomainName,
+				mailbox,
+				destination,
+				error => {
+					this.recordEvent(
+						'addNewEmailForwardClick',
+						this.props.selectedDomainName,
+						mailbox,
+						destination,
+						! Boolean( error )
 					);
-				} else {
-					this.formStateController.resetFields( this.getInitialState().fields );
 
-					notices.success(
-						this.translate( '%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.', { args: {
-							email: mailbox + '@' + this.props.selectedDomainName,
-							destination: destination
-						} } ), {
-							duration: 5000
-						} );
+					if ( error ) {
+						notices.error(
+							error.message ||
+								this.translate(
+									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+									{
+										components: {
+											contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+										},
+									}
+								)
+						);
+					} else {
+						this.formStateController.resetFields( this.getInitialState().fields );
+
+						notices.success(
+							this.translate(
+								'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
+								{
+									args: {
+										email: mailbox + '@' + this.props.selectedDomainName,
+										destination: destination,
+									},
+								}
+							),
+							{
+								duration: 5000,
+							}
+						);
+					}
+					this.setState( { formSubmitting: false, showForm: ! error } );
 				}
-				this.setState( { formSubmitting: false, showForm: ! error } );
-			} );
+			);
 		} );
 	},
 
@@ -117,7 +145,8 @@ const EmailForwardingAddNew = React.createClass( {
 		return (
 			<FormButton
 				disabled={ this.state.formSubmitting || this.hasReachedLimit() }
-				onClick={ handler }>
+				onClick={ handler }
+			>
 				{ this.translate( 'Add New Email Forward' ) }
 			</FormButton>
 		);
@@ -133,7 +162,8 @@ const EmailForwardingAddNew = React.createClass( {
 				type="button"
 				isPrimary={ false }
 				disabled={ this.state.formSubmitting }
-				onClick={ this.onCancel }>
+				onClick={ this.onCancel }
+			>
 				{ this.translate( 'Cancel' ) }
 			</FormButton>
 		);
@@ -153,7 +183,10 @@ const EmailForwardingAddNew = React.createClass( {
 			return null;
 		}
 
-		const contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } ),
+		const contactText = this.translate( 'contact', {
+				context: 'part of e-mail address',
+				comment: 'As it would be part of an e-mail address contact@example.com',
+			} ),
 			exampleEmailText = this.translate( 'e.g. %(example)s', { args: { example: contactText } } ),
 			isValidMailbox = this.isValid( 'mailbox' ),
 			isValidDestination = this.isValid( 'destination' ),
@@ -172,8 +205,16 @@ const EmailForwardingAddNew = React.createClass( {
 						placeholder={ exampleEmailText }
 						type="text"
 						suffix={ '@' + this.props.selectedDomainName }
-						value={ mailbox } />
-					{ ! isValidMailbox && <FormInputValidation text={ this.translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) } isError={ true }/> }
+						value={ mailbox }
+					/>
+					{ ! isValidMailbox && (
+						<FormInputValidation
+							text={ this.translate(
+								'Invalid mailbox - only characters [a-z0-9._+-] are allowed'
+							) }
+							isError={ true }
+						/>
+					) }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -186,8 +227,14 @@ const EmailForwardingAddNew = React.createClass( {
 						isError={ ! isValidDestination }
 						placeholder={ this.translate( 'Your Existing Email Address' ) }
 						type="text"
-						value={ destination } />
-					{ ! isValidDestination && <FormInputValidation text={ this.translate( 'Invalid destination address' ) } isError={ true }/> }
+						value={ destination }
+					/>
+					{ ! isValidDestination && (
+						<FormInputValidation
+							text={ this.translate( 'Invalid destination address' ) }
+							isError={ true }
+						/>
+					) }
 				</FormFieldset>
 			</div>
 		);
@@ -201,8 +248,9 @@ const EmailForwardingAddNew = React.createClass( {
 		return (
 			<form className="email-forwarding__add-new">
 				<EmailForwardingLimit
-					selectedSite= { this.props.selectedSite }
-					emailForwarding={ this.props.emailForwarding } />
+					selectedSite={ this.props.selectedSite }
+					emailForwarding={ this.props.emailForwarding }
+				/>
 
 				{ this.formFields() }
 
@@ -228,7 +276,7 @@ const EmailForwardingAddNew = React.createClass( {
 
 		this.formStateController.handleFieldChange( {
 			name,
-			value
+			value,
 		} );
 	},
 
@@ -238,7 +286,7 @@ const EmailForwardingAddNew = React.createClass( {
 
 	handleFieldFocus( fieldName ) {
 		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName );
-	}
+	},
 } );
 
 export default EmailForwardingAddNew;

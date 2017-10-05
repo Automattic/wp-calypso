@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -31,31 +34,27 @@ export class ForgotUsernameFormComponent extends Component {
 		};
 	}
 
-	submitForm = ( event ) => {
-		const {
-			firstName,
-			lastName,
-			url,
-		} = this.state;
+	submitForm = event => {
+		const { firstName, lastName, url } = this.state;
 
 		this.props.fetchResetOptionsByNameAndUrl( firstName, lastName, url );
 
 		event.preventDefault();
 	};
 
-	firstNameUpdated = ( event ) => {
+	firstNameUpdated = event => {
 		this.setState( { firstName: event.target.value } );
 	};
 
-	lastNameUpdated = ( event ) => {
+	lastNameUpdated = event => {
 		this.setState( { lastName: event.target.value } );
 	};
 
-	siteUrlUpdated = ( event ) => {
+	siteUrlUpdated = event => {
 		this.setState( { url: event.target.value } );
 	};
 
-	getErrorMessage = ( requestError ) => {
+	getErrorMessage = requestError => {
 		const { translate } = this.props;
 
 		if ( ! requestError ) {
@@ -63,33 +62,25 @@ export class ForgotUsernameFormComponent extends Component {
 		}
 
 		if ( requestError.statusCode === 404 ) {
-			return translate( "We're not able to find an account matching that information. " +
-				'Double-check your spelling, or try another name or URL.' );
+			return translate(
+				"We're not able to find an account matching that information. " +
+					'Double-check your spelling, or try another name or URL.'
+			);
 		}
 
 		return translate( "We've encountered some technical issues. Please try again later." );
 	};
 
 	render() {
-		const {
-			translate,
-			isRequesting,
-			requestError,
-		} = this.props;
+		const { translate, isRequesting, requestError } = this.props;
 
-		const {
-			firstName,
-			lastName,
-			url,
-		} = this.state;
+		const { firstName, lastName, url } = this.state;
 
 		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
 
 		return (
 			<Card>
-				<h2 className="forgot-username-form__title">
-					{ translate( 'Forgot your username?' ) }
-				</h2>
+				<h2 className="forgot-username-form__title">{ translate( 'Forgot your username?' ) }</h2>
 				<p>{ translate( 'Enter your full name and URL instead.' ) }</p>
 				<form onSubmit={ this.submitForm }>
 					<FormLabel>
@@ -108,7 +99,8 @@ export class ForgotUsernameFormComponent extends Component {
 							className="forgot-username-form__last-name-input"
 							onChange={ this.lastNameUpdated }
 							value={ lastName }
-							disabled={ isRequesting } />
+							disabled={ isRequesting }
+						/>
 					</FormLabel>
 					<FormLabel>
 						{ translate( "Your site's URL" ) }
@@ -116,19 +108,20 @@ export class ForgotUsernameFormComponent extends Component {
 							className="forgot-username-form__site-url-input"
 							onChange={ this.siteUrlUpdated }
 							value={ url }
-							disabled={ isRequesting } />
+							disabled={ isRequesting }
+						/>
 					</FormLabel>
-					{
-						requestError && (
+					{ requestError && (
 						<p className="forgot-username-form__error-message">
 							{ this.getErrorMessage( requestError ) }
-						</p> )
-					}
+						</p>
+					) }
 					<FormButton
 						className="forgot-username-form__submit-button"
 						type="submit"
 						disabled={ ! isPrimaryButtonEnabled }
-						primary>
+						primary
+					>
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
@@ -145,7 +138,7 @@ ForgotUsernameFormComponent.defaultProps = {
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),

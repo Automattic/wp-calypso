@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
@@ -16,7 +19,6 @@ import WebPreviewContent from 'components/web-preview/content';
 import { isEnabled } from 'config';
 
 const EditorPreview = React.createClass( {
-
 	_hasTouch: false,
 
 	propTypes: {
@@ -42,12 +44,13 @@ const EditorPreview = React.createClass( {
 			this.setState( { iframeUrl: 'about:blank' } );
 		}
 
-		if ( this.props.previewUrl && (
-			this.didFinishSaving( prevProps ) ||
-			this.didLoad( prevProps ) ||
-			this.didShowSavedPreviewViaTouch( prevProps ) ||
-			this.didShowOrHideFullPreview( prevProps )
-		) ) {
+		if (
+			this.props.previewUrl &&
+			( this.didFinishSaving( prevProps ) ||
+				this.didLoad( prevProps ) ||
+				this.didShowSavedPreviewViaTouch( prevProps ) ||
+				this.didShowOrHideFullPreview( prevProps ) )
+		) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
 	},
@@ -74,11 +77,13 @@ const EditorPreview = React.createClass( {
 
 	didShowSavedPreviewViaTouch( prevProps ) {
 		// Find state change where preview is shown and we're not saving or loading
-		return this._hasTouch &&
+		return (
+			this._hasTouch &&
 			! prevProps.showPreview &&
 			this.props.showPreview &&
 			! this.props.isSaving &&
-			! this.props.isLoading;
+			! this.props.isLoading
+		);
 	},
 
 	didShowOrHideFullPreview( prevProps ) {
@@ -98,10 +103,7 @@ const EditorPreview = React.createClass( {
 		parsed.query.iframe = 'true';
 		parsed.query.revision = String( this.props.revision );
 		// Scroll to the main post content.
-		if (
-			this.props.postId &&
-			isEnabled( 'post-editor/preview-scroll-to-content' )
-		) {
+		if ( this.props.postId && isEnabled( 'post-editor/preview-scroll-to-content' ) ) {
 			// Vary the URL hash based on whether the preview is shown.  When
 			// the preview is hidden then re-shown, we want to be sure to
 			// scroll to the content section again even if the preview has not
@@ -129,35 +131,35 @@ const EditorPreview = React.createClass( {
 
 		return (
 			<div className={ className }>
-				{ isFullScreen
-					? <WebPreviewContent
-							showPreview={ this.props.showPreview }
-							showEdit={ true }
-							showExternal={ true }
-							showUrl={ true }
-							defaultViewportDevice={ this.props.defaultViewportDevice }
-							onClose={ this.props.onClose }
-							onEdit={ this.props.onEdit }
-							previewUrl={ this.state.iframeUrl }
-							editUrl={ this.props.editUrl }
-							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
-							loadingMessage={
-								this.props.translate( '{{strong}}One moment, please…{{/strong}} loading your new post.',
-									{ components: { strong: <strong /> } }
-								)
-							}
-						/>
-					: <WebPreview
-							showPreview={ this.props.showPreview }
-							defaultViewportDevice={ this.props.defaultViewportDevice }
-							onClose={ this.props.onClose }
-							previewUrl={ this.state.iframeUrl }
-							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
-						/>
-				}
+				{ isFullScreen ? (
+					<WebPreviewContent
+						showPreview={ this.props.showPreview }
+						showEdit={ true }
+						showExternal={ true }
+						showUrl={ true }
+						defaultViewportDevice={ this.props.defaultViewportDevice }
+						onClose={ this.props.onClose }
+						onEdit={ this.props.onEdit }
+						previewUrl={ this.state.iframeUrl }
+						editUrl={ this.props.editUrl }
+						externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
+						loadingMessage={ this.props.translate(
+							'{{strong}}One moment, please…{{/strong}} loading your new post.',
+							{ components: { strong: <strong /> } }
+						) }
+					/>
+				) : (
+					<WebPreview
+						showPreview={ this.props.showPreview }
+						defaultViewportDevice={ this.props.defaultViewportDevice }
+						onClose={ this.props.onClose }
+						previewUrl={ this.state.iframeUrl }
+						externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
+					/>
+				) }
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = localize( EditorPreview );

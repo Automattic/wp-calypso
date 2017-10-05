@@ -1,6 +1,9 @@
 /**
  * Internal Dependencies
+ *
+ * @format
  */
+
 import queryKey from 'state/reader/feed-searches/query-key';
 
 /**

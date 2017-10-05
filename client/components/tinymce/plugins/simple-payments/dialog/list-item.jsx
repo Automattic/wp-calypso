@@ -1,4 +1,8 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/**
+ * /* eslint-disable wpcalypso/jsx-classname-namespace
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -63,12 +67,8 @@ class ProductListItem extends Component {
 					onChange={ this.handleRadioChange }
 				/>
 				<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
-					<div className="editor-simple-payments-modal__list-name">
-						{ title }
-					</div>
-					<div>
-						{ this.formatPrice( price, currency ) }
-					</div>
+					<div className="editor-simple-payments-modal__list-name">{ title }</div>
+					<div>{ this.formatPrice( price, currency ) }</div>
 				</label>
 				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
 				<EllipsisMenu

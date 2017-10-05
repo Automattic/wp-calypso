@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import {
-	WOOCOMMERCE_PROMOTIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+
+import { WOOCOMMERCE_PROMOTIONS_REQUEST } from 'woocommerce/state/action-types';
 
 export function fetchPromotions( siteId, perPage = undefined ) {
 	return {
@@ -12,4 +13,3 @@ export function fetchPromotions( siteId, perPage = undefined ) {
 		perPage,
 	};
 }
-

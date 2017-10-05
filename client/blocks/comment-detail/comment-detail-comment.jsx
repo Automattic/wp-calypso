@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -78,20 +81,21 @@ export class CommentDetailComment extends Component {
 					/>
 					<AutoDirection>
 						<Emojify>
-							<div className="comment-detail__comment-body"
+							<div
+								className="comment-detail__comment-body"
 								dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 							/>
 						</Emojify>
 					</AutoDirection>
 
-					{ repliedToComment &&
+					{ repliedToComment && (
 						<div className="comment-detail__comment-reply">
 							<a>
 								<Gridicon icon="reply" />
 								<span>{ translate( 'You replied to this comment' ) }</span>
 							</a>
 						</div>
-					}
+					) }
 				</div>
 			</div>
 		);

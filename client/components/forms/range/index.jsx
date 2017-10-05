@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { omit, uniqueId } from 'lodash';
@@ -36,21 +39,13 @@ export default class extends React.Component {
 
 	getMinContentElement = () => {
 		if ( this.props.minContent ) {
-			return (
-				<span className="range__content is-min">
-					{ this.props.minContent }
-				</span>
-			);
+			return <span className="range__content is-min">{ this.props.minContent }</span>;
 		}
 	};
 
 	getMaxContentElement = () => {
 		if ( this.props.maxContent ) {
-			return (
-				<span className="range__content is-max">
-					{ this.props.maxContent }
-				</span>
-			);
+			return <span className="range__content is-max">{ this.props.maxContent }</span>;
 		}
 	};
 

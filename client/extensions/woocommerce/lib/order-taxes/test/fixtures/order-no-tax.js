@@ -1,17 +1,22 @@
-/* eslint-disable */
+/**
+ * /* eslint-disable
+ *
+ * @format
+ */
+
 export default {
-	"line_items": [
+	line_items: [
 		{
-			"id": 1,
-			"name": "Scarf",
-			"product_id": 49,
-			"taxes": [],
-			"price": 25
-		}
+			id: 1,
+			name: 'Scarf',
+			product_id: 49,
+			taxes: [],
+			price: 25,
+		},
 	],
-	"tax_lines": [],
-	"shipping_lines": [],
-	"fee_lines": [],
-	"coupon_lines": [],
-	"refunds": []
-}
+	tax_lines: [],
+	shipping_lines: [],
+	fee_lines: [],
+	coupon_lines: [],
+	refunds: [],
+};

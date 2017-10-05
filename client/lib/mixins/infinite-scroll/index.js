@@ -1,30 +1,31 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { throttle } from 'lodash';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
 module.exports = function( nextPageMethod ) {
-
 	return {
-
 		componentDidMount: function() {
 			this.checkScrollPositionHandler = throttle(
 				this.checkScrollPosition.bind( this, {
-					triggeredByScroll: true
+					triggeredByScroll: true,
 				} ),
 				SCROLL_CHECK_RATE_IN_MS
 			);
 			window.addEventListener( 'scroll', this.checkScrollPositionHandler );
 			this.checkScrollPosition( {
-				triggeredByScroll: false
+				triggeredByScroll: false,
 			} );
 		},
 
 		componentDidUpdate: function() {
 			this.checkScrollPosition( {
-				triggeredByScroll: false
+				triggeredByScroll: false,
 			} );
 		},
 
@@ -39,8 +40,7 @@ module.exports = function( nextPageMethod ) {
 				scrollOffset = 2 * viewportHeight,
 				triggeredByScroll = options.triggeredByScroll;
 
-			if ( scrollPosition >= ( documentHeight - viewportHeight - scrollOffset ) ) {
-
+			if ( scrollPosition >= documentHeight - viewportHeight - scrollOffset ) {
 				// Consider all page fetches once user starts scrolling as triggered by scroll
 				// Same condition check is in components/infinite-list/scroll-helper loadNextPage
 				if ( scrollPosition > viewportHeight ) {
@@ -51,10 +51,10 @@ module.exports = function( nextPageMethod ) {
 				// we cannot create new action while dispatching old one
 				window.requestAnimationFrame( () => {
 					this[ nextPageMethod ]( {
-						triggeredByScroll: triggeredByScroll
+						triggeredByScroll: triggeredByScroll,
 					} );
 				} );
 			}
-		}
+		},
 	};
 };

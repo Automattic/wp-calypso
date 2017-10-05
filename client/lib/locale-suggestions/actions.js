@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
@@ -13,10 +16,10 @@ var LocaleSuggestionActions = {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_LOCALE_SUGGESTIONS',
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
-	}
+	},
 };
 
 module.exports = LocaleSuggestionActions;

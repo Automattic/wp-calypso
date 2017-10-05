@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:steps:test' );
@@ -26,11 +29,13 @@ export default class extends React.Component {
 					headerText="This is a test step"
 					subHeaderText="Go ahead and click the button to continue. It'll blow your mind!"
 					signupProgress={ this.props.signupProgress }
-					goToNextStep={ this.props.goToNextStep } />
+					goToNextStep={ this.props.goToNextStep }
+				/>
 				<SubmitStepButton
-						buttonText="Click to continue"
-						goToNextStep={ this.props.goToNextStep }
-						stepName={ this.props.stepName } />
+					buttonText="Click to continue"
+					goToNextStep={ this.props.goToNextStep }
+					stepName={ this.props.stepName }
+				/>
 			</span>
 		);
 	}

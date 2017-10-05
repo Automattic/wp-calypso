@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -66,7 +69,8 @@ export default connect(
 			status: post.status,
 			isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
 		};
-	}, {
+	},
+	{
 		toggleSharePanel,
 	}
 )( localize( PostActionsEllipsisMenuShare ) );

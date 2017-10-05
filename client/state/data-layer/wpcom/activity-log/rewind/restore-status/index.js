@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
@@ -16,11 +19,16 @@ import { updateRewindRestoreProgress } from 'state/activity-log/actions';
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:restore-status' );
 
 const requestRestoreProgress = ( { dispatch }, action ) => {
-	dispatch( http( {
-		apiVersion: '1',
-		method: 'GET',
-		path: `/activity-log/${ action.siteId }/rewind/${ action.restoreId }/restore-status`,
-	}, action ) );
+	dispatch(
+		http(
+			{
+				apiVersion: '1',
+				method: 'GET',
+				path: `/activity-log/${ action.siteId }/rewind/${ action.restoreId }/restore-status`,
+			},
+			action
+		)
+	);
 };
 
 const fromApi = ( { restore_status = {} } ) => {
@@ -41,7 +49,11 @@ const fromApi = ( { restore_status = {} } ) => {
 	};
 };
 
-export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, restoreId }, apiData ) => {
+export const receiveRestoreProgress = (
+	{ dispatch },
+	{ siteId, timestamp, restoreId },
+	apiData
+) => {
 	const data = fromApi( apiData );
 
 	debug( 'Restore progress', data );
@@ -53,16 +65,16 @@ export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, resto
 export const receiveRestoreError = ( { dispatch }, action, error ) => {
 	debug( 'Restore progress error', error );
 
-	dispatch( createNotice(
-		'is-warning',
-		translate( "Hmm, we can't update the status of your restore. Please refresh this page." ),
-	) );
+	dispatch(
+		createNotice(
+			'is-warning',
+			translate( "Hmm, we can't update the status of your restore. Please refresh this page." )
+		)
+	);
 };
 
 export default {
-	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [ dispatchRequest(
-		requestRestoreProgress,
-		receiveRestoreProgress,
-		receiveRestoreError
-	) ],
+	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [
+		dispatchRequest( requestRestoreProgress, receiveRestoreProgress, receiveRestoreError ),
+	],
 };

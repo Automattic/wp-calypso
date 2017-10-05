@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
@@ -18,12 +21,7 @@ describe( 'EmbedDialog', function() {
 	it( 'should render', function() {
 		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 		const wrapper = shallow(
-			<EmbedDialog
-				embedUrl={ url }
-				onCancel={ noop }
-				onUpdate={ noop }
-				translate={ identity }
-			/>
+			<EmbedDialog embedUrl={ url } onCancel={ noop } onUpdate={ noop } translate={ identity } />
 		);
 
 		assert.isFalse( wrapper.instance().props.isVisible );
@@ -47,7 +45,7 @@ describe( 'EmbedDialog', function() {
 			target: {
 				value: newUrl,
 				focus: noop,
-			}
+			},
 		};
 		let inputField = wrapper.find( FormTextInput ).get( 0 );
 
@@ -64,10 +62,10 @@ describe( 'EmbedDialog', function() {
 			target: {
 				value: newUrl,
 				focus: noop,
-			}
+			},
 		};
 		let currentUrl = originalUrl;
-		const onUpdate = ( url ) => {
+		const onUpdate = url => {
 			currentUrl = url;
 		};
 		const wrapper = shallow(
@@ -92,11 +90,11 @@ describe( 'EmbedDialog', function() {
 			target: {
 				value: newUrl,
 				focus: noop,
-			}
+			},
 		};
 		const noopSpy = spy( noop );
 		let currentUrl = originalUrl;
-		const onUpdate = ( url ) => {
+		const onUpdate = url => {
 			currentUrl = url;
 		};
 		const wrapper = shallow(

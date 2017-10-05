@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -35,36 +38,32 @@ class SettingsPaymentsMethodList extends Component {
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchPaymentMethods( newSiteId );
 		}
-	}
+	};
 
-	renderMethodItem = ( method ) => {
+	renderMethodItem = method => {
 		const { site } = this.props;
 		// Disable BACS and Cheque payment for now until #16630 and #16629 are fixed.
 		if ( 'bacs' === method.id ) {
 			return null;
 		}
 
-		return (
-			<PaymentMethodItem method={ method } key={ method.title } site={ site } />
-		);
-	}
+		return <PaymentMethodItem method={ method } key={ method.title } site={ site } />;
+	};
 
 	showPlaceholder = () => {
-		return (
-			<PaymentMethodItemPlaceholder />
-		);
-	}
+		return <PaymentMethodItemPlaceholder />;
+	};
 
 	render() {
 		const { isLoading, methodType, paymentMethods, translate } = this.props;
@@ -80,8 +79,7 @@ class SettingsPaymentsMethodList extends Component {
 							{ translate( 'Fees' ) }
 						</ListItemField>
 					) }
-					<ListItemField className="payments__methods-column-settings">
-					</ListItemField>
+					<ListItemField className="payments__methods-column-settings" />
 				</ListHeader>
 				{ isLoading && this.showPlaceholder() }
 				{ paymentMethods && paymentMethods.map( this.renderMethodItem ) }

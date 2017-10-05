@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers, createReducer } from 'state/utils';
 import {
 	CHECK_YOUR_EMAIL_PAGE,

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import accountRecovery from './account-recovery';
 import activityLog from './activity-log';

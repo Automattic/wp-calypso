@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -24,7 +27,7 @@ class PostActionsEllipsisMenuRestore extends Component {
 		postId: PropTypes.number,
 		canRestore: PropTypes.bool,
 		status: PropTypes.string,
-		restorePost: PropTypes.func.isRequired
+		restorePost: PropTypes.func.isRequired,
 	};
 
 	constructor() {
@@ -71,7 +74,11 @@ export default connect(
 			siteId: post.site_ID,
 			postId: post.ID,
 			status: post.status,
-			canRestore: canCurrentUser( state, post.site_ID, isAuthor ? 'delete_posts' : 'delete_others_posts' )
+			canRestore: canCurrentUser(
+				state,
+				post.site_ID,
+				isAuthor ? 'delete_posts' : 'delete_others_posts'
+			),
 		};
 	},
 	{ restorePost }

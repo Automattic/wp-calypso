@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
@@ -14,15 +17,12 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import {
-	canCurrentUser,
-	isEligibleForFreeToPaidUpsell,
-} from 'state/selectors';
+import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
 	isStarted as isJetpackPluginsStarted,
-	isFinished as isJetpackPluginsFinished
+	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
@@ -30,7 +30,7 @@ import { isDomainOnlySite } from 'state/selectors';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
-		site: PropTypes.object
+		site: PropTypes.object,
 	};
 
 	static defaultProps = {};
@@ -52,7 +52,7 @@ class SiteNotice extends React.Component {
 				showDismiss={ false }
 				text={ translate( 'Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
-					components: { a: <a href={ site.URL } /> }
+					components: { a: <a href={ site.URL } /> },
 				} ) }
 			>
 				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
@@ -72,7 +72,12 @@ class SiteNotice extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Notice isCompact status="is-success" icon="info-outline" text={ translate( 'Free domain available' ) }>
+			<Notice
+				isCompact
+				status="is-success"
+				icon="info-outline"
+				text={ translate( 'Free domain available' ) }
+			>
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
 					href={ `/domains/add/${ this.props.site.slug }` }
@@ -94,7 +99,12 @@ class SiteNotice extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Notice isCompact status="is-success" icon="info-outline" text={ translate( 'Free domain with a plan' ) }>
+			<Notice
+				isCompact
+				status="is-success"
+				icon="info-outline"
+				text={ translate( 'Free domain with a plan' ) }
+			>
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
@@ -107,7 +117,10 @@ class SiteNotice extends React.Component {
 	}
 
 	jetpackPluginsSetupNotice() {
-		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
+		if (
+			! this.props.pausedJetpackPluginsSetup ||
+			this.props.site.plan.product_slug === 'jetpack_free'
+		) {
 			return null;
 		}
 
@@ -118,12 +131,11 @@ class SiteNotice extends React.Component {
 				icon="plugins"
 				isCompact
 				status="is-info"
-				text={ translate(
-					'Your %(plan)s plan needs setting up!',
-					{ args: { plan: this.props.site.plan.product_name_short } }
-				) }
+				text={ translate( 'Your %(plan)s plan needs setting up!', {
+					args: { plan: this.props.site.plan.product_name_short },
+				} ) }
 			>
-				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` } >
+				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` }>
 					{ translate( 'Finish' ) }
 				</NoticeAction>
 			</Notice>
@@ -148,26 +160,32 @@ class SiteNotice extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
-	return {
-		isDomainOnly: isDomainOnlySite( state, siteId ),
-		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, moment() ),
-		hasDomainCredit: hasDomainCredit( state, siteId ),
-		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
-	};
-}, ( dispatch ) => {
-	return {
-		clickClaimDomainNotice: () => dispatch( recordTracksEvent(
-			'calypso_domain_credit_reminder_click', {
-				cta_name: 'current_site_domain_notice'
-			}
-		) ),
-		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
-			'calypso_upgrade_nudge_cta_click', {
-				cta_name: 'free-to-paid-sidebar'
-			}
-		) ),
-	};
-} )( localize( SiteNotice ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+		return {
+			isDomainOnly: isDomainOnlySite( state, siteId ),
+			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, moment() ),
+			hasDomainCredit: hasDomainCredit( state, siteId ),
+			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			pausedJetpackPluginsSetup:
+				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
+		};
+	},
+	dispatch => {
+		return {
+			clickClaimDomainNotice: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
+						cta_name: 'current_site_domain_notice',
+					} )
+				),
+			clickFreeToPaidPlanNotice: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'free-to-paid-sidebar',
+					} )
+				),
+		};
+	}
+)( localize( SiteNotice ) );

@@ -1,15 +1,16 @@
+/** @format */
 export const Formats = {
 	DOM: 'DOM',
 	STRING: 'STRING',
 	SHORTCODE: 'SHORTCODE',
 	OBJECT: 'OBJECT',
 	API: 'API',
-	UNKNOWN: 'UNKNOWN'
+	UNKNOWN: 'UNKNOWN',
 };
 
 export const MediaTypes = {
 	IMAGE: 'IMAGE',
 	VIDEO: 'VIDEO',
 	AUDIO: 'AUDIO',
-	UNKNOWN: 'UNKNOWN'
+	UNKNOWN: 'UNKNOWN',
 };

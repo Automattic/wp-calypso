@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -45,21 +48,21 @@ class ReviewsFilterNav extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { site, productId } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId && productId ) {
 			this.props.fetchProduct( newSiteId, productId );
 		}
 	}
 
-	doSearch = ( search ) => {
+	doSearch = search => {
 		const { productId } = this.props;
 		const updatedStateQuery = { search, status: 'any' };
 		if ( productId ) {
 			updatedStateQuery.product = productId;
 		}
 		this.props.updateCurrentReviewsQuery( this.props.site.ID, updatedStateQuery );
-	}
+	};
 
 	clearSearch = () => {
 		const { status, productId } = this.props;
@@ -68,7 +71,7 @@ class ReviewsFilterNav extends Component {
 			updatedStateQuery.product = productId;
 		}
 		this.props.updateCurrentReviewsQuery( this.props.site.ID, updatedStateQuery );
-	}
+	};
 
 	render() {
 		const { translate, site, status, productId, product } = this.props;
@@ -106,17 +109,22 @@ class ReviewsFilterNav extends Component {
 		return (
 			<div className="reviews__filter-nav">
 				{ product && (
-					<Notice text={ translate(
-						'Viewing reviews for {{productLink}}%(productName)s{{/productLink}}.',
-						{
-							args: {
-								productName: product.name,
-							},
-							components: {
-								productLink: <a href={ getLink( `/store/product/:site/${ product.id }`, site ) } />
+					<Notice
+						text={ translate(
+							'Viewing reviews for {{productLink}}%(productName)s{{/productLink}}.',
+							{
+								args: {
+									productName: product.name,
+								},
+								components: {
+									productLink: (
+										<a href={ getLink( `/store/product/:site/${ product.id }`, site ) } />
+									),
+								},
 							}
-						}
-					) } showDismiss={ false }>
+						) }
+						showDismiss={ false }
+					>
 						<NoticeAction href={ getLink( `/store/reviews/${ status }/:site/`, site ) }>
 							{ translate( 'View all reviews' ) }
 						</NoticeAction>
@@ -124,24 +132,16 @@ class ReviewsFilterNav extends Component {
 				) }
 				<SectionNav selectedText={ currentSelection }>
 					<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>
-						<NavItem
-							path={ pendingLink }
-							selected={ 'pending' === status }>
+						<NavItem path={ pendingLink } selected={ 'pending' === status }>
 							{ pendingLabel }
 						</NavItem>
-						<NavItem
-							path={ approvedLink }
-							selected={ 'approved' === status }>
+						<NavItem path={ approvedLink } selected={ 'approved' === status }>
 							{ approvedLabel }
 						</NavItem>
-						<NavItem
-							path={ spamLink }
-							selected={ 'spam' === status }>
+						<NavItem path={ spamLink } selected={ 'spam' === status }>
 							{ spamLabel }
 						</NavItem>
-						<NavItem
-							path={ trashLink }
-							selected={ 'trash' === status }>
+						<NavItem path={ trashLink } selected={ 'trash' === status }>
 							{ trashlabel }
 						</NavItem>
 					</NavTabs>

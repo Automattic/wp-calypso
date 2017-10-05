@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -38,7 +41,8 @@ const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {
 				isCompact
 				selectedSite={ selectedSite }
 				domains={ domains }
-				ruleWhiteList={ ruleWhiteList } />
+				ruleWhiteList={ ruleWhiteList }
+			/>
 		</div>
 	);
 };
@@ -46,17 +50,15 @@ const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {
 CurrentSiteDomainWarnings.propTypes = {
 	domains: PropTypes.array,
 	isJetpack: PropTypes.bool,
-	selectedSite: PropTypes.object
+	selectedSite: PropTypes.object,
 };
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
 
-		return {
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
-			isJetpack: isJetpackSite( state, selectedSiteId ),
-			selectedSite: getSelectedSite( state )
-		};
-	}
-)( CurrentSiteDomainWarnings );
+	return {
+		domains: getDecoratedSiteDomains( state, selectedSiteId ),
+		isJetpack: isJetpackSite( state, selectedSiteId ),
+		selectedSite: getSelectedSite( state ),
+	};
+} )( CurrentSiteDomainWarnings );

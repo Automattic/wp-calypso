@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -27,11 +30,8 @@ const NativeCustomizer = React.createClass( {
 	},
 
 	render() {
-		return (
-			<div className="paladin__native-customizer">
-			</div>
-		);
-	}
+		return <div className="paladin__native-customizer" />;
+	},
 } );
 
 export default connect( null, { setLayoutFocus, setPreviewType } )( NativeCustomizer );

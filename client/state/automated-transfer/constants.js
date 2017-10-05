@@ -1,3 +1,4 @@
+/** @format */
 export const transferStates = {
 	INQUIRING: 'inquiring',
 	FAILURE: 'failure',

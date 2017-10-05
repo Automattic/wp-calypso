@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,18 +22,17 @@ import { getPreference } from 'state/preferences/selectors';
 const PREFERENCE_PREFIX = 'dismissible-card-';
 
 class DismissibleCard extends Component {
-
 	static propTypes = {
 		className: PropTypes.string,
 		dismissCard: PropTypes.func,
 		isDismissed: PropTypes.bool,
 		temporary: PropTypes.bool,
 		onClick: PropTypes.func,
-		preferenceName: PropTypes.string.isRequired
+		preferenceName: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
-		onClick: noop
+		onClick: noop,
 	};
 
 	render() {
@@ -58,17 +60,20 @@ export default connect(
 	( state, ownProps ) => {
 		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
 		return {
-			isDismissed: getPreference( state, preference )
+			isDismissed: getPreference( state, preference ),
 		};
 	},
-	( dispatch, ownProps ) => bindActionCreators( {
-		dismissCard: () => {
-			const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-			if ( ownProps.temporary ) {
-				return setPreference( preference, true );
-			}
-			return savePreference( preference, true );
-		}
-	}, dispatch )
+	( dispatch, ownProps ) =>
+		bindActionCreators(
+			{
+				dismissCard: () => {
+					const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
+					if ( ownProps.temporary ) {
+						return setPreference( preference, true );
+					}
+					return savePreference( preference, true );
+				},
+			},
+			dispatch
+		)
 )( DismissibleCard );
-

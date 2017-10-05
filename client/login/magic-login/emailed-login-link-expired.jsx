@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -18,9 +21,12 @@ import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { recordPageView } from 'state/analytics/actions';
 
 const nativeLoginUrl = login( { isNative: true } );
-const lostPasswordURL = addQueryArgs( {
-	action: 'lostpassword',
-}, login() );
+const lostPasswordURL = addQueryArgs(
+	{
+		action: 'lostpassword',
+	},
+	login()
+);
 
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -12,11 +15,7 @@ const HeaderButtonExample = () => {
 	const onClick = () => alert( 'clicked me!' );
 	return (
 		<div>
-			<HeaderButton
-				icon="plus-small"
-				label="Add Plugin"
-				onClick={ onClick }
-			/>
+			<HeaderButton icon="plus-small" label="Add Plugin" onClick={ onClick } />
 		</div>
 	);
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
@@ -24,11 +27,11 @@ class QueryMedia extends Component {
 		siteId: PropTypes.number.isRequired,
 		query: PropTypes.object,
 		mediaId: PropTypes.number,
-		request: PropTypes.func
+		request: PropTypes.func,
 	};
 
 	static defaultProps = {
-		request: () => {}
+		request: () => {},
 	};
 
 	componentDidMount() {
@@ -36,9 +39,11 @@ class QueryMedia extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId === prevProps.siteId &&
-				this.props.mediaId === prevProps.mediaId &&
-				shallowEqual( this.props.query, prevProps.query ) ) {
+		if (
+			this.props.siteId === prevProps.siteId &&
+			this.props.mediaId === prevProps.mediaId &&
+			shallowEqual( this.props.query, prevProps.query )
+		) {
 			return;
 		}
 

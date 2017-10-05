@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -21,18 +24,18 @@ var EmailForwardingList = React.createClass( {
 			return null;
 		}
 
-		emailForwardingItems = list.map( ( emailForwarding ) => {
+		emailForwardingItems = list.map( emailForwarding => {
 			return (
 				<EmailForwardingItem
 					key={ emailForwarding.email }
 					emailData={ emailForwarding }
 					selectedSite={ this.props.selectedSite }
-					/>
+				/>
 			);
 		} );
 
 		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>;
-	}
+	},
 } );
 
 module.exports = EmailForwardingList;

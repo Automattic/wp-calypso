@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -27,35 +30,34 @@ export class CommentDetailReply extends Component {
 
 	bindTextareaRef = textarea => {
 		this.textarea = textarea;
-	}
+	};
 
 	calculateTextareaHeight = () => {
 		const textareaScrollHeight = this.textarea.scrollHeight;
-		const textareaHeight = Math.min( TEXTAREA_MAX_HEIGHT, textareaScrollHeight + TEXTAREA_VERTICAL_BORDER );
+		const textareaHeight = Math.min(
+			TEXTAREA_MAX_HEIGHT,
+			textareaScrollHeight + TEXTAREA_VERTICAL_BORDER
+		);
 		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
-	}
+	};
 
 	getTextareaPlaceholder = () => {
-		const {
-			authorDisplayName,
-			comment: { status },
-			translate,
-		} = this.props;
+		const { authorDisplayName, comment: { status }, translate } = this.props;
 
 		if ( 'approved' !== status ) {
 			return authorDisplayName
 				? translate( 'Approve and reply to %(commentAuthor)s…', {
-					args: { commentAuthor: authorDisplayName }
-				} )
+						args: { commentAuthor: authorDisplayName },
+					} )
 				: translate( 'Approve and reply to comment…' );
 		}
 
 		return authorDisplayName
 			? translate( 'Reply to %(commentAuthor)s…', {
-				args: { commentAuthor: authorDisplayName }
-			} )
+					args: { commentAuthor: authorDisplayName },
+				} )
 			: translate( 'Reply to comment…' );
-	}
+	};
 
 	handleTextChange = event => {
 		const { value } = event.target;
@@ -65,28 +67,26 @@ export class CommentDetailReply extends Component {
 			commentText: value,
 			textareaHeight,
 		} );
-	}
+	};
 
-	setFocus = () => this.setState( {
-		hasFocus: true,
-		textareaHeight: this.calculateTextareaHeight(),
-	} );
+	setFocus = () =>
+		this.setState( {
+			hasFocus: true,
+			textareaHeight: this.calculateTextareaHeight(),
+		} );
 
 	submit = () => {
-		const {
-			comment,
-			replyComment,
-		} = this.props;
+		const { comment, replyComment } = this.props;
 		const { commentText } = this.state;
 
 		replyComment( commentText, comment );
 		this.setState( { commentText: '' } );
-	}
+	};
 
 	submitComment = event => {
 		event.preventDefault();
 		this.submit();
-	}
+	};
 
 	submitCommentOnCtrlEnter = event => {
 		// Use Ctrl+Enter to submit comment
@@ -94,23 +94,17 @@ export class CommentDetailReply extends Component {
 			event.preventDefault();
 			this.submit();
 		}
-	}
+	};
 
-	unsetFocus = () => this.setState( {
-		hasFocus: false,
-		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
-	} );
+	unsetFocus = () =>
+		this.setState( {
+			hasFocus: false,
+			textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
+		} );
 
 	render() {
-		const {
-			currentUser,
-			translate,
-		} = this.props;
-		const {
-			commentText,
-			hasFocus,
-			textareaHeight,
-		} = this.state;
+		const { currentUser, translate } = this.props;
+		const { commentText, hasFocus, textareaHeight } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
@@ -152,11 +146,7 @@ export class CommentDetailReply extends Component {
 					/>
 				</AutoDirection>
 
-				<Gravatar
-					className={ gravatarClasses }
-					size={ 24 }
-					user={ currentUser }
-				/>
+				<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
 
 				<button
 					className={ buttonClasses }
@@ -171,7 +161,7 @@ export class CommentDetailReply extends Component {
 }
 
 const mapStateToProps = state => ( {
-	currentUser: getCurrentUser( state )
+	currentUser: getCurrentUser( state ),
 } );
 
 export default connect( mapStateToProps )( localize( CommentDetailReply ) );

@@ -1,3 +1,4 @@
+/** @format */
 export const Steps = {
 	CONFIRMATION: 'confirmation',
 	INTRO: 'intro',

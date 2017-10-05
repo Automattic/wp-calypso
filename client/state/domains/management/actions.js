@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcom from 'lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -28,7 +31,7 @@ import {
 export function receiveContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-		data
+		data,
 	};
 }
 
@@ -38,7 +41,7 @@ export function receiveContactDetailsCache( data ) {
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
@@ -47,7 +50,7 @@ export function requestContactDetailsCache() {
 			if ( error ) {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
-					error
+					error,
 				} );
 				return;
 			}
@@ -63,7 +66,7 @@ export function requestContactDetailsCache() {
 export function updateContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-		data
+		data,
 	};
 }
 
@@ -79,7 +82,7 @@ export function receiveWhois( domain, whoisData ) {
 	return {
 		type: DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 		domain,
-		whoisData
+		whoisData,
 	};
 }
 
@@ -90,25 +93,27 @@ export function receiveWhois( domain, whoisData ) {
  * @returns {Function}          Action thunk
  */
 export function requestWhois( domain ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
-			domain
+			domain,
 		} );
 
-		return wpcom.undocumented().fetchWhois( domain )
+		return wpcom
+			.undocumented()
+			.fetchWhois( domain )
 			.then( whoisData => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
-					domain
+					domain,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
-					error
+					error,
 				} );
 			} );
 	};
@@ -123,25 +128,27 @@ export function requestWhois( domain ) {
  * @returns {Function}				Action thunk
  */
 export function saveWhois( domain, whoisData ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
-			domain
+			domain,
 		} );
 
-		return wpcom.undocumented().updateWhois( domain, whoisData )
+		return wpcom
+			.undocumented()
+			.updateWhois( domain, whoisData )
 			.then( ( { updated } ) => {
 				dispatch( updateWhois( domain, updated ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
-					domain
+					domain,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 					domain,
-					error
+					error,
 				} );
 			} );
 	};
@@ -151,7 +158,6 @@ export function updateWhois( domain, whoisData ) {
 	return {
 		type: DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 		domain,
-		whoisData
+		whoisData,
 	};
 }
-

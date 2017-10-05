@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -60,14 +63,14 @@ PostTypeUnsupported.propTypes = {
 	translate: PropTypes.func,
 	canManage: PropTypes.bool,
 	siteSlug: PropTypes.string,
-	type: PropTypes.string
+	type: PropTypes.string,
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		canManage: canCurrentUser( state, siteId, 'manage_options' ),
-		siteSlug: getSiteSlug( state, siteId )
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( localize( PostTypeUnsupported ) );

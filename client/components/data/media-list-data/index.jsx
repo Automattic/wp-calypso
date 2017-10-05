@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,7 +20,7 @@ function getStateData( siteId ) {
 	return {
 		media: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId )
+		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
 	};
 }
 
@@ -29,7 +32,7 @@ module.exports = React.createClass( {
 		source: PropTypes.string,
 		postId: PropTypes.number,
 		filter: PropTypes.string,
-		search: PropTypes.string
+		search: PropTypes.string,
 	},
 
 	getInitialState: function() {
@@ -91,8 +94,11 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		return passToChildren( this, assign( {}, this.state, {
-			mediaOnFetchNextPage: this.fetchData
-		} ) );
-	}
+		return passToChildren(
+			this,
+			assign( {}, this.state, {
+				mediaOnFetchNextPage: this.fetchData,
+			} )
+		);
+	},
 } );

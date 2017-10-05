@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { values } from 'lodash';
 
 /**
@@ -15,11 +18,11 @@ import createSelector from 'lib/create-selector';
  * @return {Array}        Notice objects as array
  */
 export const getNotices = createSelector(
-	( state ) => values( state.notices.items ),
-	( state ) => state.notices.items
+	state => values( state.notices.items ),
+	state => state.notices.items
 );
 
 export const getNoticeLastTimeShown = createSelector(
 	( state, noticeId ) => state.notices.lastTimeShown[ noticeId ] || 0,
-	( state ) => state.notices.lastTimeShown
+	state => state.notices.lastTimeShown
 );

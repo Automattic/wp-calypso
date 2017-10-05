@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	LOCALE_SET
-} from 'state/action-types';
-import { localeSlugSchema } from './schema';
+import { LOCALE_SET } from 'state/action-types';
+import { localeSlugSchema } from './schema';
 
 /**
  * Tracks the state of the ui locale
@@ -15,8 +16,12 @@ import { localeSlugSchema } from './schema';
  * @return {Object}        Updated state
  *
  */
-export const localeSlug = createReducer( 'en', {
-	[ LOCALE_SET ]: ( state, action ) => action.localeSlug
-}, localeSlugSchema );
+export const localeSlug = createReducer(
+	'en',
+	{
+		[ LOCALE_SET ]: ( state, action ) => action.localeSlug,
+	},
+	localeSlugSchema
+);
 
 export default combineReducers( { localeSlug } );

@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -11,8 +12,8 @@ export const itemsSchema = {
 				total: { type: 'number' },
 				translations: { type: 'number' },
 				wordress: { type: 'number' },
-				wp_version: { type: 'string' }
-			}
-		}
-	}
+				wp_version: { type: 'string' },
+			},
+		},
+	},
 };

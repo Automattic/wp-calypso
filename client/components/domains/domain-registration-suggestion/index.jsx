@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +16,11 @@ import { localize } from 'i18n-calypso';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
-import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
+import {
+	shouldBundleDomainWithPlan,
+	getDomainPriceRule,
+	hasDomainInCart,
+} from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const newTLDs = [
@@ -258,7 +265,7 @@ const newTLDs = [
 	'.software',
 	'.studio',
 	'.vet',
-	'.video'
+	'.video',
 ];
 
 class DomainRegistrationSuggestion extends React.Component {
@@ -268,7 +275,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		suggestion: PropTypes.shape( {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
-			cost: PropTypes.string
+			cost: PropTypes.string,
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -277,7 +284,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		recordTracksEvent: PropTypes.func,
 		uiPosition: PropTypes.number,
 		fetchAlgo: PropTypes.string,
-		query: PropTypes.string
+		query: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -294,7 +301,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				ui_position: this.props.uiPosition,
 				fetch_algo: this.props.fetchAlgo,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
-				fetch_query: this.props.query
+				fetch_query: this.props.query,
 			} );
 		}
 	}
@@ -303,7 +310,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		if ( this.props.railcarId ) {
 			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: this.props.railcarId,
-				action: 'domain_added_to_cart'
+				action: 'domain_added_to_cart',
 			} );
 		}
 
@@ -311,7 +318,14 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	render() {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props;
+		const {
+			cart,
+			domainsWithPlansOnly,
+			isSignupStep,
+			selectedSite,
+			suggestion,
+			translate,
+		} = this.props;
 		const domain = suggestion.domain_name;
 		const isAdded = hasDomainInCart( cart, domain );
 		const domainFlags = [];
@@ -370,21 +384,26 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
 			buttonClasses = 'add is-primary';
-			buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
-				? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
-				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+			buttonContent =
+				! isSignupStep &&
+				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+					? translate( 'Upgrade', {
+							context: 'Domain mapping suggestion button with plan upgrade',
+						} )
+					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
 		return (
 			<DomainSuggestion
-					priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
-					price={ suggestion.product_slug && suggestion.cost }
-					domain={ domain }
-					buttonClasses={ buttonClasses }
-					buttonContent={ buttonContent }
-					cart={ cart }
-					domainsWithPlansOnly={ domainsWithPlansOnly }
-					onButtonClick={ this.onButtonClick }>
+				priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
+				price={ suggestion.product_slug && suggestion.cost }
+				domain={ domain }
+				buttonClasses={ buttonClasses }
+				buttonContent={ buttonContent }
+				cart={ cart }
+				domainsWithPlansOnly={ domainsWithPlansOnly }
+				onButtonClick={ this.onButtonClick }
+			>
 				<h3>
 					{ domain }
 					{ domainFlags }
@@ -394,7 +413,4 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( DomainRegistrationSuggestion ) );
+export default connect( null, { recordTracksEvent } )( localize( DomainRegistrationSuggestion ) );

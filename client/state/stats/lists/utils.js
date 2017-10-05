@@ -1,14 +1,27 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
+
+import {
+	sortBy,
+	toPairs,
+	camelCase,
+	mapKeys,
+	isNumber,
+	get,
+	filter,
+	map,
+	concat,
+	flatten,
+} from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
-
 
 /**
  * Returns a string of the moment format for the period. Supports store stats
@@ -22,15 +35,11 @@ export function getPeriodFormat( period, date ) {
 	const strDate = date.toString();
 	switch ( period ) {
 		case 'week':
-			return ( strDate.length === 8 && strDate.substr( 4, 2 ) === '-W' )
-				? 'YYYY-[W]WW'
-				:	'YYYY-MM-DD';
+			return strDate.length === 8 && strDate.substr( 4, 2 ) === '-W' ? 'YYYY-[W]WW' : 'YYYY-MM-DD';
 		case 'month':
-			return ( strDate.length === 7 && strDate.substr( 4, 1 ) === '-' )
-				? 'YYYY-MM'
-				: 'YYYY-MM-DD';
+			return strDate.length === 7 && strDate.substr( 4, 1 ) === '-' ? 'YYYY-MM' : 'YYYY-MM-DD';
 		case 'year':
-			return ( strDate.length === 4 ) ? 'YYYY' : 'YYYY-MM-DD';
+			return strDate.length === 4 ? 'YYYY' : 'YYYY-MM-DD';
 		case 'day':
 		default:
 			return 'YYYY-MM-DD';
@@ -62,7 +71,7 @@ export function rangeOfPeriod( period, date ) {
 	}
 	return {
 		startOf: startOf.format( 'YYYY-MM-DD' ),
-		endOf: endOf.format( 'YYYY-MM-DD' )
+		endOf: endOf.format( 'YYYY-MM-DD' ),
 	};
 }
 
@@ -107,12 +116,12 @@ export function buildExportArray( data, parent = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
-	const label = parent ? ( parent + ' > ' + data.label ) : data.label;
+	const label = parent ? parent + ' > ' + data.label : data.label;
 	const escapedLabel = label.replace( /\"/, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	if ( data.children ) {
-		const childData = map( data.children, ( child ) => {
+		const childData = map( data.children, child => {
 			return buildExportArray( child, label );
 		} );
 
@@ -130,7 +139,7 @@ export function buildExportArray( data, parent = null ) {
  * @return {String}          Serialized stats query
  */
 export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( toPairs( query ), ( pair ) => pair[ 0 ] ) );
+	return JSON.stringify( sortBy( toPairs( query ), pair => pair[ 0 ] ) );
 }
 
 /**
@@ -141,10 +150,16 @@ export function getSerializedStatsQuery( query = {} ) {
  * @return {array} - Array of data objects
  */
 export function parseOrderDeltas( payload ) {
-	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
+	if (
+		! payload ||
+		! payload.deltas ||
+		! payload.delta_fields ||
+		Object.keys( payload.deltas ).length === 0
+	) {
 		return [];
 	}
-	return payload.deltas.map( row => { // will be renamed to deltas
+	return payload.deltas.map( row => {
+		// will be renamed to deltas
 		const notPeriodKeys = Object.keys( row ).filter( key => key !== 'period' );
 		const newRow = { period: parseUnitPeriods( payload.unit, row.period ).format( 'YYYY-MM-DD' ) };
 		notPeriodKeys.forEach( key => {
@@ -191,7 +206,7 @@ export function parseOrdersChartData( payload ) {
 			const localizedDate = parseUnitPeriods( payload.unit, dataRecord.period );
 			if ( date.isValid() ) {
 				const dayOfWeek = date.toDate().getDay();
-				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+				if ( 'day' === payload.unit && ( 6 === dayOfWeek || 0 === dayOfWeek ) ) {
 					dataRecord.classNames.push( 'is-weekend' );
 				}
 				dataRecord.labelDay = localizedDate.format( 'MMM D' );
@@ -247,7 +262,7 @@ function parseChartData( payload, nullAttributes = [] ) {
 			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' );
 			if ( date.isValid() ) {
 				const dayOfWeek = date.toDate().getDay();
-				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
+				if ( 'day' === payload.unit && ( 6 === dayOfWeek || 0 === dayOfWeek ) ) {
 					dataRecord.classNames.push( 'is-weekend' );
 				}
 				dataRecord.labelDay = localizedDate.format( 'MMM D' );
@@ -271,7 +286,10 @@ export function parseUnitPeriods( unit, period ) {
 	switch ( unit ) {
 		case 'week':
 			const splitYearWeek = period.split( '-W' );
-			return moment().isoWeekYear( splitYearWeek[ 0 ] ).isoWeek( splitYearWeek[ 1 ] ).endOf( 'isoWeek' );
+			return moment()
+				.isoWeekYear( splitYearWeek[ 0 ] )
+				.isoWeek( splitYearWeek[ 1 ] )
+				.endOf( 'isoWeek' );
 		case 'month':
 			return moment( period, 'YYYY-MM' ).endOf( 'month' );
 		case 'year':
@@ -303,7 +321,7 @@ export const normalizers = {
 	 * @param  {Object} data    Stats query
 	 * @return {Object?}        Normalized stats data
 	 */
-	statsInsights: ( data ) => {
+	statsInsights: data => {
 		if ( ! data || ! isNumber( data.highest_day_of_week ) ) {
 			return {};
 		}
@@ -323,9 +341,14 @@ export const normalizers = {
 		}
 
 		return {
-			day: moment().day( dayOfWeek ).format( 'dddd' ),
+			day: moment()
+				.day( dayOfWeek )
+				.format( 'dddd' ),
 			percent: Math.round( highest_day_percent ),
-			hour: moment().hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
+			hour: moment()
+				.hour( highest_hour )
+				.startOf( 'hour' )
+				.format( 'LT' ),
 			hourPercent: Math.round( highest_hour_percent ),
 			hourlyViews: hourly_views,
 		};
@@ -346,10 +369,12 @@ export const normalizers = {
 		}
 
 		const { startOf, endOf } = rangeOfPeriod( query.period, query.date );
-		const dataPath = query.summarize ? [ 'summary', 'postviews' ] : [ 'days', startOf, 'postviews' ];
+		const dataPath = query.summarize
+			? [ 'summary', 'postviews' ]
+			: [ 'days', startOf, 'postviews' ];
 		const viewData = get( data, dataPath, [] );
 
-		return map( viewData, ( item ) => {
+		return map( viewData, item => {
 			const detailPage = site ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
 
@@ -369,13 +394,15 @@ export const normalizers = {
 				label: item.title,
 				value: item.views,
 				page: detailPage,
-				actions: [ {
-					type: 'link',
-					data: item.href
-				} ],
+				actions: [
+					{
+						type: 'link',
+						data: item.href,
+					},
+				],
 				labelIcon: null,
 				children: null,
-				className: inPeriod ? 'published' : null
+				className: inPeriod ? 'published' : null,
 			};
 		} );
 	},
@@ -399,11 +426,11 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'views' ] : [ 'days', startOf, 'views' ];
 
 		// filter out country views that have no legitimate country data associated with them
-		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+		const countryData = filter( get( data, dataPath, [] ), viewData => {
 			return countryInfo[ viewData.country_code ];
 		} );
 
-		return map( countryData, ( viewData ) => {
+		return map( countryData, viewData => {
 			const country = countryInfo[ viewData.country_code ];
 			const icon = `/calypso/images/flags/${ viewData.country_code.toLowerCase() }.svg`;
 
@@ -413,7 +440,7 @@ export const normalizers = {
 				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
-				backgroundImage: icon
+				backgroundImage: icon,
 			};
 		} );
 	},
@@ -429,7 +456,7 @@ export const normalizers = {
 			return [];
 		}
 
-		return data.services.map( ( service ) => {
+		return data.services.map( service => {
 			const { label, icon } = PUBLICIZE_SERVICES_LABEL_ICON[ service.service ];
 			return { label, icon, value: service.followers };
 		} );
@@ -451,16 +478,20 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
 
-		return videoPlaysData.map( ( item ) => {
-			const detailPage = site ? `/stats/${ query.period }/videodetails/${ site.slug }?post=${ item.post_id }` : null;
+		return videoPlaysData.map( item => {
+			const detailPage = site
+				? `/stats/${ query.period }/videodetails/${ site.slug }?post=${ item.post_id }`
+				: null;
 			return {
 				label: item.title,
 				page: detailPage,
 				value: item.plays,
-				actions: [ {
-					type: 'link',
-					data: item.url
-				} ]
+				actions: [
+					{
+						type: 'link',
+						data: item.url,
+					},
+				],
 			};
 		} );
 	},
@@ -478,7 +509,7 @@ export const normalizers = {
 		const { total_wpcom, total_email } = data;
 		const subscriberData = get( data, [ 'subscribers' ], [] );
 
-		const subscribers = subscriberData.map( ( item ) => {
+		const subscribers = subscriberData.map( item => {
 			return {
 				label: item.label,
 				iconClassName: 'avatar-user',
@@ -486,12 +517,14 @@ export const normalizers = {
 				link: item.url,
 				value: {
 					type: 'relative-date',
-					value: item.date_subscribed
+					value: item.date_subscribed,
 				},
-				actions: [ {
-					type: 'follow',
-					data: item.follow_data ? item.follow_data.params : false
-				} ]
+				actions: [
+					{
+						type: 'follow',
+						data: item.follow_data ? item.follow_data.params : false,
+					},
+				],
 			};
 		} );
 
@@ -508,18 +541,18 @@ export const normalizers = {
 		const total = data.total || 0;
 		let posts = [];
 		if ( data.posts ) {
-			posts = data.posts.map( ( item ) => {
+			posts = data.posts.map( item => {
 				if ( 0 === item.id ) {
 					return {
 						label: 'All Posts',
-						value: item.followers
+						value: item.followers,
 					};
 				}
 				return {
 					label: item.title,
 					link: item.url,
 					labelIcon: 'external',
-					value: item.followers
+					value: item.followers,
 				};
 			} );
 		}
@@ -535,7 +568,7 @@ export const normalizers = {
 
 		let authors = [];
 		if ( data.authors ) {
-			authors = data.authors.map( ( author ) => {
+			authors = data.authors.map( author => {
 				return {
 					label: author.name,
 					value: author.comments,
@@ -546,24 +579,26 @@ export const normalizers = {
 					actions: [
 						{
 							type: 'follow',
-							data: author.follow_data ? author.follow_data.params : false
-						}
-					]
+							data: author.follow_data ? author.follow_data.params : false,
+						},
+					],
 				};
 			} );
 		}
 
 		let posts = [];
 		if ( data.posts ) {
-			posts = data.posts.map( ( post ) => {
+			posts = data.posts.map( post => {
 				return {
 					label: post.name,
 					value: post.comments,
 					page: site ? '/stats/post/' + post.id + '/' + site.slug : null,
-					actions: [ {
-						type: 'link',
-						data: post.link
-					} ]
+					actions: [
+						{
+							type: 'link',
+							data: post.link,
+						},
+					],
 				};
 			} );
 		}
@@ -584,17 +619,19 @@ export const normalizers = {
 
 		let data = [];
 		if ( payload.data ) {
-			data = payload.data.map( ( item ) => {
-				return { period: item[ 0 ], value: item[ 1 ] };
-			} ).slice( Math.max( payload.data.length - 10, 1 ) );
+			data = payload.data
+				.map( item => {
+					return { period: item[ 0 ], value: item[ 1 ] };
+				} )
+				.slice( Math.max( payload.data.length - 10, 1 ) );
 		}
 
 		let pages = [];
 		if ( payload.pages ) {
-			pages = payload.pages.map( ( item ) => {
+			pages = payload.pages.map( item => {
 				return {
 					label: item,
-					link: item
+					link: item,
 				};
 			} );
 		}
@@ -618,27 +655,29 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
 
-		return authorsData.map( ( item ) => {
+		return authorsData.map( item => {
 			const record = {
 				label: item.name,
 				iconClassName: 'avatar-user',
 				icon: parseAvatar( item.avatar ),
 				children: null,
 				value: item.views,
-				className: 'module-content-list-item-large'
+				className: 'module-content-list-item-large',
 			};
 
 			if ( item.posts && item.posts.length > 0 ) {
-				record.children = item.posts.map( ( child ) => {
+				record.children = item.posts.map( child => {
 					return {
 						label: child.title,
 						value: child.views,
 						page: site ? '/stats/post/' + child.id + '/' + site.slug : null,
-						actions: [ {
-							type: 'link',
-							data: child.url
-						} ],
-						children: null
+						actions: [
+							{
+								type: 'link',
+								data: child.url,
+							},
+						],
+						children: null,
 					};
 				} );
 			}
@@ -658,29 +697,29 @@ export const normalizers = {
 			return [];
 		}
 
-		const getTagTypeIcon = ( type ) => {
+		const getTagTypeIcon = type => {
 			return type === 'category' ? 'folder' : type;
 		};
 
-		return data.tags.map( ( item ) => {
+		return data.tags.map( item => {
 			let children;
 			const hasChildren = item.tags.length > 1;
-			const labels = item.tags.map( ( tagItem ) => {
+			const labels = item.tags.map( tagItem => {
 				return {
 					label: tagItem.name,
 					labelIcon: getTagTypeIcon( tagItem.type ),
-					link: hasChildren ? null : tagItem.link
+					link: hasChildren ? null : tagItem.link,
 				};
 			} );
 
 			if ( hasChildren ) {
-				children = item.tags.map( ( tagItem ) => {
+				children = item.tags.map( tagItem => {
 					return {
 						label: tagItem.name,
 						labelIcon: getTagTypeIcon( tagItem.type ),
 						value: null,
 						children: null,
-						link: tagItem.link
+						link: tagItem.link,
 					};
 				} );
 			}
@@ -689,7 +728,7 @@ export const normalizers = {
 				label: labels,
 				link: labels.length > 1 ? null : labels[ 0 ].link,
 				value: item.views,
-				children: children
+				children: children,
 			};
 		} );
 	},
@@ -710,7 +749,7 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
 		const statsData = get( data, dataPath, [] );
 
-		return statsData.map( ( item ) => {
+		return statsData.map( item => {
 			const hasChildren = item.children && item.children.length > 0;
 			const newRecord = {
 				label: item.name,
@@ -718,17 +757,17 @@ export const normalizers = {
 				children: null,
 				link: item.url,
 				icon: item.icon,
-				labelIcon: hasChildren ? null : 'external'
+				labelIcon: hasChildren ? null : 'external',
 			};
 
 			if ( item.children ) {
-				newRecord.children = item.children.map( ( child ) => {
+				newRecord.children = item.children.map( child => {
 					return {
 						label: child.name,
 						value: child.views,
 						children: null,
 						link: child.url,
-						labelIcon: 'external'
+						labelIcon: 'external',
 					};
 				} );
 			}
@@ -754,7 +793,7 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
 		const statsData = get( data, dataPath, [] );
 
-		const parseItem = ( item ) => {
+		const parseItem = item => {
 			let children;
 			if ( item.children && item.children.length > 0 ) {
 				children = item.children.map( parseItem );
@@ -765,7 +804,7 @@ export const normalizers = {
 				value: item.views,
 				link: item.url,
 				labelIcon: children ? null : 'external',
-				children
+				children,
 			};
 
 			if ( item.icon ) {
@@ -775,25 +814,27 @@ export const normalizers = {
 			return record;
 		};
 
-		return statsData.map( ( item ) => {
+		return statsData.map( item => {
 			let actions = [];
 			if (
 				( item.url && -1 !== item.url.indexOf( item.name ) ) ||
 				( ! item.url && item.name === item.group && -1 !== item.name.indexOf( '.' ) )
 			) {
-				actions = [ {
-					type: 'spam',
-					data: {
-						siteID: siteId,
-						domain: item.name
-					}
-				} ];
+				actions = [
+					{
+						type: 'spam',
+						data: {
+							siteID: siteId,
+							domain: item.name,
+						},
+					},
+				];
 			}
 
 			return {
 				...parseItem( { ...item, children: item.results, views: item.total } ),
 				actions,
-				actionMenu: actions.length
+				actionMenu: actions.length,
 			};
 		} );
 	},
@@ -852,13 +893,17 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
 		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
-		const encryptedSearchTerms = get( data, dataPath.concat( [ 'encrypted_search_terms' ] ), false );
+		const encryptedSearchTerms = get(
+			data,
+			dataPath.concat( [ 'encrypted_search_terms' ] ),
+			false
+		);
 
-		const result = searchTerms.map( ( day ) => {
+		const result = searchTerms.map( day => {
 			return {
 				label: day.term,
 				className: 'user-selectable',
-				value: day.views
+				value: day.views,
 			};
 		} );
 
@@ -867,7 +912,7 @@ export const normalizers = {
 				label: translate( 'Unknown Search Terms' ),
 				value: encryptedSearchTerms,
 				link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
-				labelIcon: 'external'
+				labelIcon: 'external',
 			} );
 		}
 
@@ -891,17 +936,21 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const statsData = get( data, [ 'days', startOf, 'downloads' ], [] );
 
-		return statsData.map( ( item ) => {
-			const detailPage = site ? '/stats/' + query.period + '/podcastdownloads/' + site.slug + '?post=' + item.post_id : null;
+		return statsData.map( item => {
+			const detailPage = site
+				? '/stats/' + query.period + '/podcastdownloads/' + site.slug + '?post=' + item.post_id
+				: null;
 			return {
 				label: item.title,
 				page: detailPage,
 				value: item.downloads,
-				actions: [ {
-					type: 'link',
-					data: item.url
-				} ]
+				actions: [
+					{
+						type: 'link',
+						data: item.url,
+					},
+				],
 			};
 		} );
-	}
+	},
 };

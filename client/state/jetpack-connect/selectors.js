@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -19,23 +22,23 @@ const getJetpackSiteByUrl = ( state, url ) => {
 	return site;
 };
 
-const getConnectingSite = ( state ) => {
+const getConnectingSite = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
 };
 
-const getAuthorizationData = ( state ) => {
+const getAuthorizationData = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
 };
 
-const getAuthorizationRemoteQueryData = ( state ) => {
+const getAuthorizationRemoteQueryData = state => {
 	return get( getAuthorizationData( state ), [ 'queryObject' ] );
 };
 
-const getAuthorizationRemoteSite = ( state ) => {
+const getAuthorizationRemoteSite = state => {
 	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
 };
 
-const isRemoteSiteOnSitesList = ( state ) => {
+const isRemoteSiteOnSitesList = state => {
 	const remoteUrl = getAuthorizationRemoteSite( state ),
 		authorizationData = getAuthorizationData( state );
 
@@ -50,11 +53,11 @@ const isRemoteSiteOnSitesList = ( state ) => {
 	return !! getJetpackSiteByUrl( state, remoteUrl );
 };
 
-const getSessions = ( state ) => {
+const getSessions = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
 };
 
-const getSSO = ( state ) => {
+const getSSO = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackSSO' ] );
 };
 
@@ -95,7 +98,7 @@ const getAuthAttempts = ( state, slug ) => {
 	return attemptsData ? attemptsData.attempt || 0 : 0;
 };
 
-const getUserAlreadyConnected = ( state ) => {
+const getUserAlreadyConnected = state => {
 	return get( state, 'jetpackConnectAuthorize.userAlreadyConnected' );
 };
 
@@ -144,11 +147,17 @@ const getJetpackPlanSelected = function( state ) {
 };
 
 const getSiteSelectedPlan = function( state, siteSlug ) {
-	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ siteSlug ];
+	return (
+		state.jetpackConnect.jetpackConnectSelectedPlans &&
+		state.jetpackConnect.jetpackConnectSelectedPlans[ siteSlug ]
+	);
 };
 
 const getGlobalSelectedPlan = function( state ) {
-	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ];
+	return (
+		state.jetpackConnect.jetpackConnectSelectedPlans &&
+		state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ]
+	);
 };
 
 const getSiteIdFromQueryObject = function( state ) {
@@ -178,5 +187,5 @@ export default {
 	getGlobalSelectedPlan,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected
+	getUserAlreadyConnected,
 };

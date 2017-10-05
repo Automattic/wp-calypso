@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -32,16 +35,14 @@ const PurchasesSite = ( {
 	if ( isPlaceholder ) {
 		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
-		items = purchases.map(
-			purchase => (
-				<PurchaseItem
-					key={ purchase.id }
-					slug={ slug }
-					isDisconnectedSite={ ! site }
-					purchase={ purchase }
-				/>
-			)
-		);
+		items = purchases.map( purchase => (
+			<PurchaseItem
+				key={ purchase.id }
+				slug={ slug }
+				isDisconnectedSite={ ! site }
+				purchase={ purchase }
+			/>
+		) );
 	}
 
 	const isJetpack = some( purchases, purchase => isJetpackPlan( purchase ) );
@@ -58,9 +59,9 @@ const PurchasesSite = ( {
 
 			{ items }
 
-			{ ! isPlaceholder && hasLoadedSite && ! site
-				? <PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
-				: null }
+			{ ! isPlaceholder && hasLoadedSite && ! site ? (
+				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
+			) : null }
 		</div>
 	);
 };

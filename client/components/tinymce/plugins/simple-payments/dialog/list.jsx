@@ -1,4 +1,8 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/**
+ * /* eslint-disable wpcalypso/jsx-classname-namespace
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -45,7 +49,7 @@ class ProductList extends Component {
 			return range( 2 ).map( i => <ProductListItemPlaceholder key={ i } /> );
 		}
 
-		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) =>
+		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) => (
 			<ProductListItem
 				key={ paymentId }
 				siteId={ siteId }
@@ -58,16 +62,12 @@ class ProductList extends Component {
 				onSelectedChange={ onSelectedChange }
 				onEditClick={ onEditClick }
 				onTrashClick={ onTrashClick }
-			/>,
-		);
+			/>
+		) );
 	}
 
 	render() {
-		return (
-			<div className="editor-simple-payments-modal__list">
-				{ this.renderListItems() }
-			</div>
-		);
+		return <div className="editor-simple-payments-modal__list">{ this.renderListItems() }</div>;
 	}
 }
 

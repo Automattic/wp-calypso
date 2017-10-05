@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,15 +18,8 @@ import QueryProducts from 'components/data/query-products-list';
 import QuerySites from 'components/data/query-sites';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
-import {
-	fetchByDomain,
-	fetchBySiteId
-} from 'state/google-apps-users/actions';
-import {
-	getByDomain,
-	getBySite,
-	isLoaded
-} from 'state/google-apps-users/selectors';
+import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
+import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
 import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
@@ -32,10 +28,7 @@ import { getProductsList } from 'state/products-list/selectors';
 
 const user = userFactory();
 
-const stores = [
-	DomainsStore,
-	CartStore
-];
+const stores = [ DomainsStore, CartStore ];
 
 function getStateFromStores( props ) {
 	return {
@@ -48,7 +41,7 @@ function getStateFromStores( props ) {
 		sitePlans: props.sitePlans,
 		user: user.get(),
 		googleAppsUsers: props.googleAppsUsers,
-		googleAppsUsersLoaded: props.googleAppsUsersLoaded
+		googleAppsUsersLoaded: props.googleAppsUsersLoaded,
 	};
 }
 
@@ -63,7 +56,7 @@ const EmailData = React.createClass( {
 		selectedSite: PropTypes.object.isRequired,
 		sitePlans: PropTypes.object.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
-		googleAppsUsersLoaded: PropTypes.bool.isRequired
+		googleAppsUsersLoaded: PropTypes.bool.isRequired,
 	},
 
 	componentWillMount() {
@@ -103,10 +96,11 @@ const EmailData = React.createClass( {
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
-					context={ this.props.context } />
+					context={ this.props.context }
+				/>
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -135,7 +129,7 @@ export default connect(
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
-			}
+			},
 		};
 	}
 )( EmailData );

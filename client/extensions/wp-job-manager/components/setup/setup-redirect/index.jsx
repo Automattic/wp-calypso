@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -20,7 +23,7 @@ class SetupRedirect extends Component {
 		showWizard: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
-	}
+	};
 
 	componentWillReceiveProps( { isFetching, showWizard, siteSlug } ) {
 		if ( this.props.isFetching && ! isFetching && showWizard ) {
@@ -35,16 +38,12 @@ class SetupRedirect extends Component {
 			return null;
 		}
 
-		return (
-			<QuerySetupStatus siteId={ siteId } />
-		);
+		return <QuerySetupStatus siteId={ siteId } />;
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		isFetching: isFetchingSetupStatus( state, siteId ),
-		showWizard: shouldShowSetupWizard( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-	} )
-)( SetupRedirect );
+export default connect( ( state, { siteId } ) => ( {
+	isFetching: isFetchingSetupStatus( state, siteId ),
+	showWizard: shouldShowSetupWizard( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
+} ) )( SetupRedirect );

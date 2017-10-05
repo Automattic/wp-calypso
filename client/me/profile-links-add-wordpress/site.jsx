@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -22,7 +25,7 @@ class ProfileLinksAddWordPressSite extends Component {
 		checked: false,
 	};
 
-	onSelect = ( event ) => {
+	onSelect = event => {
 		this.props.onSelect( event, this.getInputName() );
 	};
 
@@ -44,11 +47,9 @@ class ProfileLinksAddWordPressSite extends Component {
 					type="checkbox"
 					name={ this.getInputName() }
 					onChange={ onChange }
-					checked={ checked } />
-				<Site
-					site={ site }
-					indicator={ false }
-					onSelect={ this.onSelect } />
+					checked={ checked }
+				/>
+				<Site site={ site } indicator={ false } onSelect={ this.onSelect } />
 			</li>
 		);
 	}

@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component } from 'react';
+
+import React, { Component } from 'react';
 import Modal from 'react-modal';
 import classnames from 'classnames';
 
@@ -10,30 +13,33 @@ class DialogBase extends Component {
 		baseClassName: 'dialog',
 		isFullScreen: true,
 		autoFocus: true,
-		label: ''
-	}
+		label: '',
+	};
 
 	render() {
 		const { additionalClassNames, baseClassName, isFullScreen } = this.props,
 			contentClassName = baseClassName + '__content',
 			// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 			dialogClassName = classnames( baseClassName, 'card', additionalClassNames ),
-			backdropClassName = classnames(
-				baseClassName + '__backdrop',
-				{ 'is-full-screen': !! isFullScreen },
-			);
+			backdropClassName = classnames( baseClassName + '__backdrop', {
+				'is-full-screen': !! isFullScreen,
+			} );
 
 		return (
 			<Modal
 				isOpen={ this.props.isVisible }
 				onRequestClose={ this._close }
-				closeTimeoutMS= { this.props.leaveTimeout }
-				contentLabel={ this.props.label }
+				closeTimeoutMS={ this.props.leaveTimeout }
+				contentLabel={ this.props.label }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
 				role="dialog"
 			>
-				<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
+				<div
+					className={ classnames( this.props.className, contentClassName ) }
+					ref="content"
+					tabIndex="-1"
+				>
 					{ this.props.children }
 				</div>
 				{ this._renderButtonsBar() }
@@ -65,8 +71,13 @@ class DialogBase extends Component {
 			clickHandler = this._onButtonClick.bind( this, button );
 
 		return (
-			<button key={ button.action } className={ classes }
-					data-e2e-button={ button.action } onClick={ clickHandler } disabled={ !! button.disabled }>
+			<button
+				key={ button.action }
+				className={ classes }
+				data-e2e-button={ button.action }
+				onClick={ clickHandler }
+				disabled={ !! button.disabled }
+			>
 				<span className={ this.props.baseClassName + '__button-label' }>{ button.label }</span>
 			</button>
 		);
@@ -86,20 +97,20 @@ class DialogBase extends Component {
 		return classes;
 	}
 
-	_onButtonClick = ( button ) => {
+	_onButtonClick = button => {
 		if ( button.onClick ) {
 			button.onClick( this._close.bind( this, button.action ) );
 			return;
 		}
 
 		this._close( button.action );
-	}
+	};
 
-	_close = ( action ) => {
+	_close = action => {
 		if ( this.props.onDialogClose ) {
 			this.props.onDialogClose( action );
 		}
-	}
+	};
 }
 
 export default DialogBase;

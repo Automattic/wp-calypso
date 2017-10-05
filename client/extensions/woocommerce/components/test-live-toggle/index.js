@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -17,7 +20,7 @@ class TestLiveToggle extends Component {
 		isTestMode: PropTypes.bool.isRequired,
 		onSelectLive: PropTypes.func.isRequired,
 		onSelectTest: PropTypes.func.isRequired,
-	}
+	};
 
 	render = () => {
 		const { isTestMode, onSelectLive, onSelectTest, translate } = this.props;
@@ -25,25 +28,17 @@ class TestLiveToggle extends Component {
 		return (
 			<div className="test-live-toggle__container">
 				<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
-				<SegmentedControl
-					primary
-				>
-					<ControlItem
-						selected={ isTestMode }
-						onClick={ onSelectTest }
-					>
+				<SegmentedControl primary>
+					<ControlItem selected={ isTestMode } onClick={ onSelectTest }>
 						{ translate( 'Test Mode' ) }
 					</ControlItem>
-					<ControlItem
-						selected={ ! isTestMode }
-						onClick={ onSelectLive }
-					>
+					<ControlItem selected={ ! isTestMode } onClick={ onSelectLive }>
 						{ translate( 'Live Mode' ) }
 					</ControlItem>
 				</SegmentedControl>
 			</div>
 		);
-	}
+	};
 }
 
 export default localize( TestLiveToggle );

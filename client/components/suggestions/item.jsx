@@ -1,12 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 class Item extends PureComponent {
-
 	static propTypes = {
 		label: PropTypes.string.isRequired,
 		hasHighlight: PropTypes.bool,
@@ -37,34 +39,36 @@ class Item extends PureComponent {
 				'is-emphasized': lowercasePart === query,
 			} );
 
-			return <span key={ key } className={ spanClass } >{ part }</span>;
+			return (
+				<span key={ key } className={ spanClass }>
+					{ part }
+				</span>
+			);
 		} );
 	}
 
-	handleMouseDown = ( event ) => {
+	handleMouseDown = event => {
 		event.stopPropagation();
 		event.preventDefault();
 
 		this.props.onMouseDown( this.props.label );
-	}
+	};
 
 	handleMouseOver = () => {
 		this.props.onMouseOver( this.props.label );
-	}
+	};
 
 	render() {
 		const { hasHighlight, label, query } = this.props;
 
-		const className = classNames(
-			'suggestions__item',
-			{ 'has-highlight': hasHighlight }
-		);
+		const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
 
 		return (
 			<span
 				className={ className }
 				onMouseDown={ this.handleMouseDown }
-				onMouseOver={ this.handleMouseOver }>
+				onMouseOver={ this.handleMouseOver }
+			>
 				{ this.createTextWithHighlight( label, query ) }
 			</span>
 		);

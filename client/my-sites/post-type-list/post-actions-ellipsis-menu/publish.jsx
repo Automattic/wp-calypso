@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -24,7 +27,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		canPublish: PropTypes.bool,
-		savePost: PropTypes.func
+		savePost: PropTypes.func,
 	};
 
 	constructor() {
@@ -68,7 +71,7 @@ export default connect(
 			status: post.status,
 			siteId: post.site_ID,
 			postId: post.ID,
-			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' )
+			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
 		};
 	},
 	{ savePost }

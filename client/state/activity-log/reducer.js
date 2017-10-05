@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers } from 'state/utils';
 import { activationRequesting } from './activation/reducer';
 import { logItems } from './log/reducer';

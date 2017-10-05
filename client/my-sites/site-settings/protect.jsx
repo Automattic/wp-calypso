@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -21,7 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
+	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -39,7 +42,7 @@ class Protect extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
-		fields: {}
+		fields: {},
 	};
 
 	handleAddToWhitelist = () => {
@@ -51,7 +54,7 @@ class Protect extends Component {
 		}
 
 		setFieldValue( 'jetpack_protect_global_whitelist', whitelist + this.getIpAddress() );
-	}
+	};
 
 	getIpAddress() {
 		if ( window.app && window.app.clientIp ) {
@@ -74,14 +77,17 @@ class Protect extends Component {
 
 		const whitelist = this.getProtectWhitelist().split( '\n' );
 
-		return includes( whitelist, ipAddress ) || some( whitelist, entry => {
-			if ( entry.indexOf( '-' ) < 0 ) {
-				return false;
-			}
+		return (
+			includes( whitelist, ipAddress ) ||
+			some( whitelist, entry => {
+				if ( entry.indexOf( '-' ) < 0 ) {
+					return false;
+				}
 
-			const range = entry.split( '-' ).map( trim );
-			return includes( range, ipAddress );
-		} );
+				const range = entry.split( '-' ).map( trim );
+				return includes( range, ipAddress );
+			} )
+		);
 	}
 
 	render() {
@@ -92,12 +98,13 @@ class Protect extends Component {
 			protectModuleActive,
 			protectModuleUnavailable,
 			selectedSiteId,
-			translate
+			translate,
 		} = this.props;
 
 		const ipAddress = this.getIpAddress();
 		const isIpWhitelisted = this.isIpAddressWhitelisted();
-		const disabled = isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
+		const disabled =
+			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
 		const protectToggle = (
 			<JetpackModuleToggle
 				siteId={ selectedSiteId }
@@ -108,7 +115,10 @@ class Protect extends Component {
 		);
 
 		return (
-			<FoldableCard className="protect__foldable-card site-settings__foldable-card" header={ protectToggle }>
+			<FoldableCard
+				className="protect__foldable-card site-settings__foldable-card"
+				header={ protectToggle }
+			>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
 				<FormFieldset>
@@ -122,48 +132,48 @@ class Protect extends Component {
 						</div>
 
 						<p>
-							{
-								translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
-									args: {
-										IP: ipAddress || translate( 'Unknown IP address' ),
-									},
-									components: {
-										strong: <strong />,
-										br: <br />,
-									}
-								} )
-							}
+							{ translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
+								args: {
+									IP: ipAddress || translate( 'Unknown IP address' ),
+								},
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							} ) }
 
-							{ ipAddress &&
+							{ ipAddress && (
 								<Button
 									className="protect__add-to-whitelist site-settings__add-to-whitelist"
 									onClick={ this.handleAddToWhitelist }
 									disabled={ disabled || isIpWhitelisted }
 									compact
 								>
-									{ isIpWhitelisted
-										? translate( 'Already in whitelist' )
-										: translate( 'Add to whitelist' )
-									}
+									{ isIpWhitelisted ? (
+										translate( 'Already in whitelist' )
+									) : (
+										translate( 'Add to whitelist' )
+									) }
 								</Button>
-							}
+							) }
 						</p>
 
-						<FormLabel htmlFor="jetpack_protect_global_whitelist">{ translate( 'Whitelisted IP addresses' ) }</FormLabel>
+						<FormLabel htmlFor="jetpack_protect_global_whitelist">
+							{ translate( 'Whitelisted IP addresses' ) }
+						</FormLabel>
 						<FormTextarea
 							id="jetpack_protect_global_whitelist"
 							value={ this.getProtectWhitelist() }
 							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
 							disabled={ disabled }
 							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
-						>
-						</FormTextarea>
+						/>
 						<FormSettingExplanation>
 							{ translate(
 								'You may whitelist an IP address or series of addresses preventing them from ' +
-								'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
-								'To specify a range, enter the low value and high value separated by a dash. ' +
-								'Example: 12.12.12.1-12.12.12.100'
+									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
+									'To specify a range, enter the low value and high value separated by a dash. ' +
+									'Example: 12.12.12.1-12.12.12.100'
 							) }
 						</FormSettingExplanation>
 					</div>
@@ -173,16 +183,18 @@ class Protect extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'protect' );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'protect'
+	);
 
-		return {
-			selectedSiteId,
-			protectModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'protect' ),
-			protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		};
-	}
-)( localize( Protect ) );
+	return {
+		selectedSiteId,
+		protectModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'protect' ),
+		protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+	};
+} )( localize( Protect ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -71,7 +74,8 @@ class SetupWizard extends Component {
 					forwardText={ translate( 'Continue' ) }
 					hideNavigation={ true }
 					steps={ steps }
-					stepName={ stepName } />
+					stepName={ stepName }
+				/>
 			</Main>
 		);
 	}

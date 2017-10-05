@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { numberFormat, localize } from 'i18n-calypso';
@@ -69,11 +72,12 @@ class AuthorCompactProfile extends React.Component {
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
 				{ hasAuthorName &&
-					! hasMatchingAuthorAndSiteNames &&
+				! hasMatchingAuthorAndSiteNames && (
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
 						{ author.name }
-					</ReaderAuthorLink> }
-				{ siteName &&
+					</ReaderAuthorLink>
+				) }
+				{ siteName && (
 					<ReaderSiteStreamLink
 						className="author-compact-profile__site-link"
 						feedId={ feedId }
@@ -81,19 +85,20 @@ class AuthorCompactProfile extends React.Component {
 						post={ post }
 					>
 						{ siteName }
-					</ReaderSiteStreamLink> }
+					</ReaderSiteStreamLink>
+				) }
 
 				<div className="author-compact-profile__follow">
-					{ followCount
-						? <div className="author-compact-profile__follow-count">
-								{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
-									count: followCount,
-									args: {
-										followCount: numberFormat( followCount ),
-									},
-								} ) }
-							</div>
-						: null }
+					{ followCount ? (
+						<div className="author-compact-profile__follow-count">
+							{ this.props.translate( '%(followCount)s follower', '%(followCount)s followers', {
+								count: followCount,
+								args: {
+									followCount: numberFormat( followCount ),
+								},
+							} ) }
+						</div>
+					) : null }
 
 					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
 				</div>

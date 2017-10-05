@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:wporg-data:actions' );
@@ -19,7 +22,7 @@ let _fetching = {};
 
 export default {
 	fetchPluginData: function( pluginSlug ) {
-		return ( dispatch ) => {
+		return dispatch => {
 			if ( _fetching[ pluginSlug ] ) {
 				return;
 			}
@@ -40,9 +43,9 @@ export default {
 					type: WPORG_PLUGIN_DATA_RECEIVE,
 					pluginSlug: pluginSlug,
 					data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
-					error: error
+					error: error,
 				} );
 			} );
-		}
-	}
+		};
+	},
 };

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import cache from './cache/reducer';
 import { combineReducers } from 'state/utils';
 import plugins from './plugins/reducer';

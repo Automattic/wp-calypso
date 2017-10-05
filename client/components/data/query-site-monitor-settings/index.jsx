@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +19,7 @@ class QuerySiteMonitorSettings extends Component {
 		siteId: PropTypes.number.isRequired,
 		// Connected props
 		requestingSiteMonitorSettings: PropTypes.bool,
-		requestSiteMonitorSettings: PropTypes.func
+		requestSiteMonitorSettings: PropTypes.func,
 	};
 
 	componentDidMount() {

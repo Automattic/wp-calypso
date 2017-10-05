@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
@@ -84,7 +87,7 @@ function statusForSite( state = {}, action ) {
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			if ( typeof state[ pluginId ] !== 'undefined' ) {
 				return Object.assign( {}, state, {
-					[ pluginId ]: statusForSitePlugin( state[ pluginId ], action )
+					[ pluginId ]: statusForSitePlugin( state[ pluginId ], action ),
 				} );
 			}
 			return Object.assign( {}, state, { [ pluginId ]: statusForSitePlugin( {}, action ) } );
@@ -118,7 +121,11 @@ function statusForSitePlugin( state = {}, action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE:
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, { status: 'error', action: action.action, error: action.error } );
+			return Object.assign( {}, state, {
+				status: 'error',
+				action: action.action,
+				error: action.error,
+			} );
 		default:
 			return state;
 	}

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { clone, noop } from 'lodash';
 
 function fakeNormalize( post, transforms, callback ) {

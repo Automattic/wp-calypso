@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 
 export class TwitterSharePreview extends PureComponent {
@@ -26,36 +29,24 @@ export class TwitterSharePreview extends PureComponent {
 					</div>
 					<div className="twitter-share-preview__content-part">
 						<div className="twitter-share-preview__profile-line">
-							<a
-								className="twitter-share-preview__profile-name"
-								href={ externalProfileURL }
-							>
+							<a className="twitter-share-preview__profile-name" href={ externalProfileURL }>
 								{ externalName }
 							</a>
-							<a
-								className="twitter-share-preview__profile-handle"
-								href={ externalProfileURL }
-							>
+							<a className="twitter-share-preview__profile-handle" href={ externalProfileURL }>
 								{ externalDisplay }
 							</a>
 						</div>
-						<div className="twitter-share-preview__message">
-							{ message }
-						</div>
+						<div className="twitter-share-preview__message">{ message }</div>
 						<div className="twitter-share-preview__article-url-line">
-							<a className="twitter-share-preview__article-url"
-								href={ articleUrl }>
+							<a className="twitter-share-preview__article-url" href={ articleUrl }>
 								{ articleUrl }
 							</a>
 						</div>
-						{ imageUrl &&
+						{ imageUrl && (
 							<div className="twitter-share-preview__image-wrapper">
-								<img
-									className="twitter-share-preview__image"
-									src={ imageUrl }
-								/>
+								<img className="twitter-share-preview__image" src={ imageUrl } />
 							</div>
-						}
+						) }
 					</div>
 				</div>
 			</div>

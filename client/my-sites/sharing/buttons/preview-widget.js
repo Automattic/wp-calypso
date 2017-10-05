@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import qs from 'querystring';
 import i18n from 'i18n-calypso';
 
@@ -33,5 +36,5 @@ module.exports = {
 		}
 
 		return baseUrl + '?' + qs.stringify( query );
-	}
+	},
 };

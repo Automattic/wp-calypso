@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
 /**

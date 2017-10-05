@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -11,10 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
-import {
-	hasActiveHappychatSession,
-	isHappychatAvailable,
-} from 'state/happychat/selectors';
+import { hasActiveHappychatSession, isHappychatAvailable } from 'state/happychat/selectors';
 
 const JetpackConnectHappychatButton = ( {
 	children,
@@ -37,16 +37,12 @@ const JetpackConnectHappychatButton = ( {
 			borderless={ false }
 		>
 			<HappychatConnection />
-			<Gridicon icon="chat" />
-			{ ' ' }
-			{ translate( 'Get help connecting your site' ) }
+			<Gridicon icon="chat" /> { translate( 'Get help connecting your site' ) }
 		</HappychatButton>
 	);
 };
 
-export default connect(
-	state => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-	} ),
-)( localize( JetpackConnectHappychatButton ) );
+export default connect( state => ( {
+	isChatAvailable: isHappychatAvailable( state ),
+	isChatActive: hasActiveHappychatSession( state ),
+} ) )( localize( JetpackConnectHappychatButton ) );

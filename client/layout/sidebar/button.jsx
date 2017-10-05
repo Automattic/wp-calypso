@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -17,7 +20,7 @@ export default React.createClass( {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		preloadSectionName: PropTypes.string,
-		children: PropTypes.node
+		children: PropTypes.node,
 	},
 
 	_preloaded: false,
@@ -47,5 +50,5 @@ export default React.createClass( {
 				{ this.props.children || this.translate( 'Add' ) }
 			</a>
 		);
-	}
+	},
 } );

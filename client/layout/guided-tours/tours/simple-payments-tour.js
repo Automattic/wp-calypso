@@ -1,26 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
+import { overEvery as and } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	Link,
-	Quit,
-} from 'layout/guided-tours/config-elements';
-import {
-	isNotNewUser,
-} from 'state/ui/guided-tours/contexts';
+import { makeTour, Tour, Step, ButtonRow, Link, Quit } from 'layout/guided-tours/config-elements';
+import { isNotNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
 export const SimplePaymentsTour = makeTour(
@@ -38,22 +30,18 @@ export const SimplePaymentsTour = makeTour(
 			style={ { marginLeft: '22px', zIndex: 'auto' } }
 		>
 			<p>
-				{
-					translate(
-						'Did you know? ' +
+				{ translate(
+					'Did you know? ' +
 						'If your site is on the Premium or Business plan, you can add {{strong}}payment buttons{{/strong}} here!',
-						{
-							components: {
-								strong: <strong />,
-							}
-						}
-					)
-				}
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>
-					{ translate( 'Got it, sounds good!' ) }
-				</Quit>
+				<Quit primary>{ translate( 'Got it, sounds good!' ) }</Quit>
 			</ButtonRow>
 			<Link href="https://en.support.wordpress.com/simple-payments">
 				{ translate( 'Learn more about Simple Payments.' ) }

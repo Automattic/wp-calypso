@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -35,8 +38,8 @@ export class QueryAutomatedTransferEligibility extends Component {
 	}
 }
 
-export const mapDispatchToProps = ( {
+export const mapDispatchToProps = {
 	requestEligibility,
-} );
+};
 
 export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );

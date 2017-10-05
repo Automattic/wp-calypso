@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -13,5 +16,5 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return <ListItemFileDetails { ...this.props } />;
-	}
+	},
 } );

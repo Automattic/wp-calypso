@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -47,13 +50,13 @@ export class EmbedDialog extends React.Component {
 	 *
 	 * @param {object} nextProps The properties that will be received.
 	 */
-	componentWillReceiveProps = ( nextProps ) => {
+	componentWillReceiveProps = nextProps => {
 		this.setState( {
 			embedUrl: nextProps.embedUrl,
 		} );
 	};
 
-	onChangeEmbedUrl = ( event ) => {
+	onChangeEmbedUrl = event => {
 		this.setState( { embedUrl: event.target.value } );
 	};
 
@@ -61,7 +64,7 @@ export class EmbedDialog extends React.Component {
 		this.props.onUpdate( this.state.embedUrl );
 	};
 
-	onKeyDownEmbedUrl = ( event ) => {
+	onKeyDownEmbedUrl = event => {
 		if ( 'Enter' !== event.key ) {
 			return;
 		}
@@ -73,12 +76,10 @@ export class EmbedDialog extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const dialogButtons = [
-			<Button onClick={ this.props.onCancel }>
-				{ translate( 'Cancel' ) }
-			</Button>,
+			<Button onClick={ this.props.onCancel }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.onUpdate }>
 				{ translate( 'Update' ) }
-			</Button>
+			</Button>,
 		];
 
 		return (
@@ -90,9 +91,7 @@ export class EmbedDialog extends React.Component {
 				onCancel={ this.props.onCancel }
 				onClose={ this.props.onCancel }
 			>
-				<h3 className="embed__title">
-					{ translate( 'Embed URL' ) }
-				</h3>
+				<h3 className="embed__title">{ translate( 'Embed URL' ) }</h3>
 
 				<FormTextInput
 					autoFocus={ true }

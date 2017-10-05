@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -59,7 +62,7 @@ class Login extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	componentWillReceiveProps = ( nextProps ) => {
+	componentWillReceiveProps = nextProps => {
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
@@ -70,16 +73,23 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
-			page( login( {
-				isNative: true,
-				// If no notification is sent, the user is using the authenticator for 2FA by default
-				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
+						'none',
+						'authenticator'
+					),
+				} )
+			);
 		} else if ( this.props.isLinking ) {
-			page( login( {
-				isNative: true,
-				socialConnect: true,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+				} )
+			);
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -87,10 +97,12 @@ class Login extends Component {
 
 	handleValid2FACode = () => {
 		if ( this.props.isLinking ) {
-			page( login( {
-				isNative: true,
-				socialConnect: true,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+				} )
+			);
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -135,31 +147,38 @@ class Login extends Component {
 			headerText = translate( 'Connect your %(service)s account.', {
 				args: {
 					service: capitalize( linkingSocialService ),
-				}
+				},
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
 		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
-					clientTitle: oauth2Client.title
+					clientTitle: oauth2Client.title,
 				},
-				comment: "'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')"
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
 			if ( isWooOAuth2Client( oauth2Client ) ) {
-				preHeader = (
-					<Gridicon icon="my-sites" size={ 72 } />
-				);
+				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
 				postHeader = (
 					<p>
-						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
-							components: {
-								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
-									target="_blank" rel="noopener noreferrer" />,
-								br: <br />,
+						{ translate(
+							'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
+							{
+								components: {
+									a: (
+										<a
+											href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									br: <br />,
+								},
 							}
-						} ) }
+						) }
 					</p>
 				);
 			}
@@ -168,9 +187,7 @@ class Login extends Component {
 		return (
 			<div className="login__form-header-wrapper">
 				{ preHeader }
-				<div className="login__form-header">
-					{ headerText }
-				</div>
+				<div className="login__form-header">{ headerText }</div>
 				{ postHeader }
 			</div>
 		);
@@ -210,7 +227,8 @@ class Login extends Component {
 					{ poller }
 					<VerificationCodeForm
 						onSuccess={ this.handleValid2FACode }
-						twoFactorAuthType={ twoFactorAuthType } />
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
 				</div>
 			);
 		}
@@ -225,14 +243,10 @@ class Login extends Component {
 		}
 
 		if ( socialConnect ) {
-			return (
-				<SocialConnectPrompt onSuccess={ this.handleValidLogin } />
-			);
+			return <SocialConnectPrompt onSuccess={ this.handleValidLogin } />;
 		}
 
-		return (
-			<LoginForm onSuccess={ this.handleValidLogin } privateSite={ privateSite } />
-		);
+		return <LoginForm onSuccess={ this.handleValidLogin } privateSite={ privateSite } />;
 	}
 
 	render() {
@@ -251,7 +265,7 @@ class Login extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		redirectTo: getRedirectTo( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
@@ -259,7 +273,8 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
-	} ), {
+	} ),
+	{
 		recordTracksEvent,
 	}
 )( localize( Login ) );

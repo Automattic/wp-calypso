@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcom from 'lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
@@ -10,7 +13,7 @@ import {
 	SITE_SETTINGS_SAVE,
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE
+	SITE_SETTINGS_UPDATE,
 } from 'state/action-types';
 import { normalizeSettings } from './utils';
 
@@ -25,7 +28,7 @@ export function receiveSiteSettings( siteId, settings ) {
 	return {
 		type: SITE_SETTINGS_RECEIVE,
 		siteId,
-		settings
+		settings,
 	};
 }
 
@@ -40,7 +43,7 @@ export function updateSiteSettings( siteId, settings ) {
 	return {
 		type: SITE_SETTINGS_UPDATE,
 		siteId,
-		settings
+		settings,
 	};
 }
 
@@ -52,56 +55,60 @@ export function updateSiteSettings( siteId, settings ) {
  * @return {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_SETTINGS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().settings( siteId )
+		return wpcom
+			.undocumented()
+			.settings( siteId )
 			.then( ( { name, description, settings } ) => {
 				const savedSettings = {
-					...( normalizeSettings( settings ) ),
+					...normalizeSettings( settings ),
 					blogname: name,
-					blogdescription: description
+					blogdescription: description,
 				};
 
 				dispatch( receiveSiteSettings( siteId, savedSettings ) );
 				dispatch( {
 					type: SITE_SETTINGS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId,
-					error
+					error,
 				} );
 			} );
 	};
 }
 
 export function saveSiteSettings( siteId, settings ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().settings( siteId, 'post', settings )
+		return wpcom
+			.undocumented()
+			.settings( siteId, 'post', settings )
 			.then( ( { updated } ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
-					siteId
+					siteId,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId,
-					error
+					error,
 				} );
 			} );
 	};

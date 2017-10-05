@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
@@ -38,8 +41,10 @@ const calculateProgress = progress => {
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
 		// return a weight of 80% attachment, 20% other objects
-		return 80 * attachment.completed / attachment.total +
-			0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) );
+		return (
+			80 * attachment.completed / attachment.total +
+			0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) )
+		);
 	}
 
 	const percentages = Object.keys( progress )
@@ -50,7 +55,8 @@ const calculateProgress = progress => {
 	return 100 * percentages.reduce( sum, 0 ) / percentages.length;
 };
 
-const resourcesRemaining = progress => Object.keys( progress )
+const resourcesRemaining = progress =>
+	Object.keys( progress )
 		.map( k => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
@@ -60,8 +66,7 @@ const hasProgressInfo = progress => {
 		return false;
 	}
 
-	const types = Object
-		.keys( progress )
+	const types = Object.keys( progress )
 		.map( k => progress[ k ] )
 		.filter( ( { total } ) => total > 0 );
 
@@ -87,23 +92,23 @@ export const ImportingPane = React.createClass( {
 			counts: PropTypes.shape( {
 				comments: PropTypes.number,
 				pages: PropTypes.number,
-				posts: PropTypes.number
+				posts: PropTypes.number,
 			} ),
 			errorData: PropTypes.shape( {
 				description: PropTypes.string.isRequired,
-				type: PropTypes.string.isRequired
+				type: PropTypes.string.isRequired,
 			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			site: PropTypes.shape( {
-				slug: PropTypes.string.isRequired
+				slug: PropTypes.string.isRequired,
 			} ),
-			statusMessage: PropTypes.string
+			statusMessage: PropTypes.string,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
-			single_user_site: PropTypes.bool.isRequired
-		} ).isRequired
+			single_user_site: PropTypes.bool.isRequired,
+		} ).isRequired,
 	},
 
 	getErrorMessage( { description } ) {
@@ -117,7 +122,7 @@ export const ImportingPane = React.createClass( {
 	getHeadingText: function() {
 		return translate(
 			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
-			'You can safely navigate away from this page if you need to: we\'ll send you a notification when it\'s done.'
+				"You can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
 	},
 
@@ -134,21 +139,22 @@ export const ImportingPane = React.createClass( {
 		if ( pageCount && postCount ) {
 			return this.translate(
 				'All done! Check out {{a}}Posts{{/a}} or ' +
-				'{{b}}Pages{{/b}} to see your imported content.', {
+					'{{b}}Pages{{/b}} to see your imported content.',
+				{
 					components: {
 						a: postLink,
-						b: pageLink
-					}
+						b: pageLink,
+					},
 				}
 			);
 		}
 
 		if ( pageCount || postCount ) {
 			return this.translate(
-				'All done! Check out {{a}}%(articles)s{{/a}} ' +
-				'to see your imported content.', {
+				'All done! Check out {{a}}%(articles)s{{/a}} ' + 'to see your imported content.',
+				{
 					components: { a: pageCount ? pageLink : postLink },
-					args: { articles: pageCount ? pageText : postText }
+					args: { articles: pageCount ? pageText : postText },
 				}
 			);
 		}
@@ -166,7 +172,7 @@ export const ImportingPane = React.createClass( {
 			'Waiting on %(numResources)s resources to import',
 			{
 				count: numResources,
-				args: { numResources: numberFormat( numResources ) }
+				args: { numResources: numberFormat( numResources ) },
 			}
 		);
 	},
@@ -193,20 +199,14 @@ export const ImportingPane = React.createClass( {
 
 	render: function() {
 		const {
-			importerStatus: {
-				importerId,
-				errorData = {},
-				customData
-			},
+			importerStatus: { importerId, errorData = {}, customData },
 			mapAuthorFor,
-			site: {
-				ID: siteId,
-				name: siteName,
-				single_user_site: hasSingleAuthor
-			}
+			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 		} = this.props;
 
-		const progressClasses = classNames( 'importer__import-progress', { 'is-complete': this.isFinished() } );
+		const progressClasses = classNames( 'importer__import-progress', {
+			'is-complete': this.isFinished(),
+		} );
 
 		let { percentComplete, progress, statusMessage } = this.props.importerStatus;
 		let blockingMessage;
@@ -229,7 +229,7 @@ export const ImportingPane = React.createClass( {
 		return (
 			<div className="importer__importing-pane">
 				{ this.isImporting() && <p>{ this.getHeadingText() }</p> }
-				{ this.isMapping() &&
+				{ this.isMapping() && (
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
@@ -239,21 +239,28 @@ export const ImportingPane = React.createClass( {
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }
 					/>
-				}
-				{ this.isImporting() && (
-					percentComplete >= 0
-						? <ProgressBar className={ progressClasses } value={ percentComplete } />
-						: <div><Spinner className="importer__import-spinner" /><br /></div>
 				) }
+				{ this.isImporting() &&
+					( percentComplete >= 0 ? (
+						<ProgressBar className={ progressClasses } value={ percentComplete } />
+					) : (
+						<div>
+							<Spinner className="importer__import-spinner" />
+							<br />
+						</div>
+					) ) }
 				{ blockingMessage && <div>{ blockingMessage }</div> }
-				<div><p className="importer__status-message">{ statusMessage }</p></div>
+				<div>
+					<p className="importer__status-message">{ statusMessage }</p>
+				</div>
 			</div>
 		);
-	}
+	},
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) => dispatch( mapAuthor( importerId, source, target ) )
+	mapAuthorFor: importerId => ( source, target ) =>
+		dispatch( mapAuthor( importerId, source, target ) ),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( ImportingPane );

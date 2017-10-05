@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -41,8 +44,8 @@ class Promotions extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchPromotions( newSiteId );
@@ -71,7 +74,7 @@ class Promotions extends Component {
 		return (
 			<Main className={ classes }>
 				<SidebarNavigation />
-				<ActionHeader breadcrumbs={ ( <span>{ translate( 'Promotions' ) }</span> ) }>
+				<ActionHeader breadcrumbs={ <span>{ translate( 'Promotions' ) }</span> }>
 					<Button primary href={ getLink( '/store/promotion/:site/', site ) }>
 						{ translate( 'Add promotion' ) }
 					</Button>

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { omit } from 'lodash';
@@ -8,7 +11,7 @@ import { omit } from 'lodash';
 export default class AsyncLoad extends Component {
 	static propTypes = {
 		require: PropTypes.func.isRequired,
-		placeholder: PropTypes.node
+		placeholder: PropTypes.node,
 	};
 
 	constructor() {
@@ -16,7 +19,7 @@ export default class AsyncLoad extends Component {
 
 		this.state = {
 			require: null,
-			component: null
+			component: null,
 		};
 	}
 
@@ -40,7 +43,7 @@ export default class AsyncLoad extends Component {
 
 	require() {
 		const requireFunction = this.props.require;
-		requireFunction( ( component ) => {
+		requireFunction( component => {
 			if ( this.props.require === requireFunction ) {
 				this.setState( { component } );
 			}

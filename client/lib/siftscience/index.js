@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:siftscience' );
@@ -37,5 +40,5 @@ module.exports = {
 				}
 			} );
 		}
-	}
+	},
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { merge, get } from 'lodash';
 
 /**
@@ -24,38 +27,41 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requests = createReducer( {}, {
-	[ SITE_STATS_REQUEST ]: ( state, { siteId, statType, query } ) => {
-		const queryKey = getSerializedStatsQuery( query );
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ statType ]: {
-					[ queryKey ]: { requesting: true, status: 'pending' }
-				}
-			}
-		} );
-	},
-	[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query, date } ) => {
-		const queryKey = getSerializedStatsQuery( query );
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ statType ]: {
-					[ queryKey ]: { requesting: false, status: 'success', date }
-				}
-			}
-		} );
-	},
-	[ SITE_STATS_REQUEST_FAILURE ]: ( state, { siteId, statType, query } ) => {
-		const queryKey = getSerializedStatsQuery( query );
-		return merge( {}, state, {
-			[ siteId ]: {
-				[ statType ]: {
-					[ queryKey ]: { requesting: false, status: 'error' }
-				}
-			}
-		} );
+export const requests = createReducer(
+	{},
+	{
+		[ SITE_STATS_REQUEST ]: ( state, { siteId, statType, query } ) => {
+			const queryKey = getSerializedStatsQuery( query );
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ statType ]: {
+						[ queryKey ]: { requesting: true, status: 'pending' },
+					},
+				},
+			} );
+		},
+		[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query, date } ) => {
+			const queryKey = getSerializedStatsQuery( query );
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ statType ]: {
+						[ queryKey ]: { requesting: false, status: 'success', date },
+					},
+				},
+			} );
+		},
+		[ SITE_STATS_REQUEST_FAILURE ]: ( state, { siteId, statType, query } ) => {
+			const queryKey = getSerializedStatsQuery( query );
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ statType ]: {
+						[ queryKey ]: { requesting: false, status: 'error' },
+					},
+				},
+			} );
+		},
 	}
-} );
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -79,9 +85,9 @@ export function items( state = {}, action ) {
 					...state[ siteId ],
 					[ statType ]: {
 						...get( state, [ siteId, statType ] ),
-						[ queryKey ]: data
-					}
-				}
+						[ queryKey ]: data,
+					},
+				},
 			};
 	}
 
@@ -91,5 +97,5 @@ items.schema = itemSchema;
 
 export default combineReducers( {
 	requests,
-	items
+	items,
 } );

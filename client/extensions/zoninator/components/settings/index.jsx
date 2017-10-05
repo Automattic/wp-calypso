@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -15,11 +18,7 @@ import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryZones from '../data/query-zones';
 
-const Settings = ( {
-	children,
-	siteId,
-	translate,
-} ) => {
+const Settings = ( { children, siteId, translate } ) => {
 	const mainClassName = 'zoninator__main';
 
 	return (
@@ -36,7 +35,4 @@ const connectComponent = connect( state => ( {
 	siteId: getSelectedSiteId( state ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( Settings );
+export default flowRight( connectComponent, localize )( Settings );

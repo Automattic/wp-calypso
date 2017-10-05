@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -31,7 +34,7 @@ const Shipping = ( { className } ) => {
 };
 
 Shipping.propTypes = {
-	className: PropTypes.string
+	className: PropTypes.string,
 };
 
 export default Shipping;

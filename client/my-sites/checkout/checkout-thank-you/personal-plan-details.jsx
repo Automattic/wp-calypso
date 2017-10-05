@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -28,7 +31,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +
-					'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+						'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
 				) }
 			/>
 		</div>
@@ -36,11 +39,8 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 };
 
 PersonalPlanDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [
-		PropTypes.bool,
-		PropTypes.object
-	] ).isRequired,
-	sitePlans: PropTypes.object.isRequired
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
+	sitePlans: PropTypes.object.isRequired,
 };
 
 export default localize( PersonalPlanDetails );

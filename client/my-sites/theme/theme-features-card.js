@@ -1,10 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,12 +28,13 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 			<SectionHeader label={ translate( 'Features' ) } />
 			<Card>
 				<ul className="theme__sheet-features-list">
-					{ features.map( ( { name, slug, term } ) => (
+					{ features.map( ( { name, slug, term } ) => (
 						<li key={ 'theme-features-item-' + slug }>
-							{ ! isWpcomTheme
-								? <a>{ name }</a>
-								: <a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
-						}
+							{ ! isWpcomTheme ? (
+								<a>{ name }</a>
+							) : (
+								<a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
+							) }
 						</li>
 					) ) }
 				</ul>
@@ -39,12 +43,10 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 	);
 };
 
-export default connect(
-	( state, { taxonomies } ) => {
-		const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
-			const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
-			return { name, slug, term };
-		} );
-		return { features };
-	}
-)( localize( ThemeFeaturesCard ) );
+export default connect( ( state, { taxonomies } ) => {
+	const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
+		const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
+		return { name, slug, term };
+	} );
+	return { features };
+} )( localize( ThemeFeaturesCard ) );

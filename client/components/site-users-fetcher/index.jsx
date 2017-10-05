@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { includes, isEqual, omit, partition } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -19,7 +22,7 @@ import pollers from 'lib/data-poller';
  */
 var defaultOptions = {
 	number: 100,
-	offset: 0
+	offset: 0,
 };
 
 module.exports = React.createClass( {
@@ -27,10 +30,7 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		fetchOptions: PropTypes.object.isRequired,
-		exclude: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.number ),
-			PropTypes.func
-		] )
+		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
 	},
 
 	getInitialState: function() {
@@ -91,19 +91,22 @@ module.exports = React.createClass( {
 			// Partition will return an array of two arrays.
 			// users[0] will be a list of the users that were not excluded.
 			// users[1] will be a list of the excluded users.
-			users = partition( users, function( user ) {
-				if ( 'function' === typeof this.props.exclude ) {
-					return ! this.props.exclude( user );
-				}
+			users = partition(
+				users,
+				function( user ) {
+					if ( 'function' === typeof this.props.exclude ) {
+						return ! this.props.exclude( user );
+					}
 
-				return ! includes( this.props.exclude, user.ID );
-			}.bind( this ) );
+					return ! includes( this.props.exclude, user.ID );
+				}.bind( this )
+			);
 		}
 
 		return Object.assign( {}, paginationData, {
 			users: this.props.exclude ? users[ 0 ] : users,
 			fetchOptions: fetchOptions,
-			excludedUsers: this.props.exclude ? users[ 1 ] : []
+			excludedUsers: this.props.exclude ? users[ 1 ] : [],
 		} );
 	},
 
@@ -125,5 +128,5 @@ module.exports = React.createClass( {
 			}
 			UsersActions.fetchUsers( fetchOptions );
 		}, 0 );
-	}
+	},
 } );

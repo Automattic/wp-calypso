@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:paygate' );
@@ -36,15 +39,18 @@ PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
 		return callback( null, window.Paygate );
 	}
 
-	loadScript.loadjQueryDependentScript( paygateUrl, function( error ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	loadScript.loadjQueryDependentScript(
+		paygateUrl,
+		function( error ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		debug( 'Paygate loaded for the first time' );
-		callback( null, window.Paygate );
-	}.bind( this ) );
+			debug( 'Paygate loaded for the first time' );
+			callback( null, window.Paygate );
+		}.bind( this )
+	);
 };
 
 /**

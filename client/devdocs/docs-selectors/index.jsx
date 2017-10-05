@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 
@@ -15,7 +18,7 @@ import DocumentHead from 'components/data/document-head';
 export default class DocsSelectors extends PureComponent {
 	static propTypes = {
 		selector: PropTypes.string,
-		search: PropTypes.string
+		search: PropTypes.string,
 	};
 
 	render() {

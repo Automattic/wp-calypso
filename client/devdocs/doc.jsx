@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -18,11 +21,11 @@ export default class extends React.Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		term: PropTypes.string,
-		sectionId: PropTypes.string
+		sectionId: PropTypes.string,
 	};
 
 	state = {
-		body: ''
+		body: '',
 	};
 
 	timeoutID = null;
@@ -46,14 +49,17 @@ export default class extends React.Component {
 
 	fetch = () => {
 		this.setState( {
-			body: ''
+			body: '',
 		} );
 		this.delayLoadingMessage();
-		DocService.fetch( this.props.path, function( err, body ) {
-			this.setState( {
-				body: ( err || body )
-			} );
-		}.bind( this ) );
+		DocService.fetch(
+			this.props.path,
+			function( err, body ) {
+				this.setState( {
+					body: err || body,
+				} );
+			}.bind( this )
+		);
 	};
 
 	setBodyScrollPosition = () => {
@@ -68,13 +74,16 @@ export default class extends React.Component {
 
 	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
-		this.timeoutID = setTimeout( function() {
-			if ( ! this.state.body ) {
-				this.setState( {
-					body: 'Loading…'
-				} );
-			}
-		}.bind( this ), 1000 );
+		this.timeoutID = setTimeout(
+			function() {
+				if ( ! this.state.body ) {
+					this.setState( {
+						body: 'Loading…',
+					} );
+				}
+			}.bind( this ),
+			1000
+		);
 	};
 
 	clearLoadingMessage = () => {
@@ -85,29 +94,26 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
+		const editURL =
+			encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 		const titleMatches = this.state.body.length && this.state.body.match( /<h1[^>]+>(.+)<\/h1>/ );
 		const title = titleMatches && titleMatches[ 1 ];
 
 		return (
 			<div className="devdocs devdocs__doc">
-				{
-					title
-						? <DocumentHead title={ title } />
-						: null
-
-				}
+				{ title ? <DocumentHead title={ title } /> : null }
 				<CompactCard className="devdocs__doc-header">
 					Path: <code>{ this.props.path }</code>
-					<a href={ editURL } target="_blank" rel="noopener noreferrer">Improve this document on GitHub &rarr;</a>
+					<a href={ editURL } target="_blank" rel="noopener noreferrer">
+						Improve this document on GitHub &rarr;
+					</a>
 				</CompactCard>
 				<div
 					className="devdocs__doc-content"
 					ref="body"
 					dangerouslySetInnerHTML={ //eslint-disable-line react/no-danger
-						{ __html: highlight( this.props.term, this.state.body ) }
-					}
+					{ __html: highlight( this.props.term, this.state.body ) } }
 				/>
 			</div>
 		);

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { reject, isEqual } from 'lodash';
 
 /**
@@ -14,12 +17,15 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( {}, {
-	[ WOOCOMMERCE_REVIEW_REPLIES_UPDATED ]: repliesUpdated,
-	[ WOOCOMMERCE_REVIEW_REPLY_DELETED ]: replyDeleted,
-	[ WOOCOMMERCE_REVIEW_REPLY_UPDATED ]: replyUpdated,
-	[ WOOCOMMERCE_REVIEW_REPLY_CREATED ]: replyCreated,
-} );
+export default createReducer(
+	{},
+	{
+		[ WOOCOMMERCE_REVIEW_REPLIES_UPDATED ]: repliesUpdated,
+		[ WOOCOMMERCE_REVIEW_REPLY_DELETED ]: replyDeleted,
+		[ WOOCOMMERCE_REVIEW_REPLY_UPDATED ]: replyUpdated,
+		[ WOOCOMMERCE_REVIEW_REPLY_CREATED ]: replyCreated,
+	}
+);
 
 export function repliesUpdated( state, action ) {
 	const { reviewId, replies, error } = action;
@@ -62,7 +68,7 @@ export function replyUpdated( state, action ) {
 
 	const repliesForReview = existingReplies[ reviewId ];
 
-	const updatedReplies = repliesForReview.map( ( reviewReply ) => {
+	const updatedReplies = repliesForReview.map( reviewReply => {
 		if ( isEqual( replyId, reviewReply.id ) ) {
 			return reply;
 		}

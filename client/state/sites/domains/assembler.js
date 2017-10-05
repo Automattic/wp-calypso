@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getDomainType } from 'lib/domains/utils';
 import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,7 +19,7 @@ class QueryUsers extends Component {
 		requestUsers: PropTypes.func,
 		siteId: PropTypes.number,
 		userIds: PropTypes.arrayOf( PropTypes.number ),
-	}
+	};
 
 	componentWillMount() {
 		this.request();
@@ -42,7 +45,4 @@ class QueryUsers extends Component {
 	}
 }
 
-export default connect(
-	() => ( {} ),
-	{ requestUsers }
-)( QueryUsers );
+export default connect( () => ( {} ), { requestUsers } )( QueryUsers );

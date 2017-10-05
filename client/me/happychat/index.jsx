@@ -1,6 +1,10 @@
-/*
-	External Deps
-*/
+/**
+ * /*
+ * 	External Deps
+ *
+ * @format
+ */
+
 import React from 'react';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -14,13 +18,9 @@ import controller from 'me/controller';
 import Happychat from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 
-const renderChat = ( context ) => {
+const renderChat = context => {
 	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );
-	renderWithReduxStore(
-		<Happychat />,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	renderWithReduxStore( <Happychat />, document.getElementById( 'primary' ), context.store );
 };
 
 export default () => {

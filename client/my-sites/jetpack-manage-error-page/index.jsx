@@ -1,9 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent } from 'react';
+
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,16 +19,16 @@ import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/sele
 class JetpackManageErrorPage extends PureComponent {
 	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
-		optInManage: 'actionCallbackActivate'
-	}
+		optInManage: 'actionCallbackActivate',
+	};
 
 	actionCallbackActivate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
-	}
+	};
 
 	actionCallbackUpdate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
-	}
+	};
 
 	getSettings() {
 		const { remoteManagementUrl, section, siteSlug, template, translate } = this.props;
@@ -33,27 +36,33 @@ class JetpackManageErrorPage extends PureComponent {
 		const defaults = {
 			updateJetpack: {
 				title: translate( 'Your version of Jetpack is out of date.' ),
-				line: translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version } } ),
+				line: translate( 'Jetpack %(version)s or higher is required to see this page.', {
+					args: { version },
+				} ),
 				action: translate( 'Update Jetpack' ),
 				illustration: null,
 				actionURL: '../../plugins/jetpack/' + siteSlug,
-				version
+				version,
 			},
 			optInManage: {
 				title: translate( 'Looking to manage this site from WordPress.com?' ),
-				line: translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
+				line: translate(
+					'We need you to enable the Manage feature in the Jetpack plugin on your remote site'
+				),
 				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
 				action: translate( 'Enable Jetpack Manage' ),
 				actionURL: remoteManagementUrl + ( section ? '&section=' + section : '' ),
-				actionTarget: '_blank'
+				actionTarget: '_blank',
 			},
 			noDomainsOnJetpack: {
 				title: translate( 'Domains are not available for this site.' ),
-				line: translate( 'You can only purchase domains for sites hosted on WordPress.com at this time.' ),
+				line: translate(
+					'You can only purchase domains for sites hosted on WordPress.com at this time.'
+				),
 				action: translate( 'View Plans' ),
-				actionURL: '/plans/' + ( siteSlug || '' )
+				actionURL: '/plans/' + ( siteSlug || '' ),
 			},
-			'default': {}
+			default: {},
 		};
 		return Object.assign( {}, defaults[ template ] || defaults.default, this.props );
 	}
@@ -61,11 +70,13 @@ class JetpackManageErrorPage extends PureComponent {
 	render() {
 		const settings = this.getSettings();
 		if ( JetpackManageErrorPage.actionCallbacks[ this.props.template ] ) {
-			settings.actionCallback = this[ JetpackManageErrorPage.actionCallbacks[ this.props.template ] ];
+			settings.actionCallback = this[
+				JetpackManageErrorPage.actionCallbacks[ this.props.template ]
+			];
 		}
-		const featureExample = this.props.featureExample
-			? <FeatureExample>{ this.props.featureExample }</FeatureExample>
-			: null;
+		const featureExample = this.props.featureExample ? (
+			<FeatureExample>{ this.props.featureExample }</FeatureExample>
+		) : null;
 
 		return (
 			<div>
@@ -76,9 +87,7 @@ class JetpackManageErrorPage extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId ),
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId )
-	} )
-)( localize( JetpackManageErrorPage ) );
+export default connect( ( state, { siteId } ) => ( {
+	siteSlug: getSiteSlug( state, siteId ),
+	remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
+} ) )( localize( JetpackManageErrorPage ) );

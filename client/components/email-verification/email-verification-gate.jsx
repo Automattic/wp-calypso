@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -19,15 +22,15 @@ export class EmailVerificationGate extends React.Component {
 		noticeStatus: PropTypes.string,
 		//connected
 		userEmail: PropTypes.string,
-		needsVerification: PropTypes.bool
+		needsVerification: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		noticeText: null,
-		noticeStatus: ''
+		noticeStatus: '',
 	};
 
-	handleFocus = ( e ) => {
+	handleFocus = e => {
 		e.target.blur();
 	};
 
@@ -38,10 +41,9 @@ export class EmailVerificationGate extends React.Component {
 					<EmailUnverifiedNotice
 						userEmail={ this.props.userEmail }
 						noticeText={ this.props.noticeText }
-						noticeStatus={ this.props.noticeStatus } />
-					<div className="email-verification-gate__content">
-						{ this.props.children }
-					</div>
+						noticeStatus={ this.props.noticeStatus }
+					/>
+					<div className="email-verification-gate__content">{ this.props.children }</div>
 				</div>
 			);
 		}
@@ -50,12 +52,10 @@ export class EmailVerificationGate extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const user = getCurrentUser( state );
-		return {
-			userEmail: user && user.email,
-			needsVerification: ! isCurrentUserEmailVerified( state )
-		};
-	}
-)( EmailVerificationGate );
+export default connect( state => {
+	const user = getCurrentUser( state );
+	return {
+		userEmail: user && user.email,
+		needsVerification: ! isCurrentUserEmailVerified( state ),
+	};
+} )( EmailVerificationGate );

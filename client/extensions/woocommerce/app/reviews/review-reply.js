@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,12 +19,15 @@ import Button from 'components/button';
 import { decodeEntities, removep } from 'lib/formatting';
 import {
 	deleteReviewReply,
-	updateReviewReply
+	updateReviewReply,
 } from 'woocommerce/state/sites/review-replies/actions';
-import { editReviewReply, clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
+import {
+	editReviewReply,
+	clearReviewReplyEdits,
+} from 'woocommerce/state/ui/review-replies/actions';
 import {
 	getCurrentlyEditingReviewReplyId,
-	getReviewReplyEdits
+	getReviewReplyEdits,
 } from 'woocommerce/state/ui/review-replies/selectors';
 import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
 import Gravatar from './gravatar';
@@ -36,37 +42,37 @@ class ReviewReply extends Component {
 
 	onEdit = () => {
 		const { siteId, reviewId, reply } = this.props;
-		let content = reply.content && reply.content.rendered || '';
+		let content = ( reply.content && reply.content.rendered ) || '';
 		content = removep( decodeEntities( content ) );
 		this.props.editReviewReply( siteId, reviewId, { id: reply.id, content } );
-	}
+	};
 
 	onCancel = () => {
 		const { siteId } = this.props;
 		this.props.clearReviewReplyEdits( siteId );
-	}
+	};
 
-	onTextChange = ( event ) => {
+	onTextChange = event => {
 		const { value } = event.target;
 		const { siteId, reviewId, replyId } = this.props;
 		this.props.editReviewReply( siteId, reviewId, { id: replyId, content: value } );
-	}
+	};
 
 	onDelete = () => {
 		const { siteId, reviewId, replyId, translate } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this reply?' );
-		accept( areYouSure, ( accepted ) => {
+		accept( areYouSure, accepted => {
 			if ( ! accepted ) {
 				return;
 			}
 			this.props.deleteReviewReply( siteId, reviewId, replyId );
 		} );
-	}
+	};
 
 	onSave = () => {
 		const { siteId, reviewId, replyId, replyEdits } = this.props;
 		this.props.updateReviewReply( siteId, reviewId, replyId, replyEdits );
-	}
+	};
 
 	renderReplyActions = () => {
 		const { translate } = this.props;
@@ -82,7 +88,7 @@ class ReviewReply extends Component {
 				</Button>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		const { isEditing } = this.props;
@@ -97,10 +103,7 @@ class ReviewReply extends Component {
 		const { translate, editContent } = this.props;
 		return (
 			<div className="reviews__reply-edit">
-				<textarea
-					onChange={ this.onTextChange }
-					value={ editContent }
-				/>
+				<textarea onChange={ this.onTextChange } value={ editContent } />
 
 				<div className="reviews__reply-edit-buttons">
 					<Button compact onClick={ this.onCancel }>
@@ -117,15 +120,12 @@ class ReviewReply extends Component {
 
 	renderView() {
 		const { reply } = this.props;
-		const content = reply.content && reply.content.rendered || '';
+		const content = ( reply.content && reply.content.rendered ) || '';
 		return (
 			<div className="reviews__reply">
 				<div className="reviews__reply-bar">
 					<div className="reviews__author-gravatar">
-						<Gravatar
-							object={ reply }
-							forType="reply"
-						/>
+						<Gravatar object={ reply } forType="reply" />
 					</div>
 
 					<div className="reviews__info">
@@ -136,7 +136,8 @@ class ReviewReply extends Component {
 					{ this.renderReplyActions() }
 				</div>
 
-				<div className="reviews__reply-content"
+				<div
+					className="reviews__reply-content"
 					dangerouslySetInnerHTML={ { __html: content } } //eslint-disable-line react/no-danger
 					// Sets the rendered comment HTML correctly for display.
 					// Also used for comments in `comment-detail/comment-detail-comment.jsx`
@@ -144,7 +145,6 @@ class ReviewReply extends Component {
 			</div>
 		);
 	}
-
 }
 
 function mapDispatchToProps( dispatch ) {
@@ -159,17 +159,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	( state, props ) => {
-		const reply = getReviewReply( state, props.reviewId, props.replyId );
-		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
-		const replyEdits = getReviewReplyEdits( state );
-		const editContent = replyEdits.content || '';
-		return {
-			reply,
-			isEditing,
-			replyEdits,
-			editContent,
-		};
-	}, mapDispatchToProps
-)( localize( ReviewReply ) );
+export default connect( ( state, props ) => {
+	const reply = getReviewReply( state, props.reviewId, props.replyId );
+	const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+	const replyEdits = getReviewReplyEdits( state );
+	const editContent = replyEdits.content || '';
+	return {
+		reply,
+		isEditing,
+		replyEdits,
+		editContent,
+	};
+}, mapDispatchToProps )( localize( ReviewReply ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Component } from 'react';
@@ -26,8 +29,8 @@ class QueryReaderRelatedPosts extends Component {
 			! nextProps.shouldFetch ||
 			( this.props.siteId === nextProps.siteId &&
 				this.props.postId === nextProps.postId &&
-				this.props.scope === nextProps.scope
-			) ) {
+				this.props.scope === nextProps.scope )
+		) {
 			return;
 		}
 
@@ -44,25 +47,28 @@ QueryReaderRelatedPosts.propTypes = {
 	postId: PropTypes.number,
 	scope: PropTypes.oneOf( [ SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER ] ),
 	shouldFetch: PropTypes.bool,
-	requestRelatedPosts: PropTypes.func
+	requestRelatedPosts: PropTypes.func,
 };
 
 QueryReaderRelatedPosts.defaultProps = {
 	scope: SCOPE_ALL,
-	requestRelatedPosts: () => {}
+	requestRelatedPosts: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const { siteId, postId, scope } = ownProps;
 		return {
-			shouldFetch: shouldFetchRelated( state, siteId, postId, scope )
+			shouldFetch: shouldFetchRelated( state, siteId, postId, scope ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestRelatedPosts
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestRelatedPosts,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderRelatedPosts );
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { partition, sortBy } from 'lodash';
 
 /**
@@ -19,14 +22,13 @@ const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
  * @return {Array}        Sites objects
  */
 export default createSelector(
-	( state ) => {
+	state => {
 		const primarySiteId = getPrimarySiteId( state );
 		const [ primarySite, sites ] = partition( state.sites.items, { ID: primarySiteId } );
 
-		return [
-			...primarySite,
-			...sortByNameAndUrl( sites )
-		].map( site => getSite( state, site.ID ) );
+		return [ ...primarySite, ...sortByNameAndUrl( sites ) ].map( site =>
+			getSite( state, site.ID )
+		);
 	},
-	( state ) => [ state.sites.items, state.currentUser.capabilities ]
+	state => [ state.sites.items, state.currentUser.capabilities ]
 );

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import { updateSettings } from '../helpers';

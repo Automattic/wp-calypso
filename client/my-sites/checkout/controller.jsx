@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -53,27 +56,23 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 		renderWithReduxStore(
-			(
-				<CheckoutData>
-					<Checkout
-						product={ product }
-						productsList={ productsList }
-						purchaseId={ context.params.purchaseId }
-						selectedFeature={ selectedFeature }
-						couponCode={ context.query.code }
-					/>
-				</CheckoutData>
-			),
+			<CheckoutData>
+				<Checkout
+					product={ product }
+					productsList={ productsList }
+					purchaseId={ context.params.purchaseId }
+					selectedFeature={ selectedFeature }
+					couponCode={ context.query.code }
+				/>
+			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 
 		renderWithReduxStore(
-			(
-				<CartData>
-					<SecondaryCart selectedSite={ selectedSite } />
-				</CartData>
-			),
+			<CartData>
+				<SecondaryCart selectedSite={ selectedSite } />
+			</CartData>,
 			document.getElementById( 'secondary' ),
 			context.store
 		);
@@ -91,24 +90,17 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 		renderWithReduxStore(
-			(
-				<CheckoutData>
-					<Checkout
-						reduxStore={ context.store }
-						productsList={ productsList }
-					/>
-				</CheckoutData>
-			),
+			<CheckoutData>
+				<Checkout reduxStore={ context.store } productsList={ productsList } />
+			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 
 		renderWithReduxStore(
-			(
-				<CartData>
-					<SecondaryCart />
-				</CartData>
-			),
+			<CartData>
+				<SecondaryCart />
+			</CartData>,
 			document.getElementById( 'secondary' ),
 			context.store
 		);
@@ -130,18 +122,17 @@ module.exports = {
 		const selectedSite = getSelectedSite( state );
 
 		renderWithReduxStore(
-			(
-				<CheckoutThankYouComponent
-					productsList={ productsList }
-					receiptId={ receiptId }
-					domainOnlySiteFlow={ isEmpty( context.params.site ) }
-					selectedFeature={ context.params.feature }
-					selectedSite={ selectedSite } />
-			),
+			<CheckoutThankYouComponent
+				productsList={ productsList }
+				receiptId={ receiptId }
+				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				selectedFeature={ context.params.feature }
+				selectedSite={ selectedSite }
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	}
+	},
 };

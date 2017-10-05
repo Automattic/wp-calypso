@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	SITE_VOUCHERS_ASSIGN_RECEIVE,
 	SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -22,34 +25,22 @@ import { itemsSchema } from './schema';
  * @return {Object} updated state
  */
 export const items = ( state = {}, action ) => {
-	const {
-		siteId,
-		type,
-		voucher,
-		vouchers,
-		serviceType
-	} = action;
+	const { siteId, type, voucher, vouchers, serviceType } = action;
 
 	switch ( type ) {
 		case SITE_VOUCHERS_ASSIGN_RECEIVE:
-			const serviceVouchers = state[ siteId ]
-				? ( state[ siteId ][ serviceType ] || [] )
-				: [];
+			const serviceVouchers = state[ siteId ] ? state[ siteId ][ serviceType ] || [] : [];
 
 			return Object.assign( {}, state, {
 				[ siteId ]: {
-					[ serviceType ]: serviceVouchers.concat( voucher )
-				}
+					[ serviceType ]: serviceVouchers.concat( voucher ),
+				},
 			} );
 
 		case SITE_VOUCHERS_RECEIVE:
-			return Object.assign(
-				{},
-				state,
-				{
-					[ siteId ]: vouchers
-				}
-			);
+			return Object.assign( {}, state, {
+				[ siteId ]: vouchers,
+			} );
 	}
 
 	return state;
@@ -75,8 +66,8 @@ export const requesting = ( state = {}, { type, siteId } ) => {
 			return Object.assign( {}, state, {
 				[ siteId ]: {
 					getAll: type === SITE_VOUCHERS_REQUEST,
-					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST
-				}
+					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST,
+				},
 			} );
 	}
 
@@ -99,8 +90,8 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 			return Object.assign( {}, state, {
 				[ siteId ]: {
 					getAll: null,
-					assign: null
-				}
+					assign: null,
+				},
 			} );
 
 		case SITE_VOUCHERS_REQUEST_FAILURE:
@@ -108,9 +99,8 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 			return Object.assign( {}, state, {
 				[ siteId ]: {
 					getAll: type === SITE_VOUCHERS_REQUEST_FAILURE ? error : null,
-					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE ? error : null
-				}
-
+					assign: type === SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE ? error : null,
+				},
 			} );
 	}
 
@@ -120,5 +110,5 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 export default combineReducers( {
 	items,
 	requesting,
-	errors
+	errors,
 } );

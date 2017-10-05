@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
@@ -22,13 +25,13 @@ export class TransactionIdFormComponent extends Component {
 	state = {
 		isSubmitting: false,
 		transactionId: '',
-	}
+	};
 
 	submitForm = () => {
 		this.setState( { isSubmitting: true } );
 	};
 
-	onTransactionIdChanged = ( event ) => {
+	onTransactionIdChanged = event => {
 		this.setState( { transactionId: event.target.value } );
 	};
 
@@ -39,36 +42,32 @@ export class TransactionIdFormComponent extends Component {
 
 		return (
 			<div>
-				<h2 className="transaction-id-form__title">
-					{ translate( 'Account recovery' ) }
-				</h2>
+				<h2 className="transaction-id-form__title">{ translate( 'Account recovery' ) }</h2>
 				<p>
 					{ translate(
 						'Please provide the following information to verify your identity. ' +
-						'Without {{strong}}proper validating information{{/strong}}, ' +
-						'we might not be able to help you recover your account. ' +
-						'Read more about the process {{helpLink}}here{{/helpLink}}.',
+							'Without {{strong}}proper validating information{{/strong}}, ' +
+							'we might not be able to help you recover your account. ' +
+							'Read more about the process {{helpLink}}here{{/helpLink}}.',
 						{
 							components: {
 								strong: <strong />,
-								helpLink: <a href={ support.ACCOUNT_RECOVERY } />
-							}
+								helpLink: <a href={ support.ACCOUNT_RECOVERY } />,
+							},
 						}
 					) }
 				</p>
 				<Card>
-					<FormLabel htmlFor="transactionId">
-						{ translate( 'Transaction ID' ) }
-					</FormLabel>
+					<FormLabel htmlFor="transactionId">{ translate( 'Transaction ID' ) }</FormLabel>
 					<p className="transaction-id-form__transaction-id-description">
 						{ translate(
 							'If you have purchased any upgrades on WordPress.com, this number ' +
-							'will be in your receipt from PayPal or in your PayPal account. ' +
-							'{{helpLink}}Need help to find your transaction id?{{/helpLink}}',
+								'will be in your receipt from PayPal or in your PayPal account. ' +
+								'{{helpLink}}Need help to find your transaction id?{{/helpLink}}',
 							{
 								components: {
-									helpLink: <a href={ support.ACCOUNT_RECOVERY } />
-								}
+									helpLink: <a href={ support.ACCOUNT_RECOVERY } />,
+								},
 							}
 						) }
 					</p>
@@ -77,7 +76,8 @@ export class TransactionIdFormComponent extends Component {
 						className="transaction-id-form__transaction-id-input"
 						onChange={ this.onTransactionIdChanged }
 						value={ transactionId }
-						disabled={ isSubmitting } />
+						disabled={ isSubmitting }
+					/>
 
 					<Button
 						className="transaction-id-form__continue-button"

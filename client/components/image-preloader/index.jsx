@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, omit } from 'lodash';
@@ -12,7 +15,7 @@ const LoadStatus = {
 	PENDING: 'PENDING',
 	LOADING: 'LOADING',
 	LOADED: 'LOADED',
-	FAILED: 'FAILED'
+	FAILED: 'FAILED',
 };
 
 export default React.createClass( {
@@ -23,12 +26,12 @@ export default React.createClass( {
 		placeholder: PropTypes.element.isRequired,
 		children: PropTypes.node,
 		onLoad: PropTypes.func,
-		onError: PropTypes.func
+		onError: PropTypes.func,
 	},
 
 	getInitialState() {
 		return {
-			status: LoadStatus.PENDING
+			status: LoadStatus.PENDING,
 		};
 	},
 
@@ -51,7 +54,7 @@ export default React.createClass( {
 
 		this.destroyLoader();
 		this.setState( {
-			status: LoadStatus.LOADING
+			status: LoadStatus.LOADING,
 		} );
 
 		if ( ! src ) {
@@ -109,13 +112,10 @@ export default React.createClass( {
 				children = this.props.children;
 				break;
 
-			default: break;
+			default:
+				break;
 		}
 
-		return (
-			<div className="image-preloader">
-				{ children }
-			</div>
-		);
-	}
+		return <div className="image-preloader">{ children }</div>;
+	},
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -16,19 +19,22 @@ export default React.createClass( {
 	displayName: 'StatsOverviewPlaceholder',
 
 	propTypes: {
-		insights: PropTypes.bool
+		insights: PropTypes.bool,
 	},
 
 	render() {
 		let icon;
 
 		if ( ! this.props.insights ) {
-			icon = <div className="module-header__site-icon"><img width="24" height="24" /></div>;
+			icon = (
+				<div className="module-header__site-icon">
+					<img width="24" height="24" />
+				</div>
+			);
 		}
 
 		return (
 			<Card className="stats-module is-loading">
-
 				<div className="module-header">
 					<h3 className="module-header-title">
 						<a href="#" className="module-header__link">
@@ -46,24 +52,28 @@ export default React.createClass( {
 						isLoading={ true }
 						gridicon="visible"
 						label={ this.translate( 'Views', { context: 'noun' } ) }
-						value={ null } />
+						value={ null }
+					/>
 					<StatsTab
 						isLoading={ true }
 						gridicon="user"
 						label={ this.translate( 'Visitors', { context: 'noun' } ) }
-						value={ null } />
+						value={ null }
+					/>
 					<StatsTab
 						isLoading={ true }
 						gridicon="star"
 						label={ this.translate( 'Likes', { context: 'noun' } ) }
-						value={ null } />
+						value={ null }
+					/>
 					<StatsTab
 						isLoading={ true }
 						gridicon="comment"
 						label={ this.translate( 'Comments', { context: 'noun' } ) }
-						value={ null } />
+						value={ null }
+					/>
 				</StatsTabs>
 			</Card>
 		);
-	}
+	},
 } );

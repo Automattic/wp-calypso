@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -37,17 +40,17 @@ export const CommentDetailPost = ( {
 					<Gravatar user={ author } />
 				</div>
 				<div className="comment-detail__post-info">
-					{ parentCommentAuthorDisplayName &&
+					{ parentCommentAuthorDisplayName && (
 						<span>
 							<Emojify>
-								{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
+								{ translate( '%(authorName)s:', {
+									args: { authorName: parentCommentAuthorDisplayName },
+								} ) }
 							</Emojify>
 						</span>
-					}
+					) }
 					<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ onClick }>
-						<Emojify>
-							{ parentCommentContent }
-						</Emojify>
+						<Emojify>{ parentCommentContent }</Emojify>
 					</a>
 				</div>
 			</div>
@@ -58,17 +61,15 @@ export const CommentDetailPost = ( {
 		<div className="comment-detail__post">
 			<SiteIcon siteId={ siteId } size={ 24 } />
 			<div className="comment-detail__post-info">
-				{ postAuthorDisplayName &&
+				{ postAuthorDisplayName && (
 					<span>
 						<Emojify>
 							{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
 						</Emojify>
 					</span>
-				}
+				) }
 				<a href={ postUrl } onClick={ onClick }>
-					<Emojify>
-						{ postTitle || translate( 'Untitled' ) }
-					</Emojify>
+					<Emojify>{ postTitle || translate( 'Untitled' ) }</Emojify>
 				</a>
 			</div>
 		</div>

@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PROMOTIONS_PAGE_SET } from 'woocommerce/state/action-types';
 
 const initialState = {
 	currentPage: 1,
@@ -16,9 +17,8 @@ export default createReducer( initialState, {
 } );
 
 function promotionsPageSet( state, action ) {
-	const currentPage = ( action.currentPage > 0 ? action.currentPage : initialState.currentPage );
-	const perPage = ( action.perPage > 0 ? action.perPage : initialState.perPage );
+	const currentPage = action.currentPage > 0 ? action.currentPage : initialState.currentPage;
+	const perPage = action.perPage > 0 ? action.perPage : initialState.perPage;
 
 	return { perPage, currentPage };
 }
-

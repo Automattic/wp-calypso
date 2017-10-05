@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
@@ -46,5 +49,5 @@ export default {
 	'portfolio-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
-	'oauth2-user': UserSignupComponent
+	'oauth2-user': UserSignupComponent,
 };

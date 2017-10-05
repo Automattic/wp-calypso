@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactor from 'debug';
 
 const debug = debugFactor( 'woocommerce:action-list' );
@@ -8,10 +11,7 @@ const debug = debugFactor( 'woocommerce:action-list' );
 /**
  * Internal dependencies
  */
-import {
-	actionListStepNext,
-	actionListAnnotate,
-} from 'woocommerce/state/action-list/actions';
+import { actionListStepNext, actionListAnnotate } from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,

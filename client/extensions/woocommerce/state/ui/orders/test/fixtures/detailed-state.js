@@ -1,3 +1,4 @@
+/** @format */
 export const order = {
 	id: 40,
 	status: 'completed',
@@ -64,9 +65,9 @@ export const state = {
 						},
 						items: {
 							40: order,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			ui: {
 				orders: {
@@ -76,20 +77,20 @@ export const state = {
 							changes: {
 								billing: {
 									first_name: 'Joan',
-								}
+								},
 							},
 						},
 						list: {
 							currentPage: 2,
 							currentSearch: 'example',
-						}
+						},
 					},
 					234: {
 						edits: {},
 						list: {
 							currentPage: 5,
 							currentSearch: 'test',
-						}
+						},
 					},
 					345: {
 						edits: {
@@ -97,13 +98,13 @@ export const state = {
 							changes: {
 								billing: {
 									email: 'test@example.com',
-								}
+								},
 							},
 						},
 						list: {
 							currentPage: 2,
 							currentSearch: 'example',
-						}
+						},
 					},
 				},
 			},

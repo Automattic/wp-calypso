@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -21,5 +24,5 @@ export default React.createClass( {
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);
-	}
+	},
 } );

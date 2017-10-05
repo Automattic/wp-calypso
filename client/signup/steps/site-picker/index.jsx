@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 
 /**
@@ -14,45 +17,40 @@ import StepWrapper from 'signup/step-wrapper';
 class SitePicker extends Component {
 	componentWillMount() {
 		this.state = {
-			siteSlug: null
+			siteSlug: null,
 		};
 	}
 
-	handleSiteSelect = ( siteSlug ) => {
+	handleSiteSelect = siteSlug => {
 		this.setState( {
-			siteSlug
+			siteSlug,
 		} );
 	};
 
-	filterSites = ( site ) => {
+	filterSites = site => {
 		return site.capabilities.manage_options && ! site.jetpack;
 	};
 
 	renderScreen() {
 		return (
 			<Card className="site-picker__wrapper">
-				<SiteSelector
-					filter={ this.filterSites }
-					onSiteSelect={ this.handleSiteSelect }
-				/>
+				<SiteSelector filter={ this.filterSites } onSiteSelect={ this.handleSiteSelect } />
 			</Card>
 		);
 	}
 
 	render() {
 		if ( this.state.siteSlug ) {
-			const {
-				stepSectionName,
-				stepName,
-				goToStep,
-			} = this.props;
+			const { stepSectionName, stepName, goToStep } = this.props;
 
-			return <SitePickerSubmit
-				siteSlug={ this.state.siteSlug }
-				stepSectionName={ stepSectionName }
-				stepName={ stepName }
-				goToStep={ goToStep }
-			/>;
+			return (
+				<SitePickerSubmit
+					siteSlug={ this.state.siteSlug }
+					stepSectionName={ stepSectionName }
+					stepName={ stepName }
+					goToStep={ goToStep }
+				/>
+			);
 		}
 
 		return (
@@ -63,7 +61,8 @@ class SitePicker extends Component {
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderScreen() } />
+				stepContent={ this.renderScreen() }
+			/>
 		);
 	}
 }

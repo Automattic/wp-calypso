@@ -1,12 +1,15 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcom from 'lib/wp';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
-	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS
+	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -21,7 +24,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 	return {
 		type: DOMAINS_SUGGESTIONS_RECEIVE,
 		queryObject,
-		suggestions
+		suggestions,
 	};
 }
 
@@ -35,23 +38,27 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
  * @returns {Function}                                      Action thunk
  */
 export function requestDomainsSuggestions( queryObject ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: DOMAINS_SUGGESTIONS_REQUEST,
-			queryObject
+			queryObject,
 		} );
-		return wpcom.domains().suggestions( queryObject ).then( ( suggestions ) => {
-			dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
-			dispatch( {
-				type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-				queryObject
+		return wpcom
+			.domains()
+			.suggestions( queryObject )
+			.then( suggestions => {
+				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
+				dispatch( {
+					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
+					queryObject,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
+					queryObject,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
-				queryObject,
-				error
-			} );
-		} );
 	};
 }

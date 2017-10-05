@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +28,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import WebPreview from 'components/web-preview';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
@@ -48,7 +51,7 @@ class StatsPostDetail extends Component {
 	};
 
 	state = {
-		showPreview: false
+		showPreview: false,
 	};
 
 	goBack = () => {
@@ -56,7 +59,7 @@ class StatsPostDetail extends Component {
 		const defaultBack = '/stats/' + pathParts[ pathParts.length - 1 ];
 
 		page( this.props.context.prevPath || defaultBack );
-	}
+	};
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
@@ -64,15 +67,15 @@ class StatsPostDetail extends Component {
 
 	openPreview = () => {
 		this.setState( {
-			showPreview: true
+			showPreview: true,
 		} );
-	}
+	};
 
 	closePreview = () => {
 		this.setState( {
-			showPreview: false
+			showPreview: false,
 		} );
-	}
+	};
 
 	render() {
 		const {
@@ -85,7 +88,7 @@ class StatsPostDetail extends Component {
 			translate,
 			siteSlug,
 			showViewLink,
-			previewUrl
+			previewUrl,
 		} = this.props;
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
@@ -97,7 +100,7 @@ class StatsPostDetail extends Component {
 		}
 
 		if ( ! postOnRecord && ! isRequestingPost ) {
-			title = translate( 'We don\'t have that post on record yet.' );
+			title = translate( "We don't have that post on record yet." );
 		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
@@ -123,13 +126,14 @@ class StatsPostDetail extends Component {
 					actionIcon={ showViewLink ? 'visible' : null }
 					actionText={ showViewLink ? actionLabel : null }
 					actionOnClick={ showViewLink ? this.openPreview : null }
-					>
+				>
 					{ title }
 				</HeaderCake>
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
-				{ ! isLoading && countViews === 0 &&
+				{ ! isLoading &&
+				countViews === 0 && (
 					<EmptyContent
 						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
@@ -139,9 +143,10 @@ class StatsPostDetail extends Component {
 						illustration="/calypso/images/stats/illustration-stats.svg"
 						illustrationWidth={ 150 }
 					/>
-				}
+				) }
 
-				{ ! isLoading && countViews > 0 &&
+				{ ! isLoading &&
+				countViews > 0 && (
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
 
@@ -165,7 +170,7 @@ class StatsPostDetail extends Component {
 
 						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
-				}
+				) }
 
 				<WebPreview
 					showPreview={ this.state.showPreview }
@@ -174,35 +179,28 @@ class StatsPostDetail extends Component {
 					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
 				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>
-						{ translate( 'Edit' ) }
-					</Button>
+					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
 				</WebPreview>
 			</Main>
 		);
 	}
 }
 
-const connectComponent = connect(
-	( state, { postId } ) => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isPreviewable = isSitePreviewable( state, siteId );
+const connectComponent = connect( ( state, { postId } ) => {
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isPreviewable = isSitePreviewable( state, siteId );
 
-		return {
-			post: getSitePost( state, siteId, postId ),
-			isRequestingPost: isRequestingSitePost( state, siteId, postId ),
-			countViews: getPostStat( state, siteId, postId, 'views' ),
-			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
-			siteSlug: getSiteSlug( state, siteId ),
-			showViewLink: ! isJetpack && isPreviewable,
-			previewUrl: getPostPreviewUrl( state, siteId, postId ),
-			siteId,
-		};
-	}
-);
+	return {
+		post: getSitePost( state, siteId, postId ),
+		isRequestingPost: isRequestingSitePost( state, siteId, postId ),
+		countViews: getPostStat( state, siteId, postId, 'views' ),
+		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
+		siteSlug: getSiteSlug( state, siteId ),
+		showViewLink: ! isJetpack && isPreviewable,
+		previewUrl: getPostPreviewUrl( state, siteId, postId ),
+		siteId,
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetail );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import qs from 'querystring';
 
 /**
@@ -54,7 +57,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, localeQueryParam ) )
+		query: qs.stringify( Object.assign( query, localeQueryParam ) ),
 	} );
 }
 
@@ -73,7 +76,7 @@ export function injectLocalization( wpcom ) {
 
 		request: function( params, callback ) {
 			return originalRequest( addLocaleQueryParam( params ), callback );
-		}
+		},
 	} );
 }
 

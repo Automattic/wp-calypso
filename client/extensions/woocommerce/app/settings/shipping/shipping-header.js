@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,8 +20,8 @@ import ShippingSettingsSaveButton from './save-button';
 
 const ShippingHeader = ( { translate, site } ) => {
 	const breadcrumbs = [
-		( <a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
-		( <span>{ translate( 'Shipping' ) }</span> ),
+		<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
+		<span>{ translate( 'Shipping' ) }</span>,
 	];
 	return (
 		<div>

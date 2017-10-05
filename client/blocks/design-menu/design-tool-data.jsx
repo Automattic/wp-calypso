@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -37,14 +40,16 @@ export default function designTool( Component ) {
 		},
 
 		getUpdatedCustomizationsForKey( id, customizations ) {
-			const updatedCustomizations = { [ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ) };
+			const updatedCustomizations = {
+				[ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ),
+			};
 			return Object.assign( {}, this.props.customizations, updatedCustomizations );
 		},
 
 		buildOnChangeFor( id ) {
 			return customizations => {
 				const newCustomizations = this.getUpdatedCustomizationsForKey( id, customizations );
-				debug( `changed customizations for "${id}" to`, newCustomizations );
+				debug( `changed customizations for "${ id }" to`, newCustomizations );
 				return this.props.updateCustomizations( this.props.selectedSiteId, newCustomizations );
 			};
 		},
@@ -71,13 +76,17 @@ export default function designTool( Component ) {
 		},
 
 		getChildProps() {
-			return Object.assign( {}, this.getDefaultChildProps(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			return Object.assign(
+				{},
+				this.getDefaultChildProps(),
+				this.getCustomizationsForKey( this.props.previewDataKey )
+			);
 		},
 
 		render() {
 			const props = this.getChildProps();
 			return <Component { ...props } />;
-		}
+		},
 	} );
 
 	function mapStateToProps( state ) {

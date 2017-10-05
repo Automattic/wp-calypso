@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -22,7 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
+	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
@@ -30,7 +33,7 @@ class AfterTheDeadline extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
-		fields: {}
+		fields: {},
 	};
 
 	static propTypes = {
@@ -41,7 +44,7 @@ class AfterTheDeadline extends Component {
 		fields: PropTypes.object,
 	};
 
-	onChangeIgnoredPhrases = ( phrases ) => {
+	onChangeIgnoredPhrases = phrases => {
 		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
 	};
 
@@ -51,7 +54,7 @@ class AfterTheDeadline extends Component {
 			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
-			moduleUnavailable
+			moduleUnavailable,
 		} = this.props;
 		return (
 			<CompactFormToggle
@@ -69,24 +72,22 @@ class AfterTheDeadline extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>
-					{ translate( 'Proofreading' ) }
-				</FormLegend>
+				<FormLegend>{ translate( 'Proofreading' ) }</FormLegend>
 				<FormSettingExplanation>
 					{ translate( 'Automatically proofread content when:' ) }
 				</FormSettingExplanation>
 
-				{
-					this.renderToggle( 'onpublish', ! afterTheDeadlineModuleActive, translate(
-						'Posts or pages are first published'
-					) )
-				}
+				{ this.renderToggle(
+					'onpublish',
+					! afterTheDeadlineModuleActive,
+					translate( 'Posts or pages are first published' )
+				) }
 
-				{
-					this.renderToggle( 'onupdate', ! afterTheDeadlineModuleActive, translate(
-						'Posts or pages are updated'
-					) )
-				}
+				{ this.renderToggle(
+					'onupdate',
+					! afterTheDeadlineModuleActive,
+					translate( 'Posts or pages are updated' )
+				) }
 			</FormFieldset>
 		);
 	}
@@ -96,18 +97,18 @@ class AfterTheDeadline extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>
-					{ translate( 'Automatic Language Detection' ) }
-				</FormLegend>
+				<FormLegend>{ translate( 'Automatic Language Detection' ) }</FormLegend>
 				<FormSettingExplanation>
-					{ translate( 'The proofreader supports English, French, German, Portuguese and Spanish.' ) }
+					{ translate(
+						'The proofreader supports English, French, German, Portuguese and Spanish.'
+					) }
 				</FormSettingExplanation>
 
-				{
-					this.renderToggle( 'guess_lang', ! afterTheDeadlineModuleActive, translate(
-						'Use automatically detected language to proofread posts and pages'
-					) )
-				}
+				{ this.renderToggle(
+					'guess_lang',
+					! afterTheDeadlineModuleActive,
+					translate( 'Use automatically detected language to proofread posts and pages' )
+				) }
 			</FormFieldset>
 		);
 	}
@@ -117,38 +118,70 @@ class AfterTheDeadline extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>
-					{ translate( 'English Options' ) }
-				</FormLegend>
+				<FormLegend>{ translate( 'English Options' ) }</FormLegend>
 				<FormSettingExplanation>
-					{ translate( 'Enable proofreading for the following grammar and style rules when writing posts and pages:' ) }
+					{ translate(
+						'Enable proofreading for the following grammar and style rules when writing posts and pages:'
+					) }
 				</FormSettingExplanation>
 
-				{ this.renderToggle( 'Bias Language', ! afterTheDeadlineModuleActive, translate( 'Bias Language' ) ) }
+				{ this.renderToggle(
+					'Bias Language',
+					! afterTheDeadlineModuleActive,
+					translate( 'Bias Language' )
+				) }
 				{ this.renderToggle( 'Cliches', ! afterTheDeadlineModuleActive, translate( 'Clichés' ) ) }
-				{ this.renderToggle( 'Complex Expression', ! afterTheDeadlineModuleActive, translate( 'Complex Phrases' ) ) }
-				{ this.renderToggle( 'Diacritical Marks', ! afterTheDeadlineModuleActive, translate( 'Diacritical Marks' ) ) }
-				{ this.renderToggle( 'Double Negative', ! afterTheDeadlineModuleActive, translate( 'Double Negatives' ) ) }
-				{ this.renderToggle( 'Hidden Verbs', ! afterTheDeadlineModuleActive, translate( 'Hidden Verbs' ) ) }
-				{ this.renderToggle( 'Jargon Language', ! afterTheDeadlineModuleActive, translate( 'Jargon' ) ) }
-				{ this.renderToggle( 'Passive voice', ! afterTheDeadlineModuleActive, translate( 'Passive Voice' ) ) }
-				{ this.renderToggle( 'Phrases to Avoid', ! afterTheDeadlineModuleActive, translate( 'Phrases to Avoid' ) ) }
-				{ this.renderToggle( 'Redundant Expression', ! afterTheDeadlineModuleActive, translate( 'Redundant Phrases' ) ) }
+				{ this.renderToggle(
+					'Complex Expression',
+					! afterTheDeadlineModuleActive,
+					translate( 'Complex Phrases' )
+				) }
+				{ this.renderToggle(
+					'Diacritical Marks',
+					! afterTheDeadlineModuleActive,
+					translate( 'Diacritical Marks' )
+				) }
+				{ this.renderToggle(
+					'Double Negative',
+					! afterTheDeadlineModuleActive,
+					translate( 'Double Negatives' )
+				) }
+				{ this.renderToggle(
+					'Hidden Verbs',
+					! afterTheDeadlineModuleActive,
+					translate( 'Hidden Verbs' )
+				) }
+				{ this.renderToggle(
+					'Jargon Language',
+					! afterTheDeadlineModuleActive,
+					translate( 'Jargon' )
+				) }
+				{ this.renderToggle(
+					'Passive voice',
+					! afterTheDeadlineModuleActive,
+					translate( 'Passive Voice' )
+				) }
+				{ this.renderToggle(
+					'Phrases to Avoid',
+					! afterTheDeadlineModuleActive,
+					translate( 'Phrases to Avoid' )
+				) }
+				{ this.renderToggle(
+					'Redundant Expression',
+					! afterTheDeadlineModuleActive,
+					translate( 'Redundant Phrases' )
+				) }
 			</FormFieldset>
 		);
 	}
 
 	renderIgnoredPhrasesSection() {
 		const { afterTheDeadlineModuleActive, fields, moduleUnavailable, translate } = this.props;
-		const ignoredPhrases = fields.ignored_phrases
-			? fields.ignored_phrases.split( ',' )
-			: [];
+		const ignoredPhrases = fields.ignored_phrases ? fields.ignored_phrases.split( ',' ) : [];
 
 		return (
 			<FormFieldset>
-				<FormLegend>
-					{ translate( 'Ignored Phrases' ) }
-				</FormLegend>
+				<FormLegend>{ translate( 'Ignored Phrases' ) }</FormLegend>
 
 				<TokenField
 					onChange={ this.onChangeIgnoredPhrases }
@@ -165,7 +198,7 @@ class AfterTheDeadline extends Component {
 			isSavingSettings,
 			moduleUnavailable,
 			selectedSiteId,
-			translate
+			translate,
 		} = this.props;
 
 		const atdToggle = (
@@ -178,13 +211,20 @@ class AfterTheDeadline extends Component {
 		);
 
 		return (
-			<FoldableCard className="composing__foldable-card site-settings__foldable-card" header={ atdToggle }>
+			<FoldableCard
+				className="composing__foldable-card site-settings__foldable-card"
+				header={ atdToggle }
+			>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
 				<div className="composing__module-settings site-settings__child-settings">
 					<div className="composing__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/spelling-and-grammar/" icon target="_blank">
+							<ExternalLink
+								href="https://jetpack.com/support/spelling-and-grammar/"
+								icon
+								target="_blank"
+							>
 								{ translate( 'Learn more about After the Deadline.' ) }
 							</ExternalLink>
 						</InfoPopover>
@@ -200,16 +240,22 @@ class AfterTheDeadline extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'after-the-deadline' );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'after-the-deadline'
+	);
 
-		return {
+	return {
+		selectedSiteId,
+		afterTheDeadlineModuleActive: !! isJetpackModuleActive(
+			state,
 			selectedSiteId,
-			afterTheDeadlineModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'after-the-deadline' ),
-			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		};
-	}
-)( localize( AfterTheDeadline ) );
+			'after-the-deadline'
+		),
+		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+	};
+} )( localize( AfterTheDeadline ) );

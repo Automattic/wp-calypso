@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
@@ -12,12 +15,7 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	NOT_SUBMITTED,
-	SUBMITTING,
-	SUBMIT_FAILURE,
-	SUBMITTED,
-} from './constants';
+import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 
 export const isSessionEligible = createReducer( false, {
 	[ NPS_SURVEY_SET_ELIGIBILITY ]: ( state, action ) => action.isSessionPicked,

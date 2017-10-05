@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import update from 'react-addons-update';
 import {
 	assign,
@@ -55,7 +58,7 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY
+	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
 
 /**
@@ -97,7 +100,11 @@ function add( newCartItem ) {
  * @returns {Boolean} whether or not the item should replace the cart
  */
 function cartItemShouldReplaceCart( cartItem, cart ) {
-	if ( isRenewal( cartItem ) && ! isPrivacyProtection( cartItem ) && ! isDomainRedemption( cartItem ) ) {
+	if (
+		isRenewal( cartItem ) &&
+		! isPrivacyProtection( cartItem ) &&
+		! isDomainRedemption( cartItem )
+	) {
 		// adding a renewal replaces the cart unless it is a privacy protection
 		return true;
 	}
@@ -170,7 +177,13 @@ function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
-	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
+	return uniq(
+		flatten(
+			dependentProducts.concat(
+				dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) )
+			)
+		)
+	);
 }
 
 /**
@@ -180,7 +193,7 @@ function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
  * @returns {Object[]} the list of items in the shopping cart as `CartItemValue` objects
  */
 function getAll( cart ) {
-	return cart && cart.products || [];
+	return ( cart && cart.products ) || [];
 }
 
 /**
@@ -247,15 +260,16 @@ function hasTld( cart, tld ) {
 }
 
 function getTlds( cart ) {
-	return uniq( map( getDomainRegistrations( cart ), function( cartItem ) {
-		return trimStart( getDomainRegistrationTld( cartItem ), '.' );
-	} ) );
+	return uniq(
+		map( getDomainRegistrations( cart ), function( cartItem ) {
+			return trimStart( getDomainRegistrationTld( cartItem ), '.' );
+		} )
+	);
 }
 
 function getDomainRegistrationTld( cartItem ) {
 	if ( ! isDomainRegistration( cartItem ) ) {
-		throw new Error( 'This function only works on domain registration cart ' +
-											'items.' );
+		throw new Error( 'This function only works on domain registration cart ' + 'items.' );
 	}
 
 	return '.' + tail( cartItem.meta.split( '.' ) ).join( '.' );
@@ -361,7 +375,7 @@ function planItem( productSlug, isFreeTrial = false ) {
 
 	return {
 		product_slug: productSlug,
-		free_trial: isFreeTrial
+		free_trial: isFreeTrial,
 	};
 }
 
@@ -409,10 +423,13 @@ function businessPlan( slug, properties ) {
 function domainItem( productSlug, domain, source ) {
 	var extra = source ? { extra: { source: source } } : undefined;
 
-	return Object.assign( {
-		product_slug: productSlug,
-		meta: domain
-	}, extra );
+	return Object.assign(
+		{
+			product_slug: productSlug,
+			meta: domain,
+		},
+		extra
+	);
 }
 
 function themeItem( themeSlug, source ) {
@@ -420,8 +437,8 @@ function themeItem( themeSlug, source ) {
 		product_slug: 'premium_theme',
 		meta: themeSlug,
 		extra: {
-			source: source
-		}
+			source: source,
+		},
 	};
 }
 
@@ -432,11 +449,10 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ),
-		{
-			is_domain_registration: true,
-			...( properties.extra ? { extra: properties.extra } : {} ),
-		} );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), {
+		is_domain_registration: true,
+		...( properties.extra ? { extra: properties.extra } : {} ),
+	} );
 }
 
 /**
@@ -494,10 +510,13 @@ function googleAppsExtraLicenses( properties ) {
 
 function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
-	return flow.apply( null, googleAppsItems.map( function( item ) {
-		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-		return add( item )
-	} ) );
+	return flow.apply(
+		null,
+		googleAppsItems.map( function( item ) {
+			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
+			return add( item );
+		} )
+	);
 }
 
 function hasGoogleApps( cart ) {
@@ -506,7 +525,7 @@ function hasGoogleApps( cart ) {
 
 function customDesignItem() {
 	return {
-		product_slug: 'custom-design'
+		product_slug: 'custom-design',
 	};
 }
 
@@ -518,31 +537,31 @@ function guidedTransferItem() {
 
 function noAdsItem() {
 	return {
-		product_slug: 'no-adverts/no-adverts.php'
+		product_slug: 'no-adverts/no-adverts.php',
 	};
 }
 
 function videoPressItem() {
 	return {
-		product_slug: 'videopress'
+		product_slug: 'videopress',
 	};
 }
 
 function unlimitedSpaceItem() {
 	return {
-		product_slug: 'unlimited_space'
+		product_slug: 'unlimited_space',
 	};
 }
 
 function unlimitedThemesItem() {
 	return {
-		product_slug: 'unlimited_themes'
+		product_slug: 'unlimited_themes',
 	};
 }
 
 function spaceUpgradeItem( slug ) {
 	return {
-		product_slug: slug
+		product_slug: slug,
 	};
 }
 
@@ -675,12 +694,14 @@ function getRenewalItemFromProduct( product, properties ) {
  * @returns {Object} a CartItem object
  */
 function getRenewalItemFromCartItem( cartItem, properties ) {
-	return merge( {}, cartItem, { extra: {
-		purchaseId: properties.id,
-		purchaseDomain: properties.domain,
-		purchaseType: 'renewal',
-		includedDomain: properties.includedDomain
-	} } );
+	return merge( {}, cartItem, {
+		extra: {
+			purchaseId: properties.id,
+			purchaseDomain: properties.domain,
+			purchaseType: 'renewal',
+			includedDomain: properties.includedDomain,
+		},
+	} );
 }
 
 /**
@@ -708,7 +729,7 @@ function getDomainRegistrationsWithoutPrivacy( cart ) {
 	return getDomainRegistrations( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: 'private_whois'
+			product_slug: 'private_whois',
 		} );
 	} );
 }
@@ -722,9 +743,12 @@ function getDomainRegistrationsWithoutPrivacy( cart ) {
  * @returns {Function} the function that adds/removes privacy protections from the shopping cart
  */
 function changePrivacyForDomains( cart, domainItems, changeFunction ) {
-	return flow.apply( null, domainItems.map( function( item ) {
-		return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
-	} ) );
+	return flow.apply(
+		null,
+		domainItems.map( function( item ) {
+			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
+		} )
+	);
 }
 
 function addPrivacyToAllDomains( cart ) {
@@ -772,7 +796,7 @@ function isNextDomainFree( cart ) {
 function isDomainBeingUsedForPlan( cart, domain ) {
 	if ( cart && domain && hasPlan( cart ) ) {
 		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-			domainProduct = ( domainProducts.shift() || {} );
+			domainProduct = domainProducts.shift() || {};
 		return domain === domainProduct.meta;
 	}
 
@@ -780,15 +804,18 @@ function isDomainBeingUsedForPlan( cart, domain ) {
 }
 
 function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestionOrCartItem ) {
-	return withPlansOnly &&
+	return (
+		withPlansOnly &&
 		// not free or a cart item
 		( isDomainRegistration( suggestionOrCartItem ) ||
 			isDomainMapping( suggestionOrCartItem ) ||
-			( suggestionOrCartItem.domain_name && ! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
-		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
-		( ! isNextDomainFree( cart ) ) && // domain credit
-		( ! hasPlan( cart ) ) && // already a plan in cart
-		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
+			( suggestionOrCartItem.domain_name &&
+				! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
+		! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) && // a plan in cart
+		! isNextDomainFree( cart ) && // domain credit
+		! hasPlan( cart ) && // already a plan in cart
+		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) )
+	); // site has a plan
 }
 
 function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
@@ -820,7 +847,10 @@ function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 function hasStaleItem( cart ) {
 	return some( getAll( cart ), function( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
-		return ( cartItem.time_added_to_cart && cartItem.time_added_to_cart * 1000 < Date.now() - ( 10 * 60 * 1000 ) );
+		return (
+			cartItem.time_added_to_cart &&
+			cartItem.time_added_to_cart * 1000 < Date.now() - 10 * 60 * 1000
+		);
 	} );
 }
 
@@ -883,5 +913,5 @@ module.exports = {
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
 	videoPressItem,
-	hasStaleItem
+	hasStaleItem,
 };

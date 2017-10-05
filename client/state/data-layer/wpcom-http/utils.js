@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import schemaValidator from 'is-my-json-valid';
 import { get, identity, noop } from 'lodash';
 

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -30,7 +33,9 @@ class SidebarNavigation extends React.Component {
 					<Gridicon icon="chevron-left" />
 					{ this.props.children }
 					<div>
-						<p className={ 'current-section__' + this.props.sectionName + '-title' }>{ this.props.sectionTitle }</p>
+						<p className={ 'current-section__' + this.props.sectionName + '-title' }>
+							{ this.props.sectionTitle }
+						</p>
 						<h1 className="current-section__section-title">{ this.props.title }</h1>
 					</div>
 				</a>
@@ -49,7 +54,7 @@ SidebarNavigation.propTypes = {
 
 export default connect(
 	state => ( {
-		title: getDocumentHeadTitle( state )
+		title: getDocumentHeadTitle( state ),
 	} ),
 	{ setLayoutFocus }
 )( SidebarNavigation );

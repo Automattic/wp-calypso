@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -16,7 +19,7 @@ class EditorRevisions extends Component {
 	showRevisionsNestedSidebar = () => {
 		this.props.selectRevision( null );
 		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
-	}
+	};
 
 	render() {
 		const { adminUrl, revisions, translate } = this.props;
@@ -33,13 +36,10 @@ class EditorRevisions extends Component {
 					onClick={ this.showRevisionsNestedSidebar }
 				>
 					<Gridicon icon="history" size={ 18 } />
-					{ translate(
-						'%(revisions)d revision',
-						'%(revisions)d revisions', {
-							count: revisions.length,
-							args: { revisions: revisions.length },
-						}
-					) }
+					{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
+						count: revisions.length,
+						args: { revisions: revisions.length },
+					} ) }
 				</button>
 			);
 		}
@@ -55,13 +55,10 @@ class EditorRevisions extends Component {
 				aria-label={ translate( 'Open list of revisions' ) }
 			>
 				<Gridicon icon="history" size={ 18 } />
-				{ translate(
-					'%(revisions)d revision',
-					'%(revisions)d revisions', {
-						count: revisions.length,
-						args: { revisions: revisions.length },
-					}
-				) }
+				{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
+					count: revisions.length,
+					args: { revisions: revisions.length },
+				} ) }
 			</a>
 		);
 	}

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { fill } from 'lodash';
 
 /**
@@ -75,15 +78,8 @@ function productsRequestSuccess( state, action ) {
 
 function calculatePromotions( coupons, products ) {
 	// Only calculate if coupons and products are all loaded.
-	if (
-		coupons &&
-		products &&
-		-1 === coupons.indexOf( null ) &&
-		-1 === products.indexOf( null )
-	) {
-		const saleProducts = products.filter(
-			( product ) => '' !== product.sale_price
-		);
+	if ( coupons && products && -1 === coupons.indexOf( null ) && -1 === products.indexOf( null ) ) {
+		const saleProducts = products.filter( product => '' !== product.sale_price );
 
 		const productPromotions = saleProducts.map( createPromotionFromProduct );
 		const couponPromotions = coupons.map( createPromotionFromCoupon );
@@ -146,4 +142,3 @@ function compareDateStrings( aString, bString ) {
 	// Neither have a date, so they're equal.
 	return 0;
 }
-

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import Shortcode from 'lib/shortcode';
 import { deserialize as _recurse } from '../';
 import createElementFromString from '../create-element-from-string';
@@ -52,10 +55,7 @@ function parseAsElement( node, _parsed ) {
  * @return {Object}         Object of all detected values
  */
 export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
-	return [
-		parseAsShortcode,
-		parseAsElement
-	].reduce( ( memo, parse ) => {
+	return [ parseAsShortcode, parseAsElement ].reduce( ( memo, parse ) => {
 		return Object.assign( memo, parse( node, _parsed ) );
 	}, {} );
 }

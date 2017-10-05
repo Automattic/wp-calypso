@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -22,7 +25,9 @@ import {
 } from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
-	let props = {}, url, text;
+	let props = {},
+		url,
+		text;
 
 	if ( ! selectedSite ) {
 		return <span />;

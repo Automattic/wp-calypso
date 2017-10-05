@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import page from 'page';
 
@@ -32,7 +35,10 @@ const Edit = React.createClass( {
 
 		return (
 			<Main className="domain-management-edit">
-				<Header onClick={ this.goToDomainManagement } selectedDomainName={ this.props.selectedDomainName }>
+				<Header
+					onClick={ this.goToDomainManagement }
+					selectedDomainName={ this.props.selectedDomainName }
+				>
 					{ this.props.translate( 'Domain Settings' ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
@@ -66,16 +72,18 @@ const Edit = React.createClass( {
 			return <MaintenanceCard { ...this.props } />;
 		}
 
-		return <Details
-			domain={ domain }
-			selectedSite={ this.props.selectedSite }
-			settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
-		/>;
+		return (
+			<Details
+				domain={ domain }
+				selectedSite={ this.props.selectedSite }
+				settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
+			/>
+		);
 	},
 
 	goToDomainManagement() {
 		page( paths.domainManagementList( this.props.selectedSite.slug ) );
-	}
+	},
 } );
 
 export default localize( Edit );

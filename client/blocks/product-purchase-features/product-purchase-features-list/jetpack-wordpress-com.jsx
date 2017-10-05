@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -17,11 +20,11 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Automatic Updates' ) }
 				description={ translate(
 					'Keep your plugins securely updated and manage your site from ' +
-					'{{a}}mobile apps{{/a}}.',
+						'{{a}}mobile apps{{/a}}.',
 					{
 						components: {
-							a: <a href="https://apps.wordpress.com/" />
-						}
+							a: <a href="https://apps.wordpress.com/" />,
+						},
 					}
 				) }
 				buttonText={ translate( 'Configure auto updates' ) }

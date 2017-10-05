@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,12 +18,14 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getStripeSampleStatementDescriptor, hasStripeKeyPairForMode } from './payment-method-stripe-utils.js';
+import {
+	getStripeSampleStatementDescriptor,
+	hasStripeKeyPairForMode,
+} from './payment-method-stripe-utils.js';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
 class PaymentMethodStripeKeyBasedDialog extends Component {
-
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		method: PropTypes.shape( {
@@ -60,25 +65,23 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 			);
 		}
 
-		return (
-			<div className="stripe__method-edit-header">
-				{ translate( 'Manage Stripe' ) }
-			</div>
-		);
-	}
+		return <div className="stripe__method-edit-header">{ translate( 'Manage Stripe' ) }</div>;
+	};
 
 	onSelectLive = () => {
 		this.props.onEditField( { target: { name: 'testmode', value: 'no' } } );
-	}
+	};
 
 	onSelectTest = () => {
 		this.props.onEditField( { target: { name: 'testmode', value: 'yes' } } );
-	}
+	};
 
 	renderModePromptAndKeyFields = () => {
 		const { method, translate } = this.props;
 		const secretPlaceholder = translate( 'Enter your secret key from your Stripe.com account' );
-		const publishablePlaceholder = translate( 'Enter your publishable key from your Stripe.com account' );
+		const publishablePlaceholder = translate(
+			'Enter your publishable key from your Stripe.com account'
+		);
 
 		let keys = [];
 
@@ -95,7 +98,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 					label: translate( 'Live Publishable Key' ),
 					placeholder: publishablePlaceholder,
 					value: method.settings.publishable_key.value,
-				}
+				},
 			];
 		} else {
 			keys = [
@@ -110,7 +113,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 					label: translate( 'Test Publishable Key' ),
 					placeholder: publishablePlaceholder,
 					value: method.settings.test_publishable_key.value,
-				}
+				},
 			];
 		}
 
@@ -130,15 +133,15 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 				/>
 			</div>
 		);
-	}
+	};
 
 	onSelectAuthOnly = () => {
 		this.props.onEditField( { target: { name: 'capture', value: 'no' } } );
-	}
+	};
 
 	onSelectCapture = () => {
 		this.props.onEditField( { target: { name: 'capture', value: 'yes' } } );
-	}
+	};
 
 	renderMoreSettings = () => {
 		const { domain, method, translate } = this.props;
@@ -152,44 +155,43 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 					onSelectCapture={ this.onSelectCapture }
 				/>
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Descriptor' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Descriptor' ) }</FormLabel>
 					<FormTextInput
 						name="statement_descriptor"
 						onChange={ this.props.onEditField }
 						value={ method.settings.statement_descriptor.value }
-						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) } />
+						placeholder={ translate( 'e.g. %(sampleDescriptor)s', { args: { sampleDescriptor } } ) }
+					/>
 					<FormSettingExplanation>
-						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
+						{ translate(
+							"Appears on your customer's credit card statement. 22 characters maximum"
+						) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="stripe__method-edit-field-container">
-					<FormLabel>
-						{ translate( 'Use Apple Pay' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Use Apple Pay' ) }</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
 						name="apple_pay"
-						onChange={ this.props.onEditField } />
+						onChange={ this.props.onEditField }
+					/>
 					<span>
 						{ translate(
-							'By using Apple Pay you agree to Stripe and ' +
-							'Apple\'s terms of service'
+							'By using Apple Pay you agree to Stripe and ' + "Apple's terms of service"
 						) }
 					</span>
 				</FormFieldset>
 			</div>
 		);
-	}
+	};
 
-	onDone = ( e ) => {
+	onDone = e => {
 		if ( hasStripeKeyPairForMode( this.props.method ) ) {
 			this.props.onDone( e );
 		} else {
 			this.setState( { highlightEmptyRequiredFields: true } );
 		}
-	}
+	};
 
 	getButtons = () => {
 		const { method, onCancel, onUserRequestsConnectFlow, translate } = this.props;
@@ -201,7 +203,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 				action: 'switch',
 				label: <span>{ translate( 'I want to use Stripe Connect instead' ) }</span>,
 				onClick: onUserRequestsConnectFlow,
-				additionalClassNames: 'payments__method-stripe-force-flow is-borderless'
+				additionalClassNames: 'payments__method-stripe-force-flow is-borderless',
 			} );
 		}
 
@@ -212,18 +214,19 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 			disabled: ! hasStripeKeyPairForMode( method ),
 			label: translate( 'Done' ),
 			onClick: this.onDone,
-			isPrimary: true
+			isPrimary: true,
 		} );
 
 		return buttons;
-	}
+	};
 
 	render() {
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.getButtons() }
-				isVisible>
+				isVisible
+			>
 				{ this.renderHeading() }
 				{ this.renderModePromptAndKeyFields() }
 				{ this.renderMoreSettings() }

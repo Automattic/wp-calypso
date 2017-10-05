@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -55,11 +58,9 @@ export const CommentDetailHeader = ( {
 	const handleFullHeaderClick = isBulkEdit ? toggleSelected : toggleExpanded;
 
 	return (
-		<div
-			className={ classes }
-			onClick={ isExpanded ? noop : handleFullHeaderClick }
-		>
-			{ isExpanded && ! isEditMode &&
+		<div className={ classes } onClick={ isExpanded ? noop : handleFullHeaderClick }>
+			{ isExpanded &&
+			! isEditMode && (
 				<CommentDetailActions
 					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
@@ -70,73 +71,63 @@ export const CommentDetailHeader = ( {
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
-			}
+			) }
 
-			{ isExpanded && isEditMode &&
+			{ isExpanded &&
+			isEditMode && (
 				<div className="comment-detail__header-edit-mode">
 					<div className="comment-detail__header-edit-title">
 						<Gridicon icon="pencil" />
 						<span>{ translate( 'Edit Comment' ) }</span>
 					</div>
-					<Button
-						borderless
-						className="comment-detail__action-collapse"
-						onClick={ toggleEditMode }
-					>
+					<Button borderless className="comment-detail__action-collapse" onClick={ toggleEditMode }>
 						<Gridicon icon="cross" />
 					</Button>
 				</div>
-			}
+			) }
 
-			{ ! isExpanded &&
+			{ ! isExpanded && (
 				<div className="comment-detail__header-content">
 					<div className="comment-detail__author-preview">
-						{ isBulkEdit &&
+						{ isBulkEdit && (
 							<label className="comment-detail__checkbox">
 								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
 							</label>
-						}
+						) }
 						<div className="comment-detail__author-avatar">
-							{ 'comment' === commentType &&
-								<Gravatar user={ author } />
-							}
-							{ 'comment' !== commentType &&
-								<Gridicon icon="link" size={ 24 } />
-							}
+							{ 'comment' === commentType && <Gravatar user={ author } /> }
+							{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
 						</div>
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
 								<strong>
-									<Emojify>
-										{ authorDisplayName }
-									</Emojify>
+									<Emojify>{ authorDisplayName }</Emojify>
 								</strong>
 								<span>
-									<Emojify>
-										{ urlToDomainAndPath( authorUrl ) }
-									</Emojify>
+									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
 								</span>
 							</div>
 							<div className="comment-detail__author-info-element">
 								<Emojify>
-									{ translate( 'on %(postTitle)s', { args: {
-										postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-									} } ) }
+									{ translate( 'on %(postTitle)s', {
+										args: {
+											postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+										},
+									} ) }
 								</Emojify>
 							</div>
 						</div>
 					</div>
 					<AutoDirection>
 						<div className="comment-detail__comment-preview">
-							<Emojify>
-								{ decodeEntities( stripHTML( commentContent ) ) }
-							</Emojify>
+							<Emojify>{ decodeEntities( stripHTML( commentContent ) ) }</Emojify>
 						</div>
 					</AutoDirection>
 				</div>
-			}
+			) }
 
-			{ ! isBulkEdit && ! isEditMode &&
+			{ ! isBulkEdit &&
+			! isEditMode && (
 				<Button
 					borderless
 					className="comment-detail__action-collapse"
@@ -145,7 +136,7 @@ export const CommentDetailHeader = ( {
 				>
 					<Gridicon icon="chevron-down" />
 				</Button>
-			}
+			) }
 		</div>
 	);
 };

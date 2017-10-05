@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -24,9 +27,7 @@ const PluginSectionsCustom = ( { plugin, translate } ) => {
 			<div className="plugin-sections__header">
 				<SectionNav selectedText={ translate( 'Description' ) }>
 					<NavTabs>
-						<NavItem selected>
-							{ translate( 'Description' ) }
-						</NavItem>
+						<NavItem selected>{ translate( 'Description' ) }</NavItem>
 					</NavTabs>
 				</SectionNav>
 			</div>

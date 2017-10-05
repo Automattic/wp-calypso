@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -37,7 +40,8 @@ class SubscriptionSettings extends React.Component {
 			<Button
 				className="subscription-settings"
 				href={ this.getLink() }
-				onClick={ this.props.onClick }>
+				onClick={ this.props.onClick }
+			>
 				{ this.props.translate( 'Payment Settings' ) }
 			</Button>
 		);

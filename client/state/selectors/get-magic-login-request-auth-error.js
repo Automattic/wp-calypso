@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 export default function getMagicLoginRequestAuthError( state ) {

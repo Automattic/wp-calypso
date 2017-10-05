@@ -1,139 +1,142 @@
 /**
  * Module variables
+ *
+ * @format
  */
+
 const sections = [
 	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
 		group: 'sites',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'my-sites/customize',
 		group: 'sites',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'paladin',
 		paths: [ '/paladin' ],
 		module: 'my-sites/paladin',
 		group: 'sites',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',
 		group: 'me',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'me/account',
 		group: 'me',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',
 		group: 'me',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'purchases',
 		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'me/purchases',
 		group: 'me',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'me/notification-settings',
 		group: 'me',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
 		group: 'sites',
-		secondary: true
+		secondary: true,
 	},
 	{
 		name: 'people',
 		paths: [ '/people' ],
 		module: 'my-sites/people',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'plugins',
 		paths: [ '/plugins' ],
 		module: 'my-sites/plugins',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'posts-pages',
 		paths: [ '/pages' ],
 		module: 'my-sites/pages',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'posts-pages',
 		paths: [ '/posts' ],
 		module: 'my-sites/posts',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'settings-writing',
 		paths: [ '/settings/writing', '/settings/taxonomies' ],
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'settings-traffic',
 		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
 		module: 'my-sites/site-settings/settings-traffic',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'my-sites/site-settings/settings-security',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'sharing',
 		paths: [ '/sharing' ],
 		module: 'my-sites/sharing',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'jetpack-connect',
@@ -156,7 +159,7 @@ const sections = [
 		paths: [ '/stats' ],
 		module: 'my-sites/stats',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -168,7 +171,7 @@ const sections = [
 		secondary: true,
 		group: 'sites',
 		isomorphic: true,
-		title: 'Themes'
+		title: 'Themes',
 	},
 	{
 		name: 'theme',
@@ -178,48 +181,48 @@ const sections = [
 		secondary: false,
 		group: 'sites',
 		isomorphic: true,
-		title: 'Themes'
+		title: 'Themes',
 	},
 	{
 		name: 'domains',
 		paths: [ '/domains' ],
 		module: 'my-sites/domains',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'my-sites/checkout',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'plans',
 		paths: [ '/plans' ],
 		module: 'my-sites/plans',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
-		enableLoggedOut: true
+		enableLoggedOut: true,
 	},
 	{
 		name: 'ads',
 		paths: [ '/ads' ],
 		module: 'my-sites/ads',
 		secondary: true,
-		group: 'sites'
+		group: 'sites',
 	},
 	{
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
-		enableLoggedOut: true
-	}
+		enableLoggedOut: true,
+	},
 ];
 
 sections.push( {
@@ -228,7 +231,7 @@ sections.push( {
 	module: 'post-editor',
 	group: 'editor',
 	secondary: true,
-	css: 'post-editor'
+	css: 'post-editor',
 } );
 
 sections.push( {
@@ -253,7 +256,7 @@ sections.push( {
 	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 	module: 'reader/full-post',
 	secondary: false,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -261,7 +264,7 @@ sections.push( {
 	paths: [ '/recommendations/posts' ],
 	module: 'reader/recommendations',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -269,7 +272,7 @@ sections.push( {
 	paths: [ '/recommendations' ],
 	module: 'reader/recommendations',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -277,7 +280,7 @@ sections.push( {
 	paths: [ '/discover' ],
 	module: 'reader/discover',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -285,7 +288,7 @@ sections.push( {
 	paths: [ '/following' ],
 	module: 'reader/following',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -293,7 +296,7 @@ sections.push( {
 	paths: [ '/tags', '/tag' ],
 	module: 'reader/tag-stream',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -301,7 +304,7 @@ sections.push( {
 	paths: [ '/activities' ],
 	module: 'reader/liked-stream',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -309,7 +312,7 @@ sections.push( {
 	paths: [ '/read/search' ],
 	module: 'reader/search',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -317,7 +320,7 @@ sections.push( {
 	paths: [ '/read/list' ],
 	module: 'reader/list',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -325,7 +328,7 @@ sections.push( {
 	paths: [ '/read/conversations' ],
 	module: 'reader/conversations',
 	secondary: true,
-	group: 'reader'
+	group: 'reader',
 } );
 
 sections.push( {
@@ -334,7 +337,7 @@ sections.push( {
 	module: 'me/help',
 	secondary: true,
 	enableLoggedOut: true,
-	group: 'me'
+	group: 'me',
 } );
 
 sections.push( {
@@ -352,7 +355,7 @@ sections.push( {
 	paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 	module: 'auth',
 	secondary: false,
-	enableLoggedOut: true
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -360,7 +363,7 @@ sections.push( {
 	paths: [ '/types' ],
 	module: 'my-sites/types',
 	secondary: true,
-	group: 'sites'
+	group: 'sites',
 } );
 
 sections.push( {
@@ -368,7 +371,7 @@ sections.push( {
 	paths: [ '/me/chat' ],
 	module: 'me/happychat',
 	group: 'me',
-	secondary: true
+	secondary: true,
 } );
 
 sections.push( {
@@ -376,7 +379,7 @@ sections.push( {
 	paths: [ '/comments' ],
 	module: 'my-sites/comments',
 	group: 'sites',
-	secondary: true
+	secondary: true,
 } );
 
 sections.push( {
@@ -384,7 +387,7 @@ sections.push( {
 	paths: [ '/view' ],
 	module: 'my-sites/preview',
 	group: 'sites',
-	secondary: true
+	secondary: true,
 } );
 
 sections.push( {
@@ -393,7 +396,7 @@ sections.push( {
 	module: 'my-sites/domains/domain-management/domain-connect',
 	enableLoggedOut: false,
 	secondary: false,
-	isomorphic: false
+	isomorphic: false,
 } );
 
 module.exports = sections;

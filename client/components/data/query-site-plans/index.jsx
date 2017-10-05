@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +16,6 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 
 class QuerySitePlans extends Component {
-
 	constructor( props ) {
 		super( props );
 		this.requestPlans = this.requestPlans.bind( this );
@@ -30,9 +32,11 @@ class QuerySitePlans extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingSitePlans ||
+		if (
+			nextProps.requestingSitePlans ||
 			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
+			this.props.siteId === nextProps.siteId
+		) {
 			return;
 		}
 		this.requestPlans( nextProps );
@@ -46,22 +50,25 @@ class QuerySitePlans extends Component {
 QuerySitePlans.propTypes = {
 	siteId: PropTypes.number,
 	requestingPlans: PropTypes.bool,
-	fetchSitePlans: PropTypes.func
+	fetchSitePlans: PropTypes.func,
 };
 
 QuerySitePlans.defaultProps = {
-	fetchSitePlans: () => {}
+	fetchSitePlans: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingSitePlans: isRequestingSitePlans( state, ownProps.siteId )
+			requestingSitePlans: isRequestingSitePlans( state, ownProps.siteId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			fetchSitePlans
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				fetchSitePlans,
+			},
+			dispatch
+		);
 	}
 )( QuerySitePlans );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -18,7 +21,11 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getJetpackModule, isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
+import {
+	getJetpackModule,
+	isActivatingJetpackModule,
+	isJetpackModuleActive,
+} from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class Sitemaps extends Component {
@@ -68,59 +75,50 @@ class Sitemaps extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate( 'Your sitemap is automatically sent to all major search engines for indexing.' ) }
+				{ translate(
+					'Your sitemap is automatically sent to all major search engines for indexing.'
+				) }
 			</FormSettingExplanation>
 		);
 	}
 
 	renderNonPublicExplanation() {
-		const {
-			siteSlug,
-			translate
-		} = this.props;
+		const { siteSlug, translate } = this.props;
 
 		return (
 			<FormSettingExplanation>
-				{
-					translate(
-						'Your site is not currently accessible to search engines. ' +
+				{ translate(
+					'Your site is not currently accessible to search engines. ' +
 						'You must set your {{a}}privacy settings{{/a}} to "public".',
-						{
-							components: {
-								a: <a href={ '/settings/general/' + siteSlug } />,
-							}
-						}
-					)
-				}
+					{
+						components: {
+							a: <a href={ '/settings/general/' + siteSlug } />,
+						},
+					}
+				) }
 			</FormSettingExplanation>
 		);
 	}
 
 	renderWpcomSettings() {
 		const { site } = this.props;
-		const sitemapTypes = [
-			'sitemap',
-			'news-sitemap',
-		];
+		const sitemapTypes = [ 'sitemap', 'news-sitemap' ];
 
 		return (
 			<div>
 				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/' ) }
 
-				{ this.isSitePublic()
-					? (
-						<div>
-							{ this.renderSitemapExplanation() }
-							{
-								sitemapTypes.map( ( sitemapType ) => {
-									const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
-									return this.renderSitemapLink( sitemapUrl );
-								} )
-							}
-						</div>
-					)
-					: this.renderNonPublicExplanation()
-				}
+				{ this.isSitePublic() ? (
+					<div>
+						{ this.renderSitemapExplanation() }
+						{ sitemapTypes.map( sitemapType => {
+							const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
+							return this.renderSitemapLink( sitemapUrl );
+						} ) }
+					</div>
+				) : (
+					this.renderNonPublicExplanation()
+				) }
 			</div>
 		);
 	}
@@ -130,7 +128,7 @@ class Sitemaps extends Component {
 			activatingSitemapsModule,
 			sitemapsModule,
 			sitemapsModuleActive,
-			translate
+			translate,
 		} = this.props;
 
 		if ( ! this.isSitePublic() && ! activatingSitemapsModule ) {
@@ -145,45 +143,32 @@ class Sitemaps extends Component {
 			return;
 		}
 
-		const sitemapTypes = [
-			'sitemap_url',
-			'news_sitemap_url',
-		];
+		const sitemapTypes = [ 'sitemap_url', 'news_sitemap_url' ];
 
 		return (
 			<div className="sitemaps__module-settings site-settings__child-settings">
-				{
-					activatingSitemapsModule &&
-					<FormSettingExplanation>
-						{ translate( 'Generating sitemap…' ) }
-					</FormSettingExplanation>
-				}
+				{ activatingSitemapsModule && (
+					<FormSettingExplanation>{ translate( 'Generating sitemap…' ) }</FormSettingExplanation>
+				) }
 
-				{
-					sitemapsModuleActive &&
+				{ sitemapsModuleActive && (
 					<div>
 						{ this.renderSitemapExplanation() }
 
-						{
-							sitemapsModule &&
-							sitemapTypes.map( ( sitemapType ) =>
-								sitemapsModule.extra[ sitemapType ] &&
-								this.renderSitemapLink( sitemapsModule.extra[ sitemapType ] )
-							)
-						}
+						{ sitemapsModule &&
+							sitemapTypes.map(
+								sitemapType =>
+									sitemapsModule.extra[ sitemapType ] &&
+									this.renderSitemapLink( sitemapsModule.extra[ sitemapType ] )
+							) }
 					</div>
-				}
+				) }
 			</div>
 		);
 	}
 
 	renderJetpackSettings() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			siteId,
-			translate
-		} = this.props;
+		const { isRequestingSettings, isSavingSettings, siteId, translate } = this.props;
 
 		return (
 			<FormFieldset>
@@ -202,11 +187,7 @@ class Sitemaps extends Component {
 	}
 
 	render() {
-		const {
-			siteId,
-			siteIsJetpack,
-			translate
-		} = this.props;
+		const { siteId, siteIsJetpack, translate } = this.props;
 
 		return (
 			<div>
@@ -215,28 +196,23 @@ class Sitemaps extends Component {
 				<SectionHeader label={ translate( 'Sitemaps' ) } />
 
 				<Card className="sitemaps__card site-settings__traffic-settings">
-					{ siteIsJetpack
-						? this.renderJetpackSettings()
-						: this.renderWpcomSettings()
-					}
+					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
-			site: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
-			sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
-		};
-	}
-)( localize( Sitemaps ) );
+	return {
+		siteId,
+		activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
+		sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
+	};
+} )( localize( Sitemaps ) );

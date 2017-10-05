@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -92,7 +95,7 @@ class ManageOrdersView extends Component {
 				currency={ currency }
 			/>
 		);
-	}
+	};
 
 	possiblyRenderReviewsWidget = () => {
 		const { site, pendingReviews, translate } = this.props;
@@ -102,24 +105,23 @@ class ManageOrdersView extends Component {
 
 		const classes = classNames( 'card', 'dashboard__reviews-widget' );
 		const countText = translate( 'Pending review', 'Pending reviews', {
-			count: pendingReviews
+			count: pendingReviews,
 		} );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<div>
-					<span>{ pendingReviews}</span>
+					<span>{ pendingReviews }</span>
 					<span>{ countText }</span>
 				</div>
 				<div>
 					<Button href={ getLink( '/store/reviews/:site', site ) }>
-						{ translate( 'Moderate',
-						{ context: 'Product reviews widget moderation button' } ) }
+						{ translate( 'Moderate', { context: 'Product reviews widget moderation button' } ) }
 					</Button>
 				</div>
 			</div>
 		);
-	}
+	};
 
 	possiblyRenderShareWidget = () => {
 		// TODO - connect to display preferences in a follow-on PR
@@ -131,7 +133,7 @@ class ManageOrdersView extends Component {
 				urlToShare={ site.URL }
 			/>
 		);
-	}
+	};
 
 	render = () => {
 		const { site, translate, orders, user } = this.props;
@@ -142,31 +144,28 @@ class ManageOrdersView extends Component {
 					<h2>
 						{ translate( 'Hi, {{storeOwnerName/}}.', {
 							components: {
-								storeOwnerName: <strong>{ user.display_name || user.username }</strong>
-							}
+								storeOwnerName: <strong>{ user.display_name || user.username }</strong>,
+							},
 						} ) }
-						{ orders.length && (
-							<span>{ translate( 'You have new orders 🎉' ) }</span>
-						) || '' }
+						{ ( orders.length && <span>{ translate( 'You have new orders 🎉' ) }</span> ) || '' }
 					</h2>
 				</div>
 
 				<div className="dashboard__queue-widgets">
 					{ this.possiblyRenderProcessOrdersWidget() }
-					{ config.isEnabled( 'woocommerce/extension-reviews' ) && this.possiblyRenderReviewsWidget() }
+					{ config.isEnabled( 'woocommerce/extension-reviews' ) &&
+						this.possiblyRenderReviewsWidget() }
 				</div>
 
-				<Card
-					className="dashboard__reports-widget"
-				>
+				<Card className="dashboard__reports-widget">
 					<div className="dashboard__reports-widget-content-wrapper">
 						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" alt="" />
 						<div className="dashboard__reports-widget-content">
-							<h2>
-								{ translate( 'Reports' ) }
-							</h2>
+							<h2>{ translate( 'Reports' ) }</h2>
 							<p>
-								{ translate( 'See a detailed breakdown of how your store is doing on the stats screen.' ) }
+								{ translate(
+									'See a detailed breakdown of how your store is doing on the stats screen.'
+								) }
 							</p>
 							<p>
 								<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
@@ -179,7 +178,7 @@ class ManageOrdersView extends Component {
 				{ this.possiblyRenderShareWidget() }
 			</div>
 		);
-	}
+	};
 }
 
 function mapStateToProps( state ) {

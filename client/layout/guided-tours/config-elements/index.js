@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 export ButtonRow from './button-row';
 export combineTours from './combine-tours';
 export Continue from './continue';

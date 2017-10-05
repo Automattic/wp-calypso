@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classNames from 'classnames';
 
@@ -12,7 +15,7 @@ import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
-module.exports = React.createClass({
+module.exports = React.createClass( {
 	displayName: 'KeyboardShortcutsMenu',
 
 	componentDidMount: function() {
@@ -27,7 +30,7 @@ module.exports = React.createClass({
 
 	getInitialState: function() {
 		return {
-			showDialog: false
+			showDialog: false,
 		};
 	},
 
@@ -51,35 +54,33 @@ module.exports = React.createClass({
 					name: this.translate( 'List Navigation' ),
 					shortcuts: allShortcuts.listNavigation,
 					className: 'keyboard-shortcuts__list-navigation',
-					disabled: true
+					disabled: true,
 				},
 				{
 					name: this.translate( 'Site Navigation' ),
 					shortcuts: allShortcuts.siteNavigation,
-					className: 'keyboard-shortcuts__site-navigation'
+					className: 'keyboard-shortcuts__site-navigation',
 				},
 				{
 					name: this.translate( 'Reader' ),
 					shortcuts: allShortcuts.reader,
 					className: 'keyboard-shortcuts__reader',
-					disabled: true
+					disabled: true,
 				},
 				{
 					name: this.translate( 'Blog Posts and Pages' ),
 					shortcuts: allShortcuts.blogPostsAndPages,
 					className: 'keyboard-shortcuts__blog-posts-and-pages',
-					disabled: true
-				}
+					disabled: true,
+				},
 			];
 
 		if ( config.isEnabled( 'devdocs' ) ) {
-			shortcutsByCategory = shortcutsByCategory.concat(
-				{
-					name: this.translate( 'Developer' ),
-					shortcuts: allShortcuts.developer,
-					className: 'keyboard-shortcuts__developer'
-				}
-			);
+			shortcutsByCategory = shortcutsByCategory.concat( {
+				name: this.translate( 'Developer' ),
+				shortcuts: allShortcuts.developer,
+				className: 'keyboard-shortcuts__developer',
+			} );
 		}
 
 		return shortcutsByCategory.map( function( category ) {
@@ -103,8 +104,12 @@ module.exports = React.createClass({
 		return shortcuts.map( function( shortcut ) {
 			// process the list of keys in this shortcut into individual elements
 			var keys = shortcut.description.keys.map( function( key, index ) {
-				return ( <div className="keyboard-shortcuts__key" key={ shortcut.eventName + index } >{ key }</div> );
-			});
+				return (
+					<div className="keyboard-shortcuts__key" key={ shortcut.eventName + index }>
+						{ key }
+					</div>
+				);
+			} );
 
 			return (
 				<li key={ shortcut.eventName }>
@@ -117,10 +122,14 @@ module.exports = React.createClass({
 
 	render: function() {
 		return (
-			<Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
+			<Dialog
+				additionalClassNames="keyboard-shortcuts"
+				isVisible={ this.state.showDialog }
+				onClose={ this.closeDialog }
+			>
 				<h1 className="keyboard-shortcuts__title">{ this.translate( 'Keyboard Shortcuts' ) }</h1>
 				<ul className="keyboard-shortcuts__categories">{ this.getShortcutsByCategory() }</ul>
 			</Dialog>
 		);
-	}
-});
+	},
+} );

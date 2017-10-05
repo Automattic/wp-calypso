@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -29,21 +32,21 @@ function getTimeframeText( promotion, translate, moment ) {
 			args: {
 				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
 				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
-			}
+			},
 		} );
 	}
 	if ( promotion.endDate ) {
 		return translate( 'Ends on %(endDate)s', {
 			args: {
 				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
-			}
+			},
 		} );
 	}
 	if ( promotion.startDate ) {
 		return translate( '%(startDate)s - No expiration date', {
 			args: {
 				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
-			}
+			},
 		} );
 	}
 	return translate( 'No expiration date' );
@@ -57,13 +60,9 @@ const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
 				<span className="promotions__list-name">{ promotion.name }</span>
 			</TableItem>
 
-			<TableItem>
-				{ getPromotionTypeText( promotion.type, translate ) }
-			</TableItem>
+			<TableItem>{ getPromotionTypeText( promotion.type, translate ) }</TableItem>
 
-			<TableItem>
-				{ getTimeframeText( promotion, translate, moment ) }
-			</TableItem>
+			<TableItem>{ getTimeframeText( promotion, translate, moment ) }</TableItem>
 		</TableRow>
 	);
 };
@@ -72,9 +71,7 @@ PromotionsListRow.propTypes = {
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ),
-	promotion: PropTypes.shape( {
-	} ),
+	promotion: PropTypes.shape( {} ),
 };
 
 export default localize( PromotionsListRow );
-

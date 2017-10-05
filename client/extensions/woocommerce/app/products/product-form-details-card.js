@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import config from 'config';
 import i18n from 'i18n-calypso';
@@ -20,7 +23,6 @@ import ProductFormImages from './product-form-images';
 import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 
 export default class ProductFormDetailsCard extends Component {
-
 	static propTypes = {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
@@ -52,12 +54,14 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { name } );
 
 		if ( this.state.updateSkuOnNameChange ) {
-			const sku = trim( name ).toLowerCase().replace( /\s+/g, '-' );
+			const sku = trim( name )
+				.toLowerCase()
+				.replace( /\s+/g, '-' );
 			editProduct( siteId, product, { sku } );
 		}
 	}
 
-	setSku = ( sku ) => {
+	setSku = sku => {
 		const { siteId, product, editProduct } = this.props;
 		editProduct( siteId, product, { sku } );
 
@@ -66,41 +70,46 @@ export default class ProductFormDetailsCard extends Component {
 				updateSkuOnNameChange: false,
 			} );
 		}
-	}
+	};
 
 	setDescription( description ) {
 		const { siteId, product, editProduct } = this.props;
 		editProduct( siteId, product, { description } );
 	}
 
-	onImageUpload = ( image ) => {
+	onImageUpload = image => {
 		const { siteId, product, editProduct } = this.props;
-		const images = product.images && [ ...product.images ] || [];
+		const images = ( product.images && [ ...product.images ] ) || [];
 		images.push( {
 			id: image.ID,
 			src: image.URL,
 		} );
 		editProduct( siteId, product, { images } );
-	}
+	};
 
-	onImageRemove = ( id ) => {
+	onImageRemove = id => {
 		const { siteId, product, editProduct } = this.props;
-		const images = product.images && [ ...product.images ].filter( i => i.id !== id ) || [];
+		const images = ( product.images && [ ...product.images ].filter( i => i.id !== id ) ) || [];
 		editProduct( siteId, product, { images } );
-	}
+	};
 
 	renderTinyMCE = () => {
 		const { product } = this.props;
 
-		if ( ( isNumber( product.id ) && 'undefined' === typeof product.description ) || 'undefined' === typeof product.id ) {
-			return <div className="products__product-form-tinymce-placeholder"></div>;
+		if (
+			( isNumber( product.id ) && 'undefined' === typeof product.description ) ||
+			'undefined' === typeof product.id
+		) {
+			return <div className="products__product-form-tinymce-placeholder" />;
 		}
 
-		return <CompactTinyMCE
-			initialValue={ product.description || '' }
-			onContentsChange={ this.debouncedSetDescription }
-		/>;
-	}
+		return (
+			<CompactTinyMCE
+				initialValue={ product.description || '' }
+				onContentsChange={ this.debouncedSetDescription }
+			/>
+		);
+	};
 
 	render() {
 		const { product } = this.props;
@@ -125,11 +134,7 @@ export default class ProductFormDetailsCard extends Component {
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">
 							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
-							<FormTextInput
-								id="name"
-								value={ product.name || '' }
-								onChange={ this.setName }
-							/>
+							<FormTextInput id="name" value={ product.name || '' } onChange={ this.setName } />
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-sku">
 							<FormLabel htmlFor="sku">{ __( 'SKU:' ) }</FormLabel>

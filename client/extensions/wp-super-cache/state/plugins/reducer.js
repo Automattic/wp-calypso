@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
@@ -21,11 +24,20 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated requesting state
  */
-export const requesting = createReducer( {}, {
-	[ WP_SUPER_CACHE_REQUEST_PLUGINS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
-} );
+export const requesting = createReducer(
+	{},
+	{
+		[ WP_SUPER_CACHE_REQUEST_PLUGINS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+		[ WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: false,
+		} ),
+		[ WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: false,
+		} ),
+	}
+);
 
 /**
  * Returns the updated plugin toggling state after an action has been dispatched.
@@ -35,26 +47,29 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated saving state
  */
-export const toggling = createReducer( {}, {
-	[ WP_SUPER_CACHE_TOGGLE_PLUGIN ]: ( state, { siteId, plugin } ) => ( {
-		...state,
-		[ siteId ]: {
-			[ plugin ]: true
-		}
-	} ),
-	[ WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS ]: ( state, { siteId, plugin } ) => ( {
-		...state,
-		[ siteId ]: {
-			[ plugin ]: false
-		}
-	} ),
-	[ WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE ]: ( state, { siteId, plugin } ) => ( {
-		...state,
-		[ siteId ]: {
-			[ plugin ]: false
-		}
-	} )
-} );
+export const toggling = createReducer(
+	{},
+	{
+		[ WP_SUPER_CACHE_TOGGLE_PLUGIN ]: ( state, { siteId, plugin } ) => ( {
+			...state,
+			[ siteId ]: {
+				[ plugin ]: true,
+			},
+		} ),
+		[ WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS ]: ( state, { siteId, plugin } ) => ( {
+			...state,
+			[ siteId ]: {
+				[ plugin ]: false,
+			},
+		} ),
+		[ WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE ]: ( state, { siteId, plugin } ) => ( {
+			...state,
+			[ siteId ]: {
+				[ plugin ]: false,
+			},
+		} ),
+	}
+);
 
 /**
  * Tracks the plugins for a particular site.
@@ -63,9 +78,16 @@ export const toggling = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated plugins
  */
-export const items = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_PLUGINS ]: ( state, { siteId, plugins } ) => ( { ...state, [ siteId ]: plugins } )
-}, itemsSchema );
+export const items = createReducer(
+	{},
+	{
+		[ WP_SUPER_CACHE_RECEIVE_PLUGINS ]: ( state, { siteId, plugins } ) => ( {
+			...state,
+			[ siteId ]: plugins,
+		} ),
+	},
+	itemsSchema
+);
 
 export default combineReducers( {
 	items,

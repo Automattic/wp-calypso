@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import tinymce from 'tinymce/tinymce';
@@ -15,7 +18,7 @@ import EmbedDialog from './dialog';
  *
  * @param {object} editor An instance of TinyMCE
  */
-const embed = ( editor ) => {
+const embed = editor => {
 	let embedDialogContainer;
 
 	/**
@@ -29,7 +32,7 @@ const embed = ( editor ) => {
 			embedUrl: selectedEmbedNode.innerText || selectedEmbedNode.textContent,
 			isVisible: visible,
 			onCancel: () => render( false ),
-			onUpdate: ( newUrl ) => {
+			onUpdate: newUrl => {
 				editor.execCommand( 'mceInsertContent', false, newUrl );
 				render( false );
 			},
@@ -47,9 +50,7 @@ const embed = ( editor ) => {
 	editor.addCommand( 'embedDialog', () => render() );
 
 	editor.on( 'init', () => {
-		embedDialogContainer = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		embedDialogContainer = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', () => {

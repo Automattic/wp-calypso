@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import detailsMappings from './details-mappings';
 
 /**

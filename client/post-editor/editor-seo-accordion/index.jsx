@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -23,12 +26,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 class EditorSeoAccordion extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
-		metaDescription: PropTypes.string
+		metaDescription: PropTypes.string,
 	};
 
 	static defaultProps = {
 		metaDescription: '',
-		translate: identity
+		translate: identity,
 	};
 
 	constructor( props ) {
@@ -62,7 +65,7 @@ class EditorSeoAccordion extends Component {
 					<EditorDrawerLabel
 						helpText={ translate(
 							'Craft a description of your post for search engine results. ' +
-							'The post content is used by default.'
+								'The post content is used by default.'
 						) }
 						labelText={ translate( 'Meta Description' ) }
 					>
@@ -75,12 +78,9 @@ class EditorSeoAccordion extends Component {
 							onChange={ onMetaChange }
 						/>
 					</EditorDrawerLabel>
-					{ isJetpack &&
+					{ isJetpack && (
 						<div>
-							<Button
-								className="editor-seo-accordion__preview-button"
-								onClick={ this.showPreview }
-							>
+							<Button className="editor-seo-accordion__preview-button" onClick={ this.showPreview }>
 								{ translate( 'Preview' ) }
 							</Button>
 							<WebPreview
@@ -92,7 +92,7 @@ class EditorSeoAccordion extends Component {
 								frontPageMetaDescription={ metaDescription }
 							/>
 						</div>
-					}
+					) }
 				</AccordionSection>
 			</Accordion>
 		);
@@ -101,15 +101,15 @@ class EditorSeoAccordion extends Component {
 
 function onMetaChange( event ) {
 	PostActions.updateMetadata( {
-		advanced_seo_description: event.target.value
+		advanced_seo_description: event.target.value,
 	} );
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isJetpack: isJetpackSite( state, siteId )
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 };
 

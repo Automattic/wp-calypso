@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import untrailingslashit from './untrailingslashit';
 import page from 'page';
 

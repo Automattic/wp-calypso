@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:follow-list:site' );
@@ -40,9 +43,12 @@ FollowListSite.prototype.follow = function() {
 		debug( 'following site', this.site_id );
 		this.is_following = true;
 		this.emit( 'change' );
-		wpcom.site( this.site_id ).follow().add( function( resp ) {
-			debug( 'follow success', resp );
-		} );
+		wpcom
+			.site( this.site_id )
+			.follow()
+			.add( function( resp ) {
+				debug( 'follow success', resp );
+			} );
 	}
 };
 
@@ -54,9 +60,12 @@ FollowListSite.prototype.unfollow = function() {
 	if ( this.is_following ) {
 		this.is_following = false;
 		this.emit( 'change' );
-		wpcom.site( this.site_id ).follow().del( function( resp ) {
-			debug( 'unfollow success', resp );
-		} );
+		wpcom
+			.site( this.site_id )
+			.follow()
+			.del( function( resp ) {
+				debug( 'unfollow success', resp );
+			} );
 	}
 };
 

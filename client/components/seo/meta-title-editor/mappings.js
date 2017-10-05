@@ -1,3 +1,4 @@
+/** @format */
 // Maps between different title format formats
 //
 // raw from API is
@@ -62,10 +63,13 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = unary(
-	partialRight( map, p => Object.assign( {},
-		{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
-		'string' === p.type && { value: p.value },
-	) ),
+	partialRight( map, p =>
+		Object.assign(
+			{},
+			{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
+			'string' === p.type && { value: p.value }
+		)
+	)
 );
 
 /**
@@ -76,22 +80,28 @@ export const rawToNative = unary(
  * @param {Array} n List of native format pieces
  * @returns {Array} List of raw format pieces
  */
-export const nativeToRaw = unary( compose(
-	// combine adjacent strings
-	partialRight( reduce, ( format, piece ) => {
-		const lastPiece = last( format );
+export const nativeToRaw = unary(
+	compose(
+		// combine adjacent strings
+		partialRight(
+			reduce,
+			( format, piece ) => {
+				const lastPiece = last( format );
 
-		if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-			return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
-		}
+				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
+					return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
+				}
 
-		return [ ...format, piece ];
-	}, [] ),
-	partialRight( map, p => ( {
-		type: p.type === 'string' ? 'string' : 'token',
-		value: get( p, 'value', snakeCase( p.type ) )
-	} ) ),
-) );
+				return [ ...format, piece ];
+			},
+			[]
+		),
+		partialRight( map, p => ( {
+			type: p.type === 'string' ? 'string' : 'token',
+			value: get( p, 'value', snakeCase( p.type ) ),
+		} ) )
+	)
+);
 
 // Not only are the format strings themselves stored differently
 // than on the server, but the API expects a different structure
@@ -105,10 +115,10 @@ export const nativeToRaw = unary( compose(
 
 export const toApi = compose(
 	partialRight( mapKeys, rearg( snakeCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, nativeToRaw ),         // native objects to raw objects
+	partialRight( mapValues, nativeToRaw ) // native objects to raw objects
 );
 
 export const fromApi = compose(
 	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, rawToNative ),         // raw objects to native objects
+	partialRight( mapValues, rawToNative ) // raw objects to native objects
 );

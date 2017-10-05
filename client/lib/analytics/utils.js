@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 /**
@@ -58,9 +61,7 @@ export function isPiiUrl() {
 }
 
 // For better load performance, these routes are blacklisted from loading ads.
-const blacklistedRoutes = [
-	'/log-in',
-];
+const blacklistedRoutes = [ '/log-in' ];
 
 /**
  * Are ads blacklisted from the given URL for better performance?
@@ -88,4 +89,3 @@ export function shouldSkipAds() {
 	debug( `Is Skipping Ads: ${ result }` );
 	return result;
 }
-

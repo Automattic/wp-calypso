@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
@@ -39,7 +42,7 @@ const handlers = mergeHandlers(
 	shippingZoneMethods,
 	shippingZones,
 	stripeConnectAccount,
-	ui,
+	ui
 );
 
 export default function installActionHandlers() {

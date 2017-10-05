@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -30,14 +33,12 @@ PageDropdown.propTypes = {
 	pages: PropTypes.array,
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
-		};
-	}
-);
+	return {
+		pages: ( siteId && getSitePosts( state, siteId ) ) || [],
+	};
+} );
 
 export default connectComponent( PageDropdown );

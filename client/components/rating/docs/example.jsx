@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -10,8 +13,6 @@ import Rating from 'components/rating';
 
 export default class RatingExample extends React.PureComponent {
 	render() {
-		return (
-			<Rating rating={ 70 } size={ 48 } />
-		);
+		return <Rating rating={ 70 } size={ 48 } />;
 	}
 }

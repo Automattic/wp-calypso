@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { includes, sampleSize } from 'lodash';
 
 /**
@@ -33,7 +36,9 @@ export default function getThemes( vertical, designType, quantity = 9 ) {
 
 	// Make sure we meet the minimum number of themes by adding back in random design type matches.
 	if ( themeSet.length < quantity ) {
-		themeSet = themeSet.concat( getUnusedThemes( themeSet, themesByType, quantity - themeSet.length ) );
+		themeSet = themeSet.concat(
+			getUnusedThemes( themeSet, themesByType, quantity - themeSet.length )
+		);
 	}
 
 	return sampleSize( themeSet, quantity );

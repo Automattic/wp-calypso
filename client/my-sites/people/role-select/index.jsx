@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { omit, map } from 'lodash';
 import { connect } from 'react-redux';
@@ -25,11 +28,11 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 
 	return {
 		display_name: displayName,
-		name: 'follower'
+		name: 'follower',
 	};
 };
 
-const RoleSelect = ( props ) => {
+const RoleSelect = props => {
 	let { siteRoles } = props;
 	const { site, includeFollower, siteId, id, explanation, translate } = props;
 	const omitProps = [
@@ -42,7 +45,7 @@ const RoleSelect = ( props ) => {
 		'dispatch',
 		'moment',
 		'numberFormat',
-		'translate'
+		'translate',
 	];
 
 	if ( site && siteRoles && includeFollower ) {
@@ -53,32 +56,23 @@ const RoleSelect = ( props ) => {
 		<FormFieldset key={ siteId } disabled={ ! siteRoles }>
 			{ siteId && <QuerySites siteId={ siteId } /> }
 			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
-			<FormLabel htmlFor={ id }>
-				{ translate( 'Role' ) }
-			</FormLabel>
+			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
 			<FormSelect { ...omit( props, omitProps ) }>
-				{
-					siteRoles && map( siteRoles, ( role ) => {
+				{ siteRoles &&
+					map( siteRoles, role => {
 						return (
 							<option value={ role.name } key={ role.name }>
 								{ role.display_name }
 							</option>
 						);
-					} )
-				}
+					} ) }
 			</FormSelect>
-			{ explanation &&
-				<FormSettingExplanation>
-					{ explanation }
-				</FormSettingExplanation>
-			}
+			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		site: getSite( state, ownProps.siteId ),
-		siteRoles: getSiteRoles( state, ownProps.siteId ),
-	} )
-)( localize( RoleSelect ) );
+export default connect( ( state, ownProps ) => ( {
+	site: getSite( state, ownProps.siteId ),
+	siteRoles: getSiteRoles( state, ownProps.siteId ),
+} ) )( localize( RoleSelect ) );

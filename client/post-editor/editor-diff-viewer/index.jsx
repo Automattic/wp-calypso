@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,9 +17,7 @@ import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
 
 const EditorDiffViewer = ( { contentChanges, revision } ) => (
 	<div className="editor-diff-viewer">
-		<h1 className="editor-diff-viewer__title">
-			{ get( revision, 'title' ) }
-		</h1>
+		<h1 className="editor-diff-viewer__title">{ get( revision, 'title' ) }</h1>
 		<div className="editor-diff-viewer__content">
 			{ map( contentChanges, ( change, changeIndex ) => {
 				const changeClassNames = classNames( {
@@ -41,9 +42,7 @@ EditorDiffViewer.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect(
-	( state, { siteId, postId, selectedRevisionId } ) => ( {
-		contentChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
-		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
-	} )
-)( EditorDiffViewer );
+export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
+	contentChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
+	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
+} ) )( EditorDiffViewer );

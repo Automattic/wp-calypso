@@ -1,24 +1,20 @@
+/** @format */
 const themeSchema = {
 	title: 'Theme',
 	type: 'object',
 	properties: {
-		id: { type: 'string' },
-		name: { type: 'string' },
-		author: { type: 'string' },
-		screenshot: { type: 'string' },
-		stylesheet: { type: 'string' },
-		demo_uri: { type: 'string' },
-		author_uri: { type: 'string' },
+		id: { type: 'string' },
+		name: { type: 'string' },
+		author: { type: 'string' },
+		screenshot: { type: 'string' },
+		stylesheet: { type: 'string' },
+		demo_uri: { type: 'string' },
+		author_uri: { type: 'string' },
 		price: {
-			type: 'string'
-		}
+			type: 'string',
+		},
 	},
-	required: [
-		'id',
-		'name',
-		'author',
-		'screenshot'
-	]
+	required: [ 'id', 'name', 'author', 'screenshot' ],
 };
 
 export const queriesSchema = {
@@ -36,8 +32,8 @@ export const queriesSchema = {
 							description: 'Themes, keyed by ID',
 							type: 'object',
 							patternProperties: {
-								'^\\w+$': themeSchema
-							}
+								'^\\w+$': themeSchema,
+							},
 						},
 						queries: {
 							patternProperties: {
@@ -47,31 +43,31 @@ export const queriesSchema = {
 									required: [ 'itemKeys' ],
 									properties: {
 										itemKeys: {
-											type: 'array'
+											type: 'array',
 										},
 										found: {
-											type: 'number'
-										}
-									}
-								}
+											type: 'number',
+										},
+									},
+								},
 							},
-							additionalProperties: false
-						}
-					}
+							additionalProperties: false,
+						},
+					},
 				},
 				options: {
 					type: 'object',
 					required: [ 'itemKey' ],
 					properties: {
 						itemKey: {
-							type: 'string'
-						}
-					}
-				}
-			}
-		}
+							type: 'string',
+						},
+					},
+				},
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };
 
 export const activeThemesSchema = {
@@ -79,9 +75,9 @@ export const activeThemesSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			description: 'Theme ID',
-			type: 'string'
-		}
-	}
+			type: 'string',
+		},
+	},
 };
 
 export const themeRequestErrorsSchema = {
@@ -102,11 +98,11 @@ export const themeRequestErrorsSchema = {
 						status: { type: 'number' },
 						message: { type: 'string' },
 						error: { type: 'string' },
-					}
-				}
-			}
-		}
-	}
+					},
+				},
+			},
+		},
+	},
 };
 
 export const themeFiltersSchema = {
@@ -122,12 +118,12 @@ export const themeFiltersSchema = {
 					title: 'Term',
 					type: 'object',
 					properties: {
-						name: { type: 'string' },
-						description: { type: 'string' },
-					}
-				}
+						name: { type: 'string' },
+						description: { type: 'string' },
+					},
+				},
 			},
-			uniqueItems: true
+			uniqueItems: true,
 		},
 	},
 	additionalProperties: false,

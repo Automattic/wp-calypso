@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -23,7 +26,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-	isRegeneratingJetpackPostByEmail
+	isRegeneratingJetpackPostByEmail,
 } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -38,66 +41,81 @@ class PublishingTools extends Component {
 			moduleUnavailable,
 			postByEmailAddressModuleActive,
 			regeneratingPostByEmail,
-			selectedSiteId
+			selectedSiteId,
 		} = this.props;
 
 		if ( ! moduleUnavailable ) {
 			return;
 		}
 
-		if ( postByEmailAddressModuleActive && regeneratingPostByEmail === null && ! fields.post_by_email_address ) {
+		if (
+			postByEmailAddressModuleActive &&
+			regeneratingPostByEmail === null &&
+			! fields.post_by_email_address
+		) {
 			this.props.regeneratePostByEmail( selectedSiteId );
 		}
 	}
 
 	onRegenerateButtonClick = () => {
 		this.props.regeneratePostByEmail( this.props.selectedSiteId );
-	}
+	};
 
 	isFormPending() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-		} = this.props;
+		const { isRequestingSettings, isSavingSettings } = this.props;
 
 		return isRequestingSettings || isSavingSettings;
 	}
 
 	renderPostByEmailSettings() {
-		const { fields, moduleUnavailable, translate, postByEmailAddressModuleActive, regeneratingPostByEmail } = this.props;
+		const {
+			fields,
+			moduleUnavailable,
+			translate,
+			postByEmailAddressModuleActive,
+			regeneratingPostByEmail,
+		} = this.props;
 		const isFormPending = this.isFormPending();
-		const email = fields.post_by_email_address && fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '';
-		const labelClassName = moduleUnavailable || regeneratingPostByEmail || ! postByEmailAddressModuleActive ? 'is-disabled' : null;
+		const email =
+			fields.post_by_email_address && fields.post_by_email_address !== 'regenerate'
+				? fields.post_by_email_address
+				: '';
+		const labelClassName =
+			moduleUnavailable || regeneratingPostByEmail || ! postByEmailAddressModuleActive
+				? 'is-disabled'
+				: null;
 
 		return (
 			<div className="publishing-tools__module-settings site-settings__child-settings">
-				<FormLabel className={ labelClassName }>
-					{ translate( 'Email Address' ) }
-				</FormLabel>
+				<FormLabel className={ labelClassName }>{ translate( 'Email Address' ) }</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
-					disabled={ regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable }
+					disabled={
+						regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable
+					}
 					value={ email }
 				/>
 				<Button
 					onClick={ this.onRegenerateButtonClick }
-					disabled={ isFormPending || regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable }
-				>
-					{ regeneratingPostByEmail
-						? translate( 'Regenerating…' )
-						: translate( 'Regenerate address' )
+					disabled={
+						isFormPending ||
+						regeneratingPostByEmail ||
+						! postByEmailAddressModuleActive ||
+						moduleUnavailable
 					}
+				>
+					{ regeneratingPostByEmail ? (
+						translate( 'Regenerating…' )
+					) : (
+						translate( 'Regenerate address' )
+					) }
 				</Button>
 			</div>
 		);
 	}
 
 	renderPostByEmailModule() {
-		const {
-			moduleUnavailable,
-			selectedSiteId,
-			translate
-		} = this.props;
+		const { moduleUnavailable, selectedSiteId, translate } = this.props;
 		const formPending = this.isFormPending();
 
 		return (
@@ -115,7 +133,7 @@ class PublishingTools extends Component {
 					moduleSlug="post-by-email"
 					label={ translate( 'Publish posts by sending an email' ) }
 					disabled={ formPending || moduleUnavailable }
-					/>
+				/>
 
 				{ this.renderPostByEmailSettings() }
 			</FormFieldset>
@@ -158,7 +176,7 @@ class PublishingTools extends Component {
 PublishingTools.defaultProps = {
 	isSavingSettings: false,
 	isRequestingSettings: true,
-	fields: {}
+	fields: {},
 };
 
 PublishingTools.propTypes = {
@@ -169,20 +187,28 @@ PublishingTools.propTypes = {
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'post-by-email' );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+			state,
+			selectedSiteId,
+			'post-by-email'
+		);
 
 		return {
 			selectedSiteId,
 			regeneratingPostByEmail,
-			postByEmailAddressModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'post-by-email' ),
+			postByEmailAddressModuleActive: !! isJetpackModuleActive(
+				state,
+				selectedSiteId,
+				'post-by-email'
+			),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	},
 	{
-		regeneratePostByEmail
+		regeneratePostByEmail,
 	}
 )( localize( PublishingTools ) );

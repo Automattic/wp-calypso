@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -17,18 +20,18 @@ class SearchAutocomplete extends Component {
 	static propTypes = {
 		onSelect: PropTypes.func.isRequired,
 		exclude: PropTypes.array,
-	}
+	};
 
 	static defaultProps = {
 		exclude: [],
-	}
+	};
 
 	state = {
 		search: '',
 		searchIsOpen: false,
-	}
+	};
 
-	handleSearch = ( term ) => {
+	handleSearch = term => {
 		if ( this.state.search === term ) {
 			return;
 		}
@@ -36,11 +39,11 @@ class SearchAutocomplete extends Component {
 		this.setState( {
 			search: term || '',
 		} );
-	}
+	};
 
-	setSearch = ref => this.searchRef = ref;
+	setSearch = ref => ( this.searchRef = ref );
 
-	setSuggestions = ref => this.suggestionsRef = ref && ref.getWrappedInstance();
+	setSuggestions = ref => ( this.suggestionsRef = ref && ref.getWrappedInstance() );
 
 	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
 
@@ -52,12 +55,12 @@ class SearchAutocomplete extends Component {
 		}
 
 		this.suggestionsRef && this.suggestionsRef.handleKeyEvent( event );
-	}
+	};
 
-	handleSelect = ( item ) => {
+	handleSelect = item => {
 		this.searchRef.clear();
 		this.props.onSelect( item );
-	}
+	};
 
 	render() {
 		const { exclude, translate } = this.props;
@@ -82,15 +85,16 @@ class SearchAutocomplete extends Component {
 						onSearchOpen={ this.handleSearchOpen }
 						onSearchClose={ this.handleSearchClose }
 						onKeyDown={ this.handleKeyDown }
-						placeholder={ translate( 'Search for content' ) } />
-					{
-						this.state.search &&
+						placeholder={ translate( 'Search for content' ) }
+					/>
+					{ this.state.search && (
 						<PostSuggestions
 							ref={ this.setSuggestions }
 							search={ this.state.search }
 							exclude={ exclude }
-							suggest={ this.handleSelect } />
-					}
+							suggest={ this.handleSelect }
+						/>
+					) }
 				</Card>
 			</div>
 		);

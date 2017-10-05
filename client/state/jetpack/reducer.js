@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { reducer as connection } from './connection/reducer';
 import { combineReducers } from 'state/utils';
 import { reducer as jumpstart } from './jumpstart/reducer';
@@ -11,5 +14,5 @@ export default combineReducers( {
 	connection,
 	jumpstart,
 	modules,
-	settings
+	settings,
 } );

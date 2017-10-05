@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
@@ -19,12 +22,12 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 ) {
-		let minutes = Math.ceil( millisAgo / ( MILLIS_IN_MINUTE ) );
+		let minutes = Math.ceil( millisAgo / MILLIS_IN_MINUTE );
 		return i18n.translate( '%(minutes)dm ago', {
 			args: {
-				minutes: minutes
+				minutes: minutes,
 			},
-			comment: 'example for a resulting string: 2m ago'
+			comment: 'example for a resulting string: 2m ago',
 		} );
 	}
 
@@ -32,9 +35,9 @@ module.exports = function humanDate( dateOrMoment ) {
 		let hours = now.diff( dateOrMoment, 'hours' );
 		return i18n.translate( '%(hours)dh ago', {
 			args: {
-				hours: hours
+				hours: hours,
 			},
-			comment: 'example for a resulting string: 5h ago'
+			comment: 'example for a resulting string: 5h ago',
 		} );
 	}
 
@@ -42,9 +45,9 @@ module.exports = function humanDate( dateOrMoment ) {
 		let days = now.diff( dateOrMoment, 'days' );
 		return i18n.translate( '%(days)dd ago', {
 			args: {
-				days: days
+				days: days,
 			},
-			comment: 'example for a resulting string: 4d ago'
+			comment: 'example for a resulting string: 4d ago',
 		} );
 	}
 

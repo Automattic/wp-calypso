@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { clone } from 'lodash';
 
 /**
@@ -37,7 +40,7 @@ const PluginsListsStore = {
 		}
 		return {
 			fetching: !! _fetching[ category ],
-			list: _shortLists[ category ] || []
+			list: _shortLists[ category ] || [],
 		};
 	},
 
@@ -47,7 +50,7 @@ const PluginsListsStore = {
 		}
 		return {
 			fetching: _fetching[ category ] !== false,
-			list: _fullLists[ category ] || []
+			list: _fullLists[ category ] || [],
 		};
 	},
 
@@ -66,13 +69,13 @@ const PluginsListsStore = {
 		}
 		return {
 			fetching: isSearching,
-			list: _fullLists.search || []
+			list: _fullLists.search || [],
 		};
 	},
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {

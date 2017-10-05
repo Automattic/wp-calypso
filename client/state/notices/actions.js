@@ -1,20 +1,20 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	NOTICE_CREATE,
-	NOTICE_REMOVE
-} from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 
 export function removeNotice( noticeId ) {
 	return {
 		noticeId: noticeId,
-		type: NOTICE_REMOVE
+		type: NOTICE_REMOVE,
 	};
 }
 
@@ -22,19 +22,19 @@ export function createNotice( status, text, options = {} ) {
 	const notice = {
 		noticeId: options.id || uniqueId(),
 		duration: options.duration,
-		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
+		showDismiss: typeof options.showDismiss === 'boolean' ? options.showDismiss : true,
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
 		text: text,
 		button: options.button,
 		href: options.href,
-		onClick: options.onClick
+		onClick: options.onClick,
 	};
 
 	return {
 		type: NOTICE_CREATE,
-		notice: notice
+		notice: notice,
 	};
 }
 

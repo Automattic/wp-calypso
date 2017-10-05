@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -27,10 +30,7 @@ class QuerySimplePayments extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.siteId !== this.props.siteId ||
-			nextProps.productId !== this.props.productId
-		) {
+		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
 			this.request( nextProps );
 		}
 	}

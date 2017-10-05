@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WP_JOB_MANAGER_CREATE_PAGES,
 	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
@@ -18,7 +21,11 @@ import {
  * @param  {Array}  titles Page titles
  * @return {Object} Action object
  */
-export const createPages = ( siteId, titles ) => ( { type: WP_JOB_MANAGER_CREATE_PAGES, siteId, titles } );
+export const createPages = ( siteId, titles ) => ( {
+	type: WP_JOB_MANAGER_CREATE_PAGES,
+	siteId,
+	titles,
+} );
 
 /**
  * Returns an action object to indicate that an error was received when creating the pages.
@@ -50,7 +57,10 @@ export const fetchSetupStatus = siteId => ( { type: WP_JOB_MANAGER_FETCH_SETUP_S
  * @param  {Number} siteId Site ID
  * @return {Object} Action object
  */
-export const fetchSetupStatusError = siteId => ( { type: WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR, siteId } );
+export const fetchSetupStatusError = siteId => ( {
+	type: WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR,
+	siteId,
+} );
 
 /**
  * Returns an action object to indicate that the setup status should be updated.
@@ -59,7 +69,11 @@ export const fetchSetupStatusError = siteId => ( { type: WP_JOB_MANAGER_FETCH_SE
  * @param  {Object} setupStatus Setup status
  * @return {Object} Action object
  */
-export const updateSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS, siteId, setupStatus } );
+export const updateSetupStatus = ( siteId, setupStatus ) => ( {
+	type: WP_JOB_MANAGER_UPDATE_SETUP_STATUS,
+	siteId,
+	setupStatus,
+} );
 
 /**
  * Returns an action object to indicate that the setup status should be saved.
@@ -68,4 +82,8 @@ export const updateSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MAN
  * @param  {Boolean} setupStatus Setup status
  * @return {Object} Action object
  */
-export const saveSetupStatus = ( siteId, setupStatus ) => ( { type: WP_JOB_MANAGER_SAVE_SETUP_STATUS, siteId, setupStatus } );
+export const saveSetupStatus = ( siteId, setupStatus ) => ( {
+	type: WP_JOB_MANAGER_SAVE_SETUP_STATUS,
+	siteId,
+	setupStatus,
+} );

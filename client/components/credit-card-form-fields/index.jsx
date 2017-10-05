@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { assign } from 'lodash';
@@ -20,20 +23,23 @@ class CreditCardFormFields extends React.Component {
 		countriesList: PropTypes.object.isRequired,
 		eventFormName: PropTypes.string.isRequired,
 		isFieldInvalid: PropTypes.func.isRequired,
-		onFieldChange: PropTypes.func.isRequired
+		onFieldChange: PropTypes.func.isRequired,
 	};
 
 	field = ( fieldName, componentClass, props ) => {
-		return React.createElement( componentClass, assign( {}, props, {
-			additionalClasses: 'credit-card-form-fields__field',
-			eventFormName: this.props.eventFormName,
-			isError: this.props.isFieldInvalid( fieldName ),
-			name: fieldName,
-			onBlur: this.handleFieldChange,
-			onChange: this.handleFieldChange,
-			value: this.getFieldValue( fieldName ),
-			autoComplete: 'off'
-		} ) );
+		return React.createElement(
+			componentClass,
+			assign( {}, props, {
+				additionalClasses: 'credit-card-form-fields__field',
+				eventFormName: this.props.eventFormName,
+				isError: this.props.isFieldInvalid( fieldName ),
+				name: fieldName,
+				onBlur: this.handleFieldChange,
+				onChange: this.handleFieldChange,
+				value: this.getFieldValue( fieldName ),
+				autoComplete: 'off',
+			} )
+		);
 	};
 
 	getFieldValue = fieldName => {
@@ -46,11 +52,11 @@ class CreditCardFormFields extends React.Component {
 		const previousValue = this.getFieldValue( fieldName );
 
 		const rawDetails = {
-			[ fieldName ]: unmaskField( fieldName, previousValue, nextValue )
+			[ fieldName ]: unmaskField( fieldName, previousValue, nextValue ),
 		};
 
 		const maskedDetails = {
-			[ fieldName ]: maskField( fieldName, previousValue, nextValue )
+			[ fieldName ]: maskField( fieldName, previousValue, nextValue ),
 		};
 
 		this.props.onFieldChange( rawDetails, maskedDetails );
@@ -65,16 +71,16 @@ class CreditCardFormFields extends React.Component {
 					labelClass: 'credit-card-form-fields__label',
 					autoFocus: true,
 					label: translate( 'Name on Card', {
-						context: 'Card holder name label on credit card form'
-					} )
+						context: 'Card holder name label on credit card form',
+					} ),
 				} ) }
 
 				{ this.field( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
 					labelClass: 'credit-card-form-fields__label',
 					label: translate( 'Card Number', {
-						context: 'Card number label on credit card form'
-					} )
+						context: 'Card number label on credit card form',
+					} ),
 				} ) }
 
 				<div className="credit-card-form-fields__extras">
@@ -82,28 +88,28 @@ class CreditCardFormFields extends React.Component {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
 						label: translate( 'MM/YY', {
-							context: 'Expiry label on credit card form'
-						} )
+							context: 'Expiry label on credit card form',
+						} ),
 					} ) }
 
 					{ this.field( 'cvv', Input, {
 						inputMode: 'numeric',
 						labelClass: 'credit-card-form-fields__label',
 						label: translate( 'CVV', {
-							context: '3 digit security number on credit card form'
-						} )
+							context: '3 digit security number on credit card form',
+						} ),
 					} ) }
 
 					{ this.field( 'country', CountrySelect, {
 						label: translate( 'Country' ),
-						countriesList: this.props.countriesList
+						countriesList: this.props.countriesList,
 					} ) }
 
 					{ this.field( 'postal-code', Input, {
 						labelClass: 'credit-card-form-fields__label',
 						label: translate( 'Postal Code', {
-							context: 'Postal code on credit card form'
-						} )
+							context: 'Postal code on credit card form',
+						} ),
 					} ) }
 				</div>
 			</div>

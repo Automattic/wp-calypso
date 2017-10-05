@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -27,8 +30,17 @@ const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 			<ActionPanelFigure>
 				<ActiveThemeScreenshot theme={ theme } />
 			</ActionPanelFigure>
-			<p>{ translate( 'Want your site to look like the demo? Use Theme Setup to automatically apply the demo site\'s settings to your site.' ) }</p>
-			<p>{ translate( 'You can apply Theme Setup to your current site while keeping all your posts, pages, and widgets. Some placeholder text may appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
+			<p>
+				{ translate(
+					"Want your site to look like the demo? Use Theme Setup to automatically apply the demo site's settings to your site."
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You can apply Theme Setup to your current site while keeping all your posts, pages, and widgets. Some placeholder text may appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!',
+					{ components: { strong: <strong /> } }
+				) }
+			</p>
 		</ActionPanelBody>
 		<ActionPanelFooter>
 			<Button className="theme-setup__button" primary={ true } onClick={ onClick }>
@@ -40,4 +52,3 @@ const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 );
 
 export default localize( ThemeSetupCard );
-

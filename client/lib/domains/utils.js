@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isEmpty, find, values } from 'lodash';
 
 /**
@@ -53,7 +56,4 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	return null;
 }
 
-export {
-	getDomainNameFromReceiptOrCart,
-	getDomainType,
-};
+export { getDomainNameFromReceiptOrCart, getDomainType };

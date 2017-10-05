@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -11,10 +14,13 @@ import mediaController from './controller';
 import config from 'config';
 
 module.exports = function() {
-
 	if ( config.isEnabled( 'manage/media' ) ) {
 		page( '/media', controller.siteSelection, controller.sites );
-		page( '/media/:filter?/:domain', controller.siteSelection, controller.navigation, mediaController.media );
+		page(
+			'/media/:filter?/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			mediaController.media
+		);
 	}
-
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop } from 'lodash';
@@ -85,7 +88,8 @@ class MediaLibraryUploadUrl extends Component {
 					onKeyDown={ this.onKeyDown }
 					isError={ this.state.isError }
 					autoFocus
-					required />
+					required
+				/>
 
 				<div className="media-library__upload-url-button-group">
 					<button type="submit" className="button is-primary">
@@ -93,9 +97,7 @@ class MediaLibraryUploadUrl extends Component {
 					</button>
 
 					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
-						<span className="screen-reader-text">
-							{ translate( 'Cancel' ) }
-						</span>
+						<span className="screen-reader-text">{ translate( 'Cancel' ) }</span>
 						<Gridicon icon="cross" />
 					</button>
 				</div>
@@ -105,4 +107,3 @@ class MediaLibraryUploadUrl extends Component {
 }
 
 export default localize( MediaLibraryUploadUrl );
-

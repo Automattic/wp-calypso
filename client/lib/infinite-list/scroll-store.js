@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import Dispatcher from 'dispatcher';
 
 /**
@@ -10,7 +13,7 @@ var _scrollStore = {},
 	InfiniteListScrollStore = {
 		get: function( url ) {
 			return _scrollStore[ url ];
-		}
+		},
 	};
 
 function storeInfiniteListScrollPosition( url, scrollPosition ) {
@@ -28,7 +31,6 @@ InfiniteListScrollStore.dispatchToken = Dispatcher.register( function( payload )
 		case 'SCROLL_CHANGED':
 			storeInfiniteListScrollPosition( action.url, action.scrollPosition );
 			break;
-
 	}
 } );
 

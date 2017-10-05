@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 
 export const NESTED_SIDEBAR_NONE = 'NESTED_SIDEBAR_NONE';

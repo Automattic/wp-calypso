@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,

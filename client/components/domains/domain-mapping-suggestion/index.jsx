@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -18,18 +21,20 @@ class DomainMappingSuggestion extends React.Component {
 		products: PropTypes.object.isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] )
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	render() {
 		const suggestion = {
 			product_slug: this.props.products.domain_map.product_slug,
-			cost: this.props.products.domain_map.cost_display
+			cost: this.props.products.domain_map.cost_display,
 		};
 		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, translate } = this.props;
-		const buttonContent = ! isSignupStep && shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
-			? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
-			: translate( 'Map it', { context: 'Domain mapping suggestion button' } );
+		const buttonContent =
+			! isSignupStep &&
+			shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
+				? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
+				: translate( 'Map it', { context: 'Domain mapping suggestion button' } );
 
 		return (
 			<DomainSuggestion
@@ -40,18 +45,20 @@ class DomainMappingSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				buttonContent={ buttonContent }
 				cart={ cart }
-				onButtonClick={ this.props.onButtonClick }>
+				onButtonClick={ this.props.onButtonClick }
+			>
 				<div className="domain-mapping-suggestion__domain-description">
 					<h3>
 						{ translate( 'Already own a domain?', {
 							context: 'Upgrades: Register domain header',
-							comment: 'Asks if you want to own a new domain (not if you want to map an existing domain).'
+							comment:
+								'Asks if you want to own a new domain (not if you want to map an existing domain).',
 						} ) }
 					</h3>
 					<p>
-						{ translate( 'Map this domain to use it as your site\'s address.', {
+						{ translate( "Map this domain to use it as your site's address.", {
 							context: 'Upgrades: Register domain description',
-							comment: 'Explains how you could use a new domain name for your site\'s address.'
+							comment: "Explains how you could use a new domain name for your site's address.",
 						} ) }
 					</p>
 				</div>

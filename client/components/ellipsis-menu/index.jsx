@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -29,14 +32,14 @@ class EllipsisMenu extends Component {
 	static defaultProps = {
 		onClick: noop,
 		onToggle: noop,
-	}
+	};
 
 	constructor() {
 		super( ...arguments );
 
 		this.state = {
 			isMenuVisible: false,
-			popoverContext: null
+			popoverContext: null,
 		};
 
 		this.showMenu = this.toggleMenu.bind( this, true );
@@ -45,7 +48,7 @@ class EllipsisMenu extends Component {
 		this.setPopoverContext = this.setPopoverContext.bind( this );
 	}
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		const { onClick } = this.props;
 		const { isMenuVisible } = this.state;
 
@@ -72,11 +75,19 @@ class EllipsisMenu extends Component {
 	}
 
 	render() {
-		const { toggleTitle, translate, position, children, disabled, className, popoverClassName } = this.props;
+		const {
+			toggleTitle,
+			translate,
+			position,
+			children,
+			disabled,
+			className,
+			popoverClassName,
+		} = this.props;
 		const { isMenuVisible, popoverContext } = this.state;
 		const classes = classnames( 'ellipsis-menu', className, {
 			'is-menu-visible': isMenuVisible,
-			'is-disabled': disabled
+			'is-disabled': disabled,
 		} );
 		const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
 
@@ -88,17 +99,17 @@ class EllipsisMenu extends Component {
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					borderless
 					disabled={ disabled }
-					className="ellipsis-menu__toggle">
-					<Gridicon
-						icon="ellipsis"
-						className="ellipsis-menu__toggle-icon" />
+					className="ellipsis-menu__toggle"
+				>
+					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
 				</Button>
 				<PopoverMenu
 					isVisible={ isMenuVisible }
 					onClose={ this.hideMenu }
 					position={ position }
 					context={ popoverContext }
-					className={ popoverClasses }>
+					className={ popoverClasses }
+				>
 					{ children }
 				</PopoverMenu>
 			</span>

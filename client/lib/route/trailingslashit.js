@@ -1,3 +1,4 @@
+/** @format */
 var trailingSlashRe = /(\/)?$/;
 
 module.exports = function trailingSlashIt( path ) {

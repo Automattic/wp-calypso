@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -17,8 +20,11 @@ import {
  * @param {Object} [params.file]  An image to attach to the video
  * @return {Object} Action object
  */
-export const updatePoster = ( videoId, params ) =>
-	( { type: VIDEO_EDITOR_UPDATE_POSTER, videoId, params } );
+export const updatePoster = ( videoId, params ) => ( {
+	type: VIDEO_EDITOR_UPDATE_POSTER,
+	videoId,
+	params,
+} );
 
 /**
  * Returns an action object to indicate that the poster for the video has been updated successfully.
@@ -41,5 +47,7 @@ export const showError = () => ( { type: VIDEO_EDITOR_SHOW_ERROR } );
  * @param  {String} percentage  Upload progress percentage
  * @return {Object} Action object
  */
-export const showUploadProgress = percentage =>
-	( { type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS, percentage } );
+export const showUploadProgress = percentage => ( {
+	type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+	percentage,
+} );

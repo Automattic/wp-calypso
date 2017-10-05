@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 
 /**
@@ -9,12 +12,11 @@ import React, { Component } from 'react';
 import SignupActions from 'lib/signup/actions';
 
 export default class SubmitStepButton extends Component {
-
 	handleSubmit = () => {
 		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
 
 		this.props.goToNextStep();
-	}
+	};
 
 	render() {
 		return (

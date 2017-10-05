@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { defer, isEmpty, pick } from 'lodash';
 import React from 'react';
 import titleCase from 'to-title-case';
@@ -26,13 +29,13 @@ var TransactionsTable = React.createClass( {
 
 		return {
 			transactions: initialTransactions,
-			filter: this.props.initialFilter
+			filter: this.props.initialFilter,
 		};
 	},
 
 	getDefaultProps: function() {
 		return {
-			header: false
+			header: false,
 		};
 	},
 
@@ -66,7 +69,7 @@ var TransactionsTable = React.createClass( {
 
 		this.setState( {
 			transactions: newTransactions,
-			filter: newFilter
+			filter: newFilter,
 		} );
 	},
 
@@ -78,10 +81,13 @@ var TransactionsTable = React.createClass( {
 		var header;
 
 		if ( false !== this.props.header ) {
-			header = <TransactionsHeader
-				onNewFilter={ this.filterTransactions }
-				transactions={ this.props.transactions }
-				filter={ this.state.filter } />;
+			header = (
+				<TransactionsHeader
+					onNewFilter={ this.filterTransactions }
+					transactions={ this.props.transactions }
+					filter={ this.state.filter }
+				/>
+			);
 		}
 
 		return (
@@ -99,8 +105,7 @@ var TransactionsTable = React.createClass( {
 	},
 
 	serviceName: function( transaction ) {
-		var item,
-			name;
+		var item, name;
 
 		if ( ! transaction.items ) {
 			name = this.serviceNameDescription( transaction );
@@ -125,7 +130,11 @@ var TransactionsTable = React.createClass( {
 				</div>
 			);
 		} else {
-			description = <strong>{ transaction.product } { transaction.plan }</strong>;
+			description = (
+				<strong>
+					{ transaction.product } { transaction.plan }
+				</strong>
+			);
 		}
 
 		return description;
@@ -161,7 +170,9 @@ var TransactionsTable = React.createClass( {
 			}
 			return (
 				<tr className="billing-history__no-results">
-					<td className="billing-history__no-results-cell" colSpan="3">{ noResultsText }</td>
+					<td className="billing-history__no-results-cell" colSpan="3">
+						{ noResultsText }
+					</td>
 				</tr>
 			);
 		}
@@ -175,7 +186,9 @@ var TransactionsTable = React.createClass( {
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
-								<div className="billing-history__service-name">{ this.serviceName( transaction ) }</div>
+								<div className="billing-history__service-name">
+									{ this.serviceName( transaction ) }
+								</div>
 								{ this.props.transactionRenderer( transaction ) }
 							</div>
 						</div>
@@ -184,7 +197,7 @@ var TransactionsTable = React.createClass( {
 				</tr>
 			);
 		}, this );
-	}
+	},
 } );
 
 module.exports = TransactionsTable;

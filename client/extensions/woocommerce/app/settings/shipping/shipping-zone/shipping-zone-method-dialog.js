@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -20,9 +23,7 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import FreeShipping from './shipping-methods/free-shipping';
 import LocalPickup from './shipping-methods/local-pickup';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import {
-	getShippingMethodNameMap,
-} from 'woocommerce/state/sites/shipping-methods/selectors';
+import { getShippingMethodNameMap } from 'woocommerce/state/sites/shipping-methods/selectors';
 import {
 	changeShippingZoneMethodTitle,
 	changeShippingZoneMethodType,
@@ -39,16 +40,16 @@ import {
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 
 const ShippingZoneMethodDialog = ( {
-		siteId,
-		method,
-		methodNamesMap,
-		methodTypeOptions,
-		translate,
-		isVisible,
-		isNew,
-		currency,
-		actions
-	} ) => {
+	siteId,
+	method,
+	methodNamesMap,
+	methodTypeOptions,
+	translate,
+	isVisible,
+	isNew,
+	currency,
+	actions,
+} ) => {
 	if ( ! isVisible ) {
 		return null;
 	}
@@ -63,16 +64,18 @@ const ShippingZoneMethodDialog = ( {
 	const onDelete = () => {
 		actions.removeMethodFromShippingZone( method.id );
 	};
-	const onMethodTitleChange = ( event ) => ( actions.changeShippingZoneMethodTitle( event.target.value ) );
-	const onMethodTypeChange = ( event ) => {
+	const onMethodTitleChange = event => actions.changeShippingZoneMethodTitle( event.target.value );
+	const onMethodTypeChange = event => {
 		const newType = event.target.value;
 		actions.changeShippingZoneMethodType( newType, methodNamesMap( newType ) );
 	};
-	const onEnabledChange = () => ( actions.toggleOpenedShippingZoneMethodEnabled( ! enabled ) );
+	const onEnabledChange = () => actions.toggleOpenedShippingZoneMethodEnabled( ! enabled );
 
 	const renderMethodTypeOptions = () => {
 		return methodTypeOptions.map( ( newMethodId, index ) => (
-			<option value={ newMethodId } key={ index }>{ methodNamesMap( newMethodId ) }</option>
+			<option value={ newMethodId } key={ index }>
+				{ methodNamesMap( newMethodId ) }
+			</option>
 		) );
 	};
 
@@ -91,15 +94,24 @@ const ShippingZoneMethodDialog = ( {
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ) },
-		{ action: 'add', label: isNew ? translate( 'Add' ) : translate( 'Done' ), onClick: onClose, isPrimary: true },
+		{
+			action: 'add',
+			label: isNew ? translate( 'Add' ) : translate( 'Done' ),
+			onClick: onClose,
+			isPrimary: true,
+		},
 	];
 
 	if ( ! isNew ) {
 		buttons.unshift( {
 			action: 'delete',
-			label: <span><Gridicon icon="trash" /> { translate( 'Delete this method' ) }</span>,
+			label: (
+				<span>
+					<Gridicon icon="trash" /> { translate( 'Delete this method' ) }
+				</span>
+			),
 			onClick: onDelete,
-			additionalClassNames: 'shipping-zone__method-delete is-scary is-borderless'
+			additionalClassNames: 'shipping-zone__method-delete is-scary is-borderless',
 		} );
 	}
 
@@ -108,11 +120,14 @@ const ShippingZoneMethodDialog = ( {
 			additionalClassNames="shipping-zone__method-dialog woocommerce"
 			isVisible={ isVisible }
 			buttons={ buttons }
-			onClose={ onCancel } >
+			onClose={ onCancel }
+		>
 			<div className="shipping-zone__method-dialog-header">
 				{ isNew ? translate( 'Add shipping method' ) : translate( 'Edit shipping method' ) }
 				<FormFieldSet className="shipping-zone__enable">
-					<FormToggle checked={ enabled } onChange={ onEnabledChange }>{ translate( 'Enabled' ) }</FormToggle>
+					<FormToggle checked={ enabled } onChange={ onEnabledChange }>
+						{ translate( 'Enabled' ) }
+					</FormToggle>
 				</FormFieldSet>
 			</div>
 			<FormFieldSet>
@@ -121,7 +136,8 @@ const ShippingZoneMethodDialog = ( {
 					<FormSelect
 						className="shipping-zone__method-type-select"
 						value={ methodType }
-						onChange={ onMethodTypeChange }>
+						onChange={ onMethodTypeChange }
+					>
 						{ renderMethodTypeOptions() }
 					</FormSelect>
 				</FormFieldSet>
@@ -130,7 +146,8 @@ const ShippingZoneMethodDialog = ( {
 					<FormTextInput
 						placeholder={ translate( 'Title' ) }
 						value={ title || '' }
-						onChange={ onMethodTitleChange } />
+						onChange={ onMethodTitleChange }
+					/>
 				</FormFieldSet>
 				{ renderMethodSettingsView() }
 			</FormFieldSet>
@@ -143,7 +160,7 @@ ShippingZoneMethodDialog.propTypes = {
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		const method = getCurrentlyOpenShippingZoneMethod( state );
 
 		return {
@@ -156,13 +173,17 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId( {
-			changeShippingZoneMethodTitle,
-			changeShippingZoneMethodType,
-			cancelShippingZoneMethod,
-			closeShippingZoneMethod,
-			removeMethodFromShippingZone,
-			toggleOpenedShippingZoneMethodEnabled,
-		}, dispatch, ownProps.siteId )
+		actions: bindActionCreatorsWithSiteId(
+			{
+				changeShippingZoneMethodTitle,
+				changeShippingZoneMethodType,
+				cancelShippingZoneMethod,
+				closeShippingZoneMethod,
+				removeMethodFromShippingZone,
+				toggleOpenedShippingZoneMethodEnabled,
+			},
+			dispatch,
+			ownProps.siteId
+		),
 	} )
 )( localize( ShippingZoneMethodDialog ) );

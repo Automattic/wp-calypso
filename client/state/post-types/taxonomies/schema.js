@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
@@ -19,16 +20,16 @@ export const itemsSchema = {
 								labels: { type: 'object' },
 								description: { type: 'string' },
 								hierarchical: { type: 'boolean' },
-								'public': { type: 'boolean' },
-								capabilities: { type: 'object' }
-							}
-						}
+								public: { type: 'boolean' },
+								capabilities: { type: 'object' },
+							},
+						},
 					},
-					additionalProperties: false
-				}
+					additionalProperties: false,
+				},
 			},
-			additionalProperties: false
-		}
+			additionalProperties: false,
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { forEach } from 'lodash';
 
 export default function removeContentStyles( post, dom ) {
@@ -9,9 +12,10 @@ export default function removeContentStyles( post, dom ) {
 	}
 
 	// Whitelist the markup for galleries, Instagram, and Twitter. Styling will be allowed on elements that match this selector.
-	const whitelistSelector = '.gallery, .gallery *, .gallery-row, .gallery-row *, .gallery-group, .gallery-group *, ' +
-	'blockquote[class^="instagram-"], blockquote[class^="instagram-"] *, ' +
-	'blockquote[class^="twitter-"], blockquote[class^="twitter-"] *';
+	const whitelistSelector =
+		'.gallery, .gallery *, .gallery-row, .gallery-row *, .gallery-group, .gallery-group *, ' +
+		'blockquote[class^="instagram-"], blockquote[class^="instagram-"] *, ' +
+		'blockquote[class^="twitter-"], blockquote[class^="twitter-"] *';
 
 	// remove most style attributes
 	const styled = dom.querySelectorAll( '[style]' );

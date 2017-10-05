@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -25,10 +28,9 @@ class QueryGeo extends Component {
 
 QueryGeo.propTypes = {
 	requesting: PropTypes.bool,
-	requestGeo: PropTypes.func
+	requestGeo: PropTypes.func,
 };
 
-export default connect(
-	( state ) => ( { requesting: isRequestingGeo( state ) } ),
-	{ requestGeo }
-)( QueryGeo );
+export default connect( state => ( { requesting: isRequestingGeo( state ) } ), { requestGeo } )(
+	QueryGeo
+);

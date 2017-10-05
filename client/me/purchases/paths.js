@@ -1,3 +1,4 @@
+/** @format */
 function purchasesRoot() {
 	return '/me/purchases';
 }

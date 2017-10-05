@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -12,15 +15,12 @@ import config from 'config';
 import { mapPostStatus } from 'lib/route/path';
 
 class PostListWrapper extends React.Component {
-
 	constructor( props ) {
 		super( props );
 	}
 
 	renderPostList() {
-		return (
-			<PostList { ...this.props } />
-		);
+		return <PostList { ...this.props } />;
 	}
 
 	renderPostTypeList() {
@@ -36,23 +36,17 @@ class PostListWrapper extends React.Component {
 			query.meta = 'counts';
 		}
 
-		return (
-			<PostTypeList
-				query={ query }
-				largeTitles={ true }
-				wrapTitles={ true }
-			/>
-		);
+		return <PostTypeList query={ query } largeTitles={ true } wrapTitles={ true } />;
 	}
 
 	render() {
 		return (
 			<div>
-				{ config.isEnabled( 'posts/post-type-list' )
-					? this.renderPostTypeList()
-					: this.renderPostList()
-
-				}
+				{ config.isEnabled( 'posts/post-type-list' ) ? (
+					this.renderPostTypeList()
+				) : (
+					this.renderPostList()
+				) }
 			</div>
 		);
 	}

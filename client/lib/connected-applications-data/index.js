@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter, find } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:connected-applications-data' );
@@ -38,7 +41,6 @@ Emitter( ConnectedApplications.prototype );
  */
 ConnectedApplications.prototype.get = function() {
 	if ( ! this.initialized ) {
-
 		// Call fetch to refresh data
 		this.fetch();
 	}
@@ -52,21 +54,22 @@ ConnectedApplications.prototype.get = function() {
  */
 ConnectedApplications.prototype.fetch = function() {
 	this.fetching = true;
-	wpcom.me().getConnectedApplications( function( error, data ) {
-		this.fetching = false;
+	wpcom.me().getConnectedApplications(
+		function( error, data ) {
+			this.fetching = false;
 
-		if ( error ) {
-			debug( 'Something went wrong fetching connected applications.' );
-			return;
-		}
+			if ( error ) {
+				debug( 'Something went wrong fetching connected applications.' );
+				return;
+			}
 
-		this.data = data.connected_applications;
-		this.initialized = true;
+			this.data = data.connected_applications;
+			this.initialized = true;
 
-		debug( 'Connected applications successfully retrieved' );
-		this.emit( 'change' );
-
-	}.bind( this ) );
+			debug( 'Connected applications successfully retrieved' );
+			this.emit( 'change' );
+		}.bind( this )
+	);
 };
 
 /**
@@ -76,21 +79,23 @@ ConnectedApplications.prototype.fetch = function() {
  * @param  int connectionID The ID of the connection
  */
 ConnectedApplications.prototype.revoke = function( connectionID, callback ) {
-	wpcom.me().revokeApplicationConnection( connectionID, function( error, data ) {
-		if ( error ) {
-			debug( 'Revoking application connection failed.' );
-			callback( error );
-			return;
-		}
+	wpcom.me().revokeApplicationConnection(
+		connectionID,
+		function( error, data ) {
+			if ( error ) {
+				debug( 'Revoking application connection failed.' );
+				callback( error );
+				return;
+			}
 
-		this.data = filter( this.data, function( connectedApp ) {
-			return parseInt( connectedApp.ID, 10 ) !== connectionID;
-		} );
+			this.data = filter( this.data, function( connectedApp ) {
+				return parseInt( connectedApp.ID, 10 ) !== connectionID;
+			} );
 
-		callback( null, data );
-		this.emit( 'change' );
-
-	}.bind( this ) );
+			callback( null, data );
+			this.emit( 'change' );
+		}.bind( this )
+	);
 };
 
 /**

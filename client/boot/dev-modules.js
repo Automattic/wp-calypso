@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactClass from 'react/lib/ReactClass';
 
 /**

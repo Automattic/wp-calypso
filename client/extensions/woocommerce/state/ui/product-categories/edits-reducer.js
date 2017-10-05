@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { compact, isEqual } from 'lodash';
 
 /**
@@ -29,17 +32,19 @@ function productCategoryUpdatedAction( edits, action ) {
 		const prevEdits = edits || {};
 		const prevCreates = prevEdits.creates || [];
 
-		const newCreates = compact( prevCreates.map( ( category ) => {
-			if ( isEqual( prevCategoryId, category.id ) ) {
-				// Remove this create, it's no longer needed.
-				return undefined;
-			}
-			return category;
-		} ) );
+		const newCreates = compact(
+			prevCreates.map( category => {
+				if ( isEqual( prevCategoryId, category.id ) ) {
+					// Remove this create, it's no longer needed.
+					return undefined;
+				}
+				return category;
+			} )
+		);
 
 		return {
 			...prevEdits,
-			creates: ( newCreates.length ? newCreates : undefined ),
+			creates: newCreates.length ? newCreates : undefined,
 		};
 	}
 	// TODO: Add support for update and delete.
@@ -70,15 +75,17 @@ function editProductCategory( array, category, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const newArray = compact( prevArray.map( ( c ) => {
-		if ( category.id === c.id ) {
-			found = true;
+	const newArray = compact(
+		prevArray.map( c => {
+			if ( category.id === c.id ) {
+				found = true;
 
-			// If data is null, remove this edit, otherwise update the edit data.
-			return ( data ? { ...c, ...data } : undefined );
-		}
-		return c;
-	} ) );
+				// If data is null, remove this edit, otherwise update the edit data.
+				return data ? { ...c, ...data } : undefined;
+			}
+			return c;
+		} )
+	);
 
 	if ( ! found ) {
 		// update or create not already in edit state, so add it now.
@@ -87,4 +94,3 @@ function editProductCategory( array, category, data ) {
 
 	return newArray;
 }
-

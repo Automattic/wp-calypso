@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -38,7 +41,7 @@ class SocialLoginForm extends Component {
 		linkingSocialService: '',
 	};
 
-	handleGoogleResponse = ( response ) => {
+	handleGoogleResponse = response => {
 		const { onSuccess, redirectTo } = this.props;
 
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
@@ -51,39 +54,39 @@ class SocialLoginForm extends Component {
 			id_token: response.Zi.id_token,
 		};
 
-		this.props.loginSocialUser( socialInfo, redirectTo )
-			.then(
-				() => {
-					this.recordEvent( 'calypso_login_social_login_success' );
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success' );
 
-					onSuccess();
-				},
-				error => {
-					if ( error.code === 'unknown_user' ) {
-						return this.props.createSocialUser( socialInfo, 'login' )
-							.then(
-								() => this.recordEvent( 'calypso_login_social_signup_success' ),
-								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
-									error_code: createAccountError.code,
-									error_message: createAccountError.message
-								} )
-							);
-					} else if ( error.code === 'user_exists' ) {
-						this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
-					}
-
-					this.recordEvent( 'calypso_login_social_login_failure', {
-						error_code: error.code,
-						error_message: error.message
-					} );
+				onSuccess();
+			},
+			error => {
+				if ( error.code === 'unknown_user' ) {
+					return this.props.createSocialUser( socialInfo, 'login' ).then(
+						() => this.recordEvent( 'calypso_login_social_signup_success' ),
+						createAccountError =>
+							this.recordEvent( 'calypso_login_social_signup_failure', {
+								error_code: createAccountError.code,
+								error_message: createAccountError.message,
+							} )
+					);
+				} else if ( error.code === 'user_exists' ) {
+					this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
 				}
-			);
+
+				this.recordEvent( 'calypso_login_social_login_failure', {
+					error_code: error.code,
+					error_message: error.message,
+				} );
+			}
+		);
 	};
 
-	recordEvent = ( eventName, params ) => this.props.recordTracksEvent( eventName, {
-		social_account_type: 'google',
-		...params
-	} );
+	recordEvent = ( eventName, params ) =>
+		this.props.recordTracksEvent( eventName, {
+			social_account_type: 'google',
+			...params,
+		} );
 
 	trackGoogleLogin = () => {
 		this.recordEvent( 'calypso_login_social_button_click' );
@@ -96,7 +99,7 @@ class SocialLoginForm extends Component {
 					{ this.props.translate( 'Or, choose a different %(service)s account:', {
 						args: {
 							service: capitalize( this.props.linkingSocialService ),
-						}
+						},
 					} ) }
 				</p>
 			);
@@ -118,12 +121,13 @@ class SocialLoginForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
-						onClick={ this.trackGoogleLogin } />
+						onClick={ this.trackGoogleLogin }
+					/>
 				</div>
 
-				{ this.props.isSocialAccountCreating &&
+				{ this.props.isSocialAccountCreating && (
 					<InfoNotice text={ this.props.translate( 'Creating your account…' ) } />
-				}
+				) }
 
 				{ this.props.bearerToken && (
 					<WpcomLoginForm
@@ -138,7 +142,7 @@ class SocialLoginForm extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),

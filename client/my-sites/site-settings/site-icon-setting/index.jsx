@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -33,12 +36,15 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
-import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'state/ui/editor/image-editor/selectors';
 import {
 	getSiteIconId,
 	getSiteIconUrl,
 	isPrivateSite,
-	isSiteSupportingImageEditor
+	isSiteSupportingImageEditor,
 } from 'state/selectors';
 import { errorNotice } from 'state/notices/actions';
 
@@ -57,22 +63,22 @@ class SiteIconSetting extends Component {
 		onEditSelectedMedia: PropTypes.func,
 		onCancelEditingIcon: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
-		crop: PropTypes.object
+		crop: PropTypes.object,
 	};
 
 	state = {
 		isModalVisible: false,
 		hasToggledModal: false,
-		isEditingSiteIcon: false
+		isEditingSiteIcon: false,
 	};
 
-	toggleModal = ( isModalVisible ) => {
+	toggleModal = isModalVisible => {
 		const { isEditingSiteIcon } = this.state;
 
 		this.setState( {
 			isModalVisible,
 			hasToggledModal: true,
-			isEditingSiteIcon: isModalVisible ? isEditingSiteIcon : false
+			isEditingSiteIcon: isModalVisible ? isEditingSiteIcon : false,
 		} );
 	};
 
@@ -80,7 +86,7 @@ class SiteIconSetting extends Component {
 
 	showModal = () => this.toggleModal( true );
 
-	editSelectedMedia = ( value ) => {
+	editSelectedMedia = value => {
 		if ( value ) {
 			this.setState( { isEditingSiteIcon: true } );
 			this.props.onEditSelectedMedia();
@@ -151,7 +157,7 @@ class SiteIconSetting extends Component {
 		MediaActions.add( siteId, {
 			ID: transientMediaId,
 			fileContents: blob,
-			fileName
+			fileName,
 		} );
 	}
 
@@ -167,18 +173,21 @@ class SiteIconSetting extends Component {
 		}
 
 		const { crop, transform, recordEvent } = this.props;
-		const isImageEdited = ! isEqual( {
-			...crop,
-			...transform
-		}, {
-			topRatio: 0,
-			leftRatio: 0,
-			widthRatio: 1,
-			heightRatio: 1,
-			degrees: 0,
-			scaleX: 1,
-			scaleY: 1
-		} );
+		const isImageEdited = ! isEqual(
+			{
+				...crop,
+				...transform,
+			},
+			{
+				topRatio: 0,
+				leftRatio: 0,
+				widthRatio: 1,
+				heightRatio: 1,
+				degrees: 0,
+				scaleX: 1,
+				scaleY: 1,
+			}
+		);
 
 		recordEvent( 'Completed Site Icon Selection' );
 
@@ -198,7 +207,7 @@ class SiteIconSetting extends Component {
 
 		recordEvent( 'Clicked Remove Site Icon' );
 
-		accept( message, ( accepted ) => {
+		accept( message, accepted => {
 			if ( accepted ) {
 				removeSiteIcon( siteId );
 				recordEvent( 'Confirmed Remove Site Icon' );
@@ -221,7 +230,14 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const { isJetpack, isPrivate, iconUrl, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
+		const {
+			isJetpack,
+			isPrivate,
+			iconUrl,
+			customizerUrl,
+			generalOptionsUrl,
+			siteSupportsImageEditor,
+		} = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 
 		let buttonProps;
@@ -229,7 +245,7 @@ class SiteIconSetting extends Component {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
-				onMouseEnter: this.preloadModal
+				onMouseEnter: this.preloadModal,
 			};
 		} else {
 			buttonProps = { rel: 'external' };
@@ -247,10 +263,9 @@ class SiteIconSetting extends Component {
 		}
 
 		// Merge analytics click handler into existing button props
-		buttonProps.onClick = flow( compact( [
-			() => this.props.recordEvent( 'Clicked Change Site Icon' ),
-			buttonProps.onClick
-		] ) );
+		buttonProps.onClick = flow(
+			compact( [ () => this.props.recordEvent( 'Clicked Change Site Icon' ), buttonProps.onClick ] )
+		);
 
 		const { translate, siteId, isSaving, hasIcon } = this.props;
 
@@ -261,20 +276,25 @@ class SiteIconSetting extends Component {
 					<InfoPopover position="bottom right">
 						{ translate(
 							'The Site Icon is used as a browser and app icon for your site.' +
-							' Icons must be square, and at least %s pixels wide and tall.',
+								' Icons must be square, and at least %s pixels wide and tall.',
 							{ args: [ 512 ] }
 						) }
 					</InfoPopover>
 				</FormLabel>
-				{ React.createElement( buttonProps.href ? 'a' : 'button', {
-					...buttonProps,
-					className: 'site-icon-setting__icon'
-				}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
+				{ React.createElement(
+					buttonProps.href ? 'a' : 'button',
+					{
+						...buttonProps,
+						className: 'site-icon-setting__icon',
+					},
+					<SiteIcon size={ 96 } siteId={ siteId } />
+				) }
 				<Button
 					{ ...buttonProps }
 					className="site-icon-setting__button"
 					disabled={ isSaving }
-					compact>
+					compact
+				>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
 				{ hasIcon && (
@@ -283,7 +303,8 @@ class SiteIconSetting extends Component {
 						scary
 						onClick={ this.confirmRemoval }
 						className="site-icon-setting__button"
-						disabled={ isSaving }>
+						disabled={ isSaving }
+					>
 						{ translate( 'Remove' ) }
 					</Button>
 				) }
@@ -291,27 +312,28 @@ class SiteIconSetting extends Component {
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
 							require="post-editor/media-modal"
-							placeholder={ (
-								<Dialog
-									additionalClassNames="editor-media-modal"
-									isVisible={ isModalVisible } />
-							) }
+							placeholder={
+								<Dialog additionalClassNames="editor-media-modal" isVisible={ isModalVisible } />
+							}
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
 							isParentReady={ this.isParentReady }
 							enabledFilters={ [ 'images' ] }
-							{ ...( isEditingSiteIcon ? {
-								imageEditorProps: {
-									allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-									onDone: this.setSiteIcon,
-									onCancel: this.cancelEditingSiteIcon
-								}
-							} : {} ) }
+							{ ...( isEditingSiteIcon
+								? {
+										imageEditorProps: {
+											allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+											onDone: this.setSiteIcon,
+											onCancel: this.cancelEditingSiteIcon,
+										},
+									}
+								: {} ) }
 							visible={ isModalVisible }
 							labels={ {
-								confirm: translate( 'Continue' )
+								confirm: translate( 'Continue' ),
 							} }
-							single />
+							single
+						/>
 					</MediaLibrarySelectedData>
 				) }
 			</FormFieldset>
@@ -320,7 +342,7 @@ class SiteIconSetting extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -335,11 +357,11 @@ export default connect(
 			customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
 			crop: getImageEditorCrop( state ),
-			transform: getImageEditorTransform( state )
+			transform: getImageEditorTransform( state ),
 		};
 	},
 	{
-		recordEvent: ( action ) => recordGoogleEvent( 'Site Settings', action ),
+		recordEvent: action => recordGoogleEvent( 'Site Settings', action ),
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
@@ -348,6 +370,6 @@ export default connect(
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		receiveMedia,
 		deleteMedia,
-		errorNotice
+		errorNotice,
 	}
 )( localize( SiteIconSetting ) );

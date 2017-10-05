@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
@@ -78,26 +81,29 @@ class CalendarButton extends Component {
 			return null;
 		}
 
-		const calendarProperties = Object.assign( {}, pick( this.props, [
-			'autoPosition',
-			'closeOnEsc',
-			'disabledDays',
-			'events',
-			'enableOutsideDays',
-			'ignoreContext',
-			'isVisible',
-			'modifiers',
-			'rootClassName',
-			'selectedDay',
-			'showDelay',
-			'siteId',
-			'onDateChange',
-			'onMonthChange',
-			'onDayMouseEnter',
-			'onDayMouseLeave',
-			'onShow',
-			'onClose',
-		] ) );
+		const calendarProperties = Object.assign(
+			{},
+			pick( this.props, [
+				'autoPosition',
+				'closeOnEsc',
+				'disabledDays',
+				'events',
+				'enableOutsideDays',
+				'ignoreContext',
+				'isVisible',
+				'modifiers',
+				'rootClassName',
+				'selectedDay',
+				'showDelay',
+				'siteId',
+				'onDateChange',
+				'onMonthChange',
+				'onDayMouseEnter',
+				'onDayMouseLeave',
+				'onShow',
+				'onClose',
+			] )
+		);
 
 		return (
 			<AsyncLoad
@@ -112,23 +118,24 @@ class CalendarButton extends Component {
 	}
 
 	renderCalendarContent() {
-		return this.props.children
-			? this.props.children
-			: ( <Gridicon icon={ this.props.icon } /> );
+		return this.props.children ? this.props.children : <Gridicon icon={ this.props.icon } />;
 	}
 
 	render() {
-		const buttonsProperties = Object.assign( {}, pick( this.props, [
-			'compact',
-			'disabled',
-			'primary',
-			'scary',
-			'busy',
-			'href',
-			'borderless',
-			'target',
-			'rel',
-		] ) );
+		const buttonsProperties = Object.assign(
+			{},
+			pick( this.props, [
+				'compact',
+				'disabled',
+				'primary',
+				'scary',
+				'busy',
+				'href',
+				'borderless',
+				'target',
+				'rel',
+			] )
+		);
 
 		return (
 			<Button

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -8,21 +11,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import {
-	identity,
-	includes,
-	noop,
-	without,
-} from 'lodash';
+import { identity, includes, noop, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
-import {
-	hideDropZone,
-	showDropZone,
-} from 'state/ui/drop-zone/actions';
+import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 
 export const DropZone = React.createClass( {
 	propTypes: {
@@ -91,7 +86,7 @@ export const DropZone = React.createClass( {
 
 		this.setState( {
 			isDraggingOverDocument: false,
-			isDraggingOverElement: false
+			isDraggingOverElement: false,
 		} );
 
 		this.toggleDropZoneReduxState( false );
@@ -104,7 +99,7 @@ export const DropZone = React.createClass( {
 			this.observer = new window.MutationObserver( this.detectNodeRemoval );
 			this.observer.observe( document.body, {
 				childList: true,
-				subtree: true
+				subtree: true,
 			} );
 		}
 	},
@@ -119,7 +114,7 @@ export const DropZone = React.createClass( {
 	},
 
 	detectNodeRemoval( mutations ) {
-		mutations.forEach( ( mutation ) => {
+		mutations.forEach( mutation => {
 			if ( ! mutation.removedNodes.length ) {
 				return;
 			}
@@ -149,8 +144,9 @@ export const DropZone = React.createClass( {
 
 		this.setState( {
 			isDraggingOverDocument: isDraggingOverDocument,
-			isDraggingOverElement: isDraggingOverDocument && ( this.props.fullScreen ||
-				this.isWithinZoneBounds( detail.clientX, detail.clientY ) )
+			isDraggingOverElement:
+				isDraggingOverDocument &&
+				( this.props.fullScreen || this.isWithinZoneBounds( detail.clientX, detail.clientY ) ),
 		} );
 
 		if ( window.CustomEvent && event instanceof window.CustomEvent ) {
@@ -159,7 +155,9 @@ export const DropZone = React.createClass( {
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
 
-		this.toggleDropZoneReduxState( !! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) );
+		this.toggleDropZoneReduxState(
+			!! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement )
+		);
 	},
 
 	toggleDropZoneReduxState( isVisible ) {
@@ -192,8 +190,7 @@ export const DropZone = React.createClass( {
 			return false;
 		}
 
-		return x >= rect.left && x <= rect.right &&
-			y >= rect.top && y <= rect.bottom;
+		return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 	},
 
 	onDrop( event ) {
@@ -203,7 +200,10 @@ export const DropZone = React.createClass( {
 
 		this.resetDragState();
 
-		if ( ! this.props.fullScreen && ! ReactDom.findDOMNode( this.refs.zone ).contains( event.target ) ) {
+		if (
+			! this.props.fullScreen &&
+			! ReactDom.findDOMNode( this.refs.zone ).contains( event.target )
+		) {
 			return;
 		}
 
@@ -228,20 +228,14 @@ export const DropZone = React.createClass( {
 
 		return (
 			<div className="drop-zone__content">
-				{
+				{ this.props.children ? (
 					this.props.children
-						? this.props.children
-						: (
-							<div>
-								<span className="drop-zone__content-icon">
-									{ this.props.icon }
-								</span>
-								<span className="drop-zone__content-text">
-									{ textLabel }
-								</span>
-							</div>
-						)
-				}
+				) : (
+					<div>
+						<span className="drop-zone__content-icon">{ this.props.icon }</span>
+						<span className="drop-zone__content-text">{ textLabel }</span>
+					</div>
+				) }
 			</div>
 		);
 	},
@@ -264,7 +258,7 @@ export const DropZone = React.createClass( {
 			return <RootChild>{ element }</RootChild>;
 		}
 		return element;
-	}
+	},
 } );
 
 const mapDispatch = {

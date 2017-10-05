@@ -1,10 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { noop } from 'lodash';
 
 export default class FormToggle extends PureComponent {
 	static propTypes = {

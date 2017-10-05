@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -15,11 +18,8 @@ class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
 		onClose: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
-		selectedDomainName: PropTypes.string.isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
 	};
 
 	closeDeleteForwards = () => {
@@ -38,35 +38,34 @@ class DeleteEmailForwardsDialog extends React.Component {
 				action: 'delete',
 				label: translate( 'Deactivate Email Forwards and Remove Records' ),
 				isPrimary: true,
-				onClick: this.closeDeleteForwards
+				onClick: this.closeDeleteForwards,
 			},
 			{
 				action: 'keep',
-				label: translate( 'Keep Records and Email Forwards' )
-			}
+				label: translate( 'Keep Records and Email Forwards' ),
+			},
 		];
 
 		return (
 			<Dialog
-					isVisible={ visible }
-					buttons={ buttons }
-					onClose={ this.close }
-					className="cancel-purchase-button__warning-dialog"
+				isVisible={ visible }
+				buttons={ buttons }
+				onClose={ this.close }
+				className="cancel-purchase-button__warning-dialog"
 			>
-				<h1>
-					{ translate( 'Are you sure?' ) }
-				</h1>
+				<h1>{ translate( 'Are you sure?' ) }</h1>
 				<p>
-				{ translate(
-					'Removing this record will delete your current {{a}}Email Forwards{{/a}}.',
-					{
+					{ translate( 'Removing this record will delete your current {{a}}Email Forwards{{/a}}.', {
 						components: {
-							a: <a target="_blank" rel="noopener noreferrer"
-								href={ this.getEmailForwardingPath() }
-							/>
-						}
-					}
-				) }
+							a: (
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={ this.getEmailForwardingPath() }
+								/>
+							),
+						},
+					} ) }
 				</p>
 			</Dialog>
 		);

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { merge, omit, uniqueId } from 'lodash';
 import { combineReducers } from 'state/utils';
 

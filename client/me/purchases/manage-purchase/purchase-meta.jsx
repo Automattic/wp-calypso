@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -46,12 +49,9 @@ class PurchaseMeta extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] )
-			.isRequired,
+		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType(
-			[ PropTypes.object, PropTypes.bool, PropTypes.undefined ]
-		),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
 	};
 
 	static defaultProps = {
@@ -64,9 +64,8 @@ class PurchaseMeta extends Component {
 		const { translate } = this.props;
 		const purchase = getPurchase( this.props );
 		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
-		const period = productSlug && isMonthly( productSlug )
-			? translate( 'month' )
-			: translate( 'year' );
+		const period =
+			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) ) {
 			return translate(
@@ -159,9 +158,7 @@ class PurchaseMeta extends Component {
 
 			return (
 				<span>
-					<a href={ attachedPlanUrl }>
-						{ translate( 'Renews with Plan' ) }
-					</a>
+					<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
 				</span>
 			);
 		}
@@ -188,11 +185,7 @@ class PurchaseMeta extends Component {
 		const { translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return (
-				<span className="manage-purchase__detail">
-					{ translate( 'Included with plan' ) }
-				</span>
-			);
+			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
 		}
 
 		if ( hasPaymentMethod( purchase ) ) {
@@ -216,11 +209,7 @@ class PurchaseMeta extends Component {
 			);
 		}
 
-		return (
-			<span className="manage-purchase__detail">
-				{ translate( 'None' ) }
-			</span>
-		);
+		return <span className="manage-purchase__detail">{ translate( 'None' ) }</span>;
 	}
 
 	renderPaymentDetails() {
@@ -243,11 +232,7 @@ class PurchaseMeta extends Component {
 			! isPaidWithCreditCard( purchase ) ||
 			! getSelectedSite( this.props )
 		) {
-			return (
-				<li>
-					{ paymentDetails }
-				</li>
-			);
+			return <li>{ paymentDetails }</li>;
 		}
 
 		return (

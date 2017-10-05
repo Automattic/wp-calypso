@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineReducers, keyedReducer } from 'state/utils';
 import coupons from './coupons/reducer';
 import currencies from './currencies/reducer';

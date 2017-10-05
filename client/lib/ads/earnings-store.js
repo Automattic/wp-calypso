@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugModule from 'debug';
 
 /**
@@ -28,7 +31,7 @@ EarningsStore = {
 		return {
 			earnings: _earnings.hasOwnProperty( siteId ) ? _earnings[ siteId ] : null,
 			isLoading: _isLoading,
-			error: _loadingError
+			error: _loadingError,
 		};
 	},
 
@@ -42,7 +45,7 @@ EarningsStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateEarnings( siteId, data ) {

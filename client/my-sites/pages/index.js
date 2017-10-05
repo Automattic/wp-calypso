@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -12,6 +15,11 @@ import config from 'config';
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/pages' ) ) {
-		page( '/pages/:status?/:domain?', controller.siteSelection, controller.navigation, pagesController.pages );
+		page(
+			'/pages/:status?/:domain?',
+			controller.siteSelection,
+			controller.navigation,
+			pagesController.pages
+		);
 	}
 };

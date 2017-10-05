@@ -1,9 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
- /**
+/**
  * Internal dependencies
  */
 import buildUrl from 'lib/build-url';

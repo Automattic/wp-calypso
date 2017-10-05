@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -20,7 +23,7 @@ module.exports = React.createClass( {
 	propTypes: {
 		width: PropTypes.number.isRequired,
 		x: PropTypes.number.isRequired,
-		label: PropTypes.string.isRequired
+		label: PropTypes.string.isRequired,
 	},
 
 	render: function() {
@@ -28,11 +31,15 @@ module.exports = React.createClass( {
 		let labelStyle;
 
 		labelStyle = {
-			width: this.props.width + 'px'
+			width: this.props.width + 'px',
 		};
 
 		labelStyle[ dir ] = this.props.x + 'px';
 
-		return <div className="chart__x-axis-label" style={ labelStyle }>{ this.props.label }</div>;
-	}
+		return (
+			<div className="chart__x-axis-label" style={ labelStyle }>
+				{ this.props.label }
+			</div>
+		);
+	},
 } );

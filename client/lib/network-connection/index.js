@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:network-connection' );
@@ -21,7 +24,6 @@ var STATUS_CHECK_INTERVAL = 20000,
 	NetworkConnectionApp;
 
 NetworkConnectionApp = {
-
 	/**
 	 * @returns {boolean}
 	 */
@@ -44,28 +46,33 @@ NetworkConnectionApp = {
 				debug( 'Showing notice "Connection restored".' );
 				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
 			} else {
-				reduxStore.dispatch( connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) ) );
+				reduxStore.dispatch(
+					connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) )
+				);
 				debug( 'Showing notice "No internet connection".' );
 			}
 		};
 
 		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !!navigator.onLine : true;
+			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
 
 			window.addEventListener( 'online', this.emitConnected.bind( this ) );
 			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
 		} else {
 			PollerPool.add( this, 'checkNetworkStatus', {
-				interval: STATUS_CHECK_INTERVAL
+				interval: STATUS_CHECK_INTERVAL,
 			} );
 		}
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener( 'beforeunload', function() {
-			debug( 'Removing listener.' );
-			this.off( 'change', changeCallback );
-		}.bind( this ) );
+		window.addEventListener(
+			'beforeunload',
+			function() {
+				debug( 'Removing listener.' );
+				this.off( 'change', changeCallback );
+			}.bind( this )
+		);
 	},
 
 	/**
@@ -75,15 +82,19 @@ NetworkConnectionApp = {
 	checkNetworkStatus: function() {
 		debug( 'Checking network status.' );
 
-		request.head( '/version?' + ( new Date() ).getTime() )
+		request
+			.head( '/version?' + new Date().getTime() )
 			.timeout( STATUS_CHECK_INTERVAL / 2 )
-			.end( function( error, response ) { // eslint-disable-line no-unused-vars
-				if ( error ) {
-					this.emitDisconnected();
-				} else {
-					this.emitConnected();
-				}
-			}.bind( this ) );
+			.end(
+				function( error, response ) {
+					// eslint-disable-line no-unused-vars
+					if ( error ) {
+						this.emitDisconnected();
+					} else {
+						this.emitConnected();
+					}
+				}.bind( this )
+			);
 	},
 
 	/**
@@ -119,7 +130,7 @@ NetworkConnectionApp = {
 	 */
 	isConnected: function() {
 		return connected;
-	}
+	},
 };
 
 /**

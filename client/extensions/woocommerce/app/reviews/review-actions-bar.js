@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -39,11 +42,7 @@ const ReviewActionsBar = ( {
 				className={ classNames( 'reviews__action-approve', { 'is-approved': isApproved } ) }
 			>
 				<Gridicon icon={ isApproved ? 'checkmark-circle' : 'checkmark' } />
-				<span>{
-					isApproved
-						? translate( 'Approved' )
-						: translate( 'Approve' )
-				}</span>
+				<span>{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 			</Button>
 
 			<Button
@@ -52,30 +51,22 @@ const ReviewActionsBar = ( {
 				className={ classNames( 'reviews__action-spam', { 'is-spam': isSpam } ) }
 			>
 				<Gridicon icon="spam" />
-				<span>{
-					isSpam
-						? translate( 'Marked as Spam' )
-						: translate( 'Spam' )
-				}</span>
+				<span>{ isSpam ? translate( 'Marked as Spam' ) : translate( 'Spam' ) }</span>
 			</Button>
 
-			{ 'trash' === currentStatus && (
+			{ ( 'trash' === currentStatus && (
 				<Button borderless className="reviews__action-delete" onClick={ deleteTheReview }>
 					<Gridicon icon="trash" />
 					<span>{ translate( 'Delete Permanently' ) }</span>
 				</Button>
-			) || (
+			) ) || (
 				<Button
 					borderless
 					onClick={ trashReview }
 					className={ classNames( 'reviews__action-trash', { 'is-trash': isTrash } ) }
 				>
 					<Gridicon icon="trash" />
-					<span>{
-						isTrash
-							? translate( 'Trashed' )
-							: translate( 'Trash' )
-					}</span>
+					<span>{ isTrash ? translate( 'Trashed' ) : translate( 'Trash' ) }</span>
 				</Button>
 			) }
 		</div>
@@ -116,7 +107,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 		spamReview: () => {
 			dispatch( changeReviewStatus( siteId, postId, commentId, review.status, 'spam' ) );
 			toggleExpanded();
-		}
+		},
 	};
 };
 

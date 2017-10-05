@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { size, filter } from 'lodash';
 
 /*
@@ -9,9 +12,10 @@ import { size, filter } from 'lodash';
  * @param  {Object}  state  Global state tree
  * @return {Integer} Follow count
  */
-const getReaderFollowsCount = state => Math.max(
-	state.reader.follows.itemsCount,
-	size( filter( state.reader.follows.items, { is_following: true } ) ),
-);
+const getReaderFollowsCount = state =>
+	Math.max(
+		state.reader.follows.itemsCount,
+		size( filter( state.reader.follows.items, { is_following: true } ) )
+	);
 
 export default getReaderFollowsCount;

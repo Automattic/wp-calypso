@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -19,7 +22,7 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 	let title, action;
 
 	if ( 'draft' === status ) {
-		title = translate( 'You don\'t have any drafts.' );
+		title = translate( "You don't have any drafts." );
 	} else if ( typeObject ) {
 		title = typeObject.labels.not_found;
 	}
@@ -30,15 +33,14 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 
 	return (
 		<div>
-			{ siteId && (
-				<QueryPostTypes siteId={ siteId } />
-			) }
+			{ siteId && <QueryPostTypes siteId={ siteId } /> }
 			<EmptyContent
 				title={ title }
 				action={ action }
 				actionURL={ editPath }
 				illustration="/calypso/images/pages/illustration-pages.svg"
-				illustrationWidth={ 150 } />
+				illustrationWidth={ 150 }
+			/>
 		</div>
 	);
 }
@@ -49,7 +51,7 @@ PostTypeListEmptyContent.propTypes = {
 	type: PropTypes.string,
 	status: PropTypes.string,
 	typeObject: PropTypes.object,
-	editPath: PropTypes.string
+	editPath: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -58,6 +60,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		typeObject: getPostType( state, siteId, ownProps.type ),
-		editPath: getEditorPath( state, siteId, null, ownProps.type )
+		editPath: getEditorPath( state, siteId, null, ownProps.type ),
 	};
 } )( localize( PostTypeListEmptyContent ) );

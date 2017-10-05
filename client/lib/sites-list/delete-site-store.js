@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 
@@ -10,13 +13,13 @@ var _deletedSite = {},
 function storeDeletedSite( site ) {
 	_deletedSite = {
 		status: 'deleting',
-		site: site
+		site: site,
 	};
 	DeletedSiteStore.emit( 'change' );
 }
 
 function handleDeleteSiteResponse( error ) {
-	_deletedSite.status = ( error ) ? 'error' : 'deleted';
+	_deletedSite.status = error ? 'error' : 'deleted';
 	DeletedSiteStore.emit( 'change' );
 }
 
@@ -28,7 +31,7 @@ function clearDeletedSite() {
 DeletedSiteStore = {
 	get: function() {
 		return _deletedSite;
-	}
+	},
 };
 
 Emitter( DeletedSiteStore );

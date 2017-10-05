@@ -1,3 +1,4 @@
+/** @format */
 export function getCurrentPreviewType( state ) {
 	return state.ui.preview.currentPreviewType;
 }
