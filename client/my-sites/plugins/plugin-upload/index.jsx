@@ -39,6 +39,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
+import { successNotice } from 'state/notices/actions';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -62,6 +63,13 @@ class PluginUpload extends React.Component {
 
 		if ( nextProps.complete ) {
 			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+
+			nextProps.successNotice(
+				nextProps.translate( "You've successfully uploaded the %(pluginId)s plugin.", {
+					args: { pluginId: nextProps.pluginId }
+				} ),
+				{ duration: 8000 }
+			);
 		}
 	}
 
@@ -183,5 +191,5 @@ export default connect(
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		};
 	},
-	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip }
+	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 )( localize( PluginUpload ) );
