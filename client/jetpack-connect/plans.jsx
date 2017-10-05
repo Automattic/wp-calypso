@@ -32,7 +32,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isRtl } from 'state/selectors';
 import {
 	getFlowType,
 	isRedirectingToWpAdmin,
@@ -263,6 +263,8 @@ class Plans extends Component {
 	}
 
 	render() {
+		const { isRtlLayout } = this.props;
+
 		if (
 			this.redirecting ||
 			this.hasPreSelectedPlan() ||
@@ -288,7 +290,7 @@ class Plans extends Component {
 					}
 					hideFreePlan={ true }
 				>
-					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
+					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 				</PlansGrid>
 			</div>
 		);
@@ -323,6 +325,7 @@ export default connect(
 			getPlanBySlug: searchPlanBySlug,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
+			isRtlLayout: isRtl( state ),
 		};
 	},
 	{

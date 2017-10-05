@@ -11,11 +11,11 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PlansSkipButton = ( { onClick, translate } ) => (
+const PlansSkipButton = ( { onClick, isRtl, translate } ) => (
 	<div className="jetpack-connect__plans-nav-buttons">
 		<Button onClick={ onClick }>
 			{ translate( 'Start with free' ) }
-			<Gridicon icon="arrow-right" />
+			<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } />
 		</Button>
 	</div>
 );
