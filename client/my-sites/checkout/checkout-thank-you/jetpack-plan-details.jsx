@@ -4,85 +4,133 @@
  * @format
  */
 
-import React from 'react';
-import i18n from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
-import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 const user = userFactory();
 
-const JetpackPlanDetails = ( { selectedSite } ) => {
-	const props = {
-		icon: 'cog',
-		title: i18n.translate( 'Set up your VaultPress and Akismet accounts' ),
-		description: i18n.translate(
+const BasicDetails = ( { translate } ) => (
+	<PurchaseDetail
+		icon="cog"
+		title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
+		description={ translate(
 			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
 				'Follow the instructions in the email to get started.',
 			{ args: { email: user.get().email } }
-		),
-	};
+		) }
+	/>
+);
 
-	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		const trackManualInstall = eventName => {
-			return () => {
-				analytics.tracks.recordEvent( eventName );
-			};
-		};
-
-		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
-		if ( reasons && reasons.length > 0 ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_filemod', {
-				error: reasons[ 0 ],
-			} );
-		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_jpversion', {
-				jetpack_version: selectedSite.options.jetpack_version,
-			} );
-		} else if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_multisite' );
-		} else if ( selectedSite.options.is_multi_network ) {
-			analytics.tracks.recordEvent( 'calypso_plans_autoconfig_halt_multinetwork' );
-		}
-
-		props.title = null;
-		if ( ! selectedSite.canUpdateFiles ) {
-			props.description = i18n.translate(
-				'You can now install Akismet and VaultPress, which will automatically protect your site from spam and data loss. ' +
-					"If you have any questions along the way, we're here to help!"
-			);
-			props.buttonText = i18n.translate( 'Installation Instructions' );
-			props.href = 'https://en.support.wordpress.com/setting-up-premium-services/';
-			props.onClick = trackManualInstall( 'calypso_plans_autoconfig_click_manual_install' );
-		} else {
-			props.description = i18n.translate(
-				'We are about to install Akismet and VaultPress for your site, which will automatically protect your site from spam ' +
-					"and data loss. If you have any questions along the way, we're here to help! You can also perform a manual " +
-					'installation by following {{a}}these instructions{{/a}}.',
-				{
-					components: {
-						a: (
-							<a
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://en.support.wordpress.com/setting-up-premium-services/"
-								onClick={ trackManualInstall( 'calypso_plans_autoconfig_click_opt_out' ) }
-							/>
-						),
-					},
-				}
-			);
-			props.buttonText = i18n.translate( 'Set up your plan' );
-			props.href = `/plugins/setup/${ selectedSite.slug }`;
-		}
+class EnhancedDetails extends Component {
+	componentDidMount() {
+		this.props.trackAutoconfigHalt();
 	}
 
-	return <PurchaseDetail { ...props } />;
+	render() {
+		const { selectedSite, trackManualInstall, translate } = this.props;
+
+		if ( ! selectedSite.canUpdateFiles ) {
+			return (
+				<PurchaseDetail
+					icon="cog"
+					buttonText={ translate( 'Installation Instructions' ) }
+					description={ translate(
+						'You can now install Akismet and VaultPress, which will automatically ' +
+							'protect your site from spam and data loss. ' +
+							"If you have any questions along the way, we're here to help!"
+					) }
+					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					onClick={ trackManualInstall }
+				/>
+			);
+		}
+
+		return (
+			<PurchaseDetail
+				icon="cog"
+				buttonText={ translate( 'Set up your plan' ) }
+				description={ translate(
+					'We are about to install Akismet and VaultPress for your site, ' +
+						'which will automatically protect your site from spam ' +
+						'and data loss. If you have any questions along the way, ' +
+						"we're here to help! You can also perform a manual " +
+						'installation by following {{a}}these instructions{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href="https://en.support.wordpress.com/setting-up-premium-services/"
+									onClick={ trackManualInstall }
+								/>
+							),
+						},
+					}
+				) }
+				href={ `/plugins/setup/${ selectedSite.slug }` }
+			/>
+		);
+	}
+}
+
+const getTracksDataForAutoconfigHalt = selectedSite => {
+	const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+
+	if ( reasons && reasons.length > 0 ) {
+		return [ 'calypso_plans_autoconfig_halt_filemod', { error: reasons[ 0 ] } ];
+	}
+
+	if ( ! selectedSite.hasMinimumJetpackVersion ) {
+		return [
+			'calypso_plans_autoconfig_halt_jpversion',
+			{ jetpack_version: selectedSite.options.jetpack_version },
+		];
+	}
+
+	if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite ) {
+		return [ 'calypso_plans_autoconfig_halt_multisite', undefined ];
+	}
+
+	if ( selectedSite.options.is_multi_network ) {
+		return [ 'calypso_plans_autoconfig_halt_multinetwork', undefined ];
+	}
+
+	return null;
 };
 
-export default JetpackPlanDetails;
+const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
+	trackAutoconfigHalt: () => {
+		const eventData = getTracksDataForAutoconfigHalt( selectedSite );
+
+		if ( ! eventData ) {
+			return;
+		}
+
+		const [ name, properties ] = eventData;
+
+		dispatch( recordTracksEvent( name, properties ) );
+	},
+	trackManualInstall: () => {
+		const eventName = selectedSite.canUpdateFiles
+			? 'calypso_plans_autoconfig_click_opt_out'
+			: 'calypso_plans_autoconfig_click_manual_install';
+
+		dispatch( recordTracksEvent( eventName ) );
+	},
+} );
+
+const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
+	? connect( null, mapDispatchToProps )( EnhancedDetails )
+	: BasicDetails;
+
+export default localize( JetpackPlanDetails );
