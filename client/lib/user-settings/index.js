@@ -13,8 +13,9 @@ import emitterClass from 'lib/mixins/emitter';
 import userFactory from 'lib/user';
 const user = userFactory();
 import userUtils from 'lib/user/utils';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /*
  * Decodes entities in those specific user settings properties

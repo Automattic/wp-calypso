@@ -9,8 +9,9 @@ const debug = debugFactory( 'calypso:trophies-data' );
  */
 import Emitter from 'lib/mixins/emitter';
 import store from 'store';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 function TrophiesData() {
 	if ( ! ( this instanceof TrophiesData ) ) {

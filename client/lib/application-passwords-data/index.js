@@ -10,8 +10,9 @@ const debug = debugFactory( 'calypso:application-passwords-data' );
  */
 import makeEmitter from 'lib/mixins/emitter';
 import store from 'store';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 function ApplicationPasswords() {
 	if ( ! ( this instanceof ApplicationPasswords ) ) {

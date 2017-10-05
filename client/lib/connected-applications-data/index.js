@@ -9,8 +9,9 @@ const debug = debugFactory( 'calypso:connected-applications-data' );
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /**
  * Initialize ConnectedApplications with defaults

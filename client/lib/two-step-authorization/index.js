@@ -13,8 +13,9 @@ import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';
 import profileLinks from 'lib/user-profile-links';
 import analytics from 'lib/analytics';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /*
  * Initialize TwoStepAuthorization with defaults

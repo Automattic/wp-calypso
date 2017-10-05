@@ -3,8 +3,6 @@
  */
 import { forOwn } from 'lodash';
 import store from 'store';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
 
 /**
  * Internal dependencies
@@ -12,9 +10,12 @@ const wpcom = undocumented();
 import Dispatcher from 'dispatcher';
 import PreferencesConstants from './constants';
 import userUtils from 'lib/user/utils';
+import wp from 'lib/wp';
+
 /**
  * Module variables
  */
+const wpcom = wp.undocumented();
 const PreferencesActions = {};
 let	_pendingUpdates = 0;
 

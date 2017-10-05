@@ -19,8 +19,9 @@ import {
 	cartItems,
 	fillInAllCartItemAttributes,
 } from 'lib/cart-values';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 var _cartKey = null,
 	_synchronizer = null,

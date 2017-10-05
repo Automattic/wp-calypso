@@ -16,14 +16,15 @@ import notices from 'notices';
 import PaymentBox from './payment-box';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',

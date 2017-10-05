@@ -13,8 +13,9 @@ import inherits from 'inherits';
 import paygateLoader from 'lib/paygate-loader';
 import { validateCardDetails } from 'lib/credit-card-details';
 import transactionStepTypes from './step-types';
-import { undocumented } from 'lib/wp';
-const wpcom = undocumented();
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /**
  * Make a purchase on WordPress.com.
