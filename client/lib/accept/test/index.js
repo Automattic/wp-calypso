@@ -47,13 +47,14 @@ describe( '#accept()', () => {
 		document.querySelector( '.button:not( .is-primary )' ).click();
 	} );
 
-	test( 'should clean up after itself once the prompt is closed', done => {
+	test( 'should clean up after itself once the prompt is closed', () => {
 		accept( 'Are you sure?', function() {
+			jest.useFakeTimers();
 			process.nextTick( function() {
 				expect( document.querySelector( '.accept-dialog' ) ).to.be.null;
-
-				done();
 			} );
+			jest.runAllTimers();
+			jest.useRealTimers();
 		} );
 
 		document.querySelector( '.button.is-primary' ).click();
