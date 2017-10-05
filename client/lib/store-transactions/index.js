@@ -12,7 +12,13 @@ import inherits from 'inherits';
  */
 import paygateLoader from 'lib/paygate-loader';
 import { validateCardDetails } from 'lib/credit-card-details';
-import transactionStepTypes from './step-types';
+import {
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from './step-types';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
@@ -91,7 +97,7 @@ TransactionFlow.prototype._paymentHandlers = {
 			payment_partner
 		} = this._initialData.payment.storedCard;
 
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
 		this._submitWithPayment( {
 			payment_method: 'WPCOM_Billing_MoneyPress_Stored',
@@ -107,7 +113,7 @@ TransactionFlow.prototype._paymentHandlers = {
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
-				name: transactionStepTypes.INPUT_VALIDATION,
+				name: INPUT_VALIDATION,
 				error: new ValidationError( 'invalid-card-details', validation.errors ),
 				first: true,
 				last: true
@@ -115,7 +121,7 @@ TransactionFlow.prototype._paymentHandlers = {
 			return;
 		}
 
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new card' );
 
 		this._createPaygateToken( function( paygateToken ) {
@@ -132,24 +138,24 @@ TransactionFlow.prototype._paymentHandlers = {
 	},
 
 	'WPCOM_Billing_WPCOM': function() {
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
 	}
 };
 
 TransactionFlow.prototype._createPaygateToken = function( callback ) {
-	this._pushStep( { name: transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST } );
+	this._pushStep( { name: SUBMITTING_PAYMENT_KEY_REQUEST } );
 
 	createPaygateToken( 'new_purchase', this._initialData.payment.newCardDetails, function( error, paygateToken ) {
 		if ( error ) {
 			return this._pushStep( {
-				name: transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE,
+				name: RECEIVED_PAYMENT_KEY_RESPONSE,
 				error: error,
 				last: true
 			} );
 		}
 
-		this._pushStep( { name: transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE } );
+		this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
 		callback( paygateToken );
 	}.bind( this ) );
 };
@@ -162,19 +168,19 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 			payment: payment
 		};
 
-	this._pushStep( { name: transactionStepTypes.SUBMITTING_WPCOM_REQUEST } );
+	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
 
 	wpcom.transactions( 'POST', transaction, function( error, data ) {
 		if ( error ) {
 			return this._pushStep( {
-				name: transactionStepTypes.RECEIVED_WPCOM_RESPONSE,
+				name: RECEIVED_WPCOM_RESPONSE,
 				error: error,
 				last: true
 			} );
 		}
 
 		this._pushStep( {
-			name: transactionStepTypes.RECEIVED_WPCOM_RESPONSE,
+			name: RECEIVED_WPCOM_RESPONSE,
 			data: data,
 			last: true
 		} );
