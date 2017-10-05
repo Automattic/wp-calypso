@@ -31,6 +31,7 @@ import { getSiteOptions } from 'state/selectors';
 import { getAutomatedTransferStatus as fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import { isSiteAutomatedTransfer as isSiteAutomatedTransferSelector } from 'state/selectors';
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
@@ -391,6 +392,27 @@ class RequiredPluginsInstallView extends Component {
 		);
 	};
 
+	fetchSiteData = () => {
+		const {
+			automatedTransferStatus,
+			isSiteAutomatedTransfer,
+			atomicStoreDoingTransfer,
+			siteId,
+		} = this.props;
+		const { COMPLETE } = transferStates;
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		if (
+			! atomicStoreDoingTransfer ||
+			( automatedTransferStatus === COMPLETE && ! isSiteAutomatedTransfer )
+		) {
+			return <QuerySites siteId={ siteId } />;
+		}
+	};
+
 	render = () => {
 		const { site, translate, isInSignup } = this.props;
 		const { engineState } = this.state;
@@ -404,7 +426,7 @@ class RequiredPluginsInstallView extends Component {
 		return (
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
-				{ site && <QuerySites siteId={ site.ID } /> }
+				{ this.fetchSiteData() }
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
@@ -434,6 +456,7 @@ function mapStateToProps( state ) {
 		atomicStoreDoingTransfer,
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransferSelector( state, siteId ),
 	};
 }
 
