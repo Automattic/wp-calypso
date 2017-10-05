@@ -233,7 +233,7 @@ class PostCommentForm extends React.Component {
 							disabled={ this.state.commentText.length === 0 }
 							onClick={ this.handleSubmit }
 						>
-							{ translate( 'Send' ) }
+							{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
 						</button>
 						{ this.renderError() }
 					</label>
