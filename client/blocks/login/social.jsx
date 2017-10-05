@@ -71,33 +71,32 @@ class SocialLoginForm extends Component {
 			id_token: response.Zi.id_token,
 		};
 
-		this.props.loginSocialUser( socialInfo, redirectTo )
-			.then(
-				() => {
-					this.recordEvent( 'calypso_login_social_login_success' );
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success' );
 
-					onSuccess( redirectTo );
-				},
-				error => {
-					if ( error.code === 'unknown_user' ) {
-						return this.props.createSocialUser( socialInfo, 'login' )
-							.then(
-								() => this.recordEvent( 'calypso_login_social_signup_success' ),
-								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
-									error_code: createAccountError.code,
-									error_message: createAccountError.message
-								} )
-							);
-					} else if ( error.code === 'user_exists' ) {
-						this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
-					}
-
-					this.recordEvent( 'calypso_login_social_login_failure', {
-						error_code: error.code,
-						error_message: error.message
-					} );
+				onSuccess( redirectTo );
+			},
+			error => {
+				if ( error.code === 'unknown_user' ) {
+					return this.props.createSocialUser( socialInfo, 'login' ).then(
+						() => this.recordEvent( 'calypso_login_social_signup_success' ),
+						createAccountError =>
+							this.recordEvent( 'calypso_login_social_signup_failure', {
+								error_code: createAccountError.code,
+								error_message: createAccountError.message,
+							} )
+					);
+				} else if ( error.code === 'user_exists' ) {
+					this.props.createSocialUserFailed( 'google', response.Zi.id_token, error );
 				}
-			);
+
+				this.recordEvent( 'calypso_login_social_login_failure', {
+					error_code: error.code,
+					error_message: error.message,
+				} );
+			}
+		);
 	};
 
 	recordEvent = ( eventName, params ) =>
@@ -138,7 +137,10 @@ class SocialLoginForm extends Component {
 		// let's use the redirect flow instead in that case.
 		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
 		const loginCallbackRoute = login( { isNative: true, socialService: 'google' } );
-		const redirectUri = isPopup ? `https://${ config( 'hostname' ) + loginCallbackRoute }` : null;
+		const redirectUri = isPopup
+			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+					loginCallbackRoute }`
+			: null;
 
 		return (
 			<div className="login__social">

@@ -75,18 +75,25 @@ class Login extends Component {
 
 	handleValidLogin = redirectTo => {
 		if ( this.props.twoFactorEnabled ) {
-			page( login( {
-				isNative: true,
-				// If no notification is sent, the user is using the authenticator for 2FA by default
-				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' ),
-				redirectTo,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
+						'none',
+						'authenticator'
+					),
+					redirectTo,
+				} )
+			);
 		} else if ( this.props.isLinking ) {
-			page( login( {
-				isNative: true,
-				socialConnect: true,
-				redirectTo,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+					redirectTo,
+				} )
+			);
 		} else {
 			this.rebootAfterLogin( redirectTo );
 		}
@@ -250,7 +257,8 @@ class Login extends Component {
 				onSuccess={ this.handleValidLogin }
 				privateSite={ privateSite }
 				socialService={ socialService }
-				socialServiceResponse={ socialServiceResponse } />
+				socialServiceResponse={ socialServiceResponse }
+			/>
 		);
 	}
 
