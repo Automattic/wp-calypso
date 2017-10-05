@@ -12,7 +12,7 @@ import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostActions from 'lib/posts/actions';
 import InfoPopover from 'components/info-popover';
-import stats from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -75,8 +75,8 @@ export default React.createClass( {
 			gaEvent = 'Trackback status changed';
 		}
 
-		stats.recordStat( statName );
-		stats.recordEvent( gaEvent, newStatus );
+		recordStat( statName );
+		recordEvent( gaEvent, newStatus );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {

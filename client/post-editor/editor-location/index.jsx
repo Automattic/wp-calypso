@@ -10,7 +10,7 @@ import qs from 'querystring';
  */
 import PostActions from 'lib/posts/actions';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import stats from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
 
@@ -49,7 +49,7 @@ export default React.createClass( {
 			geo_longitude: position.coords.longitude
 		} );
 
-		stats.recordStat( 'location_geolocate_success' );
+		recordStat( 'location_geolocate_success' );
 	},
 
 	onGeolocateFailure: function( error ) {
@@ -58,7 +58,7 @@ export default React.createClass( {
 			locating: false
 		} );
 
-		stats.recordStat( 'location_geolocate_failed' );
+		recordStat( 'location_geolocate_failed' );
 	},
 
 	resetError: function() {
@@ -79,8 +79,8 @@ export default React.createClass( {
 			{ enableHighAccuracy: true }
 		);
 
-		stats.recordStat( 'location_geolocate' );
-		stats.recordEvent( 'Location Geolocated' );
+		recordStat( 'location_geolocate' );
+		recordEvent( 'Location Geolocated' );
 	},
 
 	clear: function() {
