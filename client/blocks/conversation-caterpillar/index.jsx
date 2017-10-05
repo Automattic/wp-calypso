@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
@@ -54,6 +55,12 @@ class ConversationCaterpillarComponent extends React.Component {
 			postId,
 			commentIds: map( commentsToExpand, 'ID' ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		} );
+		recordAction( 'comment_show_all_click' );
+		recordGaEvent( 'Clicked Comment Show All' );
+		recordTrack( 'calypso_reader_comment_show_all_click', {
+			blog_id: blogId,
+			post_id: postId,
 		} );
 	};
 
