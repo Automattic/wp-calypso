@@ -14,7 +14,7 @@ import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rul
 import { action as FeedPostActionType } from './constants';
 import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
 import { mc } from 'lib/analytics';
-import stats from 'reader/stats';
+import { pageViewForPost } from 'reader/stats';
 
 /**
  * Module variables
@@ -289,7 +289,7 @@ function markPostSeen( post, site ) {
 		const isAdmin = !! get( site, 'capabilities.manage_options', false );
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
-				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
+				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
 				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
