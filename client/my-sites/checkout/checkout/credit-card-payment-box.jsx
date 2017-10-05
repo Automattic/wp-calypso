@@ -15,7 +15,14 @@ import TermsOfService from './terms-of-service';
 import PaymentBox from './payment-box';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
-import transactionStepTypes from 'lib/store-transactions/step-types';
+import {
+	BEFORE_SUBMIT,
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from 'lib/store-transactions/step-types';
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
@@ -51,21 +58,21 @@ var CreditCardPaymentBox = React.createClass( {
 
 	submitting: function( transactionStep ) {
 		switch ( transactionStep.name ) {
-			case transactionStepTypes.BEFORE_SUBMIT:
+			case BEFORE_SUBMIT:
 				return false;
 
-			case transactionStepTypes.INPUT_VALIDATION:
+			case INPUT_VALIDATION:
 				if ( this.props.transactionStep.error ) {
 					return false;
 				}
 				return true;
 
-			case transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST:
-			case transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE:
-			case transactionStepTypes.SUBMITTING_WPCOM_REQUEST:
+			case SUBMITTING_PAYMENT_KEY_REQUEST:
+			case RECEIVED_PAYMENT_KEY_RESPONSE:
+			case SUBMITTING_WPCOM_REQUEST:
 				return true;
 
-			case transactionStepTypes.RECEIVED_WPCOM_RESPONSE:
+			case RECEIVED_WPCOM_RESPONSE:
 				if ( transactionStep.error || ! transactionStep.data.success ) {
 					return false;
 				}
