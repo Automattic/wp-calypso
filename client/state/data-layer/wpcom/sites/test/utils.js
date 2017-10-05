@@ -76,7 +76,6 @@ describe( 'utility functions', () => {
 				skipSort: false,
 				comments: [ placeholder ],
 			} );
-			expect( dispatch ).to.have.been.calledWith(
 			expect( dispatch ).to.have.been.calledWithMatch(
 				http( {
 					apiVersion: '1.1',
