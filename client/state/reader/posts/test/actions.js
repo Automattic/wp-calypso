@@ -13,7 +13,7 @@ import { tracks } from 'lib/analytics';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
 import wp from 'lib/wp';
 
-const undocumented = wp.undocumented();
+const undocumented = wp.undocumented;
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
