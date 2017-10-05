@@ -247,7 +247,7 @@
     "chai": "3.5.0",
     "chai-enzyme": "0.5.2",
     "deep-freeze": "0.0.1",
-    "enzyme": "2.4.1",
+    "enzyme": "2.9.1",
     "esformatter": "0.7.3",
     "esformatter-braces": "1.2.1",
     "esformatter-collapse-objects-a8c": "0.1.0",
