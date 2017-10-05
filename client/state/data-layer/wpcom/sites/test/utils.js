@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -77,7 +76,7 @@ describe( 'utility functions', () => {
 				skipSort: false,
 				comments: [ placeholder ],
 			} );
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).to.have.been.calledWithMatch(
 				http( {
 					apiVersion: '1.1',
 					method: 'POST',
@@ -166,7 +165,6 @@ describe( 'utility functions', () => {
 
 			handleWriteCommentFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
 
-			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 				notice: {

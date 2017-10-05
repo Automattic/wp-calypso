@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay } from 'lodash';
+import { get, size, takeRight, delay, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -236,6 +236,7 @@ class PostCommentList extends React.Component {
 	};
 
 	onReplyCancel = () => {
+		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
@@ -276,7 +277,14 @@ class PostCommentList extends React.Component {
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
-		if ( this.props.activeReplyCommentId && ! this.state.errors ) {
+		if (
+			this.props.activeReplyCommentId ||
+			size(
+				filter( this.props.commentsTree, comment => {
+					return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+				} )
+			) > 0
+		) {
 			return null;
 		}
 
