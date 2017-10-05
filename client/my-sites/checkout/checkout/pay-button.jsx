@@ -12,18 +12,25 @@ import {
 	isPaidForFullyInCredits,
 } from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
-import transactionStepTypes from 'lib/store-transactions/step-types';
+import {
+	BEFORE_SUBMIT,
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from 'lib/store-transactions/step-types';
 
 var PayButton = React.createClass( {
 	buttonState: function() {
 		var state;
 
 		switch ( this.props.transactionStep.name ) {
-			case transactionStepTypes.BEFORE_SUBMIT:
+			case BEFORE_SUBMIT:
 				state = this.beforeSubmit();
 				break;
 
-			case transactionStepTypes.INPUT_VALIDATION:
+			case INPUT_VALIDATION:
 				if ( this.props.transactionStep.error ) {
 					state = this.beforeSubmit();
 				} else {
@@ -31,16 +38,16 @@ var PayButton = React.createClass( {
 				}
 				break;
 
-			case transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST:
-			case transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE:
+			case SUBMITTING_PAYMENT_KEY_REQUEST:
+			case RECEIVED_PAYMENT_KEY_RESPONSE:
 				state = this.sending();
 				break;
 
-			case transactionStepTypes.SUBMITTING_WPCOM_REQUEST:
+			case SUBMITTING_WPCOM_REQUEST:
 				state = this.completing();
 				break;
 
-			case transactionStepTypes.RECEIVED_WPCOM_RESPONSE:
+			case RECEIVED_WPCOM_RESPONSE:
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();
 				} else {
