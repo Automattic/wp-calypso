@@ -105,7 +105,7 @@ class LoggedInForm extends Component {
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( props.isSSO || props.isWoo || this.isFromJpo() ) {
+		if ( props.isSSO || props.isWoo || this.isFromJpo( props ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
@@ -155,7 +155,7 @@ class LoggedInForm extends Component {
 	redirect() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo() ) {
+		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo( this.props ) ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
@@ -169,11 +169,8 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	isFromJpo() {
-		return startsWith(
-			get( this.props, [ 'jetpackConnectAuthorize', 'queryObject', 'from' ] ),
-			'jpo'
-		);
+	isFromJpo( props ) {
+		return startsWith( get( props, [ 'jetpackConnectAuthorize', 'queryObject', 'from' ] ), 'jpo' );
 	}
 
 	handleClickDisclaimer = () => {
