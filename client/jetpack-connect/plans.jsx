@@ -12,6 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
 import {
@@ -104,6 +107,10 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
 
 		this.selectFreeJetpackPlan();
+	};
+
+	handleHelpButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
 	isFlowTypePaid() {
@@ -291,6 +298,11 @@ class Plans extends Component {
 					hideFreePlan={ true }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
+					<LoggedOutFormLinks>
+						<JetpackConnectHappychatButton>
+							<HelpButton onClick={ this.handleHelpButtonClick } />
+						</JetpackConnectHappychatButton>
+					</LoggedOutFormLinks>
 				</PlansGrid>
 			</div>
 		);
