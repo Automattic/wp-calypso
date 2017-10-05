@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer from '../reducer';
 import {
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
 } from 'woocommerce/state/action-types';
@@ -155,6 +156,28 @@ describe( 'reducer', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 			siteId: 123,
+		};
+		const originalState = deepFreeze( {
+			currentlyEditingId: 40,
+			changes: {
+				billing: {
+					first_name: 'Joan',
+				},
+			},
+		} );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {
+			currentlyEditingId: null,
+			changes: {},
+		} );
+	} );
+
+	it( 'should clear order changes if this order is successfully updated', () => {
+		const action = {
+			type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+			siteId: 123,
+			orderId: 40,
+			order: {},
 		};
 		const originalState = deepFreeze( {
 			currentlyEditingId: 40,
