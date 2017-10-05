@@ -8,7 +8,6 @@ import React from 'react';
  */
 import {
 	cartItems,
-	hasFreeTrial,
 	isPaidForFullyInCredits,
 } from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
@@ -123,7 +122,7 @@ var PayButton = React.createClass( {
 
 	completing: function() {
 		var text;
-		if ( hasFreeTrial( this.props.cart ) ) {
+		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } )
 		} else {
 			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
