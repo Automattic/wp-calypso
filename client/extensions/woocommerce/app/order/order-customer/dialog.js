@@ -150,7 +150,7 @@ class CustomerAddressDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, translate } = this.props;
+		const { isBilling, isVisible, translate } = this.props;
 		const { address } = this.state;
 		const dialogButtons = [
 			<Button onClick={ this.closeDialog }>{ translate( 'Close' ) }</Button>,
@@ -168,7 +168,7 @@ class CustomerAddressDialog extends Component {
 			>
 				<FormFieldset>
 					<FormLegend className="order-customer__billing-details">
-						{ translate( 'Billing Details' ) }
+						{ isBilling ? translate( 'Billing Details' ) : translate( 'Shipping Details' ) }
 					</FormLegend>
 					<div className="order-customer__fieldset">
 						<div className="order-customer__field">
