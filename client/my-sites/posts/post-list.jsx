@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { debounce, isEqual, omit } from 'lodash';
+import { debounce, isEqual, isUndefined, omitBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import PostListFetcher from 'components/post-list-fetcher';
+import QueryPosts from 'components/data/query-posts';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
-import actions from 'lib/posts/actions';
 import EmptyContent from 'components/empty-content';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
@@ -22,7 +21,11 @@ import { mapPostStatus as mapStatus, sectionify } from 'lib/route';
 import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQuery,
+	isSitePostsLastPageForQuery,
+ } from 'state/posts/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:posts' );
 
@@ -34,43 +37,81 @@ class PostList extends PureComponent {
 		search: PropTypes.string,
 		category: PropTypes.string,
 		tag: PropTypes.string,
-		hasSites: PropTypes.bool,
 		statusSlug: PropTypes.string,
 		siteId: PropTypes.number,
 		author: PropTypes.number
 	};
 
+	state = {
+		page: 1,
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.author !== this.props.author ||
+			nextProps.search !== this.props.search ||
+			nextProps.siteId !== this.props.siteId ||
+			nextProps.status !== this.props.status ) {
+			this.resetPage();
+		}
+	}
+
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	}
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
+	}
+
 	render() {
+		const { author, category, context, search, siteId, statusSlug, tag } = this.props;
+		const query = omitBy( {
+			page: this.state.page,
+			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			author,
+			category,
+			order_by: statusSlug === 'drafts' ? 'modified' : undefined,
+			search,
+			site_visibility: ! siteId ? 'visible' : undefined,
+			status: mapStatus( statusSlug ),
+			tag,
+			type: 'post'
+		}, isUndefined );
+
 		return (
-			<PostListFetcher
-				siteId={ this.props.siteId }
-				status={ mapStatus( this.props.statusSlug ) }
-				author={ this.props.author }
-				withImages={ true }
-				withCounts={ true }
-				search={ this.props.search }
-				category={ this.props.category }
-				tag={ this.props.tag }
-			>
-				<Posts
-					{ ...omit( this.props, 'children' ) }
+			<div>
+				<QueryPosts siteId={ siteId }
+					query={ query }
+					largeTitles={ true }
+					wrapTitles={ true }
 				/>
-			</PostListFetcher>
+				<ConnectedPosts
+					incrementPage={ this.incrementPage }
+					pathname={ context.pathname }
+					query={ query }
+					siteId={ siteId }
+					statusSlug={ statusSlug } />
+			</div>
 		);
 	}
 }
 
-const Posts = localize( class extends React.Component {
+const Posts = localize( class extends Component {
 	static propTypes = {
-		author: PropTypes.number,
-		context: PropTypes.object.isRequired,
-		hasRecentError: PropTypes.bool.isRequired,
 		lastPage: PropTypes.bool.isRequired,
 		loading: PropTypes.bool.isRequired,
-		page: PropTypes.number.isRequired,
-		postImages: PropTypes.object.isRequired,
+		pathname: PropTypes.string.isRequired,
 		posts: PropTypes.array.isRequired,
-		search: PropTypes.string,
+		query: PropTypes.shape( {
+			page: PropTypes.number,
+			number: PropTypes.number,
+			author: PropTypes.number,
+			category: PropTypes.string,
+			search: PropTypes.string,
+			status: PropTypes.oneOf( [ 'draft,pending', 'future', 'trash', 'publish,private' ] ),
+			tag: PropTypes.string,
+			type: PropTypes.oneOf( [ 'post' ] ),
+		} ),
 		siteId: PropTypes.number,
 		hasSites: PropTypes.bool.isRequired,
 		statusSlug: PropTypes.string,
@@ -78,11 +119,8 @@ const Posts = localize( class extends React.Component {
 	};
 
 	static defaultProps = {
-		hasRecentError: false,
 		loading: false,
 		lastPage: false,
-		page: 0,
-		postImages: {},
 		posts: [],
 		trackScrollPage: function() {}
 	};
@@ -103,9 +141,6 @@ const Posts = localize( class extends React.Component {
 
 	shouldComponentUpdate( nextProps ) {
 		if ( nextProps.loading !== this.props.loading ) {
-			return true;
-		}
-		if ( nextProps.hasRecentError !== this.props.hasRecentError ) {
 			return true;
 		}
 		if ( nextProps.lastPage !== this.props.lastPage ) {
@@ -130,18 +165,18 @@ const Posts = localize( class extends React.Component {
 		}
 	};
 
-	fetchPosts = options => {
-		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
+	fetchPosts = ( options ) => {
+		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
-			this.props.trackScrollPage( this.props.page + 1 );
+			this.props.trackScrollPage( this.props.query.page + 1 );
 		}
-		actions.fetchNextPage();
+		this.props.incrementPage();
 	};
 
 	getNoContentMessage = () => {
-		const { hasRecentError, siteId, search, statusSlug, translate } = this.props;
+		const { hasRecentError, query: { search }, siteId, statusSlug, translate } = this.props;
 		let attributes;
 
 		if ( search ) {
@@ -218,12 +253,13 @@ const Posts = localize( class extends React.Component {
 
 	renderLoadingPlaceholders = () => {
 		return (
-			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
+			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.query.page } />
 		);
 	};
 
 	renderPost = ( post, index ) => {
-		const postImages = this.props.postImages[ post.global_ID ];
+		const { canonical_image, featured_image } = post;
+		const postImages = { canonical_image, featured_image };
 		const renderedPost = (
 			<Post
 				ref={ post.global_ID }
@@ -231,11 +267,11 @@ const Posts = localize( class extends React.Component {
 				post={ post }
 				postImages={ postImages }
 				fullWidthPost={ this.state.postsAtFullWidth }
-				path={ sectionify( this.props.context.pathname ) }
+				path={ sectionify( this.props.pathname ) }
 			/>
 		);
 
-		if ( index === 2 && this.props.selectedSiteId && ! this.props.statusSlug ) {
+		if ( index === 2 && this.props.siteId && ! this.props.statusSlug ) {
 			return (
 				<div key={ post.global_ID }>
 					<UpgradeNudge
@@ -299,9 +335,13 @@ const Posts = localize( class extends React.Component {
 	}
 } );
 
-export default connect(
-	( state ) => ( {
-		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: hasInitializedSites( state )
-	} )
-)( PostList );
+const mapState = ( state, { query, siteId } ) => ( {
+	hasSites: hasInitializedSites( state ),
+	loading: isRequestingSitePostsForQuery( state, siteId, query ),
+	lastPage: !! isSitePostsLastPageForQuery( state, siteId, query ),
+	posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+} );
+
+const ConnectedPosts = connect( mapState )( Posts );
+
+export default PostList;
