@@ -62,6 +62,7 @@ export class CommentList extends Component {
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
 		recordChangePage: PropTypes.func,
+		changePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		siteBlacklist: PropTypes.string,
@@ -76,19 +77,22 @@ export class CommentList extends Component {
 		isBulkEdit: false,
 		// TODO: replace with [] when adding back Bulk Actions
 		lastUndo: null,
-		page: 1,
 		persistedComments: [],
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, status } = this.props;
+		const { siteId, status, changePage } = this.props;
+		const totalPages = this.getTotalPages();
+		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
+			return changePage( totalPages );
+		}
+
 		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
 				isBulkEdit: false,
 				lastUndo: null,
-				page: 1,
 				persistedComments: [],
 				selectedComments: [],
 			} );
@@ -96,13 +100,16 @@ export class CommentList extends Component {
 	}
 
 	changePage = page => {
-		const total = Math.ceil( ( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE );
-		this.props.recordChangePage( page, total );
+		const {
+			recordChangePage,
+			changePage,
+		} = this.props;
 
-		this.setState( {
-			page,
-			selectedComments: [],
-		} );
+		recordChangePage( page, this.getTotalPages() );
+
+		this.setState( { selectedComments: [] } );
+
+		changePage( page );
 	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
@@ -143,14 +150,21 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	};
 
+	getTotalPages = () => Math.ceil(
+		( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE
+	);
+
 	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
+	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
+
 	isSelectedAll = () => {
-		const { page, selectedComments } = this.state;
+		const { page } = this.props;
+		const { selectedComments } = this.state;
 		const visibleComments = this.getCommentsPage( this.getComments(), page );
 		return selectedComments.length && ( selectedComments.length === visibleComments.length );
 	};
@@ -408,6 +422,7 @@ export class CommentList extends Component {
 		const {
 			isJetpack,
 			isLoading,
+			page,
 			siteBlacklist,
 			siteId,
 			siteFragment,
@@ -415,13 +430,14 @@ export class CommentList extends Component {
 		} = this.props;
 		const {
 			isBulkEdit,
-			page,
 			selectedComments,
 		} = this.state;
 
+		const validPage = this.isRequestedPageValid() ? page : 1;
+
 		const comments = this.getComments();
 		const commentsCount = comments.length;
-		const commentsPage = this.getCommentsPage( comments, page );
+		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
@@ -435,7 +451,7 @@ export class CommentList extends Component {
 				{ isJetpack &&
 					<QuerySiteCommentsList
 						number={ 100 }
-						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
+						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }
 						status={ status }
 					/>
@@ -496,7 +512,7 @@ export class CommentList extends Component {
 				{ ! showPlaceholder && ! showEmptyContent &&
 					<Pagination
 						key="comment-list-pagination"
-						page={ page }
+						page={ validPage }
 						pageClick={ this.changePage }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
