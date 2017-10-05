@@ -1,19 +1,16 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classnames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Main
  */
-var PostImage = React.createClass( {
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class PostImage extends React.PureComponent {
+    static propTypes = {
 		postImages: PropTypes.shape( {
 			featured_image: PropTypes.string,
 			canonical_image: PropTypes.shape( {
@@ -32,15 +29,13 @@ var PostImage = React.createClass( {
 				height: PropTypes.number
 			} ) )
 		} )
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			collapsed: true
-		};
-	},
+	state = {
+		collapsed: true
+	};
 
-	render: function() {
+	render() {
 		var imageURL = this._getImageURL(),
 			containerClasses, containerStyles;
 
@@ -66,9 +61,9 @@ var PostImage = React.createClass( {
 				: null }
 			</div>
 		);
-	},
+	}
 
-	_getImageURL: function() {
+	_getImageURL = () => {
 		var postImages = this.props.postImages;
 
 		if ( postImages.featured_image !== '' ) {
@@ -86,14 +81,13 @@ var PostImage = React.createClass( {
 		if ( postImages.images && postImages.images.length ) {
 			return postImages.images[ 0 ].src;
 		}
-	},
+	};
 
-	_handleClick: function() {
+	_handleClick = () => {
 		this.setState( {
 			collapsed: ! this.state.collapsed
 		} );
-	}
-
-} );
+	};
+}
 
 module.exports = PostImage;

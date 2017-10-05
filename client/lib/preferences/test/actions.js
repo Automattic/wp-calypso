@@ -14,6 +14,7 @@ import Dispatcher from 'dispatcher';
 import { getSettings, postSettings } from 'lib/wp';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
+import { stub } from 'sinon';
 jest.mock( 'lib/user/utils', () => ( {
 	isLoggedIn: () => true,
 } ) );
@@ -26,8 +27,7 @@ jest.mock( 'dispatcher', () => ( {
 	handleServerAction: () => {},
 } ) );
 jest.mock( 'lib/wp', () => {
-	const { stub } = require( 'sinon' );
-	const getSettings = stub();
+    const getSettings = stub();
 	const postSettings = stub();
 
 	return {

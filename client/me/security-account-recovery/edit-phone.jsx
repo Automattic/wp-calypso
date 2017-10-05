@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { isEmpty } from 'lodash';
 
@@ -18,10 +19,10 @@ import Buttons from './buttons';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-module.exports = React.createClass( {
-	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
-	propTypes: {
+	static propTypes = {
 		storedPhone: PropTypes.shape( {
 			countryCode: PropTypes.string,
 			countryNumericCode: PropTypes.string,
@@ -31,15 +32,13 @@ module.exports = React.createClass( {
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
 		onDelete: PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isInvalid: false
-		};
-	},
+	state = {
+		isInvalid: false
+	};
 
-	render: function() {
+	render() {
 		var validation = null,
 			havePhone = ! isEmpty( this.props.storedPhone );
 		if ( this.state.validation ) {
@@ -52,7 +51,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div>
+            <div>
 				<FormFieldset>
 					<FormPhoneInput
 						countriesList={ countriesList }
@@ -69,16 +68,16 @@ module.exports = React.createClass( {
 				<Buttons
 					isSavable={ this.isSavable() }
 					isDeletable={ havePhone }
-					saveText={ this.translate( 'Save Number' ) }
+					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
 					onCancel={ this.onCancel }
 					/>
 			</div>
-		);
-	},
+        );
+	}
 
-	isSavable: function() {
+	isSavable = () => {
 		if ( ! this.state.phoneNumber ) {
 			return false;
 		}
@@ -94,23 +93,23 @@ module.exports = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	onChange: function( phoneNumber ) {
+	onChange = phoneNumber => {
 		this.setState( { phoneNumber } );
-	},
+	};
 
-	onKeyUp: function( event ) {
+	onKeyUp = event => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
-	},
+	};
 
-	onSave: function() {
+	onSave = () => {
 		var phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
-			this.setState( { validation: this.translate( 'Please enter a valid phone number.' ) } );
+			this.setState( { validation: this.props.translate( 'Please enter a valid phone number.' ) } );
 			return;
 		}
 
@@ -121,13 +120,13 @@ module.exports = React.createClass( {
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull
 		} );
-	},
+	};
 
-	onCancel: function() {
+	onCancel = () => {
 		this.props.onCancel();
-	},
+	};
 
-	onDelete: function() {
+	onDelete = () => {
 		this.props.onDelete();
-	}
-} );
+	};
+});

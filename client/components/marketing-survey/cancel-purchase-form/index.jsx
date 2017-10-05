@@ -24,8 +24,8 @@ import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 
-const CancelPurchaseForm = React.createClass( {
-	propTypes: {
+class CancelPurchaseForm extends React.Component {
+    static propTypes = {
 		productName: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 		surveyStep: PropTypes.string.isRequired,
@@ -34,9 +34,10 @@ const CancelPurchaseForm = React.createClass( {
 		onInputChange: PropTypes.func.isRequired,
 		isJetpack: PropTypes.bool.isRequired,
 		chatInitiated: PropTypes.func.isRequired,
-	},
+	};
 
-	getInitialState() {
+	constructor(props) {
+	    super(props);
 		// shuffle reason order, but keep anotherReasonOne last
 		let questionOneOrder = shuffle( [
 			'couldNotInstall',
@@ -53,7 +54,7 @@ const CancelPurchaseForm = React.createClass( {
 		] );
 
 		// set different reason groupings for Jetpack subscribers
-		if ( this.props.isJetpack ) {
+		if ( props.isJetpack ) {
 			questionOneOrder = shuffle( [
 				'couldNotActivate',
 				'didNotInclude',
@@ -71,7 +72,7 @@ const CancelPurchaseForm = React.createClass( {
 		questionOneOrder.push( 'anotherReasonOne' );
 		questionTwoOrder.push( 'anotherReasonTwo' );
 
-		return {
+		this.state = {
 			questionOneRadio: null,
 			questionOneText: '',
 			questionOneOrder: questionOneOrder,
@@ -80,9 +81,9 @@ const CancelPurchaseForm = React.createClass( {
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: ''
 		};
-	},
+	}
 
-	onRadioOneChange( event ) {
+	onRadioOneChange = event => {
 		this.props.clickRadio( 'radio_1', event.currentTarget.value );
 		const newState = {
 			...this.state,
@@ -91,18 +92,18 @@ const CancelPurchaseForm = React.createClass( {
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
-	},
+	};
 
-	onTextOneChange( event ) {
+	onTextOneChange = event => {
 		const newState = {
 			...this.state,
 			questionOneText: event.currentTarget.value
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
-	},
+	};
 
-	onRadioTwoChange( event ) {
+	onRadioTwoChange = event => {
 		this.props.clickRadio( 'radio_2', event.currentTarget.value );
 		const newState = {
 			...this.state,
@@ -111,27 +112,27 @@ const CancelPurchaseForm = React.createClass( {
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
-	},
+	};
 
-	onTextTwoChange( event ) {
+	onTextTwoChange = event => {
 		const newState = {
 			...this.state,
 			questionTwoText: event.currentTarget.value
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
-	},
+	};
 
-	onTextThreeChange( event ) {
+	onTextThreeChange = event => {
 		const newState = {
 			...this.state,
 			questionThreeText: event.currentTarget.value
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
-	},
+	};
 
-	renderQuestionOne() {
+	renderQuestionOne = () => {
 		const reasons = {};
 		const { translate } = this.props;
 
@@ -270,9 +271,9 @@ const CancelPurchaseForm = React.createClass( {
 				{ orderedReasons }
 			</div>
 		);
-	},
+	};
 
-	renderQuestionTwo() {
+	renderQuestionTwo = () => {
 		const reasons = {};
 		const { translate } = this.props;
 
@@ -422,9 +423,9 @@ const CancelPurchaseForm = React.createClass( {
 				{ orderedReasons }
 			</div>
 		);
-	},
+	};
 
-	renderFreeformQuestion() {
+	renderFreeformQuestion = () => {
 		const { translate } = this.props;
 		return (
 			<FormFieldset>
@@ -438,14 +439,14 @@ const CancelPurchaseForm = React.createClass( {
 				</FormLabel>
 			</FormFieldset>
 		);
-	},
+	};
 
-	openCalendly() {
+	openCalendly = () => {
 		this.props.clickCalendly();
 		return window.open( 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' );
-	},
+	};
 
-	renderConciergeOffer() {
+	renderConciergeOffer = () => {
 		const { translate } = this.props;
 		return (
 			<FormFieldset>
@@ -465,9 +466,9 @@ const CancelPurchaseForm = React.createClass( {
 				</Button>
 			</FormFieldset>
 		);
-	},
+	};
 
-	renderLiveChat() {
+	renderLiveChat = () => {
 		const { chatInitiated, productName, translate } = this.props;
 		return (
 			<FormFieldset>
@@ -488,7 +489,7 @@ const CancelPurchaseForm = React.createClass( {
 				</HappychatButton>
 			</FormFieldset>
 		);
-	},
+	};
 
 	render() {
 		const { translate, showSurvey, surveyStep } = this.props;
@@ -554,7 +555,7 @@ const CancelPurchaseForm = React.createClass( {
 		// just return the default if we don't want to show the survey
 		return ( <div>{ this.props.defaultContent }</div> );
 	}
-} );
+}
 
 export default connect(
 	null,

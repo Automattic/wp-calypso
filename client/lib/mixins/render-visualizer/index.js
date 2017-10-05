@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' );
+import ReactDom from 'react-dom';
 
 var RenderVisualizerMixin = {
 		UPDATE_RENDER_LOG_POSITION_TIMEOUT_MS: 500,

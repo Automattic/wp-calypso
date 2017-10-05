@@ -1,9 +1,10 @@
 /**
  * External Dependencies
  */
-var debug = require( 'debug' )( 'calypso:notices' );
+import debugFactory from 'debug';
 
-var Emitter = require( 'lib/mixins/emitter' );
+const debug = debugFactory('calypso:notices');
+import Emitter from 'lib/mixins/emitter';
 
 debug( 'initializing notices' );
 

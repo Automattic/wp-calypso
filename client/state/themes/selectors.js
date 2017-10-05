@@ -616,8 +616,7 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
 	return !! getTheme( state, siteId, themeId ) || ( // The theme is already available or...
 		isWpcomTheme( state, themeId ) && (  // ...it's a WP.com theme and...
-		config.isEnabled( 'manage/themes/upload' ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) // ...the site supports theme installation from WP.com.
+		(config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )) // ...the site supports theme installation from WP.com.
 		)
 	);
 }

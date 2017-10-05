@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal Dependencies
  */
 import { action as InvitesActionTypes } from 'lib/invites/constants';
-let User = require( './user' ),
-	_user = false;
+import User from './user';
+let _user = false;
 
 module.exports = function() {
 	if ( ! _user ) {

@@ -12,6 +12,7 @@ import * as actions from '../actions';
 import { tracks } from 'lib/analytics';
 import { undocumented } from 'lib/wp';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
+import { stub } from 'sinon';
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: require( 'sinon' ).spy(),
@@ -19,8 +20,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 jest.mock( 'lib/wp', () => {
-	const { stub } = require( 'sinon' );
-	const readFeedPost = stub();
+    const readFeedPost = stub();
 	const readSitePost = stub();
 
 	return {

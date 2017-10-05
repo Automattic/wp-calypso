@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:auth:store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:auth:store');
 
 /**
  * Internal dependencies

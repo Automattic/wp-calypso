@@ -1,9 +1,10 @@
 /*eslint no-multi-spaces: 0*/
 // node dependency
-var EventEmitter   = require( 'events' ).EventEmitter;
+import { EventEmitter } from 'events';
 
 // internal dependency
-var page           = require( 'page' );
+import page from 'page';
+
 var Route          = page.Route;
 
 // routing state and middleware

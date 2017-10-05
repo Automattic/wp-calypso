@@ -6,6 +6,7 @@ import { omit } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 
 /**
@@ -21,7 +22,7 @@ import smartSetState from 'lib/react-smart-set-state';
 
 const debug = debugFactory( 'calypso:infinite-list' );
 
-module.exports = React.createClass( {
+module.exports = createReactClass({
 	displayName: 'InfiniteList',
 
 	lastScrollTop: -1,
@@ -417,4 +418,4 @@ module.exports = React.createClass( {
 		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
 	}
 
-} );
+});

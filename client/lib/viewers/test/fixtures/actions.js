@@ -1,6 +1,6 @@
-var site = require( './site' ),
-	viewerData = require( './viewers-1' ),
-	moreViewerData = require( './viewers-2' );
+import site from './site';
+import viewerData from './viewers-1';
+import moreViewerData from './viewers-2';
 
 module.exports = {
 	fetchedViewersEmpty: {

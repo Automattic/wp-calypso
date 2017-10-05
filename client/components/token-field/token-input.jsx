@@ -1,12 +1,16 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import PropTypes from 'prop-types';
 
-var TokenInput = React.createClass( {
-	propTypes: {
+import React from 'react';
+import createReactClass from 'create-react-class';
+import PureRenderMixin from 'react-pure-render/mixin';
+
+var TokenInput = createReactClass({
+    displayName: 'TokenInput',
+
+    propTypes: {
 		onChange: PropTypes.func,
 		onBlur: PropTypes.func,
 		value: PropTypes.string,
@@ -14,7 +18,7 @@ var TokenInput = React.createClass( {
 		disabled: PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+    getDefaultProps: function() {
 		return {
 			onChange: function() {},
 			onBlur: function() {},
@@ -24,9 +28,9 @@ var TokenInput = React.createClass( {
 		};
 	},
 
-	mixins: [ PureRenderMixin ],
+    mixins: [ PureRenderMixin ],
 
-	render: function() {
+    render: function() {
 		const props = { ...this.props, onChange: this._onChange };
 		const { value, placeholder } = props;
 		const size = ( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
@@ -42,21 +46,21 @@ var TokenInput = React.createClass( {
 		);
 	},
 
-	focus: function() {
+    focus: function() {
 		if ( this.isMounted() ) {
 			this.refs.input.focus();
 		}
 	},
 
-	hasFocus: function() {
+    hasFocus: function() {
 		return this.isMounted() && this.refs.input === document.activeElement;
 	},
 
-	_onChange: function( event ) {
+    _onChange: function( event ) {
 		this.props.onChange( {
 			value: event.target.value
 		} );
 	}
-} );
+});
 
 module.exports = TokenInput;

@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-var debug = require( 'debug' )( 'calypso:infinite-list:positions-store' ),
-	Dispatcher = require( 'dispatcher' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:infinite-list:positions-store');
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal Dependencies
  */
-var emitter = require( 'lib/mixins/emitter' );
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module Variables

@@ -5,21 +5,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'NoticeAction',
+export default class extends React.Component {
+    static displayName = 'NoticeAction';
 
-	propTypes: {
+	static propTypes = {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		external: PropTypes.bool,
 		icon: PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			external: false
-		};
-	},
+	static defaultProps = {
+		external: false
+	};
 
 	render() {
 		const attributes = {
@@ -40,4 +38,4 @@ export default React.createClass( {
 			</a>
 		);
 	}
-} );
+}

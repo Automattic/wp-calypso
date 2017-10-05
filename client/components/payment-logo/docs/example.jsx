@@ -2,17 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import PaymentLogo from '../index';
 
-const PaymentLogoExamples = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	render() {
+class PaymentLogoExamples extends React.PureComponent {
+    render() {
 		return (
 			<div>
 				<PaymentLogo type="amex" /> { ' ' }
@@ -24,6 +21,6 @@ const PaymentLogoExamples = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 module.exports = PaymentLogoExamples;

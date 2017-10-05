@@ -34,7 +34,7 @@ const wpcomUndocumented = wpcom.undocumented();
  * This is necessary here to capture events that occur in the Olark
  * module before the React tree gets drawn.
  */
-require( 'lib/olark-store' );
+import 'lib/olark-store';
 
 const olark = {
 

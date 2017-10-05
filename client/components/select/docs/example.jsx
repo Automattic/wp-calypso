@@ -1,13 +1,10 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
 
-var Selects = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+class Selects extends React.PureComponent {
+    render() {
 		return (
 			<div className="docs__design-group">
 				<h2>
@@ -42,6 +39,6 @@ var Selects = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 module.exports = Selects;

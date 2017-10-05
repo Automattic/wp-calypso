@@ -1,4 +1,4 @@
-const site = require( '../../fixtures/site' );
+import site from '../../fixtures/site';
 
 const Actions = {
 

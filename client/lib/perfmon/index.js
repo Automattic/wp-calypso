@@ -10,7 +10,8 @@ import { debounce, each, remove } from 'lodash';
 
 import page from 'page';
 
-var debug = require( 'debug' )( 'calypso:perfmon' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:perfmon');
 
 const PLACEHOLDER_CLASSES = [
 	'placeholder',

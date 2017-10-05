@@ -15,11 +15,8 @@ import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
 import { isEnabled } from 'config';
 
-const EditorPreview = React.createClass( {
-
-	_hasTouch: false,
-
-	propTypes: {
+class EditorPreview extends React.Component {
+    static propTypes = {
 		showPreview: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isLoading: PropTypes.bool,
@@ -29,15 +26,15 @@ const EditorPreview = React.createClass( {
 		onClose: PropTypes.func,
 		postId: PropTypes.number,
 		revision: PropTypes.number,
-	},
+	};
 
-	getInitialState() {
-		return {
-			iframeUrl: 'about:blank',
-		};
-	},
+	state = {
+		iframeUrl: 'about:blank',
+	};
 
-	componentDidUpdate( prevProps ) {
+	_hasTouch = false;
+
+	componentDidUpdate(prevProps) {
 		if ( this.didStartSaving( prevProps, this.props ) ) {
 			this.setState( { iframeUrl: 'about:blank' } );
 		}
@@ -50,38 +47,38 @@ const EditorPreview = React.createClass( {
 		) ) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.keyDown );
-	},
+	}
 
-	didStartSaving( props, nextProps ) {
+	didStartSaving = (props, nextProps) => {
 		if ( ! props || ! nextProps ) {
 			return false;
 		}
 
 		return nextProps.isSaving && ! props.isSaving;
-	},
+	};
 
-	didFinishSaving( prevProps ) {
+	didFinishSaving = prevProps => {
 		return prevProps.isSaving && ! this.props.isSaving;
-	},
+	};
 
-	didLoad( prevProps ) {
+	didLoad = prevProps => {
 		return prevProps && prevProps.isLoading && ! this.props.isLoading;
-	},
+	};
 
-	didShowSavedPreviewViaTouch( prevProps ) {
+	didShowSavedPreviewViaTouch = prevProps => {
 		// Find state change where preview is shown and we're not saving or loading
 		return this._hasTouch &&
 			! prevProps.showPreview &&
 			this.props.showPreview &&
 			! this.props.isSaving &&
 			! this.props.isLoading;
-	},
+	};
 
-	didShowOrHideFullPreview( prevProps ) {
+	didShowOrHideFullPreview = prevProps => {
 		// Force a URL update (hash change) when the preview is shown or
 		// hidden, but only if we are currently showing the actual preview URL
 		// and not 'about:blank'.
@@ -90,9 +87,9 @@ const EditorPreview = React.createClass( {
 			this.state.iframeUrl !== 'about:blank' &&
 			prevProps.showPreview !== this.props.showPreview
 		);
-	},
+	};
 
-	getIframePreviewUrl() {
+	getIframePreviewUrl = () => {
 		const parsed = url.parse( this.props.previewUrl, true );
 		parsed.query.preview = 'true';
 		parsed.query.iframe = 'true';
@@ -115,11 +112,11 @@ const EditorPreview = React.createClass( {
 		}
 		delete parsed.search;
 		return url.format( parsed );
-	},
+	};
 
-	cleanExternalUrl( externalUrl ) {
+	cleanExternalUrl = externalUrl => {
 		return omitUrlParams( externalUrl, [ 'iframe', 'frame-nonce' ] );
-	},
+	};
 
 	render() {
 		const isFullScreen = this.props.isFullScreen;
@@ -158,6 +155,6 @@ const EditorPreview = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 module.exports = localize( EditorPreview );

@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	support = require( 'lib/url/support' ),
-	Gridicon = require( 'gridicons' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
-	displayName: 'TermsOfService',
+import support from 'lib/url/support';
+import Gridicon from 'gridicons';
 
-	recordTermsAndConditionsClick: function() {
+module.exports = localize(class extends React.Component {
+    static displayName = 'TermsOfService';
+
+	recordTermsAndConditionsClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
-	},
+	};
 
-	renderTerms: function() {
-		var message = this.translate(
+	renderTerms = () => {
+		var message = this.props.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.', {
 			components: {
 				link: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
@@ -27,7 +30,7 @@ module.exports = React.createClass( {
 
 		// Need to add check for subscription products in the cart so we don't show this for one-off purchases like themes
 		if ( this.props.hasRenewableSubscription ) {
-			message =  this.translate(
+			message =  this.props.translate(
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.', {
 				components: {
 					tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
@@ -38,9 +41,9 @@ module.exports = React.createClass( {
 		}
 
 		return message;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
 				<Gridicon icon="info-outline" size={ 18 } />
@@ -48,4 +51,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

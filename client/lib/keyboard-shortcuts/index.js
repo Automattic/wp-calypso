@@ -8,8 +8,12 @@ var keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymas
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
+import Emitter from 'lib/mixins/emitter';
+
+/**
+ * Internal dependencies
+ */
+var keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
 
 /**
  * Module variables

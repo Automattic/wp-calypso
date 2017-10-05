@@ -1,32 +1,29 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 
-module.exports = React.createClass( {
+module.exports = class extends React.Component {
+    static displayName = 'Welcome';
 
-	displayName: 'Welcome',
+	state = {
+		visible: !! this.props.isVisible
+	};
 
-	getInitialState: function() {
-		return {
-			visible: !! this.props.isVisible
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		var nextVisible = !! nextProps.isVisible;
 		if ( nextVisible !== this.state.visible ) {
 			this.setState( {
 				visible: nextVisible
 			} );
 		}
-	},
+	}
 
-	close: function( event ) {
+	close = event => {
 		event.preventDefault();
 
 		this.setState( {
@@ -36,9 +33,9 @@ module.exports = React.createClass( {
 		if( 'function' === typeof( this.props.closeAction ) ) {
 			this.props.closeAction();
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var welcomeClassName = ( this.props.additionalClassName ) ? this.props.additionalClassName + ' welcome-message' : 'welcome-message';
 
 		if ( this.state.visible ) {
@@ -52,4 +49,4 @@ module.exports = React.createClass( {
 			return null;
 		}
 	}
-} );
+};

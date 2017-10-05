@@ -58,10 +58,10 @@ import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 
-const ThemeSheet = React.createClass( {
-	displayName: 'ThemeSheet',
+class ThemeSheet extends React.Component {
+    static displayName = 'ThemeSheet';
 
-	propTypes: {
+	static propTypes = {
 		id: PropTypes.string,
 		name: PropTypes.string,
 		author: PropTypes.string,
@@ -97,29 +97,27 @@ const ThemeSheet = React.createClass( {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			section: ''
-		};
-	},
+	static defaultProps = {
+		section: ''
+	};
 
-	scrollToTop() {
+	scrollToTop = () => {
 		window.scroll( 0, 0 );
-	},
+	};
 
 	componentDidMount() {
 		this.scrollToTop();
-	},
+	}
 
-	componentWillUpdate( nextProps ) {
+	componentWillUpdate(nextProps) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
 		}
-	},
+	}
 
-	isLoaded() {
+	isLoaded = () => {
 		// We need to make sure the theme object has been loaded including full details
 		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
 		// component used by the theme showcase's list view). However, these extra details
@@ -128,53 +126,53 @@ const ThemeSheet = React.createClass( {
 			return !! this.props.name;
 		}
 		return !! this.props.screenshots;
-	},
+	};
 
-	onButtonClick() {
+	onButtonClick = () => {
 		const { defaultOption } = this.props;
 		defaultOption.action && defaultOption.action( this.props.id );
-	},
+	};
 
-	onSecondaryButtonClick() {
+	onSecondaryButtonClick = () => {
 		const { secondaryOption } = this.props;
 		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.id );
-	},
+	};
 
-	getValidSections() {
+	getValidSections = () => {
 		const validSections = [];
 		validSections.push( '' ); // Default section
 		this.props.supportDocumentation && validSections.push( 'setup' );
 		validSections.push( 'support' );
 		return validSections;
-	},
+	};
 
-	validateSection( section ) {
+	validateSection = section => {
 		if ( this.getValidSections().indexOf( section ) === -1 ) {
 			return this.getValidSections()[ 0 ];
 		}
 		return section;
-	},
+	};
 
-	trackButtonClick( context ) {
+	trackButtonClick = context => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
 			theme_name: this.props.id,
 			button_context: context
 		} );
-	},
+	};
 
-	trackContactUsClick() {
+	trackContactUsClick = () => {
 		this.trackButtonClick( 'help' );
-	},
+	};
 
-	trackThemeForumClick() {
+	trackThemeForumClick = () => {
 		this.trackButtonClick( 'theme_forum' );
-	},
+	};
 
-	trackCssClick() {
+	trackCssClick = () => {
 		this.trackButtonClick( 'css_forum' );
-	},
+	};
 
-	renderBar() {
+	renderBar = () => {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
 		const tag = this.props.author ? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } ) : placeholder;
@@ -185,22 +183,22 @@ const ThemeSheet = React.createClass( {
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
-	},
+	};
 
-	getFullLengthScreenshot() {
+	getFullLengthScreenshot = () => {
 		if ( this.isLoaded() ) {
 			return this.props.screenshots[ 0 ];
 		}
 		return null;
-	},
+	};
 
-	previewAction() {
+	previewAction = () => {
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
 		return preview.action( this.props.id );
-	},
+	};
 
-	renderPreviewButton() {
+	renderPreviewButton = () => {
 		return (
 			<a className="theme__sheet-preview-link" onClick={ this.previewAction } data-tip-target="theme-sheet-preview">
 				<span className="theme__sheet-preview-link-text">
@@ -208,9 +206,9 @@ const ThemeSheet = React.createClass( {
 				</span>
 			</a>
 		);
-	},
+	};
 
-	renderScreenshot() {
+	renderScreenshot = () => {
 		const { demo_uri, retired, isWpcomTheme } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const img = screenshotFull && <img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />;
@@ -229,9 +227,9 @@ const ThemeSheet = React.createClass( {
 				{ img }
 			</div>
 		);
-	},
+	};
 
-	renderSectionNav( currentSection ) {
+	renderSectionNav = currentSection => {
 		const filterStrings = {
 			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
 			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
@@ -258,9 +256,9 @@ const ThemeSheet = React.createClass( {
 				{ this.isLoaded() && nav }
 			</SectionNav>
 		);
-	},
+	};
 
-	renderSectionContent( section ) {
+	renderSectionContent = section => {
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -274,9 +272,9 @@ const ThemeSheet = React.createClass( {
 				<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
 			</div>
 		);
-	},
+	};
 
-	renderDescription() {
+	renderDescription = () => {
 		if ( this.props.descriptionLong ) {
 			return (
 				<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
@@ -284,9 +282,9 @@ const ThemeSheet = React.createClass( {
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
 		return <div>{ this.props.description }</div>;
-	},
+	};
 
-	renderNextTheme() {
+	renderNextTheme = () => {
 		const { next, siteSlug } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
@@ -294,9 +292,9 @@ const ThemeSheet = React.createClass( {
 		return <SectionHeader
 			href={ nextThemeHref }
 			label={ i18n.translate( 'Next theme' ) } />;
-	},
+	};
 
-	renderOverviewTab() {
+	renderOverviewTab = () => {
 		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
 
 		return (
@@ -312,9 +310,9 @@ const ThemeSheet = React.createClass( {
 				{ isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
-	},
+	};
 
-	renderSetupTab() {
+	renderSetupTab = () => {
 		return (
 			<div>
 				<Card className="theme__sheet-content">
@@ -322,9 +320,9 @@ const ThemeSheet = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
+	};
 
-	renderSupportContactUsCard( buttonCount ) {
+	renderSupportContactUsCard = buttonCount => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -340,9 +338,9 @@ const ThemeSheet = React.createClass( {
 				</Button>
 			</Card>
 		);
-	},
+	};
 
-	renderSupportThemeForumCard( buttonCount ) {
+	renderSupportThemeForumCard = buttonCount => {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -366,9 +364,9 @@ const ThemeSheet = React.createClass( {
 				</Button>
 			</Card>
 		);
-	},
+	};
 
-	renderSupportCssCard( buttonCount ) {
+	renderSupportCssCard = buttonCount => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -384,9 +382,9 @@ const ThemeSheet = React.createClass( {
 				</Button>
 			</Card>
 		);
-	},
+	};
 
-	renderSupportTab() {
+	renderSupportTab = () => {
 		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
 		let buttonCount = 1;
 		let renderedTab = null;
@@ -437,9 +435,9 @@ const ThemeSheet = React.createClass( {
 		}
 
 		return renderedTab;
-	},
+	};
 
-	getDefaultOptionLabel() {
+	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isLoggedIn && ! isActive ) {
 			if ( isPremium && ! isPurchased ) { // purchase
@@ -448,13 +446,13 @@ const ThemeSheet = React.createClass( {
 			return i18n.translate( 'Activate this design' );
 		}
 		return defaultOption.label;
-	},
+	};
 
-	renderRelatedThemes() {
+	renderRelatedThemes = () => {
 		return <ThemesRelatedCard currentTheme={ this.props.id } />;
-	},
+	};
 
-	renderRetired() {
+	renderRetired = () => {
 		return (
 			<div className="theme__sheet-content">
 				<Card className="theme__retired-theme-message">
@@ -475,9 +473,9 @@ const ThemeSheet = React.createClass( {
 				<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
 			</div>
 		);
-	},
+	};
 
-	renderPrice() {
+	renderPrice = () => {
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
@@ -490,9 +488,9 @@ const ThemeSheet = React.createClass( {
 		} );
 
 		return price ? <span className={ className }>{ price }</span> : '';
-	},
+	};
 
-	renderButton() {
+	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
@@ -505,9 +503,9 @@ const ThemeSheet = React.createClass( {
 				{ this.props.isWpcomTheme && this.renderPrice() }
 			</Button>
 		);
-	},
+	};
 
-	renderSheet() {
+	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
 		const { siteId, retired } = this.props;
 
@@ -575,15 +573,15 @@ const ThemeSheet = React.createClass( {
 				<ThemePreview />
 			</Main>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.error ) {
 			return <ThemeNotFoundError />;
 		}
 		return this.renderSheet();
-	},
-} );
+	}
+}
 
 const ConnectedThemeSheet = connectOptions(
 	( props ) => {

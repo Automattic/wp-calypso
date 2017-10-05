@@ -49,11 +49,12 @@ describe( 'Interval', function() {
 		} );
 
 		it( 'Should pass props to children', function() {
-			const PropConsumer = React.createClass( {
-				render() {
+		    class PropConsumer extends React.Component {
+			    render() {
 					return <div>{ this.props.prop }</div>;
-				},
-			} );
+				}
+			}
+
 			const wrapper = shallow(
 				<Interval prop={ 42 } onTick={ noop } period={ EVERY_SECOND }>
 					<PropConsumer />

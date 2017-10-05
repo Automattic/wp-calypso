@@ -1,22 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Gauge = require( 'components/gauge' );
+import Gauge from 'components/gauge';
 
-module.exports = React.createClass( {
-	displayName: 'Gauge',
+module.exports = class extends React.PureComponent {
+    static displayName = 'Gauge';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		return (
 			<Gauge percentage={ 27 } metric={ 'test' } />
 		);
 	}
-} );
+};

@@ -4,14 +4,14 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-var React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	expect = require( 'chai' ).expect;
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var passToChildren = require( '../' );
+import passToChildren from '../';
 
 /**
  * Module variables
@@ -19,11 +19,11 @@ var passToChildren = require( '../' );
 var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 	PassThrough;
 
-PassThrough = React.createClass( {
-	render: function() {
+PassThrough = class extends React.Component {
+    render() {
 		return passToChildren( this, DUMMY_PROPS );
-	},
-} );
+	}
+};
 
 describe( 'index', function() {
 	var renderer;

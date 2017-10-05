@@ -8,16 +8,17 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 } from 'state/action-types';
 import { pauseAll, resumePaused } from 'lib/data-poller';
+import sitesFactory from 'lib/sites-list';
+
+const sites = sitesFactory();
 
 const pauseFetching = () => {
-	pauseAll();
-	const sites = require( 'lib/sites-list' )();
+    pauseAll();
 	sites.pauseFetching();
 };
 
 const resumeFetching = () => {
-	resumePaused();
-	const sites = require( 'lib/sites-list' )();
+    resumePaused();
 	sites.resumeFetching();
 };
 

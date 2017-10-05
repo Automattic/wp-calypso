@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' ),
-	PluginsActions = require( 'lib/plugins/actions' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+import Gridicon from 'gridicons';
+import PluginsActions from 'lib/plugins/actions';
 
-	displayName: 'PluginSiteUpdateIndicator',
+module.exports = localize(class extends React.Component {
+    static displayName = 'PluginSiteUpdateIndicator';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.shape( {
 			canUpdateFiles: PropTypes.bool.isRequired,
 			ID: PropTypes.number.isRequired
@@ -23,13 +26,11 @@ module.exports = React.createClass( {
 		plugin: PropTypes.shape( { slug: PropTypes.string } ),
 		notices: PropTypes.object.isRequired,
 		expanded: PropTypes.bool
-	},
+	};
 
-	getDefaultProps: function() {
-		return { expanded: false };
-	},
+	static defaultProps = { expanded: false };
 
-	updatePlugin: function( ev ) {
+	updatePlugin = ev => {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
@@ -39,27 +40,27 @@ module.exports = React.createClass( {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug
 		} );
-	},
+	};
 
-	getOngoingUpdates: function() {
+	getOngoingUpdates = () => {
 		return this.props.notices.inProgress.filter( log =>log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN' );
-	},
+	};
 
-	isUpdating: function() {
+	isUpdating = () => {
 		return this.getOngoingUpdates().length > 0;
-	},
+	};
 
-	renderUpdate: function() {
+	renderUpdate = () => {
 		let message,
 			ongoingUpdates = this.getOngoingUpdates(),
 			isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
-			message = this.translate( 'Updating to version %(version)s', {
+			message = this.props.translate( 'Updating to version %(version)s', {
 				args: { version: ongoingUpdates[ 0 ].plugin.update.new_version }
 			} );
 		} else {
-			message = this.translate( 'Update to %(version)s', {
+			message = this.props.translate( 'Update to %(version)s', {
 				args: { version: this.props.site.plugin.update.new_version }
 			} );
 		}
@@ -70,9 +71,9 @@ module.exports = React.createClass( {
 				</button>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return;
 		}
@@ -88,5 +89,4 @@ module.exports = React.createClass( {
 		}
 		return null;
 	}
-
-} );
+});

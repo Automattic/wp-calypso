@@ -3,23 +3,25 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classnames from 'classnames';
 
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
-const PostExcerpt = React.createClass( {
+const PostExcerpt = createReactClass({
+    displayName: 'PostExcerpt',
 
-	propTypes: {
+    propTypes: {
 		content: PropTypes.string.isRequired,
 		maxLength: PropTypes.number
 	},
 
-	defaultProps: {
+    defaultProps: {
 		maxLength: 80
 	},
 
-	render() {
+    render() {
 		if ( ! this.props.content ) {
 			return null;
 		}
@@ -40,6 +42,6 @@ const PostExcerpt = React.createClass( {
 			</AutoDirection>
 		);
 	}
-} );
+});
 
 export default PostExcerpt;

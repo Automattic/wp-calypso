@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const i18n = require( 'i18n-calypso' );
+import i18n from 'i18n-calypso';
 
 /**
  * @see wp_mce_translation() in src/wp-includes/class-wp-editor.php from WordPress

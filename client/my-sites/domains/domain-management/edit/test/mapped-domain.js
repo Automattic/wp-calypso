@@ -13,6 +13,8 @@ import sinon from 'sinon';
  */
 import { MappedDomain } from '../mapped-domain.jsx';
 
+import paths from 'my-sites/domains/paths';
+
 jest.mock( 'lib/analytics', () => {} );
 
 describe( 'mapped-domain', () => {
@@ -44,8 +46,7 @@ describe( 'mapped-domain', () => {
 	it(
 		'should use selectedSite.slug for URLs',
 		sinon.test( function() {
-			const paths = require( 'my-sites/domains/paths' );
-			const dnsStub = this.stub( paths, 'domainManagementDns' );
+		    const dnsStub = this.stub( paths, 'domainManagementDns' );
 			const emailStub = this.stub( paths, 'domainManagementEmail' );
 
 			const renderer = TestUtils.createRenderer();

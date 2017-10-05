@@ -12,38 +12,34 @@ import * as stats from 'lib/posts/stats';
 import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 
-export default React.createClass( {
-	displayName: 'EditorLocationSearch',
+export default class extends React.Component {
+    static displayName = 'EditorLocationSearch';
 
-	propTypes: {
+	static propTypes = {
 		onError: PropTypes.func,
 		onSelect: PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onError: () => {},
-			onSelect: () => {}
-		};
-	},
+	static defaultProps = {
+		onError: () => {},
+		onSelect: () => {}
+	};
 
-	getInitialState() {
-		return {
-			results: [],
-			isSearching: false
-		};
-	},
+	state = {
+		results: [],
+		isSearching: false
+	};
 
 	componentDidMount() {
 		this.mounted = true;
 		this.hasTrackedStats = false;
-	},
+	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-	},
+	}
 
-	geocode( address ) {
+	geocode = address => {
 		const { onError } = this.props;
 
 		if ( ! this.hasTrackedStats ) {
@@ -79,12 +75,12 @@ export default React.createClass( {
 		this.setState( {
 			isSearching: true
 		} );
-	},
+	};
 
-	onSelect( result ) {
+	onSelect = result => {
 		this.refs.search.clear();
 		this.props.onSelect( result );
-	},
+	};
 
 	render() {
 		const { results, isSearching } = this.state;
@@ -112,4 +108,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

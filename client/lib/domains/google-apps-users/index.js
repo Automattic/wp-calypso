@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
-const i18n = require( 'i18n-calypso' ),
-	emailValidator = require( 'email-validator' );
+import i18n from 'i18n-calypso';
+import emailValidator from 'email-validator';
 
 function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {

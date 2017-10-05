@@ -23,8 +23,8 @@ const OPTION_SHAPE = PropTypes.shape( {
 	action: PropTypes.func
 } );
 
-const ThemesSiteSelectorModal = React.createClass( {
-	propTypes: {
+class ThemesSiteSelectorModal extends React.Component {
+    static propTypes = {
 		children: PropTypes.element,
 		options: PropTypes.objectOf( OPTION_SHAPE ),
 		defaultOption: OPTION_SHAPE,
@@ -34,16 +34,14 @@ const ThemesSiteSelectorModal = React.createClass( {
 		// connected props
 		getSiteSlug: PropTypes.func,
 		getWpcomTheme: PropTypes.func,
-	},
+	};
 
-	getInitialState() {
-		return {
-			selectedThemeId: null,
-			selectedOption: null,
-		};
-	},
+	state = {
+		selectedThemeId: null,
+		selectedOption: null,
+	};
 
-	trackAndCallAction( siteId ) {
+	trackAndCallAction = siteId => {
 		const action = this.state.selectedOption.action;
 		const themeId = this.state.selectedThemeId;
 		const { search } = this.props;
@@ -66,15 +64,15 @@ const ThemesSiteSelectorModal = React.createClass( {
 				action( themeId, siteId );
 			} );
 		}
-	},
+	};
 
-	showSiteSelectorModal( option, themeId ) {
+	showSiteSelectorModal = (option, themeId) => {
 		this.setState( { selectedThemeId: themeId, selectedOption: option } );
-	},
+	};
 
-	hideSiteSelectorModal() {
+	hideSiteSelectorModal = () => {
 		this.showSiteSelectorModal( null, null );
-	},
+	};
 
 	/*
 	 * Wrap an option's action with a SiteSelectorModal.
@@ -82,7 +80,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 	 * but only if it also has a header, because the latter indicates it really needs
 	 * a site to be selected and doesn't work otherwise.
 	 */
-	wrapOption( option ) {
+	wrapOption = option => {
 		return Object.assign(
 			{},
 			option,
@@ -93,7 +91,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 				? { getUrl: null }
 				: {},
 		);
-	},
+	};
 
 	render() {
 		const children = React.cloneElement(
@@ -129,7 +127,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => ( {

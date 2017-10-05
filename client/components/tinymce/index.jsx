@@ -2,24 +2,24 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	PropTypes = require( 'prop-types' ),
-	classnames = require( 'classnames' ),
-	autosize = require( 'autosize' ),
-	tinymce = require( 'tinymce/tinymce' );
-
-require( 'tinymce/themes/modern/theme.js' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import autosize from 'autosize';
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
-require( 'tinymce/plugins/colorpicker/plugin.js' );
-require( 'tinymce/plugins/directionality/plugin.js' );
-require( 'tinymce/plugins/hr/plugin.js' );
-require( 'tinymce/plugins/lists/plugin.js' );
-require( 'tinymce/plugins/media/plugin.js' );
-require( 'tinymce/plugins/paste/plugin.js' );
-require( 'tinymce/plugins/tabfocus/plugin.js' );
-require( 'tinymce/plugins/textcolor/plugin.js' );
+import 'tinymce/plugins/colorpicker/plugin.js';
+
+import 'tinymce/plugins/directionality/plugin.js';
+import 'tinymce/plugins/hr/plugin.js';
+import 'tinymce/plugins/lists/plugin.js';
+import 'tinymce/plugins/media/plugin.js';
+import 'tinymce/plugins/paste/plugin.js';
+import 'tinymce/plugins/tabfocus/plugin.js';
+import 'tinymce/plugins/textcolor/plugin.js';
 
 // TinyMCE plugins that we've forked or written ourselves
 import wpcomPlugin from './plugins/wpcom/plugin.js';
@@ -79,10 +79,12 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 /**
  * Internal Dependencies
  */
-const user = require( 'lib/user' )(),
-	i18n = require( './i18n' ),
-	viewport = require( 'lib/viewport' ),
-	config = require( 'config' );
+import userFactory from 'lib/user';
+
+const user = userFactory();
+import i18n from './i18n';
+import viewport from 'lib/viewport';
+import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
 /**
@@ -158,10 +160,10 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
-module.exports = React.createClass( {
-	displayName: 'TinyMCE',
+module.exports = class extends React.Component {
+    static displayName = 'TinyMCE';
 
-	propTypes: {
+	static propTypes = {
 		isNew: PropTypes.bool,
 		mode: PropTypes.string,
 		tabIndex: PropTypes.number,
@@ -183,34 +185,30 @@ module.exports = React.createClass( {
 		onSetContent: PropTypes.func,
 		onUndo: PropTypes.func,
 		onTextEditorChange: PropTypes.func,
-	},
+	};
 
-	contextTypes: {
+	static contextTypes = {
 		store: PropTypes.object,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			mode: 'tinymce',
-			isNew: false
-		};
-	},
+	static defaultProps = {
+		mode: 'tinymce',
+		isNew: false
+	};
 
-	getInitialState: function() {
-		return {
-			content: '',
-			selection: null,
-		};
-	},
+	state = {
+		content: '',
+		selection: null,
+	};
 
-	_editor: null,
+	_editor = null;
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this._id = 'tinymce-' + _instance;
 		_instance++;
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -220,9 +218,9 @@ module.exports = React.createClass( {
 		if ( this.props.mode !== prevProps.mode ) {
 			this.toggleEditor();
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.mounted = true;
 
 		const setup = function( editor ) {
@@ -330,16 +328,16 @@ module.exports = React.createClass( {
 		} );
 
 		autosize( ReactDom.findDOMNode( this.refs.text ) );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.mounted = false;
 		if ( this._editor ) {
 			this.destroyEditor();
 		}
-	},
+	}
 
-	destroyEditor() {
+	destroyEditor = () => {
 		forEach( EVENTS, function( eventHandler, eventName ) {
 			if ( this.props[ eventHandler ] ) {
 				this._editor.off( eventName, this.props[ eventHandler ] );
@@ -349,13 +347,13 @@ module.exports = React.createClass( {
 		tinymce.remove( this._editor );
 		this._editor = null;
 		autosize.destroy( ReactDom.findDOMNode( this.refs.text ) );
-	},
+	};
 
-	doAutosizeUpdate: function() {
+	doAutosizeUpdate = () => {
 		autosize.update( ReactDom.findDOMNode( this.refs.text ) );
-	},
+	};
 
-	bindEditorEvents: function( prevProps ) {
+	bindEditorEvents = prevProps => {
 		prevProps = prevProps || {};
 
 		forEach( EVENTS, function( eventHandler, eventName ) {
@@ -367,9 +365,9 @@ module.exports = React.createClass( {
 				}
 			}
 		}.bind( this ) );
-	},
+	};
 
-	toggleEditor: function( options = { autofocus: true } ) {
+	toggleEditor = (options = { autofocus: true }) => {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -387,9 +385,9 @@ module.exports = React.createClass( {
 		if ( options.autofocus ) {
 			this.focusEditor();
 		}
-	},
+	};
 
-	focusEditor: function() {
+	focusEditor = () => {
 		if ( this.props.mode === 'html' ) {
 			const textNode = ReactDom.findDOMNode( this.refs.text );
 
@@ -407,9 +405,9 @@ module.exports = React.createClass( {
 		} else if ( this._editor ) {
 			this._editor.focus();
 		}
-	},
+	};
 
-	getContent: function( args ) {
+	getContent = args => {
 		if ( this.props.mode === 'html' ) {
 			return this.state.content;
 		}
@@ -428,22 +426,22 @@ module.exports = React.createClass( {
 		}
 
 		return content;
-	},
+	};
 
-	isDirty: function() {
+	isDirty = () => {
 		if ( this._editor ) {
 			return this._editor.isDirty();
 		}
 		return false;
-	},
+	};
 
-	setTextAreaContent: function( content ) {
+	setTextAreaContent = content => {
 		this.setState( {
 			content: decodeEntities( content )
 		}, this.doAutosizeUpdate );
-	},
+	};
 
-	setEditorContent: function( content, args = {} ) {
+	setEditorContent = (content, args = {}) => {
 		if ( this._editor ) {
 			const { mode } = this.props;
 			this._editor.setContent( wpautop( content ), { ...args, mode } );
@@ -454,15 +452,15 @@ module.exports = React.createClass( {
 		}
 
 		this.setTextAreaContent( content );
-	},
+	};
 
-	setSelection: function( selection ) {
+	setSelection = selection => {
 		this.setState( {
 			selection
 		} );
-	},
+	};
 
-	selectTextInTextArea: function( selection ) {
+	selectTextInTextArea = selection => {
 		// only valid in the text area mode and if we have selection
 		if ( ! selection ) {
 			return;
@@ -477,9 +475,9 @@ module.exports = React.createClass( {
 
 		// clear out the selection from the state
 		this.setState( { selection: null } );
-	},
+	};
 
-	onTextAreaChange: function( event ) {
+	onTextAreaChange = event => {
 		const content = event.target.value;
 
 		if ( this.props.onTextEditorChange ) {
@@ -487,17 +485,17 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( { content: content }, this.doAutosizeUpdate );
-	},
+	};
 
-	onToolbarChangeContent: function( content ) {
+	onToolbarChangeContent = content => {
 		if ( this.props.onTextEditorChange ) {
 			this.props.onTextEditorChange( content );
 		}
 
 		this.setState( { content }, this.doAutosizeUpdate );
-	},
+	};
 
-	localize: function() {
+	localize = () => {
 		const userData = user.get();
 		let i18nStrings = i18n;
 
@@ -513,9 +511,9 @@ module.exports = React.createClass( {
 
 		// Stop TinyMCE from trying to load the lang script by marking as done
 		tinymce.ScriptLoader.markDone( DUMMY_LANG_URL );
-	},
+	};
 
-	render: function() {
+	render() {
 		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
@@ -551,4 +549,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

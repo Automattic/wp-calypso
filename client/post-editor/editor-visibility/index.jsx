@@ -27,16 +27,12 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
-const EditorVisibility = React.createClass( {
-	showingAcceptDialog: false,
+class EditorVisibility extends React.Component {
+    static defaultProps = {
+		isPrivateSite: false
+	};
 
-	getDefaultProps() {
-		return {
-			isPrivateSite: false
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		context: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		isPrivateSite: PropTypes.bool,
@@ -47,15 +43,15 @@ const EditorVisibility = React.createClass( {
 		savedPassword: PropTypes.string,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
-	},
+	};
 
-	getInitialState() {
-		return {
-			passwordIsValid: true,
-		};
-	},
+	state = {
+		passwordIsValid: true,
+	};
 
-	componentWillReceiveProps( nextProps ) {
+	showingAcceptDialog = false;
+
+	componentWillReceiveProps(nextProps) {
 		if ( this.props.password === nextProps.password ) {
 			return;
 		}
@@ -70,9 +66,9 @@ const EditorVisibility = React.createClass( {
 		const passwordIsValid = isChangeFromPublicToPrivate || isPasswordNotEmpty;
 
 		this.setState( { passwordIsValid } );
-	},
+	}
 
-	getVisibility() {
+	getVisibility = () => {
 		if ( this.props.password ) {
 			return 'password';
 		}
@@ -82,9 +78,9 @@ const EditorVisibility = React.createClass( {
 		}
 
 		return 'public';
-	},
+	};
 
-	isPasswordValid() {
+	isPasswordValid = () => {
 		if ( 'password' !== this.getVisibility() ) {
 			return true;
 		}
@@ -92,16 +88,16 @@ const EditorVisibility = React.createClass( {
 		const password = ReactDom.findDOMNode( this.refs.postPassword ).value.trim();
 
 		return password.length;
-	},
+	};
 
-	updatePostStatus() {
+	updatePostStatus = () => {
 		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
 		const postEdits = { status: defaultVisibility };
 
 		postActions.edit( postEdits );
-	},
+	};
 
-	updateVisibility( newVisibility ) {
+	updateVisibility = newVisibility => {
 		const { siteId, postId } = this.props;
 		let reduxPostEdits;
 
@@ -131,9 +127,9 @@ const EditorVisibility = React.createClass( {
 		if ( reduxPostEdits ) {
 			this.props.editPost( siteId, postId, reduxPostEdits );
 		}
-	},
+	};
 
-	setPostToPrivate() {
+	setPostToPrivate = () => {
 		const { siteId, postId } = this.props;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( {
@@ -149,14 +145,14 @@ const EditorVisibility = React.createClass( {
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
 		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: 'private' } );
-	},
+	};
 
-	onPrivatePublish() {
+	onPrivatePublish = () => {
 		this.setPostToPrivate();
 		setTimeout( () => this.props.onPrivatePublish( true ), 0 );
-	},
+	};
 
-	onSetToPrivate() {
+	onSetToPrivate = () => {
 		if ( 'private' === this.props.savedStatus ) {
 			this.setPostToPrivate();
 			return;
@@ -184,9 +180,9 @@ const EditorVisibility = React.createClass( {
 				this.onPrivatePublish();
 			}
 		}, this.props.translate( 'Yes' ), this.props.translate( 'No' ) );
-	},
+	};
 
-	onPasswordChange( event ) {
+	onPasswordChange = event => {
 		const { siteId, postId } = this.props;
 		let newPassword = event.target.value.trim();
 		const passwordIsValid = newPassword.length > 0;
@@ -199,9 +195,9 @@ const EditorVisibility = React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		this.props.editPost( siteId, postId, { password: newPassword } );
-	},
+	};
 
-	renderPasswordInput() {
+	renderPasswordInput = () => {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
@@ -222,9 +218,9 @@ const EditorVisibility = React.createClass( {
 				{ isError ? <FormInputValidation isError={ true } text={ errorMessage } /> : null }
 			</div>
 		);
-	},
+	};
 
-	renderPrivacyDropdown( visibility ) {
+	renderPrivacyDropdown = visibility => {
 		const dropdownItems = [
 			{
 				label: this.props.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } ),
@@ -274,7 +270,7 @@ const EditorVisibility = React.createClass( {
 				</FormFieldset>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const visibility = this.getVisibility();
@@ -288,8 +284,7 @@ const EditorVisibility = React.createClass( {
 			</div>
 		);
 	}
-
-} );
+}
 
 export default connect(
 	( state ) => {

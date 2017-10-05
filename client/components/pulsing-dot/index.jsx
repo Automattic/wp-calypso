@@ -1,32 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
-var PulsingDot = React.createClass( {
+class PulsingDot extends React.Component {
+    static defaultProps = {
+		active: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			active: false
-		};
-	},
+	_loadingStatTimeout = null;
 
-	_loadingStatTimeout: null,
-
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( this._loadingStatTimeout ) {
 			clearTimeout( this._loadingStatTimeout );
 			this._loadingStatTimeout = null;
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( nextProps.active === this.props.active || ! this.props.chunkName ) {
 			return;
 		}
@@ -39,9 +37,9 @@ var PulsingDot = React.createClass( {
 			clearTimeout( this._loadingStatTimeout );
 			this._loadingStatTimeout = null;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		var className = classnames( {
 			'pulsing-dot': true,
 			'is-active': this.props.active
@@ -50,7 +48,6 @@ var PulsingDot = React.createClass( {
 			<div className={ className } />
 		);
 	}
-
-} );
+}
 
 module.exports = PulsingDot;

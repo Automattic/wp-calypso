@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' );
+import Dispatcher from 'dispatcher';
+
+import wpcom from 'lib/wp';
 
 /**
  * Internal dependencies

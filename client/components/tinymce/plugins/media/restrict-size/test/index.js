@@ -8,12 +8,13 @@
  */
 import { expect } from 'chai';
 
+import restrictSize from '../';
+
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;
 
 	before( () => {
-		const restrictSize = require( '../' );
-		getMaxWidth = restrictSize.getMaxWidth;
+	    getMaxWidth = restrictSize.getMaxWidth;
 		resetImages = restrictSize.resetImages;
 		setImages = restrictSize.setImages;
 	} );

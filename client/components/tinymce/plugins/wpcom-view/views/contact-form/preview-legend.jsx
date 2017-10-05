@@ -8,10 +8,10 @@ import React from 'react';
  */
 import PreviewRequired from './preview-required';
 
-export default React.createClass( {
-	displayName: 'PreviewLegend',
+export default class extends React.Component {
+ static displayName = 'PreviewLegend';
 
-	render() {
-		return ( <legend>{ this.props.label }<PreviewRequired { ...this.props } /></legend> );
-	}
-} );
+ render() {
+	 return ( <legend>{ this.props.label }<PreviewRequired { ...this.props } /></legend> );
+ }
+}

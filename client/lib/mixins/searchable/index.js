@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:searchable' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:searchable');
 
 /**
  * Add search capability to collection

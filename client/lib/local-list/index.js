@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:stats-data:local-list' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:stats-data:local-list');
+import store from 'store';
 import { find } from 'lodash';
 
 /**

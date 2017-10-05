@@ -21,8 +21,8 @@ import SiteRedirect from './site-redirect';
 import { type as domainTypes } from 'lib/domains/constants';
 import WpcomDomain from './wpcom-domain';
 
-const Edit = React.createClass( {
-	render() {
+class Edit extends React.Component {
+    render() {
 		const domain = this.props.domains && getSelectedDomain( this.props ),
 			Details = this.getDetailsForType( domain && domain.type );
 
@@ -38,9 +38,9 @@ const Edit = React.createClass( {
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
-	},
+	}
 
-	getDetailsForType( type ) {
+	getDetailsForType = type => {
 		switch ( type ) {
 			case domainTypes.MAPPED:
 				return MappedDomain;
@@ -57,9 +57,9 @@ const Edit = React.createClass( {
 			default:
 				return null;
 		}
-	},
+	};
 
-	renderDetails( domain, Details ) {
+	renderDetails = (domain, Details) => {
 		const { MAINTENANCE } = registrarNames;
 
 		if ( domain.type === domainTypes.REGISTERED && domain.registrar === MAINTENANCE ) {
@@ -71,11 +71,11 @@ const Edit = React.createClass( {
 			selectedSite={ this.props.selectedSite }
 			settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
 		/>;
-	},
+	};
 
-	goToDomainManagement() {
+	goToDomainManagement = () => {
 		page( paths.domainManagementList( this.props.selectedSite.slug ) );
-	}
-} );
+	};
+}
 
 export default localize( Edit );

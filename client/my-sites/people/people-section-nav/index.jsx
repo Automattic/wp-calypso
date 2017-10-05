@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import createReactClass from 'create-react-class';
 import config from 'config';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -9,13 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	UrlSearch = require( 'lib/mixins/url-search' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import Search from 'components/search';
 
-let PeopleSearch = React.createClass( {
+import UrlSearch from 'lib/mixins/url-search';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+
+let PeopleSearch = createReactClass({
 	displayName: 'PeopleSearch',
 	mixins: [ UrlSearch ],
 
@@ -31,11 +33,12 @@ let PeopleSearch = React.createClass( {
 				analyticsGroup="People" />
 		);
 	}
-} );
+});
 
-let PeopleNavTabs = React.createClass( {
-	displayName: 'PeopleNavTabs',
-	render: function() {
+class PeopleNavTabs extends React.Component {
+    static displayName = 'PeopleNavTabs';
+
+	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
 				{ this.props.filters.map( function( filterItem ) {
@@ -51,7 +54,7 @@ let PeopleNavTabs = React.createClass( {
 			</NavTabs>
 		);
 	}
-} );
+}
 
 class PeopleSectionNav extends Component {
 

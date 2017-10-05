@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { throttle } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,23 +23,20 @@ import {
 	getSiteStatsTotalPostsForStreakQuery
 } from 'state/stats/lists/selectors';
 
-const PostTrends = React.createClass( {
+class PostTrends extends React.Component {
+    static displayName = 'PostTrends';
 
-	displayName: 'PostTrends',
-
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		query: PropTypes.object
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			canScrollLeft: false,
-			canScrollRight: false
-		};
-	},
+	state = {
+		canScrollLeft: false,
+		canScrollRight: false
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -52,20 +49,20 @@ const PostTrends = React.createClass( {
 		this.resize = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resize );
 		this.resize();
-	},
+	}
 
 	// Remove listener
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resize );
-	},
+	}
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		// only update if the total number of posts, or query.endDate has changed
 		return nextProps.totalPosts !== this.props.totalPosts ||
 			nextProps.query.endDate !== this.props.query.endDate;
-	},
+	}
 
-	resize: function() {
+	resize = () => {
 		var scrollProps = {},
 			node = this.refs.wrapper,
 			yearNode = this.refs.year,
@@ -81,9 +78,9 @@ const PostTrends = React.createClass( {
 		}
 
 		this.setState( scrollProps );
-	},
+	};
 
-	scroll: function( direction ) {
+	scroll = direction => {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -107,17 +104,17 @@ const PostTrends = React.createClass( {
 		yearNode.style.left = left + 'px';
 
 		this.resize();
-	},
+	};
 
-	scrollLeft: function() {
+	scrollLeft = () => {
 		this.scroll( -1 );
-	},
+	};
 
-	scrollRight: function() {
+	scrollRight = () => {
 		this.scroll( 1 );
-	},
+	};
 
-	getMonthComponents: function() {
+	getMonthComponents = () => {
 		var i,
 			months = [],
 			startDate;
@@ -135,9 +132,9 @@ const PostTrends = React.createClass( {
 		}
 
 		return months;
-	},
+	};
 
-	render: function() {
+	render() {
 		const { siteId, query } = this.props;
 
 		const leftClass = classNames( 'post-trends__scroll-left', {
@@ -149,10 +146,9 @@ const PostTrends = React.createClass( {
 		} );
 
 		return (
-
-			<div className="post-trends">
+            <div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.translate( 'Posting Activity' ) }></SectionHeader>
+				<SectionHeader label={ this.props.translate( 'Posting Activity' ) }></SectionHeader>
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
 					<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
@@ -161,7 +157,7 @@ const PostTrends = React.createClass( {
 							{ this.getMonthComponents() }
 						</div>
 						<div className="post-trends__key-container">
-							<span className="post-trends__key-label">{ this.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">{ this.props.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
 							<ul className="post-trends__key">
 								<li className="post-trends__key-day is-today"></li>
 								<li className="post-trends__key-day is-level-1"></li>
@@ -169,14 +165,14 @@ const PostTrends = React.createClass( {
 								<li className="post-trends__key-day is-level-3"></li>
 								<li className="post-trends__key-day is-level-4"></li>
 							</ul>
-							<span className="post-trends__key-label">{ this.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">{ this.props.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
 						</div>
 					</div>
 				</Card>
 			</div>
-		);
+        );
 	}
-} );
+}
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
@@ -194,4 +190,4 @@ export default connect( ( state ) => {
 		query,
 		siteId
 	};
-} )( PostTrends );
+} )( localize(PostTrends) );

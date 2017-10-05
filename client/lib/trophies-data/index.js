@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:trophies-data' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:trophies-data');
+import Emitter from 'lib/mixins/emitter';
+import store from 'store';
 
 /**
  * Internal dependencies

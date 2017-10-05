@@ -1,56 +1,59 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:list-item' ),
-	page = require( 'page' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:stats:list-item');
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var Follow = require( './action-follow' ),
-	Page = require( './action-page' ),
-	OpenLink = require( './action-link' ),
-	Spam = require( './action-spam' ),
-	Emojify = require( 'components/emojify' ),
-	titlecase = require( 'to-title-case' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import Follow from './action-follow';
 
-module.exports = React.createClass( {
-	displayName: 'StatsListItem',
+import Page from './action-page';
+import OpenLink from './action-link';
+import Spam from './action-spam';
+import Emojify from 'components/emojify';
+import titlecase from 'to-title-case';
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 
-	getInitialState: function() {
-		return {
-			active: this.props.active,
-			actionMenuOpen: false,
-			disabled: false
-		};
-	},
+module.exports = localize(class extends React.Component {
+    static displayName = 'StatsListItem';
 
-	addMenuListener: function() {
+	state = {
+		active: this.props.active,
+		actionMenuOpen: false,
+		disabled: false
+	};
+
+	addMenuListener = () => {
 		document.addEventListener( 'click', this.closeMenu );
-	},
+	};
 
-	removeMenuListener: function() {
+	removeMenuListener = () => {
 		document.removeEventListener( 'click', this.closeMenu );
-	},
+	};
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( this.props.data.actionMenu ) {
 			this.removeMenuListener();
 		}
-	},
+	}
 
-	closeMenu: function() {
+	closeMenu = () => {
 		this.removeMenuListener();
 		this.setState( {
 			actionMenuOpen: false
 		} );
-	},
+	};
 
-	actionMenuClick: function( event ) {
+	actionMenuClick = event => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -62,13 +65,13 @@ module.exports = React.createClass( {
 		} else {
 			this.closeMenu();
 		}
-	},
+	};
 
-	preventDefaultOnClick: function( event ) {
+	preventDefaultOnClick = event => {
 		event.preventDefault();
-	},
+	};
 
-	onClick: function( event ) {
+	onClick = event => {
 		var gaEvent,
 			moduleName = titlecase( this.props.moduleName );
 
@@ -101,15 +104,15 @@ module.exports = React.createClass( {
 				analytics.ga.recordEvent( 'Stats', gaEvent + ' in List' );
 			}
 		}
-	},
+	};
 
-	spamHandler: function( isSpammed ) {
+	spamHandler = isSpammed => {
 		this.setState( {
 			disabled: isSpammed
 		} );
-	},
+	};
 
-	buildActions: function() {
+	buildActions = () => {
 		var data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
@@ -155,9 +158,9 @@ module.exports = React.createClass( {
 		}
 
 		return actionList;
-	},
+	};
 
-	buildLabel: function() {
+	buildLabel = () => {
 		var data = this.props.data,
 			labelData = data.label,
 			wrapperClassSet,
@@ -206,9 +209,9 @@ module.exports = React.createClass( {
 		}, this );
 
 		return label;
-	},
+	};
 
-	buildValue: function() {
+	buildValue = () => {
 		var data = this.props.data,
 			valueData = data.value,
 			value;
@@ -222,18 +225,18 @@ module.exports = React.createClass( {
 
 		switch ( valueData.type ) {
 			case 'relative-date':
-				value = this.moment( valueData.value ).fromNow( true );
+				value = this.props.moment( valueData.value ).fromNow( true );
 				break;
 			default:
 			case 'number':
-				value = this.numberFormat( valueData.value );
+				value = this.props.numberFormat( valueData.value );
 				break;
 		}
 
 		return value;
-	},
+	};
 
-	render: function() {
+	render() {
 		var data = this.props.data,
 			rightClassOptions = {
 				'module-content-list-item-right': true
@@ -270,7 +273,7 @@ module.exports = React.createClass( {
 						classNames( toggleOptions )
 					}
 					title={
-						this.translate(
+						this.props.translate(
 							'Show Actions',
 							{ context: 'Label for hidden menu in a list on the Stats page.' }
 						)
@@ -298,4 +301,4 @@ module.exports = React.createClass( {
 			</li>
 		);
 	}
-} );
+});

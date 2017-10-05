@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
@@ -19,29 +20,27 @@ import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
-const EditorPostFormats = React.createClass( {
-	propTypes: {
+class EditorPostFormats extends React.Component {
+    static propTypes = {
 		siteId: PropTypes.number,
 		value: PropTypes.string,
 		postFormats: PropTypes.object
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			value: 'standard'
-		};
-	},
+	static defaultProps = {
+		value: 'standard'
+	};
 
-	getSelectedPostFormat() {
+	getSelectedPostFormat = () => {
 		const { value } = this.props;
 		const isSupportedFormat = !! this.getPostFormats()[ value ];
 
 		return isSupportedFormat ? value : 'standard';
-	},
+	};
 
-	getPostFormats() {
+	getPostFormats = () => {
 		let formats = {
-			standard: this.translate( 'Standard', {
+			standard: this.props.translate( 'Standard', {
 				context: 'Post format'
 			} )
 		};
@@ -51,9 +50,9 @@ const EditorPostFormats = React.createClass( {
 		}
 
 		return formats;
-	},
+	};
 
-	getPostFormatIcon( postFormatSlug ) {
+	getPostFormatIcon = postFormatSlug => {
 		const icons = {
 			aside: 'aside',
 			image: 'image',
@@ -67,9 +66,9 @@ const EditorPostFormats = React.createClass( {
 		};
 
 		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
-	},
+	};
 
-	onChange( event ) {
+	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			format: event.target.value
@@ -77,9 +76,9 @@ const EditorPostFormats = React.createClass( {
 
 		recordStat( 'post_format_changed' );
 		recordEvent( 'Changed Post Format', event.target.value );
-	},
+	};
 
-	renderPostFormats() {
+	renderPostFormats = () => {
 		const selectedFormat = this.getSelectedPostFormat();
 
 		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
@@ -102,7 +101,7 @@ const EditorPostFormats = React.createClass( {
 				</li>
 			);
 		} );
-	},
+	};
 
 	render() {
 		return (
@@ -115,7 +114,7 @@ const EditorPostFormats = React.createClass( {
 			</AccordionSection>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -126,4 +125,4 @@ export default connect(
 			postFormats: getPostFormats( state, siteId )
 		};
 	}
-)( EditorPostFormats );
+)( localize(EditorPostFormats) );

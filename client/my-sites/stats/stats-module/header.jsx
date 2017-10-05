@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -11,10 +12,10 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
-export default React.createClass( {
-	displayName: 'StatsModuleHeader',
+export default localize(class extends React.Component {
+    static displayName = 'StatsModuleHeader';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number,
 		path: PropTypes.string,
 		title: PropTypes.string,
@@ -25,18 +26,16 @@ export default React.createClass( {
 		showActions: PropTypes.bool,
 		showCollapse: PropTypes.bool,
 		onActionClick: PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			showCollapse: true,
-			showModule: true,
-			showActions: true,
-			onActionClick: () => {}
-		}
-	},
+	static defaultProps = {
+		showCollapse: true,
+		showModule: true,
+		showActions: true,
+		onActionClick: () => {}
+	};
 
-	toggleInfo: function( event ) {
+	toggleInfo = event => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
@@ -49,9 +48,9 @@ export default React.createClass( {
 		onActionClick( {
 			showInfo: ! showInfo
 		} );
-	},
+	};
 
-	toggleModule: function( event ) {
+	toggleModule = event => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';
@@ -63,9 +62,9 @@ export default React.createClass( {
 		onActionClick( {
 			showModule: ! showModule
 		} );
-	},
+	};
 
-	renderActions() {
+	renderActions = () => {
 		const { showCollapse, showInfo, showActions } = this.props;
 		const infoIcon = showInfo ? 'info' : 'info-outline';
 
@@ -74,12 +73,12 @@ export default React.createClass( {
 		}
 
 		return (
-			<ul className="module-header-actions">
+            <ul className="module-header-actions">
 				<li className="module-header-action toggle-info">
 					<a href="#"
 						className="module-header-action-link"
-						aria-label={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
-						title={ this.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						aria-label={ this.props.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
+						title={ this.props.translate( 'Show or hide panel information', { context: 'Stats panel action' } ) }
 						onClick={ this.toggleInfo }
 					>
 						<Gridicon icon={ infoIcon } />
@@ -87,23 +86,23 @@ export default React.createClass( {
 				</li>
 				{ showCollapse ? this.renderChevron() : null }
 			</ul>
-		);
-	},
+        );
+	};
 
-	renderChevron() {
+	renderChevron = () => {
 		return (
-			<li className="module-header-action toggle-services">
+            <li className="module-header-action toggle-services">
 				<a
 					href="#"
 					className="module-header-action-link"
 					aria-label={
-						this.translate(
+						this.props.translate(
 							'Expand or collapse panel',
 							{ context: 'Stats panel action' }
 						)
 					}
 					title={
-						this.translate(
+						this.props.translate(
 							'Expand or collapse panel',
 							{ context: 'Stats panel action' }
 						)
@@ -115,10 +114,10 @@ export default React.createClass( {
 					<Gridicon icon="chevron-down" />
 				</a>
 			</li>
-		);
-	},
+        );
+	};
 
-	renderTitle() {
+	renderTitle = () => {
 		const { title, titleLink } = this.props;
 
 		if ( titleLink ) {
@@ -135,7 +134,7 @@ export default React.createClass( {
 		}
 
 		return <h3 className="module-header-title">{ title }</h3>;
-	},
+	};
 
 	render() {
 		return (
@@ -145,4 +144,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

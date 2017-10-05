@@ -2,26 +2,27 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'TermTreeSelectorSearch',
+export default localize(class extends React.Component {
+    static displayName = 'TermTreeSelectorSearch';
 
-	propTypes: {
+	static propTypes = {
 		searchTerm: PropTypes.string,
 		onSearch: PropTypes.func.isRequired
-	},
+	};
 
 	render() {
 		return (
-			<div className="term-tree-selector__search">
+            <div className="term-tree-selector__search">
 				<Gridicon icon="search" size={ 18 } />
 				<input type="search"
-					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
+					placeholder={ this.props.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }
 					onChange={ this.props.onSearch } />
 			</div>
-		);
+        );
 	}
-} );
+});

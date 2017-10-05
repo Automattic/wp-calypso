@@ -1,45 +1,50 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+
+import classNames from 'classnames';
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	StoredCard = require( './stored-card' ),
-	NewCardForm = require( './new-card-form' ),
-	storeTransactions = require( 'lib/store-transactions' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
 
-var CreditCardSelector = React.createClass({
-	getInitialState: function() {
-		if ( this.props.initialCard ) {
-			return { section: this.props.initialCard.stored_details_id };
+import StoredCard from './stored-card';
+import NewCardForm from './new-card-form';
+import storeTransactions from 'lib/store-transactions';
+import upgradesActions from 'lib/upgrades/actions';
+
+class CreditCardSelector extends React.Component {
+    constructor(props) {
+	    super(props);
+		if ( props.initialCard ) {
+		    this.state = { section: props.initialCard.stored_details_id };
+			return;
 		} else {
-			return { section: 'new-card' };
+		    this.state = { section: 'new-card' };
+			return;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="payment-box-sections">
 				{ this.storedCards() }
 				{ this.newCardForm() }
 			</div>
 		);
-	},
+	}
 
-	storedCards: function() {
+	storedCards = () => {
 		return this.props.cards.map( function( card ) {
 			var storedCard = <StoredCard card={ card } />;
 			return this.section( card.stored_details_id, storedCard );
 		}, this );
-	},
+	};
 
-	newCardForm: function() {
+	newCardForm = () => {
 		var cardForm = (
 			<NewCardForm
 				countriesList={ this.props.countriesList }
@@ -48,9 +53,9 @@ var CreditCardSelector = React.createClass({
 		);
 
 		return this.section( 'new-card', cardForm );
-	},
+	};
 
-	section: function( name, content ) {
+	section = (name, content) => {
 		var classes = classNames( 'payment-box-section', {
 			'selected': this.state.section === name,
 			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0
@@ -65,9 +70,9 @@ var CreditCardSelector = React.createClass({
 				</div>
 			</div>
 		);
-	},
+	};
 
-	handleClickedSection: function( section ) {
+	handleClickedSection = section => {
 		var newPayment;
 
 		if ( section === this.state.section ) {
@@ -83,11 +88,11 @@ var CreditCardSelector = React.createClass({
 
 		upgradesActions.setPayment( newPayment );
 		this.setState( { section: section } );
-	},
+	};
 
-	getStoredCardDetails: function( section ) {
+	getStoredCardDetails = section => {
 		return find( this.props.cards, { stored_details_id: section } );
-	}
-} );
+	};
+}
 
 module.exports = CreditCardSelector;

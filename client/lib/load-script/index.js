@@ -5,7 +5,7 @@
 /**
  * Internal dependency.
  */
-var config = require( 'config' );
+import config from 'config';
 
 var JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js',
 	callbacksForURLsInProgress = {};

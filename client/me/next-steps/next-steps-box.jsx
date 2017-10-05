@@ -2,25 +2,25 @@
  * External dependencies
  */
 
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
-	displayName: 'NextStepsBox',
+module.exports = class extends React.Component {
+    static displayName = 'NextStepsBox';
 
-	recordEvent: function() {
+	recordEvent = () => {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
 		analytics.tracks.recordEvent( 'calypso_me_next_click', {
 			module: this.props.stepName,
 			is_welcome: this.props.isWelcome
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		var boxClassNames = 'next-steps-box',
 			bodyClassNames = 'next-steps-box__step-body',
 			buttonClassNames = 'button';
@@ -48,4 +48,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

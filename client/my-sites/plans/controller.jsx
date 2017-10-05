@@ -11,12 +11,12 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { get } from 'lodash';
 import { isValidFeatureKey } from 'lib/plans';
 
+import Plans from 'my-sites/plans/main';
+import CheckoutData from 'components/data/checkout';
+
 export default {
 	plans( context ) {
-		const Plans = require( 'my-sites/plans/main' ),
-			CheckoutData = require( 'components/data/checkout' );
-
-		renderWithReduxStore(
+	    renderWithReduxStore(
 			<CheckoutData>
 				<Plans
 					context={ context }

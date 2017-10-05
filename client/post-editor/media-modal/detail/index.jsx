@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop, partial } from 'lodash';
@@ -9,15 +10,16 @@ import { noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-var DetailItem = require( './detail-item' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	HeaderCake = require( 'components/header-cake' ),
-	preloadImage = require( '../preload-image' );
+import DetailItem from './detail-item';
+
+import MediaUtils from 'lib/media/utils';
+import HeaderCake from 'components/header-cake';
+import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
-	propTypes: {
+export class EditorMediaModalDetail extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		selectedIndex: PropTypes.number,
@@ -25,24 +27,22 @@ export const EditorMediaModalDetail = React.createClass( {
 		onReturnToList: PropTypes.func,
 		onEdit: PropTypes.func,
 		onRestore: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			selectedIndex: 0,
-			onSelectedIndexChange: noop
-		};
-	},
+	static defaultProps = {
+		selectedIndex: 0,
+		onSelectedIndexChange: noop
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.preloadImages();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.preloadImages();
-	},
+	}
 
-	preloadImages: function() {
+	preloadImages = () => {
 		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
 			var src = MediaUtils.url( image, {
 				photon: this.props.site && ! this.props.site.is_private
@@ -50,13 +50,13 @@ export const EditorMediaModalDetail = React.createClass( {
 
 			preloadImage( src );
 		}, this );
-	},
+	};
 
-	incrementIndex: function( increment ) {
+	incrementIndex = increment => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			items,
 			selectedIndex,
@@ -72,8 +72,8 @@ export const EditorMediaModalDetail = React.createClass( {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		return (
-			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
+            <div className="editor-media-modal-detail">
+				<HeaderCake onClick={ onReturnToList } backText={ this.props.translate( 'Media Library' ) } />
 				<DetailItem
 					site={ site }
 					item={ item }
@@ -84,12 +84,12 @@ export const EditorMediaModalDetail = React.createClass( {
 					onRestore={ onRestoreItem }
 					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
 			</div>
-		);
+        );
 	}
-} );
+}
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( EditorMediaModalDetail );
+} )( localize(EditorMediaModalDetail) );

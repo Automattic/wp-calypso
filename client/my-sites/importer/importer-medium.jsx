@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,18 +17,16 @@ const importerData = {
 	icon: 'medium'
 };
 
-export default React.createClass( {
-	displayName: 'ImporterMedium',
+export default localize(class extends React.PureComponent {
+    static displayName = 'ImporterMedium';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
-		importerData.description = this.translate(
+	render() {
+		importerData.description = this.props.translate(
 			'Import posts, tags, images and videos ' +
 			'from a Medium export file.'
 		);
 
-		importerData.uploadDescription = this.translate(
+		importerData.uploadDescription = this.props.translate(
 			'Upload a {{b}}Medium export file{{/b}} to start ' +
 			'importing into {{b2}}%(title)s{{/b2}}.',
 			{
@@ -42,4 +40,4 @@ export default React.createClass( {
 
 		return <FileImporter importerData={ importerData } {...this.props} />;
 	}
-} );
+});

@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	SitesLog = require( 'lib/sites-list/log-store' ),
-	SitesListActions = require( 'lib/sites-list/actions' );
+import notices from 'notices';
+
+import SitesLog from 'lib/sites-list/log-store';
+import SitesListActions from 'lib/sites-list/actions';
 
 module.exports = {
 	getInitialState: function() {

@@ -2,7 +2,6 @@
 * External dependencies
 */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -13,34 +12,30 @@ import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
-var Buttons = React.createClass( {
-	displayName: 'Buttons',
+class Buttons extends React.PureComponent {
+    static displayName = 'Buttons';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		compactButtons: false
+	};
 
-	getInitialState: function() {
-		return {
-			compactButtons: false
-		};
-	},
-
-	render: function() {
+	render() {
 		var toggleText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
 		return config.isEnabled( 'devdocs/components-usage-stats' )
 			? this.renderDocsExampleWithUsageStats( toggleText )
 			: this.renderDocsExample( toggleText );
-	},
+	}
 
-	renderDocsExample: function( toggleText ) {
+	renderDocsExample = toggleText => {
 		return (
 			<div>
 				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>{ toggleText }</a>
 				{ this.renderButtons( toggleText ) }
 			</div>
 		);
-	},
+	};
 
-	renderDocsExampleWithUsageStats: function( toggleText ) {
+	renderDocsExampleWithUsageStats = toggleText => {
 		return (
 			<DocsExample
 				componentUsageStats={ this.props.componentUsageStats }
@@ -50,9 +45,9 @@ var Buttons = React.createClass( {
 				{ this.renderButtons() }
 			</DocsExample>
 		);
-	},
+	};
 
-	renderButtons: function() {
+	renderButtons = () => {
 		if ( ! this.state.compactButtons ) {
 			return (
 				<Card>
@@ -192,11 +187,11 @@ var Buttons = React.createClass( {
 				</Card>
 			);
 		}
-	},
+	};
 
-	toggleButtons: function() {
+	toggleButtons = () => {
 		this.setState( { compactButtons: ! this.state.compactButtons } );
-	}
-} );
+	};
+}
 
 module.exports = Buttons;

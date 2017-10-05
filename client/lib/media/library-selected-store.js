@@ -6,9 +6,10 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-var MediaStore = require( './store' ),
-	Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import MediaStore from './store';
+
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables

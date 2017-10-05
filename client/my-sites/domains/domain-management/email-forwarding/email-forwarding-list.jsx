@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var EmailForwardingItem = require( './email-forwarding-item' );
+import EmailForwardingItem from './email-forwarding-item';
 
-var EmailForwardingList = React.createClass( {
-	render: function() {
+class EmailForwardingList extends React.Component {
+    render() {
 		var emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {
-			return <span>{ this.translate( 'Loading…' ) }</span>;
+			return <span>{ this.props.translate( 'Loading…' ) }</span>;
 		}
 
 		if ( ! list ) {
@@ -33,6 +35,6 @@ var EmailForwardingList = React.createClass( {
 
 		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>;
 	}
-} );
+}
 
-module.exports = EmailForwardingList;
+module.exports = localize(EmailForwardingList);

@@ -1,47 +1,41 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import SegmentedControl from 'components/segmented-control';
+
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Segmented Control Demo
  */
-var SegmentedControlDemo = React.createClass( {
-	displayName: 'SegmentedControl',
+class SegmentedControlDemo extends React.PureComponent {
+    static displayName = 'SegmentedControl';
 
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		options: [
+			{ value: 'all', label: 'All' },
+			{ value: 'unread', label: 'Unread' },
+			{ value: 'comments', label: 'Comments' },
+			{ value: 'follows', label: 'Follows' },
+			{ value: 'likes', label: 'Likes' }
+		]
+	};
 
-	getInitialState: function() {
-		return {
-			childSelected: 'all',
-			compact: false
-		};
-	},
+	state = {
+		childSelected: 'all',
+		compact: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			options: [
-				{ value: 'all', label: 'All' },
-				{ value: 'unread', label: 'Unread' },
-				{ value: 'comments', label: 'Comments' },
-				{ value: 'follows', label: 'Follows' },
-				{ value: 'likes', label: 'Likes' }
-			]
-		};
-	},
-
-	toggleCompact: function() {
+	toggleCompact = () => {
 		this.setState( { compact: ! this.state.compact } );
-	},
+	};
 
-	render: function() {
+	render() {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
@@ -130,19 +124,19 @@ var SegmentedControlDemo = React.createClass( {
 				</SegmentedControl>
 			</div>
 		);
-	},
+	}
 
-	selectChildSegment: function( childSelected, event ) {
+	selectChildSegment = (childSelected, event) => {
 		event.preventDefault();
 		this.setState( {
 			childSelected: childSelected
 		} );
 		console.log( 'Segmented Control (selected):', childSelected );
-	},
+	};
 
-	selectSegment: function( option ) {
+	selectSegment = option => {
 		console.log( 'Segmented Control (selected):', option );
-	}
-} );
+	};
+}
 
 module.exports = SegmentedControlDemo;

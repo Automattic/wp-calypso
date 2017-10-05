@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
+import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
-const DomainsSelect = React.createClass( {
-	propTypes: {
+class DomainsSelect extends React.Component {
+    static propTypes = {
 		domains: PropTypes.object.isRequired
-	},
+	};
 
 	render() {
 		let domainRegistrations,
@@ -31,7 +34,7 @@ const DomainsSelect = React.createClass( {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.translate( 'Loading' ) }...</option>;
+			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
 		}
 
 		return (
@@ -43,6 +46,6 @@ const DomainsSelect = React.createClass( {
 			</select>
 		);
 	}
-} );
+}
 
-module.exports = DomainsSelect;
+module.exports = localize(DomainsSelect);

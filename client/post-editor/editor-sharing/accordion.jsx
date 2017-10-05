@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -27,8 +28,8 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const EditorSharingAccordion = React.createClass( {
-	propTypes: {
+class EditorSharingAccordion extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
@@ -37,9 +38,9 @@ const EditorSharingAccordion = React.createClass( {
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
 		isLikesActive: PropTypes.bool
-	},
+	};
 
-	getSubtitle: function() {
+	getSubtitle = () => {
 		const { isPublicizeEnabled, post, connections } = this.props;
 		if ( ! isPublicizeEnabled || ! post || ! connections ) {
 			return;
@@ -55,9 +56,9 @@ const EditorSharingAccordion = React.createClass( {
 
 			return memo;
 		}, [] ).join( ', ' );
-	},
+	};
 
-	renderShortUrl: function() {
+	renderShortUrl = () => {
 		const classes = classNames( 'editor-sharing__shortlink', {
 			'is-standalone': this.hideSharing()
 		} );
@@ -67,12 +68,12 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		return (
-			<div className={ classes }>
+            <div className={ classes }>
 				<label
 					className="editor-sharing__shortlink-label"
 					htmlFor="shortlink-field"
 				>
-					{ this.translate( 'Shortlink' ) }
+					{ this.props.translate( 'Shortlink' ) }
 				</label>
 				<FormTextInput
 					className="editor-sharing__shortlink-field"
@@ -83,15 +84,15 @@ const EditorSharingAccordion = React.createClass( {
 					selectOnFocus
 				/>
 			</div>
-		);
-	},
+        );
+	};
 
-	hideSharing: function() {
+	hideSharing = () => {
 		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
 		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
-	},
+	};
 
-	render: function() {
+	render() {
 		const hideSharing = this.hideSharing();
 		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
 			'is-loading': ! this.props.post || ! this.props.connections
@@ -107,7 +108,7 @@ const EditorSharingAccordion = React.createClass( {
 		if ( this.props.hasBrokenConnection ) {
 			status = {
 				type: 'warning',
-				text: this.translate( 'A broken connection requires repair', {
+				text: this.props.translate( 'A broken connection requires repair', {
 					comment: 'Publicize connection deauthorized, needs user action to fix'
 				} ),
 				url: `/sharing/${ this.props.site.slug }`,
@@ -117,8 +118,8 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		return (
-			<Accordion
-				title={ this.translate( 'Sharing' ) }
+            <Accordion
+				title={ this.props.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
 				className={ classes }
@@ -133,9 +134,9 @@ const EditorSharingAccordion = React.createClass( {
 					{ this.renderShortUrl() }
 				</AccordionSection>
 			</Accordion>
-		);
+        );
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -157,4 +158,4 @@ export default connect(
 	{
 		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' )
 	}
-)( EditorSharingAccordion );
+)( localize(EditorSharingAccordion) );

@@ -1,24 +1,23 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' );
+import Card from 'components/card';
 
-var Cards = React.createClass( {
-	displayName: 'Cards',
+import CompactCard from 'components/card/compact';
 
-	getInitialState: function() {
-		return {
-			compactCards: false
-		};
-	},
+class Cards extends React.Component {
+    static displayName = 'Cards';
 
-	render: function() {
+	state = {
+		compactCards: false
+	};
+
+	render() {
 		var toggleCardsText = this.state.compactCards ? 'Normal Cards' : 'Compact Cards';
 
 		return (
@@ -27,9 +26,9 @@ var Cards = React.createClass( {
 				{ this.renderCards() }
 			</div>
 		);
-	},
+	}
 
-	renderCards: function() {
+	renderCards = () => {
 		if ( ! this.state.compactCards ) {
 			return (
 				<div>
@@ -59,11 +58,11 @@ var Cards = React.createClass( {
 				</div>
 			);
 		}
-	},
+	};
 
-	toggleCards: function() {
+	toggleCards = () => {
 		this.setState( { compactCards: ! this.state.compactCards } );
-	}
-} );
+	};
+}
 
 module.exports = Cards;

@@ -12,8 +12,8 @@ import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const DomainMainPlaceholder = React.createClass( {
-	render() {
+class DomainMainPlaceholder extends React.Component {
+    render() {
 		return (
 			<Main className="domain-main-placeholder">
 				<Header onClick={ this.props.goBack } />
@@ -33,6 +33,6 @@ const DomainMainPlaceholder = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 export default DomainMainPlaceholder;

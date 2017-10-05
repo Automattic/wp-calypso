@@ -18,6 +18,8 @@ import { isSupportUserSession } from 'lib/user/support-user-interop';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
+import initialState from 'state/initial-state';
+
 jest.mock( 'config', () => {
 	const config = () => 'development';
 
@@ -47,8 +49,7 @@ describe( 'initial-state', () => {
 	} );
 
 	before( () => {
-		const initialState = require( 'state/initial-state' );
-		createReduxStoreFromPersistedInitialState = initialState.default;
+	    createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
 		MAX_AGE = initialState.MAX_AGE;
 		SERIALIZE_THROTTLE = initialState.SERIALIZE_THROTTLE;

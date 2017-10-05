@@ -30,12 +30,13 @@ import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-use
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
+import { ReduxWrappedLayout as Layout } from 'controller';
+import Logger from 'lib/catch-js-errors';
+
 const debug = debugFactory( 'calypso' );
 
 function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
-
-	const layoutElement = React.createElement( Layout, {
+    const layoutElement = React.createElement( Layout, {
 		store: reduxStore
 	} );
 
@@ -89,8 +90,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const Logger = require( 'lib/catch-js-errors' );
-			const errorLogger = new Logger();
+		    const errorLogger = new Logger();
 			//Save errorLogger to a singleton for use in arbitrary logging.
 			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger

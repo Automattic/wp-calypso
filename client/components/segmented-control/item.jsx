@@ -1,31 +1,29 @@
 /**
  * External Dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * SegmentedControlItem
  */
-var SegmentedControlItem = React.createClass( {
-
-	propTypes: {
+class SegmentedControlItem extends React.Component {
+    static propTypes = {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
 		selected: PropTypes.bool,
 		title: PropTypes.string,
 		value: PropTypes.string,
 		onClick: PropTypes.func
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			selected: false
-		};
-	},
+	static defaultProps = {
+		selected: false
+	};
 
-	render: function() {
+	render() {
 		const itemClassName = classNames( {
 			'segmented-control__item': true,
 			'is-selected': this.props.selected
@@ -54,6 +52,6 @@ var SegmentedControlItem = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
 
 module.exports = SegmentedControlItem;

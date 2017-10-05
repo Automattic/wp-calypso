@@ -2,6 +2,7 @@
  *	External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classnames from 'classnames';
 import { assign, isArray, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -29,7 +30,8 @@ import {
 	setUrlScheme,
 } from 'lib/url';
 
-const debug = require( 'debug' )( 'calypso:happychat:timeline' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:happychat:timeline');
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
@@ -155,16 +157,17 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollble
 
 const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-export const Timeline = React.createClass( {
-	mixins: [ autoscroll, scrollbleed ],
+export const Timeline = createReactClass({
+    displayName: 'Timeline',
+    mixins: [ autoscroll, scrollbleed ],
 
-	getDefaultProps() {
+    getDefaultProps() {
 		return {
 			onScrollContainer: () => {}
 		};
 	},
 
-	render() {
+    render() {
 		const { onScrollContainer } = this.props;
 		return chatTimeline( assign( {}, this.props, {
 			onScrollContainer: forEach( this.setupAutoscroll, onScrollContainer, this.setScrollbleedTarget ),
@@ -172,7 +175,7 @@ export const Timeline = React.createClass( {
 			scrollbleedUnlock: this.scrollbleedUnlock
 		} ) );
 	}
-} );
+});
 
 const mapProps = state => {
 	const current_user = getCurrentUser( state );

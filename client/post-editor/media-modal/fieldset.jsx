@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalFieldset',
+import React from 'react';
+import classNames from 'classnames';
 
-	propTypes: {
+module.exports = class extends React.Component {
+    static displayName = 'EditorMediaModalFieldset';
+
+	static propTypes = {
 		legend: PropTypes.oneOfType( [
 			PropTypes.string,
 			PropTypes.element
 		] ).isRequired
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<fieldset className={ classNames( 'editor-media-modal__fieldset', this.props.className ) }>
 				<legend className="editor-media-modal__fieldset-legend">{ this.props.legend }</legend>
@@ -23,4 +24,4 @@ module.exports = React.createClass( {
 			</fieldset>
 		);
 	}
-} );
+};

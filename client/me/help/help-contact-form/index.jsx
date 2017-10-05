@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { debounce, isEqual, find } from 'lodash';
@@ -51,10 +52,11 @@ const trackSupportAfterSibylClick = () => composeAnalytics(
 	recordTracksEvent( 'calypso_sibyl_support_after_question_click' )
 );
 
-export const HelpContactForm = React.createClass( {
-	mixins: [ LinkedStateMixin, PureRenderMixin ],
+export const HelpContactForm = createReactClass({
+    displayName: 'HelpContactForm',
+    mixins: [ LinkedStateMixin, PureRenderMixin ],
 
-	propTypes: {
+    propTypes: {
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -73,7 +75,7 @@ export const HelpContactForm = React.createClass( {
 		} ),
 	},
 
-	getDefaultProps() {
+    getDefaultProps() {
 		return {
 			formDescription: '',
 			showHowCanWeHelpField: false,
@@ -89,7 +91,7 @@ export const HelpContactForm = React.createClass( {
 		};
 	},
 
-	/**
+    /**
 	 * Setup our initial state
 	 * @return {Object} An object representing our initial state
 	 */
@@ -104,11 +106,11 @@ export const HelpContactForm = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+    componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	},
 
-	componentWillReceiveProps( nextProps ) {
+    componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -116,14 +118,14 @@ export const HelpContactForm = React.createClass( {
 		this.setState( nextProps.valueLink.value );
 	},
 
-	componentDidUpdate( prevProps, prevState ) {
+    componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.subject !== this.state.subject || prevState.message !== this.state.message ) {
 			this.debouncedQandA();
 		}
 		this.props.valueLink.requestChange( this.state );
 	},
 
-	trackClickStats( selectionName, selectedOption ) {
+    trackClickStats( selectionName, selectedOption ) {
 		const tracksEvent = {
 			howCanWeHelp: 'calypso_help_how_can_we_help_click',
 			howYouFeel: 'calypso_help_how_you_feel_click'
@@ -134,7 +136,7 @@ export const HelpContactForm = React.createClass( {
 		}
 	},
 
-	doQandASearch() {
+    doQandASearch() {
 		const query = this.state.subject + ' ' + this.state.message;
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
 			const existingIDs = existingQuestions.map( question => question.id );
@@ -154,12 +156,12 @@ export const HelpContactForm = React.createClass( {
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	},
 
-	trackSibylClick( event, helpLink ) {
+    trackSibylClick( event, helpLink ) {
 		this.props.trackSibylClick( event, helpLink );
 		this.setState( { sibylClicked: true } );
 	},
 
-	/**
+    /**
 	 * Render both a SegmentedControl and SelectDropdown component.
 	 *
 	 * The SegmentedControl is used for desktop and the SelectDropdown is used for mobile.
@@ -201,7 +203,7 @@ export const HelpContactForm = React.createClass( {
 		);
 	},
 
-	/**
+    /**
 	 * Determine if this form is ready to submit
 	 * @return {bool}	Return true if this form can be submitted
 	 */
@@ -220,7 +222,7 @@ export const HelpContactForm = React.createClass( {
 		return !! message.trim();
 	},
 
-	/**
+    /**
 	 * Start a chat using the info set in state
 	 * @param  {object} event Event object
 	 */
@@ -247,7 +249,7 @@ export const HelpContactForm = React.createClass( {
 		} );
 	},
 
-	/**
+    /**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
@@ -341,7 +343,7 @@ export const HelpContactForm = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
 const mapStateToProps = ( state ) => ( {
 	selectedSite: getHelpSelectedSite( state ),

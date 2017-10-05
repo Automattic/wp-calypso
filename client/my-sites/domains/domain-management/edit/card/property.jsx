@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
-const Property = React.createClass( {
-	render() {
+class Property extends React.Component {
+    render() {
 		return (
 			<div className="domain-details-card__property">
 				<strong>
@@ -16,6 +16,6 @@ const Property = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 module.exports = Property;

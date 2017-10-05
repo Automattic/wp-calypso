@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	adsController = require( './controller' );
+import controller from 'my-sites/controller';
+
+import adsController from './controller';
 
 module.exports = function() {
 	page( '/ads', controller.siteSelection, controller.sites );

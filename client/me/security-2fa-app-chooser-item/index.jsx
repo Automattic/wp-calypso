@@ -1,38 +1,39 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-app-chooser-item' );
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
+
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-app-chooser-item');
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faAppChooserItem';
 
-	displayName: 'Security2faAppChooserItem',
+	state = {
+		downloadCodeDisplayed: false
+	};
 
-	getInitialState: function() {
-		return {
-			downloadCodeDisplayed: false
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	onCodeToggle: function( event ) {
+	onCodeToggle = event => {
 		event.preventDefault();
 		this.setState( { downloadCodeDisplayed: ! this.state.downloadCodeDisplayed } );
-	},
+	};
 
-	possiblyRenderDownloadQRCode: function( appURL ) {
+	possiblyRenderDownloadQRCode = appURL => {
 		var imgURL = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' + encodeURIComponent( appURL );
 
 		if ( ! this.state.downloadCodeDisplayed ) {
@@ -45,13 +46,13 @@ module.exports = React.createClass( {
 				src={ imgURL }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div>
+            <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'You selected {{strong}}%(deviceName)s{{/strong}}. If you do not ' +
 						'already have an authentication app on your smartphone, you will ' +
 						'need to choose from one of the following options:',
@@ -67,7 +68,7 @@ module.exports = React.createClass( {
 				</p>
 				<ul>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'{{downloadLink}}Download %(appName)s to this device ' +
 							'from %(appStoreName)s.{{/downloadLink}}',
 							{
@@ -89,7 +90,7 @@ module.exports = React.createClass( {
 						) }
 					</li>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'Search for %(appName)s on %(appStoreName)s.',
 							{
 								args: {
@@ -100,7 +101,7 @@ module.exports = React.createClass( {
 						) }
 					</li>
 					<li>
-						{ this.translate(
+						{ this.props.translate(
 							'{{codeRevealAnchor}}Scan this code{{/codeRevealAnchor}} with your ' +
 							'device to be directed to %(appName)s on %(appStoreName)s.',
 							{
@@ -123,6 +124,6 @@ module.exports = React.createClass( {
 					</li>
 				</ul>
 			</div>
-		);
+        );
 	}
-} );
+});

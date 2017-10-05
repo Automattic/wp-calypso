@@ -2,14 +2,15 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'StatsTabsTab',
+export default localize(class extends React.Component {
+    static displayName = 'StatsTabsTab';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		gridicon: PropTypes.string,
 		href: PropTypes.string,
@@ -22,27 +23,27 @@ export default React.createClass( {
 			PropTypes.number,
 			PropTypes.string
 		] )
-	},
+	};
 
-	clickHandler( event ) {
+	clickHandler = event => {
 		if ( this.props.tabClick ) {
 			event.preventDefault();
 			this.props.tabClick( this.props );
 		}
-	},
+	};
 
-	ensureValue( value ) {
+	ensureValue = value => {
 		const { loading, children } = this.props;
 		if ( children ) {
 			return null;
 		}
 
 		if ( ( ! loading ) && ( value || value === 0 ) ) {
-			return this.numberFormat( value );
+			return this.props.numberFormat( value );
 		}
 
 		return String.fromCharCode( 8211 );
-	},
+	};
 
 	render() {
 		const { className, compact, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
@@ -76,4 +77,4 @@ export default React.createClass( {
 			</li>
 		);
 	}
-} );
+});

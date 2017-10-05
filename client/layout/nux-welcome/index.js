@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var store = require( 'store' );
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * This module stores the current and previous

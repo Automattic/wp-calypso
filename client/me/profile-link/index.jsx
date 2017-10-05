@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -14,7 +15,7 @@ import eventRecorder from 'me/event-recorder';
 import { withoutHttp } from 'lib/url';
 import Button from 'components/button';
 
-export default React.createClass( {
+export default createReactClass({
 
 	displayName: 'ProfileLink',
 
@@ -80,4 +81,4 @@ export default React.createClass( {
 			</li>
 		);
 	}
-} );
+});

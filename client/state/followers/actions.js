@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:followers-actions' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:followers-actions');
 
 /**
  * Internal dependencies

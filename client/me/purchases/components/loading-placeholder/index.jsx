@@ -11,15 +11,15 @@ import React from 'react';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 
-const LoadingPlaceholder = React.createClass( {
-	propTypes: {
+class LoadingPlaceholder extends React.Component {
+    static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		page.back( this.props.path || '/' );
-	},
+	};
 
 	render() {
 		return (
@@ -31,7 +31,7 @@ const LoadingPlaceholder = React.createClass( {
 				{ this.props.children }
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default LoadingPlaceholder;

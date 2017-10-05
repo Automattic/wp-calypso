@@ -8,12 +8,12 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 
-export default React.createClass( {
-	displayName: 'NotificationsBlogSettingsPlaceholder',
+export default class extends React.Component {
+    static displayName = 'NotificationsBlogSettingsPlaceholder';
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
@@ -37,4 +37,4 @@ export default React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}

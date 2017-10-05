@@ -1,5 +1,5 @@
-var untrailingslashit = require( './untrailingslashit' ),
-	page = require( 'page' );
+import untrailingslashit from './untrailingslashit';
+import page from 'page';
 
 function appendQueryString( basepath, querystring ) {
 	return basepath + ( querystring ? '?' + querystring : '' );

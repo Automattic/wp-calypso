@@ -1,21 +1,27 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-const React = require( 'react' ),
-	page = require( 'page' );
+import PropTypes from 'prop-types';
+
+import { localize } from 'i18n-calypso';
+
+import React from 'react';
+import createReactClass from 'create-react-class';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	paths = require( 'my-sites/domains/paths' ),
-	Button = require( 'components/button' );
+import analyticsMixin from 'lib/mixins/analytics';
 
-const PrimaryDomainButton = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+import paths from 'my-sites/domains/paths';
+import Button from 'components/button';
 
-	propTypes: {
+const PrimaryDomainButton = createReactClass({
+    displayName: 'PrimaryDomainButton',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+
+    propTypes: {
 		domain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
@@ -24,21 +30,21 @@ const PrimaryDomainButton = React.createClass( {
 		settingPrimaryDomain: PropTypes.bool.isRequired
 	},
 
-	handleClick() {
+    handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
 		page( paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
 	},
 
-	render() {
+    render() {
 		const domain = this.props.domain;
 		var label;
 
 		if ( domain && ! domain.isPrimary ) {
 			if ( this.props.settingPrimaryDomain ) {
-				label = this.translate( 'Saving…' );
+				label = this.props.translate( 'Saving…' );
 			} else {
-				label = this.translate( 'Make Primary' );
+				label = this.props.translate( 'Make Primary' );
 			}
 
 			return (
@@ -53,6 +59,6 @@ const PrimaryDomainButton = React.createClass( {
 
 		return null;
 	}
-} );
+});
 
-module.exports = PrimaryDomainButton;
+module.exports = localize(PrimaryDomainButton);

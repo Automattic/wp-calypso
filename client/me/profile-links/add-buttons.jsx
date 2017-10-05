@@ -2,7 +2,9 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 
 // Internal dependencies
@@ -12,7 +14,7 @@ import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
-export default React.createClass( {
+export default localize(createReactClass({
 
 	displayName: 'AddProfileLinksButtons',
 
@@ -36,8 +38,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		return(
-			<div>
+		return (
+            <div>
 
 				<PopoverMenu
 					isVisible={ this.props.showPopoverMenu }
@@ -47,11 +49,11 @@ export default React.createClass( {
 					>
 					<PopoverMenuItem
 						onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }>
-						{ this.translate( 'Add WordPress Site' ) }
+						{ this.props.translate( 'Add WordPress Site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
 						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }>
-						{ this.translate( 'Add URL' ) }
+						{ this.props.translate( 'Add URL' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
 
@@ -61,9 +63,9 @@ export default React.createClass( {
 					className="popover-icon"
 					onClick={ this.props.onShowPopoverMenu }>
 						<Gridicon icon="add-outline" />
-						{ this.translate( 'Add' ) }
+						{ this.props.translate( 'Add' ) }
 				</Button>
 			</div>
-		);
+        );
 	}
-} );
+}));

@@ -1,27 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-status' );
+import React from 'react';
 
-module.exports = React.createClass( {
+import { localize } from 'i18n-calypso';
 
-	displayName: 'Security2faStatus',
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:me:security:2fa-status');
 
-	componentDidMount: function() {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faStatus';
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
-			<p>
+            <p>
 				{
 					this.props.twoStepEnabled
-					? this.translate(
+					? this.props.translate(
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
 						{
 							components: {
@@ -30,7 +33,7 @@ module.exports = React.createClass( {
 							}
 						}
 					)
-					: this.translate(
+					: this.props.translate(
 						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
 						{
 							components: {
@@ -41,6 +44,6 @@ module.exports = React.createClass( {
 					)
 				}
 			</p>
-		);
+        );
 	}
-} );
+});

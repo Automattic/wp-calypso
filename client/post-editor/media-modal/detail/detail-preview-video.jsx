@@ -8,16 +8,17 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-const MediaUtils = require( 'lib/media/utils' ),
-	EditorMediaModalDetailItemVideoPress = require( './detail-preview-videopress' );
+import MediaUtils from 'lib/media/utils';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewVideo',
+import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-	propTypes: {
+module.exports = class extends React.Component {
+    static displayName = 'EditorMediaModalDetailPreviewVideo';
+
+	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired
-	},
+	};
 
 	render() {
 		if ( MediaUtils.isVideoPressItem( this.props.item ) ) {
@@ -33,4 +34,4 @@ module.exports = React.createClass( {
 				className={ classes } />
 		);
 	}
-} );
+};

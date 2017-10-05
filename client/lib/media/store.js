@@ -7,9 +7,9 @@ import { values } from 'lodash';
  * Internal dependencies
  */
 import { isItemBeingUploaded } from 'lib/media/utils';
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	MediaValidationStore = require( './validation-store' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import MediaValidationStore from './validation-store';
 
 /**
  * Module variables

@@ -1,13 +1,16 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:help-search:store' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('calypso:help-search:store');
 
 /**
  * Internal dependencies
  */
-var createReducerStore = require( 'lib/store' ).createReducerStore,
-	ActionTypes = require( './constants' ).action;
+import { createReducerStore } from 'lib/store';
+
+import { action as ActionTypes } from './constants';
 
 /**
  * Module variables

@@ -2,16 +2,18 @@
  * External dependencies
  */
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
-const debug = require( 'debug' )( 'calypso:signup-progress-store' );
-const store = require( 'store' );
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:signup-progress-store');
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	SignupDependencyStore = require( './dependency-store' ),
-	steps = require( 'signup/config/steps' );
+import Dispatcher from 'dispatcher';
+
+import emitter from 'lib/mixins/emitter';
+import SignupDependencyStore from './dependency-store';
+import steps from 'signup/config/steps';
 
 /**
  * Constants

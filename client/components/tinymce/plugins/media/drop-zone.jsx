@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { noop } from 'lodash';
 
 /**
@@ -18,7 +19,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 
-export default React.createClass( {
+export default createReactClass({
 	displayName: 'TinyMCEDropZone',
 
 	mixins: [ observe( 'sites' ) ],
@@ -138,4 +139,4 @@ export default React.createClass( {
 				onAddMedia={ this.insertMedia } />
 		);
 	}
-} );
+});

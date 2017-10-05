@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -10,9 +12,8 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-export default React.createClass( {
-
-	displayName: 'NotificationSettingsNavigation',
+export default localize(class extends React.Component {
+    static displayName = 'NotificationSettingsNavigation';
 
 	render() {
 		var navItems = [
@@ -29,18 +30,18 @@ export default React.createClass( {
 				</NavTabs>
 			</SectionNav>
 		);
-	},
+	}
 
-	itemLabels() {
+	itemLabels = () => {
 		return {
-			'/me/notifications': this.translate( 'Notifications' ),
-			'/me/notifications/comments': this.translate( 'Comments' ),
-			'/me/notifications/updates': this.translate( 'Updates' ),
-			'/me/notifications/subscriptions': this.translate( 'Reader Subscriptions' )
+			'/me/notifications': this.props.translate( 'Notifications' ),
+			'/me/notifications/comments': this.props.translate( 'Comments' ),
+			'/me/notifications/updates': this.props.translate( 'Updates' ),
+			'/me/notifications/subscriptions': this.props.translate( 'Reader Subscriptions' )
 		};
-	},
+	};
 
-	navItem( path ) {
+	navItem = path => {
 		return (
 			<NavItem path={ path }
 					key={ path }
@@ -48,9 +49,9 @@ export default React.createClass( {
 				{ this.itemLabels()[ path ] }
 			</NavItem>
 		);
-	},
+	};
 
-	getSelectedText() {
+	getSelectedText = () => {
 		return this.itemLabels()[ this.props.path ];
-	},
-} );
+	};
+});

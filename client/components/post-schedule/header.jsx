@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -15,40 +16,36 @@ import classNames from 'classnames';
  */
 var noop = () => {};
 
-export default React.createClass( {
-	displayName: 'PostScheduleHeader',
+export default localize(class extends React.Component {
+    static displayName = 'PostScheduleHeader';
 
-	propTypes: {
+	static propTypes = {
 		date: PropTypes.object,
 		inputChronoDisplayed: PropTypes.bool,
 		onDateChange: PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			inputChronoDisplayed: true,
-			onDateChange: noop
-		};
-	},
+	static defaultProps = {
+		inputChronoDisplayed: true,
+		onDateChange: noop
+	};
 
-	getInitialState() {
-		return {
-			showYearControls: false
-		}
-	},
+	state = {
+		showYearControls: false
+	};
 
-	setToCurrentMonth() {
-		var month = this.moment().month();
+	setToCurrentMonth = () => {
+		var month = this.props.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
-	},
+	};
 
-	setToCurrentYear() {
-		var year = this.moment().year();
+	setToCurrentYear = () => {
+		var year = this.props.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
-	},
+	};
 
-	setYear( modifier ) {
-		var date = this.moment( this.props.date );
+	setYear = modifier => {
+		var date = this.props.moment( this.props.date );
 		date.year( date.year() + modifier );
 
 		if ( 0 > date.year() || date.year() > 9999 ) {
@@ -56,7 +53,7 @@ export default React.createClass( {
 		}
 
 		this.props.onDateChange( date );
-	},
+	};
 
 	render() {
 		const headerClasses = classNames( 'post-schedule__header', { 'is-input-chrono-displayed': this.props.inputChronoDisplayed } );
@@ -92,4 +89,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

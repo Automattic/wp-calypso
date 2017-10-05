@@ -9,8 +9,8 @@ import React from 'react';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 
-export default React.createClass( {
-	displayName: 'HappinessSupport',
+export default class extends React.Component {
+    static displayName = 'HappinessSupport';
 
 	render() {
 		return (
@@ -19,4 +19,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}

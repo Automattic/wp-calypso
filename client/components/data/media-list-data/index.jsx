@@ -8,10 +8,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaListStore = require( 'lib/media/list-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+import MediaActions from 'lib/media/actions';
+
+import MediaListStore from 'lib/media/list-store';
+import passToChildren from 'lib/react-pass-to-children';
+import utils from './utils';
 
 function getStateData( siteId ) {
 	return {
@@ -21,41 +22,39 @@ function getStateData( siteId ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaListData',
+module.exports = class extends React.Component {
+    static displayName = 'MediaListData';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		source: PropTypes.string,
 		postId: PropTypes.number,
 		filter: PropTypes.string,
 		search: PropTypes.string
-	},
+	};
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+	state = getStateData( this.props.siteId );
 
-	componentWillMount: function() {
+	componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		MediaListStore.on( 'change', this.updateStateData );
 		this.updateStateData();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		MediaListStore.off( 'change', this.updateStateData );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		var nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );
 			this.setState( getStateData( nextProps.siteId ) );
 		}
-	},
+	}
 
-	getQuery: function( props ) {
+	getQuery = props => {
 		const query = {};
 
 		props = props || this.props;
@@ -80,19 +79,19 @@ module.exports = React.createClass( {
 		}
 
 		return query;
-	},
+	};
 
-	fetchData: function() {
+	fetchData = () => {
 		MediaActions.fetchNextPage( this.props.siteId );
-	},
+	};
 
-	updateStateData: function() {
+	updateStateData = () => {
 		this.setState( getStateData( this.props.siteId ) );
-	},
+	};
 
-	render: function() {
+	render() {
 		return passToChildren( this, assign( {}, this.state, {
 			mediaOnFetchNextPage: this.fetchData
 		} ) );
 	}
-} );
+};

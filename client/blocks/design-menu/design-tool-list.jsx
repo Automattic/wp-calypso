@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -12,12 +13,12 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 
-const DesignToolList = React.createClass( {
-	propTypes: {
+class DesignToolList extends React.Component {
+    static propTypes = {
 		onChange: PropTypes.func.isRequired,
-	},
+	};
 
-	renderControl( tool ) {
+	renderControl = tool => {
 		const onChange = event => {
 			event.preventDefault();
 			this.props.onChange( tool.value );
@@ -32,20 +33,20 @@ const DesignToolList = React.createClass( {
 							<Gridicon icon="chevron-right" size={ 24 } onClick={ onChange } className="design-tool-list__button__icon" />
 						</SidebarItem>
 					);
-	},
+	};
 
 	render() {
 		return (
-			<div className="design-tool-list">
-				<SidebarHeading>{ this.translate( 'Site Identity' ) }</SidebarHeading>
+            <div className="design-tool-list">
+				<SidebarHeading>{ this.props.translate( 'Site Identity' ) }</SidebarHeading>
 				<SidebarMenu>
 					<ul>
-						{ this.renderControl( { icon: 'heading', label: this.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
+						{ this.renderControl( { icon: 'heading', label: this.props.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
 					</ul>
 				</SidebarMenu>
 			</div>
-		);
+        );
 	}
-} );
+}
 
-export default DesignToolList;
+export default localize(DesignToolList);

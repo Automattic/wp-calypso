@@ -1,47 +1,43 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import PropTypes from 'prop-types';
 
-module.exports = React.createClass( {
-	displayName: 'Gauge',
+import React from 'react';
 
-	mixins: [ PureRenderMixin ],
+module.exports = class extends React.PureComponent {
+    static displayName = 'Gauge';
 
-	propTypes: {
+	static propTypes = {
 		percentage: PropTypes.number.isRequired,
 		width: PropTypes.number,
 		height: PropTypes.number,
 		colors: PropTypes.array,
 		lineWidth: PropTypes.number,
 		metric: PropTypes.string.isRequired
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			width: 118,
-			height: 118,
-			lineWidth: 9,
-			labelSize: 32,
-			colors: [ '#e9eff3', '#00aadc' ]
-		};
-	},
+	static defaultProps = {
+		width: 118,
+		height: 118,
+		lineWidth: 9,
+		labelSize: 32,
+		colors: [ '#e9eff3', '#00aadc' ]
+	};
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		var canvas = this.refs.canvas,
 			ctx = canvas.getContext( '2d' );
 
 		ctx.clearRect( 0, 0, this.props.width, this.props.height );
 		this.drawArcs();
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.drawArcs();
-	},
+	}
 
-	drawArcs: function() {
+	drawArcs = () => {
 		var canvas = this.refs.canvas,
 			x = ( this.props.width / 2 ),
 			y = ( this.props.height / 2 ),
@@ -60,9 +56,9 @@ module.exports = React.createClass( {
 			ctx.lineCap = 'round';
 			ctx.stroke();
 		}, this );
-	},
+	};
 
-	render: function() {
+	render() {
 		var wrapperStyles = {
 				width: this.props.width,
 				height: this.props.height
@@ -89,4 +85,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -23,18 +24,19 @@ import {
 	getPastBillingTransactions,
 } from 'state/selectors';
 
-const BillingReceipt = React.createClass( {
-	mixins: [ eventRecorder ],
+const BillingReceipt = createReactClass({
+    displayName: 'BillingReceipt',
+    mixins: [ eventRecorder ],
 
-	componentDidMount() {
+    componentDidMount() {
 		this.redirectIfInvalidTransaction();
 	},
 
-	componentDidUpdate() {
+    componentDidUpdate() {
 		this.redirectIfInvalidTransaction();
 	},
 
-	redirectIfInvalidTransaction() {
+    redirectIfInvalidTransaction() {
 		const { totalTransactions, transaction } = this.props;
 
 		if ( ! transaction && totalTransactions !== null ) {
@@ -42,12 +44,12 @@ const BillingReceipt = React.createClass( {
 		}
 	},
 
-	printReceipt( event ) {
+    printReceipt( event ) {
 		event.preventDefault();
 		window.print();
 	},
 
-	ref() {
+    ref() {
 		const { transaction, translate } = this.props;
 
 		if ( ! transaction.pay_ref ) {
@@ -62,7 +64,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	paymentMethod() {
+    paymentMethod() {
 		const { transaction, translate } = this.props;
 		let text;
 
@@ -82,7 +84,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderTitle() {
+    renderTitle() {
 		const { translate } = this.props;
 
 		return (
@@ -92,7 +94,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderPlaceholder() {
+    renderPlaceholder() {
 		return (
 			<Card compact className="billing-history__receipt-card is-placeholder">
 				<div className="billing-history__app-overview">
@@ -108,7 +110,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderBillingDetails() {
+    renderBillingDetails() {
 		const { transaction, translate } = this.props;
 		if ( ! transaction.cc_name && ! transaction.cc_email ) {
 			return null;
@@ -123,7 +125,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderEmptyBillingDetails() {
+    renderEmptyBillingDetails() {
 		const { translate } = this.props;
 
 		return (
@@ -134,7 +136,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderLineItems() {
+    renderLineItems() {
 		const { transaction, translate } = this.props;
 		const items = transaction.items.map( ( item ) => {
 			return (
@@ -180,7 +182,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	renderBillingHistory() {
+    renderBillingHistory() {
 		const { transaction, translate } = this.props;
 		const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
 		const serviceLink = <a href={ transaction.url } title={ title } />;
@@ -250,7 +252,7 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const { transaction, translate } = this.props;
 
 		return (
@@ -264,8 +266,8 @@ const BillingReceipt = React.createClass( {
 				{ transaction ? this.renderBillingHistory() : this.renderPlaceholder() }
 			</Main>
 		);
-	},
-} );
+	}
+});
 
 export default connect(
 	( state, ownProps ) => {

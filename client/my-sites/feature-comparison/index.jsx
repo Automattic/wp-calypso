@@ -10,13 +10,12 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FeatureComparison';
 
-	displayName: 'FeatureComparison',
-
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'feature-comparison' );
@@ -26,4 +25,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}

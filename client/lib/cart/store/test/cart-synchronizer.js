@@ -11,6 +11,8 @@ import assert from 'assert';
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 
+import cartValues from 'lib/cart-values';
+
 var TEST_CART_KEY = 91234567890;
 
 var poller = {
@@ -21,9 +23,7 @@ describe( 'cart-synchronizer', function() {
 	let applyCoupon, emptyCart;
 
 	before( () => {
-		const cartValues = require( 'lib/cart-values' );
-
-		applyCoupon = cartValues.applyCoupon;
+	    applyCoupon = cartValues.applyCoupon;
 		emptyCart = cartValues.emptyCart;
 	} );
 

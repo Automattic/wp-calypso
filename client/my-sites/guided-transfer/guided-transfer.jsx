@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
 import { get } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -37,36 +37,36 @@ const guidedTransferHosts = {
 	}
 };
 
-export default React.createClass( {
-	displayName: 'GuidedTransfer',
+export default localize(class extends React.Component {
+    static displayName = 'GuidedTransfer';
 
-	propTypes: {
+	static propTypes = {
 		hostSlug: PropTypes.string,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired
-	},
+	};
 
-	showExporter() {
+	showExporter = () => {
 		page( `/settings/export/${this.props.siteSlug}` );
-	},
+	};
 
-	showHostSelection() {
+	showHostSelection = () => {
 		page( `/settings/export/guided/${this.props.siteSlug}` );
-	},
+	};
 
-	showHost( hostSlug ) {
+	showHost = hostSlug => {
 		page( `/settings/export/guided/${hostSlug}/${this.props.siteSlug}` );
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		if ( this.props.hostSlug ) {
 			this.showHostSelection();
 		} else {
 			this.showExporter();
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		const { siteId, siteSlug } = this.props;
 		if ( ! siteId ) {
 			return <Placeholder />;
@@ -81,14 +81,14 @@ export default React.createClass( {
 		} );
 
 		return (
-			<Main className="guided-transfer__main site-settings">
+            <Main className="guided-transfer__main site-settings">
 				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
 						onClick={ this.goBack }
 						isCompact={ true }
 					>
-							{ this.translate( 'Guided Transfer' ) }
+							{ this.props.translate( 'Guided Transfer' ) }
 					</HeaderCake>
 				</div>
 
@@ -107,6 +107,6 @@ export default React.createClass( {
 					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
 				}
 			</Main>
-		);
+        );
 	}
-} );
+});

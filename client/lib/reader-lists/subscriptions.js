@@ -4,13 +4,14 @@
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-const Dispatcher = require( 'dispatcher' );
+import Dispatcher from 'dispatcher';
 
 /**
  * Internal dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	ListStore = require( './lists' );
+import emitter from 'lib/mixins/emitter';
+
+import ListStore from './lists';
 
 var lists = null,
 	errors = [],

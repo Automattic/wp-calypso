@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -20,8 +21,10 @@ import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
-const AddGoogleAppsCard = React.createClass( {
-	propTypes: {
+const AddGoogleAppsCard = createReactClass({
+    displayName: 'AddGoogleAppsCard',
+
+    propTypes: {
 		products: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [
@@ -30,9 +33,9 @@ const AddGoogleAppsCard = React.createClass( {
 		] ).isRequired
 	},
 
-	mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
+    mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
 
-	render() {
+    render() {
 		const { currencyCode, translate } = this.props,
 			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
 			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE,
@@ -197,7 +200,7 @@ const AddGoogleAppsCard = React.createClass( {
 		);
 	},
 
-	renderAddGoogleAppsButton() {
+    renderAddGoogleAppsButton() {
 		const { translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
@@ -213,18 +216,18 @@ const AddGoogleAppsCard = React.createClass( {
 		);
 	},
 
-	handleLearnMoreClick() {
+    handleLearnMoreClick() {
 		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName || null );
 	},
 
-	handleAndMoreClick() {
+    handleAndMoreClick() {
 		this.recordEvent( 'andMoreClick', this.props.selectedDomainName || null );
 	},
 
-	goToAddGoogleApps() {
+    goToAddGoogleApps() {
 		page( paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
-} );
+});
 
 export default connect(
 	( state ) => ( {

@@ -13,21 +13,19 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryDropZone',
+export default class extends React.Component {
+    static displayName = 'EditorMediaModalGalleryDropZone';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		onInvalidItemAdded: PropTypes.func
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onInvalidItemAdded: () => {}
-		};
-	},
+	static defaultProps = {
+		onInvalidItemAdded: () => {}
+	};
 
-	filterDroppedImagesSelected() {
+	filterDroppedImagesSelected = () => {
 		const { site } = this.props;
 		if ( ! site ) {
 			return;
@@ -40,7 +38,7 @@ export default React.createClass( {
 			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );
 			this.props.onInvalidItemAdded();
 		}
-	},
+	};
 
 	render() {
 		return (
@@ -50,4 +48,4 @@ export default React.createClass( {
 				fullScreen={ false } />
 		);
 	}
-} );
+}

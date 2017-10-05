@@ -6,28 +6,28 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
-export default React.createClass( {
-	displayName: 'RootChild',
+export default class extends React.Component {
+    static displayName = 'RootChild';
 
-	propTypes: {
+	static propTypes = {
 		children: PropTypes.node
-	},
+	};
 
-	contextTypes: {
+	static contextTypes = {
 		store: PropTypes.object
-	},
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.container = document.createElement( 'div' );
 		document.body.appendChild( this.container );
 		this.renderChildren();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.renderChildren();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( ! this.container ) {
 			return;
 		}
@@ -35,9 +35,9 @@ export default React.createClass( {
 		ReactDom.unmountComponentAtNode( this.container );
 		document.body.removeChild( this.container );
 		delete this.container;
-	},
+	}
 
-	renderChildren: function() {
+	renderChildren = () => {
 		var content;
 
 		if ( this.props &&
@@ -59,9 +59,9 @@ export default React.createClass( {
 		}
 
 		ReactDom.render( content, this.container );
-	},
+	};
 
-	render: function() {
+	render() {
 		return null;
 	}
-} );
+}

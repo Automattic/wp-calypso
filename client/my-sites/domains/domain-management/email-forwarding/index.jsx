@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 
@@ -18,29 +19,29 @@ import paths from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
-const EmailForwarding = React.createClass( {
-	propTypes: {
+class EmailForwarding extends React.Component {
+    static propTypes = {
 		emailForwarding: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
 			PropTypes.bool
 		] ).isRequired
-	},
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
 			return <MainPlaceholder goBack={ this.goToEditEmail } />;
 		}
 		return (
-			<Main className="email-forwarding">
+            <Main className="email-forwarding">
 				<Header
 					onClick={ this.goToEditEmail }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Email Forwarding' ) }
+					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
 
-				<SectionHeader label={ this.translate( 'Email Forwarding' ) } />
+				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
 				<Card className="email-forwarding-card">
 					<EmailForwardingDetails
 						selectedDomainName={ this.props.selectedDomainName } />
@@ -55,16 +56,16 @@ const EmailForwarding = React.createClass( {
 						selectedSite={ this.props.selectedSite } />
 				</Card>
 			</Main>
-		);
-	},
-
-	isDataLoading() {
-		return ( ! this.props.emailForwarding.hasLoadedFromServer );
-	},
-
-	goToEditEmail() {
-		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+        );
 	}
-} );
 
-export default EmailForwarding;
+	isDataLoading = () => {
+		return ( ! this.props.emailForwarding.hasLoadedFromServer );
+	};
+
+	goToEditEmail = () => {
+		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+	};
+}
+
+export default localize(EmailForwarding);

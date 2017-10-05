@@ -23,28 +23,15 @@ import {
 /**
  * Internal dependencies
  */
-var productsValues = require( 'lib/products-values' ),
-	formatProduct = productsValues.formatProduct,
-	isCustomDesign = productsValues.isCustomDesign,
-	isDependentProduct = productsValues.isDependentProduct,
-	isDomainMapping = productsValues.isDomainMapping,
-	isDomainProduct = productsValues.isDomainProduct,
-	isDomainRedemption = productsValues.isDomainRedemption,
-	isDomainRegistration = productsValues.isDomainRegistration,
-	isGoogleApps = productsValues.isGoogleApps,
-	isNoAds = productsValues.isNoAds,
-	isPlan = productsValues.isPlan,
-	isPremium = productsValues.isPremium,
-	isPrivacyProtection = productsValues.isPrivacyProtection,
-	isSiteRedirect = productsValues.isSiteRedirect,
-	isSpaceUpgrade = productsValues.isSpaceUpgrade,
-	isUnlimitedSpace = productsValues.isUnlimitedSpace,
-	isUnlimitedThemes = productsValues.isUnlimitedThemes,
-	isVideoPress = productsValues.isVideoPress,
-	isJetpackPlan = productsValues.isJetpackPlan,
-	isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain,
-	sortProducts = require( 'lib/products-values/sort' ),
-	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
+import productsValues from 'lib/products-values';
+
+import sortProducts from 'lib/products-values/sort';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
+
+/**
+ * Internal dependencies
+ */
+var formatProduct = productsValues.formatProduct, isCustomDesign = productsValues.isCustomDesign, isDependentProduct = productsValues.isDependentProduct, isDomainMapping = productsValues.isDomainMapping, isDomainProduct = productsValues.isDomainProduct, isDomainRedemption = productsValues.isDomainRedemption, isDomainRegistration = productsValues.isDomainRegistration, isGoogleApps = productsValues.isGoogleApps, isNoAds = productsValues.isNoAds, isPlan = productsValues.isPlan, isPremium = productsValues.isPremium, isPrivacyProtection = productsValues.isPrivacyProtection, isSiteRedirect = productsValues.isSiteRedirect, isSpaceUpgrade = productsValues.isSpaceUpgrade, isUnlimitedSpace = productsValues.isUnlimitedSpace, isUnlimitedThemes = productsValues.isUnlimitedThemes, isVideoPress = productsValues.isVideoPress, isJetpackPlan = productsValues.isJetpackPlan, isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain;
 
 import {
 	PLAN_FREE,

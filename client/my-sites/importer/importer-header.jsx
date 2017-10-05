@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { flowRight, includes } from 'lodash';
 import SocialLogo from 'social-logos';
 
@@ -29,12 +29,10 @@ const startStates = [ appStates.DISABLED, appStates.INACTIVE ],
 	stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ],
 	doneStates = [ appStates.IMPORT_SUCCESS ];
 
-export const ImporterHeader = React.createClass( {
-	displayName: 'ImporterHeader',
+export const ImporterHeader = localize(class extends React.PureComponent {
+    static displayName = 'ImporterHeader';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			type: PropTypes.string.isRequired
@@ -43,9 +41,9 @@ export const ImporterHeader = React.createClass( {
 		icon: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		isEnabled: PropTypes.bool.isRequired
-	},
+	};
 
-	controlButtonClicked: function() {
+	controlButtonClicked = () => {
 		const {
 			importerStatus: {
 				importerId,
@@ -65,29 +63,29 @@ export const ImporterHeader = React.createClass( {
 		} else if ( includes( doneStates, importerState ) ) {
 			resetImport( siteId, importerId );
 		}
-	},
+	};
 
-	getButtonText: function() {
+	getButtonText = () => {
 		const { importerState } = this.props.importerStatus;
 
 		if ( includes( startStates, importerState ) ) {
-			return this.translate( 'Start Import', { context: 'verb' } );
+			return this.props.translate( 'Start Import', { context: 'verb' } );
 		}
 
 		if ( includes( cancelStates, importerState ) ) {
-			return this.translate( 'Close', { context: 'verb, to Close a dialog' } );
+			return this.props.translate( 'Close', { context: 'verb, to Close a dialog' } );
 		}
 
 		if ( includes( stopStates, importerState ) ) {
-			return this.translate( 'Importing...' );
+			return this.props.translate( 'Importing...' );
 		}
 
 		if ( includes( doneStates, importerState ) ) {
-			return this.translate( 'Done', { context: 'adjective' } );
+			return this.props.translate( 'Done', { context: 'adjective' } );
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
 		const canCancel = isEnabled && ! includes( [ appStates.UPLOADING, ...stopStates ], importerState );
 		const isScary = includes( [ ...cancelStates ], importerState );
@@ -112,7 +110,7 @@ export const ImporterHeader = React.createClass( {
 			</header>
 		);
 	}
-} );
+});
 
 const mapDispatchToProps = dispatch => ( {
 	startImport: flowRight( dispatch, startImport )

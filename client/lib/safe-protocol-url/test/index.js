@@ -4,12 +4,12 @@
  * @format
  */
 
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal Dependencies
  */
-var safeProtocolUrl = require( '../' );
+import safeProtocolUrl from '../';
 
 describe( 'index', function() {
 	it( 'should ignore a relative url', function() {

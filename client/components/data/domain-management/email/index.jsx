@@ -52,10 +52,10 @@ function getStateFromStores( props ) {
 	};
 }
 
-const EmailData = React.createClass( {
-	displayName: 'EmailData',
+class EmailData extends React.Component {
+    static displayName = 'EmailData';
 
-	propTypes: {
+	static propTypes = {
 		component: PropTypes.func.isRequired,
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,
@@ -64,28 +64,28 @@ const EmailData = React.createClass( {
 		sitePlans: PropTypes.object.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
 		googleAppsUsersLoaded: PropTypes.bool.isRequired
-	},
+	};
 
 	componentWillMount() {
 		const { selectedSite } = this.props;
 
 		this.loadDomainsAndSitePlans( selectedSite );
 		this.props.fetchGoogleAppsUsers( selectedSite.ID );
-	},
+	}
 
-	componentWillUpdate( nextProps ) {
+	componentWillUpdate(nextProps) {
 		const { selectedSite: nextSite } = nextProps;
 		const { selectedSite: prevSite } = this.props;
 
 		if ( nextSite !== prevSite ) {
 			this.loadDomainsAndSitePlans( nextSite );
 		}
-	},
+	}
 
-	loadDomainsAndSitePlans( site ) {
+	loadDomainsAndSitePlans = site => {
 		fetchDomains( site.ID );
 		this.props.fetchSitePlans( this.props.sitePlans, site );
-	},
+	};
 
 	render() {
 		return (
@@ -107,7 +107,7 @@ const EmailData = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, { selectedDomainName } ) => {

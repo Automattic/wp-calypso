@@ -3,21 +3,18 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 
-export default React.createClass( {
-	displayName: 'StatsListLegend',
+export default class extends React.PureComponent {
+    static displayName = 'StatsListLegend';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		value: PropTypes.string,
 		label: PropTypes.string
-	},
+	};
 
 	render() {
 		const { value, label } = this.props;
@@ -43,4 +40,4 @@ export default React.createClass( {
 			</ul>
 		);
 	}
-} );
+}

@@ -1,30 +1,29 @@
 /**
  * External dependencies
  */
-const PropTypes = require( 'prop-types' );
-var React = require( 'react' );
+import PropTypes from 'prop-types';
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'gridicons' );
+import Gridicon from 'gridicons';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItemFileDetails',
+module.exports = class extends React.Component {
+    static displayName = 'MediaLibraryListItemFileDetails';
 
-	propTypes: {
+	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
 		icon: PropTypes.string
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			icon: 'pages'
-		};
-	},
+	static defaultProps = {
+		icon: 'pages'
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="media-library__list-item-file-details media-library__list-item-centered">
 				<div className="media-library__list-item-icon">
@@ -40,4 +39,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+};

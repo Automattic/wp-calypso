@@ -4,7 +4,6 @@
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 
@@ -38,12 +37,10 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
  */
 const debug = debugModule( 'calypso:help-search' );
 
-const Help = React.createClass( {
-	displayName: 'Help',
+class Help extends React.PureComponent {
+    static displayName = 'Help';
 
-	mixins: [ PureRenderMixin ],
-
-	getHelpfulArticles: function() {
+	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
 				link: 'https://en.support.wordpress.com/com-vs-org/',
@@ -85,9 +82,9 @@ const Help = React.createClass( {
 				} ) }
 			</div>
 		);
-	},
+	};
 
-	getSupportLinks: function() {
+	getSupportLinks = () => {
 		return (
 			<div className="help__support-links">
 				<CompactCard className="help__support-link" href="https://support.wordpress.com/" target="__blank">
@@ -135,9 +132,9 @@ const Help = React.createClass( {
 				</CompactCard>
 		</div>
 		);
-	},
+	};
 
-	getCoursesTeaser: function() {
+	getCoursesTeaser = () => {
 		if ( ! this.props.showCoursesTeaser ) {
 			return null;
 		}
@@ -149,16 +146,16 @@ const Help = React.createClass( {
 				title={ this.props.translate( 'Courses' ) }
 				description={ this.props.translate( 'Learn how to make the most of your site with these courses and webinars' ) } />
 		);
-	},
+	};
 
-	trackCoursesButtonClick() {
+	trackCoursesButtonClick = () => {
 		const { isBusinessPlanUser } = this.props;
 		analytics.tracks.recordEvent( 'calypso_help_courses_click', {
 			is_business_plan_user: isBusinessPlanUser
 		} );
-	},
+	};
 
-	getPlaceholders() {
+	getPlaceholders = () => {
 		return (
 			<Main className="help">
 				<MeSidebarNavigation />
@@ -168,9 +165,9 @@ const Help = React.createClass( {
 				<div className="help__support-links is-placeholder" />
 			</Main>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			isEmailVerified,
 			userId,
@@ -194,7 +191,7 @@ const Help = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, ownProps ) => {
