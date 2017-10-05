@@ -51,6 +51,7 @@ class PostList extends PureComponent {
 				search={ this.props.search }
 				category={ this.props.category }
 				tag={ this.props.tag }
+				order={ this.props.statusSlug === 'scheduled' ? 'ASC' : 'DESC' }
 			>
 				<Posts
 					{ ...omit( this.props, 'children' ) }

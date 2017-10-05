@@ -135,6 +135,7 @@ export default function( id ) {
 	 */
 	function sort() {
 		const key = _activeList.query.orderBy;
+		const order = _activeList.query.order || null;
 
 		_activeList.postIds.sort( function( a, b ) {
 			var postA = PostsStore.get( a ),
@@ -149,6 +150,11 @@ export default function( id ) {
 
 				return postA.title > postB.title ? 1 : -1;
 			}
+
+			if ( order === 'ASC' ) {
+				return timeA < timeB ? -1 : 1;
+			}
+
 			// reverse-chronological
 			return timeA > timeB ? -1 : 1;
 		} );
