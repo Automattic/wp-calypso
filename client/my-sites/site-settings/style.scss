@@ -110,6 +110,10 @@
 		padding-top: 20px;
 	}
 
+	.site-settings__analytics-stores-basic-settings {
+		padding-bottom: 20px;
+	}
+
 	.site-settings__blogaddress-settings {
 		@include breakpoint( ">660px" ) {
 			display: flex;

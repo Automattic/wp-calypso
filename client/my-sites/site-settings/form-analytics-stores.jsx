@@ -22,7 +22,7 @@ class FormAnalyticsStores extends Component {
 		const { fields } = this.props;
 
 		return (
-			<div>
+			<div className="site-settings__analytics-stores-basic-settings">
 				{ settings.map( setting => (
 					<CompactFormToggle
 						checked={ fields.wga ? Boolean( fields.wga[ setting.key ] ) : false }
