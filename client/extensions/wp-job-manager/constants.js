@@ -28,3 +28,5 @@ export const Steps = {
 };
 
 export const SetupPath = '/extensions/wp-job-manager/setup';
+
+export const MinPluginVersion = '1.28.0';

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from '../../constants';
+import { MinPluginVersion, SetupPath, Steps } from '../../constants';
 import Confirmation from './confirmation';
 import DocumentHead from 'components/data/document-head';
 import ExtensionRedirect from 'blocks/extension-redirect';
@@ -68,7 +68,11 @@ class SetupWizard extends Component {
 
 		return (
 			<Main className={ mainClassName }>
-				<ExtensionRedirect minimumVersion="1.28.0" pluginId="wp-job-manager" siteId={ siteId } />
+				<ExtensionRedirect
+					minimumVersion={ MinPluginVersion }
+					pluginId="wp-job-manager"
+					siteId={ siteId }
+				/>
 				<DocumentHead title={ translate( 'Setup' ) } />
 				<Wizard
 					basePath={ `${ SetupPath }/${ slug }` }
