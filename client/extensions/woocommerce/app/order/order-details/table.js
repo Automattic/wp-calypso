@@ -14,7 +14,7 @@ import { sum } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-taxes';
+import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-values';
 import OrderDiscountRow from './row-discount';
 import OrderRefundRow from './row-refund';
 import OrderShippingRefundRow from './row-shipping-refund';

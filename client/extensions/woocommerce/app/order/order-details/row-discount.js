@@ -10,7 +10,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
-import { getOrderDiscountTax } from 'woocommerce/lib/order-taxes';
+import { getOrderDiscountTax } from 'woocommerce/lib/order-values';
 
 class OrderDiscountRow extends Component {
 	static propTypes = {
