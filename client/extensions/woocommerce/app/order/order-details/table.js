@@ -192,9 +192,12 @@ class OrderDetailsTable extends Component {
 						showTax={ showTax }
 					/>
 					<OrderTotalRow
+						isEditable={ isEditable }
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
-						value={ order.shipping_total }
+						value={ isEditable ? this.state.shippingTotal : order.shipping_total }
+						name="shipping_total"
+						onChange={ this.onChange }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
 					/>

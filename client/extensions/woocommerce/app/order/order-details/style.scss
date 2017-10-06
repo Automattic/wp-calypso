@@ -64,12 +64,12 @@
 	}
 
 	&.has-taxes {
-		.order-details__total-shipping-refund .order-details__totals-value {
+		.order-details__total-edit .order-details__totals-value {
 			flex: 1 0 192px;
 		}
 	}
 
-	.order-details__total-shipping-refund {
+	.order-details__total-edit {
 		.form-text-input-with-affixes {
 			width: 130px;
 		}
