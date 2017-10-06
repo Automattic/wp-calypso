@@ -22,20 +22,21 @@ export function recordGaEvent( action, label, value ) {
 	ga.recordEvent( 'Reader', action, label, value );
 }
 
-export function recordPermalinkClick( where, post ) {
+export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	mc.bumpStat( {
 		reader_actions: 'visited_post_permalink',
-		reader_permalink_source: where,
+		reader_permalink_source: source,
 	} );
-	recordGaEvent( 'Clicked Post Permalink', where );
+	recordGaEvent( 'Clicked Post Permalink', source );
 	const trackEvent = 'calypso_reader_permalink_click';
-	const args = {
-		source: where,
-	};
+
+	// Add source as Tracks event property
+	eventProperties = Object.assign( { source: source }, eventProperties );
+
 	if ( post ) {
-		recordTrackForPost( trackEvent, post, args );
+		recordTrackForPost( trackEvent, post, eventProperties );
 	} else {
-		recordTrack( trackEvent, args );
+		recordTrack( trackEvent, eventProperties );
 	}
 }
 
