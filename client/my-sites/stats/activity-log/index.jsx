@@ -34,7 +34,6 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -44,6 +43,7 @@ import {
 	rewindRestore as rewindRestoreAction,
 } from 'state/activity-log/actions';
 import {
+	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
 	getRequestedRewind,
