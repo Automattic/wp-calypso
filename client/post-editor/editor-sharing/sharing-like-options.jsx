@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -58,15 +59,15 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-			<label>
+            <label>
 				<FormCheckbox
 					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
 					onChange={ this.onChange }
 				/>
-				<span>{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
+				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
 			</label>
-		);
+        );
 	},
 
 	renderLikesButtonField() {
@@ -75,15 +76,15 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-			<label>
+            <label>
 				<FormCheckbox
 					name="likes_enabled"
 					checked={ this.isShowingLikeButton() }
 					onChange={ this.onChange }
 				/>
-				<span>{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
+				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
 			</label>
-		);
+        );
 	},
 
 	onChange: function( event ) {
@@ -112,14 +113,14 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-			<EditorFieldset
+            <EditorFieldset
 				className="editor-sharing__sharing-like-options"
-				legend={ this.translate( 'Sharing Buttons & Likes' ) }
+				legend={ this.props.translate( 'Sharing Buttons & Likes' ) }
 			>
 				{ this.renderSharingButtonField() }
 				{ this.renderLikesButtonField() }
 			</EditorFieldset>
-		);
+        );
 	},
 } );
 
@@ -131,4 +132,4 @@ export default connect( state => {
 		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
 		isNew: isEditorNewPost( state ),
 	};
-} )( SharingLikeOptions );
+} )( localize(SharingLikeOptions) );

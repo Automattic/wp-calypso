@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 
@@ -13,7 +14,7 @@ import classnames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'CustomizerLoadingPanel',
 
 	propTypes: {
@@ -32,12 +33,12 @@ export default React.createClass( {
 		} );
 
 		return (
-			<div className={ noticeClassNames }>
+            <div className={ noticeClassNames }>
 				<div className="customizer-loading-panel__notice-label">
 					<Spinner />
-					{ this.translate( 'Loading the Customizer…' ) }
+					{ this.props.translate( 'Loading the Customizer…' ) }
 				</div>
 			</div>
-		);
+        );
 	},
-} );
+}));

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
@@ -30,20 +31,20 @@ import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
 module.exports = protectForm(
-	React.createClass( {
+	localize(React.createClass( {
 		displayName: 'NotificationSubscriptions',
 
 		mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ), eventRecorder ],
 
 		getDeliveryHourLabel( hour ) {
-			return this.translate( '%(fromHour)s - %(toHour)s', {
+			return this.props.translate( '%(fromHour)s - %(toHour)s', {
 				context: 'Hour range between which subscriptions are delivered',
 				args: {
-					fromHour: this.moment()
+					fromHour: this.props.moment()
 						.hour( hour )
 						.minute( 0 )
 						.format( 'LT' ),
-					toHour: this.moment()
+					toHour: this.props.moment()
 						.hour( hour + 2 )
 						.minute( 0 )
 						.format( 'LT' ),
@@ -53,7 +54,7 @@ module.exports = protectForm(
 
 		render() {
 			return (
-				<Main className="notifications-settings">
+                <Main className="notifications-settings">
 					<MeSidebarNavigation />
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -66,10 +67,10 @@ module.exports = protectForm(
 							onSubmit={ this.submitForm }
 						>
 							<FormSectionHeading>
-								{ this.translate( 'Subscriptions Delivery' ) }
+								{ this.props.translate( 'Subscriptions Delivery' ) }
 							</FormSectionHeading>
 							<p>
-								{ this.translate(
+								{ this.props.translate(
 									'{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
 									{
 										components: {
@@ -86,7 +87,7 @@ module.exports = protectForm(
 
 							<FormFieldset>
 								<FormLabel htmlFor="subscription_delivery_email_default">
-									{ this.translate( 'Default Email Delivery' ) }
+									{ this.props.translate( 'Default Email Delivery' ) }
 								</FormLabel>
 								<FormSelect
 									disabled={ this.getDisabledState() }
@@ -95,15 +96,15 @@ module.exports = protectForm(
 									onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
 									valueLink={ this.valueLink( 'subscription_delivery_email_default' ) }
 								>
-									<option value="never">{ this.translate( 'Never send email' ) }</option>
-									<option value="instantly">{ this.translate( 'Send email instantly' ) }</option>
-									<option value="daily">{ this.translate( 'Send email daily' ) }</option>
-									<option value="weekly">{ this.translate( 'Send email every week' ) }</option>
+									<option value="never">{ this.props.translate( 'Never send email' ) }</option>
+									<option value="instantly">{ this.props.translate( 'Send email instantly' ) }</option>
+									<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
+									<option value="weekly">{ this.props.translate( 'Send email every week' ) }</option>
 								</FormSelect>
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLegend>{ this.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
+								<FormLegend>{ this.props.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
 								<FormLabel>
 									<FormCheckbox
 										checkedLink={ this.valueLink( 'subscription_delivery_jabber_default' ) }
@@ -112,13 +113,13 @@ module.exports = protectForm(
 										name="subscription_delivery_jabber_default"
 										onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) }
 									/>
-									<span>{ this.translate( 'Default delivery via Jabber instant message' ) }</span>
+									<span>{ this.props.translate( 'Default delivery via Jabber instant message' ) }</span>
 								</FormLabel>
 							</FormFieldset>
 
 							<FormFieldset>
 								<FormLabel htmlFor="subscription_delivery_mail_option">
-									{ this.translate( 'Email Delivery Format' ) }
+									{ this.props.translate( 'Email Delivery Format' ) }
 								</FormLabel>
 								<FormSelect
 									disabled={ this.getDisabledState() }
@@ -127,14 +128,14 @@ module.exports = protectForm(
 									onFocus={ this.recordFocusEvent( 'Email Delivery Format' ) }
 									valueLink={ this.valueLink( 'subscription_delivery_mail_option' ) }
 								>
-									<option value="html">{ this.translate( 'HTML' ) }</option>
-									<option value="text">{ this.translate( 'Plain Text' ) }</option>
+									<option value="html">{ this.props.translate( 'HTML' ) }</option>
+									<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
 								</FormSelect>
 							</FormFieldset>
 
 							<FormFieldset>
 								<FormLabel htmlFor="subscription_delivery_day">
-									{ this.translate( 'Email Delivery Window' ) }
+									{ this.props.translate( 'Email Delivery Window' ) }
 								</FormLabel>
 								<FormSelect
 									disabled={ this.getDisabledState() }
@@ -144,13 +145,13 @@ module.exports = protectForm(
 									onFocus={ this.recordFocusEvent( 'Email Delivery Window Day' ) }
 									valueLink={ this.valueLink( 'subscription_delivery_day' ) }
 								>
-									<option value="0">{ this.translate( 'Sunday' ) }</option>
-									<option value="1">{ this.translate( 'Monday' ) }</option>
-									<option value="2">{ this.translate( 'Tuesday' ) }</option>
-									<option value="3">{ this.translate( 'Wednesday' ) }</option>
-									<option value="4">{ this.translate( 'Thursday' ) }</option>
-									<option value="5">{ this.translate( 'Friday' ) }</option>
-									<option value="6">{ this.translate( 'Saturday' ) }</option>
+									<option value="0">{ this.props.translate( 'Sunday' ) }</option>
+									<option value="1">{ this.props.translate( 'Monday' ) }</option>
+									<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
+									<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
+									<option value="4">{ this.props.translate( 'Thursday' ) }</option>
+									<option value="5">{ this.props.translate( 'Friday' ) }</option>
+									<option value="6">{ this.props.translate( 'Saturday' ) }</option>
 								</FormSelect>
 
 								<FormSelect
@@ -175,14 +176,14 @@ module.exports = protectForm(
 								</FormSelect>
 
 								<FormSettingExplanation>
-									{ this.translate(
+									{ this.props.translate(
 										'When choosing daily or weekly email delivery, which time of day would you prefer?'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLegend>{ this.translate( 'Block Emails' ) }</FormLegend>
+								<FormLegend>{ this.props.translate( 'Block Emails' ) }</FormLegend>
 								<FormLabel>
 									<FormCheckbox
 										checkedLink={ this.valueLink( 'subscription_delivery_email_blocked' ) }
@@ -192,7 +193,7 @@ module.exports = protectForm(
 										onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }
 									/>
 									<span>
-										{ this.translate(
+										{ this.props.translate(
 											'Block all email updates from blogs you’re following on WordPress.com'
 										) }
 									</span>
@@ -205,15 +206,15 @@ module.exports = protectForm(
 								onClick={ this.recordClickEvent( 'Save Notification Settings Button' ) }
 							>
 								{ this.state.submittingForm ? (
-									this.translate( 'Saving…' )
+									this.props.translate( 'Saving…' )
 								) : (
-									this.translate( 'Save Notification Settings' )
+									this.props.translate( 'Save Notification Settings' )
 								) }
 							</FormButton>
 						</form>
 					</Card>
 				</Main>
-			);
+            );
 		},
-	} )
+	} ))
 );

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,12 +19,12 @@ import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'PluginRemoveButton',
 
 	removeAction() {
 		accept(
-			this.translate(
+			this.props.translate(
 				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}',
 				{
 					components: {
@@ -38,7 +39,7 @@ module.exports = React.createClass( {
 				}
 			),
 			this.processRemovalConfirmation,
-			this.translate( 'Remove' )
+			this.props.translate( 'Remove' )
 		);
 	},
 
@@ -82,13 +83,13 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! this.props.site.hasMinimumJetpackVersion ) {
-			return this.translate( '%(site)s is not running an up to date version of Jetpack', {
+			return this.props.translate( '%(site)s is not running an up to date version of Jetpack', {
 				args: { site: this.props.site.title },
 			} );
 		}
 
 		if ( this.props.site.options.is_multi_network ) {
-			return this.translate(
+			return this.props.translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
 				{
 					args: { site: this.props.site.title },
@@ -97,7 +98,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( ! utils.isMainNetworkSite( this.props.site ) ) {
-			return this.translate(
+			return this.props.translate(
 				'%(pluginName)s cannot be removed because %(site)s is not the main site of the multi-site installation.',
 				{
 					args: {
@@ -115,7 +116,7 @@ module.exports = React.createClass( {
 			if ( reasons.length > 1 ) {
 				html.push(
 					<p key="reason-shell">
-						{ this.translate( '%(pluginName)s cannot be removed:', {
+						{ this.props.translate( '%(pluginName)s cannot be removed:', {
 							args: { pluginName: this.props.plugin.name },
 						} ) }
 					</p>
@@ -131,7 +132,7 @@ module.exports = React.createClass( {
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', {
+						{ this.props.translate( '%(pluginName)s cannot be removed. %(reason)s', {
 							args: { pluginName: this.props.plugin.name, reason: reasons[ 0 ] },
 						} ) }
 					</p>
@@ -147,7 +148,7 @@ module.exports = React.createClass( {
 					) }
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
-					{ this.translate( 'How do I fix this?' ) }
+					{ this.props.translate( 'How do I fix this?' ) }
 				</ExternalLink>
 			);
 
@@ -162,17 +163,17 @@ module.exports = React.createClass( {
 		] );
 		const getDisabledInfo = this.getDisabledInfo();
 		const label = getDisabledInfo
-			? this.translate( 'Removal Disabled', {
+			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
 				} )
-			: this.translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } );
+			: this.props.translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } );
 		if ( inProgress ) {
 			return (
-				<span className="plugin-action plugin-remove-button__remove">
-					{ this.translate( 'Removing…' ) }
+                <span className="plugin-action plugin-remove-button__remove">
+					{ this.props.translate( 'Removing…' ) }
 				</span>
-			);
+            );
 		}
 		return (
 			<PluginAction
@@ -200,4 +201,4 @@ module.exports = React.createClass( {
 
 		return this.renderButton();
 	},
-} );
+} ));

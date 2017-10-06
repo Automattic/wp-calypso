@@ -5,6 +5,7 @@
  */
 
 import { defer, isEmpty, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import { capitalPDangit } from 'lib/formatting';
@@ -91,9 +92,9 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<div>
+            <div>
 				<SearchCard
-					placeholder={ this.translate( 'Search all receipts…', { textOnly: true } ) }
+					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
 					onSearch={ this.onSearch }
 				/>
 				<table className="billing-history__transactions">
@@ -101,7 +102,7 @@ var TransactionsTable = React.createClass( {
 					<tbody>{ this.renderRows() }</tbody>
 				</table>
 			</div>
-		);
+        );
 	},
 
 	serviceName: function( transaction ) {
@@ -114,7 +115,7 @@ var TransactionsTable = React.createClass( {
 			item.plan = capitalPDangit( titleCase( item.variation ) );
 			name = this.serviceNameDescription( item );
 		} else {
-			name = <strong>{ this.translate( 'Multiple items' ) }</strong>;
+			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
 		}
 
 		return name;
@@ -200,4 +201,4 @@ var TransactionsTable = React.createClass( {
 	},
 } );
 
-module.exports = TransactionsTable;
+module.exports = localize(TransactionsTable);

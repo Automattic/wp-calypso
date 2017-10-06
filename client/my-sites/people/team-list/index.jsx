@@ -5,6 +5,7 @@
  */
 
 import deterministicStringify from 'json-stable-stringify';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
@@ -26,7 +27,7 @@ import ListEnd from 'components/list-end';
 /**
  * Module Variables
  */
-var Team = React.createClass( {
+var Team = localize(React.createClass( {
 	displayName: 'Team',
 
 	getInitialState: function() {
@@ -41,7 +42,7 @@ var Team = React.createClass( {
 
 	render: function() {
 		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
+			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = this.state.bulkEditing ? 'bulk-editing' : null,
 			people;
 
@@ -52,19 +53,19 @@ var Team = React.createClass( {
 			! this.props.fetchingUsers
 		) {
 			return (
-				<NoResults
+                <NoResults
 					image="/calypso/images/people/mystery-person.svg"
-					text={ this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+					text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
 						args: { searchTerm: this.props.search },
 						components: { em: <em /> },
 					} ) }
 				/>
-			);
+            );
 		}
 
 		if ( this.props.site && this.props.users.length ) {
 			if ( this.props.search && this.props.totalUsers ) {
-				headerText = this.translate(
+				headerText = this.props.translate(
 					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
 					'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
 					{
@@ -143,9 +144,9 @@ var Team = React.createClass( {
 	_renderLoadingPeople: function() {
 		return <PeopleListItem key="people-list-item-placeholder" />;
 	},
-} );
+} ));
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'TeamList',
 
 	render: function() {
@@ -165,4 +166,4 @@ module.exports = React.createClass( {
 			</SiteUsersFetcher>
 		);
 	},
-} );
+} ));

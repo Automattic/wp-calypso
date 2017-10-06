@@ -22,7 +22,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
-const RegisteredDomain = React.createClass( {
+const RegisteredDomain = localize(React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {
@@ -152,7 +152,7 @@ const RegisteredDomain = React.createClass( {
 	getVerticalNav() {
 		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
 		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = this.moment().subtract( 18, 'days' ) <= expirationMoment;
+		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
 
 		return (
 			<VerticalNav>
@@ -259,6 +259,6 @@ const RegisteredDomain = React.createClass( {
 			</div>
 		);
 	},
-} );
+} ));
 
 export default localize( RegisteredDomain );

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
 import analytics from 'lib/analytics';
@@ -16,7 +17,7 @@ import { preventWidows } from 'lib/formatting';
 import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'MediaLibraryListPlanPromo',
 
 	propTypes: {
@@ -27,19 +28,19 @@ module.exports = React.createClass( {
 	getTitle: function() {
 		switch ( this.props.filter ) {
 			case 'videos':
-				return this.translate( 'Upload Videos', {
+				return this.props.translate( 'Upload Videos', {
 					textOnly: true,
 					context: 'Media upload plan needed',
 				} );
 
 			case 'audio':
-				return this.translate( 'Upload Audio', {
+				return this.props.translate( 'Upload Audio', {
 					textOnly: true,
 					context: 'Media upload plan needed',
 				} );
 
 			default:
-				return this.translate( 'Upload Media', {
+				return this.props.translate( 'Upload Media', {
 					textOnly: true,
 					context: 'Media upload plan needed',
 				} );
@@ -50,7 +51,7 @@ module.exports = React.createClass( {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
-					this.translate( 'To upload video files to your site, upgrade your plan.', {
+					this.props.translate( 'To upload video files to your site, upgrade your plan.', {
 						textOnly: true,
 						context: 'Media upgrade promo',
 					} ),
@@ -59,7 +60,7 @@ module.exports = React.createClass( {
 
 			case 'audio':
 				return preventWidows(
-					this.translate( 'To upload audio files to your site, upgrade your plan.', {
+					this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
 						textOnly: true,
 						context: 'Media upgrade promo',
 					} ),
@@ -68,7 +69,7 @@ module.exports = React.createClass( {
 
 			default:
 				return preventWidows(
-					this.translate( 'To upload audio and video files to your site, upgrade your plan.', {
+					this.props.translate( 'To upload audio and video files to your site, upgrade your plan.', {
 						textOnly: true,
 						context: 'Media upgrade promo',
 					} ),
@@ -88,7 +89,7 @@ module.exports = React.createClass( {
 	render: function() {
 		const action = (
 			<Button className="button is-primary" onClick={ this.viewPlansPage }>
-				{ this.translate( 'See Plans' ) }
+				{ this.props.translate( 'See Plans' ) }
 			</Button>
 		);
 
@@ -101,4 +102,4 @@ module.exports = React.createClass( {
 			/>
 		);
 	},
-} );
+} ));

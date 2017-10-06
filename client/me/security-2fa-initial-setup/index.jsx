@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
@@ -15,7 +16,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 import FormButton from 'components/forms/form-button';
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'Security2faInitialSetup',
 
 	componentDidMount: function() {
@@ -32,9 +33,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+            <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Two-Step Authentication adds an extra layer ' +
 							'of security to your account. Once enabled, logging in to ' +
 							'WordPress.com will require you to enter a unique passcode ' +
@@ -49,9 +50,9 @@ module.exports = React.createClass( {
 						this.props.onSuccess( event );
 					}.bind( this ) }
 				>
-					{ this.translate( 'Get Started' ) }
+					{ this.props.translate( 'Get Started' ) }
 				</FormButton>
 			</div>
-		);
+        );
 	},
-} );
+} ));

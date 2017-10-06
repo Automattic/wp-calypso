@@ -5,6 +5,7 @@
  */
 
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -18,16 +19,16 @@ import TermsOfService from './terms-of-service';
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+            <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
-						{ this.translate( 'Get started with %(productName)s', {
+						{ this.props.translate( 'Get started with %(productName)s', {
 							args: { productName: this.getProductName() },
 						} ) }
 					</h6>
 
 					<span>
-						{ this.translate(
+						{ this.props.translate(
 							'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.'
 						) }
 					</span>
@@ -38,7 +39,7 @@ const FreeTrialConfirmationBox = React.createClass( {
 					<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 				</div>
 			</form>
-		);
+        );
 	},
 
 	getProductName() {
@@ -52,4 +53,4 @@ const FreeTrialConfirmationBox = React.createClass( {
 	},
 } );
 
-module.exports = FreeTrialConfirmationBox;
+module.exports = localize(FreeTrialConfirmationBox);

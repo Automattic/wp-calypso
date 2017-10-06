@@ -5,10 +5,11 @@
  */
 
 import { map } from 'lodash';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'ValidationErrorList',
 
 	propTypes: {
@@ -17,9 +18,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+            <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Please correct the issue below and try again.',
 						'Please correct the issues listed below and try again.',
 						{
@@ -33,6 +34,6 @@ module.exports = React.createClass( {
 					} ) }
 				</ul>
 			</div>
-		);
+        );
 	},
-} );
+} ));

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -14,7 +15,7 @@ import Gridicon from 'gridicons';
 import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'CommunityTranslatorInvitation',
 
 	propTypes: {
@@ -29,10 +30,10 @@ export default React.createClass( {
 		invitationUtils.recordInvitationDisplayed();
 
 		const subComponents = {
-			title: this.translate( 'Translate WordPress.com as you go' ),
-			acceptButtonText: this.translate( 'Try it now!' ),
-			dismissButtonText: this.translate( 'No thanks' ),
-			content: this.translate(
+			title: this.props.translate( 'Translate WordPress.com as you go' ),
+			acceptButtonText: this.props.translate( 'Try it now!' ),
+			dismissButtonText: this.props.translate( 'No thanks' ),
+			content: this.props.translate(
 				'Help translate the WordPress.com dashboard into your' +
 					' native language using the Community Translator tool. ' +
 					'{{docsLink}}Find out more{{/docsLink}}. ',
@@ -103,7 +104,7 @@ export default React.createClass( {
 		recordEvent( 'More Info' );
 		invitationUtils.recordDocsEvent();
 	},
-} );
+}));
 
 function recordEvent( eventAction ) {
 	googleAnalytics.recordEvent( 'Translator Invitation', eventAction );

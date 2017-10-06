@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -315,7 +316,7 @@ const PostSelectorPosts = React.createClass( {
 		const children = this.getPostChildren( item.ID );
 
 		return (
-			<div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
+            <div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
 				<label>
 					<input
 						name="posts"
@@ -326,7 +327,7 @@ const PostSelectorPosts = React.createClass( {
 						className="post-selector__input"
 					/>
 					<span className="post-selector__label">
-						{ decodeEntities( item.title || this.translate( 'Untitled' ) ) }
+						{ decodeEntities( item.title || this.props.translate( 'Untitled' ) ) }
 						{ this.isTypeLabelsVisible() && (
 							<span
 								className="post-selector__label-type"
@@ -347,7 +348,7 @@ const PostSelectorPosts = React.createClass( {
 					</div>
 				) }
 			</div>
-		);
+        );
 	},
 
 	renderEmptyContent() {
@@ -381,17 +382,17 @@ const PostSelectorPosts = React.createClass( {
 		}
 
 		return (
-			<div key="placeholder" className="post-selector__list-item is-placeholder">
+            <div key="placeholder" className="post-selector__list-item is-placeholder">
 				<label>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						disabled
 						className="post-selector__input"
 					/>
-					<span className="post-selector__label">{ this.translate( 'Loading…' ) }</span>
+					<span className="post-selector__label">{ this.props.translate( 'Loading…' ) }</span>
 				</label>
 			</div>
-		);
+        );
 	},
 
 	cellRendererWrapper( { key, style, ...rest } ) {
@@ -477,4 +478,4 @@ export default connect( ( state, ownProps ) => {
 		postTypes: getPostTypes( state, siteId ),
 		queryWithVersion: queryWithVersion,
 	};
-} )( PostSelectorPosts );
+} )( localize(PostSelectorPosts) );

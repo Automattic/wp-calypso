@@ -14,6 +14,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -22,7 +23,7 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'CharMap',
 
 	propTypes: {
@@ -316,27 +317,27 @@ export default React.createClass( {
 		return [
 			<FormButton
 				isPrimary={ false }
-				aria-label={ this.translate( 'Close special characters dialog' ) }
+				aria-label={ this.props.translate( 'Close special characters dialog' ) }
 				onClick={ this.props.onClose }
 			>
-				{ this.translate( 'Close' ) }
+				{ this.props.translate( 'Close' ) }
 			</FormButton>,
 		];
 	},
 
 	render() {
 		return (
-			<Dialog
+            <Dialog
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-charmap__dialog"
 				onClose={ this.props.onClose }
 			>
-				<h2 className="wpcom-charmap__heading">{ this.translate( 'Special characters' ) }</h2>
+				<h2 className="wpcom-charmap__heading">{ this.props.translate( 'Special characters' ) }</h2>
 				<div className="wpcom-charmap__table">
 					{ this.defaultCharMap().map( this.renderCell, this ) }
 				</div>
 			</Dialog>
-		);
+        );
 	},
-} );
+}));

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -158,7 +159,7 @@ const CreditCardForm = React.createClass( {
 				this.props
 					.saveStoredCard( paygateToken )
 					.then( () => {
-						notices.success( this.translate( 'Card added successfully' ), {
+						notices.success( this.props.translate( 'Card added successfully' ), {
 							persistent: true,
 						} );
 
@@ -239,7 +240,7 @@ const CreditCardForm = React.createClass( {
 
 	render() {
 		return (
-			<form onSubmit={ this.onSubmit }>
+            <form onSubmit={ this.onSubmit }>
 				<Card className="credit-card-form__content">
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
@@ -251,7 +252,7 @@ const CreditCardForm = React.createClass( {
 					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
-							{ this.translate(
+							{ this.props.translate(
 								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
 									'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
 									'on a recurring basis until you cancel, which you can do at any time. ' +
@@ -281,33 +282,33 @@ const CreditCardForm = React.createClass( {
 				</Card>
 
 				<CompactCard className="credit-card-form__footer">
-					<em>{ this.translate( 'All fields required' ) }</em>
+					<em>{ this.props.translate( 'All fields required' ) }</em>
 
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
 						{ this.state.formSubmitting ? (
-							this.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
+							this.props.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
 						) : (
-							this.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } )
+							this.props.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } )
 						) }
 					</FormButton>
 				</CompactCard>
 			</form>
-		);
+        );
 	},
 	renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (
-				<div className="credit-card-form__card-terms">
+                <div className="credit-card-form__card-terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						{ this.translate(
+						{ this.props.translate(
 							'This card will be used for future renewals of existing purchases.'
 						) }
 					</p>
 				</div>
-			);
+            );
 		}
 	},
 } );
 
-export default CreditCardForm;
+export default localize(CreditCardForm);

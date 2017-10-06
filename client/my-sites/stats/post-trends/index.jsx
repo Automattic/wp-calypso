@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { throttle } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -162,9 +162,9 @@ const PostTrends = React.createClass( {
 		} );
 
 		return (
-			<div className="post-trends">
+            <div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.translate( 'Posting Activity' ) } />
+				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
 				<Card>
 					<div className={ leftClass } onClick={ this.scrollLeft }>
 						<span className="left-arrow" />
@@ -178,7 +178,7 @@ const PostTrends = React.createClass( {
 						</div>
 						<div className="post-trends__key-container">
 							<span className="post-trends__key-label">
-								{ this.translate( 'Fewer Posts', {
+								{ this.props.translate( 'Fewer Posts', {
 									context: 'Legend label in stats post trends visualization',
 								} ) }
 							</span>
@@ -190,7 +190,7 @@ const PostTrends = React.createClass( {
 								<li className="post-trends__key-day is-level-4" />
 							</ul>
 							<span className="post-trends__key-label">
-								{ this.translate( 'More Posts', {
+								{ this.props.translate( 'More Posts', {
 									context: 'Legend label in stats post trends visualization',
 								} ) }
 							</span>
@@ -198,7 +198,7 @@ const PostTrends = React.createClass( {
 					</div>
 				</Card>
 			</div>
-		);
+        );
 	},
 } );
 
@@ -227,4 +227,4 @@ export default connect( state => {
 		query,
 		siteId,
 	};
-} )( PostTrends );
+} )( localize(PostTrends) );

@@ -5,6 +5,7 @@
  */
 
 import debug from 'debug';
+import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -53,12 +54,12 @@ var LoadingError = React.createClass( {
 
 	render: function() {
 		return (
-			<EmptyContent
+            <EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.translate( "We're sorry, but an unexpected error has occurred" ) }
+				title={ this.props.translate( "We're sorry, but an unexpected error has occurred" ) }
 			/>
-		);
+        );
 	},
 } );
 
-module.exports = LoadingError;
+module.exports = localize(LoadingError);

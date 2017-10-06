@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -15,9 +17,9 @@ import support from 'lib/url/support';
 const EditContactInfoPrivacyEnabledCard = React.createClass( {
 	render() {
 		return (
-			<Card className="edit-contact-info-privacy-enabled-card">
+            <Card className="edit-contact-info-privacy-enabled-card">
 				<p className="edit-contact-info-privacy-enabled-card__settings-explanation">
-					{ this.translate(
+					{ this.props.translate(
 						'This domain is currently using Privacy Protection to keep your information from showing up in public record searches. ' +
 							"If you need to make a change to your domain's contact info, please {{a}}contact support{{/a}}.",
 						{
@@ -28,8 +30,8 @@ const EditContactInfoPrivacyEnabledCard = React.createClass( {
 					) }
 				</p>
 			</Card>
-		);
+        );
 	},
 } );
 
-export default EditContactInfoPrivacyEnabledCard;
+export default localize(EditContactInfoPrivacyEnabledCard);

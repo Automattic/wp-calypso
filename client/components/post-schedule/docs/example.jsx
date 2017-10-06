@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
@@ -19,7 +20,7 @@ import EventsTooltip from 'components/date-picker/events-tooltip';
 /**
  * Date Picker Demo
  */
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'PostSchedule',
 
 	mixins: [ PureRenderMixin ],
@@ -33,7 +34,7 @@ export default React.createClass( {
 		date.setMilliseconds( 0 );
 		date.setSeconds( 0 );
 
-		date = this.moment( date ).tz( tz );
+		date = this.props.moment( date ).tz( tz );
 		date.set( { hour: 11, minute: 20 } );
 
 		return {
@@ -266,4 +267,4 @@ export default React.createClass( {
 			</span>
 		);
 	},
-} );
+}));

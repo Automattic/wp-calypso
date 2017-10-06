@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
@@ -54,7 +55,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 			return postFormats[ formatValue ];
 		}
 
-		return this.translate( 'Standard', {
+		return this.props.translate( 'Standard', {
 			context: 'Post format',
 		} );
 	},
@@ -66,11 +67,11 @@ const EditorPostFormatsAccordion = React.createClass( {
 		} );
 
 		return (
-			<div>
+            <div>
 				<QueryPostFormats siteId={ this.props.siteId } />
 				{ ! isEmpty( postFormats ) && (
 					<Accordion
-						title={ this.translate( 'Post Format' ) }
+						title={ this.props.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
 						className={ classes }
 						e2eTitle="post-format"
@@ -79,7 +80,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 					</Accordion>
 				) }
 			</div>
-		);
+        );
 	},
 } );
 
@@ -92,4 +93,4 @@ export default connect( state => {
 		postFormats: getPostFormats( state, siteId ),
 		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
 	};
-} )( EditorPostFormatsAccordion );
+} )( localize(EditorPostFormatsAccordion) );

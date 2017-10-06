@@ -5,6 +5,7 @@
  */
 
 import { get, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -25,7 +26,7 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
@@ -95,7 +96,7 @@ export default React.createClass( {
 		var discussion = this.getDiscussionSetting();
 
 		return (
-			<EditorFieldset legend={ this.translate( 'Discussion' ) }>
+            <EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
 				<label>
 					<FormCheckbox
 						name="comment_status"
@@ -104,14 +105,14 @@ export default React.createClass( {
 						onChange={ this.onChange }
 					/>
 					<span>
-						{ this.translate( 'Allow comments' ) }
+						{ this.props.translate( 'Allow comments' ) }
 						<InfoPopover
 							position="top right"
 							className="editor-comment_status__info"
 							gaEventCategory="Editor"
 							popoverName="CommentStatus"
 						>
-							{ this.translate(
+							{ this.props.translate(
 								'Provide a comment section to give readers the ability to respond.'
 							) }
 						</InfoPopover>
@@ -124,9 +125,9 @@ export default React.createClass( {
 						disabled={ ! this.props.post }
 						onChange={ this.onChange }
 					/>
-					<span>{ this.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
+					<span>{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
-		);
+        );
 	},
-} );
+}));
