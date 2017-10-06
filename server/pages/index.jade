@@ -84,18 +84,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		//- Preload our scripts
 		if i18nLocaleScript
 			link(rel='preload' as='script' href=i18nLocaleScript)
-		if 'development' === env || isDebug
-			link(rel='preload' as='script' href=urls[ 'manifest' ])
-			link(rel='preload' as='script' href=urls[ 'vendor' ])
-			link(rel='preload' as='script' href=urls[ jsFile ])
-			if chunk
-				link(rel='preload' as='script' href=urls[ chunk ])
-		else
-			link(rel='preload' as='script' href=urls[ 'manifest-min' ])
-			link(rel='preload' as='script' href=urls[ 'vendor-min' ])
-			link(rel='preload' as='script' href=urls[ jsFile + '-min' ])
-			if chunk
-				link(rel='preload' as='script' href=urls[ chunk + '-min' ])
+		link(rel='preload' as='script' href=urls[ 'manifest' ])
+		link(rel='preload' as='script' href=urls[ 'vendor' ])
+		link(rel='preload' as='script' href=urls[ jsFile ])
+		if chunk
+			link(rel='preload' as='script' href=urls[ chunk ])
 
 	body( class=bodyClasses )
 		if renderedLayout
