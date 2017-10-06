@@ -24,7 +24,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
-import OrderDetailsTable from '../order-details/table';
+import OrderRefundTable from './table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
@@ -177,7 +177,7 @@ class OrderPaymentCard extends Component {
 				additionalClassNames="order-payment__dialog woocommerce"
 			>
 				<h1>{ translate( 'Refund order' ) }</h1>
-				<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } />
+				<OrderRefundTable order={ order } onChange={ this.recalculateRefund } />
 				<form className="order-payment__container">
 					<FormLabel className="order-payment__note">
 						{ translate( 'Refund note' ) }
