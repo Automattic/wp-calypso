@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import notices from 'notices';
 import SitesLog from 'lib/sites-list/log-store';
 import SitesListActions from 'lib/sites-list/actions';
 
-module.exports = React.createClass( {
+module.exports = localize( React.createClass( {
 	getInitialState: function() {
 		return { notices: this.refreshSiteNotices() };
 	},
@@ -81,9 +82,9 @@ module.exports = React.createClass( {
 		switch ( action ) {
 			case 'DISCONNECT_SITE':
 				if ( 1 === translateArg.args.numberOfSites ) {
-					return this.translate( 'Successfully disconnected %(siteName)s.', translateArg );
+					return this.props.translate( 'Successfully disconnected %(siteName)s.', translateArg );
 				}
-				return this.translate(
+				return this.props.translate(
 					'Successfully disconnected %(numberOfSites)d site.',
 					'Successfully disconnected %(numberOfSites)d sites.',
 					translateArg
@@ -97,9 +98,9 @@ module.exports = React.createClass( {
 		switch ( action ) {
 			case 'DISCONNECT_SITE':
 				if ( 1 === translateArg.args.numberOfSites ) {
-					return this.translate( 'Disconnecting %(siteName)s.', translateArg );
+					return this.props.translate( 'Disconnecting %(siteName)s.', translateArg );
 				}
-				return this.translate(
+				return this.props.translate(
 					'Disconnecting %(numberOfSites)d site.',
 					'Disconnecting %(numberOfSites)d sites.',
 					translateArg
@@ -111,7 +112,7 @@ module.exports = React.createClass( {
 		var completedMessage = this.getMessage( logNotices.completed, this.successMessage ),
 			errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
 
-		return this.translate( '%(completedMessage)s %(errorMessage)s', {
+		return this.props.translate( '%(completedMessage)s %(errorMessage)s', {
 			args: {
 				completedMessage: completedMessage,
 				errorMessage: errorMessage,
@@ -126,9 +127,9 @@ module.exports = React.createClass( {
 		switch ( action ) {
 			case 'RECEIVE_PLUGINS':
 				if ( 1 === translateArg.args.numberOfSites ) {
-					return this.translate( 'Error fetching plugins on %(siteName)s.', translateArg );
+					return this.props.translate( 'Error fetching plugins on %(siteName)s.', translateArg );
 				}
-				return this.translate(
+				return this.props.translate(
 					'Error fetching plugins on %(numberOfSites)d site: %(siteNames)s.',
 					'Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s.',
 					translateArg
@@ -139,12 +140,12 @@ module.exports = React.createClass( {
 					case 'unauthorized':
 					case 'unauthorized_access':
 						if ( 1 === translateArg.args.numberOfSites ) {
-							return this.translate(
+							return this.props.translate(
 								"You don't have permission to disconnect %(siteName)s.",
 								translateArg
 							);
 						}
-						return this.translate(
+						return this.props.translate(
 							"You don't have permission to disconnect %(numberOfSites)d site: %(siteNames)s.",
 							"You don't have permission to disconnect %(numberOfSites)d sites: %(siteNames)s.",
 							translateArg
@@ -152,9 +153,9 @@ module.exports = React.createClass( {
 
 					default:
 						if ( 1 === translateArg.args.numberOfSites ) {
-							return this.translate( 'Error disconnecting %(siteName)s.', translateArg );
+							return this.props.translate( 'Error disconnecting %(siteName)s.', translateArg );
 						}
-						return this.translate(
+						return this.props.translate(
 							'Error disconnecting %(numberOfSites)d site: %(siteNames)s.',
 							'Error disconnecting %(numberOfSites)d sites: %(siteNames)s.',
 							translateArg
@@ -166,4 +167,4 @@ module.exports = React.createClass( {
 	render: function() {
 		return null;
 	}
-} );
+} ) );
