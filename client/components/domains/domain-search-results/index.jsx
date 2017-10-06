@@ -17,7 +17,7 @@ import { endsWith, includes, times } from 'lodash';
  * Internal dependencies
  */
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
@@ -138,7 +138,8 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		let suggestionElements, mappingOffer;
+		let suggestionElements;
+		let transferOffer;
 
 		if ( this.props.suggestions.length ) {
 			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
@@ -166,8 +167,8 @@ class DomainSearchResults extends React.Component {
 			}, this );
 
 			if ( this.props.offerMappingOption ) {
-				mappingOffer = (
-					<DomainMappingSuggestion
+				transferOffer = (
+					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickMapping }
 						products={ this.props.products }
 						selectedSite={ this.props.selectedSite }
@@ -184,7 +185,7 @@ class DomainSearchResults extends React.Component {
 		return (
 			<div className="domain-search-results__domain-suggestions">
 				{ suggestionElements }
-				{ mappingOffer }
+				{ transferOffer }
 			</div>
 		);
 	}

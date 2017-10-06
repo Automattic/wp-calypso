@@ -495,6 +495,16 @@ function domainRedemption( properties ) {
 	return domainItem( 'domain_redemption', properties.domain, properties.source );
 }
 
+/**
+ * Creates a new shopping cart item for an incoming domain transfer.
+ *
+ * @param {Object} properties - list of properties
+ * @returns {Object} the new item as `CartItemValue` object
+ */
+function domainTransfer( properties ) {
+	return domainItem( 'domain_transfer', properties.domain, properties.source );
+}
+
 function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
@@ -863,6 +873,7 @@ export default {
 	domainPrivacyProtection,
 	domainRedemption,
 	domainRegistration,
+	domainTransfer,
 	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,

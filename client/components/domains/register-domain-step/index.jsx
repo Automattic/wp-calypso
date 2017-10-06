@@ -35,7 +35,7 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
@@ -608,7 +608,7 @@ class RegisterDomainStep extends React.Component {
 
 	initialSuggestions() {
 		let domainRegistrationSuggestions;
-		let domainMappingSuggestion;
+		let domainTransferSuggestion;
 		let suggestions;
 
 		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
@@ -633,8 +633,8 @@ class RegisterDomainStep extends React.Component {
 				);
 			}, this );
 
-			domainMappingSuggestion = (
-				<DomainMappingSuggestion
+			domainTransferSuggestion = (
+				<DomainTransferSuggestion
 					isSignupStep={ this.props.isSignupStep }
 					onButtonClick={ this.goToMapDomainStep }
 					selectedSite={ this.props.selectedSite }
@@ -651,7 +651,7 @@ class RegisterDomainStep extends React.Component {
 				className="register-domain-step__domain-suggestions"
 			>
 				{ domainRegistrationSuggestions }
-				{ domainMappingSuggestion }
+				{ domainTransferSuggestion }
 			</div>
 		);
 	}
