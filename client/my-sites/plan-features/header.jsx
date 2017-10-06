@@ -131,7 +131,7 @@ class PlanFeaturesHeader extends Component {
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
 						>
-							{ translate( 'Discount for first year' ) }
+							{ translate( 'Price for the next 12 months' ) }
 						</InfoPopover>
 					) }
 				</p>
