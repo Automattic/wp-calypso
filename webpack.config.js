@@ -13,6 +13,7 @@ const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
+const AssetsPlugin = require( 'assets-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -70,7 +71,7 @@ const jsLoader = isWindows ? babelLoader : 'happypack/loader';
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
 	entry: {},
-	devtool: '#eval',
+	devtool: 'false',
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
@@ -161,6 +162,11 @@ const webpackConfig = {
 			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
 		} ),
 		new NameAllModulesPlugin(),
+		new AssetsPlugin( {
+			filename: 'assets.json',
+			path: path.join( __dirname, 'server', 'bundler' )
+		} ),
+
 	] ),
 	externals: [ 'electron' ]
 };
