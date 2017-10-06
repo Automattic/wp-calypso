@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Page from 'page';
@@ -14,7 +15,7 @@ import Page from 'page';
  */
 import Notice from 'components/notice';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'SiteSettingsImporterError',
 
 	mixins: [ PureRenderMixin ],
@@ -31,7 +32,7 @@ export default React.createClass( {
 	},
 
 	getImportError: function() {
-		return this.translate(
+		return this.props.translate(
 			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
 			{
 				args: {
@@ -47,10 +48,10 @@ export default React.createClass( {
 	},
 
 	getUploadError: function() {
-		const defaultError = this.translate( 'Unexpected error during the upload' );
+		const defaultError = this.props.translate( 'Unexpected error during the upload' );
 		const { description = '' } = this.props;
 
-		return this.translate(
+		return this.props.translate(
 			'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.',
 			{
 				args: {
@@ -92,4 +93,4 @@ export default React.createClass( {
 			</div>
 		);
 	},
-} );
+}));

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -22,7 +23,7 @@ import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
-let Viewers = React.createClass( {
+let Viewers = localize(React.createClass( {
 	displayName: 'Viewers',
 
 	getInitialState: function() {
@@ -51,11 +52,11 @@ let Viewers = React.createClass( {
 		accept(
 			<div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'If you remove this viewer, he or she will not be able to visit this site.'
 					) }
 				</p>
-				<p>{ this.translate( 'Would you still like to remove this viewer?' ) }</p>
+				<p>{ this.props.translate( 'Would you still like to remove this viewer?' ) }</p>
 			</div>,
 			accepted => {
 				if ( accepted ) {
@@ -71,7 +72,7 @@ let Viewers = React.createClass( {
 					);
 				}
 			},
-			this.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
+			this.props.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
 	},
 
@@ -109,19 +110,19 @@ let Viewers = React.createClass( {
 			emptyContentArgs = {
 				title:
 					this.props.site && this.props.site.jetpack
-						? this.translate( "Oops, Jetpack sites don't support viewers." )
-						: this.translate( "You don't have any viewers yet." ),
+						? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+						: this.props.translate( "You don't have any viewers yet." ),
 			},
 			listClass = this.state.bulkEditing ? 'bulk-editing' : null;
 
 		if ( ! this.props.viewers.length && ! this.props.fetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
 				emptyContentArgs = Object.assign( emptyContentArgs, {
-					line: this.translate(
+					line: this.props.translate(
 						'Only private sites can have viewers. You can make your site private by ' +
 							'changing its visibility settings.'
 					),
-					action: this.translate( 'Visit Site Settings' ),
+					action: this.props.translate( 'Visit Site Settings' ),
 					actionURL: '/settings/general/' + this.props.site.slug,
 				} );
 			}
@@ -161,9 +162,9 @@ let Viewers = React.createClass( {
 			</div>
 		);
 	},
-} );
+} ));
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'ViewersList',
 
 	mixins: [ PureRenderMixin ],
@@ -179,4 +180,4 @@ module.exports = React.createClass( {
 			</ViewersData>
 		);
 	},
-} );
+} ));

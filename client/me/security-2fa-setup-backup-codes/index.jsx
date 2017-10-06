@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
@@ -19,7 +20,7 @@ import eventRecorder from 'me/event-recorder';
 import support from 'lib/url/support';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'Security2faSetupBackupCodes',
 
 	mixins: [ eventRecorder ],
@@ -47,7 +48,7 @@ module.exports = React.createClass( {
 	onRequestComplete: function( error, data ) {
 		if ( error ) {
 			this.setState( {
-				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' ),
+				lastError: this.props.translate( 'Unable to obtain backup codes.  Please try again later.' ),
 			} );
 			return;
 		}
@@ -67,7 +68,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		errorMessage = this.translate(
+		errorMessage = this.props.translate(
 			'There was an error retrieving back up codes. Please {{supportLink}}contact support{{/supportLink}}',
 			{
 				components: {
@@ -100,10 +101,10 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+            <div>
 				<Security2faProgress step={ 3 } />
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							"machine and the bag of rice trick doesn't work."
@@ -113,6 +114,6 @@ module.exports = React.createClass( {
 				{ this.possiblyRenderError() }
 				{ this.renderList() }
 			</div>
-		);
+        );
 	},
-} );
+} ));

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
 
 /**
@@ -30,12 +31,12 @@ var CreditsPaymentBox = React.createClass( {
 			hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+            <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
+					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
 					<span>
-						{ this.translate(
+						{ this.props.translate(
 							'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
@@ -67,16 +68,16 @@ var CreditsPaymentBox = React.createClass( {
 
 				<CartToggle />
 			</form>
-		);
+        );
 	},
 
 	render: function() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.translate( 'Secure Payment' ) }>
+            <PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
-		);
+        );
 	},
 } );
 
-module.exports = CreditsPaymentBox;
+module.exports = localize(CreditsPaymentBox);

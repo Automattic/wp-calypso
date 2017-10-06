@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -15,7 +16,7 @@ import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'AddProfileLinksButtons',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -39,7 +40,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
+            <div>
 				<PopoverMenu
 					isVisible={ this.props.showPopoverMenu }
 					onClose={ this.props.onClosePopoverMenu }
@@ -52,12 +53,12 @@ export default React.createClass( {
 							this.props.onShowAddWordPress
 						) }
 					>
-						{ this.translate( 'Add WordPress Site' ) }
+						{ this.props.translate( 'Add WordPress Site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
 						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
 					>
-						{ this.translate( 'Add URL' ) }
+						{ this.props.translate( 'Add URL' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
 
@@ -68,9 +69,9 @@ export default React.createClass( {
 					onClick={ this.props.onShowPopoverMenu }
 				>
 					<Gridicon icon="add-outline" />
-					{ this.translate( 'Add' ) }
+					{ this.props.translate( 'Add' ) }
 				</Button>
 			</div>
-		);
+        );
 	},
-} );
+}));

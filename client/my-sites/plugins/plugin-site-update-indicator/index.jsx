@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -14,7 +15,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'PluginSiteUpdateIndicator',
 
 	propTypes: {
@@ -66,11 +67,11 @@ module.exports = React.createClass( {
 			isUpdating = ongoingUpdates.length > 0;
 
 		if ( isUpdating ) {
-			message = this.translate( 'Updating to version %(version)s', {
+			message = this.props.translate( 'Updating to version %(version)s', {
 				args: { version: ongoingUpdates[ 0 ].plugin.update.new_version },
 			} );
 		} else {
-			message = this.translate( 'Update to %(version)s', {
+			message = this.props.translate( 'Update to %(version)s', {
 				args: { version: this.props.site.plugin.update.new_version },
 			} );
 		}
@@ -111,4 +112,4 @@ module.exports = React.createClass( {
 		}
 		return null;
 	},
-} );
+} ));

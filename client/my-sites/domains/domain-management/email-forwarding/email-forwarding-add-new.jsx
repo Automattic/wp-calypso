@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -97,7 +98,7 @@ const EmailForwardingAddNew = React.createClass( {
 					if ( error ) {
 						notices.error(
 							error.message ||
-								this.translate(
+								this.props.translate(
 									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 									{
 										components: {
@@ -110,7 +111,7 @@ const EmailForwardingAddNew = React.createClass( {
 						this.formStateController.resetFields( this.getInitialState().fields );
 
 						notices.success(
-							this.translate(
+							this.props.translate(
 								'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
 								{
 									args: {
@@ -143,13 +144,13 @@ const EmailForwardingAddNew = React.createClass( {
 		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
 
 		return (
-			<FormButton
+            <FormButton
 				disabled={ this.state.formSubmitting || this.hasReachedLimit() }
 				onClick={ handler }
 			>
-				{ this.translate( 'Add New Email Forward' ) }
+				{ this.props.translate( 'Add New Email Forward' ) }
 			</FormButton>
-		);
+        );
 	},
 
 	cancelButton() {
@@ -158,15 +159,15 @@ const EmailForwardingAddNew = React.createClass( {
 		}
 
 		return (
-			<FormButton
+            <FormButton
 				type="button"
 				isPrimary={ false }
 				disabled={ this.state.formSubmitting }
 				onClick={ this.onCancel }
 			>
-				{ this.translate( 'Cancel' ) }
+				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
-		);
+        );
 	},
 
 	formFooter() {
@@ -183,19 +184,19 @@ const EmailForwardingAddNew = React.createClass( {
 			return null;
 		}
 
-		const contactText = this.translate( 'contact', {
+		const contactText = this.props.translate( 'contact', {
 				context: 'part of e-mail address',
 				comment: 'As it would be part of an e-mail address contact@example.com',
 			} ),
-			exampleEmailText = this.translate( 'e.g. %(example)s', { args: { example: contactText } } ),
+			exampleEmailText = this.props.translate( 'e.g. %(example)s', { args: { example: contactText } } ),
 			isValidMailbox = this.isValid( 'mailbox' ),
 			isValidDestination = this.isValid( 'destination' ),
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-			<div className="form-content">
+            <div className="form-content">
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Emails Sent To' ) }</FormLabel>
+					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						disabled={ this.state.formSubmitting }
 						name="mailbox"
@@ -209,7 +210,7 @@ const EmailForwardingAddNew = React.createClass( {
 					/>
 					{ ! isValidMailbox && (
 						<FormInputValidation
-							text={ this.translate(
+							text={ this.props.translate(
 								'Invalid mailbox - only characters [a-z0-9._+-] are allowed'
 							) }
 							isError={ true }
@@ -218,26 +219,26 @@ const EmailForwardingAddNew = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Will Be Forwarded To' ) }</FormLabel>
+					<FormLabel>{ this.props.translate( 'Will Be Forwarded To' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.state.formSubmitting }
 						name="destination"
 						onChange={ this.onChange }
 						onFocus={ this.handleFieldFocus.bind( this, 'Destination' ) }
 						isError={ ! isValidDestination }
-						placeholder={ this.translate( 'Your Existing Email Address' ) }
+						placeholder={ this.props.translate( 'Your Existing Email Address' ) }
 						type="text"
 						value={ destination }
 					/>
 					{ ! isValidDestination && (
 						<FormInputValidation
-							text={ this.translate( 'Invalid destination address' ) }
+							text={ this.props.translate( 'Invalid destination address' ) }
 							isError={ true }
 						/>
 					) }
 				</FormFieldset>
 			</div>
-		);
+        );
 	},
 
 	shouldShowForm() {
@@ -289,4 +290,4 @@ const EmailForwardingAddNew = React.createClass( {
 	},
 } );
 
-export default EmailForwardingAddNew;
+export default localize(EmailForwardingAddNew);

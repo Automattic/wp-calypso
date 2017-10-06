@@ -5,11 +5,12 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'StatsError',
 
 	mixins: [ PureRenderMixin ],
@@ -22,7 +23,7 @@ export default React.createClass( {
 	render() {
 		const message =
 			this.props.message ||
-			this.translate( "Some stats didn't load in time. Please try again later." );
+			this.props.translate( "Some stats didn't load in time. Please try again later." );
 
 		return (
 			<div className={ classNames( 'module-content-text', 'is-error', this.props.className ) }>
@@ -30,4 +31,4 @@ export default React.createClass( {
 			</div>
 		);
 	},
-} );
+}));

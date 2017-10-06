@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -69,13 +70,13 @@ const EditorSticky = React.createClass( {
 		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
 
 		return (
-			<Button
+            <Button
 				borderless
 				className={ classes }
 				onClick={ this.toggleStickyStatus }
 				onMouseEnter={ this.enableTooltip }
 				onMouseLeave={ this.disableTooltip }
-				aria-label={ this.translate( 'Stick post to the front page' ) }
+				aria-label={ this.props.translate( 'Stick post to the front page' ) }
 				ref="stickyPostButton"
 			>
 				<Gridicon icon="bookmark" />
@@ -86,11 +87,11 @@ const EditorSticky = React.createClass( {
 						isVisible={ this.state.tooltip }
 						position="bottom left"
 					>
-						<span>{ this.translate( 'Marked as sticky' ) }</span>
+						<span>{ this.props.translate( 'Marked as sticky' ) }</span>
 					</Tooltip>
 				) }
 			</Button>
-		);
+        );
 	},
 } );
 
@@ -107,4 +108,4 @@ export default connect(
 		};
 	},
 	{ editPost }
-)( EditorSticky );
+)( localize(EditorSticky) );

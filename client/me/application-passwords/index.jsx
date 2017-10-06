@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords' );
@@ -68,7 +69,7 @@ const ApplicationPasswords = React.createClass( {
 					// handle error case here
 					notices.clearNotices( 'notices' );
 					this.props.errorNotice(
-						this.translate(
+						this.props.translate(
 							'There was a problem creating your application password. Please try again.'
 						)
 					);
@@ -95,7 +96,7 @@ const ApplicationPasswords = React.createClass( {
 		} );
 
 		return (
-			<Card className={ cardClasses }>
+            <Card className={ cardClasses }>
 				<form
 					id="add-application-password"
 					className="application-passwords__add-new"
@@ -103,7 +104,7 @@ const ApplicationPasswords = React.createClass( {
 				>
 					<FormFieldset>
 						<FormLabel htmlFor="application-name">
-							{ this.translate( 'Application Name' ) }
+							{ this.props.translate( 'Application Name' ) }
 						</FormLabel>
 						<FormTextInput
 							className="application-passwords__add-new-field"
@@ -121,9 +122,9 @@ const ApplicationPasswords = React.createClass( {
 							onClick={ this.recordClickEvent( 'Generate New Application Password Button' ) }
 						>
 							{ this.state.submittingForm ? (
-								this.translate( 'Generating Password…' )
+								this.props.translate( 'Generating Password…' )
 							) : (
-								this.translate( 'Generate Password' )
+								this.props.translate( 'Generate Password' )
 							) }
 						</FormButton>
 						{ this.props.appPasswordsData.get().length ? (
@@ -134,25 +135,25 @@ const ApplicationPasswords = React.createClass( {
 									this.toggleNewPassword
 								) }
 							>
-								{ this.translate( 'Cancel' ) }
+								{ this.props.translate( 'Cancel' ) }
 							</FormButton>
 						) : null }
 					</FormButtonsBar>
 				</form>
 			</Card>
-		);
+        );
 	},
 
 	renderNewAppPassword: function() {
 		var newPassword = this.props.appPasswordsData.newApplicationPassword;
 		return (
-			<Card className="application-passwords__new-password">
+            <Card className="application-passwords__new-password">
 				<p className="application-passwords__new-password-display">
 					{ newPassword.application_password }
 				</p>
 
 				<p className="application-passwords__new-password-help">
-					{ this.translate(
+					{ this.props.translate(
 						'Use this password to log in to {{strong}}%(appName)s{{/strong}}. Note: spaces are ignored.',
 						{
 							args: {
@@ -172,11 +173,11 @@ const ApplicationPasswords = React.createClass( {
 							this.clearNewApplicationPassword
 						) }
 					>
-						{ this.translate( 'Done' ) }
+						{ this.props.translate( 'Done' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</Card>
-		);
+        );
 	},
 
 	renderApplicationPasswords: function() {
@@ -185,8 +186,8 @@ const ApplicationPasswords = React.createClass( {
 		}
 
 		return (
-			<div className="application-passwords__active">
-				<FormSectionHeading>{ this.translate( 'Active Passwords' ) }</FormSectionHeading>
+            <div className="application-passwords__active">
+				<FormSectionHeading>{ this.props.translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
 					{ this.props.appPasswordsData.get().map( function( password ) {
 						return (
@@ -199,15 +200,15 @@ const ApplicationPasswords = React.createClass( {
 					}, this ) }
 				</ul>
 			</div>
-		);
+        );
 	},
 
 	render: function() {
 		var hasNewPassword = this.props.appPasswordsData.hasNewPassword();
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Application Passwords' ) }>
+            <div>
+				<SectionHeader label={ this.props.translate( 'Application Passwords' ) }>
 					<Button
 						compact
 						onClick={ this.recordClickEvent(
@@ -218,14 +219,14 @@ const ApplicationPasswords = React.createClass( {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="plus-small" size={ 16 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						{ this.translate( 'Add New Application Password' ) }
+						{ this.props.translate( 'Add New Application Password' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
 					{ hasNewPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
 					<p>
-						{ this.translate(
+						{ this.props.translate(
 							'With Two-Step Authentication active, you can generate a custom password for ' +
 								'each third-party application you authorize to use your WordPress.com account. ' +
 								'You can revoke access for an individual application here if you ever need to.'
@@ -235,10 +236,10 @@ const ApplicationPasswords = React.createClass( {
 					{ this.renderApplicationPasswords() }
 				</Card>
 			</div>
-		);
+        );
 	},
 } );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	ApplicationPasswords
+	localize(ApplicationPasswords)
 );

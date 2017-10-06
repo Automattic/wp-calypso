@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import chrono from 'chrono-node';
 
@@ -13,7 +14,7 @@ import chrono from 'chrono-node';
  */
 const supportedLanguages = [ 'en', 'jp' ];
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'InputChrono',
 
 	focused: false,
@@ -71,8 +72,8 @@ export default React.createClass( {
 		var date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
-			this.setState( { value: this.moment( date ).calendar() } );
-			this.props.onSet( this.moment( date ) );
+			this.setState( { value: this.props.moment( date ).calendar() } );
+			this.props.onSet( this.props.moment( date ) );
 		}
 	},
 
@@ -99,4 +100,4 @@ export default React.createClass( {
 			</div>
 		);
 	},
-} );
+}));

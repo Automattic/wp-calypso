@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -518,7 +519,7 @@ const PushNotificationSettings = React.createClass( {
 											fontWeight="normal"
 										>
 											<tspan x="91" y="148" fill="#3D596D">
-												{ this.translate( 'Notifications: Ask by default', {
+												{ this.props.translate( 'Notifications: Ask by default', {
 													comment:
 														'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".',
 												} ) }
@@ -579,7 +580,7 @@ const PushNotificationSettings = React.createClass( {
 												fill="#3D596D"
 											>
 												<tspan x="26.434555" y="20.1594203">
-													{ this.translate( 'Always allow on this site', {
+													{ this.props.translate( 'Always allow on this site', {
 														comment:
 															'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".',
 													} ) }
@@ -611,7 +612,7 @@ const PushNotificationSettings = React.createClass( {
 		);
 
 		return (
-			<Dialog
+            <Dialog
 				isVisible={ this.props.showDialog }
 				className=".notification-settings-push-notification-settings__instruction-dialog"
 				onClose={ this.props.toggleUnblockInstructions }
@@ -619,20 +620,20 @@ const PushNotificationSettings = React.createClass( {
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.translate( 'Enable Browser Notifications' ) }
+							{ this.props.translate( 'Enable Browser Notifications' ) }
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAddressBar />
 							</div>
-							<p>{ this.translate( 'Click the lock icon in your address bar.' ) }</p>
+							<p>{ this.props.translate( 'Click the lock icon in your address bar.' ) }</p>
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAlwaysAllow />
 							</div>
 							<p>
-								{ this.translate(
+								{ this.props.translate(
 									'Click {{strong}}Notifications{{/strong}} and choose {{em}}Always allow{{/em}}.',
 									{
 										components: {
@@ -647,7 +648,7 @@ const PushNotificationSettings = React.createClass( {
 					<Notice
 						className="push-notification-settings__instruction-refresh-notice"
 						showDismiss={ false }
-						text={ this.translate(
+						text={ this.props.translate(
 							"Once you've allowed notifications, you may need to refresh your browser."
 						) }
 					/>
@@ -658,10 +659,10 @@ const PushNotificationSettings = React.createClass( {
 					onClick={ this.props.toggleUnblockInstructions }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
+					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
 				</span>
 			</Dialog>
-		);
+        );
 	},
 
 	render: function() {
@@ -681,38 +682,38 @@ const PushNotificationSettings = React.createClass( {
 			case 'disabling':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 				break;
 			case 'enabling':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Disable' );
+				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
-				stateText = this.translate( 'Enabled' );
+				stateText = this.props.translate( 'Enabled' );
 				break;
 			case 'unsubscribed':
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 				break;
 			case 'subscribed':
 				buttonClass = { 'is-disable': true };
 				buttonDisabled = false;
-				buttonText = this.translate( 'Disable' );
+				buttonText = this.props.translate( 'Disable' );
 				stateClass = { 'is-enabled': true };
-				stateText = this.translate( 'Enabled' );
+				stateText = this.props.translate( 'Enabled' );
 				break;
 			case 'denied':
 				blockedInstruction = this.getBlockedInstruction();
 				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonText = this.translate( 'Enable' );
+				buttonText = this.props.translate( 'Enable' );
 				stateClass = { 'is-disabled': true };
-				stateText = this.translate( 'Disabled' );
+				stateText = this.props.translate( 'Disabled' );
 
 				deniedText = (
 					<Notice
@@ -721,12 +722,12 @@ const PushNotificationSettings = React.createClass( {
 						text={
 							<div>
 								<div>
-									{ this.translate(
+									{ this.props.translate(
 										'Your browser is currently set to block notifications from WordPress.com.'
 									) }
 								</div>
 								<div>
-									{ this.translate(
+									{ this.props.translate(
 										'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}',
 										{
 											components: {
@@ -752,14 +753,14 @@ const PushNotificationSettings = React.createClass( {
 		}
 
 		return (
-			<Card className="notification-settings-push-notification-settings__settings">
+            <Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
 					<Gridicon
 						size={ 24 }
 						className="notification-settings-push-notification-settings__settings-icon"
 						icon="bell"
 					/>
-					{ this.translate( 'Browser Notifications' ) }
+					{ this.props.translate( 'Browser Notifications' ) }
 					<small
 						className={ classNames(
 							'notification-settings-push-notification-settings__settings-state',
@@ -771,7 +772,7 @@ const PushNotificationSettings = React.createClass( {
 				</h2>
 
 				<p className="notification-settings-push-notification-settings__settings-description">
-					{ this.translate(
+					{ this.props.translate(
 						'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.'
 					) }
 				</p>
@@ -789,7 +790,7 @@ const PushNotificationSettings = React.createClass( {
 
 				{ deniedText }
 			</Card>
-		);
+        );
 	},
 } );
 
@@ -806,4 +807,4 @@ export default connect(
 		toggleEnabled,
 		toggleUnblockInstructions,
 	}
-)( PushNotificationSettings );
+)( localize(PushNotificationSettings) );
