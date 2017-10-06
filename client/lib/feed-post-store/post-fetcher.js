@@ -4,8 +4,7 @@
  * @format
  */
 
-import { assign, noop, pick } from 'lodash';
-import Immutable from 'immutable';
+import { assign, noop, pick, omitBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -23,14 +22,30 @@ function PostFetcher( options ) {
 		options
 	);
 
-	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+	this.postsToFetch = new Set();
 	this.batchQueued = false;
+}
+
+function toKey( o ) {
+	return `${ o.feedId }-${ o.blogId }-${ o.postId }`;
+}
+
+function fromKey( key ) {
+	const [ feedId, blogId, postId ] = key.split( '-' );
+	return omitBy(
+		{
+			feedId,
+			blogId,
+			postId,
+		},
+		Boolean
+	);
 }
 
 assign( PostFetcher.prototype, {
 	add: function( postKey ) {
 		this.postsToFetch = this.postsToFetch.add(
-			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
+			toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
 		);
 
 		if ( ! this.batchQueued ) {
@@ -40,7 +55,7 @@ assign( PostFetcher.prototype, {
 
 	remove: function( postKey ) {
 		this.postsToFetch = this.postsToFetch.delete(
-			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
+			toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
 		);
 	},
 
@@ -53,8 +68,8 @@ assign( PostFetcher.prototype, {
 			return;
 		}
 
-		toFetch.forEach( function( postKey ) {
-			postKey = postKey.toJS();
+		toFetch.forEach( function( key ) {
+			const postKey = fromKey( key );
 			const post = FeedPostStore.get( postKey );
 
 			if ( post && post._state !== 'minimal' ) {
@@ -73,7 +88,7 @@ assign( PostFetcher.prototype, {
 			);
 		}, this );
 
-		this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+		this.postsToFetch = new Set();
 	},
 } );
 
