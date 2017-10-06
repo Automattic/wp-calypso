@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -49,6 +49,7 @@ class RequiredPluginsInstallView extends Component {
 			toInstall: [],
 			workingOn: '',
 			stepIndex: 0,
+			numTotalSteps: 0,
 			requestedTransferStatus: false,
 		};
 		this.updateTimer = false;
@@ -60,6 +61,7 @@ class RequiredPluginsInstallView extends Component {
 		this.createUpdateTimer();
 
 		if ( isInSignup ) {
+			this.fetchAutomatedTransferStatus();
 			this.startSetup();
 		}
 	};
@@ -68,8 +70,11 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyUpdateTimer();
 	};
 
-	componentWillReceiveProps = nextProps => {
-		if ( nextProps.atomicStoreDoingTransfer && ! this.state.requestedTransferStatus ) {
+	fetchAutomatedTransferStatus() {
+		const { atomicStoreDoingTransfer, isInSignup } = this.props;
+		const { requestedTransferStatus } = this.state;
+
+		if ( ( atomicStoreDoingTransfer || isInSignup ) && ! requestedTransferStatus ) {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 
 			this.setState( {
@@ -79,6 +84,10 @@ class RequiredPluginsInstallView extends Component {
 				numTotalSteps: 6,
 			} );
 		}
+	}
+
+	componentWillReceiveProps = () => {
+		this.fetchAutomatedTransferStatus();
 	};
 
 	createUpdateTimer = () => {
@@ -113,7 +122,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doTransferStatusPolling = () => {
-		const { automatedTransferStatus } = this.props;
+		const { automatedTransferStatus, siteId } = this.props;
 
 		const { COMPLETE } = transferStates;
 
@@ -124,11 +133,13 @@ class RequiredPluginsInstallView extends Component {
 				stepIndex: 3,
 				numTotalSteps: 6,
 			} );
+
+			this.props.fetchPlugins( [ siteId ] );
 		}
 	};
 
 	doInitialization = () => {
-		const { site, sitePlugins, wporg } = this.props;
+		const { site, sitePlugins, wporg, isInSignup } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -185,7 +196,7 @@ class RequiredPluginsInstallView extends Component {
 
 		const toInstall = [];
 		const toActivate = [];
-		let numTotalSteps = 0;
+		let numTotalSteps = this.state.numTotalSteps;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
@@ -198,6 +209,12 @@ class RequiredPluginsInstallView extends Component {
 			}
 		}
 
+		let stepIndex = this.state.stepIndex;
+
+		if ( isInSignup ) {
+			stepIndex += numTotalSteps - this.state.numTotalSteps;
+		}
+
 		if ( toInstall.length ) {
 			this.setState( {
 				engineState: 'INSTALLING',
@@ -205,6 +222,7 @@ class RequiredPluginsInstallView extends Component {
 				toInstall,
 				workingOn: '',
 				numTotalSteps,
+				stepIndex,
 			} );
 			return;
 		}
@@ -215,6 +233,7 @@ class RequiredPluginsInstallView extends Component {
 				toActivate,
 				workingOn: '',
 				numTotalSteps,
+				stepIndex,
 			} );
 			return;
 		}
@@ -339,14 +358,9 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	getProgress = () => {
-		const { engineState, stepIndex, numTotalSteps } = this.state;
-		const { atomicStoreDoingTransfer } = this.props;
+		const { stepIndex, numTotalSteps } = this.state;
 
-		if ( ! atomicStoreDoingTransfer && 'INITIALIZING' === engineState ) {
-			return 0;
-		}
-
-		return ( stepIndex + 1 ) / ( numTotalSteps + 1 ) * 100;
+		return stepIndex / numTotalSteps * 100;
 	};
 
 	startSetup = () => {
@@ -444,7 +458,7 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID;
 
-	const sitePlugins = site ? getPlugins( state, siteId ) : [];
+	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
 	const siteOptions = getSiteOptions( state, siteId );
 
 	const atomicStoreDoingTransfer = get( siteOptions, [ 'atomic_store_doing_transfer' ], false );
@@ -468,6 +482,7 @@ function mapDispatchToProps( dispatch ) {
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
 			fetchAutomatedTransferStatus,
+			fetchPlugins,
 		},
 		dispatch
 	);
