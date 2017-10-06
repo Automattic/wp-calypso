@@ -495,9 +495,9 @@
 .jetpack-connect__plans-nav-buttons {
 	text-align: center;
 
-	.button.is-compact {
-		font-size: 14px;
-		font-weight: 500;
+	.button .gridicon {
+		padding-left: 4px;
+		margin-right: -5px;
 	}
 }
 
