@@ -11,9 +11,7 @@ import { isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	HAPPYCHAT_MESSAGE_TYPES
-} from 'state/happychat/constants';
+import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
 import {
 	receiveChatEvent,
 	requestChatTranscript,
@@ -27,12 +25,12 @@ import {
 
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
-const buildConnection = ( socket ) => isString( socket )
-	? new IO( socket ) // If socket is an URL, connect to server.
-	: socket; // If socket is not an url, use it directly. Useful for testing.
+const buildConnection = socket =>
+	isString( socket )
+		? new IO( socket ) // If socket is an URL, connect to server.
+		: socket; // If socket is not an url, use it directly. Useful for testing.
 
 class Connection {
-
 	init( url, dispatch, { signer_user_id, jwt, locale, groups, geo_location } ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
@@ -161,4 +159,4 @@ class Connection {
 	}
 }
 
-export default ( ) => new Connection( );
+export default () => new Connection();

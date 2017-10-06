@@ -125,7 +125,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 			return sign( { user, session_id } );
 		} )
 		.then( ( { jwt } ) => connection.init( url, dispatch, { jwt, ...happychatUser } ) )
-		.catch( e => debug( 'failed to start Happychat session ', e, e.stack ) );
+		.catch( e => debug( 'failed to start Happychat session', e, e.stack ) );
 };
 
 export const requestTranscript = ( connection, { dispatch } ) => {
