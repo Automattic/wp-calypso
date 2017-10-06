@@ -50,25 +50,16 @@ describe( 'receiveStatus', () => {
 	it( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
-		expect( dispatch ).to.have.callCount( 4 );
+		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
 	} );
 
-	it( 'should dispatch success notice if complete', () => {
-		const dispatch = sinon.spy();
-		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
-		expect( dispatch ).to.have.callCount( 4 );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: "You've successfully uploaded the hello-dolly plugin." },
-		} );
-	} );
-
 	it( 'should dispatch tracks event if complete', () => {
 		const dispatch = sinon.spy();
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
-		expect( dispatch ).to.have.callCount( 4 );
+		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
 			recordTracksEvent( 'calypso_automated_transfer_complete', {
 				context: 'plugin_upload',

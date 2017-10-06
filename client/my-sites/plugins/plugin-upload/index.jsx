@@ -38,7 +38,13 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+	getAutomatedTransferStatus,
+} from 'state/automated-transfer/selectors';
+import { successNotice } from 'state/notices/actions';
+import { transferStates } from 'state/automated-transfer/constants';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -62,6 +68,20 @@ class PluginUpload extends React.Component {
 
 		if ( nextProps.complete ) {
 			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		}
+
+		const { COMPLETE } = transferStates;
+
+		if (
+			this.props.automatedTransferStatus !== COMPLETE &&
+			nextProps.automatedTransferStatus === COMPLETE
+		) {
+			nextProps.successNotice(
+				nextProps.translate( "You've successfully uploaded the %(pluginId)s plugin.", {
+					args: { pluginId: nextProps.pluginId },
+				} ),
+				{ duration: 8000 }
+			);
 		}
 	}
 
@@ -181,7 +201,8 @@ export default connect(
 			isJetpackMultisite,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+			automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		};
 	},
-	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip }
+	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 )( localize( PluginUpload ) );

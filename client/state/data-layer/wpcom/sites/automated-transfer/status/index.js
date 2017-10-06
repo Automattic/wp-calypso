@@ -3,8 +3,6 @@
  *
  * @format
  */
-
-import { translate } from 'i18n-calypso';
 import { delay, noop } from 'lodash';
 
 /**
@@ -15,7 +13,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice } from 'state/notices/actions';
 import {
 	getAutomatedTransferStatus,
 	setAutomatedTransferStatus,
@@ -59,14 +56,6 @@ export const receiveStatus = (
 
 		// Update the now-atomic site to ensure plugin page displays correctly.
 		dispatch( requestSite( siteId ) );
-		dispatch(
-			successNotice(
-				translate( "You've successfully uploaded the %(pluginId)s plugin.", {
-					args: { pluginId },
-				} ),
-				{ duration: 8000 }
-			)
-		);
 	}
 };
 
