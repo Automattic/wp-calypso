@@ -62,7 +62,7 @@ const Layout = React.createClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
+	mixins: [ observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
 
 	propTypes: {
 		primary: PropTypes.element,
@@ -156,6 +156,7 @@ const Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
+				<SitesListNotices />
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }

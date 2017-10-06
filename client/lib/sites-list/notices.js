@@ -1,14 +1,17 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import React from 'react';
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import notices from 'notices';
 import SitesLog from 'lib/sites-list/log-store';
 import SitesListActions from 'lib/sites-list/actions';
 
-module.exports = {
+module.exports = React.createClass( {
 	getInitialState: function() {
 		return { notices: this.refreshSiteNotices() };
 	},
@@ -159,4 +162,8 @@ module.exports = {
 				}
 		}
 	},
-};
+
+	render: function() {
+		return null;
+	}
+} );
