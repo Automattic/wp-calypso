@@ -75,7 +75,7 @@ const minMaxSpend = {
 
 const expiryDate = {
 	name: 'expiryDate',
-	getText: ( translate ) => translate( 'Expiry date' ),
+	getText: ( translate ) => translate( 'Expiration date' ),
 	isChecked: ( promotion ) => {
 		const { date_expires_gmt } = promotion.coupon || {};
 		return 'undefined' !== typeof date_expires_gmt;
