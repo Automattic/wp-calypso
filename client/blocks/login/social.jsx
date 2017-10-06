@@ -27,6 +27,25 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
 
+function isLocalStorageFunctional() {
+	try {
+		window.localStorage.setItem( '__test_localStorage', 1 );
+		window.localStorage.removeItem( '__test_localStorage' );
+		return true;
+	} catch ( error ) {
+		return false;
+	}
+}
+
+function shouldUseRedirectFlow() {
+	// If calypso is loaded in a popup, we don't want to open a second popup for social login
+	// let's use the redirect flow instead in that case
+	const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+	// also disable the popup flow for old versions of safari private browsing (<v11)
+	// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
+	return isPopup || ! isLocalStorageFunctional();
+}
+
 class SocialLoginForm extends Component {
 	static propTypes = {
 		createSocialUser: PropTypes.func.isRequired,
@@ -135,13 +154,9 @@ class SocialLoginForm extends Component {
 
 	render() {
 		const { redirectTo } = this.props;
-		// If calypso is loaded in a popup, we don't want to open a second popup for social login
-		// let's use the redirect flow instead in that case.
-		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-		const loginCallbackRoute = login( { isNative: true, socialService: 'google' } );
-		const redirectUri = isPopup
+		const redirectUri = shouldUseRedirectFlow()
 			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
-					loginCallbackRoute }`
+					login( { isNative: true, socialService: 'google' } ) }`
 			: null;
 
 		return (
