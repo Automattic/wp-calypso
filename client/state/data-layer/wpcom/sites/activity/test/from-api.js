@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { itemsReducer, processItem } from '../from-api';
+import { processItem } from '../from-api';
 
 const SITE_ID = 123456;
 
@@ -44,25 +44,6 @@ const VALID_API_ITEM = deepFreeze( {
 	gridicon: 'posts',
 	activity_id: 'foobarbaz',
 	status: 'warning',
-} );
-
-describe( 'itemsReducer', () => {
-	it( 'should return a new array', () => {
-		const accumulator = [];
-		expect( itemsReducer( accumulator, VALID_API_ITEM ) ).to.not.equal( accumulator );
-	} );
-
-	it( 'should add items to array', () => {
-		expect( itemsReducer( [], VALID_API_ITEM ) ).to.be.an( 'array' ).that.is.not.empty;
-	} );
-
-	it( 'should append valid items to array', () => {
-		const existingItem = Object.create( null );
-		const result = itemsReducer( [ existingItem ], VALID_API_ITEM );
-		expect( result ).to.be.an( 'array' );
-		expect( result.length ).to.equal( 2 );
-		expect( result[ 0 ] ).to.equal( existingItem );
-	} );
 } );
 
 describe( 'processItem', () => {

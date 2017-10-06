@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { concat, get, head, reduce, split } from 'lodash';
+import { get, head, map, split } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,19 +25,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  */
 export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
-	return reduce( orderedItems, itemsReducer, [] );
-}
-
-/**
- * Reducer which recieves an array of processed items and an item to process and returns a new array
- * with the processed item appended if it is valid.
- *
- * @param  {array}  processedItems Array of processed items
- * @param  {object} item           API format item to process
- * @return {array}                 Array of items with current item appended if valid
- */
-export function itemsReducer( processedItems, item ) {
-	return concat( processedItems, processItem( item ) );
+	return map( orderedItems, processItem );
 }
 
 /**
