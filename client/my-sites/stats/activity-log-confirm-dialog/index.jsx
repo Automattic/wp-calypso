@@ -81,12 +81,14 @@ class ActivityLogConfirmDialog extends Component {
 						) }
 					</p>
 
-					<p>
+					<div className="activity-log-confirm-dialog__notice">
 						<Gridicon icon={ 'notice' } />
-						{ translate(
-							'This will remove all content and options created or changed since then.'
-						) }
-					</p>
+						<span className="activity-log-confirm-dialog__notice-content">
+							{ translate(
+								'This will remove all content and options created or changed since then.'
+							) }
+						</span>
+					</div>
 
 					<div className="activity-log-confirm-dialog__button-wrap">{ this.renderButtons() }</div>
 				</Card>
