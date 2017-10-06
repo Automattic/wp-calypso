@@ -108,7 +108,9 @@ class SocialLoginForm extends Component {
 	trackGoogleLogin = () => {
 		this.recordEvent( 'calypso_login_social_button_click' );
 
-		window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+		if ( this.props.redirectTo ) {
+			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+		}
 	};
 
 	renderText() {
