@@ -51,7 +51,7 @@ Here's how you would use it to vary the text attribute of a button:
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
-    buttonWording = this.translate( 'Start Free Trial' );
+    buttonWording = translate( 'Start Free Trial' );
 } else {
     // Note: Don't make this translatable because it's only visible to English-language users
     buttonWording = 'Begin Your Free Trial';
@@ -72,9 +72,9 @@ const userCountryCode = getGeoCountryShort( state );
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeTrial' ) {
-    buttonWording = this.translate( 'India Special: Start Free Trial' );
+    buttonWording = translate( 'India Special: Start Free Trial' );
 } else {
-   buttonWording = this.translate( 'Start Free Trial' );
+   buttonWording = translate( 'Start Free Trial' );
 }
 
 <Button text={ buttonWording } />

@@ -9,7 +9,7 @@ This component is used to represent a list `PluginItem`s, with a `PluginsListHea
 import PluginsList from 'my-sites/plugins/plugins-list';
 
 return <PluginsList
-		header={ this.translate( 'Plugins' ) }
+		header={ this.props.translate( 'Plugins' ) }
 		plugins={ this.getPlugins() }
 		sites={ this.props.sites }
 		selectedSite={ this.props.selectedSite }
@@ -23,4 +23,4 @@ return <PluginsList
 * `sites`: An object describing the sites list object.
 * `selectedSite`: An object or false of the single site.
 * `pluginUpdateCount`: Number of plugin updates that need to happen.
-* `isPlaceholder`: Weather to show a placeholder. 
+* `isPlaceholder`: Weather to show a placeholder.
