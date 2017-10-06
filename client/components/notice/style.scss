@@ -1,12 +1,14 @@
 .notice {
 	display: flex;
-		flex-direction: column;
+	flex-direction: column;
 	position: relative;
 	width: 100%;
 	margin-bottom: 24px;
-	background: lighten( $gray, 30 );
 	box-sizing: border-box;
 	animation: appear .3s ease-in-out;
+	background: $gray-dark;
+	color: $white;
+	border-radius: 3px;
 
 	@include breakpoint( ">480px" ) {
 		flex-direction: row;
@@ -14,57 +16,29 @@
 
 	// Success!
 	&.is-success {
-		background: $alert-green;
-		color: darken( $alert-green, 40 );
-
-		.notice__text a {
-			color: darken( $alert-green, 43 );
-		}
-
-		.notice__dismiss {
-			color: darken( $alert-green, 40 );
+		.notice__icon-wrapper {
+			background: $alert-green;
 		}
 	}
 
 	// Warning
 	&.is-warning {
-		background: $alert-yellow;
-		color: darken( $alert-yellow, 48 );
-
-		.notice__text a {
-			color: darken( $alert-yellow, 51 );
-		}
-
-		.notice__dismiss {
-			color: darken( $alert-yellow, 48 );
+		.notice__icon-wrapper {
+			background: $alert-yellow;
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
-		background: $alert-red;
-		color: darken( $alert-red, 48 );
-
-		.notice__text a {
-			color: darken( $alert-red, 51 );
-		}
-
-		.notice__dismiss {
-			color: darken( $alert-red, 48 );
+		.notice__icon-wrapper {
+			background: $alert-red;
 		}
 	}
 
 	// General notice
 	&.is-info {
-		background: $blue-medium;
-		color: darken( $blue-medium, 35 );
-
-		.notice__text a {
-			color: darken( $blue-medium, 38 );
-		}
-
-		.notice__dismiss {
-			color: darken( $blue-medium, 35 );
+		.notice__icon-wrapper {
+			background: $blue-medium;
 		}
 	}
 
@@ -82,22 +56,15 @@
 	}
 }
 
-.notice__icon {
-	position: absolute;
-		top: 0;
-		left: 0;
+.notice__icon-wrapper {
+	background: $gray-text-min;
+	color: $white;
 	display: flex;
-		flex-shrink: 0;
-	width: 18px;
-	height: 18px;
-	padding: 14px 16px;
-
-	@include breakpoint( ">480px" ) {
-		position: relative;
-		padding: 13px 0px 13px 16px;
-		width: 24px;
-		height: 24px;
-	}
+	align-items: center;
+	width: 47px;
+	justify-content: center;
+	border-radius: 3px 0 0 3px;
+	flex-shrink: 0;
 }
 
 .notice__content {
@@ -117,6 +84,7 @@
 
 	a {
 		text-decoration: underline;
+		color: $white;
 	}
 
 	ul {
@@ -153,7 +121,6 @@
 		flex-shrink: 0;
 	padding: 14px 16px;
 	cursor: pointer;
-	color: $gray;
 
 	.gridicon {
 		width: 18px;
@@ -170,18 +137,12 @@
 		}
 	}
 
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-	}
-
 	.notice & {
-		color: $gray;
-		opacity: 0.85;
+		color: lighten( $gray, 10% );
 
 		&:hover,
 		&:focus {
-			opacity: 1;
+			color: $white;
 		}
 	}
 }
@@ -195,13 +156,12 @@ a.notice__action {
 	box-sizing: border-box;
 	margin: 0 8px 8px 8px;
 	padding: 8px;
-	border-radius: 3px;
 	cursor: pointer;
 	font-size: 12px;
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	background: lighten( $gray, 28 );
+	color: lighten( $gray, 10% );
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;
@@ -218,30 +178,8 @@ a.notice__action {
 		}
 	}
 
-	.is-success &,
-	.is-error &,
-	.is-warning &,
-	.is-info & {
+	&:hover {
 		color: $white;
-	}
-
-	.is-success & {
-		background: lighten( $alert-green, 20 );
-		color: darken( $alert-green, 30 );
-	}
-
-	.is-error & {
-		background: lighten( $alert-red, 5 );
-		color: darken( $alert-red, 40 );
-	}
-
-	.is-warning & {
-		background: lighten( $alert-yellow, 10 );
-		color: darken( $alert-yellow, 40 );
-	}
-
-	.is-info & {
-		background: darken( $blue-wordpress, 15 );
 	}
 
 	.gridicon {
@@ -249,11 +187,6 @@ a.notice__action {
 		opacity: 0.7;
 		width: 18px;
 		height: 18px;
-	}
-
-	&:hover,
-	&:focus {
-		background: rgba( 255, 255, 255, 0.2 );
 	}
 }
 
@@ -263,20 +196,13 @@ a.notice__action {
 		flex-wrap: nowrap;
 		flex-direction: row;
 	width: auto;
-	border-radius: 2px;
+	border-radius: 3px;
 	min-height: 20px;
 	margin: 0;
 	padding: 0;
 	text-decoration: none;
 	text-transform: none;
 	vertical-align: middle;
-
-	&.is-success,
-	&.is-error,
-	&.is-warning,
-	&.is-info {
-		color: $white;
-	}
 
 	.notice__content {
 		font-size: 12px;
@@ -287,15 +213,13 @@ a.notice__action {
 		line-height: 1;
 	}
 
-	.notice__icon {
-		position: relative;
-		align-self: center;
-		flex-shrink: 0;
-		margin: 0 0 0 8px;
-		padding: 0;
-		width: 18px;
-		height: 18px;
-		vertical-align: middle;
+	.notice__icon-wrapper {
+		width: 24px;
+
+		.notice__icon {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	.notice__dismiss {
