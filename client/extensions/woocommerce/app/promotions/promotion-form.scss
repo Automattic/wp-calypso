@@ -51,6 +51,10 @@
 			margin-right: 0;
 		}
 	}
+	
+	.form-select {
+		width: 100%;
+	}
 
 	@include breakpoint( "<960px" ) {
 		flex-direction: column;
@@ -64,11 +68,14 @@
 			width: 100%;
 		}
 	}
+}
 
+.promotions__promotion-form-applies-to {
 	.form-select {
-		@include breakpoint( ">960px" ) {
-			max-width: 200px;
-		}
+		width: 100%;
 	}
 }
 
+.promotions__promotion-form-condition .form-label {
+	padding-left: 26px;
+}
