@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 

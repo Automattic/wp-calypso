@@ -7,7 +7,7 @@
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import page from 'page';
 
 /**

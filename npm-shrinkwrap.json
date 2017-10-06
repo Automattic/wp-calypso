@@ -3,7 +3,7 @@
   "version": "0.17.0",
   "dependencies": {
     "@types/node": {
-      "version": "6.0.88",
+      "version": "6.0.89",
       "dev": true
     },
     "5to6-codemod": {
@@ -887,6 +887,9 @@
     "chai-enzyme": {
       "version": "0.5.2",
       "dev": true
+    },
+    "chain-function": {
+      "version": "1.0.0"
     },
     "chalk": {
       "version": "1.0.0",
@@ -3075,6 +3078,9 @@
     },
     "immediate": {
       "version": "3.0.6"
+    },
+    "immutability-helper": {
+      "version": "2.4.0"
     },
     "immutable": {
       "version": "3.7.6"
@@ -5578,18 +5584,12 @@
     "react-addons-create-fragment": {
       "version": "15.4.0"
     },
-    "react-addons-css-transition-group": {
-      "version": "15.4.0"
-    },
     "react-addons-linked-state-mixin": {
       "version": "15.4.0"
     },
     "react-addons-test-utils": {
       "version": "15.4.0",
       "dev": true
-    },
-    "react-addons-update": {
-      "version": "15.4.0"
     },
     "react-click-outside": {
       "version": "2.1.0"
@@ -5873,6 +5873,14 @@
         "whatwg-url": {
           "version": "3.1.0",
           "dev": true
+        }
+      }
+    },
+    "react-transition-group": {
+      "version": "1.2.1",
+      "dependencies": {
+        "dom-helpers": {
+          "version": "3.2.1"
         }
       }
     },
@@ -6784,7 +6792,7 @@
       "version": "2.2.1"
     },
     "tar-fs": {
-      "version": "1.15.3"
+      "version": "1.16.0"
     },
     "tar-stream": {
       "version": "1.5.4",
@@ -7154,6 +7162,9 @@
     "walker": {
       "version": "1.0.7",
       "dev": true
+    },
+    "warning": {
+      "version": "3.0.0"
     },
     "watch": {
       "version": "0.18.0",

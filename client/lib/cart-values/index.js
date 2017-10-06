@@ -5,7 +5,7 @@
  */
 
 import { extend } from 'lodash';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
 import config from 'config';
 
