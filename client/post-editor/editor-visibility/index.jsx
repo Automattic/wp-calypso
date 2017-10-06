@@ -243,11 +243,16 @@ const EditorVisibility = React.createClass( {
 	},
 
 	renderPrivacyDropdown( visibility ) {
+		const publicLabelPublicSite = this.props.translate( 'Public', {
+			context: 'Editor: Radio label to set post visible to public',
+		} );
+		const publicLabelPrivateSite = this.props.translate( 'Site Members', {
+			context:
+				'Editor: Radio label to set post visible to public on a private site so that only site members can see it',
+		} );
 		const dropdownItems = [
 			{
-				label: this.props.translate( 'Public', {
-					context: 'Editor: Radio label to set post visible to public',
-				} ),
+				label: this.props.isPrivateSite ? publicLabelPrivateSite : publicLabelPublicSite,
 				icon: <Gridicon icon="globe" size={ 18 } />,
 				value: 'public',
 				onClick: () => {
@@ -255,8 +260,9 @@ const EditorVisibility = React.createClass( {
 				},
 			},
 			{
-				label: this.props.translate( 'Private', {
-					context: 'Editor: Radio label to set post to private',
+				label: this.props.translate( 'Admins and Editors', {
+					context:
+						'Editor: Radio label to set post to private so that only admins and editors can see it',
 				} ),
 				icon: <Gridicon icon="user" size={ 18 } />,
 				value: 'private',
