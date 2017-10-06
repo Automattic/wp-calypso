@@ -4,6 +4,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -13,7 +15,9 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
+import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class OrderPaymentCard extends Component {
 	static propTypes = {
@@ -26,6 +30,8 @@ class OrderPaymentCard extends Component {
 			total: PropTypes.string.isRequired,
 		} ),
 		siteId: PropTypes.number.isRequired,
+		translate: PropTypes.func.isRequired,
+		updateOrder: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -72,7 +78,7 @@ class OrderPaymentCard extends Component {
 		const { order, translate } = this.props;
 		if ( 'refunded' === order.status ) {
 			return null;
-		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
+		} else if ( isOrderWaitingPayment( order.status ) ) {
 			return <Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>;
 		}
 		return <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>;
@@ -114,4 +120,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default localize( OrderPaymentCard );
+export default connect( null, dispatch => bindActionCreators( { updateOrder }, dispatch ) )(
+	localize( OrderPaymentCard )
+);

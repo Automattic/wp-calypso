@@ -36,7 +36,6 @@ class OrderPaymentCard extends Component {
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
 			id: PropTypes.number.isRequired,
-			payment_method_title: PropTypes.string.isRequired,
 			refunds: PropTypes.array.isRequired,
 			status: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
@@ -45,6 +44,7 @@ class OrderPaymentCard extends Component {
 		sendRefund: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		toggleDialog: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 	};
 
 	state = {
