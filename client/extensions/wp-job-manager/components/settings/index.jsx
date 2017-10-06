@@ -13,7 +13,9 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
+import { MinPluginVersion } from '../../constants';
 import DocumentHead from 'components/data/document-head';
+import ExtensionRedirect from 'blocks/extension-redirect';
 import Main from 'components/main';
 import Navigation from '../navigation';
 import QuerySettings from '../data/query-settings';
@@ -40,6 +42,11 @@ class Settings extends Component {
 
 		return (
 			<Main className={ mainClassName }>
+				<ExtensionRedirect
+					minimumVersion={ MinPluginVersion }
+					pluginId="wp-job-manager"
+					siteId={ siteId }
+				/>
 				<SetupRedirect siteId={ siteId } />
 				<QuerySettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />

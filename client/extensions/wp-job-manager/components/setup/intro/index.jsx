@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from '../constants';
+import { SetupPath, Steps } from '../../../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
