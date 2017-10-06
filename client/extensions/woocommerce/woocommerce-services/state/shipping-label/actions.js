@@ -71,7 +71,7 @@ export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING, orderId, siteId, isFetching: true } );
 
 	api.get( siteId, api.url.orderLabels( orderId ) )
-		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
+		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled } ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 				siteId,
@@ -82,6 +82,7 @@ export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 				storeOptions,
 				paymentMethod,
 				numPaymentMethods,
+				enabled,
 			} );
 		} )
 		.catch( ( error ) => {

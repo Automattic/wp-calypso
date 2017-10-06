@@ -11,9 +11,10 @@ import { isEmpty, mapValues } from 'lodash';
  * @param {Object} storeOptions store options (weight/dimensions units etc)
  * @param {Number} paymentMethod selected payment method
  * @param {Number} numPaymentMethods number of payments methods stored with the jetpack master account
+ * @param {Bool} enabled checks if labels were enabled in the settings
  * @returns {Object} labels Redux state
  */
-export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods ) => {
+export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled ) => {
 	if ( ! formData ) {
 		return {
 			loaded: false,
@@ -30,6 +31,7 @@ export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, n
 		loaded: true,
 		isFetching: false,
 		error: false,
+		enabled,
 		refreshedLabelStatus: false,
 		labels: labelsData || [],
 		paperSize,

@@ -20,6 +20,11 @@ export const isLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
 	return shippingLabel && shippingLabel.loaded;
 };
 
+export const isEnabled = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel && shippingLabel.enabled;
+};
+
 export const isFetching = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.isFetching;

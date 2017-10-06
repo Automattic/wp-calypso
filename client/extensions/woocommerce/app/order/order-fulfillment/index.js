@@ -31,6 +31,7 @@ import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shippin
 import {
 	getLabelsCount,
 	getSelectedPaymentMethod,
+	isEnabled as areLabelsEnabled,
 	isLoaded as areLabelsLoaded,
  } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
@@ -132,11 +133,11 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { labelsLoaded, order, site, translate, hasLabelsPaymentMethod } = this.props;
+		const { labelsLoaded, labelsEnabled, order, site, translate, hasLabelsPaymentMethod } = this.props;
 		const isShippable = this.isShippable( order );
 
 		if ( ( ! wcsEnabled && ! isShippable ) ||
-			( labelsLoaded && ! hasLabelsPaymentMethod ) ) {
+			( labelsLoaded && ( ! hasLabelsPaymentMethod || ! labelsEnabled ) ) ) {
 			return null;
 		}
 
@@ -247,6 +248,7 @@ export default connect(
 
 		return {
 			labelsLoaded,
+			labelsEnabled: labelsLoaded && areLabelsEnabled( state, order.id, site.ID ),
 			labelsCount: labelsLoaded ? getLabelsCount( state, order.id, site.ID ) : 0,
 			hasLabelsPaymentMethod,
 		};
