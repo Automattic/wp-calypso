@@ -9,6 +9,7 @@ import React from 'react';
  */
 import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
+import ConversationsIntro from './intro';
 
 export default function( props ) {
 	return (
@@ -22,6 +23,7 @@ export default function( props ) {
 			trackScrollPage={ props.trackScrollPage }
 		>
 			<DocumentHead title={ props.title } />
+			<ConversationsIntro />
 		</Stream>
 	);
 }
