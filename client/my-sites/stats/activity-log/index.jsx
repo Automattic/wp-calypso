@@ -134,46 +134,23 @@ class ActivityLog extends Component {
 	handleRequestRestore = ( activityId, from ) => {
 		const { recordTracksEvent, rewindRequestRestore, siteId } = this.props;
 
-		recordTracksEvent( 'calypso_activitylog_restore_request', {
-			from,
-			activityId,
-		} );
+		recordTracksEvent( 'calypso_activitylog_restore_request', { from } );
 		rewindRequestRestore( siteId, activityId );
 	};
 
 	handleRestoreDialogClose = () => {
-		const {
-			recordTracksEvent,
-			requestedRestoreActivityId,
-			rewindRequestDismiss,
-			siteId,
-		} = this.props;
-		recordTracksEvent( 'calypso_activitylog_restore_cancel', {
-			activityId: requestedRestoreActivityId,
-		} );
+		const { recordTracksEvent, rewindRequestDismiss, siteId } = this.props;
+		recordTracksEvent( 'calypso_activitylog_restore_cancel' );
 		rewindRequestDismiss( siteId );
 	};
 
 	handleRestoreDialogConfirm = () => {
-		const {
-			recordTracksEvent,
-			requestedRestoreActivity,
-			requestedRestoreActivityId,
-			rewindRestore,
-			siteId,
-		} = this.props;
-		const { activityTs } = requestedRestoreActivity;
+		const { recordTracksEvent, requestedRestoreActivity, rewindRestore, siteId } = this.props;
+		const { activityTs: timestamp } = requestedRestoreActivity;
 
-		recordTracksEvent( 'calypso_activitylog_restore_confirm', {
-			activityId: requestedRestoreActivityId,
-		} );
-		debug(
-			'Restore requested for site %d after activity %s, found activity %o',
-			this.props.siteId,
-			requestedRestoreActivityId,
-			requestedRestoreActivity
-		);
-		rewindRestore( siteId, activityTs );
+		debug( 'Restore requested for after activity %o', requestedRestoreActivity );
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', { timestamp } );
+		rewindRestore( siteId, timestamp );
 	};
 
 	/**
