@@ -12,7 +12,7 @@ import { forEach, map, mapValues, values } from 'lodash';
  */
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
-import ContactFormView from './views/contact-form';
+import * as ContactFormView from './views/contact-form';
 import * as VideoView from './views/video';
 import SimplePaymentsView from './views/simple-payments';
 import { isEnabled } from 'config';

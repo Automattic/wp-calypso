@@ -14,41 +14,41 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 import shortcodeUtils from 'lib/shortcode';
 import renderField from './preview-fields';
 
-export default localize(
-	class extends React.Component {
-		static displayName = 'ContactForm';
+const ContactForm = localize(
+	( { content, translate } ) => {
+		const { fields } = deserialize( content );
 
-		static match( content ) {
-			const match = shortcodeUtils.next( 'contact-form', content );
-
-			if ( match ) {
-				return {
-					index: match.index,
-					content: match.content,
-					options: {
-						shortcode: match.shortcode,
-					},
-				};
-			}
-		}
-
-		static serialize( content ) {
-			return encodeURIComponent( content );
-		}
-
-		static edit( editor, content ) {
-			editor.execCommand( 'wpcomContactForm', content );
-		}
-
-		render() {
-			const { fields } = deserialize( this.props.content );
-
-			return (
-				<div className="wpview-content wpview-type-contact-form">
-					{ [].concat( fields ).map( renderField ) }
-					<button disabled>{ this.props.translate( 'Submit' ) }</button>
-				</div>
-			);
-		}
+		return (
+			<div className="wpview-content wpview-type-contact-form">
+				{ [].concat( fields ).map( renderField ) }
+				<button disabled>{ translate( 'Submit' ) }</button>
+			</div>
+		);
 	}
 );
+
+export function match( content ) {
+	const m = shortcodeUtils.next( 'contact-form', content );
+
+	if ( m ) {
+		return {
+			index: m.index,
+			content: m.content,
+			options: {
+				shortcode: m.shortcode,
+			},
+		};
+	}
+}
+
+export function serialize( content ) {
+	return encodeURIComponent( content );
+}
+
+export function edit( editor, content ) {
+	editor.execCommand( 'wpcomContactForm', content );
+}
+
+export function getComponent() {
+	return ContactForm;
+}
