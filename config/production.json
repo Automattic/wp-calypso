@@ -30,6 +30,8 @@
 		"help/courses": true,
 		"jetpack/activity-log": true,
 		"jetpack/api-cache": false,
+		"jetpack/google-analytics-anonymize-ip": false,
+		"jetpack/google-analytics-for-stores": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

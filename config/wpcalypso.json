@@ -38,6 +38,8 @@
 		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
 		"jetpack/happychat": true,
+		"jetpack/google-analytics-anonymize-ip": true,
+		"jetpack/google-analytics-for-stores": true,
 		"jetpack_core_inline_update": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
