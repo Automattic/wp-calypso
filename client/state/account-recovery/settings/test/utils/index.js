@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { useNock } from 'test/helpers/use-nock';
 
 export const generateSuccessAndFailedTestsForThunk = ( {
@@ -9,19 +12,14 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	thunk,
 	preCondition,
 	postConditionSuccess,
-	postConditionFailed
+	postConditionFailed,
 } ) => {
-	const {
-		method,
-		endpoint,
-		successResponse,
-		errorResponse,
-	} = nockSettings;
+	const { method, endpoint, successResponse, errorResponse } = nockSettings;
 
 	const apiUrl = 'https://public-api.wordpress.com:443';
 
 	describe( testBaseName + ' success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( apiUrl )
 				[ method ]( endpoint )
 				.reply( 200, successResponse );
@@ -37,7 +35,7 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	} );
 
 	describe( testBaseName + ' fail', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( apiUrl )
 				[ method ]( endpoint )
 				.reply( errorResponse.status, errorResponse );

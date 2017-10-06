@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { pick } from 'lodash';
 
@@ -16,10 +19,7 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const CacheLocation = ( {
-	fields: {
-		cache_path = '',
-		default_cache_path = '',
-	},
+	fields: { cache_path = '', default_cache_path = '' },
 	handleChange,
 	handleSubmitForm,
 	isReadOnly,
@@ -32,15 +32,8 @@ const CacheLocation = ( {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Cache Location' ) }>
-				<Button
-					compact
-					primary
-					disabled={ isDisabled }
-					onClick={ handleSubmitForm }>
-					{ isSaving
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
+				<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
+					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -49,15 +42,16 @@ const CacheLocation = ( {
 						<FormTextInput
 							disabled={ isDisabled }
 							onChange={ handleChange( 'cache_path' ) }
-							value={ cache_path } />
+							value={ cache_path }
+						/>
 						<FormSettingExplanation>
 							{ translate(
 								'Change the location of your cache files. The default is WP_CONTENT_DIR . ' +
-								'/cache/ which translates to {{cacheLocation/}}',
+									'/cache/ which translates to {{cacheLocation/}}',
 								{
 									components: {
 										cacheLocation: <span>{ default_cache_path }</span>,
-									}
+									},
 								}
 							) }
 						</FormSettingExplanation>
@@ -69,10 +63,7 @@ const CacheLocation = ( {
 };
 
 const getFormSettings = settings => {
-	return pick( settings, [
-		'cache_path',
-		'default_cache_path',
-	] );
+	return pick( settings, [ 'cache_path', 'default_cache_path' ] );
 };
 
 export default WrapSettingsForm( getFormSettings )( CacheLocation );

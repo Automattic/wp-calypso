@@ -1,14 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	identity,
-	includes,
-	noop,
-	pull,
-} from 'lodash';
+import { identity, includes, noop, pull } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -38,7 +36,7 @@ export class MediaLibraryFilterBar extends Component {
 		isConnected: PropTypes.bool,
 	};
 
-	static defaultProps ={
+	static defaultProps = {
 		filter: '',
 		basePath: '/media',
 		onFilterChange: noop,
@@ -113,19 +111,17 @@ export class MediaLibraryFilterBar extends Component {
 
 		return (
 			<SectionNavTabs>
-				{
-					tabs.map( filter =>
-						<FilterItem
-							key={ 'filter-tab-' + filter }
-							value={ filter }
-							selected={ this.props.filter === filter }
-							onChange={ this.changeFilter }
-							disabled={ this.isFilterDisabled( filter ) }
-						>
-							{ this.getFilterLabel( filter ) }
-						</FilterItem>
-					)
-				}
+				{ tabs.map( filter => (
+					<FilterItem
+						key={ 'filter-tab-' + filter }
+						value={ filter }
+						selected={ this.props.filter === filter }
+						onChange={ this.changeFilter }
+						disabled={ this.isFilterDisabled( filter ) }
+					>
+						{ this.getFilterLabel( filter ) }
+					</FilterItem>
+				) ) }
 			</SectionNavTabs>
 		);
 	}
@@ -147,7 +143,8 @@ export class MediaLibraryFilterBar extends Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.search }
 				placeholder={ this.getSearchPlaceholderText() }
-				delaySearch={ true } />
+				delaySearch={ true }
+			/>
 		);
 	}
 

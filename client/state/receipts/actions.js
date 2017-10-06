@@ -1,52 +1,55 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { createReceiptObject } from './assembler';
-import {
-	RECEIPT_FETCH,
-	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED
-} from 'state/action-types';
+import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
 import wpcom from 'lib/wp';
 
 export function fetchReceipt( receiptId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: RECEIPT_FETCH,
-			receiptId
+			receiptId,
 		} );
 
 		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().me().getReceipt( receiptId, ( error, data ) => {
-				if ( error ) {
-					const errorMessage = error.message || i18n.translate( 'There was a problem retrieving your receipt.' );
+			wpcom
+				.undocumented()
+				.me()
+				.getReceipt( receiptId, ( error, data ) => {
+					if ( error ) {
+						const errorMessage =
+							error.message || i18n.translate( 'There was a problem retrieving your receipt.' );
 
-					dispatch( {
-						type: RECEIPT_FETCH_FAILED,
-						receiptId,
-						error: errorMessage
-					} );
+						dispatch( {
+							type: RECEIPT_FETCH_FAILED,
+							receiptId,
+							error: errorMessage,
+						} );
 
-					reject( errorMessage );
-				} else {
-					dispatch( fetchReceiptCompleted( receiptId, data ) );
+						reject( errorMessage );
+					} else {
+						dispatch( fetchReceiptCompleted( receiptId, data ) );
 
-					resolve();
-				}
-			} );
+						resolve();
+					}
+				} );
 		} );
 	};
-};
+}
 
 export function fetchReceiptCompleted( receiptId, data ) {
 	return {
 		type: RECEIPT_FETCH_COMPLETED,
 		receiptId,
-		receipt: createReceiptObject( data )
+		receipt: createReceiptObject( data ),
 	};
 }

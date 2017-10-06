@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, Component } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -18,23 +22,14 @@ import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import TermsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import {
-	assignSiteVoucher as assignVoucher
-} from 'state/sites/vouchers/actions';
+import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
 import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
-import {
-	getVouchersBySite,
-	getGoogleAdCredits
-} from 'state/sites/vouchers/selectors';
+import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 
-const [
-	INITIAL_STEP,
-	TERMS_AND_CONDITIONS,
-	CODE_REDEEMED
-] = [
+const [ INITIAL_STEP, TERMS_AND_CONDITIONS, CODE_REDEEMED ] = [
 	'INITIAL_STEP',
 	'TERMS_AND_CONDITIONS',
-	'CODE_REDEEMED'
+	'CODE_REDEEMED',
 ];
 
 class GoogleVoucherDetails extends Component {
@@ -51,7 +46,7 @@ class GoogleVoucherDetails extends Component {
 		this.changeStep = debounce( this.changeStep, 300 );
 
 		this.state = {
-			step: INITIAL_STEP
+			step: INITIAL_STEP,
 		};
 	}
 
@@ -77,7 +72,10 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onGenerateCode() {
-		analytics.ga.recordEvent( 'calypso_plans_google_voucher_generate_click', 'Cliked Generate Code Button' );
+		analytics.ga.recordEvent(
+			'calypso_plans_google_voucher_generate_click',
+			'Cliked Generate Code Button'
+		);
 
 		this.changeStep();
 	}
@@ -87,18 +85,24 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onAcceptTermsAndConditions() {
-		analytics.ga.recordEvent( 'calypso_plans_google_voucher_toc_accept_click', 'Cliked Agree Button' );
+		analytics.ga.recordEvent(
+			'calypso_plans_google_voucher_toc_accept_click',
+			'Cliked Agree Button'
+		);
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
 		this.setState( { step: CODE_REDEEMED } );
 	}
 
 	onSetupGoogleAdWordsLink() {
-		analytics.ga.recordEvent( 'calypso_plans_google_voucher_setup_click', 'Cliked Setup Goole AdWords Button' );
+		analytics.ga.recordEvent(
+			'calypso_plans_google_voucher_setup_click',
+			'Cliked Setup Goole AdWords Button'
+		);
 	}
 
 	changeStep() {
-		const newStep = ( this.state.step === INITIAL_STEP ) ? TERMS_AND_CONDITIONS : CODE_REDEEMED;
+		const newStep = this.state.step === INITIAL_STEP ? TERMS_AND_CONDITIONS : CODE_REDEEMED;
 		this.setState( { step: newStep } );
 	}
 
@@ -112,10 +116,14 @@ class GoogleVoucherDetails extends Component {
 			<div className="google-voucher__initial-step">
 				<PurchaseButton
 					onClick={ this.onGenerateCode }
-					text={ this.props.translate( 'Generate code' ) } />
+					text={ this.props.translate( 'Generate code' ) }
+				/>
 
 				<TipInfo
-					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate(
+						'Offer valid in US after spending the first $25 on Google AdWords.'
+					) }
+				/>
 			</div>
 		);
 	}
@@ -130,7 +138,8 @@ class GoogleVoucherDetails extends Component {
 				<div className="google-voucher-dialog__header">
 					<img
 						src="/calypso/images/google-vouchers/google-voucher.svg"
-						className="google-voucher-dialog__header__image" />
+						className="google-voucher-dialog__header__image"
+					/>
 
 					<div className="google-voucher-dialog__header__text">
 						<h1>{ this.props.translate( 'Terms of Service' ) }</h1>
@@ -143,10 +152,7 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<div className="google-voucher-dialog__footer">
-					<Button
-						className="google-vouchers-dialog__cancel-button"
-						onClick={ this.onDialogCancel }
-					>
+					<Button className="google-vouchers-dialog__cancel-button" onClick={ this.onDialogCancel }>
 						{ this.props.translate( 'Cancel' ) }
 					</Button>
 
@@ -166,25 +172,25 @@ class GoogleVoucherDetails extends Component {
 		const { code } = this.getVoucher();
 		return (
 			<div className="google-voucher">
-				<ClipboardButtonInput
-					value={ code }
-					disabled= { ! code } />
+				<ClipboardButtonInput value={ code } disabled={ ! code } />
 
 				<div className="google-voucher-code">
 					<p className="form-setting-explanation">
-						{
-							this.props.translate( 'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
-								{
-									components: {
-										a: <a
+						{ this.props.translate(
+							'Copy this unique, one-time use code to your clipboard and setup your Google AdWords account. {{a}}View help guide{{/a}}',
+							{
+								components: {
+									a: (
+										<a
 											className="google-voucher-code__help-link"
 											href="https://en.support.wordpress.com/google-adwords-credit/"
 											target="_blank"
-											rel="noopener noreferrer" />
-									}
-								}
-							)
-						}
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</p>
 
 					<PurchaseButton
@@ -192,14 +198,17 @@ class GoogleVoucherDetails extends Component {
 						href="https://www.google.com/adwords/"
 						target="_blank"
 						rel="noopener noreferrer"
-						onClick= { this.onSetupGoogleAdWordsLink }
-						text={ this.props.translate( 'Setup Google AdWords' ) } />
-
+						onClick={ this.onSetupGoogleAdWordsLink }
+						text={ this.props.translate( 'Setup Google AdWords' ) }
+					/>
 				</div>
 
 				<TipInfo
 					className="google-voucher-advice"
-					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate(
+						'Offer valid in US after spending the first $25 on Google AdWords.'
+					) }
+				/>
 			</div>
 		);
 	}
@@ -228,22 +237,23 @@ class GoogleVoucherDetails extends Component {
 					id="google-credits"
 					icon="tag"
 					title={ translate( 'Google AdWords credit' ) }
-					description={ translate( 'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.', {
-						components: {
-							strong: <strong />
+					description={ translate(
+						'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.',
+						{
+							components: {
+								strong: <strong />,
+							},
 						}
-					} ) }
-					body={ body } />
+					) }
+					body={ body }
+				/>
 			</div>
 		);
 	}
 }
 
 GoogleVoucherDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [
-		PropTypes.bool,
-		PropTypes.object
-	] ).isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 	googleAdCredits: PropTypes.array,
 };
 
@@ -252,7 +262,7 @@ export default connect(
 		const site = props.selectedSite;
 		return {
 			vouchers: getVouchersBySite( state, site ),
-			googleAdCredits: getGoogleAdCredits( state, site )
+			googleAdCredits: getGoogleAdCredits( state, site ),
 		};
 	},
 	{ assignVoucher }

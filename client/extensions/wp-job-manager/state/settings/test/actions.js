@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
@@ -11,12 +14,7 @@ import {
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
-import {
-	fetchError,
-	fetchSettings,
-	saveSettings,
-	updateSettings,
-} from '../actions';
+import { fetchError, fetchSettings, saveSettings, updateSettings } from '../actions';
 
 describe( 'actions', () => {
 	const siteId = 123456;

@@ -1,8 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' );
+
+import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
 
 /**
  * Internal dependencies
@@ -13,10 +16,10 @@ var LocaleSuggestionActions = {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_LOCALE_SUGGESTIONS',
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
-	}
+	},
 };
 
 module.exports = LocaleSuggestionActions;

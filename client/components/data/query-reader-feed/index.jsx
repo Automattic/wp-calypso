@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -19,7 +23,7 @@ class QueryReaderFeed extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldFeedBeFetched || ( this.props.feedId === nextProps.feedId ) ) {
+		if ( ! nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId ) {
 			return;
 		}
 
@@ -34,23 +38,26 @@ class QueryReaderFeed extends Component {
 QueryReaderFeed.propTypes = {
 	feedId: PropTypes.number,
 	shouldFeedBeFetched: PropTypes.bool,
-	requestFeed: PropTypes.func
+	requestFeed: PropTypes.func,
 };
 
 QueryReaderFeed.defaultProps = {
-	requestFeed: () => {}
+	requestFeed: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const { feedId } = ownProps;
 		return {
-			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId )
+			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestFeed
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestFeed,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderFeed );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { noop } from 'lodash';
 
 const WAIT_INITIAL = 1; // initial wait in milliseconds
@@ -18,12 +21,15 @@ const wait = ( { condition, consequence, delay = 0, onError = noop } ) => {
 		return;
 	}
 
-	window.setTimeout( wait.bind( null, {
-		condition,
-		consequence,
-		delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
-		onError,
-	} ), delay );
+	window.setTimeout(
+		wait.bind( null, {
+			condition,
+			consequence,
+			delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
+			onError,
+		} ),
+		delay
+	);
 };
 
 export default wait;

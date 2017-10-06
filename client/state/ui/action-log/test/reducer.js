@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,12 +8,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useFakeTimers } from 'test/helpers/use-sinon';
-import {
-	ROUTE_SET,
-	COMMENTS_LIKE,
-} from 'state/action-types';
 import reducer from '../reducer';
+import { ROUTE_SET, COMMENTS_LIKE } from 'state/action-types';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useFakeTimers( 1337 );
@@ -19,7 +18,7 @@ describe( 'reducer', () => {
 	it( 'should default to an empty list', () => {
 		const state = reducer( undefined, {} );
 
-		expect( state ).to.eql( [] );
+		expect( state ).to.eql( [] );
 	} );
 
 	it( 'should add actions to the log', () => {
@@ -62,26 +61,34 @@ describe( 'reducer', () => {
 			{
 				type: ROUTE_SET,
 				path: '/themes/77203074',
-				meta: { analytics: [ {
-					type: 'ANALYTICS_EVENT_RECORD',
-					payload: {
-						service: 'tracks',
-						name: 'calypso_themeshowcase_theme_click',
-						properties: {}
-					}
-				} ] }
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								service: 'tracks',
+								name: 'calypso_themeshowcase_theme_click',
+								properties: {},
+							},
+						},
+					],
+				},
 			},
 			{
 				type: COMMENTS_LIKE,
 				path: '/menus/foobar',
-				meta: { analytics: [ {
-					type: 'ANALYTICS_EVENT_RECORD',
-					payload: {
-						service: 'tracks',
-						name: 'calypso_themeshowcase_theme_click',
-						properties: {}
-					}
-				} ] }
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								service: 'tracks',
+								name: 'calypso_themeshowcase_theme_click',
+								properties: {},
+							},
+						},
+					],
+				},
 			},
 		];
 		const state = actions.reduce( reducer, undefined );
@@ -97,32 +104,38 @@ describe( 'reducer', () => {
 			{
 				type: ROUTE_SET,
 				path: '/themes/77203074',
-				meta: { analytics: [ {
-					type: 'ANALYTICS_EVENT_RECORD',
-					payload: {
-						service: 'tracks',
-						name: 'calypso_all_your_base_are_belong_to_us',
-						properties: {}
-					}
-				} ] }
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								service: 'tracks',
+								name: 'calypso_all_your_base_are_belong_to_us',
+								properties: {},
+							},
+						},
+					],
+				},
 			},
 			{
 				type: COMMENTS_LIKE,
 				path: '/menus/foobar',
-				meta: { analytics: [ {
-					type: 'ANALYTICS_EVENT_RECORD',
-					payload: {
-						service: 'tracks',
-						name: 'calypso_all_your_base_are_belong_to_us',
-						properties: {}
-					}
-				} ] }
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								service: 'tracks',
+								name: 'calypso_all_your_base_are_belong_to_us',
+								properties: {},
+							},
+						},
+					],
+				},
 			},
 		];
 		const state = actions.reduce( reducer, undefined );
 
-		expect( state ).to.eql( [
-			{ ...actions[ 0 ], timestamp: 1337 },
-		] );
+		expect( state ).to.eql( [ { ...actions[ 0 ], timestamp: 1337 } ] );
 	} );
 } );

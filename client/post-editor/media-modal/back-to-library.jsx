@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 export default React.createClass( {
@@ -13,5 +16,5 @@ export default React.createClass( {
 				<span className="is-desktop">{ this.translate( 'Media Library' ) }</span>
 			</span>
 		);
-	}
+	},
 } );

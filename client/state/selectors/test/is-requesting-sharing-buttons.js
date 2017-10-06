@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,10 +16,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					requesting: {
-						2916284: true
-					}
-				}
-			}
+						2916284: true,
+					},
+				},
+			},
 		};
 		const isRequesting = isRequestingSharingButtons( state, 2916285 );
 
@@ -29,10 +31,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					requesting: {
-						2916284: false
-					}
-				}
-			}
+						2916284: false,
+					},
+				},
+			},
 		};
 		const isRequesting = isRequestingSharingButtons( state, 2916284 );
 
@@ -44,10 +46,10 @@ describe( 'isRequestingSharingButtons()', () => {
 			sites: {
 				sharingButtons: {
 					requesting: {
-						2916284: true
-					}
-				}
-			}
+						2916284: true,
+					},
+				},
+			},
 		};
 		const isRequesting = isRequestingSharingButtons( state, 2916284 );
 

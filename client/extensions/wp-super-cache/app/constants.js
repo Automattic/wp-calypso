@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
+
+export const WPSC_MIN_VERSION = '1.5.4';
 
 export const Tabs = {
 	EASY: {
@@ -24,8 +29,13 @@ export const Tabs = {
 		label: translate( 'Preload' ),
 		slug: 'preload',
 	},
+	PLUGINS: {
+		label: translate( 'Plugins' ),
+		slug: 'plugins',
+		minVersion: '1.5.6', // The /plugins endpoint is only present in WPSC 1.5.6 and later!
+	},
 	DEBUG: {
 		label: translate( 'Debug' ),
 		slug: 'debug',
-	}
+	},
 };

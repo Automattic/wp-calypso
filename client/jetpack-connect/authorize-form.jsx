@@ -58,7 +58,7 @@ class JetpackConnectAuthorizeForm extends Component {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
 				from: PropTypes.string,
-			} ).isRequired,
+			} ),
 		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
 		setTracksAnonymousUserId: PropTypes.func,
@@ -73,7 +73,7 @@ class JetpackConnectAuthorizeForm extends Component {
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
 		const queryObject = this.props.jetpackConnectAuthorize.queryObject;
-		if ( queryObject._ui && 'anon' === queryObject._ut ) {
+		if ( queryObject && queryObject._ui && 'anon' === queryObject._ut ) {
 			this.props.setTracksAnonymousUserId( queryObject._ui );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );

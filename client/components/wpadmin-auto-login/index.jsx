@@ -1,7 +1,11 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { get } from 'lodash';
 
 /**
@@ -13,14 +17,16 @@ function tryLogin( requestUrl, initalDelay, attempt ) {
 
 	if ( attempt < 9 ) {
 		image.onerror = function() {
-			setTimeout( tryLogin.bind( null, requestUrl, initalDelay, attempt + 1 ), initalDelay * attempt );
+			setTimeout(
+				tryLogin.bind( null, requestUrl, initalDelay, attempt + 1 ),
+				initalDelay * attempt
+			);
 		};
 	}
 	image.src = requestUrl;
 }
 
 export default class WpadminAutoLogin extends Component {
-
 	static propTypes = {
 		site: PropTypes.object,
 		delay: PropTypes.number,
@@ -45,4 +51,4 @@ export default class WpadminAutoLogin extends Component {
 	render() {
 		return null;
 	}
-};
+}

@@ -1,14 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var i18n = require( 'i18n-calypso' );
+
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ),
-	user = require( 'lib/user' )();
+import Emitter from 'lib/mixins/emitter';
+import wpcom from 'lib/wp';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 /**
  * Initialize Username with defaults
@@ -29,28 +33,36 @@ Username.prototype.validate = function( username ) {
 		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
-				message: i18n.translate( 'Usernames must be at least 4 characters.' )
+				message: i18n.translate( 'Usernames must be at least 4 characters.' ),
 			};
 
 			this.emit( 'change' );
 		} else if ( ! /^[a-z0-9]+$/.test( username ) ) {
 			this.validation = {
 				error: 'invalid_input',
-				message: i18n.translate( 'Usernames can only contain lowercase letters (a-z) and numbers.' )
+				message: i18n.translate(
+					'Usernames can only contain lowercase letters (a-z) and numbers.'
+				),
 			};
 
 			this.emit( 'change' );
-		}  else {
-			wpcom.undocumented().me().validateUsername( username, function( error, data ) {
-				if ( error ) {
-					this.validation = error;
-				} else {
-					this.validation = data;
-					this.validation.validatedUsername = username;
-				}
+		} else {
+			wpcom
+				.undocumented()
+				.me()
+				.validateUsername(
+					username,
+					function( error, data ) {
+						if ( error ) {
+							this.validation = error;
+						} else {
+							this.validation = data;
+							this.validation.validatedUsername = username;
+						}
 
-				this.emit( 'change' );
-			}.bind( this ) );
+						this.emit( 'change' );
+					}.bind( this )
+				);
 		}
 	} else {
 		this.validation = false;
@@ -59,18 +71,25 @@ Username.prototype.validate = function( username ) {
 };
 
 Username.prototype.change = function( username, action, callback ) {
-	wpcom.undocumented().me().changeUsername( username, action, function( error, data ) {
-		if ( error ) {
-			this.validation = error;
-			this.emit( 'change' );
-		} else {
-			user.fetch();
-		}
+	wpcom
+		.undocumented()
+		.me()
+		.changeUsername(
+			username,
+			action,
+			function( error, data ) {
+				if ( error ) {
+					this.validation = error;
+					this.emit( 'change' );
+				} else {
+					user.fetch();
+				}
 
-		if ( callback ) {
-			callback( error, data );
-		}
-	}.bind( this ) );
+				if ( callback ) {
+					callback( error, data );
+				}
+			}.bind( this )
+		);
 };
 
 Username.prototype.isUsernameValid = function() {
@@ -86,7 +105,9 @@ Username.prototype.getAllowedActions = function() {
 };
 
 Username.prototype.getValidatedUsername = function() {
-	return this.validation && this.validation.validatedUsername ? this.validation.validatedUsername : null;
+	return this.validation && this.validation.validatedUsername
+		? this.validation.validatedUsername
+		: null;
 };
 
 Username.prototype.clearValidation = function() {

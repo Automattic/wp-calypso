@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,15 +9,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	GOOGLE_APPS_USERS_FETCH,
-	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-} from 'state/action-types';
-
-import {
-	items,
-	loaded
-} from '../reducer';
+import { items, loaded } from '../reducer';
+import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -26,15 +21,19 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should return new items received', () => {
-			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ),
-				{ type: GOOGLE_APPS_USERS_FETCH_COMPLETED, items: [ { email: 'hi@world.com' } ] } );
+			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ), {
+				type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
+				items: [ { email: 'hi@world.com' } ],
+			} );
 
 			assert.deepEqual( state, [ { email: 'hello@world.com' }, { email: 'hi@world.com' } ] );
 		} );
 
 		it( 'should not have duplicate items', () => {
-			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ),
-				{ type: GOOGLE_APPS_USERS_FETCH_COMPLETED, items: [ { email: 'hi@world.com' }, { email: 'hello@world.com' } ] } );
+			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ), {
+				type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
+				items: [ { email: 'hi@world.com' }, { email: 'hello@world.com' } ],
+			} );
 
 			assert.deepEqual( state, [ { email: 'hello@world.com' }, { email: 'hi@world.com' } ] );
 		} );

@@ -1,23 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import moment from 'moment';
-import {
-	find,
-	get,
-	includes,
-	invoke
-} from 'lodash';
+import { find, get, includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import {
-	isFreeJetpackPlan,
-	isJetpackPlan,
-	isMonthly
-} from 'lib/products-values';
+import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
 import {
 	FEATURES_LIST,
 	PLANS_LIST,
@@ -74,10 +68,11 @@ export function canUpgradeToPlan( planKey, site ) {
 }
 
 export function getUpgradePlanSlugFromPath( path, site ) {
-	return find( Object.keys( PLANS_LIST ), planKey => (
-		( planKey === path || getPlanPath( planKey ) === path ) &&
-		canUpgradeToPlan( planKey, site )
-	) );
+	return find(
+		Object.keys( PLANS_LIST ),
+		planKey =>
+			( planKey === path || getPlanPath( planKey ) === path ) && canUpgradeToPlan( planKey, site )
+	);
 }
 
 export function getPlanPath( plan ) {
@@ -102,7 +97,11 @@ export function getDayOfTrial( plan ) {
 	const { subscribedDayMoment } = plan;
 
 	// we return the difference plus one day so that the first day is day 1 instead of day 0
-	return moment().startOf( 'day' ).diff( subscribedDayMoment, 'days' ) + 1;
+	return (
+		moment()
+			.startOf( 'day' )
+			.diff( subscribedDayMoment, 'days' ) + 1
+	);
 }
 
 export function getDaysUntilUserFacingExpiry( plan ) {
@@ -125,7 +124,13 @@ export function shouldFetchSitePlans( sitePlans, selectedSite ) {
 	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
 }
 
-export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalType, showJetpackFreePlan ) {
+export function filterPlansBySiteAndProps(
+	plans,
+	site,
+	hideFreePlan,
+	intervalType,
+	showJetpackFreePlan
+) {
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
 	return plans.filter( function( plan ) {

@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -8,15 +12,15 @@ export default React.createClass( {
 	displayName: 'NoticeAction',
 
 	propTypes: {
-		href: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		external: React.PropTypes.bool,
-		icon: React.PropTypes.string
+		href: PropTypes.string,
+		onClick: PropTypes.func,
+		external: PropTypes.bool,
+		icon: PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
-			external: false
+			external: false,
 		};
 	},
 
@@ -24,7 +28,7 @@ export default React.createClass( {
 		const attributes = {
 			className: 'notice__action',
 			href: this.props.href,
-			onClick: this.props.onClick
+			onClick: this.props.onClick,
 		};
 
 		if ( this.props.external ) {
@@ -32,11 +36,11 @@ export default React.createClass( {
 		}
 
 		return (
-			<a {...attributes} >
+			<a { ...attributes }>
 				<span>{ this.props.children }</span>
 				{ this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
 			</a>
 		);
-	}
+	},
 } );

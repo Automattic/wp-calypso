@@ -1,9 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,19 +14,24 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-atomic-store/type-images';
+import {
+	BlogImage,
+	PageImage,
+	GridImage,
+	StoreImage,
+} from '../design-type-with-atomic-store/type-images';
 import { abtest } from 'lib/abtest';
-
+import SignupActions from 'lib/signup/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
+import SignupDependencyStore from 'lib/signup/dependency-store';
+import SignupProgressStore from 'lib/signup/progress-store';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
+import PressableStoreStep from '../design-type-with-store/pressable-store';
 
 class DesignTypeWithAtomicStoreStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			showStore: false
-		};
-	}
+	state = { showStore: false };
+	setPressableStore = ref => ( this.pressableStore = ref );
 
 	getChoices() {
 		const { translate } = this.props;
@@ -38,36 +45,89 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		const storeText = translate( 'To sell your products or services and accept payments.' );
 
 		return [
-			{ type: 'blog',
+			{
+				type: 'blog',
 				label: translate( 'Start with a blog' ),
 				description: blogText,
-				image: <BlogImage /> },
-			{ type: 'page',
+				image: <BlogImage />,
+			},
+			{
+				type: 'page',
 				label: translate( 'Start with a website' ),
 				description: siteText,
-				image: <PageImage /> },
-			{ type: 'grid',
+				image: <PageImage />,
+			},
+			{
+				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: gridText,
-				image: <GridImage /> },
-			{ type: 'store',
+				image: <GridImage />,
+			},
+			{
+				type: 'store',
 				label: translate( 'Start with an online store' ),
 				description: storeText,
-				image: <StoreImage /> },
+				image: <StoreImage />,
+			},
 		];
 	}
 
-	renderChoice = ( choice ) => {
+	scrollUp() {
+		// Didn't use setInterval in order to fix delayed scroll
+		while ( window.pageYOffset > 0 ) {
+			window.scrollBy( 0, -10 );
+		}
+	}
+
+	handleStoreBackClick = () => {
+		this.setState( { showStore: false }, this.scrollUp );
+	};
+
+	handleChoiceClick = type => event => {
+		event.preventDefault();
+		event.stopPropagation();
+		this.handleNextStep( type );
+	};
+
+	handleNextStep = designType => {
+		this.props.setDesignType( designType );
+
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
+
+		if (
+			abtest( 'signupPressableStoreFlow' ) === 'pressable' &&
+			designType === DESIGN_TYPE_STORE
+		) {
+			this.scrollUp();
+
+			this.setState( {
+				showStore: true,
+			} );
+
+			invoke( this, 'pressableStore.focus' );
+
+			return;
+		}
+
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+			designType,
+		} );
+
+		this.props.goToNextStep();
+	};
+
+	renderChoice = choice => {
 		return (
 			<Card className="design-type-with-atomic-store__choice" key={ choice.type }>
-				<a className="design-type-with-atomic-store__choice-link"
-					href="#">
-					<div className="design-type-with-atomic-store__image">
-						{ choice.image }
-					</div>
+				<a
+					className="design-type-with-atomic-store__choice-link"
+					href="#"
+					onClick={ this.handleChoiceClick( choice.type ) }
+				>
+					<div className="design-type-with-atomic-store__image">{ choice.image }</div>
 					<div className="design-type-with-atomic-store__choice-copy">
 						<span className="button is-compact design-type-with-atomic-store__cta">
-							{choice.label}
+							{ choice.label }
 						</span>
 						<p className="design-type-with-atomic-store__choice-description">
 							{ choice.description }
@@ -80,21 +140,31 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 	renderChoices() {
 		const { translate } = this.props;
-		const disclaimerText = translate( 'Not sure? Pick the closest option. You can always change your settings later.' ); // eslint-disable-line max-len
+		const disclaimerText = translate(
+			'Not sure? Pick the closest option. You can always change your settings later.'
+		); // eslint-disable-line max-len
 
-		const designTypeListClassName = classNames(
-			'design-type-with-atomic-store__list',
-			{ 'is-hidden': this.state.showStore }
-		);
+		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
+			'is-hidden': ! this.state.showStore,
+		} );
+
+		const designTypeListClassName = classNames( 'design-type-with-atomic-store__list', {
+			'is-hidden': this.state.showStore,
+		} );
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
+				<div className={ storeWrapperClassName }>
+					<PressableStoreStep
+						{ ...this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>
+				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
 
-					<p className="design-type-with-atomic-store__disclaimer">
-						{ disclaimerText }
-					</p>
+					<p className="design-type-with-atomic-store__disclaimer">{ disclaimerText }</p>
 				</div>
 			</div>
 		);
@@ -108,7 +178,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		}
 
 		if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
-			return 'We\'re excited to hear more about your project.';
+			return "We're excited to hear more about your project.";
 		}
 
 		return translate( 'Hello! Let’s create your new site.' );
@@ -118,6 +188,16 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		const { translate } = this.props;
 
 		return translate( 'What kind of site do you need? Choose an option below:' );
+	}
+
+	componentWillMount() {
+		if ( this.props.signupDependencyStore.themeSlugWithRepo ) {
+			SignupDependencyStore.reset();
+		}
+
+		if ( this.props.signupProgress ) {
+			SignupProgressStore.reset();
+		}
 	}
 
 	render() {
@@ -135,13 +215,18 @@ class DesignTypeWithAtomicStoreStep extends Component {
 				subHeaderText={ subHeaderText }
 				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderChoices() }
-				shouldHideNavButtons={ this.state.showStore } />
+				shouldHideNavButtons={ this.state.showStore }
+			/>
 		);
 	}
 }
 
 export default connect(
-	null,
+	state => {
+		return {
+			signupDependencyStore: getSignupDependencyStore( state ),
+		};
+	},
 	{
 		recordTracksEvent,
 		setDesignType,

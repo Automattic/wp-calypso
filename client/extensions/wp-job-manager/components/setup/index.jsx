@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -9,9 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from './constants';
+import { MinPluginVersion, SetupPath, Steps } from '../../constants';
 import Confirmation from './confirmation';
 import DocumentHead from 'components/data/document-head';
+import ExtensionRedirect from 'blocks/extension-redirect';
 import Intro from './intro';
 import Main from 'components/main';
 import PageSetup from './page-setup';
@@ -53,7 +57,7 @@ class SetupWizard extends Component {
 	}
 
 	render() {
-		const { slug, stepName, translate } = this.props;
+		const { siteId, slug, stepName, translate } = this.props;
 		const steps = [ Steps.INTRO, Steps.PAGE_SETUP, Steps.CONFIRMATION ];
 		const components = {
 			[ Steps.INTRO ]: <Intro />,
@@ -64,6 +68,11 @@ class SetupWizard extends Component {
 
 		return (
 			<Main className={ mainClassName }>
+				<ExtensionRedirect
+					minimumVersion={ MinPluginVersion }
+					pluginId="wp-job-manager"
+					siteId={ siteId }
+				/>
 				<DocumentHead title={ translate( 'Setup' ) } />
 				<Wizard
 					basePath={ `${ SetupPath }/${ slug }` }
@@ -71,7 +80,8 @@ class SetupWizard extends Component {
 					forwardText={ translate( 'Continue' ) }
 					hideNavigation={ true }
 					steps={ steps }
-					stepName={ stepName } />
+					stepName={ stepName }
+				/>
 			</Main>
 		);
 	}

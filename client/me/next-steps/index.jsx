@@ -1,21 +1,28 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { property, sortBy } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var NextStepsBox = require( './next-steps-box' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	steps = require( './steps' ),
-	analytics = require( 'lib/analytics' ),
-	productsValues = require( 'lib/products-values' ),
-	sites = require( 'lib/sites-list' )();
+import NextStepsBox from './next-steps-box';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import steps from './steps';
+import analytics from 'lib/analytics';
+import productsValues from 'lib/products-values';
+/* eslint-disable no-restricted-imports */
+import observe from 'lib/mixins/data-observe';
+import sitesFactory from 'lib/sites-list';
+const sites = sitesFactory();
+/* eslint-enable no-restricted-imports */
 
 module.exports = React.createClass( {
+	displayName: 'NextSteps',
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 
@@ -33,7 +40,7 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Me > Next > Welcome Message', event.action );
 		analytics.tracks.recordEvent( 'calypso_me_next_welcome_click', {
 			link: event.tracks,
-			is_welcome: this.props.isWelcome
+			is_welcome: this.props.isWelcome,
 		} );
 	},
 
@@ -53,11 +60,7 @@ module.exports = React.createClass( {
 	// the user has already done the action
 	renderPostComponent: function() {
 		if ( this.props.trophiesData.hasLoadedFromServer() ) {
-			return (
-				<div>
-					{ this.userState.userHasPosted ? 'You have posted' : 'Create a post' }
-				</div>
-			);
+			return <div>{ this.userState.userHasPosted ? 'You have posted' : 'Create a post' }</div>;
 		}
 	},
 
@@ -70,21 +73,21 @@ module.exports = React.createClass( {
 	bloggingUniversityLinkRecordEvent: function() {
 		this.recordEvent( {
 			tracks: 'blogging_course',
-			action: 'Clicked Blogging University Link'
+			action: 'Clicked Blogging University Link',
 		} );
 	},
 
 	docsLinkRecordEvent: function() {
 		this.recordEvent( {
 			tracks: 'documentation',
-			action: 'Clicked Documentation Link'
+			action: 'Clicked Documentation Link',
 		} );
 	},
 
 	dismissLinkRecordEvent: function() {
 		this.recordEvent( {
 			tracks: 'dismiss',
-			action: 'Clicked Dismiss Link'
+			action: 'Clicked Dismiss Link',
 		} );
 	},
 
@@ -92,30 +95,37 @@ module.exports = React.createClass( {
 		if ( this.props.isWelcome ) {
 			return (
 				<div className="next-steps__intro">
-				<h3 className="next-steps__title">{ this.translate( 'Thanks for signing up for WordPress.com.' ) }</h3>
-				<p className="next-steps__intro">
-					{ this.translate(
-						'Next you can take any of the following steps, ' +
-						'join a {{bloggingUniversityLink}}guided blogging course{{/bloggingUniversityLink}}, ' +
-						'or check out our {{docsLink}}support documentation{{/docsLink}}.', {
-							components: {
-								bloggingUniversityLink: <a
-									href="https://bloggingu.wordpress.com/"
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.bloggingUniversityLinkRecordEvent }
-								/>,
-								docsLink: <a
-									href="http://en.support.wordpress.com/"
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.docsLinkRecordEvent }
-								/>
+					<h3 className="next-steps__title">
+						{ this.translate( 'Thanks for signing up for WordPress.com.' ) }
+					</h3>
+					<p className="next-steps__intro">
+						{ this.translate(
+							'Next you can take any of the following steps, ' +
+								'join a {{bloggingUniversityLink}}guided blogging course{{/bloggingUniversityLink}}, ' +
+								'or check out our {{docsLink}}support documentation{{/docsLink}}.',
+							{
+								components: {
+									bloggingUniversityLink: (
+										<a
+											href="https://bloggingu.wordpress.com/"
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ this.bloggingUniversityLinkRecordEvent }
+										/>
+									),
+									docsLink: (
+										<a
+											href="http://en.support.wordpress.com/"
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ this.docsLinkRecordEvent }
+										/>
+									),
+								},
 							}
-						}
-					) }
-				</p>
-			</div>
+						) }
+					</p>
+				</div>
 			);
 		}
 	},
@@ -125,8 +135,7 @@ module.exports = React.createClass( {
 	},
 
 	outroMessage: function() {
-		var site,
-			dismissLink;
+		var site, dismissLink;
 
 		if ( this.props.isWelcome ) {
 			site = this.newestSite();
@@ -134,14 +143,17 @@ module.exports = React.createClass( {
 
 			return (
 				<div className="next-steps__outro">
-				<p>{
-					this.translate( 'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.', {
-						components: {
-							a: <a href={ dismissLink } onClick={ this.dismissLinkRecordEvent } />
-						}
-					} )
-				}</p>
-			</div>
+					<p>
+						{ this.translate(
+							'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.',
+							{
+								components: {
+									a: <a href={ dismissLink } onClick={ this.dismissLinkRecordEvent } />,
+								},
+							}
+						) }
+					</p>
+				</div>
 			);
 		}
 	},
@@ -162,10 +174,20 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="next-steps__steps">
-				{ sequence.map( function( stepName, index ) {
-					var step = steps.definitions( site )[ stepName ];
-					return <NextStepsBox key={ stepName } stepName={ stepName } step={ step } primary={ index === 0 } isWelcome={ this.props.isWelcome } />;
-				}.bind( this ) ) }
+				{ sequence.map(
+					function( stepName, index ) {
+						var step = steps.definitions( site )[ stepName ];
+						return (
+							<NextStepsBox
+								key={ stepName }
+								stepName={ stepName }
+								step={ step }
+								primary={ index === 0 }
+								isWelcome={ this.props.isWelcome }
+							/>
+						);
+					}.bind( this )
+				) }
 			</div>
 		);
 	},
@@ -190,5 +212,5 @@ module.exports = React.createClass( {
 				{ this.outroMessage() }
 			</div>
 		);
-	}
+	},
 } );

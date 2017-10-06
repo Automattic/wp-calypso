@@ -1,4 +1,10 @@
-const site = require( './site' );
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
+
+import site from './site';
 
 module.exports = {
 	unauthorizedFetchingUsers: {
@@ -9,14 +15,14 @@ module.exports = {
 			siteId: site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
-			search: null
+			search: null,
 		},
 		error: {
 			statusCode: 403,
 			error: 'unauthorized',
 			message: 'User cannot view users for specified site',
-			name: 'UnauthorizedError'
-		}
+			name: 'UnauthorizedError',
+		},
 	},
 
 	errorWhenFetchingUsers: {
@@ -27,13 +33,14 @@ module.exports = {
 			siteId: site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
-			search: null
+			search: null,
 		},
 		error: {
 			statusCode: 400,
 			error: 'jetpack_error',
-			message: 'The Jetpack site is inaccessible or returned an error: transport error - HTTP status code was not 200 (500) [-32300]',
-			name: 'JetpackErrorError'
-		}
-	}
+			message:
+				'The Jetpack site is inaccessible or returned an error: transport error - HTTP status code was not 200 (500) [-32300]',
+			name: 'JetpackErrorError',
+		},
+	},
 };

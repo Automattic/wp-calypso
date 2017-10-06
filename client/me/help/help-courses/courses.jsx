@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 
 /**
@@ -29,22 +32,18 @@ class Courses extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			userId,
-			isBusinessPlanUser,
-			courses,
-			isLoading
-		} = this.props;
+		const { translate, userId, isBusinessPlanUser, courses, isLoading } = this.props;
 
 		return (
 			<Main className="help-courses">
 				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
 					{ translate( 'Courses' ) }
 				</HeaderCake>
-				{ isLoading
-					? <CourseListPlaceholder />
-					: <CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } /> }
+				{ isLoading ? (
+					<CourseListPlaceholder />
+				) : (
+					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
+				) }
 
 				<QueryUserPurchases userId={ userId } />
 			</Main>

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,15 +21,12 @@ class PromotionUpdate extends React.Component {
 			ID: PropTypes.number,
 		} ),
 		className: PropTypes.string,
-	}
+	};
 
 	render() {
 		const { className } = this.props;
 
-		return (
-			<Main className={ className }>
-			</Main>
-		);
+		return <Main className={ className } />;
 	}
 }
 

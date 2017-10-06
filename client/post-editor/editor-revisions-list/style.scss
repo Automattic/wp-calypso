@@ -1,14 +1,17 @@
+/** @format */
+@import 'components/accordion/style';
+
 .editor-revisions-list__button {
 	// NOTE: this is imitating the style of an accordion (with subtitle), with
 	// support for being "selected" and no right arrow
 	background-color: $accordion-background-collapsed;
-	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-top: 1px solid darken($sidebar-bg-color, 5%);
 	color: $gray-dark;
 	cursor: pointer;
 	display: block;
 	font-size: 13px;
 	margin: 0;
-	padding: ( $accordion-padding - $accordion-subtitle-height / 2 ) $accordion-padding;
+	padding: ($accordion-padding - $accordion-subtitle-height / 2) $accordion-padding;
 	text-align: left;
 	width: 100%;
 
@@ -53,8 +56,8 @@
 .editor-revisions-list__list,
 .editor-revisions-list__header {
 	background: $white;
-	border-top: 1px solid darken( $sidebar-bg-color, 5% );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	border-top: 1px solid darken($sidebar-bg-color, 5%);
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	font-size: 13px;
 }
 

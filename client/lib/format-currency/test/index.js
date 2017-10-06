@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -68,7 +70,7 @@ describe( 'formatCurrency', () => {
 				symbol: 'A$',
 				grouping: ',',
 				decimal: '.',
-				precision: 2
+				precision: 2,
 			} );
 		} );
 	} );
@@ -80,7 +82,7 @@ describe( 'formatCurrency', () => {
 				symbol: '$',
 				integer: '0',
 				fraction: '.00',
-				sign: ''
+				sign: '',
 			} );
 		} );
 		it( 'handles negative values', () => {
@@ -89,7 +91,7 @@ describe( 'formatCurrency', () => {
 				symbol: '$',
 				integer: '1,234',
 				fraction: '.57',
-				sign: '-'
+				sign: '-',
 			} );
 		} );
 		describe( 'supported currencies', () => {
@@ -99,7 +101,7 @@ describe( 'formatCurrency', () => {
 					symbol: '$',
 					integer: '9,800,900',
 					fraction: '.32',
-					sign: ''
+					sign: '',
 				} );
 			} );
 			it( 'AUD', () => {
@@ -108,7 +110,7 @@ describe( 'formatCurrency', () => {
 					symbol: 'A$',
 					integer: '9,800,900',
 					fraction: '.32',
-					sign: ''
+					sign: '',
 				} );
 			} );
 			it( 'CAD', () => {
@@ -117,15 +119,16 @@ describe( 'formatCurrency', () => {
 					symbol: 'C$',
 					integer: '9,800,900',
 					fraction: '.32',
-					sign: ''
-				} );			} );
+					sign: '',
+				} );
+			} );
 			it( 'EUR', () => {
 				const money = getCurrencyObject( 9800900.32, 'EUR' );
 				expect( money ).to.eql( {
 					symbol: '€',
 					integer: '9.800.900',
 					fraction: ',32',
-					sign: ''
+					sign: '',
 				} );
 			} );
 			it( 'GBP', () => {
@@ -134,7 +137,7 @@ describe( 'formatCurrency', () => {
 					symbol: '£',
 					integer: '9,800,900',
 					fraction: '.32',
-					sign: ''
+					sign: '',
 				} );
 			} );
 			it( 'JPY', () => {
@@ -143,7 +146,7 @@ describe( 'formatCurrency', () => {
 					symbol: '¥',
 					integer: '9,800,900',
 					fraction: '',
-					sign: ''
+					sign: '',
 				} );
 			} );
 			it( 'BRL', () => {
@@ -152,7 +155,7 @@ describe( 'formatCurrency', () => {
 					symbol: 'R$',
 					integer: '9,800,900',
 					fraction: '.32',
-					sign: ''
+					sign: '',
 				} );
 			} );
 		} );

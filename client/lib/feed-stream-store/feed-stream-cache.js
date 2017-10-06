@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import LRU from 'lru';
 
 /**
@@ -31,5 +34,5 @@ module.exports = {
 	clear: function() {
 		specialCache = {};
 		cache = new LRU( 10 );
-	}
+	},
 };

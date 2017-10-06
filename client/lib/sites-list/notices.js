@@ -1,9 +1,12 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-var notices = require( 'notices' ),
-	SitesLog = require( 'lib/sites-list/log-store' ),
-	SitesListActions = require( 'lib/sites-list/actions' );
+
+import notices from 'notices';
+import SitesLog from 'lib/sites-list/log-store';
+import SitesListActions from 'lib/sites-list/actions';
 
 module.exports = {
 	getInitialState: function() {
@@ -21,7 +24,7 @@ module.exports = {
 		return {
 			errors: SitesLog.getErrors(),
 			inProgress: SitesLog.getInProgress(),
-			completed: SitesLog.getCompleted()
+			completed: SitesLog.getCompleted(),
 		};
 	},
 
@@ -31,20 +34,25 @@ module.exports = {
 		this.setState( { notices: logNotices } );
 
 		if ( logNotices.inProgress.length > 0 ) {
-			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage ), { persistent: true } );
+			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage ), {
+				persistent: true,
+			} );
 			return;
 		}
 		if ( logNotices.completed.length > 0 && logNotices.errors.length > 0 ) {
 			notices.warning( this.erroredAndCompletedMessage( logNotices ), {
-				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.completed.concat( logNotices.errors ) )
+				onRemoveCallback: SitesListActions.removeSitesNotices.bind(
+					this,
+					logNotices.completed.concat( logNotices.errors )
+				),
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
 			notices.error( this.getMessage( logNotices.errors, this.errorMessage ), {
-				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.errors )
+				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.errors ),
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
 			notices.success( this.getMessage( logNotices.completed, this.successMessage ), {
-				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.completed )
+				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.completed ),
 			} );
 		}
 	},
@@ -59,8 +67,8 @@ module.exports = {
 				args: {
 					siteName: sampleLog.site.title,
 					siteNames: sites.join( ', ' ),
-					numberOfSites: sites.length
-				}
+					numberOfSites: sites.length,
+				},
 			};
 
 		return messageFunction( sampleLog.action, translateArg, sampleLog );
@@ -75,12 +83,14 @@ module.exports = {
 				return this.translate(
 					'Successfully disconnected %(numberOfSites)d site.',
 					'Successfully disconnected %(numberOfSites)d sites.',
-					translateArg );
+					translateArg
+				);
 		}
 	},
 
 	inProgressMessage: function( action, translateArg ) {
-		translateArg.context = 'In progress message for when a Jetpack site is disconnecting from WP.com';
+		translateArg.context =
+			'In progress message for when a Jetpack site is disconnecting from WP.com';
 		switch ( action ) {
 			case 'DISCONNECT_SITE':
 				if ( 1 === translateArg.args.numberOfSites ) {
@@ -89,7 +99,8 @@ module.exports = {
 				return this.translate(
 					'Disconnecting %(numberOfSites)d site.',
 					'Disconnecting %(numberOfSites)d sites.',
-					translateArg );
+					translateArg
+				);
 		}
 	},
 
@@ -100,10 +111,11 @@ module.exports = {
 		return this.translate( '%(completedMessage)s %(errorMessage)s', {
 			args: {
 				completedMessage: completedMessage,
-				errorMessage: errorMessage
+				errorMessage: errorMessage,
 			},
-			context: 'The success message and the error message after the disconnection success and failure.',
-			comment: '%(completedMessage)s %(errorMessage)s are complete sentences.'
+			context:
+				'The success message and the error message after the disconnection success and failure.',
+			comment: '%(completedMessage)s %(errorMessage)s are complete sentences.',
 		} );
 	},
 
@@ -116,19 +128,24 @@ module.exports = {
 				return this.translate(
 					'Error fetching plugins on %(numberOfSites)d site: %(siteNames)s.',
 					'Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s.',
-					translateArg );
+					translateArg
+				);
 
 			case 'DISCONNECT_SITE':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized':
 					case 'unauthorized_access':
 						if ( 1 === translateArg.args.numberOfSites ) {
-							return this.translate( 'You don\'t have permission to disconnect %(siteName)s.', translateArg );
+							return this.translate(
+								"You don't have permission to disconnect %(siteName)s.",
+								translateArg
+							);
 						}
 						return this.translate(
-							'You don\'t have permission to disconnect %(numberOfSites)d site: %(siteNames)s.',
-							'You don\'t have permission to disconnect %(numberOfSites)d sites: %(siteNames)s.',
-							translateArg );
+							"You don't have permission to disconnect %(numberOfSites)d site: %(siteNames)s.",
+							"You don't have permission to disconnect %(numberOfSites)d sites: %(siteNames)s.",
+							translateArg
+						);
 
 					default:
 						if ( 1 === translateArg.args.numberOfSites ) {
@@ -137,9 +154,9 @@ module.exports = {
 						return this.translate(
 							'Error disconnecting %(numberOfSites)d site: %(siteNames)s.',
 							'Error disconnecting %(numberOfSites)d sites: %(siteNames)s.',
-							translateArg );
+							translateArg
+						);
 				}
-
 		}
-	}
+	},
 };

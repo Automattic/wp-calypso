@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	SELECTED_SITE_SET,
 	SECTION_SET,
@@ -51,7 +54,7 @@ export const siteSelectionInitialized = createReducer( false, {
 export function section( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.section !== undefined ) ? action.section : state;
+			return action.section !== undefined ? action.section : state;
 	}
 	return state;
 }
@@ -59,7 +62,7 @@ export function section( state = false, action ) {
 export function hasSidebar( state = true, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
+			return action.hasSidebar !== undefined ? action.hasSidebar : state;
 	}
 	return state;
 }
@@ -67,7 +70,7 @@ export function hasSidebar( state = true, action ) {
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.isLoading !== undefined ) ? action.isLoading : state;
+			return action.isLoading !== undefined ? action.isLoading : state;
 	}
 	return state;
 }

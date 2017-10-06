@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,6 +10,13 @@ import sinon, { match } from 'sinon';
  * Internal dependencies
  */
 import {
+	siteUpdatesReceiveAction,
+	siteUpdatesRequestAction,
+	siteUpdatesRequestSuccessAction,
+	siteUpdatesRequestFailureAction,
+	updateWordPress,
+} from '../actions';
+import {
 	SITE_UPDATES_RECEIVE,
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
@@ -16,13 +25,6 @@ import {
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 } from 'state/action-types';
-import {
-	siteUpdatesReceiveAction,
-	siteUpdatesRequestAction,
-	siteUpdatesRequestSuccessAction,
-	siteUpdatesRequestFailureAction,
-	updateWordPress,
-} from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -94,11 +96,11 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/sites/' + siteId + '/core/update' )
 					.reply( 200, {
-						version: 4.7
+						version: 4.7,
 					} );
 			} );
 
@@ -113,7 +115,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/sites/' + siteId + '/core/update' )
 					.reply( 400, {
@@ -128,8 +130,8 @@ describe( 'actions', () => {
 						type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 						siteId,
 						error: match( {
-							message: 'WordPress is at the latest version.'
-						} )
+							message: 'WordPress is at the latest version.',
+						} ),
 					} );
 				} );
 			} );

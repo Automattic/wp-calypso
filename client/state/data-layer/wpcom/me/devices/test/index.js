@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,13 +9,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestUserDevices, handleSuccess, handleError } from '../';
 import { NOTICE_CREATE, USER_DEVICES_ADD } from 'state/action-types';
-import {
-	requestUserDevices,
-	handleSuccess,
-	handleError,
-} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'user devices', () => {
@@ -24,11 +22,13 @@ describe( 'wpcom-api', () => {
 				requestUserDevices( { dispatch } );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'GET',
-					path: '/notifications/devices'
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http( {
+						apiVersion: '1.1',
+						method: 'GET',
+						path: '/notifications/devices',
+					} )
+				);
 			} );
 		} );
 
@@ -36,7 +36,7 @@ describe( 'wpcom-api', () => {
 			it( 'should dispatch user devices updates', () => {
 				const devices = [
 					{ device_id: 1, device_name: 'Mobile Phone' },
-					{ device_id: 2, device_name: 'Tablet' }
+					{ device_id: 2, device_name: 'Tablet' },
 				];
 				const dispatch = spy();
 
@@ -47,8 +47,8 @@ describe( 'wpcom-api', () => {
 					type: USER_DEVICES_ADD,
 					devices: {
 						1: { id: 1, name: 'Mobile Phone' },
-						2: { id: 2, name: 'Tablet' }
-					}
+						2: { id: 2, name: 'Tablet' },
+					},
 				} );
 			} );
 		} );
@@ -63,8 +63,8 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWithMatch( {
 					type: NOTICE_CREATE,
 					notice: {
-						status: 'is-error'
-					}
+						status: 'is-error',
+					},
 				} );
 			} );
 		} );

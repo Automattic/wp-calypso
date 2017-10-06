@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,9 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getStatus,
-} from '../selectors';
+import { getStatus } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getStatus()', () => {
@@ -16,9 +16,9 @@ describe( 'selectors', () => {
 			const mockState = {
 				pushNotifications: {
 					system: {
-						apiReady: false
-					}
-				}
+						apiReady: false,
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'unknown' );
 		} );
@@ -29,8 +29,8 @@ describe( 'selectors', () => {
 					system: {
 						apiReady: true,
 						blocked: true,
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'denied' );
 		} );
@@ -45,10 +45,10 @@ describe( 'selectors', () => {
 						apiReady: true,
 						blocked: false,
 						wpcomSubscription: {
-							ID: 42
+							ID: 42,
 						},
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'subscribed' );
 		} );
@@ -62,8 +62,8 @@ describe( 'selectors', () => {
 					system: {
 						apiReady: true,
 						blocked: false,
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'enabling' );
 		} );
@@ -78,8 +78,8 @@ describe( 'selectors', () => {
 						apiReady: true,
 						blocked: false,
 						wpcomSubscription: false,
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'enabling' );
 		} );
@@ -96,8 +96,8 @@ describe( 'selectors', () => {
 						wpcomSubscription: {
 							ID: 42,
 						},
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'disabling' );
 		} );
@@ -111,8 +111,8 @@ describe( 'selectors', () => {
 					system: {
 						apiReady: true,
 						blocked: false,
-					}
-				}
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
 		} );
@@ -126,9 +126,9 @@ describe( 'selectors', () => {
 					system: {
 						apiReady: true,
 						blocked: false,
-						wpcomSubscription: false
-					}
-				}
+						wpcomSubscription: false,
+					},
+				},
 			};
 			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
 		} );

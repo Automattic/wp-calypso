@@ -1,11 +1,15 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import { createReducer } from 'state/utils';
-import {
-	USER_DEVICES_ADD,
-} from 'state/action-types';
 
-export default createReducer( {}, {
-	[ USER_DEVICES_ADD ]: ( state, { devices } ) => ( { ...state, ...devices } )
-} );
+import { createReducer } from 'state/utils';
+import { USER_DEVICES_ADD } from 'state/action-types';
+
+export default createReducer(
+	{},
+	{
+		[ USER_DEVICES_ADD ]: ( state, { devices } ) => ( { ...state, ...devices } ),
+	}
+);

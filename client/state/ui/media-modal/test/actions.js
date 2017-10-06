@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,9 +8,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
-import { ModalViews } from '../constants';
 import { setMediaModalView, resetMediaModalView } from '../actions';
+import { ModalViews } from '../constants';
+import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setMediaModalView()', () => {
@@ -17,7 +19,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: MEDIA_MODAL_VIEW_SET,
-				view: ModalViews.DETAIL
+				view: ModalViews.DETAIL,
 			} );
 		} );
 	} );
@@ -28,7 +30,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: MEDIA_MODAL_VIEW_SET,
-				view: null
+				view: null,
 			} );
 		} );
 	} );

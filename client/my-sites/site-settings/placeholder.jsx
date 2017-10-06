@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -15,40 +18,26 @@ import SectionHeader from 'components/section-header';
 import SectionNav from 'components/section-nav';
 
 const Placeholder = ( { translate } ) => {
-	const header = (
-		<div className="site-settings__placeholder-item">
-			General Settings
-		</div>
-	);
+	const header = <div className="site-settings__placeholder-item">General Settings</div>;
 
 	return (
 		<Main className="site-settings__placeholder">
 			<SectionNav>
 				<NavTabs>
 					<NavItem>
-						<span className="site-settings__placeholder-item">
-							{ translate( 'General' ) }
-						</span>
+						<span className="site-settings__placeholder-item">{ translate( 'General' ) }</span>
 					</NavItem>
 					<NavItem>
-						<span className="site-settings__placeholder-item">
-							{ translate( 'Writing' ) }
-						</span>
+						<span className="site-settings__placeholder-item">{ translate( 'Writing' ) }</span>
 					</NavItem>
 					<NavItem>
-						<span className="site-settings__placeholder-item">
-							{ translate( 'Discussion' ) }
-						</span>
+						<span className="site-settings__placeholder-item">{ translate( 'Discussion' ) }</span>
 					</NavItem>
 					<NavItem>
-						<span className="site-settings__placeholder-item">
-							{ translate( 'Traffic' ) }
-						</span>
+						<span className="site-settings__placeholder-item">{ translate( 'Traffic' ) }</span>
 					</NavItem>
 					<NavItem>
-						<span className="site-settings__placeholder-item">
-							{ translate( 'Security' ) }
-						</span>
+						<span className="site-settings__placeholder-item">{ translate( 'Security' ) }</span>
 					</NavItem>
 				</NavTabs>
 			</SectionNav>
@@ -56,9 +45,7 @@ const Placeholder = ( { translate } ) => {
 			<SectionHeader label={ header } />
 
 			<Card>
-				<div className="site-settings__placeholder-item">
-					Example content here
-				</div>
+				<div className="site-settings__placeholder-item">Example content here</div>
 				<div className="site-settings__placeholder-item">
 					Example content here<br />
 					Example content here<br />

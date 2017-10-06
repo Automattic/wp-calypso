@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -12,10 +15,10 @@ import pluginsController from './controller';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const nonJetpackRedirectTo = path => ( context, next ) => {
+const ifSimpleSiteThenRedirectTo = path => ( context, next ) => {
 	const site = getSelectedSite( context.store.getState() );
 
-	if ( site.jetpack ) {
+	if ( site && ! site.jetpack ) {
 		page.redirect( `${ path }/${ site.slug }` );
 	}
 
@@ -24,86 +27,84 @@ const nonJetpackRedirectTo = path => ( context, next ) => {
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page( '/plugins/setup',
-			controller.siteSelection,
-			pluginsController.setupPlugins
-		);
+		page( '/plugins/setup', controller.siteSelection, pluginsController.setupPlugins );
 
-		page( '/plugins/setup/:site',
-			controller.siteSelection,
-			pluginsController.setupPlugins
-		);
+		page( '/plugins/setup/:site', controller.siteSelection, pluginsController.setupPlugins );
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
 		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
-			page.redirect( '/plugins/' + context.params.site );
+			page.redirect( `/plugins/${ context.params.site }` );
 		} );
 
 		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
 			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
-			page.redirect( '/plugins/browse/' + context.params.site );
+			page.redirect( `/plugins/browse/${ context.params.site }` );
 		} );
 
-		page( '/plugins/browse/:category/:site',
-			controller.siteSelection,
-			controller.navigation,
-			pluginsController.browsePlugins
-		);
+		page( '/plugins/manage/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
+			page.redirect( `/plugins/manage/${ context.params.site }` );
+		} );
 
-		page( '/plugins/browse/:siteOrCategory?',
-			controller.siteSelection,
-			controller.navigation,
-			pluginsController.browsePlugins
-		);
+		page( '/plugins/browse/:category/:site', context => {
+			const { category, site } = context.params;
+			page.redirect( `/plugins/${ category }/${ site }` );
+		} );
 
-		page( '/plugins/category/:category/:site_id',
-			controller.siteSelection,
-			controller.navigation,
-			nonJetpackRedirectTo( '/plugins/manage' ),
-			pluginsController.plugins.bind( null, 'all' ),
-		);
+		page( '/plugins/browse/:siteOrCategory?', context => {
+			const { siteOrCategory } = context.params;
+			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
+		} );
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
 			page( '/plugins/upload', controller.sites );
-			page( '/plugins/upload/:site_id',
+			page(
+				'/plugins/upload/:site_id',
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.upload
 			);
 		}
 
-		page( '/plugins',
+		page(
+			'/plugins',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.browsePlugins
 		);
 
-		page( '/plugins/manage/:site?',
+		page(
+			'/plugins/manage/:site?',
 			controller.siteSelection,
 			controller.navigation,
+			ifSimpleSiteThenRedirectTo( '/plugins' ),
 			pluginsController.plugins.bind( null, 'all' ),
 			controller.sites
 		);
 
-		[ 'active', 'inactive', 'updates' ].forEach( filter => (
-			page( `/plugins/${ filter }/:site_id?`,
+		[ 'active', 'inactive', 'updates' ].forEach( filter =>
+			page(
+				`/plugins/${ filter }/:site_id?`,
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
 				pluginsController.plugins.bind( null, filter ),
 				controller.sites
 			)
-		) );
+		);
 
-		page( '/plugins/:plugin/:site_id?',
+		page(
+			'/plugins/:plugin/:site_id?',
 			controller.siteSelection,
 			controller.navigation,
+			pluginsController.maybeBrowsePlugins,
 			pluginsController.plugin
 		);
 
-		page( '/plugins/:plugin/eligibility/:site_id',
+		page(
+			'/plugins/:plugin/eligibility/:site_id',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.eligibility

@@ -1,7 +1,5 @@
-const endpoints = [
-	'add',
-	'del'
-];
+/** @format */
+const endpoints = [ 'add', 'del' ];
 
 /**
  * Stub wp module to avoid its dependency on the browser
@@ -22,7 +20,7 @@ export default {
 					siteEndpoints[ endpoint ] = successRequestStub;
 				}, this );
 				return siteEndpoints;
-			}
+			},
 		};
-	}
+	},
 };

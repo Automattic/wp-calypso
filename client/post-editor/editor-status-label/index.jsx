@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -16,10 +20,10 @@ export default React.createClass( {
 	displayName: 'StatusLabel',
 
 	propTypes: {
-		onClick: React.PropTypes.func,
-		post: React.PropTypes.object,
-		type: React.PropTypes.string,
-		advancedStatus: React.PropTypes.bool
+		onClick: PropTypes.func,
+		post: PropTypes.object,
+		type: PropTypes.string,
+		advancedStatus: PropTypes.bool,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -29,13 +33,13 @@ export default React.createClass( {
 			onClick: null,
 			post: null,
 			advancedStatus: false,
-			type: 'post'
+			type: 'post',
 		};
 	},
 
 	getInitialState: function() {
 		return {
-			currentTime: Date.now()
+			currentTime: Date.now(),
 		};
 	},
 
@@ -67,9 +71,7 @@ export default React.createClass( {
 
 		if ( ! this.props.onClick ) {
 			return (
-				<span className={ classNames( statusClass, 'is-plain' ) }>
-					{ this.renderLabel() }
-				</span>
+				<span className={ classNames( statusClass, 'is-plain' ) }>{ this.renderLabel() }</span>
 			);
 		}
 
@@ -99,9 +101,7 @@ export default React.createClass( {
 		}
 
 		// prevent JP sites from showing a draft as saved in the future
-		if ( 'draft' === post.status &&
-				editedTime.isAfter( this.state.currentTime )
-		) {
+		if ( 'draft' === post.status && editedTime.isAfter( this.state.currentTime ) ) {
 			editedTime = this.moment( this.state.currentTime );
 		}
 
@@ -112,47 +112,50 @@ export default React.createClass( {
 				label = this.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				} );
 				break;
 			case 'private':
-				label = this.translate( '{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
+				label = this.translate(
+					'{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s',
+					{
+						args: { relativeTimeFromNow: timeFromNow },
+						components: {
+							strong: <strong />,
+						},
 					}
-				} );
+				);
 				break;
 			case 'draft':
 				label = this.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				} );
 				break;
 			case 'pending':
 				label = this.translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				} );
 				break;
 			case 'future':
 				label = this.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				} );
 				break;
 			case 'trash':
 				label = this.translate( '{{strong}}Trashed{{/strong}}', {
 					components: {
-						strong: <strong />
-					}
+						strong: <strong />,
+					},
 				} );
 				break;
 			default:
@@ -165,7 +168,7 @@ export default React.createClass( {
 
 	updateCurrentTime: function() {
 		this.setState( {
-			currentTime: Date.now()
+			currentTime: Date.now(),
 		} );
-	}
+	},
 } );

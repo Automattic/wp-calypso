@@ -1,5 +1,7 @@
-/** @jest-environment jsdom */
-jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -12,6 +14,8 @@ import React from 'react';
  * Internal dependencies
  */
 import PluginAction from '../plugin-action';
+
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 
 describe( 'PluginAction', function() {
 	describe( 'rendering with form toggle', function() {
@@ -28,7 +32,11 @@ describe( 'PluginAction', function() {
 		} );
 
 		it( 'should render a plugin action label', function() {
-			const wrapper = shallow( <PluginAction label="hello"><span /></PluginAction> );
+			const wrapper = shallow(
+				<PluginAction label="hello">
+					<span />
+				</PluginAction>
+			);
 
 			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );
@@ -36,13 +44,21 @@ describe( 'PluginAction', function() {
 
 	describe( 'rendering children', function() {
 		it( 'should not render a form toggle when children exist', function() {
-			const wrapper = mount( <PluginAction><span /></PluginAction> );
+			const wrapper = mount(
+				<PluginAction>
+					<span />
+				</PluginAction>
+			);
 
 			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'should render child within plugin-action__children container', function() {
-			const wrapper = mount( <PluginAction><span /></PluginAction> ),
+			const wrapper = mount(
+					<PluginAction>
+						<span />
+					</PluginAction>
+				),
 				children = wrapper.find( '.plugin-action__children' );
 
 			expect( children.length ).to.equal( 1 );
@@ -50,7 +66,11 @@ describe( 'PluginAction', function() {
 		} );
 
 		it( 'should render a plugin action label', function() {
-			const wrapper = mount( <PluginAction label="hello"><span /></PluginAction> );
+			const wrapper = mount(
+				<PluginAction label="hello">
+					<span />
+				</PluginAction>
+			);
 
 			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );

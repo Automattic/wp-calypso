@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { get, pick } from 'lodash';
@@ -79,6 +82,6 @@ export default connect(
 				likeComment,
 				unlikeComment,
 			},
-			dispatch,
-		),
+			dispatch
+		)
 )( CommentLikeButtonContainer );

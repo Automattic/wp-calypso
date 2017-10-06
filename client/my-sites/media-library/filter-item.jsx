@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 
 /**
@@ -11,20 +14,13 @@ import SectionNavTabItem from 'components/section-nav/item';
 class FilterItem extends Component {
 	activate = () => {
 		this.props.onChange( this.props.value );
-	}
+	};
 
 	render() {
-		const {
-			isDisabled,
-			selected,
-		} = this.props;
+		const { isDisabled, selected } = this.props;
 
 		return (
-			<SectionNavTabItem
-				selected={ selected }
-				onClick={ this.activate }
-				disabled={ isDisabled }
-			>
+			<SectionNavTabItem selected={ selected } onClick={ this.activate } disabled={ isDisabled }>
 				{ this.props.children }
 			</SectionNavTabItem>
 		);

@@ -1,23 +1,27 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import deterministicStringify from 'json-stable-stringify';
 import { endsWith, find, omit } from 'lodash';
-const debug = require( 'debug' )( 'calypso:users:store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:users:store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
-var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
+var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
-	_usersBySite = {},                     // store user objects
-	_totalUsersByNamespace = {},           // store total found for params
-	_usersFetchedByNamespace = {},         // store fetch progress
-	_offsetByNamespace = {},               // store fetch progress
-	_userIDsByNamespace = {};              // store user order
+	_usersBySite = {}, // store user objects
+	_totalUsersByNamespace = {}, // store total found for params
+	_usersFetchedByNamespace = {}, // store fetch progress
+	_offsetByNamespace = {}, // store fetch progress
+	_userIDsByNamespace = {}; // store user order
 
 var UsersStore = {
 	// This data can help manage infinite scroll
@@ -30,7 +34,7 @@ var UsersStore = {
 			fetchingUsers: _fetchingUsersByNamespace[ namespace ] || false,
 			usersCurrentOffset: _offsetByNamespace[ namespace ],
 			numUsersFetched: _usersFetchedByNamespace[ namespace ],
-			fetchNameSpace: namespace
+			fetchNameSpace: namespace,
 		};
 	},
 	// Get Users for a set of fetchOptions
@@ -74,13 +78,13 @@ var UsersStore = {
 
 		return Object.assign( {}, fetchOptions, {
 			offset: 0,
-			number: Math.min( requestNumber, 1000 )
+			number: Math.min( requestNumber, 1000 ),
 		} );
 	},
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateUser( siteId, id, user ) {
@@ -97,7 +101,10 @@ function updateUser( siteId, id, user ) {
 
 function decrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
 			_totalUsersByNamespace[ namespace ]--;
 			_usersFetchedByNamespace[ namespace ]--;
 		}
@@ -106,7 +113,10 @@ function decrementPaginationData( siteId, userId ) {
 
 function incrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
 			_totalUsersByNamespace[ namespace ]++;
 			_usersFetchedByNamespace[ namespace ]++;
 		}
@@ -123,7 +133,10 @@ function deleteUserFromSite( siteId, userId ) {
 
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
 			_userIDsByNamespace[ namespace ].delete( userId );
 		}
 	} );

@@ -1,8 +1,11 @@
 /**
  * Normalize API Settings
- * @param  {Object} settings Raw API settings
+ *
+ * @format
+ * @param {Object} settings Raw API settings
  * @return {Object}          Normalized settings
  */
+
 export function normalizeSettings( settings ) {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {

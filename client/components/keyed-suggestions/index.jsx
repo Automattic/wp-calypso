@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -25,36 +28,35 @@ function SuggestionsButtonAll( props ) {
 		return props.onClick( props.category );
 	}
 
-	return <span
-		className="keyed-suggestions__category-show-all"
-		onClick={ click }>
-		{ props.label }
-	</span>;
+	return (
+		<span className="keyed-suggestions__category-show-all" onClick={ click }>
+			{ props.label }
+		</span>
+	);
 }
 
 class KeyedSuggestions extends React.Component {
-
 	static propTypes = {
 		suggest: PropTypes.func,
 		terms: PropTypes.object,
 		input: PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		suggest: noop,
 		terms: {},
 		input: '',
-	}
+	};
 
 	state = {
 		suggestionPosition: 0,
 		currentSuggestion: null,
 		suggestions: {},
 		filterTerm: '',
-		showAll: ''
-	}
+		showAll: '',
+	};
 
-	setInitialState = ( input ) => {
+	setInitialState = input => {
 		const suggestions = this.narrowDownAndSort( input, this.state.showAll );
 		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
@@ -63,7 +65,7 @@ class KeyedSuggestions extends React.Component {
 			suggestionPosition: 0,
 			currentSuggestion: taxonomySuggestionsArray[ 0 ],
 		} );
-	}
+	};
 
 	componentWillMount() {
 		this.setInitialState( this.props.input );
@@ -77,15 +79,15 @@ class KeyedSuggestions extends React.Component {
 
 	countSuggestions = () => {
 		return this.state.taxonomySuggestionsArray.length;
-	}
+	};
 
-	getSuggestionForPosition = ( position ) => {
+	getSuggestionForPosition = position => {
 		return this.state.taxonomySuggestionsArray[ position ];
-	}
+	};
 
-	getPositionForSuggestion = ( suggestion ) => {
+	getPositionForSuggestion = suggestion => {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
-	}
+	};
 
 	incPosition = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
@@ -93,15 +95,15 @@ class KeyedSuggestions extends React.Component {
 			suggestionPosition: position,
 			currentSuggestion: this.getSuggestionForPosition( position ),
 		} );
-	}
+	};
 
 	decPosition = () => {
 		const position = this.state.suggestionPosition - 1;
 		this.setState( {
 			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
-			currentSuggestion: this.getSuggestionForPosition( position )
+			currentSuggestion: this.getSuggestionForPosition( position ),
 		} );
-	}
+	};
 
 	/**
 	 * Provides keybord support for suggestings component by managing items highlith position
@@ -110,17 +112,17 @@ class KeyedSuggestions extends React.Component {
 	 * @param  {Object} event  Keybord event
 	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
-	handleKeyEvent = ( event ) => {
+	handleKeyEvent = event => {
 		switch ( event.key ) {
-			case 'ArrowDown' :
+			case 'ArrowDown':
 				this.incPosition();
 				event.preventDefault();
 				break;
-			case 'ArrowUp' :
+			case 'ArrowUp':
 				this.decPosition();
 				event.preventDefault();
 				break;
-			case 'Enter' :
+			case 'Enter':
 				if ( !! this.state.currentSuggestion ) {
 					this.props.suggest( this.state.currentSuggestion );
 					return true;
@@ -128,26 +130,26 @@ class KeyedSuggestions extends React.Component {
 				break;
 		}
 		return false;
-	}
+	};
 
-	onMouseDown = ( event ) => {
+	onMouseDown = event => {
 		event.stopPropagation();
 		event.preventDefault();
 		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
 		this.props.suggest( suggestion );
-	}
+	};
 
-	onMouseOver = ( event ) => {
+	onMouseOver = event => {
 		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( suggestion ),
 			currentSuggestion: suggestion,
 		} );
-	}
+	};
 
-	removeEmptySuggestions = ( suggestions ) => {
+	removeEmptySuggestions = suggestions => {
 		return pickBy( suggestions, negate( isEmpty ) );
-	}
+	};
 
 	/**
 	 * Returns an object containing lists of fliters keyed by taxnomies.
@@ -202,7 +204,8 @@ class KeyedSuggestions extends React.Component {
 			// add back at the beggining of the list so it will showup first.
 			otherSuggestions.unshift( filter );
 			// limit or show all
-			filtered[ taxonomy ] = showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
+			filtered[ taxonomy ] =
+				showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
 			return filtered;
 		}
 
@@ -231,20 +234,20 @@ class KeyedSuggestions extends React.Component {
 		}
 
 		return this.removeEmptySuggestions( filtered );
-	}
+	};
 
-	createTaxonomySuggestionsArray = ( suggestions ) => {
+	createTaxonomySuggestionsArray = suggestions => {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
 			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
-			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ':' + value ) );
+			taxonomySuggestionsArray.push( ...suggestions[ key ].map( value => key + ':' + value ) );
 		}
 
 		return taxonomySuggestionsArray;
-	}
+	};
 
 	createTextWithHighlight = ( text, highlightedText ) => {
 		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
@@ -253,24 +256,32 @@ class KeyedSuggestions extends React.Component {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			if ( lowercasePart === highlightedText ) {
-				return <span key={ key } className="keyed-suggestions__value-emphasis" >{ part }</span>;
+				return (
+					<span key={ key } className="keyed-suggestions__value-emphasis">
+						{ part }
+					</span>
+				);
 			}
-			return <span key={ key } className="keyed-suggestions__value-normal" >{ part }</span>;
+			return (
+				<span key={ key } className="keyed-suggestions__value-normal">
+					{ part }
+				</span>
+			);
 		} );
 
 		return token;
-	}
+	};
 
-	onShowAllClick = ( category ) => {
+	onShowAllClick = category => {
 		const suggestions = this.narrowDownAndSort( this.props.input, category );
 		this.setState( {
 			showAll: category,
 			suggestions,
-			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions )
+			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
 		} );
-	}
+	};
 
-	createSuggestions = ( suggestions ) => {
+	createSuggestions = suggestions => {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
@@ -287,52 +298,66 @@ class KeyedSuggestions extends React.Component {
 					<span className="keyed-suggestions__category-name">{ key }</span>
 					<span className="keyed-suggestions__category-counter">
 						{ i18n.translate( '%(filtered)s of %(total)s', {
-							args: { filtered, total }
+							args: { filtered, total },
 						} ) }
 					</span>
-					{ Object.keys( this.props.terms[ key ] ).length > suggestions[ key ].length &&
+					{ Object.keys( this.props.terms[ key ] ).length > suggestions[ key ].length && (
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
 							category={ key }
-							label={ i18n.translate( 'Show all' ) } /> }
-					{ key === this.state.showAll &&
+							label={ i18n.translate( 'Show all' ) }
+						/>
+					) }
+					{ key === this.state.showAll && (
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
 							category={ '' }
-							label={ i18n.translate( 'Show less' ) } /> }
+							label={ i18n.translate( 'Show less' ) }
+						/>
+					) }
 				</div>
 			);
 			//Add values
 			const { terms } = this.props;
-			rendered.push( suggestions[ key ].map( ( value, i ) => {
-				const taxonomyName = terms[ key ][ value ].name;
-				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-				const className = classNames( 'keyed-suggestions__value', { 'has-highlight': hasHighlight } );
-				return (
-					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
-						<span className="keyed-suggestions__value-category">{ key + ':' + value + ' '}</span>
-						<span className="keyed-suggestions__value-label-wigh-highlight">
-							{ this.createTextWithHighlight( taxonomyName, this.state.filterTerm ) }
+			rendered.push(
+				suggestions[ key ].map( ( value, i ) => {
+					const taxonomyName = terms[ key ][ value ].name;
+					const hasHighlight = noOfSuggestions + i === this.state.suggestionPosition;
+					const className = classNames( 'keyed-suggestions__value', {
+						'has-highlight': hasHighlight,
+					} );
+					return (
+						<span
+							className={ className }
+							onMouseDown={ this.onMouseDown }
+							onMouseOver={ this.onMouseOver }
+							key={ key + '_' + i }
+						>
+							<span className="keyed-suggestions__value-category">{ key + ':' + value + ' ' }</span>
+							<span className="keyed-suggestions__value-label-wigh-highlight">
+								{ this.createTextWithHighlight( taxonomyName, this.state.filterTerm ) }
+							</span>
+							{ terms[ key ][ value ].description !== '' && (
+								<span className="keyed-suggestions__value-description">
+									{ terms[ key ][ value ].description }
+								</span>
+							) }
 						</span>
-						{ terms[ key ][ value ].description !== '' &&
-							<span className="keyed-suggestions__value-description">{ terms[ key ][ value ].description }</span>
-						}
-					</span>
-				);
-			} ) );
+					);
+				} )
+			);
 
 			noOfSuggestions += suggestions[ key ].length;
 		}
 
 		return <div className="keyed-suggestions__suggestions">{ rendered }</div>;
-	}
+	};
 
 	render() {
 		return (
 			<div className="keyed-suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
-
 }
 
 export default KeyedSuggestions;

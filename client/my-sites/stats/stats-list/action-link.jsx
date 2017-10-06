@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -24,24 +28,31 @@ class StatsActionLink extends PureComponent {
 
 	onClick( event ) {
 		event.stopPropagation();
-		analytics.ga.recordEvent( 'Stats', 'Clicked on External Link in ' + this.props.moduleName + ' List Action Menu' );
+		analytics.ga.recordEvent(
+			'Stats',
+			'Clicked on External Link in ' + this.props.moduleName + ' List Action Menu'
+		);
 	}
 
 	render() {
 		const { href, translate } = this.props;
 		return (
 			<li className="module-content-list-item-action">
-				<a href={ href }
+				<a
+					href={ href }
 					onClick={ this.onClick }
 					target="_blank"
 					rel="noopener noreferrer"
 					className="module-content-list-item-action-wrapper"
 					title={ translate( 'View content in a new window', {
-						textOnly: true, context: 'Stats action tooltip: View content in a new window'
+						textOnly: true,
+						context: 'Stats action tooltip: View content in a new window',
 					} ) }
 					aria-label={ translate( 'View content in a new window', {
-						textOnly: true, context: 'Stats ARIA label: View content in new window action'
-					} ) } >
+						textOnly: true,
+						context: 'Stats ARIA label: View content in new window action',
+					} ) }
+				>
 					<Gridicon icon="external" size={ 18 } />
 					<span className="module-content-list-item-action-label module-content-list-item-action-label-view">
 						{ translate( 'View', { context: 'Stats: List item action to view content' } ) }

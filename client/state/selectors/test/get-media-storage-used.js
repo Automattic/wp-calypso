@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,17 +42,20 @@ describe( 'getMediaStorageUsed()', () => {
 
 	it( 'should return the storage used for a site', () => {
 		const storage_used_bytes = 1029384756;
-		const result = getMediaStorageUsed( {
-			sites: {
-				mediaStorage: {
-					items: {
-						123: {
-							storage_used_bytes,
+		const result = getMediaStorageUsed(
+			{
+				sites: {
+					mediaStorage: {
+						items: {
+							123: {
+								storage_used_bytes,
+							},
 						},
 					},
 				},
 			},
-		}, 123 );
+			123
+		);
 
 		expect( result ).to.equal( storage_used_bytes );
 	} );

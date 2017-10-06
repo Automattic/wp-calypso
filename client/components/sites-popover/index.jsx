@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import classnames from 'classnames';
@@ -16,19 +20,19 @@ module.exports = React.createClass( {
 	displayName: 'SitesPopover',
 
 	propTypes: {
-		showDelay: React.PropTypes.number,
-		context: React.PropTypes.object,
-		visible: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
-		position: React.PropTypes.string,
-		id: React.PropTypes.string,
-		groups: React.PropTypes.bool,
-		className: React.PropTypes.string
+		showDelay: PropTypes.number,
+		context: PropTypes.object,
+		visible: PropTypes.bool,
+		onClose: PropTypes.func,
+		position: PropTypes.string,
+		id: PropTypes.string,
+		groups: PropTypes.bool,
+		className: PropTypes.string,
 	},
 
 	getInitialState: function() {
 		return {
-			popoverVisible: false
+			popoverVisible: false,
 		};
 	},
 
@@ -39,7 +43,7 @@ module.exports = React.createClass( {
 			position: 'bottom left',
 			groups: false,
 			siteQuerystring: false,
-			className: ''
+			className: '',
 		};
 	},
 
@@ -55,16 +59,12 @@ module.exports = React.createClass( {
 
 	updatePopoverVisibilityState: function() {
 		this.setState( {
-			popoverVisible: this.props.visible
+			popoverVisible: this.props.visible,
 		} );
 	},
 
 	renderHeader() {
-		return (
-			<div className="sites-popover__header">
-				{ this.props.header }
-			</div>
-		);
+		return <div className="sites-popover__header">{ this.props.header }</div>;
 	},
 
 	renderSiteSelector() {
@@ -76,7 +76,8 @@ module.exports = React.createClass( {
 				indicator={ false }
 				autoFocus={ ! hasTouch() }
 				groups={ true }
-				onClose={ this.props.onClose } />
+				onClose={ this.props.onClose }
+			/>
 		);
 	},
 
@@ -101,5 +102,5 @@ module.exports = React.createClass( {
 				{ this.renderSiteSelector() }
 			</Popover>
 		);
-	}
+	},
 } );

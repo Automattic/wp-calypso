@@ -1,8 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import classNames from 'classnames';
 
 /**
@@ -24,16 +27,13 @@ export default class PaymentBox extends PureComponent {
 				transitionAppearTimeout={ 400 }
 				transitionEnter={ true }
 				transitionEnterTimeout={ 400 }
-				transitionLeave={ false } >
-
-				<div className="checkout__payment-box-container"
-					key={ this.props.currentPage } >
+				transitionLeave={ false }
+			>
+				<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 					<SectionHeader label={ this.props.title } />
 					<Card className={ cardClass }>
 						<div className="checkout__box-padding">
-							<div className={ contentClass }>
-								{ this.props.children }
-							</div>
+							<div className={ contentClass }>{ this.props.children }</div>
 						</div>
 					</Card>
 				</div>

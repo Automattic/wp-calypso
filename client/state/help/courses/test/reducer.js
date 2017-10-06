@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,18 +9,12 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	HELP_COURSES_RECEIVE,
-} from 'state/action-types';
-import reducer, {
-	items,
-} from '../reducer';
+import reducer, { items } from '../reducer';
+import { HELP_COURSES_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
 	} );
 
 	describe( '#items()', () => {
@@ -34,14 +30,17 @@ describe( 'reducer', () => {
 					title: 'title',
 					description: 'description',
 					schedule: [],
-					videos: []
-				}
+					videos: [],
+				},
 			] );
 
-			const state = items( {}, {
-				type: HELP_COURSES_RECEIVE,
-				courses,
-			} );
+			const state = items(
+				{},
+				{
+					type: HELP_COURSES_RECEIVE,
+					courses,
+				}
+			);
 
 			expect( state ).to.eql( courses );
 		} );

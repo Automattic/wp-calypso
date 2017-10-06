@@ -9,14 +9,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
-	READER_FOLLOWS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
-	READER_FOLLOW_ERROR,
-} from 'state/action-types';
-import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
 	unsubscribeToNewPostEmail,
@@ -27,6 +19,14 @@ import {
 	syncComplete,
 } from '../actions';
 import { items, itemsCount } from '../reducer';
+import {
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
+	READER_FOLLOWS_RECEIVE,
+	SERIALIZE,
+	DESERIALIZE,
+	READER_FOLLOW_ERROR,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#itemsCount()', () => {

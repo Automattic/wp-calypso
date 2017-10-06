@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight, pick } from 'lodash';
@@ -23,9 +26,12 @@ const PublicPostTypes = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	supportsPublicPostTypesCheckbox,
-	translate
+	translate,
 } ) => {
-	if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) || ! supportsPublicPostTypesCheckbox ) {
+	if (
+		! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ||
+		! supportsPublicPostTypesCheckbox
+	) {
 		return null;
 	}
 
@@ -36,9 +42,7 @@ const PublicPostTypes = ( {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'jetpack_sync_non_public_post_stati' ) }
 			>
-				{ translate(
-					'Allow synchronization of Posts and Pages with non-public post statuses'
-				) }
+				{ translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }
 			</CompactFormToggle>
 			<FormSettingExplanation isIndented>
 				{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
@@ -47,25 +51,20 @@ const PublicPostTypes = ( {
 	);
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteIsJetpack = isJetpackSite( state, siteId );
 
-		return {
-			supportsPublicPostTypesCheckbox: siteIsJetpack && ! isJetpackMinimumVersion( state, siteId, '4.2' ),
-		};
-	}
-);
+	return {
+		supportsPublicPostTypesCheckbox:
+			siteIsJetpack && ! isJetpackMinimumVersion( state, siteId, '4.2' ),
+	};
+} );
 
-const getFormSettings = ( settings ) => {
-	return pick( settings, [
-		'jetpack_sync_non_public_post_stati',
-	] );
+const getFormSettings = settings => {
+	return pick( settings, [ 'jetpack_sync_non_public_post_stati' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( PublicPostTypes );
+export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
+	PublicPostTypes
+);

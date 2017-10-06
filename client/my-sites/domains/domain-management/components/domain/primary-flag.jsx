@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -18,7 +22,9 @@ class DomainPrimaryFlag extends Component {
 
 		if ( domain.isPrimary && ! isDomainOnly ) {
 			return (
-				<Notice isCompact status="is-success">{ translate( 'Primary Domain' ) }</Notice>
+				<Notice isCompact status="is-success">
+					{ translate( 'Primary Domain' ) }
+				</Notice>
 			);
 		}
 
@@ -27,13 +33,13 @@ class DomainPrimaryFlag extends Component {
 }
 
 DomainPrimaryFlag.propTypes = {
-	domain: React.PropTypes.object.isRequired,
-	isDomainOnly: React.PropTypes.bool,
-	translate: React.PropTypes.func.isRequired,
+	domain: PropTypes.object.isRequired,
+	isDomainOnly: PropTypes.bool,
+	translate: PropTypes.func.isRequired,
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) )
+		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	};
 } )( localize( DomainPrimaryFlag ) );

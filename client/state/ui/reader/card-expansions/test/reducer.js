@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,12 +9,9 @@ import freeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import {
-	READER_EXPAND_CARD,
-	READER_RESET_CARD_EXPANSIONS,
-} from 'state/action-types';
 import reducer from '../reducer';
 import { keyToString } from 'lib/feed-stream-store/post-key';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const postKey = freeze( { postId: 'postId', blogId: 'blogId' } );
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 	it( 'should add a newly expanded card to state', () => {
 		const action = freeze( {
 			type: READER_EXPAND_CARD,
-			payload: { postKey }
+			payload: { postKey },
 		} );
 		const prevState = freeze( {} );
 		const nextState = reducer( prevState, action );

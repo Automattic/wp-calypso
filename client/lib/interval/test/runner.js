@@ -1,14 +1,22 @@
+/** @format */
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 
+/**
+ * Internal dependencies
+ */
 import {
-	add, remove,
+	add,
+	remove,
 	resetForTesting as reset,
 	EVERY_SECOND,
 	EVERY_FIVE_SECONDS,
 	EVERY_TEN_SECONDS,
 	EVERY_THIRTY_SECONDS,
-	EVERY_MINUTE
+	EVERY_MINUTE,
 } from '../runner';
 
 const noop = () => null;

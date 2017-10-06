@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import reducer, { requesting, counts } from '../reducer';
 import {
 	CURRENT_USER_ID_SET,
 	POST_COUNTS_RECEIVE,
@@ -19,23 +21,17 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	requesting,
-	counts
-} from '../reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'counts'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'counts' ] );
 	} );
 
 	describe( '#requesting()', () => {
@@ -49,33 +45,33 @@ describe( 'reducer', () => {
 			const state = requesting( undefined, {
 				type: POST_COUNTS_REQUEST,
 				siteId: 2916284,
-				postType: 'post'
+				postType: 'post',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 		} );
 
 		it( 'should accumulate requests for the same site', () => {
 			const original = deepFreeze( {
 				2916284: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 			const state = requesting( original, {
 				type: POST_COUNTS_REQUEST,
 				siteId: 2916284,
-				postType: 'page'
+				postType: 'page',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: true,
-					page: true
-				}
+					page: true,
+				},
 			} );
 		} );
 
@@ -83,23 +79,23 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
-					page: true
-				}
+					page: true,
+				},
 			} );
 			const state = requesting( original, {
 				type: POST_COUNTS_REQUEST,
 				siteId: 77203074,
-				postType: 'post'
+				postType: 'post',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: true,
-					page: true
+					page: true,
 				},
 				77203074: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 		} );
 
@@ -107,26 +103,26 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
-					page: true
+					page: true,
 				},
 				77203074: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 			const state = requesting( original, {
 				type: POST_COUNTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				postType: 'post'
+				postType: 'post',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: false,
-					page: true
+					page: true,
 				},
 				77203074: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 		} );
 
@@ -134,26 +130,26 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: false,
-					page: true
+					page: true,
 				},
 				77203074: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 			const state = requesting( original, {
 				type: POST_COUNTS_REQUEST_FAILURE,
 				siteId: 2916284,
-				postType: 'page'
+				postType: 'page',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: false,
-					page: false
+					page: false,
 				},
 				77203074: {
-					post: true
-				}
+					post: true,
+				},
 			} );
 		} );
 	} );
@@ -176,17 +172,17 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 2 },
-					mine: { publish: 1 }
-				}
+					mine: { publish: 1 },
+				},
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 2 },
-						mine: { publish: 1 }
-					}
-				}
+						mine: { publish: 1 },
+					},
+				},
 			} );
 		} );
 
@@ -195,9 +191,9 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: 2 },
-						mine: { publish: 1 }
-					}
-				}
+						mine: { publish: 1 },
+					},
+				},
 			} );
 			const state = counts( original, {
 				type: POST_COUNTS_RECEIVE,
@@ -205,21 +201,21 @@ describe( 'reducer', () => {
 				postType: 'page',
 				counts: {
 					all: { publish: 12 },
-					mine: { publish: 11 }
-				}
+					mine: { publish: 11 },
+				},
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 2 },
-						mine: { publish: 1 }
+						mine: { publish: 1 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 		} );
 
@@ -228,13 +224,13 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: 2 },
-						mine: { publish: 1 }
+						mine: { publish: 1 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 			const state = counts( original, {
 				type: POST_COUNTS_RECEIVE,
@@ -242,21 +238,21 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 3 },
-					mine: { publish: 2 }
-				}
+					mine: { publish: 2 },
+				},
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 3 },
-						mine: { publish: 2 }
+						mine: { publish: 2 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 		} );
 
@@ -264,13 +260,13 @@ describe( 'reducer', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 481, site_ID: 2916284, type: 'post', status: 'trash', author: { ID: 73705554 } }
-				]
+					{ ID: 481, site_ID: 2916284, type: 'post', status: 'trash', author: { ID: 73705554 } },
+				],
 			} );
 
 			state = counts( state, {
 				type: CURRENT_USER_ID_SET,
-				userId: 73705554
+				userId: 73705554,
 			} );
 
 			state = counts( state, {
@@ -279,32 +275,32 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 2, trash: 1 },
-					mine: { publish: 1, trash: 1 }
-				}
+					mine: { publish: 1, trash: 1 },
+				},
 			} );
 
 			state = counts( state, {
 				type: POST_DELETE,
 				siteId: 2916284,
-				postId: 481
+				postId: 481,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 2, trash: 0 },
-						mine: { publish: 1, trash: 0 }
-					}
-				}
+						mine: { publish: 1, trash: 0 },
+					},
+				},
 			} );
 		} );
 
-		it( 'should transition an updated post\'s count to its new status when changed', () => {
+		it( "should transition an updated post's count to its new status when changed", () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
-				]
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } },
+				],
 			} );
 
 			state = counts( state, {
@@ -313,24 +309,24 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 3, draft: 1, trash: 0 },
-					mine: { publish: 2, draft: 0, trash: 0 }
-				}
+					mine: { publish: 2, draft: 0, trash: 0 },
+				},
 			} );
 
 			state = counts( state, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
-				]
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } },
+				],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 4, draft: 0, trash: 0 },
-						mine: { publish: 2, draft: 0, trash: 0 }
-					}
-				}
+						mine: { publish: 2, draft: 0, trash: 0 },
+					},
+				},
 			} );
 		} );
 
@@ -338,8 +334,8 @@ describe( 'reducer', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
-				]
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } },
+				],
 			} );
 
 			state = counts( state, {
@@ -348,24 +344,24 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 3, draft: 1, trash: 0 },
-					mine: { publish: 2, draft: 0, trash: 0 }
-				}
+					mine: { publish: 2, draft: 0, trash: 0 },
+				},
 			} );
 
 			state = counts( state, {
 				type: POST_SAVE,
 				siteId: 2916284,
 				postId: 98,
-				post: { status: 'trash' }
+				post: { status: 'trash' },
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 3, draft: 0, trash: 1 },
-						mine: { publish: 2, draft: 0, trash: 0 }
-					}
-				}
+						mine: { publish: 2, draft: 0, trash: 0 },
+					},
+				},
 			} );
 		} );
 
@@ -376,31 +372,31 @@ describe( 'reducer', () => {
 				postType: 'post',
 				counts: {
 					all: { publish: 3, draft: 0, trash: 0 },
-					mine: { publish: 2, draft: 0, trash: 0 }
-				}
+					mine: { publish: 2, draft: 0, trash: 0 },
+				},
 			} );
 
 			state = counts( state, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
-				]
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } },
+				],
 			} );
 
 			state = counts( state, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
-				]
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } },
+				],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
 						all: { publish: 4, draft: 0, trash: 0 },
-						mine: { publish: 2, draft: 0, trash: 0 }
-					}
-				}
+						mine: { publish: 2, draft: 0, trash: 0 },
+					},
+				},
 			} );
 		} );
 
@@ -409,13 +405,13 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: 3 },
-						mine: { publish: 2 }
+						mine: { publish: 2 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 			const state = counts( original, { type: SERIALIZE } );
 
@@ -427,13 +423,13 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: 3 },
-						mine: { publish: 2 }
+						mine: { publish: 2 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 			const state = counts( original, { type: DESERIALIZE } );
 
@@ -445,13 +441,13 @@ describe( 'reducer', () => {
 				2916284: {
 					post: {
 						all: { publish: true },
-						mine: { publish: 2 }
+						mine: { publish: 2 },
 					},
 					page: {
 						all: { publish: 12 },
-						mine: { publish: 11 }
-					}
-				}
+						mine: { publish: 11 },
+					},
+				},
 			} );
 			const state = counts( original, { type: DESERIALIZE } );
 

@@ -1,10 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
-import {
-	some,
-} from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,33 +35,32 @@ var CreditsPaymentBox = React.createClass( {
 					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
 
 					<span>
-						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+						{ this.translate(
+							'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
 									credits: cart.credits,
-									currency: cart.currency
+									currency: cart.currency,
 								},
 								components: {
-									strong: <strong />
-								}
-							} )
-						}
+									strong: <strong />,
+								},
+							}
+						) }
 					</span>
 				</div>
 
 				<TermsOfService />
 
 				<div className="payment-box-actions">
-					<PayButton
-						cart={ this.props.cart }
-						transactionStep={ transactionStep } />
-					{
-						showPaymentChatButton &&
+					<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+					{ showPaymentChatButton && (
 						<PaymentChatButton
 							paymentType="credits"
 							cart={ cart }
-							transactionStep={ transactionStep } />
-					}
+							transactionStep={ transactionStep }
+						/>
+					) }
 				</div>
 
 				<CartCoupon cart={ cart } />
@@ -72,13 +72,11 @@ var CreditsPaymentBox = React.createClass( {
 
 	render: function() {
 		return (
-			<PaymentBox
-				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
-	}
+	},
 } );
 
 module.exports = CreditsPaymentBox;

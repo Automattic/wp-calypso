@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var expect = require( 'chai' ).expect;
+
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var utils = require( '../utils' );
+import utils from '../utils';
 
 describe( 'utils', function() {
 	describe( '#getMimeBaseTypeFromFilter()', function() {

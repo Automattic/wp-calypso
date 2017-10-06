@@ -1,17 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
-const debug = require( 'debug' )( 'calypso:signup-progress-store' );
-const store = require( 'store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:signup-progress-store' );
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	SignupDependencyStore = require( './dependency-store' ),
-	steps = require( 'signup/config/steps' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import SignupDependencyStore from './dependency-store';
+import steps from 'signup/config/steps';
 
 /**
  * Constants
@@ -30,7 +34,7 @@ var SignupProgressStore = {
 	reset: function() {
 		signupProgress = [];
 		store.remove( STORAGE_KEY );
-	}
+	},
 };
 
 emitter( SignupProgressStore );
@@ -72,10 +76,12 @@ function updateOrAddStep( step ) {
 }
 
 function setStepInvalid( step, errors ) {
-	updateOrAddStep( assign( {}, step, {
-		status: 'invalid',
-		errors: errors
-	} ) );
+	updateOrAddStep(
+		assign( {}, step, {
+			status: 'invalid',
+			errors: errors,
+		} )
+	);
 }
 
 function saveStep( step ) {
@@ -87,7 +93,8 @@ function saveStep( step ) {
 }
 
 function submitStep( step ) {
-	const stepHasApiRequestFunction = steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
+	const stepHasApiRequestFunction =
+			steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
 		status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	updateOrAddStep( assign( {}, step, { status } ) );

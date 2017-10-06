@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -16,8 +19,7 @@ export default localize( ( { translate } ) => {
 				icon="comment"
 				title={ translate( 'Marketing Automation' ) }
 				description={ translate(
-					'Schedule tweets, Facebook posts, and other social posts in advance. ' +
-					'No limits.'
+					'Schedule tweets, Facebook posts, and other social posts in advance. ' + 'No limits.'
 				) }
 			/>
 		</div>

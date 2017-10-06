@@ -1,15 +1,15 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
 class PendingGappsTosNoticeMultipleDomainListItem extends React.PureComponent {
 	onClickHandler = () => {
-		this.props.onClick(
-			this.props.domainName,
-			this.props.user
-		);
+		this.props.onClick( this.props.domainName, this.props.user );
 	};
 
 	render() {

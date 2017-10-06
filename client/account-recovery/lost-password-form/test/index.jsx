@@ -1,11 +1,14 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -16,7 +19,8 @@ describe( 'LostPassword', () => {
 	it( 'should render as expected', () => {
 		const wrapper = shallow( <LostPasswordFormComponent /> );
 
-		expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be.ok;
+		expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be
+			.ok;
 		expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
 
@@ -26,12 +30,15 @@ describe( 'LostPassword', () => {
 			wrapper.setState( { userLoginFormValue: '' } );
 
 			wrapper.find( '.lost-password-form__user-login-input' ).node.value = '';
-			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be.ok;
+			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be
+				.ok;
 			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
 		it( 'should be disabled when isRequesting is true', function() {
-			const wrapper = mount( <LostPasswordFormComponent className="test__test" isRequesting={ true } /> );
+			const wrapper = mount(
+				<LostPasswordFormComponent className="test__test" isRequesting={ true } />
+			);
 
 			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.be.ok;
 			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;

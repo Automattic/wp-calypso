@@ -1,17 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find, isEqual, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:site' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:site' );
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	notices = require( 'notices' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	getAttributes = require( './computed-attributes' );
+import wpcom from 'lib/wp';
+import notices from 'notices';
+import Emitter from 'lib/mixins/emitter';
+import getAttributes from './computed-attributes';
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {
@@ -25,12 +29,16 @@ function settingsErrorHandler( error, site ) {
 	var adminURL = site.options ? site.options.admin_url : '';
 	switch ( error.statusCode ) {
 		case 0:
-			notices.error( i18n.translate( 'There was an error retrieving your site settings. Please check your internet connection.' ) );
+			notices.error(
+				i18n.translate(
+					'There was an error retrieving your site settings. Please check your internet connection.'
+				)
+			);
 			break;
 		case 400:
 			notices.error( i18n.translate( 'There was an error retrieving your site settings.' ), {
 				button: i18n.translate( 'Make sure your Jetpack is up to date' ),
-				href: adminURL + 'plugins.php?plugin_status=upgrade'
+				href: adminURL + 'plugins.php?plugin_status=upgrade',
 			} );
 			break;
 		case 401:
@@ -65,7 +73,10 @@ Site.prototype.set = function( attributes ) {
 	// `attributes` may only contain the attributes we're updating here, so we
 	// only check if the new computed properties match the existing ones.
 	for ( const prop in attributes ) {
-		if ( computedAttributes.hasOwnProperty( prop ) && ! isEqual( computedAttributes[ prop ], this[ prop ] ) ) {
+		if (
+			computedAttributes.hasOwnProperty( prop ) &&
+			! isEqual( computedAttributes[ prop ], this[ prop ] )
+		) {
 			if ( undefined === computedAttributes[ prop ] ) {
 				delete this[ prop ];
 			} else {
@@ -99,19 +110,21 @@ Site.prototype.updateComputedAttributes = function() {
 Site.prototype.fetchSettings = function( siteID ) {
 	var requestID = this.ID || siteID;
 	this.set( { fetchingSettings: true } );
-	wpcom.undocumented().settings( requestID, function( error, data ) {
-		if ( error ) {
-			settingsErrorHandler( error, this );
-			debug( 'error fetching site settings data from api', error );
-			return;
-		}
+	wpcom.undocumented().settings(
+		requestID,
+		function( error, data ) {
+			if ( error ) {
+				settingsErrorHandler( error, this );
+				debug( 'error fetching site settings data from api', error );
+				return;
+			}
 
-		// settings endpoint is a superset of Site and can be set on top of Site
-		data.latestSettings = new Date().getTime();
-		data.fetchingSettings = false;
-		this.set( data );
-
-	}.bind( this ) );
+			// settings endpoint is a superset of Site and can be set on top of Site
+			data.latestSettings = new Date().getTime();
+			data.fetchingSettings = false;
+			this.set( data );
+		}.bind( this )
+	);
 };
 
 /**
@@ -120,15 +133,12 @@ Site.prototype.fetchSettings = function( siteID ) {
  * @param  {Function} callback    function to call when request resolves
  */
 Site.prototype.saveSettings = function( newSettings, callback ) {
-
 	var reflectSavedSettings = function( savedSettings ) {
-
 		var settings = this.settings,
 			updatedAttributes = { settings: settings },
 			key;
 
 		for ( key in savedSettings ) {
-
 			if ( ! savedSettings.hasOwnProperty( key ) ) {
 				continue;
 			}
@@ -141,30 +151,24 @@ Site.prototype.saveSettings = function( newSettings, callback ) {
 			}
 
 			settings[ key ] = savedSettings[ key ];
-
 		}
 
 		updatedAttributes.settings = settings;
 
 		this.set( updatedAttributes );
-
 	}.bind( this );
 
 	if ( 'string' === typeof newSettings.whitelistString ) {
-		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( "\n" );
+		newSettings.jetpack_protect_whitelist = newSettings.whitelistString.split( '\n' );
 		newSettings = omit( newSettings, 'whitelistString' );
 	}
 
 	wpcom.undocumented().settings( this.ID, 'post', newSettings, function( error, data ) {
-
 		if ( ! error && data.updated ) {
-
 			reflectSavedSettings( data.updated );
-
 		}
 		callback( error, data );
 	} );
-
 };
 
 /**
@@ -200,16 +204,18 @@ Site.prototype.fetchUsers = function() {
 
 	this.fetchingUsers = true;
 
-	wpcom.site( this.ID ).usersList( function( error, data ) {
-		if ( error || ! data.users ) {
-			debug( 'error fetching site users data from api', error );
-			return;
-		}
+	wpcom.site( this.ID ).usersList(
+		function( error, data ) {
+			if ( error || ! data.users ) {
+				debug( 'error fetching site users data from api', error );
+				return;
+			}
 
-		this.set( { users: data.users } );
-		this.fetchingUsers = false;
-		this.emit( 'usersFetched' );
-	}.bind( this ) );
+			this.set( { users: data.users } );
+			this.fetchingUsers = false;
+			this.emit( 'usersFetched' );
+		}.bind( this )
+	);
 };
 
 Site.prototype.isUpgradeable = function() {

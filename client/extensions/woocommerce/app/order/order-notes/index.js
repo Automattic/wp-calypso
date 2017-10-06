@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ class OrderNotes extends Component {
 	static propTypes = {
 		orderId: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
-	}
+	};
 
 	constructor( props ) {
 		super( props );
@@ -45,16 +46,14 @@ class OrderNotes extends Component {
 		};
 	}
 
-	toggleOpenDay = ( index ) => {
+	toggleOpenDay = index => {
 		this.setState( () => ( { openIndex: index } ) );
-	}
+	};
 
 	renderNotes = () => {
 		const { days, notesByDay, translate } = this.props;
 		if ( ! days.length ) {
-			return (
-				<p>{ translate( 'No activity yet' ) }</p>
-			);
+			return <p>{ translate( 'No activity yet' ) }</p>;
 		}
 
 		return days.map( ( day, index ) => {
@@ -66,12 +65,13 @@ class OrderNotes extends Component {
 					date={ day }
 					index={ index }
 					isOpen={ index === this.state.openIndex }
-					onClick={ this.toggleOpenDay } >
+					onClick={ this.toggleOpenDay }
+				>
 					{ notes.map( note => <OrderNote { ...note } key={ note.id } /> ) }
 				</OrderNotesByDay>
 			);
 		} );
-	}
+	};
 
 	renderPlaceholder = () => {
 		const noop = () => {};
@@ -80,22 +80,19 @@ class OrderNotes extends Component {
 				<OrderNote note="" />
 			</OrderNotesByDay>
 		);
-	}
+	};
 
 	render() {
 		const { areNotesLoaded, orderId, siteId, translate } = this.props;
 		const classes = classNames( {
-			'is-placeholder': ! areNotesLoaded
+			'is-placeholder': ! areNotesLoaded,
 		} );
 
 		return (
 			<div className="order-notes">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
 				<Card className={ classes }>
-					{ areNotesLoaded
-						? this.renderNotes()
-						: this.renderPlaceholder()
-					}
+					{ areNotesLoaded ? this.renderNotes() : this.renderPlaceholder() }
 					<CreateOrderNote orderId={ orderId } siteId={ siteId } />
 				</Card>
 			</div>
@@ -103,23 +100,21 @@ class OrderNotes extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		const orderId = props.orderId || false;
-		const siteId = props.siteId || false;
-		const areNotesLoaded = areOrderNotesLoaded( state, orderId );
-		const notes = getOrderNotes( state, orderId );
-		const notesByDay = notes.length ? getSortedNotes( notes ) : false;
-		const days = notesByDay ? keys( notesByDay ) : [];
-		days.sort().reverse();
+export default connect( ( state, props ) => {
+	const orderId = props.orderId || false;
+	const siteId = props.siteId || false;
+	const areNotesLoaded = areOrderNotesLoaded( state, orderId );
+	const notes = getOrderNotes( state, orderId );
+	const notesByDay = notes.length ? getSortedNotes( notes ) : false;
+	const days = notesByDay ? keys( notesByDay ) : [];
+	days.sort().reverse();
 
-		return {
-			areNotesLoaded,
-			days,
-			notes,
-			notesByDay,
-			orderId,
-			siteId,
-		};
-	}
-)( localize( OrderNotes ) );
+	return {
+		areNotesLoaded,
+		days,
+		notes,
+		notesByDay,
+		orderId,
+		siteId,
+	};
+} )( localize( OrderNotes ) );

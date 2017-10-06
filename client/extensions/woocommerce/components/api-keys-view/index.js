@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -22,31 +25,30 @@ class APIKeysView extends Component {
 				id: PropTypes.string.isRequired,
 				label: PropTypes.string,
 				placeholder: PropTypes.string,
-				value: PropTypes.string
+				value: PropTypes.string,
 			} )
 		),
-	}
+	};
 
-	renderOneKey = ( key ) => {
+	renderOneKey = key => {
 		const { highlightEmptyFields, onEdit, translate } = this.props;
 		const isError = highlightEmptyFields && ! key.value.trim();
 		const requiredFieldText = translate( 'This field is required.' );
 
 		return (
 			<FormFieldset className="api-keys-view__key-container" key={ key.id }>
-				<FormLabel required={ true }>
-					{ key.label }
-				</FormLabel>
+				<FormLabel required={ true }>{ key.label }</FormLabel>
 				<FormTextInput
 					isError={ isError }
 					name={ key.id }
 					onChange={ onEdit }
 					value={ key.value }
-					placeholder={ key.placeholder } />
+					placeholder={ key.placeholder }
+				/>
 				{ isError && <FormInputValidation isError text={ requiredFieldText } /> }
 			</FormFieldset>
 		);
-	}
+	};
 
 	render = () => {
 		const { keys } = this.props;
@@ -54,12 +56,8 @@ class APIKeysView extends Component {
 			return null;
 		}
 
-		return (
-			<div className="api-keys-view__container">
-				{ keys.map( this.renderOneKey ) }
-			</div>
-		);
-	}
+		return <div className="api-keys-view__container">{ keys.map( this.renderOneKey ) }</div>;
+	};
 }
 
 export default localize( APIKeysView );

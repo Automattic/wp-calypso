@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { put } from 'woocommerce/state/data-layer/request/actions';
@@ -63,14 +66,18 @@ export const handleCurrencyUpdate = ( store, action ) => {
 		dispatch( successAction );
 	};
 
-	store.dispatch( put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction ) );
+	store.dispatch(
+		put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction )
+	);
 };
 
 export default {
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: [ dispatchRequest(
-		handleSettingsGeneral,
-		handleSettingsGeneralSuccess,
-		handleSettingsGeneralError
-	) ],
+	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: [
+		dispatchRequest(
+			handleSettingsGeneral,
+			handleSettingsGeneralSuccess,
+			handleSettingsGeneralError
+		),
+	],
 	[ WOOCOMMERCE_CURRENCY_UPDATE ]: [ handleCurrencyUpdate ],
 };

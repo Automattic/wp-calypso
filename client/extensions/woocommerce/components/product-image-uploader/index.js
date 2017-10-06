@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,7 +17,6 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
-
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';
@@ -43,7 +45,7 @@ class ProductImageUploader extends Component {
 		onUpload: noop,
 		onError: noop,
 		onFinish: noop,
-	}
+	};
 
 	state = {
 		errors: [],
@@ -61,8 +63,8 @@ class ProductImageUploader extends Component {
 		let extraDetails;
 		const validationError = errors[ transientId ] || [];
 		switch ( head( validationError ) ) {
-			case 'EXCEEDS_PLAN_STORAGE_LIMIT' :
-			case 'NOT_ENOUGH_SPACE' :
+			case 'EXCEEDS_PLAN_STORAGE_LIMIT':
+			case 'NOT_ENOUGH_SPACE':
 				extraDetails = translate( 'You have reached your plan storage limit.' );
 				break;
 		}
@@ -70,41 +72,45 @@ class ProductImageUploader extends Component {
 		let message;
 		if ( media && media.file ) {
 			message = translate( 'There was a problem uploading %s.', {
-				args: media.file
+				args: media.file,
 			} );
 		} else {
 			message = translate( 'There was a problem uploading your image.' );
 		}
 
-		errorNotice( extraDetails && ( message + ' ' + extraDetails ) || message );
-	}
+		errorNotice( ( extraDetails && message + ' ' + extraDetails ) || message );
+	};
 
 	storeValidationErrors = () => {
 		this.setState( {
 			errors: MediaValidationStore.getAllErrors( this.props.site.ID ),
 		} );
-	}
+	};
 
 	// https://stackoverflow.com/a/20732091
 	displayableFileSize( size ) {
 		const i = Math.floor( Math.log( size ) / Math.log( 1024 ) );
-		return ( size / Math.pow( 1024, i ) ).toFixed( 2 ) * 1 + ' ' + [ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ];
+		return (
+			( size / Math.pow( 1024, i ) ).toFixed( 2 ) * 1 + ' ' + [ 'B', 'kB', 'MB', 'GB', 'TB' ][ i ]
+		);
 	}
 
-	buildFilesToUpload = ( images ) => {
+	buildFilesToUpload = images => {
 		const { site, errorNotice, translate } = this.props;
-		const maxUploadSize = site.options && site.options.max_upload_size || null;
+		const maxUploadSize = ( site.options && site.options.max_upload_size ) || null;
 		const displayableFileSize = this.displayableFileSize( maxUploadSize );
 		const filesToUpload = [];
 
 		images.forEach( function( image ) {
 			if ( maxUploadSize && image.size > maxUploadSize ) {
-				errorNotice( translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
-					args: {
-						name: image.name,
-						size: displayableFileSize,
-					},
-				} ) );
+				errorNotice(
+					translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
+						args: {
+							name: image.name,
+							size: displayableFileSize,
+						},
+					} )
+				);
 				return;
 			}
 			filesToUpload.push( {
@@ -116,14 +122,16 @@ class ProductImageUploader extends Component {
 		} );
 
 		return filesToUpload;
-	}
+	};
 
-	onPick = ( files ) => {
+	onPick = files => {
 		const { site, multiple } = this.props;
 		const { onSelect, onUpload, onFinish } = this.props;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
-		let images = Array.isArray( files ) ? MediaUtils.filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
+		let images = Array.isArray( files )
+			? MediaUtils.filterItemsByMimePrefix( files, 'image' )
+			: [ ...files ];
 		if ( ! images ) {
 			return false;
 		}
@@ -139,7 +147,7 @@ class ProductImageUploader extends Component {
 
 		onSelect( filesToUpload );
 
-		const transientIds = filesToUpload.map( ( file ) => {
+		const transientIds = filesToUpload.map( file => {
 			return file.ID;
 		} );
 
@@ -152,7 +160,7 @@ class ProductImageUploader extends Component {
 			// File has finished uploading or failed.
 			if ( ! isUploadInProgress ) {
 				if ( media ) {
-					const file = find( filesToUpload, ( f ) => f.ID === transientId );
+					const file = find( filesToUpload, f => f.ID === transientId );
 					if ( media.URL ) {
 						onUpload( {
 							ID: media.ID,
@@ -179,13 +187,13 @@ class ProductImageUploader extends Component {
 		MediaValidationStore.on( 'change', this.storeValidationErrors );
 		MediaStore.on( 'change', handleUpload );
 		MediaActions.add( site.ID, filesToUpload );
-	}
+	};
 
 	renderCompactUploader() {
 		const { multiple } = this.props;
 		return (
 			<div className="product-image-uploader__picker compact">
-				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick } >
+				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
 					<Gridicon icon="add-image" size={ 24 } />
 				</FilePicker>
 			</div>
@@ -247,9 +255,8 @@ class ProductImageUploader extends Component {
 			);
 		}
 
-		return compact && this.renderCompactUploader() || this.renderUploader();
+		return ( compact && this.renderCompactUploader() ) || this.renderUploader();
 	}
-
 }
 
 function mapStateToProps( state ) {
@@ -259,4 +266,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )( localize( ProductImageUploader ) );
+export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )(
+	localize( ProductImageUploader )
+);

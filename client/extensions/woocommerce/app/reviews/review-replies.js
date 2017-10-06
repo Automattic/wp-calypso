@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -44,25 +47,17 @@ class ReviewReplies extends Component {
 
 	renderReply = ( replyId, i ) => {
 		const { siteId, review } = this.props;
-		return <ReviewReply
-			siteId={ siteId }
-			key={ i }
-			reviewId={ review.id }
-			replyId={ replyId }
-		/>;
-	}
+		return <ReviewReply siteId={ siteId } key={ i } reviewId={ review.id } replyId={ replyId } />;
+	};
 
 	render() {
 		const { siteId, replyIds, review } = this.props;
-		const repliesOutput = replyIds.length && replyIds.map( this.renderReply ) || null;
+		const repliesOutput = ( replyIds.length && replyIds.map( this.renderReply ) ) || null;
 		return (
 			<div className="reviews__replies">
 				{ repliesOutput }
 
-				<ReviewReplyCreate
-					siteId={ siteId }
-					review={ review }
-				/>
+				<ReviewReplyCreate siteId={ siteId } review={ review } />
 			</div>
 		);
 	}
@@ -73,7 +68,7 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const replies = getReviewReplies( state, props.review.id );
-		const replyIds = replies && replies.map( reply => reply.id ) || [];
+		const replyIds = ( replies && replies.map( reply => reply.id ) ) || [];
 		return {
 			siteId,
 			replyIds,

@@ -1,15 +1,4 @@
-jest.mock( 'lib/wp', () => {
-	const getNotificationSettingsStub = require( 'sinon' ).stub();
-
-	return {
-		undocumented: () => ( {
-			me: () => ( {
-				getNotificationSettings: getNotificationSettingsStub
-			} )
-		} )
-	};
-} );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +8,23 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import * as NotificationSettingsStoreActions from '../actions';
 import NotificationSettingsStore from '../';
-import { undocumented } from 'lib/wp';
+import * as NotificationSettingsStoreActions from '../actions';
+import wp from 'lib/wp';
+
+const undocumented = wp.undocumented;
+
+jest.mock( 'lib/wp', () => {
+	const getNotificationSettingsStub = require( 'sinon' ).stub();
+
+	return {
+		undocumented: () => ( {
+			me: () => ( {
+				getNotificationSettings: getNotificationSettingsStub,
+			} ),
+		} ),
+	};
+} );
 
 describe( 'index', () => {
 	const changeSpy = sinon.spy();
@@ -55,7 +58,7 @@ describe( 'index', () => {
 						post_like: false,
 						follow: true,
 						achievement: false,
-						mentions: true
+						mentions: true,
 					},
 					email: {
 						new_comment: false,
@@ -63,9 +66,9 @@ describe( 'index', () => {
 						post_like: false,
 						follow: false,
 						achievement: false,
-						mentions: true
-					}
-				}
+						mentions: true,
+					},
+				},
 			];
 
 			const settings = { blogs: blogsSettings };
@@ -88,7 +91,7 @@ describe( 'index', () => {
 					post_like: false,
 					follow: true,
 					achievement: false,
-					mentions: true
+					mentions: true,
 				},
 				email: {
 					new_comment: false,
@@ -96,8 +99,8 @@ describe( 'index', () => {
 					post_like: false,
 					follow: false,
 					achievement: false,
-					mentions: true
-				}
+					mentions: true,
+				},
 			};
 
 			const settings = { other: otherSettings };
@@ -115,7 +118,7 @@ describe( 'index', () => {
 		it( 'should return an object for WP email settings', () => {
 			const emailSettings = {
 				new_comment: false,
-				comment_like: true
+				comment_like: true,
 			};
 
 			const settings = { wpcom: emailSettings };
@@ -139,8 +142,8 @@ describe( 'index', () => {
 					devices: [
 						{ device_id: 123, new_comment: false },
 						{ device_id: 1234, new_comment: false },
-						{ device_id: 12345, new_comment: false }
-					]
+						{ device_id: 12345, new_comment: false },
+					],
 				},
 				{
 					blog_id: 1234567,
@@ -149,9 +152,9 @@ describe( 'index', () => {
 					devices: [
 						{ device_id: 123, new_comment: false },
 						{ device_id: 1234, new_comment: false },
-						{ device_id: 12345, new_comment: false }
-					]
-				}
+						{ device_id: 12345, new_comment: false },
+					],
+				},
 			];
 
 			const settings = { blogs: blogsSettings };
@@ -163,10 +166,22 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.toggle( 1234567, 'timeline', 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
-			assert.notOk( state.settings.find( blog => blog.get( 'blog_id' ) === 123456 ).getIn( [ 'timeline', 'new_comment' ] ) );
+			assert.notOk(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 123456 )
+					.getIn( [ 'timeline', 'new_comment' ] )
+			);
 
-			assert.ok( state.settings.find( blog => blog.get( 'blog_id' ) === 1234567 ).getIn( [ 'timeline', 'new_comment' ] ) );
-			assert.notOk( state.settings.find( blog => blog.get( 'blog_id' ) === 1234567 ).getIn( [ 'email', 'new_comment' ] ) );
+			assert.ok(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 1234567 )
+					.getIn( [ 'timeline', 'new_comment' ] )
+			);
+			assert.notOk(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 1234567 )
+					.getIn( [ 'email', 'new_comment' ] )
+			);
 		} );
 
 		it( 'should toggle a device setting for a blog by device id and blog id', () => {
@@ -174,17 +189,29 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
 
-			assert.ok( state.settings.find( blog => blog.get( 'blog_id' ) === 1234567 )
-				.get( 'devices' ).find( device => device.get( 'device_id' ) === 1234 )
-				.get( 'new_comment' ) );
+			assert.ok(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 1234567 )
+					.get( 'devices' )
+					.find( device => device.get( 'device_id' ) === 1234 )
+					.get( 'new_comment' )
+			);
 
-			assert.notOk( state.settings.find( blog => blog.get( 'blog_id' ) === 123456 )
-				.get( 'devices' ).find( device => device.get( 'device_id' ) === 1234 )
-				.get( 'new_comment' ) );
+			assert.notOk(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 123456 )
+					.get( 'devices' )
+					.find( device => device.get( 'device_id' ) === 1234 )
+					.get( 'new_comment' )
+			);
 
-			assert.notOk( state.settings.find( blog => blog.get( 'blog_id' ) === 1234567 )
-				.get( 'devices' ).find( device => device.get( 'device_id' ) === 123 )
-				.get( 'new_comment' ) );
+			assert.notOk(
+				state.settings
+					.find( blog => blog.get( 'blog_id' ) === 1234567 )
+					.get( 'devices' )
+					.find( device => device.get( 'device_id' ) === 123 )
+					.get( 'new_comment' )
+			);
 		} );
 	} );
 
@@ -196,8 +223,8 @@ describe( 'index', () => {
 				devices: [
 					{ device_id: 123, new_comment: false },
 					{ device_id: 1234, new_comment: false },
-					{ device_id: 12345, new_comment: false }
-				]
+					{ device_id: 12345, new_comment: false },
+				],
 			};
 
 			const settings = { other: otherSettings };
@@ -217,13 +244,19 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
 
-			assert.ok( state.settings.get( 'devices' )
-				.find( device => device.get( 'device_id' ) === 1234 )
-				.get( 'new_comment' ) );
+			assert.ok(
+				state.settings
+					.get( 'devices' )
+					.find( device => device.get( 'device_id' ) === 1234 )
+					.get( 'new_comment' )
+			);
 
-			assert.notOk( state.settings.get( 'devices' )
-				.find( device => device.get( 'device_id' ) === 12345 )
-				.get( 'new_comment' ) );
+			assert.notOk(
+				state.settings
+					.get( 'devices' )
+					.find( device => device.get( 'device_id' ) === 12345 )
+					.get( 'new_comment' )
+			);
 		} );
 	} );
 
@@ -231,7 +264,7 @@ describe( 'index', () => {
 		it( 'should toggle a a setting by stream', () => {
 			const wpcomSettings = {
 				new_comment: false,
-				comment_like: false
+				comment_like: false,
 			};
 
 			const settings = { wpcom: wpcomSettings };

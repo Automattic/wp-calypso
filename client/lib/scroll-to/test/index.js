@@ -1,4 +1,7 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -27,7 +30,7 @@ describe( 'scroll-to', () => {
 				expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 500 );
 				expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 300 );
 				done();
-			}
+			},
 		} );
 	} );
 	it( 'window position y', done => {
@@ -39,7 +42,7 @@ describe( 'scroll-to', () => {
 				expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 0 );
 				expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 100 );
 				done();
-			}
+			},
 		} );
 	} );
 } );

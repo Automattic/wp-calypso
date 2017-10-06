@@ -1,17 +1,19 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 import events from 'events';
 import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import analytics from '../../lib/analytics';
 import { logSectionResponseTime } from 'pages/analytics';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 
@@ -31,7 +33,7 @@ describe( 'index', function() {
 		describe( 'when rendering a section', function() {
 			let clock;
 
-			useFakeTimers( newClock => clock = newClock );
+			useFakeTimers( newClock => ( clock = newClock ) );
 
 			beforeEach( function() {
 				sinon.stub( analytics.statsd, 'recordTiming' );
@@ -53,7 +55,9 @@ describe( 'index', function() {
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
-					'reader', 'response-time', TWO_SECONDS
+					'reader',
+					'response-time',
+					TWO_SECONDS
 				);
 			} );
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,12 +15,16 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
-					items: {}
-				}
-			}
+					items: {},
+				},
+			},
 		};
 
-		const unavailable = isJetpackModuleUnavailableInDevelopmentMode( stateTree, 12345678, 'module-a' );
+		const unavailable = isJetpackModuleUnavailableInDevelopmentMode(
+			stateTree,
+			12345678,
+			'module-a'
+		);
 		expect( unavailable ).to.be.null;
 	} );
 
@@ -32,13 +38,17 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 								module: 'module-a',
 								requires_connection: true,
 							},
-						}
-					}
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 
-		const unavailable = isJetpackModuleUnavailableInDevelopmentMode( stateTree, 12345678, 'module-a' );
+		const unavailable = isJetpackModuleUnavailableInDevelopmentMode(
+			stateTree,
+			12345678,
+			'module-a'
+		);
 		expect( unavailable ).to.be.true;
 	} );
 
@@ -52,13 +62,17 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 								module: 'module-a',
 								requires_connection: false,
 							},
-						}
-					}
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 
-		const unavailable = isJetpackModuleUnavailableInDevelopmentMode( stateTree, 12345678, 'module-a' );
+		const unavailable = isJetpackModuleUnavailableInDevelopmentMode(
+			stateTree,
+			12345678,
+			'module-a'
+		);
 		expect( unavailable ).to.be.false;
 	} );
 
@@ -71,13 +85,17 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 							'module-a': {
 								module: 'module-a',
 							},
-						}
-					}
-				}
-			}
+						},
+					},
+				},
+			},
 		};
 
-		const unavailable = isJetpackModuleUnavailableInDevelopmentMode( stateTree, 12345678, 'module-a' );
+		const unavailable = isJetpackModuleUnavailableInDevelopmentMode(
+			stateTree,
+			12345678,
+			'module-a'
+		);
 		expect( unavailable ).to.be.false;
 	} );
 } );

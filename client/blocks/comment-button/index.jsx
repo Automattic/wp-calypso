@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,12 +17,11 @@ import Gridicon from 'gridicons';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 class CommentButton extends Component {
-
 	static propTypes = {
 		onClick: PropTypes.func,
 		tagName: PropTypes.string,
 		commentCount: PropTypes.number,
-		showLabel: PropTypes.bool
+		showLabel: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -27,52 +29,42 @@ class CommentButton extends Component {
 		tagName: 'li',
 		size: 24,
 		commentCount: 0,
-		showLabel: true
+		showLabel: true,
 	};
 
 	render() {
-		const {
-			translate,
-			commentCount,
-			onClick,
-			showLabel,
-			tagName: containerTag,
-		} = this.props;
+		const { translate, commentCount, onClick, showLabel, tagName: containerTag } = this.props;
 
 		return React.createElement(
-			containerTag, {
+			containerTag,
+			{
 				className: 'comment-button',
-				onClick
+				onClick,
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
 			<span className="comment-button__label">
-				{ commentCount > 0 &&
+				{ commentCount > 0 && (
 					<span className="comment-button__label-count">{ commentCount }</span>
-				}
-				{ showLabel && commentCount > 0 &&
+				) }
+				{ showLabel &&
+				commentCount > 0 && (
 					<span className="comment-button__label-status">
 						{ translate( 'Comment', 'Comments', {
 							context: 'noun',
 							count: commentCount,
 						} ) }
 					</span>
-				}
+				) }
 			</span>
 		);
 	}
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	const {
-		post: {
-			site_ID: siteId,
-			ID: postId,
-		} = {},
-		commentCount,
-	} = ownProps;
+	const { post: { site_ID: siteId, ID: postId } = {}, commentCount } = ownProps;
 
 	return {
-		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount
+		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount,
 	};
 };
 

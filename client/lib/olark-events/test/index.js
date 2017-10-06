@@ -1,4 +1,7 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * Internal dependencies
@@ -24,7 +27,7 @@ describe( 'Olark events', () => {
 	} );
 
 	// Test that a listener for the api.chat.onReady event will always have it's callback executed if the event has already fired.
-	it( 'should trigger on api.chat.onReady', ( done ) => {
+	it( 'should trigger on api.chat.onReady', done => {
 		olarkEvents.on( 'api.chat.onReady', () => {
 			done();
 		} );
@@ -32,7 +35,7 @@ describe( 'Olark events', () => {
 
 	// Test that nested event listener callbacks for the api.chat.onReady event will always be executed if the event has already fired.
 	// #9668 fixes a bug where this nesting of events doesn't work properly.
-	it( 'should trigger on nested api.chat.onReady', ( done ) => {
+	it( 'should trigger on nested api.chat.onReady', done => {
 		olarkEvents.on( 'api.chat.onReady', () => {
 			olarkEvents.on( 'api.chat.onReady', () => {
 				done();

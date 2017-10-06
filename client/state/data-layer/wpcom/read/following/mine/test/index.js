@@ -1,26 +1,15 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import freeze from 'deep-freeze';
 import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-
-import {
-	receiveFollows as receiveFollowsAction,
-	follow,
-	syncComplete,
-} from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { NOTICE_CREATE } from 'state/action-types';
-import { subscriptionsFromApi } from '../utils';
-
 import {
 	isSyncingFollows,
 	requestPage,
@@ -31,6 +20,15 @@ import {
 	resetSyncingFollows,
 	updateSeenOnFollow,
 } from '../';
+import { subscriptionsFromApi } from '../utils';
+import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
+import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	follow,
+	syncComplete,
+} from 'state/reader/follows/actions';
 
 const successfulApiResponse = freeze( {
 	number: 2,

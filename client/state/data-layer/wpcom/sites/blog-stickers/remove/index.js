@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
 
@@ -18,12 +21,13 @@ export function requestBlogStickerRemove( { dispatch }, action ) {
 	dispatch(
 		http( {
 			method: 'POST',
-			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${ action.payload.stickerName }`,
+			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${ action.payload
+				.stickerName }`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -45,17 +49,19 @@ export function receiveBlogStickerRemove( store, action, response ) {
 			} ),
 			{
 				duration: 5000,
-			},
-		),
+			}
+		)
 	);
 }
 
 export function receiveBlogStickerRemoveError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem removing that sticker. Please try again.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem removing that sticker. Please try again.' ) )
 	);
 	// Revert the removal
-	dispatch( bypassDataLayer( addBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
+	dispatch(
+		bypassDataLayer( addBlogSticker( action.payload.blogId, action.payload.stickerName ) )
+	);
 }
 
 export default {
@@ -63,7 +69,7 @@ export default {
 		dispatchRequest(
 			requestBlogStickerRemove,
 			receiveBlogStickerRemove,
-			receiveBlogStickerRemoveError,
+			receiveBlogStickerRemoveError
 		),
 	],
 };

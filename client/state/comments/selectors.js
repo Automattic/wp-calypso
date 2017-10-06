@@ -2,13 +2,28 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy, pickBy } from 'lodash';
+import {
+	filter,
+	find,
+	findLast,
+	flatMap,
+	get,
+	groupBy,
+	keyBy,
+	map,
+	mapValues,
+	partition,
+	pickBy,
+	size,
+	sortBy,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getStateKey, deconstructStateKey, fetchStatusInitialState } from './reducer';
+import { fetchStatusInitialState } from './reducer';
+import { getStateKey, deconstructStateKey } from './utils';
 
 /***
  * Gets comment items for post
@@ -63,9 +78,10 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
  * @param {Number} postId site identification
  * @return {Date} most recent comment date
  */
-export const getPostMostRecentCommentDate = createSelector( ( state, siteId, postId ) => {
+export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
-	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
+	const firstContiguousComment = find( items, 'contiguous' );
+	return firstContiguousComment ? new Date( get( firstContiguousComment, 'date' ) ) : undefined;
 }, state => state.comments.items );
 
 /***
@@ -77,19 +93,8 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
  */
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
-	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, state => state.comments.items );
-
-/***
- * Get newest comment date for a given post
- * @param {Object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Date} earliest comment date
- */
-export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
-	const items = getPostCommentItems( state, siteId, postId );
-	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
+	const lastContiguousComment = findLast( items, 'contiguous' );
+	return lastContiguousComment ? new Date( get( lastContiguousComment, 'date' ) ) : undefined;
 }, state => state.comments.items );
 
 /***
@@ -108,15 +113,29 @@ export const getPostCommentsTree = createSelector(
 				? filter( allItems, item => item.isPlaceholder || item.status === status )
 				: allItems;
 
+		// separate out root comments from comments that have parents
+		const [ roots, children ] = partition( items, item => item.parent === false );
+
+		// group children by their parent ID
+		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
+
+		// Generate a new map of parent ID to an array of chilren IDs
+		// Reverse the order to keep it in chrono order
+		const parentToChildIdMap = mapValues( childrenGroupedByParent, _children =>
+			map( _children, 'ID' ).reverse()
+		);
+
+		// convert all of the comments to comment nodes for our tree structure
+		const transformItemToNode = item => ( {
+			data: item,
+			children: parentToChildIdMap[ item.ID ] || [],
+		} );
+
+		const commentsByIdMap = keyBy( map( items, transformItemToNode ), 'data.ID' );
+
 		return {
-			...keyBy(
-				map( items, item => ( {
-					children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ).reverse(),
-					data: item,
-				} ) ),
-				'data.ID'
-			),
-			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
+			...commentsByIdMap,
+			children: map( roots, root => root.ID ).reverse(),
 		};
 	},
 	state => state.comments.items

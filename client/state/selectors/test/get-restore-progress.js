@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,11 +14,14 @@ const SITE_ID = 1234;
 
 describe( 'getRestoreProgress()', () => {
 	it( 'should return null if no progress exists for a site', () => {
-		const result = getRestoreProgress( {
-			activityLog: {
-				restoreProgress: {},
+		const result = getRestoreProgress(
+			{
+				activityLog: {
+					restoreProgress: {},
+				},
 			},
-		}, SITE_ID );
+			SITE_ID
+		);
 		expect( result ).to.be.null;
 	} );
 
@@ -26,13 +31,16 @@ describe( 'getRestoreProgress()', () => {
 			percent: 20,
 			status: 'in-progress',
 		};
-		const result = getRestoreProgress( {
-			activityLog: {
-				restoreProgress: {
-					[ SITE_ID ]: progress,
+		const result = getRestoreProgress(
+			{
+				activityLog: {
+					restoreProgress: {
+						[ SITE_ID ]: progress,
+					},
 				},
 			},
-		}, SITE_ID );
+			SITE_ID
+		);
 		expect( result ).to.deep.equal( progress );
 	} );
 } );

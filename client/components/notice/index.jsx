@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -20,18 +24,12 @@ export class Notice extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
-		duration: React.PropTypes.number,
+		duration: PropTypes.number,
 		icon: PropTypes.string,
 		isCompact: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
-		status: PropTypes.oneOf( [
-			'is-error',
-			'is-info',
-			'is-success',
-			'is-warning',
-			'is-plain',
-		] ),
+		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
 		text: PropTypes.oneOfType( [
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
@@ -91,22 +89,22 @@ export class Notice extends Component {
 		} = this.props;
 		const classes = classnames( 'notice', status, className, {
 			'is-compact': isCompact,
-			'is-dismissable': showDismiss
+			'is-dismissable': showDismiss,
 		} );
 
 		return (
 			<div className={ classes }>
 				<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
 				<span className="notice__content">
-					<span className="notice__text">
-						{ text ? text : children }
-					</span>
+					<span className="notice__text">{ text ? text : children }</span>
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
-					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick } >
+					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick }>
 						<Gridicon icon="cross" size={ 24 } />
-						<span className="notice__screen-reader-text screen-reader-text">{ translate( 'Dismiss' ) }</span>
+						<span className="notice__screen-reader-text screen-reader-text">
+							{ translate( 'Dismiss' ) }
+						</span>
 					</span>
 				) }
 			</div>

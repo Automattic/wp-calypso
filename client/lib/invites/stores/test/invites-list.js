@@ -1,20 +1,22 @@
+/** @format */
+
 /**
  * External dependencies
  */
-const assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-const Dispatcher = require( 'dispatcher' ),
-	constants = require( 'lib/invites/constants' );
+import Dispatcher from 'dispatcher';
+import { action as ActionTypes } from 'lib/invites/constants';
 
 describe( 'List Invites Store', function() {
-	var ListInvitesStore;
+	let ListInvitesStore;
 	const siteId = 123;
 	const actions = {
 		receiveInvites: {
-			type: constants.action.RECEIVE_INVITES,
+			type: ActionTypes.RECEIVE_INVITES,
 			siteId: siteId,
 			offset: 0,
 			data: {
@@ -25,14 +27,14 @@ describe( 'List Invites Store', function() {
 						role: 'editor',
 						user: {
 							ID: 1234,
-							name: 'Test One'
-						}
-					}
-				]
-			}
+							name: 'Test One',
+						},
+					},
+				],
+			},
 		},
 		receiveMoreInvites: {
-			type: constants.action.RECEIVE_INVITES,
+			type: ActionTypes.RECEIVE_INVITES,
 			siteId: siteId,
 			offset: 0,
 			data: {
@@ -43,12 +45,12 @@ describe( 'List Invites Store', function() {
 						role: 'contributor',
 						user: {
 							ID: 1234,
-							name: 'Test Two'
-						}
-					}
-				]
-			}
-		}
+							name: 'Test Two',
+						},
+					},
+				],
+			},
+		},
 	};
 
 	beforeEach( function() {

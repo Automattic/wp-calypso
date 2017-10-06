@@ -1,3 +1,4 @@
+/** @format */
 export const localeSlugSchema = {
-	type: 'string'
+	type: 'string',
 };

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -21,7 +24,7 @@ import Notice from 'components/notice';
 
 class PostShareExample extends Component {
 	state = {
-		isEnabled: false
+		isEnabled: false,
 	};
 
 	toggleEnable = () => this.setState( { isEnabled: ! this.state.isEnabled } );
@@ -33,44 +36,44 @@ class PostShareExample extends Component {
 			<div>
 				{ siteId && <QuerySites siteId={ siteId } /> }
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && (
-					<QueryPosts
-						siteId={ siteId }
-						query={ { number: 1, type: 'post' } } />
-				) }
+				{ siteId && <QueryPosts siteId={ siteId } query={ { number: 1, type: 'post' } } /> }
 
-				{ site && post &&
+				{ site &&
+				post && (
 					<p>
 						Site: <strong>{ site.name }</strong> ({ siteId })<br />
-						Plan: <strong>{ planSlug }</strong><br />
-						Post: <em>{ post.title }</em><br />
+						Plan: <strong>{ planSlug }</strong>
+						<br />
+						Post: <em>{ post.title }</em>
+						<br />
 					</p>
-				}
+				) }
 
 				<p onClick={ this.toggleEnable }>
-					<label>Enabled: <FormToggle checked={ this.state.isEnabled } /></label>
+					<label>
+						Enabled: <FormToggle checked={ this.state.isEnabled } />
+					</label>
 				</p>
 
-				{ this.state.isEnabled && <Notice
-					status="is-warning"
-					showDismiss={ false }
-					text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` } />
-				}
+				{ this.state.isEnabled && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` }
+					/>
+				) }
 
 				<hr />
 
 				<Card>
-					<PostShare
-						disabled={ ! this.state.isEnabled }
-						post={ post }
-						siteId={ siteId } />
+					<PostShare disabled={ ! this.state.isEnabled } post={ post } siteId={ siteId } />
 				</Card>
 			</div>
 		);
 	}
 }
 
-const ConnectedPostShareExample = connect( ( state ) => {
+const ConnectedPostShareExample = connect( state => {
 	const user = getCurrentUser( state );
 	const siteId = get( user, 'primary_blog' );
 	const site = getSite( state, siteId );

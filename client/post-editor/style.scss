@@ -133,6 +133,21 @@
 	}
 }
 
+/*
+ * Constrain the `MediaLibraryDropZone` to the editor content area, instead of taking up the entire
+ * screen. This allows room for the `FeaturedImageDropZone`.
+ *
+ * It's only done while an image is actively being dragged, because it interferes with TinyMCE
+ * toolbar pinning/unpinning.
+ */
+.post-editor__content-editor .editor-featured-image.has-active-drop-zone ~ div.tinymce-container {
+	position: relative;
+}
+
+.post-editor .tinymce-container .drop-zone.is-active {
+	top: 80px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
+}
+
 .post-editor .tinymce {
 	min-height: 100vh;
 	resize: none;

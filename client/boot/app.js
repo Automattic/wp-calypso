@@ -1,3 +1,4 @@
+/** @format */
 // Initialize polyfills before any dependencies are loaded
 import './polyfills';
 
@@ -15,12 +16,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	configureReduxStore,
-	locales,
-	setupMiddlewares,
-	utils
-} from './common';
+import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';

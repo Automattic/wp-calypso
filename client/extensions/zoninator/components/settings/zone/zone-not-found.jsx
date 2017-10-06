@@ -1,8 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,9 +17,10 @@ import { settingsPath } from '../../../app/util';
 const ZoneNotFound = ( { siteSlug, translate } ) => (
 	<EmptyContent
 		title={ translate( 'Zone not found' ) }
-		line={ translate( 'The zone you\'re trying to access doesn\'t exist.' ) }
+		line={ translate( "The zone you're trying to access doesn't exist." ) }
 		action={ translate( 'Add new' ) }
-		actionURL={ `${ settingsPath }/new/${ siteSlug }` } />
+		actionURL={ `${ settingsPath }/new/${ siteSlug }` }
+	/>
 );
 
 ZoneNotFound.propTypes = {

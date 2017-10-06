@@ -1,3 +1,4 @@
+/** @format */
 let element = ( () => {
 	if ( document.implementation && document.implementation.createHTMLDocument ) {
 		return document.implementation.createHTMLDocument( '' ).createElement( 'textarea' );
@@ -11,4 +12,4 @@ export default function decodeEntities( text ) {
 	let decoded = element.textContent;
 	element.innerHTML = '';
 	return decoded;
-};
+}

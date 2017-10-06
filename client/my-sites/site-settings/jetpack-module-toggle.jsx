@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,11 +13,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-
-import {
-	activateModule,
-	deactivateModule
-} from 'state/jetpack/modules/actions';
+import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
 import {
 	getJetpackModule,
 	isActivatingJetpackModule,
@@ -28,7 +27,7 @@ class JetpackModuleToggle extends Component {
 		disabled: false,
 		toggleDisabled: false,
 		checked: false,
-		isJetpackSite: false
+		isJetpackSite: false,
 	};
 
 	static propTypes = {
@@ -40,7 +39,7 @@ class JetpackModuleToggle extends Component {
 		toggleDisabled: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		activateModule: PropTypes.func,
-		deactivateModule: PropTypes.func
+		deactivateModule: PropTypes.func,
 	};
 
 	handleChange = () => {
@@ -49,7 +48,7 @@ class JetpackModuleToggle extends Component {
 		} else {
 			this.props.deactivateModule( this.props.siteId, this.props.moduleSlug );
 		}
-	}
+	};
 
 	render() {
 		if ( ! this.props.isJetpackSite ) {
@@ -67,33 +66,32 @@ class JetpackModuleToggle extends Component {
 				>
 					{ this.props.label }
 				</CompactFormToggle>
-				{
-					this.props.description && (
-						<FormSettingExplanation isIndented>
-							{ this.props.description }
-						</FormSettingExplanation>
-					)
-				}
+				{ this.props.description && (
+					<FormSettingExplanation isIndented>{ this.props.description }</FormSettingExplanation>
+				) }
 			</span>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const active = isJetpackModuleActive( state, ownProps.siteId, ownProps.moduleSlug );
-	const activating = isActivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
-	const moduleDetails = getJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
-	const deactivating = isDeactivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
-	const moduleDetailsNotLoaded = moduleDetails === null;
-	const toggling = activating || deactivating;
-	return {
-		moduleDetails,
-		checked: ( active && ! deactivating ) || ( ! active && activating ),
-		toggling,
-		toggleDisabled: moduleDetailsNotLoaded || toggling,
-		isJetpackSite: isJetpackSite( state, ownProps.siteId )
-	};
-}, {
-	activateModule,
-	deactivateModule
-} )( localize( JetpackModuleToggle ) );
+export default connect(
+	( state, ownProps ) => {
+		const active = isJetpackModuleActive( state, ownProps.siteId, ownProps.moduleSlug );
+		const activating = isActivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
+		const moduleDetails = getJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
+		const deactivating = isDeactivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
+		const moduleDetailsNotLoaded = moduleDetails === null;
+		const toggling = activating || deactivating;
+		return {
+			moduleDetails,
+			checked: ( active && ! deactivating ) || ( ! active && activating ),
+			toggling,
+			toggleDisabled: moduleDetailsNotLoaded || toggling,
+			isJetpackSite: isJetpackSite( state, ownProps.siteId ),
+		};
+	},
+	{
+		activateModule,
+		deactivateModule,
+	}
+)( localize( JetpackModuleToggle ) );

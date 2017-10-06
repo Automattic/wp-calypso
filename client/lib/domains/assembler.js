@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { camelCase, find, mapKeys, without } from 'lodash';
 
+import { camelCase, find, mapKeys, without } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -17,7 +19,7 @@ function createDomainObjects( dataTransferObject ) {
 		return domains;
 	}
 
-	domains = dataTransferObject.map( ( domain ) => {
+	domains = dataTransferObject.map( domain => {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
 			currentUserCanManage: domain.current_user_can_manage,
@@ -70,5 +72,6 @@ function ensurePrimaryDomainIsFirst( domains ) {
 }
 
 module.exports = {
-	createDomainObjects
+	assembleGoogleAppsSubscription,
+	createDomainObjects,
 };

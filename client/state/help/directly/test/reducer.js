@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,28 +9,22 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_START,
-	DIRECTLY_INITIALIZATION_SUCCESS,
-	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
-import {
 	STATUS_UNINITIALIZED,
 	STATUS_INITIALIZING,
 	STATUS_READY,
 	STATUS_ERROR,
 } from '../constants';
-import reducer, {
-	questionAsked,
-	status,
-} from '../reducer';
+import reducer, { questionAsked, status } from '../reducer';
+import {
+	DIRECTLY_ASK_QUESTION,
+	DIRECTLY_INITIALIZATION_START,
+	DIRECTLY_INITIALIZATION_SUCCESS,
+	DIRECTLY_INITIALIZATION_ERROR,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'questionAsked',
-			'status',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'questionAsked', 'status' ] );
 	} );
 
 	describe( '#questionAsked()', () => {
@@ -38,7 +34,8 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set once a question is asked', () => {
-			const questionText = 'What is the answer to the ultimate question of life, the universe, and everything?';
+			const questionText =
+				'What is the answer to the ultimate question of life, the universe, and everything?';
 			const name = 'Douglas Adams';
 			const email = 'doug@hhguide.com';
 			const action = { type: DIRECTLY_ASK_QUESTION, questionText, name, email };

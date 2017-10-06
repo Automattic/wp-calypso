@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -31,41 +34,35 @@ const PackagesListItem = ( {
 				<div className="packages__packages-row-dimensions">
 					<span />
 				</div>
-				<div className="packages__packages-row-actions">
-					{ children }
-				</div>
+				<div className="packages__packages-row-actions">{ children }</div>
 			</div>
 		);
 	}
 
-	const renderIcon = ( isLetter ) => {
+	const renderIcon = isLetter => {
 		const icon = isLetter ? 'mail' : 'product';
 
 		return <Gridicon icon={ icon } size={ 18 } />;
 	};
 
-	const renderName = ( name ) => {
-		return name && '' !== trim( name )
-			? name
-			: translate( 'Untitled' );
+	const renderName = name => {
+		return name && '' !== trim( name ) ? name : translate( 'Untitled' );
 	};
 
-	const renderActions = () => (
-		<div className="packages__packages-row-actions">
-			{ children }
-		</div>
-	);
+	const renderActions = () => <div className="packages__packages-row-actions">{ children }</div>;
 
 	return (
 		<div className={ classNames( 'packages__packages-row', { prefixed: prefixActions } ) }>
 			{ prefixActions ? renderActions() : null }
-			<div className="packages__packages-row-icon">
-				{ renderIcon( data.is_letter, hasError ) }
-			</div>
+			<div className="packages__packages-row-icon">{ renderIcon( data.is_letter, hasError ) }</div>
 			<div className="packages__packages-row-details">
-				<div className="packages__packages-row-details-name">{ renderName( data.name, translate ) }</div>
+				<div className="packages__packages-row-details-name">
+					{ renderName( data.name, translate ) }
+				</div>
 			</div>
-			<div className="packages__packages-row-dimensions">{ data.inner_dimensions } { dimensionUnit }</div>
+			<div className="packages__packages-row-dimensions">
+				{ data.inner_dimensions } { dimensionUnit }
+			</div>
 			{ prefixActions ? null : renderActions() }
 		</div>
 	);

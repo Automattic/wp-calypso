@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST } from 'state/action-types';
 import {
 	validateRequestSuccess,
@@ -21,8 +24,8 @@ export const handleValidateRequest = ( { dispatch }, action ) => {
 				body: {
 					...userData,
 					method,
-					key
-				}
+					key,
+				},
 			},
 			action
 		)
@@ -39,9 +42,11 @@ export const handleValidateRequestFailure = ( { dispatch }, action, response ) =
 };
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: [ dispatchRequest(
-		handleValidateRequest,
-		handleValidateRequestSuccess,
-		handleValidateRequestFailure
-	) ],
+	[ ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST ]: [
+		dispatchRequest(
+			handleValidateRequest,
+			handleValidateRequestSuccess,
+			handleValidateRequestFailure
+		),
+	],
 };

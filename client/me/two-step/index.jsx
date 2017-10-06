@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -32,7 +35,7 @@ class TwoStep extends Component {
 
 	state = {
 		initialized: false,
-		doingSetup: false
+		doingSetup: false,
 	};
 
 	componentDidMount() {
@@ -56,7 +59,7 @@ class TwoStep extends Component {
 		if ( ! this.state.initialized ) {
 			this.setState( {
 				initialized: true,
-				doingSetup: ! this.props.userSettings.isTwoStepEnabled()
+				doingSetup: ! this.props.userSettings.isTwoStepEnabled(),
 			} );
 			return;
 		}
@@ -72,7 +75,7 @@ class TwoStep extends Component {
 	onSetupFinished = () => {
 		this.setState(
 			{
-				doingSetup: false
+				doingSetup: false,
 			},
 			this.refetchSettings
 		);
@@ -81,7 +84,7 @@ class TwoStep extends Component {
 	onDisableFinished = () => {
 		this.setState(
 			{
-				doingSetup: true
+				doingSetup: true,
 			},
 			this.refetchSettings
 		);
@@ -133,9 +136,7 @@ class TwoStep extends Component {
 			return null;
 		}
 
-		return (
-			<AppPasswords appPasswordsData={ this.props.appPasswordsData } />
-		);
+		return <AppPasswords appPasswordsData={ this.props.appPasswordsData } />;
 	};
 
 	renderBackupCodes = () => {
@@ -143,9 +144,7 @@ class TwoStep extends Component {
 			return null;
 		}
 
-		return (
-			<Security2faBackupCodes userSettings={ this.props.userSettings } />
-		);
+		return <Security2faBackupCodes userSettings={ this.props.userSettings } />;
 	};
 
 	render() {
@@ -161,9 +160,7 @@ class TwoStep extends Component {
 					title={ this.props.translate( 'Two-Step Authentication', { textOnly: true } ) }
 				/>
 
-				<Card>
-					{ this.renderTwoStepSection() }
-				</Card>
+				<Card>{ this.renderTwoStepSection() }</Card>
 
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }

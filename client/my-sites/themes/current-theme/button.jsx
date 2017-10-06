@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -19,25 +23,23 @@ export default React.createClass( {
 		label: PropTypes.string.isRequired,
 		icon: PropTypes.string.isRequired,
 		href: PropTypes.string,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
 	},
 
 	render() {
 		return (
-			<a role="button"
-				className={ classNames(
-					'current-theme__button',
-					'current-theme__' + this.props.name,
-					{ disabled: ! this.props.href }
-				) }
+			<a
+				role="button"
+				className={ classNames( 'current-theme__button', 'current-theme__' + this.props.name, {
+					disabled: ! this.props.href,
+				} ) }
 				onClick={ this.props.onClick.bind( null, this.props.name ) }
 				href={ this.props.href }
-				target={ isOutsideCalypso( this.props.href ) ? '_blank' : null } >
+				target={ isOutsideCalypso( this.props.href ) ? '_blank' : null }
+			>
 				<Gridicon icon={ this.props.icon } size={ 18 } />
-				<span className="current-theme__button-label">
-					{ this.props.label }
-				</span>
+				<span className="current-theme__button-label">{ this.props.label }</span>
 			</a>
 		);
-	}
+	},
 } );

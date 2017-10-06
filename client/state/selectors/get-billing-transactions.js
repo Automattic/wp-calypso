@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, mapValues } from 'lodash';
 
 /**
@@ -17,7 +20,7 @@ import { parseTransactionDate } from 'state/billing-transactions/util';
  * @return {?Object}         Billing transactions
  */
 const getBillingTransactions = createSelector(
-	( state ) => {
+	state => {
 		const allTransactions = get( state, 'billingTransactions.items', null );
 		if ( ! allTransactions ) {
 			return null;
@@ -25,7 +28,7 @@ const getBillingTransactions = createSelector(
 
 		return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
 	},
-	( state ) => [ state.billingTransactions.items ]
+	state => [ state.billingTransactions.items ]
 );
 
 export default getBillingTransactions;

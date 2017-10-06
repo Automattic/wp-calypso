@@ -1,3 +1,4 @@
+/** @format */
 export const dummyConfiguration = {
 	is_user_eligible: true,
 };

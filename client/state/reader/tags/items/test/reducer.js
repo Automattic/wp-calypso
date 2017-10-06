@@ -8,8 +8,8 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { items } from '../reducer';
 import { receiveUnfollowTag, receiveTags } from '../actions';
+import { items } from '../reducer';
 
 // helpers
 const keyById = tags => keyBy( tags, 'id' );

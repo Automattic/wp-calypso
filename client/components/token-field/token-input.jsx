@@ -1,16 +1,20 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 var TokenInput = React.createClass( {
 	propTypes: {
-		onChange: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		onChange: PropTypes.func,
+		onBlur: PropTypes.func,
+		value: PropTypes.string,
+		placeholder: PropTypes.string,
+		disabled: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
@@ -28,16 +32,11 @@ var TokenInput = React.createClass( {
 	render: function() {
 		const props = { ...this.props, onChange: this._onChange };
 		const { value, placeholder } = props;
-		const size = ( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
+		const size =
+			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
 
 		return (
-			<input
-				ref="input"
-				type="text"
-				{ ...props }
-				size={ size }
-				className="token-field__input"
-			/>
+			<input ref="input" type="text" { ...props } size={ size } className="token-field__input" />
 		);
 	},
 
@@ -53,9 +52,9 @@ var TokenInput = React.createClass( {
 
 	_onChange: function( event ) {
 		this.props.onChange( {
-			value: event.target.value
+			value: event.target.value,
 		} );
-	}
+	},
 } );
 
 module.exports = TokenInput;

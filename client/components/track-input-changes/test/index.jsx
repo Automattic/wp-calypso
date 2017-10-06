@@ -1,12 +1,15 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
+import { expect } from 'chai';
 import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
-import { expect } from 'chai';
+import ReactDom from 'react-dom';
 import sinon from 'sinon';
 
 /**
@@ -20,7 +23,7 @@ import TrackInputChanges from '../';
 const spies = {
 	onNewValue: null,
 	onChange: null,
-	onBlur: null
+	onBlur: null,
 };
 
 class DummyInput extends Component {
@@ -54,10 +57,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		}
 		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
+				<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
 			</TrackInputChanges>,
 			container
 		);
@@ -107,18 +107,14 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	it( 'should throw if multiple child elements', function() {
-		expect( () => ReactDom.render(
-			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-			</TrackInputChanges>,
-			container
-		) ).to.throw;
+		expect( () =>
+			ReactDom.render(
+				<TrackInputChanges onNewValue={ spies.onNewValue }>
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+				</TrackInputChanges>,
+				container
+			)
+		).to.throw;
 	} );
 } );

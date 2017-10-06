@@ -39,12 +39,12 @@ import {
 } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import jetpackPlugins from 'my-sites/plugins-wpcom/jetpack-plugins';
 import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
+import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -213,7 +213,7 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getPluginSingleListView( category ) {
-		const listLink = '/plugins/browse/' + category + '/';
+		const listLink = '/plugins/' + category + '/';
 		return (
 			<PluginsBrowserList
 				plugins={ this.getPluginsShortList( category ) }
@@ -252,7 +252,7 @@ const PluginsBrowser = React.createClass( {
 		const { siteSlug, translate } = this.props;
 		searchTerm = searchTerm.toLocaleLowerCase();
 		let matchingPlugins;
-		const plugins = jetpackPlugins( translate );
+		const plugins = wpcomFeaturesAsPlugins( translate );
 
 		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
 		// Then return the whole group as search results.
@@ -319,24 +319,24 @@ const PluginsBrowser = React.createClass( {
 				} ) }
 			>
 				<NavTabs label="Category">
-					<NavItem path={ '/plugins/browse' + site } selected={ false }>
+					<NavItem path={ '/plugins' + site } selected={ false }>
 						{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/featured' + site }
-						selected={ this.props.path === '/plugins/browse/featured' + site }
+						path={ '/plugins/featured' + site }
+						selected={ this.props.path === '/plugins/featured' + site }
 					>
 						{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/popular' + site }
-						selected={ this.props.path === '/plugins/browse/popular' + site }
+						path={ '/plugins/popular' + site }
+						selected={ this.props.path === '/plugins/popular' + site }
 					>
 						{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
 					</NavItem>
 					<NavItem
-						path={ '/plugins/browse/new' + site }
-						selected={ this.props.path === '/plugins/browse/new' + site }
+						path={ '/plugins/new' + site }
+						selected={ this.props.path === '/plugins/new' + site }
 					>
 						{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
 					</NavItem>

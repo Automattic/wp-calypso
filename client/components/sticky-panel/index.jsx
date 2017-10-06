@@ -1,24 +1,25 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { throttle } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var viewport = require( 'lib/viewport' );
+import viewport from 'lib/viewport';
 
 module.exports = React.createClass( {
 	displayName: 'StickyPanel',
 
 	propTypes: {
-		minLimit: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.number,
-		] ),
+		minLimit: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.number ] ),
 	},
 
 	getDefaultProps: function() {
@@ -59,7 +60,7 @@ module.exports = React.createClass( {
 	onWindowResize: function() {
 		this.setState( {
 			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
+			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 		} );
 	},
 
@@ -67,7 +68,7 @@ module.exports = React.createClass( {
 		var isSticky = window.pageYOffset > this.threshold;
 
 		if (
-			this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ||
+			( this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ) ||
 			viewport.isMobile()
 		) {
 			return this.setState( { isSticky: false } );
@@ -77,7 +78,7 @@ module.exports = React.createClass( {
 			this.setState( {
 				isSticky: isSticky,
 				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
+				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 			} );
 		}
 	},
@@ -92,14 +93,14 @@ module.exports = React.createClass( {
 
 			return {
 				top: offset,
-				width: this.state.blockWidth
+				width: this.state.blockWidth,
 			};
 		}
 	},
 
 	render: function() {
 		var classes = classNames( 'sticky-panel', this.props.className, {
-			'is-sticky': this.state.isSticky
+			'is-sticky': this.state.isSticky,
 		} );
 
 		return (
@@ -110,5 +111,5 @@ module.exports = React.createClass( {
 				<div className="sticky-panel__spacer" style={ { height: this.state.spacerHeight } } />
 			</div>
 		);
-	}
+	},
 } );

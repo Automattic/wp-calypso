@@ -1,7 +1,15 @@
-import React from 'react';
+/** @format */
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 import { spy } from 'sinon';
+
+/**
+ * Internal dependencies
+ */
 import FormTextInput from '../';
 
 describe( '<FormTextInput />', () => {
@@ -19,7 +27,7 @@ describe( '<FormTextInput />', () => {
 		expect( wrapper ).to.have.className( 'form-text-input' );
 	} );
 
-	it( 'should not pass component\'s own props down to the input', () => {
+	it( "should not pass component's own props down to the input", () => {
 		const wrapper = shallow( <FormTextInput isValid isError selectOnFocus /> );
 
 		expect( wrapper ).to.not.have.prop( 'isValid' );
@@ -27,7 +35,7 @@ describe( '<FormTextInput />', () => {
 		expect( wrapper ).to.not.have.prop( 'selectOnFocus' );
 	} );
 
-	it( 'should pass props aside from component\'s own to the input', () => {
+	it( "should pass props aside from component's own to the input", () => {
 		const wrapper = shallow( <FormTextInput placeholder="test placeholder" /> );
 
 		expect( wrapper ).to.have.prop( 'placeholder' );
@@ -37,8 +45,8 @@ describe( '<FormTextInput />', () => {
 		const wrapper = shallow( <FormTextInput selectOnFocus={ true } /> );
 		const event = {
 			target: {
-				select: () => {}
-			}
+				select: () => {},
+			},
 		};
 
 		spy( event.target, 'select' );
@@ -51,8 +59,8 @@ describe( '<FormTextInput />', () => {
 		const wrapper = shallow( <FormTextInput selectOnFocus={ false } /> );
 		const event = {
 			target: {
-				select: () => {}
-			}
+				select: () => {},
+			},
 		};
 
 		spy( event.target, 'select' );

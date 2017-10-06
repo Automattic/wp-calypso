@@ -1,16 +1,23 @@
-/** @jest-environment jsdom */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' ),
-	site = require( './lib/mock-site' ),
-	options = { siteId: site.ID };
+import actions from './lib/mock-actions';
+import site from './lib/mock-site';
+
+/**
+ * Internal dependencies
+ */
+const options = { siteId: site.ID };
 
 describe( 'Email Followers Store', function() {
 	var Dispatcher, EmailFollowersStore;

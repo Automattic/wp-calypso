@@ -8,6 +8,7 @@ import url from 'url';
 import { defer } from 'lodash';
 import config from 'config';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 import qs from 'qs';
 import page from 'page';
 import SocialLogo from 'social-logos';
@@ -80,7 +81,7 @@ function buildQuerystringForPost( post ) {
 
 class ReaderShare extends React.Component {
 	static propTypes = {
-		iconSize: React.PropTypes.number,
+		iconSize: PropTypes.number,
 	};
 
 	static defaultProps = {

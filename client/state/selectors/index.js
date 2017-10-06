@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Every selector contained within this directory should have its default
  * export included in the list below. Please keep this list alphabetized for
@@ -28,12 +29,15 @@ export getAccountRecoveryResetSelectedMethod from './get-account-recovery-reset-
 export getAccountRecoveryResetUserData from './get-account-recovery-reset-user-data';
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
 export getAccountRecoveryValidationKey from './get-account-recovery-validation-key';
+export getActiveReplyCommentId from './get-active-reply-comment-id';
+export getActivityLog from './get-activity-log';
 export getActivityLogs from './get-activity-logs';
 export getBillingTransactions from './get-billing-transactions';
 export getBlockedSites from './get-blocked-sites';
 export getBlogStickers from './get-blog-stickers';
 export getContactDetailsCache from './get-contact-details-cache';
 export getContactDetailsExtraCache from './get-contact-details-extra-cache';
+export getCurrentLocaleSlug from './get-current-locale-slug';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
@@ -76,8 +80,8 @@ export getPostRevisions from './get-post-revisions';
 export getPostRevisionsAuthorsId from './get-post-revisions-authors-id';
 export getPostSharePublishedActions from './get-post-share-published-actions';
 export getPostShareScheduledActions from './get-post-share-scheduled-actions';
-export getPrimarySiteId from './get-primary-site-id';
 export getPrimaryDomainBySiteId from './get-primary-domain-by-site-id';
+export getPrimarySiteId from './get-primary-site-id';
 export getPublicizeConnection from './get-publicize-connection';
 export getPublicSites from './get-public-sites';
 export getRawOffsets from './get-raw-offsets';
@@ -95,6 +99,7 @@ export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-site
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getRegistrantWhois from './get-registrant-whois';
+export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
 export getRestoreProgress from './get-restore-progress';
 export getRewindStartDate from './get-rewind-start-date';
@@ -118,8 +123,8 @@ export getSiteId from './get-site-id';
 export getSiteMonitorSettings from './get-site-monitor-settings';
 export getSiteOptions from './get-site-options';
 export getSites from './get-sites';
-export getSitesItems from './get-sites-items';
 export getSiteSetting from './get-site-setting';
+export getSitesItems from './get-sites-items';
 export getSiteSlugsForUpcomingTransactions from './get-site-slugs-for-upcoming-transactions';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
 export getSiteStatsViewSummary from './get-site-stats-view-summary';
@@ -249,4 +254,3 @@ export isWordpressUpdateSuccessful from './is-wordpress-update-successful';
 export prependThemeFilterKeys from './prepend-theme-filter-keys';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
 export shouldSyncReaderFollows from './should-sync-reader-follows';
-export getCurrentLocaleSlug from './get-current-locale-slug';

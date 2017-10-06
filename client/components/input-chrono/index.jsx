@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import chrono from 'chrono-node';
 
@@ -15,10 +19,10 @@ export default React.createClass( {
 	focused: false,
 
 	propTypes: {
-		value: React.PropTypes.string,
-		lang: React.PropTypes.string,
-		onSet: React.PropTypes.func,
-		placeholder: React.PropTypes.string
+		value: PropTypes.string,
+		lang: PropTypes.string,
+		onSet: PropTypes.func,
+		placeholder: PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -26,13 +30,13 @@ export default React.createClass( {
 			value: '',
 			lang: '',
 			placeholder: '',
-			onSet: () => {}
+			onSet: () => {},
 		};
 	},
 
 	getInitialState() {
 		return {
-			value: this.props.value
+			value: this.props.value,
 		};
 	},
 
@@ -78,8 +82,8 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="input-chrono__container" >
-				{ this.isLangSupported( this.props.lang ) ?
+			<div className="input-chrono__container">
+				{ this.isLangSupported( this.props.lang ) ? (
 					<input
 						className="input-chrono"
 						value={ this.state.value }
@@ -87,13 +91,12 @@ export default React.createClass( {
 						onKeyDown={ this.onKeyDown }
 						onChange={ this.handleChange }
 						onFocus={ this.handleFocus }
-						onBlur={ this.handleBlur } /> :
-					<div className="text-chrono">
-						{ this.state.value }
-					</div>
-				}
+						onBlur={ this.handleBlur }
+					/>
+				) : (
+					<div className="text-chrono">{ this.state.value }</div>
+				) }
 			</div>
 		);
-	}
+	},
 } );
-

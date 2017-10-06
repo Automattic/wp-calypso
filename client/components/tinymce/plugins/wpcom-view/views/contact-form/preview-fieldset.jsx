@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { omit } from 'lodash';
 
@@ -13,5 +16,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</fieldset>
 		);
-	}
+	},
 } );

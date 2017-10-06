@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -11,7 +15,7 @@ import { localize } from 'i18n-calypso';
 class GoogleAppsProductDetails extends Component {
 	static propTypes = {
 		annualPrice: PropTypes.string.isRequired,
-		monthlyPrice: PropTypes.string.isRequired
+		monthlyPrice: PropTypes.string.isRequired,
 	};
 
 	render() {
@@ -26,21 +30,21 @@ class GoogleAppsProductDetails extends Component {
 					</h3>
 
 					<p>
-						{
-							translate(
-								"We've partnered with Google to offer you email, storage, docs, calendars " +
+						{ translate(
+							"We've partnered with Google to offer you email, storage, docs, calendars " +
 								'and more, integrated with your site.'
-							)
-						}
+						) }
 					</p>
 
 					<h4 className="google-apps-dialog__price-per-user">
-						{ translate( '%(monthlyPrice)s per user / month', { args: { monthlyPrice: this.props.monthlyPrice } } ) }
+						{ translate( '%(monthlyPrice)s per user / month', {
+							args: { monthlyPrice: this.props.monthlyPrice },
+						} ) }
 					</h4>
 
 					<h5 className="google-apps-dialog__billing-period">
 						{ translate( '%(annualPrice)s Billed yearly — get 2 months free!', {
-							args: { annualPrice: this.props.annualPrice }
+							args: { annualPrice: this.props.annualPrice },
 						} ) }
 					</h5>
 				</div>

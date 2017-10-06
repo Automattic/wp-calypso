@@ -1,4 +1,8 @@
-/* eslint-disable no-console */
+/**
+ * /* eslint-disable no-console
+ *
+ * @format
+ */
 
 /**
  * Internal Dependencies

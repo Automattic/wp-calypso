@@ -1,21 +1,25 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:list' );
+
+import React from 'react';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:stats:list' );
 
 /**
  * Internal dependencies
  */
-var StatsListItem = require( './stats-list-item' );
+import StatsListItem from './stats-list-item';
 
 module.exports = React.createClass( {
 	displayName: 'StatsList',
 
 	getInitialState: function() {
 		return {
-			activeGroups: []
+			activeGroups: [],
 		};
 	},
 
@@ -32,13 +36,10 @@ module.exports = React.createClass( {
 
 	buildLists: function( groups, parentKey ) {
 		var results,
-			listClass = classNames(
-				'module-content-list',
-				{
-					'module-content-list-sublist': parentKey,
-					'is-expanded': this.isGroupActive( parentKey )
-				}
-			);
+			listClass = classNames( 'module-content-list', {
+				'module-content-list-sublist': parentKey,
+				'is-expanded': this.isGroupActive( parentKey ),
+			} );
 
 		if ( groups ) {
 			results = groups.map( function( group, groupIndex ) {
@@ -59,15 +60,25 @@ module.exports = React.createClass( {
 				if ( group.children ) {
 					childResults = this.buildLists( group.children, groupKey );
 				}
-				return <StatsListItem moduleName={ this.props.moduleName } data={ group } active={ active } children={ childResults } key={ groupKey } itemClickHandler={ clickHandler } followList={ this.props.followList } />;
+				return (
+					<StatsListItem
+						moduleName={ this.props.moduleName }
+						data={ group }
+						active={ active }
+						children={ childResults }
+						key={ groupKey }
+						itemClickHandler={ clickHandler }
+						followList={ this.props.followList }
+					/>
+				);
 			}, this );
 		}
 
-		return ( <ul className={ listClass }>{ results }</ul> );
+		return <ul className={ listClass }>{ results }</ul>;
 	},
 
 	render: function() {
 		var list = this.buildLists( this.props.data );
-		return ( list );
-	}
+		return list;
+	},
 } );

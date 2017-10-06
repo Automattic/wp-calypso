@@ -6,21 +6,24 @@ This component is used to display a list with the a parametrizable number of plu
 #### How to use:
 
 ```js
-var PluginsList = require( 'my-sites/plugins/plugins-browser-list' );
+import React from 'react';
+import { localize } from 'i18n-calypso'
 
-render: function() {
-	return (
-		<div>
-			<PluginsList
-				plugins={ pluginsData }
-				title={ this.translate( category name ) }
-				size={ 6 }
-				site={ site }
-				addPlaceHolders
-			/>
-		</div>
-	);
-}
+import PluginsList from 'my-sites/plugins/plugins-browser-list';
+
+const MyPluginsList = ( { pluginsData, translate } ) => (
+	<div>
+		<PluginsList
+			plugins={ pluginsData }
+			title={ translate( category name ) }
+			size={ 6 }
+			site={ site }
+			addPlaceHolders
+		/>
+	</div>
+);
+
+export default localize( MyPluginsList );
 ```
 
 #### Props

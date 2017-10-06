@@ -1,19 +1,25 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var debug = require( 'debug' )( 'calypso:desktop' ),
-	page = require( 'page' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:desktop' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var paths = require( 'lib/paths' ),
-	user = require( 'lib/user' )(),
-	ipc = require( 'electron' ).ipcRenderer,          // From Electron
-	store = require( 'store' ),
-	oAuthToken = require( 'lib/oauth-token' ),
-	userUtilities = require( 'lib/user/utils' ),
-	location = require( 'lib/route/page-notifier' );
+import paths from 'lib/paths';
+import userFactory from 'lib/user';
+const user = userFactory();
+import { ipcRenderer as ipc } from 'electron'; // From Electron
+import store from 'store';
+import oAuthToken from 'lib/oauth-token';
+import userUtilities from 'lib/user/utils';
+import location from 'lib/route/page-notifier';
 import { getStatsPathForTab } from 'lib/route/path';
 
 /**
@@ -99,7 +105,11 @@ var Desktop = {
 	clearNotificationBar: function() {
 		// TODO: find a better way. seems to be react component state based
 		const notificationsLink = this.getNotificationLinkElement();
-		if ( notificationsLink && notificationsLink.className && notificationsLink.className.indexOf( 'is-active' ) !== -1 ) {
+		if (
+			notificationsLink &&
+			notificationsLink.className &&
+			notificationsLink.className.indexOf( 'is-active' ) !== -1
+		) {
 			notificationsLink.click();
 		}
 	},
@@ -166,7 +176,7 @@ var Desktop = {
 
 	print: function( title, html ) {
 		ipc.send( 'print', title, html );
-	}
+	},
 };
 
 module.exports = Desktop;

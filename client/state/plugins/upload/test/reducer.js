@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,12 +15,7 @@ import {
 	updatePluginUploadProgress,
 	uploadPlugin,
 } from '../actions';
-import {
-	inProgress,
-	progressPercent,
-	uploadedPluginId,
-	uploadError,
-} from '../reducer';
+import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
 import {
 	initiateAutomatedTransferWithPluginZip,
 	setAutomatedTransferStatus,
@@ -38,7 +35,10 @@ describe( 'uploadedPluginId', () => {
 	} );
 
 	it( 'should contain plugin id after transfer status', () => {
-		const state = uploadedPluginId( {}, setAutomatedTransferStatus( siteId, 'complete', pluginId ) );
+		const state = uploadedPluginId(
+			{},
+			setAutomatedTransferStatus( siteId, 'complete', pluginId )
+		);
 		expect( state[ siteId ] ).to.equal( pluginId );
 	} );
 
@@ -129,7 +129,10 @@ describe( 'inProgress', () => {
 	} );
 
 	it( 'should not be true after completed transfer', () => {
-		const state = inProgress( { [ siteId ]: true }, setAutomatedTransferStatus( siteId, 'complete' ) );
+		const state = inProgress(
+			{ [ siteId ]: true },
+			setAutomatedTransferStatus( siteId, 'complete' )
+		);
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
 } );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,38 +9,125 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	SELECTED_SITE_SET,
+	setAllSitesSelected,
+	setPreviewShowing,
+	setRoute,
+	setSection,
+	setSelectedSiteId,
+	toggleNotificationsPanel,
+} from '../actions';
+import {
+	NOTIFICATIONS_PANEL_TOGGLE,
+	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
-	NOTIFICATIONS_PANEL_TOGGLE
+	SECTION_SET,
+	SELECTED_SITE_SET,
 } from 'state/action-types';
-import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#setSelectedSiteId()', () => {
-		it( 'should return an action object', () => {
-			const action = setSelectedSiteId( 2916284 );
+	describe( 'setAllSitesSelected()', () => {
+		it( 'should return an action object with a null siteId', () => {
+			const action = setAllSitesSelected();
 
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
-				siteId: 2916284
+				siteId: null,
+			} );
+		} );
+	} );
+
+	describe( 'setPreviewShowing()', () => {
+		it( 'should return an action object where isShowing is true', () => {
+			const action = setPreviewShowing( true );
+
+			expect( action ).to.eql( {
+				type: PREVIEW_IS_SHOWING,
+				isShowing: true,
+			} );
+		} );
+
+		it( 'should return an action object where isShowing is false', () => {
+			const action = setPreviewShowing( false );
+
+			expect( action ).to.eql( {
+				type: PREVIEW_IS_SHOWING,
+				isShowing: false,
 			} );
 		} );
 	} );
 
 	describe( 'setRoute()', () => {
-		it( 'should return an action object', () => {
-			const action = setRoute( '/foo' );
+		const route = '/foo';
+
+		it( 'should return an action with an empty query object if no query is supplied', () => {
+			const action = setRoute( route );
 
 			expect( action ).to.eql( {
 				type: ROUTE_SET,
-				path: '/foo',
-				query: {}
+				path: route,
+				query: {},
+			} );
+		} );
+
+		it( 'should return an action object with path and the specified query arguments', () => {
+			const query = {
+				foo: 'bar',
+				bat: 123,
+			};
+			const action = setRoute( route, query );
+
+			expect( action ).to.eql( {
+				type: ROUTE_SET,
+				path: route,
+				query,
+			} );
+		} );
+	} );
+
+	describe( 'setSection()', () => {
+		it( 'should return an action object where hasSidebar is true by default', () => {
+			expect( setSection() ).to.eql( {
+				type: SECTION_SET,
+				hasSidebar: true,
+			} );
+		} );
+
+		it( 'should return an action object with the section specified', () => {
+			const section = { name: 'me' };
+
+			expect( setSection( section ) ).to.eql( {
+				type: SECTION_SET,
+				section,
+				hasSidebar: true,
+			} );
+		} );
+
+		it( 'should return an action object with the section and hasSidebar specified', () => {
+			const section = { name: 'me' };
+			const options = { hasSidebar: false };
+
+			expect( setSection( section, options ) ).to.eql( {
+				type: SECTION_SET,
+				section,
+				hasSidebar: false,
+			} );
+		} );
+	} );
+
+	describe( 'setSelectedSiteId()', () => {
+		it( 'should return an action object with the siteId set', () => {
+			const siteId = 2916284;
+			const action = setSelectedSiteId( siteId );
+
+			expect( action ).to.eql( {
+				type: SELECTED_SITE_SET,
+				siteId,
 			} );
 		} );
 	} );
 
 	describe( 'toggleNotificationsPanel()', () => {
-		it( 'should return an action object', () => {
+		it( 'should return an action object with just the action type', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
 			} );

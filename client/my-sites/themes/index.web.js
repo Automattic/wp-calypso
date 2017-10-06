@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
@@ -11,7 +14,8 @@ import { validateFilters, validateVertical } from './validate-filters';
 export default function( router ) {
 	const user = userFactory();
 	const isLoggedIn = !! user.get();
-	const siteId = '\\d+' + // numeric site id
+	const siteId =
+		'\\d+' + // numeric site id
 		'|' + // or
 		'[^\\\\/.]+\\.[^\\\\/]+'; // one-or-more non-slash-or-dot chars, then a dot, then one-or-more non-slashes
 
@@ -19,10 +23,7 @@ export default function( router ) {
 		if ( isLoggedIn ) {
 			if ( config.isEnabled( 'manage/themes/upload' ) ) {
 				router( '/themes/upload', makeSites, makeLayout );
-				router(
-					'/themes/upload/:site_id?',
-					siteSelection, upload, makeNavigation, makeLayout
-				);
+				router( '/themes/upload/:site_id?', siteSelection, upload, makeNavigation, makeLayout );
 			}
 			const loggedInRoutes = [
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,

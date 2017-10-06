@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,32 +17,30 @@ import QueryTimezones from 'components/data/query-timezones';
 import { getRawOffsets, getTimezones } from 'state/selectors';
 
 class Timezone extends Component {
-	onSelect = ( event ) => {
+	onSelect = event => {
 		this.props.onSelect( event.target.value );
-	}
+	};
 
 	renderOptionsByContinent() {
 		const { timezones } = this.props;
 
-		return (
-			map( timezones, ( timezoneContinent ) => {
-				const [ continent, countries ] = timezoneContinent;
+		return map( timezones, timezoneContinent => {
+			const [ continent, countries ] = timezoneContinent;
 
-				return (
-					<optgroup label={ continent } key={ continent }>
-						{
-							map( countries, ( timezone, index ) => {
-								const [ value, label ] = timezone;
+			return (
+				<optgroup label={ continent } key={ continent }>
+					{ map( countries, ( timezone, index ) => {
+						const [ value, label ] = timezone;
 
-								return (
-									<option value={ value } key={ index }>{ label }</option>
-								);
-							} )
-						}
-					</optgroup>
-				);
-			} )
-		);
+						return (
+							<option value={ value } key={ index }>
+								{ label }
+							</option>
+						);
+					} ) }
+				</optgroup>
+			);
+		} );
 	}
 
 	renderManualUtcOffsets() {
@@ -47,11 +48,13 @@ class Timezone extends Component {
 
 		return (
 			<optgroup label={ translate( 'Manual Offsets' ) }>
-				{
-					map( rawOffsets, ( label, value ) => {
-						return ( <option value={ value } key={ value }>{ label }</option> );
-					} )
-				}
+				{ map( rawOffsets, ( label, value ) => {
+					return (
+						<option value={ value } key={ value }>
+							{ label }
+						</option>
+					);
+				} ) }
 			</optgroup>
 		);
 	}
@@ -72,17 +75,15 @@ class Timezone extends Component {
 }
 
 Timezone.defaultProps = {
-	onSelect: noop
+	onSelect: noop,
 };
 
 Timezone.propTypes = {
 	selectedZone: PropTypes.string,
-	onSelect: PropTypes.func
+	onSelect: PropTypes.func,
 };
 
-export default connect(
-	( state ) => ( {
-		rawOffsets: getRawOffsets( state ),
-		timezones: getTimezones( state ),
-	} )
-)( localize( Timezone ) );
+export default connect( state => ( {
+	rawOffsets: getRawOffsets( state ),
+	timezones: getTimezones( state ),
+} ) )( localize( Timezone ) );

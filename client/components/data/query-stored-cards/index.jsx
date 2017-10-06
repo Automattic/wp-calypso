@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -24,13 +28,13 @@ class QueryStoredCards extends Component {
 
 QueryStoredCards.propTypes = {
 	fetchStoredCards: PropTypes.func.isRequired,
-	isRequesting: PropTypes.bool.isRequired
+	isRequesting: PropTypes.bool.isRequired,
 };
 
 export default connect(
 	state => {
 		return {
-			isRequesting: isFetchingStoredCards( state )
+			isRequesting: isFetchingStoredCards( state ),
 		};
 	},
 	{ fetchStoredCards }

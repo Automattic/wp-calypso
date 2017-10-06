@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import Gridicon from 'gridicons';
 import { debounce } from 'lodash';
@@ -134,11 +137,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		}
 
 		if ( this.props.sticky ) {
-			return (
-				<StickyPanel minLimit={ 660 }>
-					{ this.renderCard() }
-				</StickyPanel>
-			);
+			return <StickyPanel minLimit={ 660 }>{ this.renderCard() }</StickyPanel>;
 		}
 
 		return this.renderCard();

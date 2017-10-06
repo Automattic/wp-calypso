@@ -1,8 +1,10 @@
 /**
- * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
+ * 
+ * 
  *
- * @see ./README.md for a higher-level overview
- * @see https://cloudup.com/cySVQ9R_O6S for Directly's configuration guide
+ * @format
+ * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
+ * @see https:
  */
 
 /**
@@ -35,7 +37,7 @@ function getDefaultOptions() {
 
 	return {
 		id: ids[ env ],
-		displayAskQuestion: false
+		displayAskQuestion: false,
 	};
 }
 
@@ -47,9 +49,11 @@ function getDefaultOptions() {
 function configureGlobals() {
 	// Set up the global DirectlyRTM function, required for the RTM widget.
 	// This snippet is pasted from Directly's setup code.
-	window.DirectlyRTM = window.DirectlyRTM || function() {
-		( window.DirectlyRTM.cq = window.DirectlyRTM.cq || [] ).push( arguments );
-	};
+	window.DirectlyRTM =
+		window.DirectlyRTM ||
+		function() {
+			( window.DirectlyRTM.cq = window.DirectlyRTM.cq || [] ).push( arguments );
+		};
 	// Since we can only configure once per pageload, this library only provides a
 	// single global configuration.
 	window.DirectlyRTM( 'config', getDefaultOptions() );
@@ -112,17 +116,20 @@ export function initialize() {
 		return directlyPromise;
 	}
 
-	directlyPromise = wpcom.undocumented().getDirectlyConfiguration().then(
-		( { isAvailable } ) => {
+	directlyPromise = wpcom
+		.undocumented()
+		.getDirectlyConfiguration()
+		.then( ( { isAvailable } ) => {
 			if ( ! isAvailable ) {
-				return Promise.reject( new Error( 'Directly Real-Time Messaging is not available at this time.' ) );
+				return Promise.reject(
+					new Error( 'Directly Real-Time Messaging is not available at this time.' )
+				);
 			}
 
 			configureGlobals();
 			insertDOM();
 			return loadDirectlyScript();
-		}
-	);
+		} );
 
 	return directlyPromise;
 }
@@ -144,6 +151,7 @@ export function askQuestion( questionText, name, email ) {
 	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
 	// active chat before the "askQuestion" fires, hence the solution here. Note that
 	// "navigate" is an undocumented API, so you won't see it in the config guide.
-	return execute( 'navigate', '/ask' )
-		.then( () => execute( 'askQuestion', { questionText, name, email } ) );
+	return execute( 'navigate', '/ask' ).then( () =>
+		execute( 'askQuestion', { questionText, name, email } )
+	);
 }

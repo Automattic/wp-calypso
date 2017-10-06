@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,53 +9,62 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	STATUS_READY,
+	STATUS_TIMEOUT,
+	OPERATOR_STATUS_AVAILABLE,
+	OPERATOR_STATUS_AWAY,
+} from '../constants';
+import {
 	isOlarkReady,
 	isOperatorsAvailable,
 	isOlarkTimedOut,
 	isChatAvailable,
-	isRequestingOlark
+	isRequestingOlark,
 } from '../selectors';
-import {
-	STATUS_READY,
-	STATUS_TIMEOUT,
-	OPERATOR_STATUS_AVAILABLE,
-	OPERATOR_STATUS_AWAY
-} from '../constants';
 
 describe( 'selectors', () => {
 	describe( '#isChatAvailable()', () => {
 		it( 'should return true if chat is available', () => {
-			const isAvailable = isChatAvailable( {
-				ui: {
-					olark: {
-						availability: {
-							testArea: true,
-						}
-					}
-				}
-			}, 'testArea' );
+			const isAvailable = isChatAvailable(
+				{
+					ui: {
+						olark: {
+							availability: {
+								testArea: true,
+							},
+						},
+					},
+				},
+				'testArea'
+			);
 			expect( isAvailable ).to.equal( true );
 		} );
 		it( 'should return false if chat is not available', () => {
-			const isAvailable = isChatAvailable( {
-				ui: {
-					olark: {
-						availability: {
-							testArea: false,
-						}
-					}
-				}
-			}, 'testArea' );
+			const isAvailable = isChatAvailable(
+				{
+					ui: {
+						olark: {
+							availability: {
+								testArea: false,
+							},
+						},
+					},
+				},
+				'testArea'
+			);
 			expect( isAvailable ).to.equal( false );
 		} );
 		it( 'should return false if area does not exist', () => {
-			const isAvailable = isChatAvailable( {
-				ui: {
-					olark: {
-						availability: {}
-					}
-				}
-			}, 'testArea' );
+			const isAvailable = isChatAvailable(
+				{
+					ui: {
+						olark: {
+							availability: {},
+						},
+					},
+				},
+				'testArea'
+			);
 			expect( isAvailable ).to.equal( false );
 		} );
 	} );
@@ -62,9 +73,9 @@ describe( 'selectors', () => {
 			const isAvailable = isOperatorsAvailable( {
 				ui: {
 					olark: {
-						operatorStatus: OPERATOR_STATUS_AVAILABLE
-					}
-				}
+						operatorStatus: OPERATOR_STATUS_AVAILABLE,
+					},
+				},
 			} );
 			expect( isAvailable ).to.equal( true );
 		} );
@@ -72,9 +83,9 @@ describe( 'selectors', () => {
 			const isAvailable = isOperatorsAvailable( {
 				ui: {
 					olark: {
-						operatorStatus: OPERATOR_STATUS_AWAY
-					}
-				}
+						operatorStatus: OPERATOR_STATUS_AWAY,
+					},
+				},
 			} );
 			expect( isAvailable ).to.equal( false );
 		} );
@@ -84,9 +95,9 @@ describe( 'selectors', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
-						status: null
-					}
-				}
+						status: null,
+					},
+				},
 			} );
 			expect( isReady ).to.equal( false );
 		} );
@@ -94,9 +105,9 @@ describe( 'selectors', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
-						status: STATUS_TIMEOUT
-					}
-				}
+						status: STATUS_TIMEOUT,
+					},
+				},
 			} );
 			expect( isReady ).to.equal( false );
 		} );
@@ -104,9 +115,9 @@ describe( 'selectors', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
-						status: STATUS_READY
-					}
-				}
+						status: STATUS_READY,
+					},
+				},
 			} );
 			expect( isReady ).to.equal( true );
 		} );
@@ -116,9 +127,9 @@ describe( 'selectors', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
-						status: null
-					}
-				}
+						status: null,
+					},
+				},
 			} );
 			expect( isTimedOut ).to.equal( false );
 		} );
@@ -126,9 +137,9 @@ describe( 'selectors', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
-						status: STATUS_TIMEOUT
-					}
-				}
+						status: STATUS_TIMEOUT,
+					},
+				},
 			} );
 			expect( isTimedOut ).to.equal( true );
 		} );
@@ -136,9 +147,9 @@ describe( 'selectors', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
-						status: STATUS_READY
-					}
-				}
+						status: STATUS_READY,
+					},
+				},
 			} );
 			expect( isTimedOut ).to.equal( false );
 		} );
@@ -148,9 +159,9 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingOlark( {
 				ui: {
 					olark: {
-						requesting: false
-					}
-				}
+						requesting: false,
+					},
+				},
 			} );
 			expect( isRequesting ).to.equal( false );
 		} );
@@ -158,9 +169,9 @@ describe( 'selectors', () => {
 			const isRequesting = isRequestingOlark( {
 				ui: {
 					olark: {
-						requesting: true
-					}
-				}
+						requesting: true,
+					},
+				},
 			} );
 			expect( isRequesting ).to.equal( true );
 		} );

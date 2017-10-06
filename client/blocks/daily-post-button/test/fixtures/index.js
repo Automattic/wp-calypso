@@ -1,3 +1,4 @@
+/** @format */
 const dailyPostSiteId = 489937;
 
 export const basicPost = {

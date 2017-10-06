@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,10 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getUserSuggestions,
-	isRequestingUserSuggestions
-} from '../selectors';
+import { getUserSuggestions, isRequestingUserSuggestions } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getUserSuggestions()', () => {
@@ -17,9 +16,9 @@ describe( 'selectors', () => {
 			const state = {
 				users: {
 					suggestions: {
-						items: {}
-					}
-				}
+						items: {},
+					},
+				},
 			};
 			expect( getUserSuggestions( state, 123 ) ).to.eql( [] );
 		} );
@@ -31,13 +30,10 @@ describe( 'selectors', () => {
 				users: {
 					suggestions: {
 						items: {
-							123: [
-								firstSuggestion,
-								secondSuggestion
-							]
-						}
-					}
-				}
+							123: [ firstSuggestion, secondSuggestion ],
+						},
+					},
+				},
 			};
 			expect( getUserSuggestions( state, 123 ) ).to.have.length( 2 );
 		} );
@@ -51,9 +47,9 @@ describe( 'selectors', () => {
 						requesting: {
 							123: true,
 							124: false,
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 			expect( isRequestingUserSuggestions( state, 123 ) ).to.equal( true );
 			expect( isRequestingUserSuggestions( state, 124 ) ).to.equal( false );

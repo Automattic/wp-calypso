@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { isEmpty, head } from 'lodash';
 import LruCache from 'lru';
 
@@ -23,9 +26,7 @@ function discover( feedUrl ) {
 		return cache.get( feedUrl );
 	}
 
-	return wpcom.undocumented().discoverFeed(
-		{ url: feedUrl }
-	);
+	return wpcom.undocumented().discoverFeed( { url: feedUrl } );
 }
 
 function feedLookup( feedUrl ) {

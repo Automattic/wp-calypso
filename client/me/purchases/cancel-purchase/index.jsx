@@ -1,9 +1,13 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -44,10 +48,10 @@ const user = userFactory();
 
 const CancelPurchase = React.createClass( {
 	propTypes: {
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
 	componentWillMount() {
@@ -73,13 +77,15 @@ const CancelPurchase = React.createClass( {
 			return true;
 		}
 
-		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
 
 		return selectedSite && purchase && isCancelable( purchase );
 	},
 
 	redirect( props ) {
-		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
 
 		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
@@ -90,7 +96,8 @@ const CancelPurchase = React.createClass( {
 	},
 
 	renderFooterText() {
-		const purchase = getPurchase( this.props ), { refundText, renewDate } = purchase;
+		const purchase = getPurchase( this.props ),
+			{ refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
 			return this.props.translate( '%(refundText)s to be refunded', {
@@ -154,9 +161,7 @@ const CancelPurchase = React.createClass( {
 				</HeaderCake>
 
 				<Card className="cancel-purchase__card">
-					<h2>
-						{ heading }
-					</h2>
+					<h2>{ heading }</h2>
 
 					<CancelPurchaseRefundInformation purchase={ purchase } />
 				</Card>

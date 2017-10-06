@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,17 +9,13 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	requestReset,
-	handleError,
-	handleSuccess,
- } from '../';
+import { requestReset, handleError, handleSuccess } from '../';
+import { setResetMethod } from 'state/account-recovery/reset/actions';
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { setResetMethod } from 'state/account-recovery/reset/actions';
 
 describe( 'account-recovery/request-reset', () => {
 	describe( '#requestReset', () => {
@@ -32,20 +30,22 @@ describe( 'account-recovery/request-reset', () => {
 
 			requestReset( { dispatch: dispatchSpy }, dummyAction );
 
-			const {
-				userData,
-				method,
-			} = dummyAction;
+			const { userData, method } = dummyAction;
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: '/account-recovery/request-reset',
-				body: {
-					...userData,
-					method,
-				},
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/request-reset',
+						body: {
+							...userData,
+							method,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 

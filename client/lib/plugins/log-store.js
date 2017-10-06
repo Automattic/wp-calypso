@@ -1,14 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
-const debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
 var _errors = [],
 	_inProgress = [],
@@ -20,7 +24,7 @@ function addLog( status, action, site, plugin, error ) {
 		status: status,
 		action: action,
 		site: site,
-		plugin: plugin
+		plugin: plugin,
 	};
 
 	debug( 'add in ' + status + ' data:', log );
@@ -85,7 +89,6 @@ function removeSingleLog( log ) {
 }
 
 LogStore = {
-
 	getErrors: function() {
 		return clone( _errors );
 	},
@@ -124,7 +127,7 @@ LogStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -157,7 +160,7 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				status: 'inProgress',
 				action: action.action,
 				site: action.site,
-				plugin: action.plugin
+				plugin: action.plugin,
 			} );
 			if ( action.type === 'RECEIVE_ACTIVATED_PLUGIN' ) {
 				if ( ! ( action.data && action.data.active ) && ! action.error ) {
@@ -165,7 +168,10 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				}
 			}
 
-			if ( action.error && [ 'activation_error', 'deactivation_error' ].indexOf( action.error.error ) === -1 ) {
+			if (
+				action.error &&
+				[ 'activation_error', 'deactivation_error' ].indexOf( action.error.error ) === -1
+			) {
 				addLog( 'error', action.action, action.site, action.plugin, action.error );
 			} else {
 				addLog( 'completed', action.action, action.site, action.plugin );

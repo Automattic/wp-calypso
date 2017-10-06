@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
@@ -9,6 +12,7 @@ import paymentMethods from './payment-methods';
 import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
+import promotions from '../sites/promotions/handlers';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
@@ -29,6 +33,7 @@ const handlers = mergeHandlers(
 	productCategories,
 	products,
 	productVariations,
+	promotions,
 	request,
 	reviews,
 	reviewReplies,
@@ -37,7 +42,7 @@ const handlers = mergeHandlers(
 	shippingZoneMethods,
 	shippingZones,
 	stripeConnectAccount,
-	ui,
+	ui
 );
 
 export default function installActionHandlers() {

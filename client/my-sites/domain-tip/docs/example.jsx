@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -15,11 +18,9 @@ const DomainTipExample = ( { siteId } ) => (
 	<DomainTip siteId={ siteId } event="domain_app_example" />
 );
 
-const ConnectedDomainTipExample = connect(
-	( state ) => ( {
-		siteId: get( getCurrentUser( state ), 'primary_blog', null )
-	} )
-)( DomainTipExample );
+const ConnectedDomainTipExample = connect( state => ( {
+	siteId: get( getCurrentUser( state ), 'primary_blog', null ),
+} ) )( DomainTipExample );
 
 ConnectedDomainTipExample.displayName = 'DomainTip';
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,10 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getCurrentOAuth2Client,
-	showOAuth2Layout,
-} from '../selectors';
+import { getCurrentOAuth2Client, showOAuth2Layout } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getCurrentOAuth2Client()', () => {
@@ -26,21 +25,21 @@ describe( 'selectors', () => {
 						id: 1,
 						name: 'test',
 						title: 'WordPress.com Test Client',
-						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-					}
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+					},
 				},
 				ui: {
 					oauth2Clients: {
 						currentClientId: 1,
-					}
-				}
+					},
+				},
 			} );
 
 			expect( clientData ).to.deep.equal( {
 				id: 1,
 				name: 'test',
 				title: 'WordPress.com Test Client',
-				url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
+				url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
 			} );
 		} );
 	} );
@@ -59,14 +58,14 @@ describe( 'selectors', () => {
 						id: 1,
 						name: 'test',
 						title: 'WordPress.com Test Client',
-						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-					}
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+					},
 				},
 				ui: {
 					oauth2Clients: {
 						currentClientId: undefined,
-					}
-				}
+					},
+				},
 			} );
 
 			expect( showOAuth2 ).to.be.false;
@@ -79,14 +78,14 @@ describe( 'selectors', () => {
 						id: 1,
 						name: 'test',
 						title: 'WordPress.com Test Client',
-						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg'
-					}
+						url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
+					},
 				},
 				ui: {
 					oauth2Clients: {
 						currentClientId: 42,
-					}
-				}
+					},
+				},
 			} );
 
 			expect( showOAuth2 ).to.be.true;

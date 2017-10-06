@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findIndex, isEqual, map } from 'lodash';
@@ -11,22 +14,23 @@ import { findIndex, isEqual, map } from 'lodash';
 import Item from './item';
 
 class Suggestions extends Component {
-
 	static propTypes = {
 		query: PropTypes.string,
-		suggestions: PropTypes.arrayOf( PropTypes.shape( {
-			label: PropTypes.string,
-		} ) ).isRequired,
+		suggestions: PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string,
+			} )
+		).isRequired,
 		suggest: PropTypes.func.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		query: '',
-	}
+	};
 
 	state = {
 		suggestionPosition: 0,
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( isEqual( nextProps.suggestions, this.props.suggestions ) ) {
@@ -42,15 +46,19 @@ class Suggestions extends Component {
 
 	suggest = position => this.props.suggest( this.props.suggestions[ position ] );
 
-	increasePosition = () => this.setState( {
-		suggestionPosition: ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount(),
-	} );
+	increasePosition = () =>
+		this.setState( {
+			suggestionPosition: ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount(),
+		} );
 
-	decreasePosition = () => this.setState( {
-		suggestionPosition: ( this.getSuggestionsCount() + this.state.suggestionPosition - 1 ) % this.getSuggestionsCount(),
-	} );
+	decreasePosition = () =>
+		this.setState( {
+			suggestionPosition:
+				( this.getSuggestionsCount() + this.state.suggestionPosition - 1 ) %
+				this.getSuggestionsCount(),
+		} );
 
-	handleKeyEvent = ( event ) => {
+	handleKeyEvent = event => {
 		if ( this.getSuggestionsCount() === 0 ) {
 			return;
 		}
@@ -70,13 +78,14 @@ class Suggestions extends Component {
 				this.state.suggestionPosition >= 0 && this.suggest( this.state.suggestionPosition );
 				break;
 		}
-	}
+	};
 
 	handleMouseDown = label => this.suggest( this.getPositionForSuggestion( label ) );
 
-	handleMouseOver = label => this.setState( {
-		suggestionPosition: this.getPositionForSuggestion( label ),
-	} );
+	handleMouseOver = label =>
+		this.setState( {
+			suggestionPosition: this.getPositionForSuggestion( label ),
+		} );
 
 	render() {
 		const { query } = this.props;
@@ -84,8 +93,7 @@ class Suggestions extends Component {
 
 		return (
 			<div>
-				{
-					showSuggestions &&
+				{ showSuggestions && (
 					<div className="suggestions__wrapper">
 						{ map( this.props.suggestions, ( { label }, index ) => (
 							<Item
@@ -94,10 +102,11 @@ class Suggestions extends Component {
 								query={ query }
 								onMouseDown={ this.handleMouseDown }
 								onMouseOver={ this.handleMouseOver }
-								label={ label } />
+								label={ label }
+							/>
 						) ) }
 					</div>
-				}
+				) }
 			</div>
 		);
 	}

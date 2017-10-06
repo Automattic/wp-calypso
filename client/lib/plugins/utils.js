@@ -1,15 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, filter, map, pick, sortBy, transform } from 'lodash';
-const sanitizeHtml = require( 'sanitize-html' );
+import sanitizeHtml from 'sanitize-html';
 
 /**
  * Internal dependencies
  */
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	parseHtml = require( 'lib/formatting' ).parseHtml,
-	PluginUtils;
+import { decodeEntities } from 'lib/formatting';
+import { parseHtml } from 'lib/formatting';
 
 /**
  * @param  {Object} site       Site Object
@@ -51,9 +53,10 @@ function filterNoticesBy( site, pluginSlug, log ) {
 	return false;
 }
 
-PluginUtils = {
+const PluginUtils = {
 	whiteListPluginData: function( plugin ) {
-		return pick( plugin,
+		return pick(
+			plugin,
 			'action_links',
 			'active',
 			'author',
@@ -89,12 +92,12 @@ PluginUtils = {
 		if ( ! authorElementSource ) {
 			return '';
 		}
-		return decodeEntities( authorElementSource.replace( /(<([^>]+)>)/ig, '' ) );
+		return decodeEntities( authorElementSource.replace( /(<([^>]+)>)/gi, '' ) );
 	},
 
 	extractAuthorUrl: function( authorElementSource ) {
-		var match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
-		return ( match && match[ 1 ] ? match[ 1 ] : '' );
+		const match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
+		return match && match[ 1 ] ? match[ 1 ] : '';
 	},
 
 	extractScreenshots: function( screenshotsHtml ) {
@@ -111,7 +114,7 @@ PluginUtils = {
 			if ( img[ 0 ] && img[ 0 ].src ) {
 				return {
 					url: img[ 0 ].src,
-					caption: captionP[ 0 ] ? captionP[ 0 ].textContent : null
+					caption: captionP[ 0 ] ? captionP[ 0 ].textContent : null,
 				};
 			}
 		} );
@@ -123,7 +126,7 @@ PluginUtils = {
 
 	normalizeCompatibilityList: function( compatibilityList ) {
 		function splitInNumbers( version ) {
-			let splittedVersion = version.split( '.' ).map( function( versionComponent ) {
+			const splittedVersion = version.split( '.' ).map( function( versionComponent ) {
 				return Number.parseInt( versionComponent, 10 );
 			} );
 			while ( splittedVersion.length < 3 ) {
@@ -131,7 +134,11 @@ PluginUtils = {
 			}
 			return splittedVersion;
 		}
-		let sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
+		const sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [
+			0,
+			1,
+			2,
+		] );
 		return sortedCompatibility.map( function( version ) {
 			if ( version.length && version[ version.length - 1 ] === 0 ) {
 				version.pop();
@@ -140,9 +147,25 @@ PluginUtils = {
 		} );
 	},
 
-	sanitizeSectionContent: ( content ) => {
+	sanitizeSectionContent: content => {
 		return sanitizeHtml( content, {
-			allowedTags: [ 'h4', 'h5', 'h6', 'blockquote', 'code', 'b', 'i', 'em', 'strong', 'a', 'p', 'img', 'ul', 'ol', 'li' ],
+			allowedTags: [
+				'h4',
+				'h5',
+				'h6',
+				'blockquote',
+				'code',
+				'b',
+				'i',
+				'em',
+				'strong',
+				'a',
+				'p',
+				'img',
+				'ul',
+				'ol',
+				'li',
+			],
 			allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
 			allowedSchemes: [ 'http', 'https' ],
 			transformTags: {
@@ -154,11 +177,11 @@ PluginUtils = {
 						attribs: {
 							...pick( attribs, [ 'href' ] ),
 							target: '_blank',
-							rel: 'external noopener noreferrer'
-						}
+							rel: 'external noopener noreferrer',
+						},
 					};
-				}
-			}
+				},
+			},
 		} );
 	},
 
@@ -179,19 +202,21 @@ PluginUtils = {
 					returnData.author_url = plugin.author_url || PluginUtils.extractAuthorUrl( item );
 					break;
 				case 'sections':
-					let cleanItem = {};
-					for ( let sectionKey of Object.keys( item ) ) {
+					const cleanItem = {};
+					for ( const sectionKey of Object.keys( item ) ) {
 						cleanItem[ sectionKey ] = PluginUtils.sanitizeSectionContent( item[ sectionKey ] );
 					}
 					returnData.sections = cleanItem;
-					returnData.screenshots = cleanItem.screenshots ? PluginUtils.extractScreenshots( cleanItem.screenshots ) : null;
+					returnData.screenshots = cleanItem.screenshots
+						? PluginUtils.extractScreenshots( cleanItem.screenshots )
+						: null;
 					break;
 				case 'num_ratings':
 				case 'rating':
 					returnData[ key ] = parseInt( item, 10 );
 					break;
 				case 'ratings':
-					for ( let prop in item ) {
+					for ( const prop in item ) {
 						item[ prop ] = parseInt( item[ prop ], 10 );
 					}
 					returnData[ key ] = item;
@@ -218,9 +243,7 @@ PluginUtils = {
 		if ( ! pluginsList ) {
 			return [];
 		}
-		return pluginsList.map( function( pluginData ) {
-			return PluginUtils.normalizePluginData( pluginData );
-		} );
+		return map( pluginsList, pluginData => PluginUtils.normalizePluginData( pluginData ) );
 	},
 
 	/**
@@ -234,7 +257,7 @@ PluginUtils = {
 	 */
 	filterNotices: function( logs, site, pluginSlug ) {
 		return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
-	}
+	},
 };
 
 module.exports = PluginUtils;

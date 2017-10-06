@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,9 +12,7 @@ import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
 	} );
 
 	describe( 'items()', () => {

@@ -1,3 +1,4 @@
+/** @format */
 var pluginsInstallCalls = 0,
 	pluginsAutoupdateCalls = 0,
 	pluginsActivateCalls = 0,
@@ -6,7 +7,6 @@ var pluginsInstallCalls = 0,
 	pluginsRemoveCalls = 0,
 	lastRequestParams = null,
 	deactivatedCallbacks = false,
-
 	wpcomPluginMock = {
 		deactivate: function( callback ) {
 			pluginsDeactivateCalls++;
@@ -17,9 +17,7 @@ var pluginsInstallCalls = 0,
 			pluginsRemoveCalls++;
 			callback();
 		},
-
 	},
-
 	pluginMock = {
 		activate: function( callback ) {
 			pluginsActivateCalls++;
@@ -53,12 +51,11 @@ var pluginsInstallCalls = 0,
 				callback( null, {
 					code: 200,
 					headers: [ { name: 'Content-Type', value: 'application/json' } ],
-					body: {}
+					body: {},
 				} );
 			}
-		}
+		},
 	},
-
 	siteMock = {
 		plugin: function() {
 			return pluginMock;
@@ -66,9 +63,8 @@ var pluginsInstallCalls = 0,
 
 		wpcomPlugin: function() {
 			return wpcomPluginMock;
-		}
+		},
 	},
-
 	mock = {
 		site: function() {
 			return siteMock;
@@ -93,13 +89,13 @@ var pluginsInstallCalls = 0,
 				pluginsDeactivateCalls: pluginsDeactivateCalls,
 				pluginsDisableAutoupdateCalls: pluginsDisableAutoupdateCalls,
 				pluginsRemoveCalls: pluginsRemoveCalls,
-				lastRequestParams: lastRequestParams
+				lastRequestParams: lastRequestParams,
 			};
 		},
 
 		undocumented: function() {
 			return mock;
-		}
+		},
 	};
 
 module.exports = mock;

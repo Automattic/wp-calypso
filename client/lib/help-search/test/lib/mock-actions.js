@@ -1,9 +1,15 @@
-var helpLinks = require( './mock-help-links' ),
-	ActionTypes = require( 'lib/help-search/constants' ).action;
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
+
+import helpLinks from './mock-help-links';
+import { action as ActionTypes } from 'lib/help-search/constants';
 
 module.exports = {
 	fetchedHelpLinks: {
 		type: ActionTypes.SET_HELP_LINKS,
-		helpLinks: helpLinks
-	}
+		helpLinks: helpLinks,
+	},
 };

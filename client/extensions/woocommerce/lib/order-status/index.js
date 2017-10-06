@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,19 +18,10 @@ export const ORDER_COMPLETED = 'finished';
  * Lists of statuses in each group, waiting for payment, waiting for
  * fulfillment, and finished orders.
  */
-export const statusWaitingPayment = [
-	'on-hold',
-	'pending',
-];
-export const statusWaitingFulfillment = [
-	'processing',
-];
-export const statusFinished = [
-	'cancelled',
-	'completed',
-	'failed',
-	'refunded',
-];
+export const statusEditable = [ 'on-hold', 'pending' ];
+export const statusWaitingPayment = [ 'on-hold', 'pending' ];
+export const statusWaitingFulfillment = [ 'processing' ];
+export const statusFinished = [ 'cancelled', 'completed', 'failed', 'refunded' ];
 
 /**
  * Get a list of order statuses for display (including a translated label)
@@ -37,28 +29,36 @@ export const statusFinished = [
  * @return {Array} List of objects {name,value} for each status
  */
 export function getOrderStatusList() {
-	return [ {
-		value: 'pending',
-		name: translate( 'Pending payment' ),
-	}, {
-		value: 'processing',
-		name: translate( 'Processing' ),
-	}, {
-		value: 'on-hold',
-		name: translate( 'On hold' ),
-	}, {
-		value: 'completed',
-		name: translate( 'Completed' ),
-	}, {
-		value: 'cancelled',
-		name: translate( 'Cancelled' ),
-	}, {
-		value: 'refunded',
-		name: translate( 'Refunded' ),
-	}, {
-		value: 'failed',
-		name: translate( 'Payment failed' ),
-	} ];
+	return [
+		{
+			value: 'pending',
+			name: translate( 'Pending payment' ),
+		},
+		{
+			value: 'processing',
+			name: translate( 'Processing' ),
+		},
+		{
+			value: 'on-hold',
+			name: translate( 'On hold' ),
+		},
+		{
+			value: 'completed',
+			name: translate( 'Completed' ),
+		},
+		{
+			value: 'cancelled',
+			name: translate( 'Cancelled' ),
+		},
+		{
+			value: 'refunded',
+			name: translate( 'Refunded' ),
+		},
+		{
+			value: 'failed',
+			name: translate( 'Payment failed' ),
+		},
+	];
 }
 
 /**
@@ -68,7 +68,17 @@ export function getOrderStatusList() {
  * @return {Boolean} true if the status is awaiting payment
  */
 export function isOrderWaitingPayment( status ) {
-	return ( -1 !== statusWaitingPayment.indexOf( status ) );
+	return -1 !== statusWaitingPayment.indexOf( status );
+}
+
+/**
+ * Checks if this status (from an order) is editable
+ *
+ * @param {String} status Order status
+ * @return {Boolean} true if the status is editable
+ */
+export function isOrderEditable( status ) {
+	return -1 !== statusEditable.indexOf( status );
 }
 
 /**
@@ -78,7 +88,7 @@ export function isOrderWaitingPayment( status ) {
  * @return {Boolean} true if the status is awaiting fulfillment
  */
 export function isOrderWaitingFulfillment( status ) {
-	return ( -1 !== statusWaitingFulfillment.indexOf( status ) );
+	return -1 !== statusWaitingFulfillment.indexOf( status );
 }
 
 /**
@@ -88,5 +98,5 @@ export function isOrderWaitingFulfillment( status ) {
  * @return {Boolean} true if the status is completed, cancelled, or otherwise has no further action
  */
 export function isOrderFinished( status ) {
-	return ( -1 !== statusFinished.indexOf( status ) );
+	return -1 !== statusFinished.indexOf( status );
 }

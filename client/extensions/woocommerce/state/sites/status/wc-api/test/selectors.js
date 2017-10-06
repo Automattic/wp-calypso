@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,11 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getLastApiError,
-	getLastApiErrorCode,
-	getLastApiErrorMessage,
-} from '../selectors';
+import { getLastApiError, getLastApiErrorCode, getLastApiErrorMessage } from '../selectors';
 
 describe( 'selectors', () => {
 	let stateWithoutError;
@@ -23,8 +21,7 @@ describe( 'selectors', () => {
 					site: {
 						1337: {
 							status: {
-								wcApi: {
-								},
+								wcApi: {},
 							},
 						},
 					},
@@ -99,4 +96,3 @@ describe( 'selectors', () => {
 		} );
 	} );
 } );
-

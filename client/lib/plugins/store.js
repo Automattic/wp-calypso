@@ -1,35 +1,38 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	localStore = require( 'store' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	sitesList = require( 'lib/sites-list' )(),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	versionCompare = require( 'lib/version-compare' ),
-	PluginUtils = require( 'lib/plugins/utils' ),
-	JetpackSite = require( 'lib/site/jetpack' ),
-	Site = require( 'lib/site' ),
-	config = require( 'config' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+/* eslint-disable no-restricted-imports */
+import sitesListFactory from 'lib/sites-list';
+const sitesList = sitesListFactory();
+/* eslint-enable no-restricted-imports */
+import PluginsActions from 'lib/plugins/actions';
+import versionCompare from 'lib/version-compare';
+import PluginUtils from 'lib/plugins/utils';
+import JetpackSite from 'lib/site/jetpack';
+import Site from 'lib/site';
 
 /*
  * Constants
  */
-var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
-	// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
-	_UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000,
-	_STORAGE_LIST_NAME = 'CachedPluginsBySite';
+// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
+const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
 var _fetching = {},
 	_pluginsBySite = {},
-	PluginsStore,
 	_filters = {
 		none: function() {
 			return false;
@@ -54,7 +57,7 @@ var _fetching = {},
 		},
 		isEqual: function( pluginSlug, plugin ) {
 			return plugin.slug === pluginSlug;
-		}
+		},
 	};
 
 function refreshNetworkSites( site ) {
@@ -79,11 +82,14 @@ function remove( site, slug ) {
 	delete _pluginsBySite[ site.ID ][ slug ];
 
 	debug( 'removed plugin ' + slug );
-	storePluginsBySite( site.ID, _pluginsBySite[ site.ID ] );
 }
 
 function update( site, slug, plugin ) {
-	if ( plugin.network && ( site.options.is_multi_site || versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) ) ) {
+	if (
+		plugin.network &&
+		( site.options.is_multi_site ||
+			versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
+	) {
 		return;
 	}
 
@@ -97,7 +103,6 @@ function update( site, slug, plugin ) {
 	_pluginsBySite[ site.ID ][ slug ] = assign( {}, _pluginsBySite[ site.ID ][ slug ], plugin );
 
 	debug( 'update to ', _pluginsBySite[ site.ID ][ slug ] );
-	storePluginsBySite( site.ID, _pluginsBySite[ site.ID ] );
 }
 
 function updatePlugins( site, plugins ) {
@@ -111,39 +116,13 @@ function updatePlugins( site, plugins ) {
 	} );
 }
 
-function getPluginsBySiteFromStorage( siteId ) {
-	var storedLists;
-	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		storedLists = localStore.get( _STORAGE_LIST_NAME );
-		return storedLists && storedLists[ siteId ];
-	}
-}
-
-function storePluginsBySite( siteId, pluginsList ) {
-	var storedLists;
-
-	if ( config.isEnabled( 'manage/plugins/cache' ) ) {
-		storedLists = localStore.get( _STORAGE_LIST_NAME ) || {};
-		storedLists[ siteId ] = {
-			list: pluginsList,
-			fetched: Date.now()
-		};
-		localStore.set( _STORAGE_LIST_NAME, storedLists );
-	}
-}
-
-function isCachedListStillValid( storedList ) {
-	return ( storedList && ( Date.now() - storedList.fetched < _CACHE_TIME_TO_LIVE ) );
-}
-
-PluginsStore = {
-
+const PluginsStore = {
 	getPlugin: function( sites, pluginSlug ) {
 		var pluginData = {},
 			fetched = false;
 		pluginData.sites = [];
 
-		sites = ( ! isArray( sites ) ? [ sites ] : sites );
+		sites = ! isArray( sites ) ? [ sites ] : sites;
 
 		sites.forEach( function( site ) {
 			var sitePlugins = PluginsStore.getSitePlugins( site );
@@ -209,19 +188,12 @@ PluginsStore = {
 
 	// Get Plugins for a single site
 	getSitePlugins: function( site ) {
-		var storedList;
 		if ( ! site ) {
 			return [];
 		}
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
-			storedList = getPluginsBySiteFromStorage( site.ID );
-
-			_pluginsBySite[ site.ID ] = storedList && storedList.list;
-
-			if ( ! isCachedListStillValid( storedList ) ) {
-				PluginsActions.fetchSitePlugins( site );
-				_fetching[ site.ID ] = true;
-			}
+			PluginsActions.fetchSitePlugins( site );
+			_fetching[ site.ID ] = true;
 		}
 		if ( ! _pluginsBySite[ site.ID ] ) {
 			return _pluginsBySite[ site.ID ];
@@ -283,8 +255,12 @@ PluginsStore = {
 				return false;
 			}
 			//TODO: compatibility with old site object (for now, remove when not needed)
-			if ( site.jetpack &&
-				( typeof site.isSecondaryNetworkSite === 'function' ? site.isSecondaryNetworkSite() : site.isSecondaryNetworkSite ) ) {
+			if (
+				site.jetpack &&
+				( typeof site.isSecondaryNetworkSite === 'function'
+					? site.isSecondaryNetworkSite()
+					: site.isSecondaryNetworkSite )
+			) {
 				return false;
 			}
 
@@ -296,7 +272,7 @@ PluginsStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
@@ -339,12 +315,16 @@ PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
 				// still needs to be updated
 				update( action.site, action.plugin.slug, { update: action.plugin.update } );
 			} else {
-				update( action.site,
+				update(
+					action.site,
 					action.plugin.slug,
 					Object.assign( { update: { recentlyUpdated: true } }, action.data )
 				);
 				sitesList.onUpdatedPlugin( action.site );
-				setTimeout( PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ), _UPDATED_PLUGIN_INFO_TIME_TO_LIVE );
+				setTimeout(
+					PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ),
+					_UPDATED_PLUGIN_INFO_TIME_TO_LIVE
+				);
 			}
 			PluginsStore.emitChange();
 			break;
@@ -379,7 +359,10 @@ PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
 			break;
 
 		case 'RECEIVE_ACTIVATED_PLUGIN':
-			if ( ( action.error && action.error.error !== 'activation_error' ) || ! ( action.data && action.data.active ) && ! action.error ) {
+			if (
+				( action.error && action.error.error !== 'activation_error' ) ||
+				( ! ( action.data && action.data.active ) && ! action.error )
+			) {
 				debug( 'plugin activation error', action.error );
 				update( action.site, action.plugin.slug, { active: false } );
 			} else {

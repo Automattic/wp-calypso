@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -28,7 +32,4 @@ class QueryReaderTag extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestTag: requestTags },
-)( QueryReaderTag );
+export default connect( null, { requestTag: requestTags } )( QueryReaderTag );

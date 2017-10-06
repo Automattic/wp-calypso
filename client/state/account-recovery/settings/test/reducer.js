@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,28 +8,21 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-
+import reducer from '../reducer';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
-
-import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
-
-import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
 	const expectedState = {

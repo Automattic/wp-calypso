@@ -1,9 +1,11 @@
 /**
  * Tells whether the Directly RTM widget has failed to initialize
+ * 
+ * 
  *
+ * @format
  * @see lib/directly for more about Directly
- *
- * @param  {Object}  state  Global state tree
+ * @param {Object}  state  Global state tree
  * @return {Boolean}        Whether the widget has failed
  */
 

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { flowRight, includes, noop } from 'lodash';
@@ -27,8 +31,8 @@ export const UploadingPane = React.createClass( {
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
-			percentComplete: PropTypes.number
-		} )
+			percentComplete: PropTypes.number,
+		} ),
 	},
 
 	componentWillUnmount: function() {
@@ -50,13 +54,13 @@ export const UploadingPane = React.createClass( {
 			case appStates.UPLOADING:
 				let uploadPercent = percentComplete,
 					progressClasses = classNames( 'importer__upload-progress', {
-						'is-complete': uploadPercent > 95
+						'is-complete': uploadPercent > 95,
 					} ),
 					uploaderPrompt;
 
 				if ( uploadPercent < 99 ) {
 					uploaderPrompt = this.translate( 'Uploading %(filename)s\u2026', {
-						args: { filename }
+						args: { filename },
 					} );
 				} else {
 					uploaderPrompt = this.translate( 'Processing uploaded file\u2026' );
@@ -120,23 +124,31 @@ export const UploadingPane = React.createClass( {
 		return (
 			<div>
 				<p>{ this.props.description }</p>
-				<div className="importer__uploading-pane" onClick={ this.isReadyForImport() ? this.openFileSelector : null }>
+				<div
+					className="importer__uploading-pane"
+					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
+				>
 					<div className="importer__upload-content">
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
-					{ this.isReadyForImport()
-						? <input ref="fileSelector" type="file" name="exportFile" onChange={ this.initiateFromForm } />
-						: null }
+					{ this.isReadyForImport() ? (
+						<input
+							ref="fileSelector"
+							type="file"
+							name="exportFile"
+							onChange={ this.initiateFromForm }
+						/>
+					) : null }
 					<DropZone onFilesDrop={ this.isReadyForImport() ? this.initiateFromDrop : noop } />
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight( dispatch, startUpload )
+	startUpload: flowRight( dispatch, startUpload ),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( UploadingPane );

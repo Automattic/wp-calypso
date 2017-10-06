@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT,
 	WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,

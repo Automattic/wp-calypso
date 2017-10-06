@@ -1,13 +1,16 @@
 /**
-* External dependencies
-*/
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+ * External dependencies
+ *
+ * @format
+ */
+
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
-var InfoPopover = require( 'components/info-popover' );
+import InfoPopover from 'components/info-popover';
 
 var InfoPopoverExample = React.createClass( {
 	displayName: 'InfoPopover',
@@ -23,7 +26,8 @@ var InfoPopoverExample = React.createClass( {
 	render: function() {
 		return (
 			<div>
-				<label>Position
+				<label>
+					Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
@@ -38,10 +42,7 @@ var InfoPopoverExample = React.createClass( {
 
 				<br />
 
-				<InfoPopover
-					id="popover__info-popover-example"
-					position={ this.state.popoverPosition }
-				>
+				<InfoPopover id="popover__info-popover-example" position={ this.state.popoverPosition }>
 					Some informational text.
 				</InfoPopover>
 			</div>
@@ -50,8 +51,7 @@ var InfoPopoverExample = React.createClass( {
 
 	_changePopoverPosition: function( event ) {
 		this.setState( { popoverPosition: event.target.value } );
-	}
-
+	},
 } );
 
 module.exports = InfoPopoverExample;

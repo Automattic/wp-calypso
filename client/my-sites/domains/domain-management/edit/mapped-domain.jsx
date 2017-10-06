@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -25,17 +28,31 @@ const MappedDomain = React.createClass( {
 
 		if ( domain.isAutoRenewing ) {
 			return (
-				<Property label={ translate( 'Mapping renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
+				<Property
+					label={ translate( 'Mapping renews on', {
+						comment:
+							'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
+					} ) }
+				>
 					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
 		}
 
-		const expirationMessage = domain.expirationMoment && domain.expirationMoment.format( 'LL' ) ||
-			<em>{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
+		const expirationMessage = ( domain.expirationMoment &&
+			domain.expirationMoment.format( 'LL' ) ) || (
+			<em>
+				{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }
+			</em>
+		);
 
 		return (
-			<Property label={ translate( 'Mapping expires on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
+			<Property
+				label={ translate( 'Mapping expires on', {
+					comment:
+						'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
+				} ) }
+			>
 				{ expirationMessage }
 			</Property>
 		);
@@ -46,11 +63,14 @@ const MappedDomain = React.createClass( {
 	},
 
 	domainWarnings() {
-		return <DomainWarnings
-			domain={ this.props.domain }
-			position="mapped-domain"
-			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'wrongNSMappedDomains' ] } />;
+		return (
+			<DomainWarnings
+				domain={ this.props.domain }
+				position="mapped-domain"
+				selectedSite={ this.props.selectedSite }
+				ruleWhiteList={ [ 'wrongNSMappedDomains' ] }
+			/>
+		);
 	},
 
 	render() {
@@ -81,7 +101,8 @@ const MappedDomain = React.createClass( {
 						type={ domain.type }
 						subscriptionId={ domain.subscriptionId }
 						siteSlug={ selectedSite.slug }
-						onClick={ this.handlePaymentSettingsClick } />
+						onClick={ this.handlePaymentSettingsClick }
+					/>
 				</Card>
 			</div>
 		);
@@ -102,25 +123,16 @@ const MappedDomain = React.createClass( {
 			this.props.domain.name
 		);
 
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Email' ) }
-			</VerticalNavItem>
-		);
+		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
 
 	dnsRecordsNavItem() {
-		const path = paths.domainManagementDns(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
+		const path = paths.domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'DNS Records' ) }
-			</VerticalNavItem>
+			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
 		);
-	}
+	},
 } );
 
 export { MappedDomain };

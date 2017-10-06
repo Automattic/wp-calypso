@@ -1,12 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-	negate as not,
-} from 'lodash';
+import { overEvery as and, negate as not } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -44,15 +44,15 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			isDesktop,
 			selectedSiteIsCustomizable,
 			not( inSection( 'customize' ) ),
-			isAbTestInVariant( 'designShowcaseWelcomeTour', 'enabled' ),
+			isAbTestInVariant( 'designShowcaseWelcomeTour', 'enabled' )
 		) }
 	>
 		<Step name="init" placement="right" next="search">
 			<p>
-				{
-					translate( 'On this page, you can explore our many themes. ' +
-						"Want to learn how to find the design that fits the site you're building?" )
-				}
+				{ translate(
+					'On this page, you can explore our many themes. ' +
+						"Want to learn how to find the design that fits the site you're building?"
+				) }
 			</p>
 			<ButtonRow>
 				<Next step="search">{ translate( "Let's go!" ) }</Next>
@@ -60,14 +60,17 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			</ButtonRow>
 		</Step>
 
-		<Step name="search"
+		<Step
+			name="search"
 			target=".themes-magic-search-card .search__icon-navigation, .themes__search-card .search__icon-navigation"
 			arrow="top-left"
 			placement="below"
 			next="theme-options"
 		>
 			<p>
-				{ translate( 'Search for your ideal theme by feature, look, or topic — you can use words like "business", "photography", or "food".' ) }
+				{ translate(
+					'Search for your ideal theme by feature, look, or topic — you can use words like "business", "photography", or "food".'
+				) }
 			</p>
 			<ButtonRow>
 				<Next step="theme-options" />
@@ -75,7 +78,8 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			</ButtonRow>
 		</Step>
 
-		<Step name="theme-options"
+		<Step
+			name="theme-options"
 			target=".card.theme:nth-child(4) .theme__more-button"
 			placement="beside"
 			next="finish"
@@ -83,13 +87,13 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			shouldScrollTo
 		>
 			<p>
-				{
-					translate( 'Scroll down to discover more themes. Found anything you like? ' +
-						'Try clicking the three dots — {{icon/}} — for more theme options.', {
-							components: { icon: <Gridicon icon="ellipsis" /> }
-						}
-					)
-				}
+				{ translate(
+					'Scroll down to discover more themes. Found anything you like? ' +
+						'Try clicking the three dots — {{icon/}} — for more theme options.',
+					{
+						components: { icon: <Gridicon icon="ellipsis" /> },
+					}
+				) }
 			</p>
 			<Continue
 				icon="ellipsis"
@@ -99,19 +103,13 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			/>
 		</Step>
 
-		<Step name="finish"
-			target=".popover"
-			placement="beside"
-		>
+		<Step name="finish" target=".popover" placement="beside">
 			<p>
 				{ translate( 'This menu lets you preview and set up any theme, or learn more about it.' ) }
 			</p>
 			<ButtonRow>
-				<Quit primary>
-					{ translate( "We're all done!" ) }
-				</Quit>
+				<Quit primary>{ translate( "We're all done!" ) }</Quit>
 			</ButtonRow>
 		</Step>
-
 	</Tour>
 );

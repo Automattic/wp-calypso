@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { reduce } from 'lodash';
 
 export { diffWords } from 'diff';
@@ -47,6 +50,6 @@ export function countDiffWords( diffChanges ) {
 		{
 			added: 0,
 			removed: 0,
-		},
+		}
 	);
 }

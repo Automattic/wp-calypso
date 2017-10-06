@@ -1,17 +1,18 @@
 /**
  * Console dispatcher Redux store enhancer
- *
+ * 
  * Inject into the `createStore` enhancer chain in order
  * to provide access to the store directly from the console.
- *
+ * 
  * Will only attach if the `window` variable is available
  * globally. If not it will simply be an empty link in the
  * chain, passing straight through.
- *
+ * 
  * A few helpers have also been attached to the window in
  * order to make debugging and interacting easier. Please
  * see the README for more information.
  *
+ * @format
  */
 
 /**
@@ -31,11 +32,11 @@ const state = {
 };
 
 const actionLog = {
-	clear: () => state.actionHistory = [],
+	clear: () => ( state.actionHistory = [] ),
 	filter: type => state.actionHistory.filter( matchesProperty( 'type', type ) ),
-	setSize: size => state.historySize = size,
-	start: () => state.shouldRecordActions = true,
-	stop: () => state.shouldRecordActions = false,
+	setSize: size => ( state.historySize = size ),
+	start: () => ( state.shouldRecordActions = true ),
+	stop: () => ( state.shouldRecordActions = false ),
 };
 
 Object.defineProperty( actionLog, 'history', {
@@ -44,14 +45,9 @@ Object.defineProperty( actionLog, 'history', {
 } );
 
 const recordAction = action => {
-	const {
-		actionHistory,
-		historySize,
-	} = state;
+	const { actionHistory, historySize } = state;
 
-	const thunkDescription = 'function' === typeof action
-		? { type: 'thunk (hidden)' }
-		: {};
+	const thunkDescription = 'function' === typeof action ? { type: 'thunk (hidden)' } : {};
 
 	actionHistory.push( {
 		...action,
@@ -64,7 +60,7 @@ const recordAction = action => {
 
 	// cheap optimization to keep from
 	// thrashing once we hit our size limit
-	if ( actionHistory.length > ( 2 * historySize ) ) {
+	if ( actionHistory.length > 2 * historySize ) {
 		state.actionHistory = actionHistory.slice( -1 * historySize );
 	}
 };
@@ -97,7 +93,7 @@ export const consoleDispatcher = next => ( reducer, initialState ) => {
 
 	return {
 		...store,
-		dispatch
+		dispatch,
 	};
 };
 

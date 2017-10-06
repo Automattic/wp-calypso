@@ -1,14 +1,17 @@
-/** @jest-environment jsdom */
-jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
+import React from 'react';
 
+jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;
@@ -26,7 +29,8 @@ describe( 'Domain Suggestion', function() {
 					domain="example.com"
 					isAdded={ false }
 					onButtonClick={ noop }
-					priceRule="PRICE" />
+					priceRule="PRICE"
+				/>
 			);
 
 			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );

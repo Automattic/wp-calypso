@@ -1,19 +1,22 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var expect = require( 'chai' ).expect;
+
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var paths = require( '../' );
+import paths from '../';
 
 /**
  * Module variables
  */
 var DUMMY_SITE = {
 	ID: 73693298,
-	slug: 'settingstestsite.wordpress.com'
+	slug: 'settingstestsite.wordpress.com',
 };
 
 describe( 'index', function() {

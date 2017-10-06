@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -43,20 +46,13 @@ class SiteOwnership extends Component {
 		return (
 			<div className="manage-connection__user">
 				<Gravatar user={ currentUser } size={ 24 } />
-				<span className="manage-connection__user-name">
-					{ currentUser.display_name }
-				</span>
+				<span className="manage-connection__user-name">{ currentUser.display_name }</span>
 			</div>
 		);
 	}
 
 	renderConnectionDetails() {
-		const {
-			siteIsConnected,
-			siteIsInDevMode,
-			translate,
-			userIsMaster,
-		} = this.props;
+		const { siteIsConnected, siteIsInDevMode, translate, userIsMaster } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return translate( 'The site is not connected.' );
@@ -65,7 +61,9 @@ class SiteOwnership extends Component {
 		if ( siteIsInDevMode ) {
 			return (
 				<FormSettingExplanation>
-					{ translate( 'Your site is in Development Mode, so it can not be connected to WordPress.com.' ) }
+					{ translate(
+						'Your site is in Development Mode, so it can not be connected to WordPress.com.'
+					) }
 				</FormSettingExplanation>
 			);
 		}
@@ -73,16 +71,13 @@ class SiteOwnership extends Component {
 		return (
 			<div>
 				<FormSettingExplanation>
-					{
-						userIsMaster
-							? translate( 'You are the owner of this site\'s connection to WordPress.com.' )
-							: translate( 'Somebody else owns this site\'s connection to WordPress.com.' )
-					}
+					{ userIsMaster ? (
+						translate( "You are the owner of this site's connection to WordPress.com." )
+					) : (
+						translate( "Somebody else owns this site's connection to WordPress.com." )
+					) }
 				</FormSettingExplanation>
-				{
-					userIsMaster &&
-					this.renderCurrentUser()
-				}
+				{ userIsMaster && this.renderCurrentUser() }
 			</div>
 		);
 	}
@@ -101,12 +96,7 @@ class SiteOwnership extends Component {
 	}
 
 	render() {
-		const {
-			siteId,
-			siteIsConnected,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { siteId, siteIsConnected, siteIsJetpack, translate } = this.props;
 
 		return (
 			<div>
@@ -115,26 +105,21 @@ class SiteOwnership extends Component {
 
 				<SectionHeader label={ translate( 'Site ownership' ) } />
 
-				{ siteIsConnected === null
-					? this.renderPlaceholder()
-					: this.renderCardContent()
-				}
+				{ siteIsConnected === null ? this.renderPlaceholder() : this.renderCardContent() }
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			currentUser: getCurrentUser( state ),
-			siteId,
-			siteIsConnected: isJetpackSiteConnected( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-			userIsMaster: isJetpackUserMaster( state, siteId ),
-		};
-	}
-)( localize( SiteOwnership ) );
+	return {
+		currentUser: getCurrentUser( state ),
+		siteId,
+		siteIsConnected: isJetpackSiteConnected( state, siteId ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
+		userIsMaster: isJetpackUserMaster( state, siteId ),
+	};
+} )( localize( SiteOwnership ) );

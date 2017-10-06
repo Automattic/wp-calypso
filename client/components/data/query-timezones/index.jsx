@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -11,7 +15,7 @@ import { requestTimezones } from 'state/timezones/actions';
 
 export class QueryTimezones extends Component {
 	static propTypes = {
-		requestTimezones: PropTypes.func
+		requestTimezones: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -23,7 +27,4 @@ export class QueryTimezones extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestTimezones }
-)( QueryTimezones );
+export default connect( null, { requestTimezones } )( QueryTimezones );

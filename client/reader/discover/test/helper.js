@@ -2,10 +2,6 @@
  * @format
  * @jest-environment jsdom
  */
-jest.mock( 'config', () => {
-	return () => require( './fixtures' ).discoverSiteId;
-} );
-jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 
 /**
  * External dependencies
@@ -16,8 +12,12 @@ import { get, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as fixtures from './fixtures';
 import * as helper from '../helper';
+import * as fixtures from './fixtures';
+jest.mock( 'config', () => {
+	return () => require( './fixtures' ).discoverSiteId;
+} );
+jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;

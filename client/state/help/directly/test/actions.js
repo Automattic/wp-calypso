@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,12 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	askQuestion,
-	initialize,
-	initializationCompleted,
-	initializationFailed,
-} from '../actions';
+import { askQuestion, initialize, initializationCompleted, initializationFailed } from '../actions';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,

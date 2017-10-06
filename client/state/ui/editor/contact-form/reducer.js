@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { cloneDeep, merge } from 'lodash';
 
+import { cloneDeep, merge } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -14,7 +16,7 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_ADD,
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
-	EDITOR_CONTACT_FORM_SETTINGS_UPDATE
+	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 } from 'state/action-types';
 import { CONTACT_FORM_DEFAULT, CONTACT_FORM_DEFAULT_NEW_FIELD } from './constants';
 
@@ -32,7 +34,7 @@ export default function( state = initialState, action ) {
 			break;
 		case EDITOR_CONTACT_FORM_FIELD_ADD:
 			state = Object.assign( {}, state, {
-				fields: [ ...state.fields, CONTACT_FORM_DEFAULT_NEW_FIELD ]
+				fields: [ ...state.fields, CONTACT_FORM_DEFAULT_NEW_FIELD ],
 			} );
 			break;
 		case EDITOR_CONTACT_FORM_FIELD_REMOVE: {
@@ -50,7 +52,8 @@ export default function( state = initialState, action ) {
 				delete newField.options;
 			} else if ( newField.options === undefined ) {
 				newField.options = i18n.translate( 'Option One,Option Two', {
-					comment: 'Default options for drop down lists and radio buttons. Must be separated by a comma without extra spaces.'
+					comment:
+						'Default options for drop down lists and radio buttons. Must be separated by a comma without extra spaces.',
 				} );
 			}
 

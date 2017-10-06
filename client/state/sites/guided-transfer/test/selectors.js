@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -23,8 +25,8 @@ describe( 'selectors', () => {
 				sites: {
 					guidedTransfer: {
 						isFetching: {},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.false;
@@ -38,13 +40,12 @@ describe( 'selectors', () => {
 							1: false,
 							[ testSiteId ]: true,
 						},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.true;
 		} );
-
 
 		it( 'should return false when a isFetching is false', () => {
 			const state = deepFreeze( {
@@ -54,8 +55,8 @@ describe( 'selectors', () => {
 							1: true,
 							[ testSiteId ]: false,
 						},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.false;
@@ -65,86 +66,114 @@ describe( 'selectors', () => {
 	describe( '#getGuidedTransferIssue()', () => {
 		it( 'should return a single issue when no options specified', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [
-						{ reason: 'something' },
-						{ reason: 'something-else' },
-					] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: {
+								issues: [ { reason: 'something' }, { reason: 'something-else' } ],
+							},
+						},
+					},
+				},
 			} );
-			expect( getGuidedTransferIssue( state, testSiteId ) ).to.eql(
-				{ reason: 'something' }
-			);
+			expect( getGuidedTransferIssue( state, testSiteId ) ).to.eql( { reason: 'something' } );
 		} );
 
 		it( 'should return the first issue with given options', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [
-						{ reason: 'something-else', prevents_transfer: true },
-						{ reason: 'something-blocking', prevents_transfer: true },
-						{ reason: 'something-not-blocking', prevents_transfer: false },
-					] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: {
+								issues: [
+									{ reason: 'something-else', prevents_transfer: true },
+									{ reason: 'something-blocking', prevents_transfer: true },
+									{ reason: 'something-not-blocking', prevents_transfer: false },
+								],
+							},
+						},
+					},
+				},
 			} );
 
-			expect( getGuidedTransferIssue( state, testSiteId, { reason: 'something-blocking', prevents_transfer: true } ) ).to.eql(
-				{ reason: 'something-blocking', prevents_transfer: true }
-			);
+			expect(
+				getGuidedTransferIssue( state, testSiteId, {
+					reason: 'something-blocking',
+					prevents_transfer: true,
+				} )
+			).to.eql( { reason: 'something-blocking', prevents_transfer: true } );
 
-			expect( getGuidedTransferIssue( state, testSiteId, { reason: 'something-blocking' } ) ).to.eql(
-				{ reason: 'something-blocking', prevents_transfer: true }
-			);
+			expect(
+				getGuidedTransferIssue( state, testSiteId, { reason: 'something-blocking' } )
+			).to.eql( { reason: 'something-blocking', prevents_transfer: true } );
 
-			expect( getGuidedTransferIssue( state, testSiteId, { prevents_transfer: true } ) ).to.eql(
-				{ reason: 'something-else', prevents_transfer: true }
-			);
+			expect( getGuidedTransferIssue( state, testSiteId, { prevents_transfer: true } ) ).to.eql( {
+				reason: 'something-else',
+				prevents_transfer: true,
+			} );
 
-			expect( getGuidedTransferIssue( state, testSiteId, { prevents_transfer: false } ) ).to.eql(
-				{ reason: 'something-not-blocking', prevents_transfer: false }
-			);
+			expect( getGuidedTransferIssue( state, testSiteId, { prevents_transfer: false } ) ).to.eql( {
+				reason: 'something-not-blocking',
+				prevents_transfer: false,
+			} );
 		} );
 	} );
 
 	describe( '#isGuidedTransferAvailableForAllSites()', () => {
 		it( 'should return false when unavailable', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [
-						{ reason: 'unavailable', prevents_transfer: true },
-					] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: {
+								issues: [ { reason: 'unavailable', prevents_transfer: true } ],
+							},
+						},
+					},
+				},
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
 		} );
 
 		it( 'should return false when on vacation', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [
-						{ reason: 'vacation', prevents_transfer: true },
-					] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: {
+								issues: [ { reason: 'vacation', prevents_transfer: true } ],
+							},
+						},
+					},
+				},
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
 		} );
 
 		it( 'should return true when no issues', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [ ] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: { issues: [] },
+						},
+					},
+				},
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
 		} );
 
 		it( 'should return true when theres only a site specific issue', () => {
 			const state = deepFreeze( {
-				sites: { guidedTransfer: { status: {
-					[ testSiteId ]: { issues: [
-						{ reason: 'premium-theme', prevents_transfer: true },
-					] }
-				} } }
+				sites: {
+					guidedTransfer: {
+						status: {
+							[ testSiteId ]: {
+								issues: [ { reason: 'premium-theme', prevents_transfer: true } ],
+							},
+						},
+					},
+				},
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
 		} );
@@ -156,8 +185,8 @@ describe( 'selectors', () => {
 				sites: {
 					guidedTransfer: {
 						isSaving: {},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.false;
@@ -171,8 +200,8 @@ describe( 'selectors', () => {
 							1: false,
 							[ testSiteId ]: true,
 						},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.true;
@@ -186,8 +215,8 @@ describe( 'selectors', () => {
 							1: true,
 							[ testSiteId ]: false,
 						},
-					}
-				}
+					},
+				},
 			} );
 
 			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.false;

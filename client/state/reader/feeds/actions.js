@@ -8,7 +8,6 @@ import { isArray } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,

@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -11,10 +13,8 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-
 import SignupSiteTitle from 'components/signup-site-title';
 import SiteTitleExample from 'components/site-title-example';
-
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 import { translate } from 'i18n-calypso';
@@ -32,11 +32,15 @@ class SiteTitleStep extends React.Component {
 	submitSiteTitleStep = siteTitle => {
 		this.props.setSiteTitle( siteTitle );
 
-		SignupActions.submitSignupStep( {
-			processingMessage: translate( 'Setting up your site' ),
-			stepName: this.props.stepName,
-			siteTitle
-		}, [], { siteTitle } );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: translate( 'Setting up your site' ),
+				stepName: this.props.stepName,
+				siteTitle,
+			},
+			[],
+			{ siteTitle }
+		);
 
 		this.props.goToNextStep();
 	};
@@ -48,9 +52,7 @@ class SiteTitleStep extends React.Component {
 	renderSiteTitleStep = () => {
 		return (
 			<div>
-				<SignupSiteTitle
-					onSubmit={ this.submitSiteTitleStep }
-				/>
+				<SignupSiteTitle onSubmit={ this.submitSiteTitleStep } />
 				<SiteTitleExample />
 			</div>
 		);
@@ -58,7 +60,9 @@ class SiteTitleStep extends React.Component {
 
 	render() {
 		const headerText = translate( 'Give your new site a name.' );
-		const subHeaderText = translate( 'Enter a Site Title that will be displayed for visitors. You can always change this later.' );
+		const subHeaderText = translate(
+			'Enter a Site Title that will be displayed for visitors. You can always change this later.'
+		);
 
 		return (
 			<div>
@@ -79,7 +83,4 @@ class SiteTitleStep extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ setSiteTitle }
-)( SiteTitleStep );
+export default connect( null, { setSiteTitle } )( SiteTitleStep );

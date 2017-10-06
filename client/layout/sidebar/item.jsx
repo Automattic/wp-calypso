@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -25,7 +28,7 @@ export default React.createClass( {
 		preloadSectionName: PropTypes.string,
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
-		tipTarget: PropTypes.string
+		tipTarget: PropTypes.string,
 	},
 
 	_preloaded: false,
@@ -62,5 +65,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</li>
 		);
-	}
+	},
 } );

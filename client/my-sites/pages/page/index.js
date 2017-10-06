@@ -1,19 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import createFragment from 'react-addons-create-fragment';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import {
-	flow,
-	get,
-	includes,
-	partial,
-} from 'lodash';
+import { flow, get, includes, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,19 +25,11 @@ import SiteIcon from 'blocks/site-icon';
 import helpers from '../helpers';
 import utils from 'lib/posts/utils';
 import classNames from 'classnames';
-
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import {
-	getSite,
-	hasStaticFrontPage,
-	isSitePreviewable,
-} from 'state/sites/selectors';
+import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isFrontPage,
-	isPostsPage,
-} from 'state/pages/selectors';
+import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -68,7 +58,7 @@ class Page extends Component {
 		previousStatus: PropTypes.string,
 		showMoreOptions: PropTypes.bool.isRequired,
 		showPageActions: PropTypes.bool.isRequired,
-	}
+	};
 
 	togglePageActions = () => {
 		this.props.togglePageActions();
@@ -76,14 +66,14 @@ class Page extends Component {
 		if ( this.props.showPageActions ) {
 			this.props.recordMoreOptions();
 		}
-	}
+	};
 
 	// Construct a link to the Site the page belongs too
 	getSiteDomain() {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	}
 
-	viewPage = ( event ) => {
+	viewPage = event => {
 		event.preventDefault();
 		const { isPreviewable, page, previewURL } = this.props;
 
@@ -97,7 +87,7 @@ class Page extends Component {
 
 		this.props.setPreviewUrl( previewURL );
 		this.props.setLayoutFocus( 'preview' );
-	}
+	};
 
 	getViewItem() {
 		const { isPreviewable } = this.props;
@@ -138,16 +128,20 @@ class Page extends Component {
 
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
-		const parentHref = utils.userCan( 'edit_post', this.props.page ) ? helpers.editLinkForPage( page.parent, site ) : page.parent.URL;
+		const parentHref = utils.userCan( 'edit_post', this.props.page )
+			? helpers.editLinkForPage( page.parent, site )
+			: page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
-		return ( <div className="page__popover-more-info">{
-			translate( 'Child of {{PageTitle/}}', {
-				components: {
-					PageTitle: parentLink
-				}
-			} )
-		}</div> );
+		return (
+			<div className="page__popover-more-info">
+				{ translate( 'Child of {{PageTitle/}}', {
+					components: {
+						PageTitle: parentLink,
+					},
+				} ) }
+			</div>
+		);
 	}
 
 	frontPageInfo() {
@@ -155,15 +149,19 @@ class Page extends Component {
 			return null;
 		}
 
-		return ( <div className="page__popover-more-info">{
-			this.props.translate( 'This page is set as your site\'s homepage' )
-		}</div> );
+		return (
+			<div className="page__popover-more-info">
+				{ this.props.translate( "This page is set as your site's homepage" ) }
+			</div>
+		);
 	}
 
 	getPublishItem() {
-		if ( this.props.page.status === 'publish' ||
-				! utils.userCan( 'publish_post', this.props.page ) ||
-				this.props.page.status === 'trash' ) {
+		if (
+			this.props.page.status === 'publish' ||
+			! utils.userCan( 'publish_post', this.props.page ) ||
+			this.props.page.status === 'trash'
+		) {
 			return null;
 		}
 
@@ -204,27 +202,28 @@ class Page extends Component {
 		if ( this.props.page.status !== 'trash' ) {
 			return createFragment( {
 				separator: <MenuSeparator />,
-				item: <PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.props.translate( 'Trash' ) }
-				</PopoverMenuItem>,
+				item: (
+					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.props.translate( 'Trash' ) }
+					</PopoverMenuItem>
+				),
 			} );
 		}
 
 		return createFragment( {
 			separator: <MenuSeparator />,
-			item: <PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-				<Gridicon icon="trash" size={ 18 } />
-				{ this.props.translate( 'Delete' ) }
-			</PopoverMenuItem>,
+			item: (
+				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
+					<Gridicon icon="trash" size={ 18 } />
+					{ this.props.translate( 'Delete' ) }
+				</PopoverMenuItem>
+			),
 		} );
 	}
 
 	getCopyItem() {
-		const {
-			page: post,
-			siteSlugOrId,
-		} = this.props;
+		const { page: post, siteSlugOrId } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
 			! utils.userCan( 'edit_post', post )
@@ -232,7 +231,10 @@ class Page extends Component {
 			return null;
 		}
 		return (
-			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }>
+			<PopoverMenuItem
+				onClick={ this.copyPage }
+				href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }
+			>
 				<Gridicon icon="clipboard" size={ 18 } />
 				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
@@ -255,7 +257,7 @@ class Page extends Component {
 	statsPage = () => {
 		this.props.recordStatsPage();
 		pageRouter( helpers.statsLinkForPage( this.props.page, this.props.site ) );
-	}
+	};
 
 	getStatsItem() {
 		if ( this.props.page.status !== 'publish' ) {
@@ -273,14 +275,18 @@ class Page extends Component {
 	editPage = () => {
 		this.props.recordEditPage();
 		pageRouter( helpers.editLinkForPage( this.props.page, this.props.site ) );
-	}
+	};
 
 	getPageStatusInfo() {
 		if ( this.props.page.status === 'publish' ) {
 			return null;
 		}
 
-		return <div className="page__popover-more-info">{ this.getReadableStatus( this.props.page.status ) }</div>;
+		return (
+			<div className="page__popover-more-info">
+				{ this.getReadableStatus( this.props.page.status ) }
+			</div>
+		);
 	}
 
 	getReadableStatus( status ) {
@@ -291,7 +297,7 @@ class Page extends Component {
 				draft: translate( 'Draft' ),
 				pending: translate( 'Pending' ),
 				future: translate( 'Future' ),
-				'private': translate( 'Private' ),
+				private: translate( 'Private' ),
 				trash: translate( 'Trashed' ),
 			};
 		}
@@ -332,10 +338,14 @@ class Page extends Component {
 		const copyItem = this.getCopyItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
-		const hasMenuItems = (
-			viewItem || publishItem || editItem || statsItem ||
-			restoreItem || sendToTrashItem || moreInfoItem
-		);
+		const hasMenuItems =
+			viewItem ||
+			publishItem ||
+			editItem ||
+			statsItem ||
+			restoreItem ||
+			sendToTrashItem ||
+			moreInfoItem;
 
 		const popoverMenu = hasMenuItems && (
 			<PopoverMenu
@@ -360,10 +370,11 @@ class Page extends Component {
 				icon="ellipsis"
 				className={ classNames( {
 					'page__actions-toggle': true,
-					'is-active': this.props.showPageActions
+					'is-active': this.props.showPageActions,
 				} ) }
 				onClick={ this.togglePageActions }
-				ref="popoverMenuButton" />
+				ref="popoverMenuButton"
+			/>
 		);
 
 		const cardClasses = {
@@ -382,21 +393,26 @@ class Page extends Component {
 		}
 
 		const hierarchyIndent = cardClasses[ 'is-indented' ] && (
-			<div className={ classNames( hierarchyIndentClasses ) } ></div>
+			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
 		return (
-			<CompactCard className={ classNames( cardClasses ) } >
+			<CompactCard className={ classNames( cardClasses ) }>
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
-					<a className="page__title"
+					<a
+						className="page__title"
 						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
-						title={ canEdit
-							? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
-							: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
+						title={
+							canEdit ? (
+								translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
+							) : (
+								translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
+							)
+						}
 						onClick={ this.props.recordPageTitle }
-						>
+					>
 						{ depthIndicator }
 						{ title }
 					</a>
@@ -411,37 +427,37 @@ class Page extends Component {
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 300 }>
+					transitionLeaveTimeout={ 300 }
+				>
 					{ this.props.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</CompactCard>
-
 		);
 	}
 
 	updateStatusPublish = () => {
 		this.props.updatePostStatus( 'publish' );
 		this.props.recordEvent( 'Clicked Publish Page' );
-	}
+	};
 
 	updateStatusTrash = () => {
 		this.props.updatePostStatus( 'trash' );
 		this.props.recordEvent( 'Clicked Move to Trash' );
-	}
+	};
 
 	updateStatusRestore = () => {
 		this.props.updatePostStatus( 'restore' );
 		this.props.recordEvent( 'Clicked Restore' );
-	}
+	};
 
 	updateStatusDelete = () => {
 		this.props.updatePostStatus( 'delete' );
 		this.props.recordEvent( 'Clicked Delete Page' );
-	}
+	};
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
-	}
+	};
 }
 
 const mapState = ( state, props ) => {
@@ -450,8 +466,7 @@ const mapState = ( state, props ) => {
 	const siteSlugOrId = get( site, 'slug' ) || get( site, 'ID', null );
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
-		false !== isSitePreviewable( state, pageSiteId ) &&
-		site && site.ID === selectedSiteId;
+		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
@@ -475,8 +490,4 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow(
-	localize,
-	updatePostStatus,
-	connect( mapState, mapDispatch )
-)( Page );
+export default flow( localize, updatePostStatus, connect( mapState, mapDispatch ) )( Page );

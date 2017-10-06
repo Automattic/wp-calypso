@@ -1,14 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import {
-	endsWith,
-	noop,
-} from 'lodash';
+import { endsWith, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,9 @@ export class DomainToPaidPlanNotice extends Component {
 		}
 
 		const actionLink = isDomainOnly
-			? `/start/site-selected/?siteSlug=${ encodeURIComponent( site.slug ) }&siteId=${ encodeURIComponent( site.ID ) }`
+			? `/start/site-selected/?siteSlug=${ encodeURIComponent(
+					site.slug
+				) }&siteId=${ encodeURIComponent( site.ID ) }`
 			: `/plans/my-plan/${ site.slug }`;
 
 		return (
@@ -69,7 +71,7 @@ export class DomainToPaidPlanNotice extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const isDomainOnly = isDomainOnlySite( state, site.ID );
 
@@ -82,7 +84,4 @@ const mapStateToProps = ( state ) => {
 };
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)( localize( DomainToPaidPlanNotice ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainToPaidPlanNotice ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 import { assign } from 'lodash';
 
@@ -11,12 +14,11 @@ export default {
 			environment: config( 'env' ),
 			site_count: siteCount || 0,
 			site_id_label: 'wpcom',
-			client: config( 'client_slug' )
+			client: config( 'client_slug' ),
 		};
 
 		if ( selectedSite ) {
 			siteProps = {
-
 				// Tracks expects a blog_id property to identify the blog which is
 				// why we use it here instead of calling the property site_id
 				blog_id: selectedSite.ID,
@@ -27,10 +29,10 @@ export default {
 
 				site_id_label: selectedSite.jetpack ? 'jetpack' : 'wpcom',
 				site_plan_id: selectedSite.plan ? selectedSite.plan.product_id : null,
-				site_post_count: selectedSite.post_count
+				site_post_count: selectedSite.post_count,
 			};
 		}
 
 		return assign( defaultProps, siteProps );
-	}
+	},
 };

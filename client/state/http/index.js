@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import superagent from 'superagent';
 
 /***
@@ -11,10 +14,12 @@ import { HTTP_REQUEST } from 'state/action-types';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
 
 const isAllHeadersValid = headers =>
-	headers.every( headerPair => Array.isArray( headerPair ) &&
-		headerPair.length === 2 &&
-		typeof headerPair[ 0 ] === 'string' &&
-		typeof headerPair[ 1 ] === 'string'
+	headers.every(
+		headerPair =>
+			Array.isArray( headerPair ) &&
+			headerPair.length === 2 &&
+			typeof headerPair[ 0 ] === 'string' &&
+			typeof headerPair[ 1 ] === 'string'
 	);
 
 /***
@@ -40,7 +45,7 @@ export const httpHandler = ( { dispatch }, action ) => {
 		body,
 		withCredentials,
 		onSuccess,
-		onFailure
+		onFailure,
 	} = action;
 
 	if ( ! isAllHeadersValid( headers ) ) {
@@ -55,9 +60,9 @@ export const httpHandler = ( { dispatch }, action ) => {
 		request.withCredentials();
 	}
 
-	const queryString = queryParams.map(
-		( [ queryKey, queryValue ] ) => queryKey + '=' + encodeURIComponent( queryValue )
-	).join( '&' );
+	const queryString = queryParams
+		.map( ( [ queryKey, queryValue ] ) => queryKey + '=' + encodeURIComponent( queryValue ) )
+		.join( '&' );
 
 	if ( queryString.length > 0 ) {
 		request.query( queryString );
@@ -78,5 +83,5 @@ export const httpHandler = ( { dispatch }, action ) => {
 };
 
 export default {
-	[ HTTP_REQUEST ]: [ httpHandler ]
+	[ HTTP_REQUEST ]: [ httpHandler ],
 };

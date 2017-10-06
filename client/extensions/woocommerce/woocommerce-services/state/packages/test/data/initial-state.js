@@ -1,3 +1,4 @@
+/** @format */
 export default {
 	showModal: false,
 	packageData: null,
@@ -18,12 +19,10 @@ export default {
 		},
 		otherService: {
 			express: {
-				definitions: [
-					{ id: 'envelope', name: 'envelope' },
-				],
+				definitions: [ { id: 'envelope', name: 'envelope' } ],
 				title: 'Express',
 			},
-		}
+		},
 	},
 	pristine: true,
 	isSaving: false,

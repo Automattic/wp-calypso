@@ -1,10 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, Component } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 
 /**
@@ -26,7 +30,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
 class StatsModule extends Component {
@@ -47,11 +51,11 @@ class StatsModule extends Component {
 
 	static defaultProps = {
 		showSummaryLink: false,
-		query: {}
+		query: {},
 	};
 
 	state = {
-		loaded: false
+		loaded: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -77,8 +81,9 @@ class StatsModule extends Component {
 				date={ startOf }
 				path={ path }
 				query={ query }
-				summary={ true } />
-			);
+				summary={ true }
+			/>
+		);
 	}
 
 	getHref() {
@@ -86,13 +91,28 @@ class StatsModule extends Component {
 
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + period.startOf.format( 'YYYY-MM-DD' );
+			return (
+				'/stats/' +
+				period.period +
+				'/' +
+				path +
+				'/' +
+				siteSlug +
+				'?startDate=' +
+				period.startOf.format( 'YYYY-MM-DD' )
+			);
 		}
 	}
 
 	isAllTimeList() {
 		const { summary, statType } = this.props;
-		const summarizedTypes = [ 'statsCountryViews', 'statsTopPosts', 'statsSearchTerms', 'statsClicks', 'statsReferrers' ];
+		const summarizedTypes = [
+			'statsCountryViews',
+			'statsTopPosts',
+			'statsSearchTerms',
+			'statsClicks',
+			'statsReferrers',
+		];
 		return summary && includes( summarizedTypes, statType );
 	}
 
@@ -111,11 +131,7 @@ class StatsModule extends Component {
 			translate,
 		} = this.props;
 
-		const noData = (
-			data &&
-			this.state.loaded &&
-			! data.length
-		);
+		const noData = data && this.state.loaded && ! data.length;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -128,7 +144,7 @@ class StatsModule extends Component {
 			{
 				'is-loading': isLoading,
 				'has-no-data': noData,
-				'is-showing-error': noData
+				'is-showing-error': noData,
 			},
 			className
 		);
@@ -136,16 +152,25 @@ class StatsModule extends Component {
 		const summaryLink = this.getHref();
 		const displaySummaryLink = data && data.length >= 10;
 		const isAllTime = this.isAllTimeList();
-		const headerClass = classNames( 'stats-module__header', { 'is-refreshing': requesting && ! isLoading } );
+		const headerClass = classNames( 'stats-module__header', {
+			'is-refreshing': requesting && ! isLoading,
+		} );
 
 		return (
 			<div>
-				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				{ ! isAllTime &&
-					<SectionHeader className={ headerClass } label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
-						{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+				{ siteId &&
+				statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ ! isAllTime && (
+					<SectionHeader
+						className={ headerClass }
+						label={ this.getModuleLabel() }
+						href={ ! summary ? summaryLink : null }
+					>
+						{ summary && (
+							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+						) }
 					</SectionHeader>
-				}
+				) }
 				<Card compact className={ cardClasses }>
 					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
@@ -154,28 +179,32 @@ class StatsModule extends Component {
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
-					{ this.props.showSummaryLink && displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
-					{ summary && 'countryviews' === path &&
+					{ this.props.showSummaryLink &&
+					displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
+					{ summary &&
+					'countryviews' === path && (
 						<UpgradeNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate( 'Upgrade to a Business Plan for Google Analytics integration.' ) }
+							message={ translate(
+								'Upgrade to a Business Plan for Google Analytics integration.'
+							) }
 							event="googleAnalytics-stats-countries"
 							feature="google-analytics"
 						/>
-					}
+					) }
 				</Card>
-				{ isAllTime &&
+				{ isAllTime && (
 					<div className="stats-module__footer-actions">
 						<DownloadCsv
 							statType={ statType }
 							query={ query }
 							path={ path }
 							borderless
-							period={ period } />
+							period={ period }
+						/>
 					</div>
-				}
+				) }
 			</div>
-
 		);
 	}
 }
@@ -189,6 +218,6 @@ export default connect( ( state, ownProps ) => {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
-		siteSlug
+		siteSlug,
 	};
 } )( localize( StatsModule ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 
 /**
@@ -15,7 +18,7 @@ import SearchCard from 'components/search-card';
 var noop = () => {};
 
 class SearchDemo extends PureComponent {
-    static displayName = 'Search';
+	static displayName = 'Search';
 
 	render() {
 		return (

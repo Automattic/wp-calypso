@@ -1,3 +1,4 @@
+/** @format */
 export const settings = {
 	12345678: {
 		setting_1: 4321,
@@ -11,8 +12,8 @@ export const settings = {
 		setting_2: true,
 		setting_3: {
 			setting_4: 'some_value',
-		}
-	}
+		},
+	},
 };
 
 export const normalizedSettings = {
@@ -21,7 +22,7 @@ export const normalizedSettings = {
 		...settings[ 12345678 ],
 		wp_mobile_excerpt: false,
 		wp_mobile_featured_images: true,
-	}
+	},
 };
 
 export const requests = {
@@ -34,5 +35,5 @@ export const requests = {
 		requesting: true,
 		updating: false,
 		regeneratingPostByEmail: false,
-	}
+	},
 };

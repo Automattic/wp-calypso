@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,8 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import { menusFlat, menuBadParent } from './fixtures';
 import TreeConvert from '../index';
+import { menusFlat, menuBadParent } from './fixtures';
 
 describe( 'TreeConvert', () => {
 	let converter, menu;

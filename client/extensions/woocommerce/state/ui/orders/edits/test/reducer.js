@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,6 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer from '../reducer';
 import {
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
 } from 'woocommerce/state/action-types';
@@ -22,7 +25,7 @@ describe( 'reducer', () => {
 				id: 40,
 				billing: {
 					first_name: 'Joan',
-				}
+				},
 			},
 		};
 		const newState = reducer( undefined, action );
@@ -31,12 +34,12 @@ describe( 'reducer', () => {
 			changes: {
 				billing: {
 					first_name: 'Joan',
-				}
+				},
 			},
 		} );
 	} );
 
-	it( 'should update the order when it\'s changed', () => {
+	it( "should update the order when it's changed", () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -45,7 +48,7 @@ describe( 'reducer', () => {
 				billing: {
 					first_name: 'Joan',
 					last_name: 'Watson',
-				}
+				},
 			},
 		};
 		const originalState = deepFreeze( {
@@ -53,7 +56,7 @@ describe( 'reducer', () => {
 			changes: {
 				billing: {
 					first_name: 'Joan',
-				}
+				},
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -63,7 +66,7 @@ describe( 'reducer', () => {
 				billing: {
 					first_name: 'Joan',
 					last_name: 'Watson',
-				}
+				},
 			},
 		} );
 	} );
@@ -76,7 +79,7 @@ describe( 'reducer', () => {
 				id: 40,
 				billing: {
 					last_name: 'Watson',
-				}
+				},
 			},
 		};
 		const originalState = deepFreeze( {
@@ -84,7 +87,7 @@ describe( 'reducer', () => {
 			changes: {
 				billing: {
 					first_name: 'Joan',
-				}
+				},
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -94,7 +97,7 @@ describe( 'reducer', () => {
 				billing: {
 					first_name: 'Joan',
 					last_name: 'Watson',
-				}
+				},
 			},
 		} );
 	} );
@@ -106,7 +109,7 @@ describe( 'reducer', () => {
 			order: {
 				billing: {
 					first_name: 'Alex',
-				}
+				},
 			},
 		};
 		const newState = reducer( undefined, action );
@@ -114,7 +117,7 @@ describe( 'reducer', () => {
 		expect( newState.changes ).to.eql( {
 			billing: {
 				first_name: 'Alex',
-			}
+			},
 		} );
 	} );
 
@@ -126,7 +129,7 @@ describe( 'reducer', () => {
 				id: { placeholder: 'order_1' },
 				billing: {
 					last_name: 'Helbron',
-				}
+				},
 			},
 		};
 		const originalState = deepFreeze( {
@@ -134,7 +137,7 @@ describe( 'reducer', () => {
 			changes: {
 				billing: {
 					first_name: 'Fiona',
-				}
+				},
 			},
 		} );
 		const newState = reducer( originalState, action );
@@ -144,7 +147,7 @@ describe( 'reducer', () => {
 				billing: {
 					first_name: 'Fiona',
 					last_name: 'Helbron',
-				}
+				},
 			},
 		} );
 	} );
@@ -159,7 +162,29 @@ describe( 'reducer', () => {
 			changes: {
 				billing: {
 					first_name: 'Joan',
-				}
+				},
+			},
+		} );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {
+			currentlyEditingId: null,
+			changes: {},
+		} );
+	} );
+
+	it( 'should clear order changes if this order is successfully updated', () => {
+		const action = {
+			type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+			siteId: 123,
+			orderId: 40,
+			order: {},
+		};
+		const originalState = deepFreeze( {
+			currentlyEditingId: 40,
+			changes: {
+				billing: {
+					first_name: 'Joan',
+				},
 			},
 		} );
 		const newState = reducer( originalState, action );

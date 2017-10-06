@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { filter, findLast } from 'lodash';
@@ -16,7 +19,7 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 	const paramTags = filter( tags, { title: 'param' } );
 	const returnTag = findLast( tags, { title: 'return' } );
 	const classes = classnames( 'docs-selectors__result', {
-		'is-expanded': expanded
+		'is-expanded': expanded,
 	} );
 
 	return (
@@ -32,7 +35,7 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 				{ paramTags.length > 0 && (
 					<div className="docs-selectors__result-arguments">
 						<span className="docs-selectors__result-label">Arguments</span>
-						{ paramTags.map( ( tag ) => (
+						{ paramTags.map( tag => (
 							<div className="docs-selectors__result-arguments-content" key={ tag.name }>
 								<div className="docs-selectors__result-arguments-name">
 									<strong>{ tag.name }</strong>
@@ -60,5 +63,5 @@ DocsSelectorsResult.propTypes = {
 	name: PropTypes.string,
 	description: PropTypes.string,
 	tags: PropTypes.array,
-	expanded: PropTypes.bool
+	expanded: PropTypes.bool,
 };

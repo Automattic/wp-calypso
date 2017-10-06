@@ -1,7 +1,11 @@
 /**
-* External dependencies
-*/
-import React, { Component, PropTypes } from 'react';
+ * External dependencies
+ *
+ * @format
+ */
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
@@ -18,11 +22,10 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
 class StatsAllTime extends Component {
-
 	static propTypes = {
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
@@ -31,7 +34,7 @@ class StatsAllTime extends Component {
 		posts: PropTypes.number,
 		views: PropTypes.number,
 		viewsBestDay: PropTypes.string,
-		viewsBestDayTotal: PropTypes.number
+		viewsBestDayTotal: PropTypes.number,
 	};
 
 	render() {
@@ -44,7 +47,7 @@ class StatsAllTime extends Component {
 			visitors,
 			viewsBestDay,
 			viewsBestDayTotal,
-			query
+			query,
 		} = this.props;
 		const isLoading = requesting && ! views;
 
@@ -55,7 +58,7 @@ class StatsAllTime extends Component {
 		}
 
 		const classes = {
-			'is-loading': requesting
+			'is-loading': requesting,
 		};
 
 		return (
@@ -69,26 +72,30 @@ class StatsAllTime extends Component {
 							label={ translate( 'Posts' ) }
 							loading={ isLoading }
 							value={ posts }
-							compact />
+							compact
+						/>
 						<StatsTab
 							gridicon="visible"
 							label={ translate( 'Views' ) }
 							loading={ isLoading }
 							value={ views }
-							compact />
+							compact
+						/>
 						<StatsTab
 							gridicon="user"
 							label={ translate( 'Visitors' ) }
 							loading={ isLoading }
 							value={ visitors }
-							compact />
+							compact
+						/>
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
 							label={ translate( 'Best Views Ever' ) }
 							loading={ isLoading }
 							value={ viewsBestDayTotal }
-							compact >
+							compact
+						>
 							<span className="all-time__best-day">{ bestDay }</span>
 						</StatsTab>
 					</StatsTabs>
@@ -98,7 +105,7 @@ class StatsAllTime extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {};
 	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
@@ -107,13 +114,13 @@ export default connect( ( state ) => {
 		'views',
 		'visitors',
 		'viewsBestDay',
-		'viewsBestDayTotal'
+		'viewsBestDayTotal',
 	] );
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'stats', query ),
 		query,
 		siteId,
-		...allTimeStats
+		...allTimeStats,
 	};
 } )( localize( StatsAllTime ) );

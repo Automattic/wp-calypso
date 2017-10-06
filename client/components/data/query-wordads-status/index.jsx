@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -17,14 +21,14 @@ class QueryWordadsStatus extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
-			this.refreshSite( nextProps.siteId );			
+			this.refreshSite( nextProps.siteId );
 		}
 	}
 
 	refreshSite( siteId ) {
 		if ( ! this.props.isRequestingWordadsStatus ) {
 			this.props.requestWordadsStatus( siteId );
-		}		
+		}
 	}
 
 	render() {
@@ -35,16 +39,16 @@ class QueryWordadsStatus extends Component {
 QueryWordadsStatus.propTypes = {
 	isRequestingWordadsStatus: PropTypes.bool,
 	requestWordadsStatus: PropTypes.func,
-	siteId: PropTypes.number
+	siteId: PropTypes.number,
 };
 
 QueryWordadsStatus.defaultProps = {
-	requestWordadsStatus: () => {}
+	requestWordadsStatus: () => {},
 };
 
 export default connect(
 	( state, props ) => ( {
-		isRequestingWordadsStatus: isRequestingWordadsStatus( state, props.siteId )
+		isRequestingWordadsStatus: isRequestingWordadsStatus( state, props.siteId ),
 	} ),
 	{ requestWordadsStatus }
 )( QueryWordadsStatus );

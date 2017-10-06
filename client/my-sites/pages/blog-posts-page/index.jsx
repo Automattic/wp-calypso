@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { identity } from 'lodash';
@@ -12,25 +16,23 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import {
-	getSiteFrontPageType,
-	getSitePostsPage,
-	getSiteFrontPage,
-} from 'state/sites/selectors';
+import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
 
 class BlogPostsPage extends React.Component {
-
 	static propTypes = {
-		site: React.PropTypes.object,
-		pages: React.PropTypes.array,
-	}
+		site: PropTypes.object,
+		pages: PropTypes.array,
+	};
 
 	static defaultProps = {
 		translate: identity,
-	}
+	};
 
 	getPageProperty( { pageId, property } ) {
-		return this.props.pages.filter( page => page.ID === pageId ).map( page => page[ property ] ).shift();
+		return this.props.pages
+			.filter( page => page.ID === pageId )
+			.map( page => page[ property ] )
+			.shift();
 	}
 
 	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
@@ -53,13 +55,14 @@ class BlogPostsPage extends React.Component {
 				<span>
 					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
 					{ this.props.translate( 'Not in use.' ) + ' ' }
-					{
-						this.props.translate( '"%(pageTitle)s" is the front page.', {
-							args: {
-								pageTitle: this.getPageProperty( { pageId: this.props.frontPage, property: 'title' } ),
-							}
-						} )
-					}
+					{ this.props.translate( '"%(pageTitle)s" is the front page.', {
+						args: {
+							pageTitle: this.getPageProperty( {
+								pageId: this.props.frontPage,
+								property: 'title',
+							} ),
+						},
+					} ) }
 				</span>
 			);
 		}
@@ -75,37 +78,50 @@ class BlogPostsPage extends React.Component {
 
 		return (
 			<span>
-				{
-					translate( '"%(pageTitle)s" page is showing your latest posts.', {
-						args: {
-							pageTitle: this.getPageProperty( { pageId: this.props.postsPage, property: 'title' } ),
-						}
-					} )
-				}
+				{ translate( '"%(pageTitle)s" page is showing your latest posts.', {
+					args: {
+						pageTitle: this.getPageProperty( { pageId: this.props.postsPage, property: 'title' } ),
+					},
+				} ) }
 			</span>
 		);
 	}
 
 	render() {
 		const { translate } = this.props;
-		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
+		const isStaticHomePageWithNoPostsPage =
+			this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
 		return (
-			<Card href={ this.getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
-				target="_blank" rel="noopener noreferrer" className="blog-posts-page" >
+			<Card
+				href={ this.getPostsPageLink( {
+					isStaticHomePageWithNoPostsPage,
+					isCurrentlySetAsHomepage,
+				} ) }
+				target="_blank"
+				rel="noopener noreferrer"
+				className="blog-posts-page"
+			>
 				<div className="blog-posts-page__details">
-					<div className={ classNames( {
-						'blog-posts-page__title': true,
-						'is-disabled': isStaticHomePageWithNoPostsPage,
-					} ) } >
+					<div
+						className={ classNames( {
+							'blog-posts-page__title': true,
+							'is-disabled': isStaticHomePageWithNoPostsPage,
+						} ) }
+					>
 						{ translate( 'Blog Posts' ) }
 					</div>
-					<div className={ classNames( {
-						'blog-posts-page__info': true,
-						'is-disabled': isStaticHomePageWithNoPostsPage,
-					} ) } >
-						{ this.renderPostsPageInfo( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
+					<div
+						className={ classNames( {
+							'blog-posts-page__info': true,
+							'is-disabled': isStaticHomePageWithNoPostsPage,
+						} ) }
+					>
+						{ this.renderPostsPageInfo( {
+							isStaticHomePageWithNoPostsPage,
+							isCurrentlySetAsHomepage,
+						} ) }
 					</div>
 				</div>
 			</Card>
@@ -113,13 +129,11 @@ class BlogPostsPage extends React.Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		return {
-			frontPageType: getSiteFrontPageType( state, props.site.ID ),
-			isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
-			postsPage: getSitePostsPage( state, props.site.ID ),
-			frontPage: getSiteFrontPage( state, props.site.ID ),
-		};
-	}
-)( localize( BlogPostsPage ) );
+export default connect( ( state, props ) => {
+	return {
+		frontPageType: getSiteFrontPageType( state, props.site.ID ),
+		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
+		postsPage: getSitePostsPage( state, props.site.ID ),
+		frontPage: getSiteFrontPage( state, props.site.ID ),
+	};
+} )( localize( BlogPostsPage ) );

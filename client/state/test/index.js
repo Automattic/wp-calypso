@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-
+/** @format */
 /**
  * External dependencies
  */
@@ -8,9 +7,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
@@ -37,7 +36,7 @@ describe( 'index', () => {
 			const user = { ID: 1234, display_name: 'test user', username: 'testuser' };
 			const initialState = {
 				currentUser: { id: 1234 },
-				users: { items: { 1234: user } }
+				users: { items: { 1234: user } },
 			};
 			const reduxStoreWithCurrentUser = createReduxStore( initialState ).getState();
 			expect( reduxStoreWithCurrentUser.currentUser ).to.eql( currentUser( { id: 1234 }, {} ) );
@@ -46,7 +45,7 @@ describe( 'index', () => {
 		} );
 
 		describe( 'invalid data', () => {
-			useSandbox( ( sandbox ) => {
+			useSandbox( sandbox => {
 				sandbox.stub( console, 'error' );
 			} );
 

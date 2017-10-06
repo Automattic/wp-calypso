@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,6 @@ import {
 	productsSearchRequestSuccess,
 	productsSearchClear,
 } from '../search-reducer';
-
 import {
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,

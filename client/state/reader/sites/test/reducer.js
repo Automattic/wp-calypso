@@ -9,6 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { items, queuedRequests, lastFetched } from '../reducer';
 import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
@@ -17,8 +18,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-
-import { items, queuedRequests, lastFetched } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

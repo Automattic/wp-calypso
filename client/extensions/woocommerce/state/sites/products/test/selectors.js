@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+
 /**
  * Internal dependencies
  */
@@ -64,14 +67,14 @@ const loadedState = {
 						products,
 						totalPages: 3,
 						totalProducts: 30,
-					}
+					},
 				},
 				401: {
 					products: {
 						search: {
 							isLoading: {
 								[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
-							}
+							},
 						},
 						isLoading: {
 							[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,

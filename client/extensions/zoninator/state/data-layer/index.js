@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import feeds from './feeds';
@@ -9,10 +12,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'zoninator:errors' );
 
-const handlers = mergeHandlers(
-	feeds,
-	zones,
-);
+const handlers = mergeHandlers( feeds, zones );
 
 export default function installActionHandlers() {
 	const added = addHandlers( 'zoninator', handlers );

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -22,7 +26,6 @@ import accept from 'lib/accept';
 import searchUrl from 'lib/search-url';
 
 class Media extends Component {
-
 	static propTypes = {
 		selectedSite: PropTypes.object,
 		filter: PropTypes.string,
@@ -40,11 +43,11 @@ class Media extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			containerWidth: this.refs.container.clientWidth
+			containerWidth: this.refs.container.clientWidth,
 		} );
 	}
 
-	onFilterChange = ( filter ) => {
+	onFilterChange = filter => {
 		let redirect = '/media';
 
 		if ( filter ) {
@@ -62,7 +65,7 @@ class Media extends Component {
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = ( image ) => {
+	openDetailsModalForASingleImage = image => {
 		this.setState( {
 			currentDetail: 0,
 			selectedItems: [ image ],
@@ -75,12 +78,17 @@ class Media extends Component {
 
 		this.setState( {
 			currentDetail: 0,
-			selectedItems: selected
+			selectedItems: selected,
 		} );
 	};
 
 	closeDetailsModal = () => {
-		this.setState( { editedImageItem: null, editedVideoItem: null, currentDetail: null, selectedItems: [] } );
+		this.setState( {
+			editedImageItem: null,
+			editedVideoItem: null,
+			currentDetail: null,
+			selectedItems: [],
+		} );
 	};
 
 	editImage = () => {
@@ -91,8 +99,8 @@ class Media extends Component {
 		this.setState( { currentDetail: null, editedVideoItem: this.state.currentDetail } );
 	};
 
-	onImageEditorCancel = ( imageEditorProps ) => {
-		const {	resetAllImageEditorState } = imageEditorProps;
+	onImageEditorCancel = imageEditorProps => {
+		const { resetAllImageEditorState } = imageEditorProps;
 		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
 		resetAllImageEditorState();
@@ -105,12 +113,7 @@ class Media extends Component {
 			return;
 		}
 
-		const {
-			fileName,
-			site,
-			ID,
-			resetAllImageEditorState
-		} = imageEditorProps;
+		const { fileName, site, ID, resetAllImageEditorState } = imageEditorProps;
 
 		const mimeType = MediaUtils.getMimeType( fileName );
 
@@ -119,8 +122,8 @@ class Media extends Component {
 			media: {
 				fileName: fileName,
 				fileContents: blob,
-				mimeType: mimeType
-			}
+				mimeType: mimeType,
+			},
 		};
 
 		MediaActions.update( site.ID, item, true );
@@ -130,7 +133,7 @@ class Media extends Component {
 
 	getModalButtons() {
 		// do not render buttons if the media image or video editor is opened
-		if ( ( this.state.editedImageItem !== null ) || ( this.state.editedVideoItem !== null ) ) {
+		if ( this.state.editedImageItem !== null || this.state.editedVideoItem !== null ) {
 			return null;
 		}
 
@@ -151,7 +154,7 @@ class Media extends Component {
 				isPrimary: true,
 				disabled: false,
 				onClose: this.closeDetailsModal,
-			}
+			},
 		];
 	}
 
@@ -172,7 +175,7 @@ class Media extends Component {
 					fmt_hd: urlBeforeQuery,
 					fmt_dvd: urlBeforeQuery,
 					fmt_std: urlBeforeQuery,
-				}
+				},
 			} );
 		}
 
@@ -187,7 +190,7 @@ class Media extends Component {
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 	};
 
-	setDetailSelectedIndex = ( index ) => {
+	setDetailSelectedIndex = index => {
 		this.setState( { currentDetail: index } );
 	};
 
@@ -204,26 +207,32 @@ class Media extends Component {
 		const selectedCount = selected.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
-			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-			'This cannot be undone.',
+				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+				'This cannot be undone.',
 			'Are you sure you want to delete these items? ' +
-			'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-			'This cannot be undone.',
+				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
+				'This cannot be undone.',
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, accepted => {
-			if ( ! accepted ) {
-				return;
-			}
+		accept(
+			confirmMessage,
+			accepted => {
+				if ( ! accepted ) {
+					return;
+				}
 
-			this.confirmDeleteMedia();
-			if ( callback ) {
-				callback();
+				this.confirmDeleteMedia();
+				if ( callback ) {
+					callback();
+				}
+			},
+			translate( 'Delete' ),
+			null,
+			{
+				isScary: true,
 			}
-		}, translate( 'Delete' ), null, {
-			isScary: true
-		} );
+		);
 	}
 
 	handleDeleteMediaEvent = () => {
@@ -251,9 +260,10 @@ class Media extends Component {
 			return;
 		}
 
-		const selected = this.state.selectedItems && this.state.selectedItems.length
-			? this.state.selectedItems
-			: MediaLibrarySelectedStore.getAll( site.ID );
+		const selected =
+			this.state.selectedItems && this.state.selectedItems.length
+				? this.state.selectedItems
+				: MediaLibrarySelectedStore.getAll( site.ID );
 
 		MediaActions.delete( site.ID, selected );
 	};
@@ -263,43 +273,46 @@ class Media extends Component {
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ ( this.state.editedImageItem !== null || this.state.editedVideoItem !== null || this.state.currentDetail !== null ) &&
+				{ ( this.state.editedImageItem !== null ||
+					this.state.editedVideoItem !== null ||
+					this.state.currentDetail !== null ) && (
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal media__item-dialog"
 						buttons={ this.getModalButtons() }
 						onClose={ this.closeDetailsModal }
 					>
-					{ this.state.currentDetail !== null &&
-						<EditorMediaModalDetail
-							site={ site }
-							items={ this.state.selectedItems }
-							selectedIndex={ this.state.currentDetail }
-							onReturnToList={ this.closeDetailsModal }
-							onEditImageItem={ this.editImage }
-							onEditVideoItem={ this.editVideo }
-							onRestoreItem={ this.restoreOriginalMedia }
-							onSelectedIndexChange={ this.setDetailSelectedIndex }
-						/>
-					}
-					{ this.state.editedImageItem !== null &&
-						<ImageEditor
-							siteId={ site && site.ID }
-							media={ this.state.selectedItems[ this.state.editedImageItem ] }
-							onDone={ this.onImageEditorDone }
-							onCancel={ this.onImageEditorCancel }
-						/>
-					}
-					{ this.state.editedVideoItem !== null &&
-						<VideoEditor
-							media={ this.state.selectedItems[ this.state.editedVideoItem ] }
-							onCancel={ this.onVideoEditorCancel }
-							onUpdatePoster={ this.onVideoEditorUpdatePoster }
-						/>
-					}
+						{ this.state.currentDetail !== null && (
+							<EditorMediaModalDetail
+								site={ site }
+								items={ this.state.selectedItems }
+								selectedIndex={ this.state.currentDetail }
+								onReturnToList={ this.closeDetailsModal }
+								onEditImageItem={ this.editImage }
+								onEditVideoItem={ this.editVideo }
+								onRestoreItem={ this.restoreOriginalMedia }
+								onSelectedIndexChange={ this.setDetailSelectedIndex }
+							/>
+						) }
+						{ this.state.editedImageItem !== null && (
+							<ImageEditor
+								siteId={ site && site.ID }
+								media={ this.state.selectedItems[ this.state.editedImageItem ] }
+								onDone={ this.onImageEditorDone }
+								onCancel={ this.onImageEditorCancel }
+							/>
+						) }
+						{ this.state.editedVideoItem !== null && (
+							<VideoEditor
+								media={ this.state.selectedItems[ this.state.editedVideoItem ] }
+								onCancel={ this.onVideoEditorCancel }
+								onUpdatePoster={ this.onVideoEditorUpdatePoster }
+							/>
+						) }
 					</Dialog>
-				}
-				{ site && site.ID && (
+				) }
+				{ site &&
+				site.ID && (
 					<MediaLibrarySelectedData siteId={ site.ID }>
 						<MediaLibrary
 							{ ...this.props }
@@ -314,7 +327,8 @@ class Media extends Component {
 							onDeleteItem={ this.handleDeleteMediaEvent }
 							onSourceChange={ this.handleSourceChange }
 							modal={ false }
-							containerWidth={ this.state.containerWidth } />
+							containerWidth={ this.state.containerWidth }
+						/>
 					</MediaLibrarySelectedData>
 				) }
 			</div>

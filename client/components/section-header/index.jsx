@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 
@@ -24,14 +27,10 @@ export default class SectionHeader extends PureComponent {
 		return (
 			<CompactCard className={ classes } href={ this.props.href }>
 				<div className="section-header__label">
-					<span className="section-header__label-text">
-						{ this.props.label }
-					</span>
+					<span className="section-header__label-text">{ this.props.label }</span>
 					{ hasCount && <Count count={ this.props.count } /> }
 				</div>
-				<div className="section-header__actions">
-					{ this.props.children }
-				</div>
+				<div className="section-header__actions">{ this.props.children }</div>
 			</CompactCard>
 		);
 	}

@@ -1,18 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { keys, difference, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	SIGNUP_COMPLETE_RESET,
-	SIGNUP_DEPENDENCY_STORE_UPDATE,
-} from 'state/action-types';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
 
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-
 import Dispatcher from 'dispatcher';
 import steps from 'signup/config/steps';
 
@@ -23,12 +22,12 @@ const SignupDependencyStore = {
 	reset: function() {
 		SignupDependencyStore.reduxStore.dispatch( {
 			type: SIGNUP_COMPLETE_RESET,
-			data: {}
+			data: {},
 		} );
 	},
 	setReduxStore( reduxStore ) {
 		this.reduxStore = reduxStore;
-	}
+	},
 };
 
 function assertValidDependencies( action ) {
@@ -36,9 +35,14 @@ function assertValidDependencies( action ) {
 		extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
 
 	if ( ! isEmpty( extraDependencies ) ) {
-		throw new Error( 'This step (' + action.data.stepName + ') provides an unspecified dependency [' +
-			extraDependencies.join( ', ' ) + '].' +
-			' Make sure to specify it in /signup/config/steps.js, using the providesDependencies property.' );
+		throw new Error(
+			'This step (' +
+				action.data.stepName +
+				') provides an unspecified dependency [' +
+				extraDependencies.join( ', ' ) +
+				'].' +
+				' Make sure to specify it in /signup/config/steps.js, using the providesDependencies property.'
+		);
 	}
 
 	return isEmpty( extraDependencies );
@@ -59,7 +63,7 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 					// any dependency from `PROVIDE_SIGNUP_DEPENDENCIES` is valid as it is not associated with a step
 					SignupDependencyStore.reduxStore.dispatch( {
 						type: SIGNUP_DEPENDENCY_STORE_UPDATE,
-						data: action.providedDependencies
+						data: action.providedDependencies,
 					} );
 				}
 				break;

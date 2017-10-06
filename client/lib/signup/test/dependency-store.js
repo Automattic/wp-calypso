@@ -1,22 +1,24 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
 import assert from 'assert';
+import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { createStore } from 'redux';
 import { reducer } from 'state';
 
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+
 describe( 'dependency-store', function() {
-	let SignupProgressStore,
-		SignupDependencyStore,
-		SignupActions;
+	let SignupProgressStore, SignupDependencyStore, SignupActions;
 
 	before( () => {
 		SignupProgressStore = require( '../progress-store' );
@@ -45,7 +47,9 @@ describe( 'dependency-store', function() {
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN' } );
 
-		SignupActions.processedSignupStep( { stepName: 'userCreation', }, [], { bearer_token: 'TOKEN2' } );
+		SignupActions.processedSignupStep( { stepName: 'userCreation' }, [], {
+			bearer_token: 'TOKEN2',
+		} );
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2' } );
 	} );
@@ -53,7 +57,7 @@ describe( 'dependency-store', function() {
 	it( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
 		const dependencies = {
 			foo: 'bar',
-			baz: 'test'
+			baz: 'test',
 		};
 
 		SignupActions.provideDependencies( dependencies );

@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
+import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { activityLogError, activityLogRequest } from 'state/activity-log/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 77203074;
 

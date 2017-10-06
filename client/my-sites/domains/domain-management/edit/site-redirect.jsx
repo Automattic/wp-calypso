@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -60,24 +63,28 @@ const SiteRedirect = React.createClass( {
 							type={ domain.type }
 							subscriptionId={ domain.subscriptionId }
 							siteSlug={ this.props.selectedSite.slug }
-							onClick={ this.handlePaymentSettingsClick } />
+							onClick={ this.handlePaymentSettingsClick }
+						/>
 					</Card>
 				</div>
 
-				<VerticalNav>
-					{ this.siteRedirectNavItem() }
-				</VerticalNav>
+				<VerticalNav>{ this.siteRedirectNavItem() }</VerticalNav>
 			</div>
 		);
 	},
 
 	siteRedirectNavItem() {
 		return (
-			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.props.domain.name ) }>
+			<VerticalNavItem
+				path={ paths.domainManagementRedirectSettings(
+					this.props.selectedSite.slug,
+					this.props.domain.name
+				) }
+			>
 				{ this.props.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);
-	}
+	},
 } );
 
 export default localize( SiteRedirect );

@@ -1,20 +1,24 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { map } from 'lodash';
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	classNames = require( 'classnames' ),
-	scrollIntoView = require( 'dom-scroll-into-view' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import scrollIntoView from 'dom-scroll-into-view';
 
 var SuggestionsList = React.createClass( {
 	propTypes: {
-		isExpanded: React.PropTypes.bool,
-		match: React.PropTypes.string,
-		displayTransform: React.PropTypes.func.isRequired,
-		onSelect: React.PropTypes.func,
-		suggestions: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number
+		isExpanded: PropTypes.bool,
+		match: PropTypes.string,
+		displayTransform: PropTypes.func.isRequired,
+		onSelect: PropTypes.func,
+		suggestions: PropTypes.array,
+		selectedIndex: PropTypes.number,
 	},
 
 	getDefaultProps: function() {
@@ -23,7 +27,7 @@ var SuggestionsList = React.createClass( {
 			match: '',
 			onHover: function() {},
 			onSelect: function() {},
-			suggestions: Object.freeze( [] )
+			suggestions: Object.freeze( [] ),
 		};
 	},
 
@@ -34,17 +38,25 @@ var SuggestionsList = React.createClass( {
 
 		// only have to worry about scrolling selected suggestion into view
 		// when already expanded
-		if ( prevProps.isExpanded && this.props.isExpanded && this.props.selectedIndex > -1 && this.props.scrollIntoView ) {
+		if (
+			prevProps.isExpanded &&
+			this.props.isExpanded &&
+			this.props.selectedIndex > -1 &&
+			this.props.scrollIntoView
+		) {
 			this._scrollingIntoView = true;
 			node = this.refs.list;
 
 			scrollIntoView( node.children[ this.props.selectedIndex ], node, {
-				onlyScrollIfNeeded: true
+				onlyScrollIfNeeded: true,
 			} );
 
-			setTimeout( function() {
-				this._scrollingIntoView = false;
-			}.bind( this ), 100 );
+			setTimeout(
+				function() {
+					this._scrollingIntoView = false;
+				}.bind( this ),
+				100
+			);
 		}
 	},
 
@@ -62,13 +74,13 @@ var SuggestionsList = React.createClass( {
 		return {
 			suggestionBeforeMatch: suggestion.substring( 0, indexOfMatch ),
 			suggestionMatch: suggestion.substring( indexOfMatch, indexOfMatch + match.length ),
-			suggestionAfterMatch: suggestion.substring( indexOfMatch + match.length )
+			suggestionAfterMatch: suggestion.substring( indexOfMatch + match.length ),
 		};
 	},
 
 	render: function() {
 		var classes = classNames( 'token-field__suggestions-list', {
-			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0
+			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0,
 		} );
 
 		// We set `tabIndex` here because otherwise Firefox sets focus on this
@@ -83,34 +95,35 @@ var SuggestionsList = React.createClass( {
 	},
 
 	_renderSuggestions: function() {
+		return map(
+			this.props.suggestions,
+			function( suggestion, index ) {
+				var match = this._computeSuggestionMatch( suggestion ),
+					classes = classNames( 'token-field__suggestion', {
+						'is-selected': index === this.props.selectedIndex,
+					} );
 
-		return map( this.props.suggestions, function( suggestion, index ) {
-			var match = this._computeSuggestionMatch( suggestion ),
-				classes = classNames( 'token-field__suggestion', {
-					'is-selected': index === this.props.selectedIndex
-				} );
-
-			return (
-				<li
-					className={ classes }
-					key={ suggestion }
-					onMouseDown={ this._handleMouseDown }
-					onClick={ this._handleClick( suggestion ) }
-					onMouseEnter={ this._handleHover( suggestion ) }>
-					{ match ?
-						<span>
-							{ match.suggestionBeforeMatch }
-							<strong className="token-field__suggestion-match">
-								{ match.suggestionMatch }
-							</strong>
-							{ match.suggestionAfterMatch }
-						</span>
-					:
-						this.props.displayTransform( suggestion )
-					}
-				</li>
-			);
-		}.bind( this ) );
+				return (
+					<li
+						className={ classes }
+						key={ suggestion }
+						onMouseDown={ this._handleMouseDown }
+						onClick={ this._handleClick( suggestion ) }
+						onMouseEnter={ this._handleHover( suggestion ) }
+					>
+						{ match ? (
+							<span>
+								{ match.suggestionBeforeMatch }
+								<strong className="token-field__suggestion-match">{ match.suggestionMatch }</strong>
+								{ match.suggestionAfterMatch }
+							</span>
+						) : (
+							this.props.displayTransform( suggestion )
+						) }
+					</li>
+				);
+			}.bind( this )
+		);
 	},
 
 	_handleHover: function( suggestion ) {
@@ -130,7 +143,7 @@ var SuggestionsList = React.createClass( {
 	_handleMouseDown: function( e ) {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
 		e.preventDefault();
-	}
+	},
 } );
 
 module.exports = SuggestionsList;

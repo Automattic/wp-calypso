@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,23 +9,20 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
 	WP_SUPER_CACHE_REQUEST_STATUS,
 	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
 import reducer from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -31,7 +30,7 @@ describe( 'reducer', () => {
 		const previousState = deepFreeze( {
 			requesting: {
 				[ primarySiteId ]: true,
-			}
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -107,18 +106,18 @@ describe( 'reducer', () => {
 			cache_writable: {
 				message: '/home/public_html/ is writable.',
 				type: 'warning',
-			}
+			},
 		};
 		const secondaryNotices = {
 			cache_readonly: {
 				message: '/home/public_html/ is readonly.',
 				type: 'warning',
-			}
+			},
 		};
 		const previousState = deepFreeze( {
 			items: {
 				[ primarySiteId ]: primaryNotices,
-			}
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -210,7 +209,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				items: {
 					[ primarySiteId ]: 2,
-				}
+				},
 			} );
 			const state = reducer( previousInvalidState, {
 				type: DESERIALIZE,

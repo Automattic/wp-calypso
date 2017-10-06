@@ -1,22 +1,22 @@
+/** @format */
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
-
-const sampleSuccessResponse = require( './sample-response.json' );
+import useNock from 'test/helpers/use-nock';
+import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 
 describe( 'actions', () => {
@@ -53,24 +53,26 @@ describe( 'actions', () => {
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: USER_SUGGESTIONS_REQUEST,
-				siteId
+				siteId,
 			} );
 
-			return request.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
-					data: sampleSuccessResponse,
-					siteId
-				} );
+			return request
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: USER_SUGGESTIONS_REQUEST_SUCCESS,
+						data: sampleSuccessResponse,
+						siteId,
+					} );
 
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: USER_SUGGESTIONS_RECEIVE,
-					suggestions: sampleSuccessResponse.suggestions,
-					siteId
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: USER_SUGGESTIONS_RECEIVE,
+						suggestions: sampleSuccessResponse.suggestions,
+						siteId,
+					} );
+				} )
+				.catch( err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
-			} ).catch( ( err ) => {
-				assert.fail( err, undefined, 'errback should not have been called' );
-			} );
 		} );
 	} );
 } );

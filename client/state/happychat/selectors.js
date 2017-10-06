@@ -1,12 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	get,
-	includes,
-	last,
-	map,
-} from 'lodash';
+
+import { get, includes, last, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +13,12 @@ import createSelector from 'lib/create-selector';
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP,
-	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
+	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT,
 } from './constants';
+import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
+import { getSectionName } from 'state/ui/selectors';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
@@ -41,6 +41,14 @@ export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
  */
 export const getGroups = ( state, siteId ) => {
 	const groups = [];
+
+	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
+	// when the user does not have a site yet, or their primary site is not a Jetpack site.
+	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpackConnect' ) {
+		groups.push( HAPPYCHAT_GROUP_JPOP );
+		return groups;
+	}
+
 	const siteDetails = getSite( state, siteId );
 
 	if ( isATEnabled( siteDetails ) ) {
@@ -64,9 +72,7 @@ export function getGeoLocation( state ) {
 	return state.happychat.geoLocation || null;
 }
 
-export const getHappychatChatStatus = createSelector(
-	state => state.happychat.chatStatus
-);
+export const getHappychatChatStatus = createSelector( state => state.happychat.chatStatus );
 
 export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
 
@@ -75,13 +81,15 @@ export const getHappychatLastActivityTimestamp = state => state.happychat.lastAc
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
-export const getHappychatConnectionStatus = createSelector(
-	state => get( state, 'happychat.connectionStatus' )
+export const getHappychatConnectionStatus = createSelector( state =>
+	get( state, 'happychat.connectionStatus' )
 );
 
-export const isHappychatConnectionUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
+export const isHappychatConnectionUninitialized = state =>
+	getHappychatConnectionStatus( state ) === 'uninitialized';
 
-export const isHappychatClientConnected = state => getHappychatConnectionStatus( state ) === 'connected';
+export const isHappychatClientConnected = state =>
+	getHappychatConnectionStatus( state ) === 'connected';
 
 export const isHappychatChatAssigned = createSelector(
 	state => get( state, 'happychat.chatStatus' ) === HAPPYCHAT_CHAT_STATUS_ASSIGNED
@@ -95,15 +103,16 @@ export const isHappychatChatAssigned = createSelector(
  * @return {Boolean} Whether there's an active Happychat session happening
  */
 export const hasActiveHappychatSession = createSelector(
-	state => ! includes(
-		[
-			HAPPYCHAT_CHAT_STATUS_BLOCKED,
-			HAPPYCHAT_CHAT_STATUS_CLOSED,
-			HAPPYCHAT_CHAT_STATUS_DEFAULT,
-			HAPPYCHAT_CHAT_STATUS_NEW,
-		],
-		state.happychat.chatStatus
-	),
+	state =>
+		! includes(
+			[
+				HAPPYCHAT_CHAT_STATUS_BLOCKED,
+				HAPPYCHAT_CHAT_STATUS_CLOSED,
+				HAPPYCHAT_CHAT_STATUS_DEFAULT,
+				HAPPYCHAT_CHAT_STATUS_NEW,
+			],
+			state.happychat.chatStatus
+		),
 	state => state.happychat.chatStatus
 );
 
@@ -116,16 +125,15 @@ export const isHappychatServerReachable = createSelector(
  * @param {Object} state - global redux state
  * @return {String} status of the current chat session
  */
-export const getHappychatStatus = createSelector(
-	state => state.happychat.chatStatus
-);
+export const getHappychatStatus = createSelector( state => state.happychat.chatStatus );
 
 /**
  * Returns true if Happychat is available to take new chats.
  * @param {Object} state - global redux state
  * @return {Boolean} Whether Happychat is available for new chats
  */
-export const isHappychatAvailable = state => isHappychatClientConnected( state ) && state.happychat.isAvailable;
+export const isHappychatAvailable = state =>
+	isHappychatClientConnected( state ) && state.happychat.isAvailable;
 
 /**
  * Gets timeline chat events from the happychat state
@@ -144,7 +152,7 @@ export const getHappychatTimeline = createSelector(
  * @param {Object} state - global redux state
  * @return {Boolean} Whether the user is able to send messages
  */
-export const canUserSendMessages = state => (
+export const canUserSendMessages = state =>
 	isHappychatClientConnected( state ) &&
 	! includes(
 		[
@@ -152,22 +160,19 @@ export const canUserSendMessages = state => (
 			HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			HAPPYCHAT_CHAT_STATUS_PENDING,
 			HAPPYCHAT_CHAT_STATUS_MISSED,
-			HAPPYCHAT_CHAT_STATUS_ABANDONED
+			HAPPYCHAT_CHAT_STATUS_ABANDONED,
 		],
 		getHappychatChatStatus( state )
-	)
-);
+	);
 
 export const wasHappychatRecentlyActive = state => {
 	const lastActive = getHappychatLastActivityTimestamp( state );
 	const now = Date.now();
 
-	return ( now - lastActive ) < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
+	return now - lastActive < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
 };
 
-export const getLostFocusTimestamp = createSelector(
-	state => state.happychat.lostFocusAt
-);
+export const getLostFocusTimestamp = createSelector( state => state.happychat.lostFocusAt );
 
 export const hasUnreadMessages = createSelector(
 	state => {

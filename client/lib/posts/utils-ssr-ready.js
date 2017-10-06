@@ -1,3 +1,4 @@
+/** @format */
 // Put util functions here which don't depend on anything that is not SSR-ready (such as sites-list).
 
 /**
@@ -10,7 +11,7 @@
  * @param  {Object} post Post object
  * @return {Number}      The featured image ID
  */
-export const getFeaturedImageId = ( post ) => {
+export const getFeaturedImageId = post => {
 	if ( ! post ) {
 		return;
 	}

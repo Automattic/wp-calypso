@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -21,20 +22,15 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import reducer, {
-	items,
-	restoring,
-} from '../reducer';
+import reducer, { items, restoring } from '../reducer';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -42,7 +38,7 @@ describe( 'reducer', () => {
 		const previousState = deepFreeze( {
 			requesting: {
 				[ primarySiteId ]: true,
-			}
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -120,8 +116,8 @@ describe( 'reducer', () => {
 					saving: true,
 					status: 'pending',
 					error: false,
-				}
-			}
+				},
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -140,8 +136,8 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: {
 					saving: true,
 					status: 'pending',
-					error: false
-				}
+					error: false,
+				},
 			} );
 		} );
 
@@ -161,7 +157,7 @@ describe( 'reducer', () => {
 					saving: true,
 					status: 'pending',
 					error: false,
-				}
+				},
 			} );
 		} );
 
@@ -176,7 +172,7 @@ describe( 'reducer', () => {
 					saving: false,
 					status: 'success',
 					error: false,
-				}
+				},
 			} );
 		} );
 
@@ -192,7 +188,7 @@ describe( 'reducer', () => {
 					saving: false,
 					status: 'error',
 					error: 'my error',
-				}
+				},
 			} );
 		} );
 
@@ -292,7 +288,7 @@ describe( 'reducer', () => {
 		const previousState = deepFreeze( {
 			items: {
 				[ primarySiteId ]: primarySettings,
-			}
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -375,7 +371,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				items: {
 					[ primarySiteId ]: 2,
-				}
+				},
 			} );
 			const state = reducer( previousInvalidState, {
 				type: DESERIALIZE,
@@ -388,8 +384,8 @@ describe( 'reducer', () => {
 			const state = items(
 				{
 					[ primarySiteId ]: {
-						is_preloading: false
-					}
+						is_preloading: false,
+					},
 				},
 				{
 					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
@@ -405,8 +401,8 @@ describe( 'reducer', () => {
 			const state = items(
 				{
 					[ primarySiteId ]: {
-						is_preloading: true
-					}
+						is_preloading: true,
+					},
 				},
 				{
 					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,

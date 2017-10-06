@@ -1,0 +1,140 @@
+.product-search {
+	position: relative;
+
+	.search-card {
+		box-shadow: none;
+		border: 1px solid darken( $gray-light, 10% );
+	}
+
+	div.has-focus {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+	}
+}
+
+.product-search__results {
+	position: absolute;
+	top: 100%;
+	z-index: 1;
+	width: 100%;
+	max-height: 275px;
+	overflow-y: scroll;
+	border-bottom: 1px solid darken( $gray-light, 10% );
+
+	&.is-placeholder {
+		overflow-y: visible;
+
+		span {
+			display: inline-block;
+			width: 100%;
+			@include placeholder();
+		}
+
+		.product-search__image span {
+			height: 40px;
+			width: 40px;
+		}
+
+		.product-search__name span {
+			height: 20px;
+			width: 35%;
+		}
+
+		.product-search__sku span {
+			margin-top: 2px;
+			height: 12px;
+			width: 30%;
+		}
+	}
+
+	&.is-not-found {
+		overflow-y: visible;
+
+		.product-search__item {
+			cursor: default;
+
+			&:hover {
+				background: $white;
+				color: $gray-text;
+
+				.product-search__sku {
+					color: $gray-text-min;
+				}
+			}
+		}
+
+		.product-search__image {
+			padding: 8px;
+			flex: 0 0 24px;
+			height: 24px;
+			width: 24px;
+		}
+
+		.product-search__sku {
+			text-transform: none;
+		}
+	}
+
+	> div:first-child {
+		.product-search__item {
+			border-top: 0;
+		}
+	}
+}
+
+.product-search__item {
+	display: flex;
+	cursor: pointer;
+	box-shadow: none;
+	border: 1px solid darken( $gray-light, 10% );
+	border-bottom-width: 0;
+	margin: 0;
+	padding: 10px;
+
+	.accessible-focus &:focus,
+	&:hover {
+		background: $blue-medium;
+		color: $white;
+
+		.product-search__sku {
+			color: $white;
+		}
+	}
+
+	.product-search__value-emphasis {
+		font-weight: bold;
+	}
+}
+
+.product-search__image {
+	flex: 0 0 40px;
+	height: 40px;
+	width: 40px;
+	overflow: hidden;
+	position: relative;
+	margin-right: 10px;
+
+	&:empty {
+		border: 1px solid darken( $gray-light, 10% );
+		box-sizing: border-box;
+	}
+
+	img {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		height: 100%;
+		width: auto;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+}
+
+.product-search__label {
+	flex: 1;
+
+	.product-search__sku {
+		color: $gray-text-min;
+		font-size: 11px;
+		text-transform: uppercase;
+	}
+}

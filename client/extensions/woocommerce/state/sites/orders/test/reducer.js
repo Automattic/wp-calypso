@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,14 +10,9 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	isLoading,
-	isQueryLoading,
-	isUpdating,
-	items,
-	queries,
-	total,
-} from '../reducer';
+import { isLoading, isQueryLoading, isUpdating, items, queries, total } from '../reducer';
+import order from './fixtures/order';
+import orders from './fixtures/orders';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -27,8 +24,6 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import orders from './fixtures/orders';
-import order from './fixtures/order';
 
 describe( 'reducer', () => {
 	describe( 'isLoading', () => {

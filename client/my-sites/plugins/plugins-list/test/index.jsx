@@ -1,59 +1,59 @@
-/** @jest-environment jsdom */
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {}
-	}
-} ) );
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'lib/wp', () => ( {
-	undocumented: () => ( {
-		getProducts: () => {}
-	} )
-} ) );
-jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
-jest.mock( 'matches-selector', () => require( 'component-matches-selector' ), { virtual: true } );
-jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { Provider as ReduxProvider } from 'react-redux';
 import React from 'react';
 import {
 	renderIntoDocument as testRenderer,
-	scryRenderedComponentsWithType
+	scryRenderedComponentsWithType,
 } from 'react-addons-test-utils';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
 import { PluginsList } from '../';
 import { sites } from './fixtures';
+import { createReduxStore } from 'state';
+
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {},
+	},
+} ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/wp', () => ( {
+	undocumented: () => ( {
+		getProducts: () => {},
+	} ),
+} ) );
+jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
+	require( 'components/empty-component' )
+);
+jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
+jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginsList', () => {
-	before( () => {
-		const ReactClass = require( 'react/lib/ReactClass' );
-
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-	} );
-
 	describe( 'rendering bulk actions', function() {
 		let renderedPluginsList, plugins, props;
 
 		before( () => {
 			plugins = [
 				{ sites, slug: 'hello', name: 'Hello Dolly' },
-				{ sites, slug: 'jetpack', name: 'Jetpack' } ];
+				{ sites, slug: 'jetpack', name: 'Jetpack' },
+			];
 
 			props = {
 				plugins,
 				header: 'Plugins',
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
-				pluginUpdateCount: plugins.length
+				pluginUpdateCount: plugins.length,
 			};
 		} );
 

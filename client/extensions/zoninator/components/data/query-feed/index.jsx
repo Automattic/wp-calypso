@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,7 +14,6 @@ import { connect } from 'react-redux';
 import { requestFeed } from '../../../state/feeds/actions';
 
 class QueryFeed extends PureComponent {
-
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		zoneId: PropTypes.number.isRequired,
@@ -36,9 +38,6 @@ class QueryFeed extends PureComponent {
 	}
 }
 
-const connectComponent = connect(
-	null,
-	{ requestFeed },
-);
+const connectComponent = connect( null, { requestFeed } );
 
 export default connectComponent( QueryFeed );

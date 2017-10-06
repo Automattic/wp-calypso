@@ -1,7 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-var analytics = require( 'lib/analytics' );
+
+import analytics from 'lib/analytics';
 
 module.exports = {
 	recordEvent: function( eventAction ) {
@@ -61,5 +64,5 @@ module.exports = {
 				callback( event );
 			}
 		};
-	}
+	},
 };

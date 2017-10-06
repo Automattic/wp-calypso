@@ -1,3 +1,4 @@
+/** @format */
 const me = function() {
 	return {
 		get() {},
@@ -9,20 +10,20 @@ const me = function() {
 						lang_id: false,
 						testParent: {
 							testChild: false,
-						}
+						},
 					} );
 				},
 				update( settings, callback ) {
 					setTimeout( () => callback( null, settings ) );
-				}
+				},
 			};
-		}
+		},
 	};
-}
+};
 
 export default {
 	me,
 	undocumented() {
 		return { me };
-	}
+	},
 };

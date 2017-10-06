@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { pick } from 'lodash';
 import url from 'url';
 

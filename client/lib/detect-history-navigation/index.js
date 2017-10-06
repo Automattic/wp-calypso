@@ -1,3 +1,4 @@
+/** @format */
 let _loadedViaHistory = false;
 
 module.exports = {
@@ -9,5 +10,5 @@ module.exports = {
 	},
 	loadedViaHistory: function() {
 		return _loadedViaHistory;
-	}
+	},
 };

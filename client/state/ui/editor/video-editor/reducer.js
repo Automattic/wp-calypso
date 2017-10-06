@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -16,9 +19,7 @@ import { combineReducers } from 'state/utils';
  * @return {String} Updated poster URL
  */
 export const url = ( state = null, { type, posterUrl } ) =>
-	VIDEO_EDITOR_SET_POSTER_URL === type
-		? posterUrl
-		: state;
+	VIDEO_EDITOR_SET_POSTER_URL === type ? posterUrl : state;
 
 /**
  * Tracks poster upload progress state.

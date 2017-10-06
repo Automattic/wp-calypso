@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { noop } from 'lodash';
@@ -19,22 +23,22 @@ const SitePicker = React.createClass( {
 	displayName: 'SitePicker',
 
 	propTypes: {
-		onClose: React.PropTypes.func,
-		currentLayoutFocus: React.PropTypes.string,
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
+		onClose: PropTypes.func,
+		currentLayoutFocus: PropTypes.string,
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
 		return {
 			isAutoFocused: false,
-			isOpened: false
+			isOpened: false,
 		};
 	},
 
 	getDefaultProps: function() {
 		return {
-			onClose: noop
+			onClose: noop,
 		};
 	},
 
@@ -94,7 +98,7 @@ const SitePicker = React.createClass( {
 				/>
 			</div>
 		);
-	}
+	},
 } );
 
 function mapStateToProps( state ) {
@@ -103,4 +107,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )( wrapWithClickOutside( SitePicker ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	wrapWithClickOutside( SitePicker )
+);

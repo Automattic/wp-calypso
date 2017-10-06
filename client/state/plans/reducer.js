@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
@@ -71,5 +74,5 @@ export const error = ( state = false, action ) => {
 export default combineReducers( {
 	items,
 	requesting,
-	error
+	error,
 } );

@@ -1,9 +1,10 @@
+/** @format */
 export const titleSchema = {
-	type: 'string'
+	type: 'string',
 };
 
 export const unreadCountSchema = {
-	type: 'number'
+	type: 'number',
 };
 
 export const metaSchema = {
@@ -11,11 +12,11 @@ export const metaSchema = {
 	items: {
 		type: 'object',
 		properties: {
-			name: { type: 'string' },
-			property: { type: 'string' },
-			content: { type: 'string' },
-		}
-	}
+			name: { type: 'string' },
+			property: { type: 'string' },
+			content: { type: 'string' },
+		},
+	},
 };
 
 export const linkSchema = {
@@ -23,8 +24,8 @@ export const linkSchema = {
 	items: {
 		type: 'object',
 		properties: {
-			href: { type: 'string' },
-			rel: { type: 'string' },
-		}
-	}
+			href: { type: 'string' },
+			rel: { type: 'string' },
+		},
+	},
 };

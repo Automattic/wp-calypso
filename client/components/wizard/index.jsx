@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get, indexOf } from 'lodash';
@@ -20,12 +23,12 @@ class Wizard extends Component {
 		hideNavigation: PropTypes.bool,
 		steps: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		stepName: PropTypes.string.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		basePath: '',
 		hideNavigation: false,
-	}
+	};
 
 	getStepIndex = () => indexOf( this.props.steps, this.props.stepName );
 
@@ -44,13 +47,13 @@ class Wizard extends Component {
 		}
 
 		return `${ basePath }/${ previousStepName }`;
-	}
+	};
 
 	getForwardUrl = () => {
 		const { basePath, steps } = this.props;
 		const stepIndex = this.getStepIndex();
 
-		if ( stepIndex === -1 || ( stepIndex === steps.length - 1 ) ) {
+		if ( stepIndex === -1 || stepIndex === steps.length - 1 ) {
 			return;
 		}
 
@@ -61,17 +64,10 @@ class Wizard extends Component {
 		}
 
 		return `${ basePath }/${ nextStepName }`;
-	}
+	};
 
 	render() {
-		const {
-			backText,
-			components,
-			forwardText,
-			hideNavigation,
-			steps,
-			stepName,
-		} = this.props;
+		const { backText, components, forwardText, hideNavigation, steps, stepName } = this.props;
 		const component = get( components, stepName );
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
@@ -80,31 +76,24 @@ class Wizard extends Component {
 
 		return (
 			<div className="wizard">
-				{ totalSteps > 1 &&
-					<ProgressIndicator
-						stepNumber={ stepIndex }
-						totalSteps={ totalSteps } />
-				}
+				{ totalSteps > 1 && (
+					<ProgressIndicator stepNumber={ stepIndex } totalSteps={ totalSteps } />
+				) }
 
 				{ component }
 
-				{ ! hideNavigation && totalSteps > 1 &&
+				{ ! hideNavigation &&
+				totalSteps > 1 && (
 					<div className="wizard__navigation-links">
-						{ stepIndex > 0 &&
-							<NavigationLink
-								direction="back"
-								href={ backUrl }
-								text={ backText } />
-						}
+						{ stepIndex > 0 && (
+							<NavigationLink direction="back" href={ backUrl } text={ backText } />
+						) }
 
-						{ stepIndex < totalSteps - 1 &&
-							<NavigationLink
-								direction="forward"
-								href={ forwardUrl }
-								text={ forwardText } />
-						}
+						{ stepIndex < totalSteps - 1 && (
+							<NavigationLink direction="forward" href={ forwardUrl } text={ forwardText } />
+						) }
 					</div>
-				}
+				) }
 			</div>
 		);
 	}

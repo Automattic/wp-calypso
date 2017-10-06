@@ -1,14 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-const page = require( 'page' );
+
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const controller = require( 'my-sites/controller' ),
-	checkoutController = require( './controller' ),
-	SiftScience = require( 'lib/siftscience' );
+import controller from 'my-sites/controller';
+import checkoutController from './controller';
+import SiftScience from 'lib/siftscience';
 
 module.exports = function() {
 	SiftScience.recordUser();
@@ -37,17 +40,9 @@ module.exports = function() {
 		checkoutController.checkoutThankYou
 	);
 
-	page(
-		'/checkout/no-site',
-		controller.noSite,
-		checkoutController.sitelessCheckout
-	);
+	page( '/checkout/no-site', controller.noSite, checkoutController.sitelessCheckout );
 
-	page(
-		'/checkout/:domain/:product?',
-		controller.siteSelection,
-		checkoutController.checkout
-	);
+	page( '/checkout/:domain/:product?', controller.siteSelection, checkoutController.checkout );
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',

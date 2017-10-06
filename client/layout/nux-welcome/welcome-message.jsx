@@ -1,21 +1,23 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' );
+import config from 'config';
+import route from 'lib/route';
+import analytics from 'lib/analytics';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
 module.exports = React.createClass( {
-
 	displayName: 'NuxWelcomeMessage',
 
 	analyticsEvents: {
@@ -33,12 +35,14 @@ module.exports = React.createClass( {
 		},
 		facebook: function() {
 			recordEvent( 'Clicked Connect to Facebook Button' );
-		}
+		},
 	},
 
 	render: function() {
 		var welcomeSite = this.props.welcomeSite || false,
-			adminURL = welcomeSite.options ? welcomeSite.options.admin_url : route.getSiteFragment( window.location.href ) + '/wp-admin/',
+			adminURL = welcomeSite.options
+				? welcomeSite.options.admin_url
+				: route.getSiteFragment( window.location.href ) + '/wp-admin/',
 			postLink = '#',
 			customizeLink = '#',
 			sharingLink = '#',
@@ -46,7 +50,9 @@ module.exports = React.createClass( {
 
 		if ( welcomeSite ) {
 			postLink = '/post/' + welcomeSite.slug;
-			customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + welcomeSite.slug : adminURL + 'customize.php?return=' + encodeURIComponent( window.location.href );
+			customizeLink = config.isEnabled( 'manage/customize' )
+				? '/customize/' + welcomeSite.slug
+				: adminURL + 'customize.php?return=' + encodeURIComponent( window.location.href );
 			sharingLink = '/sharing/' + welcomeSite.slug;
 		}
 
@@ -57,42 +63,54 @@ module.exports = React.createClass( {
 		return (
 			<div className="NuxWelcomeMessage__primary-content">
 				<img src="/calypso/images/illustrations/illustration-write.svg" />
-				<h3 className="NuxWelcomeMessage__title">{ this.translate( 'Welcome to WordPress.com!' ) }</h3>
+				<h3 className="NuxWelcomeMessage__title">
+					{ this.translate( 'Welcome to WordPress.com!' ) }
+				</h3>
 				<p className="NuxWelcomeMessage__intro">
 					{ this.translate(
 						'This is your site dashboard where you can write posts and control your site. ' +
-						'Since you\'re new, check out our {{startLink}}setup guides{{/startLink}}. ' +
-						'Our {{docsLink}}support documentation{{/docsLink}} is available 24/7.', {
+							"Since you're new, check out our {{startLink}}setup guides{{/startLink}}. " +
+							'Our {{docsLink}}support documentation{{/docsLink}} is available 24/7.',
+						{
 							components: {
-								startLink: <a
-									href="https://en.support.wordpress.com/start/"
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.analyticsEvents.startLink }
-								/>,
-								docsLink: <a
-									href="http://en.support.wordpress.com/"
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.analyticsEvents.docsLink }
-								/>
-							}
-						} ) }
+								startLink: (
+									<a
+										href="https://en.support.wordpress.com/start/"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ this.analyticsEvents.startLink }
+									/>
+								),
+								docsLink: (
+									<a
+										href="http://en.support.wordpress.com/"
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ this.analyticsEvents.docsLink }
+									/>
+								),
+							},
+						}
+					) }
 				</p>
 				<p>
-					{ customizeEnabled
-					? <a href={ customizeLink } className="button is-primary" onClick={ this.analyticsEvents.customize }>{
-						this.translate( 'Customize your Site' )
-					}</a>
-					: null }
-					<a href={ postLink } className="button" onClick={ this.analyticsEvents.firstPost }>{
-						this.translate( 'Start your first Post' )
-					}</a>
-					<a href={ sharingLink } className="button" onClick={ this.analyticsEvents.facebook }>{
-						this.translate( 'Connect to Facebook' )
-					}</a>
+					{ customizeEnabled ? (
+						<a
+							href={ customizeLink }
+							className="button is-primary"
+							onClick={ this.analyticsEvents.customize }
+						>
+							{ this.translate( 'Customize your Site' ) }
+						</a>
+					) : null }
+					<a href={ postLink } className="button" onClick={ this.analyticsEvents.firstPost }>
+						{ this.translate( 'Start your first Post' ) }
+					</a>
+					<a href={ sharingLink } className="button" onClick={ this.analyticsEvents.facebook }>
+						{ this.translate( 'Connect to Facebook' ) }
+					</a>
 				</p>
 			</div>
 		);
-	}
+	},
 } );

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -35,12 +39,12 @@ class QueryCountryStates extends Component {
 QueryCountryStates.propTypes = {
 	countryCode: PropTypes.string.isRequired,
 	isRequesting: PropTypes.bool,
-	requestCountryStates: PropTypes.func
+	requestCountryStates: PropTypes.func,
 };
 
 export default connect(
 	( state, { countryCode } ) => ( {
-		isRequesting: isCountryStatesFetching( state, countryCode )
+		isRequesting: isCountryStatesFetching( state, countryCode ),
 	} ),
 	{ requestCountryStates }
 )( QueryCountryStates );

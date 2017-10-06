@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,30 +9,21 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { withSchemaValidation } from 'state/utils';
-
-// Reducers
-import plansReducer, {
-	items,
-	requesting as requestReducer,
-	error as errorReducer
-} from '../reducer';
-
-/**
- * Actions creators functions
- */
 import {
 	plansReceiveAction,
 	plansRequestSuccessAction,
 	plansRequestFailureAction,
 	requestPlans,
 } from '../actions';
+import plansReducer, {
+	items,
+	requesting as requestReducer,
+	error as errorReducer,
+} from '../reducer';
 
-/**
- * Fixture data
- */
 import { WPCOM_RESPONSE } from './fixture';
+import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const itemsReducer = withSchemaValidation( items.schema, items );
 
@@ -44,11 +37,7 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should export expected reducer keys', () => {
-		expect( plansReducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting',
-			'error'
-		] );
+		expect( plansReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'error' ] );
 	} );
 
 	describe( '#items()', () => {

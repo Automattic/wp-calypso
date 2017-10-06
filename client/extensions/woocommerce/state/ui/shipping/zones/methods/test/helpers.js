@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -27,7 +29,9 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
+			currentMethodEdits
+		);
 	} );
 
 	it( 'should return the saved edits when there are no current edits', () => {
@@ -48,7 +52,9 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( zoneMethodEdits );
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
+			zoneMethodEdits
+		);
 	} );
 
 	it( 'should return the union of all the edits', () => {
@@ -153,7 +159,9 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
+			currentMethodEdits
+		);
 	} );
 
 	it( 'should preserve the isNew state', () => {
@@ -174,7 +182,9 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: false,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
+			currentMethodEdits
+		);
 	} );
 
 	it( 'should preserve the changed type state', () => {
@@ -195,6 +205,8 @@ describe( 'mergeMethodEdits', () => {
 			currentlyEditingChangedType: true,
 		};
 
-		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal(
+			currentMethodEdits
+		);
 	} );
 } );

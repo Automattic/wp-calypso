@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { maxBy, values } from 'lodash';
 
 /**

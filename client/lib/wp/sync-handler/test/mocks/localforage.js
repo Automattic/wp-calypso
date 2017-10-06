@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:sync-handler:localforage-mock' );
@@ -43,5 +46,5 @@ export default {
 	setLocalData( newData ) {
 		localData = newData;
 	},
-	config() {}
+	config() {},
 };

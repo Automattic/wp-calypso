@@ -80,6 +80,13 @@
 	margin-left: 0;
 }
 
+.conversations__comment-list-ul .comments__form-closed {
+	border-top: 0;
+	padding-left: 42px;
+	padding-top: 0;
+	text-align: left;
+}
+
 .is-group-reader .conversations__stream .like-button__label-status {
 	display: inline;
 }

@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
@@ -15,6 +16,14 @@ module.exports = {
 			hideSurveyStep: 80,
 		},
 		defaultVariation: 'hideSurveyStep',
+	},
+	signupPressableStoreFlow: {
+		datestamp: '20171018',
+		variations: {
+			atomic: 99,
+			pressable: 1,
+		},
+		defaultVariation: 'atomic',
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
@@ -67,16 +76,6 @@ module.exports = {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-	},
-	readerIntroIllustration: {
-		datestamp: '20170718',
-		variations: {
-			blue: 33,
-			lightBlue: 33,
-			white: 34,
-		},
-		defaultVariation: 'white',
-		assignmentMethod: 'userId',
 	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',

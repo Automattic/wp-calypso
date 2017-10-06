@@ -1,7 +1,4 @@
-jest.mock( 'lib/user', () => () => ( {
-	fetch() {}
-} ) );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -11,12 +8,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import * as settingsModule from '../';
-import { useSandbox } from 'test/helpers/use-sinon';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	updateUserSettings,
-	clearUnsavedUserSettings,
-} from 'state/user-settings/actions';
+import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
+import { useSandbox } from 'test/helpers/use-sinon';
+jest.mock( 'lib/user', () => () => ( {
+	fetch() {},
+} ) );
 
 describe( 'wpcom-api', () => {
 	let dispatch;
@@ -32,11 +29,16 @@ describe( 'wpcom-api', () => {
 				settingsModule.requestUserSettings( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'GET',
-					path: '/me/settings',
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'GET',
+							path: '/me/settings',
+						},
+						action
+					)
+				);
 			} );
 		} );
 
@@ -49,9 +51,11 @@ describe( 'wpcom-api', () => {
 				} );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
-					language: 'qix',
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					updateUserSettings( {
+						language: 'qix',
+					} )
+				);
 			} );
 
 			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
@@ -63,11 +67,13 @@ describe( 'wpcom-api', () => {
 					user_URL: 'http://example.com?a=b&amp;c=d',
 				} );
 
-				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
-					display_name: 'baz & qix',
-					description: 'foo & bar',
-					user_URL: 'http://example.com?a=b&c=d',
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					updateUserSettings( {
+						display_name: 'baz & qix',
+						description: 'foo & bar',
+						user_URL: 'http://example.com?a=b&c=d',
+					} )
+				);
 			} );
 		} );
 	} );
@@ -78,46 +84,56 @@ describe( 'wpcom-api', () => {
 				const getState = () => ( {
 					userSettings: {
 						settings: { foo: 'bar' },
-						unsavedSettings: { foo: 'baz' }
-					}
+						unsavedSettings: { foo: 'baz' },
+					},
 				} );
 				const action = { type: 'DUMMY' };
 
 				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'POST',
-					path: '/me/settings',
-					body: { foo: 'baz' }
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'POST',
+							path: '/me/settings',
+							body: { foo: 'baz' },
+						},
+						action
+					)
+				);
 			} );
 
 			it( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
 				const getState = () => ( {} );
 				const action = {
 					type: 'DUMMY',
-					settingsOverride: { foo: 'baz' }
+					settingsOverride: { foo: 'baz' },
 				};
 
 				settingsModule.saveUserSettings( { dispatch, getState }, action, null );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'POST',
-					path: '/me/settings',
-					body: { foo: 'baz' }
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'POST',
+							path: '/me/settings',
+							body: { foo: 'baz' },
+						},
+						action
+					)
+				);
 			} );
 
 			it( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
 				const getState = () => ( {
 					userSettings: {
 						settings: {},
-						unsavedSettings: {}
-					}
+						unsavedSettings: {},
+					},
 				} );
 				const action = { type: 'DUMMY' };
 
@@ -136,9 +152,11 @@ describe( 'wpcom-api', () => {
 				} );
 
 				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
-					language: 'qix',
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					updateUserSettings( {
+						language: 'qix',
+					} )
+				);
 				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings() );
 			} );
 
@@ -151,12 +169,12 @@ describe( 'wpcom-api', () => {
 				settingsModule.finishUserSettingsSave( { dispatch }, action, data );
 
 				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
-					language: 'qix'
-				} ) );
-				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings( [
-					'language'
-				] ) );
+				expect( dispatch ).to.have.been.calledWith(
+					updateUserSettings( {
+						language: 'qix',
+					} )
+				);
+				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings( [ 'language' ] ) );
 			} );
 
 			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
@@ -168,11 +186,13 @@ describe( 'wpcom-api', () => {
 					user_URL: 'http://example.com?a=b&amp;c=d',
 				} );
 
-				expect( dispatch ).to.have.been.calledWith( updateUserSettings( {
-					display_name: 'baz & qix',
-					description: 'foo & bar',
-					user_URL: 'http://example.com?a=b&c=d',
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					updateUserSettings( {
+						display_name: 'baz & qix',
+						description: 'foo & bar',
+						user_URL: 'http://example.com?a=b&c=d',
+					} )
+				);
 			} );
 		} );
 	} );

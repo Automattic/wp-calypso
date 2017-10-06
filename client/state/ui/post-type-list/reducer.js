@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { without } from 'lodash';
 
 /**
@@ -18,10 +21,16 @@ const initialState = {
 export const postTypeList = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case POST_TYPE_LIST_SHARE_PANEL_HIDE:
-			return { ...state, activeSharePanels: without( state.activeSharePanels, action.postGlobalId ) };
+			return {
+				...state,
+				activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
+			};
 		case POST_TYPE_LIST_SHARE_PANEL_TOGGLE:
 			if ( state.activeSharePanels.indexOf( action.postGlobalId ) > -1 ) {
-				return { ...state, activeSharePanels: without( state.activeSharePanels, action.postGlobalId ) };
+				return {
+					...state,
+					activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
+				};
 			}
 			return { ...state, activeSharePanels: [ action.postGlobalId ] };
 	}

@@ -1,22 +1,23 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
+
+import ReactDom from 'react-dom';
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
-const HelpModal = require( './help-modal' );
+import HelpModal from './help-modal';
 
 function wpcomHelpPlugin( editor ) {
 	var node;
 
 	editor.on( 'init', function() {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', function() {
@@ -36,7 +37,7 @@ function wpcomHelpPlugin( editor ) {
 				React.createElement( HelpModal, {
 					showDialog: visibility === 'show' ? true : false,
 					onClose: onClose,
-					macosx: tinymce.Env.mac
+					macosx: tinymce.Env.mac,
 				} ),
 				node
 			);

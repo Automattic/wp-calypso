@@ -1,3 +1,4 @@
+/** @format */
 export const jpoConnectSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -37,10 +38,10 @@ export const jpoConnectSchema = {
 						user_email: { type: 'string' },
 						user_login: { type: 'string' },
 					},
-					additionalProperties: false
-				}
+					additionalProperties: false,
+				},
 			},
-			additionalProperties: false
-		}
-	}
+			additionalProperties: false,
+		},
+	},
 };

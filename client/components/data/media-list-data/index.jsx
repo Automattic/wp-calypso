@@ -1,22 +1,26 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, isEqual } from 'lodash';
-const React = require( 'react' );
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaListStore = require( 'lib/media/list-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+import MediaActions from 'lib/media/actions';
+import MediaListStore from 'lib/media/list-store';
+import passToChildren from 'lib/react-pass-to-children';
+import utils from './utils';
 
 function getStateData( siteId ) {
 	return {
 		media: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId )
+		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
 	};
 }
 
@@ -24,11 +28,11 @@ module.exports = React.createClass( {
 	displayName: 'MediaListData',
 
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired,
-		source: React.PropTypes.string,
-		postId: React.PropTypes.number,
-		filter: React.PropTypes.string,
-		search: React.PropTypes.string
+		siteId: PropTypes.number.isRequired,
+		source: PropTypes.string,
+		postId: PropTypes.number,
+		filter: PropTypes.string,
+		search: PropTypes.string,
 	},
 
 	getInitialState: function() {
@@ -90,8 +94,11 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		return passToChildren( this, assign( {}, this.state, {
-			mediaOnFetchNextPage: this.fetchData
-		} ) );
-	}
+		return passToChildren(
+			this,
+			assign( {}, this.state, {
+				mediaOnFetchNextPage: this.fetchData,
+			} )
+		);
+	},
 } );

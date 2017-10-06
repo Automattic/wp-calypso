@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 module.exports = React.createClass( {
 	displayName: 'StoredCard',
@@ -13,13 +16,17 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ cardClasses }>
-				<span className="stored-card__number">{ card.card_type } ****{ card.card }</span>
+				<span className="stored-card__number">
+					{ card.card_type } ****{ card.card }
+				</span>
 				<span className="stored-card__name">{ card.name }</span>
-				<span className="stored-card__expiration-date">{ this.translate( 'Expires %(date)s', {
-					args: { date: expirationDate },
-					context: 'date is of the form MM/YY'
-				} ) }</span>
+				<span className="stored-card__expiration-date">
+					{ this.translate( 'Expires %(date)s', {
+						args: { date: expirationDate },
+						context: 'date is of the form MM/YY',
+					} ) }
+				</span>
 			</div>
 		);
-	}
+	},
 } );

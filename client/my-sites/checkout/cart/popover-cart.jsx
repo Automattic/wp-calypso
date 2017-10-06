@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
@@ -23,17 +27,14 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 
 const PopoverCart = React.createClass( {
 	propTypes: {
-		cart: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		onToggle: React.PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: React.PropTypes.func,
-		visible: React.PropTypes.bool.isRequired,
-		pinned: React.PropTypes.bool.isRequired,
-		showKeepSearching: React.PropTypes.bool.isRequired,
-		onKeepSearchingClick: React.PropTypes.func.isRequired
+		cart: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		onToggle: PropTypes.func.isRequired,
+		closeSectionNavMobilePanel: PropTypes.func,
+		visible: PropTypes.bool.isRequired,
+		pinned: PropTypes.bool.isRequired,
+		showKeepSearching: PropTypes.bool.isRequired,
+		onKeepSearchingClick: PropTypes.func.isRequired,
 	},
 
 	itemCount: function() {
@@ -48,9 +49,9 @@ const PopoverCart = React.createClass( {
 
 	render: function() {
 		let countBadge;
-		const	classes = classNames( {
+		const classes = classNames( {
 			'popover-cart': true,
-			pinned: this.props.pinned
+			pinned: this.props.pinned,
 		} );
 
 		if ( this.itemCount() ) {
@@ -65,11 +66,9 @@ const PopoverCart = React.createClass( {
 		return (
 			<div>
 				<div className={ classes }>
-					<button className="cart-toggle-button"
-							ref="toggleButton"
-							onClick={ this.onToggle }>
+					<button className="cart-toggle-button" ref="toggleButton" onClick={ this.onToggle }>
 						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon='cart' size={ 24 } />
+						<Gridicon icon="cart" size={ 24 } />
 						{ countBadge }
 					</button>
 				</div>
@@ -82,26 +81,30 @@ const PopoverCart = React.createClass( {
 	cartContent: function() {
 		if ( ! this.props.pinned ) {
 			return (
-				<Popover className="popover-cart__popover popover"
-						isVisible={ this.props.visible }
-						position="bottom left"
-						onClose={ this.onClose }
-						context={ this.refs.toggleButton }>
+				<Popover
+					className="popover-cart__popover popover"
+					isVisible={ this.props.visible }
+					position="bottom left"
+					onClose={ this.onClose }
+					context={ this.refs.toggleButton }
+				>
 					{ this.cartBody() }
-				<TrackComponentView
-					eventName="calypso_popover_cart_content_impression"
-					eventProperties={ { style: 'popover' } } />
+					<TrackComponentView
+						eventName="calypso_popover_cart_content_impression"
+						eventProperties={ { style: 'popover' } }
+					/>
 				</Popover>
 			);
 		}
 		if ( this.props.visible ) {
 			return (
 				<div className="popover-cart__mobile-cart">
-					<div className="top-arrow"></div>
+					<div className="top-arrow" />
 					{ this.cartBody() }
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
-						eventProperties={ { style: 'mobile-cart' } } />
+						eventProperties={ { style: 'mobile-cart' } }
+					/>
 				</div>
 			);
 		}
@@ -118,27 +121,24 @@ const PopoverCart = React.createClass( {
 		}
 
 		if ( ! this.props.cart.products.length ) {
-			return (
-				<CartEmpty selectedSite={ this.props.selectedSite } path={ this.props.path } />
-			);
+			return <CartEmpty selectedSite={ this.props.selectedSite } path={ this.props.path } />;
 		}
 
 		return (
 			<div>
-				<CartPlanAd
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
+				<CartPlanAd cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
 
 				<CartBody
 					collapse={ true }
 					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+				/>
 
 				<CartButtons
 					selectedSite={ this.props.selectedSite }
 					showKeepSearching={ this.props.showKeepSearching }
 					onKeepSearchingClick={ this.props.onKeepSearchingClick }
-					/>
+				/>
 			</div>
 		);
 	},
@@ -156,7 +156,7 @@ const PopoverCart = React.createClass( {
 		}
 
 		this.onToggle();
-	}
+	},
 } );
 
 export default localize( PopoverCart );

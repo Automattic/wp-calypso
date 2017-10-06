@@ -1,11 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { includes } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +17,7 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import SitesDropdown from 'components/sites-dropdown';
-import { getPrimarySiteId, getVisibleSites } from 'state/selectors';
+import { getPrimarySiteId, getVisibleSites } from 'state/selectors';
 
 class SiteSelectorModal extends Component {
 	static propTypes = {
@@ -36,77 +40,77 @@ class SiteSelectorModal extends Component {
 		// from localize()
 		translate: PropTypes.func.isRequired,
 		// connected props
-		initialSiteId: PropTypes.number
-	}
+		initialSiteId: PropTypes.number,
+	};
 
 	state = {
-		siteId: this.props.initialSiteId
-	}
+		siteId: this.props.initialSiteId,
+	};
 
-	setSite = ( siteId ) => {
+	setSite = siteId => {
 		this.setState( { siteId } );
-	}
+	};
 
-	onClose = ( action ) => {
+	onClose = action => {
 		if ( 'mainAction' === action ) {
 			this.props.mainAction( this.state.siteId );
 		}
 
 		this.props.hide();
-	}
+	};
 
 	onButtonClick = () => {
 		this.props.mainAction( this.state.siteId );
-	}
+	};
 
 	getMainLink() {
 		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.siteId );
 
-		return url
-			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
-			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
+		return url ? (
+			<Button primary href={ url } onClick={ this.onButtonClick }>
+				{ this.props.mainActionLabel }
+			</Button>
+		) : (
+			{ action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true }
+		);
 	}
 
 	render() {
 		const mainLink = this.getMainLink();
-		const buttons = [
-			{ action: 'back', label: this.props.translate( 'Back' ) },
-			mainLink
-		];
+		const buttons = [ { action: 'back', label: this.props.translate( 'Back' ) }, mainLink ];
 		const classNames = classnames( 'site-selector-modal', this.props.className );
 
 		return (
-			<Dialog className={ classNames }
+			<Dialog
+				className={ classNames }
 				isVisible={ this.props.isVisible }
 				buttons={ buttons }
-				onClose={ this.onClose }>
-				<div className="site-selector-modal__content">
-					{ this.props.children }
-				</div>
+				onClose={ this.onClose }
+			>
+				<div className="site-selector-modal__content">{ this.props.children }</div>
 				<SitesDropdown
 					onSiteSelect={ this.setSite }
 					selectedSiteId={ this.state.siteId }
-					filter={ this.props.filter } />
+					filter={ this.props.filter }
+				/>
 			</Dialog>
 		);
 	}
 }
 
-export default connect(
-	( state, { filter } ) => {
-		const primarySiteId = getPrimarySiteId( state );
-		const visibleSites = getVisibleSites( state );
+export default connect( ( state, { filter } ) => {
+	const primarySiteId = getPrimarySiteId( state );
+	const visibleSites = getVisibleSites( state );
 
-		let filteredSiteIds = visibleSites.map( ( site ) => site.ID );
+	let filteredSiteIds = visibleSites.map( site => site.ID );
 
-		if ( filter ) {
-			filteredSiteIds = filteredSiteIds.filter( filter );
-		}
-
-		return {
-			initialSiteId: includes( filteredSiteIds, primarySiteId )
-				? primarySiteId
-				: filteredSiteIds[ 0 ]
-		};
+	if ( filter ) {
+		filteredSiteIds = filteredSiteIds.filter( filter );
 	}
-)( localize( SiteSelectorModal ) );
+
+	return {
+		initialSiteId: includes( filteredSiteIds, primarySiteId )
+			? primarySiteId
+			: filteredSiteIds[ 0 ],
+	};
+} )( localize( SiteSelectorModal ) );

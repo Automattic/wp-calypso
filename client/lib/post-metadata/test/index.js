@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var expect = require( 'chai' ).expect;
+
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var PostMetadata = require( '../' );
+import PostMetadata from '../';
 
 describe( 'index', function() {
 	describe( '#publicizeMessage()', function() {
@@ -33,9 +36,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.publicizeMessage( {
-				metadata: [
-					{ id: '796', key: '_wpas_mess', value: message }
-				]
+				metadata: [ { id: '796', key: '_wpas_mess', value: message } ],
 			} );
 
 			expect( value ).to.equal( message );
@@ -68,9 +69,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.publicizeDone( {
-				metadata: [
-					{ id: '797', key: '_wpas_done_' + ID, value: '1' }
-				]
+				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '1' } ],
 			} );
 
 			expect( value ).to.eql( [ ID ] );
@@ -81,9 +80,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.publicizeDone( {
-				metadata: [
-					{ id: '797', key: '_wpas_done_' + ID, value: '0' }
-				]
+				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '0' } ],
 			} );
 
 			expect( value ).to.be.empty;
@@ -116,9 +113,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.publicizeSkipped( {
-				metadata: [
-					{ id: '797', key: '_wpas_skip_' + ID, value: '1' }
-				]
+				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '1' } ],
 			} );
 
 			expect( value ).to.eql( [ ID ] );
@@ -129,9 +124,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.publicizeSkipped( {
-				metadata: [
-					{ id: '797', key: '_wpas_skip_' + ID, value: '0' }
-				]
+				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '0' } ],
 			} );
 
 			expect( value ).to.be.empty;
@@ -162,9 +155,7 @@ describe( 'index', function() {
 				value;
 
 			value = PostMetadata.geoLabel( {
-				metadata: [
-					{ id: '796', key: 'geo_address', value: address }
-				]
+				metadata: [ { id: '796', key: 'geo_address', value: address } ],
 			} );
 
 			expect( value ).to.equal( address );
@@ -192,9 +183,7 @@ describe( 'index', function() {
 
 		it( 'should return undefined if metadata contains only one of latitude or longitude', function() {
 			var value = PostMetadata.geoCoordinates( {
-				metadata: [
-					{ id: '796', key: 'geo_latitude', value: '40.7127837' }
-				]
+				metadata: [ { id: '796', key: 'geo_latitude', value: '40.7127837' } ],
 			} );
 
 			expect( value ).to.be.undefined;
@@ -208,8 +197,8 @@ describe( 'index', function() {
 			value = PostMetadata.geoCoordinates( {
 				metadata: [
 					{ id: '796', key: 'geo_latitude', value: latitude.toString() },
-					{ id: '796', key: 'geo_longitude', value: longitude.toString() }
-				]
+					{ id: '796', key: 'geo_longitude', value: longitude.toString() },
+				],
 			} );
 
 			expect( value ).to.be.eql( [ latitude, longitude ] );

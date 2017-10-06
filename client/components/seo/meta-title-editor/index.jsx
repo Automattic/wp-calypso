@@ -1,12 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
-import {
-	get,
-	identity,
-	noop,
-} from 'lodash';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { get, identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ const titleTypes = translate => [
 	{ value: 'posts', label: translate( 'Posts' ) },
 	{ value: 'pages', label: translate( 'Pages' ) },
 	{ value: 'groups', label: translate( 'Tags' ) },
-	{ value: 'archives', label: translate( 'Archives' ) }
+	{ value: 'archives', label: translate( 'Archives' ) },
 ];
 
 const getValidTokens = translate => ( {
@@ -28,7 +28,7 @@ const getValidTokens = translate => ( {
 	postTitle: translate( 'Post Title' ),
 	pageTitle: translate( 'Page Title' ),
 	groupTitle: translate( 'Tag or Category Name' ),
-	date: translate( 'Date' )
+	date: translate( 'Date' ),
 } );
 
 const tokenMap = {
@@ -36,15 +36,17 @@ const tokenMap = {
 	posts: [ 'siteName', 'tagline', 'postTitle' ],
 	pages: [ 'siteName', 'tagline', 'pageTitle' ],
 	groups: [ 'siteName', 'tagline', 'groupTitle' ],
-	archives: [ 'siteName', 'tagline', 'date' ]
+	archives: [ 'siteName', 'tagline', 'date' ],
 };
 
 const getTokensForType = ( type, translate ) => {
-	return get( tokenMap, type, [] )
-		.reduce( ( allTokens, name ) => ( {
+	return get( tokenMap, type, [] ).reduce(
+		( allTokens, name ) => ( {
 			...allTokens,
-			[ name ]: get( getValidTokens( translate ), name, '' )
-		} ), {} );
+			[ name ]: get( getValidTokens( translate ), name, '' ),
+		} ),
+		{}
+	);
 };
 
 export class MetaTitleEditor extends Component {
@@ -57,7 +59,7 @@ export class MetaTitleEditor extends Component {
 	static defaultProps = {
 		disabled: false,
 		onChange: noop,
-		translate: identity
+		translate: identity,
 	};
 
 	constructor( props ) {
@@ -70,21 +72,16 @@ export class MetaTitleEditor extends Component {
 
 		onChange( {
 			...titleFormats,
-			[ type ]: values
+			[ type ]: values,
 		} );
 	}
 
 	render() {
-		const {
-			disabled,
-			site,
-			titleFormats,
-			translate,
-		} = this.props;
+		const { disabled, site, titleFormats, translate } = this.props;
 
 		return (
 			<div className="meta-title-editor">
-				{ titleTypes( translate ).map( type =>
+				{ titleTypes( translate ).map( type => (
 					<TitleFormatEditor
 						key={ type.value }
 						disabled={ disabled }
@@ -94,7 +91,7 @@ export class MetaTitleEditor extends Component {
 						titleFormats={ get( titleFormats, type.value, [] ) }
 						tokens={ getTokensForType( type.value, translate ) }
 					/>
-				) }
+				) ) }
 			</div>
 		);
 	}

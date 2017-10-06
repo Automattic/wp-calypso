@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -86,14 +89,17 @@ class UploadImage extends Component {
 		const { translate } = this.props;
 
 		const fileName = files[ 0 ].name;
-		const extension = path.extname( fileName ).toLowerCase().substring( 1 );
+		const extension = path
+			.extname( fileName )
+			.toLowerCase()
+			.substring( 1 );
 
 		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
 			this.handleError(
 				ERROR_UNSUPPORTED_FILE,
 				translate(
-					'File you are trying to upload is not supported. Please select a valid image file.',
-				),
+					'File you are trying to upload is not supported. Please select a valid image file.'
+				)
 			);
 
 			return;
@@ -116,7 +122,7 @@ class UploadImage extends Component {
 		if ( errorCode === ERROR_UPLOADING_IMAGE ) {
 			if ( error.length && error[ 0 ] === ValidationErrors.SERVER_ERROR ) {
 				message = translate(
-					'File could not be uploaded because an error occurred while uploading.',
+					'File could not be uploaded because an error occurred while uploading.'
 				);
 			}
 		}
@@ -238,9 +244,9 @@ class UploadImage extends Component {
 		const media = isEditingDefaultImage
 			? defaultImage
 			: {
-				src: selectedImage,
-				file: selectedImageName,
-			};
+					src: selectedImage,
+					file: selectedImageName,
+				};
 
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
@@ -325,9 +331,7 @@ class UploadImage extends Component {
 			<FilePicker accept="image/*" onPick={ this.receiveFiles }>
 				<div className="upload-image__image-picker">
 					<Gridicon icon="add-image" size={ 36 } />
-					<span>
-						{ addAnImageText || translate( 'Add an Image' ) }
-					</span>
+					<span>{ addAnImageText || translate( 'Add an Image' ) }</span>
 				</div>
 			</FilePicker>
 		);
@@ -441,5 +445,5 @@ export default connect(
 	},
 	{
 		resetAllImageEditorState,
-	},
+	}
 )( localize( UploadImage ) );

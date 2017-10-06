@@ -136,3 +136,25 @@ describe.only( 'just run this suite', function() {
 	} );
 } );
 ```
+
+## Troubleshooting
+
+* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not it's children. The best practice is to test the raw component directly, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
+
+	```js
+	// Bad
+	export default localize( class SomeComponent extends React.Component {
+		// ...
+	} );
+	```
+
+	```js
+	// Good
+	export class SomeComponent extends React.Component {
+		// ...
+	}
+
+	export default localize( SomeComponent );
+	```
+
+	See [#5221](https://github.com/Automattic/wp-calypso/pull/5221) and [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples using `React.createClass()` and ES6 classes, respectively.

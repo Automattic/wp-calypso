@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
@@ -54,19 +58,19 @@ class Pages extends Component {
 
 		return (
 			<div>
-				{ siteId &&
-					<QueryPosts siteId={ siteId } query={ query } />
-				}
+				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 
 				<form>
 					<ProtectFormGuard isChanged={ dirty } />
 
 					<FormSection name="pages">
 						<SectionHeader label={ translate( 'Pages' ) }>
-							<FormButton compact
+							<FormButton
+								compact
 								disabled={ isDisabled }
 								isSubmitting={ submitting }
-								onClick={ handleSubmit( this.save( 'pages' ) ) } />
+								onClick={ handleSubmit( this.save( 'pages' ) ) }
+							/>
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
@@ -74,41 +78,34 @@ class Pages extends Component {
 									{ translate( 'Submit Job Form Page' ) }
 								</FormLabel>
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [submit_job_form] shortcode. ' +
-										'This lets the plugin know the location of the form.' ) }
+									{ translate(
+										"Select the page where you've used the [submit_job_form] shortcode. " +
+											'This lets the plugin know the location of the form.'
+									) }
 								</FormSettingExplanation>
-								<PageDropdown
-									disabled={ isDisabled }
-									id="submitFormPage"
-									name="submitFormPage" />
+								<PageDropdown disabled={ isDisabled } id="submitFormPage" name="submitFormPage" />
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel htmlFor="dashboardPage">
-									{ translate( 'Job Dashboard Page' ) }
-								</FormLabel>
+								<FormLabel htmlFor="dashboardPage">{ translate( 'Job Dashboard Page' ) }</FormLabel>
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [job_dashboard] shortcode. ' +
-										'This lets the plugin know the location of the dashboard.' ) }
+									{ translate(
+										"Select the page where you've used the [job_dashboard] shortcode. " +
+											'This lets the plugin know the location of the dashboard.'
+									) }
 								</FormSettingExplanation>
-								<PageDropdown
-									disabled={ isDisabled }
-									id="dashboardPage"
-									name="dashboardPage" />
+								<PageDropdown disabled={ isDisabled } id="dashboardPage" name="dashboardPage" />
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel htmlFor="listingsPage">
-									{ translate( 'Job Listings Page' ) }
-								</FormLabel>
+								<FormLabel htmlFor="listingsPage">{ translate( 'Job Listings Page' ) }</FormLabel>
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [jobs] shortcode. ' +
-										'This lets the plugin know the location of the job listings page.' ) }
+									{ translate(
+										"Select the page where you've used the [jobs] shortcode. " +
+											'This lets the plugin know the location of the job listings page.'
+									) }
 								</FormSettingExplanation>
-								<PageDropdown
-									disabled={ isDisabled }
-									id="listingsPage"
-									name="listingsPage" />
+								<PageDropdown disabled={ isDisabled } id="listingsPage" name="listingsPage" />
 							</FormFieldset>
 						</Card>
 					</FormSection>
@@ -118,25 +115,19 @@ class Pages extends Component {
 	}
 }
 
-const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			dirty: isDirty( form ),
-			isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
-			siteId,
-		};
-	}
-);
+	return {
+		dirty: isDirty( form ),
+		isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
+		siteId,
+	};
+} );
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
 	form,
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	createReduxForm,
-)( Pages );
+export default flowRight( connectComponent, localize, createReduxForm )( Pages );

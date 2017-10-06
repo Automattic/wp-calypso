@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,20 +16,11 @@ class OrderShippingRefundRow extends Component {
 	static propTypes = {
 		currency: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
-		shippingTotal: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number,
-		] ).isRequired,
-	}
+		shippingTotal: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	};
 
 	render() {
-		const {
-			currency,
-			numberFormat,
-			onChange,
-			shippingTotal,
-			translate
-		} = this.props;
+		const { currency, numberFormat, onChange, shippingTotal, translate } = this.props;
 		const { decimal, grouping, precision } = getCurrencyDefaults( currency );
 		const total = numberFormat( Math.abs( shippingTotal ), {
 			decimals: precision,
@@ -44,7 +36,8 @@ class OrderShippingRefundRow extends Component {
 						name="shipping_total"
 						onChange={ onChange }
 						currency={ currency }
-						value={ total } />
+						value={ total }
+					/>
 				</div>
 			</div>
 		);

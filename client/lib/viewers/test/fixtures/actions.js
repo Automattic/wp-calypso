@@ -1,6 +1,12 @@
-var site = require( './site' ),
-	viewerData = require( './viewers-1' ),
-	moreViewerData = require( './viewers-2' );
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
+
+import site from './site';
+import viewerData from './viewers-1';
+import moreViewerData from './viewers-2';
 
 module.exports = {
 	fetchedViewersEmpty: {
@@ -8,7 +14,7 @@ module.exports = {
 		siteId: site.ID,
 		data: { found: 20, viewers: [] },
 		page: 2,
-		error: null
+		error: null,
 	},
 
 	fetchedViewers: {
@@ -16,7 +22,7 @@ module.exports = {
 		siteId: site.ID,
 		data: viewerData,
 		page: 1,
-		error: null
+		error: null,
 	},
 
 	fetchedMoreViewers: {
@@ -24,18 +30,18 @@ module.exports = {
 		siteId: site.ID,
 		data: moreViewerData,
 		page: 2,
-		error: null
+		error: null,
 	},
 
 	removeViewer: {
 		type: 'REMOVE_VIEWER',
 		siteId: site.ID,
-		viewer: viewerData.viewers[ 0 ]
+		viewer: viewerData.viewers[ 0 ],
 	},
 
 	removeViewerError: {
 		type: 'RECEIVE_REMOVE_VIEWER_ERROR',
 		siteId: site.ID,
-		viewer: viewerData.viewers[ 0 ]
-	}
+		viewer: viewerData.viewers[ 0 ],
+	},
 };

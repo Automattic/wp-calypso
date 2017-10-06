@@ -1,6 +1,8 @@
 /**
  * Stub wp module to avoid its dependency on the browser
- **/
+ *
+ * @format
+ */
 
 function returnSelf() {
 	return this;
@@ -9,5 +11,5 @@ function returnSelf() {
 module.exports = {
 	site: returnSelf,
 	post: returnSelf,
-	likesList: returnSelf
+	likesList: returnSelf,
 };

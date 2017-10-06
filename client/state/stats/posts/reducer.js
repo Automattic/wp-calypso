@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, merge } from 'lodash';
 
 /**
@@ -12,7 +15,7 @@ import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS
+	POST_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -31,9 +34,9 @@ export function requesting( state = {}, action ) {
 			return merge( {}, state, {
 				[ action.siteId ]: {
 					[ action.postId ]: {
-						[ action.fields.join() ]: POST_STATS_REQUEST === action.type
-					}
-				}
+						[ action.fields.join() ]: POST_STATS_REQUEST === action.type,
+					},
+				},
 			} );
 	}
 
@@ -54,12 +57,12 @@ export function items( state = {}, action ) {
 			return {
 				...state,
 				[ action.siteId ]: {
-					...( get( state, [ action.siteId ], {} ) ),
+					...get( state, [ action.siteId ], {} ),
 					[ action.postId ]: {
-						...( get( state, [ action.siteId, action.postId ], {} ) ),
+						...get( state, [ action.siteId, action.postId ], {} ),
 						...action.stats,
-					}
-				}
+					},
+				},
 			};
 	}
 
@@ -69,5 +72,5 @@ items.schema = itemSchemas;
 
 export default combineReducers( {
 	requesting,
-	items
+	items,
 } );

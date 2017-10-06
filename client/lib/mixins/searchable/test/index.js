@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var assert = require( 'assert' );
+
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
-var Searchable = require( '../' );
+import Searchable from '../';
 
 var makeCollection = function() {
 	var Collection = function() {
@@ -16,25 +19,25 @@ var makeCollection = function() {
 				author: 'bob ralian',
 				urls: {
 					public: 'wordpress.com',
-					private: 'notwordpress.com'
+					private: 'notwordpress.com',
 				},
 				editor: {
 					primary: 'Susan',
-					secondary: 'Kyle'
-				}
+					secondary: 'Kyle',
+				},
 			},
 			{
 				title: 'another title',
 				author: 'Jill',
 				urls: {
 					public: 'test.com',
-					private: 'blah.com'
+					private: 'blah.com',
 				},
 				editor: {
 					primary: 'Edith',
-					secondary: 'Susan'
-				}
-			}
+					secondary: 'Susan',
+				},
+			},
 		];
 	};
 
@@ -89,10 +92,11 @@ describe( 'index', function() {
 		it( 'should find node', function() {
 			var Collection = makeCollection(),
 				collection;
-			Searchable( Collection.prototype, [ 'title',
+			Searchable( Collection.prototype, [
+				'title',
 				'author',
 				{ urls: [ 'public', 'private' ] },
-				{ editor: [ 'primary' ] }
+				{ editor: [ 'primary' ] },
 			] );
 			collection = new Collection();
 			assert.equal( collection.search( 'test.com' ).length, 1 );
@@ -102,10 +106,11 @@ describe( 'index', function() {
 		it( 'should not find a node', function() {
 			var Collection = makeCollection(),
 				collection;
-			Searchable( Collection.prototype, [ 'title',
+			Searchable( Collection.prototype, [
+				'title',
 				'author',
 				{ urls: [ 'public', 'private' ] },
-				{ editor: [ 'primary' ] }
+				{ editor: [ 'primary' ] },
 			] );
 
 			collection = new Collection();

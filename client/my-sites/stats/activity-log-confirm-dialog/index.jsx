@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,16 +34,10 @@ class ActivityLogConfirmDialog extends Component {
 	};
 
 	renderButtons() {
-		const {
-			onClose,
-			onConfirm,
-			translate,
-		} = this.props;
+		const { onClose, onConfirm, translate } = this.props;
 		return (
 			<div>
-				<Button onClick={ onClose }>
-					{ translate( 'Cancel' ) }
-				</Button>
+				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
 				<Button primary scary onClick={ onConfirm }>
 					{ translate( 'Restore' ) }
 				</Button>
@@ -48,49 +46,36 @@ class ActivityLogConfirmDialog extends Component {
 	}
 
 	render() {
-		const {
-			applySiteOffset,
-			isVisible,
-			moment,
-			siteTitle,
-			timestamp,
-			translate,
-		} = this.props;
+		const { applySiteOffset, isVisible, moment, siteTitle, timestamp, translate } = this.props;
 
 		return (
-			<Dialog
-				additionalClassNames="activity-log-confirm-dialog"
-				isVisible={ isVisible }
-			>
+			<Dialog additionalClassNames="activity-log-confirm-dialog" isVisible={ isVisible }>
 				<h1>{ translate( 'Restore Site' ) }</h1>
 				<p className="activity-log-confirm-dialog__highlight">
-					{
-						translate(
-							'To proceed please confirm this restore on your site %(siteTitle)s',
-							{ args: { siteTitle } }
-						)
-					}
+					{ translate( 'To proceed please confirm this restore on your site %(siteTitle)s', {
+						args: { siteTitle },
+					} ) }
 				</p>
 
 				<div className="activity-log-confirm-dialog__line">
 					<Gridicon icon={ 'history' } />
-					{
+					{ timestamp ? (
 						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
 							args: {
 								time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
 							},
 							components: { b: <b /> },
 						} )
-					}
+					) : (
+						' '
+					) }
 				</div>
 				<div className="activity-log-confirm-dialog__line">
 					<Gridicon icon={ 'notice' } />
 					{ translate( 'This will remove all content and options created or changed since then.' ) }
 				</div>
 
-				<div className="activity-log-confirm-dialog__button-wrap">
-					{ this.renderButtons() }
-				</div>
+				<div className="activity-log-confirm-dialog__button-wrap">{ this.renderButtons() }</div>
 
 				<a
 					className="activity-log-confirm-dialog__more-info-link"

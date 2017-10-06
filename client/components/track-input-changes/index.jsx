@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { assign, noop } from 'lodash';
@@ -9,11 +12,11 @@ export default class TrackInputChanges extends Component {
 	static displayName = 'TrackInputChanges';
 
 	static propTypes = {
-		onNewValue: PropTypes.func
+		onNewValue: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onNewValue: noop
+		onNewValue: noop,
 	};
 
 	componentWillMount() {
@@ -47,7 +50,7 @@ export default class TrackInputChanges extends Component {
 					child.props.onBlur.call( child, event );
 				}
 				this.onInputBlur( event );
-			}
+			},
 		} );
 
 		return React.cloneElement( child, props );

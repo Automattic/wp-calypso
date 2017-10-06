@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { items } from '../reducer';
 import {
 	READER_SITE_BLOCK_REQUEST,
 	READER_SITE_BLOCK_REQUEST_SUCCESS,
@@ -16,7 +17,6 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 } from 'state/action-types';
-import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

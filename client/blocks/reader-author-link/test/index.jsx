@@ -1,21 +1,21 @@
 /** @format */
-jest.mock( 'reader/stats', () => ( {
-	recordAction: () => {},
-	recordGaEvent: () => {},
-	recordTrackForPost: () => {},
-} ) );
-
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import ReaderAuthorLink from '../index';
+
+jest.mock( 'reader/stats', () => ( {
+	recordAction: () => {},
+	recordGaEvent: () => {},
+	recordTrackForPost: () => {},
+} ) );
 
 describe( 'ReaderAuthorLink', () => {
 	let author;

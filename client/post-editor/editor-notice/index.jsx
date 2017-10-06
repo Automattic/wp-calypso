@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -28,12 +32,14 @@ export class EditorNotice extends Component {
 		message: PropTypes.string,
 		status: PropTypes.string,
 		onDismissClick: PropTypes.func,
-		error: PropTypes.object
-	}
+		error: PropTypes.object,
+	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( isMobile() &&
-			( ( ! this.props.message && nextProps.message ) || ( ! this.props.error && nextProps.error ) ) ) {
+		if (
+			isMobile() &&
+			( ( ! this.props.message && nextProps.message ) || ( ! this.props.error && nextProps.error ) )
+		) {
 			// If we are showing a notice that didn't exist before, switch to the main editor view to show it
 			this.props.setLayoutFocus( 'content' );
 		}
@@ -47,7 +53,7 @@ export class EditorNotice extends Component {
 
 		switch ( error.message ) {
 			case 'NO_CONTENT':
-				return translate( 'You haven\'t written anything yet!' );
+				return translate( "You haven't written anything yet!" );
 		}
 	}
 
@@ -60,7 +66,9 @@ export class EditorNotice extends Component {
 			case 'warnPublishDateChange':
 				// This message can only appear for type === 'post'.  See
 				// PostEditor#checkForDateChange().
-				return translate( 'Are you sure about that? If you change the date, existing links to your post will stop working.' );
+				return translate(
+					'Are you sure about that? If you change the date, existing links to your post will stop working.'
+				);
 
 			case 'publishFailure':
 				if ( 'page' === type ) {
@@ -68,10 +76,7 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate(
-						'Publishing of %(typeLabel)s failed.',
-						{ args: { typeLabel } }
-					);
+					return translate( 'Publishing of %(typeLabel)s failed.', { args: { typeLabel } } );
 				}
 
 				return translate( 'Publishing of post failed.' );
@@ -85,10 +90,7 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate(
-						'Trashing of %(typeLabel)s failed.',
-						{ args: { typeLabel } }
-					);
+					return translate( 'Trashing of %(typeLabel)s failed.', { args: { typeLabel } } );
 				}
 
 				return translate( 'Trashing of post failed.' );
@@ -100,10 +102,7 @@ export class EditorNotice extends Component {
 					}
 
 					if ( 'post' !== type && typeLabel ) {
-						return translate(
-							'%(typeLabel)s published!',
-							{ args: { typeLabel } }
-						);
+						return translate( '%(typeLabel)s published!', { args: { typeLabel } } );
 					}
 
 					return translate( 'Post published!' );
@@ -112,10 +111,15 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 							a: <a href={ `/page/${ site.slug }` } />,
 						},
-						comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
+						comment:
+							'Editor: Message displayed when a page is published, with a link to the site it was published on.',
 					} );
 				}
 
@@ -123,17 +127,27 @@ export class EditorNotice extends Component {
 					return translate( '%(typeLabel)s published on {{siteLink/}}!', {
 						args: { typeLabel },
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 						},
-						comment: 'Editor: Message displayed when a post of a custom type is published, with a link to the site it was published on.'
+						comment:
+							'Editor: Message displayed when a post of a custom type is published, with a link to the site it was published on.',
 					} );
 				}
 
 				return translate( 'Post published on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+						siteLink: (
+							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								{ site.title }
+							</a>
+						),
 					},
-					comment: 'Editor: Message displayed when a post is published, with a link to the site it was published on.'
+					comment:
+						'Editor: Message displayed when a post is published, with a link to the site it was published on.',
 				} );
 
 			case 'scheduled':
@@ -143,10 +157,7 @@ export class EditorNotice extends Component {
 					}
 
 					if ( 'post' !== type && typeLabel ) {
-						return translate(
-							'%(typeLabel)s scheduled!',
-							{ args: { typeLabel } }
-						);
+						return translate( '%(typeLabel)s scheduled!', { args: { typeLabel } } );
 					}
 
 					return translate( 'Post scheduled!' );
@@ -155,10 +166,15 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page scheduled on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 							a: <a href={ `/page/${ site.slug }` } />,
 						},
-						comment: 'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.'
+						comment:
+							'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.',
 					} );
 				}
 
@@ -166,26 +182,39 @@ export class EditorNotice extends Component {
 					return translate( '%(typeLabel)s scheduled on {{siteLink/}}!', {
 						args: { typeLabel },
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 						},
-						comment: 'Editor: Message displayed when a post of a custom type is scheduled, with a link to the site it was scheduled on.'
+						comment:
+							'Editor: Message displayed when a post of a custom type is scheduled, with a link to the site it was scheduled on.',
 					} );
 				}
 
 				return translate( 'Post scheduled on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+						siteLink: (
+							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								{ site.title }
+							</a>
+						),
 					},
-					comment: 'Editor: Message displayed when a post is scheduled, with a link to the site it was scheduled on.'
+					comment:
+						'Editor: Message displayed when a post is scheduled, with a link to the site it was scheduled on.',
 				} );
 
 			case 'publishedPrivately':
-				return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
-					components: {
-						strong: <strong />,
-					},
-					comment: 'Editor: Message displayed when a post is published privately.',
-				} );
+				return translate(
+					'{{strong}}Published privately.{{/strong}} Only admins and editors can view.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						comment: 'Editor: Message displayed when a post is published privately.',
+					}
+				);
 
 			case 'view':
 				if ( 'page' === type ) {
@@ -208,10 +237,7 @@ export class EditorNotice extends Component {
 					}
 
 					if ( 'post' !== type && typeLabel ) {
-						return translate(
-							'%(typeLabel)s updated!',
-							{ args: { typeLabel } }
-						);
+						return translate( '%(typeLabel)s updated!', { args: { typeLabel } } );
 					}
 
 					return translate( 'Post updated!' );
@@ -220,10 +246,15 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 							a: <a href={ `/page/${ site.slug }` } />,
 						},
-						comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
+						comment:
+							'Editor: Message displayed when a page is updated, with a link to the site it was updated on.',
 					} );
 				}
 
@@ -231,17 +262,27 @@ export class EditorNotice extends Component {
 					return translate( '%(typeLabel)s updated on {{siteLink/}}!', {
 						args: { typeLabel },
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: (
+								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+									{ site.title }
+								</a>
+							),
 						},
-						comment: 'Editor: Message displayed when a post of a custom type is updated, with a link to the site it was updated on.'
+						comment:
+							'Editor: Message displayed when a post of a custom type is updated, with a link to the site it was updated on.',
 					} );
 				}
 
 				return translate( 'Post updated on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+						siteLink: (
+							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								{ site.title }
+							</a>
+						),
 					},
-					comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
+					comment:
+						'Editor: Message displayed when a post is updated, with a link to the site it was updated on.',
 				} );
 		}
 		/* eslint-enable max-len */
@@ -254,29 +295,26 @@ export class EditorNotice extends Component {
 		return (
 			<div className={ classNames( 'editor-notice', { 'is-global': true } ) }>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
-				{ text && (
-					<Notice
-						{ ...{ status, text, onDismissClick } }
-						showDismiss={ true }
-					>
-					</Notice>
-				) }
+				{ text && <Notice { ...{ status, text, onDismissClick } } showDismiss={ true } /> }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const post = getEditedPost( state, siteId, getEditorPostId( state ) );
-	if ( ! post ) {
-		return {};
-	}
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const post = getEditedPost( state, siteId, getEditorPostId( state ) );
+		if ( ! post ) {
+			return {};
+		}
 
-	return {
-		siteId,
-		site: getSelectedSite( state ),
-		type: post.type,
-		typeObject: getPostType( state, siteId, post.type ),
-	};
-}, { setLayoutFocus } )( localize( EditorNotice ) );
+		return {
+			siteId,
+			site: getSelectedSite( state ),
+			type: post.type,
+			typeObject: getPostType( state, siteId, post.type ),
+		};
+	},
+	{ setLayoutFocus }
+)( localize( EditorNotice ) );

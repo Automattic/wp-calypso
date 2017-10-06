@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import cookie from 'cookie';
 import debug from 'debug';
 import qs from 'qs';
@@ -15,7 +18,11 @@ import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
-import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+import {
+	retarget,
+	recordAliasInFloodlight,
+	recordPageViewInFloodlight,
+} from 'lib/analytics/ad-tracking';
 import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 /**
@@ -26,18 +33,15 @@ const gaDebug = debug( 'calypso:analytics:ga' );
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
 
-let _superProps,
-	_user,
-	_selectedSite,
-	_siteCount,
-	_dispatch,
-	_loadTracksError;
+let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
-window.ga = window.ga || function() {
-	( window.ga.q = window.ga.q || [] ).push( arguments );
-};
+window.ga =
+	window.ga ||
+	function() {
+		( window.ga.q = window.ga.q || [] ).push( arguments );
+	};
 window.ga.l = +new Date();
 
 function getUrlParameter( name ) {
@@ -47,7 +51,8 @@ function getUrlParameter( name ) {
 	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
 }
 
-function createRandomId( randomBytesLength = 9 ) { // 9 * 4/3 = 12
+function createRandomId( randomBytesLength = 9 ) {
+	// 9 * 4/3 = 12
 	// this is to avoid getting padding of a random byte string when it is base64 encoded
 	let randomBytes;
 
@@ -88,7 +93,9 @@ function checkForBlockedTracks() {
 		}
 	}
 
-	loadScript( '/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui ) );
+	loadScript(
+		'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
+	);
 }
 
 loadScript( '//stats.wp.com/w.js?56', function( error ) {
@@ -199,7 +206,12 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystring( group, name );
-				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + uriComponent + '&t=' + Math.random();
+				new Image().src =
+					document.location.protocol +
+					'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
+					uriComponent +
+					'&t=' +
+					Math.random();
 			}
 		},
 
@@ -213,9 +225,14 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystringNoPrefix( group, name );
-				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom' + uriComponent + '&t=' + Math.random();
+				new Image().src =
+					document.location.protocol +
+					'//pixel.wp.com/g.gif?v=wpcom' +
+					uriComponent +
+					'&t=' +
+					Math.random();
 			}
-		}
+		},
 	},
 
 	// pageView is a wrapper for pageview events across Tracks and GA
@@ -229,7 +246,7 @@ const analytics = {
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );
 			}, 0 );
-		}
+		},
 	},
 
 	timing: {
@@ -237,7 +254,7 @@ const analytics = {
 			const urlPath = mostRecentUrlPath || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
-		}
+		},
 	},
 
 	tracks: {
@@ -249,10 +266,9 @@ const analytics = {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
-						const errorMessage = (
+						const errorMessage =
 							`Unable to record event "${ eventName }" because nested` +
-							`properties are not supported by Tracks. Check '${ key }' on`
-						);
+							`properties are not supported by Tracks. Check '${ key }' on`;
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
 
 						return;
@@ -286,7 +302,7 @@ const analytics = {
 		recordPageView: function( urlPath, params ) {
 			let eventProperties = {
 				path: urlPath,
-				do_not_track: doNotTrack() ? 1 : 0
+				do_not_track: doNotTrack() ? 1 : 0,
 			};
 
 			// add optional path params
@@ -330,17 +346,18 @@ const analytics = {
 
 		setAnonymousUserId: function( anonId ) {
 			window._tkq.push( [ 'identifyAnonUser', anonId ] );
-		}
+		},
 	},
 
 	statsd: {
 		/* eslint-disable no-unused-vars */
 		recordTiming: function( pageUrl, eventType, duration, triggerName ) {
-		// ignore triggerName for now, it has no obvious place in statsd
-		/* eslint-enable no-unused-vars */
+			// ignore triggerName for now, it has no obvious place in statsd
+			/* eslint-enable no-unused-vars */
 
 			if ( config( 'boom_analytics_enabled' ) ) {
-				let featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
+				let featureSlug =
+					pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
 				let matched;
 				// prevent explosion of read list metrics
 				// this is a hack - ultimately we want to report this URLs in a more generic way to
@@ -351,8 +368,6 @@ const analytics = {
 					featureSlug = 'tag__id';
 				} else if ( startsWith( featureSlug, 'domains_add_suggestion_' ) ) {
 					featureSlug = 'domains_add_suggestion__suggestion__domain';
-				} else if ( startsWith( document.location.pathname, '/plugins/browse/' ) ) {
-					featureSlug = 'plugins_browse__site';
 				} else if ( featureSlug.match( /^plugins_[^_].*__/ ) ) {
 					featureSlug = 'plugins__site__plugin';
 				} else if ( featureSlug.match( /^plugins_[^_]/ ) ) {
@@ -368,12 +383,11 @@ const analytics = {
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
 				new Image().src = imgUrl;
 			}
-		}
+		},
 	},
 
 	// Google Analytics usage and event stat tracking
 	ga: {
-
 		initialized: false,
 
 		initialize: function() {
@@ -407,7 +421,7 @@ const analytics = {
 			window.ga( 'send', {
 				hitType: 'pageview',
 				page: urlPath,
-				title: pageTitle
+				title: pageTitle,
 			} );
 		},
 
@@ -443,7 +457,7 @@ const analytics = {
 			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
 			window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
-		}
+		},
 	},
 
 	// HotJar tracking
@@ -456,9 +470,11 @@ const analytics = {
 
 			( function( h, o, t, j, a, r ) {
 				hotjarDebug( 'Loading HotJar script' );
-				h.hj = h.hj || function() {
-					( h.hj.q = h.hj.q || [] ).push( arguments );
-				};
+				h.hj =
+					h.hj ||
+					function() {
+						( h.hj.q = h.hj.q || [] ).push( arguments );
+					};
 				h._hjSettings = { hjid: 227769, hjsv: 5 };
 				a = o.getElementsByTagName( 'head' )[ 0 ];
 				r = o.createElement( 'script' );
@@ -466,7 +482,7 @@ const analytics = {
 				r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
 				a.appendChild( r );
 			} )( window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=' );
-		}
+		},
 	},
 
 	identifyUser: function() {
@@ -488,7 +504,7 @@ const analytics = {
 
 	clearedIdentity: function() {
 		window._tkq.push( [ 'clearIdentity' ] );
-	}
+	},
 };
 emitter( analytics );
 export default analytics;

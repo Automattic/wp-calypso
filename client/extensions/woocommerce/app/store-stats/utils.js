@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find, includes } from 'lodash';
 import classnames from 'classnames';
 import { moment } from 'i18n-calypso';
@@ -39,10 +42,12 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 	if ( previousItem && previousItem[ attr ] !== 0 ) {
 		const current = item[ attr ];
 		const previous = previousItem[ attr ];
-		value = Math.round( ( ( current - previous ) / previous ) * 100 );
+		value = Math.round( ( current - previous ) / previous * 100 );
 	}
 	const isIncrease = value > 0;
-	const isIncreaseFavorable = includes( negativeIsBeneficialAttributes, attr ) ? ! isIncrease : isIncrease;
+	const isIncreaseFavorable = includes( negativeIsBeneficialAttributes, attr )
+		? ! isIncrease
+		: isIncrease;
 	const classes = classnames( {
 		'is-neutral': value === 0,
 		'is-increase': value > 0,
@@ -99,9 +104,13 @@ export function getUnitPeriod( date, unit ) {
  * @return {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getEndPeriod( date, unit ) {
-	return ( unit === 'week' )
-		? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-		: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+	return unit === 'week'
+		? moment( date )
+				.endOf( 'isoWeek' )
+				.format( 'YYYY-MM-DD' )
+		: moment( date )
+				.endOf( unit )
+				.format( 'YYYY-MM-DD' );
 }
 
 /**
@@ -133,8 +142,6 @@ export function formatValue( value, format, code ) {
  * @return {array} - array of delta objects matching selectedDate
 */
 export function getDelta( deltas, selectedDate, stat ) {
-	const selectedDeltas = find( deltas, ( item ) =>
-		item.period === selectedDate
-	);
+	const selectedDeltas = find( deltas, item => item.period === selectedDate );
 	return selectedDeltas[ stat ];
 }

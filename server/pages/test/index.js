@@ -1,5 +1,4 @@
-jest.mock( 'lib/analytics', () => {} );
-
+/** @format */
 /**
  * External dependencies
  */
@@ -10,6 +9,8 @@ import ReactDomServer from 'react-dom/server';
  * Internal dependencies
  */
 import LayoutLoggedOut from 'layout/logged-out';
+
+jest.mock( 'lib/analytics', () => {} );
 
 describe( 'index', () => {
 	describe( 'when trying to renderToString() LayoutLoggedOut ', () => {
@@ -26,7 +27,7 @@ describe( 'index', () => {
 			};
 
 			expect(
-				ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) ),
+				ReactDomServer.renderToString.bind( ReactDomServer, LayoutLoggedOutFactory( props ) )
 			).not.toThrow();
 		} );
 	} );

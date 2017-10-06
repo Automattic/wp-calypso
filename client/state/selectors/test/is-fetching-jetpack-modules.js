@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,9 +16,9 @@ describe( 'isFetchingJetpackModules()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 123456;
 		const output = isFetchingJetpackModules( stateIn, siteId );
@@ -27,9 +29,9 @@ describe( 'isFetchingJetpackModules()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 654321;
 		const output = isFetchingJetpackModules( stateIn, siteId );
@@ -40,9 +42,9 @@ describe( 'isFetchingJetpackModules()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 888888;
 		const output = isFetchingJetpackModules( stateIn, siteId );

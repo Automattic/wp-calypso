@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wp from 'lib/wp';
 import {
 	PREFERENCES_SET,
@@ -10,7 +13,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
+	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
@@ -26,7 +29,7 @@ const wpcom = wp.undocumented();
 export function receivePreferences( values ) {
 	return {
 		type: PREFERENCES_RECEIVE,
-		values
+		values,
 	};
 }
 
@@ -35,18 +38,23 @@ export function receivePreferences( values ) {
  * @returns { Function }                      Action thunk
  */
 export function fetchPreferences() {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( { type: PREFERENCES_FETCH } );
 
-		return wpcom.me().preferences().get().then( ( data ) => {
-			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-			dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
-		} ).catch( ( data, error ) => {
-			dispatch( {
-				type: PREFERENCES_FETCH_FAILURE,
-				error
+		return wpcom
+			.me()
+			.preferences()
+			.get()
+			.then( data => {
+				dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
+				dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
+			} )
+			.catch( ( data, error ) => {
+				dispatch( {
+					type: PREFERENCES_FETCH_FAILURE,
+					error,
+				} );
 			} );
-		} );
 	};
 }
 
@@ -61,7 +69,7 @@ export function fetchPreferences() {
 export const setPreference = ( key, value ) => ( {
 	type: PREFERENCES_SET,
 	key,
-	value
+	value,
 } );
 
 /**
@@ -75,26 +83,31 @@ export const savePreference = ( key, value ) => dispatch => {
 	dispatch( {
 		type: PREFERENCES_SAVE,
 		key,
-		value
+		value,
 	} );
 
 	const payload = JSON.stringify( {
 		[ USER_SETTING_KEY ]: {
-			[ key ]: value
-		}
+			[ key ]: value,
+		},
 	} );
 
-	return wpcom.me().preferences().update( payload ).then( ( data ) => {
-		dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-		dispatch( {
-			type: PREFERENCES_SAVE_SUCCESS,
-			key,
-			value
+	return wpcom
+		.me()
+		.preferences()
+		.update( payload )
+		.then( data => {
+			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
+			dispatch( {
+				type: PREFERENCES_SAVE_SUCCESS,
+				key,
+				value,
+			} );
+		} )
+		.catch( error => {
+			dispatch( {
+				type: PREFERENCES_SAVE_FAILURE,
+				error,
+			} );
 		} );
-	} ).catch( ( error ) => {
-		dispatch( {
-			type: PREFERENCES_SAVE_FAILURE,
-			error
-		} );
-	} );
 };

@@ -98,7 +98,7 @@
 	text-decoration: none;
 }
 
-.editor-simple-payments-modal__navigation {
+.editor-simple-payments-modal__navigation.card {
 	margin: 0;
 	flex: none;
 }
@@ -152,7 +152,7 @@
 	overflow-y: auto;
 }
 
-.editor-simple-payments-modal__list-item {
+.editor-simple-payments-modal__list-item.card {
 	display: flex;
 	align-items: center;
 

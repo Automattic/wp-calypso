@@ -129,7 +129,7 @@ class PostComment extends React.PureComponent {
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
 		return immediateChildren.concat(
-			flatMap( immediateChildren, child => this.getAllChildrenIds( child.ID ) )
+			flatMap( immediateChildren, childId => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -222,7 +222,7 @@ class PostComment extends React.PureComponent {
 								onEditCommentCancel={ this.props.onEditCommentCancel }
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
-								onCommentSubmit={ this.props.resetActiveReplyComment }
+								onCommentSubmit={ this.props.onCommentSubmit }
 							/>
 						) ) }
 					</ol>
@@ -233,6 +233,16 @@ class PostComment extends React.PureComponent {
 
 	renderCommentForm() {
 		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
+			return null;
+		}
+
+		// If a comment save is pending, don't show the form
+		const placeholderState = get( this.props.commentsTree, [
+			this.props.commentId,
+			'data',
+			'placeholderState',
+		] );
+		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
 			return null;
 		}
 
@@ -434,6 +444,7 @@ class PostComment extends React.PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						commentsToShow={ commentsToShow }
 					/>
 				) }
 				{ this.renderRepliesList() }

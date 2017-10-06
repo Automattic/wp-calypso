@@ -1,8 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import { combineReducers, createReducer } from 'state/utils';
 
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
@@ -17,7 +19,8 @@ const isRequesting = createReducer( false, {
 } );
 
 const isUserEligible = createReducer( false, {
-	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: ( state, { configuration } ) => configuration.is_user_eligible,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: ( state, { configuration } ) =>
+		configuration.is_user_eligible,
 } );
 
 const isReady = createReducer( false, {

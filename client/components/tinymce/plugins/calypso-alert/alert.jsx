@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -13,9 +17,9 @@ export default React.createClass( {
 	displayName: 'Alert',
 
 	propTypes: {
-		isVisible: React.PropTypes.bool.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		message: React.PropTypes.string.isRequired,
+		isVisible: PropTypes.bool.isRequired,
+		onClose: PropTypes.func.isRequired,
+		message: PropTypes.string.isRequired,
 	},
 
 	splitMessage() {
@@ -31,7 +35,7 @@ export default React.createClass( {
 				onClick={ this.props.onClose }
 			>
 				{ this.translate( 'OK' ) }
-			</FormButton>
+			</FormButton>,
 		];
 	},
 
@@ -46,5 +50,5 @@ export default React.createClass( {
 				{ this.splitMessage() }
 			</Dialog>
 		);
-	}
+	},
 } );

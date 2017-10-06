@@ -1,10 +1,7 @@
-/** @jest-environment jsdom */
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () => require( './mocks/plugin-action' ) );
-jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock(
-	'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button',
-	() => require( 'components/empty-component' )
-);
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -21,11 +18,19 @@ import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import { PluginActivateToggle } from 'my-sites/plugins/plugin-activate-toggle';
 
+jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+	require( './mocks/plugin-action' )
+);
+jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
+jest.mock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', () =>
+	require( 'components/empty-component' )
+);
+
 describe( 'PluginActivateToggle', function() {
 	const analyticsMock = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
-		translate: spy()
+		translate: spy(),
 	};
 
 	afterEach( function() {

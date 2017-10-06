@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -17,7 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 
-class JetpackConnectSiteUrlInput extends Component {
+class JetpackConnectSiteUrlInput extends PureComponent {
 	static propTypes = {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),

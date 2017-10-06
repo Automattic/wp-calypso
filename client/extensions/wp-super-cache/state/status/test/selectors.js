@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,10 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingStatus,
-	getStatus,
-} from '../selectors';
+import { isRequestingStatus, getStatus } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -20,7 +19,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
-				}
+				},
 			};
 			const isRequesting = isRequestingStatus( state, primarySiteId );
 
@@ -34,10 +33,10 @@ describe( 'selectors', () => {
 						status: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingStatus( state, secondarySiteId );
 
@@ -51,10 +50,10 @@ describe( 'selectors', () => {
 						status: {
 							requesting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingStatus( state, primarySiteId );
 
@@ -68,10 +67,10 @@ describe( 'selectors', () => {
 						status: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isRequesting = isRequestingStatus( state, primarySiteId );
 
@@ -84,14 +83,14 @@ describe( 'selectors', () => {
 			cache_writable: {
 				message: '/home/public_html/ is writable.',
 				type: 'warning',
-			}
+			},
 		};
 
 		it( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
-				}
+				},
 			};
 			const status = getStatus( state, primarySiteId );
 
@@ -105,10 +104,10 @@ describe( 'selectors', () => {
 						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const status = getStatus( state, secondarySiteId );
 
@@ -122,10 +121,10 @@ describe( 'selectors', () => {
 						status: {
 							items: {
 								[ primarySiteId ]: primaryNotices,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const status = getStatus( state, primarySiteId );
 

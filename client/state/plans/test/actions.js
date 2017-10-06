@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,17 +14,13 @@ import {
 	plansRequestFailureAction,
 	requestPlans,
 } from '../actions';
-
-/**
- * Fixture data
- */
 import {
 	ACTION_PLANS_RECEIVE,
 	ACTION_PLANS_REQUEST,
 	ACTION_PLANS_REQUEST_SUCCESS,
 	ACTION_PLANS_REQUEST_FAILURE,
 	WPCOM_RESPONSE as wpcomResponse,
-	ERROR_MESSAGE_RESPONSE as errorResponse
+	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
 
 describe( 'actions', () => {

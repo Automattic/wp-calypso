@@ -1,10 +1,17 @@
-var plugins = require( './plugins' );
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
+
+import plugins from './plugins';
+
 module.exports = {
 	ID: 91234567890,
 	URL: 'http://example.com/site1',
 	canUpdateFiles: true,
 	capabilities: {
-		manage_options: true
+		manage_options: true,
 	},
 	description: 'Just another Sandbox Sites site',
 	domain: 'example.com/site1',
@@ -20,7 +27,7 @@ module.exports = {
 	name: 'Site 1',
 	options: {
 		jetpack_version: '3.7.0-dev',
-		is_multi_site: false
+		is_multi_site: false,
 	},
 	plan: 1,
 	plugins: plugins,
@@ -34,5 +41,5 @@ module.exports = {
 	user_can_manage: true,
 	visible: true,
 	wpcom_url: 'example.com/site1',
-	isMainNetworkSite: function() {}
+	isMainNetworkSite: function() {},
 };

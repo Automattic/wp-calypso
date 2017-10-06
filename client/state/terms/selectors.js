@@ -1,16 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedTermsQuery,
-	getSerializedTermsQueryWithoutPage
-} from './utils';
+import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
@@ -43,7 +43,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( ( page ) => {
+	return range( 1, lastPage + 1 ).some( page => {
 		const termsQuery = { ...query, page };
 		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
 	} );

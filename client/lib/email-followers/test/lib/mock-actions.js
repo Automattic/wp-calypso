@@ -1,6 +1,12 @@
-var site = require( './mock-site' ),
-	followerData = require( './mock-email-followers' ),
-	moreFollowerData = require( './mock-more-email-followers' );
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
+
+import site from './mock-site';
+import followerData from './mock-email-followers';
+import moreFollowerData from './mock-more-email-followers';
 
 module.exports = {
 	fetchedFollowers: {
@@ -8,10 +14,10 @@ module.exports = {
 		fetchOptions: {
 			siteId: site.ID,
 			page: 1,
-			max: 2
+			max: 2,
 		},
 		data: followerData,
-		error: null
+		error: null,
 	},
 
 	fetchedMoreFollowers: {
@@ -19,27 +25,27 @@ module.exports = {
 		fetchOptions: {
 			siteId: site.ID,
 			page: 2,
-			max: 2
+			max: 2,
 		},
 		data: moreFollowerData,
-		error: null
+		error: null,
 	},
 
 	removeFollower: {
 		type: 'REMOVE_EMAIL_FOLLOWER',
 		siteId: site.ID,
-		follower: followerData.subscribers[ 0 ]
+		follower: followerData.subscribers[ 0 ],
 	},
 
 	removeFollowerSuccess: {
 		type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_SUCCESS',
 		siteId: site.ID,
-		follower: followerData.subscribers[ 0 ]
+		follower: followerData.subscribers[ 0 ],
 	},
 
 	removeFollowerError: {
 		type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_ERROR',
 		siteId: site.ID,
-		follower: followerData.subscribers[ 0 ]
-	}
+		follower: followerData.subscribers[ 0 ],
+	},
 };

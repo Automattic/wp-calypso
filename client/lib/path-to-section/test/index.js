@@ -1,12 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 
-import {
-	wpcomImplementation,
-	fallbackImplementation
-} from '..';
+/**
+ * Internal dependencies
+ */
+import { wpcomImplementation, fallbackImplementation } from '..';
 
 describe( 'pathToSection', () => {
 	describe( 'wpcomImplementation', () => {

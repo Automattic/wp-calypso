@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import {
-	USER_DEVICES_REQUEST,
-	USER_DEVICES_ADD,
-} from 'state/action-types';
+
+import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'state/action-types';
 
 /**
  * Returns an action object to signal the request of the user's devices.

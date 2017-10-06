@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
 import { writeReplyComment } from '../';
+import * as Utils from 'state/data-layer/wpcom/sites/utils';
 
 describe( '#writeReplyComment()', () => {
 	const action = {
@@ -29,7 +31,7 @@ describe( '#writeReplyComment()', () => {
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
 			dispatch,
 			action,
-			'/sites/2916284/comments/1/replies/new',
+			'/sites/2916284/comments/1/replies/new'
 		);
 		dispatchNewCommentRequestSpy.restore();
 	} );

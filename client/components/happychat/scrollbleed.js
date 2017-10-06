@@ -1,10 +1,14 @@
-/*
+/**
+ * /*
  * A mixin that prevents scrolling events triggered by the mousewheel from moving scrollable containers
  * not directly under the mouse.
- *
+ * 
  * By default when scrolling a scrollable HTML element, once the boundary is reached the scrolling events
  * will continue up the DOM tree and ultimately end up scrolling the page.
+ *
+ * @format
  */
+
 export default {
 	componentWillUnmount() {
 		this.scrollbleedUnlock();
@@ -28,16 +32,22 @@ export default {
 
 		// scroll the window itself using JS
 		// this is not perfect, we're basically guessing at how much your wheel usually scrolls
-		if ( e === 'DOMMouseScroll' ) { // old FF
+		if ( e === 'DOMMouseScroll' ) {
+			// old FF
 			delta = e.detail * -10;
-		} else if ( e.wheelDelta ) { // webkit
+		} else if ( e.wheelDelta ) {
+			// webkit
 			delta = e.wheelDelta / 8;
-		} else if ( e.deltaY ) { // new FF
-			if ( e.deltaMode && e.deltaMode === 0 )	{			// scrolling pixels
+		} else if ( e.deltaY ) {
+			// new FF
+			if ( e.deltaMode && e.deltaMode === 0 ) {
+				// scrolling pixels
 				delta = -1 * e.deltaY;
-			} else if ( e.deltaMode && e.deltaMode === 1 ) { 	// scrolling lines
+			} else if ( e.deltaMode && e.deltaMode === 1 ) {
+				// scrolling lines
 				delta = -1 * e.deltaY * 15;
-			} else { 											// fallback
+			} else {
+				// fallback
 				delta = -1 * e.deltaY * 10;
 			}
 		}
@@ -46,7 +56,8 @@ export default {
 	},
 
 	scrollbleedLock() {
-		if ( window.addEventListener ) { // older FF
+		if ( window.addEventListener ) {
+			// older FF
 			window.addEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
 		}
 		window.onwheel = this._scrollbleed_handleScroll;
@@ -54,10 +65,11 @@ export default {
 	},
 
 	scrollbleedUnlock() {
-		if ( window.removeEventListener ) { // older FF
+		if ( window.removeEventListener ) {
+			// older FF
 			window.removeEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
 		}
 		window.onwheel = null;
 		window.onmousewheel = document.onmousewheel = null;
-	}
+	},
 };

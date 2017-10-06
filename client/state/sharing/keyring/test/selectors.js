@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,7 @@ import {
 	getKeyringConnectionById,
 	getKeyringConnectionsByName,
 	getUserConnections,
-	isKeyringConnectionsFetching
+	isKeyringConnectionsFetching,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -20,8 +22,8 @@ describe( 'selectors', () => {
 			keyring: {
 				items: {},
 				isFetching: false,
-			}
-		}
+			},
+		},
 	};
 	const activeState = {
 		sharing: {
@@ -32,8 +34,8 @@ describe( 'selectors', () => {
 					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 				},
 				isFetching: true,
-			}
-		}
+			},
+		},
 	};
 
 	describe( 'getKeyringConnections()', () => {
@@ -64,9 +66,7 @@ describe( 'selectors', () => {
 		it( 'should return the connection object for the ID', () => {
 			const connections = getKeyringConnectionById( activeState, 1 );
 
-			expect( connections ).to.eql(
-				{ ID: 1, service: 'twitter', sites: [ '2916284' ] },
-			);
+			expect( connections ).to.eql( { ID: 1, service: 'twitter', sites: [ '2916284' ] } );
 		} );
 	} );
 

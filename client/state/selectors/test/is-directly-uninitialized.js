@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,14 +8,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { isDirectlyUninitialized } from '../';
 import {
 	STATUS_ERROR,
 	STATUS_INITIALIZING,
 	STATUS_READY,
 	STATUS_UNINITIALIZED,
 } from 'state/help/directly/constants';
-
-import { isDirectlyUninitialized } from '../';
 
 describe( 'isDirectlyUninitialized()', () => {
 	it( 'should be true when uninitialized', () => {

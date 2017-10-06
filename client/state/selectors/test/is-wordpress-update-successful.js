@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,9 +19,9 @@ describe( 'isWordpressUpdateSuccessful()', () => {
 				updates: {
 					wordpressUpdateStatus: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isWordpressUpdateSuccessful( state, siteId );
 		expect( output ).to.be.true;
@@ -31,9 +33,9 @@ describe( 'isWordpressUpdateSuccessful()', () => {
 				updates: {
 					wordpressUpdateStatus: {
 						77203074: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		const output = isWordpressUpdateSuccessful( state, siteId );
 		expect( output ).to.be.null;

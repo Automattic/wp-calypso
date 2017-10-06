@@ -1,32 +1,35 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' );
-
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faBackupCodesPrompt',
 
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
+		onPrintAgain: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
 	},
 
 	componentDidMount: function() {
@@ -41,7 +44,7 @@ module.exports = React.createClass( {
 		return {
 			backupCodeEntry: '',
 			lastError: false,
-			submittingCode: false
+			submittingCode: false,
 		};
 	},
 
@@ -66,12 +69,16 @@ module.exports = React.createClass( {
 	onRequestComplete: function( error, data ) {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
-			this.setState( { lastError: this.translate( 'Unable to validate codes right now. Please try again later.' ) } );
+			this.setState( {
+				lastError: this.translate( 'Unable to validate codes right now. Please try again later.' ),
+			} );
 			return;
 		}
 
 		if ( ! data.success ) {
-			this.setState( { lastError: this.translate( 'You entered an invalid code. Please try again.' ), } );
+			this.setState( {
+				lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+			} );
 			return;
 		}
 
@@ -128,7 +135,9 @@ module.exports = React.createClass( {
 		return (
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
-					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
+					<FormLabel htmlFor="backup-code-entry">
+						{ this.translate( 'Type a Backup Code to Verify' ) }
+					</FormLabel>
 					<FormTelInput
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
@@ -137,7 +146,10 @@ module.exports = React.createClass( {
 						placeholder={ constants.eightDigitBackupCodePlaceholder }
 						valueLink={ this.linkState( 'backupCodeEntry' ) }
 						onFocus={ function() {
-							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input' );
+							analytics.ga.recordEvent(
+								'Me',
+								'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
+							);
 						} }
 					/>
 				</FormFieldset>
@@ -153,9 +165,13 @@ module.exports = React.createClass( {
 						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>
-					{ this.state.submittingCode ? this.translate( 'Verifying…' ) : this.translate( 'Verify' ) }
+					{ this.state.submittingCode ? (
+						this.translate( 'Verifying…' )
+					) : (
+						this.translate( 'Verify' )
+					) }
 				</FormButton>
 			</form>
 		);
-	}
+	},
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -10,7 +13,7 @@ import Gridicon from 'gridicons';
 class ExternalLink extends Component {
 	static defaultProps = {
 		iconSize: 18,
-		showIconFirst: false
+		showIconFirst: false,
 	};
 
 	static propTypes = {
@@ -35,16 +38,26 @@ class ExternalLink extends Component {
 				'has-icon': !! this.props.icon,
 			}
 		);
-		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ), {
-			className: classes,
-			rel: 'external'
-		} );
+		const props = assign(
+			{},
+			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
+			{
+				className: classes,
+				rel: 'external',
+			}
+		);
 
 		if ( props.target ) {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
 
-		const iconComponent = <Gridicon className={ this.props.iconClassName } icon="external" size={ this.props.iconSize } />;
+		const iconComponent = (
+			<Gridicon
+				className={ this.props.iconClassName }
+				icon="external"
+				size={ this.props.iconSize }
+			/>
+		);
 
 		return (
 			<a { ...props }>

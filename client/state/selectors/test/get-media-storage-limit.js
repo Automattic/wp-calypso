@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,17 +42,20 @@ describe( 'getMediaStorageLimit()', () => {
 
 	it( 'should return the limit for a site', () => {
 		const max_storage_bytes = 1029384756;
-		const result = getMediaStorageLimit( {
-			sites: {
-				mediaStorage: {
-					items: {
-						123: {
-							max_storage_bytes,
+		const result = getMediaStorageLimit(
+			{
+				sites: {
+					mediaStorage: {
+						items: {
+							123: {
+								max_storage_bytes,
+							},
 						},
 					},
 				},
 			},
-		}, 123 );
+			123
+		);
 
 		expect( result ).to.equal( max_storage_bytes );
 	} );

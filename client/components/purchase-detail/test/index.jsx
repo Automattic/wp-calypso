@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -27,7 +28,9 @@ describe( 'PurchaseDetail', function() {
 	it( 'should render given title and description', function() {
 		wrapper = shallow( <PurchaseDetail title="test:title" description="test:description" /> );
 		expect( wrapper.find( '.purchase-detail__title' ).props().children ).to.equal( 'test:title' );
-		expect( wrapper.find( '.purchase-detail__description' ).props().children ).to.equal( 'test:description' );
+		expect( wrapper.find( '.purchase-detail__description' ).props().children ).to.equal(
+			'test:description'
+		);
 	} );
 
 	it( 'should render given notice text', function() {

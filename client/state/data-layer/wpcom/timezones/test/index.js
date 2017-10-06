@@ -8,14 +8,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-
-import { timezonesReceive } from 'state/timezones/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-
-/*
- * Util functions
- */
 import { addTimezones, fetchTimezones, fromApi } from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { timezonesReceive } from 'state/timezones/actions';
 
 describe( 'timezones request', () => {
 	describe( 'successful requests', () => {

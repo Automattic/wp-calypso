@@ -1,10 +1,11 @@
-import { connect } from 'react-redux';
-
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -31,24 +32,25 @@ class PlansStep extends Component {
 
 	onSelectPlan( cartItem ) {
 		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			goToNextStep,
-			translate,
-			signupDependencies: { domainItem }
-		} = this.props,
-			privacyItem = cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
+				additionalStepData,
+				stepSectionName,
+				stepName,
+				goToNextStep,
+				translate,
+				signupDependencies: { domainItem },
+			} = this.props,
+			privacyItem =
+				cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
-				from_section: stepSectionName ? stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
-				from_section: stepSectionName ? stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
 
@@ -60,7 +62,7 @@ class PlansStep extends Component {
 			stepSectionName,
 			cartItem,
 			privacyItem,
-			...additionalStepData
+			...additionalStepData,
 		};
 
 		const providedDependencies = { cartItem, privacyItem };
@@ -71,11 +73,13 @@ class PlansStep extends Component {
 	}
 
 	getDomainName() {
-		return this.props.signupDependencies.domainItem && this.props.signupDependencies.domainItem.meta;
+		return (
+			this.props.signupDependencies.domainItem && this.props.signupDependencies.domainItem.meta
+		);
 	}
 
 	plansFeaturesList() {
-		const {	hideFreePlan, selectedSite } = this.props;
+		const { hideFreePlan, selectedSite } = this.props;
 
 		return (
 			<div>
@@ -95,13 +99,7 @@ class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			translate
-		} = this.props;
+		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( "Pick a plan that's right for you." );
 
@@ -114,19 +112,18 @@ class PlansStep extends Component {
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() } />
+				stepContent={ this.plansFeaturesList() }
+			/>
 		);
 	}
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
-			'is-wide-layout': true
+			'is-wide-layout': true,
 		} );
 
-		return <div className={ classes }>
-			{ this.plansFeaturesSelection() }
-		</div>;
+		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
 	}
 }
 
@@ -140,11 +137,9 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, { signupDependencies: { siteSlug } } ) => ( {
-		// This step could be used to set up an existing site, in which case
-		// some descendants of this component may display discounted prices if
-		// they apply to the given site.
-		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null
-	} )
-)( localize( PlansStep ) );
+export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
+	// This step could be used to set up an existing site, in which case
+	// some descendants of this component may display discounted prices if
+	// they apply to the given site.
+	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+} ) )( localize( PlansStep ) );

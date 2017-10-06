@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { USER_RECEIVE } from 'state/action-types';
 import { receiveUser } from '../actions';
+import { USER_RECEIVE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#receiveUser()', () => {
@@ -17,7 +19,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: USER_RECEIVE,
-				user
+				user,
 			} );
 		} );
 	} );

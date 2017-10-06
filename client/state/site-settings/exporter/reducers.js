@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	EXPORT_ADVANCED_SETTINGS_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -11,7 +14,7 @@ import {
 	EXPORT_COMPLETE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
-	EXPORT_FAILURE
+	EXPORT_FAILURE,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 import { States } from './constants';
@@ -28,7 +31,7 @@ const postTypeField = ( state = '', action ) => {
 	switch ( action.type ) {
 		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
-				[ action.fieldName ]: action.value
+				[ action.fieldName ]: action.value,
 			} );
 	}
 	return state;
@@ -38,7 +41,7 @@ const postTypes = ( state = { post: {}, page: {} }, action ) => {
 	switch ( action.type ) {
 		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
-				[ action.postType ]: postTypeField( state[ action.postType ], action )
+				[ action.postType ]: postTypeField( state[ action.postType ], action ),
 			} );
 	}
 	return state;
@@ -48,7 +51,7 @@ export function selectedAdvancedSettings( state = {}, action ) {
 	switch ( action.type ) {
 		case EXPORT_POST_TYPE_FIELD_SET:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: postTypes( state[ action.siteId ], action )
+				[ action.siteId ]: postTypes( state[ action.siteId ], action ),
 			} );
 	}
 	return state;
@@ -64,23 +67,23 @@ export function exportingState( state = {}, { type, siteId } ) {
 	switch ( type ) {
 		case EXPORT_START_REQUEST:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.STARTING
+				[ siteId ]: States.STARTING,
 			} );
 		case EXPORT_STARTED:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.EXPORTING
+				[ siteId ]: States.EXPORTING,
 			} );
 		case EXPORT_COMPLETE:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.COMPLETE
+				[ siteId ]: States.COMPLETE,
 			} );
 		case EXPORT_FAILURE:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.FAILED
+				[ siteId ]: States.FAILED,
 			} );
 		case EXPORT_CLEAR:
 			return Object.assign( {}, state, {
-				[ siteId ]: States.READY
+				[ siteId ]: States.READY,
 			} );
 	}
 	return state;
@@ -96,12 +99,12 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 	switch ( action.type ) {
 		case EXPORT_ADVANCED_SETTINGS_FETCH:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: true
+				[ action.siteId ]: true,
 			} );
 		case EXPORT_ADVANCED_SETTINGS_FAIL:
 		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: false
+				[ action.siteId ]: false,
 			} );
 	}
 	return state;
@@ -117,7 +120,7 @@ export function advancedSettings( state = {}, action ) {
 	switch ( action.type ) {
 		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: action.advancedSettings
+				[ action.siteId ]: action.advancedSettings,
 			} );
 	}
 	return state;

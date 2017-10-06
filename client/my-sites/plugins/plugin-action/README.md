@@ -8,18 +8,18 @@ This component is used to display a plugin action in the form of a toggle or a d
 By default, the PluginAction component will attempt to render a FormToggle.
 
 ```js
-var PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' );
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 
-render: function() {
+render() {
 	return (
 	  <div className="plugin-actions">
-		<PluginAction
-			label={ this.translate( 'Active', { context: 'plugin status' } ) }
-			status={ this.isActive() }
-			action={ this.toggleActivation }
-			inProgress={ this.props.activateInProgress }
-			htmlFor={ 'html-for-attribute-on-label' }
-		/>
+			<PluginAction
+				label={ this.props.translate( 'Active', { context: 'plugin status' } ) }
+				status={ this.isActive() }
+				action={ this.toggleActivation }
+				inProgress={ this.props.activateInProgress }
+				htmlFor={ 'html-for-attribute-on-label' }
+			/>
 	  </div>
 	);
 }
@@ -28,11 +28,11 @@ render: function() {
 This behavior can be overridden by passing a child to the PluginAction component.
 
 ```js
-var PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' );
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 
-render: function() {
+render() {
 	return (
-		<PluginAction label={ this.translate( 'Active and Connected', { context: 'plugin status' } ) }>
+		<PluginAction label={ this.props.translate( 'Active and Connected', { context: 'plugin status' } ) }>
 			<DisconnectJetpackButton disabled={ ! this.props.plugin } site={ this.props.site } redirect="/plugins/jetpack" />
 		</PluginAction>
 	);
@@ -48,4 +48,3 @@ render: function() {
 * `htmlFor`: (string) htmlFor is used for creating the for attribute on the label.
 * `disabledInfo`: ( string ) text that gets displayed in a infoPopover explaining why the action is disabled.
 * `disabled`: ( bool ) whether the toggle is disabled (grayed out and non interactive) or not
-

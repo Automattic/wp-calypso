@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteUrl, getSiteName } from '../get-helpers';
 
@@ -14,7 +14,6 @@ describe( '#getSiteUrl', () => {
 	const feedWithUrl = { URL: 'feedWithUrl.com' };
 	const feedWithFeedUrl = { feed_URL: 'feedwithFeedUrl.com' };
 	const postWithSiteUrl = { site_URL: 'postWithSiteUrl' };
-	const postWithFeedUrl = { feed_URL: 'postWithFeedUrl' };
 
 	it( 'should favor site over feed if both exist', () => {
 		const siteUrl = getSiteUrl( { site: siteWithUrl, feed: feedWithUrl } );
@@ -31,20 +30,7 @@ describe( '#getSiteUrl', () => {
 		expect( siteUrl ).eql( feedWithUrl.URL );
 
 		const siteUrl2 = getSiteUrl( { feed: feedWithFeedUrl } );
-		expect( siteUrl2 ).eql( false );
-	} );
-
-	it( 'should not use the feed_URL', () => {
-		const siteUrl2 = getSiteUrl( { feed: feedWithFeedUrl } );
-		expect( siteUrl2 ).not.ok;
-
-		const feedUrl = getSiteUrl( { post: postWithFeedUrl } );
-		expect( feedUrl ).not.ok;
-	} );
-
-	it( 'should get title from site if feed does not exist', () => {
-		const siteUrl = getSiteUrl( { site: siteWithUrl } );
-		expect( siteUrl ).eql( siteWithUrl.URL );
+		expect( siteUrl2 ).eql( 'feedwithFeedUrl.com' );
 	} );
 
 	it( 'should grab url from post if its there', () => {

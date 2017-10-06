@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { pick } from 'lodash';
 import Gridicon from 'gridicons';
@@ -18,9 +21,7 @@ import WrapSettingsForm from '../wrap-settings-form';
 import Notice from 'components/notice';
 
 const LockDown = ( {
-	fields: {
-		cache_lock_down,
-	},
+	fields: { cache_lock_down },
 	handleAutosavingToggle,
 	isReadOnly,
 	isRequesting,
@@ -28,8 +29,8 @@ const LockDown = ( {
 	translate,
 } ) => {
 	const lockdownCodeSnippet = translate(
-		'if ( defined( \'WPLOCKDOWN\' ) && constant( \'WPLOCKDOWN\' ) ) { echo ' +
-		'"Sorry. My blog is locked down. Updates will appear shortly"; }'
+		"if ( defined( 'WPLOCKDOWN' ) && constant( 'WPLOCKDOWN' ) ) { echo " +
+			'"Sorry. My blog is locked down. Updates will appear shortly"; }'
 	);
 
 	return (
@@ -41,45 +42,58 @@ const LockDown = ( {
 						<FormToggle
 							checked={ !! cache_lock_down }
 							disabled={ isRequesting || isSaving || isReadOnly }
-							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }>
+							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }
+						>
 							<span>
-								{ translate( 'Enable lock down to prepare your server for an expected spike in traffic.' ) }
+								{ translate(
+									'Enable lock down to prepare your server for an expected spike in traffic.'
+								) }
 							</span>
 						</FormToggle>
 					</FormFieldset>
 
 					<div className="wp-super-cache__lock-down-container">
 						<FormSettingExplanation className="wp-super-cache__lock-down-explanation">
-								{ translate(
-									'When this is enabled, new comments on a post will not refresh the cached static files.'
-								) }
+							{ translate(
+								'When this is enabled, new comments on a post will not refresh the cached static files.'
+							) }
 						</FormSettingExplanation>
 
 						<FormSettingExplanation className="wp-super-cache__lock-down-explanation">
 							{ translate(
 								'Developers: Make your plugin lock down compatible by checking the "WPLOCKDOWN" ' +
-								'constant. The following code will make sure your plugin respects the WPLOCKDOWN setting.'
+									'constant. The following code will make sure your plugin respects the WPLOCKDOWN setting.'
 							) }
 						</FormSettingExplanation>
 
 						<FormSettingExplanation className="wp-super-cache__lock-down-code-block">
 							<ClipboardButton
 								className="wp-super-cache__lock-down-code-block-button"
-								text={ lockdownCodeSnippet }>
+								text={ lockdownCodeSnippet }
+							>
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
-							<span className="wp-super-cache__lock-down-code-block-snippet">{ lockdownCodeSnippet }</span>
+							<span className="wp-super-cache__lock-down-code-block-snippet">
+								{ lockdownCodeSnippet }
+							</span>
 						</FormSettingExplanation>
 
 						<Notice
 							isCompact
 							status={ cache_lock_down ? 'is-warning' : 'is-info' }
-							text={ cache_lock_down
-								? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +
-									'when new comments are made.' )
-								: translate( 'WordPress is not locked down. New comments will refresh Super Cache ' +
-									'static files as normal.' )
-						}
+							text={
+								cache_lock_down ? (
+									translate(
+										'WordPress is locked down. Super Cache static files will not be deleted ' +
+											'when new comments are made.'
+									)
+								) : (
+									translate(
+										'WordPress is not locked down. New comments will refresh Super Cache ' +
+											'static files as normal.'
+									)
+								)
+							}
 						/>
 					</div>
 				</form>
@@ -89,9 +103,7 @@ const LockDown = ( {
 };
 
 const getFormSettings = settings => {
-	return pick( settings, [
-		'cache_lock_down',
-	] );
+	return pick( settings, [ 'cache_lock_down' ] );
 };
 
 export default WrapSettingsForm( getFormSettings )( LockDown );

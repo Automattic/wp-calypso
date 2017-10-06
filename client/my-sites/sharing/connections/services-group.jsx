@@ -1,14 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getEligibleKeyringServices, isKeyringServicesFetching } from 'state/sharing/services/selectors';
+import {
+	getEligibleKeyringServices,
+	isKeyringServicesFetching,
+} from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 import Service from './service';
@@ -29,16 +36,19 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 		<div className="sharing-services-group">
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
-				{ services.length
-					? services.map( ( service ) => {
-						const Component = Components.hasOwnProperty( service.ID ) ? Components[ service.ID ] : Service;
+				{ services.length ? (
+					services.map( service => {
+						const Component = Components.hasOwnProperty( service.ID )
+							? Components[ service.ID ]
+							: Service;
 
 						return <Component key={ service.ID } service={ service } />;
 					} )
-					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
+				) : (
+					times( NUMBER_OF_PLACEHOLDERS, index => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) )
-				}
+				) }
 			</ul>
 		</div>
 	);
@@ -56,9 +66,7 @@ SharingServicesGroup.defaultProps = {
 	services: [],
 };
 
-export default connect(
-	( state, { type } ) => ( {
-		isFetching: isKeyringServicesFetching( state ),
-		services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type )
-	} ),
-)( SharingServicesGroup );
+export default connect( ( state, { type } ) => ( {
+	isFetching: isKeyringServicesFetching( state ),
+	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
+} ) )( SharingServicesGroup );

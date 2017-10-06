@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -38,11 +42,11 @@ class QueryPluginKeys extends Component {
 QueryPluginKeys.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	hasRequested: PropTypes.bool,
-	fetchInstallInstructions: PropTypes.func
+	fetchInstallInstructions: PropTypes.func,
 };
 
 QueryPluginKeys.defaultProps = {
-	fetchInstallInstructions: () => {}
+	fetchInstallInstructions: () => {},
 };
 
 export default connect(

@@ -1,18 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debug from 'debug';
 import { assign } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import url from 'url';
+import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'lib/analytics';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
@@ -20,7 +23,6 @@ var analytics = require( 'lib/analytics' ),
 const log = debug( 'calypso:layout' );
 
 var LoadingError = React.createClass( {
-
 	statics: {
 		isRetry: function() {
 			var parsed = url.parse( location.href, true );
@@ -46,17 +48,17 @@ var LoadingError = React.createClass( {
 				React.createElement( LoadingError, {} ),
 				document.getElementById( 'primary' )
 			);
-		}
+		},
 	},
 
 	render: function() {
 		return (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
+				title={ this.translate( "We're sorry, but an unexpected error has occurred" ) }
+			/>
 		);
-	}
-
+	},
 } );
 
 module.exports = LoadingError;

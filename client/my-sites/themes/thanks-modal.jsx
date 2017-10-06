@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -21,7 +25,7 @@ import {
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
-	isWpcomTheme
+	isWpcomTheme,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
@@ -48,7 +52,7 @@ const ThanksModal = React.createClass( {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
-		visitSiteUrl: PropTypes.string
+		visitSiteUrl: PropTypes.string,
 	},
 
 	onCloseModal() {
@@ -79,9 +83,7 @@ const ThanksModal = React.createClass( {
 				<li>
 					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
 				</li>
-			<li>
-				{ this.renderSupportInfo() }
-			</li>
+				<li>{ this.renderSupportInfo() }</li>
 			</ul>
 		);
 	},
@@ -89,39 +91,35 @@ const ThanksModal = React.createClass( {
 	renderThemeInfo() {
 		return translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
-				a: <a href={ this.props.detailsUrl }
-					onClick={ this.onLinkClick( 'theme info' ) } />
-			}
+				a: <a href={ this.props.detailsUrl } onClick={ this.onLinkClick( 'theme info' ) } />,
+			},
 		} );
 	},
 
 	renderCustomizeInfo() {
 		return translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
-				a: <a href={ this.props.customizeUrl }
-					onClick={ this.onLinkClick( 'customize' ) } />
-			}
+				a: <a href={ this.props.customizeUrl } onClick={ this.onLinkClick( 'customize' ) } />,
+			},
 		} );
 	},
 
 	renderSupportInfo() {
-		const { author_uri: authorUri } = this.props.currentTheme;
+		const { author_uri: authorUri } = this.props.currentTheme;
 
 		if ( this.props.forumUrl ) {
 			return translate( 'Have questions? Stop by our {{a}}support forums{{/a}}.', {
 				components: {
-					a: <a href={ this.props.forumUrl }
-						onClick={ this.onLinkClick( 'support' ) } />
-				}
+					a: <a href={ this.props.forumUrl } onClick={ this.onLinkClick( 'support' ) } />,
+				},
 			} );
 		}
 
 		if ( authorUri ) {
 			return translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 				components: {
-					a: <a href={ authorUri }
-						onClick={ this.onLinkClick( 'org author' ) } />
-				}
+					a: <a href={ authorUri } onClick={ this.onLinkClick( 'org author' ) } />,
+				},
 			} );
 		}
 
@@ -129,10 +127,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderContent() {
-		const {
-			name: themeName,
-			author: themeAuthor
-		} = this.props.currentTheme;
+		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
 
 		return (
 			<div>
@@ -140,8 +135,8 @@ const ThanksModal = React.createClass( {
 					{ translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
 						args: { themeName, themeAuthor },
 						components: {
-							br: <br />
-						}
+							br: <br />,
+						},
 					} ) }
 				</h1>
 				{ this.renderBody() }
@@ -158,18 +153,28 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
-		const visitSiteText = hasActivated ? translate( 'Visit site' ) : translate( 'Activating theme…' );
+		const { currentTheme, hasActivated, isActivating } = this.props;
+		const visitSiteText = hasActivated
+			? translate( 'Visit site' )
+			: translate( 'Activating theme…' );
 		const buttons = [
 			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! hasActivated, onClick: this.visitSite },
+			{
+				action: 'visitSite',
+				label: visitSiteText,
+				isPrimary: true,
+				disabled: ! hasActivated,
+				onClick: this.visitSite,
+			},
 		];
 
 		return (
-			<Dialog className="themes__thanks-modal"
+			<Dialog
+				className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
 				buttons={ buttons }
-				onClose={ this.onCloseModal } >
+				onClose={ this.onCloseModal }
+			>
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
@@ -177,7 +182,7 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = get( getSite( state, siteId ), 'URL' );
 		const currentThemeId = getActiveTheme( state, siteId );
@@ -190,9 +195,9 @@ export default connect(
 			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			visitSiteUrl: siteUrl + ( isJetpackSite( state, siteId ) ? '' : '?next=customize' ),
-			isActivating: !! ( isActivatingTheme( state, siteId ) ),
-			hasActivated: !! ( hasActivatedTheme( state, siteId ) ),
-			isThemeWpcom: isWpcomTheme( state, currentThemeId )
+			isActivating: !! isActivatingTheme( state, siteId ),
+			hasActivated: !! hasActivatedTheme( state, siteId ),
+			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
 	{ clearActivated }

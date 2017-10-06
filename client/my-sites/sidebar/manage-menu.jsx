@@ -1,10 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,8 +22,14 @@ import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
-import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import {
+	getSite,
+	getSiteAdminUrl,
+	getSiteSlug,
+	isJetpackSite,
+	isSingleUserSite,
+} from 'state/sites/selectors';
+import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -34,19 +44,16 @@ class ManageMenu extends PureComponent {
 		postTypes: PropTypes.object,
 		postTypeLinks: PropTypes.object,
 		siteAdminUrl: PropTypes.string,
-		site: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ),
+		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
-	}
+	};
 
 	// We default to `/my` posts when appropriate
 	getMyParameter() {
 		const { allSingleSites, isJetpack, isSingleUser, siteId } = this.props;
 
 		if ( siteId ) {
-			return ( isSingleUser || isJetpack ) ? '' : '/my';
+			return isSingleUser || isJetpack ? '' : '/my';
 		}
 
 		// FIXME: If you clear `IndexedDB` and land on a site that has yourself as its only user,
@@ -56,7 +63,7 @@ class ManageMenu extends PureComponent {
 		// sites with other users).
 		// The fix will be to make sure all sites are fetched into Redux state, see
 		// https://github.com/Automattic/wp-calypso/pull/13094
-		return ( allSingleSites ) ? '' : '/my';
+		return allSingleSites ? '' : '/my';
 	}
 
 	getDefaultMenuItems() {
@@ -85,7 +92,7 @@ class ManageMenu extends PureComponent {
 				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
-			}
+			},
 		];
 
 		if ( config.isEnabled( 'manage/media' ) ) {
@@ -118,13 +125,13 @@ class ManageMenu extends PureComponent {
 		return items;
 	}
 
-	onNavigate = ( postType ) => () => {
+	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
 
 		this.props.onNavigate();
-	}
+	};
 
 	renderMenuItem( menuItem ) {
 		const { canUser, site, siteId, siteAdminUrl } = this.props;
@@ -149,7 +156,7 @@ class ManageMenu extends PureComponent {
 		if ( ( ! isEnabled || ! menuItem.queryable ) && siteAdminUrl ) {
 			link = siteAdminUrl + menuItem.wpAdminLink;
 		} else {
-			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
+			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
 		}
 
 		let preload;
@@ -161,18 +168,29 @@ class ManageMenu extends PureComponent {
 
 		let icon;
 		switch ( menuItem.name ) {
-			case 'post': icon = 'posts'; break;
-			case 'page': icon = 'pages'; break;
-			case 'jetpack-portfolio': icon = 'folder'; break;
-			case 'jetpack-testimonial': icon = 'quote'; break;
-			case 'media': icon = 'image'; break;
-			case 'comments': icon = 'chat'; break;
-			default: icon = 'custom-post-type';
+			case 'post':
+				icon = 'posts';
+				break;
+			case 'page':
+				icon = 'pages';
+				break;
+			case 'jetpack-portfolio':
+				icon = 'folder';
+				break;
+			case 'jetpack-testimonial':
+				icon = 'quote';
+				break;
+			case 'media':
+				icon = 'image';
+				break;
+			case 'comments':
+				icon = 'chat';
+				break;
+			default:
+				icon = 'custom-post-type';
 		}
 
-		const className = this.props.itemLinkClass(
-			menuItem.paths ? menuItem.paths : menuItem.link
-		);
+		const className = this.props.itemLinkClass( menuItem.paths ? menuItem.paths : menuItem.link );
 
 		return (
 			<SidebarItem
@@ -186,7 +204,11 @@ class ManageMenu extends PureComponent {
 				postType={ menuItem.name }
 			>
 				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>
+					<MediaLibraryUploadButton
+						className="sidebar__button"
+						site={ site }
+						href={ menuItem.buttonLink }
+					>
 						{ this.props.translate( 'Add' ) }
 					</MediaLibraryUploadButton>
 				) }
@@ -201,70 +223,69 @@ class ManageMenu extends PureComponent {
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
-		return reduce( customPostTypes, ( memo, postType, postTypeSlug ) => {
-			// `show_ui` was added in Jetpack 4.5, so explicitly check false
-			// value in case site on earlier version where property is omitted
-			if ( false === postType.show_ui ) {
-				return memo;
-			}
+		return reduce(
+			customPostTypes,
+			( memo, postType, postTypeSlug ) => {
+				// `show_ui` was added in Jetpack 4.5, so explicitly check false
+				// value in case site on earlier version where property is omitted
+				if ( false === postType.show_ui ) {
+					return memo;
+				}
 
-			let buttonLink;
-			if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
-				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
-			}
+				let buttonLink;
+				if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
+					buttonLink = this.props.postTypeLinks[ postTypeSlug ];
+				}
 
-			return memo.concat( {
-				name: postType.name,
-				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-				config: 'manage/custom-post-types',
-				queryable: postType.api_queryable,
+				return memo.concat( {
+					name: postType.name,
+					label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
+					config: 'manage/custom-post-types',
+					queryable: postType.api_queryable,
 
-				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
-				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
-				capability: get( postType.capabilities, 'edit_posts' ),
+					//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
+					//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
+					capability: get( postType.capabilities, 'edit_posts' ),
 
-				// Required to build the menu item class name. Must be discernible from other
-				// items' paths in the same section for item highlighting to work properly.
-				link: '/types/' + postType.name,
-				wpAdminLink: 'edit.php?post_type=' + postType.name,
-				showOnAllMySites: false,
-				buttonLink
-			} );
-		}, [] );
+					// Required to build the menu item class name. Must be discernible from other
+					// items' paths in the same section for item highlighting to work properly.
+					link: '/types/' + postType.name,
+					wpAdminLink: 'edit.php?post_type=' + postType.name,
+					showOnAllMySites: false,
+					buttonLink,
+				} );
+			},
+			[]
+		);
 	}
 
 	render() {
-		const menuItems = [
-			...this.getDefaultMenuItems(),
-			...this.getCustomMenuItems()
-		];
+		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
 			<ul>
-				{ this.props.siteId && (
-					<QueryPostTypes siteId={ this.props.siteId } />
-				) }
+				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
 			</ul>
 		);
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
+export default connect( ( state, { siteId } ) => {
 	const postTypes = getPostTypes( state, siteId );
 
 	return {
 		allSingleSites: areAllSitesSingleUser( state ),
 		// TODO: Instead of passing a canUser function prop, we should compute and filter
 		// the list of menuItems inside `connect` and pass it to `PostList` as a prop.
-		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
+		canUser: cap => canCurrentUser( state, siteId, cap ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes,
 		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
 			return getEditorPath( state, siteId, null, postTypeSlug );
 		} ),
-		siteAdminUrl: getSiteAdminUrl( state, siteId, ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		site: getSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

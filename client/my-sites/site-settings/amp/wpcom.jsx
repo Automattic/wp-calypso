@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -36,7 +39,9 @@ class AmpWpcom extends Component {
 	handleToggle = () => {
 		const { fields, submitForm, trackEvent, updateFields } = this.props;
 		const ampEnabled = ! fields.amp_is_enabled;
-		this.props.recordTracksEvent( 'calypso_seo_settings_amp_updated', { amp_is_enabled: ampEnabled } );
+		this.props.recordTracksEvent( 'calypso_seo_settings_amp_updated', {
+			amp_is_enabled: ampEnabled,
+		} );
 		updateFields( { amp_is_enabled: ampEnabled }, () => {
 			submitForm();
 			trackEvent( 'Toggled AMP Toggle' );
@@ -50,14 +55,11 @@ class AmpWpcom extends Component {
 
 	render() {
 		const {
-			fields: {
-				amp_is_supported: ampIsSupported,
-				amp_is_enabled: ampIsEnabled
-			},
+			fields: { amp_is_supported: ampIsSupported, amp_is_enabled: ampIsEnabled },
 			isRequestingSettings,
 			isSavingSettings,
 			siteSlug,
-			translate
+			translate,
 		} = this.props;
 
 		const isDisabled = isRequestingSettings || isSavingSettings;
@@ -82,32 +84,35 @@ class AmpWpcom extends Component {
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'Your WordPress.com site supports the use of {{a}}Accelerated Mobile Pages{{/a}}, ' +
-							'a Google-led initiative that dramatically speeds up loading times on mobile devices.',
+								'a Google-led initiative that dramatically speeds up loading times on mobile devices.',
 							{
 								components: {
-									a: <a
-										href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
-										target="_blank" rel="noopener noreferrer" />
-								}
+									a: (
+										<a
+											href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
 							}
 						) }
 					</FormSettingExplanation>
 				</CompactCard>
 
-				{
-					isCustomizeEnabled &&
+				{ isCustomizeEnabled && (
 					<CompactCard href={ '/customize/amp/' + siteSlug }>
 						{ translate( 'Edit the design of your Accelerated Mobile Pages' ) }
 					</CompactCard>
-				}
+				) }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
-	{ recordTracksEvent },
+	{ recordTracksEvent }
 )( localize( AmpWpcom ) );

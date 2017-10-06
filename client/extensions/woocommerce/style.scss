@@ -15,6 +15,7 @@
 	@import 'app/settings/payments/stripe/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
+	@import 'app/promotions/promotions-list';
 	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
@@ -38,6 +39,8 @@
 	@import 'components/order-status/style';
 	@import 'components/process-orders-widget/style';
 	@import 'components/product-image-uploader/style';
+	@import 'components/product-reviews-widget/style';
+	@import 'components/product-search/style';
 	@import 'components/reading-widget/style';
 	@import 'components/share-widget/style';
 	@import 'components/sparkline/style';

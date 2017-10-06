@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,7 +17,7 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 				reset: {
 					options: {
 						items: [],
-					}
+					},
 				},
 			},
 		};
@@ -32,13 +34,13 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 							{
 								email: 'primary@example.com',
 								sms: '1234567',
-							}
+							},
 						],
 						error: {
 							status: 404,
 							message: 'Something wrong!',
 						},
-					}
+					},
 				},
 			},
 		};
@@ -55,9 +57,9 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 							{
 								email: 'primary@example.com',
 								sms: '1234567',
-							}
+							},
 						],
-					}
+					},
 				},
 			},
 		};

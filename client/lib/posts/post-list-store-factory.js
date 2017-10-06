@@ -1,6 +1,9 @@
 /**
  * Internal Dependencies
- **/
+ *
+ * @format
+ */
+
 import PostListStore from './post-list-store';
 
 /**
@@ -20,4 +23,4 @@ export default function getStore( storeId ) {
 
 getStore._reset = function() {
 	_postListStores = {};
-}
+};

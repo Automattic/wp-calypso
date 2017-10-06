@@ -2,7 +2,18 @@
 	width: 100%;
 	padding: 0 0 7px 0;
 	text-align: center;
-	line-height: 0;
+}
+
+.editor-featured-image.has-active-drop-zone {
+	display: block;
+	position: relative;
+	min-height: 115px;
+	padding: 15px 0 20px;
+}
+
+.editor-featured-image__dropzone {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 .editor-featured-image__current-image {

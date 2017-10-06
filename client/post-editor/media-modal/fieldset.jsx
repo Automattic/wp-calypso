@@ -1,17 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalFieldset',
 
 	propTypes: {
-		legend: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
-		] ).isRequired
+		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
 	},
 
 	render: function() {
@@ -21,5 +22,5 @@ module.exports = React.createClass( {
 				{ this.props.children }
 			</fieldset>
 		);
-	}
+	},
 } );

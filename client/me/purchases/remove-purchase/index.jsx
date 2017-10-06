@@ -1,9 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -16,13 +20,10 @@ import config from 'config';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData
-	from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState
-	from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey
-	from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
 import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
@@ -189,49 +190,47 @@ class RemovePurchase extends Component {
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
 
-		this.props
-			.removePurchase( purchase.id, user.get().ID )
-			.then( () => {
-				const productName = getName( purchase );
-				const { purchasesError } = this.props;
+		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
+			const productName = getName( purchase );
+			const { purchasesError } = this.props;
 
-				if ( purchasesError ) {
-					this.setState( { isRemoving: false } );
+			if ( purchasesError ) {
+				this.setState( { isRemoving: false } );
 
-					closeDialog();
+				closeDialog();
 
-					notices.error( purchasesError );
-				} else {
-					if ( isDomainRegistration( purchase ) ) {
-						if ( isDomainOnlySite ) {
-							// Removing the domain from a domain-only site results
-							// in the site being deleted entirely. We need to call
-							// `receiveDeletedSiteDeprecated` here because the site
-							// exists in `sites-list` as well as the global store.
-							receiveDeletedSiteDeprecated( selectedSite );
-							this.props.receiveDeletedSite( selectedSite.ID );
-							this.props.setAllSitesSelected();
-						}
-
-						notices.success(
-							translate( 'The domain {{domain/}} was removed from your account.', {
-								components: { domain: <em>{ productName }</em> },
-							} ),
-							{ persistent: true }
-						);
-					} else {
-						notices.success(
-							translate( '%(productName)s was removed from {{siteName/}}.', {
-								args: { productName },
-								components: { siteName: <em>{ selectedSite.domain }</em> },
-							} ),
-							{ persistent: true }
-						);
+				notices.error( purchasesError );
+			} else {
+				if ( isDomainRegistration( purchase ) ) {
+					if ( isDomainOnlySite ) {
+						// Removing the domain from a domain-only site results
+						// in the site being deleted entirely. We need to call
+						// `receiveDeletedSiteDeprecated` here because the site
+						// exists in `sites-list` as well as the global store.
+						receiveDeletedSiteDeprecated( selectedSite );
+						this.props.receiveDeletedSite( selectedSite.ID );
+						this.props.setAllSitesSelected();
 					}
 
-					page( purchasePaths.purchasesRoot() );
+					notices.success(
+						translate( 'The domain {{domain/}} was removed from your account.', {
+							components: { domain: <em>{ productName }</em> },
+						} ),
+						{ persistent: true }
+					);
+				} else {
+					notices.success(
+						translate( '%(productName)s was removed from {{siteName/}}.', {
+							args: { productName },
+							components: { siteName: <em>{ selectedSite.domain }</em> },
+						} ),
+						{ persistent: true }
+					);
 				}
-			} );
+
+				page( purchasePaths.purchasesRoot() );
+			}
+		} );
 	};
 
 	renderCard = () => {
@@ -295,7 +294,8 @@ class RemovePurchase extends Component {
 
 	renderDomainDialogText = () => {
 		const { translate } = this.props;
-		const purchase = getPurchase( this.props ), productName = getName( purchase );
+		const purchase = getPurchase( this.props ),
+			productName = getName( purchase );
 
 		return (
 			<p>
@@ -344,9 +344,10 @@ class RemovePurchase extends Component {
 		} else if ( this.state.surveyStep === FINAL_STEP ) {
 			buttonsArr = [ buttons.cancel, buttons.prev, buttons.remove ];
 		} else {
-			buttonsArr = this.state.surveyStep === INITIAL_STEP
-				? [ buttons.cancel, buttons.next ]
-				: [ buttons.cancel, buttons.prev, buttons.next ];
+			buttonsArr =
+				this.state.surveyStep === INITIAL_STEP
+					? [ buttons.cancel, buttons.next ]
+					: [ buttons.cancel, buttons.prev, buttons.next ];
 		}
 
 		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
@@ -395,18 +396,18 @@ class RemovePurchase extends Component {
 					{ translate( 'Are you sure you want to remove %(productName)s from {{siteName/}}?', {
 						args: { productName },
 						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
-					} ) }
-					{ ' ' }
-					{ isGoogleApps( purchase )
-						? translate(
-								'Your G Suite account will continue working without interruption. ' +
-									'You will be able to manage your G Suite billing directly through Google.'
-							)
-						: translate(
-								'You will not be able to reuse it again without purchasing a new subscription.',
-								{ comment: "'it' refers to a product purchased by a user" }
-							) }
-
+					} ) }{' '}
+					{ isGoogleApps( purchase ) ? (
+						translate(
+							'Your G Suite account will continue working without interruption. ' +
+								'You will be able to manage your G Suite billing directly through Google.'
+						)
+					) : (
+						translate(
+							'You will not be able to reuse it again without purchasing a new subscription.',
+							{ comment: "'it' refers to a product purchased by a user" }
+						)
+					) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }

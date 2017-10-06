@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 import GridIcon from 'gridicons';
@@ -24,10 +28,7 @@ class SharingServicePlaceholder extends Component {
 	render() {
 		const header = (
 			<div>
-				<GridIcon
-					icon="share"
-					size={ 48 }
-					className="sharing-service__logo" />
+				<GridIcon icon="share" size={ 48 } className="sharing-service__logo" />
 
 				<div className="sharing-service__name">
 					<h2 />
@@ -37,16 +38,14 @@ class SharingServicePlaceholder extends Component {
 		);
 
 		const summary = (
-			<Button compact disabled>{ this.props.translate( 'Loading' ) }</Button>
+			<Button compact disabled>
+				{ this.props.translate( 'Loading' ) }
+			</Button>
 		);
 
 		return (
 			<li className="sharing-service is-placeholder">
-				<FoldableCard
-					header={ header }
-					summary={ summary }
-					className="sharing-service"
-					compact>
+				<FoldableCard header={ header } summary={ summary } className="sharing-service" compact>
 					<div />
 				</FoldableCard>
 			</li>

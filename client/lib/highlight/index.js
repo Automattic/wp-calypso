@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { compact, toArray } from 'lodash';
-var debug = require( 'debug' )( 'calypso:highlight' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:highlight' );
 
 /**
  * @private
@@ -42,7 +46,7 @@ function highlightNode( node, term, wrapperNode ) {
 
 	while ( true ) {
 		pos = remainingText.toLowerCase().indexOf( term.toLowerCase() );
-		if ( !remainingText || pos === -1 ) {
+		if ( ! remainingText || pos === -1 ) {
 			break;
 		}
 		found = true;
@@ -75,7 +79,6 @@ function walk( node, term, wrapperNode ) {
 		for ( var i = 0; i < children.length; i++ ) {
 			walk( children[ i ], term, wrapperNode );
 		}
-
 	} else if ( node.nodeName === '#text' ) {
 		debug( 'Parsing node with value:', node.nodeValue );
 		highlightNode( node, term, wrapperNode );

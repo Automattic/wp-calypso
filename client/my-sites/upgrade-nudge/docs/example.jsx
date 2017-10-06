@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { stubTrue } from 'lodash';
 
@@ -13,11 +16,7 @@ const UpgradeNudgeExample = () => {
 	return (
 		<div>
 			<div>
-				<UpgradeNudge
-					feature="custom-domain"
-					href="#"
-					shouldDisplay={ stubTrue }
-				/>
+				<UpgradeNudge feature="custom-domain" href="#" shouldDisplay={ stubTrue } />
 			</div>
 			<div>
 				<UpgradeNudge

@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -21,7 +25,7 @@ import EditorMediaModalFieldset from '../fieldset';
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
-		item: PropTypes.object
+		item: PropTypes.object,
 	};
 
 	constructor() {
@@ -30,11 +34,7 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.item &&
-			nextProps.item &&
-			nextProps.item.ID !== this.props.item.ID
-		) {
+		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
 			this.setState( { modifiedItem: null } );
 			this.persistChange.cancel();
 		}
@@ -94,13 +94,13 @@ class EditorMediaModalDetailFields extends Component {
 		}
 	}
 
-	scrollToShowVisibleDropdown = ( event ) => {
+	scrollToShowVisibleDropdown = event => {
 		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
 			return;
 		}
 
 		ReactDom.findDOMNode( event.target ).scrollIntoView();
-	}
+	};
 
 	renderImageAltText() {
 		if ( ! this.isMimePrefix( 'image' ) ) {
@@ -113,7 +113,8 @@ class EditorMediaModalDetailFields extends Component {
 					<FormTextInput
 						name="alt"
 						value={ this.getItemValue( 'alt' ) }
-						onChange={ this.setFieldValue } />
+						onChange={ this.setFieldValue }
+					/>
 				</TrackInputChanges>
 			</EditorMediaModalFieldset>
 		);
@@ -128,7 +129,8 @@ class EditorMediaModalDetailFields extends Component {
 						<FormTextInput
 							name="title"
 							value={ this.getItemValue( 'title' ) }
-							onChange={ this.setFieldValue } />
+							onChange={ this.setFieldValue }
+						/>
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
@@ -137,7 +139,8 @@ class EditorMediaModalDetailFields extends Component {
 						<FormTextarea
 							name="caption"
 							value={ this.getItemValue( 'caption' ) }
-							onChange={ this.setFieldValue } />
+							onChange={ this.setFieldValue }
+						/>
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
@@ -148,7 +151,8 @@ class EditorMediaModalDetailFields extends Component {
 						<FormTextarea
 							name="description"
 							value={ this.getItemValue( 'description' ) }
-							onChange={ this.setFieldValue } />
+							onChange={ this.setFieldValue }
+						/>
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
@@ -161,4 +165,3 @@ class EditorMediaModalDetailFields extends Component {
 }
 
 export default localize( EditorMediaModalDetailFields );
-

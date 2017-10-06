@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { clone } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -10,11 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import GoogleAppsUsersForm from './users-form';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
 	componentWillMount() {
@@ -30,7 +29,7 @@ class GoogleAppsUsers extends React.Component {
 			email: { value: '', error: null },
 			firstName: { value: '', error: null },
 			lastName: { value: '', error: null },
-			domain: { value: this.props.domain, error: null }
+			domain: { value: this.props.domain, error: null },
 		};
 	}
 
@@ -45,8 +44,7 @@ class GoogleAppsUsers extends React.Component {
 
 				{ allUserInputs }
 
-				<button className="google-apps-dialog__add-another-user-button"
-						onClick={ this.addUser }>
+				<button className="google-apps-dialog__add-another-user-button" onClick={ this.addUser }>
 					{ translate( 'Add Another User' ) }
 				</button>
 			</div>
@@ -73,7 +71,7 @@ class GoogleAppsUsers extends React.Component {
 		this.props.recordInputFocus( index, fieldName, inputValue );
 	};
 
-	addUser = ( event ) => {
+	addUser = event => {
 		event.preventDefault();
 
 		this.props.recordAddUserClick( this.props.analyticsSection );
@@ -97,28 +95,21 @@ class GoogleAppsUsers extends React.Component {
 	};
 }
 
-const recordAddUserClick = ( section ) => composeAnalytics(
-	recordTracksEvent(
-		'calypso_google_apps_add_user_button_click',
-		{ section }
-	),
+const recordAddUserClick = section =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_google_apps_add_user_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add User" Button in Google Apps Dialog' )
+	);
+
+const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
-		'Clicked "Add User" Button in Google Apps Dialog'
-	)
-);
+		`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
+		'Input Value',
+		inputValue
+	);
 
-const recordInputFocus = ( userIndex, fieldName, inputValue ) => recordGoogleEvent(
-	'Domain Search',
-	`Focused On "${ fieldName }" Input for User #${ userIndex } in Google Apps Dialog`,
-	'Input Value',
-	inputValue
-);
-
-export default connect(
-	null,
-	{
-		recordAddUserClick,
-		recordInputFocus,
-	}
-)( localize( GoogleAppsUsers ) );
+export default connect( null, {
+	recordAddUserClick,
+	recordInputFocus,
+} )( localize( GoogleAppsUsers ) );

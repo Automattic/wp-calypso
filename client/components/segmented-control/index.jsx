@@ -1,15 +1,19 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter, map } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ControlItem = require( 'components/segmented-control/item' );
+import ControlItem from 'components/segmented-control/item';
 
 /**
  * Internal variables
@@ -21,23 +25,23 @@ var _instance = 1;
  */
 var SegmentedControl = React.createClass( {
 	propTypes: {
-		initialSelected: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		style: React.PropTypes.object,
-		onSelect: React.PropTypes.func,
-		options: React.PropTypes.arrayOf(
-			React.PropTypes.shape( {
-				value: React.PropTypes.string.isRequired,
-				label: React.PropTypes.string.isRequired,
-				path: React.PropTypes.string
+		initialSelected: PropTypes.string,
+		compact: PropTypes.bool,
+		className: PropTypes.string,
+		style: PropTypes.object,
+		onSelect: PropTypes.func,
+		options: PropTypes.arrayOf(
+			PropTypes.shape( {
+				value: PropTypes.string.isRequired,
+				label: PropTypes.string.isRequired,
+				path: PropTypes.string,
 			} )
-		)
+		),
 	},
 
 	getDefaultProps: function() {
 		return {
-			compact: false
+			compact: false,
 		};
 	},
 
@@ -50,7 +54,7 @@ var SegmentedControl = React.createClass( {
 
 		return {
 			selected: initialSelected,
-			keyboardNavigation: false
+			keyboardNavigation: false,
 		};
 	},
 
@@ -68,7 +72,7 @@ var SegmentedControl = React.createClass( {
 			'segmented-control': true,
 			'keyboard-navigation': this.state.keyboardNavigation,
 			'is-compact': this.props.compact,
-			'is-primary': this.props.primary
+			'is-primary': this.props.primary,
 		};
 
 		if ( this.props.className ) {
@@ -94,25 +98,29 @@ var SegmentedControl = React.createClass( {
 		var refIndex = 0;
 		if ( this.props.children ) {
 			// add keys and refs to children
-			return React.Children.map( this.props.children, function( child, index ) {
-				var newChild = React.cloneElement( child, {
-					ref: ( child.type === ControlItem ) ? 'item-' + refIndex : null,
-					key: 'item-' + index,
-					onClick: function( event ) {
-						this.setKeyboardNavigation( false );
+			return React.Children.map(
+				this.props.children,
+				function( child, index ) {
+					var newChild = React.cloneElement( child, {
+						ref: child.type === ControlItem ? 'item-' + refIndex : null,
+						key: 'item-' + index,
+						onClick: function( event ) {
+							this.setKeyboardNavigation( false );
 
-						if ( typeof child.props.onClick === 'function' ) {
-							child.props.onClick( event );
-						}
-					}.bind( this )
-				} );
+							if ( typeof child.props.onClick === 'function' ) {
+								child.props.onClick( event );
+							}
+						}.bind( this ),
+					} );
 
-				if ( child.type === ControlItem ) {
-					refIndex++;
-				}
+					if ( child.type === ControlItem ) {
+						refIndex++;
+					}
 
-				return newChild;
-			}, this );
+					return newChild;
+				},
+				this
+			);
 		}
 
 		return this.props.options.map( function( item, index ) {
@@ -143,13 +151,13 @@ var SegmentedControl = React.createClass( {
 
 		this.setState( {
 			selected: option.value,
-			keyboardNavigation: false
+			keyboardNavigation: false,
 		} );
 	},
 
 	setKeyboardNavigation: function( value ) {
 		this.setState( {
-			keyboardNavigation: value
+			keyboardNavigation: value,
 		} );
 	},
 
@@ -175,7 +183,7 @@ var SegmentedControl = React.createClass( {
 	},
 
 	navigateItemByTabKey: function( event ) {
-		var direction = ( event.shiftKey ) ? 'previous' : 'next',
+		var direction = event.shiftKey ? 'previous' : 'next',
 			newIndex = this.focusSibling( direction );
 
 		// allow tabbing out of control
@@ -204,7 +212,7 @@ var SegmentedControl = React.createClass( {
 			this.focused = this.getCurrentFocusedIndex();
 		}
 
-		increment = ( direction === 'previous' ) ? -1 : 1;
+		increment = direction === 'previous' ? -1 : 1;
 		newIndex = this.focused + increment;
 		if ( newIndex >= items.length || newIndex < 0 ) {
 			return false;
@@ -222,8 +230,8 @@ var SegmentedControl = React.createClass( {
 			siblings = Array.prototype.slice( activeItem.parentNode.children ),
 			index = siblings.indexOf( activeItem );
 
-		return ( index > -1 ) ? index : 0;
-	}
+		return index > -1 ? index : 0;
+	},
 } );
 
 module.exports = SegmentedControl;

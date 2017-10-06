@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import numeral from 'numeral';
@@ -16,26 +20,23 @@ class Month extends PureComponent {
 	static propTypes = {
 		isHeader: PropTypes.bool,
 		className: PropTypes.string,
-		value: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number
-		] ),
+		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		position: PropTypes.string,
 		translate: PropTypes.func,
 		href: PropTypes.string,
-	}
+	};
 
 	state = {
-		showPopover: false
+		showPopover: false,
 	};
 
 	defaultProps = {
-		position: 'top'
+		position: 'top',
 	};
 
 	closePopover = () => {
 		this.setState( { showPopover: false } );
-	}
+	};
 
 	openPopover = () => {
 		const { isHeader, href } = this.props;
@@ -45,18 +46,20 @@ class Month extends PureComponent {
 			return;
 		}
 		this.setState( { showPopover: ! this.state.showPopover } );
-	}
+	};
 
 	render() {
 		const { isHeader, className, value, position, children } = this.props;
 		const tagName = isHeader ? 'th' : 'td';
-		return React.createElement( tagName,
+		return React.createElement(
+			tagName,
 			{
 				className: className,
 				ref: 'month',
-				onClick: this.openPopover
+				onClick: this.openPopover,
 			},
-			concat( children,
+			concat(
+				children,
 				<Popover
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
@@ -64,16 +67,14 @@ class Month extends PureComponent {
 					key="popover"
 					context={ this.refs && this.refs.month }
 				>
-					<div style={ { padding: '10px' } }>
-						{ value }
-					</div>
+					<div style={ { padding: '10px' } }>{ value }</div>
 				</Popover>
 			)
 		);
 	}
 }
 
-const StatsViewsMonths = ( props ) => {
+const StatsViewsMonths = props => {
 	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
@@ -93,24 +94,32 @@ const StatsViewsMonths = ( props ) => {
 		return sum;
 	};
 
-	const allMonths = flatten( map( data, ( year, yearNumber ) => {
-		return map( year, ( month, monthIndex ) => {
-			// keep track of earliest date to fill in zeros when applicable
-			const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
-			if ( momentMonth.isBefore( earliestDate ) ) {
-				earliestDate = moment( momentMonth );
-			}
-			return month[ dataKey ];
-		} );
-	} ) );
+	const allMonths = flatten(
+		map( data, ( year, yearNumber ) => {
+			return map( year, ( month, monthIndex ) => {
+				// keep track of earliest date to fill in zeros when applicable
+				const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
+				if ( momentMonth.isBefore( earliestDate ) ) {
+					earliestDate = moment( momentMonth );
+				}
+				return month[ dataKey ];
+			} );
+		} )
+	);
 
 	const highestMonth = max( allMonths );
-	const yearsObject = zipObject( keys( data ), times( size( data ), () => {
-		return 0;
-	} ) );
-	const monthsObject = zipObject( range( 0, 12 ), times( 12, () => {
-		return 0;
-	} ) );
+	const yearsObject = zipObject(
+		keys( data ),
+		times( size( data ), () => {
+			return 0;
+		} )
+	);
+	const monthsObject = zipObject(
+		range( 0, 12 ),
+		times( 12, () => {
+			return 0;
+		} )
+	);
 	const totals = {
 		years: merge( {}, yearsObject ),
 		months: merge( {}, monthsObject ),
@@ -119,7 +128,7 @@ const StatsViewsMonths = ( props ) => {
 	};
 
 	const years = map( data, ( item, year ) => {
-		const cells = map( range( 0, 12 ), ( month ) => {
+		const cells = map( range( 0, 12 ), month => {
 			let value = item[ month ] ? item[ month ][ dataKey ] : null;
 			let displayValue;
 			const momentMonth = momentFromMonthYear( month, year );
@@ -136,7 +145,7 @@ const StatsViewsMonths = ( props ) => {
 			}
 
 			if ( value > 0 ) {
-				const level = Math.ceil( ( value / highestMonth ) * 5 );
+				const level = Math.ceil( value / highestMonth * 5 );
 				className = `stats-views__month level-${ level }`;
 				totals.years[ year ] += value;
 				totals.months[ month ] += value;
@@ -144,20 +153,27 @@ const StatsViewsMonths = ( props ) => {
 				totals.monthsCount[ month ] += 1;
 				displayValue = value >= 1000 ? numeral( value ).format( '0.0a' ) : value;
 			}
-			return <Month
+			return (
+				<Month
 					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
 					className={ className }
 					key={ `month-${ month }` }
-					value={ numberFormat( value ) }>
-					{ displayValue }</Month>;
+					value={ numberFormat( value ) }
+				>
+					{ displayValue }
+				</Month>
+			);
 		} );
-		const yearTotal = isAverageChart ? Math.round( totals.years[ year ] / totals.yearsCount[ year ] ) : totals.years[ year ];
+		const yearTotal = isAverageChart
+			? Math.round( totals.years[ year ] / totals.yearsCount[ year ] )
+			: totals.years[ year ];
 		cells.unshift(
 			<Month
 				className="stats-views__month is-year"
 				position="left"
 				key={ `label-${ year }` }
-				value={ yearTotal }>
+				value={ yearTotal }
+			>
 				{ year }
 			</Month>
 		);
@@ -168,7 +184,7 @@ const StatsViewsMonths = ( props ) => {
 		<table className="stats-views__months">
 			<thead>
 				<tr>
-					<th></th>
+					<th />
 					<Month value={ numberFormat( getMonthTotal( totals, 0 ) ) } isHeader>
 						{ translate( 'Jan' ) }
 					</Month>
@@ -207,9 +223,7 @@ const StatsViewsMonths = ( props ) => {
 					</Month>
 				</tr>
 			</thead>
-			<tbody>
-				{ years }
-			</tbody>
+			<tbody>{ years }</tbody>
 		</table>
 	);
 };

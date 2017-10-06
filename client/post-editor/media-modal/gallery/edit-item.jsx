@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -17,12 +21,12 @@ export default React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		item: PropTypes.object,
-		showRemoveButton: PropTypes.bool
+		showRemoveButton: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
 		return {
-			showRemoveButton: true
+			showRemoveButton: true,
 		};
 	},
 
@@ -32,11 +36,7 @@ export default React.createClass( {
 			return;
 		}
 
-		return (
-			<EditorMediaModalGalleryCaption
-				siteId={ site.ID }
-				item={ item } />
-		);
+		return <EditorMediaModalGalleryCaption siteId={ site.ID } item={ item } />;
 	},
 
 	render() {
@@ -44,18 +44,12 @@ export default React.createClass( {
 
 		return (
 			<div className="editor-media-modal-gallery__edit-item">
-				<MediaLibraryListItem
-					media={ item }
-					scale={ 1 }
-					photon={ false } />
+				<MediaLibraryListItem media={ item } scale={ 1 } photon={ false } />
 				{ this.renderCaption() }
-				{ showRemoveButton &&
-					<EditorMediaModalGalleryRemoveButton
-						siteId={ site.ID }
-						itemId={ item.ID }
-					/>
-				}
+				{ showRemoveButton && (
+					<EditorMediaModalGalleryRemoveButton siteId={ site.ID } itemId={ item.ID } />
+				) }
 			</div>
 		);
-	}
+	},
 } );

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -14,7 +18,7 @@ import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
-	getEditorLastDraftPostId
+	getEditorLastDraftPostId,
 } from 'state/ui/editor/last-draft/selectors';
 import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -34,7 +38,7 @@ const ResumeEditing = React.createClass( {
 		draft: PropTypes.object,
 		editPath: PropTypes.string,
 		section: PropTypes.string,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -98,26 +102,24 @@ const ResumeEditing = React.createClass( {
 		}
 
 		const classes = classnames( 'resume-editing', {
-			'is-requesting': requesting
+			'is-requesting': requesting,
 		} );
 
 		return (
 			<a href={ editPath } onClick={ this.trackAnalytics } className={ classes }>
 				<QueryPosts siteId={ siteId } postId={ postId } />
-				<span className="resume-editing__label">
-					{ translate( 'Continue Editing' ) }
-				</span>
+				<span className="resume-editing__label">{ translate( 'Continue Editing' ) }</span>
 				<span className="resume-editing__post-title">
 					<SiteIcon size={ 16 } site={ site } />
 					{ draft.title ? decodeEntities( draft.title ) : translate( 'Untitled' ) }
 				</span>
 			</a>
 		);
-	}
+	},
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getEditorLastDraftSiteId( state );
 		const postId = getEditorLastDraftPostId( state );
 

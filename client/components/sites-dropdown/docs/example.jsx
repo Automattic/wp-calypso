@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -9,10 +12,9 @@ import React from 'react';
 import SitesDropdown from 'components/sites-dropdown';
 
 export default React.createClass( {
-
 	displayName: 'SitesDropdown',
 
 	render: function() {
 		return <SitesDropdown />;
-	}
+	},
 } );

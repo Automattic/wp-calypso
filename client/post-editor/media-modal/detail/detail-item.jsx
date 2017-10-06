@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { flowRight, get, includes, noop } from 'lodash';
@@ -91,11 +95,7 @@ class EditorMediaModalDetailItem extends Component {
 	 * @return {Boolean} Whether the video editor can be enabled
 	 */
 	enableVideoEditing( item ) {
-		const {
-			isJetpack,
-			isVideoPressEnabled,
-			isVideoPressModuleActive,
-		} = this.props;
+		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
 
 		// Not a VideoPress video
 		if ( ! MediaUtils.isVideoPressItem( item ) ) {
@@ -107,7 +107,7 @@ class EditorMediaModalDetailItem extends Component {
 			if ( ! isVideoPressModuleActive ) {
 				return false;
 			}
-		// WP.com and VideoPress disabled
+			// WP.com and VideoPress disabled
 		} else if ( ! isVideoPressEnabled ) {
 			return false;
 		}
@@ -116,12 +116,7 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderEditButton() {
-		const {
-			item,
-			onEdit,
-			site,
-			translate
-		} = this.props;
+		const { item, onEdit, site, translate } = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
 			return null;
@@ -137,9 +132,8 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const editText = 'video' === mimePrefix
-			? translate( 'Edit Thumbnail' )
-			: translate( 'Edit Image' );
+		const editText =
+			'video' === mimePrefix ? translate( 'Edit Thumbnail' ) : translate( 'Edit Image' );
 
 		return (
 			<Button
@@ -158,10 +152,7 @@ class EditorMediaModalDetailItem extends Component {
 	};
 
 	renderRestoreButton() {
-		const {
-			item,
-			translate
-		} = this.props;
+		const { item, translate } = this.props;
 
 		//do a simple guid vs url check
 		const guidParts = url.parse( item.guid );
@@ -173,16 +164,12 @@ class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<Button
-				className={ classNames(
-					'editor-media-modal-detail__restore',
-				) }
+				className={ classNames( 'editor-media-modal-detail__restore' ) }
 				onClick={ this.handleOnRestoreClick }
 				disabled={ isItemBeingUploaded( item ) }
 			>
-				<Gridicon
-					icon="refresh"
-					size={ 36 } />
-					{ translate( 'Restore Original' ) }
+				<Gridicon icon="refresh" size={ 36 } />
+				{ translate( 'Restore Original' ) }
 			</Button>
 		);
 	}
@@ -223,11 +210,7 @@ class EditorMediaModalDetailItem extends Component {
 
 		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
 
-		return (
-			<div className={ classes }>
-				{ this.renderEditButton() }
-			</div>
-		);
+		return <div className={ classes }>{ this.renderEditButton() }</div>;
 	}
 
 	renderFields() {
@@ -237,64 +220,41 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		return (
-			<EditorMediaModalDetailFields
-				site={ site }
-				item={ item } />
-		);
+		return <EditorMediaModalDetailFields site={ site } item={ item } />;
 	}
 
 	renderPreviousItemButton() {
-		const {
-			hasPreviousItem,
-			onShowPreviousItem,
-			translate
-		} = this.props;
+		const { hasPreviousItem, onShowPreviousItem, translate } = this.props;
 
 		if ( ! hasPreviousItem ) {
 			return null;
 		}
 
 		return (
-			<button
-				onClick={ onShowPreviousItem }
-				className="editor-media-modal-detail__previous">
+			<button onClick={ onShowPreviousItem } className="editor-media-modal-detail__previous">
 				<Gridicon icon="chevron-left" size={ 36 } />
-				<span className="screen-reader-text">
-					{ translate( 'Previous' ) }
-				</span>
+				<span className="screen-reader-text">{ translate( 'Previous' ) }</span>
 			</button>
 		);
 	}
 
 	renderNextItemButton() {
-		const {
-			hasNextItem,
-			onShowNextItem,
-			translate
-		} = this.props;
+		const { hasNextItem, onShowNextItem, translate } = this.props;
 
 		if ( ! hasNextItem ) {
 			return null;
 		}
 
 		return (
-			<button
-				onClick={ onShowNextItem }
-				className="editor-media-modal-detail__next">
+			<button onClick={ onShowNextItem } className="editor-media-modal-detail__next">
 				<Gridicon icon="chevron-right" size={ 36 } />
-				<span className="screen-reader-text">
-					{ translate( 'Next' ) }
-				</span>
+				<span className="screen-reader-text">{ translate( 'Next' ) }</span>
 			</button>
 		);
 	}
 
 	renderItem() {
-		const {
-			item,
-			site
-		} = this.props;
+		const { item, site } = this.props;
 
 		if ( ! item ) {
 			return null;
@@ -305,16 +265,24 @@ class EditorMediaModalDetailItem extends Component {
 		let Item;
 
 		switch ( mimePrefix ) {
-			case 'image': Item = EditorMediaModalDetailPreviewImage; break;
-			case 'video': Item = EditorMediaModalDetailPreviewVideo; break;
-			case 'audio': Item = EditorMediaModalDetailPreviewAudio; break;
-			default: Item = EditorMediaModalDetailPreviewDocument; break;
+			case 'image':
+				Item = EditorMediaModalDetailPreviewImage;
+				break;
+			case 'video':
+				Item = EditorMediaModalDetailPreviewVideo;
+				break;
+			case 'audio':
+				Item = EditorMediaModalDetailPreviewAudio;
+				break;
+			default:
+				Item = EditorMediaModalDetailPreviewDocument;
+				break;
 		}
 
 		return React.createElement( Item, {
 			className: 'editor-media-modal-detail__preview',
 			site: site,
-			item: item
+			item: item,
 		} );
 	}
 
@@ -322,13 +290,12 @@ class EditorMediaModalDetailItem extends Component {
 		const { isJetpack, item, siteId } = this.props;
 
 		const classes = classNames( 'editor-media-modal-detail__item', {
-			'is-loading': ! item
+			'is-loading': ! item,
 		} );
 
 		return (
 			<figure className={ classes }>
 				<div className="editor-media-modal-detail__content editor-media-modal__content">
-
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
 						{ this.renderMediaEditorButtons( item ) }
@@ -337,34 +304,29 @@ class EditorMediaModalDetailItem extends Component {
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ isJetpack && <QueryJetpackModules siteId={ siteId } /> /* Is the VideoPress module active? */ }
+						{ isJetpack && (
+							<QueryJetpackModules siteId={ siteId } />
+						) /* Is the VideoPress module active? */ }
 						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
-						<EditorMediaModalDetailFileInfo
-							item={ item } />
+						<EditorMediaModalDetailFileInfo item={ item } />
 					</div>
-
 				</div>
 			</figure>
 		);
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			isJetpack: isJetpackSite( state, siteId ),
-			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
-			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
-			isPrivateSite: isPrivateSite( state, siteId ),
-			siteId,
-		};
-	}
-);
+	return {
+		isJetpack: isJetpackSite( state, siteId ),
+		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
+		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+		isPrivateSite: isPrivateSite( state, siteId ),
+		siteId,
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( EditorMediaModalDetailItem );
+export default flowRight( connectComponent, localize )( EditorMediaModalDetailItem );

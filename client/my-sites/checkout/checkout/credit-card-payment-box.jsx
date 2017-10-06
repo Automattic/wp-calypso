@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classnames from 'classnames';
 import { some } from 'lodash';
@@ -9,14 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	CreditCardSelector = require( './credit-card-selector' ),
-	TermsOfService = require( './terms-of-service' ),
-	PaymentBox = require( './payment-box' ),
-	analytics = require( 'lib/analytics' ),
-	cartValues = require( 'lib/cart-values' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
-
+import PayButton from './pay-button';
+import CreditCardSelector from './credit-card-selector';
+import TermsOfService from './terms-of-service';
+import PaymentBox from './payment-box';
+import analytics from 'lib/analytics';
+import cartValues from 'lib/cart-values';
+import {
+	BEFORE_SUBMIT,
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from 'lib/store-transactions/step-types';
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
@@ -29,12 +38,15 @@ var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
 		return {
 			progress: 0,
-			previousCart: null
+			previousCart: null,
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( ! this.submitting( this.props.transactionStep ) && this.submitting( nextProps.transactionStep ) ) {
+		if (
+			! this.submitting( this.props.transactionStep ) &&
+			this.submitting( nextProps.transactionStep )
+		) {
 			this.timer = setInterval( this.tick, 100 );
 		}
 	},
@@ -52,21 +64,21 @@ var CreditCardPaymentBox = React.createClass( {
 
 	submitting: function( transactionStep ) {
 		switch ( transactionStep.name ) {
-			case transactionStepTypes.BEFORE_SUBMIT:
+			case BEFORE_SUBMIT:
 				return false;
 
-			case transactionStepTypes.INPUT_VALIDATION:
+			case INPUT_VALIDATION:
 				if ( this.props.transactionStep.error ) {
 					return false;
 				}
 				return true;
 
-			case transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST:
-			case transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE:
-			case transactionStepTypes.SUBMITTING_WPCOM_REQUEST:
+			case SUBMITTING_PAYMENT_KEY_REQUEST:
+			case RECEIVED_PAYMENT_KEY_RESPONSE:
+			case SUBMITTING_WPCOM_REQUEST:
 				return true;
 
-			case transactionStepTypes.RECEIVED_WPCOM_RESPONSE:
+			case RECEIVED_WPCOM_RESPONSE:
 				if ( transactionStep.error || ! transactionStep.data.success ) {
 					return false;
 				}
@@ -97,7 +109,8 @@ var CreditCardPaymentBox = React.createClass( {
 	paymentButtons: function() {
 		const cart = this.props.cart,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
-			showPaymentChatButton = config.isEnabled( 'upgrades/presale-chat' ) &&
+			showPaymentChatButton =
+				config.isEnabled( 'upgrades/presale-chat' ) &&
 				abtest( 'presaleChatButton' ) === 'showChatButton' &&
 				hasBusinessPlanInCart,
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
@@ -106,31 +119,29 @@ var CreditCardPaymentBox = React.createClass( {
 
 		return (
 			<div className="payment-box__payment-buttons">
-				<PayButton
-					cart={ this.props.cart }
-					transactionStep={ this.props.transactionStep } />
+				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 
-				{ cartValues.isPayPalExpressEnabled( cart )
-					? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
+				{ cartValues.isPayPalExpressEnabled( cart ) ? (
+					<a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
 						{ this.props.translate( 'or use {{paypal/}}', {
 							components: {
-								paypal: <img src="/calypso/images/upgrades/paypal.svg" alt="PayPal" width="80" />
-							}
-						} ) }</a>
-					: null
-				}
+								paypal: <img src="/calypso/images/upgrades/paypal.svg" alt="PayPal" width="80" />,
+							},
+						} ) }
+					</a>
+				) : null }
 
 				<CartCoupon cart={ cart } />
 
 				<CartToggle />
 
-				{
-					showPaymentChatButton &&
+				{ showPaymentChatButton && (
 					<PaymentChatButton
 						paymentType="credits"
 						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep } />
-				}
+						transactionStep={ this.props.transactionStep }
+					/>
+				) }
 			</div>
 		);
 	},
@@ -141,17 +152,13 @@ var CreditCardPaymentBox = React.createClass( {
 			content = this.progressBar();
 		}
 
-		return (
-			<div className="payment-box-actions">
-				{ content }
-			</div>
-		);
+		return <div className="payment-box-actions">{ content }</div>;
 	},
 
 	submit: function( event ) {
 		event.preventDefault();
 		this.setState( {
-			progress: 0
+			progress: 0,
 		} );
 		this.props.onSubmit( event );
 	},
@@ -165,10 +172,12 @@ var CreditCardPaymentBox = React.createClass( {
 					cards={ this.props.cards }
 					countriesList={ this.props.countriesList }
 					initialCard={ this.props.initialCard }
-					transaction={ this.props.transaction } />
+					transaction={ this.props.transaction }
+				/>
 
 				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
+				/>
 
 				{ this.paymentBoxActions() }
 			</form>
@@ -179,12 +188,12 @@ var CreditCardPaymentBox = React.createClass( {
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
-				title={ this.props.translate( 'Secure Payment' ) }>
+				title={ this.props.translate( 'Secure Payment' ) }
+			>
 				{ this.content() }
 			</PaymentBox>
 		);
-	}
-
+	},
 } );
 
 module.exports = localize( CreditCardPaymentBox );

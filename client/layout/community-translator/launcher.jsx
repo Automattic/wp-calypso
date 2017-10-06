@@ -1,24 +1,28 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var translator = require( 'lib/translator-jumpstart' ),
-	localStorageHelper = require( 'store' ),
-	Dialog = require( 'components/dialog' ),
-	analytics = require( 'lib/analytics' );
+import translator from 'lib/translator-jumpstart';
+import localStorageHelper from 'store';
+import Dialog from 'components/dialog';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'TranslatorLauncher',
 
 	propTypes: {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
+		isActive: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -26,7 +30,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			infoDialogVisible: false,
-			firstActivation: true
+			firstActivation: true,
 		};
 	},
 
@@ -73,24 +77,40 @@ module.exports = React.createClass( {
 			toggleString = this.translate( 'Enable Translator' );
 		}
 
-		const infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) }, ];
+		const infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) } ];
 
 		return (
 			<div>
-				<Dialog isVisible={ this.state.infoDialogVisible } buttons={ infoDialogButtons } onClose={ this.infoDialogClose } additionalClassNames="community-translator__modal">
+				<Dialog
+					isVisible={ this.state.infoDialogVisible }
+					buttons={ infoDialogButtons }
+					onClose={ this.infoDialogClose }
+					additionalClassNames="community-translator__modal"
+				>
 					<h1>{ this.translate( 'Community Translator' ) }</h1>
-					<p>{ this.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
 					<p>
-						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
+						{ this.translate(
+							'You have now enabled the translator.  Right click highlighted text to translate it.'
+						) }
+					</p>
+					<p>
+						<label>
+							<input type="checkbox" onClick={ this.toggleInfoCheckbox } />
+							<span>{ this.translate( "Don't show again" ) }</span>
+						</label>
 					</p>
 				</Dialog>
 				<div className={ launcherClasses }>
-					<a className="community-translator__button" onClick={ this.toggle } title={ this.translate( 'Community Translator' ) }>
+					<a
+						className="community-translator__button"
+						onClick={ this.toggle }
+						title={ this.translate( 'Community Translator' ) }
+					>
 						<Gridicon icon="globe" />
 						<div className="community-translator__text">{ toggleString }</div>
 					</a>
 				</div>
 			</div>
 		);
-	}
+	},
 } );

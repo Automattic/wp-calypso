@@ -1,8 +1,12 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { moment } from 'i18n-calypso';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -18,13 +22,10 @@ import { isHappychatAvailable, hasActiveHappychatSession } from 'state/happychat
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData
-	from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState
-	from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey
-	from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
 import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
@@ -156,9 +157,10 @@ class CancelPurchaseButton extends Component {
 		} else if ( this.state.surveyStep === FINAL_STEP ) {
 			buttonsArr = [ buttons.close, buttons.prev, buttons.cancel ];
 		} else {
-			buttonsArr = this.state.surveyStep === INITIAL_STEP
-				? [ buttons.cancel, buttons.next ]
-				: [ buttons.cancel, buttons.prev, buttons.next ];
+			buttonsArr =
+				this.state.surveyStep === INITIAL_STEP
+					? [ buttons.cancel, buttons.next ]
+					: [ buttons.cancel, buttons.prev, buttons.next ];
 		}
 
 		return (
@@ -182,7 +184,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase, { slug } = this.props.selectedSite;
+		const { id } = this.props.purchase,
+			{ slug } = this.props.selectedSite;
 
 		page( paths.confirmCancelDomain( slug, id ) );
 	};

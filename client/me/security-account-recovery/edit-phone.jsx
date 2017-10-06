@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { isEmpty } from 'lodash';
 
@@ -21,20 +25,20 @@ module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
 	propTypes: {
-		storedPhone: React.PropTypes.shape( {
-			countryCode: React.PropTypes.string,
-			countryNumericCode: React.PropTypes.string,
-			number: React.PropTypes.string,
-			numberFull: React.PropTypes.string
+		storedPhone: PropTypes.shape( {
+			countryCode: PropTypes.string,
+			countryNumericCode: PropTypes.string,
+			number: PropTypes.string,
+			numberFull: PropTypes.string,
 		} ),
-		onSave: React.PropTypes.func,
-		onCancel: React.PropTypes.func,
-		onDelete: React.PropTypes.func
+		onSave: PropTypes.func,
+		onCancel: PropTypes.func,
+		onDelete: PropTypes.func,
 	},
 
 	getInitialState: function() {
 		return {
-			isInvalid: false
+			isInvalid: false,
 		};
 	},
 
@@ -42,12 +46,7 @@ module.exports = React.createClass( {
 		var validation = null,
 			havePhone = ! isEmpty( this.props.storedPhone );
 		if ( this.state.validation ) {
-			validation = (
-				<FormInputValidation
-					isError
-					text={ this.state.validation }
-					/>
-			);
+			validation = <FormInputValidation isError text={ this.state.validation } />;
 		}
 
 		return (
@@ -58,10 +57,10 @@ module.exports = React.createClass( {
 						initialCountryCode={ havePhone ? this.props.storedPhone.countryCode : null }
 						initialPhoneNumber={ havePhone ? this.props.storedPhone.number : null }
 						phoneInputProps={ {
-							onKeyUp: this.onKeyUp
+							onKeyUp: this.onKeyUp,
 						} }
 						onChange={ this.onChange }
-						/>
+					/>
 					{ validation }
 				</FormFieldset>
 
@@ -72,7 +71,7 @@ module.exports = React.createClass( {
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
 					onCancel={ this.onCancel }
-					/>
+				/>
 			</div>
 		);
 	},
@@ -86,9 +85,11 @@ module.exports = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.storedPhone &&
-				this.props.storedPhone.countryCode === this.state.phoneNumber.countryData.code &&
-				this.props.storedPhone.number === this.state.phoneNumber.phoneNumber ) {
+		if (
+			this.props.storedPhone &&
+			this.props.storedPhone.countryCode === this.state.phoneNumber.countryData.code &&
+			this.props.storedPhone.number === this.state.phoneNumber.phoneNumber
+		) {
 			return false;
 		}
 
@@ -118,7 +119,7 @@ module.exports = React.createClass( {
 			countryCode: phoneNumber.countryData.code,
 			countryNumericCode: phoneNumber.countryData.numericCode,
 			number: phoneNumber.phoneNumber,
-			numberFull: phoneNumber.phoneNumberFull
+			numberFull: phoneNumber.phoneNumberFull,
 		} );
 	},
 
@@ -128,5 +129,5 @@ module.exports = React.createClass( {
 
 	onDelete: function() {
 		this.props.onDelete();
-	}
+	},
 } );

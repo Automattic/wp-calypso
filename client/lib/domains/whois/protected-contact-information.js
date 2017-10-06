@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { registrar as registrarNames } from 'lib/domains/constants';
 
 function getOpenHrsProtectedContactInformation( domain ) {
@@ -15,7 +18,7 @@ function getOpenHrsProtectedContactInformation( domain ) {
 		city: 'Beaverton',
 		state: 'OR',
 		postalCode: '97008-7105',
-		countryCode: 'US'
+		countryCode: 'US',
 	};
 }
 
@@ -31,7 +34,7 @@ function getOpenSrsProtectedContactInformation( domain ) {
 		city: 'Toronto',
 		state: 'ON',
 		postalCode: 'M6K 3M1',
-		countryCode: 'CA'
+		countryCode: 'CA',
 	};
 }
 
@@ -47,7 +50,7 @@ function getWwdProtectedContactInformation( domain ) {
 		city: 'Scottsdale',
 		state: 'AZ',
 		postalCode: '85260',
-		countryCode: 'US'
+		countryCode: 'US',
 	};
 }
 

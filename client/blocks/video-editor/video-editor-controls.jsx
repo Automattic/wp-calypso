@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
@@ -23,25 +26,28 @@ const VideoEditorControls = ( {
 } ) => {
 	return (
 		<div className="video-editor__controls">
-			{ onCancel &&
+			{ onCancel && (
 				<Button
 					className="video-editor__controls-button"
 					disabled={ isPosterUpdating }
-					onClick={ onCancel }>
+					onClick={ onCancel }
+				>
 					{ translate( 'Cancel' ) }
 				</Button>
-			}
+			) }
 			<UploadButton
 				isPosterUpdating={ isPosterUpdating }
 				onClick={ onUploadImageClick }
-				onUploadImage={ onUploadImage }>
+				onUploadImage={ onUploadImage }
+			>
 				{ translate( 'Upload Image' ) }
 			</UploadButton>
 			<Button
 				className="video-editor__controls-button"
 				disabled={ isVideoLoading || isPosterUpdating }
 				onClick={ onSelectFrame }
-				primary>
+				primary
+			>
 				{ translate( 'Select Frame' ) }
 			</Button>
 		</div>

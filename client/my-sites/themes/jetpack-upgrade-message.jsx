@@ -1,8 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,8 +30,6 @@ const JetpackUpgradeMessage = ( { siteId, translate, adminUrl } ) => (
 	</Main>
 );
 
-export default connect(
-	( state, { siteId } ) => ( {
-		adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' )
-	} )
-)( localize( JetpackUpgradeMessage ) );
+export default connect( ( state, { siteId } ) => ( {
+	adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' ),
+} ) )( localize( JetpackUpgradeMessage ) );

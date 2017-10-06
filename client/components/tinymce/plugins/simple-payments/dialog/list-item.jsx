@@ -1,9 +1,14 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/**
+ * /* eslint-disable wpcalypso/jsx-classname-namespace
+ *
+ * @format
+ */
 
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -62,12 +67,8 @@ class ProductListItem extends Component {
 					onChange={ this.handleRadioChange }
 				/>
 				<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
-					<div className="editor-simple-payments-modal__list-name">
-						{ title }
-					</div>
-					<div>
-						{ this.formatPrice( price, currency ) }
-					</div>
+					<div className="editor-simple-payments-modal__list-name">{ title }</div>
+					<div>{ this.formatPrice( price, currency ) }</div>
 				</label>
 				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
 				<EllipsisMenu

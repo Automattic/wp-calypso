@@ -1,32 +1,35 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-const React = require( 'react' ),
-	page = require( 'page' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	paths = require( 'my-sites/domains/paths' ),
-	Button = require( 'components/button' );
+import analyticsMixin from 'lib/mixins/analytics';
+import paths from 'my-sites/domains/paths';
+import Button from 'components/button';
 
 const PrimaryDomainButton = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	propTypes: {
-		domain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		settingPrimaryDomain: React.PropTypes.bool.isRequired
+		domain: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		settingPrimaryDomain: PropTypes.bool.isRequired,
 	},
 
 	handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
-		page( paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
+		page(
+			paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name )
+		);
 	},
 
 	render() {
@@ -44,14 +47,15 @@ const PrimaryDomainButton = React.createClass( {
 				<Button
 					compact
 					className="domain-details-card__make-primary-button"
-					onClick={ this.handleClick }>
+					onClick={ this.handleClick }
+				>
 					{ label }
 				</Button>
 			);
 		}
 
 		return null;
-	}
+	},
 } );
 
 module.exports = PrimaryDomainButton;

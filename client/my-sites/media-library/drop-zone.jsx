@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 
@@ -16,17 +20,17 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryDropZone',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		fullScreen: React.PropTypes.bool,
-		onAddMedia: React.PropTypes.func,
-		trackStats: React.PropTypes.bool
+		site: PropTypes.object,
+		fullScreen: PropTypes.bool,
+		onAddMedia: PropTypes.func,
+		trackStats: PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
 		return {
 			fullScreen: true,
 			onAddMedia: noop,
-			trackStats: true
+			trackStats: true,
 		};
 	},
 
@@ -76,7 +80,8 @@ module.exports = React.createClass( {
 			<DropZone
 				fullScreen={ this.props.fullScreen }
 				onVerifyValidTransfer={ this.isValidTransfer }
-				onFilesDrop={ this.uploadFiles } />
+				onFilesDrop={ this.uploadFiles }
+			/>
 		);
-	}
+	},
 } );

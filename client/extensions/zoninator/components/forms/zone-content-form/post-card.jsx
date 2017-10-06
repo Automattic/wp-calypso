@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,7 +18,6 @@ import SectionHeader from 'components/section-header';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 class PostCard extends Component {
-
 	static propTypes = {
 		editorPath: PropTypes.string.isRequired,
 		post: PropTypes.shape( {
@@ -25,18 +27,13 @@ class PostCard extends Component {
 		remove: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = ( event ) => {
+	handleMouseDown = event => {
 		event.stopPropagation();
 		event.preventDefault();
-	}
+	};
 
 	render() {
-		const {
-			editorPath,
-			post: { url, title },
-			remove,
-			translate,
-		} = this.props;
+		const { editorPath, post: { url, title }, remove, translate } = this.props;
 
 		const postCardClass = 'zoninator__zone-list-item';
 
@@ -46,20 +43,15 @@ class PostCard extends Component {
 					compact
 					onMouseDown={ this.handleMouseDown }
 					href={ url }
-					target="_blank">
+					draggable="false"
+					target="_blank"
+				>
 					{ translate( 'View' ) }
 				</Button>
-				<Button
-					compact
-					onMouseDown={ this.handleMouseDown }
-					href={ editorPath }>
+				<Button compact onMouseDown={ this.handleMouseDown } href={ editorPath } draggable="false">
 					{ translate( 'Edit' ) }
 				</Button>
-				<Button
-					compact
-					scary
-					onMouseDown={ this.handleMouseDown }
-					onClick={ remove }>
+				<Button compact scary onMouseDown={ this.handleMouseDown } onClick={ remove }>
 					{ translate( 'Remove' ) }
 				</Button>
 			</SectionHeader>
@@ -71,7 +63,4 @@ const connectComponent = connect( ( state, { post } ) => ( {
 	editorPath: getEditorPath( state, post.siteId, post.id ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

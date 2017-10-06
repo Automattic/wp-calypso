@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -24,9 +25,9 @@ import { isFollowing } from 'state/selectors';
 
 class FeedHeader extends Component {
 	static propTypes = {
-		site: React.PropTypes.object,
-		feed: React.PropTypes.object,
-		showBack: React.PropTypes.bool,
+		site: PropTypes.object,
+		feed: PropTypes.object,
+		showBack: PropTypes.bool,
 	};
 
 	getFollowerCount = ( feed, site ) => {

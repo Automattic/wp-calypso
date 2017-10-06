@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,15 +9,13 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { useFakeTimers } from 'test/helpers/use-sinon';
-import {
-	requestStatus,
-	receiveStatus,
-} from '../';
+import { requestStatus, receiveStatus } from '../';
+import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const siteId = 1916284;
 
@@ -23,6 +23,7 @@ const COMPLETE_RESPONSE = {
 	blog_id: 1916284,
 	status: 'complete',
 	uploaded_plugin_slug: 'hello-dolly',
+	transfer_id: 1,
 };
 
 const IN_PROGRESS_RESPONSE = {
@@ -44,24 +45,28 @@ describe( 'requestStatus', () => {
 
 describe( 'receiveStatus', () => {
 	let clock;
-	useFakeTimers( fakeClock => clock = fakeClock );
+	useFakeTimers( fakeClock => ( clock = fakeClock ) );
 
 	it( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
-		expect( dispatch ).to.have.been.calledThrice;
+		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
 	} );
 
-	it( 'should dispatch success notice if complete', () => {
+	it( 'should dispatch tracks event if complete', () => {
 		const dispatch = sinon.spy();
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
-		expect( dispatch ).to.have.been.calledThrice;
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: { text: "You've successfully uploaded the hello-dolly plugin." }
-		} );
+		expect( dispatch ).to.have.callCount( 3 );
+		expect( dispatch ).to.have.been.calledWith(
+			recordTracksEvent( 'calypso_automated_transfer_complete', {
+				context: 'plugin_upload',
+				transfer_id: 1,
+				uploaded_plugin_slug: 'hello-dolly',
+			} )
+		);
 	} );
 
 	it( 'should request status again if not complete', () => {
@@ -70,8 +75,6 @@ describe( 'receiveStatus', () => {
 		clock.tick( 4000 );
 
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
-			getAutomatedTransferStatus( siteId )
-		);
+		expect( dispatch ).to.have.been.calledWith( getAutomatedTransferStatus( siteId ) );
 	} );
 } );

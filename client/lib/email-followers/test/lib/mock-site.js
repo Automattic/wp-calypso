@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	ID: 95327318,
 	URL: 'https://restapiusertests.wordpress.com',
@@ -27,5 +28,5 @@ module.exports = {
 	jp_version: '3.6',
 	user_can_manage: true,
 	visible: true,
-	wpcom_url: 'restapiusertests.wordpress.com'
+	wpcom_url: 'restapiusertests.wordpress.com',
 };

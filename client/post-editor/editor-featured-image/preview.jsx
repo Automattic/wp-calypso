@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
@@ -20,13 +24,13 @@ const EditorFeaturedImagePreview = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		image: PropTypes.object,
-		maxWidth: PropTypes.number
+		maxWidth: PropTypes.number,
 	},
 
 	getInitialState() {
 		return {
 			height: null,
-			transientSrc: null
+			transientSrc: null,
 		};
 	},
 
@@ -39,7 +43,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		// To prevent container height from collapsing and expanding rapidly,
 		// we preserve the current height while the next image loads
 		const nextState = {
-			height: this.refs.preview.clientHeight
+			height: this.refs.preview.clientHeight,
 		};
 
 		// If the next image is the persisted copy of an in-progress upload, we
@@ -77,7 +81,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 
 		return MediaUtils.url( props.image, {
 			maxWidth: this.props.maxWidth,
-			size: 'post-thumbnail'
+			size: 'post-thumbnail',
 		} );
 	},
 
@@ -93,7 +97,7 @@ const EditorFeaturedImagePreview = React.createClass( {
 		const { height } = this.state;
 		const classes = classNames( 'editor-featured-image__preview', {
 			'is-transient': get( this.props.image, 'transient' ),
-			'has-assigned-height': !! height
+			'has-assigned-height': !! height,
 		} );
 
 		let placeholder;
@@ -110,14 +114,15 @@ const EditorFeaturedImagePreview = React.createClass( {
 					placeholder={ placeholder }
 					src={ this.src() }
 					onLoad={ this.clearState }
-					className="editor-featured-image__preview-image" />
+					className="editor-featured-image__preview-image"
+				/>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
-		siteId: getSelectedSiteId( state )
+		siteId: getSelectedSiteId( state ),
 	};
 } )( EditorFeaturedImagePreview );

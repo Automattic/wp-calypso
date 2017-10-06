@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +15,6 @@ import Dialog from 'components/dialog';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
 
 class PaymentMethodStripeSetupDialog extends Component {
-
 	static propTypes = {
 		onCancel: PropTypes.func.isRequired,
 		onUserRequestsKeyFlow: PropTypes.func.isRequired,
@@ -27,15 +29,15 @@ class PaymentMethodStripeSetupDialog extends Component {
 
 	onSelectCreate = () => {
 		this.setState( { createSelected: true } );
-	}
+	};
 
 	onSelectConnect = () => {
 		this.setState( { createSelected: false } );
-	}
+	};
 
 	onConnect = () => {
 		// Not yet implemented
-	}
+	};
 
 	getButtons = () => {
 		const { onCancel, onUserRequestsKeyFlow, translate } = this.props;
@@ -62,7 +64,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 		} );
 
 		return buttons;
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -71,7 +73,8 @@ class PaymentMethodStripeSetupDialog extends Component {
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.getButtons() }
-				isVisible>
+				isVisible
+			>
 				<div className="stripe__method-edit-header">
 					{ translate( 'Take credit card payments with Stripe' ) }
 				</div>

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -52,7 +55,11 @@ export class CommentDetailEdit extends Component {
 
 	editCommentAndCloseEditMode = () => {
 		const { authorDisplayName, authorUrl, commentContent } = this.props;
-		this.props.editComment( this.props.commentId, this.props.postId, this.state, { authorDisplayName, authorUrl, commentContent } );
+		this.props.editComment( this.props.commentId, this.props.postId, this.state, {
+			authorDisplayName,
+			authorUrl,
+			commentContent,
+		} );
 		this.props.closeEditMode();
 	};
 
@@ -64,23 +71,17 @@ export class CommentDetailEdit extends Component {
 			siteSlug,
 			translate,
 		} = this.props;
-		const {
-			authorDisplayName,
-			authorUrl,
-			commentContent,
-		} = this.state;
+		const { authorDisplayName, authorUrl, commentContent } = this.state;
 
 		return (
 			<div className="comment-detail__edit">
 				<FormFieldset>
-					<FormLabel htmlFor="author">
-						{ translate( 'Name' ) }
-					</FormLabel>
-					{ isAuthorRegistered &&
+					<FormLabel htmlFor="author">{ translate( 'Name' ) }</FormLabel>
+					{ isAuthorRegistered && (
 						<InfoPopover>
-							{ translate( 'This user is registered, the name can\'t be edited.' ) }
+							{ translate( "This user is registered, the name can't be edited." ) }
 						</InfoPopover>
-					}
+					) }
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorDisplayNameValue }
@@ -89,14 +90,12 @@ export class CommentDetailEdit extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="author_url">
-						{ translate( 'URL' ) }
-					</FormLabel>
-					{ isAuthorRegistered &&
+					<FormLabel htmlFor="author_url">{ translate( 'URL' ) }</FormLabel>
+					{ isAuthorRegistered && (
 						<InfoPopover>
-							{ translate( 'This user is registered, the URL can\'t be edited.' ) }
+							{ translate( "This user is registered, the URL can't be edited." ) }
 						</InfoPopover>
-					}
+					) }
 					<FormTextInput
 						disabled={ ! isEditCommentSupported || isAuthorRegistered }
 						onChange={ this.setAuthorUrlValue }
@@ -110,7 +109,7 @@ export class CommentDetailEdit extends Component {
 					value={ commentContent }
 				/>
 
-				{ ! isEditCommentSupported &&
+				{ ! isEditCommentSupported && (
 					<p className="comment-detail__edit-jetpack-update-notice">
 						<Gridicon icon="notice-outline" />
 						{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
@@ -121,7 +120,7 @@ export class CommentDetailEdit extends Component {
 							{ translate( 'Update Now' ) }
 						</a>
 					</p>
-				}
+				) }
 
 				<div className="comment-detail__edit-buttons">
 					<FormButton
@@ -131,12 +130,7 @@ export class CommentDetailEdit extends Component {
 					>
 						{ translate( 'Save' ) }
 					</FormButton>
-					<FormButton
-						compact
-						isPrimary={ false }
-						onClick={ closeEditMode }
-						type="button"
-					>
+					<FormButton compact isPrimary={ false } onClick={ closeEditMode } type="button">
 						{ translate( 'Cancel' ) }
 					</FormButton>
 				</div>

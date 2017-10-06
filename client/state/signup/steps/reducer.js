@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import designType from './design-type/reducer';
 import siteTitle from './site-title/reducer';
 import { combineReducers } from 'state/utils';

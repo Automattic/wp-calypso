@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, identity, isEmpty, map } from 'lodash';
 
 /**
@@ -8,18 +11,11 @@ import { get, identity, isEmpty, map } from 'lodash';
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
 
 import { updateEligibility } from 'state/automated-transfer/actions';
-import {
-	eligibilityHolds,
-} from 'state/automated-transfer/constants';
-import {
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
+import { eligibilityHolds } from 'state/automated-transfer/constants';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -53,9 +49,7 @@ const statusMapping = {
  * @returns {Array} list of hold constants associated with issues listed in API response
  */
 const eligibilityHoldsFromApi = ( { errors = [] } ) =>
-	errors
-		.map( ( { code } ) => get( statusMapping, code, '' ) )
-		.filter( identity );
+	errors.map( ( { code } ) => get( statusMapping, code, '' ) ).filter( identity );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
@@ -67,7 +61,11 @@ const eligibilityHoldsFromApi = ( { errors = [] } ) =>
 const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
 	Object.keys( warnings )
 		.reduce( ( list, type ) => list.concat( warnings[ type ] ), [] ) // combine plugin and theme warnings into one list
-		.map( ( { description, name, support_url } ) => ( { name, description, supportUrl: support_url } ) );
+		.map( ( { description, name, support_url } ) => ( {
+			name,
+			description,
+			supportUrl: support_url,
+		} ) );
 
 /**
  * Maps from API response to internal representation of automated transfer eligibility data
@@ -118,18 +116,22 @@ const trackEligibility = data => {
 export const requestAutomatedTransferEligibility = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
-	dispatch( http( {
-		method: 'GET',
-		path: `/sites/${ siteId }/automated-transfers/eligibility`,
-		apiVersion: '1',
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/automated-transfers/eligibility`,
+				apiVersion: '1',
+			},
+			action
+		)
+	);
 };
 
 export const updateAutomatedTransferEligibility = ( { dispatch }, { siteId }, data ) => {
-	dispatch( withAnalytics(
-		trackEligibility( data ),
-		updateEligibility( siteId, fromApi( data ) )
-	) );
+	dispatch(
+		withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) )
+	);
 };
 
 export const throwRequestError = ( store, action, error ) => {
@@ -137,9 +139,11 @@ export const throwRequestError = ( store, action, error ) => {
 };
 
 export default {
-	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [ dispatchRequest(
-		requestAutomatedTransferEligibility,
-		updateAutomatedTransferEligibility,
-		throwRequestError
-	) ],
+	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
+		dispatchRequest(
+			requestAutomatedTransferEligibility,
+			updateAutomatedTransferEligibility,
+			throwRequestError
+		),
+	],
 };

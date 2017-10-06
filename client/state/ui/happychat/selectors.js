@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import createSelector from 'lib/create-selector';
 import { getSectionName } from 'state/ui/selectors';
 
@@ -21,6 +24,4 @@ export const isHappychatOpen = createSelector(
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
-export const isHappychatMinimizing = createSelector(
-	state => state.ui.happychat.isMinimizing
-);
+export const isHappychatMinimizing = createSelector( state => state.ui.happychat.isMinimizing );

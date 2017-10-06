@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,38 +32,38 @@ class OrderFulfillment extends Component {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ),
-	}
+	};
 
 	state = {
 		errorMessage: false,
 		shouldEmail: false,
 		showDialog: false,
 		trackingNumber: '',
-	}
+	};
 
-	isShippable = ( order ) => {
-		return ( -1 === [ 'completed', 'failed', 'cancelled', 'refunded' ].indexOf( order.status ) );
-	}
+	isShippable = order => {
+		return -1 === [ 'completed', 'failed', 'cancelled', 'refunded' ].indexOf( order.status );
+	};
 
 	toggleDialog = () => {
 		this.setState( {
 			showDialog: ! this.state.showDialog,
 		} );
-	}
+	};
 
-	updateTrackingNumber = ( event ) => {
+	updateTrackingNumber = event => {
 		this.setState( {
 			errorMessage: false,
 			trackingNumber: event.target.value,
 		} );
-	}
+	};
 
 	updateCustomerEmail = () => {
 		this.setState( {
 			errorMessage: false,
 			shouldEmail: ! this.state.shouldEmail,
 		} );
-	}
+	};
 
 	submit = () => {
 		const { order, site, translate } = this.props;
@@ -81,14 +82,14 @@ class OrderFulfillment extends Component {
 		this.toggleDialog();
 		const note = {
 			note: translate( 'Your order has been shipped. The tracking number is %(trackingNumber)s.', {
-				args: { trackingNumber }
+				args: { trackingNumber },
 			} ),
 			customer_note: shouldEmail,
 		};
 		if ( trackingNumber ) {
 			this.props.createNote( site.ID, order.id, note );
 		}
-	}
+	};
 
 	getFulfillmentStatus = () => {
 		const { order, translate } = this.props;
@@ -104,7 +105,7 @@ class OrderFulfillment extends Component {
 			default:
 				return translate( 'Order needs to be fulfilled' );
 		}
-	}
+	};
 
 	render() {
 		const { order, translate } = this.props;
@@ -116,7 +117,9 @@ class OrderFulfillment extends Component {
 
 		const dialogButtons = [
 			<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary onClick={ this.submit }>{ translate( 'Fulfill' ) }</Button>,
+			<Button primary onClick={ this.submit }>
+				{ translate( 'Fulfill' ) }
+			</Button>,
 		];
 
 		const classes = classNames( {
@@ -131,13 +134,19 @@ class OrderFulfillment extends Component {
 					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order-fulfillment__action">
-					{ ( this.isShippable( order ) )
-						? <Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
-						: null
-					}
+					{ this.isShippable( order ) ? (
+						<Button primary onClick={ this.toggleDialog }>
+							{ translate( 'Fulfill' ) }
+						</Button>
+					) : null }
 				</div>
 
-				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass } buttons={ dialogButtons }>
+				<Dialog
+					isVisible={ showDialog }
+					onClose={ this.toggleDialog }
+					className={ dialogClass }
+					buttons={ dialogButtons }
+				>
 					<h1>{ translate( 'Fulfill order' ) }</h1>
 					<form>
 						<FormFieldset className="order-fulfillment__tracking">
@@ -149,13 +158,21 @@ class OrderFulfillment extends Component {
 								className="order-fulfillment__value"
 								value={ trackingNumber }
 								onChange={ this.updateTrackingNumber }
-								placeholder={ translate( 'Tracking Number' ) } />
+								placeholder={ translate( 'Tracking Number' ) }
+							/>
 						</FormFieldset>
 						<FormLabel className="order-fulfillment__email">
-							<FormInputCheckbox checked={ this.state.shouldEmail } onChange={ this.updateCustomerEmail } />
+							<FormInputCheckbox
+								checked={ this.state.shouldEmail }
+								onChange={ this.updateCustomerEmail }
+							/>
 							<span>{ translate( 'Email tracking number to customer' ) }</span>
 						</FormLabel>
-						{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
+						{ errorMessage && (
+							<Notice status="is-error" showDismiss={ false }>
+								{ errorMessage }
+							</Notice>
+						) }
 					</form>
 				</Dialog>
 			</div>
@@ -163,7 +180,6 @@ class OrderFulfillment extends Component {
 	}
 }
 
-export default connect(
-	undefined,
-	dispatch => bindActionCreators( { createNote, updateOrder }, dispatch )
+export default connect( undefined, dispatch =>
+	bindActionCreators( { createNote, updateOrder }, dispatch )
 )( localize( OrderFulfillment ) );

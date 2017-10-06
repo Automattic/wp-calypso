@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { defer, mapValues, omit } from 'lodash';
 
@@ -13,13 +17,13 @@ import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors';
+import { getTheme } from 'state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
 	getUrl: PropTypes.func,
-	action: PropTypes.func
+	action: PropTypes.func,
 } );
 
 const ThemesSiteSelectorModal = React.createClass( {
@@ -85,22 +89,20 @@ const ThemesSiteSelectorModal = React.createClass( {
 		return Object.assign(
 			{},
 			option,
-			option.header
-				? { action: themeId => this.showSiteSelectorModal( option, themeId ) }
-				: {},
-			option.getUrl && option.header
-				? { getUrl: null }
-				: {},
+			option.header ? { action: themeId => this.showSiteSelectorModal( option, themeId ) } : {},
+			option.getUrl && option.header ? { getUrl: null } : {}
 		);
 	},
 
 	render() {
 		const children = React.cloneElement(
 			this.props.children,
-			Object.assign( {}, omit( this.props, [ 'children', 'options', 'defaultOption' ] ), {
+			Object.assign( {}, omit( this.props, [ 'children', 'options', 'defaultOption' ] ), {
 				options: mapValues( this.props.options, this.wrapOption ),
 				defaultOption: this.wrapOption( this.props.defaultOption ),
-				secondaryOption: this.props.secondaryOption ? this.wrapOption( this.props.secondaryOption ) : null,
+				secondaryOption: this.props.secondaryOption
+					? this.wrapOption( this.props.secondaryOption )
+					: null,
 			} )
 		);
 
@@ -110,33 +112,41 @@ const ThemesSiteSelectorModal = React.createClass( {
 		return (
 			<div>
 				{ children }
-				{ selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
-					isVisible={ true }
-					filter={ function( siteId ) {
-						return ! ( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, siteId ) );
-					} }
-					hide={ this.hideSiteSelectorModal }
-					mainAction={ this.trackAndCallAction }
-					mainActionLabel={ selectedOption.label }
-					getMainUrl={ selectedOption.getUrl ? function( siteId ) {
-						return selectedOption.getUrl( selectedThemeId, siteId );
-					} : null } >
-
-					<Theme isActionable={ false } theme={ theme } />
-					<h1>{ selectedOption.header }</h1>
-				</SiteSelectorModal> }
+				{ selectedOption && (
+					<SiteSelectorModal
+						className="themes__site-selector-modal"
+						isVisible={ true }
+						filter={ function( siteId ) {
+							return ! (
+								selectedOption.hideForTheme &&
+								selectedOption.hideForTheme( selectedThemeId, siteId )
+							);
+						} }
+						hide={ this.hideSiteSelectorModal }
+						mainAction={ this.trackAndCallAction }
+						mainActionLabel={ selectedOption.label }
+						getMainUrl={
+							selectedOption.getUrl ? (
+								function( siteId ) {
+									return selectedOption.getUrl( selectedThemeId, siteId );
+								}
+							) : null
+						}
+					>
+						<Theme isActionable={ false } theme={ theme } />
+						<h1>{ selectedOption.header }</h1>
+					</SiteSelectorModal>
+				) }
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => ( {
-		// We don't need a <QueryTheme /> component to fetch data for the theme since the
-		// ThemesSiteSelectorModal will always be called from a context where those data are available.
-		// FIXME: Since the siteId and themeId are part of the component's internal state, we can't use them
-		// here. Instead, we have to return helper functions.
-		getSiteSlug: siteId => getSiteSlug( state, siteId ),
-		getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId ),
-	} )
-)( ThemesSiteSelectorModal );
+export default connect( state => ( {
+	// We don't need a <QueryTheme /> component to fetch data for the theme since the
+	// ThemesSiteSelectorModal will always be called from a context where those data are available.
+	// FIXME: Since the siteId and themeId are part of the component's internal state, we can't use them
+	// here. Instead, we have to return helper functions.
+	getSiteSlug: siteId => getSiteSlug( state, siteId ),
+	getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId ),
+} ) )( ThemesSiteSelectorModal );

@@ -9,6 +9,7 @@ const glob = require( 'glob' );
 const ignore = require( 'ignore' );
 const path = require( 'path' );
 const prettier = require( 'prettier' );
+const docblock = require( 'docblock' );
 
 /**
  * Returns true if the given text contains @format.
@@ -16,22 +17,7 @@ const prettier = require( 'prettier' );
  *
  * @param {String} text text to scan for the format keyword within the first docblock
  */
-const shouldFormat = text => {
-	const firstDocBlockStartIndex = text.indexOf( '/**' );
-
-	if ( -1 === firstDocBlockStartIndex ) {
-		return false;
-	}
-
-	const firstDocBlockEndIndex = text.indexOf( '*/', firstDocBlockStartIndex + 1 );
-
-	if ( -1 === firstDocBlockEndIndex ) {
-		return false;
-	}
-
-	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 1 );
-	return firstDocBlockText.indexOf( '@format' ) >= 0;
-};
+const shouldFormat = text => 'format' in docblock.parse( docblock.extract( text ) );
 
 // Load ignore file
 const ignoreFile = fs.readFileSync( '.eslintignore', 'utf-8' );

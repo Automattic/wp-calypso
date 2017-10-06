@@ -1,29 +1,33 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classnames from 'classnames';
 import { assign, some } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	cartValues = require( 'lib/cart-values' ),
-	CountrySelect = require( 'my-sites/domains/components/form/country-select' ),
-	Input = require( 'my-sites/domains/components/form/input' ),
-	notices = require( 'notices' ),
-	PaymentBox = require( './payment-box' ),
-	SubscriptionText = require( './subscription-text' ),
-	TermsOfService = require( './terms-of-service' ),
-	wpcom = require( 'lib/wp' ).undocumented();
-
+import analytics from 'lib/analytics';
+import cartValues from 'lib/cart-values';
+import CountrySelect from 'my-sites/domains/components/form/country-select';
+import Input from 'my-sites/domains/components/form/input';
+import notices from 'notices';
+import PaymentBox from './payment-box';
+import SubscriptionText from './subscription-text';
+import TermsOfService from './terms-of-service';
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',
@@ -31,7 +35,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			country: null,
-			formDisabled: false
+			formDisabled: false,
 		};
 	},
 
@@ -59,7 +63,7 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( {
-			formDisabled: submitState.disabled
+			formDisabled: submitState.disabled,
 		} );
 	},
 
@@ -68,7 +72,9 @@ module.exports = React.createClass( {
 	},
 
 	redirectToPayPal: function( event ) {
-		var cart, transaction, dataForApi,
+		var cart,
+			transaction,
+			dataForApi,
 			origin = this.getLocationOrigin( window.location );
 		event.preventDefault();
 
@@ -77,7 +83,7 @@ module.exports = React.createClass( {
 
 		this.setSubmitState( {
 			info: this.translate( 'Sending details to PayPal' ),
-			disabled: true
+			disabled: true,
 		} );
 
 		let cancelUrl = origin + '/checkout/';
@@ -92,48 +98,51 @@ module.exports = React.createClass( {
 			successUrl: origin + this.props.redirectTo(),
 			cancelUrl,
 			cart,
-			domainDetails: transaction.domainDetails
+			domainDetails: transaction.domainDetails,
 		} );
 
 		// get PayPal Express URL from rest endpoint
-		wpcom.paypalExpressUrl( dataForApi, function( error, paypalExpressURL ) {
-			var errorMessage;
-			if ( error ) {
-				if ( error.message ) {
-					errorMessage = error.message;
-				} else {
-					errorMessage = this.translate( 'Please specify a country and postal code.' );
+		wpcom.paypalExpressUrl(
+			dataForApi,
+			function( error, paypalExpressURL ) {
+				var errorMessage;
+				if ( error ) {
+					if ( error.message ) {
+						errorMessage = error.message;
+					} else {
+						errorMessage = this.translate( 'Please specify a country and postal code.' );
+					}
+
+					this.setSubmitState( {
+						error: errorMessage,
+						disabled: false,
+					} );
 				}
 
-				this.setSubmitState( {
-					error: errorMessage,
-					disabled: false
-				} );
-			}
-
-			if ( paypalExpressURL ) {
-				this.setSubmitState( {
-					info: this.translate( 'Redirecting you to PayPal' ),
-					disabled: true
-				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-				window.location = paypalExpressURL;
-			}
-		}.bind( this ) );
+				if ( paypalExpressURL ) {
+					this.setSubmitState( {
+						info: this.translate( 'Redirecting you to PayPal' ),
+						disabled: true,
+					} );
+					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
+					analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
+					window.location = paypalExpressURL;
+				}
+			}.bind( this )
+		);
 	},
 
 	renderButtonText: function() {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return this.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
-				context: 'Pay button on /checkout'
+				context: 'Pay button on /checkout',
 			} );
 		}
 
 		return this.translate( 'Pay %(price)s with PayPal', {
 			args: { price: this.props.cart.total_cost_display },
-			context: 'Pay button on /checkout'
+			context: 'Pay button on /checkout',
 		} );
 	},
 
@@ -144,7 +153,7 @@ module.exports = React.createClass( {
 			abtest( 'presaleChatButton' ) === 'showChatButton' &&
 			hasBusinessPlanInCart;
 		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
-			'credit-card-payment-box__switch-link-left': showPaymentChatButton
+			'credit-card-payment-box__switch-link-left': showPaymentChatButton,
 		} );
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
@@ -157,41 +166,48 @@ module.exports = React.createClass( {
 						value={ this.state.country }
 						onChange={ this.handleChange }
 						disabled={ this.state.formDisabled }
-						eventFormName="Checkout Form" />
+						eventFormName="Checkout Form"
+					/>
 					<Input
 						additionalClasses="checkout-field"
 						name="postal-code"
 						label={ this.translate( 'Postal Code', { textOnly: true } ) }
 						onChange={ this.handleChange }
 						disabled={ this.state.formDisabled }
-						eventFormName="Checkout Form" />
+						eventFormName="Checkout Form"
+					/>
 				</div>
 
 				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
+						this.props.cart
+					) }
+				/>
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
-						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
+						<button
+							type="submit"
+							className="button is-primary button-pay"
+							disabled={ this.state.formDisabled }
+						>
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
 
-					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
+					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) && (
 						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
 							{ this.translate( 'or use a credit card', {
 								context: 'Upgrades: PayPal checkout screen',
-								comment: 'Checkout with PayPal -- or use a credit card'
+								comment: 'Checkout with PayPal -- or use a credit card',
 							} ) }
-						</a> }
+						</a>
+					) }
 
-					{
-						showPaymentChatButton &&
-						<PaymentChatButton
-							paymentType="paypal"
-							cart={ this.props.cart } />
-					}
+					{ showPaymentChatButton && (
+						<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
+					) }
 				</div>
 
 				<CartCoupon cart={ this.props.cart } />
@@ -205,9 +221,10 @@ module.exports = React.createClass( {
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
-				title={ this.translate( 'Secure Payment with PayPal' ) }>
+				title={ this.translate( 'Secure Payment with PayPal' ) }
+			>
 				{ this.content() }
 			</PaymentBox>
 		);
-	}
+	},
 } );

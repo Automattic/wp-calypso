@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
 
@@ -22,13 +25,15 @@ function getAvailabilityNotice( domain, error ) {
 			if ( tld ) {
 				message = translate(
 					'To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, ' +
-					'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
+						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 					{
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
-						}
+							a: (
+								<a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
+							),
+						},
 					}
 				);
 				severity = 'info';
@@ -41,8 +46,8 @@ function getAvailabilityNotice( domain, error ) {
 					{
 						args: { tld },
 						components: {
-							strong: <strong />
-						}
+							strong: <strong />,
+						},
 					}
 				);
 				severity = 'info';
@@ -61,23 +66,33 @@ function getAvailabilityNotice( domain, error ) {
 			if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
-					'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
-					'Please {{a2}}contact support{{/a2}} if you have any questions.',
+						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
+						'Please {{a2}}contact support{{/a2}} if you have any questions.',
 					{
 						components: {
 							strong: <strong />,
-							a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
-							a2: <a href={ support.CALYPSO_CONTACT } />
-						}
+							a1: (
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href="http://wordpressfoundation.org/trademark-policy/"
+								/>
+							),
+							a2: <a href={ support.CALYPSO_CONTACT } />,
+						},
 					}
 				);
 			} else {
-				message = translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+				message = translate(
+					'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.'
+				);
 			}
 			break;
 
 		case domainAvailability.FORBIDDEN_SUBDOMAIN:
-			message = translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
+			message = translate(
+				"Subdomains starting with 'www.' cannot be mapped to a WordPress.com blog"
+			);
 			break;
 
 		case domainAvailability.FORBIDDEN:
@@ -87,7 +102,7 @@ function getAvailabilityNotice( domain, error ) {
 		case domainAvailability.INVALID_TLD:
 		case domainAvailability.INVALID:
 			message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-				args: { domain: domain }
+				args: { domain: domain },
 			} );
 			break;
 
@@ -102,8 +117,10 @@ function getAvailabilityNotice( domain, error ) {
 			break;
 
 		case domainAvailability.RECENTLY_UNMAPPED:
-			message = translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
-				'Please try again later or contact support.' );
+			message = translate(
+				'This domain was recently in use by someone else and is not available to map yet. ' +
+					'Please try again later or contact support.'
+			);
 			break;
 
 		case domainAvailability.EMPTY_QUERY:
@@ -111,15 +128,15 @@ function getAvailabilityNotice( domain, error ) {
 			break;
 
 		default:
-			message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
+			message = translate(
+				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
+			);
 	}
 
 	return {
 		message,
-		severity
+		severity,
 	};
 }
 
-export {
-	getAvailabilityNotice
-};
+export { getAvailabilityNotice };

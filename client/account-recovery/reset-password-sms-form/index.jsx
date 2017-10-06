@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,7 +16,6 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetSelectedMethod,
@@ -36,38 +38,30 @@ class ResetPasswordSmsForm extends Component {
 		};
 	}
 
-	submitValidationKey = ( event ) => {
-		const {
-			userData,
-			selectedMethod,
-		} = this.props;
+	submitValidationKey = event => {
+		const { userData, selectedMethod } = this.props;
 
 		this.props.validateRequest( userData, selectedMethod, this.state.candidateKey );
 
 		event.preventDefault();
-	}
+	};
 
-	updateValidationKey = ( event ) => {
+	updateValidationKey = event => {
 		this.setState( { candidateKey: event.target.value } );
-	}
+	};
 
 	render() {
-		const {
-			translate,
-			isValidating,
-			error,
-		} = this.props;
+		const { translate, isValidating, error } = this.props;
 
 		return (
 			<Card>
-				<h2 className="reset-password-sms-form__title">
-					{ translate( 'Reset your password' ) }
-				</h2>
+				<h2 className="reset-password-sms-form__title">{ translate( 'Reset your password' ) }</h2>
 				<p>
-					{ translate( 'Please enter the code you were sent by SMS. ' +
-						'It will look something like {{code}}63423423{{/code}}. You may need to wait a few moments before it arrives.',
-						{ components: { code: <code /> } } )
-					}
+					{ translate(
+						'Please enter the code you were sent by SMS. ' +
+							'It will look something like {{code}}63423423{{/code}}. You may need to wait a few moments before it arrives.',
+						{ components: { code: <code /> } }
+					) }
 				</p>
 				<form onSubmit={ this.submitValidationKey }>
 					<FormTextInput
@@ -78,11 +72,19 @@ class ResetPasswordSmsForm extends Component {
 						autoFocus
 					/>
 					{ error && <ErrorMessage error={ error } /> }
-					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
+					<FormButton
+						className="reset-password-sms-form__submit-button"
+						type="submit"
+						disabled={ isValidating }
+					>
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<Button className="reset-password-sms-form__no-sms-link" onClick={ this.props.clearResetMethod } borderless>
+				<Button
+					className="reset-password-sms-form__no-sms-link"
+					onClick={ this.props.clearResetMethod }
+					borderless
+				>
 					{ translate( 'No SMS?' ) }
 				</Button>
 			</Card>
@@ -91,7 +93,7 @@ class ResetPasswordSmsForm extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		userData: getAccountRecoveryResetUserData( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
 		isValidating: isValidatingAccountRecoveryKey( state ),

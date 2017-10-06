@@ -1,13 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isEmpty } from 'lodash';
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Input = require( './input' );
+import Input from './input';
 
 module.exports = React.createClass( {
 	displayName: 'HiddenInput',
@@ -20,7 +23,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			toggled: false
+			toggled: false,
 		};
 	},
 
@@ -35,21 +38,21 @@ module.exports = React.createClass( {
 		event.preventDefault();
 
 		this.setState( {
-			toggled: true
+			toggled: true,
 		} );
 	},
 
 	render: function() {
 		if ( this.state.toggled ) {
-			return (
-				<Input ref="input" { ...this.props } />
-			);
+			return <Input ref="input" { ...this.props } />;
 		}
 
 		return (
 			<div className="hidden-input">
-				<a href="" onClick={ this.handleClick }>{ this.props.text }</a>
+				<a href="" onClick={ this.handleClick }>
+					{ this.props.text }
+				</a>
 			</div>
 		);
-	}
+	},
 } );

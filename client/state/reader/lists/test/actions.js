@@ -2,12 +2,23 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import {
+	receiveLists,
+	requestList,
+	requestSubscribedLists,
+	followList,
+	unfollowList,
+	updateListDetails,
+	dismissListNotice,
+	updateTitle,
+	updateDescription,
+} from '../actions';
 import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
@@ -20,17 +31,6 @@ import {
 	READER_LIST_UPDATE_DESCRIPTION,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	receiveLists,
-	requestList,
-	requestSubscribedLists,
-	followList,
-	unfollowList,
-	updateListDetails,
-	dismissListNotice,
-	updateTitle,
-	updateDescription,
-} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

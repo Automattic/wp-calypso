@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, map, uniq } from 'lodash';
 
 /**
@@ -9,11 +12,9 @@ import { get, map, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 const getPostRevisionsAuthorsId = createSelector(
-	( state, siteId, postId ) => uniq( map(
-		get( state.posts.revisions.revisions, [ siteId, postId ], {} ),
-		'author'
-	) ),
-	( state ) => [ state.posts.revisions.revisions ]
+	( state, siteId, postId ) =>
+		uniq( map( get( state.posts.revisions.revisions, [ siteId, postId ], {} ), 'author' ) ),
+	state => [ state.posts.revisions.revisions ]
 );
 
 export default getPostRevisionsAuthorsId;

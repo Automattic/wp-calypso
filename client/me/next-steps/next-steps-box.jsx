@@ -1,20 +1,24 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
+	displayName: 'NextStepsBox',
+
 	recordEvent: function() {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
 		analytics.tracks.recordEvent( 'calypso_me_next_click', {
 			module: this.props.stepName,
-			is_welcome: this.props.isWelcome
+			is_welcome: this.props.isWelcome,
 		} );
 	},
 
@@ -38,12 +42,16 @@ module.exports = React.createClass( {
 					{ this.props.step.body }
 
 					<div className="next-steps-box__step-action">
-						<a className={ buttonClassNames } href={ this.props.step.buttonURL } onClick={ this.recordEvent }>
+						<a
+							className={ buttonClassNames }
+							href={ this.props.step.buttonURL }
+							onClick={ this.recordEvent }
+						>
 							{ this.props.step.buttonText }
 						</a>
 					</div>
 				</div>
 			</div>
 		);
-	}
+	},
 } );

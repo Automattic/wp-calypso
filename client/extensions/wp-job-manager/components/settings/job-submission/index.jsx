@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { change, formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
@@ -73,17 +77,20 @@ class JobSubmission extends Component {
 
 					<FormSection name="account">
 						<SectionHeader label={ translate( 'Account' ) }>
-							<FormButton compact
+							<FormButton
+								compact
 								disabled={ isDisabled }
 								isSubmitting={ submitting }
-								onClick={ handleSubmit( this.save( 'account' ) ) } />
+								onClick={ handleSubmit( this.save( 'account' ) ) }
+							/>
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isDisabled }
 									name="isAccountRequired"
-									text={ translate( 'Require an account to submit listings' ) } />
+									text={ translate( 'Require an account to submit listings' ) }
+								/>
 								<FormSettingExplanation isIndented>
 									{ translate( 'Limits job listing submissions to registered, logged-in users.' ) }
 								</FormSettingExplanation>
@@ -91,44 +98,49 @@ class JobSubmission extends Component {
 								<ReduxFormToggle
 									disabled={ isDisabled }
 									name="enableRegistration"
-									text={ translate( 'Enable account creation during submission' ) } />
+									text={ translate( 'Enable account creation during submission' ) }
+								/>
 								<FormSettingExplanation isIndented>
-									{ translate( 'Includes account creation on the listing submission form, to allow ' +
-										'non-registered users to create an account and submit a job listing simultaneously.' ) }
+									{ translate(
+										'Includes account creation on the listing submission form, to allow ' +
+											'non-registered users to create an account and submit a job listing simultaneously.'
+									) }
 								</FormSettingExplanation>
 
-								{ enableRegistration &&
+								{ enableRegistration && (
 									<div>
 										<ReduxFormToggle
 											disabled={ isDisabled }
 											name="generateUsername"
-											text="Generate usernames from email addresses" />
+											text="Generate usernames from email addresses"
+										/>
 										<FormSettingExplanation isIndented>
-											{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
-												'email address. If this is not enabled, a "username" field will display instead.' ) }
+											{ translate(
+												"Automatically generates usernames for new accounts from the registrant's " +
+													'email address. If this is not enabled, a "username" field will display instead.'
+											) }
 										</FormSettingExplanation>
 
 										<ReduxFormToggle
 											disabled={ isDisabled || generateUsername }
 											name="sendPassword"
-											text="Email new users a link to set a password" />
+											text="Email new users a link to set a password"
+										/>
 										<FormSettingExplanation isIndented>
-											{ translate( 'Sends an email to the user with their username and a link to set ' +
-												'their password. If this is not enabled, a "password" field will display instead, ' +
-												'and their email address won\'t be verified.' ) }
+											{ translate(
+												'Sends an email to the user with their username and a link to set ' +
+													'their password. If this is not enabled, a "password" field will display instead, ' +
+													"and their email address won't be verified."
+											) }
 										</FormSettingExplanation>
 									</div>
-								}
+								) }
 							</FormFieldset>
 
-							{ enableRegistration &&
+							{ enableRegistration && (
 								<FormFieldset>
-									<FormLabel>
-										{ translate( 'Role' ) }
-									</FormLabel>
-									<ReduxFormSelect
-										disabled={ isDisabled }
-										name="role">
+									<FormLabel>{ translate( 'Role' ) }</FormLabel>
+									<ReduxFormSelect disabled={ isDisabled } name="role">
 										<option value="editor">{ translate( 'Editor' ) }</option>
 										<option value="author">{ translate( 'Author' ) }</option>
 										<option value="contributor">{ translate( 'Contributor' ) }</option>
@@ -139,12 +151,14 @@ class JobSubmission extends Component {
 										<option value="shop_manager">{ translate( 'Shop manager' ) }</option>
 									</ReduxFormSelect>
 									<FormSettingExplanation>
-										{ translate( 'Any new accounts created during submission will have this role. ' +
-											'If you haven\'t enabled account creation during submission in the options above, ' +
-											'your own method of assigning roles will apply.' ) }
+										{ translate(
+											'Any new accounts created during submission will have this role. ' +
+												"If you haven't enabled account creation during submission in the options above, " +
+												'your own method of assigning roles will apply.'
+										) }
 									</FormSettingExplanation>
 								</FormFieldset>
-							}
+							) }
 						</Card>
 					</FormSection>
 				</form>
@@ -152,28 +166,36 @@ class JobSubmission extends Component {
 				<form>
 					<FormSection name="approval">
 						<SectionHeader label={ translate( 'Approval' ) }>
-							<FormButton compact
+							<FormButton
+								compact
 								disabled={ isDisabled }
 								isSubmitting={ submitting }
-								onClick={ handleSubmit( this.save( 'approval' ) ) } />
+								onClick={ handleSubmit( this.save( 'approval' ) ) }
+							/>
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isDisabled }
 									name="isApprovalRequired"
-									text={ translate( 'Require admin approval of all new listing submissions' ) } />
+									text={ translate( 'Require admin approval of all new listing submissions' ) }
+								/>
 								<FormSettingExplanation isIndented>
-									{ translate( 'Sets all new submissions to "pending." They will not appear on your ' +
-										'site until an admin approves them.' ) }
+									{ translate(
+										'Sets all new submissions to "pending." They will not appear on your ' +
+											'site until an admin approves them.'
+									) }
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
 									disabled={ isDisabled }
 									name="canEdit"
-									text="Allow editing of pending listings" />
+									text="Allow editing of pending listings"
+								/>
 								<FormSettingExplanation isIndented>
-									{ translate( 'Users can continue to edit pending listings until they are approved by an admin.' ) }
+									{ translate(
+										'Users can continue to edit pending listings until they are approved by an admin.'
+									) }
 								</FormSettingExplanation>
 							</FormFieldset>
 						</Card>
@@ -183,10 +205,12 @@ class JobSubmission extends Component {
 				<form>
 					<FormSection name="duration">
 						<SectionHeader label={ translate( 'Listing Duration' ) }>
-							<FormButton compact
+							<FormButton
+								compact
 								disabled={ isDisabled }
 								isSubmitting={ submitting }
-								onClick={ handleSubmit( this.save( 'duration' ) ) } />
+								onClick={ handleSubmit( this.save( 'duration' ) ) }
+							/>
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
@@ -196,19 +220,23 @@ class JobSubmission extends Component {
 									{
 										count: submissionDuration,
 										components: {
-											days:
+											days: (
 												<ReduxFormTextInput
 													disabled={ isDisabled }
 													min="0"
 													name="submissionDuration"
 													step="1"
-													type="number" />
-										}
+													type="number"
+												/>
+											),
+										},
 									}
 								) }
 								<FormSettingExplanation>
-									{ translate( 'Listings will display for the set number of days, then expire. ' +
-										'Leave this field blank if you don\'t want listings to have an expiration date.' ) }
+									{ translate(
+										'Listings will display for the set number of days, then expire. ' +
+											"Leave this field blank if you don't want listings to have an expiration date."
+									) }
 								</FormSettingExplanation>
 							</FormFieldset>
 						</Card>
@@ -218,45 +246,34 @@ class JobSubmission extends Component {
 				<form>
 					<FormSection name="method">
 						<SectionHeader label={ translate( 'Application Method' ) }>
-							<FormButton compact
+							<FormButton
+								compact
 								disabled={ isDisabled }
 								isSubmitting={ submitting }
-								onClick={ handleSubmit( this.save( 'method' ) ) } />
+								onClick={ handleSubmit( this.save( 'method' ) ) }
+							/>
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<FormSettingExplanation>
-									{ translate( 'Choose the application method job listers will need to provide. ' +
-										'Specify URL or email address only, or allow listers to choose which they prefer.' ) }
+									{ translate(
+										'Choose the application method job listers will need to provide. ' +
+											'Specify URL or email address only, or allow listers to choose which they prefer.'
+									) }
 								</FormSettingExplanation>
 								<FormLabel>
-									<ReduxFormRadio
-										disabled={ isDisabled }
-										name="applicationMethod"
-										value="" />
-									<span>
-										{ translate( 'Email address or website URL' ) }
-									</span>
+									<ReduxFormRadio disabled={ isDisabled } name="applicationMethod" value="" />
+									<span>{ translate( 'Email address or website URL' ) }</span>
 								</FormLabel>
 
 								<FormLabel>
-									<ReduxFormRadio
-										disabled={ isDisabled }
-										name="applicationMethod"
-										value="email" />
-									<span>
-										{ translate( 'Email addresses only' ) }
-									</span>
+									<ReduxFormRadio disabled={ isDisabled } name="applicationMethod" value="email" />
+									<span>{ translate( 'Email addresses only' ) }</span>
 								</FormLabel>
 
 								<FormLabel>
-									<ReduxFormRadio
-										disabled={ isDisabled }
-										name="applicationMethod"
-										value="url" />
-									<span>
-										{ translate( 'Website URLs only' ) }
-									</span>
+									<ReduxFormRadio disabled={ isDisabled } name="applicationMethod" value="url" />
+									<span>{ translate( 'Website URLs only' ) }</span>
 								</FormLabel>
 							</FormFieldset>
 						</Card>
@@ -284,8 +301,4 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	createReduxForm,
-)( JobSubmission );
+export default flowRight( connectComponent, localize, createReduxForm )( JobSubmission );

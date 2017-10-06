@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { forEach, get, includes, orderBy, reject } from 'lodash';
 /**
  * Internal dependencies
@@ -9,10 +12,14 @@ import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const getPackagesForm = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'packages' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'packages' ],
+		null
+	);
 };
 
-const getPredefinedPackageServices = ( form ) => {
+const getPredefinedPackageServices = form => {
 	if ( ! form || ! form.predefinedSchema ) {
 		return [];
 	}
@@ -37,10 +44,10 @@ export const getAllSelectedPackages = createSelector(
 		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
 			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
 
-			forEach( serviceGroups, ( group ) => {
+			forEach( serviceGroups, group => {
 				const definitions = group.definitions;
 
-				forEach( definitions, ( pckg ) => {
+				forEach( definitions, pckg => {
 					if ( ! includes( serviceSelectedIds, pckg.id ) ) {
 						return;
 					}
@@ -69,7 +76,7 @@ export const getAllSelectedPackages = createSelector(
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
 			...( form.packages.custom || [] ),
-			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] )
+			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
 		];
 	}
 );
@@ -109,7 +116,7 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 					selected: 0,
 				};
 
-				forEach( definitions, ( pckg ) => {
+				forEach( definitions, pckg => {
 					const selected = includes( serviceSelectedIds, pckg.id );
 					if ( selected ) {
 						groupResult.selected++;
@@ -136,7 +143,7 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
-			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] )
+			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
 		];
 	}
 );
@@ -157,11 +164,10 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 			return { added, removed };
 		}
 
-		const existingPackages = form.packages && form.packages.predefined
-			? form.packages.predefined
-			: {};
+		const existingPackages =
+			form.packages && form.packages.predefined ? form.packages.predefined : {};
 		const editedPackages = form.currentlyEditingPredefinedPackages;
-		Object.keys( editedPackages ).forEach( ( key ) => {
+		Object.keys( editedPackages ).forEach( key => {
 			const existing = existingPackages[ key ];
 			const edited = editedPackages[ key ];
 
@@ -170,14 +176,14 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 				return;
 			}
 
-			edited.forEach( ( packageId ) => {
+			edited.forEach( packageId => {
 				if ( ! includes( existing, packageId ) ) {
 					added++;
 				}
 			} );
 		} );
 
-		Object.keys( existingPackages ).forEach( ( key ) => {
+		Object.keys( existingPackages ).forEach( key => {
 			const existing = existingPackages[ key ];
 			const edited = editedPackages[ key ];
 
@@ -186,7 +192,7 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 				return;
 			}
 
-			existing.forEach( ( packageId ) => {
+			existing.forEach( packageId => {
 				if ( ! includes( edited, packageId ) ) {
 					removed++;
 				}
@@ -203,8 +209,11 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
-			...serviceIds.map( ( serviceId ) => form.packages && form.packages.predefined && form.packages.predefined[ serviceId ] ),
-			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] )
+			...serviceIds.map(
+				serviceId =>
+					form.packages && form.packages.predefined && form.packages.predefined[ serviceId ]
+			),
+			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
 		];
 	}
 );

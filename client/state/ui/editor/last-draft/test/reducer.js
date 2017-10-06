@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,15 +8,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 import reducer, { siteId, postId } from '../reducer';
+import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'siteId',
-			'postId'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'siteId', 'postId' ] );
 	} );
 
 	describe( '#siteId()', () => {
@@ -28,7 +27,7 @@ describe( 'reducer', () => {
 			const state = siteId( undefined, {
 				type: EDITOR_LAST_DRAFT_SET,
 				siteId: 2916284,
-				postId: 841
+				postId: 841,
 			} );
 
 			expect( state ).to.equal( 2916284 );
@@ -46,7 +45,7 @@ describe( 'reducer', () => {
 			const state = postId( undefined, {
 				type: EDITOR_LAST_DRAFT_SET,
 				siteId: 2916284,
-				postId: 841
+				postId: 841,
 			} );
 
 			expect( state ).to.equal( 841 );

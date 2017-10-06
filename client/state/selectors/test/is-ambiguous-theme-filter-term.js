@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isAmbiguousThemeFilterTerm } from '../';
-import { state } from './fixtures/theme-filters';
+import { isAmbiguousThemeFilterTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'isAmbiguousThemeFilterTerm()', () => {
 	it( 'should return false for an unambiguous term', () => {

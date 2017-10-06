@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,10 +17,8 @@ describe( 'getPaymentMethodDetails', () => {
 	} );
 	it( 'returns object containing info from detailsMap', () => {
 		const methodType = getPaymentMethodDetails( 'bacs' );
-		expect( methodType ).to.eql(
-			{
-				methodType: 'offline'
-			}
-		);
+		expect( methodType ).to.eql( {
+			methodType: 'offline',
+		} );
 	} );
 } );

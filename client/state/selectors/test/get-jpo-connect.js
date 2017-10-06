@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,14 +18,16 @@ describe( 'getJpoConnect', () => {
 	it( 'should return jpoConnect type from the state', () => {
 		const testJpoConnectObject = {
 			queryObject: { client_id: '123' },
-			isAuthorizing: true
+			isAuthorizing: true,
 		};
-		expect( getJpoConnect( {
-			signup: {
-				dependencyStore: {
-					jpoConnect: testJpoConnectObject
-				}
-			}
-		} ) ).to.deep.eql( testJpoConnectObject );
+		expect(
+			getJpoConnect( {
+				signup: {
+					dependencyStore: {
+						jpoConnect: testJpoConnectObject,
+					},
+				},
+			} )
+		).to.deep.eql( testJpoConnectObject );
 	} );
 } );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -12,7 +15,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from '../constants';
+import { SetupPath, Steps } from '../../../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
@@ -54,11 +57,7 @@ const PageRenderer = ( { disabled, explanation, input, meta } ) => {
 		<div className="page-setup__page">
 			<FormTextInput { ...input } disabled={ disabled } />
 			{ isError && <FormInputValidation isError text={ meta.error } /> }
-			{ explanation &&
-				<FormSettingExplanation>
-					{ explanation }
-				</FormSettingExplanation>
-			}
+			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</div>
 	);
 };
@@ -110,7 +109,7 @@ class PageSetup extends Component {
 		}
 
 		this.props.createPages( siteId, titles );
-	}
+	};
 
 	render() {
 		const {
@@ -129,75 +128,76 @@ class PageSetup extends Component {
 				<CompactCard>
 					{ translate(
 						'{{p}}With WP Job Manager, employers and applicants can post, manage, and browse job listings ' +
-						'right on your website. Tell us which of these common pages you\'d like your site to have ' +
-						'and we\'ll create and configure them for you.{{/p}}' +
-						'{{p}}(These pages are created using {{shortcodes}}shortcodes{{/shortcodes}}, which we take care of ' +
-						'in this step. If you\'d like to build these pages yourself or want to add one of these options to an ' +
-						'existing page on your site, you can skip this step and take a look at {{shortcodeRef}}shortcode ' +
-						'support documentation{{/shortcodeRef}} for detailed instructions.){{/p}}',
-						{ components: {
-							em: <em />,
-							p: <p />,
-							shortcodes: (
-								<ExternalLink
-									icon={ true }
-									target="_blank"
-									href="https://codex.wordpress.org/Shortcode"
-								/>
-							),
-							shortcodeRef: (
-								<ExternalLink
-									icon={ true }
-									target="_blank"
-									href="https://wpjobmanager.com/document/shortcode-reference/"
-								/>
-							)
-						} }
+							"right on your website. Tell us which of these common pages you'd like your site to have " +
+							"and we'll create and configure them for you.{{/p}}" +
+							'{{p}}(These pages are created using {{shortcodes}}shortcodes{{/shortcodes}}, which we take care of ' +
+							"in this step. If you'd like to build these pages yourself or want to add one of these options to an " +
+							'existing page on your site, you can skip this step and take a look at {{shortcodeRef}}shortcode ' +
+							'support documentation{{/shortcodeRef}} for detailed instructions.){{/p}}',
+						{
+							components: {
+								em: <em />,
+								p: <p />,
+								shortcodes: (
+									<ExternalLink
+										icon={ true }
+										target="_blank"
+										href="https://codex.wordpress.org/Shortcode"
+									/>
+								),
+								shortcodeRef: (
+									<ExternalLink
+										icon={ true }
+										target="_blank"
+										href="https://wpjobmanager.com/document/shortcode-reference/"
+									/>
+								),
+							},
+						}
 					) }
 
 					<div className="page-setup__pages">
 						<form>
 							<FormFieldset>
-								<ReduxFormToggle
-									disabled={ isCreating }
-									name="createPostJob" />
+								<ReduxFormToggle disabled={ isCreating } name="createPostJob" />
 								<Field
 									component={ PageRenderer }
 									disabled={ ! createPostJob || isCreating }
 									explanation={ translate(
 										'Creates a page that allows employers to post new jobs directly from a page on your website, ' +
-										'instead of requiring them to log in to an admin area. If you\'d rather not allow this -- ' +
-										'for example, if you want employers to use the admin dashboard only -- you can uncheck ' +
-										'this setting.'
+											"instead of requiring them to log in to an admin area. If you'd rather not allow this -- " +
+											'for example, if you want employers to use the admin dashboard only -- you can uncheck ' +
+											'this setting.'
 									) }
-									name="postJobTitle" />
+									name="postJobTitle"
+								/>
 							</FormFieldset>
 
 							<FormFieldset>
-								<ReduxFormToggle
-									disabled={ isCreating }
-									name="createDashboard" />
+								<ReduxFormToggle disabled={ isCreating } name="createDashboard" />
 								<Field
 									component={ PageRenderer }
 									disabled={ ! createDashboard || isCreating }
 									explanation={ translate(
 										'Creates a page that allows employers to manage their job listings directly from a page on your ' +
-										'website, instead of requiring them to log in to an admin area. If you want to manage all ' +
-										'job listings from the admin dashboard only, you can uncheck this setting.'
+											'website, instead of requiring them to log in to an admin area. If you want to manage all ' +
+											'job listings from the admin dashboard only, you can uncheck this setting.'
 									) }
-									name="dashboardTitle" />
+									name="dashboardTitle"
+								/>
 							</FormFieldset>
 
 							<FormFieldset>
-								<ReduxFormToggle
-									disabled={ isCreating }
-									name="createJobs" />
+								<ReduxFormToggle disabled={ isCreating } name="createJobs" />
 								<Field
 									component={ PageRenderer }
 									disabled={ ! createJobs || isCreating }
-									explanation={ translate( 'Creates a page where visitors can browse, search, and filter ' +
-										'job listings.' ) }
-									name="jobsTitle" />
+									explanation={ translate(
+										'Creates a page where visitors can browse, search, and filter ' +
+											'job listings.'
+									) }
+									name="jobsTitle"
+								/>
 							</FormFieldset>
 						</form>
 					</div>
@@ -206,13 +206,16 @@ class PageSetup extends Component {
 				<CompactCard>
 					<a
 						className="page-setup__skip"
-						href={ slug && `${ SetupPath }/${ slug }/${ Steps.CONFIRMATION }` }>
+						href={ slug && `${ SetupPath }/${ slug }/${ Steps.CONFIRMATION }` }
+					>
 						{ translate( 'Skip this step' ) }
 					</a>
-					<Button primary
+					<Button
+						primary
 						className="page-setup__create-pages"
 						disabled={ ( ! createPostJob && ! createDashboard && ! createJobs ) || isCreating }
-						onClick={ handleSubmit( this.createSelectedPages ) }>
+						onClick={ handleSubmit( this.createSelectedPages ) }
+					>
 						{ translate( 'Create selected pages' ) }
 					</Button>
 				</CompactCard>
@@ -253,5 +256,5 @@ const createReduxForm = reduxForm( {
 export default compose(
 	localize, // Must be the outer HOC, as the validation function relies on `translate` prop
 	connect( mapStateToProps, mapDispatchToProps ),
-	createReduxForm,
+	createReduxForm
 )( PageSetup );

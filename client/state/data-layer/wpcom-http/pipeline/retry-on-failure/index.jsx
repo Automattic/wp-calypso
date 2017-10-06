@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { get, merge } from 'lodash';
 
+import { get, merge } from 'lodash';
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';
 
@@ -33,7 +35,7 @@ export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
 
 	setTimeout(
 		() => dispatch( merge( originalRequest, { meta: { dataLayer: { retryCount } } } ) ),
-		getDelay( delay, retryCount ),
+		getDelay( delay, retryCount )
 	);
 
 	return { ...inboundData, shouldAbort: true };

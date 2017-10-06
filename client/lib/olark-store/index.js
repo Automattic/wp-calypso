@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducerStore } from 'lib/store';
 import { action as ActionTypes } from 'lib/olark-store/constants';
 
@@ -14,7 +17,7 @@ const initialState = {
 	isOlarkExpanded: false,
 	isSupportClosed: false,
 	locale: 'en',
-	details: {}
+	details: {},
 };
 
 const olarkStore = createReducerStore( function( state, payload ) {

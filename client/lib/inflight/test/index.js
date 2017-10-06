@@ -1,10 +1,12 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	isRequestInflight,
@@ -48,9 +50,7 @@ describe( 'inflight', () => {
 		it( 'should track a promise that resolves', () => {
 			const tracked = trackPromise( key, Promise.resolve( 5 ) );
 			expect( isRequestInflight( key ) ).to.be.true;
-			return tracked.then(
-				() => expect( isRequestInflight( key ) ).to.be.false
-			);
+			return tracked.then( () => expect( isRequestInflight( key ) ).to.be.false );
 		} );
 		it( 'should track a promise that rejects', () => {
 			const tracked = trackPromise( key, Promise.reject( 5 ) );
@@ -62,7 +62,7 @@ describe( 'inflight', () => {
 		} );
 	} );
 	context( 'requestTracker', () => {
-		it( 'should track a good request', ( done ) => {
+		it( 'should track a good request', done => {
 			const val = { one: 1 };
 			const cb = ( err, data ) => {
 				expect( err ).to.not.be.ok;
@@ -74,7 +74,7 @@ describe( 'inflight', () => {
 			expect( isRequestInflight( key ) ).to.be.true;
 			tracked( null, val );
 		} );
-		it( 'should track a bad request', ( done ) => {
+		it( 'should track a bad request', done => {
 			const error = { one: 1 };
 			const cb = ( err, data ) => {
 				expect( err ).to.equal( error );

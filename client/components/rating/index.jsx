@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -26,13 +29,7 @@ export default class Rating extends React.PureComponent {
 
 		const stars = [];
 		for ( let i = 0; i < 5; i++ ) {
-			stars.push(
-				<Gridicon
-					key={ 'star-' + i }
-					icon="star"
-					style={ starStyles }
-				/>
-			);
+			stars.push( <Gridicon key={ 'star-' + i } icon="star" style={ starStyles } /> );
 		}
 		return stars;
 	}
@@ -52,16 +49,12 @@ export default class Rating extends React.PureComponent {
 		const stars = [];
 		for ( let i = 0; i < 5; i++ ) {
 			let allStyles = starStyles;
-			if ( i >= ( 5 - noFillOutlineCount ) ) {
+			if ( i >= 5 - noFillOutlineCount ) {
 				allStyles = Object.assign( {}, starStyles, { fill: '#c8d7e1' } );
 			}
 
 			stars.push(
-				<Gridicon
-					key={ 'star-outline-' + i }
-					icon="star-outline"
-					style={ allStyles }
-				/>
+				<Gridicon key={ 'star-outline-' + i } icon="star-outline" style={ allStyles } />
 			);
 		}
 
@@ -73,14 +66,14 @@ export default class Rating extends React.PureComponent {
 
 		const totalWidth = size * 5;
 		const roundRating = Math.round( rating / 10 ) * 10;
-		const maskPosition = ( ( roundRating / 100 ) * totalWidth );
-		const clipPathMaskPosition = ( totalWidth - maskPosition ) + 'px';
+		const maskPosition = roundRating / 100 * totalWidth;
+		const clipPathMaskPosition = totalWidth - maskPosition + 'px';
 		const overlayHeightPx = size + 'px';
 		const overlayStyles = {
 			WebkitClipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
 			clipPath: 'inset(0 ' + clipPathMaskPosition + ' 0 0 )',
 			clip: 'rect(0, ' + ( maskPosition + 'px' ) + ', ' + overlayHeightPx + ', 0)',
-			width: totalWidth + 'px'
+			width: totalWidth + 'px',
 		};
 
 		return (
@@ -88,9 +81,7 @@ export default class Rating extends React.PureComponent {
 				<div className="rating__overlay" style={ overlayStyles }>
 					{ this.overlayStars() }
 				</div>
-				<div className="rating__star-outline">
-					{ this.outlineStars() }
-				</div>
+				<div className="rating__star-outline">{ this.outlineStars() }</div>
 			</div>
 		);
 	}
