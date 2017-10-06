@@ -7,26 +7,29 @@ and optional actions buttons.
 ## Example Usage:
 
 ```js
-var SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-render: function() {
-	return (
-		<SectionHeader label={ this.translate( 'Team' ) }>
-			<Button compact>
-				{ this.translate( 'Manage' ) }
-			</Button>
-			<Button
-				compact
-				onClick={ function() {
-					console.log( 'Clicked Add button' );
-				} }
-			>
-				{ this.translate( 'Add' ) }
-			</Button>
-		</SectionHeader>
-	);
-}
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+
+const MyHeader = ( { translate } ) => (
+	<SectionHeader label={ translate( 'Team' ) }>
+		<Button compact>
+			{ translate( 'Manage' ) }
+		</Button>
+		<Button
+			compact
+			onClick={ function() {
+				console.log( 'Clicked Add button' );
+			} }
+		>
+			{ translate( 'Add' ) }
+		</Button>
+	</SectionHeader>
+);
+
+export default localize( MyHeader );
 ```
 ## Section Header
 This is the base component and acts as a wrapper for a section's (a list of cards) title and any action buttons that act upon that list (like Bulk Edit or Add New Item).

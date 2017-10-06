@@ -13,32 +13,39 @@ This is an example of creating a `welcome-message.jsx` component within a sectio
 *Adapted from `client/my-sites/posts/welcome-message.jsx`*
 
 ```javascript
-var React = require( 'react' ),
-  store = require( 'store' ),
-  user = require( 'lib/user' )(),
-  Welcome = require( 'my-sites/welcome/welcome' );
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
+import store from 'store';
 
-module.exports = React.createClass( {
+import user from 'lib/user';
+import Welcome from 'my-sites/welcome/welcome';
 
-  buildWelcomeContent: function() {
-    var exampleExtra = ( <p className"legend"><span className="noticon noticon-info"></span> You can use any function to build out `WelcomeContent`</p> );
+class WelcomeMessage extends Component {
+  buildWelcomeContent() {
+    const { translate } = this.props;
+    const exampleExtra = (
+      <p className"legend"><Gridicon icon="info" size={ 18 } />
+        { translate( 'You can use any function to build out `WelcomeContent`' ) }
+      </p>
+    );
 
     return (
       <div>
-        <h3 className="welcome-section-title" tabIndex="0">{ this.translate( 'Welcome to the New Posts Page' ) }</h3>
-        <p><img src="/calypso/images/posts/illustration-posts.svg" className="welcome-intro-illustration" />{ this.translate( "Example introduction message introducing the new hotness." ) }</p>
+        <h3 className="welcome-section-title" tabIndex="0">{ translate( 'Welcome to the New Posts Page' ) }</h3>
+        <p><img src="/calypso/images/posts/illustration-posts.svg" className="welcome-intro-illustration" />{ translate( "Example introduction message introducing the new hotness." ) }</p>
         { exampleExtra }
       </div>
     );
   },
 
-  closeWelcomeMessage: function() {
+  closeWelcomeMessage = () => {
     store.set( 'hideExampleWelcome', true );
   },
 
-  render: function() {
-    var currentUser = user.get(),
-    showWelcome = ! store.get( 'hideExampleWelcome' );
+  render() {
+    const currentUser = user.get();
+    const showWelcome = ! store.get( 'hideExampleWelcome' );
 
     return (
       <Welcome isVisible={ showWelcome } closeAction={ this.closeWelcomeMessage }>
@@ -46,8 +53,9 @@ module.exports = React.createClass( {
       </Welcome>
     );
   }
+}
 
-} );
+export default localize( WelcomeMessage );
 ```
 
 ## Properties

@@ -20,13 +20,13 @@ It's meant to comprehensivly describe a plan and give enough reasons to upgrade.
 ```jsx
 <UpgradeNudgeExpanded
 	plan={ PLAN_BUSINESS }
-	title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-	subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+	title={ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
+	subtitle={ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
 	highlightedFeature={ FEATURE_ADVANCED_SEO }
 	benefits={ [
-		this.translate( "Preview your site's posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader." ),
-		this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
-		this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
+		translate( "Preview your site's posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader." ),
+		translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
+		translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
 	] }
 />
 ```

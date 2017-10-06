@@ -7,21 +7,21 @@ This component renders a box with a title, description, button, and icon, based 
 
 ```js
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
-export default React.createClass( {
-	render() {
-		return (
-			<PurchaseDetail
-				icon="time"
-				title={ this.translate( 'Important!' ) }
-				description={ this.translate( "Your domain mapping won't work until you update the DNS settings." ) }
-				buttonText={ this.translate( 'Learn More' ) }
-				href="https://support.wordpress.com"
-				target="_blank" />
-		);
-	}
-} );
+const MyComponent = ( { translate } ) => (
+	<PurchaseDetail
+		icon="time"
+		title={ translate( 'Important!' ) }
+		description={ translate( "Your domain mapping won't work until you update the DNS settings." ) }
+		buttonText={ translate( 'Learn More' ) }
+		href="https://support.wordpress.com"
+		target="_blank"
+	/>
+);
+
+export default localize( MyComponent );
 ```
 
 ## Props
