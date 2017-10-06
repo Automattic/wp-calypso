@@ -134,13 +134,13 @@ class OrderFulfillment extends Component {
 	renderFulfillmentAction() {
 		const { labelsLoaded, order, site, translate, hasLabelsPaymentMethod } = this.props;
 		const isShippable = this.isShippable( order );
-		const renderLabelsButton = wcsEnabled && hasLabelsPaymentMethod;
 
-		if ( ! renderLabelsButton && ! isShippable ) {
+		if ( ( ! wcsEnabled && ! isShippable ) ||
+			( labelsLoaded && ! hasLabelsPaymentMethod ) ) {
 			return null;
 		}
 
-		if ( ! renderLabelsButton ) {
+		if ( ! wcsEnabled ) {
 			return (
 				<Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
 			);
@@ -243,9 +243,7 @@ class OrderFulfillment extends Component {
 export default connect(
 	( state, { order, site } ) => {
 		const labelsLoaded = wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) );
-		const hasLabelsPaymentMethod =
-			( wcsEnabled && ! labelsLoaded ) ||
-			( wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID ) );
+		const hasLabelsPaymentMethod = ( wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID ) );
 
 		return {
 			labelsLoaded,
