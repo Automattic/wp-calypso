@@ -29,7 +29,7 @@ export const EditorBasicsTour = makeTour(
 	<Tour
 		name="editorBasicsTour"
 		version="20170503"
-		path="/post/"
+		path={ [ '/post/', '/page/' ] }
 		when={ and( isDesktop, isNewUser ) }
 	>
 		<Step
