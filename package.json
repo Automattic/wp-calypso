@@ -284,7 +284,7 @@
     "socket.io": "1.4.5",
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
-    "uglify-js": "2.6.4",
+    "uglify-js": "2.7.0",
     "webpack-bundle-analyzer": "2.8.2"
   },
   "optionalDependencies": {
