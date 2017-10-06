@@ -166,17 +166,32 @@ export default class PaginatedQueryManager extends QueryManager {
 		// set of data where our assumed item set is incorrect.
 		const modifiedNextQuery = cloneDeep( nextQuery );
 
-		// Found count is not always reliable, usually in consideration of user
-		// capabilities. If we receive a set of items with a count not matching
-		// the expected number for the query, we recalculate the found value to
-		// reflect that this is the last set we can expect to receive. Found is
-		// correct only if the count of items matches expected query number.
-		if ( modifiedNextQuery.hasOwnProperty( 'found' ) && perPage !== items.length ) {
-			// Otherwise, found count should be corrected to equal the number
-			// of items received added to the summed per page total. Note that
-			// we can reach this point if receiving the last page of items, but
-			// the updated value should still be correct given this logic.
-			modifiedNextQuery.found = ( page - 1 ) * perPage + items.length;
+		// Found count is not always reliable.  For example, if one or more
+		// password-protected posts would appear in a page of API results, but
+		// the current user doesn't have access to view them, then they will be
+		// omitted from the results entirely.  There are also other situations
+		// where this can occur, such as `status: 'inherit'`.
+		//
+		// Even worse, the WP.com API will decrement the found count in this
+		// situation, but only for items missing from the currently requested
+		// page.
+		//
+		// What should we do about all of this?  We decided that given the
+		// limitations of this code, it's OK for a page of results to have less
+		// than the expected number of items, and we should not try to
+		// decrement the "found" count either because then we could end up
+		// skipping pages from the end of a result set.
+		//
+		// Therefore, the only thing we need to do here is take the *maximum*
+		// of the previous "found" count and the next "found" count.
+		if ( modifiedNextQuery.hasOwnProperty( 'found' ) && items.length < perPage ) {
+			const previousQuery = this.data.queries[ queryKey ];
+			if ( previousQuery && previousQuery.hasOwnProperty( 'found' ) ) {
+				modifiedNextQuery.found = Math.max(
+					previousQuery.found,
+					modifiedNextQuery.found
+				);
+			}
 		}
 
 		// Replace the assumed set with the received items.

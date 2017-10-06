@@ -369,20 +369,169 @@ describe( 'PaginatedQueryManager', () => {
 			] );
 		} );
 
-		it( 'should correct the found count if received item count does not match query number', () => {
-			// Scenario: Contributor receives first page of two items, with 4
-			// found. Upon receiving second page, only one entry is provided,
-			// presumably because they don't have access to the fourth. Thus,
-			// found should be updated to reflect this discrepency.
+		// Some items may be missing from API results pages.  See comments in
+		// PaginatedQueryManager#receive() for details.
+
+		it( 'handles items missing from the last page', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], {
 				query: { search: 'title', number: 2 },
 				found: 4,
 			} );
+
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 4 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 },
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 },
+			] );
+
 			manager = manager.receive( [ { ID: 160 } ], {
 				query: { search: 'title', number: 2, page: 2 },
 			} );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 3 );
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 4 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 },
+			] );
+			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).to.eql( [
+				{ ID: 160 },
+				undefined,
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 144 },
+				{ ID: 152 },
+				{ ID: 160 },
+			] );
+		} );
+
+		it( 'handles items missing from the first page', () => {
+			manager = manager.receive( [ { ID: 1 }, { ID: 3 } ], {
+				query: { search: 'title', number: 3 },
+				found: 5, // The API found 6 results and decremented 1.
+			} );
+
+			// We would like for "found" to be 6, but at this point we don't
+			// have this information yet.
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 5 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				undefined,
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+			] );
+
+			manager = manager.receive( [ { ID: 4 }, { ID: 5 }, { ID: 6 } ], {
+				query: { search: 'title', number: 3, page: 2 },
+				found: 6,
+			} );
+
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 6 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				undefined,
+			] );
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+				{ ID: 4 },
+				{ ID: 5 },
+				{ ID: 6 },
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				{ ID: 4 },
+				{ ID: 5 },
+				{ ID: 6 },
+			] );
+		} );
+
+		it( 'handles items missing from the first and last pages', () => {
+			manager = manager.receive( [ { ID: 1 }, { ID: 3 } ], {
+				query: { search: 'title', number: 3 },
+				found: 8, // The API found 9 results and decremented 1.
+			} );
+
+			// We would like for "found" to be 9, but at this point we don't
+			// have this information yet.
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 8 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				undefined,
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+			] );
+
+			manager = manager.receive( [ { ID: 4 }, { ID: 5 }, { ID: 6 } ], {
+				query: { search: 'title', number: 3, page: 2 },
+				found: 9,
+			} );
+
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 9 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				undefined,
+			] );
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+				{ ID: 4 },
+				{ ID: 5 },
+				{ ID: 6 },
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				{ ID: 4 },
+				{ ID: 5 },
+				{ ID: 6 },
+			] );
+
+			manager = manager.receive( [ { ID: 7 }, { ID: 9 } ], {
+				query: { search: 'title', number: 3, page: 3 },
+				found: 8, // The API found 9 results and decremented 1.
+			} );
+
+			// We should remember the previous, higher "found" count of 9.  For
+			// the purpose of determining the total number of pages, it is more
+			// accurate.
+			expect( manager.getFound( { search: 'title' } ) ).to.equal( 9 );
+			// TODO - Pagination split has changed by this point (the
+			// `undefined` item has moved to the end of page 2).  Not sure why,
+			// and it is unlikely to cause problems in practice since we call
+			// `getItemsIgnoringPage`.
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				{ ID: 4 },
+			] );
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+				{ ID: 5 },
+				{ ID: 6 },
+				undefined,
+			] );
+			expect( manager.getItems( { search: 'title', number: 3, page: 3 } ) ).to.eql( [
+				{ ID: 7 },
+				{ ID: 9 },
+				undefined,
+			] );
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+				{ ID: 1 },
+				{ ID: 3 },
+				{ ID: 4 },
+				{ ID: 5 },
+				{ ID: 6 },
+				{ ID: 7 },
+				{ ID: 9 },
+			] );
 		} );
 	} );
 } );
