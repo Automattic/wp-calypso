@@ -31,7 +31,7 @@ module.exports = localize(
 		};
 
 		showNotification = () => {
-			var logNotices = this.refreshSiteNotices();
+			const logNotices = this.refreshSiteNotices();
 
 			this.setState( { notices: logNotices } );
 
@@ -107,8 +107,8 @@ module.exports = localize(
 		};
 
 		erroredAndCompletedMessage = logNotices => {
-			var completedMessage = this.getMessage( logNotices.completed, this.successMessage ),
-				errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
+			const completedMessage = this.getMessage( logNotices.completed, this.successMessage );
+			const errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
 
 			return this.props.translate( '%(completedMessage)s %(errorMessage)s', {
 				args: {
