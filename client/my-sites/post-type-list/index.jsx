@@ -73,14 +73,10 @@ class PostTypeList extends Component {
 			this.setState( {
 				maxRequestedPage,
 			} );
-			debug(
-				'reset maxRequestedPage to %d due to query change',
-				maxRequestedPage,
-				{
-					prevQuery: this.props.query,
-					nextQuery: nextProps.query,
-				}
-			);
+			debug( 'reset maxRequestedPage to %d due to query change', maxRequestedPage, {
+				prevQuery: this.props.query,
+				nextQuery: nextProps.query,
+			} );
 		}
 
 		const prevLength = this.props.posts && this.props.posts.length;
@@ -147,11 +143,7 @@ class PostTypeList extends Component {
 		}
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
 		const { maxRequestedPage } = this.state;
-		if (
-			pixelsBelowViewport <= 200 &&
-			maxRequestedPage < lastPage &&
-			! isRequestingPosts
-		) {
+		if ( pixelsBelowViewport <= 200 && maxRequestedPage < lastPage && ! isRequestingPosts ) {
 			this.setState( {
 				maxRequestedPage: maxRequestedPage + 1,
 			} );
@@ -194,28 +186,20 @@ class PostTypeList extends Component {
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
-			'is-empty': isLoadedAndEmpty
+			'is-empty': isLoadedAndEmpty,
 		} );
 
 		return (
 			<div className={ classes }>
-				{ query && range( 1, maxRequestedPage + 1 ).map( page => (
-					<QueryPosts
-						key={ `query-${ page }` }
-						siteId={ siteId }
-						query={ { ...query, page } } />
-				) ) }
-				{ posts && (
-					posts.map( this.renderPost )
-				) }
+				{ query &&
+					range( 1, maxRequestedPage + 1 ).map( page => (
+						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
+					) ) }
+				{ posts && posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
-					<PostTypeListEmptyContent
-						type={ query.type }
-						status={ query.status } />
+					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ isRequestingPosts && (
-					this.renderPlaceholder()
-				) }
+				{ isRequestingPosts && this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -227,21 +211,12 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		siteId,
-		posts: getSitePostsForQueryIgnoringPage(
-			state,
-			siteId,
-			ownProps.query
-		),
-		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage(
-			state,
-			siteId,
-			ownProps.query
-		),
+		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		lastPage,
-		isRequestingLastPage: isRequestingSitePostsForQuery(
-			state,
-			siteId,
-			{ ...ownProps.query, page: lastPage }
-		),
+		isRequestingLastPage: isRequestingSitePostsForQuery( state, siteId, {
+			...ownProps.query,
+			page: lastPage,
+		} ),
 	};
 } )( PostTypeList );

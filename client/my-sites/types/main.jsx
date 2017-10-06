@@ -30,11 +30,9 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
-			{ false !== userCanEdit && false !== postTypeSupported && [
-				<PostTypeFilter
-					key="filter"
-					query={ userCanEdit ? query : null }
-				/>,
+			{ false !== userCanEdit &&
+			false !== postTypeSupported && [
+				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
 				<PostTypeList
 					key="list"
 					query={ userCanEdit ? query : null }
