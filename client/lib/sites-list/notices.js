@@ -12,27 +12,24 @@ import notices from 'notices';
 import SitesLog from 'lib/sites-list/log-store';
 import SitesListActions from 'lib/sites-list/actions';
 
-module.exports = localize( React.createClass( {
-	getInitialState: function() {
-		return { notices: this.refreshSiteNotices() };
-	},
-	componentDidMount: function() {
+module.exports = localize(class extends React.Component {
+    componentDidMount() {
 		SitesLog.on( 'change', this.showNotification );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SitesLog.removeListener( 'change', this.showNotification );
-	},
+	}
 
-	refreshSiteNotices: function() {
+	refreshSiteNotices = () => {
 		return {
 			errors: SitesLog.getErrors(),
 			inProgress: SitesLog.getInProgress(),
 			completed: SitesLog.getCompleted(),
 		};
-	},
+	};
 
-	showNotification: function() {
+	showNotification = () => {
 		var logNotices = this.refreshSiteNotices();
 
 		this.setState( { notices: logNotices } );
@@ -59,9 +56,9 @@ module.exports = localize( React.createClass( {
 				onRemoveCallback: SitesListActions.removeSitesNotices.bind( this, logNotices.completed ),
 			} );
 		}
-	},
+	};
 
-	getMessage: function( logs, messageFunction ) {
+	getMessage = (logs, messageFunction) => {
 		const sampleLog = logs[ 0 ],
 			sites = logs.map( function( log ) {
 				return log.site && log.site.title;
@@ -76,9 +73,9 @@ module.exports = localize( React.createClass( {
 			};
 
 		return messageFunction( sampleLog.action, translateArg, sampleLog );
-	},
+	};
 
-	successMessage: function( action, translateArg ) {
+	successMessage = (action, translateArg) => {
 		switch ( action ) {
 			case 'DISCONNECT_SITE':
 				if ( 1 === translateArg.args.numberOfSites ) {
@@ -90,9 +87,9 @@ module.exports = localize( React.createClass( {
 					translateArg
 				);
 		}
-	},
+	};
 
-	inProgressMessage: function( action, translateArg ) {
+	inProgressMessage = (action, translateArg) => {
 		translateArg.context =
 			'In progress message for when a Jetpack site is disconnecting from WP.com';
 		switch ( action ) {
@@ -106,9 +103,9 @@ module.exports = localize( React.createClass( {
 					translateArg
 				);
 		}
-	},
+	};
 
-	erroredAndCompletedMessage: function( logNotices ) {
+	erroredAndCompletedMessage = logNotices => {
 		var completedMessage = this.getMessage( logNotices.completed, this.successMessage ),
 			errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
 
@@ -121,9 +118,9 @@ module.exports = localize( React.createClass( {
 				'The success message and the error message after the disconnection success and failure.',
 			comment: '%(completedMessage)s %(errorMessage)s are complete sentences.',
 		} );
-	},
+	};
 
-	errorMessage: function( action, translateArg, sampleLog ) {
+	errorMessage = (action, translateArg, sampleLog) => {
 		switch ( action ) {
 			case 'RECEIVE_PLUGINS':
 				if ( 1 === translateArg.args.numberOfSites ) {
@@ -162,9 +159,11 @@ module.exports = localize( React.createClass( {
 						);
 				}
 		}
-	},
+	};
 
-	render: function() {
+	state = { notices: this.refreshSiteNotices() };
+
+	render() {
 		return null;
 	}
-} ) );
+});
