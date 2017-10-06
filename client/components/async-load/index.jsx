@@ -15,7 +15,7 @@ export default class AsyncLoad extends Component {
 	};
 
 	static defaultProps = {
-		placeholder: <div className="async-load__placeholder" />
+		placeholder: <div className="async-load__placeholder" />,
 	};
 
 	constructor() {
@@ -48,7 +48,7 @@ export default class AsyncLoad extends Component {
 	require() {
 		const requireFunction = this.props.require;
 
-		requireFunction( ( component ) => {
+		requireFunction( component => {
 			if ( this.props.require === requireFunction ) {
 				this.setState( { component } );
 			}

@@ -102,7 +102,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings'
+		css: 'site-settings',
 	},
 	{
 		name: 'settings-discussion',
@@ -110,7 +110,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings'
+		css: 'site-settings',
 	},
 	{
 		name: 'settings-traffic',
@@ -118,7 +118,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-traffic',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings'
+		css: 'site-settings',
 	},
 	{
 		name: 'settings-security',
@@ -126,7 +126,7 @@ const sections = [
 		module: 'my-sites/site-settings/settings-security',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings'
+		css: 'site-settings',
 	},
 	{
 		name: 'settings',
@@ -134,7 +134,7 @@ const sections = [
 		module: 'my-sites/site-settings',
 		secondary: true,
 		group: 'sites',
-		css: 'site-settings'
+		css: 'site-settings',
 	},
 	{
 		name: 'sharing',
