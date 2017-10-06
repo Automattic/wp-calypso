@@ -63,3 +63,14 @@ export function getOrderTotalTax( order ) {
 	const shipping = getOrderShippingTax( order );
 	return subtotal + shipping;
 }
+
+/**
+ * Get the refund value on a given order
+ *
+ * @param {Object} order An order as returned from API
+ * @return {Float} The refund amount as a decimal number
+ */
+export function getRefundedTotal( order ) {
+	const refunds = get( order, 'refunds', [] );
+	return reduce( refunds, ( sum, value ) => sum + parseFloat( value.total ), 0 );
+}
