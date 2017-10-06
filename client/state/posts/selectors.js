@@ -171,13 +171,6 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * @return {?Number}        Last posts page
  */
 export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	const queryManager = state.posts.queries[ siteId ];
-	console.log( 'getSitePostsLastPageForQuery', {
-		siteId,
-		queryManager,
-		query,
-		allQueries: queryManager && queryManager.data.queries,
-	} );
 	if ( ! state.posts.queries[ siteId ] ) {
 		return null;
 	}

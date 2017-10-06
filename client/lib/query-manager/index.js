@@ -223,7 +223,6 @@ export default class QueryManager {
 	 *                                             same instance otherwise
 	 */
 	receive( items = [], options = {} ) {
-		console.warn( 'receive', items, options );
 		// Coerce received single item to array
 		if ( ! Array.isArray( items ) ) {
 			items = [ items ];

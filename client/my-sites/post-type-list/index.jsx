@@ -155,12 +155,6 @@ class PostTypeList extends Component {
 		}
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
 		const { maxRequestedPage } = this.state;
-		debug( 'scroll check', {
-			pixelsBelowViewport,
-			maxRequestedPage,
-			lastPage,
-			isRequestingPosts
-		} );
 		if ( pixelsBelowViewport <= 200 && maxRequestedPage < lastPage && ! isRequestingPosts ) {
 			this.setState( {
 				maxRequestedPage: maxRequestedPage + 1,
