@@ -81,6 +81,10 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	&.is-timestamp {
+		font-size: 12px;
+	}
 }
 
 .comment-detail__header {
