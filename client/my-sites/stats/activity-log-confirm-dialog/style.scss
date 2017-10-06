@@ -4,6 +4,12 @@
 	max-width: 400px;
 }
 
+.activity-log-item__restore-confirm {
+	.activity-log-item__card {
+		padding-bottom: 16px;
+	}
+}
+
 .activity-log-confirm-dialog .dialog__content {
 	color: darken( $gray, 20% );
 
@@ -18,10 +24,14 @@
 	}
 }
 
+.activity-log-confirm-dialog__title {
+	font-size: 21px;
+	margin-bottom: 12px;
+	line-height: 1;
+}
+
 .activity-log-confirm-dialog__highlight {
-	color: darken( $gray, 10% );
-	margin-bottom: 1.5em;
-	font-size: 16px;
+	margin-bottom: 24px;
 }
 
 .activity-log-confirm-dialog__notice {
@@ -90,16 +100,61 @@
 }
 
 .activity-log-confirm-dialog__button-wrap {
-	margin-top: 32px;
-	margin-bottom:16px;
+	margin: 0 -24px;
+	padding: 16px 24px 0;
+	border-top: #eee 1px solid;
+	display: block;
+
+	@include breakpoint(">480px") {
+		display: flex;
+		justify-content: space-between;
+		flex-direction: row-reverse;
+	}
 
 	.button {
 		margin: 0 4px;
+
+		@include breakpoint("<480px") {
+			margin: 0 8px 0 0;
+		}
+	}
+}
+
+.activity-log-confirm-dialog__primary-actions {
+	@include breakpoint("<480px") {
+		margin-bottom: 8px;
+	}
+}
+
+.activity-log-confirm-dialog__secondary-actions {
+	font-size: 14px;
+
+	@include breakpoint("<480px") {
+		font-size: 12px;
 	}
 }
 
 .activity-log-confirm-dialog__more-info-link {
-	font-size: 13px;
+	color: $gray;
+	padding: 7px 0 0;
+	line-height: 1;
+	display: inline-block;
+
+	.gridicon {
+		width: 18px;
+		height: 18px;
+
+		@include breakpoint(">480px") {
+			width: 24px;
+			height: 24px;
+		}
+		vertical-align: middle;
+	}
+
+	.activity-log-confirm-dialog__more-info-link-text {
+		padding-left: 8px;
+		vertical-align: middle;
+	}
 }
 
 .activity-log-confirm-dialog__dialog__action-buttons {

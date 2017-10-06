@@ -29,30 +29,34 @@ class ActivityLogConfirmDialog extends Component {
 
 	renderButtons() {
 		const { onClose, onConfirm, translate } = this.props;
-		return (
-			<div>
+		return [
+			<div className="activity-log-confirm-dialog__primary-actions">
+				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
+				<Button primary onClick={ onConfirm }>
+					{ translate( 'Confirm Rewind' ) }
+				</Button>
+			</div>,
+			<div className="activity-log-confirm-dialog__secondary-actions">
 				<a
 					className="activity-log-confirm-dialog__more-info-link"
 					href="https://help.vaultpress.com/one-click-restore/"
 				>
-					{ translate( '{{icon /}} More info', {
-						components: { icon: <Gridicon icon={ 'notice' } /> },
-					} ) }
+					<Gridicon icon="notice" />
+					<span className="activity-log-confirm-dialog__more-info-link-text">
+						{ translate( 'More info' ) }
+					</span>
 				</a>
 				<HappychatButton
 					className="activity-log-confirm-dialog__more-info-link"
 					href="https://help.vaultpress.com/one-click-restore/"
 				>
-					{ translate( '{{icon /}} Any Questions?', {
-						components: { icon: <Gridicon icon={ 'chat' } /> },
-					} ) }
+					<Gridicon icon="chat" />
+					<span className="activity-log-confirm-dialog__more-info-link-text">
+						{ translate( 'Any Questions?' ) }
+					</span>
 				</HappychatButton>
-				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-				<Button primary onClick={ onConfirm }>
-					{ translate( 'Confirm Rewind' ) }
-				</Button>
-			</div>
-		);
+			</div>,
+		];
 	}
 
 	render() {
@@ -65,13 +69,12 @@ class ActivityLogConfirmDialog extends Component {
 					<ActivityIcon activityIcon={ 'history' } />
 				</div>
 				<Card className="activity-log-item__card">
-					<h1>{ translate( 'Rewind Site' ) }</h1>
+					<h5 className="activity-log-confirm-dialog__title">{ translate( 'Rewind Site' ) }</h5>
 
 					<p className="activity-log-confirm-dialog__highlight">
 						{ translate(
-							'This is the selected point for your site Rewind.' +
-								'Are you sure you want to rewind your site back to ' +
-								'{{b}}%(time)s{{/b}}?',
+							'This is the selected point for your site Rewind. ' +
+								'Are you sure you want to rewind your site back to {{b}}%(time)s{{/b}}?',
 							{
 								args: {
 									time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
