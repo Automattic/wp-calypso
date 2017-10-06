@@ -150,7 +150,12 @@ can `@extend` the base `dialog` SCSS classes if you just want to tweak things a 
 		const { translate } = this.props;
 
 		return (
-			<Dialog baseClassName="custom-dialog" additionalClassNames="critical error" isVisible={ this.state.showDialog } onClose={ this.onCloseDialog }>
+			<Dialog
+				baseClassName="custom-dialog"
+				additionalClassNames="critical error"
+				isVisible={ this.state.showDialog }
+				onClose={ this.onCloseDialog }
+			>
 				<h1>{ translate( 'Dialog Title' ) }</h1>
 				<p>{ translate( 'Dialog content' ) }</p>
 			</Dialog>

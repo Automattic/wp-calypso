@@ -17,7 +17,8 @@ const MyComponent = ( { translate } ) => (
 		description={ translate( "Your domain mapping won't work until you update the DNS settings." ) }
 		buttonText={ translate( 'Learn More' ) }
 		href="https://support.wordpress.com"
-		target="_blank" />
+		target="_blank"
+	/>
 );
 
 export default localize( MyComponent );
