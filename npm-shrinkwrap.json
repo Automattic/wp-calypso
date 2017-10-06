@@ -943,6 +943,10 @@
           "version": "3.9.2",
           "dev": true
         },
+        "lodash.merge": {
+          "version": "4.6.0",
+          "dev": true
+        },
         "readable-stream": {
           "version": "2.3.3",
           "dev": true,
@@ -4473,16 +4477,12 @@
     "lodash.keysin": {
       "version": "3.0.8"
     },
-    "lodash.merge": {
-      "version": "3.3.2"
-    },
     "lodash.map": {
       "version": "4.6.0",
       "dev": true
     },
     "lodash.merge": {
-      "version": "4.6.0",
-      "dev": true
+      "version": "3.3.2"
     },
     "lodash.pick": {
       "version": "4.4.0",
@@ -5912,7 +5912,7 @@
       }
     },
     "react-virtualized": {
-      "version": "9.10.1",
+      "version": "9.9.0",
       "dependencies": {
         "classnames": {
           "version": "2.2.5"

@@ -132,7 +132,7 @@
     "react-pure-render": "1.0.2",
     "react-redux": "5.0.3",
     "react-transition-group": "1.2.1",
-    "react-virtualized": "9.10.1",
+    "react-virtualized": "9.9.0",
     "redux": "3.0.4",
     "redux-form": "7.0.2",
     "redux-thunk": "1.0.0",
