@@ -10,6 +10,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
 
 class OrderRefundRow extends Component {
 	static propTypes = {
@@ -20,13 +21,9 @@ class OrderRefundRow extends Component {
 		showTax: PropTypes.bool,
 	};
 
-	getRefundedTotal = order => {
-		return order.refunds.reduce( ( total, i ) => total + parseFloat( i.total ), 0 );
-	};
-
 	render() {
 		const { order, showTax, translate } = this.props;
-		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
+		const refundValue = order.refunds.length ? getOrderRefundTotal( order ) : false;
 		if ( ! refundValue ) {
 			return null;
 		}

@@ -11,10 +11,10 @@ import { expect } from 'chai';
 import {
 	getOrderDiscountTax,
 	getOrderLineItemTax,
+	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderSubtotalTax,
 	getOrderTotalTax,
-	getRefundedTotal,
 } from '../index';
 import orderWithTax from './fixtures/order';
 import orderWithoutTax from './fixtures/order-no-tax';
@@ -119,20 +119,20 @@ describe( 'getOrderTotalTax', () => {
 	} );
 } );
 
-describe( 'getRefundedTotal', () => {
+describe( 'getOrderRefundTotal', () => {
 	it( 'should be a function', () => {
-		expect( getRefundedTotal ).to.be.a( 'function' );
+		expect( getOrderRefundTotal ).to.be.a( 'function' );
 	} );
 
 	it( 'should get the correct refund amount', () => {
-		expect( getRefundedTotal( orderWithCoupons ) ).to.eql( -10.0 );
+		expect( getOrderRefundTotal( orderWithCoupons ) ).to.eql( -10.0 );
 	} );
 
 	it( 'should return 0 if there are no refunds', () => {
-		expect( getRefundedTotal( orderWithoutTax ) ).to.eql( 0 );
+		expect( getOrderRefundTotal( orderWithoutTax ) ).to.eql( 0 );
 	} );
 
 	it( 'should get the correct tax amount with multiple refunds', () => {
-		expect( getRefundedTotal( orderWithRefunds ) ).to.eql( -25.0 );
+		expect( getOrderRefundTotal( orderWithRefunds ) ).to.eql( -25.0 );
 	} );
 } );

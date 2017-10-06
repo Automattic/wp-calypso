@@ -23,6 +23,7 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
 import Notice from 'components/notice';
 import OrderDetailsTable from '../order-details/table';
 import PriceInput from 'woocommerce/components/price-input';
@@ -70,10 +71,6 @@ class OrderPaymentCard extends Component {
 		}
 	};
 
-	getRefundedTotal = order => {
-		return order.refunds.reduce( ( sum, i ) => sum + parseFloat( i.total ), 0 );
-	};
-
 	getPaymentStatus = () => {
 		const { order, translate } = this.props;
 		let paymentStatus;
@@ -92,7 +89,7 @@ class OrderPaymentCard extends Component {
 				},
 			} );
 		} else if ( order.refunds.length ) {
-			const refund = this.getRefundedTotal( order );
+			const refund = getOrderRefundTotal( order );
 			paymentStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
 				args: {
 					total: formatCurrency( order.total, order.currency ),
@@ -146,7 +143,7 @@ class OrderPaymentCard extends Component {
 
 	sendRefund = () => {
 		const { order, paymentMethod, site, translate } = this.props;
-		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
+		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
 			this.setState( {
 				errorMessage: translate( 'Refund must be less than or equal to the order total.' ),
