@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, unescape } from 'lodash';
+import { isEqual, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import CountryDropdown from 'woocommerce/woocommerce-services/components/country
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
+import { decodeEntities } from 'lib/formatting';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
 import {
 	selectNormalizedAddress,
@@ -65,8 +66,7 @@ const AddressFields = ( props ) => {
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 	const getId = ( fieldName ) => group + '_' + fieldName;
-	const unescapeHtml = ( value ) => unescape( value ).replace( /&#039;/g, "'" );
-	const getValue = ( fieldName ) => values[ fieldName ] ? unescapeHtml( values[ fieldName ] ) : '';
+	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
 	const updatePhoneValue = ( value ) => props.updateAddressValue( orderId, siteId, group, 'phone', getPhoneNumber( value ) );
