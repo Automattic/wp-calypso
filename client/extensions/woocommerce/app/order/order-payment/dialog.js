@@ -22,6 +22,7 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
@@ -70,10 +71,6 @@ class OrderPaymentCard extends Component {
 		}
 	};
 
-	getRefundedTotal = order => {
-		return order.refunds.reduce( ( sum, i ) => sum + parseFloat( i.total ), 0 );
-	};
-
 	toggleDialog = () => {
 		this.setState( {
 			errorMessage: false,
@@ -95,7 +92,7 @@ class OrderPaymentCard extends Component {
 
 	sendRefund = () => {
 		const { order, paymentMethod, siteId, translate } = this.props;
-		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
+		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
 			this.setState( {
 				errorMessage: translate( 'Refund must be less than or equal to the order total.' ),

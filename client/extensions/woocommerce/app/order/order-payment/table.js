@@ -16,9 +16,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import {
 	getOrderDiscountTax,
 	getOrderLineItemTax,
+	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderTotalTax,
-	getRefundedTotal,
 } from 'woocommerce/lib/order-values';
 import OrderTotalRow from '../order-details/row-total';
 import Table from 'woocommerce/components/table';
@@ -160,7 +160,7 @@ class OrderRefundTable extends Component {
 			'has-taxes': showTax,
 			'is-refund-modal': true,
 		} );
-		const refundValue = getRefundedTotal( order );
+		const refundValue = getOrderRefundTotal( order );
 
 		return (
 			<div>
