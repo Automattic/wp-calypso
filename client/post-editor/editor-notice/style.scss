@@ -1,8 +1,11 @@
+/** @format */
+@import 'components/global-notices/style';
+
 .editor-notice {
 	.notice {
 		margin: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin: -8px 0 24px;
 		}
 	}
@@ -20,13 +23,13 @@
 
 	&.is-global {
 		@extend .global-notices;
-		z-index: z-index( 'root', '.web-preview .editor-notice' );
+		z-index: z-index('root', '.web-preview .editor-notice');
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			top: 47px + 49px + 16px;
 		}
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			top: 47px + 49px + 24px;
 		}
 
@@ -36,7 +39,7 @@
 			text-align: left;
 			pointer-events: auto;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				display: flex;
 				border-radius: 20px;
 				margin: 0;
@@ -45,7 +48,7 @@
 		}
 
 		.notice__icon {
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				padding: 8px 0 8px 16px;
 			}
 		}
@@ -54,7 +57,7 @@
 			flex-basis: auto;
 			flex-grow: 1;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				padding: 9px 13px;
 			}
 		}
@@ -62,7 +65,7 @@
 		.notice__dismiss {
 			flex-shrink: 0;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				padding: 8px 16px;
 			}
 		}
