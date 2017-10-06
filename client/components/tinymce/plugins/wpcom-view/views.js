@@ -20,7 +20,7 @@ import { isEnabled } from 'config';
 /**
  * Module variables
  */
-let views = {
+const views = {
 	gallery: GalleryView,
 	embed: new EmbedViewManager(),
 	contactForm: ContactFormView,
@@ -52,7 +52,7 @@ export default {
 	 * @return {String} The string with markers.
 	 */
 	setMarkers( content ) {
-		var pieces = [ { content: content } ],
+		let pieces = [ { content: content } ],
 			current;
 
 		forEach( views, function( view, type ) {
@@ -60,7 +60,7 @@ export default {
 			pieces = [];
 
 			forEach( current, function( piece ) {
-				var remaining = piece.content,
+				let remaining = piece.content,
 					result;
 
 				// Ignore processed pieces, but retain their location.
