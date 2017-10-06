@@ -39,17 +39,13 @@
 	text-align: right;
 	font-size: 14px;
 
-	.order-details__total-discount,
-	.order-details__total-shipping,
-	.order-details__total-shipping-refund,
-	.order-details__total-refund,
 	.order-details__total {
 		margin-bottom: 8px;
 		display: flex;
 		align-items: center;
 
 		.order-details__totals-label {
-			flex: 1 0 calc( 100% - 104px );
+			flex: 1 0 calc(100% - 104px);
 		}
 
 		.order-details__totals-tax,
@@ -60,13 +56,9 @@
 
 	&.is-refund-modal,
 	&.has-taxes {
-		.order-details__total-discount,
-		.order-details__total-refund,
-		.order-details__total-shipping,
-		.order-details__total-shipping-refund,
 		.order-details__total {
 			.order-details__totals-label {
-				flex: 1 0 calc( 100% - 204px );
+				flex: 1 0 calc(100% - 204px);
 			}
 		}
 	}
@@ -87,12 +79,12 @@
 		color: $alert-red;
 	}
 
-	& > div:last-child {
-		margin-bottom: 0;
+	.order-details__total-full .order-details__totals-label,
+	.order-details__total-full .order-details__totals-value {
+		font-weight: 600;
 	}
 
-	.order-details__total .order-details__totals-label,
-	.order-details__total .order-details__totals-value {
-		font-weight: 600;
+	& > div:last-child {
+		margin-bottom: 0;
 	}
 }

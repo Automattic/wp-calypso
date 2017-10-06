@@ -14,11 +14,13 @@ import { sum } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrderLineItemTax, getOrderShippingTax } from 'woocommerce/lib/order-values';
-import OrderDiscountRow from './row-discount';
-import OrderRefundRow from './row-refund';
-import OrderShippingRefundRow from './row-shipping-refund';
-import OrderShippingRow from './row-shipping';
+import {
+	getOrderDiscountTax,
+	getOrderLineItemTax,
+	getOrderRefundTotal,
+	getOrderShippingTax,
+	getOrderTotalTax,
+} from 'woocommerce/lib/order-values';
 import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -162,7 +164,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	render() {
-		const { isEditable, order } = this.props;
+		const { isEditable, order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -173,6 +175,7 @@ class OrderDetailsTable extends Component {
 			'has-taxes': showTax,
 			'is-refund-modal': isEditable,
 		} );
+		const refundValue = getOrderRefundTotal( order );
 
 		return (
 			<div>
@@ -181,18 +184,37 @@ class OrderDetailsTable extends Component {
 				</Table>
 
 				<div className={ totalsClasses }>
-					<OrderDiscountRow order={ order } showTax={ showTax } />
-					{ isEditable ? (
-						<OrderShippingRefundRow
+					<OrderTotalRow
+						currency={ order.currency }
+						label={ translate( 'Discount' ) }
+						value={ order.discount_total }
+						taxValue={ getOrderDiscountTax( order ) }
+						showTax={ showTax }
+					/>
+					<OrderTotalRow
+						currency={ order.currency }
+						label={ translate( 'Shipping' ) }
+						value={ order.shipping_total }
+						taxValue={ getOrderShippingTax( order ) }
+						showTax={ showTax }
+					/>
+					<OrderTotalRow
+						className="order-details__total-full"
+						currency={ order.currency }
+						label={ translate( 'Total' ) }
+						value={ order.total }
+						taxValue={ getOrderTotalTax( order ) }
+						showTax={ showTax }
+					/>
+					{ !! refundValue && (
+						<OrderTotalRow
+							className="order-details__total-refund"
 							currency={ order.currency }
-							onChange={ this.onChange }
-							shippingTotal={ this.state.shippingTotal }
+							label={ translate( 'Refunded' ) }
+							value={ refundValue }
+							showTax={ showTax }
 						/>
-					) : (
-						<OrderShippingRow order={ order } showTax={ showTax } />
 					) }
-					<OrderTotalRow order={ order } showTax={ showTax } />
-					<OrderRefundRow order={ order } showTax={ showTax } />
 				</div>
 			</div>
 		);

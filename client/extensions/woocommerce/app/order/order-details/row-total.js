@@ -2,48 +2,49 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
-import { getOrderTotalTax } from 'woocommerce/lib/order-values';
 
-class OrderTotalRow extends Component {
-	static propTypes = {
-		order: PropTypes.shape( {
-			currency: PropTypes.string.isRequired,
-			total: PropTypes.string.isRequired,
-		} ),
-		showTax: PropTypes.bool,
-	};
-
-	render() {
-		const { order, showTax, translate } = this.props;
-		if ( ! order ) {
-			return null;
-		}
-
-		const taxValue = getOrderTotalTax( order );
-		const tax = (
-			<div className="order-details__totals-tax">
-				{ formatCurrency( taxValue, order.currency ) }
-			</div>
-		);
-
-		return (
-			<div className="order-details__total">
-				<div className="order-details__totals-label">{ translate( 'Total' ) }</div>
-				{ showTax && tax }
-				<div className="order-details__totals-value">
-					{ formatCurrency( order.total, order.currency ) }
-				</div>
-			</div>
-		);
+function OrderTotalRow( {
+	className,
+	currency = 'USD',
+	label,
+	value,
+	showTax,
+	taxValue,
+	translate,
+} ) {
+	if ( ! label ) {
+		label = translate( 'Total' );
 	}
+	const tax = (
+		<div className="order-details__totals-tax">{ formatCurrency( taxValue, currency ) }</div>
+	);
+	const classes = classnames( className, 'order-details__total' );
+
+	return (
+		<div className={ classes }>
+			<div className="order-details__totals-label">{ label }</div>
+			{ showTax && tax }
+			<div className="order-details__totals-value">{ formatCurrency( value, currency ) }</div>
+		</div>
+	);
 }
+
+OrderTotalRow.propTypes = {
+	currency: PropTypes.string.isRequired,
+	label: PropTypes.string.isRequired,
+	showTax: PropTypes.bool,
+	taxValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+	translate: PropTypes.func.isRequired,
+	value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+};
 
 export default localize( OrderTotalRow );
