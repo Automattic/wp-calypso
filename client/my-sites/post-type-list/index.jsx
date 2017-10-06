@@ -128,12 +128,24 @@ class PostTypeList extends Component {
 		return Math.min( pageCount, 5 );
 	}
 
+	getScrollTop() {
+		const { scrollContainer } = this.props;
+		if ( ! scrollContainer ) {
+			return null;
+		}
+		if ( scrollContainer === document.body ) {
+			return 'scrollY' in window ? window.scrollY : document.documentElement.scrollTop;
+		}
+		return scrollContainer.scrollTop;
+	}
+
 	maybeLoadNextPage() {
 		const { scrollContainer, lastPage, isRequestingPosts } = this.props;
 		if ( ! scrollContainer ) {
 			return;
 		}
-		const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+		const scrollTop = this.getScrollTop();
+		const { scrollHeight, clientHeight } = scrollContainer;
 		if (
 			typeof scrollTop !== 'number' ||
 			typeof scrollHeight !== 'number' ||
