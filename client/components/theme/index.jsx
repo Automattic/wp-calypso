@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, get, isEmpty, isEqual, noop } from 'lodash';
+import { get, isEmpty, isEqual, noop, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -98,8 +98,8 @@ export class Theme extends Component {
 
 	isBeginnerTheme = () => {
 		const { theme } = this.props;
-		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ], null );
-		return !! find( skillLevels, { slug: 'beginner' } );
+		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
+		return some( skillLevels, { slug: 'beginner' } );
 	};
 
 	renderPlaceholder = () => {
@@ -155,7 +155,11 @@ export class Theme extends Component {
 
 		return (
 			<Card className={ themeClass }>
-				{ this.isBeginnerTheme() && <Ribbon color="green">{ translate( 'BEGINNER' ) }</Ribbon> }
+				{ this.isBeginnerTheme() && <Ribbon
+					className="theme__ribbon"
+					color="green">
+					{ translate( 'Beginner' ) }
+				</Ribbon> }
 				<div className="theme__content">
 					{ this.renderHover() }
 
