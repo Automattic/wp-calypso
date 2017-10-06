@@ -38,9 +38,15 @@ import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
+	rewindRequestDismiss as rewindRequestDismissAction,
+	rewindRequestRestore as rewindRequestRestoreAction,
+	rewindRestore as rewindRestoreAction,
+} from 'state/activity-log/actions';
+import {
+	getActivityLog,
 	getActivityLogs,
+	getRequestedRewind,
 	getRestoreProgress,
 	getRewindStatusError,
 	getSiteGmtOffset,
@@ -76,6 +82,14 @@ class ActivityLog extends Component {
 			] ).isRequired,
 			timestamp: PropTypes.number.isRequired,
 		} ),
+		recordTracksEvent: PropTypes.func.isRequired,
+		requestedRestoreActivity: PropTypes.shape( {
+			activityTs: PropTypes.number.isRequired,
+		} ),
+		requestedRestoreActivityId: PropTypes.string,
+		rewindRequestDismiss: PropTypes.func.isRequired,
+		rewindRequestRestore: PropTypes.func.isRequired,
+		rewindRestore: PropTypes.func.isRequired,
 		rewindStatusError: PropTypes.shape( {
 			error: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
@@ -90,11 +104,6 @@ class ActivityLog extends Component {
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	state = {
-		requestedRestoreTimestamp: null,
-		showRestoreConfirmDialog: false,
 	};
 
 	componentDidMount() {
@@ -122,38 +131,26 @@ class ActivityLog extends Component {
 		this.handlePeriodChange( ...args );
 	};
 
-	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
-		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
-			from,
-			timestamp: requestedRestoreTimestamp,
-		} );
-		this.setState( {
-			requestedRestoreTimestamp,
-			showRestoreConfirmDialog: true,
-		} );
+	handleRequestRestore = ( activityId, from ) => {
+		const { recordTracksEvent, rewindRequestRestore, siteId } = this.props;
+
+		recordTracksEvent( 'calypso_activitylog_restore_request', { from } );
+		rewindRequestRestore( siteId, activityId );
 	};
 
 	handleRestoreDialogClose = () => {
-		this.props.recordTracksEvent( 'calypso_activitylog_restore_cancel', {
-			timestamp: this.state.requestedRestoreTimestamp,
-		} );
-		this.setState( { showRestoreConfirmDialog: false } );
+		const { recordTracksEvent, rewindRequestDismiss, siteId } = this.props;
+		recordTracksEvent( 'calypso_activitylog_restore_cancel' );
+		rewindRequestDismiss( siteId );
 	};
 
 	handleRestoreDialogConfirm = () => {
-		const { recordTracksEvent, rewindRestore, siteId } = this.props;
-		const { requestedRestoreTimestamp } = this.state;
+		const { recordTracksEvent, requestedRestoreActivity, rewindRestore, siteId } = this.props;
+		const { activityTs: timestamp } = requestedRestoreActivity;
 
-		recordTracksEvent( 'calypso_activitylog_restore_confirm', {
-			timestamp: requestedRestoreTimestamp,
-		} );
-		debug(
-			'Restore requested for site %d to time %d',
-			this.props.siteId,
-			requestedRestoreTimestamp
-		);
-		this.setState( { showRestoreConfirmDialog: false } );
-		rewindRestore( siteId, requestedRestoreTimestamp );
+		debug( 'Restore requested for after activity %o', requestedRestoreActivity );
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', { timestamp } );
+		rewindRestore( siteId, timestamp );
 	};
 
 	/**
@@ -254,7 +251,15 @@ class ActivityLog extends Component {
 	}
 
 	renderLogs() {
-		const { isPressable, isRewindActive, logs, moment, translate, siteId } = this.props;
+		const {
+			isPressable,
+			isRewindActive,
+			logs,
+			moment,
+			requestedRestoreActivityId,
+			siteId,
+			translate,
+		} = this.props;
 		const startMoment = this.getStartMoment();
 
 		if ( isNull( logs ) ) {
@@ -283,8 +288,8 @@ class ActivityLog extends Component {
 				.endOf( 'day' )
 				.valueOf()
 		);
-		const activityDays = [];
 
+		const activityDays = [];
 		// loop backwards through each day in the month
 		for (
 			const m = moment.min(
@@ -305,6 +310,7 @@ class ActivityLog extends Component {
 			activityDays.push(
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
+					requestedRestoreActivityId={ requestedRestoreActivityId }
 					disableRestore={ disableRestore }
 					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
@@ -352,6 +358,7 @@ class ActivityLog extends Component {
 			gmtOffset,
 			isPressable,
 			isRewindActive,
+			requestedRestoreActivity,
 			siteId,
 			siteTitle,
 			slug,
@@ -371,8 +378,6 @@ class ActivityLog extends Component {
 				</Main>
 			);
 		}
-
-		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
 
 		return (
 			<Main wideLayout>
@@ -394,9 +399,9 @@ class ActivityLog extends Component {
 
 				<ActivityLogConfirmDialog
 					applySiteOffset={ this.applySiteOffset }
-					isVisible={ showRestoreConfirmDialog }
+					isVisible={ !! requestedRestoreActivity }
 					siteTitle={ siteTitle }
-					timestamp={ requestedRestoreTimestamp }
+					timestamp={ requestedRestoreActivity && requestedRestoreActivity.activityTs }
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
@@ -411,6 +416,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
+		const requestedRestoreActivityId = getRequestedRewind( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -421,6 +427,8 @@ export default connect(
 				siteId,
 				getActivityLogQuery( { gmtOffset, startDate, timezone } )
 			),
+			requestedRestoreActivity: getActivityLog( state, siteId, requestedRestoreActivityId ),
+			requestedRestoreActivityId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
@@ -434,6 +442,8 @@ export default connect(
 	},
 	{
 		recordTracksEvent: recordTracksEventAction,
+		rewindRequestDismiss: rewindRequestDismissAction,
+		rewindRequestRestore: rewindRequestRestoreAction,
 		rewindRestore: rewindRestoreAction,
 	}
 )( localize( ActivityLog ) );
