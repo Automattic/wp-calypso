@@ -82,6 +82,12 @@ class ConversationCaterpillarComponent extends React.Component {
 			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
+		recordAction( 'comment_caterpillar_click' );
+		recordGaEvent( 'Clicked Caterpillar' );
+		recordTrack( 'calypso_reader_comment_caterpillar_click', {
+			blog_id: blogId,
+			post_id: postId,
+		} );
 	};
 
 	render() {
