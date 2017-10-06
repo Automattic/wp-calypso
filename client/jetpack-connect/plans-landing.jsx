@@ -15,7 +15,7 @@ import PlansSkipButton from './plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import QueryPlans from 'components/data/query-plans';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -77,11 +77,11 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { basePlansPath, interval, site } = this.props;
+		const { basePlansPath, interval, requestingSites, site } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
-		if ( site ) {
+		if ( site || requestingSites ) {
 			return null;
 		}
 
@@ -110,6 +110,7 @@ export default connect(
 		const site = rawSite ? getSite( state, rawSite.ID ) : null;
 
 		return {
+			requestingSites: isRequestingSites( state ),
 			site,
 		};
 	},
