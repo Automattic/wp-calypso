@@ -19,7 +19,7 @@ const ConversationCaterpillarExample = () => {
 				blogId={ 123 }
 				postId={ 12 }
 				commentsTree={ commentsTree }
-				hiddenComments={ commentsTree }
+				commentsToShow={ {} }
 				expandComments={ () => {} }
 			/>
 		</div>
