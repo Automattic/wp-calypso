@@ -183,6 +183,7 @@ if ( calypsoEnv === 'desktop' ) {
 		'react-redux',
 		'redux',
 		'redux-thunk',
+		'sanitize-html',
 		'store',
 		'wpcom',
 	];
