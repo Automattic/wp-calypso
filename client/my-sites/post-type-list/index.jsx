@@ -194,7 +194,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, posts, isRequestingPosts } = this.props;
+		const { query, siteId, posts, isRequestingPosts, lastPage } = this.props;
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -211,7 +211,12 @@ class PostTypeList extends Component {
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ isRequestingPosts && this.renderPlaceholder() }
+				{ (
+					maxRequestedPage < lastPage ||
+					isRequestingPosts
+				) && (
+					this.renderPlaceholder()
+				) }
 			</div>
 		);
 	}
