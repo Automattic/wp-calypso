@@ -42,6 +42,7 @@ class CustomerAddressDialog extends Component {
 		closeDialog: PropTypes.func,
 		isBilling: PropTypes.bool,
 		isVisible: PropTypes.bool,
+		updateAddress: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -60,6 +61,7 @@ class CustomerAddressDialog extends Component {
 		closeDialog: noop,
 		isBilling: false,
 		isVisible: false,
+		updateAddress: noop,
 	};
 
 	constructor( props ) {

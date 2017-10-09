@@ -24,11 +24,14 @@ import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
+		editOrder: PropTypes.func.isRequired,
+		isEditing: PropTypes.bool,
 		orderId: PropTypes.number.isRequired,
 		order: PropTypes.shape( {
 			billing: PropTypes.object.isRequired,
 			shipping: PropTypes.object.isRequired,
 		} ),
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
