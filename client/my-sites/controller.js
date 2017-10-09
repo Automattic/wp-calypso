@@ -8,7 +8,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, some, startsWith, omit } from 'lodash';
+import { uniq, some, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -342,10 +342,13 @@ module.exports = {
 					} )
 				);
 
-				analytics.tracks.recordEvent(
-					'calypso_my-sites_single_site_jetpack_connection_error',
-					omit( currentUser, 'meta' )
-				);
+				const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
+				analytics.tracks.recordEvent( 'calypso_mysites_single_site_jetpack_connection_error', {
+					username,
+					primary_blog,
+					primary_blog_url,
+					primary_blog_is_jetpack,
+				} );
 			}
 		}
 
