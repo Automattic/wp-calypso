@@ -23,7 +23,6 @@ import {
 	canUserSendMessages,
 	hasActiveHappychatSession,
 	wasHappychatRecentlyActive,
-	getGeoLocation,
 	getGroups,
 } from '../selectors';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -199,27 +198,6 @@ describe( 'selectors', () => {
 				},
 			} );
 			expect( isHappychatAvailable( state ) ).to.be.true;
-		} );
-	} );
-
-	describe( 'getGeoLocation', () => {
-		it( 'should return null if geoLocation is not set', () => {
-			const selected = getGeoLocation( {
-				happychat: {
-					geoLocation: null,
-				},
-			} );
-			expect( selected ).to.equal( null );
-		} );
-		it( 'should return value if geoLocation is set', () => {
-			const selected = getGeoLocation( {
-				happychat: {
-					geoLocation: {
-						city: 'Timisoara',
-					},
-				},
-			} );
-			expect( selected.city ).to.equal( 'Timisoara' );
 		} );
 	} );
 

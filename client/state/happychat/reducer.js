@@ -19,12 +19,13 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
-import { timelineSchema, geoLocationSchema } from './schema';
+import { timelineSchema } from './schema';
 import connection from './connection/reducer';
 import ui from './ui/reducer';
+import user from './user/reducer';
 
 /**
  * Returns a timeline event from the redux action
@@ -58,23 +59,6 @@ const timeline_event = ( state = {}, action ) => {
 
 const validateTimeline = validator( timelineSchema );
 const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
-
-/**
- * Tracks the current user geo location.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const geoLocation = createReducer( null, {
-	[ HAPPYCHAT_CONNECTED ]: ( state, action ) => {
-		const { user: { geo_location } } = action;
-		if ( geo_location && geo_location.country_long && geo_location.city ) {
-			return geo_location;
-		}
-		return state;
-	}
-}, geoLocationSchema );
 
 /**
  * Adds timeline events for happychat
@@ -194,7 +178,7 @@ export default combineReducers( {
 	lastActivityTimestamp,
 	message,
 	timeline,
-	geoLocation,
 	connection,
 	ui,
+	user,
 } );
