@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -13,60 +14,59 @@ import classNames from 'classnames';
  */
 import { decodeEntities } from 'lib/formatting';
 
-var SharingButtonsLabelEditor = ( module.exports = React.createClass( {
-	displayName: 'SharingButtonsLabelEditor',
+const closeKeyCodes = [
+	13, // Return
+	27, // Escape
+];
 
-	propTypes: {
+class SharingButtonsLabelEditor extends React.Component {
+	static displayName = 'SharingButtonsLabelEditor';
+
+	static propTypes = {
 		active: PropTypes.bool,
 		value: PropTypes.string,
 		onChange: PropTypes.func,
 		onClose: PropTypes.func,
 		hasEnabledButtons: PropTypes.bool,
-	},
+	};
 
-	statics: {
-		closeKeyCodes: [
-			13, // Return
-			27, // Escape
-		],
-	},
+	static defaultProps = {
+		active: false,
+		value: '',
+		onChange: function() {},
+		onClose: function() {},
+		hasEnabledButtons: true,
+	};
 
-	getDefaultProps: function() {
-		return {
-			active: false,
-			value: '',
-			onChange: function() {},
-			onClose: function() {},
-			hasEnabledButtons: true,
-		};
-	},
-
-	onKeyDown: function( event ) {
-		if ( -1 !== SharingButtonsLabelEditor.closeKeyCodes.indexOf( event.keyCode ) ) {
+	onKeyDown = event => {
+		if ( -1 !== closeKeyCodes.indexOf( event.keyCode ) ) {
 			event.target.blur();
 			event.preventDefault();
 			this.props.onClose();
 		}
-	},
+	};
 
-	onInputChange: function( event ) {
+	onInputChange = event => {
 		this.props.onChange( event.target.value );
-	},
+	};
 
-	getNoButtonsNoticeElement: function() {
+	getNoButtonsNoticeElement = () => {
 		if ( ! this.props.hasEnabledButtons ) {
 			return (
 				<em className="sharing-buttons-preview__panel-notice">
-					{ this.translate( "This text won't appear until you add at least one sharing button.", {
-						context: 'Sharing: Buttons',
-					} ) }
+					{ this.props.translate(
+						"This text won't appear until you add at least one sharing button.",
+						{
+							context: 'Sharing: Buttons',
+						}
+					) }
 				</em>
 			);
 		}
-	},
+	};
 
-	render: function() {
-		var classes = classNames(
+	render() {
+		const classes = classNames(
 			'sharing-buttons-preview__panel',
 			'is-top',
 			'sharing-buttons-label-editor',
@@ -79,10 +79,10 @@ var SharingButtonsLabelEditor = ( module.exports = React.createClass( {
 			<div className={ classes }>
 				<div className="sharing-buttons-preview__panel-content">
 					<h3 className="sharing-buttons-preview__panel-heading">
-						{ this.translate( 'Edit label text', { context: 'Sharing: buttons' } ) }
+						{ this.props.translate( 'Edit label text', { context: 'Sharing: buttons' } ) }
 					</h3>
 					<p className="sharing-buttons-preview__panel-instructions">
-						{ this.translate( 'Change the text of the sharing buttons label' ) }
+						{ this.props.translate( 'Change the text of the sharing buttons label' ) }
 					</p>
 					<input
 						type="text"
@@ -95,10 +95,12 @@ var SharingButtonsLabelEditor = ( module.exports = React.createClass( {
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
 					<button type="button" className="button" onClick={ this.props.onClose }>
-						{ this.translate( 'Close' ) }
+						{ this.props.translate( 'Close' ) }
 					</button>
 				</footer>
 			</div>
 		);
-	},
-} ) );
+	}
+}
+
+export default localize( SharingButtonsLabelEditor );
