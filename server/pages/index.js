@@ -191,6 +191,8 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
+		shouldUsePreconnectGoogle:
+			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
 		shouldUsePreload: config.isEnabled( 'try/preload' ) && !! request.query.enablePreload,
 		shouldUseSingleCDN,
 		bodyClasses,

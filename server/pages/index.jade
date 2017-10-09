@@ -94,11 +94,12 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			link(rel='preconnect' href='https://www.google-analytics.com')
 			
 			//- Preconnect for Google domains - especially useful for SSO.
-			link(rel='preconnect' href='https://google.com')
-			link(rel='preconnect' href='https://ssl.gstatic.com')
-			link(rel='preconnect' href='https://apis.google.com')
-			link(rel='preconnect' href='https://accounts.google.com')
-			link(rel='preconnect' href='https://stats.g.doubleclick.net')
+			if shouldUsePreconnectGoogle
+				link(rel='preconnect' href='https://google.com')
+				link(rel='preconnect' href='https://ssl.gstatic.com')
+				link(rel='preconnect' href='https://apis.google.com')
+				link(rel='preconnect' href='https://accounts.google.com')
+				link(rel='preconnect' href='https://stats.g.doubleclick.net')
 
 		//- Preload our scripts
 		if shouldUsePreload
