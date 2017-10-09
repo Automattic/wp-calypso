@@ -1063,7 +1063,9 @@ export const PostEditor = React.createClass( {
 			const referrer = get( window, 'document.referrer', '' );
 			const referrerDomain = parseUrl( referrer ).hostname;
 			const shouldReturnToSite =
-				this.props.isEditorOnlyRouteInHistory && referrerDomain === this.props.selectedSiteDomain;
+				'updated' === message &&
+				this.props.isEditorOnlyRouteInHistory &&
+				referrerDomain === this.props.selectedSiteDomain;
 
 			if ( shouldReturnToSite ) {
 				window.location.href = this.getExternalUrl();
