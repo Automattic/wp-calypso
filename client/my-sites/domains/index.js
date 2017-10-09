@@ -218,6 +218,23 @@ export default function() {
 			controller.jetPackWarning,
 			domainsController.siteRedirect
 		);
+
+		page(
+			'/domains/add/transfer',
+			controller.siteSelection,
+			domainsController.domainsAddHeader,
+			controller.jetPackWarning,
+			controller.sites
+		);
+
+		page(
+			'/domains/add/transfer/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
+			controller.jetPackWarning,
+			domainsController.mapDomain
+		);
 	}
 
 	page( '/domains', controller.siteSelection, controller.sites );
