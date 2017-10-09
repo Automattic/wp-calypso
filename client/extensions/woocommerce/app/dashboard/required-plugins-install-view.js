@@ -52,6 +52,7 @@ class RequiredPluginsInstallView extends Component {
 			requestedTransferStatus: false,
 		};
 		this.updateTimer = false;
+		this.transferStatusFetcher = null;
 	}
 
 	componentDidMount = () => {
@@ -77,7 +78,7 @@ class RequiredPluginsInstallView extends Component {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 
 			if ( ! automatedTransferStatus ) {
-				delay( this.fetchAutomatedTransferStatus, 4000 );
+				this.transferStatusFetcher = delay( this.fetchAutomatedTransferStatus, 4000 );
 
 				return;
 			}
@@ -106,6 +107,11 @@ class RequiredPluginsInstallView extends Component {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = false;
+		}
+
+		if ( this.transferStatusFetcher ) {
+			window.clearTimeout( this.transferStatusFetcher );
+			this.transferStatusFetcher = null;
 		}
 	};
 
