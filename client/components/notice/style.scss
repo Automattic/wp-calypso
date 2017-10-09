@@ -9,6 +9,7 @@
 	background: $gray-dark;
 	color: $white;
 	border-radius: 3px;
+	align-items: center;
 
 	@include breakpoint( ">480px" ) {
 		flex-direction: row;
@@ -65,6 +66,7 @@
 	justify-content: center;
 	border-radius: 3px 0 0 3px;
 	flex-shrink: 0;
+	align-self: stretch;
 }
 
 .notice__content {
