@@ -77,14 +77,15 @@
 	float: left;
 }
 
-.comment-detail__author-info-element {
+.comment-detail__author-info-element,
+.comment-detail__author-info-timestamp {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
 
-	&.is-timestamp {
-		font-size: 12px;
-	}
+.comment-detail__author-info-timestamp {
+	font-size: 12px;
 }
 
 .comment-detail__header {

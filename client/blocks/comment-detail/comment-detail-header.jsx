@@ -141,7 +141,7 @@ export class CommentDetailHeader extends Component {
 									</Emojify>
 								</div>
 							</div>
-							<div className="comment-detail__author-info-element is-timestamp">
+							<div className="comment-detail__author-info-timestamp">
 								{ getFormattedDate( commentDate, site ) }
 							</div>
 						</div>
