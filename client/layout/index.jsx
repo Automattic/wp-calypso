@@ -42,7 +42,7 @@ import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';

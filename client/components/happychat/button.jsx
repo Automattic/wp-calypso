@@ -20,7 +20,7 @@ import viewport from 'lib/viewport';
 import { hasUnreadMessages, hasActiveHappychatSession } from 'state/happychat/selectors';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { connectChat } from 'state/happychat/connection/actions';
-import { openChat } from 'state/ui/happychat/actions';
+import { openChat } from 'state/happychat/ui/actions';
 import Button from 'components/button';
 
 class HappychatButton extends Component {
