@@ -130,7 +130,7 @@ class Order extends Component {
 		return (
 			<Main className={ className }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					{ config.isEnabled( 'woocommerce/extension-orders-create' ) && button }
+					{ config.isEnabled( 'woocommerce/extension-orders-edit' ) && button }
 				</ActionHeader>
 
 				<div className="order__container">
