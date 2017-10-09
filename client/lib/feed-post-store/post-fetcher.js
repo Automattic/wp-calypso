@@ -44,9 +44,7 @@ function fromKey( key ) {
 
 assign( PostFetcher.prototype, {
 	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add(
-			toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
-		);
+		this.postsToFetch.add( toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 
 		if ( ! this.batchQueued ) {
 			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
@@ -54,9 +52,7 @@ assign( PostFetcher.prototype, {
 	},
 
 	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete(
-			toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
-		);
+		this.postsToFetch.delete( toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 	},
 
 	run: function() {
