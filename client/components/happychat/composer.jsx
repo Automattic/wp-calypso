@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { sendChatMessage, setChatMessage } from 'state/happychat/actions';
+import { sendChatMessage, setChatMessage } from 'state/happychat/connection/actions';
 import { canUserSendMessages } from 'state/happychat/selectors';
 import { when, forEach, compose, propEquals, call, prop } from './functional';
 import scrollbleed from './scrollbleed';

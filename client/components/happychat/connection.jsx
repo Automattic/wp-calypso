@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import { connectChat } from 'state/happychat/actions';
-import { isHappychatConnectionUninitialized } from 'state/happychat/selectors';
+import { connectChat } from 'state/happychat/connection/actions';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 
 class HappychatConnection extends Component {
 	componentDidMount() {

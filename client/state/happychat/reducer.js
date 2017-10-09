@@ -13,16 +13,12 @@ import validator from 'is-my-json-valid';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_BLUR,
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
@@ -31,6 +27,7 @@ import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
 import { timelineSchema } from './schema';
 import user from './user/reducer';
+import connection from './connection/reducer';
 
 /**
  * Returns a timeline event from the redux action
@@ -145,38 +142,6 @@ export const message = ( state = '', action ) => {
 };
 
 /**
- * Tracks the state of the happychat client connection
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- *
- */
-const connectionStatus = ( state = 'uninitialized', action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
-		case HAPPYCHAT_CONNECTED:
-			return 'connected';
-		case HAPPYCHAT_DISCONNECTED:
-			return 'disconnected';
-		case HAPPYCHAT_RECONNECTING:
-			return 'reconnecting';
-	}
-	return state;
-};
-
-const connectionError = ( state = null, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTED:
-			return null;
-		case HAPPYCHAT_DISCONNECTED:
-			return action.errorStatus;
-	}
-	return state;
-};
-
-/**
  * Tracks the state of the happychat chat. Valid states are:
  *
  *  - HAPPYCHAT_CHAT_STATUS_DEFAULT : no chat has been started
@@ -196,21 +161,6 @@ const chatStatus = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_CHAT_STATUS:
 			return action.status;
-	}
-	return state;
-};
-
-/**
- * Tracks whether happychat.io is accepting new chats.
- *
- * @param  {Boolean} state  Current happychat status
- * @param  {Object}  action Action playload
- * @return {Boolean}        Updated happychat status
- */
-const isAvailable = ( state = false, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_SET_AVAILABLE:
-			return action.isAvailable;
 	}
 	return state;
 };
@@ -259,12 +209,10 @@ lastActivityTimestamp.hasCustomPersistence = true;
 
 export default combineReducers( {
 	chatStatus,
-	connectionError,
-	connectionStatus,
-	isAvailable,
 	lastActivityTimestamp,
 	lostFocusAt,
 	message,
 	timeline,
 	user,
+	connection,
 } );
