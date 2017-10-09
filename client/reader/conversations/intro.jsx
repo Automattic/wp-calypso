@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -17,6 +18,14 @@ import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
 class ConversationsIntro extends React.Component {
+	static propTypes = {
+		isInternalConversations: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isInternalConversations: false,
+	};
+
 	componentDidMount() {
 		this.recordRenderTrack();
 	}
@@ -34,7 +43,7 @@ class ConversationsIntro extends React.Component {
 	};
 
 	render() {
-		const { hasUsedConversations, translate, dismiss } = this.props;
+		const { hasUsedConversations, translate, dismiss, isInternalConversations } = this.props;
 
 		if ( hasUsedConversations ) {
 			return null;
@@ -46,16 +55,30 @@ class ConversationsIntro extends React.Component {
 				<div className="conversations__intro-header">
 					<div className="conversations__intro-copy">
 						<span>
-							{ translate(
-								'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
-									'and reply to all your conversations in one place. ' +
-									"WordPress posts you've liked or commented on " +
-									'will appear when they have new comments.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
+							{ isInternalConversations ? (
+								translate(
+									'{{strong}}Welcome to A8C Conversations.{{/strong}} You can read ' +
+										'and reply to all your P2 conversations in one place. ' +
+										"Automattic P2 posts you've liked or commented on " +
+										'will appear when they have new comments.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								)
+							) : (
+								translate(
+									'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
+										'and reply to all your conversations in one place. ' +
+										"WordPress posts you've liked or commented on " +
+										'will appear when they have new comments.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								)
 							) }
 						</span>
 					</div>
@@ -80,6 +103,10 @@ class ConversationsIntro extends React.Component {
 		);
 	}
 }
+
+ConversationsIntro.PropTypes = {
+	isInternalConversations: PropTypes.bool,
+};
 
 export default connect(
 	state => {
