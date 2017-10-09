@@ -187,6 +187,8 @@ function getDefaultContext( request ) {
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
+		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ),
+		shouldUsePreload: config.isEnabled( 'try/preload' ),
 		bodyClasses,
 		sectionCss,
 		sectionCssRtl,
