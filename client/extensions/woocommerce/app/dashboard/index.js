@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -168,10 +169,12 @@ function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const loading =
 		areOrdersLoading( state ) || areSetupChoicesLoading( state ) || areProductsLoading( state );
-	const hasOrders = getOrders( state ).length > 0;
+	const newOrders = getOrders( state );
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const hasOrders = find( newOrders, { status: 'processing' } );
+
 	return {
 		finishedInitialSetup,
 		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),
