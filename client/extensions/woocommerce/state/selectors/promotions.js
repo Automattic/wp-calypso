@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  *
  * @format
@@ -7,7 +12,7 @@
 import { getSelectedSiteWithFallback } from '../sites/selectors';
 
 export function getPromotions( rootState, siteId = getSelectedSiteWithFallback( rootState ) ) {
-	const { promotions } = rootState.extensions.woocommerce.sites[ siteId ];
+	const { promotions } = get( rootState, [ 'extensions', 'woocommerce', 'sites', siteId ], {} );
 	return promotions.promotions;
 }
 
@@ -23,11 +28,11 @@ export function getPromotionsPage(
 }
 
 export function getPromotionsCurrentPage( rootState ) {
-	const { promotions } = rootState.extensions.woocommerce.ui;
-	return promotions.currentPage;
+	const { list } = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions' ], {} );
+	return list.currentPage;
 }
 
 export function getPromotionsPerPage( rootState ) {
-	const { promotions } = rootState.extensions.woocommerce.ui;
-	return promotions.perPage;
+	const { list } = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions' ], {} );
+	return list.perPage;
 }
