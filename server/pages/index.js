@@ -171,7 +171,8 @@ function getDefaultContext( request ) {
 		sectionCssRtl = urls.rtl;
 	}
 
-	const shouldUseSingleCDN = config.isEnabled( 'try/preload' ) && !! request.query.singleCdn;
+	const shouldUseSingleCDN =
+		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,

@@ -160,6 +160,7 @@
 		"sync-handler": true,
 		"try/preconnect": true,
 		"try/preload": true,
+		"try/single-cdn": true,
 		"ui/first-view": true,
 		"ui/first-view/reset-route": true,
 		"upgrades/checkout": true,
