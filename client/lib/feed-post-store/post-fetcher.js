@@ -4,7 +4,7 @@
  * @format
  */
 
-import { assign, noop, pick, omitBy } from 'lodash';
+import { assign, noop, pick, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -27,18 +27,18 @@ function PostFetcher( options ) {
 }
 
 function toKey( o ) {
-	return `${ o.feedId }-${ o.blogId }-${ o.postId }`;
+	return `${ o.feedId || '' }-${ o.blogId || '' }-${ o.postId || '' }`;
 }
 
 function fromKey( key ) {
-	const [ feedId, blogId, postId ] = key.split( '-' );
-	return omitBy(
+	const [ feedId, blogId, postId ] = key.split( '-' ).map( Number );
+	return pickBy(
 		{
 			feedId,
 			blogId,
 			postId,
 		},
-		Boolean
+		value => value > 0
 	);
 }
 
