@@ -37,7 +37,7 @@ class DisconnectSite extends Component {
 		return (
 			<div>
 				<span className="disconnect-site__back-button-container">
-					<NavigationBackButton redirectRoute={ this.getRoute() } { ...this.props } />
+					<NavigationBackButton redirectRoute={ this.getRoute() } />
 				</span>
 				<Main className="disconnect-site__site-settings">
 					<DocumentHead title={ translate( 'Site Settings' ) } />
