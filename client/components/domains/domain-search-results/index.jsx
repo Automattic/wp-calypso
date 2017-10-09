@@ -37,10 +37,12 @@ class DomainSearchResults extends React.Component {
 		placeholderQuantity: PropTypes.number.isRequired,
 		buttonLabel: PropTypes.string,
 		mappingSuggestionLabel: PropTypes.string,
-		offerMappingOption: PropTypes.bool,
+		offerUnavailableOption: PropTypes.bool,
 		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
+		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
+		onClickTransfer: PropTypes.func,
 		isSignupStep: PropTypes.bool,
 		railcarSeed: PropTypes.string,
 		fetchAlgo: PropTypes.string,
@@ -55,7 +57,7 @@ class DomainSearchResults extends React.Component {
 		const suggestions = this.props.suggestions || [];
 		const { MAPPABLE, UNKNOWN } = domainAvailability;
 
-		let availabilityElement, domainSuggestionElement, mappingOffer;
+		let availabilityElement, domainSuggestionElement, offer;
 
 		if ( availableDomain ) {
 			// should use real notice component or custom class
@@ -82,21 +84,21 @@ class DomainSearchResults extends React.Component {
 			includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) &&
 			this.props.products.domain_map
 		) {
-			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
+			const components = { a: <a href="#" onClick={ this.handleAddTransfer } />, small: <small /> };
 
 			if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}} for free.{{/small}}',
 					{ args: { domain }, components }
 				);
 			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-				mappingOffer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}}.{{/small}}',
+					{ args: { domain }, components }
 				);
 			} else {
-				mappingOffer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}} with WordPress.com Premium.{{/small}}',
 					{ args: { domain }, components }
 				);
 			}
@@ -108,10 +110,10 @@ class DomainSearchResults extends React.Component {
 						} )
 					: translate( '%(domain)s is taken.', { args: { domain } } );
 
-			if ( this.props.offerMappingOption ) {
+			if ( this.props.offerUnavailableOption ) {
 				availabilityElement = (
 					<Notice status="is-warning" showDismiss={ false }>
-						{ domainUnavailableMessage } { mappingOffer }
+						{ domainUnavailableMessage } { offer }
 					</Notice>
 				);
 			}
@@ -129,6 +131,10 @@ class DomainSearchResults extends React.Component {
 
 	handleAddMapping = () => {
 		this.props.onAddMapping( this.props.lastDomainSearched );
+	};
+
+	handleAddTransfer = () => {
+		this.props.onAddTransfer( this.props.lastDomainSearched );
 	};
 
 	renderPlaceholders() {
@@ -166,17 +172,8 @@ class DomainSearchResults extends React.Component {
 				);
 			}, this );
 
-			if ( this.props.offerMappingOption ) {
-				transferOffer = (
-					<DomainTransferSuggestion
-						onButtonClick={ this.props.onClickMapping }
-						products={ this.props.products }
-						selectedSite={ this.props.selectedSite }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						isSignupStep={ this.props.isSignupStep }
-						cart={ this.props.cart }
-					/>
-				);
+			if ( this.props.offerUnavailableOption ) {
+				transferOffer = <DomainTransferSuggestion onButtonClick={ this.props.onClickTransfer } />;
 			}
 		} else {
 			suggestionElements = this.renderPlaceholders();

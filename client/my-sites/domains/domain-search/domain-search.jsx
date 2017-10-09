@@ -147,7 +147,7 @@ class DomainSearch extends Component {
 								onAddMapping={ this.handleAddMapping }
 								cart={ this.props.cart }
 								selectedSite={ selectedSite }
-								offerMappingOption
+								offerUnavailableOption
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 							/>

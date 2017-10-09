@@ -3,7 +3,6 @@
  *
  * @format
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -35,14 +34,13 @@ class DomainTransferSuggestion extends React.Component {
 					<h3>
 						{ translate( 'Already own a domain?', {
 							context: 'Upgrades: Register domain header',
-							comment:
-								'Asks if you want to own a new domain (not if you want to map an existing domain).',
+							comment: 'Asks if you already own a domain name.',
 						} ) }
 					</h3>
 					<p>
 						{ translate( "Transfer or map it to use it as your site's address.", {
 							context: 'Upgrades: Register domain description',
-							comment: "Explains how you could use a new domain name for your site's address.",
+							comment: 'Explains how you could use an existing domain name with your site.',
 						} ) }
 					</p>
 				</div>

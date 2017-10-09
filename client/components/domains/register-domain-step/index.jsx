@@ -133,6 +133,7 @@ class RegisterDomainStep extends React.Component {
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
+		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 	};
 
@@ -634,14 +635,7 @@ class RegisterDomainStep extends React.Component {
 			}, this );
 
 			domainTransferSuggestion = (
-				<DomainTransferSuggestion
-					isSignupStep={ this.props.isSignupStep }
-					onButtonClick={ this.goToMapDomainStep }
-					selectedSite={ this.props.selectedSite }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					cart={ this.props.cart }
-					products={ this.props.products }
-				/>
+				<DomainTransferSuggestion onButtonClick={ this.goToTransferDomainStep } />
 			);
 		}
 
@@ -700,10 +694,12 @@ class RegisterDomainStep extends React.Component {
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.props.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
+				onAddTransfer={ this.props.onAddTransfer }
+				onClickTransfer={ this.goToTransferDomainStep }
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
-				offerMappingOption={ this.props.offerMappingOption }
+				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
@@ -729,12 +725,36 @@ class RegisterDomainStep extends React.Component {
 		return mapDomainUrl;
 	}
 
+	getTransferDomainUrl() {
+		let transferDomainUrl;
+
+		if ( this.props.transferDomainUrl ) {
+			transferDomainUrl = this.props.transferDomainUrl;
+		} else {
+			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+			transferDomainUrl = `${ this.props.basePath }/transfer`;
+			if ( this.props.selectedSite ) {
+				transferDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+			}
+		}
+
+		return transferDomainUrl;
+	}
+
 	goToMapDomainStep = event => {
 		event.preventDefault();
 
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
 
 		page( this.getMapDomainUrl() );
+	};
+
+	goToTransferDomainStep = event => {
+		event.preventDefault();
+
+		this.props.recordTransferDomainButtonClick( this.props.analyticsSection );
+
+		page( this.getTransferDomainUrl() );
 	};
 
 	showValidationErrorMessage( domain, error ) {
@@ -747,6 +767,12 @@ const recordMapDomainButtonClick = section =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
 		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+	);
+
+const recordTransferDomainButtonClick = section =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
+		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section } )
 	);
 
 const recordSearchFormSubmit = ( searchBoxValue, section, timeDiffFromLastSearch, count, vendor ) =>
@@ -826,5 +852,6 @@ export default connect(
 		recordSearchFormSubmit,
 		recordSearchFormView,
 		recordSearchResultsReceive,
+		recordTransferDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );
