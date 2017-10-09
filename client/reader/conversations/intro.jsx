@@ -17,13 +17,16 @@ import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
 
+const getPreferenceName = isInternal =>
+	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
+
 class ConversationsIntro extends React.Component {
 	static propTypes = {
-		isInternalConversations: PropTypes.bool,
+		isInternal: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		isInternalConversations: false,
+		isInternal: false,
 	};
 
 	componentDidMount() {
@@ -42,8 +45,12 @@ class ConversationsIntro extends React.Component {
 		}
 	};
 
+	dismiss = () => {
+		this.props.dismiss( this.props.isInternal );
+	};
+
 	render() {
-		const { hasUsedConversations, translate, dismiss, isInternalConversations } = this.props;
+		const { hasUsedConversations, translate, isInternal } = this.props;
 
 		if ( hasUsedConversations ) {
 			return null;
@@ -55,7 +62,7 @@ class ConversationsIntro extends React.Component {
 				<div className="conversations__intro-header">
 					<div className="conversations__intro-copy">
 						<span>
-							{ isInternalConversations ? (
+							{ isInternal ? (
 								translate(
 									'{{strong}}Welcome to A8C Conversations.{{/strong}} You can read ' +
 										'and reply to all your P2 conversations in one place. ' +
@@ -86,7 +93,7 @@ class ConversationsIntro extends React.Component {
 
 					<div
 						className="conversations__intro-close"
-						onClick={ dismiss }
+						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
 						role="button"
 						aria-label={ translate( 'Close' ) }
@@ -105,21 +112,23 @@ class ConversationsIntro extends React.Component {
 }
 
 ConversationsIntro.PropTypes = {
-	isInternalConversations: PropTypes.bool,
+	isInternal: PropTypes.bool,
 };
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		const preferenceName = getPreferenceName( ownProps.isInternal );
 		return {
-			hasUsedConversations: getPreference( state, 'has_used_reader_conversations' ),
+			hasUsedConversations: getPreference( state, preferenceName ),
 		};
 	},
 	dispatch =>
 		bindActionCreators(
 			{
-				dismiss: () => {
+				dismiss: isInternal => {
 					recordTrack( 'calypso_reader_conversations_intro_dismiss' );
-					return savePreference( 'has_used_reader_conversations', true );
+					const preferenceName = getPreferenceName( isInternal );
+					return savePreference( preferenceName, true );
 				},
 			},
 			dispatch
