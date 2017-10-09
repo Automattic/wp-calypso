@@ -3,16 +3,18 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { get, includes, pick, reduce } from 'lodash';
+import { get, includes, reduce } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import fromApi from './from-api';
 import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
-import { activityLogError, activityLogUpdate } from 'state/activity-log/actions';
+import { activityLogUpdate } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'state/notices/actions';
 
 /**
  * Module constants
@@ -66,8 +68,8 @@ export const receiveActivityLog = ( { dispatch }, action, data ) => {
 	dispatch( activityLogUpdate( action.siteId, data, data.totalItems, action.params ) );
 };
 
-export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
-	dispatch( activityLogError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
+export const receiveActivityLogError = ( { dispatch } ) => {
+	dispatch( errorNotice( translate( 'Error receiving activity for site.' ) ) );
 };
 
 export default {

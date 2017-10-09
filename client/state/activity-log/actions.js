@@ -3,7 +3,6 @@
  * Internal dependencies
  */
 import {
-	ACTIVITY_LOG_ERROR,
 	ACTIVITY_LOG_REQUEST,
 	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
@@ -79,14 +78,6 @@ export function activityLogRequest( siteId, params ) {
 		type: ACTIVITY_LOG_REQUEST,
 		params,
 		siteId,
-	};
-}
-
-export function activityLogError( siteId, error ) {
-	return {
-		type: ACTIVITY_LOG_ERROR,
-		siteId,
-		error,
 	};
 }
 
