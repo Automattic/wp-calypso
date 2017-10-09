@@ -99,8 +99,10 @@
 }
 
 .editor-simple-payments-modal__navigation.card {
+	height: 48px;
 	margin: 0;
 	flex: none;
+	z-index: 1;
 }
 
 .editor-simple-payments-modal__form {
