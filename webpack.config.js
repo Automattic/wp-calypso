@@ -225,6 +225,8 @@ if ( calypsoEnv === 'development' ) {
 			enforce: 'pre',
 			loader: 'source-map-loader'
 		} );
+	} else {
+		webpackConfig.devtool = '#eval';
 	}
 } else {
 	webpackConfig.plugins.push( new UseMinifiedFiles() );
