@@ -3,8 +3,7 @@
  *
  * @format
  */
-
-import { get, includes, last, map } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,16 +105,6 @@ export const hasActiveHappychatSession = createSelector(
 export const getHappychatStatus = createSelector( state => state.happychat.chatStatus );
 
 /**
- * Gets timeline chat events from the happychat state
- * @param {Object} state - Global redux state
- * @return [{Object}] events - an array of timeline chat events
- */
-export const getHappychatTimeline = createSelector(
-	state => state.happychat.timeline,
-	state => map( state.happychat.timeline, 'id' )
-);
-
-/**
  * Returns true if the user should be able to send messages to operators based on
  * chat status. For example new chats and ongoing chats should be able to send messages,
  * but blocked or pending chats should not.
@@ -141,21 +130,3 @@ export const wasHappychatRecentlyActive = state => {
 
 	return now - lastActive < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
 };
-
-export const getLostFocusTimestamp = createSelector( state => state.happychat.lostFocusAt );
-
-export const hasUnreadMessages = createSelector(
-	state => {
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
-		const lostFocusAt = getLostFocusTimestamp( state );
-
-		return (
-			typeof lastMessageTimestamp === 'number' &&
-			typeof lostFocusAt === 'number' &&
-			// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
-			// to milliseconds, so we can compare it to other JS-generated timestamps
-			lastMessageTimestamp * 1000 >= lostFocusAt
-		);
-	},
-	[ getHappychatTimeline, getLostFocusTimestamp ]
-);
