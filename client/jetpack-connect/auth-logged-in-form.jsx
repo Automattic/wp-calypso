@@ -20,6 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
@@ -503,7 +504,9 @@ class LoggedInForm extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.handleClickHelp } />
+				<JetpackConnectHappychatButton>
+					<HelpButton onClick={ this.handleClickHelp } />
+				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
 		);
 	}

@@ -32,6 +32,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import {
 	confirmJetpackInstallStatus,
@@ -348,15 +349,17 @@ class JetpackConnectMain extends Component {
 		const { translate } = this.props;
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-					{ translate( 'Install Jetpack manually' ) }
-				</LoggedOutFormLinkItem>
-				{ this.isInstall() ? null : (
-					<LoggedOutFormLinkItem href="/start">
-						{ translate( 'Start a new site on WordPress.com' ) }
+				<JetpackConnectHappychatButton>
+					<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
+						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
-				) }
-				<HelpButton />
+					{ this.isInstall() ? null : (
+						<LoggedOutFormLinkItem href="/start">
+							{ translate( 'Start a new site on WordPress.com' ) }
+						</LoggedOutFormLinkItem>
+					) }
+					<HelpButton />
+				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
 		);
 	}
@@ -478,7 +481,9 @@ class JetpackConnectMain extends Component {
 					<div className="jetpack-connect__navigation">{ this.renderBackButton() }</div>
 				</div>
 				<LoggedOutFormLinks>
-					<HelpButton />
+					<JetpackConnectHappychatButton>
+						<HelpButton />
+					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
