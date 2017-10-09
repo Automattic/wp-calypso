@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
+import { find, get, delay } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -69,12 +69,18 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyUpdateTimer();
 	};
 
-	fetchAutomatedTransferStatus() {
-		const { signupIsStore } = this.props;
+	fetchAutomatedTransferStatus = () => {
+		const { signupIsStore, automatedTransferStatus } = this.props;
 		const { requestedTransferStatus } = this.state;
 
 		if ( signupIsStore && ! requestedTransferStatus ) {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
+
+			if ( ! automatedTransferStatus ) {
+				delay( this.fetchAutomatedTransferStatus, 4000 );
+
+				return;
+			}
 
 			this.setState( {
 				engineState: 'DOING_TRANSFER',
@@ -83,10 +89,6 @@ class RequiredPluginsInstallView extends Component {
 				numTotalSteps: 6,
 			} );
 		}
-	}
-
-	componentWillReceiveProps = () => {
-		this.fetchAutomatedTransferStatus();
 	};
 
 	createUpdateTimer = () => {
