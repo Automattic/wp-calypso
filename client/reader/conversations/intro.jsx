@@ -103,7 +103,6 @@ class ConversationsIntro extends React.Component {
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>
-						<span className="conversations__intro-close-icon-bg" />
 					</div>
 				</div>
 			</header>

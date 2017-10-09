@@ -62,9 +62,8 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		position: absolute;
-		z-index: z-index( 'root', '.following__intro-close-icon' );
 		fill: lighten( $gray, 10% );
+		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
@@ -72,24 +71,7 @@
 
 		&:hover {
 			cursor: pointer;
-			fill: darken( #62a9a7, 15% );
+			fill: darken( $gray, 20% );
 		}
-
-		&:hover + .conversations__intro-icon-bg {
-			background-color: lighten( #62a9a7, 50% );
-			box-shadow: 0 0 0 2px lighten( #62a9a7, 40% );
-		}
-	}
-
-	.conversations__intro-close-icon-bg {
-		background-color: $white;
-		border-radius: 10px;
-		display: block;
-		height: 20px;
-		position: absolute;
-			left: 2px;
-			top: 2px;
-		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
-		width: 20px;
 	}
 }
