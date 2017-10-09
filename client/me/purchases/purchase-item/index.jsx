@@ -23,7 +23,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
-import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
+import { isDomainProduct, isGoogleApps, isPlan, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
@@ -129,6 +129,41 @@ class PurchaseItem extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	renderIcon() {
+		const { purchase } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPlan( purchase ) ) {
+			return (
+				<div className="purchase-item__plan-icon">
+					<PlanIcon plan={ purchase.productSlug } />
+				</div>
+			);
+		}
+
+		let icon;
+		if ( isDomainProduct( purchase ) ) {
+			icon = 'domains';
+		} else if ( isTheme( purchase ) ) {
+			icon = 'themes';
+		} else if ( isGoogleApps( purchase ) ) {
+			icon = 'mail';
+		}
+
+		if ( ! icon ) {
+			return null;
+		}
+
+		return (
+			<div className="purchase-item__plan-icon">
+				<Gridicon icon={ icon } size={ 24 } />
+			</div>
+		);
+	}
+
 	render() {
 		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
 		const classes = classNames(
@@ -138,39 +173,16 @@ class PurchaseItem extends Component {
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
 
-		let icon;
-		if ( purchase && isPlan( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
-				</div>
-			);
-		} else if ( purchase && isDomainProduct( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<Gridicon icon="domains" size={ 24 } />
-				</div>
-			);
-		} else if ( purchase && isTheme( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<Gridicon icon="themes" size={ 24 } />
-				</div>
-			);
-		}
-
 		let content;
 		if ( isPlaceholder ) {
 			content = this.placeholder();
 		} else {
 			content = (
 				<span className="purchase-item__wrapper">
-					{ icon }
+					{ this.renderIcon() }
 					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getName( this.props.purchase ) }</div>
-						<div className="purchase-item__purchase-type">
-							{ purchaseType( this.props.purchase ) }
-						</div>
+						<div className="purchase-item__title">{ getName( purchase ) }</div>
+						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
 						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
 					</div>
 				</span>
