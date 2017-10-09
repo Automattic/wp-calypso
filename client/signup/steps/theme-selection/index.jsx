@@ -107,11 +107,11 @@ class ThemeSelectionStep extends Component {
 				{
 					stepName: this.props.stepName,
 					processingMessage: this.props.translate( 'Adding your theme' ),
-					repoSlug: 'pub/storefront',
+					repoSlug: '',
 				},
 				null,
 				{
-					themeSlugWithRepo: 'pub/storefront',
+					themeSlugWithRepo: '',
 				}
 			);
 
