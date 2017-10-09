@@ -8,7 +8,7 @@ visited site.
 ```js
 import React from 'react';
 
-import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
+import NavigationBackButton from 'components/navigation-back-button';
 
 /* ... */
 

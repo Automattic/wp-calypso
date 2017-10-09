@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import NavigationBackButton from 'components/navigation-back-button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
 import SkipSurvey from './skip-survey';
 
 const DisconnectSite = ( { siteSlug, translate } ) => {
