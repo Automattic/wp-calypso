@@ -1,6 +1,5 @@
 .notice {
 	display: flex;
-	flex-direction: column;
 	position: relative;
 	width: 100%;
 	margin-bottom: 24px;
@@ -10,10 +9,6 @@
 	color: $white;
 	border-radius: 3px;
 	align-items: center;
-
-	@include breakpoint( ">480px" ) {
-		flex-direction: row;
-	}
 
 	// Success!
 	&.is-success {
@@ -70,14 +65,12 @@
 }
 
 .notice__content {
-	display: flex;
-		flex-grow: 1;
-	padding: 14px 48px;
+	padding: 13px;
 	font-size: 12px;
+	flex-grow: 1;
 
 	@include breakpoint( ">480px" ) {
 		font-size: 14px;
-		padding: 13px;
 	}
 }
 
@@ -151,19 +144,14 @@
 
 // specificity for general `a` elements within notice is too great
 a.notice__action {
-	display: flex;
-		justify-content: center;
-		flex-shrink: 0;
-		flex-grow: 1;
-	box-sizing: border-box;
-	margin: 0 8px 8px 8px;
-	padding: 8px;
 	cursor: pointer;
 	font-size: 12px;
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
 	color: lighten( $gray, 10% );
+	padding: 13px;
+	margin-right: 50px;
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;
