@@ -10,7 +10,7 @@ import React, { Component } from 'react';
  */
 import FoldableCard from 'components/foldable-card';
 
-class OrderNotesByDay extends Component {
+class EventsByDay extends Component {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 		date: PropTypes.string.isRequired,
@@ -35,13 +35,13 @@ class OrderNotesByDay extends Component {
 		);
 
 		return (
-			<div className="order-notes__day">
+			<div className="activity-log__day">
 				<FoldableCard
 					onClick={ this.onClick }
-					className="order-notes__day-header"
+					className="activity-log__day-header"
 					expanded={ isOpen }
 					header={ header }
-					screenReaderText={ translate( 'Show notes from %(date)s', { args: { date: displayDate } } ) }>
+					screenReaderText={ translate( 'Show events from %(date)s', { args: { date: displayDate } } ) }>
 					{ this.props.children }
 				</FoldableCard>
 			</div>
@@ -49,4 +49,4 @@ class OrderNotesByDay extends Component {
 	}
 }
 
-export default localize( OrderNotesByDay );
+export default localize( EventsByDay );
