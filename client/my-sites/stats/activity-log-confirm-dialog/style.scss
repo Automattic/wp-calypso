@@ -1,4 +1,3 @@
-
 .activity-log-confirm-dialog.dialog.card {
 	text-align: center;
 	max-width: 400px;
@@ -6,7 +5,10 @@
 
 .activity-log-item__restore-confirm {
 	.activity-log-item__card {
-		padding-bottom: 16px;
+		padding-bottom: 8px;
+		border-radius: 4px;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 2px 5px lighten( $gray, 20% );
 	}
 }
 
@@ -112,7 +114,7 @@
 	}
 
 	.button {
-		margin: 0 4px;
+		margin: 0 4px 8px;
 
 		@include breakpoint("<480px") {
 			margin: 0 8px 0 0;
@@ -121,8 +123,10 @@
 }
 
 .activity-log-confirm-dialog__primary-actions {
+	text-align: right;
 	@include breakpoint("<480px") {
 		margin-bottom: 8px;
+		text-align: left;
 	}
 }
 
@@ -136,8 +140,7 @@
 
 .activity-log-confirm-dialog__more-info-link {
 	color: $gray;
-	padding: 7px 0 0;
-	line-height: 1;
+	padding: 7px 8px 0 0;
 	display: inline-block;
 
 	.gridicon {
@@ -148,12 +151,8 @@
 			width: 24px;
 			height: 24px;
 		}
-		vertical-align: middle;
-	}
-
-	.activity-log-confirm-dialog__more-info-link-text {
-		padding-left: 8px;
-		vertical-align: middle;
+		float: left;
+		margin-right: 8px;
 	}
 }
 
