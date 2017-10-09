@@ -41,13 +41,13 @@ import {
 } from 'state/action-types';
 import { receiveChatTranscript } from './actions';
 import {
-	isHappychatConnectionUninitialized,
 	wasHappychatRecentlyActive,
-	isHappychatClientConnected,
 	isHappychatChatAssigned,
 	getGeoLocation,
 	getGroups,
 } from './selectors';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-unitialized';
+import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import debugFactory from 'debug';

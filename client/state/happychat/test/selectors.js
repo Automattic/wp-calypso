@@ -24,11 +24,11 @@ import {
 	getLostFocusTimestamp,
 	hasUnreadMessages,
 	hasActiveHappychatSession,
-	isHappychatAvailable,
 	wasHappychatRecentlyActive,
 	getGeoLocation,
 	getGroups,
 } from '../selectors';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';
