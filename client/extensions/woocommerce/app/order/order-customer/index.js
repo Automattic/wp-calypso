@@ -19,7 +19,7 @@ import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
@@ -148,15 +148,13 @@ class OrderCustomerInfo extends Component {
 
 export default connect(
 	( state, props ) => {
-		const site = getSelectedSiteWithFallback( state );
-		const siteId = site ? site.ID : false;
+		const siteId = getSelectedSiteId( state );
 		const isEditing = isCurrentlyEditingOrder( state );
 		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
 
 		return {
 			isEditing,
 			order,
-			site,
 			siteId,
 		};
 	},
