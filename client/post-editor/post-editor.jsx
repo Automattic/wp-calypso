@@ -999,8 +999,8 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		const currentDate = this.moment( date );
-		const modifiedDate = this.moment( savedPost.date );
+		const currentDate = this.props.moment( date );
+		const modifiedDate = this.props.moment( savedPost.date );
 		const dateChange = ! (
 			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
 			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
