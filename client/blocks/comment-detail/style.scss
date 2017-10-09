@@ -242,6 +242,13 @@
 	padding-left: 4px;
 	user-select: none;
 
+	&.is-quick {
+		position: absolute;
+		display: flex;
+		right: 44px;
+		padding: 0;
+	}
+
 	.button.is-borderless {
 		span {
 			display: none;
