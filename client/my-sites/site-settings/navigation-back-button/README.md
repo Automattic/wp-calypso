@@ -3,39 +3,24 @@
 This component is used to display a `Back` button for redirection to the previously
 visited site.
 
-#Usage:
+#Example Usage:
 
 ```js
+import React from 'react';
+
 import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
-...
 
-getRoute() {
-	... // return a route
-}
+/* ... */
 
-<span className="....">
-		<NavigationBackButton redirectRoute={ this.getRoute() } { ...this.props } />
-</span>
+const MyComponent = ( { siteSlug } ) => (
+	<span className="/*...*/">
+			<NavigationBackButton redirectRoute={ '/settings/manage-connection/' + siteSlug } />
+	</span>
+);
 
+export default MyComponent;
 ```
 
 #Props (required):
 
 - `redirectRoute` -- destination redirect route (string)
-
-##Exemplary use
-
-Redirect to `/settings/manage-connection/:siteSlug`:
-
-```js
-
-getRoute() {
-	const { siteSlug } = this.props;
-
-	if ( siteSlug ) {
-		return '/settings/manage-connection/' + siteSlug;
-	}
-}
-
-```
-- `props` -- used to pass `translate` function to the component
