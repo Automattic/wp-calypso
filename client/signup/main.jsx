@@ -17,6 +17,7 @@ import {
 	filter,
 	find,
 	indexOf,
+	isEmpty,
 	last,
 	matchesProperty,
 	pick,
@@ -143,7 +144,7 @@ class Signup extends React.Component {
 		this.submitQueryDependencies();
 
 		const flow = flows.getFlow( this.props.flowName );
-		const queryObject = this.props.initialContext && this.props.initialContext.query || {};
+		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
 
