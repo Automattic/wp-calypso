@@ -24,16 +24,16 @@ import { urlToDomainAndPath } from 'lib/url';
 import viewport from 'lib/viewport';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
-// import humanDate from 'lib/human-date';
+import humanDate from 'lib/human-date';
 
 const getFormattedDate = ( commentDate, site ) =>
-	// humanDate(
-	convertDateToUserLocation(
-		commentDate || new Date(),
-		timezone( site ),
-		gmtOffset( site )
-	).format( 'll LT' );
-// );
+	humanDate(
+		convertDateToUserLocation(
+			commentDate || new Date(),
+			timezone( site ),
+			gmtOffset( site )
+		).format( 'll LT' )
+	);
 
 export class CommentDetailHeader extends Component {
 	state = {
