@@ -122,11 +122,10 @@ class Dashboard extends Component {
 			hasProducts,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
-			isInSignup,
 		} = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
-			return ( <RequiredPluginsInstallView site={ selectedSite } isInSignup={ isInSignup } /> );
+			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
 		if ( ! finishedPageSetup && ! hasProducts ) {
@@ -165,7 +164,7 @@ class Dashboard extends Component {
 	};
 }
 
-function mapStateToProps( state, ownProps ) {
+function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const loading =
 		areOrdersLoading( state ) || areSetupChoicesLoading( state ) || areProductsLoading( state );
@@ -183,7 +182,6 @@ function mapStateToProps( state, ownProps ) {
 		loading,
 		selectedSite,
 		setStoreAddressDuringInitialSetup: getSetStoreAddressDuringInitialSetup( state ),
-		isInSignup: ownProps.params && ownProps.params.signup === 'signup',
 	};
 }
 
