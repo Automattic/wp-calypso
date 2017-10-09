@@ -20,6 +20,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
+import { isOrderFinished } from 'woocommerce/lib/order-status';
 import Notice from 'components/notice';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
@@ -39,10 +40,6 @@ class OrderFulfillment extends Component {
 		shouldEmail: false,
 		showDialog: false,
 		trackingNumber: '',
-	};
-
-	isShippable = order => {
-		return -1 === [ 'completed', 'failed', 'cancelled', 'refunded' ].indexOf( order.status );
 	};
 
 	toggleDialog = () => {
@@ -134,7 +131,7 @@ class OrderFulfillment extends Component {
 					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order-fulfillment__action">
-					{ this.isShippable( order ) ? (
+					{ ! isOrderFinished( order.status ) ? (
 						<Button primary onClick={ this.toggleDialog }>
 							{ translate( 'Fulfill' ) }
 						</Button>
