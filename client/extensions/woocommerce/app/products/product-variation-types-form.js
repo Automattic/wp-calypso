@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { find, debounce, isNumber } from 'lodash';
+import { find, debounce, isNumber, indexOf, pull } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,6 +20,7 @@ import TokenField from 'components/token-field';
 class ProductVariationTypesForm extends Component {
 	state = {
 		attributeNames: {},
+		attributeNameErrors: [],
 	};
 
 	static propTypes = {
@@ -35,7 +36,6 @@ class ProductVariationTypesForm extends Component {
 
 	componentWillMount() {
 		const { product } = this.props;
-
 		const attributes =
 			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
 		if ( ! attributes.length ) {
@@ -58,6 +58,20 @@ class ProductVariationTypesForm extends Component {
 		editProductAttribute( siteId, product, null, this.getNewFields() );
 	};
 
+	setAttributeNameError = id => {
+		const attributeNameErrors = this.state.attributeNameErrors;
+		if ( indexOf( attributeNameErrors, id ) === -1 ) {
+			attributeNameErrors.push( id );
+		}
+		this.setState( { attributeNameErrors } );
+	};
+
+	removeAttributeNameError = id => {
+		const attributeNameErrors = this.state.attributeNameErrors;
+		pull( attributeNameErrors, id );
+		this.setState( { attributeNameErrors } );
+	};
+
 	updateNameHandler = e => {
 		const attributeNames = { ...this.state.attributeNames };
 		attributeNames[ e.target.id ] = e.target.value;
@@ -72,7 +86,20 @@ class ProductVariationTypesForm extends Component {
 			find( product.attributes, function( a ) {
 				return a.uid === attributeId;
 			} );
-		editProductAttribute( siteId, product, attribute, { name } );
+
+		// Ensure we don't have an existing variation type with the same name.
+		const existingAttribute =
+			product.attributes &&
+			find( product.attributes, function( a ) {
+				return a.uid !== attributeId && a.name.toLowerCase() === name.toLowerCase();
+			} );
+
+		if ( existingAttribute ) {
+			this.setAttributeNameError( attributeId );
+		} else {
+			this.removeAttributeNameError( attributeId );
+			editProductAttribute( siteId, product, attribute, { name } );
+		}
 	}
 
 	updateValues = ( values, attribute ) => {
@@ -82,8 +109,10 @@ class ProductVariationTypesForm extends Component {
 
 	renderInputs( attribute, index ) {
 		const { translate } = this.props;
-		const { attributeNames } = this.state;
+		const { attributeNames, attributeNameErrors } = this.state;
+
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
+		const duplicateNameIssue = indexOf( attributeNameErrors, attribute.uid ) !== -1;
 		return (
 			<div key={ index } className="products__variation-types-form-fieldset">
 				<FormTextInput
@@ -92,12 +121,14 @@ class ProductVariationTypesForm extends Component {
 					id={ attribute.uid }
 					name="type"
 					className="products__variation-types-form-field"
+					isError={ duplicateNameIssue }
 					onChange={ this.updateNameHandler }
 				/>
 				<TokenField
 					placeholder={ translate( 'Red, Green, Blue' ) }
 					value={ attribute.options }
 					name="values"
+					disabled={ duplicateNameIssue }
 					/* eslint-disable react/jsx-no-bind */
 					onChange={ values => this.updateValues( values, attribute ) }
 				/>
