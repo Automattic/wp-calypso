@@ -97,7 +97,7 @@ export class Notice extends Component {
 
 		return (
 			<div className={ classes }>
-				<span class="notice__icon-wrapper">
+				<span className="notice__icon-wrapper">
 					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
 				</span>
 				<span className="notice__content">
