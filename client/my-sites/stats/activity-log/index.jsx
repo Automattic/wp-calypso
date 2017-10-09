@@ -34,7 +34,6 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -44,6 +43,7 @@ import {
 	rewindRestore as rewindRestoreAction,
 } from 'state/activity-log/actions';
 import {
+	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
 	getRequestedRewind,
@@ -256,6 +256,7 @@ class ActivityLog extends Component {
 			isRewindActive,
 			logs,
 			moment,
+			requestedRestoreActivity,
 			requestedRestoreActivityId,
 			siteId,
 			translate,
@@ -288,6 +289,15 @@ class ActivityLog extends Component {
 				.endOf( 'day' )
 				.valueOf()
 		);
+		const rewindConfirmDialog = requestedRestoreActivity && (
+			<ActivityLogConfirmDialog
+				applySiteOffset={ this.applySiteOffset }
+				key="activity-rewind-dialog"
+				onClose={ this.handleRestoreDialogClose }
+				onConfirm={ this.handleRestoreDialogConfirm }
+				timestamp={ requestedRestoreActivity.activityTs }
+			/>
+		);
 
 		const activityDays = [];
 		// loop backwards through each day in the month
@@ -311,6 +321,7 @@ class ActivityLog extends Component {
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					requestedRestoreActivityId={ requestedRestoreActivityId }
+					rewindConfirmDialog={ rewindConfirmDialog }
 					disableRestore={ disableRestore }
 					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 					isRewindActive={ isRewindActive }
@@ -358,9 +369,7 @@ class ActivityLog extends Component {
 			gmtOffset,
 			isPressable,
 			isRewindActive,
-			requestedRestoreActivity,
 			siteId,
-			siteTitle,
 			slug,
 			startDate,
 			timezone,
@@ -396,15 +405,6 @@ class ActivityLog extends Component {
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ this.renderLogs() }
 				{ this.renderMonthNavigation( 'bottom' ) }
-
-				<ActivityLogConfirmDialog
-					applySiteOffset={ this.applySiteOffset }
-					isVisible={ !! requestedRestoreActivity }
-					siteTitle={ siteTitle }
-					timestamp={ requestedRestoreActivity && requestedRestoreActivity.activityTs }
-					onClose={ this.handleRestoreDialogClose }
-					onConfirm={ this.handleRestoreDialogConfirm }
-				/>
 				<JetpackColophon />
 			</Main>
 		);
