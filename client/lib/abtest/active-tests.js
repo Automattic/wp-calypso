@@ -88,7 +88,7 @@ module.exports = {
 		localeTargets: 'any',
 	},
 	recommendShortestDomain: {
-		datestamp: '20170908', // placeholder
+		datestamp: '20171010',
 		variations: {
 			shortest: 50,
 			original: 50,
@@ -96,5 +96,5 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 		localeTargets: 'any',
-	}
+	},
 };
