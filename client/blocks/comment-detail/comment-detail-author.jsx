@@ -112,7 +112,9 @@ export class CommentDetailAuthor extends Component {
 		}
 
 		this.props.successNotice(
-			translate( 'User %(email)s blocked.', { args: { email: authorEmail } } ),
+			translate( 'User %(email)s is blocked and can no longer comment on your site.', {
+				args: { email: authorEmail },
+			} ),
 			noticeOptions
 		);
 
