@@ -25,6 +25,20 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
+import { login } from 'lib/paths';
+
+function isSafari() {
+	return typeof window !== 'undefined' && window.navigator.userAgent.match( /safari/i );
+}
+
+function shouldUseRedirectFlow() {
+	// If calypso is loaded in a popup, we don't want to open a second popup for social login
+	// let's use the redirect flow instead in that case
+	const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+	// also disable the popup flow for all safari versions
+	// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
+	return isPopup || isSafari();
+}
 
 class SocialLoginForm extends Component {
 	static propTypes = {
@@ -35,18 +49,34 @@ class SocialLoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		linkingSocialService: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 	};
 
 	static defaultProps = {
 		linkingSocialService: '',
 	};
 
-	handleGoogleResponse = response => {
-		const { onSuccess, redirectTo } = this.props;
+	handleGoogleResponse = ( response, triggeredByUser = true ) => {
+		const { onSuccess, socialService } = this.props;
+		let redirectTo = this.props.redirectTo;
 
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
+
+		// ignore response if the user did not click on the google button
+		// and did not follow the redirect flow
+		if ( ! triggeredByUser && socialService !== 'google' ) {
+			return;
+		}
+
+		// load persisted redirect_to url from session storage, needed for redirect_to to work with google redirect flow
+		if ( ! triggeredByUser && ! redirectTo ) {
+			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
+		}
+
+		window.sessionStorage.removeItem( 'login_redirect_to' );
 
 		const socialInfo = {
 			service: 'google',
@@ -58,7 +88,7 @@ class SocialLoginForm extends Component {
 			() => {
 				this.recordEvent( 'calypso_login_social_login_success' );
 
-				onSuccess();
+				onSuccess( redirectTo );
 			},
 			error => {
 				if ( error.code === 'unknown_user' ) {
@@ -90,6 +120,10 @@ class SocialLoginForm extends Component {
 
 	trackGoogleLogin = () => {
 		this.recordEvent( 'calypso_login_social_button_click' );
+
+		if ( this.props.redirectTo ) {
+			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+		}
 	};
 
 	renderText() {
@@ -113,6 +147,12 @@ class SocialLoginForm extends Component {
 	}
 
 	render() {
+		const { redirectTo } = this.props;
+		const redirectUri = shouldUseRedirectFlow()
+			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
+					login( { isNative: true, socialService: 'google' } ) }`
+			: null;
+
 		return (
 			<div className="login__social">
 				{ this.renderText() }
@@ -121,6 +161,7 @@ class SocialLoginForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
+						redirectUri={ redirectUri }
 						onClick={ this.trackGoogleLogin }
 					/>
 				</div>
@@ -133,7 +174,7 @@ class SocialLoginForm extends Component {
 					<WpcomLoginForm
 						log={ this.props.username }
 						authorization={ 'Bearer ' + this.props.bearerToken }
-						redirectTo={ this.props.redirectTo || '/start' }
+						redirectTo={ redirectTo || '/start' }
 					/>
 				) }
 			</div>

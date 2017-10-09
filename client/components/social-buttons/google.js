@@ -89,10 +89,21 @@ class GoogleLoginButton extends Component {
 						client_id: this.props.clientId,
 						scope: this.props.scope,
 						fetch_basic_profile: this.props.fetchBasicProfile,
+						ux_mode: this.props.redirectUri ? 'redirect' : 'popup',
+						redirect_uri: this.props.redirectUri,
 					} )
 					.then( () => {
 						this.setState( { isDisabled: false } );
-						return gapi; // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+
+						const googleAuth = gapi.auth2.getAuthInstance();
+						const currentUser = googleAuth.currentUser.get();
+
+						// handle social authentication response from a redirect-based oauth2 flow
+						if ( currentUser ) {
+							this.props.responseHandler( currentUser, false );
+						}
+
+						return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
 					} )
 			)
 			.catch( error => {
