@@ -38,7 +38,6 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		isInSignup: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -56,11 +55,11 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	componentDidMount = () => {
-		const { isInSignup } = this.props;
+		const { signupIsStore } = this.props;
 
 		this.createUpdateTimer();
 
-		if ( isInSignup ) {
+		if ( signupIsStore ) {
 			this.fetchAutomatedTransferStatus();
 			this.startSetup();
 		}
@@ -71,10 +70,10 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	fetchAutomatedTransferStatus() {
-		const { atomicStoreDoingTransfer, isInSignup } = this.props;
+		const { signupIsStore } = this.props;
 		const { requestedTransferStatus } = this.state;
 
-		if ( ( atomicStoreDoingTransfer || isInSignup ) && ! requestedTransferStatus ) {
+		if ( signupIsStore && ! requestedTransferStatus ) {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 
 			this.setState( {
@@ -139,7 +138,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInitialization = () => {
-		const { site, sitePlugins, wporg, isInSignup } = this.props;
+		const { site, sitePlugins, wporg, signupIsStore } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -211,7 +210,7 @@ class RequiredPluginsInstallView extends Component {
 
 		let stepIndex = this.state.stepIndex;
 
-		if ( isInSignup ) {
+		if ( signupIsStore ) {
 			stepIndex += numTotalSteps - this.state.numTotalSteps;
 		}
 
@@ -364,7 +363,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	startSetup = () => {
-		const { atomicStoreDoingTransfer, isInSignup } = this.props;
+		const { signupIsStore } = this.props;
 
 		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'initial-setup',
@@ -372,7 +371,7 @@ class RequiredPluginsInstallView extends Component {
 
 		let engineState = 'INITIALIZING';
 
-		if ( atomicStoreDoingTransfer || isInSignup ) {
+		if ( signupIsStore ) {
 			engineState = 'DOING_TRANSFER';
 		}
 
@@ -407,31 +406,23 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	fetchSiteData = () => {
-		const {
-			automatedTransferStatus,
-			isSiteAutomatedTransfer,
-			atomicStoreDoingTransfer,
-			siteId,
-		} = this.props;
+		const { automatedTransferStatus, isSiteAutomatedTransfer, siteId } = this.props;
 		const { COMPLETE } = transferStates;
 
 		if ( ! siteId ) {
 			return;
 		}
 
-		if (
-			! atomicStoreDoingTransfer ||
-			( automatedTransferStatus === COMPLETE && ! isSiteAutomatedTransfer )
-		) {
+		if ( automatedTransferStatus === COMPLETE && ! isSiteAutomatedTransfer ) {
 			return <QuerySites siteId={ siteId } />;
 		}
 	};
 
 	render = () => {
-		const { site, translate, isInSignup } = this.props;
+		const { site, translate, signupIsStore } = this.props;
 		const { engineState } = this.state;
 
-		if ( ! isInSignup && 'CONFIRMING' === engineState ) {
+		if ( ! signupIsStore && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
 		}
 
@@ -461,16 +452,14 @@ function mapStateToProps( state ) {
 	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
 	const siteOptions = getSiteOptions( state, siteId );
 
-	const atomicStoreDoingTransfer = get( siteOptions, [ 'atomic_store_doing_transfer' ], false );
-
 	return {
 		site,
 		siteId,
 		sitePlugins,
-		atomicStoreDoingTransfer,
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransferSelector( state, siteId ),
+		signupIsStore: get( siteOptions, 'signup_is_store', false ),
 	};
 }
 
