@@ -8,7 +8,6 @@
 	background: $gray-dark;
 	color: $white;
 	border-radius: 3px;
-	align-items: center;
 
 	// Success!
 	&.is-success {
@@ -56,12 +55,20 @@
 	background: $gray-text-min;
 	color: $white;
 	display: flex;
-	align-items: center;
+	align-items: baseline;
 	width: 47px;
 	justify-content: center;
 	border-radius: 3px 0 0 3px;
 	flex-shrink: 0;
 	align-self: stretch;
+
+	.gridicon {
+		margin-top: 10px;
+
+		@include breakpoint( ">480px" ) {
+			margin-top: 12px;
+		}
+	}
 }
 
 .notice__content {
@@ -109,13 +116,10 @@
 
 // "X" for dismissing a notice
 .notice__dismiss {
-	position: absolute;
-		top: 0;
-		right: 0;
-	display: flex;
-		flex-shrink: 0;
-	padding: 14px 16px;
+	flex-shrink: 0;
+	padding: 12px;
 	cursor: pointer;
+	padding-bottom: 0;
 
 	.gridicon {
 		width: 18px;
@@ -123,8 +127,8 @@
 	}
 
 	@include breakpoint( ">480px" ) {
-		position: relative;
-		padding: 13px 16px;
+		padding: 11px;
+		padding-bottom: 0;
 
 		.gridicon {
 			width: 24px;
@@ -151,7 +155,6 @@ a.notice__action {
 	white-space: nowrap;
 	color: lighten( $gray, 10% );
 	padding: 13px;
-	margin-right: 50px;
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;

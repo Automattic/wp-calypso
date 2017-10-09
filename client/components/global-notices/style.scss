@@ -35,17 +35,11 @@
 	text-align: left;
 	pointer-events: auto;
 	border-radius: 0;
-	align-items: baseline;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 ),
 		0 0 56px rgba( 0, 0, 0, 0.15 );
 
 	.notice__icon-wrapper {
 		border-radius: 0;
-		align-items: baseline;
-
-		.gridicon {
-			margin-top: 10px;
-		}
 	}
 
 	@include breakpoint( ">660px" ) {
@@ -53,15 +47,9 @@
 		overflow: hidden;
 		margin-bottom: 24px;
 		border-radius: 3px;
-		align-items: center;
 
 		.notice__icon-wrapper {
 			border-radius: 3px 0 0 3px;
-			align-items: center;
-
-			.gridicon {
-				margin-top: 0;
-			}
 		}
 	}
 }
@@ -78,6 +66,6 @@
 	flex-shrink: 0;
 
 	@include breakpoint( ">660px" ) {
-		padding: 13px 16px;
+		padding: 13px 16px 0;
 	}
 }
