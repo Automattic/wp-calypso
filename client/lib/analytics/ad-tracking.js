@@ -39,8 +39,10 @@ const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
 const isLinkedinEnabled = true;
+const isYandexEnabled = true;
+const isOutbrainEnabled = true;
 const isAtlasEnabled = false;
-const isPanoraEnabled = false;
+const isPandoraEnabled = false;
 const isQuoraEnabled = false;
 const isMediaWallahEnabled = false;
 
@@ -75,8 +77,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
-	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
-	QUORA_URL = 'https://a.quora.com/qevents.js',
+	MEDIA_WALLAH_SCRIPT_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
+	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
+	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
+	OUTBRAIN_SCRIPT_URL = '//amplify.outbrain.com/cp/obtp.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -91,6 +95,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		dcmFloodlightAdvertiserId: '6355556',
 		linkedInPartnerId: '36622',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e'
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -143,6 +148,11 @@ if ( isLinkedinEnabled && ! window._linkedin_data_partner_id ) {
 // Quora
 if ( isQuoraEnabled && ! window.qp ) {
 	setupQuoraGlobal();
+}
+
+// Outbrain
+if ( isOutbrainEnabled ) {
+	setupOutbrainGlobal();
 }
 
 /**
@@ -225,6 +235,16 @@ function setUpTwitterGlobal() {
 	twq.queue = [];
 }
 
+function setupOutbrainGlobal() {
+	const api = window.obApi = function() {
+		api.dispatch ? api.dispatch.apply( api, arguments ) : api.queue.push( arguments );
+	};
+	api.version = '1.0';
+	api.loaded = true;
+	api.marketerId = TRACKING_IDS.outbrainAdvId;
+	api.queue = [];
+}
+
 function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
@@ -280,13 +300,25 @@ function loadTrackingScripts( callback ) {
 
 	if ( isMediaWallahEnabled ) {
 		scripts.push( function( onComplete ) {
-			loadScript( MEDIA_WALLAH_URL, onComplete );
+			loadScript( MEDIA_WALLAH_SCRIPT_URL, onComplete );
 		} );
 	}
 
 	if ( isQuoraEnabled ) {
 		scripts.push( function( onComplete ) {
-			loadScript( QUORA_URL, onComplete );
+			loadScript( QUORA_SCRIPT_URL, onComplete );
+		} );
+	}
+
+	if ( isYandexEnabled ) {
+		scripts.push( function( onComplete ) {
+			loadScript( YANDEX_SCRIPT_URL, onComplete );
+		} );
+	}
+
+	if ( isOutbrainEnabled ) {
+		scripts.push( function( onComplete ) {
+			loadScript( OUTBRAIN_SCRIPT_URL, onComplete );
 		} );
 	}
 
@@ -324,6 +356,11 @@ function loadTrackingScripts( callback ) {
 			// init Quora
 			if ( isQuoraEnabled ) {
 				window.qp( 'init', TRACKING_IDS.quoraPixelId );
+			}
+
+			// init Yandex counter
+			if ( isYandexEnabled ) {
+				window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
 			}
 
 			hasFinishedFetchingScripts = true;
@@ -417,6 +454,16 @@ function retarget() {
 	// Quora
 	if ( isQuoraEnabled ) {
 		window.qp( 'track', 'ViewContent' );
+	}
+
+	// Yandex
+	if ( isYandexEnabled ) {
+		window.yaCounter45268389.hit( document.location.href );
+	}
+
+	// Outbrain
+	if ( isOutbrainEnabled ) {
+		window.obApi( 'track', 'PAGE_VIEW' );
 	}
 }
 
@@ -536,7 +583,7 @@ function recordOrder( cart, orderId ) {
 		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isPanoraEnabled ) {
+	if ( isPandoraEnabled ) {
 		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
@@ -624,6 +671,16 @@ function recordProduct( product, orderId ) {
 				content_ids: [ product.product_slug ],
 				num_items: product.volume,
 				order_id: orderId,
+			} );
+		}
+
+		// Yandex Goal
+		if ( isYandexEnabled ) {
+			window.yaCounter45268389.reachGoal( 'ProductPurchase', {
+				order_id: orderId,
+				product_slug: product.product_slug,
+				order_price: product.cost,
+				currency: product.currency
 			} );
 		}
 
