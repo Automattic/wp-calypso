@@ -549,4 +549,16 @@
 	.formatted-header.is-without-subhead {
 		margin-bottom: 8px;
 	}
+
+	.logged-out-form__links,
+	.jetpack-connect__happychat-button {
+		text-align: center;
+	}
+
+	.logged-out-form__link-item {
+		.gridicon {
+			position: relative;
+			top: 4px;
+		}
+	}
 }
