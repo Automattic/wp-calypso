@@ -217,15 +217,7 @@ if ( calypsoEnv === 'development' ) {
 		path.join( __dirname, 'client', 'boot', 'app' )
 	];
 	webpackConfig.devServer = { hot: true, inline: true };
-
-	if ( config.isEnabled( 'use-source-maps' ) ) {
-		webpackConfig.devtool = '#eval-cheap-module-source-map';
-		webpackConfig.module.rules.push( {
-			test: /\.jsx?$/,
-			enforce: 'pre',
-			loader: 'source-map-loader'
-		} );
-	}
+	webpackConfig.devtool = '#eval';
 } else {
 	webpackConfig.plugins.push( new UseMinifiedFiles() );
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
