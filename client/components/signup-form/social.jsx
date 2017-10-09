@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import config from 'config';
 import { preventWidows } from 'lib/formatting';
+import { shouldUseLoginRedirectFlow } from 'lib/user/utils';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -37,11 +38,9 @@ class SocialSignupForm extends Component {
 	};
 
 	render() {
-		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
-		// let's use the redirect flow instead in that case.
-		//const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-		const isPopup = typeof window !== 'undefined';
-		const redirectUri = isPopup ? `https://${ ( typeof window !== 'undefined' && window.location.host ) }/start` : null;
+		const redirectUri = shouldUseLoginRedirectFlow()
+			? `https://${ window.location.host }/start`
+			: null;
 
 		return (
 			<Card className="signup-form__social">
@@ -55,6 +54,7 @@ class SocialSignupForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
+						redirectUri={ redirectUri }
 					/>
 				</div>
 			</Card>

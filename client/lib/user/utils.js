@@ -71,3 +71,16 @@ const userUtils = {
 };
 
 export default userUtils;
+
+export function isSafari() {
+	return typeof window !== 'undefined' && window.navigator.userAgent.match( /safari/i );
+}
+
+export function shouldUseLoginRedirectFlow() {
+	// If calypso is loaded in a popup, we don't want to open a second popup for social login
+	// let's use the redirect flow instead in that case
+	const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+	// also disable the popup flow for all safari versions
+	// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
+	return isPopup || isSafari();
+}
