@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
+import { map, get, last, uniqBy, size, filter, takeRight, compact, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -31,10 +31,13 @@ class ConversationCaterpillarComponent extends React.Component {
 		comments: PropTypes.array.isRequired,
 		commentsToShow: PropTypes.object,
 		parentCommentId: PropTypes.number,
+		onShowAllClicked: PropTypes.func,
 	};
 
-	getExpandableComments = () => {
-		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
+	static defaultProps = { onShowAllClicked: noop };
+
+	getExpandableComments = ( props = this.props ) => {
+		const { comments, commentsToShow, parentCommentId, commentsTree } = props;
 		const isRoot = ! parentCommentId;
 		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
 
@@ -47,9 +50,22 @@ class ConversationCaterpillarComponent extends React.Component {
 		return commentsToExpand;
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.comments !== nextProps.comments && this.showingAll ) {
+			console.error( 'happened. comment size: ', nextProps.comments.length );
+			this.expandAll( nextProps );
+		}
+	}
+
 	handleShowAll = () => {
-		const { blogId, postId } = this.props;
-		const commentsToExpand = this.getExpandableComments();
+		this.showingAll = true;
+		this.expandAll();
+		this.props.onShowAllClicked();
+	};
+
+	expandAll = ( props = this.props ) => {
+		const { blogId, postId } = props;
+		const commentsToExpand = this.getExpandableComments( props );
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,

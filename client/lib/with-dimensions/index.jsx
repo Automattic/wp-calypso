@@ -32,7 +32,7 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  * @returns {object} the enhanced component
  */
 export default EnhancedComponent =>
-	class WithWidth extends React.Component {
+	class WithDimensions extends React.Component {
 		static displayName = `WithDimensions( ${ EnhancedComponent.displayName ||
 			EnhancedComponent.name } )`;
 		static propTypes = { domTarget: PropTypes.object };

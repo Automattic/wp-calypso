@@ -10,7 +10,7 @@ import { spy } from 'sinon';
  */
 import { fetchPostComments, addComments, announceFailure, commentsFromApi } from '../';
 import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
+import { DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
@@ -19,7 +19,7 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch an HTTP request to the post replies endpoint', () => {
 				const query = {
 					order: 'DESC',
-					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					number: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
 				};
 				const action = {
@@ -56,7 +56,7 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
 				const query = {
 					order: 'DESC',
-					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					number: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
 				};
 				const action = {

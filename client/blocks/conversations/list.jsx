@@ -85,7 +85,7 @@ export class ConversationCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	};
 
-	reqMoreComments = ( props = this.props ) => {
+	reqMoreComments = ( props = this.props, totalNumber = 50 ) => {
 		const { siteId, postId, enableCaterpillar, shouldRequestComments } = props;
 
 		if ( ! shouldRequestComments || ! props.commentsFetchingStatus ) {
@@ -96,9 +96,13 @@ export class ConversationCommentList extends React.Component {
 
 		if ( enableCaterpillar && ( haveEarlierCommentsToFetch || haveLaterCommentsToFetch ) ) {
 			const direction = haveEarlierCommentsToFetch ? 'before' : 'after';
-			props.requestPostComments( { siteId, postId, direction } );
+			props.requestPostComments( { siteId, postId, direction, totalNumber } );
 		}
 	};
+
+	handleShowAllClicked = () => {
+		this.reqMoreComments( this.props, 2000 );
+	}
 
 	componentDidMount() {
 		this.resetActiveReplyComment();
@@ -231,6 +235,7 @@ export class ConversationCommentList extends React.Component {
 							postId={ post.ID }
 							commentCount={ post.discussion.comment_count }
 							commentsToShow={ commentsToShow }
+							onShowAllClicked={ this.handleShowAllClicked }
 						/>
 					) }
 					{ map( commentsTree.children, commentId => {

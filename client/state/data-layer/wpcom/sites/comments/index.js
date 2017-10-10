@@ -99,6 +99,10 @@ export const requestComment = ( store, action ) => {
 	);
 };
 
+// const batchedComments = [];
+// const batchDispatchTimer = store => {
+// 	store.dispac
+// };
 export const receiveCommentSuccess = ( store, action, response ) => {
 	const { siteId } = action;
 	const postId = response && response.post && response.post.ID;

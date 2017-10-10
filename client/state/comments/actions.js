@@ -18,7 +18,10 @@ import {
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from '../action-types';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import {
+	DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
+	MAX_NUMBER_OF_COMMENTS_PER_FETCH,
+} from './constants';
 
 export const requestComment = ( { siteId, commentId } ) => ( {
 	type: COMMENT_REQUEST,
@@ -38,6 +41,7 @@ export function requestPostComments( {
 	postId,
 	status = 'approved',
 	direction = 'before',
+	totalNumber = DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -48,9 +52,10 @@ export function requestPostComments( {
 		siteId,
 		postId,
 		direction,
+		totalNumber,
 		query: {
 			order: direction === 'before' ? 'DESC' : 'ASC',
-			number: NUMBER_OF_COMMENTS_PER_FETCH,
+			number: Math.min( totalNumber, MAX_NUMBER_OF_COMMENTS_PER_FETCH ),
 			status,
 		},
 	};
