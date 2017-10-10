@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
 import { bindActionCreators } from 'redux';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:account-password' );
 import classNames from 'classnames';
@@ -34,7 +33,7 @@ import { errorNotice } from 'state/notices/actions';
 const AccountPassword = React.createClass( {
 	displayName: 'AccountPassword',
 
-	mixins: [ LinkedStateMixin, observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ observe( 'accountPasswordData' ), eventRecorder ],
 
 	componentDidMount: function() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
