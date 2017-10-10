@@ -11,14 +11,12 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isFreeJetpackPlan } from 'lib/products-values';
-import { isJetpackSite } from 'state/sites/selectors';
 
 class DisconnectSurvey extends Component {
 	state = {
-		reasonSelected: 'tooExpensive',
-		renderInitial: true,
+		reasonSelected: null,
 	};
 
 	renderFollowUp() {
@@ -26,10 +24,9 @@ class DisconnectSurvey extends Component {
 		return <Card className="disconnect-site__question">{ 'follow-up' }</Card>;
 	}
 
-	handleAnswerClick = option => {
+	handleAnswerClick = event => {
 		this.setState( {
-			reasonSelected: option.value,
-			renderInitial: false,
+			reasonSelected: event.currentTarget.dataset.reason,
 		} );
 	};
 
@@ -63,6 +60,7 @@ class DisconnectSurvey extends Component {
 				</Card>
 				{ options.map( ( { label, value } ) => (
 					<CompactCard
+						data-reason={ value }
 						href="#"
 						key={ value }
 						onClick={ this.handleAnswerClick }
@@ -76,10 +74,10 @@ class DisconnectSurvey extends Component {
 	}
 
 	render() {
-		const { reasonSelected, renderInitial } = this.state;
+		const { reasonSelected } = this.state;
 		return (
 			<div className="disconnect-site__survey main">
-				{ renderInitial ? this.renderEntryQuestion() : this.renderFollowUp( reasonSelected ) }
+				{ reasonSelected ? this.renderFollowUp( reasonSelected ) : this.renderEntryQuestion() }
 			</div>
 		);
 	}
@@ -87,6 +85,5 @@ class DisconnectSurvey extends Component {
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
-	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( DisconnectSurvey ) );
