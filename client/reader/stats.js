@@ -39,12 +39,10 @@ export function recordPermalinkClick( where, post ) {
 	}
 }
 
-function getLocation() {
-	if ( typeof window === 'undefined' ) {
+function getLocation( path ) {
+	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-
-	const path = window.location.pathname;
 	if ( path === '/' ) {
 		return 'following';
 	}
@@ -100,9 +98,19 @@ export function recordTrack( eventName, eventProperties ) {
 	debug( 'reader track', ...arguments );
 	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
-	// Add location as ui_algo prop
-	const location = getLocation();
-	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	// Get location from locationPath and set as ui_algo prop.
+	let locationPath = window.location.pathname;
+	/* Overwrites the existing locationPath if provided in eventProperties
+	Useful for when recordTrack() is called after loading the next window.
+	For example: opening an article (calypso_reader_article_opened) would call
+	recordTrack after changing windows and would result in a `ui_algo: single_post`
+	regardless of the stream the post was opened. This now allows the article_opened
+	Tracks event to correctly specify which stream the post was opened. */
+	if ( eventProperties && 'overwriteLocationPath' in eventProperties ) {
+		locationPath = eventProperties.overwriteLocationPath;
+		delete eventProperties.overwriteLocationPath;
+	}
+	eventProperties = Object.assign( { ui_algo: getLocation( locationPath ) }, eventProperties );
 
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
@@ -208,7 +216,7 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.source || getLocation();
+	const source = additionalProps.source || getLocation( window.location.pathname );
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -223,7 +231,7 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = getLocation();
+	const source = getLocation( window.location.pathname );
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

@@ -76,6 +76,7 @@ export class FullPostView extends React.Component {
 		post: PropTypes.object.isRequired,
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
+		referralStream: PropTypes.string,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -244,7 +245,9 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			recordTrackForPost( 'calypso_reader_article_opened', post );
+			recordTrackForPost( 'calypso_reader_article_opened', post, {
+				overwriteLocationPath: this.props.referralStream,
+			} );
 			this.hasLoaded = true;
 		}
 	};
@@ -548,6 +551,7 @@ export default class FullPostFluxContainer extends React.Component {
 				onClose={ this.props.onClose }
 				post={ this.state.post }
 				referralPost={ this.state.referralPost }
+				referralStream={ this.props.referralStream }
 			/>
 		) : null;
 	}
