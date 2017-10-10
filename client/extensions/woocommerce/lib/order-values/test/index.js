@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
+	getOrderFeeTotalTax,
 	getOrderLineItemTax,
 	getOrderRefundTotal,
 	getOrderShippingTax,
@@ -59,6 +60,24 @@ describe( 'getOrderFeeTax', () => {
 
 	it( 'should return 0 if there is no tax', () => {
 		expect( getOrderFeeTax( orderWithoutTax, 0 ) ).to.eql( 0 );
+	} );
+} );
+
+describe( 'getOrderFeeTotalTax', () => {
+	it( 'should be a function', () => {
+		expect( getOrderFeeTotalTax ).to.be.a( 'function' );
+	} );
+
+	it( 'should get the correct tax amount', () => {
+		expect( getOrderFeeTotalTax( orderWithTax ) ).to.eql( 0.1262 );
+	} );
+
+	it( 'should get the correct tax amount with multiple fees', () => {
+		expect( getOrderFeeTotalTax( orderWithCoupons ) ).to.eql( 0.9375 );
+	} );
+
+	it( 'should return 0 if there is no tax', () => {
+		expect( getOrderFeeTotalTax( orderWithoutTax ) ).to.eql( 0 );
 	} );
 } );
 
