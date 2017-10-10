@@ -453,54 +453,36 @@
 }
 
 .comment-detail__author-more-info {
-	border-bottom: 1px solid lighten( $gray, 30% );
-	color: $gray-text-min;
-	display: none;
-	transform: scaleY( 0 );
-	transform-origin: top;
-
-	.gridicon {
-		color: $gray;
+	> .gridicon {
 		fill: $gray;
-	}
-}
-.comment-detail__author.is-expanded .comment-detail__author-more-info {
-	animation: comment-detail__author-more-info .15s linear;
-	display: block;
-	transform: scaleY( 1 );
-}
+		margin-left: 8px;
 
-.comment-detail__author-more-actions {
-	border-top: 1px solid lighten( $gray, 30% );
-	display: flex;
-	flex-flow: row wrap;
-	padding: 16px 8px;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+			fill: $blue-wordpress;
+		}
+	}
 }
 
 .comment-detail__author-more-element {
 	align-items: center;
-	box-sizing: border-box;
-	display: block;
-	flex-shrink: 0;
-	flex-grow: 0;
+	display: flex;
+	flex-flow: row nowrap;
+	margin-bottom: 8px;
 	overflow: hidden;
-	padding: 8px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 100%;
 
-	@include breakpoint( ">660px" ) {
-		width: 50%;
+	&:last-child {
+		margin-bottom: 0;
 	}
-}
 
-.comment-detail__author-more-element-author {
-	display: flex;
-	flex-flow: row nowrap;
-
-	.gravatar {
-		height: 24px;
-		width: 24px;
+	.gridicon {
+		fill: $gray;
+		margin-right: 4px;
+		vertical-align: middle;
 	}
 
 	.comment-detail__author-info {
@@ -512,10 +494,14 @@
 	strong {
 		float: none;
 	}
-}
 
-.comment-detail.card .comment-detail__author-more-element-block-user .gridicon {
-	vertical-align: baseline;
+	.button {
+		width: 100%;
+
+		.gridicon {
+			vertical-align: baseline;
+		}
+	}
 }
 
 .comment-detail__author-more-element-block-anonymous-user {

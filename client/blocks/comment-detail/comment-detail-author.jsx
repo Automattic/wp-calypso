@@ -6,33 +6,20 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import CommentDetailAuthorMoreInfo from './comment-detail-author-more-info';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import { urlToDomainAndPath } from 'lib/url';
-import { getSite } from 'state/sites/selectors';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { successNotice } from 'state/notices/actions';
-import { canCurrentUser } from 'state/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -44,24 +31,13 @@ export class CommentDetailAuthor extends Component {
 		authorIsBlocked: PropTypes.bool,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
-		canUserBlacklist: PropTypes.bool,
 		commentDate: PropTypes.string,
 		commentId: PropTypes.number,
 		commentStatus: PropTypes.string,
 		commentType: PropTypes.string,
 		commentUrl: PropTypes.string,
-		currentUserEmail: PropTypes.string,
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
-		updateBlacklist: PropTypes.func,
-	};
-
-	state = {
-		isExpanded: false,
-	};
-
-	toggleExpanded = () => {
-		this.setState( { isExpanded: ! this.state.isExpanded } );
 	};
 
 	getFormattedDate = () =>
@@ -75,158 +51,26 @@ export class CommentDetailAuthor extends Component {
 		'comment' === this.props.commentType &&
 		some( [ this.props.authorEmail, this.props.authorIp, this.props.authorUrl ] );
 
-	toggleBlockUser = () => {
-		const {
-			authorEmail,
-			authorId,
-			authorIsBlocked,
-			siteBlacklist,
-			commentId,
-			translate,
-			updateBlacklist,
-		} = this.props;
-
-		const noticeOptions = {
-			duration: 5000,
-			id: `comment-notice-${ commentId }`,
-			isPersistent: true,
-		};
-
-		const analytics = {
-			action: authorIsBlocked ? 'unblock_user' : 'block_user',
-			user_type: authorId ? 'wpcom' : 'email_only',
-		};
-
-		if ( authorIsBlocked ) {
-			this.props.successNotice(
-				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
-				noticeOptions
-			);
-
-			const newBlacklist = siteBlacklist
-				.split( '\n' )
-				.filter( item => item !== authorEmail )
-				.join( '\n' );
-
-			return updateBlacklist( newBlacklist, analytics );
-		}
-
-		this.props.successNotice(
-			translate( 'User %(email)s is blocked and can no longer comment on your site.', {
-				args: { email: authorEmail },
-			} ),
-			noticeOptions
-		);
-
-		const newBlacklist = !! siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
-
-		return updateBlacklist( newBlacklist, analytics );
-	};
-
-	authorMoreInfo() {
-		if ( ! this.showMoreInfo() ) {
-			return null;
-		}
-
+	render() {
 		const {
 			authorDisplayName,
 			authorEmail,
+			authorId,
 			authorIp,
 			authorIsBlocked,
 			authorUrl,
 			authorUsername,
-			canUserBlacklist,
-			currentUserEmail,
-			site,
-			trackAnonymousModeration,
-			translate,
-		} = this.props;
-
-		const showBlockUser = canUserBlacklist && !! authorEmail && authorEmail !== currentUserEmail;
-
-		return (
-			<div className="comment-detail__author-more-info">
-				<div className="comment-detail__author-more-actions">
-					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<Gridicon icon="user-circle" />
-						<div className="comment-detail__author-info">
-							<div className="comment-detail__author-name">
-								<strong>
-									<Emojify>{ authorDisplayName }</Emojify>
-								</strong>
-							</div>
-							<div className="comment-detail__author-username">{ authorUsername }</div>
-						</div>
-					</div>
-					<div className="comment-detail__author-more-element">
-						<Gridicon icon="mail" />
-						<span>{ authorEmail || <em>{ translate( 'No email address' ) }</em> }</span>
-					</div>
-					<div className="comment-detail__author-more-element">
-						<Gridicon icon="link" />
-						{ !! authorUrl && (
-							<ExternalLink href={ authorUrl }>
-								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-							</ExternalLink>
-						) }
-						{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
-					</div>
-					<div className="comment-detail__author-more-element">
-						<Gridicon icon="globe" />
-						<span>{ authorIp || <em>{ translate( 'No IP address' ) }</em> }</span>
-					</div>
-					{ showBlockUser && (
-						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-user">
-							<Button onClick={ this.toggleBlockUser }>
-								<Gridicon icon="block" />
-								<span>
-									{ authorIsBlocked ? translate( 'Unblock user' ) : translate( 'Block user' ) }
-								</span>
-							</Button>
-						</div>
-					) }
-					{ ! authorEmail && (
-						<div className="comment-detail__author-more-element comment-detail__author-more-element-block-anonymous-user">
-							<span>
-								{ translate(
-									// eslint-disable-next-line max-len
-									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
-									{
-										components: {
-											a: (
-												<a
-													href={ `/settings/discussion/${ site.slug }` }
-													onClick={ trackAnonymousModeration }
-												/>
-											),
-										},
-									}
-								) }
-							</span>
-						</div>
-					) }
-				</div>
-			</div>
-		);
-	}
-
-	render() {
-		const {
-			authorDisplayName,
-			authorUrl,
+			commentId,
 			commentStatus,
 			commentType,
 			commentUrl,
+			siteBlacklist,
+			siteId,
 			translate,
 		} = this.props;
-		const { isExpanded } = this.state;
-
-		const classes = classNames( 'comment-detail__author', {
-			'is-expanded': isExpanded,
-		} );
 
 		return (
-			<div className={ classes }>
+			<div className="comment-detail__author">
 				<div className="comment-detail__author-preview">
 					<div className="comment-detail__author-avatar">
 						<div className="comment-detail__author-avatar">
@@ -266,54 +110,24 @@ export class CommentDetailAuthor extends Component {
 						) }
 
 						{ this.showMoreInfo() && (
-							<a
-								className="comment-detail__author-more-info-toggle"
-								onClick={ this.toggleExpanded }
-							>
-								<Gridicon icon="info-outline" />
-							</a>
+							<CommentDetailAuthorMoreInfo
+								authorDisplayName={ authorDisplayName }
+								authorEmail={ authorEmail }
+								authorId={ authorId }
+								authorIp={ authorIp }
+								authorIsBlocked={ authorIsBlocked }
+								authorUrl={ authorUrl }
+								authorUsername={ authorUsername }
+								commentId={ commentId }
+								siteBlacklist={ siteBlacklist }
+								siteId={ siteId }
+							/>
 						) }
 					</div>
 				</div>
-				{ this.authorMoreInfo() }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	canUserBlacklist: canCurrentUser( state, siteId, 'manage_options' ),
-	currentUserEmail: getCurrentUserEmail( state ),
-	site: getSite( state, siteId ),
-} );
-
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: ( blacklist_keys, analytics ) =>
-		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_moderate_user', analytics ),
-					bumpStat(
-						'calypso_comment_management',
-						'block_user' === analytics.action
-							? 'comment_author_blocked'
-							: 'comment_author_unblocked'
-					)
-				),
-				saveSiteSettings( siteId, { blacklist_keys } )
-			)
-		),
-	trackAnonymousModeration: () =>
-		dispatch(
-			composeAnalytics(
-				recordTracksEvent( 'calypso_comment_management_moderate_user', {
-					action: 'open_discussion_settings',
-					user_type: 'anonymous',
-				} ),
-				bumpStat( 'calypso_comment_management', 'open_discussion_settings' )
-			)
-		),
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailAuthor ) );
+export default localize( CommentDetailAuthor );
