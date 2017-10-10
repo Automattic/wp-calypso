@@ -47,18 +47,6 @@ class DisconnectSurvey extends Component {
 		return options;
 	}
 
-	getSurveyQuestions( options ) {
-		const questions = [];
-		for ( let i = 0; i < options.length; i++ ) {
-			questions.push(
-				<CompactCard href="#" onClick={ this.logSelection } className="disconnect-site__survey-one">
-					{ options[ i ].label }
-				</CompactCard>
-			);
-		}
-		return questions;
-	}
-
 	renderEntryQuestion() {
 		const { translate, siteSlug } = this.props;
 
@@ -70,11 +58,18 @@ class DisconnectSurvey extends Component {
 			}
 		);
 		const options = this.getOptions();
-		const surveyQuestionsOne = this.getSurveyQuestions( options );
 		return (
 			<div>
 				<Card className="disconnect-site__question">{ textShareWhy }</Card>
-				{ surveyQuestionsOne }
+				{ options.map( ( { label } ) => (
+					<CompactCard
+						href="#"
+						onClick={ this.logSelection }
+						className="disconnect-site__survey-one"
+					>
+						{ label }
+					</CompactCard>
+				) ) }
 			</div>
 		);
 	}
