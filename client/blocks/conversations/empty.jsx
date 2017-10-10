@@ -37,6 +37,7 @@ class ConversationsEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
+				className="conversations__empty-content"
 				title={ this.props.translate( 'Welcome to Conversations' ) }
 				line={ this.props.translate(
 					"When WordPress posts spark lively conversations, they'll appear here. " +
