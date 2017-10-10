@@ -6,7 +6,7 @@
 
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -36,6 +36,7 @@ import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import JetpackThankYouCard from './jetpack-thank-you-card';
+import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
 	isDomainMapping,
@@ -75,6 +76,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
+import { getSiteOptions } from 'state/selectors';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -148,7 +150,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-            <Notice
+			<Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
 				status="is-warning"
@@ -164,7 +166,7 @@ const CheckoutThankYou = React.createClass( {
 					}
 				) }
 			</Notice>
-        );
+		);
 	},
 
 	isDataLoaded() {
@@ -264,6 +266,8 @@ const CheckoutThankYou = React.createClass( {
 			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
 		}
 
+		const { signupIsStore } = this.props;
+
 		// streamlined paid NUX thanks page
 		if ( this.isNewUser() && wasDotcomPlanPurchased ) {
 			return (
@@ -279,13 +283,20 @@ const CheckoutThankYou = React.createClass( {
 					<JetpackThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
+		} else if ( wasDotcomPlanPurchased && signupIsStore ) {
+			return (
+				<Main className="checkout-thank-you">
+					{ this.renderConfirmationNotice() }
+					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
+				</Main>
+			);
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
 			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
-                <Main className="checkout-thank-you">
+				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
@@ -299,7 +310,7 @@ const CheckoutThankYou = React.createClass( {
 						buttonText={ this.props.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
-            );
+			);
 		}
 
 		const goBackText = this.props.selectedSite
@@ -432,6 +443,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
+		const siteOptions = getSiteOptions( state, siteId );
 
 		return {
 			planSlug,
@@ -439,6 +451,7 @@ export default connect(
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
+			signupIsStore: get( siteOptions, 'signup_is_store', false ),
 		};
 	},
 	dispatch => {
@@ -460,4 +473,4 @@ export default connect(
 			},
 		};
 	}
-)( localize(CheckoutThankYou) );
+)( localize( CheckoutThankYou ) );
