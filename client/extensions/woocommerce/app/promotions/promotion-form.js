@@ -37,6 +37,7 @@ function renderEditCard( siteId, currency, promotion, editPromotion ) {
 				/>
 			);
 		case 'product_sale':
+			// TODO: implement product sale UI.
 			return null;
 		default:
 			return null;

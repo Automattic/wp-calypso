@@ -37,7 +37,7 @@ class PromotionCreate extends React.Component {
 		} ),
 		editPromotion: PropTypes.func.isRequired,
 		clearPromotionEdits: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		const { site } = this.props;
@@ -49,10 +49,10 @@ class PromotionCreate extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchSettingsGeneral( site.ID );
+			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
 
@@ -65,7 +65,7 @@ class PromotionCreate extends React.Component {
 
 	onSave = () => {
 		// TODO: Add action to save promotion.
-	}
+	};
 
 	isPromotionValid() {
 		const { promotion } = this.props;
@@ -104,9 +104,9 @@ class PromotionCreate extends React.Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currencySettings = getPaymentCurrencySettings( state );
-	const currency = ( currencySettings ? currencySettings.value : null );
+	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
-	const promotion = ( promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null );
+	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 
 	return {
 		site,
