@@ -73,7 +73,7 @@ class Login extends Component {
 		}
 	};
 
-	handleValidLogin = () => {
+	handleValidLogin = redirectTo => {
 		if ( this.props.twoFactorEnabled ) {
 			page(
 				login( {
@@ -83,6 +83,7 @@ class Login extends Component {
 						'none',
 						'authenticator'
 					),
+					redirectTo,
 				} )
 			);
 		} else if ( this.props.isLinking ) {
@@ -90,10 +91,11 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					socialConnect: true,
+					redirectTo,
 				} )
 			);
 		} else {
-			this.rebootAfterLogin();
+			this.rebootAfterLogin( redirectTo );
 		}
 	};
 
@@ -110,8 +112,8 @@ class Login extends Component {
 		}
 	};
 
-	rebootAfterLogin = () => {
-		const { redirectTo } = this.props;
+	rebootAfterLogin = redirectTo => {
+		redirectTo = redirectTo || this.props.redirectTo;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
