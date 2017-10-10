@@ -9,6 +9,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import {
+	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+} from 'constants';
 import isHappychatAvailable from '../is-happychat-available';
 
 describe( '#isHappychatAvailable', () => {
@@ -16,7 +20,7 @@ describe( '#isHappychatAvailable', () => {
 		const state = deepFreeze( {
 			happychat: {
 				connection: {
-					status: 'uninitialized',
+					status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 					isAvailable: true,
 				},
 			},
@@ -28,7 +32,7 @@ describe( '#isHappychatAvailable', () => {
 		const state = deepFreeze( {
 			happychat: {
 				connection: {
-					status: 'connected',
+					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: false,
 				},
 			},
@@ -40,7 +44,7 @@ describe( '#isHappychatAvailable', () => {
 		const state = deepFreeze( {
 			happychat: {
 				connection: {
-					status: 'connected',
+					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: true,
 				},
 			},

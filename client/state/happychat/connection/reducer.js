@@ -9,6 +9,13 @@ import {
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECONNECTING,
 } from 'state/action-types';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
+} from 'state/happychat/constants';
 import { combineReducers } from 'state/utils';
 
 const error = ( state = null, action ) => {
@@ -29,16 +36,16 @@ const error = ( state = null, action ) => {
  * @return {Object}        Updated state
  *
  */
-const status = ( state = 'uninitialized', action ) => {
+const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
+			return HAPPYCHAT_CONNECTION_STATUS_CONNECTING;
 		case HAPPYCHAT_CONNECTED:
-			return 'connected';
+			return HAPPYCHAT_CONNECTION_STATUS_CONNECTED;
 		case HAPPYCHAT_DISCONNECTED:
-			return 'disconnected';
+			return HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED;
 		case HAPPYCHAT_RECONNECTING:
-			return 'reconnecting';
+			return HAPPYCHAT_CONNECTION_STATUS_RECONNECTING;
 	}
 	return state;
 };

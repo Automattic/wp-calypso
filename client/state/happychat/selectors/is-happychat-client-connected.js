@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { HAPPYCHAT_CONNECTION_STATUS_CONNECTED } from 'state/happychat/constants';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 
 /**
@@ -10,5 +11,5 @@ import getHappychatConnectionStatus from 'state/happychat/selectors/get-happycha
  * @return {Boolean} Whether Happychat connection status is connected
  */
 export default function( state ) {
-	return getHappychatConnectionStatus( state ) === 'connected';
+	return getHappychatConnectionStatus( state ) === HAPPYCHAT_CONNECTION_STATUS_CONNECTED;
 }
