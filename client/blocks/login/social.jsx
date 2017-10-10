@@ -28,7 +28,9 @@ import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
 
 function isSafari() {
-	return typeof window !== 'undefined' && window.navigator.userAgent.match( /safari/i );
+	return (
+		typeof window !== 'undefined' && /^(?!.*chrome).*safari/i.test( window.navigator.userAgent )
+	);
 }
 
 function shouldUseRedirectFlow() {
