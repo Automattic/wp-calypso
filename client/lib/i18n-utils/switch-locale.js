@@ -60,11 +60,12 @@ export default function switchLocale( localeSlug ) {
 
 export function switchCSS( elementId, cssUrl, callback = noop ) {
 	const currentLink = document.getElementById( elementId );
-	if ( currentLink.getAttribute( 'href' ) === cssUrl ) {
+
+	if ( currentLink && currentLink.getAttribute( 'href' ) === cssUrl ) {
 		return callback();
 	}
 
-	loadCSS( cssUrl, ( err, newLink ) => {
+	loadCSS( cssUrl, ( error, newLink ) => {
 		if ( currentLink && currentLink.parentElement ) {
 			currentLink.parentElement.removeChild( currentLink );
 		}
