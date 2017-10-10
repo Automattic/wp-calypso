@@ -18,21 +18,12 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import { DomainWarnings } from '../';
-import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import support from 'lib/url/support';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'index', () => {
-	beforeEach( () => {
-		Notice.prototype.translate = identity;
-	} );
-
-	afterEach( () => {
-		delete Notice.prototype.translate;
-	} );
-
 	describe( 'rules', () => {
 		it( "should not render anything if there's no need", () => {
 			const props = {

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
@@ -93,7 +94,9 @@ let InviteAccept = React.createClass( {
 	},
 
 	decline() {
-		this.props.infoNotice( this.translate( 'You declined to join.' ), { displayOnNextPage: true } );
+		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
+			displayOnNextPage: true,
+		} );
 		page( '/' );
 	},
 
@@ -145,10 +148,10 @@ let InviteAccept = React.createClass( {
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
 		let props = {
-			title: this.translate( 'Oops, that invite is not valid', {
+			title: this.props.translate( 'Oops, that invite is not valid', {
 				context: 'Title that is display to users when attempting to accept an invalid invite.',
 			} ),
-			line: this.translate( "We weren't able to verify that invitation.", {
+			line: this.props.translate( "We weren't able to verify that invitation.", {
 				context: 'Message that is displayed to users when an invitation is invalid.',
 			} ),
 			illustration: '/calypso/images/illustrations/whoops.svg',
@@ -160,15 +163,17 @@ let InviteAccept = React.createClass( {
 				case 'already_subscribed':
 					Object.assign( props, {
 						title: error.message, // "You are already a (follower|member) of this site"
-						line: this.translate( 'Would you like to accept the invite with a different account?' ),
-						action: this.translate( 'Switch Accounts' ),
+						line: this.props.translate(
+							'Would you like to accept the invite with a different account?'
+						),
+						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
-						action: this.translate( 'Switch Accounts' ),
+						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
@@ -191,10 +196,10 @@ let InviteAccept = React.createClass( {
 		}
 
 		let props,
-			actionText = this.translate( 'Switch Accounts' );
+			actionText = this.props.translate( 'Switch Accounts' );
 
 		if ( ! user ) {
-			actionText = this.translate( 'Sign In' );
+			actionText = this.props.translate( 'Sign In' );
 		}
 
 		if ( invite.knownUser ) {
@@ -219,7 +224,7 @@ let InviteAccept = React.createClass( {
 					{ this.isMatchEmailError() &&
 					user && (
 						<Notice
-							text={ this.translate( 'This invite is only valid for %(email)s.', {
+							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
 								args: { email: invite.sentTo },
 							} ) }
 							status="is-error"
@@ -238,4 +243,4 @@ let InviteAccept = React.createClass( {
 
 export default connect( null, dispatch =>
 	bindActionCreators( { successNotice, infoNotice }, dispatch )
-)( InviteAccept );
+)( localize( InviteAccept ) );

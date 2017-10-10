@@ -57,8 +57,6 @@ function setup() {
 			}
 		}
 	} else {
-		require( 'bundler/assets' )( app );
-
 		// setup logger
 		app.use( morgan( 'combined' ) );
 	}

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { find, groupBy } from 'lodash';
 
@@ -48,7 +49,8 @@ const GoogleAppsUsers = React.createClass( {
 	isNewUser( user ) {
 		const domain = find( this.props.domains.list, { name: user.domain } );
 
-		return this.moment()
+		return this.props
+			.moment()
 			.subtract( 1, 'day' )
 			.isBefore( domain.googleAppsSubscription.subscribedDate );
 	},
@@ -74,7 +76,7 @@ const GoogleAppsUsers = React.createClass( {
 							href={ paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
-							{ this.translate( 'Add G Suite User' ) }
+							{ this.props.translate( 'Add G Suite User' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -93,13 +95,13 @@ const GoogleAppsUsers = React.createClass( {
 				text = user.error,
 				supportLink = (
 					<a href={ support.CALYPSO_CONTACT }>
-						<strong>{ this.translate( 'Please contact support' ) }</strong>
+						<strong>{ this.props.translate( 'Please contact support' ) }</strong>
 					</a>
 				);
 
 			if ( this.isNewUser( user ) ) {
 				status = null;
-				text = this.translate(
+				text = this.props.translate(
 					'We are setting up %(email)s for you. It should start working immediately, but may take up to 24 hours.',
 					{ args: { email: user.email } }
 				);
@@ -149,4 +151,4 @@ const GoogleAppsUsers = React.createClass( {
 	},
 } );
 
-export default GoogleAppsUsers;
+export default localize( GoogleAppsUsers );

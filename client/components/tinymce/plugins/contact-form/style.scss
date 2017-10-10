@@ -60,13 +60,30 @@
 
 .editor-contact-form-modal-fields,
 .editor-contact-form-modal-settings {
-	padding: 5px 20px;
-	top: 65px;
+	padding: 16px 24px 5px;
+	top: 76px;
 	bottom: 74px;
 	left: 0;
 	right: 0;
 	overflow-y: auto;
 	position: absolute;
+}
+
+.editor-contact-form-modal-fields {
+	.card {
+		border-radius: 4px;
+	}
+}
+
+.editor-contact-form-modal-settings {
+	.section-header {
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+	}
+	.card:last-child {
+		border-bottom-right-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
 }
 
 .editor-contact-form-modal-field__remove {

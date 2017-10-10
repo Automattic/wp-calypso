@@ -22,8 +22,13 @@ class SocialSignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleGoogleResponse = response => {
+	handleGoogleResponse = ( response, triggeredByUser = true ) => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+			return;
+		}
+
+		if ( ! triggeredByUser ) {
+			// TODO: handle social signup for the redirect flow
 			return;
 		}
 

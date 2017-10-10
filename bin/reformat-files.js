@@ -9,7 +9,7 @@ const glob = require( 'glob' );
 const ignore = require( 'ignore' );
 const path = require( 'path' );
 const prettier = require( 'prettier' );
-const docblock = require( 'docblock' );
+const docblock = require( 'jest-docblock' );
 
 /**
  * Returns true if the given text contains @format.

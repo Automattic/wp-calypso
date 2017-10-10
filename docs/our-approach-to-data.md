@@ -199,17 +199,16 @@ The `connect` function accepts two arguments, and they each serve a distinct pur
 As an example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
 
 ```jsx
-class PostDeleteButton extends React.Component {
-	render() {
-		return (
-			<button onClick={ this.props.delete }>
-				{ this.translate( 'Delete %s', { 
-					args: [ this.props.label ]
-				} ) }
-			</button>
-		);
-	}
-}
+import React from 'react';
+import { localize } from 'i18n-calypso';
+
+const PostDeleteButton = ( { delete, label, translate } ) => (
+  <button onClick={ delete }>
+    { translate( 'Delete %s', {
+      args: [ label ]
+    } ) }
+  </button>
+);
 
 export default connect(
 	( state, ownProps ) => {
@@ -222,14 +221,14 @@ export default connect(
 			delete: () => dispatch( deleteSitePost( ownProps.siteId, ownProps.postId ) )
 		};
 	}
-)( PostDeleteButton );
+)( localize( PostDeleteButton ) );
 ```
 
 At this point, you might observe that the visual elements rendered in `<PostDeleteButton />` aren't very specific to posts and could probably be reused in different contexts. This is a good observation to make, and in this case it might make sense to split the visual component to its own separate file (e.g. `client/components/delete-button/index.jsx`). You should try to identify these opportunities as often as possible. Since the `connect` wrapping function is detached from the component declaration in the file above, it should not be difficult to separate the two.
 
 Separating visual and data concerns is a good mindset to have when approaching components, and whenever possible, we should strive to create reusable visual components which accept simple props for rendering. However, pragmatically it is unreasonable to assume that components will always be reused and that there's always a clear divide between the visual and data elements. As such, while we recommend creating purely visual components whenever possible, it is also reasonable to create components that are directly tied to the global application state.
 
-#### Query components 
+#### Query components
 
 Query components accept as few props as possible to describe the data needs of the context in which they're used. They are responsible for dispatching the actions that fetch the desired data from the WordPress.com REST API. They should neither accept nor render any children.
 
@@ -269,7 +268,7 @@ What are a few common use-cases for selectors?
 
 - Resolving references: A [normalized state tree](#data-normalization) is ideal from the standpoint of minimizing redundancy and synchronization concerns, but is not as developer-friendly to use. Selectors can be helpful in restoring convenient access to useful objects.
 - Derived data: A normalized state tree avoids storing duplicated data. However, it can be useful to request a value which is calculated based on state data. For example, it might be valuable to retrieve the hostname for a site, which can be calculated based on its URL property.
-- Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled. 
+- Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled.
  - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with a library like [`reselect`](https://github.com/reactjs/reselect)).
 
 ### UI State
@@ -282,25 +281,25 @@ Files related to user-interface state can be found in the [`client/state/ui` dir
 
 ### Data Persistence ( [#2754](https://github.com/Automattic/wp-calypso/pull/2754) )
 
-Persisting our Redux state to browser storage (localStorage/indexedDB) allows us to avoid completely rebuilding the 
+Persisting our Redux state to browser storage (localStorage/indexedDB) allows us to avoid completely rebuilding the
 Redux tree from scratch on each page load.
 
-At a high level, implementing this is straightforward. We subscribe to any Redux store changes, and on change we update 
-our browser storage with the new state of the Redux tree. On page load, if we detect stored state in browser storage during 
+At a high level, implementing this is straightforward. We subscribe to any Redux store changes, and on change we update
+our browser storage with the new state of the Redux tree. On page load, if we detect stored state in browser storage during
 our initial render, we create our Redux store with that persisted initial state.
- 
+
 However we quickly run into the following problems:
 
 #### Problem: Subtrees may contain class instances
 
 Subtrees may contain class instances. In some cases this is expected, because certain branches have chosen to use
-Immutable.js for performance reasons. However, attempting to serialize class instances will throw errors while saving 
+Immutable.js for performance reasons. However, attempting to serialize class instances will throw errors while saving
 to browser storage.
 
 #### Solution: SERIALIZE and DESERIALIZE actions
 
-To work around this we create two special action types: `SERIALIZE` and `DESERIALIZE`. These actions are not dispatched, 
-but are instead used with the reducer directly to prepare state to be serialized to browser storage, and for 
+To work around this we create two special action types: `SERIALIZE` and `DESERIALIZE`. These actions are not dispatched,
+but are instead used with the reducer directly to prepare state to be serialized to browser storage, and for
 deserializing persisted state to an acceptable initialState for the Redux store.
 
 
@@ -313,8 +312,8 @@ and
 reducer( browserState, { type: 'DESERIALIZE' } )
 ```
 
-Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action 
-type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be 
+Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action
+type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
 similar to:
 ```javascript
 export const items = createReducer( defaultState, {
@@ -323,8 +322,8 @@ export const items = createReducer( defaultState, {
 } );
 ```
 
-In turn, when the store instance is initialized with the browser storage copy of state, you can convert 
-your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js 
+In turn, when the store instance is initialized with the browser storage copy of state, you can convert
+your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
 instead of returning a plain object, we create an Immutable.js instance:
 ```javascript
 export const items = createReducer( defaultState, {
@@ -332,18 +331,18 @@ export const items = createReducer( defaultState, {
 	[DESERIALIZE]: state => fromJS( state )
 } );
 ```
-If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean), 
-the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors 
+If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean),
+the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors
 from changing data shapes, as described below.
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
 
 As time passes, the shape of our data will change very drastically in our Redux store and in each subtree. If we now
-persist state, we run into the issue of our persisted data shape no longer matching what the Redux store expects. 
+persist state, we run into the issue of our persisted data shape no longer matching what the Redux store expects.
 
-As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running master, first 
-allow  state to be persisted to the browser and then switch to another branch that contains minor refactors for an 
-existing sub-tree. What happens when a selector reaches for a data property that doesn't exist or has been renamed? 
+As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running master, first
+allow  state to be persisted to the browser and then switch to another branch that contains minor refactors for an
+existing sub-tree. What happens when a selector reaches for a data property that doesn't exist or has been renamed?
 Errors!
 
 A normal user can hit this case too by visiting our website and returning two weeks later.
@@ -352,12 +351,12 @@ How can we tell that our persisted data is good to use as initial state?
 
 #### Solution: Schema Validation
 
-Before we can detect data shape changes, we need to be able to describe what our data looks like. To accomplish this, 
-we use [JSON Schema](http://json-schema.org/). JSON Schema is a well-known human and machine readable format that 
+Before we can detect data shape changes, we need to be able to describe what our data looks like. To accomplish this,
+we use [JSON Schema](http://json-schema.org/). JSON Schema is a well-known human and machine readable format that
 defines the structure of JSON data. It is also easily adapted for use with plain JavaScript objects.
 
 A schema file `schema.js` is added at the same level of each reducer. Our schema should aim to describe our data needs,
-specifically: what the general shape looks like, which properties must be required, and what additional optional 
+specifically: what the general shape looks like, which properties must be required, and what additional optional
 properties they might contain. Ideally, we should try to balance readability and strictness.
 
 A simple example schema.js:
@@ -389,15 +388,15 @@ export const items = createReducer( defaultState, {
 ```
 
 If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
-`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
-handlers to avoid data shape errors. 
+`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom
+handlers to avoid data shape errors.
 
 ### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
-If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
-We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead 
-of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with 
-`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and 
+If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer.
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
+of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with
+`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and
 returns initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
 
 To opt-out of persistence we combine the reducers without any attached schema.
@@ -417,7 +416,7 @@ return combineReducers( {
 } );
 ```
 
-For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already, 
+For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already,
 on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
 incorrectly from the default handling provided by `withSchemaValidation`.
 ```javascript
@@ -431,6 +430,6 @@ return combineReducers( {
 
 ### Not persisting data
 
-Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection 
+Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection
 values are persisted we will not be able to reliably tell when the application is offline or online. Please remember
-to reason about if items should be persisted. 
+to reason about if items should be persisted.

@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
+import { isEnabled } from 'config';
 import { hasActiveHappychatSession, isHappychatAvailable } from 'state/happychat/selectors';
 
 const JetpackConnectHappychatButton = ( {
@@ -22,6 +23,10 @@ const JetpackConnectHappychatButton = ( {
 	isChatAvailable,
 	translate,
 } ) => {
+	if ( ! isEnabled( 'jetpack/happychat' ) ) {
+		return <div>{ children }</div>;
+	}
+
 	if ( ! isChatAvailable && ! isChatActive ) {
 		return (
 			<div>

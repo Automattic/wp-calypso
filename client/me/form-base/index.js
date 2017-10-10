@@ -50,7 +50,7 @@ module.exports = {
 	showNotice: function() {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			notices.success( this.props.translate( 'Settings saved successfully!' ) );
 			this.state.showNotice = false;
 		}
 	},
@@ -79,7 +79,7 @@ module.exports = {
 					if ( error.message ) {
 						notices.error( error.message );
 					} else {
-						notices.error( this.translate( 'There was a problem saving your changes.' ) );
+						notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
 					}
 				} else {
 					this.props.markSaved && this.props.markSaved();

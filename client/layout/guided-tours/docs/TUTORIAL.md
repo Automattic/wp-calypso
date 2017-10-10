@@ -1,6 +1,6 @@
 # Tutorial: Building a Simple Tour
 
-In this tutorial, we'll create a brief tour that shows a user how the site preview works.
+In this tutorial, we'll create a brief tour that shows a user how "View Site" works.
 
 It's not a comprehensive tutorial, but walks you through many of the different tasks that you'll encounter when developing a tour using Guided Tours.
 
@@ -25,17 +25,16 @@ With that in mind, we can come up with this first draft for a set of steps:
 1. Ask the user whether they want to learn how to preview their site.
 2. Point to the site preview and tell the user to click their site's title so that the preview opens.
 3. When the preview is showing, explain that this is the site preview.
-4. Show the user how to exit the preview and wait for them to do it.
-5. Finish the tour.
+4. Finish the tour.
 
 We could have included a step — or even multiple steps — to explain the different device sizes or the SEO upgrade. But it's advisable to start off with tours that are as short as possible to see how they perform. We can always come back and add additional steps.
 
-And in that spirit, we can iterate over the steps once more to reduce them. We don't **really** need steps to ask whether a user wants to take the tour or not, and we don't **really** need a finishing step. Also, we could exit the tour while the preview is still open so the user can explore it without a tour step showing.
+And in that spirit, we can iterate over the steps once more to reduce them. We don't **really** need steps to ask whether a user wants to take the tour or not, and we don't **really** need a finishing step. We could also finish the tour with the preview still open so the user can explore it without a tour step showing.
 
 With these thoughts, we can come up with these steps:
 
-1. Point to the site preview and tell the user to click their site's title to learn about the site preview. Provide a "Quit" button though so it's obvious what to do if they don't want to take the tour.
-2. Show the user how to exit the preview, but finish the tour with the preview staying open.
+1. Point to "View Site" and tell the user to click their site's title to learn about it. Provide a "Quit" button though so it's obvious what to do if they don't want to take the tour.
+2. Explain the preview, and finish the tour with it staying open.
 
 And with that, we can now think about what will trigger our tour.
 
@@ -45,7 +44,7 @@ To start the tour, we need to provide a list of paths and a trigger function.
 
 We want our tour to start when the user is looking at their stats. We therefore use `[ '/stats' ]` as the path. Note that in the tour implementation, we can provide a single path as just a string as opposed to an array.
 
-We only want our tour to show for users who have registered in the past 7 days. We express that by giving the `Tour` element an appropriate `when` attribute.
+We only want our tour to show for users who have registered in the past 7 days. We express that by giving the `Tour` element an appropriate `when` attribute. We also only want to show it if the current site can indeed be viewed using "View Site".
 
 ## Write the Tour
 
@@ -64,7 +63,6 @@ import { translate } from 'i18n-calypso';
 import {
 	overEvery as and,
 } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -82,7 +80,6 @@ import {
 	isEnabled,
 	isSelectedSitePreviewable,
 } from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
 
 export const TutorialSitePreviewTour = makeTour(
 );
@@ -117,6 +114,7 @@ export const TutorialSitePreviewTour = makeTour(
 	path="/stats"
 	when={ and(
 		isEnabled( 'guided-tours/main' ),
+        isSelectedSitePreviewable,
 		isNewUser,
 		) }
 	>
@@ -129,6 +127,7 @@ export const TutorialSitePreviewTour = makeTour(
 - `version` is the tour's version. The value is yours to choose, though we usually use the date we created the tour in YYYYMMDD format.
 - `path` is the path part of the URL that we want to trigger the tour on. Can also be an array.
 - `when` is a boolean function that the framework tests to see whether the tour should be triggered or not. The first check should be checking whether the feature flag for this tour is enabled.
+- `isSelectedSitePreviewable` guards us against showing this step if the current site cannot be previewed.
 
 ### Add an A/B Test
 
@@ -164,54 +163,44 @@ when={ and(
 	) }
 ```
 
-Note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results.
-
-In a nutshell, we want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.
+**Important:** note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results. We want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.
 
 ## Adding the First Step
 
 Now let's insert the first `<Step>` element into the `<Tour>`. It looks like this:
 
 ```JSX
-<Step name="init"
-	target="site-card-preview"
-	arrow="top-left"
-	placement="below"
-	when={ isSelectedSitePreviewable }
-	scrollContainer=".sidebar__region"
+<Step
+    name="init"
+    target="sitePreview"
+    arrow="top-left"
+    placement="below"
+    scrollContainer=".sidebar__region"
 >
-	<p>
-		{
-			translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
-				components: {
-					strong: <strong />,
-				}
-			} )
-		}
-	</p>
-	<Continue click step="close-preview" target="site-card-preview">
-		{
-			translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
-				components: {
-					strong: <strong />,
-				},
-			} )
-		}
-	</Continue>
-	<ButtonRow>
-		<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
-	</ButtonRow>
+    <p>
+        { translate(
+            '{{strong}}View Site{{/strong}} shows you what your site looks like to visitors. Click it to continue.',
+            {
+                components: {
+                    strong: <strong />,
+                },
+            }
+        ) }
+    </p>
+    <Continue hidden click step="finish" target="sitePreview" />
+    <ButtonRow>
+        <Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
+    </ButtonRow>
 </Step>
 ```
 
 A few notes:
 
 - The first step of a tour needs to have a name of `init` to be recognizable as the first step by the framework.
-- `isSelectedSitePreviewable` guards us against showing this step if the current site cannot be previewed.
 - The `target` is the DOM element the step should be "glued" to or will point at. There are two ways to do that: either the element has a `data-tip-target` attribute, and we pass that name, or we pass a CSS selector that selects that element (cf. method `targetForSlug`). In this case, it's a `data-tip-target`.
 - The `scrollContainer` tells the framework which container it should attempt to scroll in case the `target` isn't visible. In this case, the framework will attempt to scroll the sidebar until the site preview button is in view.
 - `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `master`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
-- The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below).
+- The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step. 
 - The `ButtonRow` with the `Quit` button doesn't really look nice, but it's important to provide a way for the user to get out of the tour. The framework will quit a tour if it believes that the user is trying to navigate away from it, but in this case we thought an explicit way to quit would be good to provide.
 
 ## Adding the Second Step
@@ -219,28 +208,17 @@ A few notes:
 Now we add the second step after the first one:
 
 ```JSX
-<Step name="close-preview"
-	placement="center"
-	when={ and( isSelectedSitePreviewable, isPreviewShowing ) }
->
-	<p>
-		{ translate( "Take a look around — and when you're done, close the site preview using the {{icon/}}. " +
-			'You can come back here anytime.', {
-				components: { icon: <Gridicon icon="cross" /> }
-			}
-		) }
-	</p>
-	<ButtonRow>
-		<Quit primary>
-			{ translate( 'Got it.' ) }
-		</Quit>
-	</ButtonRow>
+<Step name="finish" placement="center">
+    <p>
+        { translate(
+            "Take a look around — and when you're done, explore the rest of WordPress.com."
+        ) }
+    </p>
+    <ButtonRow>
+        <Quit primary>{ translate( 'Got it.' ) }</Quit>
+    </ButtonRow>
 </Step>
 ```
-
-And a note:
-
-- This time, we'll guard against `isSelectedSitePreviewable` and also `isPreviewShowing` -- this makes sure that the preview sheet is actually visible when we show this step.
 
 ## Finished!
 
@@ -286,7 +264,7 @@ _The issue:_ Guided Tours has built-in support for section-wise code splitting, 
 1. A tour, `siteTitle`, has a step prompting the user to click _Settings_ on the sidebar.
 2. Once the user navigates to `/settings` and that section is loaded, Guided Tours displays the next step, which points at a specific input field of that new view, prompting the user for the next action.
 
-If neither the code chunk nor the site data required for `/settings` are available locally, there will be a race condition whereby the new chunk will be loaded and run, thus clearing the `isSectionLoaded` flag in Guided Tours, thus confirming the transition from the previous step to the new one and rendering that step's contents, **but** because the data itself hasn't been received yet, the full UI for `/settings` doesn't exist yet, so the new step won't have any `target`s (or won't have the correct/final ones) to position itself next to. The result is a grossly mispositioned step that will manifest itself to the user either a broken UI or as though the Guided Tour has abruptly quit. Usually, this will go **unnoticed in development**, as chunks are loaded locally with no latency.
+If neither the code chunk nor the site data required for `/settings` are available locally, there will be a race condition whereby the new chunk will be loaded and run, thus clearing the `isSectionLoaded` flag in Guided Tours, thus confirming the transition from the previous step to the new one and rendering that step's contents, **but** because the data itself hasn't been received yet, the full UI for `/settings` doesn't exist yet, so the new step won't have any `target`s (or won't have the correct/final ones) to position itself next to. The result is a grossly mispositioned step that will manifest itself to the user either a broken UI or as though the Guided Tour has abruptly quit. Usually, this will go **unnoticed in development**, as chunks are loaded locally with reltively low latency.
 
 _The [fix][pr-10521]:_ We make Guided Tours "subscribe" to the corresponding data requests using its all-purpose [`actionLog`][action-log]: simply add the action type signaling the satisfaction of a data need — _e.g._, `RECEIVE_FOOS` or `REQUEST_FOOS_SUCCESS` — to the log's [white list][relevant-types]. Any change to `actionLog` triggers all of Guided Tours' view layer to update, thereby allowing a correct and timely positioning of steps.
 

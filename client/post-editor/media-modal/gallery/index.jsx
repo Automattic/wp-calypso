@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
@@ -135,7 +136,7 @@ const EditorMediaModalGallery = React.createClass( {
 				/>
 				<HeaderCake
 					onClick={ this.props.onReturnToList }
-					backText={ this.translate( 'Media Library' ) }
+					backText={ this.props.translate( 'Media Library' ) }
 				/>
 				<div className="editor-media-modal-gallery__content editor-media-modal__content">
 					<EditorMediaModalGalleryPreview
@@ -162,4 +163,4 @@ const EditorMediaModalGallery = React.createClass( {
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-} )( EditorMediaModalGallery );
+} )( localize( EditorMediaModalGallery ) );

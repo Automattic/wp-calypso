@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-password-item' );
 import { bindActionCreators } from 'redux';
@@ -46,7 +47,7 @@ const ApplicationPasswordsItem = React.createClass( {
 				if ( error && 'unknown_application_password' !== error.error ) {
 					this.setState( { removingPassword: false } );
 					this.props.errorNotice(
-						this.translate(
+						this.props.translate(
 							'The application password was not successfully deleted. Please try again.'
 						)
 					);
@@ -62,8 +63,8 @@ const ApplicationPasswordsItem = React.createClass( {
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
-						{ this.translate( 'Generated on %s', {
-							args: this.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' ),
+						{ this.props.translate( 'Generated on %s', {
+							args: this.props.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' ),
 						} ) }
 					</p>
 				</div>
@@ -83,5 +84,5 @@ const ApplicationPasswordsItem = React.createClass( {
 } );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	ApplicationPasswordsItem
+	localize( ApplicationPasswordsItem )
 );

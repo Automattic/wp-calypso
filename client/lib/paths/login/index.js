@@ -9,12 +9,24 @@ import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export function login(
-	{ isNative, locale, redirectTo, twoFactorAuthType, socialConnect, emailAddress } = {}
+	{
+		isNative,
+		locale,
+		redirectTo,
+		twoFactorAuthType,
+		socialConnect,
+		emailAddress,
+		socialService,
+	} = {}
 ) {
 	let url = config( 'login_url' );
 
 	if ( isNative && isEnabled( 'login/wp-login' ) ) {
 		url = '/log-in';
+
+		if ( socialService ) {
+			url += '/' + socialService + '/callback';
+		}
 
 		if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;

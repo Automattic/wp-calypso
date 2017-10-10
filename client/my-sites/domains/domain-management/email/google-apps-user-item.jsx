@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -40,11 +41,11 @@ const GoogleAppsUserItem = React.createClass( {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ this.translate( 'Manage', { context: 'G Suite user item' } ) }
+					{ this.props.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
 		);
 	},
 } );
 
-export default GoogleAppsUserItem;
+export default localize( GoogleAppsUserItem );

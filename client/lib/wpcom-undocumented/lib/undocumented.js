@@ -506,13 +506,16 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 		data = {};
 	}
 
-	return this.wpcom.req[ method ](
-		{
-			path: '/sites/' + siteId + '/settings',
-			body: data,
-		},
-		fn
-	);
+	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
+	const apiVersion = data.apiVersion || '1.1';
+	const body = omit( data, [ 'apiVersion' ] );
+	const path = '/sites/' + siteId + '/settings';
+
+	if ( 'get' === method ) {
+		return this.wpcom.req.get( path, { apiVersion }, fn );
+	}
+
+	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
 };
 
 Undocumented.prototype._sendRequest = function( originalParams, fn ) {

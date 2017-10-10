@@ -17,7 +17,7 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	SERIALIZE,
 	DESERIALIZE,
-	HAPPYCHAT_SET_GEO_LOCATION,
+	HAPPYCHAT_CONNECTED,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -94,22 +94,27 @@ describe( 'reducers', () => {
 
 		it( 'should set the current user geolocation', () => {
 			const state = geoLocation( null, {
-				type: HAPPYCHAT_SET_GEO_LOCATION,
-				geoLocation: { city: 'Timisoara' },
+				type: HAPPYCHAT_CONNECTED,
+				user: {
+					geo_location: {
+						country_long: 'Romania',
+						city: 'Timisoara',
+					},
+				},
 			} );
 
-			expect( state ).to.eql( { city: 'Timisoara' } );
+			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 		} );
 
 		it( 'returns valid geolocation', () => {
 			const state = geoLocation(
-				{ city: 'Timisoara' },
+				{ country_long: 'Romania', city: 'Timisoara' },
 				{
 					type: DESERIALIZE,
 				}
 			);
 
-			expect( state ).to.eql( { city: 'Timisoara' } );
+			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 		} );
 	} );
 } );

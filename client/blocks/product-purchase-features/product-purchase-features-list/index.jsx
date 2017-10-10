@@ -71,7 +71,6 @@ class ProductPurchaseFeaturesList extends Component {
 
 	getBusinessFeatures() {
 		const { selectedSite, planHasDomainCredit } = this.props;
-
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
@@ -84,6 +83,7 @@ class ProductPurchaseFeaturesList extends Component {
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
+				link="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
 			/>,
 			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
@@ -170,6 +170,7 @@ class ProductPurchaseFeaturesList extends Component {
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
+				link="https://calendly.com/jetpack/concierge"
 			/>,
 			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 			<JetpackBackupSecurity key="jetpackBackupSecurity" />,

@@ -3,11 +3,13 @@
  * External dependencies
  */
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, intersection, pick } from 'lodash';
+import { get, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,23 +64,30 @@ function getInitialServerState( serializedServerState ) {
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
+const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
+const getAssets = ( () => {
+	let assets;
+	return () => {
+		if ( ! assets ) {
+			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
+		}
+		return assets;
+	};
+} )();
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
- * @param {Object} request A request to check for assets
+ *
  * @returns {Object} Map of asset names to urls
  **/
-function generateStaticUrls( request ) {
+function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
+	const assets = getAssets();
 
-	const assets = request.app.get( 'assets' );
-
-	assets.forEach( function( asset ) {
-		const name = asset.name;
-		urls[ name ] = asset.url;
-		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
-		}
+	forEach( assets, ( asset, name ) => {
+		urls[ name ] =
+			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
 	} );
 
 	return urls;
@@ -162,9 +171,12 @@ function getDefaultContext( request ) {
 		sectionCssRtl = urls.rtl;
 	}
 
+	const shouldUseSingleCDN =
+		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
-		urls: generateStaticUrls( request ),
+		urls: generateStaticUrls(),
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
@@ -173,11 +185,16 @@ function getDefaultContext( request ) {
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: '//s1.wp.com/i/favicon.ico',
+		faviconURL: shouldUseSingleCDN ? '//s0.wp.com/i/favicon.ico' : '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
+		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
+		shouldUsePreconnectGoogle:
+			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
+		shouldUsePreload: config.isEnabled( 'try/preload' ) && !! request.query.enablePreload,
+		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
 		sectionCssRtl,
@@ -345,7 +362,7 @@ function setUpRoute( req, res, next ) {
 
 function render404( request, response ) {
 	response.status( 404 ).render( '404.jade', {
-		urls: generateStaticUrls( request ),
+		urls: generateStaticUrls(),
 	} );
 }
 
@@ -450,8 +467,8 @@ module.exports = function() {
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( path => {
-				const pathRegex = utils.pathToRegExp( path );
+			section.paths.forEach( sectionPath => {
+				const pathRegex = utils.pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );

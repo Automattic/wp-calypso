@@ -5,9 +5,10 @@
  */
 
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import page from 'page';
 
 /**
@@ -118,7 +119,7 @@ const AddEmailAddressesCard = React.createClass( {
 
 				<Card className="add-email-addresses-card__inner">
 					<form className="add-email-addresses-card__form">
-						<FormLabel>{ this.translate( 'Add Email Addresses' ) }</FormLabel>
+						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
 
 						{ this.allEmailAddressFieldsets() }
 						{ this.addAnotherEmailAddressLink() }
@@ -139,7 +140,7 @@ const AddEmailAddressesCard = React.createClass( {
 
 	emailAddressFieldset( index ) {
 		const field = this.state.fieldsets[ index ],
-			contactText = this.translate( 'contact', {
+			contactText = this.props.translate( 'contact', {
 				context: 'part of e-mail address',
 				comment: 'As it would be part of an e-mail address contact@example.com',
 			} );
@@ -163,7 +164,9 @@ const AddEmailAddressesCard = React.createClass( {
 				<FormTextInputWithAffixes
 					onChange={ this.handleFieldChange.bind( this, 'username', index ) }
 					onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-					placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+					placeholder={ this.props.translate( 'e.g. %(example)s', {
+						args: { example: contactText },
+					} ) }
 					suffix={ suffix }
 					type="text"
 					value={ field.username.value }
@@ -199,7 +202,7 @@ const AddEmailAddressesCard = React.createClass( {
 				href="#"
 				onClick={ this.handleAddAnotherEmailAddress }
 			>
-				{ this.translate( '+ Add another email address' ) }
+				{ this.props.translate( '+ Add another email address' ) }
 			</a>
 		);
 	},
@@ -221,7 +224,7 @@ const AddEmailAddressesCard = React.createClass( {
 					onClick={ this.handleContinue }
 					disabled={ ! this.props.domains.hasLoadedFromServer }
 				>
-					{ this.translate( 'Continue' ) }
+					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
 				<FormButton
@@ -230,14 +233,14 @@ const AddEmailAddressesCard = React.createClass( {
 					onClick={ this.handleCancel }
 					disabled={ ! this.props.domains.hasLoadedFromServer }
 				>
-					{ this.translate( 'Cancel' ) }
+					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 			</FormFooter>
 		);
 	},
 
 	getFields() {
-		return { username: this.translate( 'User Name' ) };
+		return { username: this.props.translate( 'User Name' ) };
 	},
 
 	handleContinue( event ) {
@@ -320,4 +323,4 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	} );
 }
 
-module.exports = AddEmailAddressesCard;
+module.exports = localize( AddEmailAddressesCard );

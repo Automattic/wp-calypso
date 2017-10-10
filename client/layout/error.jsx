@@ -5,6 +5,7 @@
  */
 
 import debug from 'debug';
+import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -22,43 +23,31 @@ import EmptyContent from 'components/empty-content';
  */
 const log = debug( 'calypso:layout' );
 
-var LoadingError = React.createClass( {
-	statics: {
-		isRetry: function() {
-			var parsed = url.parse( location.href, true );
-			return parsed.query.retry === '1';
-		},
+const LoadingErrorMessage = localize( ( { translate } ) => (
+	<EmptyContent
+		illustration="/calypso/images/illustrations/illustration-500.svg"
+		title={ translate( "We're sorry, but an unexpected error has occurred" ) }
+	/>
+) );
 
-		retry: function( chunkName ) {
-			var parsed;
-			if ( ! LoadingError.isRetry() ) {
-				parsed = url.parse( location.href, true );
+export function isRetry() {
+	const parsed = url.parse( location.href, true );
+	return parsed.query.retry === '1';
+}
 
-				analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
+export function retry( chunkName ) {
+	if ( ! isRetry() ) {
+		const parsed = url.parse( location.href, true );
 
-				// Trigger a full page load which should include script tags for the current chunk
-				window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
-			}
-		},
+		analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
 
-		show: function( chunkName ) {
-			log( 'Chunk %s could not be loaded', chunkName );
-			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-			ReactDom.render(
-				React.createElement( LoadingError, {} ),
-				document.getElementById( 'primary' )
-			);
-		},
-	},
+		// Trigger a full page load which should include script tags for the current chunk
+		window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
+	}
+}
 
-	render: function() {
-		return (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.translate( "We're sorry, but an unexpected error has occurred" ) }
-			/>
-		);
-	},
-} );
-
-module.exports = LoadingError;
+export function show( chunkName ) {
+	log( 'Chunk %s could not be loaded', chunkName );
+	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
+	ReactDom.render( <LoadingErrorMessage />, document.getElementById( 'primary' ) );
+}

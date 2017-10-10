@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -326,7 +327,7 @@ const PostSelectorPosts = React.createClass( {
 						className="post-selector__input"
 					/>
 					<span className="post-selector__label">
-						{ decodeEntities( item.title || this.translate( 'Untitled' ) ) }
+						{ decodeEntities( item.title || this.props.translate( 'Untitled' ) ) }
 						{ this.isTypeLabelsVisible() && (
 							<span
 								className="post-selector__label-type"
@@ -388,7 +389,7 @@ const PostSelectorPosts = React.createClass( {
 						disabled
 						className="post-selector__input"
 					/>
-					<span className="post-selector__label">{ this.translate( 'Loading…' ) }</span>
+					<span className="post-selector__label">{ this.props.translate( 'Loading…' ) }</span>
 				</label>
 			</div>
 		);
@@ -477,4 +478,4 @@ export default connect( ( state, ownProps ) => {
 		postTypes: getPostTypes( state, siteId ),
 		queryWithVersion: queryWithVersion,
 	};
-} )( PostSelectorPosts );
+} )( localize( PostSelectorPosts ) );

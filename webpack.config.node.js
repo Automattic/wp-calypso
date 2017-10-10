@@ -6,7 +6,6 @@
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
-const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
@@ -16,7 +15,6 @@ const _ = require( 'lodash' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
-const isWindows = os.type() === 'Windows_NT';
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -70,9 +68,6 @@ const babelLoader = {
 	}
 }
 
-// happypack is not compatible with windows: https://github.com/amireh/happypack/blob/caaed26eec1795d464ac4b66abd29e60343e6252/README.md#does-it-work-under-windows
-const jsLoader = isWindows ? babelLoader : 'happypack/loader';
-
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -96,7 +91,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: [ jsLoader ]
+				loader: [ 'happypack/loader' ]
 			},
 		]
 	},
@@ -122,7 +117,7 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
-		! isWindows && new HappyPack( { loaders: [ babelLoader ] } ),
+		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM

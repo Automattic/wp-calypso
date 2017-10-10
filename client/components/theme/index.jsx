@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isEmpty, isEqual, noop } from 'lodash';
+import { get, isEmpty, isEqual, noop, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -17,6 +17,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
+import Ribbon from 'components/ribbon';
 
 /**
  * Component
@@ -34,6 +35,7 @@ export class Theme extends Component {
 			author_uri: PropTypes.string,
 			demo_uri: PropTypes.string,
 			stylesheet: PropTypes.string,
+			taxonomies: PropTypes.object,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -94,6 +96,12 @@ export class Theme extends Component {
 		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
 	};
 
+	isBeginnerTheme = () => {
+		const { theme } = this.props;
+		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
+		return some( skillLevels, { slug: 'beginner' } );
+	};
+
 	renderPlaceholder = () => {
 		return (
 			<Card className="theme is-placeholder">
@@ -147,6 +155,11 @@ export class Theme extends Component {
 
 		return (
 			<Card className={ themeClass }>
+				{ this.isBeginnerTheme() && (
+					<Ribbon className="theme__ribbon" color="green">
+						{ translate( 'Beginner' ) }
+					</Ribbon>
+				) }
 				<div className="theme__content">
 					{ this.renderHover() }
 

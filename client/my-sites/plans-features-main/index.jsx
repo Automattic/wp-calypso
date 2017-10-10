@@ -36,7 +36,6 @@ import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -350,26 +349,20 @@ class PlansFeaturesMain extends Component {
 			plansUrl = basePlansPath;
 		}
 
-		const isInBillingButtonTest = abtest( 'jetpackBillingButtonTextI1' ) === 'modified';
-
 		return (
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ intervalType === 'monthly' }
 					path={ plansLink( plansUrl, site, 'monthly' ) }
 				>
-					{ isInBillingButtonTest ? translate( 'Monthly' ) : translate( 'Monthly billing' ) }
+					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
 					path={ plansLink( plansUrl, site, 'yearly' ) }
 				>
-					{ isInBillingButtonTest ? (
-						translate( 'Yearly (Cheaper)' )
-					) : (
-						translate( 'Yearly billing' )
-					) }
+					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);

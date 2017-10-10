@@ -10,12 +10,11 @@ import { expect } from 'chai';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ReactDom from 'react-dom';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EditorDiscussion from '../';
+import { EditorDiscussion } from '../';
 import { edit as editPost } from 'lib/posts/actions';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
@@ -38,16 +37,8 @@ const DUMMY_SITE = {
 };
 
 describe( 'EditorDiscussion', function() {
-	before( function() {
-		EditorDiscussion.prototype.translate = sinon.stub().returnsArg( 0 );
-	} );
-
 	beforeEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
-	} );
-
-	after( function() {
-		delete EditorDiscussion.prototype.translate;
 	} );
 
 	describe( '#getDiscussionSetting()', function() {

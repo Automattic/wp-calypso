@@ -1,4 +1,11 @@
 /**
+ * Frozen empty object
+ *
+ * @type {Object}
+ */
+const EMPTY_SITES = Object.freeze( {} );
+
+/**
  * Returns site items object or empty object.
  * 
  *
@@ -8,5 +15,5 @@
  */
 
 export default function getSitesItems( state ) {
-	return state.sites.items || {};
+	return state.sites.items || EMPTY_SITES;
 }

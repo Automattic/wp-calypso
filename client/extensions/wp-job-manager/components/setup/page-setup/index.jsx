@@ -15,7 +15,7 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SetupPath, Steps } from '../constants';
+import { SetupPath, Steps } from '../../../constants';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';

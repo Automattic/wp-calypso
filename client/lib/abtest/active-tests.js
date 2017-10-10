@@ -87,12 +87,14 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	jetpackBillingButtonTextI1: {
-		datestamp: '20170925',
+	recommendShortestDomain: {
+		datestamp: '20171010',
 		variations: {
+			shortest: 50,
 			original: 50,
-			modified: 50,
 		},
 		defaultVariation: 'original',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

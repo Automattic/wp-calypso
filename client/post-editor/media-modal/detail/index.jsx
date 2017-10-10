@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop, partial } from 'lodash';
@@ -19,7 +20,7 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
+const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		items: PropTypes.array,
@@ -76,7 +77,10 @@ export const EditorMediaModalDetail = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
+				<HeaderCake
+					onClick={ onReturnToList }
+					backText={ this.props.translate( 'Media Library' ) }
+				/>
 				<DetailItem
 					site={ site }
 					item={ item }
@@ -96,4 +100,4 @@ export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( EditorMediaModalDetail );
+} )( localize( EditorMediaModalDetail ) );

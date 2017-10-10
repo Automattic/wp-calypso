@@ -7,7 +7,6 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -21,26 +20,28 @@ import {
 	Continue,
 } from 'layout/guided-tours/config-elements';
 import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour
 		name="tutorialSitePreview"
 		version="20170101"
 		path="/stats"
-		when={ and( isEnabled( 'guided-tours/tutorial-site-preview' ), isNewUser ) }
+		when={ and(
+			isEnabled( 'guided-tours/tutorial-site-preview' ),
+			isSelectedSitePreviewable,
+			isNewUser
+		) }
 	>
 		<Step
 			name="init"
-			target="site-card-preview"
+			target="sitePreview"
 			arrow="top-left"
 			placement="below"
-			when={ isSelectedSitePreviewable }
 			scrollContainer=".sidebar__region"
 		>
 			<p>
 				{ translate(
-					"This shows your currently {{strong}}selected site{{/strong}}'s name and address.",
+					'{{strong}}View Site{{/strong}} shows you what your site looks like to visitors. Click it to continue.',
 					{
 						components: {
 							strong: <strong />,
@@ -48,30 +49,16 @@ export const TutorialSitePreviewTour = makeTour(
 					}
 				) }
 			</p>
-			<Continue click step="close-preview" target="site-card-preview">
-				{ translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</Continue>
+			<Continue hidden click step="finish" target="sitePreview" />
 			<ButtonRow>
 				<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step
-			name="close-preview"
-			placement="center"
-			when={ and( isSelectedSitePreviewable, isPreviewShowing ) }
-		>
+		<Step name="finish" placement="center">
 			<p>
 				{ translate(
-					"Take a look around — and when you're done, close the site preview using the {{icon/}}. " +
-						'You can come back here anytime.',
-					{
-						components: { icon: <Gridicon icon="cross" /> },
-					}
+					"Take a look around — and when you're done, explore the rest of WordPress.com."
 				) }
 			</p>
 			<ButtonRow>

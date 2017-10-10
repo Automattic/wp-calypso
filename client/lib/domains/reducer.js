@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import { sortBy } from 'lodash';
 
 /**

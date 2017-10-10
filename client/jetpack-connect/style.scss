@@ -495,9 +495,9 @@
 .jetpack-connect__plans-nav-buttons {
 	text-align: center;
 
-	.button.is-compact {
-		font-size: 14px;
-		font-weight: 500;
+	.button .gridicon {
+		padding-left: 4px;
+		margin-right: -5px;
 	}
 }
 
@@ -548,5 +548,17 @@
 	.formatted-header,
 	.formatted-header.is-without-subhead {
 		margin-bottom: 8px;
+	}
+
+	.logged-out-form__links,
+	.jetpack-connect__happychat-button {
+		text-align: center;
+	}
+
+	.logged-out-form__link-item {
+		.gridicon {
+			position: relative;
+			top: 4px;
+		}
 	}
 }

@@ -165,7 +165,7 @@ class CurrentSite extends Component {
 					<AllSites />
 				) }
 
-				<AsyncLoad require="my-sites/current-site/domain-warnings" noPlaceholder={ null } />
+				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 
 				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
 			</Card>

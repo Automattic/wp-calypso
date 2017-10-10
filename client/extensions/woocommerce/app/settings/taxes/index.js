@@ -148,7 +148,7 @@ class SettingsTaxes extends Component {
 		}
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a>,
+			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
 			<span>{ translate( 'Taxes' ) }</span>,
 		];
 

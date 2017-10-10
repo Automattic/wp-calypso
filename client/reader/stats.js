@@ -48,6 +48,9 @@ function getLocation() {
 	if ( path === '/' ) {
 		return 'following';
 	}
+	if ( path.indexOf( '/read/a8c' ) === 0 ) {
+		return 'following_a8c';
+	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
 	}
@@ -83,6 +86,12 @@ function getLocation() {
 	}
 	if ( path.indexOf( '/read/search' ) === 0 ) {
 		return 'search';
+	}
+	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {
+		return 'conversations_a8c';
+	}
+	if ( path.indexOf( '/read/conversations' ) === 0 ) {
+		return 'conversations';
 	}
 	return 'unknown';
 }

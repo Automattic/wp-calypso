@@ -1,16 +1,19 @@
+/** @format */
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
-// Utils
-@import '../shared/utils';
+@import '../shared/colors';
+@import '../shared/functions/z-index';
+@import '../shared/mixins/breakpoints';
+@import '../shared/mixins/clear-fix';
+@import '../shared/mixins/clear-text';
+@import '../shared/mixins/long-content-fade';
+@import '../shared/mixins/noticon';
+@import '../shared/mixins/placeholder';
+@import '../shared/typography';
 
 // Required to access variables or @extend styles
 @import '../main';
 @import '../shared/forms';
-@import 'components/accordion/style';
-@import 'components/card/style';
-@import 'components/global-notices/style';
-@import 'components/select-dropdown/style';
-@import 'layout/sidebar/style';
 
 @import 'post-editor/style';
 @import 'post-editor/edit-post-status/style';
@@ -53,3 +56,4 @@
 @import 'post-editor/editor-title/style';
 @import 'post-editor/editor-visibility/style';
 @import 'post-editor/editor-word-count/style';
+@import 'post-editor/media-modal/style';

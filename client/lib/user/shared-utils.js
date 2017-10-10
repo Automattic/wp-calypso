@@ -58,6 +58,7 @@ module.exports = {
 				'user_ip_country_code',
 				'logout_URL',
 				'primary_blog',
+				'primary_blog_is_jetpack',
 				'primary_blog_url',
 				'meta',
 				'is_new_reader',

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
@@ -26,425 +27,435 @@ import constants from 'me/constants';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
-	displayName: 'Security2faEnable',
+module.exports = localize(
+	React.createClass( {
+		displayName: 'Security2faEnable',
 
-	mixins: [ LinkedStateMixin ],
+		mixins: [ LinkedStateMixin ],
 
-	codeRequestTimer: false,
+		codeRequestTimer: false,
 
-	getDefaultProps: function() {
-		return {
-			doSMSFlow: false,
-		};
-	},
+		getDefaultProps: function() {
+			return {
+				doSMSFlow: false,
+			};
+		},
 
-	propTypes: {
-		doSMSFlow: PropTypes.bool,
-		onCancel: PropTypes.func.isRequired,
-		onSuccess: PropTypes.func.isRequired,
-	},
+		propTypes: {
+			doSMSFlow: PropTypes.bool,
+			onCancel: PropTypes.func.isRequired,
+			onSuccess: PropTypes.func.isRequired,
+		},
 
-	getInitialState: function() {
-		return {
-			lastError: false,
-			lastErrorType: false,
-			method: this.props.doSMSFlow ? 'sms' : 'scan',
-			otpAuthUri: false,
-			smsRequestsAllowed: true,
-			smsRequestPerformed: false,
-			submittingCode: false,
-			timeCode: false,
-			verificationCode: '',
-		};
-	},
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-		twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
-		if ( this.props.doSMSFlow ) {
-			this.requestSMS();
-		}
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-		this.cancelCodeRequestTimer();
-	},
-
-	allowSMSRequests: function() {
-		this.setState( { smsRequestsAllowed: true } );
-	},
-
-	onRequestSMS: function( event ) {
-		event.preventDefault();
-		this.requestSMS();
-	},
-
-	requestSMS: function() {
-		this.setState( {
-			smsRequestsAllowed: false,
-			lastError: false,
-		} );
-		twoStepAuthorization.sendSMSCode( this.onSMSRequestResponse );
-		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
-	},
-
-	onSMSRequestResponse: function( error ) {
-		if ( error ) {
-			this.setState( {
+		getInitialState: function() {
+			return {
+				lastError: false,
+				lastErrorType: false,
+				method: this.props.doSMSFlow ? 'sms' : 'scan',
+				otpAuthUri: false,
+				smsRequestsAllowed: true,
 				smsRequestPerformed: false,
-				lastError: this.translate(
-					'Unable to request a code via SMS right now. Please try again after one minute.'
-				),
-				lastErrorType: 'is-info',
-			} );
-		} else {
-			this.setState( { smsRequestPerformed: true } );
-		}
-	},
+				submittingCode: false,
+				timeCode: false,
+				verificationCode: '',
+			};
+		},
 
-	cancelCodeRequestTimer: function() {
-		if ( this.codeRequestTimer ) {
-			clearTimeout( this.codeRequestTimer );
-		}
-	},
+		componentDidMount: function() {
+			debug( this.constructor.displayName + ' React component is mounted.' );
+			twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
+			if ( this.props.doSMSFlow ) {
+				this.requestSMS();
+			}
+		},
 
-	onResendCode: function( event ) {
-		event.preventDefault();
-		if ( this.state.smsRequestsAllowed ) {
+		componentWillUnmount: function() {
+			debug( this.constructor.displayName + ' React component will unmount.' );
+			this.cancelCodeRequestTimer();
+		},
+
+		allowSMSRequests: function() {
+			this.setState( { smsRequestsAllowed: true } );
+		},
+
+		onRequestSMS: function( event ) {
+			event.preventDefault();
 			this.requestSMS();
-		}
-	},
+		},
 
-	onVerifyBySMS: function( event ) {
-		event.preventDefault();
-		if ( this.state.smsRequestsAllowed ) {
-			this.requestSMS();
-		}
-		this.setState( { method: 'sms' } );
-	},
-
-	onAppAuthCodesRequestResponse: function( error, data ) {
-		if ( error ) {
+		requestSMS: function() {
 			this.setState( {
-				lastError: this.translate(
-					'Unable to obtain authorization application setup information. Please try again later.'
-				),
-				lastErrorType: 'is-error',
+				smsRequestsAllowed: false,
+				lastError: false,
 			} );
-			return;
-		}
+			twoStepAuthorization.sendSMSCode( this.onSMSRequestResponse );
+			this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
+		},
 
-		this.setState( {
-			otpAuthUri: data.otpauth_uri,
-			timeCode: data.time_code,
-		} );
-	},
+		onSMSRequestResponse: function( error ) {
+			if ( error ) {
+				this.setState( {
+					smsRequestPerformed: false,
+					lastError: this.props.translate(
+						'Unable to request a code via SMS right now. Please try again after one minute.'
+					),
+					lastErrorType: 'is-info',
+				} );
+			} else {
+				this.setState( { smsRequestPerformed: true } );
+			}
+		},
 
-	getFormDisabled: function() {
-		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
-	},
+		cancelCodeRequestTimer: function() {
+			if ( this.codeRequestTimer ) {
+				clearTimeout( this.codeRequestTimer );
+			}
+		},
 
-	onCodeSubmit: function( event ) {
-		event.preventDefault();
-		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
-	},
+		onResendCode: function( event ) {
+			event.preventDefault();
+			if ( this.state.smsRequestsAllowed ) {
+				this.requestSMS();
+			}
+		},
 
-	onBeginCodeValidation: function() {
-		var args = {
-			code: this.state.verificationCode,
-			action: 'enable-two-step',
-		};
+		onVerifyBySMS: function( event ) {
+			event.preventDefault();
+			if ( this.state.smsRequestsAllowed ) {
+				this.requestSMS();
+			}
+			this.setState( { method: 'sms' } );
+		},
 
-		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
-	},
+		onAppAuthCodesRequestResponse: function( error, data ) {
+			if ( error ) {
+				this.setState( {
+					lastError: this.props.translate(
+						'Unable to obtain authorization application setup information. Please try again later.'
+					),
+					lastErrorType: 'is-error',
+				} );
+				return;
+			}
 
-	onValidationResponseReceived: function( error, data ) {
-		this.setState( { submittingCode: false } );
-
-		if ( error ) {
 			this.setState( {
-				lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
-				lastErrorType: 'is-error',
+				otpAuthUri: data.otpauth_uri,
+				timeCode: data.time_code,
 			} );
-		} else if ( ! data.success ) {
-			this.setState( {
-				lastError: this.translate( 'You entered an invalid code. Please try again.' ),
-				lastErrorType: 'is-error',
-			} );
-		} else {
-			this.props.onSuccess();
-		}
-	},
+		},
 
-	getToggleLink: function() {
-		return (
-			<a
-				className="security-2fa-enable__toggle"
-				onClick={ function( event ) {
-					this.toggleMethod( event );
-					analytics.ga.recordEvent(
-						'Me',
-						'Clicked On Barcode Toggle Link',
-						'current-method',
-						this.state.method
-					);
-				}.bind( this ) }
-			/>
-		);
-	},
+		getFormDisabled: function() {
+			return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
+		},
 
-	renderQRCode: function() {
-		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
-			'is-placeholder': ! this.state.otpAuthUri,
-		} );
+		onCodeSubmit: function( event ) {
+			event.preventDefault();
+			this.setState( { submittingCode: true }, this.onBeginCodeValidation );
+		},
 
-		return (
-			<div className="security-2fa-enable__qr-code-block">
-				<p className="security-2fa-enable__qr-instruction">
-					{ this.translate(
-						"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
-						{
-							components: {
-								toggleMethodLink: this.getToggleLink(),
-							},
-						}
-					) }
-				</p>
-				<div className={ qrClasses }>
-					{ this.state.otpAuthUri && <QRCode value={ this.state.otpAuthUri } size={ 150 } /> }
-				</div>
-			</div>
-		);
-	},
+		onBeginCodeValidation: function() {
+			var args = {
+				code: this.state.verificationCode,
+				action: 'enable-two-step',
+			};
 
-	renderTimeCode: function() {
-		return (
-			<div className="security-2fa-enable__time-code-block">
-				<p className="security-2fa-enable__time-instruction">
-					{ this.translate(
-						'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
-						{
-							components: {
-								toggleMethodLink: this.getToggleLink(),
-							},
-						}
-					) }
-				</p>
-				<p className="security-2fa-enable__time-code">{ this.state.timeCode }</p>
-			</div>
-		);
-	},
+			twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
+		},
 
-	renderCodeBlock: function() {
-		if ( 'sms' === this.state.method ) {
-			return null;
-		}
+		onValidationResponseReceived: function( error, data ) {
+			this.setState( { submittingCode: false } );
 
-		return (
-			<div className="security-2fa-enable__code-block">
-				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
-			</div>
-		);
-	},
+			if ( error ) {
+				this.setState( {
+					lastError: this.props.translate(
+						'An unexpected error occurred. Please try again later.'
+					),
+					lastErrorType: 'is-error',
+				} );
+			} else if ( ! data.success ) {
+				this.setState( {
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+					lastErrorType: 'is-error',
+				} );
+			} else {
+				this.props.onSuccess();
+			}
+		},
 
-	renderInputHelp: function() {
-		if ( 'sms' === this.state.method ) {
+		getToggleLink: function() {
 			return (
-				<FormLabel htmlFor="verification-code">
-					{ this.translate( 'Enter the code you receive via SMS:' ) }
-				</FormLabel>
-			);
-		}
-
-		return <p>{ this.translate( 'Then enter the six digit code provided by the app:' ) }</p>;
-	},
-
-	toggleMethod: function( event ) {
-		event.preventDefault();
-		this.setState( { method: 'scan' === this.state.method ? 'time' : 'scan' } );
-	},
-
-	renderInputOptions: function() {
-		if ( 'sms' === this.state.method ) {
-			return null;
-		}
-
-		return (
-			<div className="security-2fa-enable__app-options">
-				<p>
-					{ this.translate(
-						'Not sure what this screen means? You may need to download ' +
-							'{{authyLink}}Authy{{/authyLink}} or ' +
-							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
-							'for your phone.',
-						{
-							components: {
-								authyLink: (
-									<a
-										href="https://www.authy.com/users/"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ function() {
-											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
-										} }
-									/>
-								),
-								googleAuthenticatorLink: (
-									<a
-										href="https://support.google.com/accounts/answer/1066447?hl=en"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ function() {
-											analytics.ga.recordEvent(
-												'Me',
-												'Clicked On 2fa Download Google Authenticator Link'
-											);
-										} }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
-	},
-
-	clearLastError: function() {
-		this.setState( { lastError: false, lastErrorType: false } );
-	},
-
-	possiblyRenderError: function() {
-		if ( ! this.state.lastError ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				status={ this.state.lastErrorType }
-				onDismissClick={ this.clearLastError }
-				text={ this.state.lastError }
-			/>
-		);
-	},
-
-	renderInputBlock: function() {
-		return (
-			<div className="security-2fa-enable__next">
-				{ this.renderInputHelp() }
-				<FormTelInput
-					autoComplete="off"
-					autoFocus
-					disabled={ this.state.submittingForm }
-					name="verification-code"
-					placeholder={
-						'sms' === this.state.method ? (
-							constants.sevenDigit2faPlaceholder
-						) : (
-							constants.sixDigit2faPlaceholder
-						)
-					}
-					valueLink={ this.linkState( 'verificationCode' ) }
-					onFocus={ function() {
-						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
-					} }
-				/>
-				{ 'sms' === this.state.method && this.state.smsRequestPerformed ? (
-					<FormSettingExplanation>
-						{ this.translate(
-							'A code has been sent to your device via SMS.  ' +
-								'You may request another code after one minute.'
-						) }
-					</FormSettingExplanation>
-				) : null }
-				{ this.possiblyRenderError() }
-				{ this.renderInputOptions() }
-			</div>
-		);
-	},
-
-	renderButtons: function() {
-		return (
-			<FormButtonsBar className="security-2fa-enable__buttons-bar">
-				<FormButton
-					className="security-2fa-enable__verify"
-					disabled={ this.getFormDisabled() }
-					onClick={ function() {
-						analytics.ga.recordEvent(
-							'Me',
-							'Clicked On Enable 2fa Button',
-							'method',
-							this.state.method
-						);
-					}.bind( this ) }
-				>
-					{ this.state.submittingCode ? (
-						this.translate( 'Enabling…', { context: 'A button label used during Two-Step setup.' } )
-					) : (
-						this.translate( 'Enable', { context: 'A button label used during Two-Step setup.' } )
-					) }
-				</FormButton>
-
-				<FormButton
-					className="security-2fa-enable__cancel"
-					isPrimary={ false }
+				<a
+					className="security-2fa-enable__toggle"
 					onClick={ function( event ) {
+						this.toggleMethod( event );
 						analytics.ga.recordEvent(
 							'Me',
-							'Clicked On Step 2 Cancel 2fa Button',
-							'method',
+							'Clicked On Barcode Toggle Link',
+							'current-method',
 							this.state.method
 						);
-						this.props.onCancel( event );
 					}.bind( this ) }
-				>
-					{ this.translate( 'Cancel' ) }
-				</FormButton>
+				/>
+			);
+		},
 
-				{ 'sms' === this.state.method ? (
-					<FormButton
-						disabled={ ! this.state.smsRequestsAllowed }
-						isPrimary={ false }
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Resend SMS Button' );
-							this.onResendCode( event );
-						}.bind( this ) }
-					>
-						{ this.translate( 'Resend Code', {
-							context: 'A button label to let a user get the SMS code sent again.',
-						} ) }
-					</FormButton>
-				) : (
-					<FormButton
-						isPrimary={ false }
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
-							this.onVerifyBySMS( event );
-						}.bind( this ) }
-					>
-						{ this.translate( 'Use SMS', {
-							context: 'A button label to let a user switch to enabling Two-Step by SMS.',
-						} ) }
-					</FormButton>
-				) }
-			</FormButtonsBar>
-		);
-	},
+		renderQRCode: function() {
+			var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+				'is-placeholder': ! this.state.otpAuthUri,
+			} );
 
-	render: function() {
-		return (
-			<div>
-				<Security2faProgress step={ 2 } />
-				<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
-					<div className="security-2fa-enable__inner">
-						{ this.renderCodeBlock() }
-						{ this.renderInputBlock() }
+			return (
+				<div className="security-2fa-enable__qr-code-block">
+					<p className="security-2fa-enable__qr-instruction">
+						{ this.props.translate(
+							"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+							{
+								components: {
+									toggleMethodLink: this.getToggleLink(),
+								},
+							}
+						) }
+					</p>
+					<div className={ qrClasses }>
+						{ this.state.otpAuthUri && <QRCode value={ this.state.otpAuthUri } size={ 150 } /> }
 					</div>
-					{ this.renderButtons() }
-				</form>
-			</div>
-		);
-	},
-} );
+				</div>
+			);
+		},
+
+		renderTimeCode: function() {
+			return (
+				<div className="security-2fa-enable__time-code-block">
+					<p className="security-2fa-enable__time-instruction">
+						{ this.props.translate(
+							'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+							{
+								components: {
+									toggleMethodLink: this.getToggleLink(),
+								},
+							}
+						) }
+					</p>
+					<p className="security-2fa-enable__time-code">{ this.state.timeCode }</p>
+				</div>
+			);
+		},
+
+		renderCodeBlock: function() {
+			if ( 'sms' === this.state.method ) {
+				return null;
+			}
+
+			return (
+				<div className="security-2fa-enable__code-block">
+					{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
+				</div>
+			);
+		},
+
+		renderInputHelp: function() {
+			if ( 'sms' === this.state.method ) {
+				return (
+					<FormLabel htmlFor="verification-code">
+						{ this.props.translate( 'Enter the code you receive via SMS:' ) }
+					</FormLabel>
+				);
+			}
+
+			return (
+				<p>{ this.props.translate( 'Then enter the six digit code provided by the app:' ) }</p>
+			);
+		},
+
+		toggleMethod: function( event ) {
+			event.preventDefault();
+			this.setState( { method: 'scan' === this.state.method ? 'time' : 'scan' } );
+		},
+
+		renderInputOptions: function() {
+			if ( 'sms' === this.state.method ) {
+				return null;
+			}
+
+			return (
+				<div className="security-2fa-enable__app-options">
+					<p>
+						{ this.props.translate(
+							'Not sure what this screen means? You may need to download ' +
+								'{{authyLink}}Authy{{/authyLink}} or ' +
+								'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
+								'for your phone.',
+							{
+								components: {
+									authyLink: (
+										<a
+											href="https://www.authy.com/users/"
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ function() {
+												analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
+											} }
+										/>
+									),
+									googleAuthenticatorLink: (
+										<a
+											href="https://support.google.com/accounts/answer/1066447?hl=en"
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ function() {
+												analytics.ga.recordEvent(
+													'Me',
+													'Clicked On 2fa Download Google Authenticator Link'
+												);
+											} }
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</div>
+			);
+		},
+
+		clearLastError: function() {
+			this.setState( { lastError: false, lastErrorType: false } );
+		},
+
+		possiblyRenderError: function() {
+			if ( ! this.state.lastError ) {
+				return null;
+			}
+
+			return (
+				<Notice
+					status={ this.state.lastErrorType }
+					onDismissClick={ this.clearLastError }
+					text={ this.state.lastError }
+				/>
+			);
+		},
+
+		renderInputBlock: function() {
+			return (
+				<div className="security-2fa-enable__next">
+					{ this.renderInputHelp() }
+					<FormTelInput
+						autoComplete="off"
+						autoFocus
+						disabled={ this.state.submittingForm }
+						name="verification-code"
+						placeholder={
+							'sms' === this.state.method ? (
+								constants.sevenDigit2faPlaceholder
+							) : (
+								constants.sixDigit2faPlaceholder
+							)
+						}
+						valueLink={ this.linkState( 'verificationCode' ) }
+						onFocus={ function() {
+							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
+						} }
+					/>
+					{ 'sms' === this.state.method && this.state.smsRequestPerformed ? (
+						<FormSettingExplanation>
+							{ this.props.translate(
+								'A code has been sent to your device via SMS.  ' +
+									'You may request another code after one minute.'
+							) }
+						</FormSettingExplanation>
+					) : null }
+					{ this.possiblyRenderError() }
+					{ this.renderInputOptions() }
+				</div>
+			);
+		},
+
+		renderButtons: function() {
+			return (
+				<FormButtonsBar className="security-2fa-enable__buttons-bar">
+					<FormButton
+						className="security-2fa-enable__verify"
+						disabled={ this.getFormDisabled() }
+						onClick={ function() {
+							analytics.ga.recordEvent(
+								'Me',
+								'Clicked On Enable 2fa Button',
+								'method',
+								this.state.method
+							);
+						}.bind( this ) }
+					>
+						{ this.state.submittingCode ? (
+							this.props.translate( 'Enabling…', {
+								context: 'A button label used during Two-Step setup.',
+							} )
+						) : (
+							this.props.translate( 'Enable', {
+								context: 'A button label used during Two-Step setup.',
+							} )
+						) }
+					</FormButton>
+
+					<FormButton
+						className="security-2fa-enable__cancel"
+						isPrimary={ false }
+						onClick={ function( event ) {
+							analytics.ga.recordEvent(
+								'Me',
+								'Clicked On Step 2 Cancel 2fa Button',
+								'method',
+								this.state.method
+							);
+							this.props.onCancel( event );
+						}.bind( this ) }
+					>
+						{ this.props.translate( 'Cancel' ) }
+					</FormButton>
+
+					{ 'sms' === this.state.method ? (
+						<FormButton
+							disabled={ ! this.state.smsRequestsAllowed }
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent( 'Me', 'Clicked On Resend SMS Button' );
+								this.onResendCode( event );
+							}.bind( this ) }
+						>
+							{ this.props.translate( 'Resend Code', {
+								context: 'A button label to let a user get the SMS code sent again.',
+							} ) }
+						</FormButton>
+					) : (
+						<FormButton
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
+								this.onVerifyBySMS( event );
+							}.bind( this ) }
+						>
+							{ this.props.translate( 'Use SMS', {
+								context: 'A button label to let a user switch to enabling Two-Step by SMS.',
+							} ) }
+						</FormButton>
+					) }
+				</FormButtonsBar>
+			);
+		},
+
+		render: function() {
+			return (
+				<div>
+					<Security2faProgress step={ 2 } />
+					<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
+						<div className="security-2fa-enable__inner">
+							{ this.renderCodeBlock() }
+							{ this.renderInputBlock() }
+						</div>
+						{ this.renderButtons() }
+					</form>
+				</div>
+			);
+		},
+	} )
+);

@@ -294,6 +294,13 @@ class PostComment extends React.PureComponent {
 				postId: this.props.post.ID,
 				displayType: POST_COMMENT_DISPLAY_TYPES.full,
 			} );
+		recordAction( 'comment_read_more_click' );
+		recordGaEvent( 'Clicked Comment Read More' );
+		recordTrack( 'calypso_reader_comment_read_more_click', {
+			blog_id: this.props.post.site_ID,
+			post_id: this.props.post.ID,
+			comment_id: this.props.commentId,
+		} );
 	};
 
 	render() {

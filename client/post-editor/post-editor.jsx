@@ -999,8 +999,8 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		const currentDate = this.moment( date );
-		const modifiedDate = this.moment( savedPost.date );
+		const currentDate = this.props.moment( date );
+		const modifiedDate = this.props.moment( savedPost.date );
 		const dateChange = ! (
 			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
 			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
@@ -1063,7 +1063,9 @@ export const PostEditor = React.createClass( {
 			const referrer = get( window, 'document.referrer', '' );
 			const referrerDomain = parseUrl( referrer ).hostname;
 			const shouldReturnToSite =
-				this.props.isEditorOnlyRouteInHistory && referrerDomain === this.props.selectedSiteDomain;
+				'updated' === message &&
+				this.props.isEditorOnlyRouteInHistory &&
+				referrerDomain === this.props.selectedSiteDomain;
 
 			if ( shouldReturnToSite ) {
 				window.location.href = this.getExternalUrl();

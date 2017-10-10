@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 
@@ -13,31 +14,33 @@ import classnames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
-	displayName: 'CustomizerLoadingPanel',
+export default localize(
+	React.createClass( {
+		displayName: 'CustomizerLoadingPanel',
 
-	propTypes: {
-		isLoaded: PropTypes.bool,
-	},
+		propTypes: {
+			isLoaded: PropTypes.bool,
+		},
 
-	getDefaultProps: function() {
-		return {
-			isLoaded: false,
-		};
-	},
+		getDefaultProps: function() {
+			return {
+				isLoaded: false,
+			};
+		},
 
-	render: function() {
-		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
-			'is-iframe-loaded': this.props.isLoaded,
-		} );
+		render: function() {
+			const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
+				'is-iframe-loaded': this.props.isLoaded,
+			} );
 
-		return (
-			<div className={ noticeClassNames }>
-				<div className="customizer-loading-panel__notice-label">
-					<Spinner />
-					{ this.translate( 'Loading the Customizer…' ) }
+			return (
+				<div className={ noticeClassNames }>
+					<div className="customizer-loading-panel__notice-label">
+						<Spinner />
+						{ this.props.translate( 'Loading the Customizer…' ) }
+					</div>
 				</div>
-			</div>
-		);
-	},
-} );
+			);
+		},
+	} )
+);

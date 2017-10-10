@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import MediaLibrary from 'my-sites/media-library';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Dialog from 'components/dialog';
-import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
+import EditorMediaModalDetail from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
