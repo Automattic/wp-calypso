@@ -99,7 +99,7 @@ class RequiredPluginsInstallView extends Component {
 		const { automatedTransferStatus: currentAutomatedTransferStatus, siteId } = this.props;
 		const { automatedTransferStatus: nextAutomatedTransferStatus } = nextProps;
 
-		if ( currentAutomatedTransferStatus === ACTIVE && nextAutomatedTransferStatus === UPLOADING ) {
+		if ( ACTIVE === currentAutomatedTransferStatus && UPLOADING === nextAutomatedTransferStatus ) {
 			this.setState( {
 				progress: this.state.progress + TIME_TO_TRANSFER_UPLOADING,
 			} );
@@ -108,8 +108,8 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if (
-			currentAutomatedTransferStatus === UPLOADING &&
-			nextAutomatedTransferStatus === BACKFILLING
+			UPLOADING === currentAutomatedTransferStatus &&
+			BACKFILLING === nextAutomatedTransferStatus
 		) {
 			this.setState( {
 				progress: this.state.progress + TIME_TO_TRANSFER_BACKFILLING,
@@ -119,8 +119,8 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if (
-			currentAutomatedTransferStatus === BACKFILLING &&
-			nextAutomatedTransferStatus === COMPLETE
+			BACKFILLING === currentAutomatedTransferStatus &&
+			COMPLETE === nextAutomatedTransferStatus
 		) {
 			this.setState( {
 				engineState: 'INITIALIZING',
@@ -434,7 +434,7 @@ class RequiredPluginsInstallView extends Component {
 			return;
 		}
 
-		if ( automatedTransferStatus === COMPLETE && ! isSiteAutomatedTransfer ) {
+		if ( COMPLETE === automatedTransferStatus && ! isSiteAutomatedTransfer ) {
 			return <QuerySites siteId={ siteId } />;
 		}
 	};
