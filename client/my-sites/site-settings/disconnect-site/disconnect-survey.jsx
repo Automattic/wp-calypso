@@ -49,18 +49,18 @@ class DisconnectSurvey extends Component {
 
 	renderEntryQuestion() {
 		const { translate, siteSlug } = this.props;
-
-		const textShareWhy = translate(
-			'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
-			{
-				textOnly: true,
-				args: { siteName: siteSlug },
-			}
-		);
 		const options = this.getOptions();
+
 		return (
 			<div>
-				<Card className="disconnect-site__question">{ textShareWhy }</Card>
+				<Card className="disconnect-site__question">
+					{ translate(
+						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
+						{
+							args: { siteName: siteSlug },
+						}
+					) }
+				</Card>
 				{ options.map( ( { label, value } ) => (
 					<CompactCard
 						href="#"
