@@ -33,6 +33,13 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { isSiteAutomatedTransfer as isSiteAutomatedTransferSelector } from 'state/selectors';
 
+// Time in seconds to complete various steps.
+const TIME_TO_TRANSFER_ELIGIBILITY = 10;
+const TIME_TO_TRANSFER_UPLOADING = 8;
+const TIME_TO_TRANSFER_BACKFILLING = 22;
+const TIME_TO_TRANSFER_COMPLETE = 6;
+const TIME_TO_PLUGIN_INSTALLATION = 13;
+
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
@@ -47,8 +54,7 @@ class RequiredPluginsInstallView extends Component {
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			stepIndex: 0,
-			numTotalSteps: 0,
+			progress: 0,
 		};
 		this.updateTimer = false;
 		this.transferStatusFetcher = null;
@@ -82,12 +88,48 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			this.setState( {
-				engineState: 'DOING_TRANSFER',
-				stepIndex: 1,
-				numTotalSteps: 6,
+				progress: this.state.progress + TIME_TO_TRANSFER_ELIGIBILITY,
 			} );
 		}
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		const { ACTIVE, UPLOADING, BACKFILLING, COMPLETE } = transferStates;
+		const { automatedTransferStatus: currentAutomatedTransferStatus, siteId } = this.props;
+		const { automatedTransferStatus: nextAutomatedTransferStatus } = nextProps;
+
+		if ( currentAutomatedTransferStatus === ACTIVE && nextAutomatedTransferStatus === UPLOADING ) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_UPLOADING,
+			} );
+
+			return;
+		}
+
+		if (
+			currentAutomatedTransferStatus === UPLOADING &&
+			nextAutomatedTransferStatus === BACKFILLING
+		) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_BACKFILLING,
+			} );
+
+			return;
+		}
+
+		if (
+			currentAutomatedTransferStatus === BACKFILLING &&
+			nextAutomatedTransferStatus === COMPLETE
+		) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+				workingOn: '',
+				progress: this.state.progress + TIME_TO_TRANSFER_COMPLETE,
+			} );
+
+			this.props.fetchPlugins( [ siteId ] );
+		}
+	}
 
 	createUpdateTimer = () => {
 		if ( this.updateTimer ) {
@@ -125,25 +167,8 @@ class RequiredPluginsInstallView extends Component {
 		};
 	};
 
-	doTransferStatusPolling = () => {
-		const { automatedTransferStatus, siteId } = this.props;
-
-		const { COMPLETE } = transferStates;
-
-		if ( automatedTransferStatus === COMPLETE ) {
-			this.setState( {
-				engineState: 'INITIALIZING',
-				workingOn: '',
-				stepIndex: 3,
-				numTotalSteps: 6,
-			} );
-
-			this.props.fetchPlugins( [ siteId ] );
-		}
-	};
-
 	doInitialization = () => {
-		const { site, sitePlugins, wporg, signupIsStore } = this.props;
+		const { site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -200,23 +225,17 @@ class RequiredPluginsInstallView extends Component {
 
 		const toInstall = [];
 		const toActivate = [];
-		let numTotalSteps = this.state.numTotalSteps;
+		let pluginInstallationTotalSteps = 0;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
 				toActivate.push( requiredPluginSlug );
-				numTotalSteps++;
+				pluginInstallationTotalSteps++;
 			} else if ( ! pluginFound.active ) {
 				toActivate.push( requiredPluginSlug );
-				numTotalSteps++;
+				pluginInstallationTotalSteps++;
 			}
-		}
-
-		let stepIndex = this.state.stepIndex;
-
-		if ( signupIsStore ) {
-			stepIndex += numTotalSteps - this.state.numTotalSteps;
 		}
 
 		if ( toInstall.length ) {
@@ -225,8 +244,7 @@ class RequiredPluginsInstallView extends Component {
 				toActivate,
 				toInstall,
 				workingOn: '',
-				numTotalSteps,
-				stepIndex,
+				pluginInstallationTotalSteps,
 			} );
 			return;
 		}
@@ -236,8 +254,7 @@ class RequiredPluginsInstallView extends Component {
 				engineState: 'ACTIVATING',
 				toActivate,
 				workingOn: '',
-				numTotalSteps,
-				stepIndex,
+				pluginInstallationTotalSteps,
 			} );
 			return;
 		}
@@ -277,7 +294,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound ) {
 			this.setState( {
 				workingOn: '',
-				stepIndex: this.state.stepIndex + 1,
+				progress: this.state.progress + this.state.pluginInstallationTotalSteps,
 			} );
 		}
 	};
@@ -327,7 +344,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound && pluginFound.active ) {
 			this.setState( {
 				workingOn: '',
-				stepIndex: this.state.stepIndex + 1,
+				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 	};
@@ -343,9 +360,6 @@ class RequiredPluginsInstallView extends Component {
 
 	updateEngine = () => {
 		switch ( this.state.engineState ) {
-			case 'DOING_TRANSFER':
-				this.doTransferStatusPolling();
-				break;
 			case 'INITIALIZING':
 				this.doInitialization();
 				break;
@@ -361,11 +375,16 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getProgress = () => {
-		const { stepIndex, numTotalSteps } = this.state;
+	getPluginInstallationTime() {
+		const { pluginInstallationTotalSteps } = this.state;
 
-		return stepIndex / numTotalSteps * 100;
-	};
+		if ( pluginInstallationTotalSteps ) {
+			return TIME_TO_PLUGIN_INSTALLATION / pluginInstallationTotalSteps;
+		}
+
+		// If there's some error, return 3 seconds for a single plugin installation time.
+		return 3;
+	}
 
 	startSetup = () => {
 		const { signupIsStore } = this.props;
@@ -374,15 +393,11 @@ class RequiredPluginsInstallView extends Component {
 			action: 'initial-setup',
 		} );
 
-		let engineState = 'INITIALIZING';
-
-		if ( signupIsStore ) {
-			engineState = 'DOING_TRANSFER';
+		if ( ! signupIsStore ) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+			} );
 		}
-
-		this.setState( {
-			engineState,
-		} );
 	};
 
 	renderConfirmScreen = () => {
@@ -423,15 +438,29 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
+	getTotalProgress() {
+		const { signupIsStore } = this.props;
+
+		if ( signupIsStore ) {
+			return (
+				TIME_TO_TRANSFER_ELIGIBILITY +
+				TIME_TO_TRANSFER_UPLOADING +
+				TIME_TO_TRANSFER_BACKFILLING +
+				TIME_TO_TRANSFER_COMPLETE +
+				TIME_TO_PLUGIN_INSTALLATION
+			);
+		}
+
+		return TIME_TO_PLUGIN_INSTALLATION;
+	}
+
 	render = () => {
 		const { site, translate, signupIsStore } = this.props;
-		const { engineState } = this.state;
+		const { engineState, progress } = this.state;
 
 		if ( ! signupIsStore && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
 		}
-
-		const progress = this.getProgress();
 
 		return (
 			<div className="card dashboard__setup-wrapper">
@@ -443,7 +472,7 @@ class RequiredPluginsInstallView extends Component {
 					title={ translate( 'Setting up your store' ) }
 					subtitle={ translate( "Give us a minute and we'll move right along." ) }
 				>
-					<ProgressBar value={ progress } isPulsing />
+					<ProgressBar value={ progress } total={ this.getTotalProgress() } isPulsing />
 				</SetupHeader>
 			</div>
 		);
