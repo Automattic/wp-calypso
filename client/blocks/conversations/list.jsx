@@ -26,7 +26,7 @@ import { requestPostComments, requestComment, setActiveReply } from 'state/comme
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
- * Some of it is boilerplate stolen from PostCommnentList (all the activeXCommentId bits) but the special
+ * Some of it is boilerplate stolen from PostCommentList (all the activeXCommentId bits) but the special
  * convos parts are related to:
  *  1. caterpillars
  *  2. commentsToShow
@@ -40,7 +40,7 @@ import { requestPostComments, requestComment, setActiveReply } from 'state/comme
  *   hands that down to all of the PostComments so they will know how to render.
  *
  * This component will also display a caterpillar if it has any children comments that are hidden.
- * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost
+ * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost.
  */
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
