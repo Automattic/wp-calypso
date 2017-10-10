@@ -34,11 +34,11 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { isSiteAutomatedTransfer as isSiteAutomatedTransferSelector } from 'state/selectors';
 
 // Time in seconds to complete various steps.
-const TIME_TO_TRANSFER_ELIGIBILITY = 10;
-const TIME_TO_TRANSFER_UPLOADING = 8;
-const TIME_TO_TRANSFER_BACKFILLING = 22;
+const TIME_TO_TRANSFER_ELIGIBILITY = 5;
+const TIME_TO_TRANSFER_UPLOADING = 5;
+const TIME_TO_TRANSFER_BACKFILLING = 25;
 const TIME_TO_TRANSFER_COMPLETE = 6;
-const TIME_TO_PLUGIN_INSTALLATION = 13;
+const TIME_TO_PLUGIN_INSTALLATION = 15;
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
@@ -55,6 +55,7 @@ class RequiredPluginsInstallView extends Component {
 			toInstall: [],
 			workingOn: '',
 			progress: 0,
+			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
 		this.transferStatusFetcher = null;
@@ -294,7 +295,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound ) {
 			this.setState( {
 				workingOn: '',
-				progress: this.state.progress + this.state.pluginInstallationTotalSteps,
+				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 	};
@@ -438,7 +439,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getTotalProgress() {
+	getTotalSeconds() {
 		const { signupIsStore } = this.props;
 
 		if ( signupIsStore ) {
@@ -456,7 +457,7 @@ class RequiredPluginsInstallView extends Component {
 
 	render = () => {
 		const { site, translate, signupIsStore } = this.props;
-		const { engineState, progress } = this.state;
+		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! signupIsStore && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
@@ -472,7 +473,7 @@ class RequiredPluginsInstallView extends Component {
 					title={ translate( 'Setting up your store' ) }
 					subtitle={ translate( "Give us a minute and we'll move right along." ) }
 				>
-					<ProgressBar value={ progress } total={ this.getTotalProgress() } isPulsing />
+					<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
 				</SetupHeader>
 			</div>
 		);
