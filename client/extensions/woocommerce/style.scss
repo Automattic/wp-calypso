@@ -1,3 +1,6 @@
+// Core CSS Dependencies
+@import 'assets/stylesheets/shared/utils';      // utilities that are used by all CSS but don't produce any code
+
 .woocommerce {
 	flex-grow: 1;
 
