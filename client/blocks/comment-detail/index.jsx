@@ -101,7 +101,9 @@ export class CommentDetail extends Component {
 		}
 	}
 
-	deleteCommentPermanently = () => {
+	deleteCommentPermanently = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -120,7 +122,9 @@ export class CommentDetail extends Component {
 			? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
 			: false;
 
-	toggleApprove = () => {
+	toggleApprove = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -150,7 +154,9 @@ export class CommentDetail extends Component {
 		}
 	};
 
-	toggleLike = () => {
+	toggleLike = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -160,7 +166,9 @@ export class CommentDetail extends Component {
 
 	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
-	toggleSpam = () => {
+	toggleSpam = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -172,7 +180,9 @@ export class CommentDetail extends Component {
 		);
 	};
 
-	toggleTrash = () => {
+	toggleTrash = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
