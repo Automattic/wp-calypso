@@ -115,6 +115,10 @@ class CartMessages extends PureComponent {
 			);
 		}
 	}
+
+	render() {
+		return null;
+	}
 }
 
 export default localize( CartMessages );
