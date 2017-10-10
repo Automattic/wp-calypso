@@ -117,7 +117,7 @@ const transferDomain = context => {
 		<Main>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
 			<CartData>
-				<TransferDomain initialQuery={ context.query.initialQuery } />
+				<TransferDomain basePath={ basePath } initialQuery={ context.query.initialQuery } />
 			</CartData>
 		</Main>,
 		document.getElementById( 'primary' ),

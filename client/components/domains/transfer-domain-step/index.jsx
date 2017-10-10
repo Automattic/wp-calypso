@@ -8,17 +8,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { endsWith, noop } from 'lodash';
+import Gridicon from 'gridicons';
+import page from 'page';
+import qs from 'qs';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	recordAddDomainButtonClickInMapDomain,
@@ -27,8 +28,10 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
-class MapDomainStep extends React.Component {
+class TransferDomainStep extends React.Component {
 	static propTypes = {
 		products: PropTypes.object.isRequired,
 		cart: PropTypes.object,
@@ -37,19 +40,20 @@ class MapDomainStep extends React.Component {
 		analyticsSection: PropTypes.string.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		onRegisterDomain: PropTypes.func.isRequired,
-		onMapDomain: PropTypes.func.isRequired,
+		onTransferDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onSave: noop,
+		analyticsSection: 'domains',
 	};
 
 	state = this.getDefaultState();
 
 	getDefaultState() {
 		return {
-			searchQuery: this.props.initialQuery,
+			searchQuery: this.props.initialQuery || '',
 		};
 	}
 
@@ -75,60 +79,86 @@ class MapDomainStep extends React.Component {
 		}
 	}
 
+	getMapDomainUrl() {
+		const { basePath, selectedSite } = this.props;
+		let mapDomainUrl;
+
+		const basePathForMapping = endsWith( basePath, '/transfer' )
+			? basePath.substring( 0, basePath.length - 9 )
+			: basePath;
+
+		const query = qs.stringify( { initialQuery: this.state.searchQuery.trim() } );
+		mapDomainUrl = `${ basePathForMapping }/mapping`;
+		if ( selectedSite ) {
+			mapDomainUrl += `/${ selectedSite.slug }?${ query }`;
+		}
+
+		return mapDomainUrl;
+	}
+
+	goToMapDomainStep = event => {
+		event.preventDefault();
+
+		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
+
+		page( this.getMapDomainUrl() );
+	};
+
 	render() {
-		const suggestion = this.props.products.domain_map
-			? {
-				cost: this.props.products.domain_map.cost_display,
-				product_slug: this.props.products.domain_map.product_slug,
-			}
-			: { cost: null, product_slug: '' };
+		const cost = this.props.products.domain_map
+			? this.props.products.domain_map.cost_display
+			: null;
 		const { translate } = this.props;
 
 		return (
-			<div className="map-domain-step">
+			<div className="transfer-domain-step">
 				{ this.notice() }
-				<form className="map-domain-step__form card" onSubmit={ this.handleFormSubmit }>
-					<div className="map-domain-step__domain-description">
+				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
+					<div className="transfer-domain-step__domain-description">
 						<p>
-							{ translate( "Map this domain to use it as your site's address.", {
-								context: 'Upgrades: Description in domain registration',
-								comment: "Explains how you could use a new domain name for your site's address.",
-							} ) }
+							{ translate( 'Use your own domain for your WordPress.com site.' ) }
+						</p>
+						<p>
+							{ translate( 'Enter the domain you want to transfer to WordPress.com and manage your domain and site' +
+								' all in one place. Domains purchased in the last 60 days can\'t be transferred. {{a}}Learn More{{/a}}',
+								{
+									components: { a: <a href="#" /> },
+								}
+							) }
 						</p>
 					</div>
 
-					<DomainProductPrice
-						rule={ cartItems.getDomainPriceRule(
-							this.props.domainsWithPlansOnly,
-							this.props.selectedSite,
-							this.props.cart,
-							suggestion
-						) }
-						price={ suggestion.cost }
-					/>
-
-					<div className="map-domain-step__add-domain" role="group">
+					<div className="transfer-domain-step__add-domain" role="group">
 						<input
-							className="map-domain-step__external-domain"
+							className="transfer-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ translate( 'Enter a domain' ) }
+							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
 							autoFocus
 						/>
-						<button
-							className="map-domain-step__go button is-primary"
-							onClick={ this.recordGoButtonClick }
-						>
-							{ translate( 'Add', {
-								context: 'Upgrades: Label for mapping an existing domain',
-							} ) }
-						</button>
 					</div>
-
+					<button
+						className="transfer-domain-step__go button is-primary"
+						onClick={ this.recordGoButtonClick }
+					>
+						{ translate( 'Transfer to WordPress.com' ) }
+					</button>
 					{ this.domainRegistrationUpsell() }
+					<div>
+						<p>
+							{ translate(
+								'Don\'t want to transfer? You can {{a}}map it{{/a}} for %(cost)s instead.',
+								{
+									args: { cost },
+									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
+								}
+							) }
+							<Gridicon icon="help" size={ 24 } />
+						</p>
+					</div>
 				</form>
 			</div>
 		);
@@ -195,7 +225,7 @@ class MapDomainStep extends React.Component {
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:
-					this.props.onMapDomain( domain );
+					this.props.onTransferDomain( domain );
 					return;
 
 				case domainAvailability.AVAILABLE:
@@ -211,14 +241,22 @@ class MapDomainStep extends React.Component {
 	};
 }
 
+const recordMapDomainButtonClick = section =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
+		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+	);
+
 export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,
 		recordFormSubmitInMapDomain,
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
+		recordMapDomainButtonClick,
 	}
-)( localize( MapDomainStep ) );
+)( localize( TransferDomainStep ) );

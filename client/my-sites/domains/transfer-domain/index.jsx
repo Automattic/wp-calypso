@@ -3,7 +3,6 @@
  *
  * @format
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -14,20 +13,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import MapDomainStep from 'components/domains/map-domain-step';
+import TransferDomainStep from 'components/domains/transfer-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
-import wp from 'lib/wp';
-import paths from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
-
-const wpcom = wp.undocumented();
 
 export class TransferDomain extends Component {
 	static propTypes = {
@@ -55,11 +50,6 @@ export class TransferDomain extends Component {
 			return;
 		}
 
-		if ( selectedSite.is_vip ) {
-			page( paths.domainManagementList( selectedSiteSlug ) );
-			return;
-		}
-
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
@@ -76,25 +66,12 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleMapDomain = domain => {
-		const { selectedSite, selectedSiteSlug } = this.props;
+	handleTransferDomain = domain => {
+		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
 
-		// For VIP sites we handle domain mappings differently
-		// We don't go through the usual checkout process
-		// Instead, we add the mapping directly
-		if ( selectedSite.is_vip ) {
-			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
-				.then(
-					() => page( paths.domainManagementList( selectedSiteSlug ) ),
-					error => this.setState( { errorMessage: error.message } )
-				);
-			return;
-		}
-
-		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
+		upgradesActions.addItem( cartItems.domainTransfer( { domain } ) );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};
@@ -109,7 +86,7 @@ export class TransferDomain extends Component {
 
 	checkSiteIsUpgradeable( props ) {
 		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
-			page.redirect( '/domains/add/mapping' );
+			page.redirect( '/domains/add/transfer' );
 		}
 	}
 
@@ -129,18 +106,19 @@ export class TransferDomain extends Component {
 			<span>
 				<QueryProductsList />
 
-				<HeaderCake onClick={ this.goBack }>{ translate( 'Map a Domain' ) }</HeaderCake>
+				<HeaderCake onClick={ this.goBack }>{ translate( 'Use My Own Domain' ) }</HeaderCake>
 
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
-				<MapDomainStep
+				<TransferDomainStep
+					basePath={ this.props.basePath }
 					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					products={ productsList }
 					selectedSite={ selectedSite }
 					onRegisterDomain={ this.handleRegisterDomain }
-					onMapDomain={ this.handleMapDomain }
+					onTransferDomain={ this.handleTransferDomain }
 					analyticsSection="domains"
 				/>
 			</span>

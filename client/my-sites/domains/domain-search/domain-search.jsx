@@ -63,6 +63,11 @@ class DomainSearch extends Component {
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
+	handleAddTransfer = domain => {
+		upgradesActions.addItem( cartItems.domainTransfer( { domain } ) );
+		page( '/checkout/' + this.props.selectedSiteSlug );
+	};
+
 	componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
@@ -145,6 +150,7 @@ class DomainSearch extends Component {
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
+								onAddTransfer={ this.handleAddTransfer }
 								cart={ this.props.cart }
 								selectedSite={ selectedSite }
 								offerUnavailableOption

@@ -165,6 +165,14 @@ export default function() {
 		);
 
 		page(
+			'/domains/add/transfer',
+			controller.siteSelection,
+			domainsController.domainsAddHeader,
+			controller.jetPackWarning,
+			controller.sites
+		);
+
+		page(
 			'/domains/add/site-redirect',
 			controller.siteSelection,
 			domainsController.domainsAddRedirectHeader,
@@ -220,20 +228,12 @@ export default function() {
 		);
 
 		page(
-			'/domains/add/transfer',
-			controller.siteSelection,
-			domainsController.domainsAddHeader,
-			controller.jetPackWarning,
-			controller.sites
-		);
-
-		page(
 			'/domains/add/transfer/:domain',
 			controller.siteSelection,
 			controller.navigation,
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 			controller.jetPackWarning,
-			domainsController.mapDomain
+			domainsController.transferDomain
 		);
 	}
 
