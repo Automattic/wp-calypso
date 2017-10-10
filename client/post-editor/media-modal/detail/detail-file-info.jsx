@@ -15,7 +15,7 @@ import classNames from 'classnames';
  */
 import MediaUtils from 'lib/media/utils';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'EditorMediaModalDetailFileInfo',
 

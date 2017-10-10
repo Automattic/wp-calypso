@@ -17,7 +17,7 @@ import { preventWidows } from 'lib/formatting';
 import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'MediaLibraryListPlanPromo',
 

@@ -15,7 +15,7 @@ import qs from 'qs';
 /**
  * Module exports.
  */
-module.exports = jsonp;
+export default jsonp;
 
 /**
  * Callback index.

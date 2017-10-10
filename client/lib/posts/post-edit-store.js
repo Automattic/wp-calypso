@@ -405,4 +405,4 @@ emitter( PostEditStore );
 
 PostEditStore.dispatchToken = Dispatcher.register( dispatcherCallback );
 
-module.exports = PostEditStore;
+export default PostEditStore;

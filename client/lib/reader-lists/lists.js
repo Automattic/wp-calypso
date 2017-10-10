@@ -128,4 +128,4 @@ ListStore.dispatchToken = dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = ListStore;
+export default ListStore;

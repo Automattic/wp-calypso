@@ -160,7 +160,7 @@ function isPayPalExpressEnabled( cart ) {
 	);
 }
 
-module.exports = {
+export default {
 	applyCoupon,
 	canRemoveFromCart,
 	cartItems,

@@ -20,7 +20,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
 

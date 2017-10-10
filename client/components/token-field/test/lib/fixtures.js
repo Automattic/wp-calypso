@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	specialTokens: {
 		textEscaped: [ 'a   b', 'i &lt;3 tags', '1&amp;2&amp;3&amp;4' ],
 		htmlEscaped: [ 'a&nbsp;&nbsp;&nbsp;b', 'i&nbsp;&lt;3&nbsp;tags', '1&amp;2&amp;3&amp;4' ],

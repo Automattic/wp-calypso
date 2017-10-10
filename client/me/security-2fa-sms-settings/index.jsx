@@ -26,7 +26,7 @@ import { forSms } from 'lib/countries-list';
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
 
-module.exports = protectForm(
+export default protectForm(
 	localize(
 		React.createClass( {
 			displayName: 'Security2faSMSSettings',

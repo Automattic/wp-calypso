@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsPreviewAction from './preview-action';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SharingButtonsPreviewPlaceholder',
 

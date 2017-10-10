@@ -104,4 +104,4 @@ var PostImage = React.createClass( {
 	},
 } );
 
-module.exports = PostImage;
+export default PostImage;

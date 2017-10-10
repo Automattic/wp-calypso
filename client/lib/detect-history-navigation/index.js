@@ -1,7 +1,7 @@
 /** @format */
 let _loadedViaHistory = false;
 
-module.exports = {
+export default {
 	start: function() {
 		// add a popstate listener that sets the flag
 		window.addEventListener( 'popstate', function( event ) {

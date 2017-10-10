@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 
 var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
-module.exports = {
+export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
 		var numberOfCustomButtons = 0,
 			query = {};

@@ -22,7 +22,7 @@ import Buttons from './buttons';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 

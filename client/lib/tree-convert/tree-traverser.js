@@ -104,7 +104,7 @@ function siblingInserter( srcNode, dstId, position ) {
 	};
 }
 
-module.exports = {
+export default {
 	/**
 	 * Traverses a tree of menu items and calls a set of filters on each item
 	 * node it enters. Warning: no data is ever cloned internally.

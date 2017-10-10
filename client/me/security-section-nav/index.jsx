@@ -17,7 +17,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SecuritySectionNav',
 
 	propTypes: {

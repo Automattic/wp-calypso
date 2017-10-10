@@ -17,7 +17,7 @@ import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SharingButtonsTray',
 

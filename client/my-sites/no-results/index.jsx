@@ -24,4 +24,4 @@ var noResults = React.createClass( {
 	},
 } );
 
-module.exports = noResults;
+export default noResults;

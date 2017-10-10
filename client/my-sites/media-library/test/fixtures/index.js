@@ -41,7 +41,7 @@
  * @format
  */
 
-module.exports = {
+export default {
 	media: [
 		{
 			ID: 1009,

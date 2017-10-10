@@ -117,10 +117,10 @@ ProductsList.prototype.hasLoadedFromServer = function() {
 
 var productsList = new ProductsList();
 
-module.exports = function() {
+export default function() {
 	if ( ! productsList.hasLoadedFromServer() && ! productsList.isFetching ) {
 		productsList.get();
 	}
 
 	return productsList;
-};
+}

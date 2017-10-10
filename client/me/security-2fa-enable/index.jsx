@@ -27,7 +27,7 @@ import constants from 'me/constants';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faEnable',
 

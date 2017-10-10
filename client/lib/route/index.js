@@ -11,7 +11,7 @@ import { assign } from 'lodash';
  */
 import path from './path';
 
-module.exports = assign(
+export default assign(
 	{
 		untrailingslashit: require( './untrailingslashit' ),
 		trailingslashit: require( './trailingslashit' ),

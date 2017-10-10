@@ -74,4 +74,4 @@ var TokenFieldWrapper = React.createClass( {
 	},
 } );
 
-module.exports = TokenFieldWrapper;
+export default TokenFieldWrapper;

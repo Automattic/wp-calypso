@@ -10,7 +10,7 @@ import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash'
 const sortByMenuOrder = list => sortBy( list, 'menu_order' );
 const getParentId = page => page.parent && page.parent.ID;
 
-module.exports = {
+export default {
 	editLinkForPage: function( page, site ) {
 		if ( ! ( page && page.ID ) || ! ( site && site.ID ) ) {
 			return null;

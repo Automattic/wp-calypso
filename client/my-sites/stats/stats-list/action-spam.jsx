@@ -17,7 +17,7 @@ import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'StatsActionSpam',
 

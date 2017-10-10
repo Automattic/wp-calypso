@@ -30,7 +30,7 @@ import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'PaypalPaymentBox',
 

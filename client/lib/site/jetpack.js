@@ -70,4 +70,4 @@ JetpackSite.prototype.getRemoteManagementURL = function() {
 	return this.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
 };
 
-module.exports = JetpackSite;
+export default JetpackSite;

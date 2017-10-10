@@ -54,4 +54,4 @@ var CartTotal = React.createClass( {
 	},
 } );
 
-module.exports = localize( CartTotal );
+export default localize( CartTotal );

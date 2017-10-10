@@ -30,7 +30,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faBackupCodesList',
 

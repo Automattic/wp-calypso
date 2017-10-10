@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	active: false,
 	author: 'Mullenweg Matt',
 	author_url: 'https://ma.tt/',

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import SiteIcon from 'blocks/site-icon';
 
-module.exports = {
+export default {
 	Page: localize(
 		React.createClass( {
 			displayName: 'PagePlaceholder',

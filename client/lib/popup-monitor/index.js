@@ -119,4 +119,4 @@ PopupMonitor.prototype.startMonitoring = function( name, windowInstance ) {
 /**
  * Expose `PopupMonitor`
  */
-module.exports = PopupMonitor;
+export default PopupMonitor;

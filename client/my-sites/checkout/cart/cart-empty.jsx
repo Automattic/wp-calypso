@@ -45,4 +45,4 @@ var CartEmpty = React.createClass( {
 	},
 } );
 
-module.exports = localize( CartEmpty );
+export default localize( CartEmpty );

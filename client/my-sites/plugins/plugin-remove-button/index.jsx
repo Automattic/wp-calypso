@@ -19,7 +19,7 @@ import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'PluginRemoveButton',
 

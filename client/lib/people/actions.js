@@ -15,4 +15,4 @@ var PeopleActions = {
 	},
 };
 
-module.exports = PeopleActions;
+export default PeopleActions;

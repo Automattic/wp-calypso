@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {

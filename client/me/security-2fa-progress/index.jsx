@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import ProgressItem from './progress-item';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faProgress',
 

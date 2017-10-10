@@ -201,4 +201,4 @@ var TransactionsTable = React.createClass( {
 	},
 } );
 
-module.exports = localize( TransactionsTable );
+export default localize( TransactionsTable );

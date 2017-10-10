@@ -13,7 +13,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SharingButtonsStyle',
 

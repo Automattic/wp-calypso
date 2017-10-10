@@ -24,7 +24,7 @@ import smartSetState from 'lib/react-smart-set-state';
 
 const debug = debugFactory( 'calypso:infinite-list' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'InfiniteList',
 
 	lastScrollTop: -1,

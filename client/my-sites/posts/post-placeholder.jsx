@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'PostPlaceholder',
 

@@ -4,7 +4,7 @@
  * @format
  */
 
-module.exports = function() {
+export default function() {
 	return {
 		getSite: function() {
 			return {};
@@ -16,4 +16,4 @@ module.exports = function() {
 			return [];
 		},
 	};
-};
+}

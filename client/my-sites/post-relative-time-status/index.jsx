@@ -14,7 +14,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'PostRelativeTime',
 

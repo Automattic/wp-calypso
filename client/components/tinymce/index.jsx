@@ -165,7 +165,7 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {

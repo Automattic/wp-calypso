@@ -166,7 +166,7 @@ let Viewers = localize(
 	} )
 );
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'ViewersList',
 

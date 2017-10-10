@@ -13,7 +13,7 @@ import controller from 'my-sites/controller';
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
 
-module.exports = function() {
+export default function() {
 	SiftScience.recordUser();
 
 	page(
@@ -52,4 +52,4 @@ module.exports = function() {
 
 	// Visting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
-};
+}

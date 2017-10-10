@@ -15,7 +15,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'SecurityAccountRecoveryManageContactButtons',
 

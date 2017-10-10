@@ -15,7 +15,7 @@ import analytics from 'lib/analytics';
 import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'TermsOfService',
 

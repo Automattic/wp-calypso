@@ -335,7 +335,7 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
-module.exports = {
+export default {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
 	stripHTML: stripHTML,

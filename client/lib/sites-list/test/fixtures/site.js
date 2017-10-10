@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	ID: 77203074,
 	URL: 'http://example.com/site1',
 	canUpdateFiles: true,

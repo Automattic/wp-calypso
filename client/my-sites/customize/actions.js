@@ -56,4 +56,4 @@ var CustomizeActions = {
 	},
 };
 
-module.exports = CustomizeActions;
+export default CustomizeActions;

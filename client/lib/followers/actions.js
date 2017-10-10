@@ -70,4 +70,4 @@ var FollowersActions = {
 	},
 };
 
-module.exports = FollowersActions;
+export default FollowersActions;

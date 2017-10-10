@@ -57,4 +57,4 @@ var TokenInput = React.createClass( {
 	},
 } );
 
-module.exports = TokenInput;
+export default TokenInput;
