@@ -14,8 +14,8 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-const GridiconButton = ( { icon, label, e2e } ) => (
-	<div>
+export const GridiconButton = ( { icon, label, e2e } ) => (
+	<div className="wpcom-insert-menu__menu">
 		<Gridicon className="wpcom-insert-menu__menu-icon" icon={ icon } />
 		<span className="wpcom-insert-menu__menu-label" data-e2e-insert-type={ e2e }>
 			{ label }
@@ -24,7 +24,7 @@ const GridiconButton = ( { icon, label, e2e } ) => (
 );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const menuItems = [
+export const menuItems = [
 	{
 		name: 'insert_media_item',
 		item: <GridiconButton icon="add-image" label={ i18n.translate( 'Add Media' ) } e2e="media" />,
@@ -71,5 +71,3 @@ if ( config.isEnabled( 'simple-payments' ) ) {
 		cmd: 'simplePaymentsButton',
 	} );
 }
-
-export default menuItems;
