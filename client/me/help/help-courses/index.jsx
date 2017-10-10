@@ -3,24 +3,64 @@
  *
  * @format
  */
-
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Courses from './courses';
+import CourseList, { CourseListPlaceholder } from './course-list';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getHelpCourses } from 'state/help/courses/selectors';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { receiveHelpCourses } from 'state/help/courses/actions';
 import {
 	getUserPurchases,
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { receiveHelpCourses } from 'state/help/courses/actions';
-import { getHelpCourses } from 'state/help/courses/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+
+class Courses extends Component {
+	componentWillMount() {
+		this.fetchCoursesIfNeeded();
+	}
+
+	fetchCoursesIfNeeded() {
+		//TODO: When courses make it into the API we will no longer need this code.
+		//      We can move towards the use of something like <QueryHelpCourses />
+		const { courses, fetchCourses } = this.props;
+
+		if ( courses ) {
+			return;
+		}
+
+		fetchCourses();
+	}
+
+	render() {
+		const { courses, isBusinessPlanUser, isLoading, translate, userId } = this.props;
+
+		return (
+			<Main className="help-courses">
+				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
+					{ translate( 'Courses' ) }
+				</HeaderCake>
+				{ isLoading ? (
+					<CourseListPlaceholder />
+				) : (
+					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
+				) }
+
+				<QueryUserPurchases userId={ userId } />
+			</Main>
+		);
+	}
+}
 
 function getCourses() {
 	return [
