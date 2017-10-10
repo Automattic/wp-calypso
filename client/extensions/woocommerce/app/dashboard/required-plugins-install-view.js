@@ -49,7 +49,6 @@ class RequiredPluginsInstallView extends Component {
 			workingOn: '',
 			stepIndex: 0,
 			numTotalSteps: 0,
-			requestedTransferStatus: false,
 		};
 		this.updateTimer = false;
 		this.transferStatusFetcher = null;
@@ -72,9 +71,8 @@ class RequiredPluginsInstallView extends Component {
 
 	fetchAutomatedTransferStatus = () => {
 		const { signupIsStore, automatedTransferStatus } = this.props;
-		const { requestedTransferStatus } = this.state;
 
-		if ( signupIsStore && ! requestedTransferStatus ) {
+		if ( signupIsStore ) {
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 
 			if ( ! automatedTransferStatus ) {
@@ -85,7 +83,6 @@ class RequiredPluginsInstallView extends Component {
 
 			this.setState( {
 				engineState: 'DOING_TRANSFER',
-				requestedTransferStatus: true,
 				stepIndex: 1,
 				numTotalSteps: 6,
 			} );
