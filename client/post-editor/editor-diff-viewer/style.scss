@@ -22,10 +22,12 @@
 }
 
 .editor-diff-viewer__additions {
-	background: #e9f9fe;
+	background: #e8f9fe;
+	border-bottom: 2px solid $blue-wordpress;
 }
 
 .editor-diff-viewer__deletions {
-	color: #c83240;
+	background: #fbeded;
+	border-bottom: 2px solid $alert-red;
 	text-decoration: line-through;
 }
