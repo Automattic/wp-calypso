@@ -12,7 +12,7 @@ import React from 'react';
  */
 import AcceptDialog from './dialog';
 
-module.exports = function( message, callback, confirmButtonText, cancelButtonText, options ) {
+export default function( message, callback, confirmButtonText, cancelButtonText, options ) {
 	var wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 

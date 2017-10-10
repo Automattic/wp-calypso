@@ -21,7 +21,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faBackupCodes',
 

@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	ID: 1,
 	avatar_URL: 'https://1.gravatar.com/avatar',
 	email: 'test1@example.com',

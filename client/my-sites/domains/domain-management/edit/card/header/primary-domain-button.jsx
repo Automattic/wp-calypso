@@ -59,4 +59,4 @@ const PrimaryDomainButton = React.createClass( {
 	},
 } );
 
-module.exports = localize( PrimaryDomainButton );
+export default localize( PrimaryDomainButton );

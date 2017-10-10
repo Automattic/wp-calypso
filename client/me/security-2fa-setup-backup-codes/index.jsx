@@ -20,7 +20,7 @@ import eventRecorder from 'me/event-recorder';
 import support from 'lib/url/support';
 import Notice from 'components/notice';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faSetupBackupCodes',
 

@@ -16,7 +16,7 @@ const debug = debugFactory( 'calypso:stats:action-page' );
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'StatsActionPage',
 

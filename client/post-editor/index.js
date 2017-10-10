@@ -13,7 +13,7 @@ import sitesController from 'my-sites/controller';
 import controller from './controller';
 import config from 'config';
 
-module.exports = function() {
+export default function() {
 	page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
 	page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
 	page( '/post/:site?/:post?', sitesController.siteSelection, controller.post );

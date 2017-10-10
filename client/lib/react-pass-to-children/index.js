@@ -7,7 +7,7 @@
 import { assign } from 'lodash';
 import React from 'react';
 
-module.exports = function( element, additionalProps ) {
+export default function( element, additionalProps ) {
 	var props = assign( {}, element.props, additionalProps ),
 		childElements;
 

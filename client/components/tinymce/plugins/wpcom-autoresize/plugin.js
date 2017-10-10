@@ -217,6 +217,6 @@ function wcpomAutoResize( editor ) {
 	editor.addCommand( 'wpcomAutoResize', resize );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/autoresize', wcpomAutoResize );
 };

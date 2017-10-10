@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HelpContactConfirmation',
 
 	mixins: [ PureRenderMixin ],

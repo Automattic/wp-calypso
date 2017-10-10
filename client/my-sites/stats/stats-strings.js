@@ -6,7 +6,7 @@
 
 import { translate } from 'i18n-calypso';
 
-module.exports = function() {
+export default function() {
 	const statsStrings = {};
 
 	statsStrings.posts = {

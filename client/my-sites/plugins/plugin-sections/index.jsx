@@ -19,7 +19,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 

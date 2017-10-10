@@ -16,7 +16,7 @@ import { assign } from 'lodash';
 // makes for a nice consistency.
 import { EventEmitter } from 'events/';
 
-module.exports = function( prototype ) {
+export default function( prototype ) {
 	assign( prototype, EventEmitter.prototype );
 	prototype.emitChange = function() {
 		this.emit( 'change' );

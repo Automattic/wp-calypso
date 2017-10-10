@@ -14,7 +14,7 @@ const debug = debugFactory( 'calypso:olark:chatbox' );
  */
 import OlarkEvents from 'lib/olark-events';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'OlarkChatBox',
 
 	/**

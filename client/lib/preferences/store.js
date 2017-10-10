@@ -81,4 +81,4 @@ PreferencesStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = PreferencesStore;
+export default PreferencesStore;

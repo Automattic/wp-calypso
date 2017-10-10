@@ -13,7 +13,7 @@ import controller from 'my-sites/controller';
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
 
-module.exports = function() {
+export default function() {
 	SiftScience.recordUser();
 
 	page(

@@ -22,4 +22,4 @@ var LocaleSuggestionActions = {
 	},
 };
 
-module.exports = LocaleSuggestionActions;
+export default LocaleSuggestionActions;

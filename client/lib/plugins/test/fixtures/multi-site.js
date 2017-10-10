@@ -6,7 +6,7 @@
 
 import plugins from './plugins';
 
-module.exports = {
+export default {
 	ID: 91234567890,
 	URL: 'http://example.com/site1',
 	canUpdateFiles: true,

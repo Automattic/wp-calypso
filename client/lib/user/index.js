@@ -13,7 +13,7 @@ import { action as InvitesActionTypes } from 'lib/invites/constants';
 import User from './user';
 let _user = false;
 
-module.exports = function() {
+export default function() {
 	if ( ! _user ) {
 		_user = new User();
 	}

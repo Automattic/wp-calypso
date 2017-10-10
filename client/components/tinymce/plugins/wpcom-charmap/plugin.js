@@ -49,6 +49,6 @@ function wpcomCharMapPlugin( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/charmap', wpcomCharMapPlugin );
 };

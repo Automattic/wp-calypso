@@ -38,7 +38,7 @@ function getSiteSlug( url ) {
 	return slug.replace( /\//g, '::' );
 }
 
-module.exports = {
+export default {
 	filterUserObject: function( obj ) {
 		var user = {},
 			allowedKeys = [

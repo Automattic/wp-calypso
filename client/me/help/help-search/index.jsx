@@ -20,7 +20,7 @@ import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'HelpSearch',
 

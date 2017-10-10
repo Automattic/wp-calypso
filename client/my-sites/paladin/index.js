@@ -13,7 +13,7 @@ import controller from 'my-sites/controller';
 import paladinController from './controller';
 import config from 'config';
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'paladin' ) ) {
 		page( '/paladin', controller.siteSelection, controller.sites );
 		page(

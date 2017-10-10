@@ -559,4 +559,4 @@ PostActions = {
 	},
 };
 
-module.exports = PostActions;
+export default PostActions;

@@ -404,4 +404,4 @@ sections.push( {
 	isomorphic: false,
 } );
 
-module.exports = sections;
+export default sections;

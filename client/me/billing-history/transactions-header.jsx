@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import tableRows from './table-rows';
 import eventRecorder from 'me/event-recorder';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'TransactionsHeader',
 

@@ -40,4 +40,4 @@ var EmailForwardingDetails = React.createClass( {
 	},
 } );
 
-module.exports = localize( EmailForwardingDetails );
+export default localize( EmailForwardingDetails );

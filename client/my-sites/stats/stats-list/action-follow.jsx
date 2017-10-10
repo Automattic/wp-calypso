@@ -19,7 +19,7 @@ import observe from 'lib/mixins/data-observe';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'StatsActionFollow',
 

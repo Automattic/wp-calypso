@@ -146,4 +146,4 @@ var SuggestionsList = React.createClass( {
 	},
 } );
 
-module.exports = SuggestionsList;
+export default SuggestionsList;

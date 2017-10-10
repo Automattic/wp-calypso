@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import upgradesActions from 'lib/upgrades/actions';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'CartCoupon',
 

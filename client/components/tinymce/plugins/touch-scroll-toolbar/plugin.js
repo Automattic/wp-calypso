@@ -100,6 +100,6 @@ function touchScrollToolbar( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/touchscrolltoolbar', touchScrollToolbar );
 };

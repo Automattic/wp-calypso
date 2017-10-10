@@ -1,7 +1,7 @@
 /** @format */
 var trailingSlashRe = /\/$/;
 
-module.exports = function unTrailingSlashIt( path ) {
+export default function unTrailingSlashIt( path ) {
 	if ( path === '/' ) {
 		return path;
 	}

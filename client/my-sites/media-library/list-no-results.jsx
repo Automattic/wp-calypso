@@ -13,7 +13,7 @@ import React from 'react';
  */
 import NoResults from 'my-sites/no-results';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'MediaLibraryListNoResults',
 

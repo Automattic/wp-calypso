@@ -437,7 +437,7 @@ const Checkout = React.createClass( {
 	},
 } );
 
-module.exports = connect(
+export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
 

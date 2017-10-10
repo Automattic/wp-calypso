@@ -12,7 +12,7 @@ import page from 'page';
 import controller from 'my-sites/controller';
 import adsController from './controller';
 
-module.exports = function() {
+export default function() {
 	page( '/ads', controller.siteSelection, controller.sites );
 	page( '/ads/:site_id', adsController.redirect );
 	page(

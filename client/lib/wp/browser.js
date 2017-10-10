@@ -71,4 +71,4 @@ injectGuestSandboxTicketHandler( wpcom );
 /**
  * Expose `wpcom`
  */
-module.exports = wpcom;
+export default wpcom;

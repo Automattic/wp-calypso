@@ -324,7 +324,7 @@ const EVENTS = {
 	},
 };
 
-module.exports = function( categoryName, subCategoryName ) {
+export default function( categoryName, subCategoryName ) {
 	return {
 		recordEvent( eventName, ...eventArguments ) {
 			let category = EVENTS[ categoryName ];

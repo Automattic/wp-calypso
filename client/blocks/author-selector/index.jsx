@@ -246,7 +246,7 @@ const SwitcherShell = localize(
 	} )
 );
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'AuthorSelector',
 		propTypes: {

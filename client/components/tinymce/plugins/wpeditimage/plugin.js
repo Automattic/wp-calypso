@@ -826,6 +826,6 @@ function wpEditImage( editor ) {
 	editor.wp.isPlaceholder = isPlaceholder;
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpeditimage', wpEditImage );
 };

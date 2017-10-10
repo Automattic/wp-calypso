@@ -16,7 +16,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 import FormButton from 'components/forms/form-button';
 import analytics from 'lib/analytics';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faInitialSetup',
 

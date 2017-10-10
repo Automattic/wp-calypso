@@ -80,4 +80,4 @@ var CreditsPaymentBox = React.createClass( {
 	},
 } );
 
-module.exports = localize( CreditsPaymentBox );
+export default localize( CreditsPaymentBox );

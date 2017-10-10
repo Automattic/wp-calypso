@@ -159,4 +159,4 @@ var PayButton = React.createClass( {
 	},
 } );
 
-module.exports = localize( PayButton );
+export default localize( PayButton );

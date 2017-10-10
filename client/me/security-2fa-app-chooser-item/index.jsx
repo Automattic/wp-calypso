@@ -14,7 +14,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
  */
 import analytics from 'lib/analytics';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faAppChooserItem',
 

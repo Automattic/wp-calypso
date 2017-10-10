@@ -86,4 +86,4 @@ var FreeCartPaymentBox = React.createClass( {
 	},
 } );
 
-module.exports = localize( FreeCartPaymentBox );
+export default localize( FreeCartPaymentBox );

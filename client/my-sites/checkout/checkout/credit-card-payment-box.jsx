@@ -196,4 +196,4 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 } );
 
-module.exports = localize( CreditCardPaymentBox );
+export default localize( CreditCardPaymentBox );

@@ -8,7 +8,7 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'StoredCard',
 

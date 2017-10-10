@@ -13,7 +13,7 @@ import controller from 'my-sites/controller';
 import config from 'config';
 import peopleController from './controller';
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
 		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );

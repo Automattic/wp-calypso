@@ -23,7 +23,7 @@ import analytics from 'lib/analytics';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'Security2faBackupCodesPrompt',
 

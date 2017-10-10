@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import MediaUtils from 'lib/media/utils';
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewVideo',
 
 	propTypes: {

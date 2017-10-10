@@ -20,9 +20,10 @@ import productsValues from 'lib/products-values';
 import observe from 'lib/mixins/data-observe';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
+
 /* eslint-enable no-restricted-imports */
 
-module.exports = localize(
+export default localize(
 	React.createClass( {
 		displayName: 'NextSteps',
 
