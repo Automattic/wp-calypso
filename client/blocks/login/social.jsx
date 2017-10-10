@@ -37,7 +37,7 @@ function shouldUseRedirectFlow() {
 	const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
 	// also disable the popup flow for all safari versions
 	// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
-	return true || isPopup || isSafari();
+	return isPopup || isSafari();
 }
 
 class SocialLoginForm extends Component {
@@ -88,7 +88,7 @@ class SocialLoginForm extends Component {
 			() => {
 				this.recordEvent( 'calypso_login_social_login_success' );
 
-				onSuccess();
+				onSuccess( redirectTo );
 			},
 			error => {
 				if ( error.code === 'unknown_user' ) {
