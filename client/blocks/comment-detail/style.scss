@@ -34,6 +34,7 @@
 
 	.gridicon {
 		margin-right: 4px;
+		vertical-align: middle;
 	}
 
 	.comment-detail__author-avatar {
@@ -131,7 +132,6 @@
 		fill: $gray;
 		transform: rotate( 180deg );
 		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
-		vertical-align: middle;
 	}
 
 	.comment-detail__action-collapse:hover .gridicon {
@@ -248,6 +248,10 @@
 		display: flex;
 		right: 44px;
 		padding: 0;
+
+		.gridicon {
+			vertical-align: baseline;
+		}
 	}
 
 	.button.is-borderless {
