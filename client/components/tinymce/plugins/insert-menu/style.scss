@@ -5,25 +5,13 @@
 		height: 36px;
 		margin: 0;
 
-
+		&.mce-active {
+			border-color: transparent;
+		}
 
 		&:hover .wpcom-insert-menu__menu-label,
 		&:focus .wpcom-insert-menu__menu-label {
-			color: lighten( $gray, 10% );
-		}
-
-		&:hover .wpcom-insert-menu__menu-icon,
-		&:focus .wpcom-insert-menu__menu-icon {
-			fill: lighten( $gray, 10% );
-		}
-
-		.wpcom-insert-menu__menu:hover {
-			.wpcom-insert-menu__menu-label {
-				color: $gray-dark;
-			}
-			.wpcom-insert-menu__menu-icon {
-				fill: $gray-dark;
-			}
+			color: $gray-dark;
 		}
 	}
 }
@@ -35,7 +23,7 @@
 }
 
 .mce-toolbar .mce-btn.mce-insert-menu button:first-child {
-	padding: 6px;
+	padding: 6px 11px 6px 9px;
 }
 
 .mce-splitbtn.mce-insert-menu .mce-open.mce-active {
@@ -52,11 +40,12 @@
 }
 
 .mce-container .wpcom-insert-menu__menu-label {
-	color: darken( $gray, 30% );
+	color: darken( $gray, 20% );
 	display: inline-block;
 	font-family: $sans;
-	margin-left: 8px;
-	margin-top: 2px;
+	font-size: 13px;
+	margin-left: 4px;
+	margin-top: 3px;
 }
 
 .wpcom-insert-menu__menu-icon {

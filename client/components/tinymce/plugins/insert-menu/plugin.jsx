@@ -25,7 +25,7 @@ const initialize = editor => {
 
 	editor.addButton( 'wpcom_insert_menu', {
 		type: 'menubutton',
-		title: i18n.translate( 'Insert content' ),
+		title: i18n.translate( 'Add content' ),
 		classes: 'btn wpcom-insert-menu insert-menu',
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
@@ -56,7 +56,7 @@ const initialize = editor => {
 			};
 
 			// Listen to `mouseenter` events on the (+)
-			addTooltipListener( insertContentElm, i18n.translate( 'Insert content' ) );
+			addTooltipListener( insertContentElm, i18n.translate( 'Add content' ) );
 		},
 	} );
 };
