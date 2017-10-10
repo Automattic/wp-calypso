@@ -36,6 +36,17 @@
 	font-size: 12px;
 	text-transform: uppercase;
 	font-weight: 500;
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+
+	.button {
+		color: $blue-wordpress;
+
+		&:hover {
+			color: $link-highlight;
+		}
+	}
 }
 
 // Override the price inputs in details-table

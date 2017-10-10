@@ -99,9 +99,9 @@ class OrderCustomerInfo extends Component {
 										compact
 										className="order-customer__edit-link"
 										onClick={ this.toggleDialog( 'billing' ) }
-										primary
+										borderless
 									>
-										{ translate( 'edit' ) }
+										{ translate( 'Edit' ) }
 									</Button>
 								) : null }
 							</h3>
@@ -126,9 +126,9 @@ class OrderCustomerInfo extends Component {
 										compact
 										className="order-customer__edit-link"
 										onClick={ this.toggleDialog( 'shipping' ) }
-										primary
+										borderless
 									>
-										{ translate( 'edit' ) }
+										{ translate( 'Edit' ) }
 									</Button>
 								) : null }
 							</h3>
