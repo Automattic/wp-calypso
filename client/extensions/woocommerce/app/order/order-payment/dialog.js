@@ -92,10 +92,18 @@ class OrderPaymentCard extends Component {
 
 	sendRefund = () => {
 		const { order, paymentMethod, siteId, translate } = this.props;
+		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
 			this.setState( {
-				errorMessage: translate( 'Refund must be less than or equal to the order total.' ),
+				errorMessage: translate(
+					'Refund must be less than or equal to the order balance, %(total)s',
+					{
+						args: {
+							total: formatCurrency( maxRefund, order.currency ),
+						},
+					}
+				),
 			} );
 			return;
 		} else if ( this.state.refundTotal <= 0 ) {
@@ -104,7 +112,7 @@ class OrderPaymentCard extends Component {
 		}
 		this.toggleDialog();
 		const refundObj = {
-			amount: this.state.refundTotal + '', // API expects a string
+			amount: this.state.refundTotal.toPrecision(),
 			reason: this.state.refundNote,
 			api_refund: paymentMethod && -1 !== paymentMethod.method_supports.indexOf( 'refunds' ),
 		};
@@ -123,7 +131,8 @@ class OrderPaymentCard extends Component {
 					<h3>{ translate( 'Manual Refund' ) }</h3>
 					<p>
 						{ translate(
-							"This payment method doesn't support automated refunds and must be submitted manually."
+							'This payment method does not support automated refunds. ' +
+								'After recording the refund here, you must remit the amount to the customer manually.'
 						) }
 					</p>
 				</div>
@@ -161,7 +170,7 @@ class OrderPaymentCard extends Component {
 		const dialogButtons = [
 			<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>
-				{ translate( 'Refund' ) }
+				{ translate( 'Refund', { context: 'Action label for button' } ) }
 			</Button>,
 		];
 
@@ -177,7 +186,7 @@ class OrderPaymentCard extends Component {
 				<OrderRefundTable order={ order } onChange={ this.recalculateRefund } />
 				<form className="order-payment__container">
 					<FormLabel className="order-payment__note">
-						{ translate( 'Refund note' ) }
+						{ translate( 'Refund note', { comment: "Label for refund's comment field" } ) }
 						<FormTextarea onChange={ this.updateNote } name="refund_note" value={ refundNote } />
 					</FormLabel>
 

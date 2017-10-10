@@ -156,7 +156,8 @@ class OrderRefundTable extends Component {
 
 		const showTax = this.shouldShowTax();
 		const totalsClasses = classnames( {
-			'order-payment__totals order-details__totals': true,
+			'order-payment__totals': true,
+			'order-details__totals': true,
 			'has-taxes': showTax,
 			'is-refund-modal': true,
 		} );
