@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { kebabCase, noop } from 'lodash';
+import { noop, snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -39,7 +39,7 @@ class OrderTotalRow extends Component {
 		const { className, currency, label, value, onChange, numberFormat } = this.props;
 		let name = this.props.name;
 		if ( ! name ) {
-			name = kebabCase( label );
+			name = snakeCase( label );
 		}
 		const { decimal, grouping, precision } = getCurrencyDefaults( currency );
 		const total = numberFormat( Math.abs( value ), {
