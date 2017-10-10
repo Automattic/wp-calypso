@@ -20,7 +20,7 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
+const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		items: PropTypes.array,
@@ -76,8 +76,11 @@ export const EditorMediaModalDetail = React.createClass( {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		return (
-            <div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.props.translate( 'Media Library' ) } />
+			<div className="editor-media-modal-detail">
+				<HeaderCake
+					onClick={ onReturnToList }
+					backText={ this.props.translate( 'Media Library' ) }
+				/>
 				<DetailItem
 					site={ site }
 					item={ item }
@@ -89,7 +92,7 @@ export const EditorMediaModalDetail = React.createClass( {
 					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
 				/>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -97,4 +100,4 @@ export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( localize(EditorMediaModalDetail) );
+} )( localize( EditorMediaModalDetail ) );
