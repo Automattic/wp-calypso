@@ -58,7 +58,6 @@ export const setHappychatAvailable = isAvailable => ( {
 } );
 
 export const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
-export const clearChatMessage = () => setChatMessage( '' );
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
