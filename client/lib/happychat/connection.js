@@ -40,8 +40,7 @@ class Connection {
 		dispatch( setConnecting() );
 
 		const socket = buildConnection( url );
-		this.openSocket = new Promise( resolve => {
-			// TODO: reject this promise
+		this.openSocket = new Promise( ( resolve, reject ) => {
 			socket
 				.once( 'connect', () => debug( 'connected' ) )
 				.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
@@ -52,7 +51,10 @@ class Connection {
 					dispatch( requestChatTranscript() );
 					resolve( socket );
 				} )
-				.on( 'unauthorized', () => socket.close() )
+				.on( 'unauthorized', () => {
+					socket.close();
+					reject( 'user is not authorized' );
+				} )
 				.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
 				.on( 'reconnecting', () => dispatch( setReconnecting() ) )
 				.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
