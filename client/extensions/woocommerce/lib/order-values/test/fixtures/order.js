@@ -56,7 +56,22 @@ export default {
 			],
 		},
 	],
-	fee_lines: [],
+	fee_lines: [
+		{
+			id: 48,
+			name: 'fee',
+			amount: '1.53',
+			total: '1.53',
+			total_tax: '0.13',
+			taxes: [
+				{
+					id: 1,
+					total: '0.1262',
+					subtotal: '',
+				},
+			],
+		},
+	],
 	coupon_lines: [
 		{
 			id: 18,

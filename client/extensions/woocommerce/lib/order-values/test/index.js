@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getOrderDiscountTax,
+	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderRefundTotal,
 	getOrderShippingTax,
@@ -40,6 +41,24 @@ describe( 'getOrderDiscountTax', () => {
 
 	test( 'should return 0 if the order is malformed', () => {
 		expect( getOrderDiscountTax( {} ) ).to.eql( 0 );
+	} );
+} );
+
+describe( 'getOrderFeeTax', () => {
+	it( 'should be a function', () => {
+		expect( getOrderFeeTax ).to.be.a( 'function' );
+	} );
+
+	it( 'should get the correct tax amount', () => {
+		expect( getOrderFeeTax( orderWithTax, 0 ) ).to.eql( 0.1262 );
+	} );
+
+	it( 'should get the correct tax amount with multiple fees', () => {
+		expect( getOrderFeeTax( orderWithCoupons, 1 ) ).to.eql( 0.625 );
+	} );
+
+	it( 'should return 0 if there is no tax', () => {
+		expect( getOrderFeeTax( orderWithoutTax, 0 ) ).to.eql( 0 );
 	} );
 } );
 

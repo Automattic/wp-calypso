@@ -12,7 +12,14 @@ export default {
 	],
 	tax_lines: [],
 	shipping_lines: [],
-	fee_lines: [],
+	fee_lines: [
+		{
+			id: 2,
+			name: 'Extra length fee',
+			total: '20.00',
+			total_tax: '0.00',
+		},
+	],
 	coupon_lines: [],
 	refunds: [],
 };

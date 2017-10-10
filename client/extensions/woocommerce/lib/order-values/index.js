@@ -30,6 +30,18 @@ export function getOrderLineItemTax( order, id ) {
 }
 
 /**
+ * Get the total tax for a given line item's value
+ *
+ * @param {Object} order An order as returned from API
+ * @param {Number} index The index of a fee line in this order
+ * @return {Float} Tax amount as a decimal number
+ */
+export function getOrderFeeTax( order, index ) {
+	const tax = get( order, `fee_lines[${ index }].taxes[0].total`, 0 );
+	return parseFloat( tax ) || 0;
+}
+
+/**
  * Get the total tax for the shipping value
  *
  * @param {Object} order An order as returned from API
