@@ -75,4 +75,12 @@
 		max-width: none;
 		width: 100%;
 	}
+
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+
+	.address-view__editable-city-state-postcode {
+		align-items: end;
+	}
 }
