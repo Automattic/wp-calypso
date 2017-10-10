@@ -219,4 +219,4 @@ function wcpomAutoResize( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/autoresize', wcpomAutoResize );
-};
+}

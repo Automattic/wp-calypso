@@ -30,4 +30,4 @@ export default function() {
 		page( '/edit/:type/:site?/:post?', sitesController.siteSelection, controller.post );
 		page.exit( '/edit/:type/:site?/:post?', controller.exitPost );
 	}
-};
+}

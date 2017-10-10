@@ -219,4 +219,4 @@ function wpLink( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wplink', wpLink );
-};
+}

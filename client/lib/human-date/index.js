@@ -52,4 +52,4 @@ export default function humanDate( dateOrMoment ) {
 	}
 
 	return dateOrMoment.format( 'll' );
-};
+}

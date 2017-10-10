@@ -45,4 +45,4 @@ export default function() {
 		// Anything else is unexpected and should be redirected to the default people management URL: /people/team
 		page( '/people/(.*)?', controller.siteSelection, peopleController.redirectToTeam );
 	}
-};
+}

@@ -21,4 +21,4 @@ export default function() {
 		controller.navigation,
 		adsController.layout
 	);
-};
+}

@@ -22,4 +22,4 @@ export default function( prototype ) {
 		this.emit( 'change' );
 	};
 	prototype.off = prototype.removeListener;
-};
+}

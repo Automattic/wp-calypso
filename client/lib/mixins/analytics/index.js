@@ -352,4 +352,4 @@ export default function( categoryName, subCategoryName ) {
 			category[ eventName ].apply( null, eventArguments );
 		},
 	};
-};
+}

@@ -18,4 +18,4 @@ export default function() {
 	if ( config.isEnabled( 'help/courses' ) ) {
 		page( '/help/courses', helpController.loggedOut, meController.sidebar, helpController.courses );
 	}
-};
+}

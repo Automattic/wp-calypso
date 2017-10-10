@@ -55,4 +55,4 @@ export default function( root ) {
 		root.localStorage.clear = storage.clear;
 		root.localStorage.__defineGetter__( 'length', getLength );
 	}
-};
+}

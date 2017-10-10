@@ -6,4 +6,4 @@ export default function unTrailingSlashIt( path ) {
 		return path;
 	}
 	return path.replace( trailingSlashRe, '' );
-};
+}

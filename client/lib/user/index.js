@@ -18,7 +18,7 @@ export default function() {
 		_user = new User();
 	}
 	return _user;
-};
+}
 
 User.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;

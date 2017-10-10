@@ -23,4 +23,4 @@ export default function() {
 			paladinController.activate
 		);
 	}
-};
+}

@@ -28,4 +28,4 @@ export default function( url ) {
 	}
 
 	return urls.format( assign( pick( bits, formatKeys ), { protocol: 'http' } ) );
-};
+}

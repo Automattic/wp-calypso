@@ -747,4 +747,4 @@ function wpcomPlugin( editor ) {
 export default function() {
 	// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
 	tinymce.PluginManager.add( 'wpcom', wpcomPlugin );
-};
+}

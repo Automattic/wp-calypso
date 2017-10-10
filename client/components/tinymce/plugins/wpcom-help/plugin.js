@@ -49,4 +49,4 @@ function wpcomHelpPlugin( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/help', wpcomHelpPlugin );
-};
+}

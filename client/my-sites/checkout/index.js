@@ -52,4 +52,4 @@ export default function() {
 
 	// Visting /checkout without a plan or product should be redirected to /plans
 	page( '/checkout', '/plans' );
-};
+}

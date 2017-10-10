@@ -903,4 +903,4 @@ function mediaButton( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/media', mediaButton );
-};
+}

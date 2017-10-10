@@ -955,4 +955,4 @@ function wpview( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/view', wpview );
-};
+}

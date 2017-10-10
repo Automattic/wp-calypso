@@ -33,4 +33,4 @@ export default function observe( listener ) {
 		listener( currentContext );
 	}
 	return location;
-};
+}

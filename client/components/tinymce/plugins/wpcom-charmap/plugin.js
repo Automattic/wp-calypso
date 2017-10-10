@@ -51,4 +51,4 @@ function wpcomCharMapPlugin( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/charmap', wpcomCharMapPlugin );
-};
+}

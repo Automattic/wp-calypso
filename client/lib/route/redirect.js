@@ -17,4 +17,4 @@ export default function redirect( path ) {
 	setTimeout( function() {
 		page.replace( path );
 	}, 0 );
-};
+}

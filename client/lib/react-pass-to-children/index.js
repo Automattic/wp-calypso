@@ -26,4 +26,4 @@ export default function( element, additionalProps ) {
 	}
 
 	return React.cloneElement( element.props.children, props );
-};
+}

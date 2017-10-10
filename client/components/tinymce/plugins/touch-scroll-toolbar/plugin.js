@@ -102,4 +102,4 @@ function touchScrollToolbar( editor ) {
 
 export default function() {
 	tinymce.PluginManager.add( 'wpcom/touchscrolltoolbar', touchScrollToolbar );
-};
+}

@@ -18,4 +18,4 @@ export default function normalize( context, next ) {
 	} else {
 		next();
 	}
-};
+}
