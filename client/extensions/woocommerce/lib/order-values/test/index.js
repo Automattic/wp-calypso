@@ -132,7 +132,7 @@ describe( 'getOrderRefundTotal', () => {
 		expect( getOrderRefundTotal( orderWithoutTax ) ).to.eql( 0 );
 	} );
 
-	it( 'should get the correct tax amount with multiple refunds', () => {
+	it( 'should get the correct refund amount with multiple refunds', () => {
 		expect( getOrderRefundTotal( orderWithRefunds ) ).to.eql( -25.0 );
 	} );
 } );
