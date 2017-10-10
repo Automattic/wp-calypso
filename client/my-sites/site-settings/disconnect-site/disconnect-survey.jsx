@@ -11,8 +11,9 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isFreeJetpackPlan } from 'lib/products-values';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { isSiteOnPaidPlan } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class DisconnectSurvey extends Component {
 	state = {
@@ -31,25 +32,26 @@ class DisconnectSurvey extends Component {
 	};
 
 	getOptions() {
-		const { translate, site } = this.props;
+		const { isPaidPlan, translate } = this.props;
 
 		const options = [
 			{ value: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
 			{ value: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
-		if ( ! isFreeJetpackPlan( site.plan ) ) {
+		if ( isPaidPlan ) {
 			options.push( { value: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
 		}
 		return options;
 	}
 
 	renderEntryQuestion() {
-		const { translate, siteSlug } = this.props;
+		const { translate, siteId, siteSlug } = this.props;
 		const options = this.getOptions();
 
 		return (
 			<div>
+				<QuerySitePlans siteId={ siteId } />
 				<Card className="disconnect-site__question">
 					{ translate(
 						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
@@ -83,7 +85,11 @@ class DisconnectSurvey extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( DisconnectSurvey ) );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isPaidPlan: isSiteOnPaidPlan( state, siteId ),
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( DisconnectSurvey ) );
