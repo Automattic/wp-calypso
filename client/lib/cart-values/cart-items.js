@@ -340,6 +340,26 @@ function hasRenewalItem( cart ) {
 }
 
 /**
+ * Determines whether there is at least one domain transfer item in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one renewal item, false otherwise
+ */
+function hasTransferProduct( cart ) {
+	return some( getAll( cart ), isTransfer );
+}
+
+/**
+ * Retrieves all the domain transfer items in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ */
+function getDomainTransfers( cart ) {
+	return filter( getAll( cart ), { product_slug: 'domain_transfer' } );
+}
+
+/**
  * Determines whether all items are renewal items in the specified shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -780,6 +800,16 @@ function isRenewal( cartItem ) {
 }
 
 /**
+ * Determines whether a cart item is a transfer
+ *
+ * @param {Object} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item is a renewal
+ */
+function isTransfer( cartItem ) {
+	return cartItem.product_slug === 'domain_transfer';
+}
+
+/**
  * Determines whether a cart item supports privacy
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -925,4 +955,6 @@ export default {
 	unlimitedThemesItem,
 	videoPressItem,
 	hasStaleItem,
+	hasTransferProduct,
+	getDomainTransfers,
 };
