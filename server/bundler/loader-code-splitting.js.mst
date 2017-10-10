@@ -33,7 +33,7 @@ function getPathRegExp( pathString ) {
 function createPageDefinition( path, sectionDefinition ) {
 	const pathRegExp = getPathRegExp( path );
 
-	page( path, function( context, next ) {
+	page( pathRegExp, function( context, next ) {
 		const envId = sectionDefinition.envId;
 
 		if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {
@@ -66,6 +66,7 @@ function createPageDefinition( path, sectionDefinition ) {
 			next();
 		}, error => {
 			if ( ! LoadingError.isRetry() ) {
+				console.warn( error );
 				LoadingError.retry( sectionDefinition.name );
 			} else {
 				console.error( error );
