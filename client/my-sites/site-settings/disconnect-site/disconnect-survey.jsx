@@ -61,9 +61,10 @@ class DisconnectSurvey extends Component {
 		return (
 			<div>
 				<Card className="disconnect-site__question">{ textShareWhy }</Card>
-				{ options.map( ( { label } ) => (
+				{ options.map( ( { label, value } ) => (
 					<CompactCard
 						href="#"
+						key={ value }
 						onClick={ this.logSelection }
 						className="disconnect-site__survey-one"
 					>
