@@ -29,13 +29,13 @@ const successfulPostRevisionsResponse = [
 		modified_gmt: '2017-04-21T12:14:50',
 		parent: 10,
 		title: {
-			rendered: 'Sed nobis ab earum',
+			raw: 'Sed nobis ab earum',
 		},
 		content: {
-			rendered: '<p>Lorem ipsum</p>',
+			raw: '<p>Lorem ipsum</p>',
 		},
 		excerpt: {
-			rendered: '',
+			raw: '',
 		},
 	},
 ];
@@ -68,17 +68,17 @@ describe( '#normalizeRevision', () => {
 		} );
 	} );
 
-	it( 'should only keep the rendered version of `title`, `content` and `excerpt`', () => {
+	it( 'should only keep the raw version of `title`, `content` and `excerpt`', () => {
 		expect(
 			normalizeRevision( {
 				title: {
-					rendered: 'Sed nobis ab earum',
+					raw: 'Sed nobis ab earum',
 				},
 				content: {
-					rendered: '<p>Lorem ipsum</p>',
+					raw: '<p>Lorem ipsum</p>',
 				},
 				excerpt: {
-					rendered: '',
+					raw: '',
 				},
 			} )
 		).to.eql( {
@@ -110,6 +110,7 @@ describe( '#fetchPostRevisions', () => {
 					path: '/sites/12345678/posts/10/revisions',
 					query: {
 						apiNamespace: 'wp/v2',
+						context: 'edit',
 					},
 				},
 				action
@@ -131,6 +132,7 @@ describe( '#fetchPostRevisions', () => {
 					path: '/sites/12345678/pages/10/revisions',
 					query: {
 						apiNamespace: 'wp/v2',
+						context: 'edit',
 					},
 				},
 				action
