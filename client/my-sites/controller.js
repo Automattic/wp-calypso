@@ -272,6 +272,31 @@ function createSitesComponent( context ) {
 	);
 }
 
+function showMissingPrimaryError( currentUser, dispatch ) {
+	const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
+	const tracksPayload = {
+		username,
+		primary_blog,
+		primary_blog_url,
+		primary_blog_is_jetpack,
+	};
+
+	if ( currentUser.primary_blog_is_jetpack ) {
+		dispatch(
+			warningNotice( i18n.translate( "Please check your Primary Site's Jetpack connection" ), {
+				button: 'wp-admin',
+				href: `${ currentUser.primary_blog_url }/wp-admin`,
+			} )
+		);
+		analytics.tracks.recordEvent(
+			'calypso_mysites_single_site_jetpack_connection_error',
+			tracksPayload
+		);
+	} else {
+		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+	}
+}
+
 module.exports = {
 	// Clears selected site from global redux state
 	noSite( context, next ) {
@@ -320,36 +345,30 @@ module.exports = {
 			return next();
 		}
 
-		// If the user has only one site, redirect to the single site
-		// context instead of rendering the all-site views.
+		/**
+		 * If the user has only one site, redirect to the single site
+		 * context instead of rendering the all-site views.
+		 *
+		 * Note: The redirectToPrimary function will be continually executed
+		 * by repeatedly querying /stats/day/undefined until the /sites
+		 * endpoint has returned.
+		 */
 		if ( hasOneSite && ! siteFragment ) {
-			if ( primary ) {
-				const hasInitialized = getSites( getState() ).length;
-				if ( hasInitialized ) {
+			const hasInitialized = getSites( getState() ).length;
+			if ( hasInitialized ) {
+				if ( primary ) {
 					redirectToPrimary();
-					return;
+				} else {
+					// If the primary site does not exist, skip redirect
+					// and display a useful error notification
+					showMissingPrimaryError( currentUser, dispatch );
 				}
-				dispatch( {
-					type: SITES_ONCE_CHANGED,
-					listener: redirectToPrimary,
-				} );
-			} else {
-				// If the primary site does not exist, skip redirect and display a useful error notification
-				dispatch(
-					warningNotice( i18n.translate( "Please check your Primary Site's Jetpack connection" ), {
-						button: 'wp-admin',
-						href: `${ currentUser.primary_blog_url }/wp-admin`,
-					} )
-				);
-
-				const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
-				analytics.tracks.recordEvent( 'calypso_mysites_single_site_jetpack_connection_error', {
-					username,
-					primary_blog,
-					primary_blog_url,
-					primary_blog_is_jetpack,
-				} );
+				return;
 			}
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectToPrimary,
+			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
