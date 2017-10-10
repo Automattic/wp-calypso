@@ -36,8 +36,11 @@ export const DropZone = React.createClass( {
 
 	getInitialState() {
 		return {
-			isDraggingOverDocument: false,
-			isDraggingOverElement: false,
+			//isDraggingOverDocument: false,
+			//isDraggingOverElement: false,
+			isDraggingOverDocument: true,
+			isDraggingOverElement: true,
+			// todo tmp set to false to make the dropzone easier to work with while debugging. revert before merging to master
 			lastVisibleState: false,
 		};
 	},
@@ -85,8 +88,11 @@ export const DropZone = React.createClass( {
 		}
 
 		this.setState( {
-			isDraggingOverDocument: false,
-			isDraggingOverElement: false,
+			//isDraggingOverDocument: false,
+			//isDraggingOverElement: false,
+			isDraggingOverDocument: true,
+			isDraggingOverElement: true
+			// todo tmp set to false to make the dropzone easier to work with while debugging. revert before merging to master
 		} );
 
 		this.toggleDropZoneReduxState( false );
@@ -194,6 +200,7 @@ export const DropZone = React.createClass( {
 	},
 
 	onDrop( event ) {
+		console.log('comp dropzone ondrop');
 		// This seemingly useless line has been shown to resolve a Safari issue
 		// where files dragged directly from the dock are not recognized
 		event.dataTransfer && event.dataTransfer.files.length;
@@ -208,6 +215,7 @@ export const DropZone = React.createClass( {
 		}
 
 		this.props.onDrop( event );
+		// this is still noop for the medialib zone? wtf
 
 		if ( ! this.props.onVerifyValidTransfer( event.dataTransfer ) ) {
 			return;
@@ -217,6 +225,7 @@ export const DropZone = React.createClass( {
 			this.props.onFilesDrop( Array.prototype.slice.call( event.dataTransfer.files ) );
 		}
 
+		// skipped past these? that wouldn't make sense though
 		event.stopPropagation();
 		event.preventDefault();
 	},

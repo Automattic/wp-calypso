@@ -41,6 +41,7 @@ module.exports = React.createClass( {
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
 		MediaActions.add( this.props.site.ID, files );
+		console.log('medialibdropzone uploadfiles');
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {

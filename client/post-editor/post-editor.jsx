@@ -215,7 +215,25 @@ export const PostEditor = React.createClass( {
 	},
 
 	storeEditor( ref ) {
-		this.editor = ref;
+		// changing this to use .getWrappedInstance because TinyMCE is wrapped in connect() now
+		// so ref is now the wrapper, and we need to get the wrapped instance instead
+
+		// ref === null when unmounting old instance. if don't account for that, unit tests break now
+		// https://github.com/facebook/react/issues/4533#issuecomment-126807678
+		// seems like this is the correct approach, but maybe tests need to be updated instead? not 100% sure
+
+		// it's bad to have extra logic like this?
+		// https://github.com/facebook/react/pull/8333#issuecomment-263721571
+		// not sure how to deal w/ the wrapped component if that's true, though
+
+		// also, has to be inline? https://github.com/facebook/react/pull/8707#issuecomment-271117654
+			// didn't seem to work that way, though
+
+		if ( null === ref ) {
+			this.editor = ref;
+		} else {
+			this.editor = ref.getWrappedInstance();
+		}
 	},
 
 	useDefaultSidebarFocus( nextProps ) {
