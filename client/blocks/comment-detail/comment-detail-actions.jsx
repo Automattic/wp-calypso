@@ -80,7 +80,8 @@ export const CommentDetailActions = ( {
 				</Button>
 			) }
 
-			{ hasAction( commentStatus, 'edit' ) && (
+			{ hasAction( commentStatus, 'edit' ) &&
+			! compact && (
 				<Button
 					{ ...{ borderless: ! compact, compact } }
 					className="comment-detail__action-edit"
