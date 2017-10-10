@@ -43,6 +43,7 @@ PromotionFormTypeCard.PropTypes = {
 	siteId: PropTypes.number,
 	promotion: PropTypes.shape( {
 		id: PropTypes.isRequired,
+		type: PropTypes.string.isRequired,
 	} ),
 	editPromotion: PropTypes.func.isRequired,
 };

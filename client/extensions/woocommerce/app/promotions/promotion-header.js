@@ -24,7 +24,11 @@ function renderTrashButton( onTrash, promotion, isBusy, translate ) {
 }
 
 function renderSaveButton( onSave, promotion, isBusy, translate ) {
-	const saveExists = 'undefined' !== typeof onSave;
+	if ( 'undefined' !== typeof onSave ) {
+		// 'Save' not allowed here.
+		return null;
+	}
+
 	const saveDisabled = false === onSave;
 
 	const saveLabel = ( promotion && ! isObject( promotion.id )
@@ -32,7 +36,7 @@ function renderSaveButton( onSave, promotion, isBusy, translate ) {
 		: translate( 'Save & Publish' )
 	);
 
-	return saveExists && (
+	return (
 		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
 			{ saveLabel }
 		</Button>
@@ -40,12 +44,10 @@ function renderSaveButton( onSave, promotion, isBusy, translate ) {
 }
 
 const PromotionHeader = ( { promotion, onSave, onTrash, isBusy, translate, site } ) => {
-	const existing = promotion && ! isObject( promotion.id );
-
 	const trashButton = renderTrashButton( onTrash, promotion, isBusy, translate );
 	const saveButton = renderSaveButton( onSave, promotion, isBusy, translate );
 
-	const currentCrumb = promotion && existing
+	const currentCrumb = promotion && ! isObject( promotion.id )
 		? ( <span>{ translate( 'Edit Promotion' ) }</span> )
 		: ( <span>{ translate( 'Add Promotion' ) }</span> );
 
