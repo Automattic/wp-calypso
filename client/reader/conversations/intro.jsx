@@ -3,11 +3,10 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -30,16 +29,19 @@ class ConversationsIntro extends React.Component {
 	};
 
 	componentDidMount() {
-		this.recordRenderTrack();
+		this.maybeRecordRenderTrack();
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.hasUsedConversations !== nextProps.hasUsedConversations ) {
-			this.recordRenderTrack( nextProps );
+		if (
+			this.props.hasUsedConversations !== nextProps.hasUsedConversations ||
+			this.props.isInternal !== nextProps.isInternal
+		) {
+			this.maybeRecordRenderTrack( nextProps );
 		}
 	}
 
-	recordRenderTrack = ( props = this.props ) => {
+	maybeRecordRenderTrack = ( props = this.props ) => {
 		if ( props.hasUsedConversations !== true ) {
 			recordTrack( 'calypso_reader_conversations_intro_render' );
 		}
@@ -110,10 +112,6 @@ class ConversationsIntro extends React.Component {
 	}
 }
 
-ConversationsIntro.PropTypes = {
-	isInternal: PropTypes.bool,
-};
-
 export default connect(
 	( state, ownProps ) => {
 		const preferenceName = getPreferenceName( ownProps.isInternal );
@@ -121,15 +119,11 @@ export default connect(
 			hasUsedConversations: getPreference( state, preferenceName ),
 		};
 	},
-	dispatch =>
-		bindActionCreators(
-			{
-				dismiss: isInternal => {
-					recordTrack( 'calypso_reader_conversations_intro_dismiss' );
-					const preferenceName = getPreferenceName( isInternal );
-					return savePreference( preferenceName, true );
-				},
-			},
-			dispatch
-		)
+	{
+		dismiss: isInternal => {
+			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
+			const preferenceName = getPreferenceName( isInternal );
+			return savePreference( preferenceName, true );
+		},
+	}
 )( localize( ConversationsIntro ) );
