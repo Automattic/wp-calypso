@@ -1,10 +1,13 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
-import { HAPPYCHAT_OPEN, HAPPYCHAT_MINIMIZING } from 'state/action-types';
+import {
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+	HAPPYCHAT_OPEN,
+	HAPPYCHAT_MINIMIZING,
+} from 'state/action-types';
 
 const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
 const setChatMinimizing = isMinimizing => ( { type: HAPPYCHAT_MINIMIZING, isMinimizing } );
@@ -32,3 +35,7 @@ export const minimizedChat = () => setChatMinimizing( false );
  * @returns {Object} Action
  */
 export const closeChat = () => setChatOpen( false );
+
+export const blur = () => ( { type: HAPPYCHAT_BLUR } );
+
+export const focus = () => ( { type: HAPPYCHAT_FOCUS } );

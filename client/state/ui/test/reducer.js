@@ -23,7 +23,6 @@ describe( 'reducer', () => {
 			'dropZone',
 			'editor',
 			'guidedTour',
-			'happychat',
 			'hasSidebar',
 			'isLoading',
 			'isNotificationsOpen',
