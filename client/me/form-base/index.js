@@ -55,12 +55,13 @@ export default {
 		}
 	},
 
-	valueLink: function( settingName ) {
-		return {
-			value: this.props.userSettings.getSetting( settingName ),
-			requestChange: function( value ) {
-				this.props.userSettings.updateSetting( settingName, value );
-			}.bind( this ),
+	getSetting: function( settingName ) {
+		return this.props.userSettings.getSetting( settingName );
+	},
+
+	updateSetting: function( settingName ) {
+		return value => {
+			this.props.userSettings.updateSetting( settingName, value );
 		};
 	},
 

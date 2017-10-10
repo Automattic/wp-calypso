@@ -96,7 +96,8 @@ export default protectForm(
 										id="subscription_delivery_email_default"
 										name="subscription_delivery_email_default"
 										onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
-										valueLink={ this.valueLink( 'subscription_delivery_email_default' ) }
+										value={ this.getSetting( 'subscription_delivery_email_default' ) }
+										onChange={ this.updateSetting( 'subscription_delivery_email_default' ) }
 									>
 										<option value="never">{ this.props.translate( 'Never send email' ) }</option>
 										<option value="instantly">
