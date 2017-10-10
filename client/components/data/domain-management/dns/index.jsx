@@ -52,6 +52,7 @@ export class DnsData extends Component {
 	}
 
 	loadDns = () => {
+		upgradesActions.fetchDomains( this.props.selectedSite.ID );
 		upgradesActions.fetchDns( this.props.selectedDomainName );
 	};
 
