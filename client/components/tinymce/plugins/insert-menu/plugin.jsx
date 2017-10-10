@@ -32,7 +32,7 @@ const initialize = editor => {
 			const [ insertContentElm ] = this.$el[ 0 ].children;
 
 			insertContentElm.innerHTML = renderToString(
-				<GridiconButton icon="add-outline" label="Add" classNames="foobar" />
+				<GridiconButton icon="add-outline" label={ i18n.translate( 'Add' ) } />
 			);
 
 			const addTooltipListener = ( el, text ) => {
