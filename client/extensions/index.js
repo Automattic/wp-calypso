@@ -11,4 +11,4 @@ const extensions = fs
 	.readdirSync( __dirname )
 	.filter( node => fs.statSync( path.join( __dirname, node ) ).isDirectory() );
 
-export default extensions;
+module.exports = extensions;
