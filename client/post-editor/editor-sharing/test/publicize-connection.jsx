@@ -13,7 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PublicizeConnection from '../publicize-connection';
+import { EditorSharingPublicizeConnection as PublicizeConnection } from '../publicize-connection';
 
 jest.mock( 'lib/posts/actions', () => ( {
 	recordEvent: () => {},

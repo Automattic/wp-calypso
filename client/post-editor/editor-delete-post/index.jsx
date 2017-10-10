@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -17,7 +18,7 @@ import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'EditorDeletePost',
 
 	propTypes: {
@@ -58,9 +59,9 @@ export default React.createClass( {
 		}
 
 		if ( this.props.post.type === 'page' ) {
-			message = this.translate( 'Are you sure you want to trash this page?' );
+			message = this.props.translate( 'Are you sure you want to trash this page?' );
 		} else {
-			message = this.translate( 'Are you sure you want to trash this post?' );
+			message = this.props.translate( 'Are you sure you want to trash this post?' );
 		}
 
 		accept(
@@ -70,8 +71,8 @@ export default React.createClass( {
 					this.sendToTrash();
 				}
 			},
-			this.translate( 'Move to trash' ),
-			this.translate( 'Back' )
+			this.props.translate( 'Move to trash' ),
+			this.props.translate( 'Back' )
 		);
 	},
 
@@ -85,8 +86,8 @@ export default React.createClass( {
 			'is-trashing': this.state.isTrashing,
 		} );
 		const label = this.state.isTrashing
-			? this.translate( 'Trashing...' )
-			: this.translate( 'Move to trash' );
+			? this.props.translate( 'Trashing...' )
+			: this.props.translate( 'Move to trash' );
 
 		return (
 			<div className="editor-delete-post">
@@ -102,4 +103,4 @@ export default React.createClass( {
 			</div>
 		);
 	},
-} );
+}));

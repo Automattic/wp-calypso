@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
@@ -16,7 +17,7 @@ import Gridicon from 'gridicons';
 import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'StatusLabel',
 
 	propTypes: {
@@ -76,11 +77,11 @@ export default React.createClass( {
 		}
 
 		return (
-			<button
+            <button
 				className={ statusClass }
 				onClick={ this.props.onClick }
 				ref="statusLabel"
-				aria-label={ this.translate( 'Show advanced status details' ) }
+				aria-label={ this.props.translate( 'Show advanced status details' ) }
 				aria-pressed={ !! this.props.advancedStatus }
 				role="alert"
 				aria-live="polite"
@@ -88,28 +89,28 @@ export default React.createClass( {
 				<Gridicon icon="cog" size={ 18 } />
 				{ this.renderLabel() }
 			</button>
-		);
+        );
 	},
 
 	renderLabel: function() {
 		var post = this.props.post,
-			editedTime = this.moment( postUtils.getEditedTime( post ) ),
+			editedTime = this.props.moment( postUtils.getEditedTime( post ) ),
 			label;
 
 		if ( ! post.modified ) {
-			return this.translate( 'New Draft' );
+			return this.props.translate( 'New Draft' );
 		}
 
 		// prevent JP sites from showing a draft as saved in the future
 		if ( 'draft' === post.status && editedTime.isAfter( this.state.currentTime ) ) {
-			editedTime = this.moment( this.state.currentTime );
+			editedTime = this.props.moment( this.state.currentTime );
 		}
 
 		const timeFromNow = editedTime.from( this.state.currentTime );
 
 		switch ( post.status ) {
 			case 'publish':
-				label = this.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.props.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
@@ -117,7 +118,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'private':
-				label = this.translate(
+				label = this.props.translate(
 					'{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s',
 					{
 						args: { relativeTimeFromNow: timeFromNow },
@@ -128,7 +129,7 @@ export default React.createClass( {
 				);
 				break;
 			case 'draft':
-				label = this.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.props.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
@@ -136,7 +137,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'pending':
-				label = this.translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.props.translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
@@ -144,7 +145,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'future':
-				label = this.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.props.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
@@ -152,7 +153,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'trash':
-				label = this.translate( '{{strong}}Trashed{{/strong}}', {
+				label = this.props.translate( '{{strong}}Trashed{{/strong}}', {
 					components: {
 						strong: <strong />,
 					},
@@ -171,4 +172,4 @@ export default React.createClass( {
 			currentTime: Date.now(),
 		} );
 	},
-} );
+}));

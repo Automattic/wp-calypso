@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
@@ -68,7 +69,7 @@ const PostTypeOptions = React.createClass( {
 		};
 
 		return (
-			<div className="export-card__option-fieldset">
+            <div className="export-card__option-fieldset">
 				<Label className="export-card__option-fieldset-legend">
 					<FormRadio checked={ isEnabled } onChange={ onSelect } />
 					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
@@ -99,11 +100,11 @@ const PostTypeOptions = React.createClass( {
 					status="error"
 					isVisible={ isEnabled && ! this.props.isDateValid }
 				>
-					{ this.translate( 'Selected start date is later than the end date' ) }
+					{ this.props.translate( 'Selected start date is later than the end date' ) }
 				</Tooltip>
 			</div>
-		);
+        );
 	},
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( PostTypeOptions );
+export default connect( mapStateToProps, mapDispatchToProps )( localize(PostTypeOptions) );

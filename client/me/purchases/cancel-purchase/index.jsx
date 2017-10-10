@@ -46,7 +46,7 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const CancelPurchase = React.createClass( {
+const CancelPurchase = localize(React.createClass( {
 	propTypes: {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -106,7 +106,7 @@ const CancelPurchase = React.createClass( {
 			} );
 		}
 
-		const renewalDate = this.moment( renewDate ).format( 'LL' );
+		const renewalDate = this.props.moment( renewDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
 			return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
@@ -180,7 +180,7 @@ const CancelPurchase = React.createClass( {
 			</Main>
 		);
 	},
-} );
+} ));
 
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -13,7 +14,7 @@ import React from 'react';
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'SidebarButton',
 
 	propTypes: {
@@ -38,7 +39,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<a
+            <a
 				rel={ isExternal( this.props.href ) ? 'external' : null }
 				onClick={ this.props.onClick }
 				href={ this.props.href }
@@ -47,8 +48,8 @@ export default React.createClass( {
 				onMouseEnter={ this.preload }
 				data-tip-target={ this.props.tipTarget }
 			>
-				{ this.props.children || this.translate( 'Add' ) }
+				{ this.props.children || this.props.translate( 'Add' ) }
 			</a>
-		);
+        );
 	},
-} );
+}));

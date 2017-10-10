@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -17,7 +19,7 @@ var EmailForwardingList = React.createClass( {
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {
-			return <span>{ this.translate( 'Loading…' ) }</span>;
+			return <span>{ this.props.translate( 'Loading…' ) }</span>;
 		}
 
 		if ( ! list ) {
@@ -38,4 +40,4 @@ var EmailForwardingList = React.createClass( {
 	},
 } );
 
-module.exports = EmailForwardingList;
+module.exports = localize(EmailForwardingList);

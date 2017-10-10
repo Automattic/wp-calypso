@@ -5,6 +5,7 @@
  */
 
 import { assign, filter, find } from 'lodash';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -16,7 +17,7 @@ import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'SharingButtonsTray',
 
 	propTypes: {
@@ -57,11 +58,11 @@ module.exports = React.createClass( {
 
 	getHeadingText: function() {
 		if ( 'visible' === this.props.visibility ) {
-			return this.translate( 'Edit visible buttons', {
+			return this.props.translate( 'Edit visible buttons', {
 				context: 'Sharing: Buttons editor heading',
 			} );
 		} else {
-			return this.translate( 'Edit “More” buttons', {
+			return this.props.translate( 'Edit “More” buttons', {
 				context: 'Sharing: Buttons editor heading',
 			} );
 		}
@@ -69,19 +70,19 @@ module.exports = React.createClass( {
 
 	getInstructionText: function() {
 		var labels = {
-			touch: this.translate( 'Tap the buttons you would like to add or remove.', {
+			touch: this.props.translate( 'Tap the buttons you would like to add or remove.', {
 				textOnly: true,
 				context: 'Sharing: Buttons editor instructions',
 			} ),
-			notouch: this.translate( 'Click the buttons you would like to add or remove.', {
+			notouch: this.props.translate( 'Click the buttons you would like to add or remove.', {
 				textOnly: true,
 				context: 'Sharing: Buttons editor instructions',
 			} ),
-			'touch-reorder': this.translate(
+			'touch-reorder': this.props.translate(
 				'Tap the button you would like to move. Then tap the desired arrow.',
 				{ textOnly: true, context: 'Sharing: Buttons editor instructions' }
 			),
-			'notouch-reorder': this.translate( 'Drag and drop to reorder the buttons.', {
+			'notouch-reorder': this.props.translate( 'Drag and drop to reorder the buttons.', {
 				textOnly: true,
 				context: 'Sharing: Buttons editor instructions',
 			} ),
@@ -93,7 +94,7 @@ module.exports = React.createClass( {
 			if ( 'hidden' === this.props.visibility ) {
 				label +=
 					' ' +
-					this.translate( 'These will be shown in a dropdown under the “More” button.', {
+					this.props.translate( 'These will be shown in a dropdown under the “More” button.', {
 						textOnly: true,
 						context: 'Sharing: Buttons editor instructions',
 					} );
@@ -167,12 +168,12 @@ module.exports = React.createClass( {
 	getLimitedButtonsNoticeElement: function() {
 		if ( this.props.limited ) {
 			return (
-				<em className="sharing-buttons-preview__panel-notice">
-					{ this.translate( 'Sharing options are limited on private sites.', {
+                <em className="sharing-buttons-preview__panel-notice">
+					{ this.props.translate( 'Sharing options are limited on private sites.', {
 						context: 'Sharing: Buttons',
 					} ) }
 				</em>
-			);
+            );
 		}
 	},
 
@@ -216,7 +217,7 @@ module.exports = React.createClass( {
 		);
 
 		return (
-			<div className={ classes }>
+            <div className={ classes }>
 				<div className="sharing-buttons-preview__panel-content">
 					<h3 className="sharing-buttons-preview__panel-heading">{ this.getHeadingText() }</h3>
 					<p className="sharing-buttons-preview__panel-instructions">
@@ -233,9 +234,9 @@ module.exports = React.createClass( {
 						disabled={ this.getButtonsOfCurrentVisibility().length <= 1 }
 					>
 						{ this.state.isReordering ? (
-							this.translate( 'Add / Remove' )
+							this.props.translate( 'Add / Remove' )
 						) : (
-							this.translate( 'Reorder' )
+							this.props.translate( 'Reorder' )
 						) }
 					</button>
 					<button
@@ -243,10 +244,10 @@ module.exports = React.createClass( {
 						className="button sharing-buttons-preview__panel-action"
 						onClick={ this.props.onClose }
 					>
-						{ this.translate( 'Close' ) }
+						{ this.props.translate( 'Close' ) }
 					</button>
 				</footer>
 			</div>
-		);
+        );
 	},
-} );
+} ));

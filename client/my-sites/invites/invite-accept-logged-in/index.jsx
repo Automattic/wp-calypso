@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -57,12 +58,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.state.submitting
-				? this.translate( 'Following…', { context: 'button' } )
-				: this.translate( 'Follow', { context: 'button' } );
+				? this.props.translate( 'Following…', { context: 'button' } )
+				: this.props.translate( 'Follow', { context: 'button' } );
 		} else {
 			text = this.state.submitting
-				? this.translate( 'Joining…', { context: 'button' } )
-				: this.translate( 'Join', { context: 'button' } );
+				? this.props.translate( 'Joining…', { context: 'button' } )
+				: this.props.translate( 'Join', { context: 'button' } );
 		}
 
 		return text;
@@ -73,7 +74,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 		let text = '';
 
 		if ( 'follower' === this.props.invite.role ) {
-			text = this.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+			text = this.props.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
 					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
 				},
@@ -82,7 +83,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 				},
 			} );
 		} else {
-			text = this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+			text = this.props.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
 					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
 				},
@@ -97,17 +98,17 @@ let InviteAcceptLoggedIn = React.createClass( {
 
 	renderMatchEmailError() {
 		return (
-			<Card>
+            <Card>
 				<InviteFormHeader { ...this.props.invite } user={ this.props.user } matchEmailError />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
 						{ this.props.invite.knownUser ? (
-							this.translate( 'Sign In as %(email)s', {
+							this.props.translate( 'Sign In as %(email)s', {
 								context: 'button',
 								args: { email: this.props.invite.sentTo },
 							} )
 						) : (
-							this.translate( 'Register as %(email)s', {
+							this.props.translate( 'Register as %(email)s', {
 								context: 'button',
 								args: { email: this.props.invite.sentTo },
 							} )
@@ -115,12 +116,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</Button>
 				</div>
 			</Card>
-		);
+        );
 	},
 
 	renderAccept() {
 		return (
-			<div>
+            <div>
 				<Card>
 					<InviteFormHeader { ...this.props.invite } user={ this.props.user } />
 					<div className="invite-accept-logged-in__join-as">
@@ -129,7 +130,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
-							{ this.translate( 'Cancel', { context: 'button' } ) }
+							{ this.props.translate( 'Cancel', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
 							{ this.getButtonText() }
@@ -139,11 +140,11 @@ let InviteAcceptLoggedIn = React.createClass( {
 
 				<LoggedOutFormLinks>
 					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ this.props.signInLink }>
-						{ this.translate( 'Sign in as a different user' ) }
+						{ this.props.translate( 'Sign in as a different user' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
-		);
+        );
 	},
 
 	render() {
@@ -156,5 +157,5 @@ let InviteAcceptLoggedIn = React.createClass( {
 } );
 
 export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
-	InviteAcceptLoggedIn
+	localize(InviteAcceptLoggedIn)
 );

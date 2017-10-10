@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -16,7 +17,7 @@ import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'ImporterMappingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -50,7 +51,7 @@ export default React.createClass( {
 
 	getMappingDescription( numSourceUsers, numTargetUsers, targetTitle ) {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
 					'all imported content will be assigned to you. ' +
@@ -66,7 +67,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
 					'all imported content will be assigned to you. ' +
@@ -82,7 +83,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on {{b}}%(destinationSiteTitle)s{{/b}}. ' +
 					'Please reassign the authors of the imported items to an existing ' +
 					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.',
@@ -97,7 +98,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
 					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.',
@@ -140,7 +141,7 @@ export default React.createClass( {
 		);
 
 		return (
-			<div className="importer__mapping-pane">
+            <div className="importer__mapping-pane">
 				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
 					<div className="importer__mapping-description">{ mappingDescription }</div>
 				</SiteUsersFetcher>
@@ -160,9 +161,9 @@ export default React.createClass( {
 					);
 				} ) }
 				<Button disabled={ ! canStartImport } onClick={ onStartImport }>
-					{ this.translate( 'Start Import' ) }
+					{ this.props.translate( 'Start Import' ) }
 				</Button>
 			</div>
-		);
+        );
 	},
-} );
+}));

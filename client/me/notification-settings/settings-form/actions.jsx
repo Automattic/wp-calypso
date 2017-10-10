@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -13,7 +14,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'NotificationSettingsFormActions',
 
 	mixins: [ PureRenderMixin ],
@@ -27,7 +28,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="notification-settings-form-actions">
+            <div className="notification-settings-form-actions">
 				{ this.props.isApplyAllVisible && (
 					<FormButton
 						className="notification-settings-form-actions__save-to-all"
@@ -35,13 +36,13 @@ export default React.createClass( {
 						onClick={ this.props.onSaveToAll }
 						isPrimary={ false }
 					>
-						{ this.translate( 'Save to All Sites' ) }
+						{ this.props.translate( 'Save to All Sites' ) }
 					</FormButton>
 				) }
 				<FormButton disabled={ this.props.disabled } onClick={ this.props.onSave }>
-					{ this.translate( 'Save Settings' ) }
+					{ this.props.translate( 'Save Settings' ) }
 				</FormButton>
 			</div>
-		);
+        );
 	},
-} );
+}));

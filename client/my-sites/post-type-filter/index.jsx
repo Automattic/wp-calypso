@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { compact, find, includes, reduce } from 'lodash';
@@ -63,27 +64,27 @@ const PostTypeFilter = React.createClass( {
 				let label, pathStatus;
 				switch ( status ) {
 					case 'publish':
-						label = this.translate( 'Published', {
+						label = this.props.translate( 'Published', {
 							context: 'Filter label for posts list',
 						} );
 						break;
 
 					case 'draft':
-						label = this.translate( 'Drafts', {
+						label = this.props.translate( 'Drafts', {
 							context: 'Filter label for posts list',
 						} );
 						pathStatus = 'drafts';
 						break;
 
 					case 'future':
-						label = this.translate( 'Scheduled', {
+						label = this.props.translate( 'Scheduled', {
 							context: 'Filter label for posts list',
 						} );
 						pathStatus = 'scheduled';
 						break;
 
 					case 'trash':
-						label = this.translate( 'Trashed', {
+						label = this.props.translate( 'Trashed', {
 							context: 'Filter label for posts list',
 						} );
 						pathStatus = 'trashed';
@@ -114,12 +115,12 @@ const PostTypeFilter = React.createClass( {
 		const selectedItem = find( navItems, 'selected' ) || {};
 
 		const scopes = {
-			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
-			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } ),
+			me: this.props.translate( 'Me', { context: 'Filter label for posts list' } ),
+			everyone: this.props.translate( 'Everyone', { context: 'Filter label for posts list' } ),
 		};
 
 		return (
-			<div>
+            <div>
 				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
 				<SectionNav
 					selectedText={
@@ -133,7 +134,7 @@ const PostTypeFilter = React.createClass( {
 					selectedCount={ selectedItem.count }
 				>
 					<NavTabs
-						label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
+						label={ this.props.translate( 'Status', { context: 'Filter group label for tabs' } ) }
 						selectedText={ selectedItem.children }
 						selectedCount={ selectedItem.count }
 					>
@@ -146,12 +147,12 @@ const PostTypeFilter = React.createClass( {
 						pinned
 						fitsContainer
 						onSearch={ this.doSearch }
-						placeholder={ this.translate( 'Search…' ) }
+						placeholder={ this.props.translate( 'Search…' ) }
 						delaySearch={ true }
 					/>
 				</SectionNav>
 			</div>
-		);
+        );
 	},
 } );
 
@@ -186,4 +187,4 @@ export default connect( ( state, { query } ) => {
 			? getNormalizedMyPostCounts( state, siteId, query.type )
 			: getNormalizedPostCounts( state, siteId, query.type ),
 	};
-} )( PostTypeFilter );
+} )( localize(PostTypeFilter) );

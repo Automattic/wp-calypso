@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -12,7 +13,7 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+module.exports = localize(React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {
@@ -37,19 +38,19 @@ module.exports = React.createClass( {
 		return [
 			{
 				value: 'icon-text',
-				label: this.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ),
+				label: this.props.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ),
 			},
 			{
 				value: 'icon',
-				label: this.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ),
+				label: this.props.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ),
 			},
 			{
 				value: 'text',
-				label: this.translate( 'Text Only', { context: 'Sharing: Sharing button option label' } ),
+				label: this.props.translate( 'Text Only', { context: 'Sharing: Sharing button option label' } ),
 			},
 			{
 				value: 'official',
-				label: this.translate( 'Official Buttons', {
+				label: this.props.translate( 'Official Buttons', {
 					context: 'Sharing: Sharing button option label',
 				} ),
 			},
@@ -71,14 +72,14 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+            <fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ this.translate( 'Button style', {
+					{ this.props.translate( 'Button style', {
 						context: 'Sharing: Sharing button option heading',
 					} ) }
 				</legend>
 				{ this.getOptions() }
 			</fieldset>
-		);
+        );
 	},
-} );
+} ));
