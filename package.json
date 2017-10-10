@@ -242,6 +242,7 @@
   },
   "devDependencies": {
     "5to6-codemod": "5to6/5to6-codemod#v1.7.0",
+    "autodll-webpack-plugin": "0.2.1",
     "babel-eslint": "6.1.2",
     "cash-touch": "0.2.0",
     "chai": "3.5.0",

@@ -13,6 +13,7 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const AssetsPlugin = require( 'assets-webpack-plugin' );
+const AutoDllPlugin = require( 'autodll-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -166,27 +167,45 @@ const webpackConfig = {
 	externals: [ 'electron' ]
 };
 
+const vendorLibs = [
+	'classnames',
+	'd3-array',
+	'd3-scale',
+	'd3-selection',
+	'd3-shape',
+	'dom-helpers',
+	'flux',
+	'get-video-id',
+	'jquery',
+	'marked',
+	'q',
+	'twemoji',
+	'tween.js',
+	'tinymce',
+	'is-my-json-valid',
+	'i18n-calypso',
+	'lodash',
+	'moment',
+	'fs',
+	'page',
+	'react',
+	'create-react-class',
+	'prop-types',
+	'react-dom',
+	'react-redux',
+	'redux',
+	'redux-thunk',
+	'store',
+	'superagent',
+	'wpcom',
+];
+
 if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
 	// vendor chunk
-	webpackConfig.entry.vendor = [
-		'classnames',
-		'i18n-calypso',
-		'lodash',
-		'moment',
-		'page',
-		'react',
-		'create-react-class',
-		'prop-types',
-		'react-dom',
-		'react-redux',
-		'redux',
-		'redux-thunk',
-		'store',
-		'wpcom',
-	];
+	// webpackConfig.entry.vendor = vendorLibs;
 
 	// for details on what the manifest is, see: https://webpack.js.org/guides/caching/
 	// tldr: webpack maintains a mapping from chunk ids --> filenames.  whenever a filename changes
@@ -211,6 +230,13 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.LoaderOptionsPlugin( { debug: true } ),
+		new AutoDllPlugin( {
+			debug: true,
+			filename: '[name].js',
+			entry: {
+				vendor: vendorLibs
+			}
+		} )
 	] );
 	webpackConfig.entry.build = [
 		'webpack-hot-middleware/client',
