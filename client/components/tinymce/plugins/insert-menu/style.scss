@@ -12,17 +12,18 @@
 			color: lighten( $gray, 10% );
 		}
 
-		&:hover.wpcom-insert-menu__menu-icon,
-		&:focus.wpcom-insert-menu__menu-icon {
+		&:hover .wpcom-insert-menu__menu-icon,
+		&:focus .wpcom-insert-menu__menu-icon {
 			fill: lighten( $gray, 10% );
 		}
 
-
-		.wpcom-insert-menu__menu-label:hover {
-			color: $gray-dark;
-		}
-		.wpcom-insert-menu__menu-icon:hover {
-			fill: $gray-dark;
+		.wpcom-insert-menu__menu:hover {
+			.wpcom-insert-menu__menu-label {
+				color: $gray-dark;
+			}
+			.wpcom-insert-menu__menu-icon {
+				fill: $gray-dark;
+			}
 		}
 	}
 }
