@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-class FollowingEmptyContent extends React.Component {
+class ConversationsEmptyContent extends React.Component {
 	shouldComponentUpdate() {
 		return false;
 	}
@@ -22,6 +22,7 @@ class FollowingEmptyContent extends React.Component {
 		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
 	};
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const action = (
 				<a
@@ -29,25 +30,26 @@ class FollowingEmptyContent extends React.Component {
 					onClick={ this.recordAction }
 					href="/read/search"
 				>
-					{ this.props.translate( 'Find Sites to Follow' ) }
+					{ this.props.translate( 'Find Posts to Follow' ) }
 				</a>
 			),
 			secondaryAction = null;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<EmptyContent
-				className="is-drake"
-				title={ this.props.translate( 'Welcome to Reader' ) }
-				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
+				title={ this.props.translate( 'Welcome to Conversations' ) }
+				line={ this.props.translate(
+					"When WordPress posts spark lively conversations, they'll appear here. " +
+						'To get started, like or comment on some posts.'
+				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-all-done.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/illustrations/illustration-conversations-empty.svg' }
+				illustrationWidth={ 400 }
 			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default localize( FollowingEmptyContent );
+export default localize( ConversationsEmptyContent );
