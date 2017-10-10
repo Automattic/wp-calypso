@@ -88,7 +88,7 @@ class SocialLoginForm extends Component {
 			() => {
 				this.recordEvent( 'calypso_login_social_login_success' );
 
-				onSuccess();
+				onSuccess( redirectTo );
 			},
 			error => {
 				if ( error.code === 'unknown_user' ) {
