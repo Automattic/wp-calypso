@@ -19,16 +19,12 @@ import Notice from 'components/notice';
 import formBase from 'me/form-base';
 import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
-import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
+import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
 import { forSms } from 'lib/countries-list';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
-
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/no-deprecated */
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 module.exports = protectForm(
 	localize(
