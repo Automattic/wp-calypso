@@ -75,7 +75,7 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		return (
-            <div className={ classes }>
+			<div className={ classes }>
 				<label className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
 					{ this.props.translate( 'Shortlink' ) }
 				</label>
@@ -88,7 +88,7 @@ const EditorSharingAccordion = React.createClass( {
 					selectOnFocus
 				/>
 			</div>
-        );
+		);
 	},
 
 	hideSharing: function() {
@@ -122,7 +122,7 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		return (
-            <Accordion
+			<Accordion
 				title={ this.props.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
@@ -135,7 +135,7 @@ const EditorSharingAccordion = React.createClass( {
 					{ this.renderShortUrl() }
 				</AccordionSection>
 			</Accordion>
-        );
+		);
 	},
 } );
 
@@ -159,4 +159,4 @@ export default connect(
 	{
 		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' ),
 	}
-)( localize(EditorSharingAccordion) );
+)( localize( EditorSharingAccordion ) );

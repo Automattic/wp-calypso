@@ -316,7 +316,7 @@ const PostSelectorPosts = React.createClass( {
 		const children = this.getPostChildren( item.ID );
 
 		return (
-            <div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
+			<div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
 				<label>
 					<input
 						name="posts"
@@ -348,7 +348,7 @@ const PostSelectorPosts = React.createClass( {
 					</div>
 				) }
 			</div>
-        );
+		);
 	},
 
 	renderEmptyContent() {
@@ -382,7 +382,7 @@ const PostSelectorPosts = React.createClass( {
 		}
 
 		return (
-            <div key="placeholder" className="post-selector__list-item is-placeholder">
+			<div key="placeholder" className="post-selector__list-item is-placeholder">
 				<label>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
@@ -392,7 +392,7 @@ const PostSelectorPosts = React.createClass( {
 					<span className="post-selector__label">{ this.props.translate( 'Loading…' ) }</span>
 				</label>
 			</div>
-        );
+		);
 	},
 
 	cellRendererWrapper( { key, style, ...rest } ) {
@@ -478,4 +478,4 @@ export default connect( ( state, ownProps ) => {
 		postTypes: getPostTypes( state, siteId ),
 		queryWithVersion: queryWithVersion,
 	};
-} )( localize(PostSelectorPosts) );
+} )( localize( PostSelectorPosts ) );

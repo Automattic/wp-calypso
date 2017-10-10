@@ -162,7 +162,7 @@ const PostTrends = React.createClass( {
 		} );
 
 		return (
-            <div className="post-trends">
+			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
 				<Card>
@@ -198,7 +198,7 @@ const PostTrends = React.createClass( {
 					</div>
 				</Card>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -227,4 +227,4 @@ export default connect( state => {
 		query,
 		siteId,
 	};
-} )( localize(PostTrends) );
+} )( localize( PostTrends ) );

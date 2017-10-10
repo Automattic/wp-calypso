@@ -126,4 +126,4 @@ export default connect( state => {
 		siteId,
 		postFormats: getPostFormats( state, siteId ),
 	};
-} )( localize(EditorPostFormats) );
+} )( localize( EditorPostFormats ) );

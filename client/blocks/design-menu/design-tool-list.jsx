@@ -46,7 +46,7 @@ const DesignToolList = React.createClass( {
 
 	render() {
 		return (
-            <div className="design-tool-list">
+			<div className="design-tool-list">
 				<SidebarHeading>{ this.props.translate( 'Site Identity' ) }</SidebarHeading>
 				<SidebarMenu>
 					<ul>
@@ -58,8 +58,8 @@ const DesignToolList = React.createClass( {
 					</ul>
 				</SidebarMenu>
 			</div>
-        );
+		);
 	},
 } );
 
-export default localize(DesignToolList);
+export default localize( DesignToolList );

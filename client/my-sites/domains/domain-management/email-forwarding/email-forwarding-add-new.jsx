@@ -144,13 +144,13 @@ const EmailForwardingAddNew = React.createClass( {
 		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
 
 		return (
-            <FormButton
+			<FormButton
 				disabled={ this.state.formSubmitting || this.hasReachedLimit() }
 				onClick={ handler }
 			>
 				{ this.props.translate( 'Add New Email Forward' ) }
 			</FormButton>
-        );
+		);
 	},
 
 	cancelButton() {
@@ -159,7 +159,7 @@ const EmailForwardingAddNew = React.createClass( {
 		}
 
 		return (
-            <FormButton
+			<FormButton
 				type="button"
 				isPrimary={ false }
 				disabled={ this.state.formSubmitting }
@@ -167,7 +167,7 @@ const EmailForwardingAddNew = React.createClass( {
 			>
 				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
-        );
+		);
 	},
 
 	formFooter() {
@@ -188,13 +188,15 @@ const EmailForwardingAddNew = React.createClass( {
 				context: 'part of e-mail address',
 				comment: 'As it would be part of an e-mail address contact@example.com',
 			} ),
-			exampleEmailText = this.props.translate( 'e.g. %(example)s', { args: { example: contactText } } ),
+			exampleEmailText = this.props.translate( 'e.g. %(example)s', {
+				args: { example: contactText },
+			} ),
 			isValidMailbox = this.isValid( 'mailbox' ),
 			isValidDestination = this.isValid( 'destination' ),
 			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
-            <div className="form-content">
+			<div className="form-content">
 				<FormFieldset>
 					<FormLabel>{ this.props.translate( 'Emails Sent To' ) }</FormLabel>
 					<FormTextInputWithAffixes
@@ -238,7 +240,7 @@ const EmailForwardingAddNew = React.createClass( {
 					) }
 				</FormFieldset>
 			</div>
-        );
+		);
 	},
 
 	shouldShowForm() {
@@ -290,4 +292,4 @@ const EmailForwardingAddNew = React.createClass( {
 	},
 } );
 
-export default localize(EmailForwardingAddNew);
+export default localize( EmailForwardingAddNew );

@@ -17,16 +17,16 @@ const SubscriptionText = React.createClass( {
 	render() {
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			return (
-                <span className="subscription-text">
+				<span className="subscription-text">
 					{ this.props.translate( 'renews annually', {
 						context: 'Informative text for renewals in /checkout',
 					} ) }
 				</span>
-            );
+			);
 		}
 
 		return null;
 	},
 } );
 
-export default localize(SubscriptionText);
+export default localize( SubscriptionText );

@@ -120,7 +120,7 @@ const PostTypeFilter = React.createClass( {
 		};
 
 		return (
-            <div>
+			<div>
 				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
 				<SectionNav
 					selectedText={
@@ -152,7 +152,7 @@ const PostTypeFilter = React.createClass( {
 					/>
 				</SectionNav>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -187,4 +187,4 @@ export default connect( ( state, { query } ) => {
 			? getNormalizedMyPostCounts( state, siteId, query.type )
 			: getNormalizedPostCounts( state, siteId, query.type ),
 	};
-} )( localize(PostTypeFilter) );
+} )( localize( PostTypeFilter ) );

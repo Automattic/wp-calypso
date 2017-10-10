@@ -19,7 +19,7 @@ var EmailForwardingDetails = React.createClass( {
 
 	render: function() {
 		return (
-            <p className="email-forwarding__explanation">
+			<p className="email-forwarding__explanation">
 				{ this.props.translate(
 					'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.'
 				) }{' '}
@@ -32,7 +32,7 @@ var EmailForwardingDetails = React.createClass( {
 					{ this.props.translate( 'Learn more.' ) }
 				</a>
 			</p>
-        );
+		);
 	},
 
 	handleLearnMoreClick() {
@@ -40,4 +40,4 @@ var EmailForwardingDetails = React.createClass( {
 	},
 } );
 
-module.exports = localize(EmailForwardingDetails);
+module.exports = localize( EmailForwardingDetails );

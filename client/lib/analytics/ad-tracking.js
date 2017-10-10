@@ -95,7 +95,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		dcmFloodlightAdvertiserId: '6355556',
 		linkedInPartnerId: '36622',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
-		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e'
+		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	},
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
@@ -236,9 +236,9 @@ function setUpTwitterGlobal() {
 }
 
 function setupOutbrainGlobal() {
-	const api = window.obApi = function() {
+	const api = ( window.obApi = function() {
 		api.dispatch ? api.dispatch.apply( api, arguments ) : api.queue.push( arguments );
-	};
+	} );
 	api.version = '1.0';
 	api.loaded = true;
 	api.marketerId = TRACKING_IDS.outbrainAdvId;
@@ -683,7 +683,7 @@ function recordProduct( product, orderId ) {
 				order_id: orderId,
 				product_slug: product.product_slug,
 				order_price: product.cost,
-				currency: product.currency
+				currency: product.currency,
 			} );
 		}
 

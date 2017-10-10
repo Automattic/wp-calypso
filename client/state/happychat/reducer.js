@@ -71,15 +71,19 @@ const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.time
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const geoLocation = createReducer( null, {
-	[ HAPPYCHAT_CONNECTED ]: ( state, action ) => {
-		const { user: { geo_location } } = action;
-		if ( geo_location && geo_location.country_long && geo_location.city ) {
-			return geo_location;
-		}
-		return state;
-	}
-}, geoLocationSchema );
+export const geoLocation = createReducer(
+	null,
+	{
+		[ HAPPYCHAT_CONNECTED ]: ( state, action ) => {
+			const { user: { geo_location } } = action;
+			if ( geo_location && geo_location.country_long && geo_location.city ) {
+				return geo_location;
+			}
+			return state;
+		},
+	},
+	geoLocationSchema
+);
 
 /**
  * Adds timeline events for happychat

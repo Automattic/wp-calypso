@@ -313,7 +313,7 @@ var LinkDialog = React.createClass( {
 
 	render: function() {
 		return (
-            <Dialog
+			<Dialog
 				isVisible={ this.props.visible }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtons() }
@@ -368,7 +368,7 @@ var LinkDialog = React.createClass( {
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
-        );
+		);
 	},
 } );
 
@@ -378,4 +378,4 @@ export default connect( state => {
 		site: selectedSite,
 		sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
 	};
-} )( localize(LinkDialog) );
+} )( localize( LinkDialog ) );

@@ -19,12 +19,12 @@ var CartTotal = React.createClass( {
 
 		if ( cart.hasPendingServerUpdates ) {
 			return (
-                <div className="cart-total">
+				<div className="cart-total">
 					{ this.props.translate( 'Recalculating…', {
 						context: 'Upgrades: Updating cart cost in checkout',
 					} ) }
 				</div>
-            );
+			);
 		}
 
 		if ( ! cart.total_cost_display ) {
@@ -54,4 +54,4 @@ var CartTotal = React.createClass( {
 	},
 } );
 
-module.exports = localize(CartTotal);
+module.exports = localize( CartTotal );

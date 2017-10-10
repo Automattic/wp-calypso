@@ -118,7 +118,9 @@ var PayButton = React.createClass( {
 	sending: function() {
 		return {
 			disabled: true,
-			text: this.props.translate( 'Sending your purchase', { context: 'Loading state on /checkout' } ),
+			text: this.props.translate( 'Sending your purchase', {
+				context: 'Loading state on /checkout',
+			} ),
 		};
 	},
 
@@ -157,4 +159,4 @@ var PayButton = React.createClass( {
 	},
 } );
 
-module.exports = localize(PayButton);
+module.exports = localize( PayButton );

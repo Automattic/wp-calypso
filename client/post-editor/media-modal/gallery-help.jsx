@@ -81,7 +81,7 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 		}
 
 		return (
-            <Popover
+			<Popover
 				onClose={ () => this.dismiss() }
 				context={ renderContext }
 				position="bottom"
@@ -117,7 +117,7 @@ const EditorMediaModalGalleryHelp = React.createClass( {
 					</div>
 				</div>
 			</Popover>
-        );
+		);
 	},
 
 	render() {
@@ -158,4 +158,4 @@ export default connect(
 			},
 			dispatch
 		)
-)( localize(EditorMediaModalGalleryHelp) );
+)( localize( EditorMediaModalGalleryHelp ) );

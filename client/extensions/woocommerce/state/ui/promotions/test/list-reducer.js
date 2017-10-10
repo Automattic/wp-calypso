@@ -9,9 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../list-reducer';
-import {
-	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PROMOTIONS_PAGE_SET } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	it( 'should initialize to default values', () => {

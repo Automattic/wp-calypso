@@ -159,13 +159,13 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		}
 
 		return (
-            <Button borderless compact onClick={ this.newConnection }>
+			<Button borderless compact onClick={ this.newConnection }>
 				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
 				<span className="editor-sharing__external-link-indicator">
 					<Gridicon icon="external" size={ 18 } />
 				</span>
 			</Button>
-        );
+		);
 	},
 
 	renderInfoNotice: function() {
@@ -176,12 +176,12 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		}
 
 		return (
-            <p className="editor-drawer__description">
+			<p className="editor-drawer__description">
 				{ this.props.translate(
 					'Connect and select social media services to automatically share this post.'
 				) }
 			</p>
-        );
+		);
 	},
 
 	dismissRepublicizeMessage: function() {
@@ -194,17 +194,17 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
 			return (
-                <div className="editor-sharing__publicize-disabled">
+				<div className="editor-sharing__publicize-disabled">
 					<p>
 						<span>{ this.props.translate( 'Publicize is disabled on this site.' ) }</span>
 					</p>
 				</div>
-            );
+			);
 		}
 
 		if ( this.props.site && this.props.site.jetpack && ! this.props.isPublicizeEnabled ) {
 			return (
-                <div className="editor-sharing__publicize-disabled">
+				<div className="editor-sharing__publicize-disabled">
 					<p>
 						<span>
 							{ this.props.translate(
@@ -219,7 +219,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 						{ this.props.translate( 'View Module Settings' ) }
 					</button>
 				</div>
-            );
+			);
 		}
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
@@ -256,4 +256,4 @@ export default connect(
 		};
 	},
 	{ requestConnections }
-)( localize(EditorSharingPublicizeOptions) );
+)( localize( EditorSharingPublicizeOptions ) );

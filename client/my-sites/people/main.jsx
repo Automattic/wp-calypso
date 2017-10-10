@@ -51,13 +51,13 @@ export const People = React.createClass( {
 				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
 			case 'email-followers':
 				return (
-                    <FollowersList
+					<FollowersList
 						site={ site }
 						search={ this.props.search }
 						label={ this.props.translate( 'Email Followers' ) }
 						type="email"
 					/>
-                );
+				);
 			case 'viewers':
 				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
 			default:
@@ -88,14 +88,14 @@ export const People = React.createClass( {
 		}
 		if ( siteId && ! canViewPeople ) {
 			return (
-                <Main>
+				<Main>
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
-            );
+			);
 		}
 		return (
 			<Main>
@@ -130,4 +130,4 @@ export default connect( state => {
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
 		jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
 	};
-} )( localize(People) );
+} )( localize( People ) );

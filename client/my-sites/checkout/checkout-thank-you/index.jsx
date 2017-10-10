@@ -148,7 +148,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-            <Notice
+			<Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
 				status="is-warning"
@@ -164,7 +164,7 @@ const CheckoutThankYou = React.createClass( {
 					}
 				) }
 			</Notice>
-        );
+		);
 	},
 
 	isDataLoaded() {
@@ -285,7 +285,7 @@ const CheckoutThankYou = React.createClass( {
 			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
-                <Main className="checkout-thank-you">
+				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
@@ -299,7 +299,7 @@ const CheckoutThankYou = React.createClass( {
 						buttonText={ this.props.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
-            );
+			);
 		}
 
 		const goBackText = this.props.selectedSite
@@ -460,4 +460,4 @@ export default connect(
 			},
 		};
 	}
-)( localize(CheckoutThankYou) );
+)( localize( CheckoutThankYou ) );

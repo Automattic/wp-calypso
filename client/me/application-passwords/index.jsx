@@ -96,7 +96,7 @@ const ApplicationPasswords = React.createClass( {
 		} );
 
 		return (
-            <Card className={ cardClasses }>
+			<Card className={ cardClasses }>
 				<form
 					id="add-application-password"
 					className="application-passwords__add-new"
@@ -141,13 +141,13 @@ const ApplicationPasswords = React.createClass( {
 					</FormButtonsBar>
 				</form>
 			</Card>
-        );
+		);
 	},
 
 	renderNewAppPassword: function() {
 		var newPassword = this.props.appPasswordsData.newApplicationPassword;
 		return (
-            <Card className="application-passwords__new-password">
+			<Card className="application-passwords__new-password">
 				<p className="application-passwords__new-password-display">
 					{ newPassword.application_password }
 				</p>
@@ -177,7 +177,7 @@ const ApplicationPasswords = React.createClass( {
 					</FormButton>
 				</FormButtonsBar>
 			</Card>
-        );
+		);
 	},
 
 	renderApplicationPasswords: function() {
@@ -186,7 +186,7 @@ const ApplicationPasswords = React.createClass( {
 		}
 
 		return (
-            <div className="application-passwords__active">
+			<div className="application-passwords__active">
 				<FormSectionHeading>{ this.props.translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
 					{ this.props.appPasswordsData.get().map( function( password ) {
@@ -200,14 +200,14 @@ const ApplicationPasswords = React.createClass( {
 					}, this ) }
 				</ul>
 			</div>
-        );
+		);
 	},
 
 	render: function() {
 		var hasNewPassword = this.props.appPasswordsData.hasNewPassword();
 
 		return (
-            <div>
+			<div>
 				<SectionHeader label={ this.props.translate( 'Application Passwords' ) }>
 					<Button
 						compact
@@ -236,10 +236,10 @@ const ApplicationPasswords = React.createClass( {
 					{ this.renderApplicationPasswords() }
 				</Card>
 			</div>
-        );
+		);
 	},
 } );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	localize(ApplicationPasswords)
+	localize( ApplicationPasswords )
 );

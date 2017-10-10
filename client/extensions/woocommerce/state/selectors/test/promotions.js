@@ -24,8 +24,8 @@ describe( 'promotions', () => {
 						list: {
 							currentPage: 12,
 							perPage: 30,
-						}
-					}
+						},
+					},
 				},
 				sites: {
 					123: {

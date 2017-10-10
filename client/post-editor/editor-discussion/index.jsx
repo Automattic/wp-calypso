@@ -27,7 +27,6 @@ function statusToBoolean( status ) {
 }
 
 export const EditorDiscussion = React.createClass( {
-
 	propTypes: {
 		isNew: PropTypes.bool,
 		post: PropTypes.object,
@@ -97,7 +96,7 @@ export const EditorDiscussion = React.createClass( {
 		var discussion = this.getDiscussionSetting();
 
 		return (
-            <EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
+			<EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
 				<label>
 					<FormCheckbox
 						name="comment_status"
@@ -129,7 +128,7 @@ export const EditorDiscussion = React.createClass( {
 					<span>{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
-        );
+		);
 	},
 } );
 

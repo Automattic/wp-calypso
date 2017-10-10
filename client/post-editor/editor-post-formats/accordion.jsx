@@ -67,7 +67,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 		} );
 
 		return (
-            <div>
+			<div>
 				<QueryPostFormats siteId={ this.props.siteId } />
 				{ ! isEmpty( postFormats ) && (
 					<Accordion
@@ -80,7 +80,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 					</Accordion>
 				) }
 			</div>
-        );
+		);
 	},
 } );
 
@@ -93,4 +93,4 @@ export default connect( state => {
 		postFormats: getPostFormats( state, siteId ),
 		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
 	};
-} )( localize(EditorPostFormatsAccordion) );
+} )( localize( EditorPostFormatsAccordion ) );

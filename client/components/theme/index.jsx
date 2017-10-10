@@ -155,11 +155,11 @@ export class Theme extends Component {
 
 		return (
 			<Card className={ themeClass }>
-				{ this.isBeginnerTheme() && <Ribbon
-					className="theme__ribbon"
-					color="green">
-					{ translate( 'Beginner' ) }
-				</Ribbon> }
+				{ this.isBeginnerTheme() && (
+					<Ribbon className="theme__ribbon" color="green">
+						{ translate( 'Beginner' ) }
+					</Ribbon>
+				) }
 				<div className="theme__content">
 					{ this.renderHover() }
 

@@ -100,4 +100,4 @@ const PlanPrice = React.createClass( {
 	},
 } );
 
-export default localize(PlanPrice);
+export default localize( PlanPrice );

@@ -87,7 +87,7 @@ const PremiumPopover = React.createClass( {
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
-            <div>
+			<div>
 				<QueryPlans />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<span
@@ -133,7 +133,7 @@ const PremiumPopover = React.createClass( {
 					</div>
 				</Popover>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -144,4 +144,4 @@ export default connect( state => {
 		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
 		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM ),
 	};
-} )( localize(PremiumPopover) );
+} )( localize( PremiumPopover ) );

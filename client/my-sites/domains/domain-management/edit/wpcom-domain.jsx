@@ -34,7 +34,7 @@ const WpcomDomain = React.createClass( {
 		}
 
 		return (
-            <VerticalNav>
+			<VerticalNav>
 				<VerticalNavItem
 					path={ `https://${ this.props.domain
 						.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
@@ -44,12 +44,12 @@ const WpcomDomain = React.createClass( {
 					{ this.props.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
-        );
+		);
 	},
 
 	render() {
 		return (
-            <div>
+			<div>
 				<div className="domain-details-card">
 					<Header { ...this.props } />
 
@@ -70,8 +70,8 @@ const WpcomDomain = React.createClass( {
 				</div>
 				{ this.getEditSiteAddressBlock() }
 			</div>
-        );
+		);
 	},
 } );
 
-export default localize(WpcomDomain);
+export default localize( WpcomDomain );

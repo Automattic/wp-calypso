@@ -98,18 +98,21 @@ describe( 'reducers', () => {
 				user: {
 					geo_location: {
 						country_long: 'Romania',
-						city: 'Timisoara'
-					}
-				}
+						city: 'Timisoara',
+					},
+				},
 			} );
 
 			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 		} );
 
 		it( 'returns valid geolocation', () => {
-			const state = geoLocation( { country_long: 'Romania', city: 'Timisoara' }, {
-				type: DESERIALIZE
-			} );
+			const state = geoLocation(
+				{ country_long: 'Romania', city: 'Timisoara' },
+				{
+					type: DESERIALIZE,
+				}
+			);
 
 			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 		} );

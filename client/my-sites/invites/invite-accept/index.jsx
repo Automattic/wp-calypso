@@ -94,7 +94,9 @@ let InviteAccept = React.createClass( {
 	},
 
 	decline() {
-		this.props.infoNotice( this.props.translate( 'You declined to join.' ), { displayOnNextPage: true } );
+		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
+			displayOnNextPage: true,
+		} );
 		page( '/' );
 	},
 
@@ -161,7 +163,9 @@ let InviteAccept = React.createClass( {
 				case 'already_subscribed':
 					Object.assign( props, {
 						title: error.message, // "You are already a (follower|member) of this site"
-						line: this.props.translate( 'Would you like to accept the invite with a different account?' ),
+						line: this.props.translate(
+							'Would you like to accept the invite with a different account?'
+						),
 						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
@@ -214,7 +218,7 @@ let InviteAccept = React.createClass( {
 			{ invite, user } = this.state;
 
 		return (
-            <div className="invite-accept">
+			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
 					{ this.isMatchEmailError() &&
@@ -233,10 +237,10 @@ let InviteAccept = React.createClass( {
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>
 			</div>
-        );
+		);
 	},
 } );
 
 export default connect( null, dispatch =>
 	bindActionCreators( { successNotice, infoNotice }, dispatch )
-)( localize(InviteAccept) );
+)( localize( InviteAccept ) );

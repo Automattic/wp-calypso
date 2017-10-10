@@ -240,7 +240,7 @@ const CreditCardForm = React.createClass( {
 
 	render() {
 		return (
-            <form onSubmit={ this.onSubmit }>
+			<form onSubmit={ this.onSubmit }>
 				<Card className="credit-card-form__content">
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
@@ -286,19 +286,25 @@ const CreditCardForm = React.createClass( {
 
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
 						{ this.state.formSubmitting ? (
-							this.props.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
+							this.props.translate( 'Saving Card…', {
+								context: 'Button label',
+								comment: 'Credit card',
+							} )
 						) : (
-							this.props.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } )
+							this.props.translate( 'Save Card', {
+								context: 'Button label',
+								comment: 'Credit card',
+							} )
 						) }
 					</FormButton>
 				</CompactCard>
 			</form>
-        );
+		);
 	},
 	renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (
-                <div className="credit-card-form__card-terms">
+				<div className="credit-card-form__card-terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						{ this.props.translate(
@@ -306,9 +312,9 @@ const CreditCardForm = React.createClass( {
 						) }
 					</p>
 				</div>
-            );
+			);
 		}
 	},
 } );
 
-export default localize(CreditCardForm);
+export default localize( CreditCardForm );

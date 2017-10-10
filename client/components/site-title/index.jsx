@@ -43,7 +43,7 @@ const SiteTitleControl = React.createClass( {
 
 	render() {
 		return (
-            <div className="site-title">
+			<div className="site-title">
 				<FormFieldset>
 					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
@@ -61,8 +61,8 @@ const SiteTitleControl = React.createClass( {
 					/>
 				</FormFieldset>
 			</div>
-        );
+		);
 	},
 } );
 
-export default localize(SiteTitleControl);
+export default localize( SiteTitleControl );

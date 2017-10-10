@@ -60,7 +60,7 @@ const FirstView = React.createClass( {
 		const firstViewHidePreferenceClasses = classNames( 'first-view__hide-preference' );
 
 		return (
-            <RootChild className={ classes }>
+			<RootChild className={ classes }>
 				<ReactCSSTransitionGroup
 					transitionName="first-view-transition"
 					component={ TransitionGroupComponent }
@@ -92,7 +92,7 @@ const FirstView = React.createClass( {
 					) }
 				</ReactCSSTransitionGroup>
 			</RootChild>
-        );
+		);
 	},
 
 	hide() {
@@ -145,4 +145,4 @@ export default connect(
 	{
 		hideView,
 	}
-)( localize(FirstView) );
+)( localize( FirstView ) );

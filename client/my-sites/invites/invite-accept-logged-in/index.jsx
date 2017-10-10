@@ -98,7 +98,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 
 	renderMatchEmailError() {
 		return (
-            <Card>
+			<Card>
 				<InviteFormHeader { ...this.props.invite } user={ this.props.user } matchEmailError />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
@@ -116,12 +116,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</Button>
 				</div>
 			</Card>
-        );
+		);
 	},
 
 	renderAccept() {
 		return (
-            <div>
+			<div>
 				<Card>
 					<InviteFormHeader { ...this.props.invite } user={ this.props.user } />
 					<div className="invite-accept-logged-in__join-as">
@@ -144,7 +144,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
-        );
+		);
 	},
 
 	render() {
@@ -157,5 +157,5 @@ let InviteAcceptLoggedIn = React.createClass( {
 } );
 
 export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
-	localize(InviteAcceptLoggedIn)
+	localize( InviteAcceptLoggedIn )
 );
