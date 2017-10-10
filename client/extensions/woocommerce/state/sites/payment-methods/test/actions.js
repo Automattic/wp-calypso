@@ -87,7 +87,7 @@ describe( 'actions', () => {
 				},
 			],
 		};
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchPaymentMethods( siteId )( dispatch, getState );
@@ -97,7 +97,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with payment information when request completes', () => {
+		test( 'should dispatch a success action with payment information when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchPaymentMethods( siteId )( dispatch, getState );
@@ -107,7 +107,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should add an object keyed with enabled to settings with a value of no when method is not enabled', () => {
+		test( 'should add an object keyed with enabled to settings with a value of no when method is not enabled', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchPaymentMethods( siteId )( dispatch, getState );
@@ -117,7 +117,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should add an object keyed with enabled to settings with a value of yes when method is enabled', () => {
+		test( 'should add an object keyed with enabled to settings with a value of yes when method is enabled', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchPaymentMethods( 456 )( dispatch, getState );
@@ -127,7 +127,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if payment methods are already loading for this site', () => {
+		test( 'should not dispatch if payment methods are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {

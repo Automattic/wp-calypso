@@ -17,12 +17,12 @@ import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 
-describe( 'index', function() {
-	describe( 'logResponseTime middleware', function() {
+describe( 'index', () => {
+	describe( 'logResponseTime middleware', () => {
 		// Stub request, response, and next
 		let request, response, next;
 		let request2, response2;
-		beforeEach( function() {
+		beforeEach( () => {
 			request = { context: {} };
 			request2 = { context: {} };
 			response = new events.EventEmitter();
@@ -30,21 +30,21 @@ describe( 'index', function() {
 			next = noop;
 		} );
 
-		describe( 'when rendering a section', function() {
+		describe( 'when rendering a section', () => {
 			let clock;
 
 			useFakeTimers( newClock => ( clock = newClock ) );
 
-			beforeEach( function() {
+			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 				request.context.sectionName = 'reader';
 			} );
 
-			afterEach( function() {
+			afterEach( () => {
 				analytics.statsd.recordTiming.restore();
 			} );
 
-			it( 'logs response time analytics', function() {
+			test( 'logs response time analytics', () => {
 				// Clear throttling
 				clock.tick( TWO_SECONDS );
 
@@ -61,7 +61,7 @@ describe( 'index', function() {
 				);
 			} );
 
-			it( 'throttles calls to log analytics', function() {
+			test( 'throttles calls to log analytics', () => {
 				// Clear throttling
 				clock.tick( TWO_SECONDS );
 
@@ -81,16 +81,16 @@ describe( 'index', function() {
 			} );
 		} );
 
-		describe( 'when not rendering a section', function() {
-			beforeEach( function() {
+		describe( 'when not rendering a section', () => {
+			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 			} );
 
-			afterEach( function() {
+			afterEach( () => {
 				analytics.statsd.recordTiming.restore();
 			} );
 
-			it( 'does not log response time analytics', function() {
+			test( 'does not log response time analytics', () => {
 				logSectionResponseTime( request, response, next );
 
 				// Mock the "finish" event

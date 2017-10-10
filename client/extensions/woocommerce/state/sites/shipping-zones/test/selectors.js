@@ -109,101 +109,101 @@ const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
 	describe( '#areShippingZonesLoading', () => {
-		it( 'should return false when woocommerce state is not available.', () => {
+		test( 'should return false when woocommerce state is not available.', () => {
 			expect( areShippingZonesLoading( preInitializedState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return false when zones are loaded.', () => {
+		test( 'should return false when zones are loaded.', () => {
 			expect( areShippingZonesLoading( loadedEmptyState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return true when zones are loaded but some methods and locations are not.', () => {
+		test( 'should return true when zones are loaded but some methods and locations are not.', () => {
 			expect( areShippingZonesLoading( loadingMethodsAndLoadingLocationsState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should return true when zones and methods are loaded but some locations are not.', () => {
+		test( 'should return true when zones and methods are loaded but some locations are not.', () => {
 			expect( areShippingZonesLoading( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be
 				.true;
 		} );
 
-		it( 'should return true when zones and locations are loaded but some methods are not.', () => {
+		test( 'should return true when zones and locations are loaded but some methods are not.', () => {
 			expect( areShippingZonesLoading( loadingMethodsAndLoadedLocationsState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should return false when zones are loaded and all methods and locations are loaded too.', () => {
+		test( 'should return false when zones are loaded and all methods and locations are loaded too.', () => {
 			expect( areShippingZonesLoading( loadedWithMethodsAndLocationsState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return true when zones are currently being fetched.', () => {
+		test( 'should return true when zones are currently being fetched.', () => {
 			expect( areShippingZonesLoading( loadingState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should return false when zones are loaded only for a different site.', () => {
+		test( 'should return false when zones are loaded only for a different site.', () => {
 			expect( areShippingZonesLoading( loadedEmptyState, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areShippingZonesLoading( loadingStateWithUi ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#areShippingZonesLoaded', () => {
-		it( 'should return false when woocommerce state is not available.', () => {
+		test( 'should return false when woocommerce state is not available.', () => {
 			expect( areShippingZonesLoaded( preInitializedState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return true when zones are loaded.', () => {
+		test( 'should return true when zones are loaded.', () => {
 			expect( areShippingZonesLoaded( loadedEmptyState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should return false when zones are loaded but some methods and locations are not.', () => {
+		test( 'should return false when zones are loaded but some methods and locations are not.', () => {
 			expect( areShippingZonesLoaded( loadingMethodsAndLoadingLocationsState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return false when zones and methods are loaded but some locations are not.', () => {
+		test( 'should return false when zones and methods are loaded but some locations are not.', () => {
 			expect( areShippingZonesLoaded( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be
 				.false;
 		} );
 
-		it( 'should return false when zones and locations are loaded but some methods are not.', () => {
+		test( 'should return false when zones and locations are loaded but some methods are not.', () => {
 			expect( areShippingZonesLoaded( loadingMethodsAndLoadedLocationsState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return true when zones are loaded and all methods and locations are loaded too.', () => {
+		test( 'should return true when zones are loaded and all methods and locations are loaded too.', () => {
 			expect( areShippingZonesLoaded( loadedWithMethodsAndLocationsState, 123 ) ).to.be.true;
 		} );
 
-		it( 'should return false when zones are currently being fetched.', () => {
+		test( 'should return false when zones are currently being fetched.', () => {
 			expect( areShippingZonesLoaded( loadingState, 123 ) ).to.be.false;
 		} );
 
-		it( 'should return false when zones are loaded only for a different site.', () => {
+		test( 'should return false when zones are loaded only for a different site.', () => {
 			expect( areShippingZonesLoaded( loadedEmptyState, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areShippingZonesLoaded( loadingStateWithUi ) ).to.be.false;
 		} );
 	} );
 
 	describe( '#getAPIShippingZones', () => {
-		it( 'should return null when woocommerce state is not available.', () => {
+		test( 'should return null when woocommerce state is not available.', () => {
 			expect( getAPIShippingZones( preInitializedState, 123 ) ).to.be.falsey;
 		} );
 
-		it( 'should return the shipping zones list if they finished loading.', () => {
+		test( 'should return the shipping zones list if they finished loading.', () => {
 			expect( getAPIShippingZones( loadedEmptyState, 123 ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return "LOADING" if the zones are currently being fetched.', () => {
+		test( 'should return "LOADING" if the zones are currently being fetched.', () => {
 			expect( getAPIShippingZones( loadingState, 123 ) ).to.equal( LOADING );
 		} );
 
-		it( 'should return null when zones are loaded only for a different site.', () => {
+		test( 'should return null when zones are loaded only for a different site.', () => {
 			expect( getAPIShippingZones( loadedEmptyState, 456 ) ).to.be.falsey;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getAPIShippingZones( loadingStateWithUi ) ).to.deep.equal( LOADING );
 		} );
 	} );

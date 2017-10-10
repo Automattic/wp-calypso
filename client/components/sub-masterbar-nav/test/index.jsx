@@ -20,7 +20,7 @@ describe( 'SubMasterbarNav', () => {
 		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
-	it( 'should render a navbar and a dropdown with the given options', () => {
+	test( 'should render a navbar and a dropdown with the given options', () => {
 		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/" /> );
 		const dropdown = wrapper.find( Dropdown );
 		const navbar = wrapper.find( Navbar );
@@ -29,7 +29,7 @@ describe( 'SubMasterbarNav', () => {
 		expect( navbar.prop( 'options' ) ).to.equal( options );
 	} );
 
-	it( 'should pass the selected option to the dropdown', () => {
+	test( 'should pass the selected option to the dropdown', () => {
 		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/more" /> );
 		const dropdown = wrapper.find( Dropdown );
 
@@ -37,7 +37,7 @@ describe( 'SubMasterbarNav', () => {
 		expect( dropdown.prop( 'selected' ) ).to.equal( options[ 1 ] );
 	} );
 
-	it( 'should pass the fallback as selected to the dropdown if none of the options is selected', () => {
+	test( 'should pass the fallback as selected to the dropdown if none of the options is selected', () => {
 		const fallback = { label: 'Select...', uri: '#' };
 
 		const wrapper = shallow(
@@ -49,7 +49,7 @@ describe( 'SubMasterbarNav', () => {
 		expect( dropdown.prop( 'selected' ) ).to.equal( fallback );
 	} );
 
-	it( 'should pass the selected option to the navbar', () => {
+	test( 'should pass the selected option to the navbar', () => {
 		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/sites" /> );
 		const navbar = wrapper.find( Navbar );
 
@@ -57,7 +57,7 @@ describe( 'SubMasterbarNav', () => {
 		expect( navbar.prop( 'selected' ) ).to.equal( options[ 0 ] );
 	} );
 
-	it( 'should not pass the fallback as selected to the navbar when nothing is selected', () => {
+	test( 'should not pass the fallback as selected to the navbar when nothing is selected', () => {
 		const fallback = { label: 'Select...', uri: '#' };
 
 		const wrapper = shallow(

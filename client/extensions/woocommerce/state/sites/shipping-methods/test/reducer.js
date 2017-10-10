@@ -14,7 +14,7 @@ import { WOOCOMMERCE_SHIPPING_METHODS_REQUEST } from 'woocommerce/state/action-t
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'fetch shipping methods', () => {
-	it( 'should mark the shipping methods tree as "loading"', () => {
+	test( 'should mark the shipping methods tree as "loading"', () => {
 		const siteId = 123;
 		const state = {};
 
@@ -24,7 +24,7 @@ describe( 'fetch shipping methods', () => {
 } );
 
 describe( 'fetch shipping methods - success', () => {
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {};
 

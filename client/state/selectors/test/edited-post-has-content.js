@@ -13,7 +13,7 @@ import { isEmptyContent } from '../edited-post-has-content';
 import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'editedPostHasContent()', () => {
-	it( 'should return false if there are no edits and no post', () => {
+	test( 'should return false if there are no edits and no post', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -28,7 +28,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.false;
 	} );
 
-	it( 'should return false if there are no edits and post has empty content', () => {
+	test( 'should return false if there are no edits and post has empty content', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -54,7 +54,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.false;
 	} );
 
-	it( 'should return true if there are no edits and the post has a title', () => {
+	test( 'should return true if there are no edits and the post has a title', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -81,7 +81,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.true;
 	} );
 
-	it( 'should return true if there are no edits and the post has content', () => {
+	test( 'should return true if there are no edits and the post has content', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -108,7 +108,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.true;
 	} );
 
-	it( 'should return true if there are no edits and the post has an excerpt', () => {
+	test( 'should return true if there are no edits and the post has an excerpt', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -135,7 +135,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.true;
 	} );
 
-	it( 'should return false if there are empty edits that overrides the post attributes', () => {
+	test( 'should return false if there are empty edits that overrides the post attributes', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -172,7 +172,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.false;
 	} );
 
-	it( 'should return true if there are title edits', () => {
+	test( 'should return true if there are title edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -193,7 +193,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.true;
 	} );
 
-	it( 'should return true if there are content edits', () => {
+	test( 'should return true if there are content edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -214,7 +214,7 @@ describe( 'editedPostHasContent()', () => {
 		expect( hasContent ).to.be.true;
 	} );
 
-	it( 'should return true if there are excerpt edits', () => {
+	test( 'should return true if there are excerpt edits', () => {
 		const hasContent = editedPostHasContent(
 			{
 				posts: {
@@ -237,19 +237,19 @@ describe( 'editedPostHasContent()', () => {
 } );
 
 describe( 'isEmptyContent()', () => {
-	it( 'should return true for empty strings', () => {
+	test( 'should return true for empty strings', () => {
 		const content = '';
 
 		expect( isEmptyContent( content ) ).to.eql( true );
 	} );
 
-	it( 'should return true for empty paragraphs', () => {
+	test( 'should return true for empty paragraphs', () => {
 		const content = '<p></p>';
 
 		expect( isEmptyContent( content ) ).to.eql( true );
 	} );
 
-	it( 'should return false for random texts', () => {
+	test( 'should return false for random texts', () => {
 		const content = 'small content';
 
 		expect( isEmptyContent( content ) ).to.eql( false );

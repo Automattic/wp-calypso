@@ -19,7 +19,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'account-recovery/reset', () => {
 	describe( '#handleResetPasswordRequest', () => {
-		it( 'should dispatch HTTP request to account recovery reset endpoint', () => {
+		test( 'should dispatch HTTP request to account recovery reset endpoint', () => {
 			const dispatchSpy = spy();
 			const dummyAction = {
 				userData: {
@@ -54,7 +54,7 @@ describe( 'account-recovery/reset', () => {
 	} );
 
 	describe( '#requestResetPasswordError', () => {
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			const dispatchSpy = spy();
 			const message = 'This is an error message.';
 			const rawError = Error( message );
@@ -69,7 +69,7 @@ describe( 'account-recovery/reset', () => {
 	} );
 
 	describe( '#requestResetPasswordSuccess', () => {
-		it( 'should dispatch success action', () => {
+		test( 'should dispatch success action', () => {
 			const dispatchSpy = spy();
 
 			handleSuccess( { dispatch: dispatchSpy } );

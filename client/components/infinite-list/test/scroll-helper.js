@@ -15,9 +15,9 @@ function getItemRef( item ) {
 	return 'i' + item;
 }
 
-describe( 'scroll-helper', function() {
-	describe( 'Hide Levels', function() {
-		describe( 'Context Higher than 5 items', function() {
+describe( 'scroll-helper', () => {
+	describe( 'Hide Levels', () => {
+		describe( 'Context Higher than 5 items', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
@@ -25,24 +25,24 @@ describe( 'scroll-helper', function() {
 			};
 			helper.updateContextHeight( 1000 );
 
-			it( 'top hard hide levels is 1 vh above context', function() {
+			test( 'top hard hide levels is 1 vh above context', () => {
 				assert.equal( helper.topHideLevelHard, -1000 );
 			} );
-			it( 'top soft hide level is 2 vh above context', function() {
+			test( 'top soft hide level is 2 vh above context', () => {
 				assert.equal( helper.topHideLevelSoft, -2000 );
 			} );
-			it( 'bottom hard hide level is 1 vh below context', function() {
+			test( 'bottom hard hide level is 1 vh below context', () => {
 				assert.equal( helper.bottomHideLevelHard, 2000 );
 			} );
-			it( 'bottom soft hide level is 2 vh below context', function() {
+			test( 'bottom soft hide level is 2 vh below context', () => {
 				assert.equal( helper.bottomHideLevelSoft, 3000 );
 			} );
-			it( 'bottom 3rd hide level is 3 vh below context', function() {
+			test( 'bottom 3rd hide level is 3 vh below context', () => {
 				assert.equal( helper.bottomHideLevelUltraSoft, 4000 );
 			} );
 		} );
 
-		describe( 'Context Shorter than 5 items', function() {
+		describe( 'Context Shorter than 5 items', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 100,
@@ -50,25 +50,25 @@ describe( 'scroll-helper', function() {
 			};
 			helper.updateContextHeight( 200 );
 
-			it( 'top hard hide levels is 5 items above context', function() {
+			test( 'top hard hide levels is 5 items above context', () => {
 				assert.equal( helper.topHideLevelHard, -500 );
 			} );
-			it( 'top soft hide level is 10 items above context', function() {
+			test( 'top soft hide level is 10 items above context', () => {
 				assert.equal( helper.topHideLevelSoft, -1000 );
 			} );
-			it( 'bottom hard hide level is 5 items below context', function() {
+			test( 'bottom hard hide level is 5 items below context', () => {
 				assert.equal( helper.bottomHideLevelHard, 700 );
 			} );
-			it( 'bottom soft hide level is 10 items below context', function() {
+			test( 'bottom soft hide level is 10 items below context', () => {
 				assert.equal( helper.bottomHideLevelSoft, 1200 );
 			} );
-			it( 'bottom 3rd hide level is 15 items below context', function() {
+			test( 'bottom 3rd hide level is 15 items below context', () => {
 				assert.equal( helper.bottomHideLevelUltraSoft, 1700 );
 			} );
 		} );
 	} );
 
-	describe( 'Container and placeholder positioning', function() {
+	describe( 'Container and placeholder positioning', () => {
 		var preparedBounds = {
 				topPlaceholder: {
 					top: -2000,
@@ -85,23 +85,23 @@ describe( 'scroll-helper', function() {
 
 		helper.updatePlaceholderDimensions();
 
-		it( 'Placeholders height determined using their bounds ', function() {
+		test( 'Placeholders height determined using their bounds ', () => {
 			assert.equal( helper.topPlaceholderHeight, 1000 );
 			assert.equal( helper.bottomPlaceholderHeight, 2000 );
 		} );
 
-		it( 'Container top determined using top placeholder bounds', function() {
+		test( 'Container top determined using top placeholder bounds', () => {
 			assert.equal( helper.containerTop, -2000 );
 		} );
 
-		it( 'Container bottom determined using bottom placeholder bounds', function() {
+		test( 'Container bottom determined using bottom placeholder bounds', () => {
 			assert.equal( helper.containerBottom, 4000 );
 		} );
 	} );
 
-	describe( 'Initial last rendered index', function() {
+	describe( 'Initial last rendered index', () => {
 		var helper;
-		beforeEach( function() {
+		beforeEach( () => {
 			helper = new ScrollHelper();
 			helper.props = {
 				guessedItemHeight: 200,
@@ -110,19 +110,19 @@ describe( 'scroll-helper', function() {
 			helper.updateContextHeight( 1000 );
 		} );
 
-		it( 'renders only up to bottom soft hide level', function() {
+		test( 'renders only up to bottom soft hide level', () => {
 			helper.props.items = range( 100 );
 			assert.equal( helper.initialLastRenderedIndex(), 14 ); // 3000 / 200 - 1
 		} );
 
-		it( 'renders everything if it should fit', function() {
+		test( 'renders everything if it should fit', () => {
 			helper.props.items = range( 10 );
 			assert.equal( helper.initialLastRenderedIndex(), 9 );
 		} );
 	} );
 
-	describe( 'Items Above', function() {
-		it( 'Starts hiding when placeholder bottom edge is above soft level', function() {
+	describe( 'Items Above', () => {
+		test( 'Starts hiding when placeholder bottom edge is above soft level', () => {
 			var helper = new ScrollHelper();
 			helper.containerTop = -3000;
 			helper.topPlaceholderHeight = 500;
@@ -134,7 +134,7 @@ describe( 'scroll-helper', function() {
 			assert.notOk( helper.shouldHideItemsAbove() );
 		} );
 
-		describe( 'Hiding batch of items', function() {
+		describe( 'Hiding batch of items', () => {
 			var preparedBounds = {
 					i0: {
 						bottom: -1850,
@@ -165,19 +165,19 @@ describe( 'scroll-helper', function() {
 
 			helper.hideItemsAbove();
 
-			it( 'updated state', function() {
+			test( 'updated state', () => {
 				assert( helper.stateUpdated );
 			} );
 
-			it( 'created placeholder for 3 items', function() {
+			test( 'created placeholder for 3 items', () => {
 				assert.equal( 900, helper.topPlaceholderHeight );
 			} );
 
-			it( 'hid 3 items', function() {
+			test( 'hid 3 items', () => {
 				assert.equal( 3, helper.firstRenderedIndex );
 			} );
 
-			it( 'stored hidden items height', function() {
+			test( 'stored hidden items height', () => {
 				assert.deepEqual(
 					{
 						i0: 250,
@@ -189,7 +189,7 @@ describe( 'scroll-helper', function() {
 			} );
 		} );
 
-		describe( 'Completely above context', function() {
+		describe( 'Completely above context', () => {
 			var preparedBounds = {
 					i0: {
 						bottom: -1850,
@@ -218,16 +218,16 @@ describe( 'scroll-helper', function() {
 
 			helper.hideItemsAbove();
 
-			it( 'created placeholder for 2 items', function() {
+			test( 'created placeholder for 2 items', () => {
 				assert.equal( 600, helper.topPlaceholderHeight );
 			} );
 
-			it( 'hid 2 items', function() {
+			test( 'hid 2 items', () => {
 				assert.equal( 2, helper.firstRenderedIndex );
 			} );
 		} );
 
-		it( 'Starts showing when placeholder bottom edge is below hard level', function() {
+		test( 'Starts showing when placeholder bottom edge is below hard level', () => {
 			var helper = new ScrollHelper();
 			helper.containerTop = -3000;
 			helper.topPlaceholderHeight = 2500;
@@ -239,7 +239,7 @@ describe( 'scroll-helper', function() {
 			assert.notOk( helper.shouldShowItemsAbove() );
 		} );
 
-		describe( 'Showing batch of items', function() {
+		describe( 'Showing batch of items', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 6 ),
@@ -263,19 +263,19 @@ describe( 'scroll-helper', function() {
 
 			helper.showItemsAbove();
 
-			it( 'updated state', function() {
+			test( 'updated state', () => {
 				assert( helper.stateUpdated );
 			} );
 
-			it( 'reduced placeholder height', function() {
+			test( 'reduced placeholder height', () => {
 				assert.equal( 250, helper.topPlaceholderHeight );
 			} );
 
-			it( 'shown 4 items', function() {
+			test( 'shown 4 items', () => {
 				assert.equal( 1, helper.firstRenderedIndex );
 			} );
 
-			it( 'removed shown items height', function() {
+			test( 'removed shown items height', () => {
 				assert.deepEqual(
 					{
 						i0: 250,
@@ -285,7 +285,7 @@ describe( 'scroll-helper', function() {
 			} );
 		} );
 
-		describe( 'Show items when their real height is higher than stored', function() {
+		describe( 'Show items when their real height is higher than stored', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 3 ),
@@ -304,16 +304,16 @@ describe( 'scroll-helper', function() {
 
 			helper.showItemsAbove();
 
-			it( 'placeholder height is never negative', function() {
+			test( 'placeholder height is never negative', () => {
 				assert.equal( 0, helper.topPlaceholderHeight );
 			} );
 
-			it( 'shown all items', function() {
+			test( 'shown all items', () => {
 				assert.equal( 0, helper.firstRenderedIndex );
 			} );
 		} );
 
-		it( 'removes placeholder if everything is shown', function() {
+		test( 'removes placeholder if everything is shown', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 3 ),
@@ -335,8 +335,8 @@ describe( 'scroll-helper', function() {
 		} );
 	} );
 
-	describe( 'Items Below', function() {
-		it( 'Starts hiding when placholder top edge is below 3rd hide limit', function() {
+	describe( 'Items Below', () => {
+		test( 'Starts hiding when placholder top edge is below 3rd hide limit', () => {
 			var helper = new ScrollHelper();
 			helper.containerBottom = 5000;
 			helper.bottomPlaceholderHeight = 500;
@@ -348,7 +348,7 @@ describe( 'scroll-helper', function() {
 			assert.notOk( helper.shouldHideItemsBelow() );
 		} );
 
-		describe( 'Hiding batch of items', function() {
+		describe( 'Hiding batch of items', () => {
 			var preparedBounds = {
 					i5: {
 						top: 1900,
@@ -383,19 +383,19 @@ describe( 'scroll-helper', function() {
 
 			helper.hideItemsBelow();
 
-			it( 'updated state', function() {
+			test( 'updated state', () => {
 				assert.ok( helper.stateUpdated );
 			} );
 
-			it( 'created placeholder for 3 items', function() {
+			test( 'created placeholder for 3 items', () => {
 				assert.equal( 2800, helper.bottomPlaceholderHeight );
 			} );
 
-			it( 'hid 4 items', function() {
+			test( 'hid 4 items', () => {
 				assert.equal( 5, helper.lastRenderedIndex );
 			} );
 
-			it( 'stored hidden items height', function() {
+			test( 'stored hidden items height', () => {
 				assert.deepEqual(
 					{
 						i6: 300,
@@ -408,7 +408,7 @@ describe( 'scroll-helper', function() {
 			} );
 		} );
 
-		describe( 'Completely below context', function() {
+		describe( 'Completely below context', () => {
 			var helper = new ScrollHelper(
 				function() {
 					return null;
@@ -430,16 +430,16 @@ describe( 'scroll-helper', function() {
 
 			helper.hideItemsBelow();
 
-			it( 'created placeholder for 2 items', function() {
+			test( 'created placeholder for 2 items', () => {
 				assert.equal( 1400, helper.bottomPlaceholderHeight );
 			} );
 
-			it( 'hid all items', function() {
+			test( 'hid all items', () => {
 				assert.equal( -1, helper.lastRenderedIndex );
 			} );
 		} );
 
-		it( 'Starts showing when placeholder top edge is above first hide limit', function() {
+		test( 'Starts showing when placeholder top edge is above first hide limit', () => {
 			var helper = new ScrollHelper();
 			helper.containerBottom = 5000;
 			helper.bottomPlaceholderHeight = 3500;
@@ -451,7 +451,7 @@ describe( 'scroll-helper', function() {
 			assert.notOk( helper.shouldShowItemsBelow() );
 		} );
 
-		describe( 'Showing batch of items', function() {
+		describe( 'Showing batch of items', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
@@ -476,19 +476,19 @@ describe( 'scroll-helper', function() {
 
 			helper.showItemsBelow();
 
-			it( 'updated state', function() {
+			test( 'updated state', () => {
 				assert( helper.stateUpdated );
 			} );
 
-			it( 'reduced placeholder height', function() {
+			test( 'reduced placeholder height', () => {
 				assert.equal( 2500, helper.bottomPlaceholderHeight );
 			} );
 
-			it( 'shown 2 items', function() {
+			test( 'shown 2 items', () => {
 				assert.equal( 6, helper.lastRenderedIndex );
 			} );
 
-			it( 'removed shown items height', function() {
+			test( 'removed shown items height', () => {
 				assert.deepEqual(
 					{
 						i7: 900,
@@ -498,7 +498,7 @@ describe( 'scroll-helper', function() {
 			} );
 		} );
 
-		describe( 'Show item longer than context', function() {
+		describe( 'Show item longer than context', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
@@ -522,16 +522,16 @@ describe( 'scroll-helper', function() {
 
 			helper.showItemsBelow();
 
-			it( 'reduced placeholder height', function() {
+			test( 'reduced placeholder height', () => {
 				assert.equal( 1900, helper.bottomPlaceholderHeight );
 			} );
 
-			it( 'shown 2 items', function() {
+			test( 'shown 2 items', () => {
 				assert.equal( 5, helper.lastRenderedIndex );
 			} );
 		} );
 
-		describe( 'Show new items', function() {
+		describe( 'Show new items', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
@@ -550,20 +550,20 @@ describe( 'scroll-helper', function() {
 
 			helper.showItemsBelow();
 
-			it( 'placeholder height is never negative', function() {
+			test( 'placeholder height is never negative', () => {
 				assert.equal( 0, helper.bottomPlaceholderHeight );
 			} );
 
-			it( 'container bottom is increased', function() {
+			test( 'container bottom is increased', () => {
 				assert.equal( 1600, helper.containerBottom );
 			} );
 
-			it( 'shown 3 items', function() {
+			test( 'shown 3 items', () => {
 				assert.equal( 7, helper.lastRenderedIndex );
 			} );
 		} );
 
-		it( 'Placeholder height is always zero if everything shown', function() {
+		test( 'Placeholder height is always zero if everything shown', () => {
 			var helper = new ScrollHelper();
 			helper.props = {
 				items: range( 8 ),
@@ -588,10 +588,10 @@ describe( 'scroll-helper', function() {
 		} );
 	} );
 
-	describe( 'Next page', function() {
+	describe( 'Next page', () => {
 		var helper;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			helper = new ScrollHelper();
 			helper.props = {
 				fetchingNextPage: false,
@@ -603,21 +603,21 @@ describe( 'scroll-helper', function() {
 			helper.bottomHideLevelHard = 2000;
 		} );
 
-		it( 'loaded when container bottom above hard limit', function() {
+		test( 'loaded when container bottom above hard limit', () => {
 			assert.ok( helper.shouldLoadNextPage() );
 		} );
 
-		it( 'not loaded when loading previous', function() {
+		test( 'not loaded when loading previous', () => {
 			helper.props.fetchingNextPage = true;
 			assert.notOk( helper.shouldLoadNextPage() );
 		} );
 
-		it( 'not loaded on last page', function() {
+		test( 'not loaded on last page', () => {
 			helper.props.lastPage = true;
 			assert.notOk( helper.shouldLoadNextPage() );
 		} );
 
-		it( 'not loaded if some items hidden', function() {
+		test( 'not loaded if some items hidden', () => {
 			helper.bottomPlaceholderHeight = 100;
 			assert.notOk( helper.shouldLoadNextPage() );
 		} );

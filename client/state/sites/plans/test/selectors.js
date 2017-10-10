@@ -34,7 +34,7 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {
-		it( 'should return plans by site', () => {
+		test( 'should return plans by site', () => {
 			const plans1 = {
 				data: [ { currentPlan: false }, { currentPlan: false }, { currentPlan: true } ],
 			};
@@ -55,7 +55,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getPlansBySiteId()', () => {
-		it( 'should return plans by site id', () => {
+		test( 'should return plans by site id', () => {
 			const plans1 = {
 				data: [ { currentPlan: false }, { currentPlan: false }, { currentPlan: true } ],
 			};
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getCurrentPlan()', () => {
-		context( 'when no plan data is found for the given siteId', () => {
+		describe( 'when no plan data is found for the given siteId', () => {
 			const siteId = 77203074;
 			const state = deepFreeze( {
 				...userState,
@@ -87,14 +87,14 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			it( 'returns null', () => {
+			test( 'returns null', () => {
 				const plan = getCurrentPlan( state, siteId );
 				expect( plan ).to.eql( null );
 			} );
 		} );
 
-		context( 'when plans are found for the given siteId', () => {
-			context( "when those plans include a 'currentPlan'", () => {
+		describe( 'when plans are found for the given siteId', () => {
+			describe( "when those plans include a 'currentPlan'", () => {
 				const siteId = 77203074;
 				const plan1 = { currentPlan: true };
 				const state = deepFreeze( {
@@ -113,13 +113,13 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				it( 'returns the currentPlan', () => {
+				test( 'returns the currentPlan', () => {
 					const plan = getCurrentPlan( state, siteId );
 					expect( plan ).to.eql( plan1 );
 				} );
 			} );
 
-			context( "when those plans do not include a 'currentPlan'", () => {
+			describe( "when those plans do not include a 'currentPlan'", () => {
 				const siteId = 77203074;
 				const plan1 = { currentPlan: false };
 				const state = deepFreeze( {
@@ -141,7 +141,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				it( 'returns a new sitePlanObject', () => {
+				test( 'returns a new sitePlanObject', () => {
 					const plan = getCurrentPlan( state, siteId );
 					expect( plan ).to.eql( {} );
 				} );
@@ -149,7 +149,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getSitePlan()', () => {
-		it( 'should return plans by site and plan slug', () => {
+		test( 'should return plans by site and plan slug', () => {
 			const plans1 = {
 				data: [
 					{
@@ -188,7 +188,7 @@ describe( 'selectors', () => {
 			const plan = getSitePlan( state, 77203074, 'gold' );
 			expect( plan ).to.eql( { currentPlan: true, productSlug: 'gold' } );
 		} );
-		it( 'should return falsey when plan is not found', () => {
+		test( 'should return falsey when plan is not found', () => {
 			const plans1 = {
 				data: [
 					{
@@ -232,7 +232,7 @@ describe( 'selectors', () => {
 			const plan = getSitePlan( state, 77203074, 'circle' );
 			expect( plan ).to.eql( undefined );
 		} );
-		it( 'should return falsey when siteId is not found', () => {
+		test( 'should return falsey when siteId is not found', () => {
 			const plans1 = {
 				data: [
 					{
@@ -261,7 +261,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getPlanRawPrice()', () => {
-		it( 'should return a plan price', () => {
+		test( 'should return a plan price', () => {
 			const plans = {
 				data: [
 					{
@@ -294,7 +294,7 @@ describe( 'selectors', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze' );
 			expect( rawPrice ).to.equal( 199 );
 		} );
-		it( 'should return a monthly price', () => {
+		test( 'should return a monthly price', () => {
 			const plans = {
 				data: [
 					{
@@ -327,7 +327,7 @@ describe( 'selectors', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
 			expect( rawPrice ).to.equal( 16.58 );
 		} );
-		it( 'should return raw price, if no discount is available', () => {
+		test( 'should return raw price, if no discount is available', () => {
 			const plans = {
 				data: [
 					{
@@ -362,7 +362,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getPlanDiscountedRawPrice()', () => {
-		it( 'should return a discount price', () => {
+		test( 'should return a discount price', () => {
 			const plans = {
 				data: [
 					{
@@ -395,7 +395,7 @@ describe( 'selectors', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze' );
 			expect( discountPrice ).to.equal( 99 );
 		} );
-		it( 'should return a monthly discount price', () => {
+		test( 'should return a monthly discount price', () => {
 			const plans = {
 				data: [
 					{
@@ -430,7 +430,7 @@ describe( 'selectors', () => {
 			} );
 			expect( discountPrice ).to.equal( 8.25 );
 		} );
-		it( 'should return null, if no discount is available', () => {
+		test( 'should return null, if no discount is available', () => {
 			const plans = {
 				data: [
 					{
@@ -468,7 +468,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPlanRawDiscount()', () => {
-		it( 'should return a raw discount', () => {
+		test( 'should return a raw discount', () => {
 			const plans = {
 				data: [
 					{
@@ -505,7 +505,7 @@ describe( 'selectors', () => {
 			expect( planRawDiscount ).to.equal( 100 );
 		} );
 
-		it( 'should return a monthly raw discount', () => {
+		test( 'should return a monthly raw discount', () => {
 			const plans = {
 				data: [
 					{
@@ -542,7 +542,7 @@ describe( 'selectors', () => {
 			expect( planRawDiscount ).to.equal( 8.33 );
 		} );
 
-		it( 'should return null, if no raw discount is available', () => {
+		test( 'should return null, if no raw discount is available', () => {
 			const plans = {
 				data: [
 					{
@@ -581,7 +581,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#hasDomainCredit()', () => {
-		it( 'should return true if plan has domain credit', () => {
+		test( 'should return true if plan has domain credit', () => {
 			const state = {
 				sites: {
 					plans: {
@@ -608,7 +608,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isRequestingSitePlans()', () => {
-		it( 'should return true if we are fetching plans', () => {
+		test( 'should return true if we are fetching plans', () => {
 			const state = {
 				sites: {
 					plans: {
@@ -634,7 +634,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isPlanDiscounted', () => {
-		it( 'should return false, if no discount is available', () => {
+		test( 'should return false, if no discount is available', () => {
 			const plans = {
 				data: [
 					{
@@ -667,7 +667,7 @@ describe( 'selectors', () => {
 			const discountPrice = isSitePlanDiscounted( state, 77203074, 'silver' );
 			expect( discountPrice ).to.equal( false );
 		} );
-		it( 'should return true, if discount is available', () => {
+		test( 'should return true, if discount is available', () => {
 			const plans = {
 				data: [
 					{
@@ -700,7 +700,7 @@ describe( 'selectors', () => {
 			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'bronze' );
 			expect( isDiscounted ).to.equal( true );
 		} );
-		it( 'should return null, if plan is unknown', () => {
+		test( 'should return null, if plan is unknown', () => {
 			const plans = {
 				data: [
 					{
@@ -753,17 +753,17 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return false if user is not a plan owner', () => {
+		test( 'should return false if user is not a plan owner', () => {
 			expect( isCurrentUserCurrentPlanOwner( state, 2916284 ) ).to.be.false;
 		} );
 
-		it( 'should return true if user is a plan owner', () => {
+		test( 'should return true if user is a plan owner', () => {
 			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#getSitePlanSlug()', () => {
-		it( 'should return null if no plan data is found for the given siteId', () => {
+		test( 'should return null if no plan data is found for the given siteId', () => {
 			expect(
 				getSitePlanSlug(
 					{
@@ -778,7 +778,7 @@ describe( 'selectors', () => {
 			).to.be.null;
 		} );
 
-		it( "should return the given site's current plan's product slug", () => {
+		test( "should return the given site's current plan's product slug", () => {
 			expect(
 				getSitePlanSlug(
 					{
@@ -802,7 +802,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#hasFeature()', () => {
-		it( 'should return false if no siteId is given', () => {
+		test( 'should return false if no siteId is given', () => {
 			expect(
 				hasFeature(
 					{
@@ -825,7 +825,7 @@ describe( 'selectors', () => {
 			).to.be.false;
 		} );
 
-		it( 'should return false if no feature is given', () => {
+		test( 'should return false if no feature is given', () => {
 			expect(
 				hasFeature(
 					{
@@ -847,7 +847,7 @@ describe( 'selectors', () => {
 			).to.be.false;
 		} );
 
-		it( 'should return false if no plan data is found for the given siteId', () => {
+		test( 'should return false if no plan data is found for the given siteId', () => {
 			expect(
 				hasFeature(
 					{
@@ -863,7 +863,7 @@ describe( 'selectors', () => {
 			).to.be.false;
 		} );
 
-		it( "should return false if the site's current plan doesn't include the specified feature", () => {
+		test( "should return false if the site's current plan doesn't include the specified feature", () => {
 			expect(
 				hasFeature(
 					{
@@ -886,7 +886,7 @@ describe( 'selectors', () => {
 			).to.be.false;
 		} );
 
-		it( "should return true if the site's current plan includes the specified feature", () => {
+		test( "should return true if the site's current plan includes the specified feature", () => {
 			expect(
 				hasFeature(
 					{

@@ -12,7 +12,7 @@ import { isFetchingJetpackModules } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isFetchingJetpackModules()', () => {
-	it( 'should return true if the list of modules is being fetched', () => {
+	test( 'should return true if the list of modules is being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -25,7 +25,7 @@ describe( 'isFetchingJetpackModules()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the list of modules is currently not being fetched', () => {
+	test( 'should return false if the list of modules is currently not being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -38,7 +38,7 @@ describe( 'isFetchingJetpackModules()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if that site is not known', () => {
+	test( 'should return null if that site is not known', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {

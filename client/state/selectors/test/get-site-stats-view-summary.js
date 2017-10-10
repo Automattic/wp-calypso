@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSiteStatsViewSummary } from '../';
 
 describe( 'getSiteStatsViewSummary()', () => {
-	it( 'should return null if no data exists', () => {
+	test( 'should return null if no data exists', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {
@@ -26,7 +26,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 		expect( data ).to.be.null;
 	} );
 
-	it( 'should return an empty object if data is empty', () => {
+	test( 'should return an empty object if data is empty', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {
@@ -51,7 +51,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 		expect( data ).to.eql( {} );
 	} );
 
-	it( 'should return a parsed object if data is present', () => {
+	test( 'should return a parsed object if data is present', () => {
 		const data = getSiteStatsViewSummary(
 			{
 				stats: {

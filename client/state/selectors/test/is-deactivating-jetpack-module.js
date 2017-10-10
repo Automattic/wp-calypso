@@ -12,7 +12,7 @@ import { isDeactivatingJetpackModule } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isDeactivatingJetpackModule()', () => {
-	it( 'should return true if module is currently being deactivated', () => {
+	test( 'should return true if module is currently being deactivated', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -25,7 +25,7 @@ describe( 'isDeactivatingJetpackModule()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if module is currently not being deactivated', () => {
+	test( 'should return false if module is currently not being deactivated', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -38,7 +38,7 @@ describe( 'isDeactivatingJetpackModule()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if that module is not known', () => {
+	test( 'should return null if that module is not known', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {

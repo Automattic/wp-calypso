@@ -15,7 +15,7 @@ import { createProductCategory } from 'woocommerce/state/sites/product-categorie
 
 describe( 'handlers', () => {
 	describe( '#handleProductCategoryCreate', () => {
-		it( 'should dispatch a post action', () => {
+		test( 'should dispatch a post action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -38,7 +38,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success action with extra properties', () => {
+		test( 'should dispatch a success action with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -72,7 +72,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success function with extra parameters', () => {
+		test( 'should dispatch a success function with extra parameters', () => {
 			const store = {
 				dispatch: spy(),
 			};

@@ -14,7 +14,7 @@ import { timezonesReceive } from 'state/timezones/actions';
 
 describe( 'timezones request', () => {
 	describe( 'successful requests', () => {
-		it( 'should dispatch HTTP GET request to /timezones endpoint', () => {
+		test( 'should dispatch HTTP GET request to /timezones endpoint', () => {
 			const action = { type: 'DUMMY' };
 			const dispatch = spy();
 
@@ -35,7 +35,7 @@ describe( 'timezones request', () => {
 	} );
 
 	describe( '#addTimezones', () => {
-		it( 'should dispatch timezones receive', () => {
+		test( 'should dispatch timezones receive', () => {
 			const responseData = {
 				manual_utc_offsets: [
 					{ value: 'UTC+0', label: 'UTC' },

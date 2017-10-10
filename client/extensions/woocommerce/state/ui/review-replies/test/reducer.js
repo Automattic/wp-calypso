@@ -19,7 +19,7 @@ const initialState = {
 };
 
 describe( 'reducer', () => {
-	it( 'should track the reply edits for more than one site', () => {
+	test( 'should track the reply edits for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 234,

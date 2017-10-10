@@ -20,7 +20,7 @@ jest.mock( 'components/info-popover', () => require( 'components/empty-component
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'post-editor/editor-term-selector', () => require( 'components/empty-component' ) );
 
-describe( 'EditorCategoriesTagsAccordion', function() {
+describe( 'EditorCategoriesTagsAccordion', () => {
 	let accordion;
 
 	function render( postTerms = {} ) {
@@ -34,8 +34,8 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 		);
 	}
 
-	describe( 'categories+tags subtitle', function() {
-		it( 'should display one top-level category name', function() {
+	describe( 'categories+tags subtitle', () => {
+		test( 'should display one top-level category name', () => {
 			render( {
 				category: {
 					cat: {
@@ -46,7 +46,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 			expect( accordion.contains( <span className="accordion__subtitle">cat</span> ) ).to.be.true;
 		} );
 
-		it( 'should display category count if more than one', function() {
+		test( 'should display category count if more than one', () => {
 			render( {
 				category: {
 					cat: {
@@ -61,7 +61,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				.be.true;
 		} );
 
-		it( 'should display one tag name', function() {
+		test( 'should display one tag name', () => {
 			render( {
 				post_tag: [ 'swawesome' ],
 			} );
@@ -69,7 +69,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				.true;
 		} );
 
-		it( 'should display two tag names', function() {
+		test( 'should display two tag names', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one' ],
 			} );
@@ -78,7 +78,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 			).to.be.true;
 		} );
 
-		it( 'should display tag count if more than two', function() {
+		test( 'should display tag count if more than two', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one', 'another one too' ],
 			} );
@@ -86,7 +86,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				.true;
 		} );
 
-		it( 'should display category and tag names together', function() {
+		test( 'should display category and tag names together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one' ],
 				category: {
@@ -102,7 +102,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 			).to.be.true;
 		} );
 
-		it( 'should display category counts and tag names together', function() {
+		test( 'should display category counts and tag names together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one' ],
 				category: {
@@ -124,7 +124,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 			).to.be.true;
 		} );
 
-		it( 'should display category names and tag counts together', function() {
+		test( 'should display category names and tag counts together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one', 'third tag' ],
 				category: {
@@ -137,7 +137,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				.true;
 		} );
 
-		it( 'should display category and tag counts together', function() {
+		test( 'should display category and tag counts together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one', 'third tag', 'fourth tag' ],
 				category: {
@@ -157,7 +157,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 			).to.be.true;
 		} );
 
-		it( 'should display tags with ampersands correctly', function() {
+		test( 'should display tags with ampersands correctly', () => {
 			render( {
 				post_tag: {
 					'a &amp; b': {
@@ -169,7 +169,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				.true;
 		} );
 
-		it( 'should display categories with ampersands correctly', function() {
+		test( 'should display categories with ampersands correctly', () => {
 			render( {
 				category: {
 					'cats &amp; dogs': {

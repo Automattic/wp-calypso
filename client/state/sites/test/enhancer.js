@@ -56,13 +56,13 @@ describe( 'sitesSync()', () => {
 		sitesList.initialize( [] );
 	} );
 
-	it( 'should preserve existing sync behavior', () => {
+	test( 'should preserve existing sync behavior', () => {
 		sitesList.sync( { sites: [ EXAMPLE_SITE ] } );
 
 		expect( sitesList.get() ).to.have.length( 1 );
 	} );
 
-	it( 'should cause sites to be updated in state', () => {
+	test( 'should cause sites to be updated in state', () => {
 		sitesList.sync( { sites: [ EXAMPLE_SITE ] } );
 
 		expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -71,7 +71,7 @@ describe( 'sitesSync()', () => {
 		} );
 	} );
 
-	it( 'should reflect into state updates to a site', () => {
+	test( 'should reflect into state updates to a site', () => {
 		state.sites.items[ 2916284 ] = EXAMPLE_SITE;
 		const site = new Site( EXAMPLE_SITE );
 		site.set( { name: 'WordPress.com Example Blog!' } );
@@ -82,14 +82,14 @@ describe( 'sitesSync()', () => {
 		} );
 	} );
 
-	it( 'should not reflect into state updates to a site if not tracked', () => {
+	test( 'should not reflect into state updates to a site if not tracked', () => {
 		const site = new Site( EXAMPLE_SITE );
 		site.set( { name: 'WordPress.com Example Blog!' } );
 
 		expect( store.dispatch ).to.not.have.been.called;
 	} );
 
-	it( 'should not reflect into state updates to a site if no changes', () => {
+	test( 'should not reflect into state updates to a site if no changes', () => {
 		state.sites.items[ 2916284 ] = EXAMPLE_SITE;
 		const site = new Site( EXAMPLE_SITE );
 		site.set( { name: 'WordPress.com Example Blog' } );

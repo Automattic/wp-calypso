@@ -12,7 +12,7 @@ import { getVisibleSites } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getVisibleSites()', () => {
-	it( 'should return an empty array if no sites in state', () => {
+	test( 'should return an empty array if no sites in state', () => {
 		const state = {
 			sites: {
 				items: {},
@@ -22,7 +22,7 @@ describe( 'getVisibleSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return the visibles sites in state', () => {
+	test( 'should return the visibles sites in state', () => {
 		const state = {
 			...userState,
 			sites: {

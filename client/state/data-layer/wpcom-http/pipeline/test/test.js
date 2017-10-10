@@ -35,7 +35,7 @@ describe( '#processInboundChain', () => {
 		successes: [ ...inboundData.successes, ...inboundData.successes ],
 	} );
 
-	it( 'should pass through data given an empty chain', () => {
+	test( 'should pass through data given an empty chain', () => {
 		expect(
 			processInboundChain( [] )(
 				getSites,
@@ -53,7 +53,7 @@ describe( '#processInboundChain', () => {
 		} );
 	} );
 
-	it( 'should sequence a single processor', () => {
+	test( 'should sequence a single processor', () => {
 		expect( processInboundChain( [ responderDoubler ] )( getSites, {}, {}, {}, {} ) ).to.eql( {
 			failures: [ getSites.onFailure, getSites.onFailure ],
 			nextData: {},
@@ -63,7 +63,7 @@ describe( '#processInboundChain', () => {
 		} );
 	} );
 
-	it( 'should sequence multiple processors', () => {
+	test( 'should sequence multiple processors', () => {
 		expect(
 			processInboundChain( [ responderDoubler, responderDoubler ] )( getSites, {}, {}, {}, {} )
 		).to.eql( {
@@ -75,7 +75,7 @@ describe( '#processInboundChain', () => {
 		} );
 	} );
 
-	it( 'should abort the chain as soon as `shouldAbort` is set', () => {
+	test( 'should abort the chain as soon as `shouldAbort` is set', () => {
 		expect(
 			processInboundChain( [ aborter, responderDoubler ] )( getSites, {}, {}, {}, {} )
 		).to.eql( {
@@ -108,25 +108,25 @@ describe( '#processOutboundChain', () => {
 		};
 	};
 
-	it( 'should pass requests given an empty chain', () => {
+	test( 'should pass requests given an empty chain', () => {
 		expect( processOutboundChain( [] )( getSites, {} ) ).to.eql( getSites );
 	} );
 
-	it( 'should sequence a single processor', () => {
+	test( 'should sequence a single processor', () => {
 		expect( processOutboundChain( [ pathDoubler ] )( getSites, {} ) ).to.eql( {
 			...getSites,
 			path: getSites.path + getSites.path,
 		} );
 	} );
 
-	it( 'should sequence multiple processors', () => {
+	test( 'should sequence multiple processors', () => {
 		expect( processOutboundChain( [ pathDoubler, pathDoubler ] )( getSites, {} ) ).to.eql( {
 			...getSites,
 			path: new Array( 4 ).fill( getSites.path ).join( '' ),
 		} );
 	} );
 
-	it( 'should abort the chain as soon as the `nextRequest` is `null`', () => {
+	test( 'should abort the chain as soon as the `nextRequest` is `null`', () => {
 		expect( processOutboundChain( [ aborter, pathDoubler ] )( getSites, {} ) ).to.be.null;
 	} );
 } );

@@ -28,7 +28,7 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isSessionEligible',
 			'wasShownThisSession',
@@ -39,13 +39,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#isSessionEligible()', () => {
-		it( 'should default to not eligible', () => {
+		test( 'should default to not eligible', () => {
 			const state = isSessionEligible( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should track if session is eligible', () => {
+		test( 'should track if session is eligible', () => {
 			const state = isSessionEligible( undefined, {
 				type: NPS_SURVEY_SET_ELIGIBILITY,
 				isSessionPicked: true,
@@ -54,7 +54,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should track if session is not eligible', () => {
+		test( 'should track if session is not eligible', () => {
 			const state = isSessionEligible( undefined, {
 				type: NPS_SURVEY_SET_ELIGIBILITY,
 				isSessionPicked: false,
@@ -65,13 +65,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#wasShownThisSession()', () => {
-		it( 'should default to not shown', () => {
+		test( 'should default to not shown', () => {
 			const state = wasShownThisSession( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should track if survey was shown', () => {
+		test( 'should track if survey was shown', () => {
 			const state = wasShownThisSession( undefined, {
 				type: NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 			} );
@@ -81,13 +81,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#surveyState()', () => {
-		it( 'should default to not submitted', () => {
+		test( 'should default to not submitted', () => {
 			const state = surveyState( undefined, {} );
 
 			expect( state ).to.equal( NOT_SUBMITTED );
 		} );
 
-		it( 'should track if submitting', () => {
+		test( 'should track if submitting', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
@@ -97,7 +97,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( SUBMITTING );
 		} );
 
-		it( 'should track if submitted', () => {
+		test( 'should track if submitted', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
 			} );
@@ -105,7 +105,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( SUBMITTED );
 		} );
 
-		it( 'should track if failed to submit', () => {
+		test( 'should track if failed to submit', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 			} );
@@ -113,7 +113,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( SUBMIT_FAILURE );
 		} );
 
-		it( 'should track if submitting with no score', () => {
+		test( 'should track if submitting with no score', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 				surveyName: 'boo',
@@ -122,7 +122,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( SUBMITTING );
 		} );
 
-		it( 'should track if submitted with no score', () => {
+		test( 'should track if submitted with no score', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 			} );
@@ -130,7 +130,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( SUBMITTED );
 		} );
 
-		it( 'should track if failed to submit with no score', () => {
+		test( 'should track if failed to submit with no score', () => {
 			const state = surveyState( undefined, {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 			} );
@@ -140,13 +140,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#surveyName()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = surveyName( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should track if submitting', () => {
+		test( 'should track if submitting', () => {
 			const state = surveyName( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
@@ -156,7 +156,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 'boo' );
 		} );
 
-		it( 'should track if submitting with no score', () => {
+		test( 'should track if submitting with no score', () => {
 			const state = surveyName( undefined, {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 				surveyName: 'boo',
@@ -167,13 +167,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#score()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = score( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should track if submitting', () => {
+		test( 'should track if submitting', () => {
 			const state = score( undefined, {
 				type: NPS_SURVEY_SUBMIT_REQUESTING,
 				surveyName: 'boo',
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 7 );
 		} );
 
-		it( 'should track if submitting with no score', () => {
+		test( 'should track if submitting with no score', () => {
 			const state = score( undefined, {
 				type: NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 				surveyName: 'boo',

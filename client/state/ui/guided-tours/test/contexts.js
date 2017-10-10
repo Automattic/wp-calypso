@@ -34,7 +34,7 @@ const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 describe( 'selectors', () => {
 	let hasUserClicked;
 
-	before( () => {
+	beforeAll( () => {
 		hasUserClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 	} );
 
@@ -65,11 +65,11 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return false for users registered before a week ago', () => {
+		test( 'should return false for users registered before a week ago', () => {
 			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).to.be.false;
 		} );
 
-		it( 'should return true for users registered in the last week', () => {
+		test( 'should return true for users registered in the last week', () => {
 			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).to.be.true;
 		} );
 	} );
@@ -99,17 +99,17 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return true for users registered before the cut-off date', () => {
+		test( 'should return true for users registered before the cut-off date', () => {
 			expect( hasUserRegisteredBefore( cutoff )( oldUser ) ).to.be.true;
 		} );
 
-		it( 'should return false for users registered after the cut-off date', () => {
+		test( 'should return false for users registered after the cut-off date', () => {
 			expect( hasUserRegisteredBefore( cutoff )( newUser ) ).to.be.false;
 		} );
 	} );
 
 	describe( '#hasUserPastedContentFromGoogleDocs', () => {
-		it( 'should return false when no actions', () => {
+		test( 'should return false when no actions', () => {
 			const state = {
 				ui: {
 					actionLog: [],
@@ -118,7 +118,7 @@ describe( 'selectors', () => {
 			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when last action is not the paste event', () => {
+		test( 'should return false when last action is not the paste event', () => {
 			const state = {
 				ui: {
 					actionLog: [ { type: EDITOR_PASTE_EVENT }, { type: 'NO_PASTE_EVENT' } ],
@@ -127,7 +127,7 @@ describe( 'selectors', () => {
 			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when last action is the paste event & the source is Google Docs', () => {
+		test( 'should return true when last action is the paste event & the source is Google Docs', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.true;
 		} );
 
-		it( 'should return false when last action is the paste event & the source is not Google Docs', () => {
+		test( 'should return false when last action is the paste event & the source is not Google Docs', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -153,7 +153,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#hasAnalyticsEventFired', () => {
-		it( 'should return false when no actions', () => {
+		test( 'should return false when no actions', () => {
 			const state = {
 				ui: {
 					actionLog: [],
@@ -161,7 +161,7 @@ describe( 'selectors', () => {
 			};
 			expect( hasUserClicked( state ) ).to.be.false;
 		} );
-		it( 'should return true when matching action', () => {
+		test( 'should return true when matching action', () => {
 			const state = {
 				ui: {
 					actionLog: [
@@ -185,7 +185,7 @@ describe( 'selectors', () => {
 			};
 			expect( hasUserClicked( state ) ).to.be.true;
 		} );
-		it( 'should return false when mis-matching event', () => {
+		test( 'should return false when mis-matching event', () => {
 			const state = {
 				ui: {
 					actionLog: [

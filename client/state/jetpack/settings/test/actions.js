@@ -54,7 +54,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a fetch action object when called', () => {
+			test( 'should return a fetch action object when called', () => {
 				fetchSettings( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should return a receive action when request successfully completes', () => {
+			test( 'should return a receive action when request successfully completes', () => {
 				return fetchSettings( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_RECEIVE,
@@ -98,7 +98,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a receive action when an error occurs', () => {
+			test( 'should return a receive action when an error occurs', () => {
 				return fetchSettings( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_REQUEST_FAILURE,
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a fetch action object when called', () => {
+			test( 'should return a fetch action object when called', () => {
 				updateSettings( siteId, NORMALIZED_SETTINGS_FIXTURE[ siteId ] )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -140,7 +140,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should return a receive action when request successfully completes', () => {
+			test( 'should return a receive action when request successfully completes', () => {
 				return updateSettings( siteId, NORMALIZED_SETTINGS_FIXTURE[ siteId ] )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_UPDATE_SUCCESS,
@@ -170,7 +170,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a receive action when an error occurs', () => {
+			test( 'should return a receive action when an error occurs', () => {
 				return updateSettings( siteId, NORMALIZED_SETTINGS_FIXTURE[ siteId ] )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_UPDATE_FAILURE,
@@ -205,7 +205,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a regenerate action object when called', () => {
+			test( 'should return a regenerate action object when called', () => {
 				regeneratePostByEmail( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -214,7 +214,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should return a receive action when request successfully completes', () => {
+			test( 'should return a receive action when request successfully completes', () => {
 				return regeneratePostByEmail( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
@@ -244,7 +244,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should return a receive action when an error occurs', () => {
+			test( 'should return a receive action when an error occurs', () => {
 				return regeneratePostByEmail( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,

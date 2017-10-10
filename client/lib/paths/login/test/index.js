@@ -21,13 +21,13 @@ describe( 'index', () => {
 				.returns( true );
 		} );
 
-		it( 'should return the legacy login url', () => {
+		test( 'should return the legacy login url', () => {
 			const url = login();
 
 			expect( url ).to.equal( 'https://wordpress.com/wp-login.php' );
 		} );
 
-		it( 'should return the legacy login url with encoded redirect url param', () => {
+		test( 'should return the legacy login url with encoded redirect url param', () => {
 			const url = login( { redirectTo: 'https://wordpress.com/?search=test&foo=bar' } );
 
 			expect( url ).to.equal(
@@ -35,19 +35,19 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should return the login url', () => {
+		test( 'should return the login url', () => {
 			const url = login( { isNative: true } );
 
 			expect( url ).to.equal( '/log-in' );
 		} );
 
-		it( 'should return the login url when the two factor auth page is supplied', () => {
+		test( 'should return the login url when the two factor auth page is supplied', () => {
 			const url = login( { isNative: true, twoFactorAuthType: 'code' } );
 
 			expect( url ).to.equal( '/log-in/code' );
 		} );
 
-		it( 'should return the login url with encoded redirect url param', () => {
+		test( 'should return the login url with encoded redirect url param', () => {
 			const url = login( {
 				isNative: true,
 				redirectTo: 'https://wordpress.com/?search=test&foo=bar',
@@ -58,7 +58,7 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should return the login url with encoded email_address param', () => {
+		test( 'should return the login url with encoded email_address param', () => {
 			const url = login( { isNative: true, emailAddress: 'foo@bar.com' } );
 
 			expect( url ).to.equal( '/log-in?email_address=foo%40bar.com' );

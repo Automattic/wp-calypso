@@ -11,7 +11,7 @@ import { assert } from 'chai';
 import { areEqualIgnoringWhitespaceAndCase } from '../';
 
 describe( 'lib/string/areEqualIgnoringWhitespaceAndCase', () => {
-	it( 'should match', () => {
+	test( 'should match', () => {
 		const pairs = [
 			// actual, expected
 			[ '', '' ],

@@ -12,14 +12,14 @@ import { isFetchingPreferences, getPreference, hasReceivedRemotePreferences } fr
 
 describe( 'selectors', () => {
 	describe( 'isFetchingPreferences()', () => {
-		it( 'should return preferences fetching status', () => {
+		test( 'should return preferences fetching status', () => {
 			const state = { preferences: { fetching: true } };
 			expect( isFetchingPreferences( state ) ).to.equal( true );
 		} );
 	} );
 
 	describe( 'getPreference()', () => {
-		it( 'should return null if none of local, remote, or default values contains key', () => {
+		test( 'should return null if none of local, remote, or default values contains key', () => {
 			const preference = getPreference(
 				{
 					preferences: {
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( preference ).to.be.null;
 		} );
 
-		it( 'should return a default value if neither local nor remote values contain key', () => {
+		test( 'should return a default value if neither local nor remote values contain key', () => {
 			const preference = getPreference(
 				{
 					preferences: {
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 			expect( preference ).to.be.false;
 		} );
 
-		it( 'should return the remote value if local does not contain key', () => {
+		test( 'should return the remote value if local does not contain key', () => {
 			const preference = getPreference(
 				{
 					preferences: {
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 			expect( preference ).to.equal( 'baz' );
 		} );
 
-		it( 'should prefer a local value over remote or default values', () => {
+		test( 'should prefer a local value over remote or default values', () => {
 			const preference = getPreference(
 				{
 					preferences: {
@@ -83,7 +83,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'hasReceivedRemotePreferences()', () => {
-		it( 'should return false if preferences have not yet been received', () => {
+		test( 'should return false if preferences have not yet been received', () => {
 			const hasReceived = hasReceivedRemotePreferences( {
 				preferences: {
 					remoteValues: null,
@@ -93,7 +93,7 @@ describe( 'selectors', () => {
 			expect( hasReceived ).to.be.false;
 		} );
 
-		it( 'should return false if preferences have been received', () => {
+		test( 'should return false if preferences have been received', () => {
 			const hasReceived = hasReceivedRemotePreferences( {
 				preferences: {
 					remoteValues: {},

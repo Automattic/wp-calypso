@@ -12,7 +12,7 @@ import { getPublicSites } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getPublicSites()', () => {
-	it( 'should return an empty array if no sites in state', () => {
+	test( 'should return an empty array if no sites in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -23,7 +23,7 @@ describe( 'getPublicSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return the public sites in state', () => {
+	test( 'should return the public sites in state', () => {
 		const state = {
 			...userState,
 			sites: {

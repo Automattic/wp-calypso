@@ -38,12 +38,12 @@ describe( 'media request', () => {
 		},
 	} );
 
-	it( 'should dispatch REQUESTING action when request triggers', () => {
+	test( 'should dispatch REQUESTING action when request triggers', () => {
 		requestMedia( { dispatch, getState }, { siteId: 2916284, query: 'a=b' } );
 		expect( dispatch ).to.have.been.calledWith( requestingMedia( 2916284, 'a=b' ) );
 	} );
 
-	it( 'should dispatch SUCCESS action when request completes', () => {
+	test( 'should dispatch SUCCESS action when request completes', () => {
 		requestMediaSuccess(
 			{ dispatch },
 			{ siteId: 2916284, query: 'a=b' },
@@ -55,12 +55,12 @@ describe( 'media request', () => {
 		);
 	} );
 
-	it( 'should dispatch FAILURE action when request fails', () => {
+	test( 'should dispatch FAILURE action when request fails', () => {
 		requestMediaError( { dispatch }, { siteId: 2916284, query: 'a=b' } );
 		expect( dispatch ).to.have.been.calledWith( failMediaRequest( 2916284, 'a=b' ) );
 	} );
 
-	it( 'should dispatch http request', () => {
+	test( 'should dispatch http request', () => {
 		requestMedia( { dispatch, getState }, { siteId: 2916284, query: 'a=b' } );
 		expect( dispatch ).to.have.been.calledWith(
 			http(
@@ -80,7 +80,7 @@ describe( 'handleMediaItemRequest', () => {
 
 	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
-	it( 'should dispatch an http action', () => {
+	test( 'should dispatch an http action', () => {
 		const siteId = 12345;
 		const mediaId = 67890;
 		const action = {
@@ -109,7 +109,7 @@ describe( 'receiveMediaItem', () => {
 
 	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
-	it( 'should dispatch media recieve actions', () => {
+	test( 'should dispatch media recieve actions', () => {
 		const siteId = 12345;
 		const mediaId = 67890;
 		const action = {
@@ -130,7 +130,7 @@ describe( 'receiveMediaItemError', () => {
 
 	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
-	it( 'should dispatch failure', () => {
+	test( 'should dispatch failure', () => {
 		const siteId = 12345;
 		const mediaId = 67890;
 		const action = {

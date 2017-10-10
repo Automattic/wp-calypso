@@ -16,7 +16,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( 'wpcom-api', () => {
 	describe( 'post comments request', () => {
 		describe( '#fetchPostComments()', () => {
-			it( 'should dispatch an HTTP request to the post replies endpoint', () => {
+			test( 'should dispatch an HTTP request to the post replies endpoint', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -53,7 +53,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
+			test( 'should dispatch an HTTP request to the post replies endpoint, before the oldest contiguous comment in state', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -101,7 +101,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#addComments', () => {
-			it( 'should dispatch a comments receive action', () => {
+			test( 'should dispatch a comments receive action', () => {
 				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
@@ -125,7 +125,7 @@ describe( 'wpcom-api', () => {
 				} );
 			} );
 
-			it( 'should dispatch a comments receive action and a count receive action when comments found', () => {
+			test( 'should dispatch a comments receive action and a count receive action when comments found', () => {
 				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
@@ -158,7 +158,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( 'commentsFromApi', () => {
-			it( 'should decode author name entities', () => {
+			test( 'should decode author name entities', () => {
 				const comments = [ { author: { name: 'joe' } }, { author: { name: '&#9829;' } } ];
 				expect( commentsFromApi( comments ) ).eql( [
 					{ author: { name: 'joe' } },
@@ -168,7 +168,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#announceFailure', () => {
-			it( 'should dispatch an error notice', () => {
+			test( 'should dispatch an error notice', () => {
 				const dispatch = spy();
 				const getState = () => ( {
 					posts: {

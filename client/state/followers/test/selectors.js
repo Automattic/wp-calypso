@@ -12,7 +12,7 @@ import { getSerializedQuery } from '../utils';
 
 describe( 'selctors', () => {
 	describe( '#getFollowersForQuery()', () => {
-		it( 'should should only return followers that match query', () => {
+		test( 'should should only return followers that match query', () => {
 			const state = {
 				followers: {
 					items: {
@@ -51,7 +51,7 @@ describe( 'selctors', () => {
 			] );
 		} );
 
-		it( 'should return null for untracked queries', () => {
+		test( 'should return null for untracked queries', () => {
 			const state = {
 				followers: {
 					queries: {},

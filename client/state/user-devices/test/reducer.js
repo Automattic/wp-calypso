@@ -14,12 +14,12 @@ import { USER_DEVICES_ADD } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should add devices to the initial state', () => {
+		test( 'should add devices to the initial state', () => {
 			const state = items( null, {
 				type: USER_DEVICES_ADD,
 				devices: {
@@ -34,7 +34,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should add new devices to the state', () => {
+		test( 'should add new devices to the state', () => {
 			const state = deepFreeze( {
 				1: { id: 1, name: 'Mobile Phone' },
 				2: { id: 2, name: 'Tablet' },

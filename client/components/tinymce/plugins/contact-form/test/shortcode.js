@@ -11,13 +11,13 @@ import { assert } from 'chai';
 import { serialize, deserialize } from '../shortcode-utils';
 
 describe( 'contact form shortcode serializer', () => {
-	it( 'should create an empty form if no definition provided', () => {
+	test( 'should create an empty form if no definition provided', () => {
 		const shortcode = serialize();
 
 		assert.equal( shortcode, '[contact-form][/contact-form]' );
 	} );
 
-	it( 'should correctly add both to and subject attributes', () => {
+	test( 'should correctly add both to and subject attributes', () => {
 		const shortcode = serialize( {
 			to: 'user@example.com',
 			subject: 'contact form subject',
@@ -29,7 +29,7 @@ describe( 'contact form shortcode serializer', () => {
 		);
 	} );
 
-	it( 'should not add empty fields if none provided', () => {
+	test( 'should not add empty fields if none provided', () => {
 		const shortcode = serialize( {
 			fields: [],
 		} );
@@ -37,7 +37,7 @@ describe( 'contact form shortcode serializer', () => {
 		assert.equal( shortcode, '[contact-form][/contact-form]' );
 	} );
 
-	it( 'should not add empty fields for empty objects', () => {
+	test( 'should not add empty fields for empty objects', () => {
 		const shortcode = serialize( {
 			fields: [ {} ],
 		} );
@@ -45,7 +45,7 @@ describe( 'contact form shortcode serializer', () => {
 		assert.equal( shortcode, '[contact-form][/contact-form]' );
 	} );
 
-	it( 'should not serialize fields with missing type', () => {
+	test( 'should not serialize fields with missing type', () => {
 		const shortcode = serialize( {
 			fields: [ { label: 'Name' } ],
 		} );
@@ -53,7 +53,7 @@ describe( 'contact form shortcode serializer', () => {
 		assert.equal( shortcode, '[contact-form][/contact-form]' );
 	} );
 
-	it( 'should not serialize fields with missing labels', () => {
+	test( 'should not serialize fields with missing labels', () => {
 		const shortcode = serialize( {
 			fields: [ { type: 'Name' } ],
 		} );
@@ -61,7 +61,7 @@ describe( 'contact form shortcode serializer', () => {
 		assert.equal( shortcode, '[contact-form][/contact-form]' );
 	} );
 
-	it( 'should serialize a single field', () => {
+	test( 'should serialize a single field', () => {
 		const shortcode = serialize( {
 			fields: [ { type: 'text', label: 'Name' } ],
 		} );
@@ -72,7 +72,7 @@ describe( 'contact form shortcode serializer', () => {
 		);
 	} );
 
-	it( 'should serialize multiple fields', () => {
+	test( 'should serialize multiple fields', () => {
 		const shortcode = serialize( {
 			fields: [ { type: 'text', label: 'First Name' }, { type: 'text', label: 'Last Name' } ],
 		} );
@@ -83,7 +83,7 @@ describe( 'contact form shortcode serializer', () => {
 		);
 	} );
 
-	it( 'should serialize a required field', () => {
+	test( 'should serialize a required field', () => {
 		const shortcode = serialize( {
 			fields: [ { type: 'text', label: 'Name', required: true } ],
 		} );
@@ -94,7 +94,7 @@ describe( 'contact form shortcode serializer', () => {
 		);
 	} );
 
-	it( 'should serialize a field with options', () => {
+	test( 'should serialize a field with options', () => {
 		const shortcode = serialize( {
 			fields: [
 				{
@@ -114,13 +114,13 @@ describe( 'contact form shortcode serializer', () => {
 } );
 
 describe( 'contact form shortcode deserializer', () => {
-	it( 'should deserialize an empty contact form', () => {
+	test( 'should deserialize an empty contact form', () => {
 		const contactForm = deserialize( '[contact-form][/contact-form]' );
 
 		assert.deepEqual( contactForm, { fields: [] } );
 	} );
 
-	it( 'should deserialize both to and subject attribute from the contact form shortcode', () => {
+	test( 'should deserialize both to and subject attribute from the contact form shortcode', () => {
 		const contactForm = deserialize(
 			'[contact-form to="user@example.com" subject="contact form subject"][/contact-form]'
 		);
@@ -132,7 +132,7 @@ describe( 'contact form shortcode deserializer', () => {
 		} );
 	} );
 
-	it( 'should deserialize a field string', () => {
+	test( 'should deserialize a field string', () => {
 		const contactForm = deserialize(
 			'[contact-form][contact-field label="name" type="text" /][/contact-form]'
 		);
@@ -142,7 +142,7 @@ describe( 'contact form shortcode deserializer', () => {
 		} );
 	} );
 
-	it( 'should deserialize a required field string', () => {
+	test( 'should deserialize a required field string', () => {
 		const contactForm = deserialize(
 			'[contact-form][contact-field label="name" type="text" required="1" /][/contact-form]'
 		);
@@ -152,7 +152,7 @@ describe( 'contact form shortcode deserializer', () => {
 		} );
 	} );
 
-	it( 'should not deserialize invalid field string', () => {
+	test( 'should not deserialize invalid field string', () => {
 		const contactForm = deserialize(
 			'[contact-form][contact-field label="name" type="text" /][contact-field this is invalid [/contact-form]'
 		);
@@ -162,7 +162,7 @@ describe( 'contact form shortcode deserializer', () => {
 		} );
 	} );
 
-	it( 'should deserialize a field with options', () => {
+	test( 'should deserialize a field with options', () => {
 		const contactForm = deserialize(
 			'[contact-form][contact-field label="options" type="dropdown" options="option 1,option 2,option 3" required="1" /][/contact-form]'
 		);

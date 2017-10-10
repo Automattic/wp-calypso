@@ -30,7 +30,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
-		it( 'should return false if no request exists', () => {
+		test( 'should return false if no request exists', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return false if query is not requesting', () => {
+		test( 'should return false if query is not requesting', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return true if query is in progress', () => {
+		test( 'should return true if query is in progress', () => {
 			const requesting = isRequestingSiteStatsForQuery(
 				{
 					stats: {
@@ -95,7 +95,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'hasSiteStatsQueryFailed()', () => {
-		it( 'should return false if no request exists', () => {
+		test( 'should return false if no request exists', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -112,7 +112,7 @@ describe( 'selectors', () => {
 			expect( hasFailed ).to.be.false;
 		} );
 
-		it( 'should return false if the request status is success', () => {
+		test( 'should return false if the request status is success', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -138,7 +138,7 @@ describe( 'selectors', () => {
 			expect( hasFailed ).to.be.false;
 		} );
 
-		it( 'should return true if the request status is error', () => {
+		test( 'should return true if the request status is error', () => {
 			const hasFailed = hasSiteStatsQueryFailed(
 				{
 					stats: {
@@ -166,7 +166,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsForQuery()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsForQuery(
 				{
 					stats: {
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should return matching stats', () => {
+		test( 'should return matching stats', () => {
 			const stats = getSiteStatsForQuery(
 				{
 					stats: {
@@ -216,7 +216,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsPostStreakData()', () => {
-		it( 'should return an empty object if no matching query results exist', () => {
+		test( 'should return an empty object if no matching query results exist', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -232,7 +232,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( {} );
 		} );
 
-		it( 'should return properly formatted data if matching data for query exists', () => {
+		test( 'should return properly formatted data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -264,7 +264,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should handle malformed data if matching data for query exists', () => {
+		test( 'should handle malformed data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData(
 				{
 					stats: {
@@ -289,7 +289,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( {} );
 		} );
 
-		it( 'should return post streak data based on the GMT offset of the current site', () => {
+		test( 'should return post streak data based on the GMT offset of the current site', () => {
 			const state = {
 				stats: {
 					lists: {
@@ -365,7 +365,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsTotalPostsForStreakQuery()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsTotalPostsForStreakQuery(
 				{
 					stats: {
@@ -381,7 +381,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( 0 );
 		} );
 
-		it( 'should properly correct number of total posts', () => {
+		test( 'should properly correct number of total posts', () => {
 			const stats = getSiteStatsTotalPostsForStreakQuery(
 				{
 					stats: {
@@ -411,7 +411,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsMaxPostsByDay()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsMaxPostsByDay(
 				{
 					stats: {
@@ -427,7 +427,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should properly correct number of max posts grouped by day', () => {
+		test( 'should properly correct number of max posts grouped by day', () => {
 			const stats = getSiteStatsMaxPostsByDay(
 				{
 					stats: {
@@ -455,7 +455,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( 2 );
 		} );
 
-		it( 'should compare numerically rather than lexically', () => {
+		test( 'should compare numerically rather than lexically', () => {
 			const stats = getSiteStatsMaxPostsByDay(
 				{
 					stats: {
@@ -484,7 +484,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsPostsCountByDay()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsPostsCountByDay(
 				{
 					stats: {
@@ -501,7 +501,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should properly correct number of max posts for a day', () => {
+		test( 'should properly correct number of max posts for a day', () => {
 			const stats = getSiteStatsPostsCountByDay(
 				{
 					stats: {
@@ -532,7 +532,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsNormalizedData()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -553,7 +553,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should return API payload data, if no normalizer exists', () => {
+		test( 'should return API payload data, if no normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -584,7 +584,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return normalized data, if normalizer exists', () => {
+		test( 'should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsNormalizedData(
 				{
 					...userState,
@@ -627,7 +627,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteStatsCSVData()', () => {
-		it( 'should return an empty array if no matching query results exist', () => {
+		test( 'should return an empty array if no matching query results exist', () => {
 			const stats = getSiteStatsCSVData(
 				{
 					...userState,
@@ -648,7 +648,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.eql( [] );
 		} );
 
-		it( 'should return normalized data, if normalizer exists', () => {
+		test( 'should return normalized data, if normalizer exists', () => {
 			const stats = getSiteStatsCSVData(
 				{
 					...userState,

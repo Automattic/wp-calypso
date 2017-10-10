@@ -13,7 +13,7 @@ import { LOCALE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'localeSlug', () => {
-		it( 'returns an appropriate localeSlug', () => {
+		test( 'returns an appropriate localeSlug', () => {
 			const state = 'en';
 			const action = { type: LOCALE_SET, localeSlug: 'he' };
 			expect( localeSlug( state, action ) ).to.eql( 'he' );

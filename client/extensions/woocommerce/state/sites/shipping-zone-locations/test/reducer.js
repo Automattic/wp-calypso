@@ -16,7 +16,7 @@ import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
-	it( 'should mark the zone locations entry as being "loading"', () => {
+	test( 'should mark the zone locations entry as being "loading"', () => {
 		const siteId = 123;
 		const zoneId = 7;
 		const action = {
@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 		expect( newSiteData[ siteId ].shippingZoneLocations[ zoneId ] ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const locations = [
 			{ type: 'country', code: 'US' },
 			{ type: 'country', code: 'CA' },

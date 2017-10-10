@@ -15,20 +15,20 @@ import { spy } from 'sinon';
 import { RemoveButton } from '../index';
 import Button from 'components/button';
 
-describe( 'Remove Button', function() {
-	it( 'should render the button', () => {
+describe( 'Remove Button', () => {
+	test( 'should render the button', () => {
 		const wrapper = shallow( <RemoveButton onRemove={ noop } translate={ identity } /> );
 
 		expect( wrapper ).to.have.className( 'remove-button' );
 	} );
 
-	it( 'should render the icon', () => {
+	test( 'should render the icon', () => {
 		const wrapper = shallow( <RemoveButton onRemove={ noop } translate={ identity } /> );
 
 		expect( wrapper.find( Gridicon ) ).to.have.length( 1 );
 	} );
 
-	it( 'should call the provided callback when the button is clicked', () => {
+	test( 'should call the provided callback when the button is clicked', () => {
 		const onRemove = spy();
 		const wrapper = shallow( <RemoveButton onRemove={ onRemove } translate={ identity } /> );
 

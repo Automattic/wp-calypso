@@ -25,23 +25,23 @@ import {
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {
-		it( '#plansReceiveAction()', () => {
+		test( '#plansReceiveAction()', () => {
 			const plans = wpcomResponse;
 			const action = plansReceiveAction( plans );
 			expect( action ).to.eql( ACTION_PLANS_RECEIVE );
 		} );
 
-		it( '#plansRequestSuccessAction()', () => {
+		test( '#plansRequestSuccessAction()', () => {
 			const action = plansRequestSuccessAction();
 			expect( action ).to.eql( ACTION_PLANS_REQUEST_SUCCESS );
 		} );
 
-		it( '#plansRequestFailureAction()', () => {
+		test( '#plansRequestFailureAction()', () => {
 			const action = plansRequestFailureAction( errorResponse );
 			expect( action ).to.eql( ACTION_PLANS_REQUEST_FAILURE );
 		} );
 
-		it( '#requestPlans()', () => {
+		test( '#requestPlans()', () => {
 			expect( requestPlans() ).to.eql( ACTION_PLANS_REQUEST );
 		} );
 	} );

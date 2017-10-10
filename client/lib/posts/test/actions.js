@@ -20,10 +20,10 @@ import Dispatcher from 'dispatcher';
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
-describe( 'actions', function() {
+describe( 'actions', () => {
 	let sandbox;
 
-	before( () => {
+	beforeAll( () => {
 		sandbox = sinon.sandbox.create();
 	} );
 
@@ -39,8 +39,8 @@ describe( 'actions', function() {
 		sandbox.restore();
 	} );
 
-	describe( '#updateMetadata()', function() {
-		it( 'should dispatch a post edit with a new metadata value', function() {
+	describe( '#updateMetadata()', () => {
+		test( 'should dispatch a post edit with a new metadata value', () => {
 			PostActions.updateMetadata( 'foo', 'bar' );
 
 			expect(
@@ -53,7 +53,7 @@ describe( 'actions', function() {
 			).to.be.true;
 		} );
 
-		it( 'accepts an object of key value pairs', function() {
+		test( 'accepts an object of key value pairs', () => {
 			PostActions.updateMetadata( {
 				foo: 'bar',
 				baz: 'qux',
@@ -72,7 +72,7 @@ describe( 'actions', function() {
 			).to.be.true;
 		} );
 
-		it( 'should include metadata already existing on the post object', function() {
+		test( 'should include metadata already existing on the post object', () => {
 			PostEditStore.get.restore();
 			sandbox.stub( PostEditStore, 'get' ).returns( {
 				metadata: [ { key: 'other', value: '1234' } ],
@@ -93,7 +93,7 @@ describe( 'actions', function() {
 			).to.be.true;
 		} );
 
-		it( 'should include metadata edits made previously', function() {
+		test( 'should include metadata edits made previously', () => {
 			PostEditStore.get.restore();
 			sandbox.stub( PostEditStore, 'get' ).returns( {
 				metadata: [ { key: 'other', operation: 'delete' } ],
@@ -114,7 +114,7 @@ describe( 'actions', function() {
 			).to.be.true;
 		} );
 
-		it( 'should not duplicate existing metadata edits', function() {
+		test( 'should not duplicate existing metadata edits', () => {
 			PostEditStore.get.restore();
 			sandbox.stub( PostEditStore, 'get' ).returns( {
 				metadata: [
@@ -139,8 +139,8 @@ describe( 'actions', function() {
 		} );
 	} );
 
-	describe( '#deleteMetadata()', function() {
-		it( 'should dispatch a post edit with a deleted metadata', function() {
+	describe( '#deleteMetadata()', () => {
+		test( 'should dispatch a post edit with a deleted metadata', () => {
 			PostEditStore.get.restore();
 			sandbox.stub( PostEditStore, 'get' ).returns( {
 				metadata: [ { key: 'bar', value: 'foo' } ],
@@ -157,7 +157,7 @@ describe( 'actions', function() {
 			).to.be.true;
 		} );
 
-		it( 'should accept an array of metadata keys to delete', function() {
+		test( 'should accept an array of metadata keys to delete', () => {
 			PostActions.deleteMetadata( [ 'foo', 'bar' ] );
 
 			expect(
@@ -171,8 +171,8 @@ describe( 'actions', function() {
 		} );
 	} );
 
-	describe( '#saveEdited()', function() {
-		it( 'should not send a request if the post has no content', function( done ) {
+	describe( '#saveEdited()', () => {
+		test( 'should not send a request if the post has no content', done => {
 			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
@@ -187,7 +187,7 @@ describe( 'actions', function() {
 			} );
 		} );
 
-		it( 'should not send a request if there are no changed attributes', function( done ) {
+		test( 'should not send a request if there are no changed attributes', done => {
 			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
@@ -203,7 +203,7 @@ describe( 'actions', function() {
 			} );
 		} );
 
-		it( 'should normalize attributes and call the API', function( done ) {
+		test( 'should normalize attributes and call the API', done => {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 
 			const changedAttributes = {

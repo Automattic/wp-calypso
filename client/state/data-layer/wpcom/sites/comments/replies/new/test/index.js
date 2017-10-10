@@ -21,7 +21,7 @@ describe( '#writeReplyComment()', () => {
 		commentText: 'comment text',
 	};
 
-	it( 'should dispatch a http request action to the new comment replies endpoint', () => {
+	test( 'should dispatch a http request action to the new comment replies endpoint', () => {
 		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 

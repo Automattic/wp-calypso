@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'fetching', 'items' ] );
 	} );
 
@@ -30,13 +30,13 @@ describe( 'reducer', () => {
 			[ primarySiteId ]: true,
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = fetching( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set state to true if settings are being fetched', () => {
+		test( 'should set state to true if settings are being fetched', () => {
 			const state = fetching( undefined, {
 				type: WP_JOB_MANAGER_FETCH_SETTINGS,
 				siteId: primarySiteId,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetching values', () => {
+		test( 'should accumulate fetching values', () => {
 			const state = fetching( previousState, {
 				type: WP_JOB_MANAGER_FETCH_SETTINGS,
 				siteId: secondarySiteId,
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if updating settings', () => {
+		test( 'should set state to false if updating settings', () => {
 			const state = fetching( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if settings could not be fetched', () => {
+		test( 'should set state to false if settings could not be fetched', () => {
 			const state = fetching( previousState, {
 				type: WP_JOB_MANAGER_FETCH_ERROR,
 				siteId: primarySiteId,
@@ -81,7 +81,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = fetching( previousState, {
 				type: SERIALIZE,
 			} );
@@ -89,7 +89,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = fetching( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -105,13 +105,13 @@ describe( 'reducer', () => {
 			[ primarySiteId ]: primarySettings,
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should index settings by site ID', () => {
+		test( 'should index settings by site ID', () => {
 			const state = items( undefined, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
@@ -123,7 +123,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate settings', () => {
+		test( 'should accumulate settings', () => {
 			const state = items( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: secondarySiteId,
@@ -136,7 +136,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous settings of same site ID', () => {
+		test( 'should override previous settings of same site ID', () => {
 			const state = items( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
@@ -148,7 +148,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
+		test( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
 			const newSettings = {
 				job_manager_hide_expired: false,
 				job_manager_hide_filled_positions: true,
@@ -164,7 +164,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = items( previousState, {
 				type: SERIALIZE,
 			} );
@@ -174,7 +174,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = items( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -184,7 +184,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
 				[ primarySiteId ]: 2,
 			} );

@@ -13,7 +13,7 @@ import { getMediaModalView } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getMediaModalView()', () => {
-		it( 'should return the current media modal view', () => {
+		test( 'should return the current media modal view', () => {
 			const view = getMediaModalView( {
 				ui: {
 					mediaModal: {

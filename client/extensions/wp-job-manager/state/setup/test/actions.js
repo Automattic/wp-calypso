@@ -32,7 +32,7 @@ describe( 'actions', () => {
 	const titles = [ 'Page 1', 'Page 2' ];
 
 	describe( '#createPages()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = createPages( siteId, titles );
 
 			expect( action ).to.deep.equal( {
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#createPagesError()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = createPagesError( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#nextStep()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = nextStep( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSetupStatus()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = fetchSetupStatus( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -77,7 +77,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSetupStatusError()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = fetchSetupStatusError( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateSetupStatus()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = updateSetupStatus( siteId, false );
 
 			expect( action ).to.deep.equal( {
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#saveSetupStatus()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = saveSetupStatus( siteId, false );
 
 			expect( action ).to.deep.equal( {

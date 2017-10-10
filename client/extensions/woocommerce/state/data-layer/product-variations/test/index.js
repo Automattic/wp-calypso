@@ -25,7 +25,7 @@ import {
 
 describe( 'handlers', () => {
 	describe( '#handleProductVariationsRequest', () => {
-		it( 'should dispatch a get action', () => {
+		test( 'should dispatch a get action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -47,7 +47,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 
-	it( 'should dispatch a success action with extra properties', () => {
+	test( 'should dispatch a success action with extra properties', () => {
 		const store = {
 			dispatch: spy(),
 		};
@@ -79,7 +79,7 @@ describe( 'handlers', () => {
 		);
 	} );
 
-	it( 'should dispatch a success function with extra properties', () => {
+	test( 'should dispatch a success function with extra properties', () => {
 		const store = {
 			dispatch: spy(),
 		};
@@ -114,7 +114,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleProductVariationCreate', () => {
-		it( 'should dispatch a post action', () => {
+		test( 'should dispatch a post action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -140,7 +140,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success action with extra properties', () => {
+		test( 'should dispatch a success action with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -174,7 +174,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success function with extra properties', () => {
+		test( 'should dispatch a success function with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -212,7 +212,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleProductVariationUpdate', () => {
-		it( 'should dispatch a put action', () => {
+		test( 'should dispatch a put action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -238,7 +238,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success action with extra properties', () => {
+		test( 'should dispatch a success action with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -272,7 +272,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success function with extra properties', () => {
+		test( 'should dispatch a success function with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -310,7 +310,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleProductVariationDelete', () => {
-		it( 'should dispatch a delete action', () => {
+		test( 'should dispatch a delete action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -332,7 +332,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success action with extra properties', () => {
+		test( 'should dispatch a success action with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -361,7 +361,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a success function with extra properties', () => {
+		test( 'should dispatch a success function with extra properties', () => {
 			const store = {
 				dispatch: spy(),
 			};

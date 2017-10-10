@@ -13,13 +13,13 @@ import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {
-		it( '#requestTimezones()', () => {
+		test( '#requestTimezones()', () => {
 			expect( requestTimezones() ).to.eql( {
 				type: TIMEZONES_REQUEST,
 			} );
 		} );
 
-		it( '#timezonesReceive()', () => {
+		test( '#timezonesReceive()', () => {
 			const responseData = {
 				rawOffsets: {
 					'UTC+0': 'UTC',

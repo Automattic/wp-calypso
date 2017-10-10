@@ -18,11 +18,11 @@ import {
 const siteId = 123;
 
 describe( 'edits-reducer', () => {
-	it( 'should initialize to null', () => {
+	test( 'should initialize to null', () => {
 		expect( reducer( undefined, { type: '@@test/INIT' } ) ).to.equal( null );
 	} );
 
-	it( 'should create "updates" upon first edit', () => {
+	test( 'should create "updates" upon first edit', () => {
 		const category = { id: 101 };
 		const edits = reducer(
 			undefined,
@@ -36,7 +36,7 @@ describe( 'edits-reducer', () => {
 		expect( edits.updates[ 0 ] ).to.eql( { id: 101, name: 'Existing Category' } );
 	} );
 
-	it( 'should modify "updates" upon second edit', () => {
+	test( 'should modify "updates" upon second edit', () => {
 		const category = { id: 101 };
 		const edits1 = reducer(
 			undefined,
@@ -59,7 +59,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.updates[ 0 ].description ).to.eql( 'Updated description' );
 	} );
 
-	it( 'should create updates for more than one existing category', () => {
+	test( 'should create updates for more than one existing category', () => {
 		const category1 = { id: 101, name: 'c1' };
 		const edits1 = reducer(
 			undefined,
@@ -82,7 +82,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.updates[ 1 ].name ).to.equal( 'Second Category' );
 	} );
 
-	it( 'should create "creates" on first edit', () => {
+	test( 'should create "creates" on first edit', () => {
 		const id1 = { placeholder: 'productCategory_1' };
 		const edits = reducer(
 			undefined,
@@ -104,7 +104,7 @@ describe( 'edits-reducer', () => {
 		expect( edits.creates[ 0 ].slug ).to.eql( 'new-category' );
 	} );
 
-	it( 'should create more than one category', () => {
+	test( 'should create more than one category', () => {
 		const id1 = { placeholder: 'productCategory_1' };
 		const edits1 = reducer(
 			undefined,
@@ -139,7 +139,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.creates[ 1 ].slug ).to.eql( 'second-category' );
 	} );
 
-	it( 'should remove a "create"', () => {
+	test( 'should remove a "create"', () => {
 		const newCategory = {
 			name: 'New Category',
 			slug: 'first-category',
@@ -151,7 +151,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.creates[ 0 ] ).to.not.exist;
 	} );
 
-	it( 'should remove an "update"', () => {
+	test( 'should remove an "update"', () => {
 		const category = { id: 101 };
 		const categoryUpdate = { name: 'After first edit' };
 		const edits1 = reducer( undefined, editProductCategory( siteId, category, categoryUpdate ) );
@@ -161,7 +161,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.updates[ 0 ] ).to.not.exist;
 	} );
 
-	it( 'should set currentlyEditingId when editing a new category', () => {
+	test( 'should set currentlyEditingId when editing a new category', () => {
 		const edits1 = reducer(
 			undefined,
 			editProductCategory( siteId, null, {
@@ -182,7 +182,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.currentlyEditingId ).to.eql( edits2.creates[ 1 ].id );
 	} );
 
-	it( 'should clear category from creates upon successful save', () => {
+	test( 'should clear category from creates upon successful save', () => {
 		const category1 = {
 			id: { placeholder: 'productCategory_1' },
 			name: 'Category 1',
@@ -206,7 +206,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2.creates ).to.not.exist;
 	} );
 
-	it( 'should clear all product category edit data', () => {
+	test( 'should clear all product category edit data', () => {
 		const edits1 = {
 			creates: [ { id: { placeholder: 'productCategory_1' }, name: 'New Category' } ],
 			updates: [ { id: 525, name: 'Updated name' } ],

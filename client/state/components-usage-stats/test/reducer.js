@@ -13,7 +13,7 @@ import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '
 
 describe( 'reducer', () => {
 	describe( '#componentsUsageStats()', () => {
-		it( 'should default to an empty array', () => {
+		test( 'should default to an empty array', () => {
 			const state = componentsUsageStats( undefined, [] );
 			expect( state ).to.eql( {
 				isFetching: false,
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set `isFetching` to `true` during fetching', () => {
+		test( 'should set `isFetching` to `true` during fetching', () => {
 			const state = componentsUsageStats( undefined, {
 				type: COMPONENTS_USAGE_STATS_REQUEST,
 			} );
@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update the state with the `componentsUsageStats` when fetching completes', () => {
+		test( 'should update the state with the `componentsUsageStats` when fetching completes', () => {
 			const state = componentsUsageStats( undefined, {
 				type: COMPONENTS_USAGE_STATS_RECEIVE,
 				componentsUsageStats: {

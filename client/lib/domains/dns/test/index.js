@@ -13,7 +13,7 @@ import { validateAllFields } from '../';
 
 describe( 'index', () => {
 	describe( '#validateAllFields', () => {
-		it( 'should return no errors for a valid A record', () => {
+		test( 'should return no errors for a valid A record', () => {
 			const initialData = {
 				type: 'A',
 				name: 'example.foo.com',

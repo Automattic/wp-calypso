@@ -11,12 +11,12 @@ import { expect } from 'chai';
 import generateVariations from '../index';
 
 describe( 'generateVariations', () => {
-	it( 'returns an empty array when passed a product with no attributes', () => {
+	test( 'returns an empty array when passed a product with no attributes', () => {
 		const product = { id: 1 };
 		const variations = generateVariations( product );
 		expect( variations ).to.eql( [] );
 	} );
-	it( 'returns an empty array when passed a product with non-variation attributes', () => {
+	test( 'returns an empty array when passed a product with non-variation attributes', () => {
 		const product = {
 			id: 1,
 			attributes: [
@@ -31,7 +31,7 @@ describe( 'generateVariations', () => {
 		const variations = generateVariations( product );
 		expect( variations ).to.eql( [] );
 	} );
-	it( 'generates simple variations when passed a product with one product variation attribute', () => {
+	test( 'generates simple variations when passed a product with one product variation attribute', () => {
 		const product = {
 			id: 1,
 			attributes: [
@@ -59,7 +59,7 @@ describe( 'generateVariations', () => {
 			},
 		] );
 	} );
-	it( 'generates a cartesian of variations when passed a product with multiple variation attributes', () => {
+	test( 'generates a cartesian of variations when passed a product with multiple variation attributes', () => {
 		const product = {
 			id: 1,
 			attributes: [
@@ -102,7 +102,7 @@ describe( 'generateVariations', () => {
 			},
 		] );
 	} );
-	it( 'generates a complex cartesian of variations when passed a product with multiple variation attributes and multiple options', () => {
+	test( 'generates a complex cartesian of variations when passed a product with multiple variation attributes and multiple options', () => {
 		const product = {
 			id: 1,
 			attributes: [
@@ -146,7 +146,7 @@ describe( 'generateVariations', () => {
 		] );
 	} );
 
-	it( 'generates a default variation sku with product name', () => {
+	test( 'generates a default variation sku with product name', () => {
 		const product = {
 			id: 1,
 			name: 'Shirt',
@@ -172,7 +172,7 @@ describe( 'generateVariations', () => {
 		expect( variations[ 1 ].sku ).to.equal( 'shirt-blue-small' );
 	} );
 
-	it( 'generates a default variation sku without a product name', () => {
+	test( 'generates a default variation sku without a product name', () => {
 		const product = {
 			id: 2,
 			attributes: [
@@ -196,7 +196,7 @@ describe( 'generateVariations', () => {
 		expect( variations[ 1 ].sku ).to.equal( 'blue-small' );
 	} );
 
-	it( 'copies id and sku from existing product variations, where available', () => {
+	test( 'copies id and sku from existing product variations, where available', () => {
 		const product = {
 			id: 2,
 			attributes: [

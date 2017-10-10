@@ -41,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveSiteStats()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY, STREAK_RESPONSE );
 
 			expect( action ).to.eql( {
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 				.reply( 200, VIDEO_RESPONSE );
 		} );
 
-		it( 'should dispatch a SITE_STATS_REQUEST', () => {
+		test( 'should dispatch a SITE_STATS_REQUEST', () => {
 			requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a SITE_STATS_RECEIVE event on success', () => {
+		test( 'should dispatch a SITE_STATS_RECEIVE event on success', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_STATS_RECEIVE,
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when request succeeds', () => {
+		test( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_REQUEST_SUCCESS,
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when video stats request succeeds', () => {
+		test( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when video stats request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, { postId: 31533 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_STATS_RECEIVE,
@@ -114,7 +114,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch SITE_STATS_REQUEST_FAILURE action when request fails', () => {
+		test( 'should dispatch SITE_STATS_REQUEST_FAILURE action when request fails', () => {
 			return requestSiteStats( SITE_ID, 'statsCountryViews', {} )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_STATS_REQUEST_FAILURE,

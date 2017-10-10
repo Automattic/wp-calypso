@@ -12,7 +12,7 @@ import { isJetpackSiteInDevelopmentMode } from '../';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteInDevelopmentMode()', () => {
-	it( 'should return true if the site is in development mode', () => {
+	test( 'should return true if the site is in development mode', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the site is not in development mode', () => {
+	test( 'should return false if the site is not in development mode', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -38,7 +38,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the site is not known yet', () => {
+	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

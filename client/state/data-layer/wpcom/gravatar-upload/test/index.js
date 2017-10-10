@@ -19,7 +19,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( '#uploadGravatar()', () => {
-	it( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
+	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
@@ -64,7 +64,7 @@ describe( '#announceSuccess()', () => {
 		} );
 	} );
 
-	it( 'dispatches a success action when the file is read', () => {
+	test( 'dispatches a success action when the file is read', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
@@ -78,7 +78,7 @@ describe( '#announceSuccess()', () => {
 		);
 	} );
 
-	it( 'dispatches a upload received action with the image data when the file is read', () => {
+	test( 'dispatches a upload received action with the image data when the file is read', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			file: 'file',
@@ -94,7 +94,7 @@ describe( '#announceSuccess()', () => {
 } );
 
 describe( '#announceFailure()', () => {
-	it( 'should dispatch an error notice', () => {
+	test( 'should dispatch an error notice', () => {
 		const dispatch = spy();
 
 		announceFailure( { dispatch } );

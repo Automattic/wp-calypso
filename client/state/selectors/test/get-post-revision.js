@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import getPostRevision from 'state/selectors/get-post-revision';
 
 describe( 'getPostRevision', () => {
-	it( 'should return `null` if there is no revision in the state for `siteId, postId`', () => {
+	test( 'should return `null` if there is no revision in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevision(
 				{
@@ -31,7 +31,7 @@ describe( 'getPostRevision', () => {
 		).to.be.null;
 	} );
 
-	it( 'should return a post revision', () => {
+	test( 'should return a post revision', () => {
 		expect(
 			getPostRevision(
 				{
@@ -63,7 +63,7 @@ describe( 'getPostRevision', () => {
 		} );
 	} );
 
-	it( 'should hydrate the revision with more author information if it can be found in the state', () => {
+	test( 'should hydrate the revision with more author information if it can be found in the state', () => {
 		expect(
 			getPostRevision(
 				{
@@ -101,7 +101,7 @@ describe( 'getPostRevision', () => {
 		} );
 	} );
 
-	it( "should preserve a revision author ID if it can't find more information about the author", () => {
+	test( "should preserve a revision author ID if it can't find more information about the author", () => {
 		expect(
 			getPostRevision(
 				{
@@ -133,7 +133,7 @@ describe( 'getPostRevision', () => {
 		} );
 	} );
 
-	it( 'should normalize the revision', () => {
+	test( 'should normalize the revision', () => {
 		expect(
 			getPostRevision(
 				{

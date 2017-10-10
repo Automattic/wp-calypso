@@ -47,7 +47,7 @@ const zone = {
 };
 
 describe( '#requestZonesList()', () => {
-	it( 'should dispatch a HTTP request to the zones endpoint', () => {
+	test( 'should dispatch a HTTP request to the zones endpoint', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -73,7 +73,7 @@ describe( '#requestZonesList()', () => {
 } );
 
 describe( '#updateZonesList()', () => {
-	it( 'should dispatch `updateZones`', () => {
+	test( 'should dispatch `updateZones`', () => {
 		const dispatch = sinon.spy();
 		const action = requestZones( 123456 );
 
@@ -93,7 +93,7 @@ describe( '#updateZonesList()', () => {
 } );
 
 describe( '#requestZonesError()', () => {
-	it( 'should dispatch `requestError`', () => {
+	test( 'should dispatch `requestError`', () => {
 		const dispatch = sinon.spy();
 		const action = requestError( 123456 );
 
@@ -105,7 +105,7 @@ describe( '#requestZonesError()', () => {
 } );
 
 describe( '#createZone()', () => {
-	it( 'should dispatch a HTTP request to create a new zone', () => {
+	test( 'should dispatch a HTTP request to create a new zone', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -132,7 +132,7 @@ describe( '#createZone()', () => {
 		);
 	} );
 
-	it( 'should dispatch `startSave`', () => {
+	test( 'should dispatch `startSave`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -146,7 +146,7 @@ describe( '#createZone()', () => {
 		expect( dispatch ).to.have.been.calledWith( startSubmit( 'form' ) );
 	} );
 
-	it( 'should dispatch `removeNotice`', () => {
+	test( 'should dispatch `removeNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -162,7 +162,7 @@ describe( '#createZone()', () => {
 } );
 
 describe( '#saveZone()', () => {
-	it( 'should dispatch `startSubmit`', () => {
+	test( 'should dispatch `startSubmit`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -177,7 +177,7 @@ describe( '#saveZone()', () => {
 		expect( dispatch ).to.have.been.calledWith( startSubmit( 'form' ) );
 	} );
 
-	it( 'should dispatch `removeNotice`', () => {
+	test( 'should dispatch `removeNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -192,7 +192,7 @@ describe( '#saveZone()', () => {
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-zone-create' ) );
 	} );
 
-	it( 'should dispatch a HTTP request to save the zone properties', () => {
+	test( 'should dispatch a HTTP request to save the zone properties', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -222,7 +222,7 @@ describe( '#saveZone()', () => {
 } );
 
 describe( '#announceZoneSaved()', () => {
-	it( 'should dispatch `stopSave`', () => {
+	test( 'should dispatch `stopSave`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -236,7 +236,7 @@ describe( '#announceZoneSaved()', () => {
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( 'form' ) );
 	} );
 
-	it( 'should dispatch `updateZone`', () => {
+	test( 'should dispatch `updateZone`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -251,7 +251,7 @@ describe( '#announceZoneSaved()', () => {
 		);
 	} );
 
-	it( 'should dispatch `successNotice`', () => {
+	test( 'should dispatch `successNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -285,7 +285,7 @@ describe( '#handleZoneSaved()', () => {
 		},
 	} );
 
-	it( 'should dispatch `initialize`', () => {
+	test( 'should dispatch `initialize`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -307,7 +307,7 @@ describe( '#handleZoneSaved()', () => {
 } );
 
 describe( '#announceSaveFailure()', () => {
-	it( 'should dispatch `stopSubmit`', () => {
+	test( 'should dispatch `stopSubmit`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -320,7 +320,7 @@ describe( '#announceSaveFailure()', () => {
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( 'form' ) );
 	} );
 
-	it( 'should dispatch `errorNotice`', () => {
+	test( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -340,7 +340,7 @@ describe( '#announceSaveFailure()', () => {
 } );
 
 describe( '#deleteZone()', () => {
-	it( 'should dispatch `removeNotice`', () => {
+	test( 'should dispatch `removeNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -353,7 +353,7 @@ describe( '#deleteZone()', () => {
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-zone-delete' ) );
 	} );
 
-	it( 'should dispatch a HTTP request to delete the zone', () => {
+	test( 'should dispatch a HTTP request to delete the zone', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -379,7 +379,7 @@ describe( '#deleteZone()', () => {
 } );
 
 describe( '#announceDeleteFailure()', () => {
-	it( 'should dispatch `errorNotice`', () => {
+	test( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',

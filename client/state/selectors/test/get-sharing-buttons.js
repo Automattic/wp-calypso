@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSharingButtons } from '../';
 
 describe( 'getSharingButtons()', () => {
-	it( 'should return null if the site is not tracked', () => {
+	test( 'should return null if the site is not tracked', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -26,7 +26,7 @@ describe( 'getSharingButtons()', () => {
 		expect( buttons ).to.be.null;
 	} );
 
-	it( 'should return the buttons for a siteId', () => {
+	test( 'should return the buttons for a siteId', () => {
 		const state = {
 			sites: {
 				sharingButtons: {

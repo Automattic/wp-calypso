@@ -17,7 +17,7 @@ describe( 'handlers', () => {
 	const siteId = 123;
 
 	describe( '#requestCoupons', () => {
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -37,7 +37,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#requestCouponsSuccess', () => {
-		it( 'should dispatch a page update', () => {
+		test( 'should dispatch a page update', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -59,7 +59,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( expectedAction );
 		} );
 
-		it( 'should not dispatch if coupon data is invalid', () => {
+		test( 'should not dispatch if coupon data is invalid', () => {
 			const store = {
 				dispatch: spy(),
 			};

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,34 +11,35 @@ import unmodifiedConfig from 'config';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'api', function() {
+describe( 'api', () => {
 	let app, config, localRequest, sandbox;
 
-	useSandbox( newSandbox => sandbox = newSandbox );
+	useSandbox( newSandbox => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
 		config = require( 'config' );
-		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
+		sandbox
+			.stub( config, 'isEnabled' )
+			.withArgs( 'oauth' )
+			.returns( true );
 		app = require( '../' )();
 		localRequest = supertest( app );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		sandbox.restore();
 	} );
 
-	it( 'should return package version', () => {
+	test( 'should return package version', () => {
 		const version = require( '../../../package.json' ).version;
 
-		return localRequest
-			.get( '/version' )
-			.then( ( { body, status } ) => {
-				expect( status ).toBe( 200 );
-				expect( body ).toEqual( { version } );
-			} );
+		return localRequest.get( '/version' ).then( ( { body, status } ) => {
+			expect( status ).toBe( 200 );
+			expect( body ).toEqual( { version } );
+		} );
 	} );
 
-	it( 'should clear oauth cookie and redirect to login_url', () => {
+	test( 'should clear oauth cookie and redirect to login_url', () => {
 		return localRequest
 			.get( '/logout' )
 			.redirects( 0 )
@@ -45,7 +47,9 @@ describe( 'api', function() {
 			.then( ( { header, status } ) => {
 				expect( status ).toBe( 302 );
 				expect( header.location ).toBe( config( 'login_url' ) );
-				expect( header[ 'set-cookie' ] ).toEqual( [ 'wpcom_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT' ] );
+				expect( header[ 'set-cookie' ] ).toEqual( [
+					'wpcom_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+				] );
 			} );
 	} );
 
@@ -108,7 +112,8 @@ describe( 'api', function() {
 	maybeIt( 'should return a 408 with no connection', function( done ) {
 		const response = {
 			error: 'invalid_request',
-			error_description: 'The request to localhost failed (code 12345), please check your internet connection and try again.',
+			error_description:
+				'The request to localhost failed (code 12345), please check your internet connection and try again.',
 		};
 		const end = sandbox.stub( request.Request.prototype, 'end' );
 

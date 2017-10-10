@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
 			'currencyCode',
@@ -41,13 +41,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#id()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = id( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set the current user ID', () => {
+		test( 'should set the current user ID', () => {
 			const state = id( null, {
 				type: CURRENT_USER_ID_SET,
 				userId: 73705554,
@@ -56,7 +56,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 73705554 );
 		} );
 
-		it( 'should validate ID is positive', () => {
+		test( 'should validate ID is positive', () => {
 			const state = id( -1, {
 				type: DESERIALIZE,
 			} );
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( null );
 		} );
 
-		it( 'should validate ID is a number', () => {
+		test( 'should validate ID is a number', () => {
 			const state = id( 'foobar', {
 				type: DESERIALIZE,
 			} );
@@ -72,7 +72,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( null );
 		} );
 
-		it( 'returns valid ID', () => {
+		test( 'returns valid ID', () => {
 			const state = id( 73705554, {
 				type: DESERIALIZE,
 			} );
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 73705554 );
 		} );
 
-		it( 'will SERIALIZE current user', () => {
+		test( 'will SERIALIZE current user', () => {
 			const state = id( 73705554, {
 				type: SERIALIZE,
 			} );
@@ -90,11 +90,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#currencyCode()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = currencyCode( undefined, {} );
 			expect( state ).to.equal( null );
 		} );
-		it( 'should set currency code when plans are received', () => {
+		test( 'should set currency code when plans are received', () => {
 			const state = currencyCode( undefined, {
 				type: PLANS_RECEIVE,
 				plans: [
@@ -106,14 +106,14 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should return current state when we have empty plans', () => {
+		test( 'should return current state when we have empty plans', () => {
 			const state = currencyCode( 'USD', {
 				type: PLANS_RECEIVE,
 				plans: [],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should update current state when we receive new plans', () => {
+		test( 'should update current state when we receive new plans', () => {
 			const state = currencyCode( 'USD', {
 				type: PLANS_RECEIVE,
 				plans: [
@@ -125,14 +125,14 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.equal( 'EUR' );
 		} );
-		it( 'should return current state when we have empty site plans', () => {
+		test( 'should return current state when we have empty site plans', () => {
 			const state = currencyCode( 'USD', {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				plans: [],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should set currency code when site plans are received', () => {
+		test( 'should set currency code when site plans are received', () => {
 			const state = currencyCode( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				plans: [
@@ -144,7 +144,7 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should update currency code when site plans are received', () => {
+		test( 'should update currency code when site plans are received', () => {
 			const state = currencyCode( 'USD', {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				plans: [
@@ -156,21 +156,21 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.equal( 'CAD' );
 		} );
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = 'JPY';
 			const state = currencyCode( original, {
 				type: SERIALIZE,
 			} );
 			expect( state ).to.equal( original );
 		} );
-		it( 'should restore valid persisted state', () => {
+		test( 'should restore valid persisted state', () => {
 			const original = 'JPY';
 			const state = currencyCode( original, {
 				type: DESERIALIZE,
 			} );
 			expect( state ).to.equal( original );
 		} );
-		it( 'should ignore invalid persisted state', () => {
+		test( 'should ignore invalid persisted state', () => {
 			const original = 1234;
 			const state = currencyCode( original, {
 				type: DESERIALIZE,
@@ -180,12 +180,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'capabilities()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = capabilities( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track capabilities by single received site', () => {
+		test( 'should track capabilities by single received site', () => {
 			const state = capabilities( undefined, {
 				type: SITE_RECEIVE,
 				site: {
@@ -203,7 +203,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate capabilities by received site', () => {
+		test( 'should accumulate capabilities by received site', () => {
 			const original = deepFreeze( {
 				2916284: {
 					manage_options: false,
@@ -229,7 +229,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should ignore received site if missing capabilities', () => {
+		test( 'should ignore received site if missing capabilities', () => {
 			const state = capabilities( undefined, {
 				type: SITE_RECEIVE,
 				site: {
@@ -240,7 +240,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track capabilities by multiple received sites', () => {
+		test( 'should track capabilities by multiple received sites', () => {
 			const state = capabilities( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
@@ -260,7 +260,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should ignore received sites if missing capabilities', () => {
+		test( 'should ignore received sites if missing capabilities', () => {
 			const state = capabilities( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
@@ -273,7 +273,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return same state if received sites result in same capabilities', () => {
+		test( 'should return same state if received sites result in same capabilities', () => {
 			const original = deepFreeze( {
 				2916284: {
 					manage_options: false,
@@ -294,7 +294,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should not return same state on sites updated if site not tracked', () => {
+		test( 'should not return same state on sites updated if site not tracked', () => {
 			const original = deepFreeze( {} );
 			const state = capabilities( original, {
 				type: SITES_UPDATE,
@@ -311,7 +311,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should update capabilities when sites updated if site tracked', () => {
+		test( 'should update capabilities when sites updated if site tracked', () => {
 			const original = deepFreeze( {
 				2916284: {
 					manage_options: false,
@@ -336,7 +336,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					manage_options: false,
@@ -349,7 +349,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should restore valid persisted state', () => {
+		test( 'should restore valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					manage_options: false,
@@ -362,7 +362,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should not restore invalid persisted state', () => {
+		test( 'should not restore invalid persisted state', () => {
 			const original = deepFreeze( {
 				BAD2916284: {
 					manage_options: false,

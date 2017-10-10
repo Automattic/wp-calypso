@@ -47,7 +47,7 @@ import reviews from 'woocommerce/state/sites/reviews/test/fixtures/reviews';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewRepliesRequest', () => {
-		it( 'should dispatch a get action', () => {
+		test( 'should dispatch a get action', () => {
 			const siteId = '123';
 			const reviewId = '555';
 			const dispatch = spy();
@@ -68,7 +68,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleReviewsRequestSuccess()', () => {
-		it( 'should dispatch review replies receive with list of replies', () => {
+		test( 'should dispatch review replies receive with list of replies', () => {
 			const siteId = '123';
 			const reviewId = '555';
 			const store = {
@@ -88,7 +88,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleReviewRepliesRequestError()', () => {
-		it( 'should dispatch error', () => {
+		test( 'should dispatch error', () => {
 			const siteId = '123';
 			const reviewId = '555';
 			const store = {
@@ -110,7 +110,7 @@ describe( 'handlers', () => {
 		const siteId = '123';
 		const reviewId = '105';
 		const replyId = '106';
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const dispatch = spy();
 			const action = deleteReviewReply( siteId, reviewId, replyId );
 			handleDeleteReviewReply( { dispatch }, action );
@@ -132,7 +132,7 @@ describe( 'handlers', () => {
 	} );
 	describe( '#announceDeleteSuccess', () => {
 		const siteId = '123';
-		it( 'should dispatch an action and success notice', () => {
+		test( 'should dispatch an action and success notice', () => {
 			const dispatch = spy();
 			const action = deleteReviewReply( siteId, 544, 105 );
 			announceDeleteSuccess( { dispatch }, action );
@@ -151,7 +151,7 @@ describe( 'handlers', () => {
 	describe( '#announceDeleteFailure', () => {
 		const siteId = '123';
 		const dispatch = spy();
-		it( 'should dispatch an error', () => {
+		test( 'should dispatch an error', () => {
 			const action = deleteReviewReply( siteId, 544, 105 );
 			announceDeleteFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
@@ -166,7 +166,7 @@ describe( 'handlers', () => {
 		const reviewId = '105';
 		const replyId = '106';
 		const changes = { content: 'test' };
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const dispatch = spy();
 			const action = updateReviewReply( siteId, reviewId, replyId, changes );
 			handleReviewReplyUpdate( { dispatch }, action );
@@ -189,7 +189,7 @@ describe( 'handlers', () => {
 	} );
 	describe( '#handleReviewReplyUpdateSuccess', () => {
 		const siteId = '123';
-		it( 'should dispatch an action and success notice', () => {
+		test( 'should dispatch an action and success notice', () => {
 			const dispatch = spy();
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
 			handleReviewReplyUpdateSuccess( { dispatch }, action, { content: 'test' } );
@@ -208,7 +208,7 @@ describe( 'handlers', () => {
 	describe( '#announceReviewReplyUpdateFailure', () => {
 		const siteId = '123';
 		const dispatch = spy();
-		it( 'should dispatch an error', () => {
+		test( 'should dispatch an error', () => {
 			const action = updateReviewReply( siteId, 544, 105, { content: 'test' } );
 			announceReviewReplyUpdateFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
@@ -222,7 +222,7 @@ describe( 'handlers', () => {
 		const siteId = '123';
 		const productId = '201';
 		const reviewId = '105';
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const dispatch = spy();
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
 			handleReviewReplyCreate( { dispatch }, action );
@@ -262,7 +262,7 @@ describe( 'handlers', () => {
 			};
 		};
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -280,7 +280,7 @@ describe( 'handlers', () => {
 				} )
 			);
 		} );
-		it( 'should approve a review when requested', () => {
+		test( 'should approve a review when requested', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -297,7 +297,7 @@ describe( 'handlers', () => {
 	describe( '#announceCreateFailure', () => {
 		const siteId = '123';
 		const dispatch = spy();
-		it( 'should dispatch an error', () => {
+		test( 'should dispatch an error', () => {
 			const action = createReviewReply( siteId, 544, 105, 'Hello world', false );
 			announceCreateFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(

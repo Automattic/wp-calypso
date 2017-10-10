@@ -22,7 +22,7 @@ jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-c
 jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
 
 describe( 'logged-out', () => {
-	context( 'when calling renderToString()', function() {
+	describe( 'when calling renderToString()', () => {
 		const themes = [
 			{
 				author: 'AudioTheme',
@@ -91,7 +91,7 @@ describe( 'logged-out', () => {
 			);
 		} );
 
-		it( 'renders without error when no themes are present', () => {
+		test( 'renders without error when no themes are present', () => {
 			let markup;
 			assert.doesNotThrow( () => {
 				markup = renderToString( layout );
@@ -100,7 +100,7 @@ describe( 'logged-out', () => {
 			assert.isTrue( markup.includes( 'empty-content' ) );
 		} );
 
-		it( 'renders without error when themes are present', () => {
+		test( 'renders without error when themes are present', () => {
 			store.dispatch( receiveThemes( themes, 'wpcom', DEFAULT_THEME_QUERY, themes.length ) );
 
 			let markup;
@@ -113,7 +113,7 @@ describe( 'logged-out', () => {
 			assert.isFalse( markup.includes( 'empty-content' ) );
 		} );
 
-		it( 'renders without error when theme fetch fails', () => {
+		test( 'renders without error when theme fetch fails', () => {
 			store.dispatch( {
 				type: THEMES_REQUEST_FAILURE,
 				siteId: 'wpcom',

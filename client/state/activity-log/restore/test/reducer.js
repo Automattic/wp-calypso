@@ -30,7 +30,7 @@ const ERROR = deepFreeze( {
 } );
 
 describe( 'restoreProgress', () => {
-	it( 'should start at 0% queued', () => {
+	test( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
 		expect( state[ SITE_ID ] ).to.deep.equal( {
 			errorCode: '',
@@ -43,7 +43,7 @@ describe( 'restoreProgress', () => {
 		} );
 	} );
 
-	it( 'should null on dismissal', () => {
+	test( 'should null on dismissal', () => {
 		const prevState = deepFreeze( {
 			[ SITE_ID ]: {
 				percent: 100,
@@ -55,7 +55,7 @@ describe( 'restoreProgress', () => {
 		expect( state[ SITE_ID ] ).to.be.null;
 	} );
 
-	it( 'should preserve other sites', () => {
+	test( 'should preserve other sites', () => {
 		const otherSiteId = 123456;
 		const prevState = deepFreeze( {
 			[ otherSiteId ]: {
@@ -75,12 +75,12 @@ describe( 'restoreProgress', () => {
 } );
 
 describe( 'rewindRequestRestore', () => {
-	it( 'should set activity ID on request', () => {
+	test( 'should set activity ID on request', () => {
 		const state = restoreRequest( undefined, rewindRequestRestore( SITE_ID, ACTIVITY_ID ) );
 		expect( state[ SITE_ID ] ).to.equal( ACTIVITY_ID );
 	} );
 
-	it( 'should clear on dismissal', () => {
+	test( 'should clear on dismissal', () => {
 		const prevState = deepFreeze( {
 			[ SITE_ID ]: ACTIVITY_ID,
 		} );

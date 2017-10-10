@@ -12,7 +12,7 @@ import { isRequestingGeo, getGeo, getGeoCountry, getGeoCountryShort } from '../s
 
 describe( 'selectors', () => {
 	describe( 'isRequestingGeo()', () => {
-		it( 'should return requesting state', () => {
+		test( 'should return requesting state', () => {
 			const isRequesting = isRequestingGeo( {
 				geo: {
 					requesting: true,
@@ -24,7 +24,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getGeo()', () => {
-		it( 'should return geo data state', () => {
+		test( 'should return geo data state', () => {
 			const geo = getGeo( {
 				geo: {
 					geo: {
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getGeoCountry()', () => {
-		it( 'should return null if no geo data state', () => {
+		test( 'should return null if no geo data state', () => {
 			const country = getGeoCountry( {
 				geo: {
 					geo: null,
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 			expect( country ).to.be.null;
 		} );
 
-		it( 'should return full country name of geo data state', () => {
+		test( 'should return full country name of geo data state', () => {
 			const country = getGeoCountry( {
 				geo: {
 					geo: {
@@ -79,7 +79,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getGeoCountryShort()', () => {
-		it( 'should return null if no geo data state', () => {
+		test( 'should return null if no geo data state', () => {
 			const country = getGeoCountryShort( {
 				geo: {
 					geo: null,
@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 			expect( country ).to.be.null;
 		} );
 
-		it( 'should return abbreviated country name of geo data state', () => {
+		test( 'should return abbreviated country name of geo data state', () => {
 			const country = getGeoCountryShort( {
 				geo: {
 					geo: {

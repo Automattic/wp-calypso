@@ -11,7 +11,7 @@ import moment from 'moment';
  */
 import { validateCardDetails } from '../validation';
 
-describe( 'validation', function() {
+describe( 'validation', () => {
 	const validCard = {
 		name: 'John Doe',
 		number: '4111111111111111',
@@ -26,13 +26,13 @@ describe( 'validation', function() {
 	};
 
 	describe( '#validateCardDetails', () => {
-		it( 'should return no errors when card is valid', function() {
+		test( 'should return no errors when card is valid', () => {
 			const result = validateCardDetails( validCard );
 
 			expect( result ).to.be.eql( { errors: {} } );
 		} );
 
-		it( 'should return error when card has expiration date in the past', function() {
+		test( 'should return error when card has expiration date in the past', () => {
 			const expiredCard = { ...validCard, 'expiration-date': '01/01' };
 
 			const result = validateCardDetails( expiredCard );
@@ -44,7 +44,7 @@ describe( 'validation', function() {
 			} );
 		} );
 
-		it( 'should return error when cvv is the wrong length', function() {
+		test( 'should return error when cvv is the wrong length', () => {
 			const invalidCVVCard = { ...validCard, cvv: '12345' };
 
 			const result = validateCardDetails( invalidCVVCard );

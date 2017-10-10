@@ -28,12 +28,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'state should default to empty object', () => {
+		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store jumpstart statuses in the items object', () => {
+		test( 'should store jumpstart statuses in the items object', () => {
 			const stateIn = {},
 				siteId = 12345678,
 				action = {
@@ -46,7 +46,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should mark the site jumpstart status as active in the items object', () => {
+		test( 'should mark the site jumpstart status as active in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should mark the site jumpstart status as inactive in the items object', () => {
+		test( 'should mark the site jumpstart status as inactive in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -74,7 +74,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update jumpstart statuses in the items object', () => {
+		test( 'should update jumpstart statuses in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -89,7 +89,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accummulate jumpstart statuses for separate sites in the items object', () => {
+		test( 'should accummulate jumpstart statuses for separate sites in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 11223344,
 				action = {
@@ -104,7 +104,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const stateIn = ITEMS_FIXTURE,
 				action = {
 					type: SERIALIZE,
@@ -113,7 +113,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const stateIn = ITEMS_FIXTURE,
 				action = {
 					type: DESERIALIZE,
@@ -124,12 +124,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requests', () => {
-		it( 'state should default to an empty object', () => {
+		test( 'state should default to an empty object', () => {
 			const state = requestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set activating to true for the specified site when activation starts', () => {
+		test( 'should set activating to true for the specified site when activation starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -146,7 +146,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set activating to false for the specified site when activation completes successfully', () => {
+		test( 'should set activating to false for the specified site when activation completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -163,7 +163,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set activating to false for the specified site when activation completes unsuccessfully', () => {
+		test( 'should set activating to false for the specified site when activation completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -180,7 +180,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set deactivating to true for the specified site when deactivation starts', () => {
+		test( 'should set deactivating to true for the specified site when deactivation starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -197,7 +197,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set deactivating to false for the specified site when deactivation completes successfully', () => {
+		test( 'should set deactivating to false for the specified site when deactivation completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -214,7 +214,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set deactivating to false for the specified site when deactivation completes unsuccessfully', () => {
+		test( 'should set deactivating to false for the specified site when deactivation completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -231,7 +231,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to true for the specified site when status request starts', () => {
+		test( 'should set requesting to true for the specified site when status request starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -248,7 +248,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes successfully', () => {
+		test( 'should set requesting to false for the specified site when status request completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 11223344,
 				action = {
@@ -265,7 +265,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
+		test( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 11223344,
 				action = {
@@ -282,7 +282,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
 					type: SERIALIZE,
@@ -291,7 +291,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
 					type: DESERIALIZE,

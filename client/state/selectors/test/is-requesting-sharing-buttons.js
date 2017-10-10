@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isRequestingSharingButtons } from '../';
 
 describe( 'isRequestingSharingButtons()', () => {
-	it( 'should return false if the site is not attached', () => {
+	test( 'should return false if the site is not attached', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -26,7 +26,7 @@ describe( 'isRequestingSharingButtons()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return false if the sharing buttons are not being fetched', () => {
+	test( 'should return false if the sharing buttons are not being fetched', () => {
 		const state = {
 			sites: {
 				sharingButtons: {
@@ -41,7 +41,7 @@ describe( 'isRequestingSharingButtons()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return true if the sharing buttons are being fetched', () => {
+	test( 'should return true if the sharing buttons are being fetched', () => {
 		const state = {
 			sites: {
 				sharingButtons: {

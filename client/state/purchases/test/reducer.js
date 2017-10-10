@@ -22,7 +22,7 @@ describe( 'reducer', () => {
 	const userId = '1337',
 		siteId = '2701';
 
-	it( 'should return an object with the initial state', () => {
+	test( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			data: [],
 			error: null,
@@ -33,7 +33,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
+	test( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
 		expect( reducer( undefined, { type: PURCHASES_USER_FETCH } ) ).to.be.eql( {
 			data: [],
 			error: null,
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with the list of purchases when fetching completed', () => {
+	test( 'should return an object with the list of purchases when fetching completed', () => {
 		let state = reducer( undefined, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should only remove purchases missing from the new purchases array with the same `user_id` or `blog_id`', () => {
+	test( 'should only remove purchases missing from the new purchases array with the same `user_id` or `blog_id`', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
@@ -148,7 +148,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with original purchase and error message when cancelation of privacy protection failed', () => {
+	test( 'should return an object with original purchase and error message when cancelation of privacy protection failed', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
@@ -189,7 +189,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with updated purchase when cancelation of privacy protection completed', () => {
+	test( 'should return an object with updated purchase when cancelation of privacy protection completed', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },

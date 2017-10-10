@@ -11,60 +11,60 @@ import { expect } from 'chai';
 import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from 'lib/format-currency';
 
 describe( 'formatCurrency', () => {
-	it( 'formats a number to localized currency', () => {
+	test( 'formats a number to localized currency', () => {
 		const money = formatCurrency( 99.32, 'USD' );
 		expect( money ).to.equal( '$99.32' );
 	} );
-	it( 'adds a localized thousands separator', () => {
+	test( 'adds a localized thousands separator', () => {
 		const money = formatCurrency( 9800900.32, 'USD' );
 		expect( money ).to.equal( '$9,800,900.32' );
 	} );
-	it( 'handles zero', () => {
+	test( 'handles zero', () => {
 		const money = formatCurrency( 0, 'USD' );
 		expect( money ).to.equal( '$0.00' );
 	} );
-	it( 'handles negative values', () => {
+	test( 'handles negative values', () => {
 		const money = formatCurrency( -1234.56789, 'USD' );
 		expect( money ).to.equal( '-$1,234.57' );
 	} );
-	it( 'unknown currency codes return default', () => {
+	test( 'unknown currency codes return default', () => {
 		const money = formatCurrency( 9800900.32, {} );
 		expect( money ).to.equal( '$9,800,900.32' );
 	} );
 
 	describe( 'supported currencies', () => {
-		it( 'USD', () => {
+		test( 'USD', () => {
 			const money = formatCurrency( 9800900.32, 'USD' );
 			expect( money ).to.equal( '$9,800,900.32' );
 		} );
-		it( 'AUD', () => {
+		test( 'AUD', () => {
 			const money = formatCurrency( 9800900.32, 'AUD' );
 			expect( money ).to.equal( 'A$9,800,900.32' );
 		} );
-		it( 'CAD', () => {
+		test( 'CAD', () => {
 			const money = formatCurrency( 9800900.32, 'CAD' );
 			expect( money ).to.equal( 'C$9,800,900.32' );
 		} );
-		it( 'EUR', () => {
+		test( 'EUR', () => {
 			const money = formatCurrency( 9800900.32, 'EUR' );
 			expect( money ).to.equal( '€9.800.900,32' );
 		} );
-		it( 'GBP', () => {
+		test( 'GBP', () => {
 			const money = formatCurrency( 9800900.32, 'GBP' );
 			expect( money ).to.equal( '£9,800,900.32' );
 		} );
-		it( 'JPY', () => {
+		test( 'JPY', () => {
 			const money = formatCurrency( 9800900.32, 'JPY' );
 			expect( money ).to.equal( '¥9,800,900' );
 		} );
-		it( 'BRL', () => {
+		test( 'BRL', () => {
 			const money = formatCurrency( 9800900.32, 'BRL' );
 			expect( money ).to.equal( 'R$9,800,900.32' );
 		} );
 	} );
 
 	describe( 'getCurrencyDefaults()', () => {
-		it( 'returns currency defaults', () => {
+		test( 'returns currency defaults', () => {
 			const audDefaults = getCurrencyDefaults( 'AUD' );
 			expect( audDefaults ).to.eql( {
 				symbol: 'A$',
@@ -76,7 +76,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	describe( 'getCurrencyObject()', () => {
-		it( 'handles zero', () => {
+		test( 'handles zero', () => {
 			const money = getCurrencyObject( 0, 'USD' );
 			expect( money ).to.eql( {
 				symbol: '$',
@@ -85,7 +85,7 @@ describe( 'formatCurrency', () => {
 				sign: '',
 			} );
 		} );
-		it( 'handles negative values', () => {
+		test( 'handles negative values', () => {
 			const money = getCurrencyObject( -1234.56789, 'USD' );
 			expect( money ).to.eql( {
 				symbol: '$',
@@ -95,7 +95,7 @@ describe( 'formatCurrency', () => {
 			} );
 		} );
 		describe( 'supported currencies', () => {
-			it( 'USD', () => {
+			test( 'USD', () => {
 				const money = getCurrencyObject( 9800900.32, 'USD' );
 				expect( money ).to.eql( {
 					symbol: '$',
@@ -104,7 +104,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'AUD', () => {
+			test( 'AUD', () => {
 				const money = getCurrencyObject( 9800900.32, 'AUD' );
 				expect( money ).to.eql( {
 					symbol: 'A$',
@@ -113,7 +113,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'CAD', () => {
+			test( 'CAD', () => {
 				const money = getCurrencyObject( 9800900.32, 'CAD' );
 				expect( money ).to.eql( {
 					symbol: 'C$',
@@ -122,7 +122,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'EUR', () => {
+			test( 'EUR', () => {
 				const money = getCurrencyObject( 9800900.32, 'EUR' );
 				expect( money ).to.eql( {
 					symbol: '€',
@@ -131,7 +131,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'GBP', () => {
+			test( 'GBP', () => {
 				const money = getCurrencyObject( 9800900.32, 'GBP' );
 				expect( money ).to.eql( {
 					symbol: '£',
@@ -140,7 +140,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'JPY', () => {
+			test( 'JPY', () => {
 				const money = getCurrencyObject( 9800900.32, 'JPY' );
 				expect( money ).to.eql( {
 					symbol: '¥',
@@ -149,7 +149,7 @@ describe( 'formatCurrency', () => {
 					sign: '',
 				} );
 			} );
-			it( 'BRL', () => {
+			test( 'BRL', () => {
 				const money = getCurrencyObject( 9800900.32, 'BRL' );
 				expect( money ).to.eql( {
 					symbol: 'R$',

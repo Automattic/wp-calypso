@@ -33,9 +33,9 @@ const MOCK_SITE = {
 	options: {},
 };
 
-describe( 'EditorPublishButton', function() {
-	describe( '#getButtonLabel()', function() {
-		it( 'should return Update if the post was originally published and is still slated to be published', function() {
+describe( 'EditorPublishButton', () => {
+	describe( '#getButtonLabel()', () => {
+		test( 'should return Update if the post was originally published and is still slated to be published', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -48,7 +48,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Update' );
 		} );
 
-		it( 'should return Update if the post was originally published and is currently reverted to non-published status', function() {
+		test( 'should return Update if the post was originally published and is currently reverted to non-published status', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -61,7 +61,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Update' );
 		} );
 
-		it( 'should return Schedule if the post is dated in the future and not scheduled', function() {
+		test( 'should return Schedule if the post is dated in the future and not scheduled', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
@@ -76,7 +76,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Schedule' );
 		} );
 
-		it( 'should return Schedule if the post is dated in the future and published', function() {
+		test( 'should return Schedule if the post is dated in the future and published', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
@@ -91,7 +91,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Schedule' );
 		} );
 
-		it( 'should return Update if the post is scheduled and dated in the future', function() {
+		test( 'should return Update if the post is scheduled and dated in the future', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
@@ -106,7 +106,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Update' );
 		} );
 
-		it( 'should return Update if the post is scheduled, dated in the future, and next status is draft', function() {
+		test( 'should return Update if the post is scheduled, dated in the future, and next status is draft', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
@@ -121,7 +121,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Update' );
 		} );
 
-		it( 'should return Publish if the post is scheduled and dated in the past', function() {
+		test( 'should return Publish if the post is scheduled and dated in the past', () => {
 			const now = moment( new Date() ),
 				lastMonth = now.month( now.month() - 1 ).format(),
 				tree = shallow(
@@ -136,7 +136,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Publish' );
 		} );
 
-		it( 'should return Publish if the post is a draft', function() {
+		test( 'should return Publish if the post is a draft', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -148,7 +148,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.getButtonLabel() ).to.equal( 'Publish' );
 		} );
 
-		it( 'should return "Submit for Review" if the post is a draft and user can\'t publish', function() {
+		test( 'should return "Submit for Review" if the post is a draft and user can\'t publish', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -165,8 +165,8 @@ describe( 'EditorPublishButton', function() {
 		} );
 	} );
 
-	describe( '#isEnabled()', function() {
-		it( 'should return true if form is not publishing and post is not empty', function() {
+	describe( '#isEnabled()', () => {
+		test( 'should return true if form is not publishing and post is not empty', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -181,7 +181,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.true;
 		} );
 
-		it( 'should return false if form is not publishing and post is not empty, but user is not verified', function() {
+		test( 'should return false if form is not publishing and post is not empty, but user is not verified', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -197,7 +197,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.false;
 		} );
 
-		it( 'should return true if form is not published and post is new and has content, but is not dirty', function() {
+		test( 'should return true if form is not published and post is new and has content, but is not dirty', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -212,7 +212,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.true;
 		} );
 
-		it( 'should return false if form is publishing', function() {
+		test( 'should return false if form is publishing', () => {
 			const tree = shallow(
 				<EditorPublishButton translate={ identity } isPublishing />
 			).instance();
@@ -220,7 +220,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.false;
 		} );
 
-		it( 'should return false if saving is blocked', function() {
+		test( 'should return false if saving is blocked', () => {
 			const tree = shallow(
 				<EditorPublishButton translate={ identity } isSaveBlocked />
 			).instance();
@@ -228,7 +228,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.false;
 		} );
 
-		it( 'should return false if not dirty and has no content', function() {
+		test( 'should return false if not dirty and has no content', () => {
 			const tree = shallow(
 				<EditorPublishButton
 					translate={ identity }
@@ -242,7 +242,7 @@ describe( 'EditorPublishButton', function() {
 			expect( tree.isEnabled() ).to.be.false;
 		} );
 
-		it( 'should return false if post has no content', function() {
+		test( 'should return false if post has no content', () => {
 			const tree = shallow(
 				<EditorPublishButton translate={ identity } post={ {} } hasContent={ false } />
 			).instance();
@@ -251,8 +251,8 @@ describe( 'EditorPublishButton', function() {
 		} );
 	} );
 
-	describe( '#onClick', function() {
-		it( 'should publish a draft', function() {
+	describe( '#onClick', () => {
+		test( 'should publish a draft', () => {
 			const onPublish = sinon.spy(),
 				tree = shallow(
 					<EditorPublishButton
@@ -268,7 +268,7 @@ describe( 'EditorPublishButton', function() {
 			expect( onPublish ).to.have.been.called;
 		} );
 
-		it( 'should schedule a posted dated in future', function() {
+		test( 'should schedule a posted dated in future', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				onPublish = sinon.spy(),
@@ -287,7 +287,7 @@ describe( 'EditorPublishButton', function() {
 			expect( onPublish ).to.have.been.called;
 		} );
 
-		it( 'should save a scheduled post dated in future', function() {
+		test( 'should save a scheduled post dated in future', () => {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				onPublish = sinon.spy(),
@@ -306,7 +306,7 @@ describe( 'EditorPublishButton', function() {
 			expect( onPublish ).to.have.been.called;
 		} );
 
-		it( 'should publish a scheduled post dated in past', function() {
+		test( 'should publish a scheduled post dated in past', () => {
 			const now = moment( new Date() ),
 				lastMonth = now.month( now.month() - 1 ).format(),
 				onPublish = sinon.spy(),
@@ -325,7 +325,7 @@ describe( 'EditorPublishButton', function() {
 			expect( onPublish ).to.have.been.called;
 		} );
 
-		it( 'should update a published post that has changed status', function() {
+		test( 'should update a published post that has changed status', () => {
 			const onSave = sinon.spy(),
 				tree = shallow(
 					<EditorPublishButton
@@ -342,7 +342,7 @@ describe( 'EditorPublishButton', function() {
 			expect( onSave ).to.have.been.called;
 		} );
 
-		it( 'should set status to "pending" if the user can\'t publish', function() {
+		test( 'should set status to "pending" if the user can\'t publish', () => {
 			const onSave = sinon.spy(),
 				tree = shallow(
 					<EditorPublishButton

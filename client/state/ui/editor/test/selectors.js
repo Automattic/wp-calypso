@@ -19,7 +19,7 @@ import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {
-		it( 'should return the current editor post ID', () => {
+		test( 'should return the current editor post ID', () => {
 			const postId = getEditorPostId( {
 				ui: {
 					editor: {
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isEditorNewPost()', () => {
-		it( 'should return false if a post ID is currently set', () => {
+		test( 'should return false if a post ID is currently set', () => {
 			const isNew = isEditorNewPost( {
 				ui: {
 					editor: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 			expect( isNew ).to.be.false;
 		} );
 
-		it( 'should return true if no post ID is currently set', () => {
+		test( 'should return true if no post ID is currently set', () => {
 			const isNew = isEditorNewPost( {
 				ui: {
 					editor: {
@@ -59,7 +59,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getEditorNewPostPath()', () => {
-		it( 'should return the post path with the site ID if site unknown', () => {
+		test( 'should return the post path with the site ID if site unknown', () => {
 			const path = getEditorNewPostPath(
 				{
 					sites: {
@@ -72,7 +72,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/post/2916284' );
 		} );
 
-		it( 'should prefix the post route for post types', () => {
+		test( 'should prefix the post route for post types', () => {
 			const path = getEditorNewPostPath(
 				{
 					sites: {
@@ -91,7 +91,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/post/example.wordpress.com' );
 		} );
 
-		it( 'should prefix the page route for page types', () => {
+		test( 'should prefix the page route for page types', () => {
 			const path = getEditorNewPostPath(
 				{
 					sites: {
@@ -110,7 +110,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/page/example.wordpress.com' );
 		} );
 
-		it( 'should prefix the type route for custom post types', () => {
+		test( 'should prefix the type route for custom post types', () => {
 			const path = getEditorNewPostPath(
 				{
 					sites: {
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getEditorPath()', () => {
-		it( 'should return the post path with the post ID if post unknown', () => {
+		test( 'should return the post path with the post ID if post unknown', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -154,7 +154,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/post/example.wordpress.com/841' );
 		} );
 
-		it( 'should return the post path with the site ID if site unknown', () => {
+		test( 'should return the post path with the site ID if site unknown', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -172,7 +172,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/post/2916284/841' );
 		} );
 
-		it( 'should prefix the post route for post types', () => {
+		test( 'should prefix the post route for post types', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -206,7 +206,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/post/example.wordpress.com/841' );
 		} );
 
-		it( 'should prefix the page route for page types', () => {
+		test( 'should prefix the page route for page types', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -240,7 +240,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/page/example.wordpress.com/413' );
 		} );
 
-		it( 'should prefix the type route for custom post types', () => {
+		test( 'should prefix the type route for custom post types', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -274,7 +274,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com/120' );
 		} );
 
-		it( 'should derive post type from edited post', () => {
+		test( 'should derive post type from edited post', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -302,7 +302,7 @@ describe( 'selectors', () => {
 			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
 
-		it( 'should allow overriding the fallback post type for unknown post', () => {
+		test( 'should allow overriding the fallback post type for unknown post', () => {
 			const path = getEditorPath(
 				{
 					sites: {
@@ -328,7 +328,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isEditorOnlyRouteInHistory()', () => {
-		it( 'should return true when Editor is the only route in history', () => {
+		test( 'should return true when Editor is the only route in history', () => {
 			const isOnlyRoute = isEditorOnlyRouteInHistory( {
 				ui: {
 					actionLog: [
@@ -343,7 +343,7 @@ describe( 'selectors', () => {
 			expect( isOnlyRoute ).to.be.true;
 		} );
 
-		it( 'should return false when Editor is not the only route in history', () => {
+		test( 'should return false when Editor is not the only route in history', () => {
 			const isOnlyRoute = isEditorOnlyRouteInHistory( {
 				ui: {
 					actionLog: [

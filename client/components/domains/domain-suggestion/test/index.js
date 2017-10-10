@@ -16,9 +16,9 @@ import React from 'react';
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
 
-describe( 'Domain Suggestion', function() {
+describe( 'Domain Suggestion', () => {
 	describe( 'has attributes', () => {
-		it( 'should have data-e2e-domain attribute for e2e testing', () => {
+		test( 'should have data-e2e-domain attribute for e2e testing', () => {
 			const domainSuggestion = shallow(
 				<DomainSuggestion
 					buttonContent="Click Me"

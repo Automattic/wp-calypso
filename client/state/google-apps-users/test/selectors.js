@@ -12,7 +12,7 @@ import { isLoaded, getByDomain, getBySite } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isLoaded()', () => {
-		it( 'should return the value', () => {
+		test( 'should return the value', () => {
 			assert( isLoaded( { googleAppsUsers: { loaded: false } } ) === false );
 		} );
 	} );
@@ -27,7 +27,7 @@ describe( 'selectors', () => {
 		},
 	} );
 	describe( '#getByDomain(domainName)', () => {
-		it( 'should filter the items by their domain property', () => {
+		test( 'should filter the items by their domain property', () => {
 			assert.deepEqual( getByDomain( getState(), 'world.com' ), [
 				{ email: 'hello@world.com', domain: 'world.com', site_id: 1 },
 				{ email: 'hi@world.com', domain: 'world.com', site_id: 1 },

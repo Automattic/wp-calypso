@@ -12,7 +12,7 @@ import reducer from '../reducer';
 import { SIGNUP_STEPS_DESIGN_TYPE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should update the design type', () => {
+	test( 'should update the design type', () => {
 		expect(
 			reducer(
 				{},

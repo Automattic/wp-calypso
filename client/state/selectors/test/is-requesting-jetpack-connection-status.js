@@ -12,7 +12,7 @@ import { isRequestingJetpackConnectionStatus } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isRequestingJetpackConnectionStatus()', () => {
-	it( 'should return true if the connection status is being fetched', () => {
+	test( 'should return true if the connection status is being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the connection status is not being fetched', () => {
+	test( 'should return false if the connection status is not being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -38,7 +38,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the site is not known yet', () => {
+	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

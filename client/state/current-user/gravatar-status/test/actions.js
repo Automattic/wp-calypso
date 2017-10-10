@@ -13,7 +13,7 @@ import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/a
 
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {
-		it( 'dispatches request action with the file and email', () => {
+		test( 'dispatches request action with the file and email', () => {
 			const action = uploadGravatar( 'file', 'email' );
 			expect( action.type ).to.equal( GRAVATAR_UPLOAD_REQUEST );
 			expect( action.file ).to.equal( 'file' );
@@ -22,7 +22,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveGravatarImageFailed', () => {
-		it( 'dispatches image receive failure action with error message', () => {
+		test( 'dispatches image receive failure action with error message', () => {
 			const errorMessage = 'error';
 			const statName = 'statName';
 			const result = receiveGravatarImageFailed( {

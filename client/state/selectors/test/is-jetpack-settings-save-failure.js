@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isJetpackSettingsSaveFailure } from '../';
 
 describe( 'isJetpackSettingsSaveFailure()', () => {
-	it( 'should return false if the site is not attached', () => {
+	test( 'should return false if the site is not attached', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -26,7 +26,7 @@ describe( 'isJetpackSettingsSaveFailure()', () => {
 		expect( isFailure ).to.be.false;
 	} );
 
-	it( 'should return false if the save request status is success', () => {
+	test( 'should return false if the save request status is success', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -41,7 +41,7 @@ describe( 'isJetpackSettingsSaveFailure()', () => {
 		expect( isFailure ).to.be.false;
 	} );
 
-	it( 'should return true if the save request status is error', () => {
+	test( 'should return true if the save request status is error', () => {
 		const state = {
 			jetpack: {
 				settings: {

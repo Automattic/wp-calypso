@@ -24,7 +24,7 @@ import {
 describe( 'actions', () => {
 	describe( '#fetchReviewReplies()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const reviewId = 5;
 			const action = fetchReviewReplies( siteId, reviewId );
 			expect( action ).to.eql( { type: WOOCOMMERCE_REVIEW_REPLIES_REQUEST, siteId, reviewId } );
@@ -32,7 +32,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#createReviewReply()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const reviewId = 5;
 			const productId = 4;
 			const action = createReviewReply( siteId, productId, reviewId, 'Hello world', false );
@@ -48,7 +48,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#deleteReviewReply()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const reviewId = 5;
 			const replyId = 6;
 			const action = deleteReviewReply( siteId, reviewId, replyId );
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#updateReviewReply()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const reviewId = 5;
 			const replyId = 6;
 			const changes = { content: 'test' };

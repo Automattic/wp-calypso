@@ -41,7 +41,7 @@ jest.mock( 'signup/utils', () => ( {
 describe( '#signupStep User', () => {
 	let testElement, rendered;
 
-	it( 'should show community subheader text if User step is first in the flow', () => {
+	test( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
@@ -53,7 +53,7 @@ describe( '#signupStep User', () => {
 		);
 	} );
 
-	it( 'should show provided subheader text if User step is not first in the flow', () => {
+	test( 'should show provided subheader text if User step is not first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
@@ -82,7 +82,7 @@ describe( '#signupStep User', () => {
 			User.prototype.componentWillReceiveProps.restore();
 		} );
 
-		it( 'should show community subheader text when new flow has user as first step', () => {
+		test( 'should show community subheader text when new flow has user as first step', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow',
@@ -98,7 +98,7 @@ describe( '#signupStep User', () => {
 			);
 		} );
 
-		it( "should show provided subheader text when new flow doesn't have user as first step", () => {
+		test( "should show provided subheader text when new flow doesn't have user as first step", () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test',

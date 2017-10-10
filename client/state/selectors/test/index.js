@@ -25,7 +25,7 @@ import * as selectors from '../';
 const RX_JS_EXTENSION = /\.js$/;
 
 describe( 'selectors', () => {
-	it( 'should match every selector to its default export', () => {
+	test( 'should match every selector to its default export', () => {
 		each( selectors, ( selector, key ) => {
 			const module = require( '../' + kebabCase( key ) );
 			const defaultExport = module.default ? module.default : module;
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	it( 'should export every selector file', done => {
+	test( 'should export every selector file', done => {
 		fs.readdir( path.join( __dirname, '..' ), ( error, files ) => {
 			if ( error ) {
 				return done( error );

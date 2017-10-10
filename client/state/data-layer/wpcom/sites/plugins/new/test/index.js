@@ -40,7 +40,7 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'uploadPlugin', () => {
-	it( 'should distpatch an http request', () => {
+	test( 'should distpatch an http request', () => {
 		const dispatch = sinon.spy();
 		uploadPlugin( { dispatch }, { siteId, file: 'xyz' } );
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -79,13 +79,13 @@ describe( 'uploadComplete', () => {
 		sandbox.restore();
 	} );
 
-	it( 'should dispatch plugin upload complete action', () => {
+	test( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
 		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith( completePluginUpload( siteId, pluginId ) );
 	} );
 
-	it( 'should dispatch a receive installed plugin action', () => {
+	test( 'should dispatch a receive installed plugin action', () => {
 		const dispatch = sinon.spy();
 
 		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
@@ -101,7 +101,7 @@ describe( 'uploadComplete', () => {
 } );
 
 describe( 'receiveError', () => {
-	it( 'should dispatch plugin upload error', () => {
+	test( 'should dispatch plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith( pluginUploadError( siteId, ERROR_RESPONSE ) );
@@ -109,7 +109,7 @@ describe( 'receiveError', () => {
 } );
 
 describe( 'updateUploadProgress', () => {
-	it( 'should dispatch plugin upload progress update', () => {
+	test( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
 		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
 		expect( dispatch ).to.have.been.calledWith( updatePluginUploadProgress( siteId, 50 ) );

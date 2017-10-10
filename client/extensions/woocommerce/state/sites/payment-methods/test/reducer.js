@@ -17,7 +17,7 @@ import {
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'reducer', () => {
-	it( 'should mark the payment methods tree as "loading"', () => {
+	test( 'should mark the payment methods tree as "loading"', () => {
 		const siteId = 123;
 		const state = {};
 		const action = {
@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].paymentMethods ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {};
 		const action = {
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {

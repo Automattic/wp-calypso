@@ -12,7 +12,7 @@ import { getJetpackUserConnection } from '../';
 import { dataItems } from './fixtures/jetpack-connection';
 
 describe( 'getJetpackUserConnection()', () => {
-	it( 'should return user connection data for a known site', () => {
+	test( 'should return user connection data for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'getJetpackUserConnection()', () => {
 		expect( output ).to.eql( dataItems[ siteId ] );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

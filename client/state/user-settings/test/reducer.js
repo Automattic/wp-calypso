@@ -18,18 +18,18 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'settings', 'unsavedSettings' ] );
 	} );
 
 	describe( 'settings', () => {
-		it( 'should default to a `null` value', () => {
+		test( 'should default to a `null` value', () => {
 			const state = settings( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should store user settings after initial update', () => {
+		test( 'should store user settings after initial update', () => {
 			const state = settings( null, {
 				type: USER_SETTINGS_UPDATE,
 				settingValues: { foo: 'bar' },
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should keep existing settings after update', () => {
+		test( 'should keep existing settings after update', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
 			} );
@@ -58,13 +58,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'unsavedSettings', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			const state = unsavedSettings( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store a user settings after it is set', () => {
+		test( 'should store a user settings after it is set', () => {
 			const state = unsavedSettings( undefined, {
 				type: USER_SETTINGS_UNSAVED_SET,
 				settingName: 'foo',
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should store additional user setting after it is set', () => {
+		test( 'should store additional user setting after it is set', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
 			} );
@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should remove a user setting', () => {
+		test( 'should remove a user setting', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
 				baz: 'qux',
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should clear user settings after successful save', () => {
+		test( 'should clear user settings after successful save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
 				baz: 'qux',
@@ -122,7 +122,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should clear user settings after successful partial save', () => {
+		test( 'should clear user settings after successful partial save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
 				baz: 'qux',

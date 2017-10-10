@@ -11,11 +11,11 @@ import { expect } from 'chai';
 import { getSignupDependencyStore } from '../selectors';
 
 describe( 'selectors', () => {
-	it( 'should return empty object as a default state', () => {
+	test( 'should return empty object as a default state', () => {
 		expect( getSignupDependencyStore( { signup: undefined }, {} ) ).to.be.eql( {} );
 	} );
 
-	it( 'should return signupDependencyStore instance from the state', () => {
+	test( 'should return signupDependencyStore instance from the state', () => {
 		expect(
 			getSignupDependencyStore(
 				{

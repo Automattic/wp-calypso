@@ -10,38 +10,38 @@ import { expect } from 'chai';
  */
 import buildUrl from '..';
 
-describe( 'build-url', function() {
-	it( 'should accept a path without existing query parameters', function() {
+describe( 'build-url', () => {
+	test( 'should accept a path without existing query parameters', () => {
 		const url = buildUrl( '/path', 'terms' );
 
 		expect( url ).to.equal( '/path?s=terms' );
 	} );
 
-	it( 'should return only the path, even if a full URL is passed', function() {
+	test( 'should return only the path, even if a full URL is passed', () => {
 		const url = buildUrl( 'https://wordpress.com/path#hash', 'terms' );
 
 		expect( url ).to.equal( '/path?s=terms#hash' );
 	} );
 
-	it( 'should preserve existing query parameters', function() {
+	test( 'should preserve existing query parameters', () => {
 		const url = buildUrl( '/path?param=1', 'terms' );
 
 		expect( url ).to.equal( '/path?param=1&s=terms' );
 	} );
 
-	it( 'should override the previous search term', function() {
+	test( 'should override the previous search term', () => {
 		const url = buildUrl( '/path?s=terms', 'newterms' );
 
 		expect( url ).to.equal( '/path?s=newterms' );
 	} );
 
-	it( 'should remove the previous search term if not searching', function() {
+	test( 'should remove the previous search term if not searching', () => {
 		const url = buildUrl( '/path?s=terms', '' );
 
 		expect( url ).to.equal( '/path' );
 	} );
 
-	it( 'should replace encoded spaces with `+`', function() {
+	test( 'should replace encoded spaces with `+`', () => {
 		const url = buildUrl( '/path', 'new terms' );
 
 		expect( url ).to.equal( '/path?s=new+terms' );

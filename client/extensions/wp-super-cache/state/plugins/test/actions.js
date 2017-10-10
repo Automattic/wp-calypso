@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#receivePlugins()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePlugins( siteId, plugins.data );
 
 			expect( action ).to.eql( {
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPlugins( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -71,13 +71,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPlugins( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receivePlugins( siteId, plugins.data ) );
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPlugins( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_SUCCESS,
@@ -86,7 +86,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestPlugins( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_REQUEST_PLUGINS_FAILURE,
@@ -119,7 +119,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch toggle action when thunk triggered', () => {
+		test( 'should dispatch toggle action when thunk triggered', () => {
 			togglePlugin( siteId, plugin )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -129,13 +129,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return togglePlugin( siteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receivePlugins( siteId, apiResponse.data ) );
 			} );
 		} );
 
-		it( 'should dispatch save success action when request completes', () => {
+		test( 'should dispatch save success action when request completes', () => {
 			return togglePlugin( siteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
@@ -145,7 +145,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return togglePlugin( failedSiteId, plugin )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,

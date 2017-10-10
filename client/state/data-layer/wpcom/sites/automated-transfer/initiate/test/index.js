@@ -39,7 +39,7 @@ const INITIATE_FAILURE_RESPONSE = {
 };
 
 describe( 'initiateTransferWithPluginZip', () => {
-	it( 'should dispatch an http request', () => {
+	test( 'should dispatch an http request', () => {
 		const dispatch = sinon.spy();
 		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -49,7 +49,7 @@ describe( 'initiateTransferWithPluginZip', () => {
 		} );
 	} );
 
-	it( 'should dispatch a tracks call', () => {
+	test( 'should dispatch a tracks call', () => {
 		const dispatch = sinon.spy();
 		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
 		expect( dispatch ).to.have.been.calledWith(
@@ -61,13 +61,13 @@ describe( 'initiateTransferWithPluginZip', () => {
 } );
 
 describe( 'receiveResponse', () => {
-	it( 'should dispatch a status request', () => {
+	test( 'should dispatch a status request', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith( getAutomatedTransferStatus( siteId ) );
 	} );
 
-	it( 'should dispatch a tracks call', () => {
+	test( 'should dispatch a tracks call', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -77,7 +77,7 @@ describe( 'receiveResponse', () => {
 		);
 	} );
 
-	it( 'should dispatch error notice on unsuccessful initiation', () => {
+	test( 'should dispatch error notice on unsuccessful initiation', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -85,7 +85,7 @@ describe( 'receiveResponse', () => {
 		} );
 	} );
 
-	it( 'should dispatch a tracks call on unsuccessful initiation', () => {
+	test( 'should dispatch a tracks call on unsuccessful initiation', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -98,13 +98,13 @@ describe( 'receiveResponse', () => {
 } );
 
 describe( 'receiveError', () => {
-	it( 'should dispatch a plugin upload error', () => {
+	test( 'should dispatch a plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith( pluginUploadError( siteId, ERROR_RESPONSE ) );
 	} );
 
-	it( 'should dispatch an error notice', () => {
+	test( 'should dispatch an error notice', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -112,7 +112,7 @@ describe( 'receiveError', () => {
 		} );
 	} );
 
-	it( 'should dispatch a tracks call', () => {
+	test( 'should dispatch a tracks call', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -125,7 +125,7 @@ describe( 'receiveError', () => {
 } );
 
 describe( 'updateUploadProgress', () => {
-	it( 'should dispatch plugin upload progress update', () => {
+	test( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
 		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
 		expect( dispatch ).to.have.been.calledWith( updatePluginUploadProgress( siteId, 50 ) );

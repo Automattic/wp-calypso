@@ -49,7 +49,7 @@ const slug = 'chicken';
 
 describe( 'follow tag request', () => {
 	describe( '#requestFollow', () => {
-		it( 'should dispatch HTTP request to tag endpoint', () => {
+		test( 'should dispatch HTTP request to tag endpoint', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -69,7 +69,7 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveFollowSuccess', () => {
-		it( 'should dispatch the followed tag with isFollowing=true', () => {
+		test( 'should dispatch the followed tag with isFollowing=true', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -90,7 +90,7 @@ describe( 'follow tag request', () => {
 			);
 		} );
 
-		it( 'if api reports error then create an error notice', () => {
+		test( 'if api reports error then create an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -102,7 +102,7 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const error = 'could not find tag';

@@ -20,12 +20,12 @@ import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'repliesUpdate', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = repliesUpdated( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should store the replies response', () => {
+		test( 'should store the replies response', () => {
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 				siteId: 123,
@@ -36,7 +36,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 555: reviewReplies } );
 		} );
 
-		it( 'should not update state on failure', () => {
+		test( 'should not update state on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 				siteId: 123,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 555: reviewReplies } );
 		} );
 
-		it( 'should not update state for another site ID', () => {
+		test( 'should not update state for another site ID', () => {
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 				siteId: 123,
@@ -72,12 +72,12 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'replyDeleted', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = replyDeleted( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should remove the reply from the list', () => {
+		test( 'should remove the reply from the list', () => {
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLY_DELETED,
 				siteId: 123,
@@ -89,12 +89,12 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'replyUpdated', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = replyUpdated( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should update the reply in the list', () => {
+		test( 'should update the reply in the list', () => {
 			const update = { ...reviewReplies[ 0 ], content: 'Updated' };
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLY_UPDATED,
@@ -109,12 +109,12 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'replyCreated', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = replyCreated( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should add the reply to the list', () => {
+		test( 'should add the reply to the list', () => {
 			const create = { content: 'New comment...' };
 			const action = {
 				type: WOOCOMMERCE_REVIEW_REPLY_CREATED,

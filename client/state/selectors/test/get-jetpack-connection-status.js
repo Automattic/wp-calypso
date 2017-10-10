@@ -12,7 +12,7 @@ import { getJetpackConnectionStatus } from '../';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'getJetpackConnectionStatus()', () => {
-	it( 'should return connection status for a known site', () => {
+	test( 'should return connection status for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'getJetpackConnectionStatus()', () => {
 		expect( output ).to.eql( ITEMS_FIXTURE[ siteId ] );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

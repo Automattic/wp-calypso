@@ -30,7 +30,7 @@ describe( 'ticket-support/configuration actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
-		it( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
+		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
 			const action = ticketSupportConfigurationRequestSuccess( dummyConfiguration );
 
 			assert.deepEqual( action, {
@@ -41,7 +41,7 @@ describe( 'ticket-support/configuration actions', () => {
 	} );
 
 	describe( '#ticketSupportConfigurationRequestFailure', () => {
-		it( 'should return HELP_TICKET_CONFIGURATION_REQUEST_FAILURE', () => {
+		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_FAILURE', () => {
 			const action = ticketSupportConfigurationRequestFailure( dummyError );
 
 			assert.deepEqual( action, {
@@ -61,7 +61,7 @@ describe( 'ticket-support/configuration actions', () => {
 				.reply( 200, dummyConfiguration );
 		} );
 
-		it( 'should be successful.', () => {
+		test( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
 			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
@@ -84,7 +84,7 @@ describe( 'ticket-support/configuration actions', () => {
 				.reply( dummyError.status, dummyError );
 		} );
 
-		it( 'should be failed.', () => {
+		test( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
 			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
@@ -103,7 +103,7 @@ describe( 'ticket-support/configuration actions', () => {
 	} );
 
 	describe( '#ticketSupportConfigurationDismissError', () => {
-		it( 'should return HELP_TICKET_CONFIGURATION_DISMISS_ERROR', () => {
+		test( 'should return HELP_TICKET_CONFIGURATION_DISMISS_ERROR', () => {
 			const action = ticketSupportConfigurationDismissError();
 
 			assert.deepEqual( action, {

@@ -25,7 +25,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#getDomainsBySite()', () => {
-		it( 'should return domains by site', () => {
+		test( 'should return domains by site', () => {
 			const state = getStateInstance();
 
 			const firstDomains = getDomainsBySite( state, { ID: firstSiteId } );
@@ -39,7 +39,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getDomainsBySiteId()', () => {
-		it( 'should return domains by site id', () => {
+		test( 'should return domains by site id', () => {
 			const state = getStateInstance();
 			const domains = getDomainsBySiteId( state, firstSiteId );
 			expect( domains ).to.eql( [ DOMAIN_PRIMARY ] );
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingSiteDomains()', () => {
-		it( 'should return true if we are fetching domains', () => {
+		test( 'should return true if we are fetching domains', () => {
 			const state = getStateInstance();
 
 			expect( isRequestingSiteDomains( state, firstSiteId ) ).to.equal( false );
@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#decorateSiteDomains()', () => {
-		it( 'should return decorated site domains with autoRenewalMoment', () => {
+		test( 'should return decorated site domains with autoRenewalMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		it( 'should return decorated site domains with registrationMoment', () => {
+		test( 'should return decorated site domains with registrationMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
@@ -83,7 +83,7 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		it( 'should return decorated site domains with expirationMoment', () => {
+		test( 'should return decorated site domains with expirationMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 

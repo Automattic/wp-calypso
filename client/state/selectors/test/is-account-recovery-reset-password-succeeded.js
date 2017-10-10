@@ -12,7 +12,7 @@ import deepFreeze from 'deep-freeze';
 import { isAccountRecoveryResetPasswordSucceeded } from '../';
 
 describe( 'isAccountRecoveryResetPasswordSucceeded()', () => {
-	it( 'should return succeeded field under resetPassword state tree.', () => {
+	test( 'should return succeeded field under resetPassword state tree.', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
@@ -26,7 +26,7 @@ describe( 'isAccountRecoveryResetPasswordSucceeded()', () => {
 		assert.isTrue( isAccountRecoveryResetPasswordSucceeded( state ) );
 	} );
 
-	it( 'should return false as default value.', () => {
+	test( 'should return false as default value.', () => {
 		assert.isFalse( isAccountRecoveryResetPasswordSucceeded( undefined ) );
 	} );
 } );

@@ -12,7 +12,7 @@ import { getJetpackJumpstartStatus } from '../';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-jumpstart';
 
 describe( 'getJetpackJumpstartStatus()', () => {
-	it( 'should return jumpstart status for a known site', () => {
+	test( 'should return jumpstart status for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
@@ -25,7 +25,7 @@ describe( 'getJetpackJumpstartStatus()', () => {
 		expect( output ).to.eql( 'jumpstart_activated' );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {

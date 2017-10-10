@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isRequestingBillingTransactions } from '../';
 
 describe( 'isRequestingBillingTransactions()', () => {
-	it( 'should return true if the billing transactions are being fetched', () => {
+	test( 'should return true if the billing transactions are being fetched', () => {
 		const state = {
 			billingTransactions: {
 				requesting: true,
@@ -21,7 +21,7 @@ describe( 'isRequestingBillingTransactions()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the billing transactions are currently not being fetched', () => {
+	test( 'should return false if the billing transactions are currently not being fetched', () => {
 		const state = {
 			billingTransactions: {
 				requesting: false,
@@ -31,7 +31,7 @@ describe( 'isRequestingBillingTransactions()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return false if the billing transactions have never been requested', () => {
+	test( 'should return false if the billing transactions have never been requested', () => {
 		const output = isRequestingBillingTransactions( {} );
 		expect( output ).to.be.false;
 	} );

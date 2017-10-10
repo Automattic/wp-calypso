@@ -47,7 +47,7 @@ const VALID_API_ITEM = deepFreeze( {
 } );
 
 describe( 'processItem', () => {
-	it( 'should process an item', () => {
+	test( 'should process an item', () => {
 		expect( processItem( VALID_API_ITEM ) )
 			.to.be.an( 'object' )
 			.that.has.keys( [

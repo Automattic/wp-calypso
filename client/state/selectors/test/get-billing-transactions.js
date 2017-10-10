@@ -12,7 +12,7 @@ import { moment } from 'i18n-calypso';
 import { getBillingTransactions } from '../';
 
 describe( 'getBillingTransactions()', () => {
-	it( 'should return all billing transactions if they have been fetched', () => {
+	test( 'should return all billing transactions if they have been fetched', () => {
 		const state = {
 			billingTransactions: {
 				items: {
@@ -52,7 +52,7 @@ describe( 'getBillingTransactions()', () => {
 		} );
 	} );
 
-	it( 'should return null if billing transactions have not been fetched yet', () => {
+	test( 'should return null if billing transactions have not been fetched yet', () => {
 		const state = {
 			billingTransactions: {
 				items: null,

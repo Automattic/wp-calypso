@@ -25,7 +25,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receivePostTypeTaxonomies()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePostTypeTaxonomies( 2916284, 'post', [
 				{ name: 'category', label: 'Categories' },
 			] );
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostTypeTaxonomies( 2916284, 'post' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPostTypeTaxonomies( 2916284, 'post' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePostTypeTaxonomies( 2916284, 'post', [
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPostTypeTaxonomies( 2916284, 'post' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestPostTypeTaxonomies( 2916284, 'foo' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,

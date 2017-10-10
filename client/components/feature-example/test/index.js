@@ -12,13 +12,13 @@ import React from 'react';
  */
 import FeatureExample from '../index';
 
-describe( 'Feature Example', function() {
-	it( 'should have Feature-example class', () => {
+describe( 'Feature Example', () => {
+	test( 'should have Feature-example class', () => {
 		const featureExample = shallow( <FeatureExample /> );
 		assert.lengthOf( featureExample.find( '.feature-example' ), 1 );
 	} );
 
-	it( 'should contains the passed children wrapped by a feature-example div', () => {
+	test( 'should contains the passed children wrapped by a feature-example div', () => {
 		const featureExample = shallow(
 			<FeatureExample>
 				<div>test</div>

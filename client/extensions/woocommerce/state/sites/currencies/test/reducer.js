@@ -16,7 +16,7 @@ import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
-	it( 'should mark the currencies array as being "loading"', () => {
+	test( 'should mark the currencies array as being "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_CURRENCIES_REQUEST,
@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 		expect( newSiteData[ siteId ].currencies ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const currencies = [
 			{ code: 'AED', name: 'United Arab Emirates dirham', symbol: '&#x62f;.&#x625;' },

@@ -26,7 +26,7 @@ const loadedState = {
 
 describe( 'selectors', () => {
 	describe( '#getVariationsForProduct', () => {
-		it( 'should give the variations when present.', () => {
+		test( 'should give the variations when present.', () => {
 			const variations15 = getVariationsForProduct( loadedState, 15, 123 );
 
 			expect( variations15 ).to.exist;
@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 			expect( variations15[ 1 ].attributes[ 0 ].option ).to.equal( 'Black' );
 		} );
 
-		it( 'should return undefined if the variations are not present.', () => {
+		test( 'should return undefined if the variations are not present.', () => {
 			const nonexistentId = 282220;
 			expect( getVariationsForProduct( loadedState, nonexistentId, 123 ) ).to.be.undefined;
 		} );

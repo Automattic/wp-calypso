@@ -24,7 +24,7 @@ function logImageLoads() {
 	const imagesLoaded = [];
 	let originalImage;
 
-	before( function spyOnImage() {
+	beforeAll( function spyOnImage() {
 		imagesLoaded.length = 0;
 		originalImage = global.Image;
 
@@ -43,30 +43,30 @@ function logImageLoads() {
 		} );
 	} );
 
-	after( function tearDownSpy() {
+	afterAll( function tearDownSpy() {
 		global.Image = originalImage;
 	} );
 
 	return imagesLoaded;
 }
 
-describe( 'Analytics', function() {
+describe( 'Analytics', () => {
 	const imagesLoaded = logImageLoads();
 
-	beforeEach( function() {
+	beforeEach( () => {
 		// this seems really weird. but we need to keep the same array reference, but trim the array
 		imagesLoaded.length = 0;
 	} );
 
-	describe( 'mc', function() {
-		it( 'bumpStat with group and stat', function() {
+	describe( 'mc', () => {
+		test( 'bumpStat with group and stat', () => {
 			analytics.mc.bumpStat( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStat with value object', function() {
+		test( 'bumpStat with value object', () => {
 			analytics.mc.bumpStat( {
 				go: 'time',
 				another: 'one',
@@ -77,14 +77,14 @@ describe( 'Analytics', function() {
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStatWithPageView with group and stat', function() {
+		test( 'bumpStatWithPageView with group and stat', () => {
 			analytics.mc.bumpStatWithPageView( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStatWithPageView with value object', function() {
+		test( 'bumpStatWithPageView with value object', () => {
 			analytics.mc.bumpStatWithPageView( {
 				go: 'time',
 				another: 'one',

@@ -14,7 +14,7 @@ import { USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE } from 'state/a
 
 describe( 'actions', () => {
 	describe( 'updateUserSetting()', () => {
-		it( 'should store the new value to unsaved settings', () => {
+		test( 'should store the new value to unsaved settings', () => {
 			const dispatch = sinon.spy();
 			const getState = () => ( {
 				userSettings: {
@@ -33,7 +33,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should remove the value from unsaved settings after it is reset to original value', () => {
+		test( 'should remove the value from unsaved settings after it is reset to original value', () => {
 			const dispatch = sinon.spy();
 			const getState = () => ( {
 				userSettings: {
@@ -51,7 +51,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should ignore update of a setting that is not already in the server data', () => {
+		test( 'should ignore update of a setting that is not already in the server data', () => {
 			const dispatch = sinon.spy();
 			const getState = () => ( {
 				userSettings: {

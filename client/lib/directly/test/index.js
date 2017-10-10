@@ -53,19 +53,19 @@ describe( 'index', () => {
 		} );
 
 		describe( '#initialize()', () => {
-			it( 'creates a window.DirectlyRTM function', () => {
+			test( 'creates a window.DirectlyRTM function', () => {
 				return directly
 					.initialize()
 					.then( () => expect( typeof window.DirectlyRTM ).to.equal( 'function' ) );
 			} );
 
-			it( 'attempts to load the remote script', () => {
+			test( 'attempts to load the remote script', () => {
 				return directly
 					.initialize()
 					.then( () => expect( loadScript.loadScript ).to.have.been.calledOnce );
 			} );
 
-			it( 'does nothing after the first call', done => {
+			test( 'does nothing after the first call', done => {
 				Promise.all( [ directly.initialize(), directly.initialize(), directly.initialize() ] )
 					.then( () => {
 						expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
@@ -75,11 +75,11 @@ describe( 'index', () => {
 					.then( () => done() );
 			} );
 
-			it( 'resolves the returned promise if the library load succeeds', done => {
+			test( 'resolves the returned promise if the library load succeeds', done => {
 				directly.initialize().then( () => done() );
 			} );
 
-			it( 'rejects the returned promise if the library load fails', done => {
+			test( 'rejects the returned promise if the library load fails', done => {
 				const error = { src: 'http://url.to/directly/embed.js' };
 				simulateFailedScriptLoad( error );
 
@@ -98,7 +98,7 @@ describe( 'index', () => {
 			const name = 'Richie Rich';
 			const email = 'richie@richenterprises.biz';
 
-			it( "initializes Directly if it hasn't already been initialized", done => {
+			test( "initializes Directly if it hasn't already been initialized", done => {
 				directly
 					.askQuestion( questionText, name, email )
 					.then( () => {
@@ -108,7 +108,7 @@ describe( 'index', () => {
 					.then( () => done() );
 			} );
 
-			it( 'invokes the Directly API with the given paramaters', done => {
+			test( 'invokes the Directly API with the given paramaters', done => {
 				window.DirectlyRTM = sinon.spy();
 				directly
 					.askQuestion( questionText, name, email )
@@ -135,7 +135,7 @@ describe( 'index', () => {
 		} );
 
 		describe( '#initialize()', () => {
-			it( 'rejects intialization with an error', done => {
+			test( 'rejects intialization with an error', done => {
 				directly
 					.initialize()
 					.catch( e => {
@@ -147,7 +147,7 @@ describe( 'index', () => {
 					.then( () => done() );
 			} );
 
-			it( 'does not attempt to load the remote script', done => {
+			test( 'does not attempt to load the remote script', done => {
 				directly
 					.initialize()
 					.catch( () => {

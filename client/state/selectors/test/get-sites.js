@@ -25,7 +25,7 @@ const currentUserState = {
 };
 
 describe( 'getSites()', () => {
-	it( 'should return an empty array if no sites in state', () => {
+	test( 'should return an empty array if no sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -36,7 +36,7 @@ describe( 'getSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return the primary site if the user has only one site', () => {
+	test( 'should return the primary site if the user has only one site', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -50,7 +50,7 @@ describe( 'getSites()', () => {
 		expect( sites ).to.have.length( 1 );
 	} );
 
-	it( 'should return the sites lists if the user has no primary site', () => {
+	test( 'should return the sites lists if the user has no primary site', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -65,7 +65,7 @@ describe( 'getSites()', () => {
 		expect( sites ).to.have.length( 2 );
 	} );
 
-	it( 'should return all the sites in state', () => {
+	test( 'should return all the sites in state', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -84,7 +84,7 @@ describe( 'getSites()', () => {
 		expect( sites[ 1 ] ).to.have.property( 'name', 'WordPress.com Way Better Example Blog' );
 	} );
 
-	it( 'should return the primary site as the first element of the list', () => {
+	test( 'should return the primary site as the first element of the list', () => {
 		const state = {
 			...currentUserState,
 			sites: {
@@ -104,7 +104,7 @@ describe( 'getSites()', () => {
 		expect( sites[ 0 ] ).to.have.property( 'ID', 2916288 );
 	} );
 
-	it( 'should return sites in alphabetical order by name and url', () => {
+	test( 'should return sites in alphabetical order by name and url', () => {
 		const state = {
 			...currentUserState,
 			sites: {

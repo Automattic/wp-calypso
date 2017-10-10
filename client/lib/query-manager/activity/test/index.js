@@ -37,8 +37,8 @@ describe( 'ActivityQueryManager', () => {
 	} );
 
 	describe( '#matches()', () => {
-		context( 'query.dateStart', () => {
-			it( 'should return true if activity is at the specified time', () => {
+		describe( 'query.dateStart', () => {
+			test( 'should return true if activity is at the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS,
@@ -49,7 +49,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true if activity is after the specified time', () => {
+			test( 'should return true if activity is after the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS - 1,
@@ -60,7 +60,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return false if activity is before the specified time', () => {
+			test( 'should return false if activity is before the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateStart: DEFAULT_ACTIVITY_TS + 1,
@@ -72,8 +72,8 @@ describe( 'ActivityQueryManager', () => {
 			} );
 		} );
 
-		context( 'query.dateEnd', () => {
-			it( 'should return true if activity is at the specified time', () => {
+		describe( 'query.dateEnd', () => {
+			test( 'should return true if activity is at the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS,
@@ -84,7 +84,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return false if activity is after the specified time', () => {
+			test( 'should return false if activity is after the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -95,7 +95,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return true if activity is before the specified time', () => {
+			test( 'should return true if activity is before the specified time', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
@@ -107,8 +107,8 @@ describe( 'ActivityQueryManager', () => {
 			} );
 		} );
 
-		context( 'date range query', () => {
-			it( 'should return true if activity is within a range of dates', () => {
+		describe( 'date range query', () => {
+			test( 'should return true if activity is within a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 1,
@@ -120,7 +120,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return false if activity is before a range of dates', () => {
+			test( 'should return false if activity is before a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS + 2,
@@ -132,7 +132,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return false if activity is after a range of dates', () => {
+			test( 'should return false if activity is after a range of dates', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -144,7 +144,7 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should be impossible to match if dateStart is after dateEnd', () => {
+			test( 'should be impossible to match if dateStart is after dateEnd', () => {
 				const isMatch = ActivityQueryManager.matches(
 					{
 						dateEnd: DEFAULT_ACTIVITY_TS - 1,
@@ -159,7 +159,7 @@ describe( 'ActivityQueryManager', () => {
 	} );
 
 	describe( '#compare()', () => {
-		it( 'should sort by timestamp descending', () => {
+		test( 'should sort by timestamp descending', () => {
 			const sortFunc = manager.compare.bind( manager, {} );
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 200000 };
@@ -167,7 +167,7 @@ describe( 'ActivityQueryManager', () => {
 			expect( [ activityA, activityB ].sort( sortFunc ) ).to.eql( [ activityB, activityA ] );
 		} );
 
-		it( 'should include simultaneous events (in any order, sort is unstable)', () => {
+		test( 'should include simultaneous events (in any order, sort is unstable)', () => {
 			const sortFunc = manager.compare.bind( manager, {} );
 			const activityA = { activityId: 'a', activityTs: 100000 };
 			const activityB = { activityId: 'b', activityTs: 100000 };

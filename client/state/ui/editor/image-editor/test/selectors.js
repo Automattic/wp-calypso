@@ -21,7 +21,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#getImageEditorTransform()', () => {
-		it( 'should return the current image editor transform', () => {
+		test( 'should return the current image editor transform', () => {
 			const transform = getImageEditorTransform( {
 				ui: {
 					editor: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getImageEditorFileInfo()', () => {
-		it( 'should return the information about the current image', () => {
+		test( 'should return the information about the current image', () => {
 			const fileInfo = getImageEditorFileInfo( {
 				ui: {
 					editor: {
@@ -67,7 +67,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#imageEditorHasChanges()', () => {
-		it( 'should return the editor changed state', () => {
+		test( 'should return the editor changed state', () => {
 			const hasChanges = imageEditorHasChanges( {
 				ui: {
 					editor: {
@@ -83,7 +83,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getImageEditorCropBounds()', () => {
-		it( 'should return the crop bounds', () => {
+		test( 'should return the crop bounds', () => {
 			const bounds = getImageEditorCropBounds( {
 				ui: {
 					editor: {
@@ -109,7 +109,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getImageEditorCrop()', () => {
-		it( 'should return crop ratios', () => {
+		test( 'should return crop ratios', () => {
 			const hasChanges = getImageEditorCrop( {
 				ui: {
 					editor: {
@@ -135,7 +135,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getImageEditorAspectRatio()', () => {
-		it( 'should return the aspect ratio', () => {
+		test( 'should return the aspect ratio', () => {
 			const hasChanges = getImageEditorAspectRatio( {
 				ui: {
 					editor: {
@@ -151,7 +151,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isImageEditorImageLoaded()', () => {
-		it( 'should return whether the image is loaded or not', () => {
+		test( 'should return whether the image is loaded or not', () => {
 			const imageIsLoading = true;
 
 			const isImageLoaded = isImageEditorImageLoaded( {

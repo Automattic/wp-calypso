@@ -23,19 +23,19 @@ describe( 'Calypso Site', () => {
 			},
 		};
 
-		it( 'attribute changed', () => {
+		test( 'attribute changed', () => {
 			const site = Site( mockSiteData );
 			site.set( { name: 'Goodbye' } );
 			expect( site.name ).to.equal( 'Goodbye' );
 		} );
 
-		it( 'attribute unset', () => {
+		test( 'attribute unset', () => {
 			const site = Site( mockSiteData );
 			site.set( { icon: undefined } );
 			expect( site ).to.not.have.key( 'icon' );
 		} );
 
-		it( 'change event fires on attribute change', () => {
+		test( 'change event fires on attribute change', () => {
 			const changeCallback = sinon.spy();
 			const site = Site( mockSiteData );
 			site.on( 'change', changeCallback );
@@ -43,7 +43,7 @@ describe( 'Calypso Site', () => {
 			expect( changeCallback.called ).to.be.true;
 		} );
 
-		it( "change doesn't fire when setting attribute to same value", () => {
+		test( "change doesn't fire when setting attribute to same value", () => {
 			const changeCallback = sinon.spy();
 			const site = Site( mockSiteData );
 			site.once( 'change', changeCallback );
@@ -51,7 +51,7 @@ describe( 'Calypso Site', () => {
 			expect( changeCallback.called ).to.be.false;
 		} );
 
-		it( "change doesn't fire when attribute is set to an object with identical data", () => {
+		test( "change doesn't fire when attribute is set to an object with identical data", () => {
 			const changeCallback = sinon.spy();
 			const nestedSiteData = Object.assign( {}, mockSiteData, {
 				name: 'Hello, again',
@@ -68,7 +68,7 @@ describe( 'Calypso Site', () => {
 			expect( changeCallback.called ).to.be.false;
 		} );
 
-		it( "change doesn't fire when attribute is set to an array with identical data", () => {
+		test( "change doesn't fire when attribute is set to an array with identical data", () => {
 			const changeCallback = sinon.spy();
 			const site = Site( Object.assign( {}, mockSiteData, { arr: [ 1, 2, 3 ] } ) );
 
@@ -77,13 +77,13 @@ describe( 'Calypso Site', () => {
 			expect( changeCallback.called ).to.be.false;
 		} );
 
-		it( '`set` returns `true` when an attribute is updated', () => {
+		test( '`set` returns `true` when an attribute is updated', () => {
 			const site = Site( mockSiteData );
 
 			expect( site.set( { description: 'new description' } ) ).to.be.true;
 		} );
 
-		it( '`set` returns `false` when no attribute is updated', () => {
+		test( '`set` returns `false` when no attribute is updated', () => {
 			const site = Site( mockSiteData );
 
 			expect( site.set( { description: mockSiteData.description } ) ).to.be.false;

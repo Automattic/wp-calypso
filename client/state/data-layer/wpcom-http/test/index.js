@@ -43,7 +43,7 @@ describe( '#queueRequest', () => {
 		dispatch = spy();
 	} );
 
-	it( 'should call `onSuccess` when a response returns with data', done => {
+	test( 'should call `onSuccess` when a response returns with data', done => {
 		const data = { value: 1 };
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( '/rest/v1.1/me' )
@@ -58,7 +58,7 @@ describe( '#queueRequest', () => {
 		}, 10 );
 	} );
 
-	it( 'should call `onFailure` when a response returns with an error', done => {
+	test( 'should call `onFailure` when a response returns with an error', done => {
 		const error = { error: 'bad' };
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( '/rest/v1.1/me' )

@@ -20,7 +20,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isCreatingPages()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( isCreating ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 			expect( isCreating ).to.be.false;
 		} );
 
-		it( 'should return false if the pages are not being created', () => {
+		test( 'should return false if the pages are not being created', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -67,7 +67,7 @@ describe( 'selectors', () => {
 			expect( isCreating ).to.be.false;
 		} );
 
-		it( 'should return true if the pages are being created', () => {
+		test( 'should return true if the pages are being created', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isFetchingSetupStatus()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -99,7 +99,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return false if the setup status is not being fetched', () => {
+		test( 'should return false if the setup status is not being fetched', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return true if the setup status is being fetched', () => {
+		test( 'should return true if the setup status is being fetched', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -152,7 +152,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shouldGoToNextStep()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -165,7 +165,7 @@ describe( 'selectors', () => {
 			expect( goToNextStep ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -182,7 +182,7 @@ describe( 'selectors', () => {
 			expect( goToNextStep ).to.be.false;
 		} );
 
-		it( 'should return false if the pages are not being created', () => {
+		test( 'should return false if the pages are not being created', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -199,7 +199,7 @@ describe( 'selectors', () => {
 			expect( goToNextStep ).to.be.false;
 		} );
 
-		it( 'should return true if the pages are being created', () => {
+		test( 'should return true if the pages are being created', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -218,7 +218,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shouldShowSetupWizard()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -231,7 +231,7 @@ describe( 'selectors', () => {
 			expect( showWizard ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -248,7 +248,7 @@ describe( 'selectors', () => {
 			expect( showWizard ).to.be.false;
 		} );
 
-		it( 'should return false if the wizard should not be shown', () => {
+		test( 'should return false if the wizard should not be shown', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -265,7 +265,7 @@ describe( 'selectors', () => {
 			expect( showWizard ).to.be.false;
 		} );
 
-		it( 'should return true if the wizard should be shown', () => {
+		test( 'should return true if the wizard should be shown', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {

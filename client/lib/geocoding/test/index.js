@@ -19,7 +19,7 @@ const TEST_ADDRESS = '1600 Amphitheatre Parkway, Mountain View, CA';
 describe( 'geocoding', () => {
 	useNock();
 
-	before( () => {
+	beforeAll( () => {
 		nock( 'https://maps.googleapis.com' )
 			.persist()
 			.get( '/maps/api/geocode/json' )
@@ -28,11 +28,11 @@ describe( 'geocoding', () => {
 	} );
 
 	describe( '#geocode()', () => {
-		it( 'should return a promise', () => {
+		test( 'should return a promise', () => {
 			expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
 		} );
 
-		it( 'should call to the Google Maps API', done => {
+		test( 'should call to the Google Maps API', done => {
 			geocode( TEST_ADDRESS )
 				.then( results => {
 					expect( results ).to.eql( [ 1, 2, 3 ] );

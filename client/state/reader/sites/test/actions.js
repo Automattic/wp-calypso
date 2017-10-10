@@ -49,7 +49,7 @@ describe( 'actions', () => {
 			request = requestSite( 1 )( spy );
 		} );
 
-		it( 'should dispatch request sync', () => {
+		test( 'should dispatch request sync', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_SITE_REQUEST,
 				payload: {
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success, eventually', function() {
+		test( 'should dispatch success, eventually', () => {
 			return request.then(
 				() => {
 					expect( spy ).to.have.been.calledWith( {
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 			request = requestSite( 1 )( spy );
 		} );
 
-		it( 'should dispatch request sync', () => {
+		test( 'should dispatch request sync', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_SITE_REQUEST,
 				payload: {
@@ -97,7 +97,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch error, eventually', function() {
+		test( 'should dispatch error, eventually', () => {
 			return request.then(
 				() => {
 					assert.fail( 'callback should not be invoked!', arguments );

@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import getAddressViewFormat from '../index';
 
 describe( 'getAddressViewFormat', () => {
-	it( 'returns a "skeleton" object if no address is supplied', () => {
+	test( 'returns a "skeleton" object if no address is supplied', () => {
 		expect( getAddressViewFormat( {} ) ).to.eql( {
 			street: '',
 			street2: '',
@@ -21,7 +21,7 @@ describe( 'getAddressViewFormat', () => {
 		} );
 	} );
 
-	it( 'returns correctly formatted address', () => {
+	test( 'returns correctly formatted address', () => {
 		const ApiAddress = {
 			address_1: '1 Main St',
 			address_2: '',

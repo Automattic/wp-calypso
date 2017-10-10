@@ -42,7 +42,7 @@ describe( 'actions', () => {
 
 		useSandbox( newSandbox => ( sandbox = newSandbox ) );
 
-		it( 'should dispatch complete action when API returns card item', () => {
+		test( 'should dispatch complete action when API returns card item', () => {
 			sandbox.stub( wp, 'undocumented', () => ( {
 				me: () => ( {
 					storedCardAdd: ( token, callback ) => callback( null, item ),
@@ -70,7 +70,7 @@ describe( 'actions', () => {
 					.reply( 200, cards );
 			} );
 
-			it( 'should dispatch fetch/complete actions', () => {
+			test( 'should dispatch fetch/complete actions', () => {
 				const promise = fetchStoredCards()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -93,7 +93,7 @@ describe( 'actions', () => {
 					.reply( 403, error );
 			} );
 
-			it( 'should dispatch fetch/fail actions', () => {
+			test( 'should dispatch fetch/fail actions', () => {
 				const promise = fetchStoredCards()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -122,7 +122,7 @@ describe( 'actions', () => {
 					.reply( 200, { success: true } );
 			} );
 
-			it( 'should dispatch fetch/complete actions', () => {
+			test( 'should dispatch fetch/complete actions', () => {
 				const promise = deleteStoredCard( card )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -145,7 +145,7 @@ describe( 'actions', () => {
 					.reply( 403, error );
 			} );
 
-			it( 'should dispatch fetch/fail actions', () => {
+			test( 'should dispatch fetch/fail actions', () => {
 				const promise = deleteStoredCard( card )( spy );
 
 				expect( spy ).to.have.been.calledWith( {

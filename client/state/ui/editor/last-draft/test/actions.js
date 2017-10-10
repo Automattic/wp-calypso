@@ -13,7 +13,7 @@ import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setEditorLastDraft()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setEditorLastDraft( 2916284, 841 );
 
 			expect( action ).to.eql( {
@@ -25,7 +25,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#resetEditorLastDraft()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = resetEditorLastDraft();
 
 			expect( action ).to.eql( {

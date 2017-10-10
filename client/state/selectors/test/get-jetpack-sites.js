@@ -12,7 +12,7 @@ import { getJetpackSites } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getJetpackSites()', () => {
-	it( 'should return an empty array if no sites exist in state', () => {
+	test( 'should return an empty array if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -23,7 +23,7 @@ describe( 'getJetpackSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return an empty array if the sites existing are not Jetpack sites', () => {
+	test( 'should return an empty array if the sites existing are not Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -37,7 +37,7 @@ describe( 'getJetpackSites()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return one Jetpack site if only one site exists and it is a Jetpack site', () => {
+	test( 'should return one Jetpack site if only one site exists and it is a Jetpack site', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -57,7 +57,7 @@ describe( 'getJetpackSites()', () => {
 		expect( sites[ 0 ].ID ).to.eql( 2916289 );
 	} );
 
-	it( 'should return all the sites in state if all of them are Jetpack sites', () => {
+	test( 'should return all the sites in state if all of them are Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -85,7 +85,7 @@ describe( 'getJetpackSites()', () => {
 		expect( sites[ 1 ].ID ).to.eql( 2916289 );
 	} );
 
-	it( 'should return only the Jetpack sites if the state contains Jetpack and non Jetpack sites', () => {
+	test( 'should return only the Jetpack sites if the state contains Jetpack and non Jetpack sites', () => {
 		const state = {
 			...userState,
 			sites: {

@@ -15,14 +15,14 @@ import React from 'react';
  */
 import Emojify from '..';
 
-describe( 'Emojify', function() {
-	context( 'component rendering', () => {
-		it( 'wraps a string in a div', () => {
+describe( 'Emojify', () => {
+	describe( 'component rendering', () => {
+		test( 'wraps a string in a div', () => {
 			const wrapper = shallow( <Emojify>Foo</Emojify> );
 			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
 		} );
 
-		it( 'wraps a block in a div', () => {
+		test( 'wraps a block in a div', () => {
 			const wrapper = shallow(
 				<Emojify>
 					<p>Bar</p>
@@ -31,7 +31,7 @@ describe( 'Emojify', function() {
 			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
 		} );
 
-		it( 'replaces emoji in a string', () => {
+		test( 'replaces emoji in a string', () => {
 			const wrapper = mount( <Emojify>🙂</Emojify> );
 
 			expect( wrapper.html() ).to.equal(
@@ -40,7 +40,7 @@ describe( 'Emojify', function() {
 			);
 		} );
 
-		it( 'replaces emoji in a block', () => {
+		test( 'replaces emoji in a block', () => {
 			const wrapper = mount(
 				<Emojify>
 					<p>🧔🏻</p>
@@ -53,7 +53,7 @@ describe( 'Emojify', function() {
 			);
 		} );
 
-		it( 'maintains custom props', () => {
+		test( 'maintains custom props', () => {
 			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify> );
 			expect( wrapper.node.props.alt ).to.equal( 'bar' );
 		} );

@@ -17,8 +17,8 @@ import Dialog from 'components/dialog';
 import FormTextInput from 'components/forms/form-text-input';
 import { EmbedDialog } from '../dialog';
 
-describe( 'EmbedDialog', function() {
-	it( 'should render', function() {
+describe( 'EmbedDialog', () => {
+	test( 'should render', () => {
 		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 		const wrapper = shallow(
 			<EmbedDialog embedUrl={ url } onCancel={ noop } onUpdate={ noop } translate={ identity } />
@@ -30,7 +30,7 @@ describe( 'EmbedDialog', function() {
 		assert.strictEqual( wrapper.find( FormTextInput ).get( 0 ).props.defaultValue, url );
 	} );
 
-	it( "should update the input field's value when input changes", function() {
+	test( "should update the input field's value when input changes", () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=ghrL82cc-ss';
 		const newUrl = 'https://videopress.com/v/DNgJlco8';
 		const wrapper = shallow(
@@ -55,7 +55,7 @@ describe( 'EmbedDialog', function() {
 		assert.strictEqual( inputField.props.defaultValue, newUrl );
 	} );
 
-	it( 'should return the new url to onUpdate when updating', function() {
+	test( 'should return the new url to onUpdate when updating', () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=R54QEvTyqO4';
 		const newUrl = 'https://videopress.com/v/x4IYthy7';
 		const mockChangeEvent = {
@@ -83,7 +83,7 @@ describe( 'EmbedDialog', function() {
 		assert.strictEqual( currentUrl, newUrl );
 	} );
 
-	it( 'should not return the new url to onUpdate when canceling', function() {
+	test( 'should not return the new url to onUpdate when canceling', () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 		const newUrl = 'https://videopress.com/v/GtWYbzhZ';
 		const mockChangeEvent = {

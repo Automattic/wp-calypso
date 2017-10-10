@@ -32,7 +32,7 @@ const getState = ( packagesState = initialPackagesState ) => {
 };
 
 describe( 'Packages selectors', () => {
-	it( 'getAllSelectedPackages when there are custom and predefined packages selected', () => {
+	test( 'getAllSelectedPackages when there are custom and predefined packages selected', () => {
 		const state = getState();
 
 		const result = getAllSelectedPackages( state, siteId );
@@ -46,7 +46,7 @@ describe( 'Packages selectors', () => {
 		] );
 	} );
 
-	it( 'getAllSelectedPackages when there are only custom packages selected', () => {
+	test( 'getAllSelectedPackages when there are only custom packages selected', () => {
 		const state = getState( {
 			...initialPackagesState,
 			packages: {
@@ -62,7 +62,7 @@ describe( 'Packages selectors', () => {
 		] );
 	} );
 
-	it( 'getAllSelectedPackages when there are only predefined packages selected', () => {
+	test( 'getAllSelectedPackages when there are only predefined packages selected', () => {
 		const state = getState( {
 			...initialPackagesState,
 			packages: {
@@ -78,7 +78,7 @@ describe( 'Packages selectors', () => {
 		] );
 	} );
 
-	it( 'getCurrentlyEditingPredefinedPackages', () => {
+	test( 'getCurrentlyEditingPredefinedPackages', () => {
 		const state = getState( {
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
@@ -131,7 +131,7 @@ describe( 'Packages selectors', () => {
 		} );
 	} );
 
-	it( 'getPredefinedPackagesChangesSummary - no changes', () => {
+	test( 'getPredefinedPackagesChangesSummary - no changes', () => {
 		const state = getState( {
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
@@ -144,7 +144,7 @@ describe( 'Packages selectors', () => {
 		} );
 	} );
 
-	it( 'getPredefinedPackagesChangesSummary - no preexisting packages', () => {
+	test( 'getPredefinedPackagesChangesSummary - no preexisting packages', () => {
 		const state = getState( {
 			...initialPackagesState,
 			packages: {
@@ -162,7 +162,7 @@ describe( 'Packages selectors', () => {
 		} );
 	} );
 
-	it( 'getPredefinedPackagesChangesSummary - all packages removed', () => {
+	test( 'getPredefinedPackagesChangesSummary - all packages removed', () => {
 		const state = getState( {
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: {},
@@ -176,7 +176,7 @@ describe( 'Packages selectors', () => {
 		} );
 	} );
 
-	it( 'getPredefinedPackagesChangesSummary - some packages removed, some added', () => {
+	test( 'getPredefinedPackagesChangesSummary - some packages removed, some added', () => {
 		const state = getState( {
 			...initialPackagesState,
 			currentlyEditingPredefinedPackages: { service: [ 'box2' ] },

@@ -22,7 +22,7 @@ describe( 'localforage-bypass', () => {
 	} );
 
 	describe( 'keys', () => {
-		it( 'should list all keys', () => {
+		test( 'should list all keys', () => {
 			db.one = 1;
 			db.two = 2;
 			return localForage.keys().then( keys => {
@@ -31,7 +31,7 @@ describe( 'localforage-bypass', () => {
 			} );
 		} );
 
-		it( 'should be empty when initialized', () => {
+		test( 'should be empty when initialized', () => {
 			return localForage.keys().then( keys => {
 				expect( keys ).to.have.length( 0 );
 			} );
@@ -49,17 +49,17 @@ describe( 'localforage-bypass', () => {
 			return () => localForage.setItem( key, value );
 		};
 
-		it( 'should be zero when initialized', () => {
+		test( 'should be zero when initialized', () => {
 			return expectLength( 0 )();
 		} );
 
-		it( 'should match number of items', () => {
+		test( 'should match number of items', () => {
 			db.one = 1;
 			db.two = 2;
 			return expectLength( 2 )();
 		} );
 
-		it( 'should increment after setItem', () => {
+		test( 'should increment after setItem', () => {
 			db.one = 1;
 			db.two = 2;
 
@@ -68,7 +68,7 @@ describe( 'localforage-bypass', () => {
 				.then( expectLength( 3 ) );
 		} );
 
-		it( 'should not increment after setItem where key already exists', () => {
+		test( 'should not increment after setItem where key already exists', () => {
 			db.one = 1;
 			db.two = 2;
 
@@ -80,7 +80,7 @@ describe( 'localforage-bypass', () => {
 	} );
 
 	describe( 'clear', () => {
-		it( 'should remove all keys', () => {
+		test( 'should remove all keys', () => {
 			db.one = 1;
 			db.two = 2;
 			return localForage.clear().then( () => {
@@ -90,14 +90,14 @@ describe( 'localforage-bypass', () => {
 	} );
 
 	describe( 'getItem', () => {
-		it( 'should get an item that exists', () => {
+		test( 'should get an item that exists', () => {
 			db.one = 1;
 			return localForage.getItem( 'one' ).then( value => {
 				expect( value ).to.equal( 1 );
 			} );
 		} );
 
-		it( "should return undefined for an item that doesn't exist", () => {
+		test( "should return undefined for an item that doesn't exist", () => {
 			db.one = 1;
 			localForage.getItem( 'two' ).then( value => {
 				expect( value ).to.be.undefined;
@@ -106,13 +106,13 @@ describe( 'localforage-bypass', () => {
 	} );
 
 	describe( 'setItem', () => {
-		it( 'should set an item', () => {
+		test( 'should set an item', () => {
 			localForage.setItem( 'abc', 123 ).then( () => {
 				expect( db.abc ).to.equal( 123 );
 			} );
 		} );
 
-		it( 'should overwrite an item', () => {
+		test( 'should overwrite an item', () => {
 			db.abc = 'not a number';
 			localForage.setItem( 'abc', 123 ).then( () => {
 				expect( db.abc ).to.equal( 123 );
@@ -121,7 +121,7 @@ describe( 'localforage-bypass', () => {
 	} );
 
 	describe( 'removeItem', () => {
-		it( 'should remove an item', () => {
+		test( 'should remove an item', () => {
 			db.one = 1;
 			db.two = 2;
 			db.three = 3;
@@ -130,7 +130,7 @@ describe( 'localforage-bypass', () => {
 			} );
 		} );
 
-		it( "should silently fail to remove item that doesn't exist", () => {
+		test( "should silently fail to remove item that doesn't exist", () => {
 			db.one = 1;
 			db.two = 2;
 			db.three = 3;

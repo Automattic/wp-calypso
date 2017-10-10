@@ -37,7 +37,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchShippingZones( siteId )( dispatch, getState );
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with shipping zone information when request completes', () => {
+		test( 'should dispatch a success action with shipping zone information when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchShippingZones( siteId )( dispatch, getState );
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if shipping zones are already loading for this site', () => {
+		test( 'should not dispatch if shipping zones are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {

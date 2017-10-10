@@ -23,7 +23,7 @@ jest.mock( 'lib/user', () => () => {
 } );
 
 describe( 'index', () => {
-	it( 'should not have overlapping step/flow names', () => {
+	test( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 
 		if ( ! isEmpty( overlappingNames ) ) {

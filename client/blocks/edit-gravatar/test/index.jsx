@@ -23,7 +23,7 @@ jest.mock( 'lib/oauth-token', () => ( {
 } ) );
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'EditGravatar', function() {
+describe( 'EditGravatar', () => {
 	let EditGravatar, FilePicker, Gravatar, ImageEditor, VerifyEmailDialog, DropZone, sandbox;
 	const user = {
 		email_verified: false,
@@ -37,7 +37,7 @@ describe( 'EditGravatar', function() {
 		};
 	} );
 
-	before( function() {
+	beforeAll( function() {
 		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;
@@ -47,25 +47,25 @@ describe( 'EditGravatar', function() {
 	} );
 
 	describe( 'component rendering', () => {
-		it( 'displays a Gravatar', () => {
+		test( 'displays a Gravatar', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( Gravatar ).length ).to.equal( 1 );
 		} );
 
-		it( 'contains a file picker that accepts images', () => {
+		test( 'contains a file picker that accepts images', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			const filePicker = wrapper.find( FilePicker );
 			expect( filePicker.length ).to.equal( 1 );
 			expect( filePicker.prop( 'accept' ) ).to.equal( 'image/*' );
 		} );
 
-		it( 'does not display the image editor by default', () => {
+		test( 'does not display the image editor by default', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
 		} );
 
 		describe( 'drag and drop', () => {
-			it( 'does not contain a drop zone for unverified users', () => {
+			test( 'does not contain a drop zone for unverified users', () => {
 				const wrapper = shallow(
 					<EditGravatar
 						translate={ noop }
@@ -77,7 +77,7 @@ describe( 'EditGravatar', function() {
 				expect( wrapper.find( DropZone ) ).to.have.length( 0 );
 			} );
 
-			it( 'contains a drop zone for verified users', () => {
+			test( 'contains a drop zone for verified users', () => {
 				const wrapper = shallow(
 					<EditGravatar
 						translate={ noop }
@@ -93,7 +93,7 @@ describe( 'EditGravatar', function() {
 
 	describe( 'getting a file from user', () => {
 		describe( 'accepted file type', () => {
-			it( 'displays the image editor with square allowed aspect ratio', () => {
+			test( 'displays the image editor with square allowed aspect ratio', () => {
 				const wrapper = shallow(
 					<EditGravatar translate={ noop } user={ user } recordReceiveImageEvent={ noop } />
 				);
@@ -114,7 +114,7 @@ describe( 'EditGravatar', function() {
 		} );
 
 		describe( 'bad file type', () => {
-			it( 'does not display editor, and calls error action creator', () => {
+			test( 'does not display editor, and calls error action creator', () => {
 				const receiveGravatarImageFailedSpy = sandbox.spy();
 				const wrapper = shallow(
 					<EditGravatar
@@ -148,7 +148,7 @@ describe( 'EditGravatar', function() {
 			},
 		];
 
-		it( 'given no error, hides image editor and calls upload gravatar action creator', () => {
+		test( 'given no error, hides image editor and calls upload gravatar action creator', () => {
 			const receiveGravatarImageFailedSpy = sandbox.spy();
 			const uploadGravatarSpy = sandbox.spy();
 			const wrapper = shallow(
@@ -170,7 +170,7 @@ describe( 'EditGravatar', function() {
 			expect( receiveGravatarImageFailedSpy.callCount ).to.equal( 0 );
 		} );
 
-		it( 'given an error, hides image editor and calls error notice action creator', () => {
+		test( 'given an error, hides image editor and calls error notice action creator', () => {
 			const error = new Error();
 			const receiveGravatarImageFailedSpy = sandbox.spy();
 			const uploadGravatarSpy = sandbox.spy();
@@ -195,7 +195,7 @@ describe( 'EditGravatar', function() {
 	} );
 
 	describe( 'unverified user', () => {
-		it( 'shows email verification dialog when clicked', () => {
+		test( 'shows email verification dialog when clicked', () => {
 			const wrapper = shallow(
 				<EditGravatar translate={ noop } user={ user } recordClickButtonEvent={ noop } />
 			);

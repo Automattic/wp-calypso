@@ -23,7 +23,7 @@ describe( 'wpcom-api', () => {
 
 	describe( 'user settings request', () => {
 		describe( '#requestUserSettings', () => {
-			it( 'should dispatch HTTP GET request to me/settings endpoint', () => {
+			test( 'should dispatch HTTP GET request to me/settings endpoint', () => {
 				const action = { type: 'DUMMY' };
 
 				settingsModule.requestUserSettings( { dispatch }, action );
@@ -43,7 +43,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#storeFetchedUserSettings', () => {
-			it( 'should dispatch user settings update', () => {
+			test( 'should dispatch user settings update', () => {
 				const action = { type: 'DUMMY' };
 
 				settingsModule.storeFetchedUserSettings( { dispatch }, action, {
@@ -58,7 +58,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
+			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const action = { type: 'DUMMY' };
 
 				settingsModule.storeFetchedUserSettings( { dispatch }, action, {
@@ -80,7 +80,7 @@ describe( 'wpcom-api', () => {
 
 	describe( 'user settings save', () => {
 		describe( '#saveUserSettings', () => {
-			it( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
+			test( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
 				const getState = () => ( {
 					userSettings: {
 						settings: { foo: 'bar' },
@@ -105,7 +105,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
+			test( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
 				const getState = () => ( {} );
 				const action = {
 					type: 'DUMMY',
@@ -128,7 +128,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
+			test( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
 				const getState = () => ( {
 					userSettings: {
 						settings: {},
@@ -144,7 +144,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#finishUserSettingsSave', () => {
-			it( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
+			test( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
 				const action = { type: 'DUMMY' };
 
 				settingsModule.finishUserSettingsSave( { dispatch }, action, {
@@ -160,7 +160,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings() );
 			} );
 
-			it( 'should dispatch user settings update and clear only one unsaved setting on partial save', () => {
+			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', () => {
 				const data = {
 					language: 'qix',
 				};
@@ -177,7 +177,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith( clearUnsavedUserSettings( [ 'language' ] ) );
 			} );
 
-			it( 'should decode HTML entities returned in some fields of HTTP response', () => {
+			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const action = { type: 'DUMMY' };
 
 				settingsModule.finishUserSettingsSave( { dispatch }, action, {

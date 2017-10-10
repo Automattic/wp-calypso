@@ -24,25 +24,25 @@ jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
 jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
-describe( 'PluginAutoupdateToggle', function() {
+describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
 		translate: spy(),
 	};
 
-	afterEach( function() {
+	afterEach( () => {
 		mockedActions.togglePluginAutoUpdate.reset();
 		mockedProps.recordGoogleEvent.reset();
 	} );
 
-	it( 'should render the component', function() {
+	test( 'should render the component', () => {
 		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
 		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 	} );
 
-	it( 'should register an event when the subcomponent action is executed', function() {
+	test( 'should register an event when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );
@@ -51,7 +51,7 @@ describe( 'PluginAutoupdateToggle', function() {
 		expect( mockedProps.recordTracksEvent.called ).to.equal( true );
 	} );
 
-	it( 'should call an action when the subcomponent action is executed', function() {
+	test( 'should call an action when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );

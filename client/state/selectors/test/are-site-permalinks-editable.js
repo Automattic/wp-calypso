@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { areSitePermalinksEditable } from '../';
 
 describe( 'areSitePermalinksEditable()', () => {
-	it( 'should return false if site ID is not tracked', () => {
+	test( 'should return false if site ID is not tracked', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {
@@ -24,7 +24,7 @@ describe( 'areSitePermalinksEditable()', () => {
 		expect( permalinksEditable ).to.be.false;
 	} );
 
-	it( 'should return true if the permalinks structure contains postname', () => {
+	test( 'should return true if the permalinks structure contains postname', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {
@@ -44,7 +44,7 @@ describe( 'areSitePermalinksEditable()', () => {
 		expect( permalinksEditable ).to.be.true;
 	} );
 
-	it( 'should return false if the permalinks structure does not contain postname', () => {
+	test( 'should return false if the permalinks structure does not contain postname', () => {
 		const permalinksEditable = areSitePermalinksEditable(
 			{
 				sites: {

@@ -40,27 +40,27 @@ describe( 'ticket-support/configuration/selectors', () => {
 	};
 
 	describe( '#isTicketSupportEligible', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			assert.isFalse( isTicketSupportEligible( uninitState ) );
 		} );
 
-		it( 'should return true', () => {
+		test( 'should return true', () => {
 			assert.isTrue( isTicketSupportEligible( initedState ) );
 		} );
 	} );
 
 	describe( '#isTicketSupportConfigurationReady', () => {
-		it( 'should return false', () => {
+		test( 'should return false', () => {
 			assert.isFalse( isTicketSupportConfigurationReady( uninitState ) );
 		} );
 
-		it( 'should return true', () => {
+		test( 'should return true', () => {
 			assert.isTrue( isTicketSupportConfigurationReady( initedState ) );
 		} );
 	} );
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
-		it( 'should return true', () => {
+		test( 'should return true', () => {
 			assert.isTrue(
 				isRequestingTicketSupportConfiguration( {
 					help: {
@@ -74,7 +74,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 	} );
 
 	describe( '#getTicketSupportRequestError', () => {
-		it( 'should return the error object', () => {
+		test( 'should return the error object', () => {
 			const errorState = {
 				help: {
 					ticket: {

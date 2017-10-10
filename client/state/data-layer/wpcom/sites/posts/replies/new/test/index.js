@@ -19,7 +19,7 @@ describe( '#writePostComment()', () => {
 		commentText: 'comment text',
 	};
 
-	it( 'should dispatch a http request action to the new post replies endpoint', () => {
+	test( 'should dispatch a http request action to the new post replies endpoint', () => {
 		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 

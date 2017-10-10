@@ -16,7 +16,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( 'wpcom-api', () => {
 	describe( 'user devices', () => {
 		describe( '#requestUserDevices', () => {
-			it( 'should dispatch HTTP request to the users devices endpoint', () => {
+			test( 'should dispatch HTTP request to the users devices endpoint', () => {
 				const dispatch = spy();
 
 				requestUserDevices( { dispatch } );
@@ -33,7 +33,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#handleSuccess', () => {
-			it( 'should dispatch user devices updates', () => {
+			test( 'should dispatch user devices updates', () => {
 				const devices = [
 					{ device_id: 1, device_name: 'Mobile Phone' },
 					{ device_id: 2, device_name: 'Tablet' },
@@ -54,7 +54,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#handleError', () => {
-			it( 'should dispatch error notice', () => {
+			test( 'should dispatch error notice', () => {
 				const dispatch = spy();
 
 				handleError( { dispatch } );

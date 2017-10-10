@@ -12,7 +12,7 @@ import { isRequestingJetpackJumpstartStatus } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-jumpstart';
 
 describe( 'isRequestingJetpackJumpstartStatus()', () => {
-	it( 'should return true if the jumpstart status is being fetched', () => {
+	test( 'should return true if the jumpstart status is being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
@@ -25,7 +25,7 @@ describe( 'isRequestingJetpackJumpstartStatus()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the jumpstart status is not being fetched', () => {
+	test( 'should return false if the jumpstart status is not being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
@@ -38,7 +38,7 @@ describe( 'isRequestingJetpackJumpstartStatus()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the site is not known yet', () => {
+	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {

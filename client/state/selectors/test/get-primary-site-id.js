@@ -11,14 +11,14 @@ import { expect } from 'chai';
 import { getPrimarySiteId } from '../';
 
 describe( 'getPrimarySiteId()', () => {
-	it( 'should return null if there is no current user', () => {
+	test( 'should return null if there is no current user', () => {
 		const siteId = getPrimarySiteId( {
 			currentUser: {},
 		} );
 		expect( siteId ).to.be.null;
 	} );
 
-	it( "should return current user's primary site's ID", () => {
+	test( "should return current user's primary site's ID", () => {
 		const siteId = getPrimarySiteId( {
 			currentUser: {
 				id: 12345678,

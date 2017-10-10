@@ -52,7 +52,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receivePost()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const post = { ID: 841, title: 'Hello World' };
 			const action = receivePost( post );
 
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receivePosts()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const posts = [ { ID: 841, title: 'Hello World' } ];
 			const action = receivePosts( posts );
 
@@ -76,7 +76,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePostSuccess()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const savedPost = { ID: 841, title: 'Hello World' };
 			const attributes = { status: 'draft' };
 			const action = savePostSuccess( 10, 841, savedPost, attributes );
@@ -113,7 +113,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSitePosts( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', () => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -132,7 +132,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts posts request success action when request completes', () => {
+		test( 'should dispatch posts posts request success action when request completes', () => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
@@ -144,7 +144,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts request success action with query results', () => {
+		test( 'should dispatch posts request success action with query results', () => {
 			return requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
@@ -156,7 +156,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestSitePosts( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_FAILURE,
@@ -179,7 +179,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', () => {
 			return requestPosts()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -202,7 +202,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
+		test( 'should dispatch request action when thunk triggered', () => {
 			requestSitePost( 2916284, 413 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -212,7 +212,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', () => {
 			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -221,7 +221,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch posts posts request success action when request completes', () => {
+		test( 'should dispatch posts posts request success action when request completes', () => {
 			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_SUCCESS,
@@ -231,7 +231,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestSitePost( 2916284, 420 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_FAILURE,
@@ -244,7 +244,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#editPost()', () => {
-		it( 'should return an action object for a new post', () => {
+		test( 'should return an action object for a new post', () => {
 			const action = editPost(
 				2916284,
 				null,
@@ -262,7 +262,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object for an existing post', () => {
+		test( 'should return an action object for an existing post', () => {
 			const action = editPost( 2916284, 413, {
 				title: 'Hello World',
 			} );
@@ -306,7 +306,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch save action when thunk triggered for new post', () => {
+		test( 'should dispatch save action when thunk triggered for new post', () => {
 			savePost( 2916284, null, { title: 'Hello World' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -319,7 +319,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post save save success action when request completes for new post', () => {
+		test( 'should dispatch post save save success action when request completes for new post', () => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -334,7 +334,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch received post action when request completes for new post', () => {
+		test( 'should dispatch received post action when request completes for new post', () => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -348,7 +348,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch save action when thunk triggered for existing post', () => {
+		test( 'should dispatch save action when thunk triggered for existing post', () => {
 			savePost( 2916284, 13640, { title: 'Updated' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -361,7 +361,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post save save success action when request completes for existing post', () => {
+		test( 'should dispatch post save save success action when request completes for existing post', () => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -376,7 +376,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch received post action when request completes for existing post', () => {
+		test( 'should dispatch received post action when request completes for existing post', () => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -390,7 +390,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch failure action when error occurs while saving new post', () => {
+		test( 'should dispatch failure action when error occurs while saving new post', () => {
 			return savePost( 77203074, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
@@ -401,7 +401,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch failure action when error occurs while saving existing post', () => {
+		test( 'should dispatch failure action when error occurs while saving existing post', () => {
 			return savePost( 77203074, 102, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
@@ -414,7 +414,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'trashPost()', () => {
-		it( 'should dispatch save request with trash status payload', () => {
+		test( 'should dispatch save request with trash status payload', () => {
 			trashPost( 2916284, 13640 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -444,7 +444,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
+		test( 'should dispatch request action when thunk triggered', () => {
 			deletePost( 2916284, 13640 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -454,7 +454,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post delete request success action when request completes', () => {
+		test( 'should dispatch post delete request success action when request completes', () => {
 			return deletePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_SUCCESS,
@@ -464,7 +464,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post delete request failure action when request fails', () => {
+		test( 'should dispatch post delete request failure action when request fails', () => {
 			return deletePost( 77203074, 102 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_FAILURE,
@@ -492,7 +492,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
+		test( 'should dispatch request action when thunk triggered', () => {
 			restorePost( 2916284, 13640 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -502,7 +502,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch the received post when request completes successfully', () => {
+		test( 'should dispatch the received post when request completes successfully', () => {
 			return restorePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -511,7 +511,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post restore request success action when request completes', () => {
+		test( 'should dispatch post restore request success action when request completes', () => {
 			return restorePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_SUCCESS,
@@ -521,7 +521,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch post restore request failure action when request fails', () => {
+		test( 'should dispatch post restore request failure action when request fails', () => {
 			return restorePost( 77203074, 102 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_FAILURE,
@@ -556,7 +556,7 @@ describe( 'actions', () => {
 			};
 		};
 
-		it( 'should dispatch a EDIT_POST event with the new term', () => {
+		test( 'should dispatch a EDIT_POST event with the new term', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 841 )(
 				spy,
 				getState
@@ -578,7 +578,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch anything if no post', () => {
+		test( 'should not dispatch anything if no post', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 3434 )(
 				spy,
 				getState
@@ -586,12 +586,12 @@ describe( 'actions', () => {
 			expect( spy ).not.to.have.been.called;
 		} );
 
-		it( 'should not dispatch anything if no term', () => {
+		test( 'should not dispatch anything if no term', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', null, 841 )( spy, getState );
 			expect( spy ).not.to.have.been.called;
 		} );
 
-		it( 'should not dispatch anything if the term is temporary', () => {
+		test( 'should not dispatch anything if the term is temporary', () => {
 			addTermForPost( 2916284, 'jetpack-portfolio', { id: 'temporary' }, 841 )( spy, getState );
 			expect( spy ).not.to.have.been.called;
 		} );

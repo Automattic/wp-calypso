@@ -49,16 +49,16 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( vouchersReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( itemsReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index items state by siteId', () => {
+		test( 'should index items state by siteId', () => {
 			const initialState = undefined;
 			const action = {
 				type: SITE_VOUCHERS_RECEIVE,
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should override vouchers for same site', () => {
+		test( 'should override vouchers for same site', () => {
 			const initialState = {
 				[ firstSiteId ]: oneOfOurServiceTypesArray,
 			};
@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( initialState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should accumulate vouchers for different sites', () => {
+		test( 'should accumulate vouchers for different sites', () => {
 			const initialState = {
 				[ firstSiteId ]: firstAdCredits,
 			};
@@ -116,7 +116,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should add SERVICE_TYPE voucher - initial state: undefined', () => {
+		test( 'should add SERVICE_TYPE voucher - initial state: undefined', () => {
 			const initialState = undefined;
 			const action = {
 				type: SITE_VOUCHERS_ASSIGN_RECEIVE,
@@ -136,7 +136,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should accumulate SERVICE_TYPE voucher', () => {
+		test( 'should accumulate SERVICE_TYPE voucher', () => {
 			const initialState = {
 				[ firstSiteId ]: {
 					[ oneOfOurServiceTypes ]: [ firstVoucher ],
@@ -162,7 +162,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = deepFreeze( {
 				[ firstSiteId ]: firstAdCredits,
 				[ secondSiteId ]: secondAdCredits,
@@ -170,7 +170,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( state, { type: 'SERIALIZE' } ) ).to.eql( state );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const state = deepFreeze( {
 				[ firstSiteId ]: firstAdCredits,
 				[ secondSiteId ]: secondAdCredits,
@@ -178,7 +178,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( state );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = deepFreeze( {
 				[ firstSiteId ]: [ { voucher: 1234567890 } ],
 			} );
@@ -187,12 +187,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( requestReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
 		describe( 'getAll', () => {
-			it( 'should set state by siteId', () => {
+			test( 'should set state by siteId', () => {
 				const initialState = undefined;
 				const action = {
 					type: SITE_VOUCHERS_REQUEST,
@@ -211,7 +211,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should accumulate state by siteId', () => {
+			test( 'should accumulate state by siteId', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -240,7 +240,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should update state by siteId on SUCCESS', () => {
+			test( 'should update state by siteId on SUCCESS', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: true,
@@ -265,7 +265,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should update state by siteId on FAILURE', () => {
+			test( 'should update state by siteId on FAILURE', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: true,
@@ -290,7 +290,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should accumulate state by siteId on FAILURE', () => {
+			test( 'should accumulate state by siteId on FAILURE', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -321,7 +321,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'assign', () => {
-			it( 'should set state by siteId', () => {
+			test( 'should set state by siteId', () => {
 				const initialState = undefined;
 				const action = {
 					type: SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -340,7 +340,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should accumulate state by siteId', () => {
+			test( 'should accumulate state by siteId', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -369,7 +369,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should update state by siteId on SUCCESS', () => {
+			test( 'should update state by siteId on SUCCESS', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -394,7 +394,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should update state by siteId on FAILURE', () => {
+			test( 'should update state by siteId on FAILURE', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -419,7 +419,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should accumulate state by siteId on FAILURE', () => {
+			test( 'should accumulate state by siteId on FAILURE', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: false,
@@ -451,12 +451,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#errors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( errorsReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
 		describe( 'getAll', () => {
-			it( 'should clean state by siteId on REQUEST', () => {
+			test( 'should clean state by siteId on REQUEST', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: errorObject.message,
@@ -481,7 +481,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should clean state by siteId on SUCCESS', () => {
+			test( 'should clean state by siteId on SUCCESS', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: errorObject.message,
@@ -506,7 +506,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should set state by siteId on FAILURE', () => {
+			test( 'should set state by siteId on FAILURE', () => {
 				const initialState = undefined;
 				const action = {
 					type: SITE_VOUCHERS_REQUEST_FAILURE,
@@ -528,7 +528,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'assign', () => {
-			it( 'should clean state by siteId on REQUEST', () => {
+			test( 'should clean state by siteId on REQUEST', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: null,
@@ -553,7 +553,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should clean state by siteId on SUCCESS', () => {
+			test( 'should clean state by siteId on SUCCESS', () => {
 				const initialState = {
 					[ firstSiteId ]: {
 						getAll: null,
@@ -578,7 +578,7 @@ describe( 'reducer', () => {
 				expect( newState ).to.eql( expectedState );
 			} );
 
-			it( 'should set state by siteId on FAILURE', () => {
+			test( 'should set state by siteId on FAILURE', () => {
 				const initialState = undefined;
 				const action = {
 					type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
