@@ -144,16 +144,16 @@ describe( 'getOrderTotalTax', () => {
 		expect( getOrderTotalTax ).to.be.a( 'function' );
 	} );
 
-	test( 'should get the correct tax amount', () => {
-		expect( getOrderTotalTax( orderWithTax ) ).to.eql( 7.1738 );
+	it( 'should get the correct tax amount', () => {
+		expect( getOrderTotalTax( orderWithTax ) ).to.eql( 7.3 );
 	} );
 
 	test( 'should return 0 if there is no tax', () => {
 		expect( getOrderTotalTax( orderWithoutTax ) ).to.eql( 0 );
 	} );
 
-	test( 'should get the correct tax amount with multiple coupons', () => {
-		expect( getOrderTotalTax( orderWithCoupons ) ).to.eql( 4.4243 );
+	it( 'should get the correct tax amount with multiple coupons', () => {
+		expect( getOrderTotalTax( orderWithCoupons ) ).to.eql( 5.3618 );
 	} );
 } );
 

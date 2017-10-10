@@ -83,7 +83,8 @@ export function getOrderSubtotalTax( order ) {
 export function getOrderTotalTax( order ) {
 	const subtotal = getOrderSubtotalTax( order );
 	const shipping = getOrderShippingTax( order );
-	return subtotal + shipping;
+	const fees = getOrderFeeTotalTax( order );
+	return subtotal + shipping + fees;
 }
 
 /**
