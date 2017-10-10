@@ -41,11 +41,15 @@
 
 .mce-container .wpcom-insert-menu__menu-label {
 	color: darken( $gray, 20% );
-	display: inline-block;
+	display: none;
 	font-family: $sans;
 	font-size: 13px;
 	margin-left: 4px;
 	margin-top: 3px;
+
+	@include breakpoint( '>660px' ) {
+		display: inline-block;
+	}
 }
 
 .wpcom-insert-menu__menu-icon {
