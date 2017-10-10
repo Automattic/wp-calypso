@@ -18,7 +18,7 @@ import config from 'config';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
-import { hasActiveHappychatSession } from 'state/happychat/selectors';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';

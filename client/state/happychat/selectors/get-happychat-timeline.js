@@ -17,6 +17,6 @@ import createSelector from 'lib/create-selector';
  * @return [{Object}] events - an array of timeline chat events
  */
 export default createSelector(
-	state => state.happychat.timeline,
-	state => map( state.happychat.timeline, 'id' )
+	state => state.happychat.chat.timeline,
+	state => map( state.happychat.chat.timeline, 'id' )
 );

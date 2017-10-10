@@ -39,9 +39,10 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
-import { receiveChatTranscript } from './actions';
-import { wasHappychatRecentlyActive, isHappychatChatAssigned, getGroups, } from './selectors';
+import { receiveChatTranscript } from 'state/happychat/connection/actions';
+import { wasHappychatRecentlyActive, getGroups } from './selectors';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
+import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
