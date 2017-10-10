@@ -26,7 +26,7 @@ class DisconnectSurvey extends Component {
 		return <Card className="disconnect-site__question">{ 'follow-up' }</Card>;
 	}
 
-	logSelection = option => {
+	handleAnswerClick = option => {
 		this.setState( {
 			reasonSelected: option.value,
 			renderInitial: false,
@@ -65,7 +65,7 @@ class DisconnectSurvey extends Component {
 					<CompactCard
 						href="#"
 						key={ value }
-						onClick={ this.logSelection }
+						onClick={ this.handleAnswerClick }
 						className="disconnect-site__survey-one"
 					>
 						{ label }
