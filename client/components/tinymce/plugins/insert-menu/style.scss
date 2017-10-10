@@ -5,23 +5,23 @@
 		height: 36px;
 		margin: 0;
 
-		&:hover .mce-open i.mce-caret,
-		&:focus .mce-open i.mce-caret {
+
+
+		&:hover .wpcom-insert-menu__menu-label,
+		&:focus .wpcom-insert-menu__menu-label {
 			color: lighten( $gray, 10% );
 		}
 
-		&:hover .gridicons-add-outline,
-		&:focus .gridicons-add-outline {
+		&:hover.wpcom-insert-menu__menu-icon,
+		&:focus.wpcom-insert-menu__menu-icon {
 			fill: lighten( $gray, 10% );
 		}
 
-		.mce-open:hover i.mce-caret,
-		.mce-open:focus i.mce-caret {
+
+		.wpcom-insert-menu__menu-label:hover {
 			color: $gray-dark;
 		}
-
-		.gridicons-add-outline:hover,
-		.gridicons-add-outline:focus {
+		.wpcom-insert-menu__menu-icon:hover {
 			fill: $gray-dark;
 		}
 	}
