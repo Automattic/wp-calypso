@@ -19,6 +19,7 @@ import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { getRequestedRewind } from 'state/selectors';
 
 /**
  * Module constants
@@ -48,8 +49,30 @@ class ActivityLogDay extends Component {
 		isRewindActive: true,
 	};
 
+	state = {
+		rewindHere: false,
+		dayExpanded: false,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		// if Rewind dialog is being displayed and it's then canceled or a different Rewind button is clicked
+		if (
+			this.state.rewindHere &&
+			( isEmpty( nextProps.requestedRewind ) ||
+				this.props.requestedRewind !== nextProps.requestedRewind )
+		) {
+			this.setState( {
+				rewindHere: false,
+			} );
+		}
+	}
+
 	handleClickRestore = event => {
 		event.stopPropagation();
+		this.setState( {
+			rewindHere: true,
+			dayExpanded: true,
+		} );
 		const { logs, requestRestore } = this.props;
 		const lastLogId = get( logs, [ 0, 'activityId' ], null );
 		if ( lastLogId ) {
@@ -64,6 +87,16 @@ class ActivityLogDay extends Component {
 			log_count: logs.length,
 			ts_end_site_day: tsEndOfSiteDay,
 			utc_date: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
+		} );
+
+		this.setState( {
+			dayExpanded: true,
+		} );
+	};
+
+	handleCloseDay = () => {
+		this.setState( {
+			dayExpanded: false,
 		} );
 	};
 
@@ -84,7 +117,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ disableRestore || ! this.props.isRewindActive }
+				disabled={ disableRestore || ! this.props.isRewindActive || this.state.rewindHere }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -146,16 +179,18 @@ class ActivityLogDay extends Component {
 			siteId,
 		} = this.props;
 
-		const hasLogs = ! isEmpty( logs );
+		const hasLogs = ! isEmpty( logs ),
+			dayExpanded = this.state.dayExpanded ? true : this.state.rewindHere;
 
 		return (
 			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
 				<FoldableCard
 					clickableHeader={ hasLogs }
-					expanded={ hasLogs && isToday }
+					expanded={ hasLogs && ( isToday || dayExpanded ) }
 					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
+					onClose={ this.handleCloseDay }
 					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 				>
 					{ hasLogs &&
@@ -178,10 +213,11 @@ class ActivityLogDay extends Component {
 }
 
 export default connect(
-	( state, { tsEndOfSiteDay } ) => {
+	( state, { tsEndOfSiteDay, siteId } ) => {
 		const now = Date.now();
 		return {
 			isToday: now <= tsEndOfSiteDay && tsEndOfSiteDay - DAY_IN_MILLISECONDS <= now,
+			requestedRewind: getRequestedRewind( state, siteId ),
 		};
 	},
 	{
