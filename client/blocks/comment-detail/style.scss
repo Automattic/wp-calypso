@@ -657,6 +657,11 @@
 		}
 	}
 
+	.comment-detail__comment-preview {
+		height: 56px;
+		max-height: 56px;
+	}
+
 	.comment-detail__header.is-preview {
 		cursor: default;
 		@include breakpoint( "<960px" ) {
