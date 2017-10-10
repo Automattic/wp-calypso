@@ -73,7 +73,7 @@ export const CommentDetailActions = ( {
 					} ) }
 					onClick={ toggleApprove }
 				>
-					<Gridicon icon={ isApproved ? 'checkmark-circle' : 'checkmark' } />
+					<Gridicon icon="checkmark-circle" />
 					{ compact || (
 						<span>{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 					) }
