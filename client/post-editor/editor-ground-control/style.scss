@@ -49,7 +49,6 @@
 	display: flex;
 	min-height: 20px;
 	justify-content: space-between;
-	margin: 0 auto 0 0;
 	position: relative;
 	border-left: 1px solid lighten( $gray, 25% );
 	padding-left: 16px;
@@ -60,6 +59,7 @@
 }
 
 .editor-ground-control__action-buttons {
+	margin-left: auto;
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
