@@ -25,9 +25,12 @@ import FormSelect from 'components/forms/form-select';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
+
+/* eslint-disable react/no-deprecated */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 module.exports = protectForm(
 	localize(
@@ -55,6 +58,7 @@ module.exports = protectForm(
 			},
 
 			render() {
+				/* eslint-disable max-len */
 				return (
 					<Main className="notifications-settings">
 						<MeSidebarNavigation />

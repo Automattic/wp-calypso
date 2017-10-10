@@ -19,12 +19,16 @@ import Notice from 'components/notice';
 import formBase from 'me/form-base';
 import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'lib/protect-form';
 import { forSms } from 'lib/countries-list';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
+
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable react/no-deprecated */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 module.exports = protectForm(
 	localize(
@@ -54,8 +58,8 @@ module.exports = protectForm(
 
 			getInitialState: function() {
 				let phoneNumber = null;
-				let storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
-				let storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
+				const storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
+				const storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
 				if ( storedCountry && storedNumber ) {
 					phoneNumber = {
 						countryCode: storedCountry,
@@ -104,13 +108,11 @@ module.exports = protectForm(
 	 * manage Notices ourselves
 	 */
 			submitSMSSettings: function() {
-				var phoneNumber;
-
 				if ( ! this.refs.phoneInput ) {
 					return;
 				}
 
-				phoneNumber = this.state.phoneNumber;
+				const phoneNumber = this.state.phoneNumber;
 
 				if ( ! phoneNumber.isValid ) {
 					this.setState( { lastError: phoneNumber.validation } );
@@ -158,7 +160,7 @@ module.exports = protectForm(
 			},
 
 			possiblyRenderError: function() {
-				var errorMessage;
+				let errorMessage;
 
 				if ( ! this.state.lastError ) {
 					return null;
@@ -178,7 +180,7 @@ module.exports = protectForm(
 			},
 
 			render: function() {
-				var savingLabel = this.props.translate( 'Saving…' );
+				const savingLabel = this.props.translate( 'Saving…' );
 
 				return (
 					<div className="security-2fa-sms-settings__container">

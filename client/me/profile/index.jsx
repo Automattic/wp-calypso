@@ -25,12 +25,15 @@ import userProfileLinks from 'lib/user-profile-links';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Card from 'components/card';
-import observe from 'lib/mixins/data-observe';
+import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
+
+/* eslint-disable react/no-deprecated */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 export default protectForm(
 	localize(
