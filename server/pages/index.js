@@ -171,6 +171,9 @@ function getDefaultContext( request ) {
 		sectionCssRtl = urls.rtl;
 	}
 
+	const shouldUseSingleCDN =
+		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls(),
@@ -182,11 +185,16 @@ function getDefaultContext( request ) {
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: '//s1.wp.com/i/favicon.ico',
+		faviconURL: shouldUseSingleCDN ? '//s0.wp.com/i/favicon.ico' : '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
+		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
+		shouldUsePreconnectGoogle:
+			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
+		shouldUsePreload: config.isEnabled( 'try/preload' ) && !! request.query.enablePreload,
+		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
 		sectionCssRtl,
