@@ -44,6 +44,7 @@ export const getPrintURL = ( siteId, paperSize, labels ) => {
 		// send params as a CSV to avoid conflicts with some plugins out there (woocommerce-services #1111)
 		label_id_csv: filter( map( labels, 'labelId' ) ).join( ',' ),
 		caption_csv: filter( map( labels, ( l ) => ( l.caption ? encodeURIComponent( l.caption ) : null ) ) ).join( ',' ),
+		json: true,
 	};
 	return api.url.labelsPrint() + '?' + querystring.stringify( params );
 };
