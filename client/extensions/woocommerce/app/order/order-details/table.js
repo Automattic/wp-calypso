@@ -6,13 +6,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { sum } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
-import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -28,8 +26,6 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
-		isEditable: PropTypes.bool,
-		onChange: PropTypes.func,
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
 			discount_total: PropTypes.string.isRequired,
@@ -42,16 +38,8 @@ class OrderDetailsTable extends Component {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ),
+		translate: PropTypes.func,
 	};
-
-	constructor( props ) {
-		super( props );
-		const shippingTax = getOrderShippingTax( props.order );
-		this.state = {
-			quantities: [],
-			shippingTotal: parseFloat( shippingTax ) + parseFloat( props.order.shipping_total ),
-		};
-	}
 
 	shouldShowTax = () => {
 		const { order } = this.props;
@@ -60,43 +48,6 @@ class OrderDetailsTable extends Component {
 		}
 		// If there are any items in `tax_lines`, we have taxes on this order.
 		return !! order.tax_lines.length;
-	};
-
-	recalculateRefund = () => {
-		const { order } = this.props;
-		if ( ! order ) {
-			return 0;
-		}
-		const subtotal = sum(
-			this.state.quantities.map( ( q, i ) => {
-				if ( ! order.line_items[ i ] ) {
-					return 0;
-				}
-
-				const price = parseFloat( order.line_items[ i ].price );
-				if ( order.prices_include_tax ) {
-					return price * q;
-				}
-
-				const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
-				return ( price + tax ) * q;
-			} )
-		);
-		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
-		this.props.onChange( total );
-	};
-
-	onChange = event => {
-		if ( 'shipping_total' === event.target.name ) {
-			const shippingTotal = event.target.value.replace( /[^0-9,.]/g, '' );
-			this.setState( { shippingTotal }, this.recalculateRefund );
-		} else {
-			// Name is `quantity-x`, where x is the ID in the line_items array
-			const i = event.target.name.split( '-' )[ 1 ];
-			const newQuants = this.state.quantities;
-			newQuants[ i ] = event.target.value;
-			this.setState( { quantities: newQuants }, this.recalculateRefund );
-		}
 	};
 
 	renderTableHeader = () => {
@@ -123,7 +74,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderOrderItems = ( item, i ) => {
-		const { isEditable, order, site } = this.props;
+		const { order, site } = this.props;
 		const tax = getOrderLineItemTax( order, i );
 		return (
 			<TableRow key={ i } className="order-details__items">
@@ -139,20 +90,7 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-cost">
 					{ formatCurrency( item.price, order.currency ) }
 				</TableItem>
-				<TableItem className="order-details__item-quantity">
-					{ isEditable ? (
-						<FormTextInput
-							type="number"
-							name={ `quantity-${ i }` }
-							onChange={ this.onChange }
-							min="0"
-							max={ item.quantity }
-							value={ this.state.quantities[ i ] || 0 }
-						/>
-					) : (
-						item.quantity
-					) }
-				</TableItem>
+				<TableItem className="order-details__item-quantity">{ item.quantity }</TableItem>
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
@@ -164,7 +102,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	render() {
-		const { isEditable, order, translate } = this.props;
+		const { order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -173,7 +111,6 @@ class OrderDetailsTable extends Component {
 		const totalsClasses = classnames( {
 			'order-details__totals': true,
 			'has-taxes': showTax,
-			'is-refund-modal': isEditable,
 		} );
 		const refundValue = getOrderRefundTotal( order );
 
@@ -192,12 +129,9 @@ class OrderDetailsTable extends Component {
 						showTax={ showTax }
 					/>
 					<OrderTotalRow
-						isEditable={ isEditable }
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
-						value={ isEditable ? this.state.shippingTotal : order.shipping_total }
-						name="shipping_total"
-						onChange={ this.onChange }
+						value={ order.shipping_total }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
 					/>
