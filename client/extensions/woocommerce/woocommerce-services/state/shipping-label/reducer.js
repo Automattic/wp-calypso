@@ -728,6 +728,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY ] = ( state, 
 	}
 	return { ...state,
 		reprintDialog: {
+			labelId,
 			fileData,
 			isFetching: false,
 		},
