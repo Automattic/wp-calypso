@@ -42,7 +42,7 @@ export function normalizeRevision( revision ) {
 		] ),
 		...flow(
 			r => pick( r, [ 'title', 'content', 'excerpt' ] ),
-			r => mapValues( r, ( val = {} ) => val.rendered )
+			r => mapValues( r, ( val = {} ) => val.raw )
 		)( revision ),
 		...flow(
 			r => pick( r, [ 'date_gmt', 'modified_gmt' ] ),
@@ -103,6 +103,7 @@ export const fetchPostRevisions = ( { dispatch }, action ) => {
 				method: 'GET',
 				query: {
 					apiNamespace: 'wp/v2',
+					context: 'edit',
 				},
 			},
 			action
