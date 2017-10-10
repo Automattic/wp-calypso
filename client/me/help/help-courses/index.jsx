@@ -63,15 +63,6 @@ class Courses extends Component {
 	}
 }
 
-function mapDispatchToProps( dispatch ) {
-	// This function only adds a way of dispatching courses because we don't have another mechanism yet.
-	// Once the courses make it into the API this function should go away in preference for
-	// something linke <QueryHelpCourses />
-	return {
-		fetchCourses: () => dispatch( receiveHelpCourses( helpCourses ) ),
-	};
-}
-
 function mapStateToProps( state ) {
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
@@ -89,4 +80,9 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Courses ) );
+// This function only adds a way of dispatching courses because we don't have another mechanism yet.
+// Once the courses make it into the API this function should go away in preference for
+// something like <QueryHelpCourses />
+const fetchCourses = () => receiveHelpCourses( helpCourses );
+
+export default connect( mapStateToProps, { fetchCourses } )( localize( Courses ) );
