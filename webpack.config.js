@@ -186,7 +186,6 @@ const vendorLibs = [
 	'i18n-calypso',
 	'lodash',
 	'moment',
-	'fs',
 	'page',
 	'react',
 	'create-react-class',
@@ -197,7 +196,7 @@ const vendorLibs = [
 	'redux-thunk',
 	'store',
 	'superagent',
-	'wpcom',
+	// 'wpcom',
 ];
 
 if ( calypsoEnv === 'desktop' ) {
@@ -213,7 +212,7 @@ if ( calypsoEnv === 'desktop' ) {
 	// it extracts the "runtime" so that the frequently changing mapping doesn't break caching of the entry chunks
 	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		// new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } )
 	] );
 
