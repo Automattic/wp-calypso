@@ -598,7 +598,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 		.then( ( fileData ) => {
 			if ( 'addon' === getPDFSupport() ) {
 				// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, printUrl } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData } );
 			} else {
 				printDocument( fileData, getPDFFileName( orderId ) )
 					.then( () => {
@@ -687,8 +687,9 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	} );
 };
 
-export const confirmPrintLabel = ( orderId, siteId, url ) => ( dispatch ) => {
-	printDocument( url, getPDFFileName( orderId ) )
+export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	printDocument( shippingLabel.form.fileData, getPDFFileName( orderId ) )
 		.then( () => {
 			dispatch( exitPrintingFlow( orderId, siteId, true ) );
 			dispatch( clearAvailableRates() );
