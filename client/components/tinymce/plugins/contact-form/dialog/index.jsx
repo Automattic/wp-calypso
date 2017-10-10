@@ -126,4 +126,4 @@ export default connect( state => {
 		currentUser: getCurrentUser( state ),
 		contactForm: state.ui.editor.contactForm,
 	};
-} )( localize(ContactFormDialog) );
+} )( localize( ContactFormDialog ) );

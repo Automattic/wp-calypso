@@ -44,7 +44,7 @@ const StatsSiteOverview = React.createClass( {
 		let headerPath = siteStatsPath;
 
 		return (
-            <div>
+			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
 				<SectionHeader label={ title } href={ headerPath } />
 				<Card className="stats__overview stats-module is-site-overview">
@@ -80,7 +80,7 @@ const StatsSiteOverview = React.createClass( {
 					</StatsTabs>
 				</Card>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -98,4 +98,4 @@ export default connect( ( state, ownProps ) => {
 		siteSlug: slug,
 		query,
 	};
-} )( localize(StatsSiteOverview) );
+} )( localize( StatsSiteOverview ) );

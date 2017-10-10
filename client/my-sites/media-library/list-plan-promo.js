@@ -17,89 +17,94 @@ import { preventWidows } from 'lib/formatting';
 import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
-module.exports = localize(React.createClass( {
-	displayName: 'MediaLibraryListPlanPromo',
+module.exports = localize(
+	React.createClass( {
+		displayName: 'MediaLibraryListPlanPromo',
 
-	propTypes: {
-		site: PropTypes.object,
-		filter: PropTypes.string,
-	},
+		propTypes: {
+			site: PropTypes.object,
+			filter: PropTypes.string,
+		},
 
-	getTitle: function() {
-		switch ( this.props.filter ) {
-			case 'videos':
-				return this.props.translate( 'Upload Videos', {
-					textOnly: true,
-					context: 'Media upload plan needed',
-				} );
-
-			case 'audio':
-				return this.props.translate( 'Upload Audio', {
-					textOnly: true,
-					context: 'Media upload plan needed',
-				} );
-
-			default:
-				return this.props.translate( 'Upload Media', {
-					textOnly: true,
-					context: 'Media upload plan needed',
-				} );
-		}
-	},
-
-	getSummary: function() {
-		switch ( this.props.filter ) {
-			case 'videos':
-				return preventWidows(
-					this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+		getTitle: function() {
+			switch ( this.props.filter ) {
+				case 'videos':
+					return this.props.translate( 'Upload Videos', {
 						textOnly: true,
-						context: 'Media upgrade promo',
-					} ),
-					2
-				);
+						context: 'Media upload plan needed',
+					} );
 
-			case 'audio':
-				return preventWidows(
-					this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
+				case 'audio':
+					return this.props.translate( 'Upload Audio', {
 						textOnly: true,
-						context: 'Media upgrade promo',
-					} ),
-					2
-				);
+						context: 'Media upload plan needed',
+					} );
 
-			default:
-				return preventWidows(
-					this.props.translate( 'To upload audio and video files to your site, upgrade your plan.', {
+				default:
+					return this.props.translate( 'Upload Media', {
 						textOnly: true,
-						context: 'Media upgrade promo',
-					} ),
-					2
-				);
-		}
-	},
+						context: 'Media upload plan needed',
+					} );
+			}
+		},
 
-	viewPlansPage: function() {
-		const { slug = '' } = this.props.site;
+		getSummary: function() {
+			switch ( this.props.filter ) {
+				case 'videos':
+					return preventWidows(
+						this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+							textOnly: true,
+							context: 'Media upgrade promo',
+						} ),
+						2
+					);
 
-		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+				case 'audio':
+					return preventWidows(
+						this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
+							textOnly: true,
+							context: 'Media upgrade promo',
+						} ),
+						2
+					);
 
-		page( `/plans/${ slug }` );
-	},
+				default:
+					return preventWidows(
+						this.props.translate(
+							'To upload audio and video files to your site, upgrade your plan.',
+							{
+								textOnly: true,
+								context: 'Media upgrade promo',
+							}
+						),
+						2
+					);
+			}
+		},
 
-	render: function() {
-		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>
-				{ this.props.translate( 'See Plans' ) }
-			</Button>
-		);
+		viewPlansPage: function() {
+			const { slug = '' } = this.props.site;
 
-		return (
-			<EmptyContent
-				title={ this.getTitle() }
-				line={ this.getSummary() }
-				action={ this.props.children || action }
-				illustration={ '' }
-			/>
-		);
-	},
-} ));
+			analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+
+			page( `/plans/${ slug }` );
+		},
+
+		render: function() {
+			const action = (
+				<Button className="button is-primary" onClick={ this.viewPlansPage }>
+					{ this.props.translate( 'See Plans' ) }
+				</Button>
+			);
+
+			return (
+				<EmptyContent
+					title={ this.getTitle() }
+					line={ this.getSummary() }
+					action={ this.props.children || action }
+					illustration={ '' }
+				/>
+			);
+		},
+	} )
+);

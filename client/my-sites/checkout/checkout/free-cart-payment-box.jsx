@@ -25,7 +25,7 @@ var FreeCartPaymentBox = React.createClass( {
 		var cart = this.props.cart;
 
 		return (
-            <form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
 						{ cart.has_bundle_credit ? (
@@ -59,7 +59,7 @@ var FreeCartPaymentBox = React.createClass( {
 					/>
 				</div>
 			</form>
-        );
+		);
 	},
 
 	getProductName: function() {
@@ -79,11 +79,11 @@ var FreeCartPaymentBox = React.createClass( {
 
 	render: function() {
 		return (
-            <PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
-        );
+		);
 	},
 } );
 
-module.exports = localize(FreeCartPaymentBox);
+module.exports = localize( FreeCartPaymentBox );

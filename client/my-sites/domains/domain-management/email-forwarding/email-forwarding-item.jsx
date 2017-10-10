@@ -47,11 +47,14 @@ const EmailForwardingItem = React.createClass( {
 				);
 			} else {
 				notices.success(
-					this.props.translate( 'Yay, e-mail forwarding for %(email)s has been successfully deleted.', {
-						args: {
-							email: email,
-						},
-					} ),
+					this.props.translate(
+						'Yay, e-mail forwarding for %(email)s has been successfully deleted.',
+						{
+							args: {
+								email: email,
+							},
+						}
+					),
 					{
 						duration: 5000,
 					}
@@ -98,7 +101,7 @@ const EmailForwardingItem = React.createClass( {
 
 	render: function() {
 		return (
-            <li>
+			<li>
 				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
 					<Gridicon icon="trash" />
 				</Button>
@@ -108,7 +111,9 @@ const EmailForwardingItem = React.createClass( {
 						disabled={ this.props.emailData.temporary }
 						borderless
 						onClick={ this.resendVerificationEmail }
-						title={ this.props.translate( 'Resend Verification Email', { context: 'Email Forwarding' } ) }
+						title={ this.props.translate( 'Resend Verification Email', {
+							context: 'Email Forwarding',
+						} ) }
 					>
 						<Gridicon icon="mail" />
 					</Button>
@@ -131,10 +136,10 @@ const EmailForwardingItem = React.createClass( {
 					) }
 				</span>
 			</li>
-        );
+		);
 	},
 } );
 
 export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
-	localize(EmailForwardingItem)
+	localize( EmailForwardingItem )
 );

@@ -92,7 +92,7 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-            <div>
+			<div>
 				<SearchCard
 					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
 					onSearch={ this.onSearch }
@@ -102,7 +102,7 @@ var TransactionsTable = React.createClass( {
 					<tbody>{ this.renderRows() }</tbody>
 				</table>
 			</div>
-        );
+		);
 	},
 
 	serviceName: function( transaction ) {
@@ -201,4 +201,4 @@ var TransactionsTable = React.createClass( {
 	},
 } );
 
-module.exports = localize(TransactionsTable);
+module.exports = localize( TransactionsTable );

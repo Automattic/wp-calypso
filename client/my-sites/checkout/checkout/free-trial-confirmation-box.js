@@ -19,7 +19,7 @@ import TermsOfService from './terms-of-service';
 const FreeTrialConfirmationBox = React.createClass( {
 	content() {
 		return (
-            <form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
 						{ this.props.translate( 'Get started with %(productName)s', {
@@ -39,7 +39,7 @@ const FreeTrialConfirmationBox = React.createClass( {
 					<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 				</div>
 			</form>
-        );
+		);
 	},
 
 	getProductName() {
@@ -53,4 +53,4 @@ const FreeTrialConfirmationBox = React.createClass( {
 	},
 } );
 
-module.exports = localize(FreeTrialConfirmationBox);
+module.exports = localize( FreeTrialConfirmationBox );

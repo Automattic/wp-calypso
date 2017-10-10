@@ -59,7 +59,7 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-            <label>
+			<label>
 				<FormCheckbox
 					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
@@ -67,7 +67,7 @@ const SharingLikeOptions = React.createClass( {
 				/>
 				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
 			</label>
-        );
+		);
 	},
 
 	renderLikesButtonField() {
@@ -76,7 +76,7 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-            <label>
+			<label>
 				<FormCheckbox
 					name="likes_enabled"
 					checked={ this.isShowingLikeButton() }
@@ -84,7 +84,7 @@ const SharingLikeOptions = React.createClass( {
 				/>
 				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
 			</label>
-        );
+		);
 	},
 
 	onChange: function( event ) {
@@ -113,14 +113,14 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-            <EditorFieldset
+			<EditorFieldset
 				className="editor-sharing__sharing-like-options"
 				legend={ this.props.translate( 'Sharing Buttons & Likes' ) }
 			>
 				{ this.renderSharingButtonField() }
 				{ this.renderLikesButtonField() }
 			</EditorFieldset>
-        );
+		);
 	},
 } );
 
@@ -132,4 +132,4 @@ export default connect( state => {
 		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
 		isNew: isEditorNewPost( state ),
 	};
-} )( localize(SharingLikeOptions) );
+} )( localize( SharingLikeOptions ) );

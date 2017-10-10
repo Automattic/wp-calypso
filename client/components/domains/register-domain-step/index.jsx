@@ -480,14 +480,18 @@ class RegisterDomainStep extends React.Component {
 				let recommendedSuggestion = null;
 
 				if ( abtest( 'recommendShortestDomain' ) === 'shortest' ) {
-					const shortestDomainBase = availableSuggestions.map( suggestion => {
-						const dotPos = suggestion.domain_name.indexOf( '.' );
-						return suggestion.domain_name.slice( 0, -1 === dotPos ? suggestion.domain_name.length : dotPos );
-					} ).reduce( ( left, right ) => left.length <= right.length ? left : right );
+					const shortestDomainBase = availableSuggestions
+						.map( suggestion => {
+							const dotPos = suggestion.domain_name.indexOf( '.' );
+							return suggestion.domain_name.slice(
+								0,
+								-1 === dotPos ? suggestion.domain_name.length : dotPos
+							);
+						} )
+						.reduce( ( left, right ) => ( left.length <= right.length ? left : right ) );
 
-					const shortestDomainBeforeTld = ( suggestion ) =>
-						( startsWith( suggestion.domain_name, `${ shortestDomainBase }.` )
-					);
+					const shortestDomainBeforeTld = suggestion =>
+						startsWith( suggestion.domain_name, `${ shortestDomainBase }.` );
 
 					recommendedSuggestion = find( availableSuggestions, shortestDomainBeforeTld );
 				} else {

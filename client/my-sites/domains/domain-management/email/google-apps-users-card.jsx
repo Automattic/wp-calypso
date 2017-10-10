@@ -49,7 +49,8 @@ const GoogleAppsUsers = React.createClass( {
 	isNewUser( user ) {
 		const domain = find( this.props.domains.list, { name: user.domain } );
 
-		return this.props.moment()
+		return this.props
+			.moment()
 			.subtract( 1, 'day' )
 			.isBefore( domain.googleAppsSubscription.subscribedDate );
 	},
@@ -66,7 +67,7 @@ const GoogleAppsUsers = React.createClass( {
 
 	renderDomain( domain, users ) {
 		return (
-            <div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
+			<div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
 				<SectionHeader label={ domain }>
 					{ this.canAddUsers() && (
 						<Button
@@ -85,7 +86,7 @@ const GoogleAppsUsers = React.createClass( {
 					</ul>
 				</CompactCard>
 			</div>
-        );
+		);
 	},
 
 	renderUser( user, index ) {
@@ -150,4 +151,4 @@ const GoogleAppsUsers = React.createClass( {
 	},
 } );
 
-export default localize(GoogleAppsUsers);
+export default localize( GoogleAppsUsers );

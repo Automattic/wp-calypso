@@ -40,7 +40,7 @@ const EditContactInfo = React.createClass( {
 		}
 
 		return (
-            <Main className="domain-management-edit-contact-info">
+			<Main className="domain-management-edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }
@@ -49,7 +49,7 @@ const EditContactInfo = React.createClass( {
 				</Header>
 				{ this.getCard() }
 			</Main>
-        );
+		);
 	},
 
 	isDataLoading() {
@@ -73,7 +73,7 @@ const EditContactInfo = React.createClass( {
 		}
 
 		return (
-            <div>
+			<div>
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
@@ -81,7 +81,7 @@ const EditContactInfo = React.createClass( {
 					selectedSite={ this.props.selectedSite }
 				/>
 			</div>
-        );
+		);
 	},
 
 	goToContactsPrivacy() {
@@ -94,4 +94,4 @@ const EditContactInfo = React.createClass( {
 	},
 } );
 
-export default localize(EditContactInfo);
+export default localize( EditContactInfo );

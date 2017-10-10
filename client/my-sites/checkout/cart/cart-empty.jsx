@@ -12,8 +12,10 @@ import page from 'page';
 var CartEmpty = React.createClass( {
 	render: function() {
 		return (
-            <div>
-				<div className="cart-empty">{ this.props.translate( 'There are no items in your cart.' ) }</div>
+			<div>
+				<div className="cart-empty">
+					{ this.props.translate( 'There are no items in your cart.' ) }
+				</div>
 				<div className="cart-buttons">
 					<button className="cart-checkout-button button is-primary" onClick={ this.handleClick }>
 						{ this.shouldShowPlanButton() ? (
@@ -24,7 +26,7 @@ var CartEmpty = React.createClass( {
 					</button>
 				</div>
 			</div>
-        );
+		);
 	},
 
 	shouldShowPlanButton: function() {
@@ -43,4 +45,4 @@ var CartEmpty = React.createClass( {
 	},
 } );
 
-module.exports = localize(CartEmpty);
+module.exports = localize( CartEmpty );

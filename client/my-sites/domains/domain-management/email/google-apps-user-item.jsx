@@ -30,7 +30,7 @@ const GoogleAppsUserItem = React.createClass( {
 
 	render() {
 		return (
-            <li>
+			<li>
 				<span className="google-apps-user-item__email">{ this.props.user.email }</span>
 
 				<ExternalLink
@@ -44,8 +44,8 @@ const GoogleAppsUserItem = React.createClass( {
 					{ this.props.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
-        );
+		);
 	},
 } );
 
-export default localize(GoogleAppsUserItem);
+export default localize( GoogleAppsUserItem );

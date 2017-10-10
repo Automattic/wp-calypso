@@ -129,7 +129,7 @@ const EditorMediaModalGallery = React.createClass( {
 		const { site, items, settings } = this.props;
 
 		return (
-            <div className="editor-media-modal-gallery">
+			<div className="editor-media-modal-gallery">
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) }
@@ -157,10 +157,10 @@ const EditorMediaModalGallery = React.createClass( {
 					</div>
 				</div>
 			</div>
-        );
+		);
 	},
 } );
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-} )( localize(EditorMediaModalGallery) );
+} )( localize( EditorMediaModalGallery ) );

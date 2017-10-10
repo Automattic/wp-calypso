@@ -108,13 +108,13 @@ let InviteAcceptLoggedOut = React.createClass( {
 
 	renderFooterLink() {
 		return (
-            <LoggedOutFormLinks>
+			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
 					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
 			</LoggedOutFormLinks>
-        );
+		);
 	},
 
 	renderEmailOnlySubscriptionLink() {
@@ -123,15 +123,15 @@ let InviteAcceptLoggedOut = React.createClass( {
 		}
 
 		return (
-            <LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
+			<LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
 				{ this.props.translate( 'Follow by email subscription only.' ) }
 			</LoggedOutFormLinkItem>
-        );
+		);
 	},
 
 	renderSignInLinkOnly() {
 		return (
-            <div className="sign-up-form">
+			<div className="sign-up-form">
 				<Card className="logged-out-form">
 					{ this.renderFormHeader() }
 					<Card className="logged-out-form__footer">
@@ -141,7 +141,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 					</Card>
 				</Card>
 			</div>
-        );
+		);
 	},
 
 	render() {
@@ -150,7 +150,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 		}
 
 		return (
-            <div>
+			<div>
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
@@ -162,16 +162,19 @@ let InviteAcceptLoggedOut = React.createClass( {
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
 					disableEmailInput={ this.props.forceMatchingEmail }
-					disableEmailExplanation={ this.props.translate( 'This invite is only valid for %(email)s.', {
-						args: { email: this.props.invite.sentTo },
-					} ) }
+					disableEmailExplanation={ this.props.translate(
+						'This invite is only valid for %(email)s.',
+						{
+							args: { email: this.props.invite.sentTo },
+						}
+					) }
 				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
-        );
+		);
 	},
 } );
 
 export default connect( null, dispatch =>
 	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
-)( localize(InviteAcceptLoggedOut) );
+)( localize( InviteAcceptLoggedOut ) );

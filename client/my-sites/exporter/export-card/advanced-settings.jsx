@@ -38,7 +38,7 @@ const AdvancedSettings = React.createClass( {
 
 	render() {
 		return (
-            <div className="export-card__advanced-settings">
+			<div className="export-card__advanced-settings">
 				<h1 className="export-card__advanced-settings-title">
 					{ this.props.translate( 'Select specific content to export' ) }
 				</h1>
@@ -70,7 +70,7 @@ const AdvancedSettings = React.createClass( {
 					loadingText={ this.props.translate( 'Exporting…' ) }
 				/>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -84,4 +84,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize(AdvancedSettings) );
+export default connect( mapStateToProps )( localize( AdvancedSettings ) );

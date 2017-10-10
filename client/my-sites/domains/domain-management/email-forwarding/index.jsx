@@ -34,7 +34,7 @@ const EmailForwarding = React.createClass( {
 			return <MainPlaceholder goBack={ this.goToEditEmail } />;
 		}
 		return (
-            <Main className="email-forwarding">
+			<Main className="email-forwarding">
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
@@ -55,7 +55,7 @@ const EmailForwarding = React.createClass( {
 					/>
 				</Card>
 			</Main>
-        );
+		);
 	},
 
 	isDataLoading() {
@@ -69,4 +69,4 @@ const EmailForwarding = React.createClass( {
 	},
 } );
 
-export default localize(EmailForwarding);
+export default localize( EmailForwarding );

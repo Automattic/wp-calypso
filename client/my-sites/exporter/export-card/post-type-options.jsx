@@ -69,7 +69,7 @@ const PostTypeOptions = React.createClass( {
 		};
 
 		return (
-            <div className="export-card__option-fieldset">
+			<div className="export-card__option-fieldset">
 				<Label className="export-card__option-fieldset-legend">
 					<FormRadio checked={ isEnabled } onChange={ onSelect } />
 					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
@@ -103,8 +103,8 @@ const PostTypeOptions = React.createClass( {
 					{ this.props.translate( 'Selected start date is later than the end date' ) }
 				</Tooltip>
 			</div>
-        );
+		);
 	},
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize(PostTypeOptions) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

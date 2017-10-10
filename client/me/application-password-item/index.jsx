@@ -59,7 +59,7 @@ const ApplicationPasswordsItem = React.createClass( {
 	render: function() {
 		var password = this.props.password;
 		return (
-            <li className="application-password-item__password" key={ password.ID }>
+			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
@@ -79,10 +79,10 @@ const ApplicationPasswordsItem = React.createClass( {
 					<Gridicon icon="cross" />
 				</Button>
 			</li>
-        );
+		);
 	},
 } );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	localize(ApplicationPasswordsItem)
+	localize( ApplicationPasswordsItem )
 );

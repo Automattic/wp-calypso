@@ -31,7 +31,7 @@ var CreditsPaymentBox = React.createClass( {
 			hasBusinessPlanInCart;
 
 		return (
-            <form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
@@ -68,16 +68,16 @@ var CreditsPaymentBox = React.createClass( {
 
 				<CartToggle />
 			</form>
-        );
+		);
 	},
 
 	render: function() {
 		return (
-            <PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
-        );
+		);
 	},
 } );
 
-module.exports = localize(CreditsPaymentBox);
+module.exports = localize( CreditsPaymentBox );

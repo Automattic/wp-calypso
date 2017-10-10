@@ -612,7 +612,7 @@ const PushNotificationSettings = React.createClass( {
 		);
 
 		return (
-            <Dialog
+			<Dialog
 				isVisible={ this.props.showDialog }
 				className=".notification-settings-push-notification-settings__instruction-dialog"
 				onClose={ this.props.toggleUnblockInstructions }
@@ -662,7 +662,7 @@ const PushNotificationSettings = React.createClass( {
 					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
 				</span>
 			</Dialog>
-        );
+		);
 	},
 
 	render: function() {
@@ -753,7 +753,7 @@ const PushNotificationSettings = React.createClass( {
 		}
 
 		return (
-            <Card className="notification-settings-push-notification-settings__settings">
+			<Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
 					<Gridicon
 						size={ 24 }
@@ -790,7 +790,7 @@ const PushNotificationSettings = React.createClass( {
 
 				{ deniedText }
 			</Card>
-        );
+		);
 	},
 } );
 
@@ -807,4 +807,4 @@ export default connect(
 		toggleEnabled,
 		toggleUnblockInstructions,
 	}
-)( localize(PushNotificationSettings) );
+)( localize( PushNotificationSettings ) );

@@ -14,18 +14,16 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 import shortcodeUtils from 'lib/shortcode';
 import renderField from './preview-fields';
 
-const ContactForm = localize(
-	( { content, translate } ) => {
-		const { fields } = deserialize( content );
+const ContactForm = localize( ( { content, translate } ) => {
+	const { fields } = deserialize( content );
 
-		return (
-			<div className="wpview-content wpview-type-contact-form">
-				{ [].concat( fields ).map( renderField ) }
-				<button disabled>{ translate( 'Submit' ) }</button>
-			</div>
-		);
-	}
-);
+	return (
+		<div className="wpview-content wpview-type-contact-form">
+			{ [].concat( fields ).map( renderField ) }
+			<button disabled>{ translate( 'Submit' ) }</button>
+		</div>
+	);
+} );
 
 export function match( content ) {
 	const m = shortcodeUtils.next( 'contact-form', content );

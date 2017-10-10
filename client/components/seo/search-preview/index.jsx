@@ -34,7 +34,7 @@ export const SearchPreview = React.createClass( {
 		const { snippet, title, url } = this.props;
 
 		return (
-            <div className="seo-search-preview">
+			<div className="seo-search-preview">
 				<h2 className="seo-search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">{ googleTitle( title ) }</div>
@@ -42,7 +42,7 @@ export const SearchPreview = React.createClass( {
 					<div className="seo-search-preview__snippet">{ googleSnippet( snippet || '' ) }</div>
 				</div>
 			</div>
-        );
+		);
 	},
 } );
 
@@ -58,4 +58,4 @@ SearchPreview.defaultProps = {
 	snippet: '',
 };
 
-export default localize(SearchPreview);
+export default localize( SearchPreview );

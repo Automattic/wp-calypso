@@ -70,7 +70,7 @@ const EditorSticky = React.createClass( {
 		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
 
 		return (
-            <Button
+			<Button
 				borderless
 				className={ classes }
 				onClick={ this.toggleStickyStatus }
@@ -91,7 +91,7 @@ const EditorSticky = React.createClass( {
 					</Tooltip>
 				) }
 			</Button>
-        );
+		);
 	},
 } );
 
@@ -108,4 +108,4 @@ export default connect(
 		};
 	},
 	{ editPost }
-)( localize(EditorSticky) );
+)( localize( EditorSticky ) );

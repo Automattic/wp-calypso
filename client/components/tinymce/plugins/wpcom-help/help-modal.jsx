@@ -45,7 +45,10 @@ const HelpModal = React.createClass( {
 			{ d: this.props.translate( 'Strikethrough' ), q: this.props.translate( 'Blockquote' ) },
 			{ u: this.props.translate( 'Bullet list' ), o: this.props.translate( 'Numbered list' ) },
 			{ a: this.props.translate( 'Insert/edit link' ), s: this.props.translate( 'Remove link' ) },
-			{ m: this.props.translate( 'Insert/edit image' ), t: this.props.translate( 'Insert Read More tag' ) },
+			{
+				m: this.props.translate( 'Insert/edit image' ),
+				t: this.props.translate( 'Insert Read More tag' ),
+			},
 			{ h: this.props.translate( 'Keyboard Shortcuts' ), x: this.props.translate( 'Code' ) },
 			{ p: this.props.translate( 'Insert Page Break tag' ) },
 		];
@@ -83,7 +86,9 @@ const HelpModal = React.createClass( {
 	},
 
 	getActionLabel() {
-		return this.props.translate( 'Action', { context: 'Action taken when pressing keyboard shortcut' } );
+		return this.props.translate( 'Action', {
+			context: 'Action taken when pressing keyboard shortcut',
+		} );
 	},
 
 	getTableHead() {
@@ -113,7 +118,7 @@ const HelpModal = React.createClass( {
 				} );
 
 		return (
-            <Dialog
+			<Dialog
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-help__dialog"
@@ -131,8 +136,8 @@ const HelpModal = React.createClass( {
 					<tbody>{ this.additionalShortcuts().map( this.renderRow, this ) }</tbody>
 				</table>
 			</Dialog>
-        );
+		);
 	},
 } );
 
-module.exports = localize(HelpModal);
+module.exports = localize( HelpModal );
