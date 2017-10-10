@@ -17,7 +17,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 
 class DisconnectSurvey extends Component {
 	state = {
-		reasonSelected: 'onlyNeedFree',
+		reasonSelected: 'tooExpensive',
 		renderInitial: true,
 	};
 
@@ -42,7 +42,7 @@ class DisconnectSurvey extends Component {
 		];
 
 		if ( ! isFreeJetpackPlan( site.plan ) ) {
-			options.push( { value: 'onlyNeedFree', label: translate( 'This plan is too expensive' ) } );
+			options.push( { value: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
 		}
 		return options;
 	}
