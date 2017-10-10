@@ -152,16 +152,10 @@ export class EditorGroundControl extends PureComponent {
 		return buttonLabels[ primaryButtonState ];
 	}
 
-	getSaveStatusLabel( translate ) {
-		if ( this.props.isSaving ) {
-			return translate( 'Saving…' );
-		}
+	shouldShowStatusLabel() {
+		const { isSaving, post } = this.props;
 
-		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
-			return null;
-		}
-
-		return translate( 'Saved' );
+		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	}
 
 	isSaveEnabled() {
@@ -264,6 +258,10 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	render() {
+		const { isSaving, translate } = this.props;
+		const isSaveEnabled = this.isSaveEnabled();
+		const shouldShowStatusLabel = this.shouldShowStatusLabel();
+
 		return (
 			<Card className="editor-ground-control">
 				<Button
@@ -271,7 +269,7 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ page.back.bind( page, this.props.allPostsUrl ) }
-					aria-label={ this.props.translate( 'Go back' ) }
+					aria-label={ translate( 'Go back' ) }
 				>
 					<Gridicon icon="arrow-left" />
 				</Button>
@@ -294,29 +292,32 @@ export class EditorGroundControl extends PureComponent {
 						/>
 						{ this.getVerificationNoticeLabel() }{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
-							{ this.props.translate( 'Learn More' ) }
+							{ translate( 'Learn More' ) }
 						</span>
 					</div>
 				) }
-				<div className="editor-ground-control__status">
-					{ this.isSaveEnabled() && (
-						<button
-							className="editor-ground-control__save button is-link"
-							onClick={ this.onSaveButtonClick }
-							tabIndex={ 3 }
-						>
-							{ this.props.translate( 'Save' ) }
-						</button>
-					) }
-					{ ! this.isSaveEnabled() && (
-						<span
-							className="editor-ground-control__save-status"
-							data-e2e-status={ this.getSaveStatusLabel( identity ) }
-						>
-							{ this.getSaveStatusLabel( this.props.translate ) }
-						</span>
-					) }
-				</div>
+				{ ( isSaveEnabled || shouldShowStatusLabel ) && (
+					<div className="editor-ground-control__status">
+						{ isSaveEnabled && (
+							<button
+								className="editor-ground-control__save button is-link"
+								onClick={ this.onSaveButtonClick }
+								tabIndex={ 3 }
+							>
+								{ translate( 'Save' ) }
+							</button>
+						) }
+						{ ! isSaveEnabled &&
+						shouldShowStatusLabel && (
+							<span
+								className="editor-ground-control__save-status"
+								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+							>
+								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+							</span>
+						) }
+					</div>
+				) }
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);
