@@ -22,6 +22,7 @@ export const statusEditable = [ 'on-hold', 'pending' ];
 export const statusWaitingPayment = [ 'on-hold', 'pending' ];
 export const statusWaitingFulfillment = [ 'processing' ];
 export const statusFinished = [ 'cancelled', 'completed', 'failed', 'refunded' ];
+export const statusFailed = [ 'cancelled', 'failed' ];
 
 /**
  * Get a list of order statuses for display (including a translated label)
@@ -99,4 +100,14 @@ export function isOrderWaitingFulfillment( status ) {
  */
 export function isOrderFinished( status ) {
 	return -1 !== statusFinished.indexOf( status );
+}
+
+/**
+ * Checks if this status (from an order) is in the "failed" group
+ *
+ * @param {String} status Order status
+ * @return {Boolean} true if the status is cancelled or failed– not a successful order
+ */
+export function isOrderFailed( status ) {
+	return -1 !== statusFailed.indexOf( status );
 }

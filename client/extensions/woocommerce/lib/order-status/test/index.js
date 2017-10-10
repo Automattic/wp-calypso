@@ -12,6 +12,7 @@ import {
 	isOrderWaitingPayment,
 	isOrderWaitingFulfillment,
 	isOrderFinished,
+	isOrderFailed,
 } from '../index';
 
 describe( 'isOrderEditable', () => {
@@ -115,5 +116,31 @@ describe( 'isOrderFinished', () => {
 
 	test( 'should be false for a fake order status', () => {
 		expect( isOrderFinished( 'fake' ) ).to.be.false;
+	} );
+} );
+
+describe( 'isOrderFailed', () => {
+	it( 'should be false for a pending order', () => {
+		expect( isOrderFailed( 'pending' ) ).to.be.false;
+	} );
+
+	it( 'should be false for an on-hold order', () => {
+		expect( isOrderFailed( 'on-hold' ) ).to.be.false;
+	} );
+
+	it( 'should be false for a processing order', () => {
+		expect( isOrderFailed( 'processing' ) ).to.be.false;
+	} );
+
+	it( 'should be false for a completed order', () => {
+		expect( isOrderFailed( 'completed' ) ).to.be.false;
+	} );
+
+	it( 'should be true for a failed order', () => {
+		expect( isOrderFailed( 'failed' ) ).to.be.true;
+	} );
+
+	it( 'should be false for a fake order status', () => {
+		expect( isOrderFailed( 'fake' ) ).to.be.false;
 	} );
 } );
