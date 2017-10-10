@@ -48,8 +48,7 @@ class ActivityLogDay extends Component {
 		isRewindActive: true,
 	};
 
-	handleClickRestore = event => {
-		event.stopPropagation();
+	handleClickRestore = () => {
 		const { logs, requestRestore } = this.props;
 		const lastLogId = get( logs, [ 0, 'activityId' ], null );
 		if ( lastLogId ) {
