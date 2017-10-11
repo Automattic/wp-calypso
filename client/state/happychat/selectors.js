@@ -10,7 +10,18 @@ import { get, includes, last, map } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from './constants';
+import {
+	HAPPYCHAT_GROUP_WPCOM,
+	HAPPYCHAT_GROUP_JPOP,
+	HAPPYCHAT_CHAT_STATUS_ABANDONED,
+	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_BLOCKED,
+	HAPPYCHAT_CHAT_STATUS_CLOSED,
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	HAPPYCHAT_CHAT_STATUS_NEW,
+	HAPPYCHAT_CHAT_STATUS_MISSED,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+} from './constants';
 import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -20,16 +31,6 @@ import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-times
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
-
-export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
-export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
-export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
-export const HAPPYCHAT_CHAT_STATUS_BLOCKED = 'blocked';
-export const HAPPYCHAT_CHAT_STATUS_CLOSED = 'closed';
-export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
-export const HAPPYCHAT_CHAT_STATUS_NEW = 'new';
-export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
-export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 
 /**
  * Grab the group or groups for happychat based on siteId
