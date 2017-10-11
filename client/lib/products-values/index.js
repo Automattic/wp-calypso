@@ -241,6 +241,13 @@ function isSiteRedirect( product ) {
 	return product.product_slug === 'offsite_redirect';
 }
 
+function isDomainTransfer( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'domain_transfer';
+}
+
 function isCredits( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -381,6 +388,7 @@ export default {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDomainTransfer,
 	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,

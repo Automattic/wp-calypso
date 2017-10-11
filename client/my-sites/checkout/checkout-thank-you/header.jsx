@@ -20,6 +20,7 @@ import {
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
+	isDomainTransfer,
 } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
@@ -44,6 +45,10 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
 			return translate( 'Thank you!' );
+		}
+
+		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
+			return translate( 'Check your email for important information about your transfer.' );
 		}
 
 		return translate( 'Congratulations on your purchase!' );
@@ -136,6 +141,17 @@ class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		if ( isDomainTransfer( primaryPurchase ) ) {
+			return translate(
+				"We're processing your request to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. " +
+					'Be on the lookout for an important mail from us to confirm the transfer.',
+				{
+					args: { domainName: primaryPurchase.meta },
+					components: { strong: <strong /> },
+				}
+			);
+		}
+
 		if ( isChargeback( primaryPurchase ) ) {
 			return translate(
 				'Your chargeback fee is paid. Your site is doing somersaults in excitement!'
@@ -184,17 +200,22 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, hasFailedPurchases } = this.props;
+		const { isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
+		let svg = 'thank-you.svg';
+
+		if ( isDomainTransfer( primaryPurchase ) ) {
+			svg = 'check-emails-desktop.svg';
+		}
+
+		if ( hasFailedPurchases ) {
+			svg = 'items-failed.svg';
+		}
 
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-icon">
-					<img
-						src={ `/calypso/images/upgrades/${ hasFailedPurchases
-							? 'items-failed.svg'
-							: 'thank-you.svg' }` }
-					/>
+					<img src={ `/calypso/images/upgrades/${ svg }` } />
 				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">

@@ -75,11 +75,17 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	getStatusMessage() {
 		const { translate } = this.props;
-		const { status } = this.state;
+		const { unlocked } = this.state;
 
-		const icon = status ? <Gridicon icon="checkmark-circle" /> : <Gridicon icon="notice-outline" />;
-		const heading = status ? translate( 'Domain is unlocked.' ) : translate( 'Unlock the domain.' );
-		const message = status
+		const icon = unlocked ? (
+			<Gridicon icon="checkmark-circle" />
+		) : (
+			<Gridicon icon="notice-outline" />
+		);
+		const heading = unlocked
+			? translate( 'Domain is unlocked.' )
+			: translate( 'Unlock the domain.' );
+		const message = unlocked
 			? translate( 'Your domain is unlocked at your current registrar.' )
 			: translate( 'Please unlock the domain at your current registrar so you can transfer it.' );
 
@@ -167,7 +173,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					{ this.getStatusMessage() }
 					{ this.getPrivacyMessage() }
 					{ this.getEPPMessage() }
-					<Button disabled={ ! this.state.status } onClick={ this.onClick }>
+					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick }>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>

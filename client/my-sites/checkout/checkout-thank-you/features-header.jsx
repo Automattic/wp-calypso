@@ -17,6 +17,7 @@ import {
 	isDomainRegistration,
 	isGoogleApps,
 	isGuidedTransfer,
+	isDomainTransfer,
 } from 'lib/products-values';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
@@ -37,7 +38,8 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		purchases.some( isGoogleApps ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer );
+		purchases.some( isGuidedTransfer ) ||
+		purchases.some( isDomainTransfer );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;
