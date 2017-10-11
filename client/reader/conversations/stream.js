@@ -16,6 +16,7 @@ import ConversationsEmptyContent from 'blocks/conversations/empty';
 export default function( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const emptyContent = <ConversationsEmptyContent />;
+	const intro = <ConversationsIntro isInternal={ isInternal } />;
 	return (
 		<Stream
 			postsStore={ props.store }
@@ -26,9 +27,9 @@ export default function( props ) {
 			useCompactCards={ true }
 			trackScrollPage={ props.trackScrollPage }
 			emptyContent={ emptyContent }
+			intro={ intro }
 		>
 			<DocumentHead title={ props.title } />
-			<ConversationsIntro isInternal={ isInternal } />
 		</Stream>
 	);
 }
