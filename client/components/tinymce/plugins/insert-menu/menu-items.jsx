@@ -14,8 +14,8 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-const GridiconButton = ( { icon, label, e2e } ) => (
-	<div>
+export const GridiconButton = ( { icon, label, e2e } ) => (
+	<div className="wpcom-insert-menu__menu">
 		<Gridicon className="wpcom-insert-menu__menu-icon" icon={ icon } />
 		<span className="wpcom-insert-menu__menu-label" data-e2e-insert-type={ e2e }>
 			{ label }
@@ -24,10 +24,10 @@ const GridiconButton = ( { icon, label, e2e } ) => (
 );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const menuItems = [
+export const menuItems = [
 	{
 		name: 'insert_media_item',
-		item: <GridiconButton icon="add-image" label={ i18n.translate( 'Add Media' ) } e2e="media" />,
+		item: <GridiconButton icon="add-image" label={ i18n.translate( 'Media' ) } e2e="media" />,
 		cmd: 'wpcomAddMedia',
 	},
 ];
@@ -38,7 +38,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 		item: (
 			<GridiconButton
 				icon="add-image"
-				label={ i18n.translate( 'Add from Google' ) }
+				label={ i18n.translate( 'Media from Google' ) }
 				e2e="google-media"
 			/>
 		),
@@ -49,11 +49,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 menuItems.push( {
 	name: 'insert_contact_form',
 	item: (
-		<GridiconButton
-			icon="mention"
-			label={ i18n.translate( 'Add Contact Form' ) }
-			e2e="contact-form"
-		/>
+		<GridiconButton icon="mention" label={ i18n.translate( 'Contact Form' ) } e2e="contact-form" />
 	),
 	cmd: 'wpcomContactForm',
 } );
@@ -64,12 +60,10 @@ if ( config.isEnabled( 'simple-payments' ) ) {
 		item: (
 			<GridiconButton
 				icon="money"
-				label={ i18n.translate( 'Add Payment Button' ) }
+				label={ i18n.translate( 'Payment Button' ) }
 				e2e="payment-button"
 			/>
 		),
 		cmd: 'simplePaymentsButton',
 	} );
 }
-
-export default menuItems;
