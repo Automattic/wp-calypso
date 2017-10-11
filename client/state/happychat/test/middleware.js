@@ -237,6 +237,8 @@ describe( 'middleware', () => {
 			sandbox.stub( wpcom, 'request', ( args, callback ) => callback( null, {} ) );
 		} );
 
+		const wasHappychatRecentlyActive = jest.fn();
+
 		test( 'should connect the chat if user was recently connected', () => {
 			connectIfRecentlyActive( connection, storeRecentlyActive ).then( () => {
 				expect( connection.init ).to.have.been.called;
@@ -282,7 +284,7 @@ describe( 'middleware', () => {
 		test( 'should fetch transcript from connection and dispatch receive action', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline: [],
+					chat: { timeline: [] },
 				},
 			} );
 			const response = {
@@ -372,7 +374,7 @@ describe( 'middleware', () => {
 					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: true,
 				},
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_ASSIGNED },
 			},
 		};
 
@@ -400,7 +402,7 @@ describe( 'middleware', () => {
 		test( 'should not sent the page URL the user is in when chat is not assigned', () => {
 			const getState = () =>
 				Object.assign( {}, state, {
-					happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING },
+					happychat: { chat: { status: HAPPYCHAT_CHAT_STATUS_PENDING } },
 				} );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
@@ -470,19 +472,19 @@ describe( 'middleware', () => {
 		const assignedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_ASSIGNED },
 			},
 		} );
 		const unassignedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 			},
 		} );
 		const unconnectedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 			},
 		} );
 

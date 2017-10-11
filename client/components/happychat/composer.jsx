@@ -9,11 +9,13 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+
 /**
  * Internal dependencies
  */
 import { setChatMessage } from 'state/happychat/actions';
 import { sendChatMessage } from 'state/happychat/connection/actions';
+import getHappychatMessage from 'state/happychat/selectors/get-happychat-message';
 import { canUserSendMessages } from 'state/happychat/selectors';
 import { when, forEach, compose, propEquals, call, prop } from './functional';
 import scrollbleed from './scrollbleed';
@@ -70,7 +72,7 @@ export const Composer = createReactClass( {
 
 const mapState = state => ( {
 	disabled: ! canUserSendMessages( state ),
-	message: state.happychat.message,
+	message: getHappychatMessage( state ),
 } );
 
 const mapDispatch = dispatch => ( {
