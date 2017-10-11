@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import classNames from 'classnames';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -13,7 +11,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { setChatMessage } from 'state/happychat/actions';
+import { setChatMessage } from 'state/happychat/chat/actions';
 import { sendChatMessage } from 'state/happychat/connection/actions';
 import getHappychatMessage from 'state/happychat/selectors/get-happychat-message';
 import { canUserSendMessages } from 'state/happychat/selectors';
