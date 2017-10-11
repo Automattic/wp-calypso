@@ -42,6 +42,7 @@ class ActivityLogDay extends Component {
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		requestedRewind: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -176,18 +177,20 @@ class ActivityLogDay extends Component {
 		} = this.props;
 
 		const hasLogs = ! isEmpty( logs ),
-			dayExpanded = this.state.dayExpanded ? true : this.state.rewindHere;
+			rewindHere = this.state.rewindHere,
+			dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
 		return (
 			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
 				<FoldableCard
-					clickableHeader={ hasLogs }
+					clickableHeader={ hasLogs && ! rewindHere }
 					expanded={ hasLogs && ( isToday || dayExpanded ) }
 					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay }
 					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
+					disableToggle={ rewindHere }
 				>
 					{ hasLogs &&
 						flatMap( logs, log => [
