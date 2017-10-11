@@ -5,6 +5,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	HAPPYCHAT_OPEN,
+	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 } from 'state/action-types';
@@ -51,4 +52,20 @@ const isOpen = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { isOpen, lostFocusAt } );
+/**
+ * Tracks the state of the happychat minimizing process
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+const isMinimizing = ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_MINIMIZING:
+			return action.isMinimizing ? true : false;
+	}
+	return state;
+};
+
+export default combineReducers( { isMinimizing, isOpen, lostFocusAt } );
