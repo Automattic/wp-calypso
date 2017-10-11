@@ -19,6 +19,10 @@
 			font-weight: normal;
 		}
 	}
+
+	.order-payment__item-total .form-text-input-with-affixes__prefix {
+		max-width: 14px;
+	}
 }
 
 .order-payment__container {

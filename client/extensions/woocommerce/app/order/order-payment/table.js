@@ -12,14 +12,17 @@ import { localize } from 'i18n-calypso';
  */
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
+import { getCurrencyDefaults } from 'lib/format-currency';
 import {
 	getOrderDiscountTax,
+	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
 import OrderTotalRow from '../order-details/row-total';
+import PriceInput from 'woocommerce/components/price-input';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -42,6 +45,9 @@ class OrderRefundTable extends Component {
 		const shippingTax = getOrderShippingTax( props.order );
 		this.state = {
 			quantities: {},
+			fees: props.order.fee_lines.map( ( item, i ) => {
+				return parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, i ) );
+			} ),
 			shippingTotal: parseFloat( shippingTax ) + parseFloat( props.order.shipping_total ),
 		};
 	}
@@ -127,6 +133,33 @@ class OrderRefundTable extends Component {
 		);
 	};
 
+	renderOrderFees = ( item, i ) => {
+		const { numberFormat, order } = this.props;
+		const { decimal, grouping, precision } = getCurrencyDefaults( order.currency );
+		const value = numberFormat( Math.abs( this.state.fees[ i ] ), {
+			decimals: precision,
+			decPoint: decimal,
+			thousandsSep: grouping,
+		} );
+		return (
+			<TableRow key={ i } className="order-payment__items order-details__items">
+				<TableItem isRowHeader className="order-payment__item-product order-details__item-product">
+					{ item.name }
+				</TableItem>
+				<TableItem className="order-payment__item-cost order-details__item-cost" />
+				<TableItem className="order-payment__item-quantity order-details__item-quantity" />
+				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
+					<PriceInput
+						name={ `fee_line-${ i }` }
+						onChange={ this.onChange }
+						currency={ order.currency }
+						value={ value }
+					/>
+				</TableItem>
+			</TableRow>
+		);
+	};
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {
@@ -149,6 +182,7 @@ class OrderRefundTable extends Component {
 					header={ this.renderTableHeader() }
 				>
 					{ order.line_items.map( this.renderOrderItems ) }
+					{ order.fee_lines.map( this.renderOrderFees ) }
 				</Table>
 
 				<div className={ totalsClasses }>
