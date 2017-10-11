@@ -53,6 +53,13 @@ export const CommentDetailActions = ( {
 
 	return (
 		<CommentDetailActionsContainer { ...{ compact } }>
+			{ hasAction( commentStatus, 'reply' ) &&
+			compact && (
+				<Button compact={ compact } className="comment-detail__action-edit" onClick={ toggleReply }>
+					<Gridicon icon="reply" />
+				</Button>
+			) }
+
 			{ hasAction( commentStatus, 'like' ) && (
 				<Button
 					{ ...{ borderless: ! compact, compact } }
@@ -90,13 +97,6 @@ export const CommentDetailActions = ( {
 				>
 					<Gridicon icon="pencil" />
 					{ compact || <span>{ translate( 'Edit' ) }</span> }
-				</Button>
-			) }
-
-			{ hasAction( commentStatus, 'reply' ) &&
-			compact && (
-				<Button compact={ compact } className="comment-detail__action-edit" onClick={ toggleReply }>
-					<Gridicon icon="reply" />
 				</Button>
 			) }
 
