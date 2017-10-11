@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { memoize, includes } from 'lodash';
+import { get, includes, memoize } from 'lodash';
 
 /**
  * This function result is cached for performance reasons, since browser capabilities won't change.
@@ -12,6 +12,11 @@ import { memoize, includes } from 'lodash';
  * PDFs at all.
  */
 export default memoize( () => {
+	if ( get( window, 'navigator.msSaveOrOpenBlob' ) ) {
+		// IE & Edge, they don't support opening a Blob in an iframe/window
+		return 'ie';
+	}
+
 	if ( includes( navigator.userAgent, 'Firefox' ) ) {
 		// Firefox has a long-lived bug (https://bugzilla.mozilla.org/show_bug.cgi?id=911444),
 		// it's not reliable to consider its PDF reader "native"

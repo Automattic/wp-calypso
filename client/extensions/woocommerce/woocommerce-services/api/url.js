@@ -5,5 +5,4 @@ export const getLabelRates = ( orderId ) => `connect/label/${ orderId }/rates`;
 export const labelStatus = ( orderId, labelId ) => `connect/label/${ orderId }/${ labelId }`;
 export const labelRefund = ( orderId, labelId ) => `connect/label/${ orderId }/${ labelId }/refund`;
 export const labelsPrint = () => 'connect/label/print';
-export const labelTestPrint = () => 'connect/label/preview';
 export const addressNormalization = () => 'connect/normalize-address';
