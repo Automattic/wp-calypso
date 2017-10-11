@@ -1,0 +1,19 @@
+var config = require( 'config' ),
+	page = require( 'page' ),
+	controller = require( 'controller' );
+
+function getPathRegExp( pathString ) {
+	if ( pathString === '/' ) {
+		return pathString;
+	}
+	return new RegExp('^' + pathString + '(/.*)?$');
+}
+
+module.exports = {
+	get: function() {
+		return ${stringSections};
+	},
+	load: function() {
+${sectionLoaders}
+	}
+};

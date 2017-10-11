@@ -7,17 +7,13 @@ var config = require( 'config' ),
 	restoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,
 	preloadHub = require( 'sections-preload' ).hub;
 
-var sections = {{{json sections}}};
+var sections = ${stringSections};
 
 var _loadedSections = {};
 
 function preload( sectionName ) {
 	switch ( sectionName ) {
-		{{#sections}}
-		case '{{{name}}}':
-			return import( /* webpackChunkName: '{{{name}}}' */ '{{{module}}}' );
-			break;
-		{{/sections}}
+		${sectionLoaders}
 	}
 }
 
