@@ -32,8 +32,8 @@ export const SimplePaymentsTour = makeTour(
 			<p>
 				{ translate(
 					'Did you know? ' +
-						'If your site is on the Premium or Business plan, you can add {{strong}}payment buttons{{/strong}} here ' +
-						'to sell courses, offer event tickets, gather donations, or just ask for tips.',
+						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} -- ' +
+						'sell tickets, collect donations, accept tips, and more.',
 					{
 						components: {
 							strong: <strong />,
@@ -42,7 +42,7 @@ export const SimplePaymentsTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( 'Got it, sounds good!' ) }</Quit>
+				<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 			</ButtonRow>
 			<Link href="https://en.support.wordpress.com/simple-payments">
 				{ translate( 'Learn more about Simple Payments.' ) }
