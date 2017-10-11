@@ -1,7 +1,13 @@
 /**
  * Internal dependencies
  */
-import { SERIALIZE, DESERIALIZE, HAPPYCHAT_BLUR, HAPPYCHAT_FOCUS } from 'state/action-types';
+import {
+	SERIALIZE,
+	DESERIALIZE,
+	HAPPYCHAT_OPEN,
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+} from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
 /**
@@ -14,7 +20,6 @@ import { combineReducers, isValidStateWithSchema } from 'state/utils';
  * @param {Object} action Action payload
  * @return {Object}        Updated state
  */
-
 export const lostFocusAt = ( state = null, action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
@@ -38,4 +43,12 @@ export const lostFocusAt = ( state = null, action ) => {
 };
 lostFocusAt.hasCustomPersistence = true;
 
-export default combineReducers( { lostFocusAt } );
+const isOpen = ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_OPEN:
+			return !! action.isOpen;
+	}
+	return state;
+};
+
+export default combineReducers( { isOpen, lostFocusAt } );

@@ -3,17 +3,8 @@
  *
  * @format
  */
-
 import { combineReducers } from 'state/utils';
-import { HAPPYCHAT_OPEN, HAPPYCHAT_MINIMIZING } from 'state/action-types';
-
-const open = ( state = false, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_OPEN:
-			return !! action.isOpen;
-	}
-	return state;
-};
+import { HAPPYCHAT_MINIMIZING } from 'state/action-types';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:ui-reducer' );
@@ -35,4 +26,4 @@ const isMinimizing = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { open, isMinimizing } );
+export default combineReducers( { isMinimizing } );
