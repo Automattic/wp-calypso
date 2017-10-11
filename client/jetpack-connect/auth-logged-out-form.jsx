@@ -20,9 +20,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import LocaleSuggestions from 'components/locale-suggestions';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import versionCompare from 'lib/version-compare';
-import FormattedHeader from 'components/formatted-header';
-import SiteCard from './site-card';
+import AuthFormHeader from './auth-form-header';
 
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
@@ -71,23 +69,6 @@ class LoggedOutForm extends Component {
 		);
 	}
 
-	renderFormHeader() {
-		const { translate, isAlreadyOnSitesList } = this.props;
-		const headerText = translate( 'Create your account' );
-		const subHeaderText = translate( 'You are moments away from connecting your site.' );
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' ) ? (
-			<SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
-		) : null;
-
-		return (
-			<div>
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-				{ siteCard }
-			</div>
-		);
-	}
-
 	renderLocaleSuggestions() {
 		return this.props.locale ? (
 			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -120,7 +101,7 @@ class LoggedOutForm extends Component {
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
-				{ this.renderFormHeader() }
+				<AuthFormHeader />
 				<SignupForm
 					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
