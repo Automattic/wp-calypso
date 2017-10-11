@@ -12,42 +12,62 @@ import { spy } from 'sinon';
 import { getData, getError, getProgress, dispatchRequest, makeParser } from '../utils.js';
 
 describe( 'WPCOM HTTP Data Layer', () => {
+	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
+	const withError = error => ( { type: 'SLUGGER', meta: { dataLayer: { error } } } );
+	const withProgress = progress => ( { type: 'UPLOAD_PROGRESS', meta: { dataLayer: { progress } } } );
+
 	describe( '#getData', () => {
 		test( 'should return successful response data if available', () => {
 			const data = { utterance: 'Bork bork' };
-			const action = { type: 'SLUGGER', meta: { dataLayer: { data } } };
 
-			expect( getData( action ) ).to.equal( data );
+			expect( getData( withData( data ) ) ).to.equal( data );
 		} );
 
-		test( 'should return null if no response data available', () => {
+		test( 'should return undefined if no response data available', () => {
 			const action = { type: 'SLUGGER' };
 
-			expect( getData( action ) ).to.be.null;
+			expect( getData( action ) ).to.be.undefined;
+		} );
+		test( 'should return valid-but-falsey data', () => {
+			expect( getData( withData( '' ) ) ).to.equal( '' );
+			expect( getData( withData( null ) ) ).to.equal( null );
+			expect( getData( withData( 0 ) ) ).to.equal( 0 );
+			expect( getData( withData( false ) ) ).to.equal( false );
 		} );
 	} );
 
 	describe( '#getError', () => {
 		test( 'should return failing error data if available', () => {
 			const error = { utterance: 'Bork bork' };
-			const action = { type: 'SLUGGER', meta: { dataLayer: { error } } };
 
-			expect( getError( action ) ).to.equal( error );
+			expect( getError( withError( error ) ) ).to.equal( error );
 		} );
 
-		test( 'should return null if no error data available', () => {
+		test( 'should return undefined if no error data available', () => {
 			const action = { type: 'SLUGGER' };
 
-			expect( getError( action ) ).to.be.null;
+			expect( getError( action ) ).to.be.undefined;
+		} );
+
+		test( 'should return valid-but-falsey data', () => {
+			expect( getError( withError( '' ) ) ).to.equal( '' );
+			expect( getError( withError( null ) ) ).to.equal( null );
+			expect( getError( withError( 0 ) ) ).to.equal( 0 );
+			expect( getError( withError( false ) ) ).to.equal( false );
 		} );
 	} );
 
 	describe( '#getProgress', () => {
 		test( 'should return progress data if available', () => {
 			const progress = { total: 1234, loaded: 123 };
-			const action = { type: 'UPLOAD_PROGRESS', meta: { dataLayer: { progress } } };
 
-			expect( getProgress( action ) ).to.equal( progress );
+			expect( getProgress( withProgress( progress ) ) ).to.equal( progress );
+		} );
+		test( 'should return valid-but-falsey data', () => {
+			expect( getProgress( withProgress( '' ) ) ).to.equal( '' );
+			expect( getProgress( withProgress( null ) ) ).to.equal( null );
+			expect( getProgress( withProgress( 0 ) ) ).to.equal( 0 );
+			expect( getProgress( withProgress( false ) ) ).to.equal( false );
 		} );
 	} );
 

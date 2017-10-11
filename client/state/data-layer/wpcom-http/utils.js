@@ -13,7 +13,7 @@ import { get, identity, noop } from 'lodash';
  * @param {Object} action may contain HTTP response data
  * @returns {?*} response data if available
  */
-export const getData = action => get( action, 'meta.dataLayer.data', null );
+export const getData = action => get( action, 'meta.dataLayer.data', undefined );
 
 /**
  * Returns error data from an HTTP request failure action if available
@@ -21,7 +21,7 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
  * @param {Object} action may contain HTTP response error data
  * @returns {?*} error data if available
  */
-export const getError = action => get( action, 'meta.dataLayer.error', null );
+export const getError = action => get( action, 'meta.dataLayer.error', undefined );
 
 /**
  * Returns (response) headers data from an HTTP request action if available
@@ -29,7 +29,7 @@ export const getError = action => get( action, 'meta.dataLayer.error', null );
  * @param {Object} action may contain HTTP response headers data
  * @returns {?*} headers data if available
  */
-export const getHeaders = action => get( action, 'meta.dataLayer.headers', null );
+export const getHeaders = action => get( action, 'meta.dataLayer.headers', undefined );
 
 /**
  * @typedef {Object} ProgressData
@@ -44,7 +44,7 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  * @returns {Object|null} progress data if available
  * @returns {ProgressData}
  */
-export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
+export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
 
 class SchemaError extends Error {
 	constructor( errors ) {
@@ -138,12 +138,12 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
 	const error = getError( action );
-	if ( error ) {
+	if ( undefined !== error ) {
 		return onError( store, action, error );
 	}
 
 	const data = getData( action );
-	if ( data ) {
+	if ( undefined !== data ) {
 		try {
 			return onSuccess( store, action, fromApi( data ) );
 		} catch ( err ) {
@@ -152,7 +152,7 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 	}
 
 	const progress = getProgress( action );
-	if ( progress ) {
+	if ( undefined !== progress ) {
 		return onProgress( store, action, progress );
 	}
 
