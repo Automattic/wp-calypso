@@ -111,6 +111,11 @@ class PeopleSectionNav extends Component {
 				path: '/people/viewers/' + siteFilter,
 				id: 'viewers',
 			},
+			{
+				title: translate( 'Invitations', { context: 'Filter label for invitations list' } ),
+				path: '/people/invitations/' + siteFilter,
+				id: 'invitations',
+			},
 		];
 
 		return filters;
