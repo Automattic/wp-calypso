@@ -26,7 +26,7 @@ import {
 const debug = debugModule( 'calypso:state:jetpack-sync:actions' );
 
 const exported = {
-    getSyncStatus( siteId ) {
+	getSyncStatus( siteId ) {
 		return dispatch => {
 			debug( 'Getting sync status for: ' + siteId );
 			dispatch( {
@@ -54,7 +54,7 @@ const exported = {
 		};
 	},
 
-    scheduleJetpackFullysync( siteId ) {
+	scheduleJetpackFullysync( siteId ) {
 		return dispatch => {
 			debug( 'Requesting full sync for: ' + siteId );
 			dispatch( {
@@ -80,12 +80,9 @@ const exported = {
 					} );
 				} );
 		};
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    getSyncStatus,
-    scheduleJetpackFullysync
-} = exported;
+export const { getSyncStatus, scheduleJetpackFullysync } = exported;

@@ -26,9 +26,9 @@ const isFetched = function( state, pluginSlug ) {
 };
 
 const exported = {
-    getPlugin,
-    isFetching,
-    isFetched
+	getPlugin,
+	isFetching,
+	isFetched,
 };
 
 export default exported;

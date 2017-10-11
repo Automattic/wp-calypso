@@ -40,17 +40,28 @@ function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 }
 
 const exported = {
-    addCardDetails,
-    addCreditCard,
-    billingHistory,
-    billingHistoryReceipt,
-    cancelPrivacyProtection,
-    cancelPurchase,
-    confirmCancelDomain,
-    editCardDetails,
-    managePurchase,
-    purchasesRoot
+	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
+	cancelPrivacyProtection,
+	cancelPurchase,
+	confirmCancelDomain,
+	editCardDetails,
+	managePurchase,
+	purchasesRoot,
 };
 
 export default exported;
-export { addCardDetails, addCreditCard, billingHistory, billingHistoryReceipt, cancelPrivacyProtection, cancelPurchase, confirmCancelDomain, editCardDetails, managePurchase, purchasesRoot };
+export {
+	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
+	cancelPrivacyProtection,
+	cancelPurchase,
+	confirmCancelDomain,
+	editCardDetails,
+	managePurchase,
+	purchasesRoot,
+};

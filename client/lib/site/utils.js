@@ -9,11 +9,11 @@ import { get } from 'lodash';
 import { withoutHttp } from 'lib/url';
 
 const exported = {
-    userCan( capability, site ) {
+	userCan( capability, site ) {
 		return site && site.capabilities && site.capabilities[ capability ];
 	},
 
-    /**
+	/**
 	 * site's timezone getter
 	 *
 	 * @param {Object} site - site object
@@ -23,7 +23,7 @@ const exported = {
 		return site && site.options ? site.options.timezone : null;
 	},
 
-    /**
+	/**
 	 * site's gmt_offset getter
 	 *
 	 * @param {Object} site - site object
@@ -33,7 +33,7 @@ const exported = {
 		return site && site.options ? site.options.gmt_offset : null;
 	},
 
-    getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
+	getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		if ( ! site || ! site.options || ! site.options.file_mod_disabled ) {
 			return;
 		}
@@ -74,7 +74,7 @@ const exported = {
 			.filter( reason => reason );
 	},
 
-    canUpdateFiles( site ) {
+	canUpdateFiles( site ) {
 		if ( ! site ) {
 			return false;
 		}
@@ -103,7 +103,7 @@ const exported = {
 		return true;
 	},
 
-    canAutoupdateFiles( site ) {
+	canAutoupdateFiles( site ) {
 		if ( ! this.canUpdateFiles( site ) ) {
 			return false;
 		}
@@ -117,7 +117,7 @@ const exported = {
 		return true;
 	},
 
-    isMainNetworkSite( site ) {
+	isMainNetworkSite( site ) {
 		if ( ! site ) {
 			return false;
 		}
@@ -143,7 +143,7 @@ const exported = {
 		return false;
 	},
 
-    /**
+	/**
 	 * Checks whether a site has a custom mapped URL.
 	 * @param  {Object}   site Site object
 	 * @return {?Boolean}      Whether site has custom domain
@@ -156,21 +156,21 @@ const exported = {
 		return site.domain !== site.wpcom_url;
 	},
 
-    isModuleActive( site, moduleId ) {
+	isModuleActive( site, moduleId ) {
 		return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
-	}
+	},
 };
 
 export default exported;
 
 export const {
-    userCan,
-    timezone,
-    gmtOffset,
-    getSiteFileModDisableReason,
-    canUpdateFiles,
-    canAutoupdateFiles,
-    isMainNetworkSite,
-    hasCustomDomain,
-    isModuleActive
+	userCan,
+	timezone,
+	gmtOffset,
+	getSiteFileModDisableReason,
+	canUpdateFiles,
+	canAutoupdateFiles,
+	isMainNetworkSite,
+	hasCustomDomain,
+	isModuleActive,
 } = exported;

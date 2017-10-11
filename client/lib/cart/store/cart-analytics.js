@@ -35,8 +35,8 @@ function recordRemoveEvent( cartItem ) {
 }
 
 const exported = {
-    recordEvents,
-    removeNestedProperties
+	recordEvents,
+	removeNestedProperties,
 };
 
 export default exported;

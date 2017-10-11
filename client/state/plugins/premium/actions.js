@@ -292,7 +292,7 @@ function configure( site, plugin, dispatch ) {
 }
 
 const exported = {
-    fetchInstallInstructions: function( siteId ) {
+	fetchInstallInstructions: function( siteId ) {
 		return dispatch => {
 			if ( _fetching[ siteId ] ) {
 				return;
@@ -327,7 +327,7 @@ const exported = {
 		};
 	},
 
-    installPlugin: function( plugin, site ) {
+	installPlugin: function( plugin, site ) {
 		return dispatch => {
 			// Starting Install
 			dispatch( {
@@ -338,12 +338,9 @@ const exported = {
 
 			install( site, plugin, dispatch );
 		};
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    fetchInstallInstructions,
-    installPlugin
-} = exported;
+export const { fetchInstallInstructions, installPlugin } = exported;

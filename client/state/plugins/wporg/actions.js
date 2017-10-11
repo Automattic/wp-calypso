@@ -21,7 +21,7 @@ import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action
 let _fetching = {};
 
 const exported = {
-    fetchPluginData: function( pluginSlug ) {
+	fetchPluginData: function( pluginSlug ) {
 		return dispatch => {
 			if ( _fetching[ pluginSlug ] ) {
 				return;
@@ -47,11 +47,9 @@ const exported = {
 				} );
 			} );
 		};
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    fetchPluginData
-} = exported;
+export const { fetchPluginData } = exported;

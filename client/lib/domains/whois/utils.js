@@ -20,8 +20,8 @@ function findPrivacyServiceWhois( whoisContacts ) {
 }
 
 const exported = {
-    findRegistrantWhois,
-    findPrivacyServiceWhois
+	findRegistrantWhois,
+	findPrivacyServiceWhois,
 };
 
 export default exported;

@@ -78,10 +78,10 @@ const SignupActions = {
 export default SignupActions;
 
 export const {
-    fetchCachedSignup,
-    saveSignupStep,
-    submitSignupStep,
-    processSignupStep,
-    processedSignupStep,
-    provideDependencies
+	fetchCachedSignup,
+	saveSignupStep,
+	submitSignupStep,
+	processSignupStep,
+	processedSignupStep,
+	provideDependencies,
 } = SignupActions;

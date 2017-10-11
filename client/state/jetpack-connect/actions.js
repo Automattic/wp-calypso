@@ -64,7 +64,7 @@ const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&p
 const remoteActivatePath = '/wp-admin/plugins.php';
 
 const exported = {
-    confirmJetpackInstallStatus( status ) {
+	confirmJetpackInstallStatus( status ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
@@ -73,7 +73,7 @@ const exported = {
 		};
 	},
 
-    dismissUrl( url ) {
+	dismissUrl( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -82,7 +82,7 @@ const exported = {
 		};
 	},
 
-    checkUrl( url, isUrlOnSites, flowType ) {
+	checkUrl( url, isUrlOnSites, flowType ) {
 		return dispatch => {
 			if ( _fetching[ url ] ) {
 				return;
@@ -180,7 +180,7 @@ const exported = {
 		};
 	},
 
-    goToPlans( url ) {
+	goToPlans( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -197,7 +197,7 @@ const exported = {
 		};
 	},
 
-    goToRemoteAuth( url ) {
+	goToRemoteAuth( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -221,7 +221,7 @@ const exported = {
 		};
 	},
 
-    retryAuth( url, attemptNumber ) {
+	retryAuth( url, attemptNumber ) {
 		return dispatch => {
 			debug( 'retrying auth', url, attemptNumber );
 			dispatch( {
@@ -249,7 +249,7 @@ const exported = {
 		};
 	},
 
-    goToPluginInstall( url ) {
+	goToPluginInstall( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -273,7 +273,7 @@ const exported = {
 		};
 	},
 
-    goToPluginActivation( url ) {
+	goToPluginActivation( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -297,7 +297,7 @@ const exported = {
 		};
 	},
 
-    goBackToWpAdmin( url ) {
+	goBackToWpAdmin( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
@@ -307,7 +307,7 @@ const exported = {
 		};
 	},
 
-    goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
+	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
 		return dispatch => {
 			const url = addQueryArgs(
 				{ code: authorizationCode, state: queryObject.state },
@@ -322,7 +322,7 @@ const exported = {
 		};
 	},
 
-    createAccount( userData ) {
+	createAccount( userData ) {
 		return dispatch => {
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
 
@@ -351,7 +351,7 @@ const exported = {
 		};
 	},
 
-    isUserConnected( siteId, siteIsOnSitesList ) {
+	isUserConnected( siteId, siteIsOnSitesList ) {
 		let accessibleSite;
 		return dispatch => {
 			dispatch( {
@@ -398,7 +398,7 @@ const exported = {
 		};
 	},
 
-    authorize( queryObject ) {
+	authorize( queryObject ) {
 		return dispatch => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
@@ -489,7 +489,7 @@ const exported = {
 		};
 	},
 
-    validateSSONonce( siteId, ssoNonce ) {
+	validateSSONonce( siteId, ssoNonce ) {
 		return dispatch => {
 			debug( 'Attempting to validate SSO for ' + siteId );
 			dispatch( {
@@ -523,7 +523,7 @@ const exported = {
 		};
 	},
 
-    authorizeSSO( siteId, ssoNonce, siteUrl ) {
+	authorizeSSO( siteId, ssoNonce, siteUrl ) {
 		return dispatch => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
 			dispatch( {
@@ -556,7 +556,7 @@ const exported = {
 		};
 	},
 
-    selectPlanInAdvance( planSlug, site ) {
+	selectPlanInAdvance( planSlug, site ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
@@ -566,34 +566,34 @@ const exported = {
 		};
 	},
 
-    completeFlow( site ) {
+	completeFlow( site ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_COMPLETE_FLOW,
 				site,
 			} );
 		};
-	}
+	},
 };
 
 export default exported;
 
 export const {
-    confirmJetpackInstallStatus,
-    dismissUrl,
-    checkUrl,
-    goToPlans,
-    goToRemoteAuth,
-    retryAuth,
-    goToPluginInstall,
-    goToPluginActivation,
-    goBackToWpAdmin,
-    goToXmlrpcErrorFallbackUrl,
-    createAccount,
-    isUserConnected,
-    authorize,
-    validateSSONonce,
-    authorizeSSO,
-    selectPlanInAdvance,
-    completeFlow
+	confirmJetpackInstallStatus,
+	dismissUrl,
+	checkUrl,
+	goToPlans,
+	goToRemoteAuth,
+	retryAuth,
+	goToPluginInstall,
+	goToPluginActivation,
+	goBackToWpAdmin,
+	goToXmlrpcErrorFallbackUrl,
+	createAccount,
+	isUserConnected,
+	authorize,
+	validateSSONonce,
+	authorizeSSO,
+	selectPlanInAdvance,
+	completeFlow,
 } = exported;

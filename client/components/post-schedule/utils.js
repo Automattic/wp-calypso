@@ -124,17 +124,28 @@ const parseAndValidateNumber = value => {
 };
 
 const exported = {
-    convertDateToGivenOffset,
-    convertDateToUserLocation,
-    convertHoursToHHMM,
-    convertMinutesToHHMM,
-    getDateInLocalUTC,
-    getLocalizedDate,
-    getTimeOffset,
-    is12hr,
-    isValidGMTOffset,
-    parseAndValidateNumber
+	convertDateToGivenOffset,
+	convertDateToUserLocation,
+	convertHoursToHHMM,
+	convertMinutesToHHMM,
+	getDateInLocalUTC,
+	getLocalizedDate,
+	getTimeOffset,
+	is12hr,
+	isValidGMTOffset,
+	parseAndValidateNumber,
 };
 
 export default exported;
-export { convertDateToGivenOffset, convertDateToUserLocation, convertHoursToHHMM, convertMinutesToHHMM, getDateInLocalUTC, getLocalizedDate, getTimeOffset, is12hr, isValidGMTOffset, parseAndValidateNumber };
+export {
+	convertDateToGivenOffset,
+	convertDateToUserLocation,
+	convertHoursToHHMM,
+	convertMinutesToHHMM,
+	getDateInLocalUTC,
+	getLocalizedDate,
+	getTimeOffset,
+	is12hr,
+	isValidGMTOffset,
+	parseAndValidateNumber,
+};
