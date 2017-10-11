@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getImageEditorIsGreaterThanMinimumDimensions } from '../';
 
 describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
-	it( 'should return false if the image has not loaded yet and therefore originalAspectRatio not set', () => {
+	test( 'should return false if the image has not loaded yet and therefore originalAspectRatio not set', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( {
 			ui: {
 				editor: {
@@ -24,7 +24,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 
 		expect( isGreaterThanMinimumDimensions ).to.be.false;
 	} );
-	it( 'should return false if the width value is not an integer', () => {
+	test( 'should return false if the width value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
 				ui: {
@@ -41,7 +41,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 
 		expect( isGreaterThanMinimumDimensions ).to.be.false;
 	} );
-	it( 'should return false if the height value is not an integer', () => {
+	test( 'should return false if the height value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
 				ui: {
@@ -59,7 +59,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 		expect( isGreaterThanMinimumDimensions ).to.be.false;
 	} );
 
-	it( 'should return false if the dimensions do not meet the supplied minimum dimensions', () => {
+	test( 'should return false if the dimensions do not meet the supplied minimum dimensions', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
 				ui: {
@@ -77,7 +77,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 		expect( isGreaterThanMinimumDimensions ).to.be.false;
 	} );
 
-	it( 'should return true if the dimensions meet the supplied minimum dimensions', () => {
+	test( 'should return true if the dimensions meet the supplied minimum dimensions', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
 				ui: {

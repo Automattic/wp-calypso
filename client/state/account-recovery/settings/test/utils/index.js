@@ -25,7 +25,7 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 				.reply( 200, successResponse );
 		} );
 
-		it( 'should be successful.', () => {
+		test( 'should be successful.', () => {
 			const action = thunk();
 
 			preCondition();
@@ -41,7 +41,7 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 				.reply( errorResponse.status, errorResponse );
 		} );
 
-		it( 'should be failed', () => {
+		test( 'should be failed', () => {
 			const action = thunk();
 
 			preCondition();

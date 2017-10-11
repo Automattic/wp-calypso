@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getRawOffsets } from '../';
 
 describe( 'getRawOffsets()', () => {
-	it( "should return null if `timezones` aren't synced", () => {
+	test( "should return null if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -25,7 +25,7 @@ describe( 'getRawOffsets()', () => {
 		expect( manualUTCOffsets ).to.eql( {} );
 	} );
 
-	it( 'should return raw offsets data', () => {
+	test( 'should return raw offsets data', () => {
 		const state = {
 			timezones: {
 				rawOffsets: {

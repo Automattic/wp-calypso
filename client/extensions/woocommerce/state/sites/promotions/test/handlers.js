@@ -22,7 +22,7 @@ describe( 'handlers', () => {
 	const siteId = 123;
 
 	describe( '#promotionsRequest', () => {
-		it( 'should dispatch the first requests for products and coupons', () => {
+		test( 'should dispatch the first requests for products and coupons', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -44,7 +44,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#couponsUpdated', () => {
-		it( 'should dispatch a request for the next page', () => {
+		test( 'should dispatch a request for the next page', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -67,7 +67,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should not dispatch after the last page', () => {
+		test( 'should not dispatch after the last page', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -86,7 +86,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#productsRequestSuccess', () => {
-		it( 'should dispatch a request for the next page', () => {
+		test( 'should dispatch a request for the next page', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -105,7 +105,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch.firstCall.returnValue ).to.be.a.function;
 		} );
 
-		it( 'should not dispatch after the last page', () => {
+		test( 'should not dispatch after the last page', () => {
 			const store = {
 				dispatch: spy(),
 			};

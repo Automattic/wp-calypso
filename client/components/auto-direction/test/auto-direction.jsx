@@ -16,9 +16,9 @@ import React from 'react';
 import AutoDirection from '..';
 import Emojify from 'components/emojify';
 
-describe( 'AutoDirection', function() {
+describe( 'AutoDirection', () => {
 	describe( 'component rendering', () => {
-		it( 'adds a direction to RTL text', () => {
+		test( 'adds a direction to RTL text', () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>השנה היא 2017.</div>
@@ -28,7 +28,7 @@ describe( 'AutoDirection', function() {
 			expect( wrapper.node.props.direction ).to.equal( 'rtl' );
 		} );
 
-		it( "doesn't add a direction to LTR text", () => {
+		test( "doesn't add a direction to LTR text", () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>The year is 2017.</div>
@@ -38,7 +38,7 @@ describe( 'AutoDirection', function() {
 			expect( wrapper.node.props ).to.not.have.property( 'direction' );
 		} );
 
-		it( 'adds a direction to the parent of an inline component', () => {
+		test( 'adds a direction to the parent of an inline component', () => {
 			const wrapper = shallow(
 				<AutoDirection>
 					<div>

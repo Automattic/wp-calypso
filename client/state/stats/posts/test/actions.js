@@ -25,7 +25,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receivePostStat()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePostStats( 2916284, 2454, { views: 2 } );
 
 			expect( action ).to.eql( {
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePostStats( 2916284, 2454, { views: 2, years: {} } )
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_STATS_REQUEST_SUCCESS,
@@ -80,7 +80,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestPostStats( 2916285, 2455, [ 'views' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_STATS_REQUEST_FAILURE,

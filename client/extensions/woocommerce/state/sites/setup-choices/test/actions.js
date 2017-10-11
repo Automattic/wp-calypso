@@ -50,7 +50,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchSetupChoices( siteId )( dispatch, getState );
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchSetupChoices( siteId )( dispatch, getState );
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if setup choices are already loading for this site', () => {
+		test( 'should not dispatch if setup choices are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -120,7 +120,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setFinishedInitialSetup( siteId, true )( dispatch, getState );
@@ -132,7 +132,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setFinishedInitialSetup( siteId, true )( dispatch, getState );
@@ -175,7 +175,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setOptedOutOfShippingSetup( siteId, true )( dispatch, getState );
@@ -187,7 +187,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setOptedOutOfShippingSetup( siteId, true )( dispatch, getState );
@@ -230,7 +230,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setOptedOutOfTaxesSetup( siteId, true )( dispatch, getState );
@@ -242,7 +242,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setOptedOutOfTaxesSetup( siteId, true )( dispatch, getState );
@@ -285,7 +285,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setTriedCustomizerDuringInitialSetup( siteId, true )( dispatch, getState );
@@ -297,7 +297,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setTriedCustomizerDuringInitialSetup( siteId, true )( dispatch, getState );
@@ -340,7 +340,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setCreatedDefaultShippingZone( siteId, true )( dispatch, getState );
@@ -352,7 +352,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setCreatedDefaultShippingZone( siteId, true )( dispatch, getState );
@@ -395,7 +395,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setFinishedInstallOfRequiredPlugins( siteId, true )( dispatch, getState );
@@ -407,7 +407,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setFinishedInstallOfRequiredPlugins( siteId, true )( dispatch, getState );
@@ -450,7 +450,7 @@ describe( 'actions', () => {
 				.reply( 200, { data } );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setUpStorePages( siteId )( dispatch, getState );
@@ -460,7 +460,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a setup choice update request action with request completes', () => {
+		test( 'should dispatch a setup choice update request action with request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setUpStorePages( siteId )( dispatch, getState );
@@ -497,7 +497,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setCheckedTaxSetup( siteId, true )( dispatch, getState );
@@ -509,7 +509,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setCheckedTaxSetup( siteId, true )( dispatch, getState );
@@ -553,7 +553,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			setSetStoreAddressDuringInitialSetup( siteId, true )( dispatch, getState );
@@ -565,7 +565,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with setup choices when request completes', () => {
+		test( 'should dispatch a success action with setup choices when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = setSetStoreAddressDuringInitialSetup( siteId, true )( dispatch, getState );

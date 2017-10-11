@@ -26,7 +26,7 @@ import {
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
-		it( 'should return an action object with a null siteId', () => {
+		test( 'should return an action object with a null siteId', () => {
 			const action = setAllSitesSelected();
 
 			expect( action ).to.eql( {
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setPreviewShowing()', () => {
-		it( 'should return an action object where isShowing is true', () => {
+		test( 'should return an action object where isShowing is true', () => {
 			const action = setPreviewShowing( true );
 
 			expect( action ).to.eql( {
@@ -46,7 +46,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object where isShowing is false', () => {
+		test( 'should return an action object where isShowing is false', () => {
 			const action = setPreviewShowing( false );
 
 			expect( action ).to.eql( {
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 	describe( 'setRoute()', () => {
 		const route = '/foo';
 
-		it( 'should return an action with an empty query object if no query is supplied', () => {
+		test( 'should return an action with an empty query object if no query is supplied', () => {
 			const action = setRoute( route );
 
 			expect( action ).to.eql( {
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object with path and the specified query arguments', () => {
+		test( 'should return an action object with path and the specified query arguments', () => {
 			const query = {
 				foo: 'bar',
 				bat: 123,
@@ -85,14 +85,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSection()', () => {
-		it( 'should return an action object where hasSidebar is true by default', () => {
+		test( 'should return an action object where hasSidebar is true by default', () => {
 			expect( setSection() ).to.eql( {
 				type: SECTION_SET,
 				hasSidebar: true,
 			} );
 		} );
 
-		it( 'should return an action object with the section specified', () => {
+		test( 'should return an action object with the section specified', () => {
 			const section = { name: 'me' };
 
 			expect( setSection( section ) ).to.eql( {
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object with the section and hasSidebar specified', () => {
+		test( 'should return an action object with the section and hasSidebar specified', () => {
 			const section = { name: 'me' };
 			const options = { hasSidebar: false };
 
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSelectedSiteId()', () => {
-		it( 'should return an action object with the siteId set', () => {
+		test( 'should return an action object with the siteId set', () => {
 			const siteId = 2916284;
 			const action = setSelectedSiteId( siteId );
 
@@ -127,7 +127,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'toggleNotificationsPanel()', () => {
-		it( 'should return an action object with just the action type', () => {
+		test( 'should return an action object with just the action type', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
 			} );

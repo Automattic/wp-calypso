@@ -12,7 +12,7 @@ import { getSelectedOrAllSitesJetpackCanManage } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
-	it( 'should return an empty array if no sites exist in state', () => {
+	test( 'should return an empty array if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -24,7 +24,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return an empty array if the sites existing do not verify jetpack canManage conditions', () => {
+	test( 'should return an empty array if the sites existing do not verify jetpack canManage conditions', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -41,7 +41,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	it( 'should return an array with one site if just one site exists and verifies jetpack canManage conditions', () => {
+	test( 'should return an array with one site if just one site exists and verifies jetpack canManage conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -71,7 +71,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites[ 0 ].ID ).to.eql( 2916288 );
 	} );
 
-	it( 'should return an array with all the sites that verify jetpack canManage conditions', () => {
+	test( 'should return an array with all the sites that verify jetpack canManage conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -117,7 +117,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites[ 1 ].ID ).to.eql( 2916289 );
 	} );
 
-	it( 'should return an array with the selected site if it verifies jetpack canManage conditions', () => {
+	test( 'should return an array with the selected site if it verifies jetpack canManage conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -160,7 +160,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites[ 0 ].ID ).to.eql( 2916289 );
 	} );
 
-	it( 'should return an empty array if the selected site can not be managed', () => {
+	test( 'should return an empty array if the selected site can not be managed', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {

@@ -13,7 +13,7 @@ import { isWordpressUpdateSuccessful } from '../';
 describe( 'isWordpressUpdateSuccessful()', () => {
 	const siteId = 2916284;
 
-	it( 'should return wordpress core update status for a known site', () => {
+	test( 'should return wordpress core update status for a known site', () => {
 		const state = {
 			sites: {
 				updates: {
@@ -27,7 +27,7 @@ describe( 'isWordpressUpdateSuccessful()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const state = {
 			sites: {
 				updates: {

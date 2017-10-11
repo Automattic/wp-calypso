@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSiteTimezoneName } from '../';
 
 describe( 'getSiteTimezoneName()', () => {
-	it( 'should return null if the site has never been fetched', () => {
+	test( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {},
@@ -22,7 +22,7 @@ describe( 'getSiteTimezoneName()', () => {
 		expect( timezone ).to.be.null;
 	} );
 
-	it( 'should return null if the site-settings has never been fetched', () => {
+	test( 'should return null if the site-settings has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -35,7 +35,7 @@ describe( 'getSiteTimezoneName()', () => {
 		expect( timezone ).to.be.null;
 	} );
 
-	it( 'should return site-settings timezone as the first priority', () => {
+	test( 'should return site-settings timezone as the first priority', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -51,7 +51,7 @@ describe( 'getSiteTimezoneName()', () => {
 		expect( timezone ).to.eql( 'Europe/Skopje' );
 	} );
 
-	it( 'should return site-settings UTC offset if timezone_string is empty', () => {
+	test( 'should return site-settings UTC offset if timezone_string is empty', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -67,7 +67,7 @@ describe( 'getSiteTimezoneName()', () => {
 		expect( timezone ).to.eql( 'UTC+11' );
 	} );
 
-	it( 'should return site-settings UTC offset for negative value', () => {
+	test( 'should return site-settings UTC offset for negative value', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {

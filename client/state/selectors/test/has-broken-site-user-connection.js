@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { hasBrokenSiteUserConnection } from '../';
 
 describe( 'hasBrokenSiteUserConnection()', () => {
-	it( 'should return false if no connections for site', () => {
+	test( 'should return false if no connections for site', () => {
 		const hasBroken = hasBrokenSiteUserConnection(
 			{
 				sharing: {
@@ -27,7 +27,7 @@ describe( 'hasBrokenSiteUserConnection()', () => {
 		expect( hasBroken ).to.be.false;
 	} );
 
-	it( 'should return false if all connections ok', () => {
+	test( 'should return false if all connections ok', () => {
 		const hasBroken = hasBrokenSiteUserConnection(
 			{
 				sharing: {
@@ -46,7 +46,7 @@ describe( 'hasBrokenSiteUserConnection()', () => {
 		expect( hasBroken ).to.be.false;
 	} );
 
-	it( 'should return true if any connections broken', () => {
+	test( 'should return true if any connections broken', () => {
 		const hasBroken = hasBrokenSiteUserConnection(
 			{
 				sharing: {

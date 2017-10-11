@@ -81,11 +81,11 @@ describe( 'edits-reducer', () => {
 		};
 	} );
 
-	it( 'should initialize to null', () => {
+	test( 'should initialize to null', () => {
 		expect( reducer( undefined, { type: '@@test/INIT' } ) ).to.equal( null );
 	} );
 
-	it( 'should create "updates" on first edit', () => {
+	test( 'should create "updates" on first edit', () => {
 		const product = { id: 48 };
 		const variation = { id: 23, regular_price: '0.99' };
 		const edits = reducer(
@@ -100,7 +100,7 @@ describe( 'edits-reducer', () => {
 		expect( edits[ 0 ].updates[ 0 ] ).to.eql( { id: 23, regular_price: '1.99' } );
 	} );
 
-	it( 'should modify "updates" on second edit', () => {
+	test( 'should modify "updates" on second edit', () => {
 		const product = { id: 48 };
 		let variation = { id: 23, regular_price: '0.99' };
 		const edits1 = reducer(
@@ -117,7 +117,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 0 ].updates[ 0 ] ).to.eql( { id: 23, regular_price: '3.99' } );
 	} );
 
-	it( 'should create updates for more than one existing variation', () => {
+	test( 'should create updates for more than one existing variation', () => {
 		const product = { id: 48 };
 		const variation1 = {
 			id: 23,
@@ -144,7 +144,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 0 ].updates[ 1 ] ).to.eql( { id: 24, regular_price: '2.99' } );
 	} );
 
-	it( 'should create "creates" on first edit', () => {
+	test( 'should create "creates" on first edit', () => {
 		const product = { id: 48 };
 
 		const edits = reducer(
@@ -159,7 +159,7 @@ describe( 'edits-reducer', () => {
 		expect( edits[ 0 ].creates[ 0 ].regular_price ).to.eql( '1.99' );
 	} );
 
-	it( 'should modify "creates" on second edit', () => {
+	test( 'should modify "creates" on second edit', () => {
 		const product = { id: 48 };
 
 		const edits1 = reducer(
@@ -176,7 +176,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 0 ].creates[ 0 ].regular_price ).to.eql( '2.99' );
 	} );
 
-	it( 'should create more than one new variation', () => {
+	test( 'should create more than one new variation', () => {
 		const product = { id: 48 };
 
 		const edits1 = reducer(
@@ -193,7 +193,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 0 ].creates[ 1 ].regular_price ).to.eql( '2.99' );
 	} );
 
-	it( 'should allow variation creates for more than one product', () => {
+	test( 'should allow variation creates for more than one product', () => {
 		const product1 = { id: 48 };
 		const product2 = { id: 49 };
 
@@ -212,7 +212,7 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 1 ].creates[ 0 ].regular_price ).to.eql( '2.99' );
 	} );
 
-	it( 'should set currentlyEditingId when editing a new variation', () => {
+	test( 'should set currentlyEditingId when editing a new variation', () => {
 		const product = { id: 48 };
 
 		const edits1 = reducer(
@@ -240,7 +240,7 @@ describe( 'edits-reducer', () => {
 		expect( productEdits2.currentlyEditingId ).to.eql( productEdits2.creates[ 1 ].id );
 	} );
 
-	it( 'should set currentlyEditingId when editing an existing variation', () => {
+	test( 'should set currentlyEditingId when editing an existing variation', () => {
 		const product = { id: 48 };
 		const variation1 = {
 			id: 23,
@@ -262,7 +262,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	describe( '#editProductVariationsAction', () => {
-		it( 'should clear any existing variation creates for a simple product', () => {
+		test( 'should clear any existing variation creates for a simple product', () => {
 			const productEditsBefore = {
 				creates: [ newVariableProduct1 ],
 			};
@@ -290,7 +290,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates ).to.not.exist;
 		} );
 
-		it( 'should clear any existing variation updates for a simple product', () => {
+		test( 'should clear any existing variation updates for a simple product', () => {
 			const productEditsBefore = {
 				updates: [ existingVariableProduct1 ],
 			};
@@ -323,7 +323,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].updates ).to.not.exist;
 		} );
 
-		it( 'should add deletes for a simple product with existing varations', () => {
+		test( 'should add deletes for a simple product with existing varations', () => {
 			const productEditsBefore = {
 				updates: [ existingVariableProduct1 ],
 			};
@@ -357,7 +357,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlackExisting.id );
 		} );
 
-		it( 'should add a variation create when a new variation type option is added', () => {
+		test( 'should add a variation create when a new variation type option is added', () => {
 			const newVariableProductNoAttributes = { ...newVariableProduct1, attributes: [] };
 			const productEditsBefore = {
 				creates: [ newVariableProductNoAttributes ],
@@ -392,7 +392,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates[ 0 ].attributes[ 0 ].option ).to.equal( 'Black' );
 		} );
 
-		it( 'should keep existing variation creates when adding a new variation type option', () => {
+		test( 'should keep existing variation creates when adding a new variation type option', () => {
 			const productEditsBefore = {
 				creates: [ newVariableProduct1 ],
 			};
@@ -438,7 +438,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].status ).to.eql( 'publish' );
 		} );
 
-		it( 'should keep existing variation updates when adding a new variation type option', () => {
+		test( 'should keep existing variation updates when adding a new variation type option', () => {
 			const productEditsBefore = {};
 			const variationEditsBefore = [
 				{
@@ -491,7 +491,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates[ 0 ].status ).to.eql( 'publish' );
 		} );
 
-		it( 'should remove a variation from creates when its type options are removed', () => {
+		test( 'should remove a variation from creates when its type options are removed', () => {
 			const productEditsBefore = {
 				creates: [ newVariableProduct1 ],
 			};
@@ -532,7 +532,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].creates[ 0 ] ).to.eql( variationBlue );
 		} );
 
-		it( 'should remove a variation from updates when its type options are removed', () => {
+		test( 'should remove a variation from updates when its type options are removed', () => {
 			const productEditsBefore = {};
 			const variationEditsBefore = [
 				{
@@ -573,7 +573,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].updates ).to.not.exist;
 		} );
 
-		it( 'should add a delete when an existing variation has its variation type option removed', () => {
+		test( 'should add a delete when an existing variation has its variation type option removed', () => {
 			const productEditsBefore = {};
 			const variationEditsBefore = [];
 			set(
@@ -606,7 +606,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlackExisting.id );
 		} );
 
-		it( 'should not retain any deletes if they become valid within the calculated variations', () => {
+		test( 'should not retain any deletes if they become valid within the calculated variations', () => {
 			const productEditsBefore = {};
 			const variationEditsBefore = [
 				{
@@ -644,7 +644,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	describe( '#productUpdatedAction', () => {
-		it( 'should update product placeholder ids to real ids when the product is created', () => {
+		test( 'should update product placeholder ids to real ids when the product is created', () => {
 			const createdVariableProduct1 = { ...newVariableProduct1, id: 55 };
 
 			const productEditsBefore = {
@@ -677,7 +677,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	describe( '#productVariationUpdatedAction', () => {
-		it( 'should clear variation from creates upon successful save', () => {
+		test( 'should clear variation from creates upon successful save', () => {
 			const variationEditsBefore = [
 				{
 					productId: 42,
@@ -703,7 +703,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter ).to.equal( null );
 		} );
 
-		it( 'should clear variation from updates upon successful save', () => {
+		test( 'should clear variation from updates upon successful save', () => {
 			const variationEditsBefore = [
 				{
 					productId: 42,
@@ -731,7 +731,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	describe( '#clearProductVariationEdits', () => {
-		it( 'should clear all product variations edit data', () => {
+		test( 'should clear all product variations edit data', () => {
 			const variationEditsBefore = [
 				{
 					productId: 42,

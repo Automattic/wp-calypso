@@ -35,7 +35,7 @@ const settingsData = [
 
 describe( 'handlers', () => {
 	describe( '#handleSettingsGeneral()', () => {
-		it( 'should dispatch a get action', () => {
+		test( 'should dispatch a get action', () => {
 			const siteId = '123';
 			const getState = () => ( {
 				extensions: {
@@ -67,7 +67,7 @@ describe( 'handlers', () => {
 				} )
 			);
 		} );
-		it( 'should not dispatch if settings are already loaded for this site', () => {
+		test( 'should not dispatch if settings are already loaded for this site', () => {
 			const siteId = '123';
 			const getState = () => ( {
 				extensions: {
@@ -90,7 +90,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleSettingsGeneralSuccess()', () => {
-		it( 'should dispatch success with settings data', () => {
+		test( 'should dispatch success with settings data', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),
@@ -108,7 +108,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleSettingsGeneralError()', () => {
-		it( 'should dispatch error', () => {
+		test( 'should dispatch error', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),

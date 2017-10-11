@@ -13,7 +13,7 @@ import reducer from '../reducer';
 import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should store the current query for more than one site', () => {
+	test( 'should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,
 			siteId: 234,

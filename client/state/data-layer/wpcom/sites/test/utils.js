@@ -27,7 +27,7 @@ describe( 'utility functions', () => {
 	useFakeTimers();
 
 	describe( '#createPlaceholderComment()', () => {
-		it( 'should return a comment placeholder', () => {
+		test( 'should return a comment placeholder', () => {
 			const placeholder = createPlaceholderComment( 'comment text', 1, 2 );
 
 			expect( placeholder ).to.eql( {
@@ -63,7 +63,7 @@ describe( 'utility functions', () => {
 			type: 'comment',
 		};
 
-		it( 'should dispatch a http request action to the specified path', () => {
+		test( 'should dispatch a http request action to the specified path', () => {
 			const dispatch = spy();
 
 			dispatchNewCommentRequest( dispatch, action, '/sites/foo/comments' );
@@ -90,7 +90,7 @@ describe( 'utility functions', () => {
 	} );
 
 	describe( '#updatePlaceholderComment()', () => {
-		it( 'should remove the placeholder comment', () => {
+		test( 'should remove the placeholder comment', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
@@ -111,7 +111,7 @@ describe( 'utility functions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a comments receive action', () => {
+		test( 'should dispatch a comments receive action', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
@@ -133,7 +133,7 @@ describe( 'utility functions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a comments count increment action', () => {
+		test( 'should dispatch a comments count increment action', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
@@ -155,7 +155,7 @@ describe( 'utility functions', () => {
 	} );
 
 	describe( '#handleWriteCommentFailure()', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
 			const getState = () => ( {
 				posts: {

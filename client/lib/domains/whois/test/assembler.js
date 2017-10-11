@@ -89,7 +89,7 @@ function buildWhoisTranferObject( suffix, type ) {
 describe( 'assembler', () => {
 	const { REGISTRANT, PRIVACY_SERVICE } = whoisType;
 
-	it( 'should return WHOIS with empty contact info when there is no valid entry in data transfer object', () => {
+	test( 'should return WHOIS with empty contact info when there is no valid entry in data transfer object', () => {
 		const invalidDataTransferObject = [ { type: 'anything' } ],
 			expectedDomainWhois = [ buildEmptyWhois( REGISTRANT ), buildEmptyWhois( PRIVACY_SERVICE ) ];
 
@@ -98,7 +98,7 @@ describe( 'assembler', () => {
 		);
 	} );
 
-	it( 'should return WHOIS with empty contact info when there is an empty registrant entry in data transfer object', () => {
+	test( 'should return WHOIS with empty contact info when there is an empty registrant entry in data transfer object', () => {
 		const emptyDataTransferObject = [
 				{
 					type: REGISTRANT,
@@ -111,7 +111,7 @@ describe( 'assembler', () => {
 		);
 	} );
 
-	it( 'should return full registrant and empty privacy service WHOIS when there is only registrant entry in data transfer object', () => {
+	test( 'should return full registrant and empty privacy service WHOIS when there is only registrant entry in data transfer object', () => {
 		const registrantDataTransferObject = [ buildWhoisTranferObject( 1, REGISTRANT ) ],
 			expectedDomainWhois = [ buildWhois( 1, REGISTRANT ), buildEmptyWhois( PRIVACY_SERVICE ) ];
 
@@ -120,7 +120,7 @@ describe( 'assembler', () => {
 		);
 	} );
 
-	it( 'should return full registrant and privacy service WHOIS when there are both entries in data transfer object', () => {
+	test( 'should return full registrant and privacy service WHOIS when there are both entries in data transfer object', () => {
 		const registrantDataTransferObject = [
 				buildWhoisTranferObject( 1, REGISTRANT ),
 				buildWhoisTranferObject( 2, PRIVACY_SERVICE ),
@@ -132,7 +132,7 @@ describe( 'assembler', () => {
 		);
 	} );
 
-	it( 'should return full registrant and privacy service WHOIS when data transfer object is shuffled', () => {
+	test( 'should return full registrant and privacy service WHOIS when data transfer object is shuffled', () => {
 		const registrantDataTransferObject = [
 				buildWhoisTranferObject( 2, PRIVACY_SERVICE ),
 				buildWhoisTranferObject( 1, REGISTRANT ),

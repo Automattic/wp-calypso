@@ -15,7 +15,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 		getSiteSlugsForUpcomingTransactions.memoizedSelector.cache.clear();
 	} );
 
-	it( 'should return slugs for sites with transactions only', () => {
+	test( 'should return slugs for sites with transactions only', () => {
 		const state = {
 			sites: {
 				items: {
@@ -36,7 +36,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 		} );
 	} );
 
-	it( 'should not return duplicate slugs when multiple transactions are for the same site', () => {
+	test( 'should not return duplicate slugs when multiple transactions are for the same site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -57,7 +57,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 		} );
 	} );
 
-	it( 'should skip transactions with empty blog_id', () => {
+	test( 'should skip transactions with empty blog_id', () => {
 		const state = {
 			sites: {
 				items: {},
@@ -72,7 +72,7 @@ describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 		expect( output ).to.eql( {} );
 	} );
 
-	it( 'should skip sites that are not loaded yet', () => {
+	test( 'should skip sites that are not loaded yet', () => {
 		const state = {
 			sites: {
 				items: {

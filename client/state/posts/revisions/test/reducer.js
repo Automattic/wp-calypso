@@ -18,18 +18,18 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'revisions' ] );
 	} );
 
 	describe( '#requesting', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set to `true` if a request is initiated', () => {
+		test( 'should set to `true` if a request is initiated', () => {
 			const state = requesting( undefined, {
 				type: POST_REVISIONS_REQUEST,
 				siteId: 12345678,
@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set to `false` if the request is successful', () => {
+		test( 'should set to `false` if the request is successful', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set to `false` if the request fails', () => {
+		test( 'should set to `false` if the request fails', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should support multiple sites', () => {
+		test( 'should support multiple sites', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should support multiple posts', () => {
+		test( 'should support multiple posts', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -133,13 +133,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#revisions', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = revisions( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should support multiple sites', () => {
+		test( 'should support multiple sites', () => {
 			const state = revisions(
 				deepFreeze( {
 					12345678: {
@@ -180,7 +180,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should support multiple posts', () => {
+		test( 'should support multiple posts', () => {
 			const state = revisions(
 				deepFreeze( {
 					12345678: {
@@ -219,7 +219,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should discard previous revisions for the same post', () => {
+		test( 'should discard previous revisions for the same post', () => {
 			const state = revisions(
 				deepFreeze( {
 					12345678: {

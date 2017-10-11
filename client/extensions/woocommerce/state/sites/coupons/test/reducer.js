@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 		},
 	];
 
-	it( 'should save page data to store', () => {
+	test( 'should save page data to store', () => {
 		const action = {
 			type: WOOCOMMERCE_COUPONS_UPDATED,
 			siteId,
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 		expect( newState.totalCoupons ).to.equal( 3 );
 	} );
 
-	it( 'should clear page data from store', () => {
+	test( 'should clear page data from store', () => {
 		const action = {
 			type: WOOCOMMERCE_COUPONS_UPDATED,
 			siteId,

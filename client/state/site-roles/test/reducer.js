@@ -25,18 +25,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set that site ID to true if a request is initiated', () => {
+		test( 'should set that site ID to true if a request is initiated', () => {
 			const state = requesting(
 				{},
 				{
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set that site ID to false if a request finishes succesfully', () => {
+		test( 'should set that site ID to false if a request finishes succesfully', () => {
 			const state = requesting(
 				{},
 				{
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set that site ID to false if a request finishes unsuccesfully', () => {
+		test( 'should set that site ID to false if a request finishes unsuccesfully', () => {
 			const state = requesting(
 				{},
 				{
@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -91,7 +91,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -135,13 +135,13 @@ describe( 'reducer', () => {
 			},
 		];
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index roles by site ID', () => {
+		test( 'should index roles by site ID', () => {
 			const state = items(
 				{},
 				{
@@ -156,7 +156,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous roles of same site ID', () => {
+		test( 'should override previous roles of same site ID', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: roles,
@@ -175,7 +175,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: roles,
@@ -192,7 +192,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: roles,
@@ -209,7 +209,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					1234567: [

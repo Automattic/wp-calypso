@@ -13,7 +13,7 @@ import { isMappedDomainSite } from '../';
 describe( '#isMappedDomainSite()', () => {
 	const siteId = 77203074;
 
-	it( 'should return null if the site is unknown', () => {
+	test( 'should return null if the site is unknown', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
@@ -26,7 +26,7 @@ describe( '#isMappedDomainSite()', () => {
 		expect( result ).to.be.null;
 	} );
 
-	it( 'it should return false if the site does not have the mapped domain option set to true', () => {
+	test( 'it should return false if the site does not have the mapped domain option set to true', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {
@@ -47,7 +47,7 @@ describe( '#isMappedDomainSite()', () => {
 		expect( result ).to.be.false;
 	} );
 
-	it( 'it should return false if the site has the mapped domain option set to true', () => {
+	test( 'it should return false if the site has the mapped domain option set to true', () => {
 		const result = isMappedDomainSite(
 			{
 				sites: {

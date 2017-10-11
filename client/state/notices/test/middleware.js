@@ -35,17 +35,17 @@ describe( 'middleware', () => {
 			sandbox.spy( store, 'dispatch' );
 		} );
 
-		before( () => {
+		beforeAll( () => {
 			handlers.DUMMY_TYPE = ( dispatch, action, getState ) => {
 				dispatch( successNotice( `${ getState() } ${ action.target }` ) );
 			};
 		} );
 
-		after( () => {
+		afterAll( () => {
 			delete handlers.DUMMY_TYPE;
 		} );
 
-		it( 'should trigger the observer corresponding to the dispatched action type', () => {
+		test( 'should trigger the observer corresponding to the dispatched action type', () => {
 			noticesMiddleware( store )( noop )( { type: 'DUMMY_TYPE', target: 'World' } );
 
 			expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -57,14 +57,14 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	context( 'utility', () => {
+	describe( 'utility', () => {
 		let dispatch;
 		useSandbox( sandbox => {
 			dispatch = sandbox.spy();
 		} );
 
 		describe( 'dispatchSuccess()', () => {
-			it( 'should return a function which upon being called dispatches the specified success message', () => {
+			test( 'should return a function which upon being called dispatches the specified success message', () => {
 				dispatchSuccess( 'Success!' )( dispatch );
 
 				expect( dispatch ).to.have.been.calledWithMatch( {
@@ -78,7 +78,7 @@ describe( 'middleware', () => {
 		} );
 
 		describe( 'dispatchError()', () => {
-			it( 'should return a function which upon being called dispatches the specified error message', () => {
+			test( 'should return a function which upon being called dispatches the specified error message', () => {
 				dispatchError( 'Error!' )( dispatch );
 
 				expect( dispatch ).to.have.been.calledWithMatch( {
@@ -92,14 +92,14 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	context( 'handlers', () => {
+	describe( 'handlers', () => {
 		let dispatch;
 		useSandbox( sandbox => {
 			dispatch = sandbox.spy();
 		} );
 
 		describe( 'onPostDeleteFailure()', () => {
-			it( 'should dispatch error notice with truncated title if known', () => {
+			test( 'should dispatch error notice with truncated title if known', () => {
 				onPostDeleteFailure(
 					dispatch,
 					{
@@ -134,7 +134,7 @@ describe( 'middleware', () => {
 				} );
 			} );
 
-			it( 'should dispatch error notice with unknown title', () => {
+			test( 'should dispatch error notice with unknown title', () => {
 				onPostDeleteFailure(
 					dispatch,
 					{
@@ -160,7 +160,7 @@ describe( 'middleware', () => {
 		} );
 
 		describe( 'onPostRestoreFailure()', () => {
-			it( 'should dispatch error notice with truncated title if known', () => {
+			test( 'should dispatch error notice with truncated title if known', () => {
 				onPostRestoreFailure(
 					dispatch,
 					{
@@ -195,7 +195,7 @@ describe( 'middleware', () => {
 				} );
 			} );
 
-			it( 'should dispatch error notice with unknown title', () => {
+			test( 'should dispatch error notice with unknown title', () => {
 				onPostRestoreFailure(
 					dispatch,
 					{
@@ -221,7 +221,7 @@ describe( 'middleware', () => {
 		} );
 
 		describe( 'onPostSaveSuccess()', () => {
-			it( 'should not dispatch if status has no corresponding text', () => {
+			test( 'should not dispatch if status has no corresponding text', () => {
 				onPostSaveSuccess( dispatch, {
 					type: POST_SAVE_SUCCESS,
 					post: {
@@ -235,7 +235,7 @@ describe( 'middleware', () => {
 				} );
 			} );
 
-			it( 'should dispatch success notice for trash', () => {
+			test( 'should dispatch success notice for trash', () => {
 				onPostSaveSuccess( dispatch, {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'trash' },
@@ -250,7 +250,7 @@ describe( 'middleware', () => {
 				} );
 			} );
 
-			it( 'should dispatch success notice for publish', () => {
+			test( 'should dispatch success notice for publish', () => {
 				onPostSaveSuccess( dispatch, {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'publish' },

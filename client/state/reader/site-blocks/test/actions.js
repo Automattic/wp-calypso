@@ -33,14 +33,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteBlock', () => {
-		context( 'success', () => {
+		describe( 'success', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/me/block/sites/123/new' )
 					.reply( 200, deepFreeze( sampleSuccessResponse ) );
 			} );
 
-			it( 'should dispatch properly when receiving a valid response', () => {
+			test( 'should dispatch properly when receiving a valid response', () => {
 				const siteId = 123;
 				const request = requestSiteBlock( siteId )( dispatchSpy );
 
@@ -63,14 +63,14 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'failure', () => {
+		describe( 'failure', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/me/block/sites/124/new' )
 					.reply( 200, deepFreeze( sampleFailureResponse ) );
 			} );
 
-			it( 'should fail when receiving an error response', () => {
+			test( 'should fail when receiving an error response', () => {
 				const siteId = 124;
 				const request = requestSiteBlock( siteId )( dispatchSpy );
 
@@ -90,7 +90,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'serverError', () => {
+		describe( 'serverError', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -98,7 +98,7 @@ describe( 'actions', () => {
 					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
 			} );
 
-			it( 'should fail when receiving an error response', () => {
+			test( 'should fail when receiving an error response', () => {
 				const siteId = 125;
 				const request = requestSiteBlock( siteId )( dispatchSpy );
 
@@ -120,14 +120,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteUnblock', () => {
-		context( 'success', () => {
+		describe( 'success', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/me/block/sites/123/delete' )
 					.reply( 200, deepFreeze( sampleSuccessResponse ) );
 			} );
 
-			it( 'should dispatch properly when receiving a valid response', () => {
+			test( 'should dispatch properly when receiving a valid response', () => {
 				const siteId = 123;
 				const request = requestSiteUnblock( siteId )( dispatchSpy );
 
@@ -150,14 +150,14 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'failure', () => {
+		describe( 'failure', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/me/block/sites/124/new' )
 					.reply( 200, deepFreeze( sampleFailureResponse ) );
 			} );
 
-			it( 'should fail when receiving an error response', () => {
+			test( 'should fail when receiving an error response', () => {
 				const siteId = 124;
 				const request = requestSiteUnblock( siteId )( dispatchSpy );
 
@@ -177,7 +177,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'serverError', () => {
+		describe( 'serverError', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -185,7 +185,7 @@ describe( 'actions', () => {
 					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
 			} );
 
-			it( 'should fail when receiving an error response', () => {
+			test( 'should fail when receiving an error response', () => {
 				const siteId = 125;
 				const request = requestSiteUnblock( siteId )( dispatchSpy );
 

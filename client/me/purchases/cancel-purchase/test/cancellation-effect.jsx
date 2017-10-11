@@ -14,22 +14,22 @@ import purchases from 'lib/purchases';
 jest.mock( 'lib/products-values', () => ( {} ) );
 jest.mock( 'lib/purchases', () => ( {} ) );
 
-describe( 'cancellation-effect', function() {
+describe( 'cancellation-effect', () => {
 	const purchase = { domain: 'example.com' };
 	let translate;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		purchases.getName = () => 'purchase name';
 		translate = ( text, args ) => ( { args, text } );
 	} );
 
-	describe( 'cancellationEffectHeadline', function() {
-		describe( 'when refundable', function() {
-			beforeEach( function() {
+	describe( 'cancellationEffectHeadline', () => {
+		describe( 'when refundable', () => {
+			beforeEach( () => {
 				purchases.isRefundable = () => true;
 			} );
 
-			it( 'should return translation of cancel and return', function() {
+			test( 'should return translation of cancel and return', () => {
 				const headline = cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? '
@@ -37,12 +37,12 @@ describe( 'cancellation-effect', function() {
 			} );
 		} );
 
-		describe( 'when not refundable', function() {
-			beforeEach( function() {
+		describe( 'when not refundable', () => {
+			beforeEach( () => {
 				purchases.isRefundable = () => false;
 			} );
 
-			it( 'should return translation of cancel', function() {
+			test( 'should return translation of cancel', () => {
 				const headline = cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? '
@@ -51,13 +51,13 @@ describe( 'cancellation-effect', function() {
 		} );
 	} );
 
-	describe( 'cancellationEffectDetail', function() {
-		describe( 'when refundable', function() {
-			beforeEach( function() {
+	describe( 'cancellationEffectDetail', () => {
+		describe( 'when refundable', () => {
+			beforeEach( () => {
 				purchases.isRefundable = () => true;
 			} );
 
-			it( 'should return translation of theme message when product is a theme', function() {
+			test( 'should return translation of theme message when product is a theme', () => {
 				productsValues.isTheme = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
@@ -65,7 +65,7 @@ describe( 'cancellation-effect', function() {
 				);
 			} );
 
-			it( 'should return translation of g suite message when product is g suite', function() {
+			test( 'should return translation of g suite message when product is g suite', () => {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
@@ -75,7 +75,7 @@ describe( 'cancellation-effect', function() {
 				);
 			} );
 
-			it( 'should return translation of jetpack plan message when product is a jetpack plan', function() {
+			test( 'should return translation of jetpack plan message when product is a jetpack plan', () => {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => false;
 				productsValues.isJetpackPlan = () => true;
@@ -86,7 +86,7 @@ describe( 'cancellation-effect', function() {
 				);
 			} );
 
-			it( 'should return translation of plan message when product is not a theme, g suite or a jetpack plan', function() {
+			test( 'should return translation of plan message when product is not a theme, g suite or a jetpack plan', () => {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => false;
 				productsValues.isJetpackPlan = () => false;
@@ -97,13 +97,13 @@ describe( 'cancellation-effect', function() {
 			} );
 		} );
 
-		describe( 'when not refundable', function() {
-			beforeEach( function() {
+		describe( 'when not refundable', () => {
+			beforeEach( () => {
 				purchases.isRefundable = () => false;
 				purchases.getSubscriptionEndDate = () => '15/12/2093';
 			} );
 
-			it( 'should return translation of g suite message when product is g suite', function() {
+			test( 'should return translation of g suite message when product is g suite', () => {
 				productsValues.isGoogleApps = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
@@ -111,7 +111,7 @@ describe( 'cancellation-effect', function() {
 				);
 			} );
 
-			it( 'should return translation of domain mapping message when product is a domain mapping', function() {
+			test( 'should return translation of domain mapping message when product is a domain mapping', () => {
 				productsValues.isGoogleApps = () => false;
 				productsValues.isDomainMapping = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
@@ -120,7 +120,7 @@ describe( 'cancellation-effect', function() {
 				);
 			} );
 
-			it( 'should return translation of plan message when product is not g suite or a domain mapping', function() {
+			test( 'should return translation of plan message when product is not g suite or a domain mapping', () => {
 				productsValues.isGoogleApps = () => false;
 				productsValues.isDomainMapping = () => false;
 				const headline = cancellationEffectDetail( purchase, translate );

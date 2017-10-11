@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#hideView()', () => {
-		it( 'should dispatch hide action when thunk triggered', () => {
+		test( 'should dispatch hide action when thunk triggered', () => {
 			hideView( { view: 'stats', enabled: false } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {

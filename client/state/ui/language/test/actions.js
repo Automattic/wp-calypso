@@ -13,7 +13,7 @@ import { LOCALE_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setLocale', () => {
-		it( 'returns an appropriate action', () => {
+		test( 'returns an appropriate action', () => {
 			expect( setLocale( 'he' ) ).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
@@ -22,7 +22,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setLocaleRawData', () => {
-		it( 'returns an appropriate action', () => {
+		test( 'returns an appropriate action', () => {
 			expect(
 				setLocaleRawData( {
 					'': {

@@ -53,19 +53,19 @@ describe( 'NavigationLink', () => {
 		signupUtils.getStepUrl.reset();
 	} );
 
-	it( 'should render Button element', () => {
+	test( 'should render Button element', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 
 		expect( wrapper.find( 'Button' ) ).to.have.length( 1 );
 		expect( wrapper.find( 'Button' ).props().className ).to.equal( 'navigation-link' );
 	} );
 
-	it( 'should render no icons when the direction prop is undefined', () => {
+	test( 'should render no icons when the direction prop is undefined', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 		expect( wrapper.find( Gridicon ) ).to.not.exist;
 	} );
 
-	it( 'should render right-arrow icon when the direction prop is "forward".', () => {
+	test( 'should render right-arrow icon when the direction prop is "forward".', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
 
 		expect( wrapper.find( Gridicon ) ).to.have.length( 1 );
@@ -73,7 +73,7 @@ describe( 'NavigationLink', () => {
 		expect( wrapper.childAt( 0 ).text() ).to.equal( 'translated:Skip for now' );
 	} );
 
-	it( 'should render left-arrow icon when the direction prop is "back".', () => {
+	test( 'should render left-arrow icon when the direction prop is "back".', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
 		expect( wrapper.find( Gridicon ) ).to.have.length( 1 );
@@ -81,12 +81,12 @@ describe( 'NavigationLink', () => {
 		expect( wrapper.childAt( 1 ).text() ).to.equal( 'translated:Back' );
 	} );
 
-	it( 'should set href prop to undefined when the direction is not "back".', () => {
+	test( 'should set href prop to undefined when the direction is not "back".', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
 		expect( wrapper.props().href ).to.equal( undefined );
 	} );
 
-	it( 'should set a proper url as href prop when the direction is "back".', () => {
+	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( signupUtils.getStepUrl ).not.to.be.called;
 
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
@@ -111,7 +111,7 @@ describe( 'NavigationLink', () => {
 		expect( wrapper.props().href ).to.equal( 'test:back-url' );
 	} );
 
-	it( 'should call goToNextStep() only when the direction is forward and clicked', () => {
+	test( 'should call goToNextStep() only when the direction is forward and clicked', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
 
 		expect( props.goToNextStep ).not.to.has.been.called;
@@ -119,7 +119,7 @@ describe( 'NavigationLink', () => {
 		expect( props.goToNextStep ).to.has.been.called;
 	} );
 
-	it( 'should not call goToNextStep() when the direction is back', () => {
+	test( 'should not call goToNextStep() when the direction is back', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
 		expect( props.goToNextStep ).not.to.has.been.called;

@@ -37,7 +37,7 @@ import {
 
 describe( 'handlers', () => {
 	describe( '#handleReviewsRequest', () => {
-		it( 'should dispatch a get action', () => {
+		test( 'should dispatch a get action', () => {
 			const siteId = '123';
 			const dispatch = spy();
 			const action = fetchReviews( siteId );
@@ -57,7 +57,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleReviewsRequestSuccess()', () => {
-		it( 'should dispatch reviews receive with the reviews list', () => {
+		test( 'should dispatch reviews receive with the reviews list', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),
@@ -84,7 +84,7 @@ describe( 'handlers', () => {
 				reviews,
 			} );
 		} );
-		it( 'should dispatch with an error if the envelope response is not 200', () => {
+		test( 'should dispatch with an error if the envelope response is not 200', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),
@@ -111,7 +111,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleReviewsRequestError()', () => {
-		it( 'should dispatch error', () => {
+		test( 'should dispatch error', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),
@@ -129,7 +129,7 @@ describe( 'handlers', () => {
 		} );
 	} );
 	describe( '#handleChangeReviewStatus', () => {
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const siteId = '123';
 			const productId = '544';
 			const reviewId = '105';
@@ -176,7 +176,7 @@ describe( 'handlers', () => {
 			};
 		};
 
-		it( 'should dispatch a fetch request for trash status updates', () => {
+		test( 'should dispatch a fetch request for trash status updates', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -190,7 +190,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should dispatch a fetch request for spam status updates', () => {
+		test( 'should dispatch a fetch request for spam status updates', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -204,7 +204,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should not dispatch a fetch request for other status updates', () => {
+		test( 'should not dispatch a fetch request for other status updates', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -226,7 +226,7 @@ describe( 'handlers', () => {
 		const currentStatus = 'pending';
 		const dispatch = spy();
 
-		it( 'should reset the status and dispatch an error', () => {
+		test( 'should reset the status and dispatch an error', () => {
 			const action = changeReviewStatus( siteId, productId, reviewId, currentStatus, 'approved' );
 			announceStatusChangeFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
@@ -248,7 +248,7 @@ describe( 'handlers', () => {
 		const siteId = '123';
 		const productId = '544';
 		const reviewId = '105';
-		it( 'should dispatch a request', () => {
+		test( 'should dispatch a request', () => {
 			const dispatch = spy();
 			const action = deleteReview( siteId, productId, reviewId );
 			handleDeleteReview( { dispatch }, action );
@@ -287,7 +287,7 @@ describe( 'handlers', () => {
 			};
 		};
 
-		it( 'should dispatch a fetch request and success notice', () => {
+		test( 'should dispatch a fetch request and success notice', () => {
 			const store = {
 				dispatch: spy(),
 				getState,
@@ -309,7 +309,7 @@ describe( 'handlers', () => {
 	describe( '#announceDeleteFailure', () => {
 		const siteId = '123';
 		const dispatch = spy();
-		it( 'should dispatch an error', () => {
+		test( 'should dispatch an error', () => {
 			const action = deleteReview( siteId, 544, 105 );
 			announceDeleteFailure( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(

@@ -14,9 +14,9 @@ import { expect } from 'chai';
 import { deserialize } from '../';
 import { MediaTypes } from '../constants';
 
-describe( 'MediaSerialization', function() {
-	describe( '#deserialize()', function() {
-		it( 'should parse a caption shortcode string containing an image', function() {
+describe( 'MediaSerialization', () => {
+	describe( '#deserialize()', () => {
+		test( 'should parse a caption shortcode string containing an image', () => {
 			const parsed = deserialize(
 				'[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]'
 			);
@@ -35,7 +35,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.appearance.size ).to.equal( 'full' );
 		} );
 
-		it( 'should parse an image string', function() {
+		test( 'should parse an image string', () => {
 			const parsed = deserialize(
 				'<img class="size-full wp-image-1627 alignright" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" />'
 			);
@@ -53,7 +53,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.appearance.align ).to.equal( 'right' );
 		} );
 
-		it( 'should parse an image HTMLElement', function() {
+		test( 'should parse an image HTMLElement', () => {
 			let img = document.createElement( 'img' );
 			img.className = 'size-full wp-image-1627 alignright';
 			img.src = 'https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg';
@@ -75,7 +75,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.appearance.align ).to.equal( 'right' );
 		} );
 
-		it( 'should parse images with the data-istransient attribute as transient images', function() {
+		test( 'should parse images with the data-istransient attribute as transient images', () => {
 			const parsed = deserialize(
 				'<img data-istransient="istransient" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />'
 			); // eslint-disable-line max-len
@@ -83,7 +83,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.media.transient ).to.be.true;
 		} );
 
-		it( 'should parse images without the data-istransient attribute as not transient images', function() {
+		test( 'should parse images without the data-istransient attribute as not transient images', () => {
 			const parsed = deserialize(
 				'<img src="blob:http%3A//wordpress.com/75205e1a-0f78-4a0b-b0e2-5f47a3471769" class="size-full wp-image-1627 alignright" alt="Example" width="660" height="660" />'
 			); // eslint-disable-line max-len
@@ -91,7 +91,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.media.transient ).to.be.false;
 		} );
 
-		it( 'should favor natural dimensions over inferred', function() {
+		test( 'should favor natural dimensions over inferred', () => {
 			let img = document.createElement( 'img' );
 			[ 'width', 'height' ].forEach( dimension => {
 				Object.defineProperty( img, dimension, {
@@ -110,7 +110,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.media.height ).to.equal( 1320 );
 		} );
 
-		it( 'should favor attribute dimensions over natural', function() {
+		test( 'should favor attribute dimensions over natural', () => {
 			let img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
@@ -128,7 +128,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.media.height ).to.equal( 990 );
 		} );
 
-		it( 'should parse a REST API media object', function() {
+		test( 'should parse a REST API media object', () => {
 			const media = {
 				ID: 3062,
 				URL: 'https://andrewmduthietest.files.wordpress.com/2015/08/sunset1.jpg',
@@ -155,7 +155,7 @@ describe( 'MediaSerialization', function() {
 			expect( parsed.appearance ).to.eql( {} );
 		} );
 
-		it( 'should gracefully handle an unknown format', function() {
+		test( 'should gracefully handle an unknown format', () => {
 			const parsed = deserialize();
 
 			expect( parsed.type ).to.equal( MediaTypes.UNKNOWN );

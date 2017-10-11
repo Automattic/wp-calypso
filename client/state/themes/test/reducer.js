@@ -72,7 +72,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'queries',
 			'queryRequests',
@@ -94,14 +94,14 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#queryRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
 		// TODO: Delete test? no site-specific search?
-		it( 'should track theme query request fetching', () => {
+		test( 'should track theme query request fetching', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: THEMES_REQUEST,
 				siteId: 2916284,
@@ -113,7 +113,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track theme queries without specified site', () => {
+		test( 'should track theme queries without specified site', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: THEMES_REQUEST,
 				query: { search: 'Hello' },
@@ -124,7 +124,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate queries', () => {
+		test( 'should accumulate queries', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"Hello"}': true,
 			} );
@@ -141,7 +141,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track theme query request success', () => {
+		test( 'should track theme query request success', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -155,7 +155,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track theme query request failure', () => {
+		test( 'should track theme query request failure', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: THEMES_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -170,13 +170,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#queryRequestErrors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queryRequestErrors( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should create empty mapping on success if previous state was empty', () => {
+		test( 'should create empty mapping on success if previous state was empty', () => {
 			const state = queryRequestErrors( deepFreeze( {} ), {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -188,7 +188,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, query to error if request finishes with failure', () => {
+		test( 'should map site ID, query to error if request finishes with failure', () => {
 			const state = queryRequestErrors( deepFreeze( {} ), {
 				type: THEMES_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -203,7 +203,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should reset error state after successful request after a failure', () => {
+		test( 'should reset error state after successful request after a failure', () => {
 			const state = queryRequestErrors(
 				deepFreeze( {
 					2916284: {
@@ -222,7 +222,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = queryRequestErrors(
 				deepFreeze( {
 					2916284: {
@@ -247,13 +247,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#queries()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should track theme query request success', () => {
+		test( 'should track theme query request success', () => {
 			const state = queries( deepFreeze( {} ), {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -267,7 +267,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Mood' } ) ).to.deep.equal( [ mood ] );
 		} );
 
-		it( 'should accumulate query request success', () => {
+		test( 'should accumulate query request success', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: THEMES_REQUEST_SUCCESS,
@@ -291,7 +291,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Twenty Six' } ) ).to.have.length( 1 );
 		} );
 
-		it( 'should return the same state if successful request has no changes', () => {
+		test( 'should return the same state if successful request has no changes', () => {
 			const action = {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -305,7 +305,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: THEMES_REQUEST_SUCCESS,
@@ -341,7 +341,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					data: {
@@ -381,7 +381,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: '{INVALID',
 			} );
@@ -393,13 +393,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#lastQuery()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = lastQuery( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should store last query', () => {
+		test( 'should store last query', () => {
 			const state = lastQuery( deepFreeze( {} ), {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -414,7 +414,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite last query with new query', () => {
+		test( 'should overwrite last query with new query', () => {
 			const state = lastQuery(
 				deepFreeze( {
 					2916284: {
@@ -438,13 +438,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#themeRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = themeRequests( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should map site ID, theme ID to true value if request in progress', () => {
+		test( 'should map site ID, theme ID to true value if request in progress', () => {
 			const state = themeRequests( deepFreeze( {} ), {
 				type: THEME_REQUEST,
 				siteId: 2916284,
@@ -458,7 +458,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = themeRequests(
 				deepFreeze( {
 					2916284: {
@@ -480,7 +480,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
+		test( 'should map site ID, theme ID to false value if request finishes successfully', () => {
 			const state = themeRequests(
 				deepFreeze( {
 					2916284: {
@@ -501,7 +501,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
+		test( 'should map site ID, theme ID to false value if request finishes with failure', () => {
 			const state = themeRequests(
 				deepFreeze( {
 					2916284: {
@@ -538,13 +538,13 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = themeRequestErrors( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should create empyt mapping on success if previous state was empty', () => {
+		test( 'should create empyt mapping on success if previous state was empty', () => {
 			const state = themeRequestErrors( deepFreeze( {} ), {
 				type: THEME_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -556,7 +556,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to error if request finishes with failure', () => {
+		test( 'should map site ID, theme ID to error if request finishes with failure', () => {
 			const state = themeRequestErrors( deepFreeze( {} ), {
 				type: THEME_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -571,7 +571,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should switch from error to no mapping after successful request after a failure', () => {
+		test( 'should switch from error to no mapping after successful request after a failure', () => {
 			const state = themeRequestErrors(
 				deepFreeze( {
 					2916284: {
@@ -590,7 +590,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = themeRequestErrors(
 				deepFreeze( {
 					2916284: {
@@ -613,7 +613,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'persists state', () => {
+		test( 'persists state', () => {
 			const state = themeRequestErrors( themeError, {
 				type: SERIALIZE,
 			} );
@@ -621,7 +621,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( themeError );
 		} );
 
-		it( 'loads persisted state', () => {
+		test( 'loads persisted state', () => {
 			const state = themeRequestErrors( themeError, {
 				type: DESERIALIZE,
 			} );
@@ -631,13 +631,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#activeThemes()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = activeThemes( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should track active theme request success', () => {
+		test( 'should track active theme request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
@@ -656,7 +656,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( { 2211667: 'rebalance' } );
 		} );
 
-		it( 'should track active theme request success and overwrite old theme', () => {
+		test( 'should track active theme request success and overwrite old theme', () => {
 			const state = activeThemes( deepFreeze( { 2211667: 'rebalance' } ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
@@ -675,7 +675,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( { 2211667: 'twentysixteen' } );
 		} );
 
-		it( 'should track theme activate request success', () => {
+		test( 'should track theme activate request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
 				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'twentysixteen',
@@ -686,13 +686,13 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = activeThemes( { 2211888: 'twentysixteen' }, { type: SERIALIZE } );
 
 			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2211888: 'twentysixteen',
 			} );
@@ -701,7 +701,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: 1234,
 			} );
@@ -712,12 +712,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#activationRequests', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = activationRequests( undefined, {} );
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should map site ID to true value if request in progress', () => {
+		test( 'should map site ID to true value if request in progress', () => {
 			const state = activationRequests( deepFreeze( {} ), {
 				type: THEME_ACTIVATE,
 				siteId: 2916284,
@@ -728,7 +728,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = activationRequests(
 				deepFreeze( {
 					2916284: true,
@@ -745,7 +745,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID to false value if request finishes successfully', () => {
+		test( 'should map site ID to false value if request finishes successfully', () => {
 			const state = activationRequests(
 				deepFreeze( {
 					2916284: true,
@@ -762,7 +762,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID to false value if request finishes with failure', () => {
+		test( 'should map site ID to false value if request finishes with failure', () => {
 			const state = activationRequests(
 				deepFreeze( {
 					2916284: true,
@@ -782,13 +782,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#themeInstalls()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = themeInstalls( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should map site ID, theme ID to true value if request in progress', () => {
+		test( 'should map site ID, theme ID to true value if request in progress', () => {
 			const state = themeInstalls( deepFreeze( {} ), {
 				type: THEME_INSTALL,
 				siteId: 2211667,
@@ -802,7 +802,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = themeInstalls(
 				deepFreeze( {
 					2211667: {
@@ -826,7 +826,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
+		test( 'should map site ID, theme ID to false value if request finishes successfully', () => {
 			const state = themeInstalls(
 				deepFreeze( {
 					2211667: {
@@ -847,7 +847,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
+		test( 'should map site ID, theme ID to false value if request finishes with failure', () => {
 			const state = themeInstalls(
 				deepFreeze( {
 					2211667: {
@@ -871,13 +871,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#completedActivationRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = completedActivationRequests( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should track theme activate request success', () => {
+		test( 'should track theme activate request success', () => {
 			const state = completedActivationRequests( deepFreeze( {} ), {
 				type: THEME_ACTIVATE_SUCCESS,
 				siteId: 2211667,
@@ -887,7 +887,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( { 2211667: true } );
 		} );
 
-		it( 'should track theme clear activated', () => {
+		test( 'should track theme clear activated', () => {
 			const state = completedActivationRequests( deepFreeze( { 2211667: true } ), {
 				type: THEME_CLEAR_ACTIVATED,
 				siteId: 2211667,
@@ -899,12 +899,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#activeThemeRequests', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = activeThemeRequests( undefined, {} );
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should map site ID to true value if request in progress', () => {
+		test( 'should map site ID to true value if request in progress', () => {
 			const state = activeThemeRequests( deepFreeze( {} ), {
 				type: ACTIVE_THEME_REQUEST,
 				siteId: 2916284,
@@ -915,7 +915,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = activeThemeRequests(
 				deepFreeze( {
 					2916284: true,
@@ -932,7 +932,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID to false value if request finishes successfully', () => {
+		test( 'should map site ID to false value if request finishes successfully', () => {
 			const state = activeThemeRequests(
 				deepFreeze( {
 					2916284: true,
@@ -949,7 +949,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID to false value if request finishes with failure', () => {
+		test( 'should map site ID to false value if request finishes with failure', () => {
 			const state = activeThemeRequests(
 				deepFreeze( {
 					2916284: true,

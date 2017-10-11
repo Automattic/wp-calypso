@@ -40,10 +40,10 @@ class DummyInput extends Component {
 	}
 }
 
-describe( 'TrackInputChanges#onNewValue', function() {
+describe( 'TrackInputChanges#onNewValue', () => {
 	let tree, dummyInput, container;
 
-	before( () => {
+	beforeAll( () => {
 		container = document.createElement( 'div' );
 	} );
 
@@ -51,7 +51,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		ReactDom.unmountComponentAtNode( container );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		for ( const spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
@@ -66,7 +66,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		TestUtils.findRenderedComponentWithType( tree, TrackInputChanges ).inputEdited = false;
 	} );
 
-	it( 'should pass through callbacks but not trigger on a change event', function() {
+	test( 'should pass through callbacks but not trigger on a change event', () => {
 		dummyInput.triggerChange( 'abc' );
 
 		expect( spies.onNewValue ).to.have.callCount( 0 );
@@ -74,7 +74,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 0 );
 	} );
 
-	it( 'should pass through callbacks but not trigger on a blur event', function() {
+	test( 'should pass through callbacks but not trigger on a blur event', () => {
 		dummyInput.triggerBlur();
 
 		expect( spies.onNewValue ).to.have.callCount( 0 );
@@ -82,7 +82,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 1 );
 	} );
 
-	it( 'should pass through callbacks and trigger on a change then a blur', function() {
+	test( 'should pass through callbacks and trigger on a change then a blur', () => {
 		dummyInput.triggerChange( 'abc' );
 		dummyInput.triggerBlur();
 
@@ -91,7 +91,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 1 );
 	} );
 
-	it( 'should trigger once on each blur event only if value changed', function() {
+	test( 'should trigger once on each blur event only if value changed', () => {
 		dummyInput.triggerBlur();
 		dummyInput.triggerChange( 'abc' );
 		dummyInput.triggerChange( 'abcd' );
@@ -106,7 +106,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 3 );
 	} );
 
-	it( 'should throw if multiple child elements', function() {
+	test( 'should throw if multiple child elements', () => {
 		expect( () =>
 			ReactDom.render(
 				<TrackInputChanges onNewValue={ spies.onNewValue }>

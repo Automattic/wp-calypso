@@ -12,7 +12,7 @@ import { isRequestingPageTemplates, getPageTemplates } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPageTemplates()', () => {
-		it( 'should return false if the site is not tracked', () => {
+		test( 'should return false if the site is not tracked', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if a request is in progress for the site', () => {
+		test( 'should return true if a request is in progress for the site', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -40,7 +40,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return false if a request has completed for the site', () => {
+		test( 'should return false if a request has completed for the site', () => {
 			const isRequesting = isRequestingPageTemplates(
 				{
 					pageTemplates: {
@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPageTemplates()', () => {
-		it( 'should return null if the site is not tracked', () => {
+		test( 'should return null if the site is not tracked', () => {
 			const templates = getPageTemplates(
 				{
 					pageTemplates: {
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 			expect( templates ).to.be.null;
 		} );
 
-		it( 'should return the page templates for the site', () => {
+		test( 'should return the page templates for the site', () => {
 			const templates = getPageTemplates(
 				{
 					pageTemplates: {

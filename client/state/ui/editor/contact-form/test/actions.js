@@ -27,7 +27,7 @@ import {
 } from 'state/action-types';
 
 describe( 'actions', () => {
-	it( 'should return an action object to signal the initialization of the store', () => {
+	test( 'should return an action object to signal the initialization of the store', () => {
 		const action = formLoad( CONTACT_FORM_DEFAULT );
 
 		assert.deepEqual( action, {
@@ -36,13 +36,13 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	it( 'should return an action object to signal the creation of a new default field', () => {
+	test( 'should return an action object to signal the creation of a new default field', () => {
 		const action = fieldAdd();
 
 		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_FIELD_ADD } );
 	} );
 
-	it( 'should return an action object to signal the removal of a field by index', () => {
+	test( 'should return an action object to signal the removal of a field by index', () => {
 		const action = fieldRemove( 1 );
 
 		assert.deepEqual( action, {
@@ -51,13 +51,13 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	it( 'should return an action object to signal the removal of the contact form data', () => {
+	test( 'should return an action object to signal the removal of the contact form data', () => {
 		const action = formClear();
 
 		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_CLEAR } );
 	} );
 
-	it( 'should return an action object to signal the update of a field by index', () => {
+	test( 'should return an action object to signal the update of a field by index', () => {
 		const action = fieldUpdate( 1, { label: 'Name', type: 'text', required: true } );
 
 		assert.deepEqual( action, {
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	it( 'should return an action object to signal the update of the form settings', () => {
+	test( 'should return an action object to signal the update of the form settings', () => {
 		const action = settingsUpdate( { to: 'user@example.com', subject: 'this is the subject' } );
 
 		assert.deepEqual( action, {

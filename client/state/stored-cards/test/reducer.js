@@ -29,7 +29,7 @@ describe( 'items', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should return an object with the initial state', () => {
+	test( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			items: [],
 			isFetching: false,
@@ -38,7 +38,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
+	test( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
 		expect( reducer( undefined, { type: STORED_CARDS_FETCH } ) ).to.be.eql( {
 			items: [],
 			isFetching: true,
@@ -47,7 +47,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should return an object with the list of stored cards when fetching completed', () => {
+	test( 'should return an object with the list of stored cards when fetching completed', () => {
 		const state = reducer( undefined, {
 			type: STORED_CARDS_FETCH_COMPLETED,
 			list: STORED_CARDS_FROM_API,
@@ -61,7 +61,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should return an object with an empty list of stored cards when fetching failed', () => {
+	test( 'should return an object with an empty list of stored cards when fetching failed', () => {
 		const state = reducer( undefined, {
 			type: STORED_CARDS_FETCH_FAILED,
 		} );
@@ -74,7 +74,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should add a stored card to the list if the stored card add request succeeded', () => {
+	test( 'should add a stored card to the list if the stored card add request succeeded', () => {
 		const state = reducer(
 			deepFreeze( {
 				items: [ STORED_CARDS_FROM_API[ 0 ] ],
@@ -95,7 +95,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should keep the current state and enable isDeleting when requesting a stored card deletion', () => {
+	test( 'should keep the current state and enable isDeleting when requesting a stored card deletion', () => {
 		const state = reducer(
 			deepFreeze( {
 				items: STORED_CARDS_FROM_API,
@@ -117,7 +117,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should remove a stored card from the list if the stored card deletion request succeeded', () => {
+	test( 'should remove a stored card from the list if the stored card deletion request succeeded', () => {
 		const state = reducer(
 			deepFreeze( {
 				items: STORED_CARDS_FROM_API,
@@ -139,7 +139,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should not change the list of items if the stored card deletion request failed', () => {
+	test( 'should not change the list of items if the stored card deletion request failed', () => {
 		const state = reducer(
 			deepFreeze( {
 				items: STORED_CARDS_FROM_API,
@@ -161,7 +161,7 @@ describe( 'items', () => {
 	} );
 
 	describe( 'persistence', () => {
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const originalState = deepFreeze( STORED_CARDS_FROM_API );
 
 			const state = items( originalState, { type: SERIALIZE } );
@@ -169,7 +169,7 @@ describe( 'items', () => {
 			expect( state ).to.eql( originalState );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( STORED_CARDS_FROM_API );
 
 			const state = items( originalState, { type: DESERIALIZE } );
@@ -177,7 +177,7 @@ describe( 'items', () => {
 			expect( state ).to.eql( originalState );
 		} );
 
-		it( 'should load default state when schema does not match', () => {
+		test( 'should load default state when schema does not match', () => {
 			const originalState = deepFreeze( [
 				{
 					card_type: 'amex',

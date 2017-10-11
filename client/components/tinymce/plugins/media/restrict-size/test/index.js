@@ -11,7 +11,7 @@ import { expect } from 'chai';
 describe( 'restrictSize', () => {
 	let getMaxWidth, resetImages, setImages;
 
-	before( () => {
+	beforeAll( () => {
 		const restrictSize = require( '../' );
 		getMaxWidth = restrictSize.getMaxWidth;
 		resetImages = restrictSize.resetImages;
@@ -20,7 +20,7 @@ describe( 'restrictSize', () => {
 
 	describe( '#getMaxWidth()', () => {
 		let matchMedia, devicePixelRatio;
-		before( () => {
+		beforeAll( () => {
 			matchMedia = window.matchMedia;
 			devicePixelRatio = window.devicePixelRatio;
 		} );
@@ -30,27 +30,27 @@ describe( 'restrictSize', () => {
 			window.matchMedia = matchMedia;
 		} );
 
-		it( 'should return the multiple of the root device ratio if available', () => {
+		test( 'should return the multiple of the root device ratio if available', () => {
 			window.devicePixelRatio = 1.5;
 
 			expect( getMaxWidth() ).to.equal( 1020 );
 		} );
 
-		it( 'should return twice the base if the device resolution matches the retina media query', () => {
+		test( 'should return twice the base if the device resolution matches the retina media query', () => {
 			window.devicePixelRatio = undefined;
 			window.matchMedia = () => ( { matches: true } );
 
 			expect( getMaxWidth() ).to.equal( 1360 );
 		} );
 
-		it( 'should return the base max width if the device is not retina-capable', () => {
+		test( 'should return the base max width if the device is not retina-capable', () => {
 			window.devicePixelRatio = undefined;
 			expect( getMaxWidth() ).to.equal( 680 );
 		} );
 	} );
 
 	describe( '#resetImages()', () => {
-		it( 'should restore all instances of replaced images', () => {
+		test( 'should restore all instances of replaced images', () => {
 			const value = resetImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
@@ -59,7 +59,7 @@ describe( 'restrictSize', () => {
 			);
 		} );
 
-		it( 'should handle multiple images from content', () => {
+		test( 'should handle multiple images from content', () => {
 			const value = resetImages(
 				'<p><img src="https://example.com/bird.jpg?w=680" data-wpmedia-src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
 			);
@@ -68,7 +68,7 @@ describe( 'restrictSize', () => {
 			);
 		} );
 
-		it( 'should ignore non-replaced images in handling multiple images', () => {
+		test( 'should ignore non-replaced images in handling multiple images', () => {
 			const value = resetImages(
 				'<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
 			);
@@ -79,7 +79,7 @@ describe( 'restrictSize', () => {
 	} );
 
 	describe( '#setImages()', () => {
-		it( 'should replace all instances of large images', () => {
+		test( 'should replace all instances of large images', () => {
 			const value = setImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
@@ -88,7 +88,7 @@ describe( 'restrictSize', () => {
 			);
 		} );
 
-		it( 'should not replace already-replaced instances', () => {
+		test( 'should not replace already-replaced instances', () => {
 			const value = setImages(
 				'<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
 			);
@@ -97,7 +97,7 @@ describe( 'restrictSize', () => {
 			);
 		} );
 
-		it( 'should replace images with indeterminate widths', () => {
+		test( 'should replace images with indeterminate widths', () => {
 			const value = setImages(
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>'
 			);
@@ -106,7 +106,7 @@ describe( 'restrictSize', () => {
 			);
 		} );
 
-		it( 'should not replace external images (those without media ID)', () => {
+		test( 'should not replace external images (those without media ID)', () => {
 			const markup =
 				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
 

@@ -14,7 +14,7 @@ import { isRewindActive } from 'state/selectors';
 const siteId = 77203074;
 
 describe( 'isRewindActive()', () => {
-	it( 'should return false if no status exists for a site', () => {
+	test( 'should return false if no status exists for a site', () => {
 		const stateNoSite = deepFreeze( {
 			activityLog: {
 				rewindStatus: {},
@@ -32,7 +32,7 @@ describe( 'isRewindActive()', () => {
 		expect( isRewindActive( stateNoStatus, siteId ) ).to.be.false;
 	} );
 
-	it( 'should return value of active for a site', () => {
+	test( 'should return value of active for a site', () => {
 		const stateTrue = deepFreeze( {
 			activityLog: {
 				rewindStatus: {

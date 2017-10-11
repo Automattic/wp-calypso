@@ -37,12 +37,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'state should default to empty object', () => {
+		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should update connection statuses in the items object', () => {
+		test( 'should update connection statuses in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accummulate connection statuses for separate sites in the items object', () => {
+		test( 'should accummulate connection statuses for separate sites in the items object', () => {
 			const stateIn = ITEMS_FIXTURE,
 				siteId = 11223344,
 				action = {
@@ -74,12 +74,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requests', () => {
-		it( 'state should default to an empty object', () => {
+		test( 'state should default to an empty object', () => {
 			const state = requestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting to true for the specified site when status request starts', () => {
+		test( 'should set requesting to true for the specified site when status request starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes successfully', () => {
+		test( 'should set requesting to false for the specified site when status request completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -107,7 +107,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
+		test( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -123,12 +123,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'dataItems', () => {
-		it( 'state should default to empty object', () => {
+		test( 'state should default to empty object', () => {
 			const state = dataItemsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should update user connection data in the items object', () => {
+		test( 'should update user connection data in the items object', () => {
 			const stateIn = DATA_ITEMS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -143,7 +143,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accummulate user connection data for separate sites in the items object', () => {
+		test( 'should accummulate user connection data for separate sites in the items object', () => {
 			const stateIn = DATA_ITEMS_FIXTURE,
 				siteId = 11223344,
 				action = {
@@ -160,12 +160,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'dataRequests', () => {
-		it( 'state should default to an empty object', () => {
+		test( 'state should default to an empty object', () => {
 			const state = dataRequestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set dataRequests to true for the specified site when data request starts', () => {
+		test( 'should set dataRequests to true for the specified site when data request starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -179,7 +179,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set dataRequests to false for the specified site when data request completes successfully', () => {
+		test( 'should set dataRequests to false for the specified site when data request completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -193,7 +193,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set dataRequests to false for the specified site when data request completes unsuccessfully', () => {
+		test( 'should set dataRequests to false for the specified site when data request completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -209,12 +209,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'disconnectRequests', () => {
-		it( 'state should default to an empty object', () => {
+		test( 'state should default to an empty object', () => {
 			const state = disconnectRequestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting to true for the specified site when disconnect request starts', () => {
+		test( 'should set requesting to true for the specified site when disconnect request starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -228,7 +228,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when disconnect request completes successfully', () => {
+		test( 'should set requesting to false for the specified site when disconnect request completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -242,7 +242,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when disconnect request completes unsuccessfully', () => {
+		test( 'should set requesting to false for the specified site when disconnect request completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {

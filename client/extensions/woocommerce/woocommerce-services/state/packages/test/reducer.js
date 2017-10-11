@@ -40,7 +40,7 @@ describe( 'Packages form reducer', () => {
 		expect( initialState ).to.eql( expectedEndState );
 	} );
 
-	it( 'ADD_PACKAGE preserves form data', () => {
+	test( 'ADD_PACKAGE preserves form data', () => {
 		const existingAddState = {
 			showModal: false,
 			mode: 'add-custom',
@@ -59,7 +59,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( "ADD_PACKAGE clears previous 'edit' data", () => {
+	test( "ADD_PACKAGE clears previous 'edit' data", () => {
 		const existingEditState = {
 			showModal: false,
 			mode: 'edit',
@@ -79,7 +79,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'EDIT_PACKAGE', () => {
+	test( 'EDIT_PACKAGE', () => {
 		const packageData = {
 			index: 1,
 			name: 'Test Box',
@@ -101,7 +101,7 @@ describe( 'Packages form reducer', () => {
 		expect( state.pristine ).to.eql( true );
 	} );
 
-	it( 'DISMISS_MODAL', () => {
+	test( 'DISMISS_MODAL', () => {
 		const visibleModalState = {
 			showModal: true,
 		};
@@ -116,7 +116,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'UPDATE_PACKAGES_FIELD', () => {
+	test( 'UPDATE_PACKAGES_FIELD', () => {
 		const packageData = {
 			name: 'Test Box',
 			is_letter: false,
@@ -139,7 +139,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'TOGGLE_OUTER_DIMENSIONS', () => {
+	test( 'TOGGLE_OUTER_DIMENSIONS', () => {
 		const visibleModalState = {
 			showModal: true,
 		};
@@ -152,7 +152,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'SAVE_PACKAGE adds new package', () => {
+	test( 'SAVE_PACKAGE adds new package', () => {
 		const packageData = {
 			is_user_defined: true,
 			name: 'Test Box',
@@ -173,7 +173,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'SAVE_PACKAGE updates an exisitng package', () => {
+	test( 'SAVE_PACKAGE updates an exisitng package', () => {
 		const packageData = {
 			is_user_defined: true,
 			index: 1,
@@ -195,7 +195,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'SAVE_PACKAGE', () => {
+	test( 'SAVE_PACKAGE', () => {
 		const packageData = {
 			is_user_defined: true,
 			index: 1,
@@ -224,7 +224,7 @@ describe( 'Packages form reducer', () => {
 		expect( state.pristine ).to.eql( false );
 	} );
 
-	it( 'SET_MODAL_ERROR', () => {
+	test( 'SET_MODAL_ERROR', () => {
 		const initialSavePackageState = {
 			showModal: true,
 			mode: 'edit',
@@ -249,7 +249,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'REMOVE_PACKAGE', () => {
+	test( 'REMOVE_PACKAGE', () => {
 		const action = removePackage( siteId, 1 );
 
 		const state = reducer( initialState, action );
@@ -258,7 +258,7 @@ describe( 'Packages form reducer', () => {
 		expect( state.showModal ).to.eql( false );
 	} );
 
-	it( 'SET_IS_SAVING', () => {
+	test( 'SET_IS_SAVING', () => {
 		const action = setIsSaving( siteId, false );
 
 		const state = reducer( initialState, action );
@@ -266,14 +266,14 @@ describe( 'Packages form reducer', () => {
 		expect( state.pristine ).to.eql( true );
 	} );
 
-	it( 'SET_IS_FETCHING', () => {
+	test( 'SET_IS_FETCHING', () => {
 		const action = setIsFetching( siteId, true );
 
 		const state = reducer( initialState, action );
 		expect( state.isFetching ).to.eql( true );
 	} );
 
-	it( 'REMOVE_PREDEF', () => {
+	test( 'REMOVE_PREDEF', () => {
 		const action = removePredefinedPackage( siteId, 'service', 'box' );
 
 		const state = reducer( initialState, action );
@@ -283,7 +283,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'SAVE_PREDEF', () => {
+	test( 'SAVE_PREDEF', () => {
 		const state = {
 			...initialState,
 			showModal: true,
@@ -303,7 +303,7 @@ describe( 'Packages form reducer', () => {
 		expect( result.showModal ).to.eql( false );
 	} );
 
-	it( 'TOGGLE_ALL selects all when none was selected', () => {
+	test( 'TOGGLE_ALL selects all when none was selected', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [], otherService: [] },
@@ -318,7 +318,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'TOGGLE_ALL selects all when some were selected', () => {
+	test( 'TOGGLE_ALL selects all when some were selected', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [ 'box1' ], otherService: [] },
@@ -333,7 +333,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'TOGGLE_ALL deselects all when all were selected', () => {
+	test( 'TOGGLE_ALL deselects all when all were selected', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [ 'box', 'box1', 'box2' ], otherService: [] },
@@ -345,7 +345,7 @@ describe( 'Packages form reducer', () => {
 		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [], otherService: [] } );
 	} );
 
-	it( 'TOGGLE_ALL deselects all when some were selected', () => {
+	test( 'TOGGLE_ALL deselects all when some were selected', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [ 'box1' ], otherService: [] },
@@ -357,7 +357,7 @@ describe( 'Packages form reducer', () => {
 		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [], otherService: [] } );
 	} );
 
-	it( 'TOGGLE_PACKAGE selects a package', () => {
+	test( 'TOGGLE_PACKAGE selects a package', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [], otherService: [] },
@@ -371,7 +371,7 @@ describe( 'Packages form reducer', () => {
 		} );
 	} );
 
-	it( 'TOGGLE_PACKAGE deselects a package', () => {
+	test( 'TOGGLE_PACKAGE deselects a package', () => {
 		const state = {
 			...initialState,
 			currentlyEditingPredefinedPackages: { service: [ 'box' ], otherService: [] },
@@ -382,7 +382,7 @@ describe( 'Packages form reducer', () => {
 		expect( result.currentlyEditingPredefinedPackages ).to.eql( { service: [], otherService: [] } );
 	} );
 
-	it( 'SET_ADD_MODE', () => {
+	test( 'SET_ADD_MODE', () => {
 		const action = setAddMode( siteId, 'add-predefined' );
 
 		const state = reducer( initialState, action );

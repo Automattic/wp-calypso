@@ -11,7 +11,7 @@ import ThemeQueryManager from '../';
 
 describe( 'ThemeQueryManager', () => {
 	describe( '#sort()', () => {
-		it( 'should leave key order unchanged', () => {
+		test( 'should leave key order unchanged', () => {
 			const originalKeys = Object.freeze( [
 				'adaline',
 				'fanwood-light',

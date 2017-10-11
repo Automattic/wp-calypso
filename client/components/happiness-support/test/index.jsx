@@ -16,15 +16,15 @@ import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
 import support from 'lib/url/support';
 
-describe( 'HappinessSupport', function() {
+describe( 'HappinessSupport', () => {
 	let wrapper;
 	const translate = content => `Translated: ${ content }`;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
 	} );
 
-	it( 'should render translated heading content', function() {
+	test( 'should render translated heading content', () => {
 		const heading = wrapper.find( 'h3' );
 		expect( heading ).to.have.length( 1 );
 		expect( heading.props().children ).to.equal(
@@ -32,7 +32,7 @@ describe( 'HappinessSupport', function() {
 		);
 	} );
 
-	it( 'should render translated help content', function() {
+	test( 'should render translated help content', () => {
 		const content = wrapper.find( 'p.happiness-support__text' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
@@ -40,13 +40,13 @@ describe( 'HappinessSupport', function() {
 		);
 	} );
 
-	it( 'should render a translated support button', function() {
+	test( 'should render a translated support button', () => {
 		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().children ).to.equal(
 			'Translated: Search our support site'
 		);
 	} );
 
-	it( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', function() {
+	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ false } />
 		);
@@ -55,7 +55,7 @@ describe( 'HappinessSupport', function() {
 		);
 	} );
 
-	it( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', function() {
+	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
@@ -67,7 +67,7 @@ describe( 'HappinessSupport', function() {
 		).to.equal( support.JETPACK_SUPPORT );
 	} );
 
-	it( 'should have is-placeholder className only if it is a placeholder', function() {
+	test( 'should have is-placeholder className only if it is a placeholder', () => {
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.false;
 
 		wrapper = shallow(
@@ -76,7 +76,7 @@ describe( 'HappinessSupport', function() {
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.true;
 	} );
 
-	it( 'should render a <HappychatConnection /> when showLiveChat prop is true', function() {
+	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
 		wrapper = shallow(
 			<HappinessSupport
 				translate={ translate }
@@ -87,19 +87,19 @@ describe( 'HappinessSupport', function() {
 		expect( wrapper.find( HappychatConnection ) ).to.have.length( 1 );
 	} );
 
-	describe( 'LiveChat button', function() {
+	describe( 'LiveChat button', () => {
 		const props = {
 			translate,
 			recordTracksEvent: noop,
 		};
 
-		beforeEach( function() {
+		beforeEach( () => {
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
 			);
 		} );
 
-		it( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', function() {
+		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
 			// should be rendered here
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 1 );
 
@@ -129,13 +129,13 @@ describe( 'HappinessSupport', function() {
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 		} );
 
-		it( 'should render translated content', function() {
+		test( 'should render translated content', () => {
 			expect( wrapper.find( HappychatButton ).props().children ).to.equal(
 				'Translated: Ask a question'
 			);
 		} );
 
-		it( 'should fire tracks event with given event name when clicked', function() {
+		test( 'should fire tracks event with given event name when clicked', () => {
 			const recordTracksEvent = spy();
 
 			wrapper = shallow(
@@ -153,7 +153,7 @@ describe( 'HappinessSupport', function() {
 			expect( recordTracksEvent ).to.be.calledWith( 'test:eventName' );
 		} );
 
-		it( 'should not fire tracks event when no event name is passed even if clicked', function() {
+		test( 'should not fire tracks event when no event name is passed even if clicked', () => {
 			const recordTracksEvent = spy();
 
 			wrapper = shallow(
@@ -171,14 +171,14 @@ describe( 'HappinessSupport', function() {
 		} );
 	} );
 
-	describe( 'Contact button', function() {
+	describe( 'Contact button', () => {
 		const selector = 'Button.happiness-support__contact-button';
 		const props = {
 			translate,
 			recordTracksEvent: noop,
 		};
 
-		it( 'should be rendered unless LiveChat button shows up', function() {
+		test( 'should be rendered unless LiveChat button shows up', () => {
 			// should not be displayed here
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
@@ -211,17 +211,17 @@ describe( 'HappinessSupport', function() {
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 		} );
 
-		it( 'should be rendered with link to CALYPSO_CONTACT if it is not for JetPack', function() {
+		test( 'should be rendered with link to CALYPSO_CONTACT if it is not for JetPack', () => {
 			wrapper = shallow( <HappinessSupport { ...props } /> );
 			expect( wrapper.find( selector ).prop( 'href' ) ).to.equal( support.CALYPSO_CONTACT );
 		} );
 
-		it( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for JetPack', function() {
+		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for JetPack', () => {
 			wrapper = shallow( <HappinessSupport { ...props } isJetpack={ true } /> );
 			expect( wrapper.find( selector ).prop( 'href' ) ).to.equal( support.JETPACK_CONTACT_SUPPORT );
 		} );
 
-		it( 'should render translated content', function() {
+		test( 'should render translated content', () => {
 			wrapper = shallow( <HappinessSupport { ...props } /> );
 			expect( wrapper.find( selector ).props().children ).to.equal( 'Translated: Ask a question' );
 		} );

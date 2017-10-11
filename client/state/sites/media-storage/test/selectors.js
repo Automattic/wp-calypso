@@ -12,7 +12,7 @@ import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../
 
 describe( 'selectors', () => {
 	describe( '#getMediaStorage()', () => {
-		it( 'should return media storage for a given site ID', () => {
+		test( 'should return media storage for a given site ID', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isRequestingMediaStorage()', () => {
-		it( 'should return fetching media storage state for a given site ID', () => {
+		test( 'should return fetching media storage state for a given site ID', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -56,7 +56,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isOverMediaLimit()', () => {
-		it( 'should return true if a site is over storage limits', () => {
+		test( 'should return true if a site is over storage limits', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -77,7 +77,7 @@ describe( 'selectors', () => {
 			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( true );
 			expect( isOverMediaLimit( state, 77203074 ) ).to.equal( false );
 		} );
-		it( 'should return false if a site is unlimited', () => {
+		test( 'should return false if a site is unlimited', () => {
 			const state = {
 				sites: {
 					mediaStorage: {
@@ -93,7 +93,7 @@ describe( 'selectors', () => {
 
 			expect( isOverMediaLimit( state, 2916284 ) ).to.equal( false );
 		} );
-		it( 'should return null if a media storage is not loaded yet', () => {
+		test( 'should return null if a media storage is not loaded yet', () => {
 			const state = {
 				sites: {
 					mediaStorage: {

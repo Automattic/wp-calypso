@@ -25,7 +25,7 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'status',
 			'requesting',
@@ -35,11 +35,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#availability()', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			const state = availability( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
-		it( 'should update on set chat availability event', () => {
+		test( 'should update on set chat availability event', () => {
 			const sampleAvailabilityObject = { test: true };
 			const state = availability( undefined, {
 				type: OLARK_SET_AVAILABILITY,
@@ -50,17 +50,17 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#operatorStatus()', () => {
-		it( 'should default to away', () => {
+		test( 'should default to away', () => {
 			const state = operatorStatus( undefined, {} );
 			expect( state ).to.equal( OPERATOR_STATUS_AWAY );
 		} );
-		it( 'should update on available', () => {
+		test( 'should update on available', () => {
 			const state = operatorStatus( undefined, {
 				type: OLARK_OPERATORS_AVAILABLE,
 			} );
 			expect( state ).to.equal( OPERATOR_STATUS_AVAILABLE );
 		} );
-		it( 'should update on away', () => {
+		test( 'should update on away', () => {
 			const state = operatorStatus( undefined, {
 				type: OLARK_OPERATORS_AWAY,
 			} );
@@ -69,29 +69,29 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#status()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = status( undefined, {} );
 			expect( state ).to.equal( null );
 		} );
-		it( 'should update status on ready', () => {
+		test( 'should update status on ready', () => {
 			const state = status( undefined, {
 				type: OLARK_READY,
 			} );
 			expect( state ).to.equal( STATUS_READY );
 		} );
-		it( 'should update status on timeout', () => {
+		test( 'should update status on timeout', () => {
 			const state = status( undefined, {
 				type: OLARK_TIMEOUT,
 			} );
 			expect( state ).to.equal( STATUS_TIMEOUT );
 		} );
-		it( 'should be ready if ready is fired after timeout', () => {
+		test( 'should be ready if ready is fired after timeout', () => {
 			const state = status( STATUS_TIMEOUT, {
 				type: OLARK_READY,
 			} );
 			expect( state ).to.equal( STATUS_READY );
 		} );
-		it( 'should not timeout if already ready', () => {
+		test( 'should not timeout if already ready', () => {
 			const state = status( STATUS_READY, {
 				type: OLARK_TIMEOUT,
 			} );
@@ -100,23 +100,23 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.equal( false );
 		} );
-		it( 'should track when we request olark state', () => {
+		test( 'should track when we request olark state', () => {
 			const state = requesting( undefined, {
 				type: OLARK_REQUEST,
 			} );
 			expect( state ).to.equal( true );
 		} );
-		it( 'should track request state when olark times out', () => {
+		test( 'should track request state when olark times out', () => {
 			const state = requesting( undefined, {
 				type: OLARK_TIMEOUT,
 			} );
 			expect( state ).to.equal( false );
 		} );
-		it( 'should track request state when olark is ready', () => {
+		test( 'should track request state when olark is ready', () => {
 			const state = requesting( undefined, {
 				type: OLARK_READY,
 			} );

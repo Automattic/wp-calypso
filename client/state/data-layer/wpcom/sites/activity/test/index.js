@@ -63,7 +63,7 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveActivityLog', () => {
-	it( 'should dispatch activity log update action', () => {
+	test( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.called.once;
@@ -78,7 +78,7 @@ describe( 'receiveActivityLog', () => {
 } );
 
 describe( 'receiveActivityLogError', () => {
-	it( 'should dispatch activity log error action', () => {
+	test( 'should dispatch activity log error action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLogError( { dispatch }, { siteId: SITE_ID }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -91,7 +91,7 @@ describe( 'receiveActivityLogError', () => {
 } );
 
 describe( 'handleActivityLogRequest', () => {
-	it( 'should dispatch HTTP action with default when no params are passed', () => {
+	test( 'should dispatch HTTP action with default when no params are passed', () => {
 		const action = activityLogRequest( SITE_ID );
 		const dispatch = sinon.spy();
 
@@ -111,7 +111,7 @@ describe( 'handleActivityLogRequest', () => {
 		);
 	} );
 
-	it( 'should dispatch HTTP action with provided parameters', () => {
+	test( 'should dispatch HTTP action with provided parameters', () => {
 		const action = activityLogRequest( SITE_ID, {
 			date_end: 1500300000000,
 			date_start: 1500000000000,
@@ -143,7 +143,7 @@ describe( 'handleActivityLogRequest', () => {
 		);
 	} );
 
-	it( 'should handle camelCase parameters', () => {
+	test( 'should handle camelCase parameters', () => {
 		const action = activityLogRequest( SITE_ID, {
 			dateEnd: 1500300000000,
 			dateStart: 1500000000000,

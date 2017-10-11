@@ -18,7 +18,7 @@ describe( 'getSiteMonitorSettings()', () => {
 		wp_note_notifications: true,
 	};
 
-	it( 'should return monitor settings for a known site', () => {
+	test( 'should return monitor settings for a known site', () => {
 		const state = {
 			sites: {
 				monitor: {
@@ -32,7 +32,7 @@ describe( 'getSiteMonitorSettings()', () => {
 		expect( output ).to.eql( settings );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const state = {
 			sites: {
 				monitor: {

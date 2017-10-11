@@ -46,10 +46,10 @@ jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-1',
 } ) );
 
-describe( 'MediaActions', function() {
+describe( 'MediaActions', () => {
 	let MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
 
-	before( function() {
+	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
 		MediaListStore = require( '../list-store' );
@@ -57,7 +57,7 @@ describe( 'MediaActions', function() {
 		MediaActions = require( '../actions' );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		sandbox = sinon.sandbox.create();
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
@@ -74,14 +74,14 @@ describe( 'MediaActions', function() {
 		window.URL = { createObjectURL: sandbox.stub() };
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		sandbox.restore();
 		delete window.FileList;
 		delete window.URL;
 	} );
 
-	describe( '#setQuery()', function() {
-		it( 'should dispatch the SET_MEDIA_QUERY action', function() {
+	describe( '#setQuery()', () => {
+		test( 'should dispatch the SET_MEDIA_QUERY action', () => {
 			MediaActions.setQuery( DUMMY_SITE_ID, DUMMY_QUERY );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -92,8 +92,8 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#fetch()', function() {
-		it( 'should call to the WordPress.com REST API', function( done ) {
+	describe( '#fetch()', () => {
+		test( 'should call to the WordPress.com REST API', done => {
 			Dispatcher.handleViewAction.restore();
 			sandbox.stub( Dispatcher, 'handleViewAction', function() {
 				expect( MediaActions._fetching ).to.have.all.keys( [
@@ -117,14 +117,14 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should not allow simultaneous request for the same item', function() {
+		test( 'should not allow simultaneous request for the same item', () => {
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
 
 			expect( stubs.mediaGet ).to.have.been.calledOnce;
 		} );
 
-		it( 'should allow simultaneous request for different items', function() {
+		test( 'should allow simultaneous request for different items', () => {
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID + 1 );
 
@@ -132,8 +132,8 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#fetchNextPage()', function() {
-		it( 'should call to the internal WordPress.com REST API', function( done ) {
+	describe( '#fetchNextPage()', () => {
+		test( 'should call to the internal WordPress.com REST API', done => {
 			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
 
 			MediaActions.fetchNextPage( DUMMY_SITE_ID );
@@ -152,7 +152,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should call to the external WordPress.com REST API', function( done ) {
+		test( 'should call to the external WordPress.com REST API', done => {
 			MediaListStore._activeQueries[ DUMMY_SITE_ID ] = { query: { source: 'external' } };
 
 			const query = MediaListStore.getNextPageQuery( DUMMY_SITE_ID );
@@ -175,8 +175,8 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#add()', function() {
-		it( 'should accept a single upload', function() {
+	describe( '#add()', () => {
+		test( 'should accept a single upload', () => {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
 				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -185,7 +185,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should accept an array of uploads', function() {
+		test( 'should accept an array of uploads', () => {
 			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
@@ -194,13 +194,13 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should accept a file URL', function() {
+		test( 'should accept a file URL', () => {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
 				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
 			} );
 		} );
 
-		it( 'should accept a FileList of uploads', function() {
+		test( 'should accept a FileList of uploads', () => {
 			const uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
 			return MediaActions.add( DUMMY_SITE_ID, uploads ).then( () => {
@@ -211,7 +211,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should accept a Blob object wrapper and pass it as "file" parameter', function() {
+		test( 'should accept a Blob object wrapper and pass it as "file" parameter', () => {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_BLOB_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, { file: DUMMY_BLOB_UPLOAD } );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
@@ -223,7 +223,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should call to the WordPress.com REST API', function() {
+		test( 'should call to the WordPress.com REST API', () => {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
@@ -235,7 +235,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should immediately receive a transient object', function() {
+		test( 'should immediately receive a transient object', () => {
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 					type: 'CREATE_MEDIA_ITEM',
@@ -248,7 +248,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should attach file upload to a post if one is being edited', function() {
+		test( 'should attach file upload to a post if one is being edited', () => {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
@@ -262,7 +262,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should attach URL upload to a post if one is being edited', function() {
+		test( 'should attach URL upload to a post if one is being edited', () => {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
@@ -276,7 +276,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should upload in series', () => {
+		test( 'should upload in series', () => {
 			// An awkward test, but the idea is that at the point at which
 			// handleServerAction is called for the first received media,
 			// only the first of the two items should have started uploading.
@@ -294,7 +294,7 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#addExternal()', () => {
-		it( 'should accept an upload', () => {
+		test( 'should accept an upload', () => {
 			return MediaActions.addExternal( DUMMY_SITE_ID, [ DUMMY_UPLOAD ], 'external' ).then( () => {
 				expect( stubs.mediaAddExternal ).to.have.been.calledWithMatch( 'external', [
 					DUMMY_UPLOAD.guid,
@@ -309,10 +309,10 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#edit()', function() {
+	describe( '#edit()', () => {
 		const item = { ID: 100, description: 'Example' };
 
-		it( 'should immediately edit the existing item', function() {
+		test( 'should immediately edit the existing item', () => {
 			MediaActions.edit( DUMMY_SITE_ID, item );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -323,20 +323,20 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#update()', function() {
+	describe( '#update()', () => {
 		const item = { ID: 100, description: 'Example' };
 
-		it( 'should accept a single item', function() {
+		test( 'should accept a single item', () => {
 			MediaActions.update( DUMMY_SITE_ID, item );
 			expect( stubs.mediaUpdate ).to.have.been.calledOnce;
 		} );
 
-		it( 'should accept an array of items', function() {
+		test( 'should accept an array of items', () => {
 			MediaActions.update( DUMMY_SITE_ID, [ item, item ] );
 			expect( stubs.mediaUpdate ).to.have.been.calledTwice;
 		} );
 
-		it( 'should immediately update the existing item', function() {
+		test( 'should immediately update the existing item', () => {
 			MediaActions.update( DUMMY_SITE_ID, item );
 
 			expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
@@ -347,7 +347,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should call to the WordPress.com REST API', function( done ) {
+		test( 'should call to the WordPress.com REST API', done => {
 			MediaActions.update( DUMMY_SITE_ID, item );
 
 			expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
@@ -365,20 +365,20 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#delete()', function() {
+	describe( '#delete()', () => {
 		const item = { ID: 100 };
 
-		it( 'should accept a single item', function() {
+		test( 'should accept a single item', () => {
 			MediaActions.delete( DUMMY_SITE_ID, item );
 			expect( stubs.mediaDelete ).to.have.been.calledOnce;
 		} );
 
-		it( 'should accept an array of items', function() {
+		test( 'should accept an array of items', () => {
 			MediaActions.delete( DUMMY_SITE_ID, [ item, item ] );
 			expect( stubs.mediaDelete ).to.have.been.calledTwice;
 		} );
 
-		it( 'should call to the WordPress.com REST API', function( done ) {
+		test( 'should call to the WordPress.com REST API', done => {
 			MediaActions.delete( DUMMY_SITE_ID, item );
 
 			expect( stubs.mediaDelete ).to.have.been.calledOn( [ DUMMY_SITE_ID, item.ID ].join() );
@@ -394,7 +394,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should immediately remove the item', function() {
+		test( 'should immediately remove the item', () => {
 			MediaActions.delete( DUMMY_SITE_ID, item );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -405,8 +405,8 @@ describe( 'MediaActions', function() {
 		} );
 	} );
 
-	describe( '#clearValidationErrors()', function() {
-		it( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId', function() {
+	describe( '#clearValidationErrors()', () => {
+		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId', () => {
 			MediaActions.clearValidationErrors( DUMMY_SITE_ID );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -416,7 +416,7 @@ describe( 'MediaActions', function() {
 			} );
 		} );
 
-		it( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId', function() {
+		test( 'should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId', () => {
 			MediaActions.clearValidationErrors( DUMMY_SITE_ID, DUMMY_ITEM.ID );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
@@ -428,7 +428,7 @@ describe( 'MediaActions', function() {
 	} );
 
 	describe( '#sourceChanged()', () => {
-		it( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
+		test( 'should dispatch the `CHANGE_MEDIA_SOURCE` action with the specified siteId', () => {
 			MediaActions.sourceChanged( DUMMY_SITE_ID );
 
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {

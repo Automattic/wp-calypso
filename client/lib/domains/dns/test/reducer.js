@@ -14,7 +14,7 @@ import { DOMAIN_NAME, RECORD_A, RECORD_TXT } from './data';
 import { action as ActionTypes } from 'lib/upgrades/constants';
 
 describe( 'reducer', () => {
-	it( 'should return the same state when no matching record passed in the delete action', () => {
+	test( 'should return the same state when no matching record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
 					records: [ RECORD_A ],
@@ -33,7 +33,7 @@ describe( 'reducer', () => {
 		expect( result ).to.be.equal( state );
 	} );
 
-	it( 'should return state without record passed in the delete action', () => {
+	test( 'should return state without record passed in the delete action', () => {
 		const state = deepFreeze( {
 				[ DOMAIN_NAME ]: {
 					records: [ RECORD_A, RECORD_TXT ],
@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 		expect( result ).to.be.eql( { [ DOMAIN_NAME ]: { records: [ RECORD_A ] } } );
 	} );
 
-	it( 'should return state without record (having no id) passed in the delete action', () => {
+	test( 'should return state without record (having no id) passed in the delete action', () => {
 		const RECORD_TXT_WITHOUT_ID = pick( RECORD_TXT, [ 'data', 'name', 'type' ] ),
 			state = deepFreeze( {
 				[ DOMAIN_NAME ]: {

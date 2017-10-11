@@ -13,48 +13,48 @@ import React from 'react';
  */
 import ExternalLink from '../index';
 
-describe( 'External Link', function() {
-	it( 'should have external-link class', () => {
+describe( 'External Link', () => {
+	test( 'should have external-link class', () => {
 		const externalLink = shallow( <ExternalLink /> );
 		assert.lengthOf( externalLink.find( '.external-link' ), 1 );
 	} );
 
-	it( 'should have className if provided', () => {
+	test( 'should have className if provided', () => {
 		const externalLink = shallow( <ExternalLink className="test__foobar" /> );
 		assert.lengthOf( externalLink.find( '.test__foobar' ), 1 );
 	} );
 
-	it( 'should have href if provided', () => {
+	test( 'should have href if provided', () => {
 		const externalLink = shallow( <ExternalLink href="http://foobar.bang" /> );
 		assert.lengthOf( externalLink.find( { href: 'http://foobar.bang' } ), 1 );
 	} );
 
-	it( 'should have icon if provided', () => {
+	test( 'should have icon if provided', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } /> );
 		assert.lengthOf( externalLink.find( Gridicon ), 1 );
 	} );
 
-	it( 'should have a target if given one', () => {
+	test( 'should have a target if given one', () => {
 		const externalLink = shallow( <ExternalLink target="_blank" /> );
 		assert.lengthOf( externalLink.find( { target: '_blank' } ), 1 );
 	} );
 
-	it( 'should have an icon className if specified', () => {
+	test( 'should have an icon className if specified', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
 		assert.equal( 'foo', externalLink.find( Gridicon ).prop( 'className' ) );
 	} );
 
-	it( 'should have an icon default size of 18', () => {
+	test( 'should have an icon default size of 18', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
 		assert.equal( '18', externalLink.find( Gridicon ).prop( 'size' ) );
 	} );
 
-	it( 'should have an icon size that is provided', () => {
+	test( 'should have an icon size that is provided', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconSize={ 20 } /> );
 		assert.equal( '20', externalLink.find( Gridicon ).prop( 'size' ) );
 	} );
 
-	it( 'should have icon first if specified', () => {
+	test( 'should have icon first if specified', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
 		assert.isTrue(
 			externalLink

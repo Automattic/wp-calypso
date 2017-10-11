@@ -28,7 +28,7 @@ const wpcomSubscription = {
 };
 
 describe( 'system reducer', () => {
-	it( 'should persist keys', () => {
+	test( 'should persist keys', () => {
 		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
@@ -37,7 +37,7 @@ describe( 'system reducer', () => {
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 
-	it( 'should refuse to persist particular keys', () => {
+	test( 'should refuse to persist particular keys', () => {
 		const previousState = {
 			system: {
 				apiReady: true,
@@ -54,7 +54,7 @@ describe( 'system reducer', () => {
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 
-	it( 'should restore keys', () => {
+	test( 'should restore keys', () => {
 		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
 		deepFreeze( previousState );
 		const action = { type: DESERIALIZE };
@@ -65,7 +65,7 @@ describe( 'system reducer', () => {
 		} );
 	} );
 
-	it( 'should refuse to restore particular keys', () => {
+	test( 'should refuse to restore particular keys', () => {
 		const wpcomSubscriptionId = { ID: '42' };
 		const previousState = {
 			system: {
@@ -85,7 +85,7 @@ describe( 'system reducer', () => {
 		} );
 	} );
 
-	it( 'should accept an integer for wpcomSubscription ID and store it as string', () => {
+	test( 'should accept an integer for wpcomSubscription ID and store it as string', () => {
 		const action = {
 			type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 			data: {
@@ -100,7 +100,7 @@ describe( 'system reducer', () => {
 } );
 
 describe( 'settings reducer', () => {
-	it( 'should persist keys', () => {
+	test( 'should persist keys', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
@@ -119,7 +119,7 @@ describe( 'settings reducer', () => {
 		} );
 	} );
 
-	it( 'should refuse to persist particular keys', () => {
+	test( 'should refuse to persist particular keys', () => {
 		const previousState = {
 			settings: {
 				enabled: true,
@@ -135,7 +135,7 @@ describe( 'settings reducer', () => {
 		} );
 	} );
 
-	it( 'should restore keys', () => {
+	test( 'should restore keys', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
@@ -153,7 +153,7 @@ describe( 'settings reducer', () => {
 		} );
 	} );
 
-	it( 'should refuse to restore particular keys', () => {
+	test( 'should refuse to restore particular keys', () => {
 		const previousState = {
 			settings: {
 				enabled: true,

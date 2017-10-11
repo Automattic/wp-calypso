@@ -19,15 +19,15 @@ import { SitesDropdown } from '..';
 
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'index', function() {
-	describe( 'component rendering', function() {
-		it( 'should render a dropdown component initially closed', function() {
+describe( 'index', () => {
+	describe( 'component rendering', () => {
+		test( 'should render a dropdown component initially closed', () => {
 			const sitesDropdown = shallow( <SitesDropdown /> );
 			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.be.true;
 			expect( sitesDropdown.hasClass( 'is-open' ) ).to.be.false;
 		} );
 
-		it( 'should toggle the dropdown, when it is clicked', function() {
+		test( 'should toggle the dropdown, when it is clicked', () => {
 			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
 			const sitesDropdown = shallow( <SitesDropdown /> );
 
@@ -40,15 +40,15 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'component state', function() {
-		it( 'should initially consider as selected the selectedOrPrimarySiteId prop', function() {
+	describe( 'component state', () => {
+		test( 'should initially consider as selected the selectedOrPrimarySiteId prop', () => {
 			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 1234567 } /> );
 			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
 		} );
 	} );
 
-	describe( 'selectSite', function() {
-		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
+	describe( 'selectSite', () => {
+		test( 'should update the `selectedSiteSlug`, and `open` state properties', () => {
 			const setStateSpy = sinon.spy();
 			const siteSelectedSpy = sinon.spy();
 			const fakeContext = {
@@ -68,8 +68,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'onClose', function() {
-		it( 'should set `open` state property to false', function() {
+	describe( 'onClose', () => {
+		test( 'should set `open` state property to false', () => {
 			const setStateSpy = sinon.spy();
 			const fakeContext = {
 				setState: setStateSpy,
@@ -84,7 +84,7 @@ describe( 'index', function() {
 			sinon.assert.calledWith( setStateSpy, { open: false } );
 		} );
 
-		it( 'should run the component `onClose` hook, when it is provided', function() {
+		test( 'should run the component `onClose` hook, when it is provided', () => {
 			const onCloseSpy = sinon.spy();
 			const fakeContext = {
 				setState: noop,
@@ -98,7 +98,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'getSelectedSite', function() {
+	describe( 'getSelectedSite', () => {
 		xit(
 			'should return a site on the basis of the component `selectedSiteSlug` state property',
 			function() {

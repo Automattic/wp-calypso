@@ -14,7 +14,7 @@ jest.mock( 'lib/analytics', () => {} );
 
 describe( 'index', () => {
 	describe( 'when trying to renderToString() LayoutLoggedOut ', () => {
-		it( "doesn't throw an exception", () => {
+		test( "doesn't throw an exception", () => {
 			const LayoutLoggedOutFactory = React.createFactory( LayoutLoggedOut );
 			const props = {
 				store: {

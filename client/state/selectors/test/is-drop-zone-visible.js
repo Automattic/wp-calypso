@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isDropZoneVisible } from '../';
 
 describe( 'isDropZoneVisible()', () => {
-	it( 'should return false as a default state', () => {
+	test( 'should return false as a default state', () => {
 		expect(
 			isDropZoneVisible( {
 				ui: {
@@ -21,7 +21,7 @@ describe( 'isDropZoneVisible()', () => {
 		).to.be.false;
 	} );
 
-	it( 'should return isVisible state', () => {
+	test( 'should return isVisible state', () => {
 		expect(
 			isDropZoneVisible(
 				{

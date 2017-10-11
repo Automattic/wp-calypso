@@ -24,7 +24,7 @@ let wpcom, responseData;
 const setLocalData = data => localforageMock.setLocalData( data );
 
 describe( 'sync-handler', () => {
-	before( () => {
+	beforeAll( () => {
 		const handlerMock = ( params, callback ) => {
 			const key = generateKey( params );
 			callback( null, responseData[ key ] );
@@ -38,7 +38,7 @@ describe( 'sync-handler', () => {
 		setLocalData( {} );
 	} );
 
-	it( 'should call callback with local response', () => {
+	test( 'should call callback with local response', () => {
 		const { postListKey, postListParams, postListLocalRecord, postListResponseBody } = testData;
 		const callback = spy();
 		setLocalData( {
@@ -47,7 +47,7 @@ describe( 'sync-handler', () => {
 		wpcom( postListParams, callback );
 		expect( callback.calledWith( null, postListResponseBody ) );
 	} );
-	it( 'should call callback with request response', done => {
+	test( 'should call callback with request response', done => {
 		const { postListKey, postListParams, postListResponseBody } = testData;
 		const callback = spy();
 		responseData[ postListKey ] = postListResponseBody;
@@ -58,7 +58,7 @@ describe( 'sync-handler', () => {
 			done();
 		} );
 	} );
-	it( 'should call callback twice with local and request responses', done => {
+	test( 'should call callback twice with local and request responses', done => {
 		const {
 			postListKey,
 			postListParams,
@@ -79,7 +79,7 @@ describe( 'sync-handler', () => {
 			done();
 		} );
 	} );
-	it( 'should store cacheIndex records with matching pageSeriesKey for paginated responses', done => {
+	test( 'should store cacheIndex records with matching pageSeriesKey for paginated responses', done => {
 		const {
 			postListKey,
 			postListNextPageKey,
@@ -113,7 +113,7 @@ describe( 'sync-handler', () => {
 			}
 		} );
 	} );
-	it( 'should call clearPageSeries when getting a response with an updated page_handle', done => {
+	test( 'should call clearPageSeries when getting a response with an updated page_handle', done => {
 		const {
 			postListParams,
 			postListLocalRecord,
@@ -140,7 +140,7 @@ describe( 'sync-handler', () => {
 			responseData = {};
 			setLocalData( {} );
 		} );
-		it( 'should return the same key for identical request', () => {
+		test( 'should return the same key for identical request', () => {
 			const { postListParams } = testData;
 			const secondRequest = Object.assign( {}, postListParams );
 			const key1 = generateKey( postListParams );
@@ -148,7 +148,7 @@ describe( 'sync-handler', () => {
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.equal( key2 );
 		} );
-		it( 'should return unique keys for different requests', () => {
+		test( 'should return unique keys for different requests', () => {
 			const { postListParams } = testData;
 			const secondRequest = Object.assign( {}, postListParams, { query: '?filter=test' } );
 			const key1 = generateKey( postListParams );
@@ -156,7 +156,7 @@ describe( 'sync-handler', () => {
 			expect( typeof key1 ).to.equal( 'string' );
 			expect( key1 ).to.not.equal( key2 );
 		} );
-		it( 'should return the same key if parameters are in different order', () => {
+		test( 'should return the same key if parameters are in different order', () => {
 			const { postListParams, postListDifferentOrderParams } = testData;
 			const key1 = generateKey( postListParams );
 			const key2 = generateKey( postListDifferentOrderParams );
@@ -166,23 +166,23 @@ describe( 'sync-handler', () => {
 	} );
 
 	describe( 'hasPaginationChanged', () => {
-		it( 'should return false if requestResponse has no page handle', () => {
+		test( 'should return false if requestResponse has no page handle', () => {
 			const { postListNoHandleResponseBody } = testData;
 			const result = hasPaginationChanged( postListNoHandleResponseBody, null );
 			expect( result ).to.equal( false );
 		} );
-		it( 'should return false for call with identical response', () => {
+		test( 'should return false for call with identical response', () => {
 			const { postListResponseBody } = testData;
 			const identicalResponse = Object.assign( {}, postListResponseBody );
 			const result = hasPaginationChanged( postListResponseBody, identicalResponse );
 			expect( result ).to.equal( false );
 		} );
-		it( 'should return true if page handle is different', () => {
+		test( 'should return true if page handle is different', () => {
 			const { postListResponseBody, postListFreshResponseBody } = testData;
 			const result = hasPaginationChanged( postListResponseBody, postListFreshResponseBody );
 			expect( result ).to.equal( true );
 		} );
-		it( 'should return false with empty local response', () => {
+		test( 'should return false with empty local response', () => {
 			const { postListResponseBody } = testData;
 			const result = hasPaginationChanged( postListResponseBody, null );
 			expect( result ).to.equal( false );
@@ -191,11 +191,11 @@ describe( 'sync-handler', () => {
 
 	describe( 'syncOptOut', () => {
 		let wpcomOptOut;
-		before( () => {
+		beforeAll( () => {
 			wpcomOptOut = syncOptOut( wpcomUndocumented( wpcom ) );
 		} );
 
-		it( 'should call callback with network response even when local response exists', done => {
+		test( 'should call callback with network response even when local response exists', done => {
 			const {
 				postListKey,
 				postListSiteId,

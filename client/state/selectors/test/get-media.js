@@ -38,13 +38,13 @@ describe( 'getMedia()', () => {
 		},
 	};
 
-	it( 'should return null if the site is not in state', () => {
+	test( 'should return null if the site is not in state', () => {
 		const media = getMedia( state, 2916285, query );
 
 		expect( media ).to.be.null;
 	} );
 
-	it( 'should return null if the query is not in state', () => {
+	test( 'should return null if the query is not in state', () => {
 		const media = getMedia( state, 2916284, {
 			search: 'flowers',
 		} );
@@ -52,7 +52,7 @@ describe( 'getMedia()', () => {
 		expect( media ).to.be.null;
 	} );
 
-	it( 'should return media', () => {
+	test( 'should return media', () => {
 		const media = getMedia( state, 2916284, query );
 
 		expect( media ).to.eql( [ item ] );

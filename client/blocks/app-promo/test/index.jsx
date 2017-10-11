@@ -27,14 +27,14 @@ describe( 'AppPromo', () => {
 	};
 	// The reason we don't import this higher up is this component can't be
 	// imported until the fake DOM is setup.
-	before( () => {
+	beforeAll( () => {
 		AppPromo = require( '..' ).AppPromo;
 		getPromoLink = require( '..' ).getPromoLink;
 		AppPromoComponent = <AppPromo { ...defaultPropsToRender } />;
 	} );
 
-	context( 'readering', () => {
-		it( 'should render the primary components', () => {
+	describe( 'readering', () => {
+		test( 'should render the primary components', () => {
 			const wrapper = shallow( AppPromoComponent );
 
 			expect( wrapper ).to.have.descendants( '.app-promo' );
@@ -43,13 +43,13 @@ describe( 'AppPromo', () => {
 			expect( wrapper ).to.have.descendants( '.app-promo__icon' );
 		} );
 
-		it( 'should render the promo text', () => {
+		test( 'should render the promo text', () => {
 			const wrapper = shallow( AppPromoComponent );
 
 			expect( wrapper.text() ).to.contain( appPromoDetails.message );
 		} );
 
-		it( 'should render the promo link', () => {
+		test( 'should render the promo link', () => {
 			const wrapper = shallow( AppPromoComponent );
 
 			const promoLink = wrapper.find( '.app-promo__link' );
@@ -60,7 +60,7 @@ describe( 'AppPromo', () => {
 		} );
 	} );
 
-	context( 'getPromoLink', () => {
+	describe( 'getPromoLink', () => {
 		const mobilePromo = {
 			promoCode: 'a0006',
 			message: 'WordPress.com in the palm of your hands — download app for mobile.',
@@ -73,11 +73,11 @@ describe( 'AppPromo', () => {
 			type: 'desktop',
 		};
 
-		it( 'should render a mobile link when the mobile promo code is passed in', () => {
+		test( 'should render a mobile link when the mobile promo code is passed in', () => {
 			expect( getPromoLink( 'reader', mobilePromo ) ).to.include( 'mobile' );
 		} );
 
-		it( 'should render a desktop link when the desktop promo code is passed in', () => {
+		test( 'should render a desktop link when the desktop promo code is passed in', () => {
 			expect( getPromoLink( 'reader', desktopPromo ) ).to.include( 'desktop' );
 		} );
 	} );

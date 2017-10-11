@@ -15,15 +15,15 @@ import Dispatcher from 'dispatcher';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-describe( 'oAuthStore', function() {
+describe( 'oAuthStore', () => {
 	let oAuthStore, oAuthToken;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		oAuthToken = require( 'lib/oauth-token' );
 		oAuthStore = require( 'lib/oauth-store' );
 	} );
 
-	it( 'is in progress when attempting login', function() {
+	test( 'is in progress when attempting login', () => {
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
@@ -34,7 +34,7 @@ describe( 'oAuthStore', function() {
 		} );
 	} );
 
-	it( 'is no longer in progress when login fails', function() {
+	test( 'is no longer in progress when login fails', () => {
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
@@ -50,7 +50,7 @@ describe( 'oAuthStore', function() {
 		} );
 	} );
 
-	it( 'requires OTP for a 2FA account', function() {
+	test( 'requires OTP for a 2FA account', () => {
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
@@ -71,7 +71,7 @@ describe( 'oAuthStore', function() {
 		} );
 	} );
 
-	it( 'requires OTP for a 2FA account when OTP is wrong', function() {
+	test( 'requires OTP for a 2FA account when OTP is wrong', () => {
 		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
 		Dispatcher.handleViewAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
@@ -92,7 +92,7 @@ describe( 'oAuthStore', function() {
 		} );
 	} );
 
-	it(
+	test(
 		'sets OAuth token when login is correct',
 		sinon.test( function() {
 			this.stub( global.document.location, 'replace' );

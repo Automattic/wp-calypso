@@ -44,7 +44,7 @@ describe( 'Invites Create Validation Store', () => {
 			Dispatcher.handleServerAction( actions.receiveValidaton );
 		} );
 
-		it( 'Validation is not empty', () => {
+		test( 'Validation is not empty', () => {
 			const success = InvitesCreateValidationStore.getSuccess( siteId );
 			assert.lengthOf( success, 2 );
 			const errors = InvitesCreateValidationStore.getErrors( siteId );

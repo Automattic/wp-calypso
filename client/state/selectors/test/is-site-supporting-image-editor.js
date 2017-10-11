@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isSiteSupportingImageEditor } from '../';
 
 describe( 'isSiteSupportingImageEditor()', () => {
-	it( 'should return true if site is not tracked', () => {
+	test( 'should return true if site is not tracked', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -27,7 +27,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 		expect( siteSupportsImageEditor ).to.be.true;
 	} );
 
-	it( 'should return true if site is public and not jetpack site', () => {
+	test( 'should return true if site is public and not jetpack site', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -47,7 +47,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 		expect( siteSupportsImageEditor ).to.be.true;
 	} );
 
-	it( 'should return false if site is private', () => {
+	test( 'should return false if site is private', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -67,7 +67,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 		expect( siteSupportsImageEditor ).to.be.false;
 	} );
 
-	it( 'should return true if site is public and jetpack and has photon enabled', () => {
+	test( 'should return true if site is public and jetpack and has photon enabled', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {
@@ -90,7 +90,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 		expect( siteSupportsImageEditor ).to.be.true;
 	} );
 
-	it( 'should return false if site is public and jetpack but has photon disabled', () => {
+	test( 'should return false if site is public and jetpack but has photon disabled', () => {
 		const siteSupportsImageEditor = isSiteSupportingImageEditor(
 			{
 				sites: {

@@ -22,10 +22,10 @@ jest.mock( 'components/popover/menu', () => require( 'components/empty-component
 jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'Theme', function() {
+describe( 'Theme', () => {
 	let props, themeNode;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		props = {
 			theme: {
 				id: 'atheme',
@@ -37,15 +37,15 @@ describe( 'Theme', function() {
 		};
 	} );
 
-	describe( 'rendering', function() {
-		context( 'with default display buttonContents', function() {
-			beforeEach( function() {
+	describe( 'rendering', () => {
+		describe( 'with default display buttonContents', () => {
+			beforeEach( () => {
 				props.onScreenshotClick = sinon.spy();
 				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, props ) );
 				themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
-			it( 'should render a <div> with a className of "theme"', function() {
+			test( 'should render a <div> with a className of "theme"', () => {
 				assert( themeNode !== null, "DOM node doesn't exist" );
 				assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
 				assert.include(
@@ -57,25 +57,25 @@ describe( 'Theme', function() {
 				assert( themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name' );
 			} );
 
-			it( 'should render a screenshot', function() {
+			test( 'should render a screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				assert.include( imgNode.getAttribute( 'src' ), '/theme/screenshot.png' );
 			} );
 
-			it( 'should call onScreenshotClick() on click on screenshot', function() {
+			test( 'should call onScreenshotClick() on click on screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
 				assert( props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
 			} );
 
-			it( 'should not show a price when there is none', function() {
+			test( 'should not show a price when there is none', () => {
 				assert(
 					themeNode.getElementsByClassName( 'price' ).length === 0,
 					'price should not appear'
 				);
 			} );
 
-			it( 'should render a More button', function() {
+			test( 'should render a More button', () => {
 				const more = themeNode.getElementsByClassName( 'theme__more-button' );
 
 				assert( more.length === 1, 'More button container not found' );
@@ -83,14 +83,14 @@ describe( 'Theme', function() {
 			} );
 		} );
 
-		context( 'with empty buttonContents', function() {
-			beforeEach( function() {
+		describe( 'with empty buttonContents', () => {
+			beforeEach( () => {
 				props.buttonContents = {};
 				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, props ) );
 				themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
-			it( 'should not render a More button', function() {
+			test( 'should not render a More button', () => {
 				const more = themeNode.getElementsByClassName( 'theme__more-button' );
 
 				assert( more.length === 0, 'More button container found' );
@@ -98,8 +98,8 @@ describe( 'Theme', function() {
 		} );
 	} );
 
-	context( 'when isPlaceholder is set to true', function() {
-		beforeEach( function() {
+	describe( 'when isPlaceholder is set to true', () => {
+		beforeEach( () => {
 			const themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, {
 					theme: { id: 'placeholder-1', name: 'Loading' },
@@ -110,21 +110,21 @@ describe( 'Theme', function() {
 			themeNode = ReactDom.findDOMNode( themeElement );
 		} );
 
-		it( 'should render a <div> with an is-placeholder class', function() {
+		test( 'should render a <div> with an is-placeholder class', () => {
 			assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
 			assert.include( themeNode.className, 'is-placeholder', 'no is-placeholder' );
 		} );
 	} );
 
-	context( 'when the theme has a price', function() {
-		beforeEach( function() {
+	describe( 'when the theme has a price', () => {
+		beforeEach( () => {
 			const themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, { ...props, price: '$50' } )
 			);
 			themeNode = ReactDom.findDOMNode( themeElement );
 		} );
 
-		it( 'should show a price', function() {
+		test( 'should show a price', () => {
 			assert( themeNode.getElementsByClassName( 'theme-badge__price' )[ 0 ].textContent === '$50' );
 		} );
 	} );

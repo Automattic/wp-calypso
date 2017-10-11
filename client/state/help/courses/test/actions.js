@@ -22,7 +22,7 @@ describe( 'actions', () => {
 	];
 
 	describe( '#receiveHelpCourses()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveHelpCourses( sampleCourseList );
 
 			expect( action ).to.eql( {

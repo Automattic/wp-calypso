@@ -23,7 +23,7 @@ const initialState = {
 };
 
 describe( 'reducer', () => {
-	it( 'should store the current query for more than one site', () => {
+	test( 'should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
@@ -45,7 +45,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should track the order edits for more than one site', () => {
+	test( 'should track the order edits for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 234,

@@ -14,13 +14,13 @@ import { EditorNotice } from '../';
 import Notice from 'components/notice';
 
 describe( 'EditorNotice', () => {
-	it( 'should not render a notice if no message is specified', () => {
+	test( 'should not render a notice if no message is specified', () => {
 		const wrapper = shallow( <EditorNotice /> );
 
 		expect( wrapper ).to.not.have.descendants( Notice );
 	} );
 
-	it( 'should display an no content error message if recognized', () => {
+	test( 'should display an no content error message if recognized', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
@@ -39,7 +39,7 @@ describe( 'EditorNotice', () => {
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
-	it( 'should display a fallback error message', () => {
+	test( 'should display a fallback error message', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
@@ -60,7 +60,7 @@ describe( 'EditorNotice', () => {
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
-	it( 'should display publish success for page', () => {
+	test( 'should display publish success for page', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
@@ -94,7 +94,7 @@ describe( 'EditorNotice', () => {
 			.equal( 'is-success' );
 	} );
 
-	it( 'should display custom post type view label', () => {
+	test( 'should display custom post type view label', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }

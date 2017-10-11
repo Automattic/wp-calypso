@@ -12,7 +12,7 @@ import { isRequestingJetpackUserConnection } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isRequestingJetpackUserConnection()', () => {
-	it( 'should return true if the user connection data is being fetched', () => {
+	test( 'should return true if the user connection data is being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'isRequestingJetpackUserConnection()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the user connection data is not being fetched', () => {
+	test( 'should return false if the user connection data is not being fetched', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -38,7 +38,7 @@ describe( 'isRequestingJetpackUserConnection()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the site is not known yet', () => {
+	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

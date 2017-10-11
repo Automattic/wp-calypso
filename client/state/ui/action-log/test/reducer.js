@@ -15,13 +15,13 @@ import { useFakeTimers } from 'test/helpers/use-sinon';
 describe( 'reducer', () => {
 	useFakeTimers( 1337 );
 
-	it( 'should default to an empty list', () => {
+	test( 'should default to an empty list', () => {
 		const state = reducer( undefined, {} );
 
 		expect( state ).to.eql( [] );
 	} );
 
-	it( 'should add actions to the log', () => {
+	test( 'should add actions to the log', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	it( 'should discard them if payload is irrelevant', () => {
+	test( 'should discard them if payload is irrelevant', () => {
 		const actions = [
 			{
 				type: COMMENTS_LIKE,
@@ -56,7 +56,7 @@ describe( 'reducer', () => {
 		expect( state ).to.eql( [] );
 	} );
 
-	it( 'should log actions with relevant analytics meta', () => {
+	test( 'should log actions with relevant analytics meta', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	it( 'should discard actions with irrelevant analytics meta', () => {
+	test( 'should discard actions with irrelevant analytics meta', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,

@@ -1,5 +1,7 @@
+/** @format */
 /**
  * External dependencies
+ *
  */
 import { expect } from 'chai';
 
@@ -11,18 +13,16 @@ import {
 	WOOCOMMERCE_PROMOTION_EDIT,
 	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
-import {
-	coupons1,
-} from 'woocommerce/state/sites/promotions/test/fixtures/promotions';
+import { coupons1 } from 'woocommerce/state/sites/promotions/test/fixtures/promotions';
 
 describe( 'edits-reducer', () => {
 	const siteId = 123;
 
-	it( 'should initialize to null', () => {
+	test( 'should initialize to null', () => {
 		expect( reducer( undefined, { type: '%%NONE%%' } ) ).to.equal( null );
 	} );
 
-	it( 'should create "updates" upon first edit', () => {
+	test( 'should create "updates" upon first edit', () => {
 		const coupon = coupons1[ 0 ];
 		const promotion = { id: 'coupon:' + coupon.id, name: coupon.code, coupon };
 		const action = {
@@ -42,7 +42,7 @@ describe( 'edits-reducer', () => {
 		expect( state.updates[ 0 ].coupon.amount ).to.equal( '18' );
 	} );
 
-	it( 'should modify "updates" on second edit', () => {
+	test( 'should modify "updates" on second edit', () => {
 		const coupon = coupons1[ 0 ];
 		const promotion = { id: 'coupon:' + coupon.id, name: coupon.code, coupon };
 		const action1 = {
@@ -65,7 +65,7 @@ describe( 'edits-reducer', () => {
 		expect( state2.updates[ 0 ].coupon.code ).to.equal( 'test_code' );
 	} );
 
-	it( 'should create updates for more than one existing promotion', () => {
+	test( 'should create updates for more than one existing promotion', () => {
 		const coupon1 = coupons1[ 0 ];
 		const promotion1 = { id: 'coupon:' + coupon1.id, name: coupon1.code, coupon: coupon1 };
 		const coupon2 = coupons1[ 1 ];
@@ -95,7 +95,7 @@ describe( 'edits-reducer', () => {
 		expect( state2.updates[ 1 ].coupon.amount ).to.equal( '222' );
 	} );
 
-	it( 'should create "creates" on first edit', () => {
+	test( 'should create "creates" on first edit', () => {
 		const action1 = {
 			type: WOOCOMMERCE_PROMOTION_EDIT,
 			siteId,
@@ -112,7 +112,7 @@ describe( 'edits-reducer', () => {
 		expect( state1.creates[ 0 ].coupon.amount ).to.equal( '111' );
 	} );
 
-	it( 'should modify "creates" on second edit', () => {
+	test( 'should modify "creates" on second edit', () => {
 		const action1 = {
 			type: WOOCOMMERCE_PROMOTION_EDIT,
 			siteId,
@@ -136,7 +136,7 @@ describe( 'edits-reducer', () => {
 		expect( state2.creates[ 0 ].coupon.code ).to.equal( 'c_code' );
 	} );
 
-	it( 'should create more than one new promotion', () => {
+	test( 'should create more than one new promotion', () => {
 		const action1 = {
 			type: WOOCOMMERCE_PROMOTION_EDIT,
 			siteId,
@@ -160,7 +160,7 @@ describe( 'edits-reducer', () => {
 		expect( state2.creates[ 1 ].coupon.code ).to.equal( 'ccode2' );
 	} );
 
-	it( 'should clear out edits', () => {
+	test( 'should clear out edits', () => {
 		const action1 = {
 			type: WOOCOMMERCE_PROMOTION_EDIT,
 			siteId,

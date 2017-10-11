@@ -12,7 +12,7 @@ import { getUserSuggestions, isRequestingUserSuggestions } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getUserSuggestions()', () => {
-		it( 'should return empty array if there is no suggestion available', () => {
+		test( 'should return empty array if there is no suggestion available', () => {
 			const state = {
 				users: {
 					suggestions: {
@@ -23,7 +23,7 @@ describe( 'selectors', () => {
 			expect( getUserSuggestions( state, 123 ) ).to.eql( [] );
 		} );
 
-		it( 'should return suggestions if they exist for a site ID', () => {
+		test( 'should return suggestions if they exist for a site ID', () => {
 			const firstSuggestion = { user_login: 'wordpress1' };
 			const secondSuggestion = { user_login: 'wordpress2' };
 			const state = {
@@ -40,7 +40,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingUserSuggestions()', () => {
-		it( 'should return true if requesting suggestions for the specified site', () => {
+		test( 'should return true if requesting suggestions for the specified site', () => {
 			const state = {
 				users: {
 					suggestions: {

@@ -19,7 +19,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( 'wpcom-api', () => {
 	describe( 'domains countries-list', () => {
 		describe( '#fetchCountriesDomains', () => {
-			it( 'should dispatch HTTP request to plans endpoint', () => {
+			test( 'should dispatch HTTP request to plans endpoint', () => {
 				const action = { type: 'DUMMY' };
 				const dispatch = spy();
 
@@ -40,7 +40,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#updateCountriesDomains', () => {
-			it( 'should dispatch updated action', () => {
+			test( 'should dispatch updated action', () => {
 				const action = { type: 'DUMMY' };
 				const dispatch = spy();
 				const data = [ 'BG', 'US', 'UK' ];
@@ -56,7 +56,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#showCountriesDomainsLoadingError', () => {
-			it( 'should dispatch error notice', () => {
+			test( 'should dispatch error notice', () => {
 				const dispatch = spy();
 
 				showCountriesDomainsLoadingError( { dispatch } );

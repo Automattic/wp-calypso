@@ -53,7 +53,7 @@ const slug = 'chickens';
 describe( 'wpcom-api', () => {
 	describe( 'request tags', () => {
 		describe( '#requestTags', () => {
-			it( 'single tag: should dispatch HTTP request to tag endpoint', () => {
+			test( 'single tag: should dispatch HTTP request to tag endpoint', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 
@@ -71,7 +71,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
+			test( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
 				const action = requestTagsAction();
 				const dispatch = sinon.spy();
 
@@ -91,7 +91,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsResponse', () => {
-			it( 'single tag: should normalize + dispatch', () => {
+			test( 'single tag: should normalize + dispatch', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 
@@ -106,7 +106,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'multiple tags: should dispatch the tags', () => {
+			test( 'multiple tags: should dispatch the tags', () => {
 				const action = requestTagsAction();
 				const dispatch = sinon.spy();
 
@@ -128,7 +128,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsError', () => {
-			it( 'should dispatch an error notice', () => {
+			test( 'should dispatch an error notice', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 				const error = 'could not find tag(s)';

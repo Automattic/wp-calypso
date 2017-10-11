@@ -17,22 +17,22 @@ import {
 } from 'state/help/directly/constants';
 
 describe( 'isDirectlyFailed()', () => {
-	it( 'should be false when uninitialized', () => {
+	test( 'should be false when uninitialized', () => {
 		const state = { help: { directly: { status: STATUS_UNINITIALIZED } } };
 		expect( isDirectlyFailed( state ) ).to.be.false;
 	} );
 
-	it( 'should be false when initializing', () => {
+	test( 'should be false when initializing', () => {
 		const state = { help: { directly: { status: STATUS_INITIALIZING } } };
 		expect( isDirectlyFailed( state ) ).to.be.false;
 	} );
 
-	it( 'should be false when ready', () => {
+	test( 'should be false when ready', () => {
 		const state = { help: { directly: { status: STATUS_READY } } };
 		expect( isDirectlyFailed( state ) ).to.be.false;
 	} );
 
-	it( 'should be true when failed', () => {
+	test( 'should be true when failed', () => {
 		const state = { help: { directly: { status: STATUS_ERROR } } };
 		expect( isDirectlyFailed( state ) ).to.be.true;
 	} );

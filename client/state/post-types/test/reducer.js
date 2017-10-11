@@ -25,18 +25,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items', 'taxonomies' ] );
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set site ID to true value if request in progress', () => {
+		test( 'should set site ID to true value if request in progress', () => {
 			const state = requesting( undefined, {
 				type: POST_TYPES_REQUEST,
 				siteId: 2916284,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values', () => {
+		test( 'should accumulate requesting values', () => {
 			const state = requesting(
 				deepFreeze( {
 					2916284: true,
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set site ID to false if request finishes successfully', () => {
+		test( 'should set site ID to false if request finishes successfully', () => {
 			const state = requesting(
 				deepFreeze( {
 					2916284: true,
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set site ID to false if request finishes with failure', () => {
+		test( 'should set site ID to false if request finishes with failure', () => {
 			const state = requesting(
 				deepFreeze( {
 					2916284: true,
@@ -98,13 +98,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index post types by site ID, post type name pairing', () => {
+		test( 'should index post types by site ID, post type name pairing', () => {
 			const state = items( null, {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate sites', () => {
+		test( 'should accumulate sites', () => {
 			const state = items(
 				deepFreeze( {
 					2916284: {
@@ -145,7 +145,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous post types of same site ID', () => {
+		test( 'should override previous post types of same site ID', () => {
 			const state = items(
 				deepFreeze( {
 					2916284: {
@@ -167,7 +167,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = items(
 				deepFreeze( {
 					2916284: {
@@ -184,7 +184,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					2916284: {
@@ -201,7 +201,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					post: { name: 'post', label: 'Posts' },

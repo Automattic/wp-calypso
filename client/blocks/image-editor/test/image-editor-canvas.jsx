@@ -34,12 +34,12 @@ describe( 'ImageEditorToolbar', () => {
 		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } /> );
 	} );
 
-	it( 'should render cropping area when the image meets the minimum height and width', () => {
+	test( 'should render cropping area when the image meets the minimum height and width', () => {
 		wrapper.setProps( { showCrop: true } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 1 );
 	} );
 
-	it( 'should not render cropping area when the image is smaller than the minimum dimensions', () => {
+	test( 'should not render cropping area when the image is smaller than the minimum dimensions', () => {
 		wrapper.setProps( { showCrop: false } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 0 );
 	} );

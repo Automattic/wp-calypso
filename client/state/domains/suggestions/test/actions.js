@@ -46,7 +46,7 @@ describe( 'actions', () => {
 	];
 
 	describe( '#receiveDomainsSuggestions()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const suggestions = exampleSuggestions;
 			const queryObject = exampleQuery;
 			const action = receiveDomainsSuggestions( suggestions, queryObject );
@@ -73,7 +73,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestDomainsSuggestions( exampleQuery )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_RECEIVE,
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestDomainsSuggestions( failingQuery )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,

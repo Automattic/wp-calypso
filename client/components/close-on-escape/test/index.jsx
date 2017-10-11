@@ -21,14 +21,14 @@ const simulateEscapeKeydown = () =>
 
 describe( 'CloseOnEscape', () => {
 	describe( 'rendering', () => {
-		it( 'renders nothing', () => {
+		test( 'renders nothing', () => {
 			const wrapper = shallow( <CloseOnEscape /> );
 			expect( wrapper.type() ).to.be.a( 'null' );
 		} );
 	} );
 
 	describe( 'escape keydown event', () => {
-		it( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
+		test( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
 			const onEscapeSpy = spy();
 
 			const wrapper1 = mount(

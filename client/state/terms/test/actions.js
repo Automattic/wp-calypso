@@ -79,7 +79,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE', () => {
+		test( 'should dispatch a TERMS_RECEIVE', () => {
 			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -97,7 +97,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE event on success', () => {
+		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_RECEIVE,
@@ -116,7 +116,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a TERM_REMOVE event on success', () => {
+		test( 'should dispatch a TERM_REMOVE event on success', () => {
 			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
@@ -127,7 +127,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a TERM_REMOVE event on failure', () => {
+		test( 'should dispatch a TERM_REMOVE event on failure', () => {
 			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERM_REMOVE,
@@ -140,7 +140,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveTerm()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveTerm( siteId, taxonomyName, testTerms[ 0 ] );
 
 			expect( action ).to.eql( {
@@ -155,7 +155,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveTerms()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveTerms( siteId, taxonomyName, testTerms, {}, 2 );
 
 			expect( action ).to.eql( {
@@ -168,7 +168,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object with query if passed', () => {
+		test( 'should return an action object with query if passed', () => {
 			const action = receiveTerms( siteId, taxonomyName, testTerms, { search: 'foo' }, 2 );
 
 			expect( action ).to.eql( {
@@ -183,7 +183,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'removeTerm()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = removeTerm( siteId, taxonomyName, 777 );
 
 			expect( action ).to.eql( {
@@ -211,7 +211,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a TERMS_REQUEST', () => {
+		test( 'should dispatch a TERMS_REQUEST', () => {
 			requestSiteTerms( siteId, taxonomyName )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -222,7 +222,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE event on success', () => {
+		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
 			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_RECEIVE,
@@ -235,7 +235,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
+		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
 			return requestSiteTerms( siteId, taxonomyName )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_REQUEST_SUCCESS,
@@ -246,7 +246,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
+		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
 			return requestSiteTerms( 12345, 'chicken-and-ribs' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: TERMS_REQUEST_FAILURE,
@@ -282,7 +282,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE POST_EDIT and SITE_SETTINGS_UPDATE on Success', () => {
+		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE POST_EDIT and SITE_SETTINGS_UPDATE on Success', () => {
 			const postObjects = {
 				[ siteId ]: {
 					'0fcb4eb16f493c19b627438fdc18d57c': {
@@ -367,7 +367,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', () => {
+		test( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', () => {
 			const state = {
 				posts: { queries: {} },
 				siteSettings: {
@@ -419,7 +419,7 @@ describe( 'actions', () => {
 				.reply( 200, { status: 'ok' } );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
+		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
 			const postObjects = {
 				[ siteId ]: {
 					'0fcb4eb16f493c19b627438fdc18d57c': {
@@ -492,7 +492,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE for default category on Success', () => {
+		test( 'should dispatch a TERMS_RECEIVE for default category on Success', () => {
 			const state = {
 				posts: {
 					queries: {
@@ -540,7 +540,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch a TERMS_RECEIVE for default category when prior category had no post_count', () => {
+		test( 'should not dispatch a TERMS_RECEIVE for default category when prior category had no post_count', () => {
 			const state = {
 				posts: {
 					queries: {
@@ -588,7 +588,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch any action on Failure', () => {
+		test( 'should not dispatch any action on Failure', () => {
 			return updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy ).catch( () => {
 				expect( spy ).not.to.have.been.called;
 			} );

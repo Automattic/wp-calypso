@@ -19,17 +19,17 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'exports expected reducer keys', () => {
+	test( 'exports expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'isUploading', 'tempImage' ] );
 	} );
 
 	describe( '#isUploading', () => {
-		it( 'returns false by default', () => {
+		test( 'returns false by default', () => {
 			const state = isUploading( undefined, {} );
 			expect( state ).to.equal( false );
 		} );
 
-		it( 'returns true when request is made', () => {
+		test( 'returns true when request is made', () => {
 			expect(
 				isUploading( false, {
 					type: GRAVATAR_UPLOAD_REQUEST,
@@ -37,7 +37,7 @@ describe( 'reducer', () => {
 			).to.equal( true );
 		} );
 
-		it( 'returns false when request succeeds', () => {
+		test( 'returns false when request succeeds', () => {
 			expect(
 				isUploading( true, {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -45,7 +45,7 @@ describe( 'reducer', () => {
 			).to.equal( false );
 		} );
 
-		it( 'returns false when request fails', () => {
+		test( 'returns false when request fails', () => {
 			expect(
 				isUploading( true, {
 					type: GRAVATAR_UPLOAD_REQUEST_FAILURE,
@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 			).to.equal( false );
 		} );
 
-		it( 'never persists loading state', () => {
+		test( 'never persists loading state', () => {
 			expect(
 				isUploading( true, {
 					type: SERIALIZE,
@@ -71,12 +71,12 @@ describe( 'reducer', () => {
 	describe( '#tempImage', () => {
 		const imageSrc = 'image';
 
-		it( 'returns empty object by default', () => {
+		test( 'returns empty object by default', () => {
 			const state = tempImage( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'returns object with image src when response is received', () => {
+		test( 'returns object with image src when response is received', () => {
 			const state = tempImage( undefined, {
 				type: GRAVATAR_UPLOAD_RECEIVE,
 				src: imageSrc,
@@ -86,7 +86,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state', () => {
+		test( 'never persists state', () => {
 			const state = {
 				src: imageSrc,
 			};

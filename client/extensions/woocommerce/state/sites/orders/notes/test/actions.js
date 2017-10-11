@@ -45,7 +45,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchNotes( siteId, orderId )( dispatch, getState );
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the notes list when request completes', () => {
+		test( 'should dispatch a success action with the notes list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchNotes( siteId, orderId )( dispatch, getState );
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchNotes( siteId, 0 )( dispatch, getState );
@@ -84,7 +84,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if notes are already loading for this site/order', () => {
+		test( 'should not dispatch if notes are already loading for this site/order', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -132,7 +132,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			createNote( siteId, orderId, note )( dispatch, getState );
@@ -143,7 +143,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the notes list when request completes', () => {
+		test( 'should dispatch a success action with the notes list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = createNote( siteId, orderId, note )( dispatch, getState );
@@ -158,7 +158,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = createNote( 234, 0, {} )( dispatch, getState );

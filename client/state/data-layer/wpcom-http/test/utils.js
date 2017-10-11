@@ -13,14 +13,14 @@ import { getData, getError, getProgress, dispatchRequest, makeParser } from '../
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	describe( '#getData', () => {
-		it( 'should return successful response data if available', () => {
+		test( 'should return successful response data if available', () => {
 			const data = { utterance: 'Bork bork' };
 			const action = { type: 'SLUGGER', meta: { dataLayer: { data } } };
 
 			expect( getData( action ) ).to.equal( data );
 		} );
 
-		it( 'should return null if no response data available', () => {
+		test( 'should return null if no response data available', () => {
 			const action = { type: 'SLUGGER' };
 
 			expect( getData( action ) ).to.be.null;
@@ -28,14 +28,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 	} );
 
 	describe( '#getError', () => {
-		it( 'should return failing error data if available', () => {
+		test( 'should return failing error data if available', () => {
 			const error = { utterance: 'Bork bork' };
 			const action = { type: 'SLUGGER', meta: { dataLayer: { error } } };
 
 			expect( getError( action ) ).to.equal( error );
 		} );
 
-		it( 'should return null if no error data available', () => {
+		test( 'should return null if no error data available', () => {
 			const action = { type: 'SLUGGER' };
 
 			expect( getError( action ) ).to.be.null;
@@ -43,7 +43,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 	} );
 
 	describe( '#getProgress', () => {
-		it( 'should return progress data if available', () => {
+		test( 'should return progress data if available', () => {
 			const progress = { total: 1234, loaded: 123 };
 			const action = { type: 'UPLOAD_PROGRESS', meta: { dataLayer: { progress } } };
 
@@ -77,7 +77,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			store = spy();
 		} );
 
-		it( 'should call the initiator if meta information missing', () => {
+		test( 'should call the initiator if meta information missing', () => {
 			dispatcher( store, empty );
 
 			expect( initiator ).to.have.been.calledWith( store, empty );
@@ -86,7 +86,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onProgress ).to.not.have.been.called;
 		} );
 
-		it( 'should call onSuccess if meta includes response data', () => {
+		test( 'should call onSuccess if meta includes response data', () => {
 			dispatcher( store, success );
 
 			expect( initiator ).to.not.have.been.called;
@@ -95,7 +95,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onProgress ).to.not.have.been.called;
 		} );
 
-		it( 'should call onFailure if meta includes error data', () => {
+		test( 'should call onFailure if meta includes error data', () => {
 			dispatcher( store, failure );
 
 			expect( initiator ).to.not.have.been.called;
@@ -104,7 +104,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onProgress ).to.not.have.been.called;
 		} );
 
-		it( 'should call onFailure if meta includes both response data and error data', () => {
+		test( 'should call onFailure if meta includes both response data and error data', () => {
 			dispatcher( store, both );
 
 			expect( initiator ).to.not.have.been.called;
@@ -113,7 +113,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onProgress ).to.not.have.been.called;
 		} );
 
-		it( 'should call onProgress if meta includes progress data', () => {
+		test( 'should call onProgress if meta includes progress data', () => {
 			dispatcher( store, progress );
 
 			expect( initiator ).to.not.have.been.called;
@@ -122,12 +122,12 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onProgress ).to.have.been.calledWith( store, progress, progressInfo );
 		} );
 
-		it( 'should not throw runtime error if onProgress is not specified', () => {
+		test( 'should not throw runtime error if onProgress is not specified', () => {
 			dispatcher = dispatchRequest( initiator, onSuccess, onFailure );
 			expect( () => dispatcher( store, progress ) ).to.not.throw( TypeError );
 		} );
 
-		it( 'should validate response data', () => {
+		test( 'should validate response data', () => {
 			const schema = {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
@@ -141,7 +141,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).to.not.have.been.called;
 		} );
 
-		it( 'should fail-over on invalid response data', () => {
+		test( 'should fail-over on invalid response data', () => {
 			const schema = {
 				type: 'object',
 				properties: { count: { type: 'string' } },
@@ -155,7 +155,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).to.have.been.called;
 		} );
 
-		it( 'should validate with additional fields', () => {
+		test( 'should validate with additional fields', () => {
 			const schema = {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
@@ -172,7 +172,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).to.not.have.been.called;
 		} );
 
-		it( 'should filter out additional fields', () => {
+		test( 'should filter out additional fields', () => {
 			const schema = {
 				type: 'object',
 				properties: { count: { type: 'integer' } },
@@ -190,7 +190,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( onFailure ).to.not.have.been.called;
 		} );
 
-		it( 'should transform validated output', () => {
+		test( 'should transform validated output', () => {
 			const schema = {
 				type: 'object',
 				properties: { count: { type: 'integer' } },

@@ -11,7 +11,7 @@ import { shouldFetchRelated, relatedPostsForPost } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'shouldFetchRelated', () => {
-		it( 'should return true if no key present', () => {
+		test( 'should return true if no key present', () => {
 			expect(
 				shouldFetchRelated(
 					{
@@ -27,7 +27,7 @@ describe( 'selectors', () => {
 				)
 			).to.be.true;
 		} );
-		it( 'should return false if key present', () => {
+		test( 'should return false if key present', () => {
 			expect(
 				shouldFetchRelated(
 					{
@@ -46,7 +46,7 @@ describe( 'selectors', () => {
 			).to.be.false;
 		} );
 
-		it( 'should return false if we have a value', () => {
+		test( 'should return false if we have a value', () => {
 			expect(
 				shouldFetchRelated(
 					{
@@ -67,7 +67,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'relatedPostsForPost', () => {
-		it( 'should return the posts that are there', () => {
+		test( 'should return the posts that are there', () => {
 			expect(
 				relatedPostsForPost(
 					{
@@ -85,7 +85,7 @@ describe( 'selectors', () => {
 			).to.eql( [ 1, 2 ] );
 		} );
 
-		it( 'should return undefined if nothing present', () => {
+		test( 'should return undefined if nothing present', () => {
 			expect(
 				relatedPostsForPost(
 					{

@@ -11,11 +11,11 @@ import { expect } from 'chai';
 import { getDesignType } from '../selectors';
 
 describe( 'selectors', () => {
-	it( 'should return empty string as a default state', () => {
+	test( 'should return empty string as a default state', () => {
 		expect( getDesignType( { signup: undefined } ) ).to.be.eql( '' );
 	} );
 
-	it( 'should return design type from the state', () => {
+	test( 'should return design type from the state', () => {
 		expect(
 			getDesignType( {
 				signup: {

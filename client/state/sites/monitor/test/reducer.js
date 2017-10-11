@@ -28,7 +28,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'updating' ] );
 	} );
 
@@ -43,13 +43,13 @@ describe( 'reducer', () => {
 			wp_note_notifications: false,
 		};
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store monitor settings when received', () => {
+		test( 'should store monitor settings when received', () => {
 			const state = items( undefined, {
 				type: SITE_MONITOR_SETTINGS_RECEIVE,
 				siteId: 2916284,
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate monitor settings when receiving for new sites', () => {
+		test( 'should accumulate monitor settings when receiving for new sites', () => {
 			const original = deepFreeze( {
 				2916284: settings,
 			} );
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite monitor settings when receiving for an existing site', () => {
+		test( 'should overwrite monitor settings when receiving for an existing site', () => {
 			const original = deepFreeze( {
 				2916284: settings,
 				77203074: settings,
@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -103,7 +103,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -114,13 +114,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track monitor settings request when started', () => {
+		test( 'should track monitor settings request when started', () => {
 			const state = requesting( undefined, {
 				type: SITE_MONITOR_SETTINGS_REQUEST,
 				siteId: 2916284,
@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate monitor settings requests when started', () => {
+		test( 'should accumulate monitor settings requests when started', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -146,7 +146,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track monitor settings request when succeeded', () => {
+		test( 'should track monitor settings request when succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: true,
@@ -162,7 +162,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track monitor settings request when failed', () => {
+		test( 'should track monitor settings request when failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
 				77203074: true,
@@ -180,13 +180,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'updating()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = updating( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track monitor settings update when started', () => {
+		test( 'should track monitor settings update when started', () => {
 			const state = updating( undefined, {
 				type: SITE_MONITOR_SETTINGS_UPDATE,
 				siteId: 2916284,
@@ -197,7 +197,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate monitor settings updates when started', () => {
+		test( 'should accumulate monitor settings updates when started', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -212,7 +212,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track monitor settings update when succeeded', () => {
+		test( 'should track monitor settings update when succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: true,
@@ -228,7 +228,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track monitor settings update when failed', () => {
+		test( 'should track monitor settings update when failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
 				77203074: true,

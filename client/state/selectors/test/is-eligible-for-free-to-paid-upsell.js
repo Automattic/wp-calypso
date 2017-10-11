@@ -35,37 +35,37 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 		isVipSite.withArgs( state, siteId ).returns( false );
 	};
 
-	it( 'should return false when user can not manage options', () => {
+	test( 'should return false when user can not manage options', () => {
 		meetAllConditions();
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
-	it( 'should return false when site has mapped domain', () => {
+	test( 'should return false when site has mapped domain', () => {
 		meetAllConditions();
 		isMappedDomainSite.withArgs( state, siteId ).returns( true );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
-	it( 'should return false when site is not on a free plan', () => {
+	test( 'should return false when site is not on a free plan', () => {
 		meetAllConditions();
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( false );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
-	it( 'should return false when user registration days is not within range', () => {
+	test( 'should return false when user registration days is not within range', () => {
 		meetAllConditions();
 		isUserRegistrationDaysWithinRange.withArgs( state, moment, 0, 180 ).returns( false );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
-	it( 'should return false when site is a vip site', () => {
+	test( 'should return false when site is a vip site', () => {
 		meetAllConditions();
 		isVipSite.withArgs( state, siteId ).returns( true );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
-	it( 'should return true when all conditions are met', () => {
+	test( 'should return true when all conditions are met', () => {
 		meetAllConditions();
 		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.true;
 	} );

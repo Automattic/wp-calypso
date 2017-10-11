@@ -60,7 +60,7 @@ describe( 'actions', () => {
 				.reply( 200, upgradeResponse );
 		} );
 
-		it( 'should dispatch fetch action with domain data for a domain', () => {
+		test( 'should dispatch fetch action with domain data for a domain', () => {
 			fetchByDomain( noUpgradeDomain )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch complete when request completes', () => {
+		test( 'should dispatch complete when request completes', () => {
 			fetchByDomain( upgradedDomain )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail when the request fails', () => {
+		test( 'should dispatch fail when the request fails', () => {
 			fetchByDomain( noUpgradeDomain )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_FAILED,
@@ -120,7 +120,7 @@ describe( 'actions', () => {
 				.reply( 200, upgradeResponse );
 		} );
 
-		it( 'should dispatch fetch action with site data for a site', () => {
+		test( 'should dispatch fetch action with site data for a site', () => {
 			fetchBySiteId( noUpgradeSiteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -129,7 +129,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch complete when request completes', () => {
+		test( 'should dispatch complete when request completes', () => {
 			fetchBySiteId( upgradedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
@@ -138,7 +138,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail when the request fails', () => {
+		test( 'should dispatch fail when the request fails', () => {
 			fetchBySiteId( noUpgradeSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_FAILED,

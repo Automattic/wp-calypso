@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSiteStatsQueryDate } from '../';
 
 describe( 'getSiteStatsQueryDate()', () => {
-	it( 'should return undefined if no request exists', () => {
+	test( 'should return undefined if no request exists', () => {
 		const date = getSiteStatsQueryDate(
 			{
 				stats: {
@@ -28,7 +28,7 @@ describe( 'getSiteStatsQueryDate()', () => {
 		expect( date ).to.be.undefined;
 	} );
 
-	it( 'should return the query date properly', () => {
+	test( 'should return the query date properly', () => {
 		const today = new Date();
 		const date = getSiteStatsQueryDate(
 			{

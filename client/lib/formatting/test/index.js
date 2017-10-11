@@ -16,7 +16,7 @@ import decodeEntitiesNode from '../decode-entities/node';
 describe( 'formatting', () => {
 	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;
 
-	before( () => {
+	beforeAll( () => {
 		formatting = require( '../' );
 		capitalPDangit = formatting.capitalPDangit;
 		parseHtml = formatting.parseHtml;
@@ -24,8 +24,8 @@ describe( 'formatting', () => {
 		preventWidows = formatting.preventWidows;
 	} );
 
-	describe( '#capitalPDangit()', function() {
-		it( 'should error when input is not a string', function() {
+	describe( '#capitalPDangtest()', function() {
+		test( 'should error when input is not a string', function() {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
@@ -37,7 +37,7 @@ describe( 'formatting', () => {
 			} );
 		} );
 
-		it( 'should not modify wordpress', function() {
+		test( 'should not modify wordpress', function() {
 			const strings = [ 'wordpress', 'I love wordpress' ];
 
 			strings.forEach( function( string ) {
@@ -45,12 +45,12 @@ describe( 'formatting', () => {
 			} );
 		} );
 
-		it( 'should return WordPress with a capital P when passed Wordpress', function() {
+		test( 'should return WordPress with a capital P when passed Wordpress', function() {
 			chai.assert.equal( capitalPDangit( 'Wordpress' ), 'WordPress' );
 			chai.assert.equal( capitalPDangit( 'I love Wordpress' ), 'I love WordPress' );
 		} );
 
-		it( 'should replace all instances of Wordpress', function() {
+		test( 'should replace all instances of Wordpress', function() {
 			chai.assert.equal( capitalPDangit( 'Wordpress Wordpress' ), 'WordPress WordPress' );
 			chai.assert.equal(
 				capitalPDangit( 'I love Wordpress and Wordpress loves me' ),
@@ -60,7 +60,7 @@ describe( 'formatting', () => {
 	} );
 
 	describe( '#parseHtml()', function() {
-		it( 'should equal to null when input is not a string', function() {
+		test( 'should equal to null when input is not a string', function() {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
@@ -68,23 +68,23 @@ describe( 'formatting', () => {
 			} );
 		} );
 
-		it( 'should return a DOM element if you pass in DOM element', function() {
+		test( 'should return a DOM element if you pass in DOM element', function() {
 			const div = document.createElement( 'div' );
 			chai.assert.equal( div, parseHtml( div ) );
 		} );
 
-		it( 'should return a document fragment if we pass in a string', function() {
+		test( 'should return a document fragment if we pass in a string', function() {
 			const fragment = parseHtml( 'hello' );
 			chai.assert.isFunction( fragment.querySelector );
 			chai.assert.equal( fragment.querySelectorAll( '*' ).length, 0 );
 		} );
 
-		it( 'should return a document fragment if we pass in a HTML string', function() {
+		test( 'should return a document fragment if we pass in a HTML string', function() {
 			const fragment = parseHtml( '<div>hello</div>' );
 			chai.assert.equal( fragment.querySelectorAll( 'div' ).length, 1 );
 		} );
 
-		it( 'should parseHtml and return document fragment that can be queried', function() {
+		test( 'should parseHtml and return document fragment that can be queried', function() {
 			const strings = [
 				'<span><a href="stuff">hello world</a></span>',
 				'<div><span></span><a href="stuff">hello world</a></div>',
@@ -100,7 +100,7 @@ describe( 'formatting', () => {
 	describe( '#decodeEntities()', () => {
 		[ 'node', 'browser' ].forEach( env => {
 			let decodeEntities;
-			before( () => {
+			beforeAll( () => {
 				switch ( env ) {
 					case 'node':
 						decodeEntities = decodeEntitiesNode;
@@ -110,12 +110,12 @@ describe( 'formatting', () => {
 			} );
 
 			describe( env, () => {
-				it( 'should decode entities', () => {
+				test( 'should decode entities', () => {
 					const decoded = decodeEntities( 'Ribs &gt; Chicken' );
 					chai.assert.equal( decoded, 'Ribs > Chicken' );
 				} );
 
-				it( 'should not alter already-decoded entities', () => {
+				test( 'should not alter already-decoded entities', () => {
 					const decoded = decodeEntities( 'Ribs > Chicken. Truth &amp; Liars.' );
 					chai.assert.equal( decoded, 'Ribs > Chicken. Truth & Liars.' );
 				} );
@@ -124,7 +124,7 @@ describe( 'formatting', () => {
 	} );
 
 	describe( '#preventWidows()', () => {
-		it( 'should not modify input if type is not string', () => {
+		test( 'should not modify input if type is not string', () => {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( type => {
@@ -132,7 +132,7 @@ describe( 'formatting', () => {
 			} );
 		} );
 
-		it( 'should return empty string when input is all whitespace', () => {
+		test( 'should return empty string when input is all whitespace', () => {
 			const inputs = [ ' ', '\t', '\n' ];
 
 			inputs.forEach( input => {
@@ -140,16 +140,16 @@ describe( 'formatting', () => {
 			} );
 		} );
 
-		it( 'should return input when only one word', () => {
+		test( 'should return input when only one word', () => {
 			chai.assert.equal( preventWidows( 'test' ), 'test' );
 		} );
 
-		it( 'should trim whitespace', () => {
+		test( 'should trim whitespace', () => {
 			chai.assert.equal( preventWidows( 'test ' ), 'test' );
 			chai.assert.equal( preventWidows( '\ntest string ' ), 'test\xA0string' );
 		} );
 
-		it( 'should add non-breaking space between words to keep', () => {
+		test( 'should add non-breaking space between words to keep', () => {
 			const input = 'I really love BBQ. It is one of my favorite foods. Beef ribs are amazing.';
 			chai.assert.equal(
 				preventWidows( input ),

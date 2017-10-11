@@ -14,7 +14,7 @@ import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setMediaModalView()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setMediaModalView( ModalViews.DETAIL );
 
 			expect( action ).to.eql( {
@@ -25,7 +25,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'resetMediaModalView()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = resetMediaModalView();
 
 			expect( action ).to.eql( {

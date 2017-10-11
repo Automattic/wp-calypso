@@ -13,11 +13,11 @@ import reducer from '../reducer';
 import * as fxt from 'woocommerce/state/action-list/test/fixtures';
 
 describe( 'reducer', () => {
-	it( 'should initialize to null', () => {
+	test( 'should initialize to null', () => {
 		expect( reducer( undefined, { type: 'DUMMY_ACTION' } ) ).to.equal( null );
 	} );
 
-	it( 'should show action list progress after step started', () => {
+	test( 'should show action list progress after step started', () => {
 		const actionList = {
 			prevSteps: [ fxt.stepASuccessful ],
 			currentStep: fxt.stepBStarted,
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, actionListAnnotate( actionList ) ) ).to.eql( expectedState );
 	} );
 
-	it( 'should show action list progress after step success', () => {
+	test( 'should show action list progress after step success', () => {
 		const actionList = {
 			prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
 			currentStep: null,
@@ -66,7 +66,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, actionListAnnotate( actionList ) ) ).to.eql( expectedState );
 	} );
 
-	it( 'should clear the actionList', () => {
+	test( 'should clear the actionList', () => {
 		const actionList = {
 			prevSteps: [ fxt.stepASuccessful, fxt.stepASuccessful, fxt.stepCSuccessful ],
 			currentStep: null,

@@ -25,10 +25,10 @@ const DUMMY_SITE_ID = 1,
 		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' },
 	};
 
-describe( 'MediaListStore', function() {
+describe( 'MediaListStore', () => {
 	let Dispatcher, sandbox, MediaListStore, handler, MediaStore;
 
-	before( function() {
+	beforeAll( function() {
 		MediaStore = require( '../store' );
 		Dispatcher = require( 'dispatcher' );
 
@@ -45,12 +45,12 @@ describe( 'MediaListStore', function() {
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		MediaListStore._media = {};
 		MediaListStore._activeQueries = {};
 	} );
 
-	after( function() {
+	afterAll( function() {
 		sandbox.restore();
 	} );
 
@@ -120,26 +120,26 @@ describe( 'MediaListStore', function() {
 		} );
 	}
 
-	describe( '#get()', function() {
-		it( 'should return a single value', function() {
+	describe( '#get()', () => {
+		test( 'should return a single value', () => {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.equal( DUMMY_MEDIA_OBJECT );
 		} );
 
-		it( 'should return undefined for an item that does not exist', function() {
+		test( 'should return undefined for an item that does not exist', () => {
 			expect( MediaListStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID + 1 ) ).to.be.undefined;
 		} );
 	} );
 
-	describe( '#getAll()', function() {
-		it( 'should return all received media', function() {
+	describe( '#getAll()', () => {
+		test( 'should return all received media', () => {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.eql( DUMMY_MEDIA_RESPONSE.media );
 		} );
 
-		it( 'should sort media by date, with newest first', function() {
+		test( 'should sort media by date, with newest first', () => {
 			var media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } ),
@@ -155,7 +155,7 @@ describe( 'MediaListStore', function() {
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.eql( [ 20, 10 ] );
 		} );
 
-		it( 'should secondary sort media by ID, with larger first', function() {
+		test( 'should secondary sort media by ID, with larger first', () => {
 			var media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: DUMMY_MEDIA_OBJECT.date } ),
@@ -171,27 +171,27 @@ describe( 'MediaListStore', function() {
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.eql( [ 20, 10 ] );
 		} );
 
-		it( 'should return undefined for a fetching site', function() {
+		test( 'should return undefined for a fetching site', () => {
 			dispatchFetchMedia();
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.be.undefined;
 		} );
 
-		it( 'should return an empty array for a site with no media', function() {
+		test( 'should return an empty array for a site with no media', () => {
 			dispatchReceiveMediaItems( { data: { media: [] } } );
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.eql( [] );
 		} );
 	} );
 
-	describe( '#getNextPageQuery()', function() {
-		it( 'should include default parameters if no query provided', function() {
+	describe( '#getNextPageQuery()', () => {
+		test( 'should include default parameters if no query provided', () => {
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
 				MediaListStore.DEFAULT_QUERY
 			);
 		} );
 
-		it( 'should include page_handle if the previous response included next_page meta', function() {
+		test( 'should include page_handle if the previous response included next_page meta', () => {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( {
@@ -200,7 +200,7 @@ describe( 'MediaListStore', function() {
 			} );
 		} );
 
-		it( 'should preserve the query from the previous request', function() {
+		test( 'should preserve the query from the previous request', () => {
 			var query = { mime_type: 'audio/' };
 			dispatchSetQuery( { query: query } );
 			dispatchFetchMedia();
@@ -217,7 +217,7 @@ describe( 'MediaListStore', function() {
 			);
 		} );
 
-		it( 'should reset the page handle when the query changes', function() {
+		test( 'should reset the page handle when the query changes', () => {
 			var query = { mime_type: 'audio/' };
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: query } );
@@ -231,43 +231,43 @@ describe( 'MediaListStore', function() {
 		} );
 	} );
 
-	describe( '#hasNextPage()', function() {
-		it( 'should return true if the previous response included next_page meta', function() {
+	describe( '#hasNextPage()', () => {
+		test( 'should return true if the previous response included next_page meta', () => {
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.be.ok;
 		} );
 
-		it( 'should return true if the site is unknown', function() {
+		test( 'should return true if the site is unknown', () => {
 			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.be.ok;
 		} );
 
-		it( 'should return false if the previous response did not include next_page meta', function() {
+		test( 'should return false if the previous response did not include next_page meta', () => {
 			dispatchReceiveMediaItems( { data: { media: [] } } );
 
 			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
 		} );
 	} );
 
-	describe( '#isFetchingNextPage()', function() {
-		it( 'should return false no request has been made', function() {
+	describe( '#isFetchingNextPage()', () => {
+		test( 'should return false no request has been made', () => {
 			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
 		} );
 
-		it( 'should return true if site media is being fetched', function() {
+		test( 'should return true if site media is being fetched', () => {
 			dispatchFetchMedia();
 
 			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.be.ok;
 		} );
 
-		it( 'should return false if site media was received', function() {
+		test( 'should return false if site media was received', () => {
 			dispatchFetchMedia();
 			dispatchReceiveMediaItems();
 
 			expect( MediaListStore.isFetchingNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
 		} );
 
-		it( 'should return false when the query was changed', function() {
+		test( 'should return false when the query was changed', () => {
 			dispatchFetchMedia();
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 
@@ -275,20 +275,20 @@ describe( 'MediaListStore', function() {
 		} );
 	} );
 
-	describe( '#isItemMatchingQuery', function() {
+	describe( '#isItemMatchingQuery', () => {
 		var isItemMatchingQuery;
 
-		before( function() {
+		beforeAll( function() {
 			isItemMatchingQuery = MediaListStore.isItemMatchingQuery;
 		} );
 
-		it( 'should return true if no query exists for site', function() {
+		test( 'should return true if no query exists for site', () => {
 			var matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
 
-		it( "should return false if a search query is specified, but the item doesn't match", function() {
+		test( "should return false if a search query is specified, but the item doesn't match", () => {
 			var matches;
 			dispatchSetQuery( { query: { search: 'Notmyitem' } } );
 
@@ -297,7 +297,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.false;
 		} );
 
-		it( 'should return true if a search query is specified, and the item matches', function() {
+		test( 'should return true if a search query is specified, and the item matches', () => {
 			var matches;
 			dispatchSetQuery( { query: { search: 'Imag' } } );
 
@@ -306,7 +306,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.true;
 		} );
 
-		it( 'should return true if a search query is specified, and the item matches case insensitive', function() {
+		test( 'should return true if a search query is specified, and the item matches case insensitive', () => {
 			var matches;
 			dispatchSetQuery( { query: { search: 'imag' } } );
 
@@ -315,7 +315,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.true;
 		} );
 
-		it( 'should return false if a search query and mime_type are specified, and the item matches on title, but not mime_type', function() {
+		test( 'should return false if a search query and mime_type are specified, and the item matches on title, but not mime_type', () => {
 			var matches;
 			dispatchSetQuery( { query: { search: 'Imag', mime_type: 'audio/' } } );
 
@@ -324,7 +324,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.false;
 		} );
 
-		it( "should return false if a mime_type is specified, but the item doesn't match", function() {
+		test( "should return false if a mime_type is specified, but the item doesn't match", () => {
 			var matches;
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 
@@ -333,7 +333,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.false;
 		} );
 
-		it( 'should return true if a mime_type is specified, and the item matches', function() {
+		test( 'should return true if a mime_type is specified, and the item matches', () => {
 			var matches;
 			dispatchSetQuery( { query: { mime_type: 'image/' } } );
 
@@ -342,7 +342,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.true;
 		} );
 
-		it( 'should return true if item matches an external source but doesnt match title', function() {
+		test( 'should return true if item matches an external source but doesnt match title', () => {
 			dispatchSetQuery( { query: { search: 'monkey', source: 'external' } } );
 
 			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
@@ -351,32 +351,32 @@ describe( 'MediaListStore', function() {
 		} );
 	} );
 
-	describe( '.dispatchToken', function() {
-		it( 'should expose its dispatcher ID', function() {
+	describe( '.dispatchToken', () => {
+		test( 'should expose its dispatcher ID', () => {
 			expect( MediaListStore.dispatchToken ).to.be.a( 'string' );
 		} );
 
-		it( 'should destroy existing media when a query changes', function() {
+		test( 'should destroy existing media when a query changes', () => {
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.be.undefined;
 		} );
 
-		it( 'should not destroy existing media if query change relates to pagination', function() {
+		test( 'should not destroy existing media if query change relates to pagination', () => {
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: { number: 40 } } );
 
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.not.be.undefined;
 		} );
 
-		it( 'should emit a change event when receiving updates', function( done ) {
+		test( 'should emit a change event when receiving updates', done => {
 			MediaListStore.once( 'change', done );
 
 			dispatchReceiveMediaItems();
 		} );
 
-		it( 'should ignore received items where the query does not match', function() {
+		test( 'should ignore received items where the query does not match', () => {
 			dispatchFetchMedia();
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 			dispatchReceiveMediaItems( { query: MediaListStore.DEFAULT_QUERY } );
@@ -384,21 +384,21 @@ describe( 'MediaListStore', function() {
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.be.undefined;
 		} );
 
-		it( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', function() {
+		test( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', () => {
 			dispatchReceiveMediaItems();
 			dispatchRemoveMediaItem();
 
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.be.be.empty;
 		} );
 
-		it( 'should re-add an item when REMOVE_MEDIA_ITEM errors and includes data', function() {
+		test( 'should re-add an item when REMOVE_MEDIA_ITEM errors and includes data', () => {
 			MediaListStore.ensureActiveQueryForSiteId( DUMMY_SITE_ID );
 			dispatchRemoveMediaItem( { error: true } );
 
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.not.be.empty;
 		} );
 
-		it( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', function() {
+		test( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', () => {
 			var newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } ),
 				allItems;
 

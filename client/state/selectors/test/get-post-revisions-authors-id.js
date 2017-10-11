@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
 
 describe( 'getPostRevisionsAuthorsId', () => {
-	it( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
+	test( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevisionsAuthorsId(
 				{
@@ -27,7 +27,7 @@ describe( 'getPostRevisionsAuthorsId', () => {
 		).to.eql( [] );
 	} );
 
-	it( 'should return an array of post revisions authors ID', () => {
+	test( 'should return an array of post revisions authors ID', () => {
 		expect(
 			getPostRevisionsAuthorsId(
 				{

@@ -18,7 +18,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostTypes()', () => {
-		it( 'should return false if the site is not tracked', () => {
+		test( 'should return false if the site is not tracked', () => {
 			const isRequesting = isRequestingPostTypes(
 				{
 					postTypes: {
@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not fetching', () => {
+		test( 'should return false if the site is not fetching', () => {
 			const isRequesting = isRequestingPostTypes(
 				{
 					postTypes: {
@@ -46,7 +46,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site is fetching', () => {
+		test( 'should return true if the site is fetching', () => {
 			const isRequesting = isRequestingPostTypes(
 				{
 					postTypes: {
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostTypes()', () => {
-		it( 'should return null if the site is not tracked', () => {
+		test( 'should return null if the site is not tracked', () => {
 			const postTypes = getPostTypes(
 				{
 					postTypes: {
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 			expect( postTypes ).to.be.null;
 		} );
 
-		it( 'should return the post types for a site', () => {
+		test( 'should return the post types for a site', () => {
 			const postTypes = getPostTypes(
 				{
 					postTypes: {
@@ -97,7 +97,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostType()', () => {
-		it( 'should return null if there are no known post types for the site', () => {
+		test( 'should return null if there are no known post types for the site', () => {
 			const postType = getPostType(
 				{
 					postTypes: {
@@ -111,7 +111,7 @@ describe( 'selectors', () => {
 			expect( postType ).to.be.null;
 		} );
 
-		it( 'should return null if the post type slug is unknown for the site', () => {
+		test( 'should return null if the post type slug is unknown for the site', () => {
 			const postType = getPostType(
 				{
 					postTypes: {
@@ -127,7 +127,7 @@ describe( 'selectors', () => {
 			expect( postType ).to.be.null;
 		} );
 
-		it( 'should return the post type', () => {
+		test( 'should return the post type', () => {
 			const postType = getPostType(
 				{
 					postTypes: {
@@ -147,7 +147,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'postTypeSupports()', () => {
-		it( 'should return true for post publicize if type is unknown', () => {
+		test( 'should return true for post publicize if type is unknown', () => {
 			const isSupported = postTypeSupports(
 				{
 					postTypes: {
@@ -162,7 +162,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.true;
 		} );
 
-		it( 'should return true for post publicize even if type is known', () => {
+		test( 'should return true for post publicize even if type is known', () => {
 			const isSupported = postTypeSupports(
 				{
 					postTypes: {
@@ -187,7 +187,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.true;
 		} );
 
-		it( 'should return null if post type is not known', () => {
+		test( 'should return null if post type is not known', () => {
 			const isSupported = postTypeSupports(
 				{
 					postTypes: {
@@ -202,7 +202,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.null;
 		} );
 
-		it( 'should return false if post type support omits feature', () => {
+		test( 'should return false if post type support omits feature', () => {
 			const isSupported = postTypeSupports(
 				{
 					postTypes: {
@@ -225,7 +225,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.false;
 		} );
 
-		it( 'should return true if post type supports feature', () => {
+		test( 'should return true if post type supports feature', () => {
 			const isSupported = postTypeSupports(
 				{
 					postTypes: {
@@ -250,7 +250,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.true;
 		} );
 
-		it( 'should return hard-coded fallback values for unknown post types', () => {
+		test( 'should return hard-coded fallback values for unknown post types', () => {
 			const state = { postTypes: { items: {} } };
 
 			expect( postTypeSupports( state, 2916284, 'page', 'publicize' ) ).to.be.false;
@@ -258,7 +258,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPostTypeSupported', () => {
-		it( 'should return null if the site post types are not known', () => {
+		test( 'should return null if the site post types are not known', () => {
 			const isSupported = isPostTypeSupported(
 				{
 					postTypes: {
@@ -272,7 +272,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.null;
 		} );
 
-		it( 'should return false if the post type is not supported', () => {
+		test( 'should return false if the post type is not supported', () => {
 			const isSupported = isPostTypeSupported(
 				{
 					postTypes: {
@@ -290,7 +290,7 @@ describe( 'selectors', () => {
 			expect( isSupported ).to.be.false;
 		} );
 
-		it( 'should return true if the post type is supported', () => {
+		test( 'should return true if the post type is supported', () => {
 			const isSupported = isPostTypeSupported(
 				{
 					postTypes: {

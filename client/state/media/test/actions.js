@@ -27,8 +27,8 @@ import {
 
 describe( 'actions', () => {
 	describe( 'receiveMedia()', () => {
-		context( 'single', () => {
-			it( 'should return an action object', () => {
+		describe( 'single', () => {
+			test( 'should return an action object', () => {
 				const action = receiveMedia( 2916284, { ID: 42, title: 'flowers' } );
 
 				expect( action ).to.eql( {
@@ -41,8 +41,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'array', () => {
-			it( 'should return an action object', () => {
+		describe( 'array', () => {
+			test( 'should return an action object', () => {
 				const action = receiveMedia( 2916284, [ { ID: 42, title: 'flowers' } ] );
 
 				expect( action ).to.eql( {
@@ -55,8 +55,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'query', () => {
-			it( 'should return an action object', () => {
+		describe( 'query', () => {
+			test( 'should return an action object', () => {
 				const action = receiveMedia( 2916284, [ { ID: 42, title: 'flowers' } ], 1, {
 					search: 'flowers',
 				} );
@@ -73,8 +73,8 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteMedia()', () => {
-		context( 'single', () => {
-			it( 'should return an action object', () => {
+		describe( 'single', () => {
+			test( 'should return an action object', () => {
 				const action = deleteMedia( 2916284, 42 );
 
 				expect( action ).to.eql( {
@@ -85,8 +85,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'array', () => {
-			it( 'should return an action object', () => {
+		describe( 'array', () => {
+			test( 'should return an action object', () => {
 				const action = deleteMedia( 2916284, [ 42 ] );
 
 				expect( action ).to.eql( {
@@ -99,7 +99,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestMediaItem()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = requestMediaItem( 2916284, 2454 );
 
 			expect( action ).to.eql( {
@@ -111,7 +111,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestingMediaItem()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = requestingMediaItem( 2916284, 2454 );
 
 			expect( action ).to.eql( {
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'successMediaItemRequest()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = successMediaItemRequest( 2916284, 2454 );
 
 			expect( action ).to.eql( {
@@ -135,7 +135,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'failMediaItemRequest()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = failMediaItemRequest( 2916284, 2454 );
 
 			expect( action ).to.eql( {
