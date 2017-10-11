@@ -4,12 +4,13 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import DisconnectSurvey from './disconnect-survey';
+import TooExpensive from './too-expensive';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -18,6 +19,10 @@ import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import NavigationBackButton from 'my-sites/site-settings/navigation-back-button';
 import SkipSurvey from './skip-survey';
+
+const reasonComponents = {
+	'too-expensive': TooExpensive,
+};
 
 class DisconnectSite extends Component {
 	getRoute() {
@@ -29,7 +34,9 @@ class DisconnectSite extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { reason, site, translate } = this.props;
+
+		const ReasonComponent = get( reasonComponents, reason, DisconnectSurvey );
 
 		if ( ! site ) {
 			return <Placeholder />;
@@ -37,7 +44,7 @@ class DisconnectSite extends Component {
 		return (
 			<div>
 				<span className="disconnect-site__back-button-container">
-					<NavigationBackButton redirectRoute={ this.getRoute() } { ...this.props } />
+					<NavigationBackButton redirectRoute={ this.getRoute() } />
 				</span>
 				<Main className="disconnect-site__site-settings">
 					<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -47,7 +54,7 @@ class DisconnectSite extends Component {
 							"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
 						) }
 					/>
-					<DisconnectSurvey />
+					<ReasonComponent />
 					<SkipSurvey />
 				</Main>
 			</div>
