@@ -35,12 +35,12 @@ class DisconnectSurvey extends Component {
 		const { isPaidPlan, translate } = this.props;
 
 		const options = [
-			{ value: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
-			{ value: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
+			{ reason: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
+			{ reason: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
 		if ( isPaidPlan ) {
-			options.push( { value: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
+			options.push( { reason: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
 		}
 		return options;
 	}
@@ -60,11 +60,11 @@ class DisconnectSurvey extends Component {
 						}
 					) }
 				</Card>
-				{ options.map( ( { label, value } ) => (
+				{ options.map( ( { label, reason } ) => (
 					<CompactCard
-						data-reason={ value }
+						data-reason={ reason }
 						href="#"
-						key={ value }
+						key={ reason }
 						onClick={ this.handleAnswerClick }
 						className="disconnect-site__survey-one"
 					>
