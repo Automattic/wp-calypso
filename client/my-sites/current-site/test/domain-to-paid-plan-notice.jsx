@@ -13,7 +13,7 @@ import { stub } from 'sinon';
  */
 import { DomainToPaidPlanNotice } from '../domain-to-paid-plan-notice';
 
-describe( 'DomainToPaidPlanNotice', function() {
+describe( 'DomainToPaidPlanNotice', () => {
 	const translate = stub();
 	const site = { ID: 12345, slug: 'site_slug' };
 
@@ -21,19 +21,19 @@ describe( 'DomainToPaidPlanNotice', function() {
 		translate.returns( 'translated content' );
 	} );
 
-	it( 'should render null when there is no site', function() {
+	test( 'should render null when there is no site', () => {
 		const wrapper = shallow( <DomainToPaidPlanNotice /> );
 
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
-	it( 'should render null when ineligible', function() {
+	test( 'should render null when ineligible', () => {
 		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } /> );
 
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
-	it( 'should render component when site information is available and the site is eligible', function() {
+	test( 'should render component when site information is available and the site is eligible', () => {
 		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
 		expect( wrapper.type().displayName ).to.equal( 'Localized(Notice)' );
 	} );

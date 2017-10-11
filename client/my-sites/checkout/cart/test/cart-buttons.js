@@ -29,15 +29,15 @@ jest.mock( 'lib/mixins/analytics', () => {
 	return analytics;
 } );
 
-describe( 'cart-buttons', function() {
+describe( 'cart-buttons', () => {
 	let cartButtonsComponent, onKeepSearchingClickStub;
 
 	useSandbox( sandbox => {
 		onKeepSearchingClickStub = sandbox.stub();
 	} );
 
-	describe( 'Click on Keep Searching Button', function() {
-		beforeEach( function() {
+	describe( 'Click on Keep Searching Button', () => {
+		beforeEach( () => {
 			cartButtonsComponent = mount(
 				<CartButtons
 					selectedSite={ { slug: 'example.com' } }
@@ -48,24 +48,24 @@ describe( 'cart-buttons', function() {
 			);
 		} );
 
-		it( 'should track "keepSearchButtonClick" event', function() {
+		test( 'should track "keepSearchButtonClick" event', () => {
 			cartButtonsComponent.find( '.cart-keep-searching-button' ).simulate( 'click' );
 			expect( recordStub ).to.have.been.calledWith( 'keepSearchButtonClick' );
 		} );
 
-		it( 'call props.onKeepSearchingClick', function() {
+		test( 'call props.onKeepSearchingClick', () => {
 			cartButtonsComponent.find( '.cart-keep-searching-button' ).simulate( 'click' );
 			expect( onKeepSearchingClickStub ).to.have.been.called;
 		} );
 	} );
-	describe( 'Click on Checkout Button', function() {
-		beforeEach( function() {
+	describe( 'Click on Checkout Button', () => {
+		beforeEach( () => {
 			cartButtonsComponent = mount(
 				<CartButtons selectedSite={ { slug: 'example.com' } } translate={ identity } />
 			);
 		} );
 
-		it( 'should track "checkoutButtonClick" event', function() {
+		test( 'should track "checkoutButtonClick" event', () => {
 			cartButtonsComponent.find( '.cart-checkout-button' ).simulate( 'click' );
 			expect( recordStub ).to.have.been.calledWith( 'checkoutButtonClick' );
 		} );

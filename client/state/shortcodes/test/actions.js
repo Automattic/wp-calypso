@@ -42,7 +42,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should return a fetch action object when called', () => {
+			test( 'should return a fetch action object when called', () => {
 				return fetchShortcode( siteId, shortcode )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST,
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should return a receive action when request successfully completes', () => {
+			test( 'should return a receive action when request successfully completes', () => {
 				return fetchShortcode( siteId, shortcode )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST_SUCCESS,
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should return a receive action when an error occurs', () => {
+			test( 'should return a receive action when an error occurs', () => {
 				return fetchShortcode( siteId, shortcode )( spy ).catch( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SHORTCODE_REQUEST_FAILURE,

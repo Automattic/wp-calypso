@@ -11,8 +11,8 @@ import { expect } from 'chai';
 import { getSelectedOrPrimarySiteId } from '../';
 
 describe( 'getSelectedOrPrimarySiteId()', () => {
-	context( 'with no current user', () => {
-		it( 'should return null if there is no site selected', () => {
+	describe( 'with no current user', () => {
+		test( 'should return null if there is no site selected', () => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				currentUser: {},
 				ui: {},
@@ -20,7 +20,7 @@ describe( 'getSelectedOrPrimarySiteId()', () => {
 			expect( siteId ).to.be.null;
 		} );
 
-		it( "should return the selected site's ID if there is one", () => {
+		test( "should return the selected site's ID if there is one", () => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				ui: { selectedSiteId: 2916284 },
 			} );
@@ -28,8 +28,8 @@ describe( 'getSelectedOrPrimarySiteId()', () => {
 		} );
 	} );
 
-	context( 'with a current user', () => {
-		it( "should return the current user's primary site's ID if there is no site selected", () => {
+	describe( 'with a current user', () => {
+		test( "should return the current user's primary site's ID if there is no site selected", () => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				currentUser: { id: 12345678 },
 				ui: {},
@@ -38,7 +38,7 @@ describe( 'getSelectedOrPrimarySiteId()', () => {
 			expect( siteId ).to.equal( 7654321 );
 		} );
 
-		it( "should return the selected site's ID if there is one", () => {
+		test( "should return the selected site's ID if there is one", () => {
 			const siteId = getSelectedOrPrimarySiteId( {
 				currentUser: { id: 12345678 },
 				ui: { selectedSiteId: 2916284 },

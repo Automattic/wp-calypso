@@ -12,7 +12,7 @@ import { moment } from 'i18n-calypso';
 import { getPastBillingTransactions } from '../';
 
 describe( 'getPastBillingTransactions()', () => {
-	it( 'should return the past billing transactions', () => {
+	test( 'should return the past billing transactions', () => {
 		const state = {
 			billingTransactions: {
 				items: {
@@ -41,7 +41,7 @@ describe( 'getPastBillingTransactions()', () => {
 		expect( output ).to.eql( expected );
 	} );
 
-	it( 'should return null if billing transactions have not been fetched yet', () => {
+	test( 'should return null if billing transactions have not been fetched yet', () => {
 		const output = getPastBillingTransactions( {
 			billingTransactions: {
 				items: {},

@@ -118,4 +118,4 @@ Username.prototype.clearValidation = function() {
 /**
  * Expose Username
  */
-module.exports = new Username();
+export default new Username();

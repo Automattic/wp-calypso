@@ -1,15 +1,24 @@
+/** @format */
 jest.mock( 'config', () => ( {
 	isEnabled: () => true,
 } ) );
-jest.mock( 'devdocs/components-usage-stats.json', () => ( {
-	'components/foo': { count: 10 },
-	'components/foo/docs/': { count: 1 },
-	'foo/components/bar': { count: 1 },
-	'my-page/index.js': { count: 1 },
-} ), { virtual: true } );
-jest.mock( 'devdocs/search-index', () => ( {
-	index: {},
-} ), { virtual: true } );
+jest.mock(
+	'devdocs/components-usage-stats.json',
+	() => ( {
+		'components/foo': { count: 10 },
+		'components/foo/docs/': { count: 1 },
+		'foo/components/bar': { count: 1 },
+		'my-page/index.js': { count: 1 },
+	} ),
+	{ virtual: true }
+);
+jest.mock(
+	'devdocs/search-index',
+	() => ( {
+		index: {},
+	} ),
+	{ virtual: true }
+);
 jest.mock( 'lunr', () => ( {
 	Index: {
 		load: () => null,
@@ -73,7 +82,7 @@ describe( 'devdocs', () => {
 		server.close( done );
 	} );
 
-	it( 'should return documents', done => {
+	test( 'should return documents', done => {
 		getDocument( 'README.md', ( err, res ) => {
 			expect( err ).toBeNull();
 			expect( res.statusCode ).toBe( 200 );
@@ -82,7 +91,7 @@ describe( 'devdocs', () => {
 		} );
 	} );
 
-	it( 'should return documents with relative paths', done => {
+	test( 'should return documents with relative paths', done => {
 		getDocument(
 			'client/components/infinite-list',
 			'../../lib/mixins/infinite-scroll/README.md',
@@ -95,7 +104,7 @@ describe( 'devdocs', () => {
 		);
 	} );
 
-	it( 'should return the README.md by default', done => {
+	test( 'should return the README.md by default', done => {
 		getDocument( 'client/lib/mixins/infinite-scroll', ( err, res ) => {
 			expect( err ).toBeNull();
 			expect( res.statusCode ).toBe( 200 );
@@ -104,7 +113,7 @@ describe( 'devdocs', () => {
 		} );
 	} );
 
-	it( 'should not allow viewing files outside the Calypso repo', done => {
+	test( 'should not allow viewing files outside the Calypso repo', done => {
 		const pathOutsideCalypso = fspath.join(
 			__dirname,
 			'..',
@@ -123,7 +132,7 @@ describe( 'devdocs', () => {
 		} );
 	} );
 
-	it( 'should not allow viewing JavaScript files', done => {
+	test( 'should not allow viewing JavaScript files', done => {
 		getDocument( 'index.js', ( err, res ) => {
 			expect( err ).not.toBeNull();
 			expect( res.statusCode ).toBe( 404 );
@@ -133,7 +142,7 @@ describe( 'devdocs', () => {
 	} );
 
 	describe( 'components usage stats endpoint', () => {
-		it( 'should return stats', done => {
+		test( 'should return stats', done => {
 			getComponentsUsageStats( ( err, res ) => {
 				expect( err ).toBeNull();
 				expect( res.statusCode ).toBe( 200 );

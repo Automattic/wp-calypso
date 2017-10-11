@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isRequestingSettings()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the settings are not being fetched', () => {
+		test( 'should return false if the settings are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -67,7 +67,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the settings are being fetched', () => {
+		test( 'should return true if the settings are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isRestoringSettings()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -99,7 +99,7 @@ describe( 'selectors', () => {
 			expect( isRestoring ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 			expect( isRestoring ).to.be.false;
 		} );
 
-		it( 'should return false if the settings are not being restored', () => {
+		test( 'should return false if the settings are not being restored', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 			expect( isRestoring ).to.be.false;
 		} );
 
-		it( 'should return true if the settings are being restored', () => {
+		test( 'should return true if the settings are being restored', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -152,7 +152,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSavingSettings()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -169,7 +169,7 @@ describe( 'selectors', () => {
 			expect( isSaving ).to.be.false;
 		} );
 
-		it( 'should return false if the site settings are not saving', () => {
+		test( 'should return false if the site settings are not saving', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -186,7 +186,7 @@ describe( 'selectors', () => {
 			expect( isSaving ).to.be.false;
 		} );
 
-		it( 'should return true if the site settings are saving', () => {
+		test( 'should return true if the site settings are saving', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -205,7 +205,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSettingsSaveSuccessful()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -222,7 +222,7 @@ describe( 'selectors', () => {
 			expect( isSuccessful ).to.be.false;
 		} );
 
-		it( 'should return true if the save request status is success', () => {
+		test( 'should return true if the save request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -239,7 +239,7 @@ describe( 'selectors', () => {
 			expect( isSuccessful ).to.be.true;
 		} );
 
-		it( 'should return false if the save request status is error', () => {
+		test( 'should return false if the save request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -260,7 +260,7 @@ describe( 'selectors', () => {
 	describe( 'getSettings()', () => {
 		const primarySettings = { is_cache_enabled: true };
 
-		it( 'should return null if no state exists', () => {
+		test( 'should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -271,7 +271,7 @@ describe( 'selectors', () => {
 			expect( settings ).to.be.null;
 		} );
 
-		it( 'should return null if the site is not attached', () => {
+		test( 'should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -288,7 +288,7 @@ describe( 'selectors', () => {
 			expect( settings ).to.be.null;
 		} );
 
-		it( 'should return the settings for a siteId', () => {
+		test( 'should return the settings for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -307,7 +307,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSettingsSaveStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
+		test( 'should return undefined if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -324,7 +324,7 @@ describe( 'selectors', () => {
 			expect( status ).to.be.undefined;
 		} );
 
-		it( 'should return success if the save request status is success', () => {
+		test( 'should return success if the save request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -341,7 +341,7 @@ describe( 'selectors', () => {
 			expect( status ).to.eql( 'success' );
 		} );
 
-		it( 'should return error if the save request status is error', () => {
+		test( 'should return error if the save request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -358,7 +358,7 @@ describe( 'selectors', () => {
 			expect( status ).to.eql( 'error' );
 		} );
 
-		it( 'should return pending if the save request status is pending', () => {
+		test( 'should return pending if the save request status is pending', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {

@@ -12,7 +12,7 @@ import { normalizeSettings } from '../utils';
 
 describe( 'utils', () => {
 	describe( 'normalizeSettings()', () => {
-		it( 'should not alter random setting', () => {
+		test( 'should not alter random setting', () => {
 			const settings = {
 				chicken_ribs: '10',
 			};
@@ -22,7 +22,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should cast the default category to int', () => {
+		test( 'should cast the default category to int', () => {
 			const settings = {
 				default_category: '10',
 			};

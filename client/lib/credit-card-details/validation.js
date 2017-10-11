@@ -185,7 +185,7 @@ function getValidator( rule ) {
 	return validators[ rule ];
 }
 
-module.exports = {
+export default {
 	getCreditCardType: getCreditCardType,
 	validateCardDetails: validateCardDetails,
 };

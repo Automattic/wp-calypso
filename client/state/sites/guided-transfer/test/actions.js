@@ -48,7 +48,7 @@ describe( 'actions', () => {
 	const sampleSiteIdFail = 77203199;
 
 	describe( '#receiveGuidedTransferStatus()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveGuidedTransferStatus( sampleSiteId, sampleStatus );
 
 			expect( action ).to.eql( {
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestGuidedTransferStatus( sampleSiteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return requestGuidedTransferStatus( sampleSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
@@ -90,7 +90,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestGuidedTransferStatus( sampleSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_RECEIVE,
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestGuidedTransferStatus( sampleSiteIdFail )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -126,7 +126,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch save action when thunk triggered', () => {
+		test( 'should dispatch save action when thunk triggered', () => {
 			saveHostDetails( sampleSiteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -135,7 +135,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return saveHostDetails( sampleSiteIdSave )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
@@ -144,7 +144,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action for updated status when request completes', () => {
+		test( 'should dispatch receive action for updated status when request completes', () => {
 			return saveHostDetails( sampleSiteIdSave )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_RECEIVE,
@@ -154,7 +154,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return saveHostDetails( sampleSiteIdFail )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,

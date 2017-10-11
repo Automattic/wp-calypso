@@ -14,7 +14,7 @@ import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types
 describe( 'actions', () => {
 	describe( '#updateCurrentReviewsQuery()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const action = updateCurrentReviewsQuery( siteId, { page: 2, search: 'testing' } );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_UI_REVIEWS_SET_QUERY,

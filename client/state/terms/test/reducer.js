@@ -49,18 +49,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'queries', 'queryRequests' ] );
 	} );
 
 	describe( 'queryRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track term query request fetching', () => {
+		test( 'should track term query request fetching', () => {
 			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST,
 				siteId: 2916284,
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate queries', () => {
+		test( 'should accumulate queries', () => {
 			const original = deepFreeze( {
 				2916284: {
 					category: {
@@ -103,7 +103,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track term query request success', () => {
+		test( 'should track term query request success', () => {
 			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -122,7 +122,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track term query request failure', () => {
+		test( 'should track term query request failure', () => {
 			const state = queryRequests( undefined, {
 				type: TERMS_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -142,13 +142,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'queries()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track term query request success', () => {
+		test( 'should track term query request success', () => {
 			const query = { search: 'i' };
 			const state = queries( undefined, {
 				type: TERMS_RECEIVE,
@@ -166,7 +166,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].category.getFound( query ) ).to.equal( 2 );
 		} );
 
-		it( 'should track items even if no query is specified', () => {
+		test( 'should track items even if no query is specified', () => {
 			const state = queries( undefined, {
 				type: TERMS_RECEIVE,
 				siteId: 2916284,
@@ -180,7 +180,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].category.getItems() ).to.eql( testTerms );
 		} );
 
-		it( 'should return the same state if no changes to received items', () => {
+		test( 'should return the same state if no changes to received items', () => {
 			const action = {
 				type: TERMS_RECEIVE,
 				siteId: 2916284,
@@ -196,7 +196,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should accumulate query request success', () => {
+		test( 'should accumulate query request success', () => {
 			const original = deepFreeze(
 				queries( undefined, {
 					type: TERMS_RECEIVE,
@@ -221,7 +221,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ] ).to.have.keys( [ 'category', 'post_tag' ] );
 		} );
 
-		it( 'should omit removed term', () => {
+		test( 'should omit removed term', () => {
 			const original = deepFreeze(
 				queries( undefined, {
 					type: TERMS_RECEIVE,
@@ -244,7 +244,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].category.getItem( testTerms[ 0 ].ID ) ).to.be.undefined;
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze(
 				queries( undefined, {
 					type: TERMS_RECEIVE,
@@ -263,7 +263,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].category ).to.have.keys( [ 'data', 'options' ] );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const original = deepFreeze(
 				queries( undefined, {
 					type: TERMS_RECEIVE,
@@ -281,7 +281,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = queries(
 				{
 					2916284: {

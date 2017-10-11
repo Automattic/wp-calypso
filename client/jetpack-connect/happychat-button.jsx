@@ -24,11 +24,7 @@ const JetpackConnectHappychatButton = ( {
 	translate,
 } ) => {
 	if ( ! isEnabled( 'jetpack/happychat' ) ) {
-		return (
-			<div>
-				{ children }
-			</div>
-		);
+		return <div>{ children }</div>;
 	}
 
 	if ( ! isChatAvailable && ! isChatActive ) {

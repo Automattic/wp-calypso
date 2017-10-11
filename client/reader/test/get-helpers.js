@@ -15,17 +15,17 @@ describe( '#getSiteUrl', () => {
 	const feedWithFeedUrl = { feed_URL: 'feedwithFeedUrl.com' };
 	const postWithSiteUrl = { site_URL: 'postWithSiteUrl' };
 
-	it( 'should favor site over feed if both exist', () => {
+	test( 'should favor site over feed if both exist', () => {
 		const siteUrl = getSiteUrl( { site: siteWithUrl, feed: feedWithUrl } );
 		expect( siteUrl ).eql( siteWithUrl.URL );
 	} );
 
-	it( 'should get title from site if feed does not exist', () => {
+	test( 'should get title from site if feed does not exist', () => {
 		const siteUrl = getSiteUrl( { site: siteWithUrl } );
 		expect( siteUrl ).eql( siteWithUrl.URL );
 	} );
 
-	it( 'should get title from feed if site does not exist', () => {
+	test( 'should get title from feed if site does not exist', () => {
 		const siteUrl = getSiteUrl( { feed: feedWithUrl } );
 		expect( siteUrl ).eql( feedWithUrl.URL );
 
@@ -33,12 +33,12 @@ describe( '#getSiteUrl', () => {
 		expect( siteUrl2 ).eql( 'feedwithFeedUrl.com' );
 	} );
 
-	it( 'should grab url from post if its there', () => {
+	test( 'should grab url from post if its there', () => {
 		const siteUrl = getSiteUrl( { post: postWithSiteUrl } );
 		expect( siteUrl ).eql( postWithSiteUrl.site_URL );
 	} );
 
-	it( 'should return false if cannot find a reasonable url', () => {
+	test( 'should return false if cannot find a reasonable url', () => {
 		const noArg = getSiteUrl();
 		expect( noArg ).not.ok;
 
@@ -64,14 +64,14 @@ describe( '#getSiteName', () => {
 	const allFeeds = [ feedWithName, feedWithTitle, feedWithTitleAndName, feedWithError ];
 	const postWithSiteName = { site_name: 'postSiteName' };
 
-	it( 'should favor site title over everything', () => {
+	test( 'should favor site title over everything', () => {
 		allFeeds.forEach( feed => {
 			const siteName = getSiteName( { site: siteWithTitleAndDomain, feed } );
 			expect( siteName ).eql( siteWithTitleAndDomain.title );
 		} );
 	} );
 
-	it( 'should fallback to feed if site title doesnt exist', () => {
+	test( 'should fallback to feed if site title doesnt exist', () => {
 		const siteName = getSiteName( { site: {}, feed: feedWithName } );
 		expect( siteName ).eql( feedWithName.name );
 
@@ -79,7 +79,7 @@ describe( '#getSiteName', () => {
 		expect( siteTitle ).eql( feedWithTitle.title );
 	} );
 
-	it( 'should fallback to post if neither site or feed exist', () => {
+	test( 'should fallback to post if neither site or feed exist', () => {
 		expect( getSiteName( { site: {}, feed: {}, post: postWithSiteName } ) ).eql(
 			postWithSiteName.site_name
 		);
@@ -87,13 +87,13 @@ describe( '#getSiteName', () => {
 		expect( getSiteName( { post: postWithSiteName } ) ).eql( postWithSiteName.site_name );
 	} );
 
-	it( 'should fallback to domain name if cannot find title', () => {
+	test( 'should fallback to domain name if cannot find title', () => {
 		expect( getSiteName( { site: siteWithDomain, post: {} } ) ).eql( siteWithDomain.domain );
 
 		expect( getSiteName( { feed: feedWithUrl } ) ).eql( 'feedwithurl.com' );
 	} );
 
-	it( 'should return null if nothing was found', () => {
+	test( 'should return null if nothing was found', () => {
 		expect( getSiteName() ).eql( null );
 
 		expect( getSiteName( { feed: {}, site: {}, post: {} } ) ).eql( null );

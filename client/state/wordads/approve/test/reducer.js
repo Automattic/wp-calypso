@@ -19,7 +19,7 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
 			'requestErrors',
@@ -28,12 +28,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by site ID', () => {
+		test( 'should index requesting state by site ID', () => {
 			const siteId = 2916284;
 			const state = requesting( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST,
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting state for sites', () => {
+		test( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
 				2916284: false,
 			} );
@@ -58,7 +58,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous requesting state', () => {
+		test( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: false,
@@ -76,12 +76,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requestErrors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requestErrors( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index error state by site ID', () => {
+		test( 'should index error state by site ID', () => {
 			const state = requestErrors( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update error state on success', () => {
+		test( 'should update error state on success', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong',
 			} );
@@ -107,7 +107,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update error state on dismiss error', () => {
+		test( 'should update error state on dismiss error', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong',
 			} );
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update error state by site id', () => {
+		test( 'should update error state by site id', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong',
 			} );
@@ -135,7 +135,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate error state by site ID on failure', () => {
+		test( 'should accumulate error state by site ID on failure', () => {
 			const originalState = deepFreeze( {
 				2916284: 'something went wrong',
 			} );
@@ -153,12 +153,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requestSuccess()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requestSuccess( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index success state by site ID', () => {
+		test( 'should index success state by site ID', () => {
 			const state = requestSuccess( undefined, {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -169,7 +169,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update success state on error', () => {
+		test( 'should update success state on error', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update success state on dismiss error', () => {
+		test( 'should update success state on dismiss error', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -197,7 +197,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update success state by site id', () => {
+		test( 'should update success state by site id', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -210,7 +210,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate success state by site ID on success', () => {
+		test( 'should accumulate success state by site ID on success', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );

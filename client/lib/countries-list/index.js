@@ -169,7 +169,7 @@ const domainRegistrationCountriesList = new DomainRegistrationCountriesList();
 const paymentCountriesList = new PaymentCountriesList();
 const smsCountriesList = new SmsCountriesList();
 
-module.exports = {
+export default {
 	forDomainRegistrations: function() {
 		return domainRegistrationCountriesList;
 	},

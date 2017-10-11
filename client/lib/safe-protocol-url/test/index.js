@@ -11,12 +11,12 @@ import { expect } from 'chai';
  */
 import safeProtocolUrl from '../';
 
-describe( 'index', function() {
-	it( 'should ignore a relative url', function() {
+describe( 'index', () => {
+	test( 'should ignore a relative url', () => {
 		expect( safeProtocolUrl( '/foo' ) ).to.eql( '/foo' );
 	} );
 
-	it( 'should return null for empty url', function() {
+	test( 'should return null for empty url', () => {
 		var returnUndefined = function() {
 			return;
 		};
@@ -26,21 +26,21 @@ describe( 'index', function() {
 		expect( safeProtocolUrl( '' ) ).to.eql( null );
 	} );
 
-	it( 'should not change url if http protocol', function() {
+	test( 'should not change url if http protocol', () => {
 		expect( safeProtocolUrl( 'http://foo.com' ) ).to.eql( 'http://foo.com' );
 		expect( safeProtocolUrl( 'http://foo.com?query=string#id' ) ).to.eql(
 			'http://foo.com?query=string#id'
 		);
 	} );
 
-	it( 'should not change url https protocol', function() {
+	test( 'should not change url https protocol', () => {
 		expect( safeProtocolUrl( 'https://foo.com' ) ).to.eql( 'https://foo.com' );
 		expect( safeProtocolUrl( 'http://foo.com?query=string#id' ) ).to.eql(
 			'http://foo.com?query=string#id'
 		);
 	} );
 
-	it( 'should not strip query args', function() {
+	test( 'should not strip query args', () => {
 		expect( safeProtocolUrl( 'https://foo.com?query=string' ) ).to.eql(
 			'https://foo.com?query=string'
 		);
@@ -49,14 +49,14 @@ describe( 'index', function() {
 		);
 	} );
 
-	it( 'should not strip query hash', function() {
+	test( 'should not strip query hash', () => {
 		expect( safeProtocolUrl( 'https://foo.com#id' ) ).to.eql( 'https://foo.com#id' );
 		expect( safeProtocolUrl( 'https://foo.com?query=string#id' ) ).to.eql(
 			'https://foo.com?query=string#id'
 		);
 	} );
 
-	it( 'should make url with javascript protocol safe', function() {
+	test( 'should make url with javascript protocol safe', () => {
 		expect( safeProtocolUrl( 'javascript:function()' ) ).to.eql( 'http:' ); // eslint-disable-line no-script-url
 	} );
 } );

@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	/**
 	 * Given a media filter, returns a partial mime type that can be used to
 	 * find only media of a certain type. Returns a blank mime if no filter,

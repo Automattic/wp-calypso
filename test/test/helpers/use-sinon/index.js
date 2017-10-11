@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -55,18 +56,18 @@ export function useSandbox( config, sandboxCallback = noop ) {
 		config = undefined;
 	}
 
-	beforeAll( function() {
+	beforeAll( () => {
 		sandbox = sinon.sandbox.create( config );
 		sandboxCallback( sandbox );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		if ( sandbox ) {
 			sandbox.reset();
 		}
 	} );
 
-	afterAll( function() {
+	afterAll( () => {
 		if ( sandbox ) {
 			sandbox.restore();
 			sandbox = null;

@@ -12,7 +12,7 @@ import React from 'react';
 import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'BulkSelects',
 
 	handleToggleAll( checkedState ) {

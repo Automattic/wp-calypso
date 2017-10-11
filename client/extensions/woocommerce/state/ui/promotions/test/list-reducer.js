@@ -9,12 +9,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../list-reducer';
-import {
-	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PROMOTIONS_PAGE_SET } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should initialize to default values', () => {
+	test( 'should initialize to default values', () => {
 		const state = reducer( undefined, { type: '%%NONE%%' } );
 
 		expect( state ).to.exist;
@@ -22,7 +20,7 @@ describe( 'reducer', () => {
 		expect( state.perPage ).to.equal( 10 );
 	} );
 
-	it( 'should store current page', () => {
+	test( 'should store current page', () => {
 		const action = {
 			type: WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 			currentPage: 6,
@@ -34,7 +32,7 @@ describe( 'reducer', () => {
 		expect( state.perPage ).to.equal( 30 );
 	} );
 
-	it( 'should ignore an invalid page number', () => {
+	test( 'should ignore an invalid page number', () => {
 		const action = {
 			type: WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 			currentPage: 0,
@@ -46,7 +44,7 @@ describe( 'reducer', () => {
 		expect( state.perPage ).to.equal( 30 );
 	} );
 
-	it( 'should ignore an invalid perPage', () => {
+	test( 'should ignore an invalid perPage', () => {
 		const action = {
 			type: WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 			currentPage: 4,

@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveUserSuggestions()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const suggestions = [];
 			const action = receiveUserSuggestions( siteId, suggestions );
 
@@ -46,7 +46,7 @@ describe( 'actions', () => {
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
 		} );
 
-		it( 'should dispatch properly when receiving a valid response', () => {
+		test( 'should dispatch properly when receiving a valid response', () => {
 			const dispatchSpy = sinon.stub();
 			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			const request = requestUserSuggestions( siteId )( dispatchSpy );

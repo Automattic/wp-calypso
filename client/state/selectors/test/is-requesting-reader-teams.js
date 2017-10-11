@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isRequestingReaderTeams } from '../';
 
 describe( 'isRequestingReaderTeams()', () => {
-	it( 'should return false if not requesting teams', () => {
+	test( 'should return false if not requesting teams', () => {
 		const isRequesting = isRequestingReaderTeams( {
 			reader: {
 				teams: {
@@ -23,7 +23,7 @@ describe( 'isRequestingReaderTeams()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return true if requesting teams', () => {
+	test( 'should return true if requesting teams', () => {
 		const isRequesting = isRequestingReaderTeams( {
 			reader: {
 				teams: {

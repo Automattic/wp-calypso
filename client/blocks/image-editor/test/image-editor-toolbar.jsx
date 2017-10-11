@@ -30,7 +30,7 @@ describe( 'ImageEditorToolbar', () => {
 		wrapper = shallow( <ImageEditorToolbar { ...defaultProps } translate={ identity } /> );
 	} );
 
-	it( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {
+	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {
 		expect(
 			wrapper
 				.find( '.image-editor__toolbar-button' )
@@ -39,7 +39,7 @@ describe( 'ImageEditorToolbar', () => {
 		).to.be.false;
 	} );
 
-	it(
+	test(
 		'should add `is-disabled` class to aspect ratio toolbar button' +
 			'when image is smaller than minimum dimensions',
 		() => {
@@ -53,7 +53,7 @@ describe( 'ImageEditorToolbar', () => {
 		}
 	);
 
-	it(
+	test(
 		'should not trigger the method `onShowNotice`' +
 			'when image width and height meet the minimum dimensions',
 		() => {
@@ -66,7 +66,7 @@ describe( 'ImageEditorToolbar', () => {
 		}
 	);
 
-	it(
+	test(
 		'should trigger the method `onShowNotice` with correct translation string' +
 			'when the user clicks on a disabled aspect ratio toolbar button',
 		() => {
@@ -83,7 +83,7 @@ describe( 'ImageEditorToolbar', () => {
 		}
 	);
 
-	it(
+	test(
 		'should show aspect ratio popover display' +
 			'when image width and height meet the minimum dimensions',
 		() => {
@@ -96,7 +96,7 @@ describe( 'ImageEditorToolbar', () => {
 		}
 	);
 
-	it(
+	test(
 		'should prevent aspect ratio popover display' +
 			'when image width and height do not meet the minimum dimensions',
 		() => {

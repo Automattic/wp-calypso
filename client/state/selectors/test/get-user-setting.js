@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getUserSetting } from '../';
 
 describe( 'getUserSetting()', () => {
-	it( 'should return null if neither server nor local unsaved settings contain the key', () => {
+	test( 'should return null if neither server nor local unsaved settings contain the key', () => {
 		const setting = getUserSetting(
 			{
 				userSettings: {
@@ -25,7 +25,7 @@ describe( 'getUserSetting()', () => {
 		expect( setting ).to.be.null;
 	} );
 
-	it( 'should prefer an unsaved setting over the server one', () => {
+	test( 'should prefer an unsaved setting over the server one', () => {
 		const setting = getUserSetting(
 			{
 				userSettings: {
@@ -39,7 +39,7 @@ describe( 'getUserSetting()', () => {
 		expect( setting ).to.eql( 'unsavedBar' );
 	} );
 
-	it( 'should ignore an unsaved setting if there is no server value for the same key', () => {
+	test( 'should ignore an unsaved setting if there is no server value for the same key', () => {
 		const setting = getUserSetting(
 			{
 				userSettings: {
@@ -53,7 +53,7 @@ describe( 'getUserSetting()', () => {
 		expect( setting ).to.be.null;
 	} );
 
-	it( 'should return a server value if there is no unsaved one', () => {
+	test( 'should return a server value if there is no unsaved one', () => {
 		const setting = getUserSetting(
 			{
 				userSettings: {

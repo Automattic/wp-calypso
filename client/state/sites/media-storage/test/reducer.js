@@ -31,18 +31,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'fetchingItems' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index media-storage by site ID', () => {
+		test( 'should index media-storage by site ID', () => {
 			const siteId = 2916284;
 			const mediaStorage = deepFreeze( {
 				max_storage_bytes: -1,
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate media-storage for sites', () => {
+		test( 'should accumulate media-storage for sites', () => {
 			const original = deepFreeze( {
 				2916284: {
 					max_storage_bytes: -1,
@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous media-storage', () => {
+		test( 'should override previous media-storage', () => {
 			const original = deepFreeze( {
 				2916284: {
 					max_storage_bytes: -1,
@@ -120,7 +120,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'persists state', () => {
+			test( 'persists state', () => {
 				const original = deepFreeze( {
 					2916284: {
 						max_storage_bytes: 3221225472,
@@ -135,7 +135,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads valid persisted state', () => {
+			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
 					2916284: {
 						max_storage_bytes: 3221225472,
@@ -150,7 +150,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads default state when schema does not match', () => {
+			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
 					2916284: {
 						max_storage_bytes: 3221225472,
@@ -168,13 +168,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#fetchingItems()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = fetchingItems( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index fetching state by site ID', () => {
+		test( 'should index fetching state by site ID', () => {
 			const state = fetchingItems( undefined, {
 				type: SITE_MEDIA_STORAGE_REQUEST,
 				siteId: 2916284,
@@ -185,7 +185,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update fetching state by site ID on success', () => {
+		test( 'should update fetching state by site ID on success', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update fetching state by site ID on failure', () => {
+		test( 'should update fetching state by site ID on failure', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -213,7 +213,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetchingItems by site ID', () => {
+		test( 'should accumulate fetchingItems by site ID', () => {
 			const originalState = deepFreeze( {
 				2916284: false,
 			} );

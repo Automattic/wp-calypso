@@ -28,7 +28,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#dismissWordAdsError()', () => {
-		it( 'should return a dismiss error action', () => {
+		test( 'should return a dismiss error action', () => {
 			expect( dismissWordAdsError( 2916284 ) ).to.eql( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 				siteId: 2916284,
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#dismissWordAdsSuccess()', () => {
-		it( 'should return a dismiss Success action', () => {
+		test( 'should return a dismiss Success action', () => {
 			expect( dismissWordAdsSuccess( 2916284 ) ).to.eql( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 				siteId: 2916284,
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestWordAdsApproval( 2916284 )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: WORDADS_SITE_APPROVE_REQUEST,
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return requestWordAdsApproval( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestWordAdsApproval( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,

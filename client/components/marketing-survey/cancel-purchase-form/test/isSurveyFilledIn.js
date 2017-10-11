@@ -10,12 +10,12 @@ import { expect } from 'chai';
  */
 import isSurveyFilledIn from '../isSurveyFilledIn';
 
-describe( 'isSurveyFilledIn', function() {
-	it( 'should return false when no questions are answered', function() {
+describe( 'isSurveyFilledIn', () => {
+	test( 'should return false when no questions are answered', () => {
 		expect( isSurveyFilledIn( {} ) ).to.equal( false );
 	} );
 
-	it( 'should return true when question one and two are answered', function() {
+	test( 'should return true when question one and two are answered', () => {
 		expect(
 			isSurveyFilledIn( {
 				questionOneRadio: 'tooHard',
@@ -24,7 +24,7 @@ describe( 'isSurveyFilledIn', function() {
 		).to.equal( true );
 	} );
 
-	it( 'should return false when question one is another reason and there is no text', function() {
+	test( 'should return false when question one is another reason and there is no text', () => {
 		expect(
 			isSurveyFilledIn( {
 				questionOneRadio: 'anotherReasonOne',
@@ -34,7 +34,7 @@ describe( 'isSurveyFilledIn', function() {
 		).to.equal( false );
 	} );
 
-	it( 'should return false when question two is another reason and there is no text', function() {
+	test( 'should return false when question two is another reason and there is no text', () => {
 		expect(
 			isSurveyFilledIn( {
 				questionOneRadio: 'tooHard',
@@ -44,7 +44,7 @@ describe( 'isSurveyFilledIn', function() {
 		).to.equal( false );
 	} );
 
-	it( 'should return true when question one and two are another reason and both have text', function() {
+	test( 'should return true when question one and two are another reason and both have text', () => {
 		expect(
 			isSurveyFilledIn( {
 				questionOneRadio: 'anotherReasonOne',

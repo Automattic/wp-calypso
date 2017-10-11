@@ -39,10 +39,10 @@ jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/emp
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginsList', () => {
-	describe( 'rendering bulk actions', function() {
+	describe( 'rendering bulk actions', () => {
 		let renderedPluginsList, plugins, props;
 
-		before( () => {
+		beforeAll( () => {
 			plugins = [
 				{ sites, slug: 'hello', name: 'Hello Dolly' },
 				{ sites, slug: 'jetpack', name: 'Jetpack' },
@@ -66,17 +66,17 @@ describe( 'PluginsList', () => {
 			renderedPluginsList = scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ];
 		} );
 
-		it( 'should be intialized with no selectedPlugins', () => {
+		test( 'should be intialized with no selectedPlugins', () => {
 			expect( renderedPluginsList.state.selectedPlugins ).to.be.empty;
 		} );
 
-		it( 'should select all plugins when toggled on', () => {
+		test( 'should select all plugins when toggled on', () => {
 			renderedPluginsList.toggleBulkManagement();
 			expect( renderedPluginsList.state.selectedPlugins ).to.contain.all.keys( 'hello', 'jetpack' );
 			expect( Object.keys( renderedPluginsList.state.selectedPlugins ) ).to.have.lengthOf( 2 );
 		} );
 
-		it( 'should always reset to all selected when toggled on', () => {
+		test( 'should always reset to all selected when toggled on', () => {
 			renderedPluginsList.togglePlugin( plugins[ 0 ] );
 			expect( Object.keys( renderedPluginsList.state.selectedPlugins ) ).to.have.lengthOf( 1 );
 

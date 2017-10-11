@@ -12,15 +12,15 @@ import Gridicon from 'gridicons';
 import React from 'react';
 import sinon from 'sinon';
 
-describe( 'AccordionStatus', function() {
+describe( 'AccordionStatus', () => {
 	let AccordionStatus, Tooltip;
 
-	before( () => {
+	beforeAll( () => {
 		AccordionStatus = require( '../status' );
 		Tooltip = require( 'components/tooltip' );
 	} );
 
-	it( 'should render with explicit props', () => {
+	test( 'should render with explicit props', () => {
 		const status = {
 			type: 'error',
 			text: 'Warning!',
@@ -44,7 +44,7 @@ describe( 'AccordionStatus', function() {
 			.equal( 'top left' );
 	} );
 
-	it( 'should render with default props', () => {
+	test( 'should render with default props', () => {
 		const wrapper = shallow( <AccordionStatus /> );
 
 		expect( wrapper ).to.not.have.prop( 'href' );
@@ -55,7 +55,7 @@ describe( 'AccordionStatus', function() {
 		expect( wrapper ).to.not.have.descendants( Tooltip );
 	} );
 
-	it( 'should show tooltip on hover', () => {
+	test( 'should show tooltip on hover', () => {
 		const wrapper = shallow( <AccordionStatus text="Warning!" /> );
 
 		expect( wrapper.find( Tooltip ) ).to.not.have.prop( 'isVisible' );
@@ -72,7 +72,7 @@ describe( 'AccordionStatus', function() {
 		expect( wrapper.find( Tooltip ) ).to.have.prop( 'isVisible' ).be.false;
 	} );
 
-	it( 'should call onClick callback', () => {
+	test( 'should call onClick callback', () => {
 		const spy = sinon.spy();
 		const wrapper = shallow( <AccordionStatus onClick={ spy } /> );
 

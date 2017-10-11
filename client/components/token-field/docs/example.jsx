@@ -178,4 +178,4 @@ var TokenFields = React.createClass( {
 	},
 } );
 
-module.exports = TokenFields;
+export default TokenFields;

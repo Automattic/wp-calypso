@@ -33,12 +33,12 @@ const feeds = freeze( [
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should add query results to an empty object', () => {
+		test( 'should add query results to an empty object', () => {
 			const prevState = {};
 			const action = receiveFeedSearch( queryKey, feeds );
 			const nextState = items( prevState, action );
@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should add query results to an already populated object', () => {
+		test( 'should add query results to an already populated object', () => {
 			const prevState = {
 				chickens: [ { blogName: 'chickens R us' } ],
 			};

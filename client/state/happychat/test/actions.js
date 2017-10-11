@@ -13,12 +13,12 @@ import { setConnected } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setConnected()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setConnected( { geo_location: { country_long: 'Romania' } } );
 
 			expect( action ).to.eql( {
 				type: HAPPYCHAT_CONNECTED,
-				user: { geo_location: { country_long: 'Romania' } }
+				user: { geo_location: { country_long: 'Romania' } },
 			} );
 		} );
 	} );

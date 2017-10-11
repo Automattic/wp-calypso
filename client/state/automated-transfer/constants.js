@@ -5,6 +5,9 @@ export const transferStates = {
 	START: 'start',
 	SETUP: 'setup',
 	CONFLICTS: 'conflicts',
+	ACTIVE: 'active',
+	UPLOADING: 'uploading',
+	BACKFILLING: 'backfilling',
 	COMPLETE: 'complete',
 };
 

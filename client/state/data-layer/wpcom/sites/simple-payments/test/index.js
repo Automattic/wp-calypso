@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import { customPostToProduct, productToCustomPost } from '../';
 
 describe( '#simplePayments', () => {
-	it( 'should convert customPost to product', () => {
+	test( 'should convert customPost to product', () => {
 		const customPost = {
 			type: 'jp_pay_product',
 			ID: 1,
@@ -39,7 +39,7 @@ describe( '#simplePayments', () => {
 		expect( convertedProduct ).to.deep.equal( product );
 	} );
 
-	it( 'should decode special characters when converting to product', () => {
+	test( 'should decode special characters when converting to product', () => {
 		const customPost = {
 			ID: 2,
 			title: '\u201d\u221e\u201d and &#8216;so much more&#8217;\u2122 \u2026',
@@ -58,7 +58,7 @@ describe( '#simplePayments', () => {
 		expect( convertedProduct.description ).to.equal( 'Accepting $, ₿, & ☃' );
 	} );
 
-	it( 'should convert product to customPost', () => {
+	test( 'should convert product to customPost', () => {
 		const product = {
 			ID: 1,
 			title: 'The Button',

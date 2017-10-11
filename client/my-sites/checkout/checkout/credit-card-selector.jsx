@@ -94,4 +94,4 @@ var CreditCardSelector = React.createClass( {
 	},
 } );
 
-module.exports = CreditCardSelector;
+export default CreditCardSelector;

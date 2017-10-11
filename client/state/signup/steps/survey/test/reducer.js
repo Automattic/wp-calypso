@@ -12,7 +12,7 @@ import signupSurveyReducer from '../reducer';
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should update the survey', () => {
+	test( 'should update the survey', () => {
 		expect(
 			signupSurveyReducer(
 				{},
@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should reset the survey on signup complete', () => {
+	test( 'should reset the survey on signup complete', () => {
 		expect(
 			signupSurveyReducer(
 				{

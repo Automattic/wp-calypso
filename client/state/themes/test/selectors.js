@@ -93,7 +93,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getTheme()', () => {
-		it( 'should return null if the theme is not known for the site', () => {
+		test( 'should return null if the theme is not known for the site', () => {
 			const theme = getTheme(
 				{
 					themes: {
@@ -107,7 +107,7 @@ describe( 'themes selectors', () => {
 			expect( theme ).to.be.null;
 		} );
 
-		it( 'should return the object for the site ID, theme ID pair', () => {
+		test( 'should return the object for the site ID, theme ID pair', () => {
 			const theme = getTheme(
 				{
 					themes: {
@@ -127,7 +127,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getCanonicalTheme()', () => {
-		it( 'with a theme found on WP.com, should return the object fetched from there', () => {
+		test( 'with a theme found on WP.com, should return the object fetched from there', () => {
 			const theme = getCanonicalTheme(
 				{
 					themes: {
@@ -145,7 +145,7 @@ describe( 'themes selectors', () => {
 			expect( theme ).to.deep.equal( twentysixteen );
 		} );
 
-		it( 'with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
+		test( 'with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -175,7 +175,7 @@ describe( 'themes selectors', () => {
 			expect( theme ).to.deep.equal( wporgTheme );
 		} );
 
-		it( 'with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
+		test( 'with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
 			const jetpackTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -201,7 +201,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemesRequestError()', () => {
-		it( 'should return null if thre is not request error storred for that theme on site', () => {
+		test( 'should return null if thre is not request error storred for that theme on site', () => {
 			const error = getThemeRequestErrors(
 				{
 					themes: {
@@ -215,7 +215,7 @@ describe( 'themes selectors', () => {
 			expect( error ).to.be.null;
 		} );
 
-		it( 'should return the error object for the site ID, theme ID pair', () => {
+		test( 'should return the error object for the site ID, theme ID pair', () => {
 			const error = getThemeRequestErrors(
 				{
 					themes: {
@@ -235,7 +235,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isRequestingTheme()', () => {
-		it( 'should return false if there are no active requests for site', () => {
+		test( 'should return false if there are no active requests for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -249,7 +249,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if there is no active request for theme for site', () => {
+		test( 'should return false if there is no active request for theme for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -267,7 +267,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if there is request ongoing for theme for site', () => {
+		test( 'should return true if there is request ongoing for theme for site', () => {
 			const isRequesting = isRequestingTheme(
 				{
 					themes: {
@@ -287,7 +287,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemesForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
@@ -301,7 +301,7 @@ describe( 'themes selectors', () => {
 			expect( siteThemes ).to.be.null;
 		} );
 
-		it( 'should return null if the query is not tracked to the query manager', () => {
+		test( 'should return null if the query is not tracked to the query manager', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
@@ -320,7 +320,7 @@ describe( 'themes selectors', () => {
 			expect( siteThemes ).to.be.null;
 		} );
 
-		it( 'should return an array of normalized known queried themes', () => {
+		test( 'should return an array of normalized known queried themes', () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
@@ -345,7 +345,7 @@ describe( 'themes selectors', () => {
 			expect( siteThemes ).to.eql( [ twentysixteen ] );
 		} );
 
-		it( "should return null if we know the number of found items but the requested set hasn't been received", () => {
+		test( "should return null if we know the number of found items but the requested set hasn't been received", () => {
 			const siteThemes = getThemesForQuery(
 				{
 					themes: {
@@ -373,7 +373,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getLastThemeQuery', () => {
-		it( 'given no site, should return empty object', () => {
+		test( 'given no site, should return empty object', () => {
 			const query = getLastThemeQuery( {
 				themes: {
 					lastQuery: {},
@@ -383,7 +383,7 @@ describe( 'themes selectors', () => {
 			expect( query ).to.deep.equal( {} );
 		} );
 
-		it( 'given a site, should return last used query', () => {
+		test( 'given a site, should return last used query', () => {
 			const query = getLastThemeQuery(
 				{
 					themes: {
@@ -402,7 +402,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isRequestingThemesForQuery()', () => {
-		it( 'should return false if the site has not been queried', () => {
+		test( 'should return false if the site has not been queried', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -416,7 +416,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site has not been queried for the specific query', () => {
+		test( 'should return false if the site has not been queried for the specific query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -432,7 +432,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site has been queried for the specific query', () => {
+		test( 'should return true if the site has been queried for the specific query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -448,7 +448,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
 			const isRequesting = isRequestingThemesForQuery(
 				{
 					themes: {
@@ -466,7 +466,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemesFoundForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
@@ -480,7 +480,7 @@ describe( 'themes selectors', () => {
 			expect( found ).to.be.null;
 		} );
 
-		it( 'should return the found items for a site query', () => {
+		test( 'should return the found items for a site query', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
@@ -506,7 +506,7 @@ describe( 'themes selectors', () => {
 			expect( found ).to.equal( 1 );
 		} );
 
-		it( 'should return zero if in-fact there are zero items', () => {
+		test( 'should return zero if in-fact there are zero items', () => {
 			const found = getThemesFoundForQuery(
 				{
 					themes: {
@@ -532,7 +532,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemesLastPageForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -549,7 +549,7 @@ describe( 'themes selectors', () => {
 			expect( lastPage ).to.be.null;
 		} );
 
-		it( 'should return the last page value for a site query', () => {
+		test( 'should return the last page value for a site query', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -578,7 +578,7 @@ describe( 'themes selectors', () => {
 			expect( lastPage ).to.equal( 1 );
 		} );
 
-		it( 'should return the last page value for a site query, even if including page param', () => {
+		test( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -607,7 +607,7 @@ describe( 'themes selectors', () => {
 			expect( lastPage ).to.equal( 7 );
 		} );
 
-		it( 'should return 1 if there are no found themes', () => {
+		test( 'should return 1 if there are no found themes', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -634,7 +634,7 @@ describe( 'themes selectors', () => {
 			expect( lastPage ).to.equal( 1 );
 		} );
 
-		it( 'should return 1 for a Jetpack site', () => {
+		test( 'should return 1 for a Jetpack site', () => {
 			const lastPage = getThemesLastPageForQuery(
 				{
 					sites: {
@@ -671,7 +671,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isThemesLastPageForQuery()', () => {
-		it( 'should return null if the last page is not known', () => {
+		test( 'should return null if the last page is not known', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					themes: {
@@ -685,7 +685,7 @@ describe( 'themes selectors', () => {
 			expect( isLastPage ).to.be.null;
 		} );
 
-		it( 'should return false if the query explicit value is not the last page', () => {
+		test( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -714,7 +714,7 @@ describe( 'themes selectors', () => {
 			expect( isLastPage ).to.be.false;
 		} );
 
-		it( 'should return true if the query explicit value is the last page', () => {
+		test( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -743,7 +743,7 @@ describe( 'themes selectors', () => {
 			expect( isLastPage ).to.be.true;
 		} );
 
-		it( 'should return true if the query implicit value is the last page', () => {
+		test( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -772,7 +772,7 @@ describe( 'themes selectors', () => {
 			expect( isLastPage ).to.be.true;
 		} );
 
-		it( 'should return true for a Jetpack site', () => {
+		test( 'should return true for a Jetpack site', () => {
 			const isLastPage = isThemesLastPageForQuery(
 				{
 					sites: {
@@ -809,7 +809,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemesForQueryIgnoringPage()', () => {
-		it( 'should return null if the query is not tracked', () => {
+		test( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -823,7 +823,7 @@ describe( 'themes selectors', () => {
 			expect( themes ).to.be.null;
 		} );
 
-		it( 'should return null if the query manager has not received items for query', () => {
+		test( 'should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -842,7 +842,7 @@ describe( 'themes selectors', () => {
 			expect( themes ).to.be.null;
 		} );
 
-		it( 'should return a concatenated array of all site themes ignoring page', () => {
+		test( 'should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -868,7 +868,7 @@ describe( 'themes selectors', () => {
 			expect( themes ).to.eql( [ twentyfifteen, twentysixteen ] );
 		} );
 
-		it( "should omit found items for which the requested result hasn't been received", () => {
+		test( "should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -896,7 +896,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isRequestingThemesForQueryIgnoringPage()', () => {
-		it( 'should return false if not requesting for query', () => {
+		test( 'should return false if not requesting for query', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -910,7 +910,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true requesting for query at exact page', () => {
+		test( 'should return true requesting for query at exact page', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -926,7 +926,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return true requesting for query without page specified', () => {
+		test( 'should return true requesting for query without page specified', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage(
 				{
 					themes: {
@@ -944,7 +944,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeDetailsUrl', () => {
-		it( 'given a theme and no site ID, should return the Calypso theme sheet URL', () => {
+		test( 'given a theme and no site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -961,7 +961,7 @@ describe( 'themes selectors', () => {
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen' );
 		} );
 
-		it( 'given a theme and wpcom site ID, should return the Calypso theme sheet URL', () => {
+		test( 'given a theme and wpcom site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -979,9 +979,9 @@ describe( 'themes selectors', () => {
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
 		} );
 
-		context( 'given a theme and a Jetpack site ID', () => {
-			context( 'with JP version < 4.7', () => {
-				it( "should return the site's wp-admin theme details URL", () => {
+		describe( 'given a theme and a Jetpack site ID', () => {
+			describe( 'with JP version < 4.7', () => {
+				test( "should return the site's wp-admin theme details URL", () => {
 					const detailsUrl = getThemeDetailsUrl(
 						{
 							sites: {
@@ -1007,9 +1007,9 @@ describe( 'themes selectors', () => {
 				} );
 			} );
 
-			context( 'with JP version >= 4.7', () => {
-				context( 'with Jetpack Manage turned off', () => {
-					it( "should return the site's wp-admin theme details URL", () => {
+			describe( 'with JP version >= 4.7', () => {
+				describe( 'with Jetpack Manage turned off', () => {
+					test( "should return the site's wp-admin theme details URL", () => {
 						const detailsUrl = getThemeDetailsUrl(
 							{
 								sites: {
@@ -1036,8 +1036,8 @@ describe( 'themes selectors', () => {
 					} );
 				} );
 
-				context( 'with Jetpack Manage not explicitly turned off', () => {
-					it( 'should return the Calypso theme sheet URL', () => {
+				describe( 'with Jetpack Manage not explicitly turned off', () => {
+					test( 'should return the Calypso theme sheet URL', () => {
 						const detailsUrl = getThemeDetailsUrl(
 							{
 								sites: {
@@ -1065,8 +1065,8 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeSupportUrl', () => {
-		context( 'for a premium theme', () => {
-			it( 'given no site ID, should return the support URL', () => {
+		describe( 'for a premium theme', () => {
+			test( 'given no site ID, should return the support URL', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1090,7 +1090,7 @@ describe( 'themes selectors', () => {
 				expect( supportUrl ).to.equal( '/theme/mood/setup' );
 			} );
 
-			it( 'given a wpcom site ID, should return the support URL', () => {
+			test( 'given a wpcom site ID, should return the support URL', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1116,8 +1116,8 @@ describe( 'themes selectors', () => {
 			} );
 		} );
 
-		context( 'for a free theme', () => {
-			it( 'given no site ID, should return null', () => {
+		describe( 'for a free theme', () => {
+			test( 'given no site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1141,7 +1141,7 @@ describe( 'themes selectors', () => {
 				expect( supportUrl ).to.be.null;
 			} );
 
-			it( 'given a wpcom site ID, should return null', () => {
+			test( 'given a wpcom site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1166,7 +1166,7 @@ describe( 'themes selectors', () => {
 				expect( supportUrl ).to.be.null;
 			} );
 
-			it( 'given a Jetpack site ID, should return null', () => {
+			test( 'given a Jetpack site ID, should return null', () => {
 				const supportUrl = getThemeSupportUrl(
 					{
 						sites: {
@@ -1198,7 +1198,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeHelpUrl', () => {
-		it( 'given a theme and no site ID, should return the help URL', () => {
+		test( 'given a theme and no site ID, should return the help URL', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1215,7 +1215,7 @@ describe( 'themes selectors', () => {
 			expect( helpUrl ).to.equal( '/theme/mood/support' );
 		} );
 
-		it( 'given a theme and a wpcom site ID, should return the correct help URL', () => {
+		test( 'given a theme and a wpcom site ID, should return the correct help URL', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1240,7 +1240,7 @@ describe( 'themes selectors', () => {
 			expect( helpUrl ).to.equal( '/theme/mood/support/example.wordpress.com' );
 		} );
 
-		it( 'given a theme and Jetpack site ID, should return the help url', () => {
+		test( 'given a theme and Jetpack site ID, should return the help url', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1264,7 +1264,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemePurchaseUrl', () => {
-		it( 'given a free theme and a wpcom site ID, should return null', () => {
+		test( 'given a free theme and a wpcom site ID, should return null', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
 					sites: {
@@ -1289,7 +1289,7 @@ describe( 'themes selectors', () => {
 			expect( purchaseUrl ).to.be.null;
 		} );
 
-		it( 'given a premium theme and a wpcom site ID, should return the purchase URL', () => {
+		test( 'given a premium theme and a wpcom site ID, should return the purchase URL', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
 					sites: {
@@ -1316,7 +1316,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeCustomizeUrl', () => {
-		it( 'given no theme and no site ID, should return the correct customize URL', () => {
+		test( 'given no theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl( {
 				sites: {
 					items: {},
@@ -1325,7 +1325,7 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
-		it( 'given a theme and no site ID, should return the correct customize URL', () => {
+		test( 'given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1337,7 +1337,7 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
-		it( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
+		test( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1362,7 +1362,7 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
-		it( 'given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
+		test( 'given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1390,8 +1390,8 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com' );
 		} );
 
-		context( 'on a Jetpack site', () => {
-			context( 'with a non-WP.com theme', () => {
+		describe( 'on a Jetpack site', () => {
+			describe( 'with a non-WP.com theme', () => {
 				const state = {
 					sites: {
 						items: {
@@ -1427,7 +1427,7 @@ describe( 'themes selectors', () => {
 						global.window = undefined;
 					} );
 
-					it( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
+					test( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
@@ -1436,7 +1436,7 @@ describe( 'themes selectors', () => {
 				} );
 
 				describe( 'on the server', () => {
-					it( 'should return customizer URL with un-suffixed theme ID', () => {
+					test( 'should return customizer URL with un-suffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?theme=twentysixteen'
@@ -1445,7 +1445,7 @@ describe( 'themes selectors', () => {
 				} );
 			} );
 
-			context( 'with a WP.com theme', () => {
+			describe( 'with a WP.com theme', () => {
 				const state = {
 					sites: {
 						items: {
@@ -1481,7 +1481,7 @@ describe( 'themes selectors', () => {
 						global.window = undefined;
 					} );
 
-					it( 'should return customizer URL with return arg and unsuffixed theme ID', () => {
+					test( 'should return customizer URL with return arg and unsuffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
@@ -1490,7 +1490,7 @@ describe( 'themes selectors', () => {
 				} );
 
 				describe( 'on the server', () => {
-					it( 'should return customizer URL with unsuffixed theme ID', () => {
+					test( 'should return customizer URL with unsuffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?theme=twentysixteen'
@@ -1502,7 +1502,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeSignupUrl', () => {
-		it( 'given a free theme, should return the correct signup URL', () => {
+		test( 'given a free theme, should return the correct signup URL', () => {
 			const signupUrl = getThemeSignupUrl(
 				{
 					themes: {
@@ -1519,7 +1519,7 @@ describe( 'themes selectors', () => {
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
 		} );
 
-		it( 'given a premium theme, should return the correct signup URL', () => {
+		test( 'given a premium theme, should return the correct signup URL', () => {
 			const signupUrl = getThemeSignupUrl(
 				{
 					themes: {
@@ -1538,7 +1538,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeDemoUrl', () => {
-		it( 'with a theme not found on WP.com nor on WP.org, should return null', () => {
+		test( 'with a theme not found on WP.com nor on WP.org, should return null', () => {
 			const demoUrl = getThemeDemoUrl(
 				{
 					themes: {
@@ -1552,7 +1552,7 @@ describe( 'themes selectors', () => {
 			expect( demoUrl ).to.be.undefined;
 		} );
 
-		it( "with a theme found on WP.com, should return that object's demo_uri field", () => {
+		test( "with a theme found on WP.com, should return that object's demo_uri field", () => {
 			const demoUrl = getThemeDemoUrl(
 				{
 					themes: {
@@ -1570,7 +1570,7 @@ describe( 'themes selectors', () => {
 			expect( demoUrl ).to.deep.equal( 'https://twentysixteendemo.wordpress.com/' );
 		} );
 
-		it( "with a theme found on WP.org but not on WP.com, should return that object's demo_uri field", () => {
+		test( "with a theme found on WP.org but not on WP.com, should return that object's demo_uri field", () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -1602,8 +1602,8 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeForumUrl', () => {
-		context( 'on a WP.com site', () => {
-			it( 'given a free theme, should return the general themes forum URL', () => {
+		describe( 'on a WP.com site', () => {
+			test( 'given a free theme, should return the general themes forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1623,7 +1623,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
-			it( 'given a premium theme, should return the specific theme forum URL', () => {
+			test( 'given a premium theme, should return the specific theme forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1644,8 +1644,8 @@ describe( 'themes selectors', () => {
 			} );
 		} );
 
-		context( 'on a Jetpack site', () => {
-			it( "given a theme that's found on neither WP.com nor WP.org, should return null", () => {
+		describe( 'on a Jetpack site', () => {
+			test( "given a theme that's found on neither WP.com nor WP.org, should return null", () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1668,7 +1668,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).to.be.null;
 			} );
 
-			it( "given a theme that's found on WP.com, should return the generic WP.com themes support forum URL", () => {
+			test( "given a theme that's found on WP.com, should return the generic WP.com themes support forum URL", () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1695,7 +1695,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
-			it( "given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
+			test( "given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
 				const jetpackTheme = {
 					id: 'twentyseventeen',
 					name: 'Twenty Seventeen',
@@ -1743,7 +1743,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getActiveTheme', () => {
-		it( 'given no site, should return null', () => {
+		test( 'given no site, should return null', () => {
 			const activeTheme = getActiveTheme( {
 				themes: {
 					activeTheme: {},
@@ -1753,7 +1753,7 @@ describe( 'themes selectors', () => {
 			expect( activeTheme ).to.be.null;
 		} );
 
-		it( 'given a site, should return its currently active theme', () => {
+		test( 'given a site, should return its currently active theme', () => {
 			const activeTheme = getActiveTheme(
 				{
 					themes: {
@@ -1768,7 +1768,7 @@ describe( 'themes selectors', () => {
 			expect( activeTheme ).to.equal( 'twentysixteen' );
 		} );
 
-		it( 'given a site, should return its currently active theme without -wpcom suffix', () => {
+		test( 'given a site, should return its currently active theme without -wpcom suffix', () => {
 			const activeTheme = getActiveTheme(
 				{
 					themes: {
@@ -1785,7 +1785,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isThemeActive', () => {
-		it( 'given no theme and no site, should return false', () => {
+		test( 'given no theme and no site, should return false', () => {
 			const isActive = isThemeActive( {
 				themes: {
 					activeThemes: {
@@ -1800,7 +1800,7 @@ describe( 'themes selectors', () => {
 			expect( isActive ).to.be.false;
 		} );
 
-		it( 'given a theme but no site, should return false', () => {
+		test( 'given a theme but no site, should return false', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1818,7 +1818,7 @@ describe( 'themes selectors', () => {
 			expect( isActive ).to.be.false;
 		} );
 
-		it( "given a theme and a site on which it isn't active, should return false", () => {
+		test( "given a theme and a site on which it isn't active, should return false", () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1842,7 +1842,7 @@ describe( 'themes selectors', () => {
 			expect( isActive ).to.be.false;
 		} );
 
-		it( 'given a theme and a site on which it is active, should return true', () => {
+		test( 'given a theme and a site on which it is active, should return true', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1866,7 +1866,7 @@ describe( 'themes selectors', () => {
 			expect( isActive ).to.be.true;
 		} );
 
-		it( 'given a wpcom theme and a jetpack site on which it is active, should return true', () => {
+		test( 'given a wpcom theme and a jetpack site on which it is active, should return true', () => {
 			const isActive = isThemeActive(
 				{
 					themes: {
@@ -1894,7 +1894,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isActivatingTheme', () => {
-		it( 'given no site, should return false', () => {
+		test( 'given no site, should return false', () => {
 			const activating = isActivatingTheme( {
 				themes: {
 					activationRequests: {},
@@ -1904,7 +1904,7 @@ describe( 'themes selectors', () => {
 			expect( activating ).to.be.false;
 		} );
 
-		it( 'given a site, should return true if theme is currently activated', () => {
+		test( 'given a site, should return true if theme is currently activated', () => {
 			const activating = isActivatingTheme(
 				{
 					themes: {
@@ -1921,7 +1921,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#hasActivatedTheme', () => {
-		it( 'given no site, should return false', () => {
+		test( 'given no site, should return false', () => {
 			const activated = hasActivatedTheme( {
 				themes: {
 					completedActivationRequests: {},
@@ -1931,7 +1931,7 @@ describe( 'themes selectors', () => {
 			expect( activated ).to.be.false;
 		} );
 
-		it( 'given a site, should return true if theme has been activated', () => {
+		test( 'given a site, should return true if theme has been activated', () => {
 			const activated = hasActivatedTheme(
 				{
 					themes: {
@@ -1948,7 +1948,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isRequestingActiveTheme', () => {
-		it( 'given empty state, should return false', () => {
+		test( 'given empty state, should return false', () => {
 			const isRequesting = isRequestingActiveTheme( {
 				themes: {
 					activeThemeRequests: {},
@@ -1958,7 +1958,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'given no active request, should return false', () => {
+		test( 'given no active request, should return false', () => {
 			const isRequesting = isRequestingActiveTheme(
 				{
 					themes: {
@@ -1973,7 +1973,7 @@ describe( 'themes selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'given pending action request, should return true', () => {
+		test( 'given pending action request, should return true', () => {
 			const isRequesting = isRequestingActiveTheme(
 				{
 					themes: {
@@ -1990,7 +1990,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isInstallingTheme', () => {
-		it( 'given no site, should return false', () => {
+		test( 'given no site, should return false', () => {
 			const installing = isInstallingTheme( {
 				themes: {
 					themeInstalls: {},
@@ -2000,7 +2000,7 @@ describe( 'themes selectors', () => {
 			expect( installing ).to.be.false;
 		} );
 
-		it( 'given a site, should return true if theme is currently being installed', () => {
+		test( 'given a site, should return true if theme is currently being installed', () => {
 			const installing = isInstallingTheme(
 				{
 					themes: {
@@ -2026,7 +2026,7 @@ describe( 'themes selectors', () => {
 			expect( installing ).to.be.true;
 		} );
 
-		it( 'given a jetpack site and wpcom theme, should return true if theme is currently being installed', () => {
+		test( 'given a jetpack site and wpcom theme, should return true if theme is currently being installed', () => {
 			const installing = isInstallingTheme(
 				{
 					themes: {
@@ -2056,7 +2056,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isWporgTheme()', () => {
-		it( 'should return false if theme is not found on WP.org', () => {
+		test( 'should return false if theme is not found on WP.org', () => {
 			const isWporg = isWporgTheme(
 				{
 					themes: {
@@ -2069,7 +2069,7 @@ describe( 'themes selectors', () => {
 			expect( isWporg ).to.be.false;
 		} );
 
-		it( 'should return true if theme is found on WP.org', () => {
+		test( 'should return true if theme is found on WP.org', () => {
 			const wporgTheme = {
 				id: 'twentyseventeen',
 				name: 'Twenty Seventeen',
@@ -2100,7 +2100,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isWpcomTheme()', () => {
-		it( 'should return false if theme is not found on WP.com', () => {
+		test( 'should return false if theme is not found on WP.com', () => {
 			const isWpcom = isWporgTheme(
 				{
 					themes: {
@@ -2113,7 +2113,7 @@ describe( 'themes selectors', () => {
 			expect( isWpcom ).to.be.false;
 		} );
 
-		it( 'should return true if theme is found on WP.com', () => {
+		test( 'should return true if theme is found on WP.com', () => {
 			const isWpcom = isWpcomTheme(
 				{
 					themes: {
@@ -2132,7 +2132,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isPremium()', () => {
-		it( 'given no theme object, should return false', () => {
+		test( 'given no theme object, should return false', () => {
 			const premium = isThemePremium( {
 				themes: {
 					queries: {},
@@ -2141,7 +2141,7 @@ describe( 'themes selectors', () => {
 			expect( premium ).to.be.false;
 		} );
 
-		it( "given the ID of a theme that doesn't exist, should return false", () => {
+		test( "given the ID of a theme that doesn't exist, should return false", () => {
 			const premium = isThemePremium(
 				{
 					themes: {
@@ -2157,7 +2157,7 @@ describe( 'themes selectors', () => {
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given the ID of a free theme, should return false', () => {
+		test( 'given the ID of a free theme, should return false', () => {
 			const premium = isThemePremium(
 				{
 					themes: {
@@ -2173,7 +2173,7 @@ describe( 'themes selectors', () => {
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given the ID of a premium theme, should return true', () => {
+		test( 'given the ID of a premium theme, should return true', () => {
 			const premium = isThemePremium(
 				{
 					themes: {
@@ -2191,7 +2191,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isThemePurchased', () => {
-		it( 'given no theme and no site, should return false', () => {
+		test( 'given no theme and no site, should return false', () => {
 			const isPurchased = isThemePurchased( {
 				purchases: {
 					data: [
@@ -2208,7 +2208,7 @@ describe( 'themes selectors', () => {
 			expect( isPurchased ).to.be.false;
 		} );
 
-		it( 'given a theme but no site, should return false', () => {
+		test( 'given a theme but no site, should return false', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2228,7 +2228,7 @@ describe( 'themes selectors', () => {
 			expect( isPurchased ).to.be.false;
 		} );
 
-		it( 'given a theme that has not been purchased on a given site, should return false', () => {
+		test( 'given a theme that has not been purchased on a given site, should return false', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2249,7 +2249,7 @@ describe( 'themes selectors', () => {
 			expect( isPurchased ).to.be.false;
 		} );
 
-		it( 'given a theme that has been purchased on a given site, should return true', () => {
+		test( 'given a theme that has been purchased on a given site, should return true', () => {
 			const isPurchased = isThemePurchased(
 				{
 					purchases: {
@@ -2272,7 +2272,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isPremiumThemeAvailable', () => {
-		it( 'given no theme and no site, should return false', () => {
+		test( 'given no theme and no site, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable( {
 				themes: {
 					queries: {},
@@ -2292,7 +2292,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.false;
 		} );
 
-		it( 'given a theme but no site, should return false', () => {
+		test( 'given a theme but no site, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					themes: {
@@ -2315,7 +2315,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.false;
 		} );
 
-		it( 'given a theme that has not been purchased on a given site, should return false', () => {
+		test( 'given a theme that has not been purchased on a given site, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2355,7 +2355,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.false;
 		} );
 
-		it( 'given a premium squared theme and a site without the premium upgrade, should return false', () => {
+		test( 'given a premium squared theme and a site without the premium upgrade, should return false', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2391,7 +2391,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.false;
 		} );
 
-		it( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
+		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2427,7 +2427,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.true;
 		} );
 
-		it( 'given a site with the unlimited premium themes bundle, should return true', () => {
+		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2465,7 +2465,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#isThemeAvailableOnJetpackSite', () => {
-		it( 'should return true if theme is already installed on Jetpack site', () => {
+		test( 'should return true if theme is already installed on Jetpack site', () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2491,7 +2491,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.true;
 		} );
 
-		it( "should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
+		test( "should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2520,7 +2520,7 @@ describe( 'themes selectors', () => {
 			expect( isAvailable ).to.be.false;
 		} );
 
-		it( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
+		test( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
 			const isAvailable = isThemeAvailableOnJetpackSite(
 				{
 					sites: {
@@ -2551,7 +2551,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( 'getWpcomParentThemeId', () => {
-		it( 'should return null for non-existent theme', () => {
+		test( 'should return null for non-existent theme', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {
@@ -2563,7 +2563,7 @@ describe( 'themes selectors', () => {
 			expect( parentId ).to.be.null;
 		} );
 
-		it( 'should return null for theme with no parent', () => {
+		test( 'should return null for theme with no parent', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {
@@ -2579,7 +2579,7 @@ describe( 'themes selectors', () => {
 			expect( parentId ).to.be.null;
 		} );
 
-		it( 'should return parent id', () => {
+		test( 'should return parent id', () => {
 			const parentId = getWpcomParentThemeId(
 				{
 					themes: {

@@ -19,18 +19,18 @@ import searchClass from '../';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
-describe( 'Search', function() {
-	describe( 'initialValue', function() {
+describe( 'Search', () => {
+	describe( 'initialValue', () => {
 		let onSearch, rendered;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			onSearch = sinon.stub();
 		} );
 
-		describe( 'with initialValue', function() {
+		describe( 'with initialValue', () => {
 			const initialValue = 'hello';
 
-			beforeEach( function() {
+			beforeEach( () => {
 				const searchElement = React.createElement( searchClass, {
 					initialValue,
 					onSearch,
@@ -38,20 +38,20 @@ describe( 'Search', function() {
 				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
 
-			it( 'should set state.keyword with the initialValue after mount', function() {
+			test( 'should set state.keyword with the initialValue after mount', () => {
 				expect( rendered.state.keyword ).to.equal( initialValue );
 			} );
 		} );
 
-		describe( 'without initialValue', function() {
-			beforeEach( function() {
+		describe( 'without initialValue', () => {
+			beforeEach( () => {
 				const searchElement = React.createElement( searchClass, {
 					onSearch,
 				} );
 				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
 
-			it( 'should set state.keyword empty string after mount', function() {
+			test( 'should set state.keyword empty string after mount', () => {
 				expect( rendered.state.keyword ).to.equal( '' );
 			} );
 		} );

@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isDeletingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not being deleted', () => {
+		test( 'should return false if the cache is not being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -67,7 +67,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is being deleted', () => {
+		test( 'should return true if the cache is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isCacheDeleteSuccessful()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -103,7 +103,7 @@ describe( 'selectors', () => {
 			expect( isSuccessful ).to.be.false;
 		} );
 
-		it( 'should return true if the delete request status is success', () => {
+		test( 'should return true if the delete request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -120,7 +120,7 @@ describe( 'selectors', () => {
 			expect( isSuccessful ).to.be.true;
 		} );
 
-		it( 'should return false if the delete request status is error', () => {
+		test( 'should return false if the delete request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCacheDeleteStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
+		test( 'should return undefined if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -156,7 +156,7 @@ describe( 'selectors', () => {
 			expect( status ).to.be.undefined;
 		} );
 
-		it( 'should return success if the delete request status is success', () => {
+		test( 'should return success if the delete request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -173,7 +173,7 @@ describe( 'selectors', () => {
 			expect( status ).to.eql( 'success' );
 		} );
 
-		it( 'should return error if the delete request status is error', () => {
+		test( 'should return error if the delete request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -190,7 +190,7 @@ describe( 'selectors', () => {
 			expect( status ).to.eql( 'error' );
 		} );
 
-		it( 'should return pending if the delete request status is pending', () => {
+		test( 'should return pending if the delete request status is pending', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -209,7 +209,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isTestingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -222,7 +222,7 @@ describe( 'selectors', () => {
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -239,7 +239,7 @@ describe( 'selectors', () => {
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not being tested', () => {
+		test( 'should return false if the cache is not being tested', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -256,7 +256,7 @@ describe( 'selectors', () => {
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is being tested', () => {
+		test( 'should return true if the cache is being tested', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -283,7 +283,7 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return empty object if no state exists', () => {
+		test( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -296,7 +296,7 @@ describe( 'selectors', () => {
 			expect( results ).to.be.empty;
 		} );
 
-		it( 'should return empty object if the site is not attached', () => {
+		test( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -313,7 +313,7 @@ describe( 'selectors', () => {
 			expect( results ).to.be.empty;
 		} );
 
-		it( 'should return the cache test results for a siteId', () => {
+		test( 'should return the cache test results for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -332,7 +332,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPreloadingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -345,7 +345,7 @@ describe( 'selectors', () => {
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -362,7 +362,7 @@ describe( 'selectors', () => {
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not preloading', () => {
+		test( 'should return false if the cache is not preloading', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -379,7 +379,7 @@ describe( 'selectors', () => {
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is preloading', () => {
+		test( 'should return true if the cache is preloading', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {

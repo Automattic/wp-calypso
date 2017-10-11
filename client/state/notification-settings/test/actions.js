@@ -13,7 +13,7 @@ import { NOTIFICATION_SETTINGS_REQUEST, NOTIFICATION_SETTINGS_UPDATE } from 'sta
 
 describe( 'actions', () => {
 	describe( '#requestNotificationSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = requestNotificationSettings();
 
 			expect( action ).to.eql( { type: NOTIFICATION_SETTINGS_REQUEST } );
@@ -21,7 +21,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateNotificationSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const settings = {};
 			const action = updateNotificationSettings( { settings } );
 

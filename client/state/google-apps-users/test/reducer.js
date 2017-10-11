@@ -14,13 +14,13 @@ import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED } from 'stat
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty array', () => {
+		test( 'should default to an empty array', () => {
 			const state = items( undefined, {} );
 
 			assert.deepEqual( state, [] );
 		} );
 
-		it( 'should return new items received', () => {
+		test( 'should return new items received', () => {
 			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ), {
 				type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
 				items: [ { email: 'hi@world.com' } ],
@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 			assert.deepEqual( state, [ { email: 'hello@world.com' }, { email: 'hi@world.com' } ] );
 		} );
 
-		it( 'should not have duplicate items', () => {
+		test( 'should not have duplicate items', () => {
 			const state = items( deepFreeze( [ { email: 'hello@world.com' } ] ), {
 				type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
 				items: [ { email: 'hi@world.com' }, { email: 'hello@world.com' } ],
@@ -40,13 +40,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#loaded()', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			assert( loaded( undefined, {} ) === false );
 		} );
-		it( 'should be true after a receive', () => {
+		test( 'should be true after a receive', () => {
 			assert( loaded( undefined, { type: GOOGLE_APPS_USERS_FETCH_COMPLETED } ) === true );
 		} );
-		it( 'should return false when a fetch starts', () => {
+		test( 'should return false when a fetch starts', () => {
 			assert( loaded( true, { type: GOOGLE_APPS_USERS_FETCH } ) === false );
 		} );
 	} );

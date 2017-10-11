@@ -46,7 +46,7 @@ describe( 'actions', () => {
 					.reply( 200, successResponse );
 			} );
 
-			it( 'should dispatch a monitor settings request action when thunk triggered', () => {
+			test( 'should dispatch a monitor settings request action when thunk triggered', () => {
 				requestSiteMonitorSettings( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch monitor settings request success and receive actions upon success', () => {
+			test( 'should dispatch monitor settings request success and receive actions upon success', () => {
 				return requestSiteMonitorSettings( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_RECEIVE,
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch monitor settings request failure action upon error', () => {
+			test( 'should dispatch monitor settings request failure action upon error', () => {
 				return requestSiteMonitorSettings( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_REQUEST_FAILURE,
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a monitor settings request action when thunk triggered', () => {
+			test( 'should dispatch a monitor settings request action when thunk triggered', () => {
 				updateSiteMonitorSettings( siteId, settings )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -125,7 +125,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch monitor settings request success action upon success', () => {
+			test( 'should dispatch monitor settings request success action upon success', () => {
 				return updateSiteMonitorSettings( siteId, settings )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
@@ -148,7 +148,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch monitor settings request failure action upon error', () => {
+			test( 'should dispatch monitor settings request failure action upon error', () => {
 				return updateSiteMonitorSettings( siteId, settings )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_MONITOR_SETTINGS_UPDATE_FAILURE,

@@ -14,42 +14,42 @@ import { assert } from 'chai';
 import actions from './lib/mock-actions';
 import site from './lib/mock-site';
 
-describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
+describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 	let Dispatcher, EarningsStore, SettingsStore, TosStore;
 
-	before( function() {
+	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
 		EarningsStore = require( 'lib/ads/earnings-store' );
 		SettingsStore = require( 'lib/ads/settings-store' );
 		TosStore = require( 'lib/ads/tos-store' );
 	} );
 
-	it( 'Stores should be an object', function() {
+	test( 'Stores should be an object', () => {
 		assert.isObject( EarningsStore );
 		assert.isObject( SettingsStore );
 		assert.isObject( TosStore );
 	} );
 
-	it( 'Stores should have method getById', function() {
+	test( 'Stores should have method getById', () => {
 		assert.isFunction( EarningsStore.getById );
 		assert.isFunction( SettingsStore.getById );
 		assert.isFunction( TosStore.getById );
 	} );
 
-	it( 'Stores should have method emitChange', function() {
+	test( 'Stores should have method emitChange', () => {
 		assert.isFunction( EarningsStore.emitChange );
 		assert.isFunction( SettingsStore.emitChange );
 		assert.isFunction( TosStore.emitChange );
 	} );
 
-	describe( 'Fetch', function() {
-		before( function() {
+	describe( 'Fetch', () => {
+		beforeAll( function() {
 			Dispatcher.handleServerAction( actions.fetchedEarnings );
 			Dispatcher.handleServerAction( actions.fetchedSettings );
 			Dispatcher.handleServerAction( actions.fetchedTos );
 		} );
 
-		it( 'The store should return an object', function() {
+		test( 'The store should return an object', () => {
 			var earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
@@ -59,7 +59,7 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
 			assert.isObject( tos );
 		} );
 
-		it( 'The object should not be null after RECEIVE', function() {
+		test( 'The object should not be null after RECEIVE', () => {
 			var earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );

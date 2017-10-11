@@ -2837,4 +2837,4 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 /**
  * Expose `Undocumented` module
  */
-module.exports = Undocumented;
+export default Undocumented;

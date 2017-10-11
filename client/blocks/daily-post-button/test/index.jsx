@@ -37,7 +37,7 @@ describe( 'DailyPostButton', () => {
 	const [ sampleUserSite, sampleReadingSite ] = sites;
 
 	describe( 'rendering', () => {
-		it( 'does not render if the user can not participate (does not have any sites)', () => {
+		test( 'does not render if the user can not participate (does not have any sites)', () => {
 			const dailyPostPrompt = shallow(
 				<DailyPostButton
 					post={ dailyPromptPost }
@@ -50,7 +50,7 @@ describe( 'DailyPostButton', () => {
 			assert.isNull( dailyPostPrompt.type() );
 		} );
 
-		it( 'renders as a span tag by default', () => {
+		test( 'renders as a span tag by default', () => {
 			const renderAsSpan = shallow(
 				<DailyPostButton
 					post={ dailyPromptPost }
@@ -63,7 +63,7 @@ describe( 'DailyPostButton', () => {
 			assert.equal( 'span', renderAsSpan.type() );
 		} );
 
-		it( 'renders as the tag specified in props tagName', () => {
+		test( 'renders as the tag specified in props tagName', () => {
 			const renderAsSpan = shallow(
 				<DailyPostButton
 					tagName="span"
@@ -79,7 +79,7 @@ describe( 'DailyPostButton', () => {
 	} );
 
 	describe( 'clicking daily post button', () => {
-		it( 'redirects to primary site if the user only has one site', () => {
+		test( 'redirects to primary site if the user only has one site', () => {
 			const dailyPostButton = shallow(
 				<DailyPostButton
 					post={ dailyPromptPost }
@@ -93,7 +93,7 @@ describe( 'DailyPostButton', () => {
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
-		it( 'shows the site selector if the user has more than one site', done => {
+		test( 'shows the site selector if the user has more than one site', done => {
 			const dailyPostButton = shallow(
 				<DailyPostButton
 					tagName="span"
@@ -110,7 +110,7 @@ describe( 'DailyPostButton', () => {
 	} );
 
 	describe( 'starting a post', () => {
-		it( 'adds the daily post prompt attributes to the redirect url', () => {
+		test( 'adds the daily post prompt attributes to the redirect url', () => {
 			const prompt = shallow(
 				<DailyPostButton
 					tagName="span"

@@ -23,7 +23,7 @@ import {
 
 describe( 'actions', () => {
 	describe( '#setDocumentHeadTitle()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setDocumentHeadTitle( 'Home' );
 
 			expect( action ).to.eql( {
@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setDocumentHeadUnreadCount()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setDocumentHeadUnreadCount( 123 );
 
 			expect( action ).to.eql( {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setDocumentHeadLink()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setDocumentHeadLink( { rel: 'some-rel', content: 'some-content' } );
 
 			expect( action ).to.eql( {
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setDocumentHeadMeta()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setDocumentHeadMeta( { rel: 'some-rel', content: 'some-content' } );
 
 			expect( action ).to.eql( {

@@ -19,7 +19,7 @@ const originalAction = {
 
 describe( 'http-request', () => {
 	describe( '#get', () => {
-		it( 'should return a request action', () => {
+		test( 'should return a request action', () => {
 			const action = request( siteId, originalAction ).get( 'placeholder_endpoint' );
 			expect( action ).to.include( {
 				type: WPCOM_HTTP_REQUEST,
@@ -33,7 +33,7 @@ describe( 'http-request', () => {
 		} );
 	} );
 	describe( '#getWithHeaders', () => {
-		it( 'should return a modified path', () => {
+		test( 'should return a modified path', () => {
 			const action = request( siteId, originalAction ).getWithHeaders( 'placeholder_endpoint' );
 
 			expect( action.query ).to.exist;
@@ -44,7 +44,7 @@ describe( 'http-request', () => {
 	describe( '#post', () => {
 		const body = { name: 'placeholder post request', placeholder: true };
 
-		it( 'should return a request action', () => {
+		test( 'should return a request action', () => {
 			const action = request( siteId, originalAction ).post( 'placeholder_endpoint', body );
 			expect( action ).to.include( {
 				type: WPCOM_HTTP_REQUEST,
@@ -61,7 +61,7 @@ describe( 'http-request', () => {
 	describe( '#put', () => {
 		const body = { name: 'placeholder post request', placeholder: true };
 
-		it( 'should return a request action', () => {
+		test( 'should return a request action', () => {
 			const action = request( siteId, originalAction ).put( 'placeholder_endpoint', body );
 			expect( action ).to.include( {
 				type: WPCOM_HTTP_REQUEST,
@@ -77,7 +77,7 @@ describe( 'http-request', () => {
 	} );
 
 	describe( '#del', () => {
-		it( 'should return a request action', () => {
+		test( 'should return a request action', () => {
 			const action = request( siteId, originalAction ).del( 'placeholder_endpoint' );
 			expect( action ).to.include( {
 				type: WPCOM_HTTP_REQUEST,

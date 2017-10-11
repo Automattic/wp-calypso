@@ -11,7 +11,7 @@ import React from 'react';
  */
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ConnectedApplicationIcon',
 
 	getDefaultProps: function() {

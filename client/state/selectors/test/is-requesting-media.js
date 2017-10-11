@@ -26,13 +26,13 @@ describe( 'isRequestingMedia()', () => {
 		},
 	};
 
-	it( 'should return false if the site is not attached', () => {
+	test( 'should return false if the site is not attached', () => {
 		const isRequesting = isRequestingMedia( state, 2916285, query );
 
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return false if media are not being requested', () => {
+	test( 'should return false if media are not being requested', () => {
 		const isRequesting = isRequestingMedia( state, 2916284, {
 			search: 'flowers',
 		} );
@@ -40,7 +40,7 @@ describe( 'isRequestingMedia()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return true if media are being requested', () => {
+	test( 'should return true if media are being requested', () => {
 		const isRequesting = isRequestingMedia( state, 2916284, query );
 
 		expect( isRequesting ).to.be.true;

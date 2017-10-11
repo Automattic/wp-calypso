@@ -130,4 +130,4 @@ const WordadsActions = {
 	},
 };
 
-module.exports = WordadsActions;
+export default WordadsActions;

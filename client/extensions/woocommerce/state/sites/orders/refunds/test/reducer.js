@@ -19,12 +19,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'isSaving', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = isSaving( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should store the currently refunding order', () => {
+		test( 'should store the currently refunding order', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_REFUND_CREATE,
 				siteId: 123,
@@ -34,7 +34,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: true } );
 		} );
 
-		it( 'should should show that the refund request has finished on success', () => {
+		test( 'should should show that the refund request has finished on success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 				siteId: 123,
@@ -46,7 +46,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: false } );
 		} );
 
-		it( 'should should show that the refund request has finished on failure', () => {
+		test( 'should should show that the refund request has finished on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 				siteId: 123,

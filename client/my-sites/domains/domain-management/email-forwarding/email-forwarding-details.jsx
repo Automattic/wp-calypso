@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -18,7 +20,7 @@ var EmailForwardingDetails = React.createClass( {
 	render: function() {
 		return (
 			<p className="email-forwarding__explanation">
-				{ this.translate(
+				{ this.props.translate(
 					'Email Forwarding lets you use your custom domain in your email address, so your email address can be just as memorable as your blog.'
 				) }{' '}
 				<a
@@ -27,7 +29,7 @@ var EmailForwardingDetails = React.createClass( {
 					rel="noopener noreferrer"
 					onClick={ this.handleLearnMoreClick }
 				>
-					{ this.translate( 'Learn more.' ) }
+					{ this.props.translate( 'Learn more.' ) }
 				</a>
 			</p>
 		);
@@ -38,4 +40,4 @@ var EmailForwardingDetails = React.createClass( {
 	},
 } );
 
-module.exports = EmailForwardingDetails;
+export default localize( EmailForwardingDetails );

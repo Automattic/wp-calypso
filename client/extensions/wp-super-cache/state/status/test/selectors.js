@@ -15,7 +15,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isRequestingStatus()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -26,7 +26,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the status are not being fetched', () => {
+		test( 'should return false if the status are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the status are being fetched', () => {
+		test( 'should return true if the status are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return empty object if no state exists', () => {
+		test( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -97,7 +97,7 @@ describe( 'selectors', () => {
 			expect( status ).to.be.empty;
 		} );
 
-		it( 'should return empty object if the site is not attached', () => {
+		test( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 			expect( status ).to.be.empty;
 		} );
 
-		it( 'should return the status for a siteId', () => {
+		test( 'should return the status for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {

@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -69,7 +71,7 @@ var PayButton = React.createClass( {
 		}
 
 		if ( cartItems.hasOnlyFreeTrial( cart ) ) {
-			return this.translate( 'Start %(days)s Day Free Trial', {
+			return this.props.translate( 'Start %(days)s Day Free Trial', {
 				args: { days: '14' },
 				context: 'Pay button for free trials on /checkout',
 			} );
@@ -78,32 +80,32 @@ var PayButton = React.createClass( {
 		if ( cart.total_cost_display ) {
 			if ( isPaidForFullyInCredits( cart ) ) {
 				if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-					return this.translate( 'Purchase %(price)s subscription with Credits', {
+					return this.props.translate( 'Purchase %(price)s subscription with Credits', {
 						args: { price: cart.total_cost_display },
 						context: 'Renew button on /checkout',
 					} );
 				}
 
-				return this.translate( 'Pay %(price)s with Credits', {
+				return this.props.translate( 'Pay %(price)s with Credits', {
 					args: { price: cart.total_cost_display },
 					context: 'Pay button on /checkout',
 				} );
 			}
 
 			if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-				return this.translate( 'Renew subscription - %(price)s', {
+				return this.props.translate( 'Renew subscription - %(price)s', {
 					args: { price: cart.total_cost_display },
 					context: 'Renew button on /checkout',
 				} );
 			}
 
-			return this.translate( 'Pay %(price)s', {
+			return this.props.translate( 'Pay %(price)s', {
 				args: { price: cart.total_cost_display },
 				context: 'Pay button on /checkout',
 			} );
 		}
 
-		return this.translate( 'Pay now', { context: 'Pay button on /checkout' } );
+		return this.props.translate( 'Pay now', { context: 'Pay button on /checkout' } );
 	},
 
 	beforeSubmit: function() {
@@ -116,18 +118,20 @@ var PayButton = React.createClass( {
 	sending: function() {
 		return {
 			disabled: true,
-			text: this.translate( 'Sending your purchase', { context: 'Loading state on /checkout' } ),
+			text: this.props.translate( 'Sending your purchase', {
+				context: 'Loading state on /checkout',
+			} ),
 		};
 	},
 
 	completing: function() {
 		var text;
 		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			text = this.translate( 'Starting your free trial…', {
+			text = this.props.translate( 'Starting your free trial…', {
 				context: 'Loading state on /checkout',
 			} );
 		} else {
-			text = this.translate( 'Completing your purchase', {
+			text = this.props.translate( 'Completing your purchase', {
 				context: 'Loading state on /checkout',
 			} );
 		}
@@ -155,4 +159,4 @@ var PayButton = React.createClass( {
 	},
 } );
 
-module.exports = PayButton;
+export default localize( PayButton );

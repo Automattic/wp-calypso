@@ -17,19 +17,19 @@ import ReactDom from 'react-dom';
  */
 import FormRange from '../';
 
-describe( 'index', function() {
-	afterEach( function() {
+describe( 'index', () => {
+	afterEach( () => {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
-	it( 'should render beginning content if passed a `minContent` prop', function() {
+	test( 'should render beginning content if passed a `minContent` prop', () => {
 		var range = TestUtils.renderIntoDocument(
 			<FormRange minContent={ <Gridicon icon="minus-small" /> } />
 		);
 		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-minus-small' );
 	} );
 
-	it( 'should not render ending content if not passed a `maxContent` prop', function() {
+	test( 'should not render ending content if not passed a `maxContent` prop', () => {
 		var range = TestUtils.renderIntoDocument(
 				<FormRange minContent={ <Gridicon icon="minus-small" /> } />
 			),
@@ -39,14 +39,14 @@ describe( 'index', function() {
 		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-min' );
 	} );
 
-	it( 'should render ending content if passed a `maxContent` prop', function() {
+	test( 'should render ending content if passed a `maxContent` prop', () => {
 		var range = TestUtils.renderIntoDocument(
 			<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
 		);
 		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-plus-small' );
 	} );
 
-	it( 'should not render beginning content if not passed a `minContent` prop', function() {
+	test( 'should not render beginning content if not passed a `minContent` prop', () => {
 		var range = TestUtils.renderIntoDocument(
 				<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
 			),
@@ -56,7 +56,7 @@ describe( 'index', function() {
 		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-max' );
 	} );
 
-	it( 'should render a value label if passed a truthy `showValueLabel` prop', function() {
+	test( 'should render a value label if passed a truthy `showValueLabel` prop', () => {
 		var range = TestUtils.renderIntoDocument(
 				<FormRange value={ 8 } showValueLabel={ true } readOnly={ true } />
 			),

@@ -21,7 +21,7 @@ jest.mock( 'state/reader/posts/actions', () => ( {
 describe( 'actions', () => {
 	let recordFollow, recordUnfollow;
 
-	before( () => {
+	beforeAll( () => {
 		const actions = require( '../actions' );
 		recordFollow = actions.recordFollow;
 		recordUnfollow = actions.recordUnfollow;
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#recordFollow', () => {
-		it( 'should dispatch an action when a URL is followed', () => {
+		test( 'should dispatch an action when a URL is followed', () => {
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_RECORD_FOLLOW,
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#recordUnfollow', () => {
-		it( 'should dispatch an action when a URL is unfollowed', () => {
+		test( 'should dispatch an action when a URL is unfollowed', () => {
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_RECORD_UNFOLLOW,
@@ -57,7 +57,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#recordFollowError', () => {
-		it( 'should dispatch an action on follow error', () => {
+		test( 'should dispatch an action on follow error', () => {
 			const action = recordFollowError( 'http://discover.wordpress.com', 'invalid_feed' );
 			expect( action ).to.deep.equal( {
 				type: READER_FOLLOW_ERROR,

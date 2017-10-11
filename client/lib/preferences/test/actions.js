@@ -49,12 +49,12 @@ jest.mock( 'lib/wp', () => {
  */
 const DUMMY_PERSISTED_PREFERENCES = { saved: true };
 
-describe( 'PreferencesActions', function() {
+describe( 'PreferencesActions', () => {
 	let sandbox;
 	useSandbox( _sandbox => ( sandbox = _sandbox ) );
 	useNock();
 
-	beforeEach( function() {
+	beforeEach( () => {
 		sandbox.restore();
 		sandbox.stub( store, 'get' );
 		sandbox.stub( store, 'set' );
@@ -72,10 +72,8 @@ describe( 'PreferencesActions', function() {
 		postSettings.reset();
 	} );
 
-	describe( '#fetch()', function() {
-		it( 'should retrieve from localStorage and trigger a request to the REST API', function(
-			done
-		) {
+	describe( '#fetch()', () => {
+		test( 'should retrieve from localStorage and trigger a request to the REST API', done => {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( DUMMY_PERSISTED_PREFERENCES );
 
@@ -99,7 +97,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should not persist to localStorage from remote request if error occurs', function( done ) {
+		test( 'should not persist to localStorage from remote request if error occurs', done => {
 			sandbox.stub( PreferencesActions, 'mergePreferencesToLocalStorage' );
 
 			getSettings.callsArgWithAsync( 0, true );
@@ -111,7 +109,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should not dispatch an empty local store', function( done ) {
+		test( 'should not dispatch an empty local store', done => {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( undefined );
 
@@ -131,8 +129,8 @@ describe( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe( '#set()', function() {
-		it( 'should save to localStorage and trigger a request to the REST API', function( done ) {
+	describe( '#set()', () => {
+		test( 'should save to localStorage and trigger a request to the REST API', done => {
 			PreferencesActions.set( 'one', 1 );
 
 			expect( store.set ).to.have.been.calledWith( LOCALSTORAGE_KEY, { one: 1 } );
@@ -153,7 +151,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should add to, not replace, existing values', function() {
+		test( 'should add to, not replace, existing values', () => {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( { one: 1 } );
 			PreferencesActions.set( 'two', 2 );
@@ -167,7 +165,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should assume a null value is to be removed', function() {
+		test( 'should assume a null value is to be removed', () => {
 			PreferencesActions.set( 'one', 1 );
 			PreferencesActions.set( 'one', null );
 
@@ -181,7 +179,7 @@ describe( 'PreferencesActions', function() {
 			} );
 		} );
 
-		it( 'should only dispatch a receive after all pending updates have finished', function( done ) {
+		test( 'should only dispatch a receive after all pending updates have finished', done => {
 			PreferencesActions.set( 'one', 1 );
 			PreferencesActions.set( 'one', null );
 
@@ -196,8 +194,8 @@ describe( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe( '#remove()', function() {
-		it( 'should remove from localStorage and trigger a request to the REST API', function( done ) {
+	describe( '#remove()', () => {
+		test( 'should remove from localStorage and trigger a request to the REST API', done => {
 			PreferencesActions.set( 'one', 1 );
 			PreferencesActions.remove( 'one' );
 

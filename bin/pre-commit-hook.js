@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+/**
+ * A blank docblock to prevent prettier from formatting this file
+ */
+
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
@@ -23,7 +27,7 @@ const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
 	.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 
 /**
- * Returns true if the given text contains @format.
+ * Returns true if the given text contain `@format`
  * within its first docblock. False otherwise.
  *
  * @param {String} text text to scan for the format keyword within the first docblock
@@ -46,8 +50,10 @@ const shouldFormat = text => {
 };
 
 // run prettier for any files in the commit that have @format within their first docblock
-files.map( file => path.join( __dirname, '../', file ) ).forEach( file => {
-	fs.readFile( file, 'utf8', ( err, text ) => {
+files
+	.map( file => path.join( __dirname, '../', file ) )
+	.forEach( file => {
+		const text = fs.readFileSync( file, 'utf8' );
 		if ( shouldFormat( text ) ) {
 			console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
 			const formattedText = prettier.format( text, {} );
@@ -55,7 +61,6 @@ files.map( file => path.join( __dirname, '../', file ) ).forEach( file => {
 			execSync( `git add ${ file }` );
 		}
 	} );
-} );
 
 // linting should happen after formatting
 const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {

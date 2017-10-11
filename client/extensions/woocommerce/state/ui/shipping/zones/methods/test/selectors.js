@@ -22,7 +22,7 @@ const emptyZoneLocations = { country: [], continent: [], state: [], postcode: []
 
 describe( 'selectors', () => {
 	describe( 'getShippingZoneMethods', () => {
-		it( 'should return an empty list when the zones are being loaded', () => {
+		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: LOADING,
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty list when the zone does not exist', () => {
+		test( 'should return an empty list when the zone does not exist', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -44,7 +44,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneMethods( state, 7 ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should NOT overlay the zone currently being edited', () => {
+		test( 'should NOT overlay the zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -77,7 +77,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should overlay method updates', () => {
+		test( 'should overlay method updates', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -112,7 +112,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should overlay method deletes', () => {
+		test( 'should overlay method deletes', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7, 8 ] } ],
@@ -148,7 +148,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should overlay method creates', () => {
+		test( 'should overlay method creates', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -181,7 +181,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should work for newly-created zones', () => {
+		test( 'should work for newly-created zones', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -214,7 +214,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should sort the shipping methods', () => {
+		test( 'should sort the shipping methods', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7, 8 ] } ],
@@ -259,7 +259,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneMethods', () => {
-		it( 'should return an empty list when the zones are being loaded', () => {
+		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: LOADING,
@@ -270,7 +270,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty list when there is no zone currently being edited', () => {
+		test( 'should return an empty list when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -294,7 +294,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should overlay updates in the zone currently being edited', () => {
+		test( 'should overlay updates in the zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -336,7 +336,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should overlay deletes in the zone currently being edited', () => {
+		test( 'should overlay deletes in the zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7, 8, 9 ] } ],
@@ -380,7 +380,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should overlay method creates in the zone currently being edited', () => {
+		test( 'should overlay method creates in the zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -422,7 +422,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNewMethodTypeOptions', () => {
-		it( 'should return all the built-in types when there are no methods in the zone', () => {
+		test( 'should return all the built-in types when there are no methods in the zone', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -448,7 +448,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should not allow for repeated methods, except for local_pickup', () => {
+		test( 'should not allow for repeated methods, except for local_pickup', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7, 8, 9 ] } ],
@@ -474,7 +474,7 @@ describe( 'selectors', () => {
 			expect( getNewMethodTypeOptions( state, 1 ) ).to.deep.equal( [ 'local_pickup' ] );
 		} );
 
-		it( 'should overlay committed edits to the zone, but not uncommitted edits to the zone currently edited', () => {
+		test( 'should overlay committed edits to the zone, but not uncommitted edits to the zone currently edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7, 8 ] } ],
@@ -518,7 +518,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should use the zone currently being edited if the zoneId param is omitted, overlaying all the edits', () => {
+		test( 'should use the zone currently being edited if the zoneId param is omitted, overlaying all the edits', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -563,7 +563,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyOpenShippingZoneMethod', () => {
-		it( 'should return null when the zones are being loaded', () => {
+		test( 'should return null when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: LOADING,
@@ -574,7 +574,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.equal( null );
 		} );
 
-		it( 'should return null when no zone is being edited', () => {
+		test( 'should return null when no zone is being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -585,7 +585,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.equal( null );
 		} );
 
-		it( 'should return null if no method is open', () => {
+		test( 'should return null if no method is open', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -617,7 +617,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.equal( null );
 		} );
 
-		it( 'should return the method fetched from the server if there are no edits', () => {
+		test( 'should return the method fetched from the server if there are no edits', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -654,7 +654,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should overlay method updates', () => {
+		test( 'should overlay method updates', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -701,7 +701,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should work for newly-created methods', () => {
+		test( 'should work for newly-created methods', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -746,7 +746,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should overlay method updates and currently added changes', () => {
+		test( 'should overlay method updates and currently added changes', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
@@ -796,7 +796,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isCurrentlyOpenShippingZoneMethodNew', () => {
-		it( 'should return the isNew state of the current method', () => {
+		test( 'should return the isNew state of the current method', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],

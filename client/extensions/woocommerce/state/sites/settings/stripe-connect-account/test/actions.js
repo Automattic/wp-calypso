@@ -16,7 +16,7 @@ describe( 'actions', () => {
 		const siteId = '123';
 		const email = 'foo@bar.com';
 		const countryCode = 'US';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const action = createAccount( siteId, email, countryCode );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,

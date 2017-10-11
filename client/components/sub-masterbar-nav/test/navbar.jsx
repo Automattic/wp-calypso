@@ -19,7 +19,7 @@ describe( 'Navbar', () => {
 		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
-	it( 'should render a navbar given a list of options', () => {
+	test( 'should render a navbar given a list of options', () => {
 		const wrapper = shallow( <Navbar options={ options } /> );
 
 		const items = wrapper.find( Item );
@@ -36,7 +36,7 @@ describe( 'Navbar', () => {
 		expect( items.at( 1 ).prop( 'isSelected' ) ).to.equal( false );
 	} );
 
-	it( 'should higlight currently selected option', () => {
+	test( 'should higlight currently selected option', () => {
 		const wrapper = shallow( <Navbar selected={ options[ 1 ] } options={ options } /> );
 
 		const items = wrapper.find( Item );

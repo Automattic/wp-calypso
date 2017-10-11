@@ -11,9 +11,9 @@ import url from 'url';
  */
 import { statsdTimingUrl } from '../statsd';
 
-describe( 'StatsD Analytics', function() {
-	describe( 'statsdTimingUrl', function() {
-		it( 'returns a URL for recording timing data to statsd', function() {
+describe( 'StatsD Analytics', () => {
+	describe( 'statsdTimingUrl', () => {
+		test( 'returns a URL for recording timing data to statsd', () => {
 			const sdUrl = url.parse( statsdTimingUrl( 'post-mysite.com', 'page-load', 150 ), true, true );
 			expect( sdUrl.query.v ).to.eql( 'calypso' );
 			expect( sdUrl.query.u ).to.eql( 'post_mysite_com' );

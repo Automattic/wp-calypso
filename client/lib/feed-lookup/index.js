@@ -51,4 +51,4 @@ function feedLookup( feedUrl ) {
 	return promiseForFeedId;
 }
 
-module.exports = feedLookup;
+export default feedLookup;

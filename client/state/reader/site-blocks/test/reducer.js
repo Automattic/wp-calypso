@@ -20,12 +20,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should optimistically update for a block attempt', () => {
+		test( 'should optimistically update for a block attempt', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
@@ -36,7 +36,7 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).to.eql( true );
 		} );
 
-		it( 'should reflect a successful block', () => {
+		test( 'should reflect a successful block', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).to.eql( true );
 		} );
 
-		it( 'should not change for a failed block', () => {
+		test( 'should not change for a failed block', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).to.be.not.ok;
 		} );
 
-		it( 'should optimistically update for an unblock attempt', () => {
+		test( 'should optimistically update for an unblock attempt', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).to.eql( false );
 		} );
 
-		it( 'should reflect a successful unblock', () => {
+		test( 'should reflect a successful unblock', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 			expect( state[ 123 ] ).to.eql( false );
 		} );
 
-		it( 'should not change for a failed unblock', () => {
+		test( 'should not change for a failed unblock', () => {
 			const original = deepFreeze( {
 				123: true,
 			} );

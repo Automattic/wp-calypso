@@ -15,7 +15,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isGeneratingStats()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 			expect( isGenerating ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 			expect( isGenerating ).to.be.false;
 		} );
 
-		it( 'should return false if the stats are not generating', () => {
+		test( 'should return false if the stats are not generating', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 			expect( isGenerating ).to.be.false;
 		} );
 
-		it( 'should return true if the stats are generating', () => {
+		test( 'should return true if the stats are generating', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -83,7 +83,7 @@ describe( 'selectors', () => {
 	describe( 'getStats()', () => {
 		const primaryStats = { generated: 1493997829 };
 
-		it( 'should return null if no state exists', () => {
+		test( 'should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -94,7 +94,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should return null if the site is not attached', () => {
+		test( 'should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -111,7 +111,7 @@ describe( 'selectors', () => {
 			expect( stats ).to.be.null;
 		} );
 
-		it( 'should return the stats for a siteId', () => {
+		test( 'should return the stats for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -130,7 +130,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isDeletingFile()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
@@ -141,7 +141,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -158,7 +158,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the file is not being deleted', () => {
+		test( 'should return false if the file is not being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -175,7 +175,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return true if the file is being deleted', () => {
+		test( 'should return true if the file is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {

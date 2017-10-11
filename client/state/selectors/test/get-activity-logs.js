@@ -13,7 +13,7 @@ import ActivityQueryManager from 'lib/query-manager/activity';
 const SITE_ID = 1234;
 
 describe( 'getActivityLogs()', () => {
-	it( 'should return null if there is no data', () => {
+	test( 'should return null if there is no data', () => {
 		const result = getActivityLogs(
 			{
 				activityLog: {
@@ -26,7 +26,7 @@ describe( 'getActivityLogs()', () => {
 		expect( result ).to.be.null;
 	} );
 
-	it( 'should return logs', () => {
+	test( 'should return logs', () => {
 		const items = [ { activityId: 'a', activityTs: 1 }, { activityId: 'b', activityTs: 2 } ];
 		const query = {
 			siteId: SITE_ID,

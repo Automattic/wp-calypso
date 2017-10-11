@@ -17,20 +17,20 @@ import { requestEligibility as requestEligibilityAction } from 'state/automated-
 describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;
 
-	it( 'should mount as null', () => {
+	test( 'should mount as null', () => {
 		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility: noop, siteId } } /> );
 
 		expect( wrapped.equals( null ) ).to.be.true;
 	} );
 
-	it( 'should issue request on mount if given a siteId', () => {
+	test( 'should issue request on mount if given a siteId', () => {
 		const requestEligibility = spy();
 		shallow( <QueryEligibility { ...{ requestEligibility, siteId } } /> );
 
 		expect( requestEligibility ).to.have.been.calledWith( siteId );
 	} );
 
-	it( 'should issue no request on mount if not given a siteId', () => {
+	test( 'should issue no request on mount if not given a siteId', () => {
 		const requestEligibility = spy();
 		shallow( <QueryEligibility { ...{ requestEligibility, siteId: null } } /> );
 		shallow( <QueryEligibility { ...{ requestEligibility, siteId: undefined } } /> );
@@ -39,7 +39,7 @@ describe( 'QueryAutomatedTransferEligibility', () => {
 		expect( requestEligibility ).to.have.not.been.called;
 	} );
 
-	it( 'should issue new request on change of siteId', () => {
+	test( 'should issue new request on change of siteId', () => {
 		const requestEligibility = spy();
 		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility, siteId } } /> );
 
@@ -52,7 +52,7 @@ describe( 'QueryAutomatedTransferEligibility', () => {
 		expect( requestEligibility ).to.have.been.calledWith( siteId + 1 );
 	} );
 
-	it( 'should not issue a new request when the siteId stays the same', () => {
+	test( 'should not issue a new request when the siteId stays the same', () => {
 		const requestEligibility = spy();
 		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility, siteId } } /> );
 
@@ -64,7 +64,7 @@ describe( 'QueryAutomatedTransferEligibility', () => {
 		expect( requestEligibility ).to.have.been.calledOnce;
 	} );
 
-	it( 'should not issue a new request when the siteId becomes empty', () => {
+	test( 'should not issue a new request when the siteId becomes empty', () => {
 		const requestEligibility = spy();
 		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility, siteId } } /> );
 
@@ -83,7 +83,7 @@ describe( 'QueryAutomatedTransferEligibility', () => {
 
 	describe( 'mapDispatchToProps', () => {
 		describe( '#request', () => {
-			it( 'should issue eligibility request when called', () => {
+			test( 'should issue eligibility request when called', () => {
 				const dispatch = spy();
 
 				const { requestEligibility } = mapDispatchToProps;

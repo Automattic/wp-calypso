@@ -25,7 +25,7 @@ import {
 } from '../selectors';
 
 describe( 'isSessionEligibleForNpsSurvey', () => {
-	it( 'should return true if the session is eligible for the NPS survey', () => {
+	test( 'should return true if the session is eligible for the NPS survey', () => {
 		const isEligible = isSessionEligibleForNpsSurvey( {
 			npsSurvey: {
 				isSessionEligible: true,
@@ -35,7 +35,7 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 		expect( isEligible ).to.be.true;
 	} );
 
-	it( 'should return false if the session is not eligible for the NPS survey', () => {
+	test( 'should return false if the session is not eligible for the NPS survey', () => {
 		const isEligible = isSessionEligibleForNpsSurvey( {
 			npsSurvey: {
 				isSessionEligible: false,
@@ -47,7 +47,7 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 } );
 
 describe( 'isSectionEligibleForNpsSurvey', () => {
-	it( 'should return true if the section is eligible for the NPS survey', () => {
+	test( 'should return true if the section is eligible for the NPS survey', () => {
 		const isEligible = isSectionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -59,7 +59,7 @@ describe( 'isSectionEligibleForNpsSurvey', () => {
 		expect( isEligible ).to.be.true;
 	} );
 
-	it( 'should return false if the section is not eligible for the NPS survey', () => {
+	test( 'should return false if the section is not eligible for the NPS survey', () => {
 		const isEligible = isSectionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -73,7 +73,7 @@ describe( 'isSectionEligibleForNpsSurvey', () => {
 } );
 
 describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
-	it( 'should return true if the section and session is eligible for the NPS survey', () => {
+	test( 'should return true if the section and session is eligible for the NPS survey', () => {
 		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -88,7 +88,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 		expect( isEligible ).to.be.true;
 	} );
 
-	it( 'should return false if the section is eligible but the session is not for the NPS survey', () => {
+	test( 'should return false if the section is eligible but the session is not for the NPS survey', () => {
 		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -103,7 +103,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 		expect( isEligible ).to.be.false;
 	} );
 
-	it( 'should return false if the section is not eligible but the session is for the NPS survey', () => {
+	test( 'should return false if the section is not eligible but the session is for the NPS survey', () => {
 		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -118,7 +118,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 		expect( isEligible ).to.be.false;
 	} );
 
-	it( 'should return false if the section and the session are not eligible for the NPS survey', () => {
+	test( 'should return false if the section and the session are not eligible for the NPS survey', () => {
 		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
 			ui: {
 				section: {
@@ -135,7 +135,7 @@ describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
 } );
 
 describe( 'wasNpsSurveyShownThisSession', () => {
-	it( 'should return true if the NPS survey was shown this session', () => {
+	test( 'should return true if the NPS survey was shown this session', () => {
 		const wasShown = wasNpsSurveyShownThisSession( {
 			npsSurvey: {
 				wasShownThisSession: true,
@@ -145,7 +145,7 @@ describe( 'wasNpsSurveyShownThisSession', () => {
 		expect( wasShown ).to.be.true;
 	} );
 
-	it( 'should return false if the session is not eligible for the NPS survey', () => {
+	test( 'should return false if the session is not eligible for the NPS survey', () => {
 		const wasShown = wasNpsSurveyShownThisSession( {
 			npsSurvey: {
 				wasShownThisSession: false,
@@ -157,7 +157,7 @@ describe( 'wasNpsSurveyShownThisSession', () => {
 } );
 
 describe( 'isNpsSurveyNotSubmitted', () => {
-	it( 'should return true if the NPS survey has not been submitted', () => {
+	test( 'should return true if the NPS survey has not been submitted', () => {
 		const isNotSubmitted = isNpsSurveyNotSubmitted( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,
@@ -167,7 +167,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 		expect( isNotSubmitted ).to.be.true;
 	} );
 
-	it( 'should return false if the NPS survey is being submitted', () => {
+	test( 'should return false if the NPS survey is being submitted', () => {
 		const isNotSubmitted = isNpsSurveyNotSubmitted( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -177,7 +177,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 		expect( isNotSubmitted ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey has been submitted', () => {
+	test( 'should return false if the NPS survey has been submitted', () => {
 		const isNotSubmitted = isNpsSurveyNotSubmitted( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -187,7 +187,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 		expect( isNotSubmitted ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey failed to submit', () => {
+	test( 'should return false if the NPS survey failed to submit', () => {
 		const isNotSubmitted = isNpsSurveyNotSubmitted( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -199,7 +199,7 @@ describe( 'isNpsSurveyNotSubmitted', () => {
 } );
 
 describe( 'isNpsSurveySubmitting', () => {
-	it( 'should return true if the NPS survey is being submitted', () => {
+	test( 'should return true if the NPS survey is being submitted', () => {
 		const isSubmitting = isNpsSurveySubmitting( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -209,7 +209,7 @@ describe( 'isNpsSurveySubmitting', () => {
 		expect( isSubmitting ).to.be.true;
 	} );
 
-	it( 'should return false if the NPS survey has not been submitted', () => {
+	test( 'should return false if the NPS survey has not been submitted', () => {
 		const isSubmitting = isNpsSurveySubmitting( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,
@@ -219,7 +219,7 @@ describe( 'isNpsSurveySubmitting', () => {
 		expect( isSubmitting ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey has been submitted', () => {
+	test( 'should return false if the NPS survey has been submitted', () => {
 		const isSubmitting = isNpsSurveySubmitting( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -229,7 +229,7 @@ describe( 'isNpsSurveySubmitting', () => {
 		expect( isSubmitting ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey has failed to submit', () => {
+	test( 'should return false if the NPS survey has failed to submit', () => {
 		const isSubmitting = isNpsSurveySubmitting( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -241,7 +241,7 @@ describe( 'isNpsSurveySubmitting', () => {
 } );
 
 describe( 'isNpsSurveySubmitted', () => {
-	it( 'should return true if the NPS survey has been submitted', () => {
+	test( 'should return true if the NPS survey has been submitted', () => {
 		const isSubmitted = isNpsSurveySubmitted( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -251,7 +251,7 @@ describe( 'isNpsSurveySubmitted', () => {
 		expect( isSubmitted ).to.be.true;
 	} );
 
-	it( 'should return false if the NPS survey has not been submitted', () => {
+	test( 'should return false if the NPS survey has not been submitted', () => {
 		const isSubmitted = isNpsSurveySubmitted( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,
@@ -261,7 +261,7 @@ describe( 'isNpsSurveySubmitted', () => {
 		expect( isSubmitted ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey is being submitted', () => {
+	test( 'should return false if the NPS survey is being submitted', () => {
 		const isSubmitted = isNpsSurveySubmitted( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -271,7 +271,7 @@ describe( 'isNpsSurveySubmitted', () => {
 		expect( isSubmitted ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey has failed to submit', () => {
+	test( 'should return false if the NPS survey has failed to submit', () => {
 		const isSubmitted = isNpsSurveySubmitted( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -283,7 +283,7 @@ describe( 'isNpsSurveySubmitted', () => {
 } );
 
 describe( 'isNpsSurveySubmitFailure', () => {
-	it( 'should return true if the NPS survey has failed to submit', () => {
+	test( 'should return true if the NPS survey has failed to submit', () => {
 		const isSubmitFailure = isNpsSurveySubmitFailure( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -293,7 +293,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 		expect( isSubmitFailure ).to.be.true;
 	} );
 
-	it( 'should return false if the NPS survey has been submitted', () => {
+	test( 'should return false if the NPS survey has been submitted', () => {
 		const isSubmitFailure = isNpsSurveySubmitFailure( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -303,7 +303,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 		expect( isSubmitFailure ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey has not been submitted', () => {
+	test( 'should return false if the NPS survey has not been submitted', () => {
 		const isSubmitFailure = isNpsSurveySubmitFailure( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,
@@ -313,7 +313,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 		expect( isSubmitFailure ).to.be.false;
 	} );
 
-	it( 'should return false if the NPS survey is being submitted', () => {
+	test( 'should return false if the NPS survey is being submitted', () => {
 		const isSubmitFailure = isNpsSurveySubmitFailure( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -325,7 +325,7 @@ describe( 'isNpsSurveySubmitFailure', () => {
 } );
 
 describe( 'getNpsSurveyName', () => {
-	it( 'should return the survey name if set', () => {
+	test( 'should return the survey name if set', () => {
 		const surveyName = getNpsSurveyName( {
 			npsSurvey: {
 				surveyName: 'boo',
@@ -335,7 +335,7 @@ describe( 'getNpsSurveyName', () => {
 		expect( surveyName ).to.equal( 'boo' );
 	} );
 
-	it( 'should return null if the survey name is not set', () => {
+	test( 'should return null if the survey name is not set', () => {
 		const surveyName = getNpsSurveyName( {
 			npsSurvey: {},
 		} );
@@ -345,7 +345,7 @@ describe( 'getNpsSurveyName', () => {
 } );
 
 describe( 'getNpsSurveyScore', () => {
-	it( 'should return the survey score if set', () => {
+	test( 'should return the survey score if set', () => {
 		const surveyScore = getNpsSurveyScore( {
 			npsSurvey: {
 				score: 9,
@@ -355,7 +355,7 @@ describe( 'getNpsSurveyScore', () => {
 		expect( surveyScore ).to.equal( 9 );
 	} );
 
-	it( 'should return null if the survey score is not set', () => {
+	test( 'should return null if the survey score is not set', () => {
 		const surveyScore = getNpsSurveyScore( {
 			npsSurvey: {},
 		} );
@@ -365,7 +365,7 @@ describe( 'getNpsSurveyScore', () => {
 } );
 
 describe( 'hasAnsweredNpsSurvey', () => {
-	it( 'should return true if the survey is being submitted with a score', () => {
+	test( 'should return true if the survey is being submitted with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -376,7 +376,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return true if the survey has been submitted with a score', () => {
+	test( 'should return true if the survey has been submitted with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -387,7 +387,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return true if the survey has failed to submit with a score', () => {
+	test( 'should return true if the survey has failed to submit with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -398,7 +398,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return false if the survey is being submitted without a score', () => {
+	test( 'should return false if the survey is being submitted without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -408,7 +408,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has been submitted without a score', () => {
+	test( 'should return false if the survey has been submitted without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -418,7 +418,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has failed to submit without a score', () => {
+	test( 'should return false if the survey has failed to submit without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -428,7 +428,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has not been submitted', () => {
+	test( 'should return false if the survey has not been submitted', () => {
 		const hasAnswered = hasAnsweredNpsSurvey( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,
@@ -440,7 +440,7 @@ describe( 'hasAnsweredNpsSurvey', () => {
 } );
 
 describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
-	it( 'should return true if the survey is being submitted without a score', () => {
+	test( 'should return true if the survey is being submitted without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -450,7 +450,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return true if the survey has been submitted without a score', () => {
+	test( 'should return true if the survey has been submitted without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -460,7 +460,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return true if the survey has failed to submit without a score', () => {
+	test( 'should return true if the survey has failed to submit without a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -470,7 +470,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.true;
 	} );
 
-	it( 'should return false if the survey is being submitted with a score', () => {
+	test( 'should return false if the survey is being submitted with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMITTING,
@@ -481,7 +481,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has been submitted with a score', () => {
+	test( 'should return false if the survey has been submitted with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMITTED,
@@ -492,7 +492,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has failed to submit with a score', () => {
+	test( 'should return false if the survey has failed to submit with a score', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: SUBMIT_FAILURE,
@@ -503,7 +503,7 @@ describe( 'hasAnsweredNpsSurveyWithNoScore', () => {
 		expect( hasAnswered ).to.be.false;
 	} );
 
-	it( 'should return false if the survey has not been submitted', () => {
+	test( 'should return false if the survey has not been submitted', () => {
 		const hasAnswered = hasAnsweredNpsSurveyWithNoScore( {
 			npsSurvey: {
 				surveyState: NOT_SUBMITTED,

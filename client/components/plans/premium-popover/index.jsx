@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { omit } from 'lodash';
 import classNames from 'classnames';
@@ -46,7 +47,7 @@ const PremiumPopover = React.createClass( {
 		);
 	},
 	priceMessage( price ) {
-		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
+		return this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: price },
 			components: { small: <small /> },
 		} );
@@ -108,7 +109,7 @@ const PremiumPopover = React.createClass( {
 				>
 					<div className="premium-popover__content">
 						<div className="premium-popover__header">
-							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							<h3>{ this.props.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
 							{ premiumPlan ? (
 								<PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 							) : (
@@ -117,12 +118,12 @@ const PremiumPopover = React.createClass( {
 						</div>
 						<ul className="premium-popover__items">
 							{ [
-								this.translate( 'A custom domain' ),
-								this.translate( 'Advanced design customization' ),
-								this.translate( '13GB of space for file and media' ),
-								this.translate( 'Video Uploads' ),
-								this.translate( 'No Ads' ),
-								this.translate( 'Email and live chat support' ),
+								this.props.translate( 'A custom domain' ),
+								this.props.translate( 'Advanced design customization' ),
+								this.props.translate( '13GB of space for file and media' ),
+								this.props.translate( 'Video Uploads' ),
+								this.props.translate( 'No Ads' ),
+								this.props.translate( 'Email and live chat support' ),
 							].map( ( message, i ) => (
 								<li key={ i }>
 									<Gridicon icon="checkmark" size={ 18 } /> { message }
@@ -143,4 +144,4 @@ export default connect( state => {
 		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
 		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM ),
 	};
-} )( PremiumPopover );
+} )( localize( PremiumPopover ) );

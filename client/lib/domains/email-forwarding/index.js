@@ -38,7 +38,7 @@ function validateField( { name, value } ) {
 	}
 }
 
-module.exports = {
+export default {
 	emailForwardingPlanLimit,
 	validateAllFields,
 };

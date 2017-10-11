@@ -1,11 +1,11 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import React from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,12 +13,22 @@ import { isEmpty } from 'lodash';
 import notices from 'notices';
 import { getNewMessages } from 'lib/cart-values';
 
-module.exports = {
+class CartMessages extends PureComponent {
+	static propTypes = {
+		cart: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object.isRequired,
+
+		// connected
+		translate: PropTypes.func.isRequired,
+	};
+
+	state = { previousCart: null };
+
 	componentDidMount() {
 		// Makes sure that we display any messages from the current cart
 		// that might have been delivered when the cart was unmounted
 		this.displayCartMessages( this.props.cart );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.cart.hasLoadedFromServer ) {
@@ -28,7 +38,7 @@ module.exports = {
 		if ( this.props.cart.messages !== nextProps.cart.messages ) {
 			this.displayCartMessages( nextProps.cart );
 		}
-	},
+	}
 
 	getChargebackErrorMessage() {
 		return this.props.translate(
@@ -42,7 +52,7 @@ module.exports = {
 				},
 			}
 		);
-	},
+	}
 
 	getBlockedPurchaseErrorMessage() {
 		return this.props.translate(
@@ -61,7 +71,7 @@ module.exports = {
 				},
 			}
 		);
-	},
+	}
 
 	getPrettyErrorMessages( messages ) {
 		if ( ! messages ) {
@@ -80,11 +90,11 @@ module.exports = {
 					return error;
 			}
 		} );
-	},
+	}
 
 	displayCartMessages( newCart ) {
-		const previousCart = this.state ? this.state.previousCart : null,
-			messages = getNewMessages( previousCart, newCart );
+		const { previousCart } = this.state;
+		const messages = getNewMessages( previousCart, newCart );
 
 		messages.errors = this.getPrettyErrorMessages( messages.errors );
 
@@ -104,5 +114,11 @@ module.exports = {
 				) )
 			);
 		}
-	},
-};
+	}
+
+	render() {
+		return null;
+	}
+}
+
+export default localize( CartMessages );

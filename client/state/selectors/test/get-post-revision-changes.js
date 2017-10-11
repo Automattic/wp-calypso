@@ -58,11 +58,11 @@ describe( 'getPostRevisionChanges', () => {
 		},
 	};
 
-	it( 'should return an empty array if the revision is not found', () => {
+	test( 'should return an empty array if the revision is not found', () => {
 		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 14 ) ).to.eql( [] );
 	} );
 
-	it( 'should compute diff changes based on revision dates', () => {
+	test( 'should compute diff changes based on revision dates', () => {
 		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 12 ) ).to.eql( [
 			{
 				count: 1,
@@ -76,7 +76,7 @@ describe( 'getPostRevisionChanges', () => {
 		] );
 	} );
 
-	it( 'should compute diff changes for the oldest revision available against a clean slate', () => {
+	test( 'should compute diff changes for the oldest revision available against a clean slate', () => {
 		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 11 ) ).to.eql( [
 			{
 				added: true,
@@ -85,7 +85,7 @@ describe( 'getPostRevisionChanges', () => {
 		] );
 	} );
 
-	it( 'should properly decode HTML entities', () => {
+	test( 'should properly decode HTML entities', () => {
 		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 16 ) ).to.eql( [
 			{
 				added: true,

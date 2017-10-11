@@ -17,7 +17,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should store the currently editing order', () => {
+	test( 'should store the currently editing order', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( "should update the order when it's changed", () => {
+	test( "should update the order when it's changed", () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should merge updates to an order if new fields are passed in', () => {
+	test( 'should merge updates to an order if new fields are passed in', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -102,7 +102,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should store a generated ID for a created order', () => {
+	test( 'should store a generated ID for a created order', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should merge updates to a new order if additional fields are passed in', () => {
+	test( 'should merge updates to a new order if additional fields are passed in', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_EDIT,
 			siteId: 123,
@@ -152,7 +152,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should clear order changes from the state when requested', () => {
+	test( 'should clear order changes from the state when requested', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 			siteId: 123,
@@ -172,7 +172,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should clear order changes if this order is successfully updated', () => {
+	test( 'should clear order changes if this order is successfully updated', () => {
 		const action = {
 			type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 			siteId: 123,

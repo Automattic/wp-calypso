@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isPrivateSite } from '../';
 
 describe( 'isPrivateSite()', () => {
-	it( 'should return null if neither the site nor settings are known', () => {
+	test( 'should return null if neither the site nor settings are known', () => {
 		const isPrivate = isPrivateSite(
 			{
 				sites: {
@@ -32,7 +32,7 @@ describe( 'isPrivateSite()', () => {
 		expect( isPrivate ).to.be.null;
 	} );
 
-	it( 'should prefer site state', () => {
+	test( 'should prefer site state', () => {
 		const isPrivate = isPrivateSite(
 			{
 				sites: {
@@ -57,7 +57,7 @@ describe( 'isPrivateSite()', () => {
 		expect( isPrivate ).to.be.true;
 	} );
 
-	it( 'should fall back to settings state', () => {
+	test( 'should fall back to settings state', () => {
 		const isPrivate = isPrivateSite(
 			{
 				sites: {
@@ -77,7 +77,7 @@ describe( 'isPrivateSite()', () => {
 		expect( isPrivate ).to.be.false;
 	} );
 
-	it( 'should return false for public sites', () => {
+	test( 'should return false for public sites', () => {
 		const isPrivate = isPrivateSite(
 			{
 				sites: {
@@ -102,7 +102,7 @@ describe( 'isPrivateSite()', () => {
 		expect( isPrivate ).to.be.false;
 	} );
 
-	it( 'should return true for private sites', () => {
+	test( 'should return true for private sites', () => {
 		const isPrivate = isPrivateSite(
 			{
 				sites: {

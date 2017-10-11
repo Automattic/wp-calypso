@@ -8,21 +8,17 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { noop } from 'lodash';
 import React from 'react';
 
-jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
+/**
+ * Internal dependencies
+ */
+import DomainSuggestion from 'components/domains/domain-suggestion';
 
-describe( 'Domain Suggestion', function() {
-	let DomainSuggestion;
-
-	before( () => {
-		DomainSuggestion = require( 'components/domains/domain-suggestion' );
-		DomainSuggestion.prototype.translate = identity;
-	} );
-
+describe( 'Domain Suggestion', () => {
 	describe( 'has attributes', () => {
-		it( 'should have data-e2e-domain attribute for e2e testing', () => {
+		test( 'should have data-e2e-domain attribute for e2e testing', () => {
 			const domainSuggestion = shallow(
 				<DomainSuggestion
 					buttonContent="Click Me"

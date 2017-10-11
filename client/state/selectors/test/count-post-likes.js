@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { countPostLikes } from '../';
 
 describe( 'countPostLikes()', () => {
-	it( 'should return null if the site has never been fetched', () => {
+	test( 'should return null if the site has never been fetched', () => {
 		const count = countPostLikes(
 			{
 				posts: {
@@ -27,7 +27,7 @@ describe( 'countPostLikes()', () => {
 		expect( count ).to.be.null;
 	} );
 
-	it( 'should return null if the post has never been fetched', () => {
+	test( 'should return null if the post has never been fetched', () => {
 		const count = countPostLikes(
 			{
 				posts: {
@@ -47,7 +47,7 @@ describe( 'countPostLikes()', () => {
 		expect( count ).to.be.null;
 	} );
 
-	it( 'should return the total of post likes', () => {
+	test( 'should return the total of post likes', () => {
 		const count = countPostLikes(
 			{
 				posts: {

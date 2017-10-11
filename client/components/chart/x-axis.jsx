@@ -13,7 +13,7 @@ import { throttle } from 'lodash';
  */
 import Label from './label';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ModuleChartXAxis',
 
 	propTypes: {

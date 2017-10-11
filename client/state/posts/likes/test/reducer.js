@@ -25,18 +25,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set site ID, post ID to true value if a request is initiated', () => {
+		test( 'should set site ID, post ID to true value if a request is initiated', () => {
 			const state = requesting( undefined, {
 				type: POST_LIKES_REQUEST,
 				siteId: 12345678,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate the requested site IDs', () => {
+		test( 'should accumulate the requested site IDs', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -74,7 +74,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate the requested post IDs', () => {
+		test( 'should accumulate the requested post IDs', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false if request finishes successfully', () => {
+		test( 'should set requesting to false if request finishes successfully', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -117,7 +117,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set post ID to false if request finishes unsuccessfully', () => {
+		test( 'should set post ID to false if request finishes unsuccessfully', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -138,7 +138,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -153,7 +153,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: {
@@ -170,13 +170,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index post likes by site ID, post Id', () => {
+		test( 'should index post likes by site ID, post Id', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const state = items(
 				{},
@@ -201,7 +201,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate sites', () => {
+		test( 'should accumulate sites', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const likes2 = [ { ID: 2, login: 'ribs' } ];
 			const state = items(
@@ -242,7 +242,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate posts', () => {
+		test( 'should accumulate posts', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const likes2 = [ { ID: 2, login: 'ribs' } ];
 			const state = items(
@@ -281,7 +281,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous post likes of same site ID post ID', () => {
+		test( 'should override previous post likes of same site ID post ID', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const likes2 = [ { ID: 2, login: 'ribs' } ];
 			const state = items(
@@ -315,7 +315,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const state = items(
 				deepFreeze( {
@@ -343,7 +343,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const state = items(
 				deepFreeze( {
@@ -371,7 +371,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					status: 'ribs',

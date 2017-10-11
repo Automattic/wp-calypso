@@ -13,7 +13,7 @@ import { getHelpCourses } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getHelpCourses()', () => {
-		it( 'should return null for default state', () => {
+		test( 'should return null for default state', () => {
 			const state = deepFreeze( {
 				help: {
 					courses: {
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 			expect( getHelpCourses( state ) ).to.be.null;
 		} );
 
-		it( 'should return courses for given state', () => {
+		test( 'should return courses for given state', () => {
 			const state = deepFreeze( {
 				help: {
 					courses: {

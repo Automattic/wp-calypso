@@ -30,7 +30,7 @@ describe( 'Importer store', () => {
 	beforeEach( resetStore );
 
 	describe( 'API integration', () => {
-		it( 'should hydrate if the API returns a blank body', done => {
+		test( 'should hydrate if the API returns a blank body', done => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
 			queuePayload( 'no-imports' );
@@ -42,7 +42,7 @@ describe( 'Importer store', () => {
 				.catch( done );
 		} );
 
-		it( 'should hydrate if the API returns a defunct importer', done => {
+		test( 'should hydrate if the API returns a defunct importer', done => {
 			expect( hydratedState(), 'before fetch' ).to.be.false;
 
 			queuePayload( 'defunct-importer' );

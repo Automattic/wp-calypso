@@ -11,7 +11,7 @@ import { getTagImages, shouldRequestTagImages } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getTagImages()', () => {
-		it( 'should return undefined if there is no image available', () => {
+		test( 'should return undefined if there is no image available', () => {
 			const state = {
 				reader: {
 					tags: {
@@ -24,7 +24,7 @@ describe( 'selectors', () => {
 			expect( getTagImages( state, 'banana' ) ).to.equal( undefined );
 		} );
 
-		it( 'should return the an image if images exist for a tag', () => {
+		test( 'should return the an image if images exist for a tag', () => {
 			const firstBananaImage = { url: 'http://example.com/banana1.jpg' };
 			const secondBananaImage = { url: 'http://example.com/banana2.jpg' };
 			const state = {
@@ -44,7 +44,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingTagImages()', () => {
-		it( 'should return true if requesting images for the specified tag', () => {
+		test( 'should return true if requesting images for the specified tag', () => {
 			const state = {
 				reader: {
 					tags: {

@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -32,7 +33,7 @@ const DomainsSelect = React.createClass( {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.translate( 'Loading' ) }...</option>;
+			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
 		}
 
 		return (
@@ -48,4 +49,4 @@ const DomainsSelect = React.createClass( {
 	},
 } );
 
-module.exports = DomainsSelect;
+export default localize( DomainsSelect );

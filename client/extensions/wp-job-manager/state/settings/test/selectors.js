@@ -15,7 +15,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isFetchingSettings()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return false if the settings are not being fetched', () => {
+		test( 'should return false if the settings are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 			expect( isFetching ).to.be.false;
 		} );
 
-		it( 'should return true if the settings are being fetched', () => {
+		test( 'should return true if the settings are being fetched', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -83,7 +83,7 @@ describe( 'selectors', () => {
 	describe( 'getSettings()', () => {
 		const primarySettings = { job_manager_hide_expired: true };
 
-		it( 'should return an empty object if no state exists', () => {
+		test( 'should return an empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -96,7 +96,7 @@ describe( 'selectors', () => {
 			expect( settings ).to.deep.equal( {} );
 		} );
 
-		it( 'should return an empty object if the site is not attached', () => {
+		test( 'should return an empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
@@ -113,7 +113,7 @@ describe( 'selectors', () => {
 			expect( settings ).to.deep.equal( {} );
 		} );
 
-		it( 'should return the settings for a siteId', () => {
+		test( 'should return the settings for a siteId', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {

@@ -11,7 +11,7 @@ import { omit } from 'lodash';
  */
 import validateContactDetails from '../fr-validate-contact-details';
 
-describe( 'validateContactDetails', function() {
+describe( 'validateContactDetails', () => {
 	const contactDetails = {
 		firstName: 'J. Random',
 		lastName: 'Tester',
@@ -31,7 +31,7 @@ describe( 'validateContactDetails', function() {
 		},
 	};
 
-	it( 'should accept valid example data (sanity check)', function() {
+	test( 'should accept valid example data (sanity check)', () => {
 		expect( validateContactDetails( contactDetails ) ).to.eql( {} );
 	} );
 
@@ -49,8 +49,8 @@ describe( 'validateContactDetails', function() {
 		[ '33445848600019' ],
 	];
 
-	describe( 'SIREN/SIRET', function() {
-		it( 'should accept all real SIRET examples', function() {
+	describe( 'SIREN/SIRET', () => {
+		test( 'should accept all real SIRET examples', () => {
 			realSiretNumbers.forEach( ( [ sirenSiret ] ) => {
 				const testDetails = Object.assign( {}, contactDetails, { extra: { sirenSiret } } );
 
@@ -59,7 +59,7 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should reject our bad SIRET examples', function() {
+		test( 'should reject our bad SIRET examples', () => {
 			const badSiretNumbers = [
 				[ 'Nonnumber' ],
 				[ '12345678' ],
@@ -77,14 +77,14 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should accept an empty value', function() {
+		test( 'should accept an empty value', () => {
 			const testDetails = Object.assign( {}, contactDetails, { extra: { sirenSiret: '' } } );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );
 		} );
 
-		it( 'should accept a missing value', function() {
+		test( 'should accept a missing value', () => {
 			const testDetails = {
 				...contactDetails,
 				extra: omit( contactDetails.extra, 'sirenSiret' ),
@@ -94,8 +94,8 @@ describe( 'validateContactDetails', function() {
 		} );
 	} );
 
-	describe( 'VAT', function() {
-		it( 'should accept VAT patterns', function() {
+	describe( 'VAT', () => {
+		test( 'should accept VAT patterns', () => {
 			const vatPatterns = [
 				[ 'ATU99999999' ],
 				[ 'BE0999999999' ],
@@ -151,7 +151,7 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should reject SIRET for VAT', function() {
+		test( 'should reject SIRET for VAT', () => {
 			realSiretNumbers.forEach( ( [ registrantVatId ] ) => {
 				const testDetails = Object.assign( {}, contactDetails, { extra: { registrantVatId } } );
 
@@ -162,14 +162,14 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should accept an empty value', function() {
+		test( 'should accept an empty value', () => {
 			const testDetails = Object.assign( {}, contactDetails, { extra: { registrantVatId: '' } } );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );
 		} );
 
-		it( 'should accept a missing value', function() {
+		test( 'should accept a missing value', () => {
 			const testDetails = {
 				...contactDetails,
 				extra: omit( contactDetails.extra, 'registrantVatId' ),
@@ -179,12 +179,12 @@ describe( 'validateContactDetails', function() {
 		} );
 	} );
 
-	describe( 'trademarkNumber', function() {
+	describe( 'trademarkNumber', () => {
 		const goodTrademarkNumbers = [ [ '012345678' ], [ '999999999' ], [ '000000001' ] ];
 
 		const badTrademarkNumbers = [ [ '123456' ], [ '88888888' ], [ '1' ], [ 'ABCDEFGHI' ] ];
 
-		it( 'should accept all good trademark examples', function() {
+		test( 'should accept all good trademark examples', () => {
 			goodTrademarkNumbers.forEach( ( [ trademarkNumber ] ) => {
 				const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber } } );
 
@@ -193,7 +193,7 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should reject our bad SIRET examples', function() {
+		test( 'should reject our bad SIRET examples', () => {
 			badTrademarkNumbers.forEach( ( [ trademarkNumber ] ) => {
 				const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber } } );
 
@@ -204,14 +204,14 @@ describe( 'validateContactDetails', function() {
 			} );
 		} );
 
-		it( 'should accept an empty value', function() {
+		test( 'should accept an empty value', () => {
 			const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber: '' } } );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );
 		} );
 
-		it( 'should accept a missing value', function() {
+		test( 'should accept a missing value', () => {
 			const testDetails = {
 				...contactDetails,
 				extra: omit( contactDetails.extra, 'trademarkNumber' ),

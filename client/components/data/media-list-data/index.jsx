@@ -24,7 +24,7 @@ function getStateData( siteId ) {
 	};
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaListData',
 
 	propTypes: {

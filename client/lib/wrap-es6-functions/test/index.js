@@ -13,7 +13,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'wrap-es6-functions', () => {
 	function assertCall( obj, args, key ) {
-		it( key, () => {
+		test( key, () => {
 			if ( isFunction( obj[ key ] ) ) {
 				obj[ key ].apply( obj, args );
 				assert( console.error.calledOnce ); // eslint-disable-line no-console

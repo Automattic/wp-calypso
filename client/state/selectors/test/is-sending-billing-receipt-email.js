@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isSendingBillingReceiptEmail } from '../';
 
 describe( 'isSendingBillingReceiptEmail()', () => {
-	it( 'should return true if the receipt email is being sent for that receiptId', () => {
+	test( 'should return true if the receipt email is being sent for that receiptId', () => {
 		const stateIn = {
 			billingTransactions: {
 				sendingReceiptEmail: {
@@ -23,7 +23,7 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the receipt email is not being sent for that receiptId', () => {
+	test( 'should return false if the receipt email is not being sent for that receiptId', () => {
 		const stateIn = {
 			billingTransactions: {
 				sendingReceiptEmail: {
@@ -35,7 +35,7 @@ describe( 'isSendingBillingReceiptEmail()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if receipt email for that receiptId is not known yet', () => {
+	test( 'should return null if receipt email for that receiptId is not known yet', () => {
 		const stateIn = {
 			billingTransactions: {
 				sendingReceiptEmail: {

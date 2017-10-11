@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
@@ -35,7 +36,7 @@ const EmailForwardingItem = React.createClass( {
 			if ( error ) {
 				notices.error(
 					error.message ||
-						this.translate(
+						this.props.translate(
 							'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 							{
 								components: {
@@ -46,11 +47,14 @@ const EmailForwardingItem = React.createClass( {
 				);
 			} else {
 				notices.success(
-					this.translate( 'Yay, e-mail forwarding for %(email)s has been successfully deleted.', {
-						args: {
-							email: email,
-						},
-					} ),
+					this.props.translate(
+						'Yay, e-mail forwarding for %(email)s has been successfully deleted.',
+						{
+							args: {
+								email: email,
+							},
+						}
+					),
 					{
 						duration: 5000,
 					}
@@ -71,7 +75,7 @@ const EmailForwardingItem = React.createClass( {
 
 			if ( error || ! response.sent ) {
 				notices.error(
-					this.translate(
+					this.props.translate(
 						'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 						{
 							components: {
@@ -82,7 +86,7 @@ const EmailForwardingItem = React.createClass( {
 				);
 			} else {
 				notices.success(
-					this.translate( 'Yay, successfully sent confirmation email to %(email)s!', {
+					this.props.translate( 'Yay, successfully sent confirmation email to %(email)s!', {
 						args: {
 							email: forward_address,
 						},
@@ -107,14 +111,16 @@ const EmailForwardingItem = React.createClass( {
 						disabled={ this.props.emailData.temporary }
 						borderless
 						onClick={ this.resendVerificationEmail }
-						title={ this.translate( 'Resend Verification Email', { context: 'Email Forwarding' } ) }
+						title={ this.props.translate( 'Resend Verification Email', {
+							context: 'Email Forwarding',
+						} ) }
 					>
 						<Gridicon icon="mail" />
 					</Button>
 				) }
 
 				<span>
-					{ this.translate(
+					{ this.props.translate(
 						'{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
 						{
 							components: {
@@ -135,5 +141,5 @@ const EmailForwardingItem = React.createClass( {
 } );
 
 export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
-	EmailForwardingItem
+	localize( EmailForwardingItem )
 );

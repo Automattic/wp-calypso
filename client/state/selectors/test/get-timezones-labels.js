@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getTimezonesLabels } from '../';
 
 describe( 'getTimezonesLabels()', () => {
-	it( "should return {} if `timezones` aren't synced", () => {
+	test( "should return {} if `timezones` aren't synced", () => {
 		const state = {
 			timezones: {
 				byContinents: {},
@@ -25,7 +25,7 @@ describe( 'getTimezonesLabels()', () => {
 		expect( timezonesLabels ).to.eql( {} );
 	} );
 
-	it( 'should return timezones by contienent object data', () => {
+	test( 'should return timezones by contienent object data', () => {
 		const state = {
 			timezones: {
 				byContinents: {},

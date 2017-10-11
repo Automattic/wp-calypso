@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	};
 
 	describe( 'receivePreferences()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePreferences( { foo: 'bar' } );
 
 			expect( action ).to.eql( {
@@ -56,14 +56,14 @@ describe( 'actions', () => {
 				.reply( 200, responseShape );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			fetchPreferences()( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: PREFERENCES_FETCH,
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_FETCH_SUCCESS,
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 				.reply( 404 );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return fetchPreferences()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_FETCH_FAILURE,
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setPreference()', () => {
-		it( 'should return PREFERENCES_SET with correct payload', () => {
+		test( 'should return PREFERENCES_SET with correct payload', () => {
 			expect( setPreference( 'preferenceKey', 'preferenceValue' ) ).to.deep.equal( {
 				type: PREFERENCES_SET,
 				key: 'preferenceKey',
@@ -121,7 +121,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
+		test( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: PREFERENCES_SET,
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE action when thunk triggered', () => {
+		test( 'should dispatch PREFERENCES_SAVE action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: PREFERENCES_SAVE,
@@ -139,7 +139,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
+		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
 			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
@@ -148,7 +148,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
+		test( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
 			return savePreference( 'loggedOut', true )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_FAILURE,
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
+		test( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
 			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_SUCCESS,

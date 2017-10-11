@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
@@ -72,7 +73,7 @@ const FirstView = React.createClass( {
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
-								{ this.translate( 'Got It!', {
+								{ this.props.translate( 'Got It!', {
 									context: 'Button that dismisses the introduction overlay.',
 								} ) }
 							</Button>
@@ -84,7 +85,7 @@ const FirstView = React.createClass( {
 										checked={ ! this.state.isEnabled }
 										onChange={ this.enableOrDisableNextTime }
 									/>
-									{ this.translate( "Don't show this again" ) }
+									{ this.props.translate( "Don't show this again" ) }
 								</label>
 							</div>
 						</Card>
@@ -144,4 +145,4 @@ export default connect(
 	{
 		hideView,
 	}
-)( FirstView );
+)( localize( FirstView ) );

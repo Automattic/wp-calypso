@@ -186,11 +186,7 @@ class PostCommentForm extends React.Component {
 		) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
-				return (
-					<p className="comments__form-closed">
-						{ translate( 'Comments closed.' ) }
-					</p>
-				);
+				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;
 			}
 
 			return null;

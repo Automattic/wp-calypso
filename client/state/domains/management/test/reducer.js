@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
 			'isRequestingContactDetailsCache',
@@ -26,14 +26,14 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state._contactDetailsCache ).to.be.empty;
 		} );
 
-		describe( 'Receive extra', function() {
-			it( 'should overwrite previous data', function() {
+		describe( 'Receive extra', () => {
+			test( 'should overwrite previous data', () => {
 				const preexistingData = {
 					firstName: 'Cronus',
 					organization: 'titans',
@@ -54,7 +54,7 @@ describe( 'reducer', () => {
 				expect( state ).to.have.property( '_contactDetailsCache', newData );
 			} );
 
-			it( "should ignore an extra if it's an array", function() {
+			test( "should ignore an extra if it's an array", () => {
 				const state = items(
 					{},
 					{
@@ -66,7 +66,7 @@ describe( 'reducer', () => {
 				expect( get( state, [ '_contactDetailsCache', 'extra' ] ) ).to.not.be.an( 'array' );
 			} );
 
-			it( 'should take other fields if extra is corrupt', function() {
+			test( 'should take other fields if extra is corrupt', () => {
 				const preexistingData = { firstName: 'Hera' };
 				const state = items( preexistingData, {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -77,8 +77,8 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		describe( 'Update extra', function() {
-			it( 'should add new values', () => {
+		describe( 'Update extra', () => {
+			test( 'should add new values', () => {
 				const newData = {
 					extra: {
 						testAdd: 'testAddValue',
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 				expect( state._contactDetailsCache ).to.eql( newData );
 			} );
 
-			it( 'should preserve existing values', () => {
+			test( 'should preserve existing values', () => {
 				const firstData = {
 					extra: {
 						testPreserve: "I'm still here",
@@ -127,7 +127,7 @@ describe( 'reducer', () => {
 				);
 			} );
 
-			it( 'should update existing values', () => {
+			test( 'should update existing values', () => {
 				const firstData = {
 					extra: {
 						testUpdate: 'old',
@@ -158,7 +158,7 @@ describe( 'reducer', () => {
 				);
 			} );
 
-			it( 'should handle corrupt values', () => {
+			test( 'should handle corrupt values', () => {
 				const initialState = {};
 
 				const dataSequence = [
@@ -186,7 +186,7 @@ describe( 'reducer', () => {
 					} );
 			} );
 
-			it( 'should replace an existing corrupt value', () => {
+			test( 'should replace an existing corrupt value', () => {
 				const corruptExistingData = {
 					_contactDetailsCache: {
 						extra: [ '' ],

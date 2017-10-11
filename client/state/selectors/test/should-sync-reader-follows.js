@@ -12,7 +12,7 @@ import { shouldSyncReaderFollows } from 'state/selectors';
 import { MS_BETWEEN_SYNCS } from 'state/selectors/should-sync-reader-follows';
 
 describe( 'shouldSyncReaderFollows', () => {
-	it( 'should return true when last time is null', () => {
+	test( 'should return true when last time is null', () => {
 		expect(
 			shouldSyncReaderFollows( {
 				reader: {
@@ -24,7 +24,7 @@ describe( 'shouldSyncReaderFollows', () => {
 		).to.be.true;
 	} );
 
-	it( 'should return true when last time is just over an hour ago', () => {
+	test( 'should return true when last time is just over an hour ago', () => {
 		expect(
 			shouldSyncReaderFollows( {
 				reader: {
@@ -36,7 +36,7 @@ describe( 'shouldSyncReaderFollows', () => {
 		).to.be.true;
 	} );
 
-	it( 'should return false when last sync date is now', () => {
+	test( 'should return false when last sync date is now', () => {
 		expect(
 			shouldSyncReaderFollows( {
 				reader: {
@@ -48,7 +48,7 @@ describe( 'shouldSyncReaderFollows', () => {
 		).to.be.false;
 	} );
 
-	it( 'should return false when last sync date is within an hour', () => {
+	test( 'should return false when last sync date is within an hour', () => {
 		expect(
 			shouldSyncReaderFollows( {
 				reader: {

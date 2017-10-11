@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import getPostRevisions from 'state/selectors/get-post-revisions';
 
 describe( 'getPostRevisions', () => {
-	it( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
+	test( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -30,7 +30,7 @@ describe( 'getPostRevisions', () => {
 		).to.eql( [] );
 	} );
 
-	it( 'should return an array of post revisions', () => {
+	test( 'should return an array of post revisions', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -63,7 +63,7 @@ describe( 'getPostRevisions', () => {
 		] );
 	} );
 
-	it( 'should hydrate all revisions with more author information if found', () => {
+	test( 'should hydrate all revisions with more author information if found', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -115,7 +115,7 @@ describe( 'getPostRevisions', () => {
 		] );
 	} );
 
-	it( 'should preserve all revisions author ID if not found', () => {
+	test( 'should preserve all revisions author ID if not found', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -156,7 +156,7 @@ describe( 'getPostRevisions', () => {
 		] );
 	} );
 
-	it( 'should normalize all revisions', () => {
+	test( 'should normalize all revisions', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -198,7 +198,7 @@ describe( 'getPostRevisions', () => {
 		] );
 	} );
 
-	it( 'should order revisions by date (recent first)', () => {
+	test( 'should order revisions by date (recent first)', () => {
 		expect(
 			getPostRevisions(
 				{

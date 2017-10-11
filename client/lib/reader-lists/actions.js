@@ -171,4 +171,4 @@ const ReaderListActions = {
 	},
 };
 
-module.exports = ReaderListActions;
+export default ReaderListActions;

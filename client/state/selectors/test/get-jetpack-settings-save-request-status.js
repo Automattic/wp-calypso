@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getJetpackSettingsSaveRequestStatus } from '../';
 
 describe( 'getJetpackSettingsSaveRequestStatus()', () => {
-	it( 'should return undefined if the site is not attached', () => {
+	test( 'should return undefined if the site is not attached', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -26,7 +26,7 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 		expect( status ).to.be.undefined;
 	} );
 
-	it( 'should return success if the save request status is success', () => {
+	test( 'should return success if the save request status is success', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -41,7 +41,7 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 		expect( status ).to.eql( 'success' );
 	} );
 
-	it( 'should return error if the save request status is error', () => {
+	test( 'should return error if the save request status is error', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -56,7 +56,7 @@ describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 		expect( status ).to.eql( 'error' );
 	} );
 
-	it( 'should return pending if the save request status is pending', () => {
+	test( 'should return pending if the save request status is pending', () => {
 		const state = {
 			jetpack: {
 				settings: {

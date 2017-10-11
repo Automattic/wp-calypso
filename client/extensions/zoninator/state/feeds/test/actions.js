@@ -22,7 +22,7 @@ describe( 'actions', () => {
 	const posts = [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ];
 
 	describe( 'requestFeed()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = requestFeed( siteId, zoneId );
 
 			expect( action ).to.deep.equal( {
@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveFeed()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = saveFeed( siteId, zoneId, 'test-form', posts );
 
 			expect( action ).to.deep.equal( {
@@ -48,7 +48,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateFeed()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = updateFeed( siteId, zoneId, posts );
 
 			expect( action ).to.deep.equal( {

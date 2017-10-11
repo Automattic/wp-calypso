@@ -4,7 +4,7 @@ jest.mock( 'fs' );
 describe( 'parser', () => {
 	let parser;
 
-	it( 'should return empty objects for an invalid path', () => {
+	test( 'should return empty objects for an invalid path', () => {
 		parser = require( 'config/parser' );
 
 		const data = parser( '/invalid-path' );
@@ -12,7 +12,7 @@ describe( 'parser', () => {
 		expect( data ).toEqual( { serverData: {}, clientData: {} } );
 	} );
 
-	it( 'server should have secrets and client should not', () => {
+	test( 'server should have secrets and client should not', () => {
 		require( 'fs' ).__setValidSecrets();
 		parser = require( 'config/parser' );
 
@@ -22,7 +22,7 @@ describe( 'parser', () => {
 		expect( data.serverData ).toHaveProperty( 'secret' );
 	} );
 
-	it( 'should cascade configs', () => {
+	test( 'should cascade configs', () => {
 		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 
@@ -43,7 +43,7 @@ describe( 'parser', () => {
 		} );
 	} );
 
-	it( 'should override enabled feature when disabledFeatures set', () => {
+	test( 'should override enabled feature when disabledFeatures set', () => {
 		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 
@@ -55,7 +55,7 @@ describe( 'parser', () => {
 		expect( data ).toHaveProperty( 'features.enabledFeature2', false );
 	} );
 
-	it( 'should override disabled feature when enabledFeatures set', () => {
+	test( 'should override disabled feature when enabledFeatures set', () => {
 		require( 'fs' ).__setValidEnvFiles();
 		parser = require( 'config/parser' );
 

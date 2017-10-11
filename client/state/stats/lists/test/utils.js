@@ -77,13 +77,13 @@ describe( 'utils', () => {
 			},
 		];
 
-		it( 'should return empty array if payload is null', () => {
+		test( 'should return empty array if payload is null', () => {
 			const actualDeltas = parseOrderDeltas( null );
 			assert.isArray( actualDeltas );
 			assert.isTrue( actualDeltas.length === 0 );
 		} );
 
-		it( 'should return empty array if payload.deltas has no keys', () => {
+		test( 'should return empty array if payload.deltas has no keys', () => {
 			const actualDeltas = parseOrderDeltas( {
 				date: '2017',
 				deltas: {},
@@ -93,20 +93,20 @@ describe( 'utils', () => {
 			assert.isTrue( actualDeltas.length === 0 );
 		} );
 
-		it( 'should return empty array if payload.deltas or delta_fields are missing', () => {
+		test( 'should return empty array if payload.deltas or delta_fields are missing', () => {
 			const actualDeltas = parseOrderDeltas( { date: '2017' } );
 			assert.isArray( actualDeltas );
 			assert.isTrue( actualDeltas.length === 0 );
 		} );
 
-		it( 'should return a well formed array of delta objects', () => {
+		test( 'should return a well formed array of delta objects', () => {
 			const actualDeltas = parseOrderDeltas( orderPayload );
 			assert.isArray( actualDeltas );
 			assert.isObject( actualDeltas[ 0 ] );
 			assert.isObject( actualDeltas[ 0 ].orders );
 		} );
 
-		it( 'should return an array of delta objects as expected', () => {
+		test( 'should return an array of delta objects as expected', () => {
 			const actualDeltas = parseOrderDeltas( orderPayload );
 			assert.deepEqual( actualDeltas, expectedDeltas );
 		} );
@@ -135,73 +135,73 @@ describe( 'utils', () => {
 			},
 		];
 
-		it( 'should return empty array if payload.data is missing', () => {
+		test( 'should return empty array if payload.data is missing', () => {
 			const actualOrders = parseOrdersChartData( { date: '2017' } );
 			assert.isArray( actualOrders );
 			assert.isTrue( actualOrders.length === 0 );
 		} );
 
-		it( 'should return a well formed array of objects', () => {
+		test( 'should return a well formed array of objects', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
 			assert.isArray( actualOrders );
 			assert.isObject( actualOrders[ 0 ] );
 		} );
 
-		it( 'should return an array of objects as expected', () => {
+		test( 'should return an array of objects as expected', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
 			assert.deepEqual( actualOrders, expectedOrders );
 		} );
 	} );
 	describe( 'getPeriodFormat', () => {
-		it( 'should return correctly day format for long formats', () => {
+		test( 'should return correctly day format for long formats', () => {
 			const response = getPeriodFormat( 'day', '2017-07-07' );
 			assert.strictEqual( response, 'YYYY-MM-DD' );
 		} );
 
-		it( 'should return correctly week format for long formats', () => {
+		test( 'should return correctly week format for long formats', () => {
 			const response = getPeriodFormat( 'week', '2017-07-07' );
 			assert.strictEqual( response, 'YYYY-MM-DD' );
 		} );
 
-		it( 'should return correctly month format for long formats', () => {
+		test( 'should return correctly month format for long formats', () => {
 			const response = getPeriodFormat( 'month', '2017-07-07' );
 			assert.strictEqual( response, 'YYYY-MM-DD' );
 		} );
 
-		it( 'should return correctly year format for long formats', () => {
+		test( 'should return correctly year format for long formats', () => {
 			const response = getPeriodFormat( 'year', '2017-07-07' );
 			assert.strictEqual( response, 'YYYY-MM-DD' );
 		} );
 
-		it( 'should return correctly day format for short (new) formats', () => {
+		test( 'should return correctly day format for short (new) formats', () => {
 			const response = getPeriodFormat( 'day', '2017-07-07' );
 			assert.strictEqual( response, 'YYYY-MM-DD' );
 		} );
 
-		it( 'should return correctly week format for short (new) formats', () => {
+		test( 'should return correctly week format for short (new) formats', () => {
 			const response = getPeriodFormat( 'week', '2017-W27' );
 			assert.strictEqual( response, 'YYYY-[W]WW' );
 		} );
 
-		it( 'should return correctly month format for short (new) formats', () => {
+		test( 'should return correctly month format for short (new) formats', () => {
 			const response = getPeriodFormat( 'month', '2017-07' );
 			assert.strictEqual( response, 'YYYY-MM' );
 		} );
 
-		it( 'should return correctly year format for short (new) formats', () => {
+		test( 'should return correctly year format for short (new) formats', () => {
 			const response = getPeriodFormat( 'year', '2017' );
 			assert.strictEqual( response, 'YYYY' );
 		} );
 	} );
 
 	describe( 'buildExportArray()', () => {
-		it( 'should an empty array if data not supplied', () => {
+		test( 'should an empty array if data not supplied', () => {
 			const data = buildExportArray( {} );
 
 			expect( data ).to.eql( [] );
 		} );
 
-		it( 'should parse simple object to csv', () => {
+		test( 'should parse simple object to csv', () => {
 			const data = buildExportArray( {
 				label: 'Chicken',
 				value: 10,
@@ -210,7 +210,7 @@ describe( 'utils', () => {
 			expect( data ).to.eql( [ [ '"Chicken"', 10 ] ] );
 		} );
 
-		it( 'should escape simple object to csv', () => {
+		test( 'should escape simple object to csv', () => {
 			const data = buildExportArray( {
 				label: 'Chicken and "Ribs"',
 				value: 10,
@@ -219,7 +219,7 @@ describe( 'utils', () => {
 			expect( data ).to.eql( [ [ '"Chicken and ""Ribs""', 10 ] ] );
 		} );
 
-		it( 'should recurse child data', () => {
+		test( 'should recurse child data', () => {
 			const data = buildExportArray( {
 				label: 'BBQ',
 				value: 10,
@@ -251,7 +251,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'rangeOfPeriod()', () => {
-		it( 'should return a period object for day', () => {
+		test( 'should return a period object for day', () => {
 			const period = rangeOfPeriod( 'day', '2016-06-01' );
 
 			expect( period ).to.eql( {
@@ -260,7 +260,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return a period object for week', () => {
+		test( 'should return a period object for week', () => {
 			const period = rangeOfPeriod( 'week', '2016-06-01' );
 
 			expect( period ).to.eql( {
@@ -269,7 +269,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return a period object for month', () => {
+		test( 'should return a period object for month', () => {
 			const period = rangeOfPeriod( 'month', '2016-06-05' );
 
 			expect( period ).to.eql( {
@@ -278,7 +278,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return a period object for year', () => {
+		test( 'should return a period object for year', () => {
 			const period = rangeOfPeriod( 'year', '2016-06-05' );
 
 			expect( period ).to.eql( {
@@ -289,7 +289,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'getSerializedStatsQuery()', () => {
-		it( 'should return a JSON string of a query', () => {
+		test( 'should return a JSON string of a query', () => {
 			const serializedQuery = getSerializedStatsQuery( {
 				startDate: '2016-06-01',
 				endDate: '2016-07-01',
@@ -298,7 +298,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '[["endDate","2016-07-01"],["startDate","2016-06-01"]]' );
 		} );
 
-		it( 'should return the same JSON string of a query regardless of query object order', () => {
+		test( 'should return the same JSON string of a query regardless of query object order', () => {
 			const serializedQuery = getSerializedStatsQuery( {
 				startDate: '2016-06-01',
 				endDate: '2016-07-01',
@@ -314,32 +314,32 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'isAutoRefreshAllowedForQuery()', () => {
-		it( 'should return true if not query specified', () => {
+		test( 'should return true if not query specified', () => {
 			const isAllowed = isAutoRefreshAllowedForQuery();
 			expect( isAllowed ).to.be.true;
 		} );
 
-		it( 'should return true for empty queries', () => {
+		test( 'should return true for empty queries', () => {
 			const isAllowed = isAutoRefreshAllowedForQuery( {} );
 			expect( isAllowed ).to.be.true;
 		} );
 
-		it( 'should return true for queries without date', () => {
+		test( 'should return true for queries without date', () => {
 			const isAllowed = isAutoRefreshAllowedForQuery( { quantity: 3 } );
 			expect( isAllowed ).to.be.true;
 		} );
 
-		it( 'should return true for queries without period', () => {
+		test( 'should return true for queries without period', () => {
 			const isAllowed = isAutoRefreshAllowedForQuery( { date: '2016-06-01' } );
 			expect( isAllowed ).to.be.true;
 		} );
 
-		it( "should return false for a period that doesn't include today", () => {
+		test( "should return false for a period that doesn't include today", () => {
 			const isAllowed = isAutoRefreshAllowedForQuery( { period: 'week', date: '2016-06-01' } );
 			expect( isAllowed ).to.be.false;
 		} );
 
-		it( 'should return true for a period that includes today', () => {
+		test( 'should return true for a period that includes today', () => {
 			const isAllowed = isAutoRefreshAllowedForQuery( {
 				period: 'day',
 				date: moment().format( 'YYYY-MM-DD' ),
@@ -350,19 +350,19 @@ describe( 'utils', () => {
 
 	describe( 'normalizers', () => {
 		describe( 'stats()', () => {
-			it( 'should return null if no data is passed', () => {
+			test( 'should return null if no data is passed', () => {
 				const parsedData = normalizers.stats();
 
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return null if data object is missing stats attribute', () => {
+			test( 'should return null if data object is missing stats attribute', () => {
 				const parsedData = normalizers.stats( { foo: false } );
 
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return parsed camelCased stats object', () => {
+			test( 'should return parsed camelCased stats object', () => {
 				const parsedData = normalizers.stats( {
 					stats: {
 						posts: 2,
@@ -384,12 +384,12 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsFollowers()', () => {
-			it( 'should return null if no data is provided', () => {
+			test( 'should return null if no data is provided', () => {
 				const parsedData = normalizers.statsFollowers();
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should properly parse followers response', () => {
+			test( 'should properly parse followers response', () => {
 				const parsedData = normalizers.statsFollowers( {
 					page: 1,
 					pages: 1,
@@ -434,12 +434,12 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsCommentFollowers()', () => {
-			it( 'should return null if no data is provided', () => {
+			test( 'should return null if no data is provided', () => {
 				const parsedData = normalizers.statsCommentFollowers();
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should properly parse followers response', () => {
+			test( 'should properly parse followers response', () => {
 				const parsedData = normalizers.statsCommentFollowers( {
 					page: 1,
 					pages: 1,
@@ -479,12 +479,12 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsComments()', () => {
-			it( 'should return null if no data is provided', () => {
+			test( 'should return null if no data is provided', () => {
 				const parsedData = normalizers.statsComments();
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should properly parse comments stats response', () => {
+			test( 'should properly parse comments stats response', () => {
 				const parsedData = normalizers.statsComments( {
 					authors: [
 						{
@@ -541,25 +541,25 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsTopPosts()', () => {
-			it( 'should return an empty array if data is null', () => {
+			test( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsTopPosts();
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsTopPosts( {}, { date: '2016-12-25' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsTopPosts( {}, { period: 'day' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should properly parse day period response', () => {
+			test( 'should properly parse day period response', () => {
 				const parsedData = normalizers.statsTopPosts(
 					{
 						date: '2017-01-12',
@@ -607,7 +607,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should properly add published className for posts published in period', () => {
+			test( 'should properly add published className for posts published in period', () => {
 				const parsedData = normalizers.statsTopPosts(
 					{
 						date: '2017-01-12',
@@ -655,7 +655,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should properly parse summarized response', () => {
+			test( 'should properly parse summarized response', () => {
 				const parsedData = normalizers.statsTopPosts(
 					{
 						date: '2017-01-12',
@@ -704,25 +704,25 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsCountryViews()', () => {
-			it( 'should return null if data is null', () => {
+			test( 'should return null if data is null', () => {
 				const parsedData = normalizers.statsCountryViews();
 
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return null if query.period is null', () => {
+			test( 'should return null if query.period is null', () => {
 				const parsedData = normalizers.statsCountryViews( {}, { date: '2016-12-25' } );
 
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return null if query.date is null', () => {
+			test( 'should return null if query.date is null', () => {
 				const parsedData = normalizers.statsCountryViews( {}, { period: 'day' } );
 
 				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should properly parse day period response', () => {
+			test( 'should properly parse day period response', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -766,7 +766,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should properly parse week period response', () => {
+			test( 'should properly parse week period response', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -810,7 +810,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should properly parse summarized response', () => {
+			test( 'should properly parse summarized response', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -853,7 +853,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should properly parse month period response', () => {
+			test( 'should properly parse month period response', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -897,7 +897,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should sanitize ’ from country names', () => {
+			test( 'should sanitize ’ from country names', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -940,7 +940,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should ignore country_codes with no country-info', () => {
+			test( 'should ignore country_codes with no country-info', () => {
 				const parsedData = normalizers.statsCountryViews(
 					{
 						date: '2015-12-25',
@@ -990,19 +990,19 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsInsights()', () => {
-			it( 'should return an empty object if no data is passed', () => {
+			test( 'should return an empty object if no data is passed', () => {
 				const stats = normalizers.statsInsights();
 
 				expect( stats ).to.eql( {} );
 			} );
 
-			it( 'should return null if data.highest_day_of_week is not numeric', () => {
+			test( 'should return null if data.highest_day_of_week is not numeric', () => {
 				const stats = normalizers.statsInsights( { highest_day_of_week: false } );
 
 				expect( stats ).to.eql( {} );
 			} );
 
-			it( 'should return properly formatted data if matching data exists', () => {
+			test( 'should return properly formatted data if matching data exists', () => {
 				const stats = normalizers.statsInsights( {
 					highest_hour: 11,
 					highest_day_percent: 10,
@@ -1022,19 +1022,19 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsPublicize()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsPublicize();
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if not data has no services attribute', () => {
+			test( 'should return an empty array if not data has no services attribute', () => {
 				const parsedData = normalizers.statsPublicize( { bad: [] } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed services array', () => {
+			test( 'should return an a properly parsed services array', () => {
 				const parsedData = normalizers.statsPublicize( {
 					services: [
 						{
@@ -1064,25 +1064,25 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsVideoPlays()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsVideoPlays();
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsVideoPlays( {}, { date: '2016-12-25' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsVideoPlays( {}, { period: 'day' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should properly parse day period response', () => {
+			test( 'should properly parse day period response', () => {
 				const parsedData = normalizers.statsVideoPlays(
 					{
 						date: '2017-01-12',
@@ -1128,13 +1128,13 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsVideo()', () => {
-			it( 'should return null if not data is passed', () => {
+			test( 'should return null if not data is passed', () => {
 				const parsedData = normalizers.statsVideo();
 
 				expect( parsedData ).to.eql( null );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsVideo( {
 					data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
 					pages: [
@@ -1172,25 +1172,25 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsTopAuthors()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsTopAuthors();
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsTopAuthors( {}, { date: '2016-12-25' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsTopAuthors( {}, { period: 'day' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsTopAuthors(
 					{
 						date: '2017-01-17',
@@ -1270,18 +1270,18 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsTags()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsTags();
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if not data has no tags attribute', () => {
+			test( 'should return an empty array if not data has no tags attribute', () => {
 				const parsedData = normalizers.statsTags( { bad: [] } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsTags( {
 					date: '2014-10-01',
 					tags: [
@@ -1363,22 +1363,22 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsClicks()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsClicks();
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsClicks( {}, { date: '2016-12-25' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsClicks( {}, { period: 'day' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsClicks(
 					{
 						date: '2017-01-12',
@@ -1445,7 +1445,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should return an a properly parsed summary data array', () => {
+			test( 'should return an a properly parsed summary data array', () => {
 				const parsedData = normalizers.statsClicks(
 					{
 						date: '2017-01-12',
@@ -1513,22 +1513,22 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsReferrers()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsReferrers();
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsReferrers( {}, { date: '2016-12-25' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsReferrers( {}, { period: 'day' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed summary data array', () => {
+			test( 'should return an a properly parsed summary data array', () => {
 				const parsedData = normalizers.statsReferrers(
 					{
 						date: '2017-01-12',
@@ -1615,7 +1615,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsReferrers(
 					{
 						date: '2017-01-12',
@@ -1705,22 +1705,22 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsSearchTerms()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsSearchTerms();
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsSearchTerms( {}, { date: '2016-12-25' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsSearchTerms( {}, { period: 'day' } );
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsSearchTerms(
 					{
 						date: '2017-01-12',
@@ -1766,7 +1766,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should return an a properly parsed summarized data array', () => {
+			test( 'should return an a properly parsed summarized data array', () => {
 				const parsedData = normalizers.statsSearchTerms(
 					{
 						date: '2017-01-12',
@@ -1814,18 +1814,18 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsVisits()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsVisits();
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if the payload no data attribute', () => {
+			test( 'should return an empty array if the payload no data attribute', () => {
 				const parsedData = normalizers.statsVisits( { bad: [] } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an a properly parsed data array', () => {
+			test( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsVisits( {
 					fields: [ 'period', 'views', 'visitors' ],
 					data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
@@ -1863,7 +1863,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			it( 'should parse the weekends properly', () => {
+			test( 'should parse the weekends properly', () => {
 				const parsedData = normalizers.statsVisits( {
 					fields: [ 'period', 'views', 'visitors' ],
 					data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
@@ -1903,25 +1903,25 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsPodcastDownloads()', () => {
-			it( 'should return an empty array if data is null', () => {
+			test( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsPodcastDownloads();
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			test( 'should return an empty array if query.period is null', () => {
 				const parsedData = normalizers.statsPodcastDownloads( {}, { date: '2016-12-25' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			test( 'should return an empty array if query.date is null', () => {
 				const parsedData = normalizers.statsPodcastDownloads( {}, { period: 'day' } );
 
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should properly parse day period response', () => {
+			test( 'should properly parse day period response', () => {
 				const parsedData = normalizers.statsPodcastDownloads(
 					{
 						date: '2017-01-12',

@@ -17,10 +17,10 @@ import { reducer } from 'state';
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
-describe( 'dependency-store', function() {
+describe( 'dependency-store', () => {
 	let SignupProgressStore, SignupDependencyStore, SignupActions;
 
-	before( () => {
+	beforeAll( () => {
 		SignupProgressStore = require( '../progress-store' );
 		SignupDependencyStore = require( '../dependency-store' );
 		SignupActions = require( '../actions' );
@@ -29,20 +29,20 @@ describe( 'dependency-store', function() {
 		SignupDependencyStore.setReduxStore( store );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		SignupProgressStore.reset();
 	} );
 
-	it( 'should return an empty object at first', function() {
+	test( 'should return an empty object at first', () => {
 		assert.deepEqual( SignupDependencyStore.get(), {} );
 	} );
 
-	it( 'should not store dependencies if none are included in an action', function() {
+	test( 'should not store dependencies if none are included in an action', () => {
 		SignupActions.submitSignupStep( { stepName: 'stepA' } );
 		assert.deepEqual( SignupDependencyStore.get(), {} );
 	} );
 
-	it( 'should store dependencies if they are provided in either signup action', function() {
+	test( 'should store dependencies if they are provided in either signup action', () => {
 		SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN' } );
@@ -54,7 +54,7 @@ describe( 'dependency-store', function() {
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2' } );
 	} );
 
-	it( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
+	test( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
 		const dependencies = {
 			foo: 'bar',
 			baz: 'test',

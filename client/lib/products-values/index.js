@@ -368,7 +368,7 @@ function isSpaceUpgrade( product ) {
 	);
 }
 
-module.exports = {
+export default {
 	formatProduct,
 	getDomainProductRanking,
 	includesProduct,

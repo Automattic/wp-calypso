@@ -6,14 +6,18 @@
 
 import React from 'react';
 
-export default React.createClass( {
-	displayName: 'ContactFormViewPreviewRequired',
+import { localize } from 'i18n-calypso';
 
-	render() {
-		if ( this.props.required ) {
-			return <em>&nbsp;({ this.translate( 'required' ) })</em>;
-		}
+export default localize(
+	React.createClass( {
+		displayName: 'ContactFormViewPreviewRequired',
 
-		return null;
-	},
-} );
+		render() {
+			if ( this.props.required ) {
+				return <em>&nbsp;({ this.props.translate( 'required' ) })</em>;
+			}
+
+			return null;
+		},
+	} )
+);

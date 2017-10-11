@@ -586,4 +586,4 @@ const MediaUtils = {
 	},
 };
 
-module.exports = MediaUtils;
+export default MediaUtils;

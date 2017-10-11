@@ -1,5 +1,5 @@
 /** @format */
-module.exports = {
+export default {
 	page: 2,
 	pages: 2,
 	total_email: 4,

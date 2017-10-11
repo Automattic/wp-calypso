@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -76,7 +77,7 @@ const EditorSharingAccordion = React.createClass( {
 		return (
 			<div className={ classes }>
 				<label className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
-					{ this.translate( 'Shortlink' ) }
+					{ this.props.translate( 'Shortlink' ) }
 				</label>
 				<FormTextInput
 					className="editor-sharing__shortlink-field"
@@ -111,7 +112,7 @@ const EditorSharingAccordion = React.createClass( {
 		if ( this.props.hasBrokenConnection ) {
 			status = {
 				type: 'warning',
-				text: this.translate( 'A broken connection requires repair', {
+				text: this.props.translate( 'A broken connection requires repair', {
 					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
 				url: `/sharing/${ this.props.site.slug }`,
@@ -122,7 +123,7 @@ const EditorSharingAccordion = React.createClass( {
 
 		return (
 			<Accordion
-				title={ this.translate( 'Sharing' ) }
+				title={ this.props.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
 				className={ classes }
@@ -158,4 +159,4 @@ export default connect(
 	{
 		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' ),
 	}
-)( EditorSharingAccordion );
+)( localize( EditorSharingAccordion ) );

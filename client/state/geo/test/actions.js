@@ -23,7 +23,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveGeo()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveGeo( {
 				latitude: '39.36006',
 				longitude: '-84.30994',
@@ -48,7 +48,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestGeo()', () => {
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestGeo()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'success', () => {
+		describe( 'success', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith(
 						receiveGeo( {
@@ -86,7 +86,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch request success action when request completes', () => {
+			test( 'should dispatch request success action when request completes', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: GEO_REQUEST_SUCCESS,
@@ -95,7 +95,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'failure', () => {
+		describe( 'failure', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -103,7 +103,7 @@ describe( 'actions', () => {
 					.reply( 500 );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: GEO_REQUEST_FAILURE,

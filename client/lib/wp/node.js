@@ -17,4 +17,4 @@ if ( config.isEnabled( 'support-user' ) ) {
 // Inject localization helpers to `wpcom` instance
 wpcom = injectLocalization( wpcom );
 
-module.exports = wpcom;
+export default wpcom;

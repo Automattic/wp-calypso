@@ -12,16 +12,16 @@ import React from 'react';
  */
 import Rating from 'components/rating';
 
-describe( '<Rating />', function() {
-	describe( 'check props size', function() {
-		it( 'should be set to 24px if no size', function() {
+describe( '<Rating />', () => {
+	describe( 'check props size', () => {
+		test( 'should be set to 24px if no size', () => {
 			const wrapper = shallow( <Rating /> );
 
 			const component = wrapper.find( 'div.rating' );
 			expect( component.props().style.width ).to.equal( '120px' ); // 24 * 5 = 120;
 		} );
 
-		it( 'should use size if passed', function() {
+		test( 'should use size if passed', () => {
 			const size = 48,
 				wrapper = shallow( <Rating size={ size } /> );
 
@@ -29,7 +29,7 @@ describe( '<Rating />', function() {
 			expect( component.props().style.width ).to.equal( size * 5 + 'px' );
 		} );
 
-		it( 'should use size in each star', function() {
+		test( 'should use size in each star', () => {
 			const rating = 30,
 				size = 48,
 				wrapper = shallow( <Rating rating={ rating } size={ size } /> );
@@ -40,8 +40,8 @@ describe( '<Rating />', function() {
 		} );
 	} );
 
-	describe( 'check props rating', function() {
-		it( 'should render full width mask for no rating', function() {
+	describe( 'check props rating', () => {
+		test( 'should render full width mask for no rating', () => {
 			const size = 24, // use default size
 				wrapper = shallow( <Rating size={ size } /> );
 
@@ -50,7 +50,7 @@ describe( '<Rating />', function() {
 			expect( component.props().style.clip ).to.equal( 'rect(0, 0px, ' + size + 'px, 0)' );
 		} );
 
-		it( 'should render rating clipping mask properly', function() {
+		test( 'should render rating clipping mask properly', () => {
 			each( [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ], function( ratingValue ) {
 				const size = 24; // use default size
 				const wrapper = shallow( <Rating rating={ ratingValue } size={ size } /> );

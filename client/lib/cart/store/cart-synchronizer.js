@@ -258,4 +258,4 @@ CartSynchronizer.prototype.hasPendingServerUpdates = function() {
 	);
 };
 
-module.exports = CartSynchronizer;
+export default CartSynchronizer;

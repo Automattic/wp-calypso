@@ -137,4 +137,4 @@ NetworkConnectionApp = {
  */
 Emitter( NetworkConnectionApp );
 
-module.exports = NetworkConnectionApp;
+export default NetworkConnectionApp;

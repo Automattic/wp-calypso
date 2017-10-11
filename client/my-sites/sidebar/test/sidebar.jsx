@@ -18,7 +18,7 @@ jest.mock( 'my-sites/sidebar/manage-menu', () => require( 'components/empty-comp
 
 describe( 'MySitesSidebar', () => {
 	describe( '#isItemLinkSelected()', () => {
-		it( 'should return false if none of the paths are a prefix', () => {
+		test( 'should return false if none of the paths are a prefix', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{
@@ -32,7 +32,7 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).to.be.false;
 		} );
 
-		it( 'should return false if one of the paths is a prefix, but not at end or separated by slash', () => {
+		test( 'should return false if one of the paths is a prefix, but not at end or separated by slash', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{
@@ -46,7 +46,7 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).to.be.false;
 		} );
 
-		it( 'should return true if one of the paths is a prefix of the current path and separated by slash', () => {
+		test( 'should return true if one of the paths is a prefix of the current path and separated by slash', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{
@@ -60,7 +60,7 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).to.be.true;
 		} );
 
-		it( 'should return true if one of the paths is a prefix of the current path and at end', () => {
+		test( 'should return true if one of the paths is a prefix of the current path and at end', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{
@@ -74,7 +74,7 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).to.be.true;
 		} );
 
-		it( 'should accept a path string', () => {
+		test( 'should accept a path string', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{
@@ -88,7 +88,7 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).to.be.true;
 		} );
 
-		it( 'should return true if one of the paths is a prefix of the current path and separated by search query', () => {
+		test( 'should return true if one of the paths is a prefix of the current path and separated by search query', () => {
 			const instance = new MySitesSidebar();
 			const isSelected = instance.isItemLinkSelected.call(
 				{

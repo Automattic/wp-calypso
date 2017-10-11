@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'connection',
 			'deleting',
@@ -63,13 +63,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requestingAll()', () => {
-		it( 'should default false', () => {
+		test( 'should default false', () => {
 			const state = requestingAll( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should update fetching state on fetch', () => {
+		test( 'should update fetching state on fetch', () => {
 			const state = requestingAll( undefined, {
 				type: SITES_REQUEST,
 			} );
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should update fetching state on success', () => {
+		test( 'should update fetching state on success', () => {
 			const state = requestingAll( true, {
 				type: SITES_REQUEST_SUCCESS,
 			} );
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should update fetching state on failure', () => {
+		test( 'should update fetching state on failure', () => {
 			const state = requestingAll( true, {
 				type: SITES_REQUEST_FAILURE,
 			} );
@@ -95,13 +95,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'can receive all sites', () => {
+		test( 'can receive all sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'overwrites sites when all sites are received', () => {
+		test( 'overwrites sites when all sites are received', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Another test site' },
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not affect state to receive updates for untracked sites', () => {
+		test( 'should not affect state to receive updates for untracked sites', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, {
 				type: SITES_UPDATE,
@@ -139,7 +139,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should update sites which are already tracked', () => {
+		test( 'should update sites which are already tracked', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
@@ -153,7 +153,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return same state if received site matches existing', () => {
+		test( 'should return same state if received site matches existing', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
@@ -165,7 +165,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should index sites by ID', () => {
+		test( 'should index sites by ID', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
 				site: { ID: 2916284, name: 'WordPress.com Example Blog' },
@@ -176,7 +176,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate sites', () => {
+		test( 'should accumulate sites', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
@@ -191,7 +191,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should remove deleted sites', () => {
+		test( 'should remove deleted sites', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Just You Wait' },
@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should remove Jetpack Disconnected sites', () => {
+		test( 'should remove Jetpack Disconnected sites', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'Jetpack Example Blog' },
 				77203074: { ID: 77203074, name: 'Just You Wait' },
@@ -224,7 +224,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return the original state when deleting a site that is not present', () => {
+		test( 'should return the original state when deleting a site that is not present', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Just You Wait' },
@@ -238,7 +238,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should override previous site of same ID', () => {
+		test( 'should override previous site of same ID', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
@@ -252,7 +252,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should strip invalid keys on the received site object', () => {
+		test( 'should strip invalid keys on the received site object', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
 				site: {
@@ -268,7 +268,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should strip invalid keys on the received site objects', () => {
+		test( 'should strip invalid keys on the received site objects', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
@@ -286,7 +286,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update properties when wordads is activated', () => {
+		test( 'should update properties when wordads is activated', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { foo: 'bar' } },
 			} );
@@ -304,7 +304,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should do nothing when site is not loaded and wordads is activated', () => {
+		test( 'should do nothing when site is not loaded and wordads is activated', () => {
 			const original = deepFreeze( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
@@ -318,7 +318,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update the theme slug option when a theme is activated', () => {
+		test( 'should update the theme slug option when a theme is activated', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -345,7 +345,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return same state when site settings updated but not site icon', () => {
+		test( 'should return same state when site settings updated but not site icon', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, {
 				type: SITE_SETTINGS_UPDATE,
@@ -356,7 +356,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return same state when site settings received with icon for untracked site', () => {
+		test( 'should return same state when site settings received with icon for untracked site', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, {
 				type: SITE_SETTINGS_RECEIVE,
@@ -369,7 +369,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return same state if received icon setting and matches current value', () => {
+		test( 'should return same state if received icon setting and matches current value', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -390,7 +390,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return same state if received privacy setting and matches current value', () => {
+		test( 'should return same state if received privacy setting and matches current value', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -409,7 +409,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return same state if received null icon setting and already unset', () => {
+		test( 'should return same state if received null icon setting and already unset', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -427,7 +427,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return site having blavatar with unset icon property if received null icon setting', () => {
+		test( 'should return site having blavatar with unset icon property if received null icon setting', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -454,7 +454,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return site with unset icon property if received null icon setting', () => {
+		test( 'should return site with unset icon property if received null icon setting', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -480,7 +480,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return site with icon property with media id if received different icon setting', () => {
+		test( 'should return site with icon property with media id if received different icon setting', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -506,7 +506,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return site with false privacy setting if received blog_public of 1', () => {
+		test( 'should return site with false privacy setting if received blog_public of 1', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -531,7 +531,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update both privacy and icon if received both setting updates', () => {
+		test( 'should update both privacy and icon if received both setting updates', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -559,7 +559,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return same state if media deleted but not including site icon setting', () => {
+		test( 'should return same state if media deleted but not including site icon setting', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -578,7 +578,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return site with unset icon property if media deleted includes icon setting', () => {
+		test( 'should return site with unset icon property if media deleted includes icon setting', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -602,7 +602,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -614,7 +614,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					ID: 2916284,
@@ -626,7 +626,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should return initial state when state is invalid', () => {
+		test( 'should return initial state when state is invalid', () => {
 			const original = deepFreeze( {
 				2916284: { bad: true },
 			} );
@@ -637,13 +637,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site request started', () => {
+		test( 'should track site request started', () => {
 			const state = requesting( undefined, {
 				type: SITE_REQUEST,
 				siteId: 2916284,
@@ -654,7 +654,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate site requests started', () => {
+		test( 'should accumulate site requests started', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -669,7 +669,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track site request succeeded', () => {
+		test( 'should track site request succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: true,
@@ -685,7 +685,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track site request failed', () => {
+		test( 'should track site request failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
 				77203074: true,
@@ -703,13 +703,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'deleting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = deleting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track request for deleting a site started', () => {
+		test( 'should track request for deleting a site started', () => {
 			const state = deleting( undefined, {
 				type: SITE_DELETE,
 				siteId: 2916284,
@@ -720,7 +720,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requests for deleting a site started', () => {
+		test( 'should accumulate requests for deleting a site started', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
@@ -735,7 +735,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request for deleting a site succeeded', () => {
+		test( 'should track request for deleting a site succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: true,
@@ -751,7 +751,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request for deleting a site failed', () => {
+		test( 'should track request for deleting a site failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
 				77203074: true,

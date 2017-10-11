@@ -20,7 +20,7 @@ import products from 'woocommerce/state/sites/products/test/fixtures/products';
 
 describe( 'reducer', () => {
 	describe( 'productsRequest', () => {
-		it( 'should store the requested page', () => {
+		test( 'should store the requested page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST,
 				siteId: 123,
@@ -31,7 +31,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'productsRequestSuccess', () => {
-		it( 'should store the current page', () => {
+		test( 'should store the current page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 				siteId: 123,
@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			const newState = productsRequestSuccess( undefined, action );
 			expect( newState.currentPage ).to.eql( 2 );
 		} );
-		it( 'should store product ids for the current page', () => {
+		test( 'should store product ids for the current page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 				siteId: 123,
@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'productsDeleteSuccess', () => {
-		it( 'should remove the product from the products list', () => {
+		test( 'should remove the product from the products list', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
 				siteId: 123,

@@ -10,12 +10,11 @@ import { expect } from 'chai';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ReactDom from 'react-dom';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EditorDiscussion from '../';
+import { EditorDiscussion } from '../';
 import { edit as editPost } from 'lib/posts/actions';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
@@ -38,27 +37,19 @@ const DUMMY_SITE = {
 };
 
 describe( 'EditorDiscussion', function() {
-	before( function() {
-		EditorDiscussion.prototype.translate = sinon.stub().returnsArg( 0 );
-	} );
-
 	beforeEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );
 	} );
 
-	after( function() {
-		delete EditorDiscussion.prototype.translate;
-	} );
-
 	describe( '#getDiscussionSetting()', function() {
-		it( 'should return an empty object if both post and site are unknown', function() {
-			var tree = TestUtils.renderIntoDocument( <EditorDiscussion /> );
+		test( 'should return an empty object if both post and site are unknown', function() {
+			const tree = TestUtils.renderIntoDocument( <EditorDiscussion /> );
 
 			expect( tree.getDiscussionSetting() ).to.eql( {} );
 		} );
 
-		it( 'should return the site default comments open if site exists and post is new', function() {
-			var site = {
+		test( 'should return the site default comments open if site exists and post is new', () => {
+			const site = {
 					options: {
 						default_comment_status: true,
 						default_ping_status: false,
@@ -66,10 +57,11 @@ describe( 'EditorDiscussion', function() {
 				},
 				post = {
 					type: 'post',
-				},
-				tree;
+				};
 
-			tree = TestUtils.renderIntoDocument( <EditorDiscussion site={ site } post={ post } isNew /> );
+			const tree = TestUtils.renderIntoDocument(
+				<EditorDiscussion site={ site } post={ post } isNew />
+			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
 				comment_status: 'open',
@@ -77,8 +69,8 @@ describe( 'EditorDiscussion', function() {
 			} );
 		} );
 
-		it( 'should return the site default pings open if site exists and post is new', function() {
-			var site = {
+		test( 'should return the site default pings open if site exists and post is new', () => {
+			const site = {
 					options: {
 						default_comment_status: false,
 						default_ping_status: true,
@@ -86,10 +78,11 @@ describe( 'EditorDiscussion', function() {
 				},
 				post = {
 					type: 'post',
-				},
-				tree;
+				};
 
-			tree = TestUtils.renderIntoDocument( <EditorDiscussion site={ site } post={ post } isNew /> );
+			const tree = TestUtils.renderIntoDocument(
+				<EditorDiscussion site={ site } post={ post } isNew />
+			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
 				comment_status: 'closed',
@@ -97,8 +90,8 @@ describe( 'EditorDiscussion', function() {
 			} );
 		} );
 
-		it( 'should return comments closed if site exists, post is new, and post is type page', function() {
-			var site = {
+		test( 'should return comments closed if site exists, post is new, and post is type page', () => {
+			const site = {
 					options: {
 						default_comment_status: false,
 						default_ping_status: true,
@@ -106,10 +99,11 @@ describe( 'EditorDiscussion', function() {
 				},
 				post = {
 					type: 'page',
-				},
-				tree;
+				};
 
-			tree = TestUtils.renderIntoDocument( <EditorDiscussion site={ site } post={ post } isNew /> );
+			const tree = TestUtils.renderIntoDocument(
+				<EditorDiscussion site={ site } post={ post } isNew />
+			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
 				comment_status: 'closed',
@@ -117,23 +111,24 @@ describe( 'EditorDiscussion', function() {
 			} );
 		} );
 
-		it( 'should return the saved post values', function() {
-			var post = {
-					discussion: {
-						comment_status: 'open',
-						ping_status: 'closed',
-					},
+		test( 'should return the saved post values', () => {
+			const post = {
+				discussion: {
+					comment_status: 'open',
+					ping_status: 'closed',
 				},
-				tree;
+			};
 
-			tree = TestUtils.renderIntoDocument( <EditorDiscussion post={ post } site={ DUMMY_SITE } /> );
+			const tree = TestUtils.renderIntoDocument(
+				<EditorDiscussion post={ post } site={ DUMMY_SITE } />
+			);
 
 			expect( tree.getDiscussionSetting() ).to.equal( post.discussion );
 		} );
 	} );
 
-	describe( '#onChange', function() {
-		var post = {
+	describe( '#onChange', () => {
+		const post = {
 			discussion: {
 				comment_status: 'closed',
 				comments_open: false,
@@ -142,18 +137,15 @@ describe( 'EditorDiscussion', function() {
 			},
 		};
 
-		it( 'should include modified comment status on the post object', function() {
-			var tree, checkbox;
-
-			tree = TestUtils.renderIntoDocument(
+		test( 'should include modified comment status on the post object', () => {
+			const tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion
 					post={ post }
 					site={ DUMMY_SITE }
 					setDiscussionSettings={ function() {} }
 				/>
 			);
-
-			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
+			const checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
 				target: {
 					name: 'comment_status',
@@ -169,18 +161,15 @@ describe( 'EditorDiscussion', function() {
 			} );
 		} );
 
-		it( 'should include modified ping status on the post object', function() {
-			var tree, checkbox;
-
-			tree = TestUtils.renderIntoDocument(
+		test( 'should include modified ping status on the post object', () => {
+			const tree = TestUtils.renderIntoDocument(
 				<EditorDiscussion
 					post={ post }
 					site={ DUMMY_SITE }
 					setDiscussionSettings={ function() {} }
 				/>
 			);
-
-			checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
+			const checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
 				target: {
 					name: 'ping_status',

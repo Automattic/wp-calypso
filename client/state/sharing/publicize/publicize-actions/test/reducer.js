@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should only change deeply nested value with proper siteId, postId and actionId', () => {
+		test( 'should only change deeply nested value with proper siteId, postId and actionId', () => {
 			const state = updateDataForPost( 'newValue', nestedStateTree, 1, 2, 3 );
 			expect( state[ 1 ][ 2 ][ 3 ] ).to.equal( 'newValue' );
 			expect( state[ 1 ][ 2 ][ 4 ] ).to.equal( 'valueNotToChange' );
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			expect( state[ 99 ].test ).to.equal( 'valueNotToChange' );
 		} );
 
-		it( 'should only change deeply nested value with proper siteId, postId when without actionId', () => {
+		test( 'should only change deeply nested value with proper siteId, postId when without actionId', () => {
 			const state = updateDataForPost( 'newValue', nestedStateTree, 1, 2 );
 			expect( state[ 1 ][ 2 ] ).to.equal( 'newValue' );
 			expect( state[ 1 ][ 5 ] ).to.equal( 'valueNotToChange' );
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'schedulingSharePostActionStatus()', () => {
-		it( 'should change to `requesting` after requesting an action scheduling', () => {
+		test( 'should change to `requesting` after requesting an action scheduling', () => {
 			const state = schedulingSharePostActionStatus( null, {
 				type: PUBLICIZE_SHARE_ACTION_SCHEDULE,
 				siteId: 2916284,
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ][ 5 ].status ).to.equal( 'requesting' );
 		} );
 
-		it( 'should change to `failure` after requesting an action scheduling failed', () => {
+		test( 'should change to `failure` after requesting an action scheduling failed', () => {
 			const state = schedulingSharePostActionStatus( null, {
 				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 				siteId: 2916284,
@@ -69,7 +69,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ][ 5 ].status ).to.equal( 'failure' );
 		} );
 
-		it( 'should change to `success` and pass share date after request success', () => {
+		test( 'should change to `success` and pass share date after request success', () => {
 			const state = schedulingSharePostActionStatus( null, {
 				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 				siteId: 2916284,
@@ -81,7 +81,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ][ 5 ].shareDate ).to.equal( 3 );
 		} );
 
-		it( 'should not be defined after dismissing a notice', () => {
+		test( 'should not be defined after dismissing a notice', () => {
 			const previousState = {
 				2916284: {
 					5: {

@@ -153,4 +153,4 @@ MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload
 	}
 } );
 
-module.exports = MediaLibrarySelectedStore;
+export default MediaLibrarySelectedStore;

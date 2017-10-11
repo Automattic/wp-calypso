@@ -372,7 +372,7 @@ function showFieldValidationLoading( formState, fieldName ) {
 	);
 }
 
-module.exports = {
+export default {
 	Controller: Controller,
 	getFieldValue: getFieldValue,
 	setFieldsValidating: setFieldsValidating,

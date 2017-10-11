@@ -14,11 +14,11 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:auth-code-request-store:test' ); //eslint-disable-line no-unused-vars
 
 describe( 'index', () => {
-	beforeEach( function() {
+	beforeEach( () => {
 		Dispatcher.handleViewAction( { type: ActionTypes.AUTH_CODE_REQUEST_RESET } );
 	} );
 
-	it( 'is in initial state', () => {
+	test( 'is in initial state', () => {
 		expect( Store.get() ).to.deep.equal( {
 			status: requestState.READY,
 			errorLevel: false,
@@ -26,7 +26,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	it( 'is in progress when requesting code', () => {
+	test( 'is in progress when requesting code', () => {
 		Dispatcher.handleViewAction( { type: ActionTypes.AUTH_CODE_REQUEST } );
 		expect( Store.get() ).to.deep.equal( {
 			status: requestState.REQUESTING,
@@ -35,7 +35,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	it( 'is complete when server responds with needs_2fa', () => {
+	test( 'is complete when server responds with needs_2fa', () => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.RECEIVE_AUTH_CODE_REQUEST,
 			data: { body: { error: 'needs_2fa' } },
@@ -49,7 +49,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	it( 'is an error when server responds without needs_2fa', () => {
+	test( 'is an error when server responds without needs_2fa', () => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.RECEIVE_AUTH_CODE_REQUEST,
 			data: { body: { error: 'other', error_description: 'Failed' } },
@@ -63,7 +63,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	it( 'is an error when server api request fails', () => {
+	test( 'is an error when server api request fails', () => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.RECEIVE_AUTH_CODE_REQUEST,
 			data: null,

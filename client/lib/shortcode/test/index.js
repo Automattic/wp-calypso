@@ -10,9 +10,9 @@ import { expect } from 'chai';
  */
 import Shortcode from '../';
 
-describe( 'index', function() {
-	describe( '#parseAttributes()', function() {
-		it( 'should parse a string of named attributes', function() {
+describe( 'index', () => {
+	describe( '#parseAttributes()', () => {
+		test( 'should parse a string of named attributes', () => {
 			var result = Shortcode.parseAttributes( 'bar="baz"' );
 
 			expect( result ).to.eql( {
@@ -23,7 +23,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should parse a string of numeric attributes', function() {
+		test( 'should parse a string of numeric attributes', () => {
 			var result = Shortcode.parseAttributes( 'bar baz' );
 
 			expect( result ).to.eql( {
@@ -32,7 +32,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should parse a string of mixed attributes', function() {
+		test( 'should parse a string of mixed attributes', () => {
 			var result = Shortcode.parseAttributes( 'bar="baz" qux' );
 
 			expect( result ).to.eql( {
@@ -44,8 +44,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( '#normalizeAttributes()', function() {
-		it( 'should normalize a string of named attributes', function() {
+	describe( '#normalizeAttributes()', () => {
+		test( 'should normalize a string of named attributes', () => {
 			var result = Shortcode.normalizeAttributes( 'bar="baz"' );
 
 			expect( result ).to.eql( {
@@ -56,7 +56,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should normalize a string of numeric attributes', function() {
+		test( 'should normalize a string of numeric attributes', () => {
 			var result = Shortcode.normalizeAttributes( 'bar' );
 
 			expect( result ).to.eql( {
@@ -65,7 +65,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should normalize a string of mixed attributes', function() {
+		test( 'should normalize a string of mixed attributes', () => {
 			var result = Shortcode.normalizeAttributes( 'bar="baz" qux' );
 
 			expect( result ).to.eql( {
@@ -76,7 +76,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should normalize an array as numeric attributes', function() {
+		test( 'should normalize an array as numeric attributes', () => {
 			var result = Shortcode.normalizeAttributes( [ 'bar' ] );
 
 			expect( result ).to.eql( {
@@ -85,7 +85,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should explicitly return an object of already split attributes', function() {
+		test( 'should explicitly return an object of already split attributes', () => {
 			var attributes = {
 					named: { bar: 'baz' },
 					numeric: [ 'qux' ],
@@ -95,7 +95,7 @@ describe( 'index', function() {
 			expect( result ).to.eql( attributes );
 		} );
 
-		it( 'should normalize an object as the named attributes', function() {
+		test( 'should normalize an object as the named attributes', () => {
 			var attributes = { bar: 'baz' },
 				result = Shortcode.normalizeAttributes( attributes );
 
@@ -106,8 +106,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( '#stringify()', function() {
-		it( 'should generate a closed shortcode when only the tag is specified', function() {
+	describe( '#stringify()', () => {
+		test( 'should generate a closed shortcode when only the tag is specified', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 			} );
@@ -115,7 +115,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo][/foo]' );
 		} );
 
-		it( 'should accept an object of named attributes', function() {
+		test( 'should accept an object of named attributes', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				attrs: {
@@ -126,7 +126,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo bar="baz"][/foo]' );
 		} );
 
-		it( 'should accept an array of numeric attributes', function() {
+		test( 'should accept an array of numeric attributes', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				attrs: [ 'bar' ],
@@ -135,7 +135,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo bar][/foo]' );
 		} );
 
-		it( 'should accept an object of mixed attributes', function() {
+		test( 'should accept an object of mixed attributes', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				attrs: {
@@ -147,7 +147,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo bar="baz" qux][/foo]' );
 		} );
 
-		it( 'should omit the closing tag for single type', function() {
+		test( 'should omit the closing tag for single type', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				type: 'single',
@@ -156,7 +156,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo]' );
 		} );
 
-		it( 'should self-close for self-closing type', function() {
+		test( 'should self-close for self-closing type', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				type: 'self-closing',
@@ -165,7 +165,7 @@ describe( 'index', function() {
 			expect( result ).to.equal( '[foo /]' );
 		} );
 
-		it( 'should include content between the opening and closing tags', function() {
+		test( 'should include content between the opening and closing tags', () => {
 			var result = Shortcode.stringify( {
 				tag: 'foo',
 				content: 'Bar',
@@ -175,8 +175,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( '#parse()', function() {
-		it( 'should interpret a closed shortcode', function() {
+	describe( '#parse()', () => {
+		test( 'should interpret a closed shortcode', () => {
 			var result = Shortcode.parse( '[foo][/foo]' );
 
 			expect( result ).to.eql( {
@@ -185,7 +185,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a shortcode with named attributes', function() {
+		test( 'should interpret a shortcode with named attributes', () => {
 			var result = Shortcode.parse( '[foo bar="baz"][/foo]' );
 
 			expect( result ).to.eql( {
@@ -200,7 +200,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a shortcode with numeric attributes', function() {
+		test( 'should interpret a shortcode with numeric attributes', () => {
 			var result = Shortcode.parse( '[foo bar][/foo]' );
 
 			expect( result ).to.eql( {
@@ -213,7 +213,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a shortcode with mixed attributes', function() {
+		test( 'should interpret a shortcode with mixed attributes', () => {
 			var result = Shortcode.parse( '[foo bar="baz" qux][/foo]' );
 
 			expect( result ).to.eql( {
@@ -228,7 +228,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a single type shortcode', function() {
+		test( 'should interpret a single type shortcode', () => {
 			var result = Shortcode.parse( '[foo]' );
 
 			expect( result ).to.eql( {
@@ -237,7 +237,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a self-closing shortcode', function() {
+		test( 'should interpret a self-closing shortcode', () => {
 			var result = Shortcode.parse( '[foo /]' );
 
 			expect( result ).to.eql( {
@@ -246,7 +246,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should interpret a shortcode with content', function() {
+		test( 'should interpret a shortcode with content', () => {
 			var result = Shortcode.parse( '[foo]Bar[/foo]' );
 
 			expect( result ).to.eql( {

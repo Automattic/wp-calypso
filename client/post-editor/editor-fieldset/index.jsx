@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorFieldset',
 
 	propTypes: {

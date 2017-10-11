@@ -32,7 +32,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveSharingButtons()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const settings = [ { ID: 'facebook', name: 'Facebook' } ];
 			const action = receiveSharingButtons( 2916284, settings );
 
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateSharingButtons()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const settings = [ { ID: 'facebook', name: 'Facebook' } ];
 			const action = updateSharingButtons( 2916284, settings );
 
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSharingButtons( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestSharingButtons( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receiveSharingButtons( 2916284, [ { ID: 'facebook', name: 'Facebook' } ] )
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestSharingButtons( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SHARING_BUTTONS_REQUEST_SUCCESS,
@@ -98,7 +98,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestSharingButtons( 2916285 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SHARING_BUTTONS_REQUEST_FAILURE,
@@ -124,7 +124,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action and an optimistic update when thunk triggered', () => {
+		test( 'should dispatch fetch action and an optimistic update when thunk triggered', () => {
 			saveSharingButtons( 2916284, [ { ID: 'twitter', name: 'Twitter' } ] )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -136,7 +136,7 @@ describe( 'actions', () => {
 			);
 		} );
 
-		it( 'should dispatch update action when request completes', () => {
+		test( 'should dispatch update action when request completes', () => {
 			return saveSharingButtons( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					updateSharingButtons( 2916284, [ { ID: 'facebook', name: 'Facebook' } ] )
@@ -144,7 +144,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch save success action when request completes', () => {
+		test( 'should dispatch save success action when request completes', () => {
 			return saveSharingButtons( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SHARING_BUTTONS_SAVE_SUCCESS,
@@ -153,7 +153,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return saveSharingButtons( 2916285 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SHARING_BUTTONS_SAVE_FAILURE,

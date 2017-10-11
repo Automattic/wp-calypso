@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -13,7 +14,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'DropZones',
 
 	mixins: [ PureRenderMixin ],
@@ -44,14 +45,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card style={ style }>
+            <Card style={ style }>
 				{ fileNames ? (
-					this.translate( 'You dropped: %s', { args: fileNames } )
+					this.props.translate( 'You dropped: %s', { args: fileNames } )
 				) : (
-					this.translate( 'This is a droppable area' )
+					this.props.translate( 'This is a droppable area' )
 				) }
 			</Card>
-		);
+        );
 	},
 
 	renderContainer() {
@@ -71,4 +72,4 @@ export default React.createClass( {
 	render() {
 		return this.renderContainer();
 	},
-} );
+}));

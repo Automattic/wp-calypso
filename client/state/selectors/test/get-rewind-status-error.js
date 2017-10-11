@@ -14,7 +14,7 @@ import { getRewindStatusError } from 'state/selectors';
 const siteId = 77203074;
 
 describe( 'getRewindStatusError()', () => {
-	it( 'should return null if no error exists for a site', () => {
+	test( 'should return null if no error exists for a site', () => {
 		const stateNoSite = deepFreeze( {
 			activityLog: {
 				rewindStatusError: {},
@@ -32,7 +32,7 @@ describe( 'getRewindStatusError()', () => {
 		expect( getRewindStatusError( stateNoError, siteId ) ).to.be.null;
 	} );
 
-	it( 'should return an existing error for a site', () => {
+	test( 'should return an existing error for a site', () => {
 		const error = {
 			error: 'vp_api_error',
 			message: 'No site found.',

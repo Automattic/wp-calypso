@@ -50,7 +50,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'Actions creators', () => {
-		it( '#vouchersReceiveAction()', () => {
+		test( '#vouchersReceiveAction()', () => {
 			const { vouchers } = wpcomAssignResponse;
 			const action = vouchersReceiveAction( siteId, vouchers );
 			expect( action ).to.eql( {
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersRequestAction()', () => {
+		test( '#vouchersRequestAction()', () => {
 			const action = vouchersRequestAction( siteId );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST,
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersRequestSuccessAction()', () => {
+		test( '#vouchersRequestSuccessAction()', () => {
 			const action = vouchersRequestSuccessAction( siteId );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST_SUCCESS,
@@ -76,7 +76,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersRequestFailureAction()', () => {
+		test( '#vouchersRequestFailureAction()', () => {
 			const action = vouchersRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_REQUEST_FAILURE,
@@ -85,7 +85,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersAssignReceiveAction()', () => {
+		test( '#vouchersAssignReceiveAction()', () => {
 			const { voucher } = wpcomResponse;
 
 			const action = vouchersAssignReceiveAction( siteId, oneOfOurServiceTypes, voucher );
@@ -97,7 +97,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersAssignRequestAction()', () => {
+		test( '#vouchersAssignRequestAction()', () => {
 			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -106,7 +106,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersAssignRequestSuccessAction()', () => {
+		test( '#vouchersAssignRequestSuccessAction()', () => {
 			const action = vouchersAssignRequestSuccessAction( siteId, oneOfOurServiceTypes );
 			expect( action ).to.eql( {
 				type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( '#vouchersAssignRequestFailureAction()', () => {
+		test( '#vouchersAssignRequestFailureAction()', () => {
 			const action = vouchersAssignRequestFailureAction(
 				siteId,
 				oneOfOurServiceTypes,
@@ -138,13 +138,13 @@ describe( 'actions', () => {
 				.reply( 200, wpcomResponse );
 		} );
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
+		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = vouchersRequestAction( siteId );
 			requestSiteVouchers( siteId )( spy );
 			expect( spy ).to.have.been.calledWith( action );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
+		test( 'should dispatch RECEIVE action when request completes', () => {
 			const { vouchers } = wpcomResponse;
 			const action = vouchersReceiveAction( siteId, vouchers );
 
@@ -162,13 +162,13 @@ describe( 'actions', () => {
 				.reply( 200, wpcomAssignResponse );
 		} );
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
+		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
 			assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy );
 			expect( spy ).to.have.been.calledWith( action );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
+		test( 'should dispatch RECEIVE action when request completes', () => {
 			const { voucher } = wpcomAssignResponse;
 			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes, voucher );
 
@@ -186,7 +186,7 @@ describe( 'actions', () => {
 				.reply( 403, wpcomErrorResponse );
 		} );
 
-		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {
+		test( 'should dispatch REQUEST_FAILURE action when request failed', () => {
 			const { message } = wpcomErrorResponse;
 			const requestAction = vouchersRequestAction( siteId );
 			const failureAction = vouchersRequestFailureAction( siteId, message );
@@ -208,7 +208,7 @@ describe( 'actions', () => {
 				.reply( 403, wpcomErrorResponse );
 		} );
 
-		it( 'should dispatch assign_FAILURE action when assign failed', () => {
+		test( 'should dispatch assign_FAILURE action when assign failed', () => {
 			const { message } = wpcomErrorResponse;
 			const assignAction = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
 			const failureAction = vouchersAssignRequestFailureAction(

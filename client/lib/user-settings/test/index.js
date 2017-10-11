@@ -18,11 +18,11 @@ jest.mock( 'lib/wp', () => require( './mocks/wp' ) );
 jest.mock( 'lib/user/utils', () => require( './mocks/user-utils' ) );
 
 describe( 'User Settings', () => {
-	before( () => {
+	beforeAll( () => {
 		userSettings.fetchSettings();
 	} );
 
-	it( 'should consider overridden settings as saved', done => {
+	test( 'should consider overridden settings as saved', done => {
 		assert.isTrue( userSettings.updateSetting( 'test', true ) );
 		assert.isTrue( userSettings.updateSetting( 'lang_id', true ) );
 
@@ -39,36 +39,36 @@ describe( 'User Settings', () => {
 	} );
 
 	describe( '#getOriginalSetting', () => {
-		context( 'when a setting has a truthy value', () => {
+		describe( 'when a setting has a truthy value', () => {
 			beforeEach( () => {
 				userSettings.settings.someSetting = 'someValue';
 			} );
 
-			it( 'returns the value of that setting', () => {
+			test( 'returns the value of that setting', () => {
 				const actual = userSettings.getOriginalSetting( 'someSetting' );
 				const expected = 'someValue';
 				expect( actual ).to.equal( expected );
 			} );
 		} );
 
-		context( 'when a setting has a falsy value', () => {
+		describe( 'when a setting has a falsy value', () => {
 			beforeEach( () => {
 				userSettings.settings.someSetting = 0;
 			} );
 
-			it( 'returns the value of that setting', () => {
+			test( 'returns the value of that setting', () => {
 				const actual = userSettings.getOriginalSetting( 'someSetting' );
 				const expected = 0;
 				expect( actual ).to.equal( expected );
 			} );
 		} );
 
-		context( 'when a setting is not found', () => {
+		describe( 'when a setting is not found', () => {
 			beforeEach( () => {
 				delete userSettings.settings.someSetting;
 			} );
 
-			it( 'returns null', () => {
+			test( 'returns null', () => {
 				const actual = userSettings.getOriginalSetting( 'someSetting' );
 				const expected = null;
 				expect( actual ).to.equal( expected );
@@ -76,7 +76,7 @@ describe( 'User Settings', () => {
 		} );
 	} );
 
-	it( 'should support flat and deep settings', done => {
+	test( 'should support flat and deep settings', done => {
 		assert.isFalse( userSettings.settings.lang_id );
 		assert.isFalse( userSettings.settings.testParent.testChild );
 

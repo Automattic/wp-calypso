@@ -11,7 +11,7 @@ import { assert } from 'chai';
 import { getAccountRecoveryResetOptions } from '../';
 
 describe( 'getAccountRecoveryResetOptions()', () => {
-	it( 'should return the items array under accountRecovery/reset substate tree.', () => {
+	test( 'should return the items array under accountRecovery/reset substate tree.', () => {
 		const resetOptionItems = [
 			{
 				email: 'primary@example.com',

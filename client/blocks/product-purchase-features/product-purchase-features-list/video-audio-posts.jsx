@@ -17,7 +17,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon="image-multiple"
+				icon={ <img src="/calypso/images/upgrades/media-post.svg" /> }
 				title={ translate( 'Video and audio posts' ) }
 				description={ translate(
 					'Enrich your posts with video and audio, uploaded directly on your site. ' +

@@ -18,15 +18,15 @@ import FormsButton from 'components/forms/form-button';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 
-describe( 'LoginForm', function() {
+describe( 'LoginForm', () => {
 	let LoginForm;
 
-	before( () => {
+	beforeAll( () => {
 		LoginForm = require( 'blocks/login/login-form' ).LoginForm;
 	} );
 
-	context( 'component rendering', () => {
-		it( 'displays a login form', () => {
+	describe( 'component rendering', () => {
+		test( 'displays a login form', () => {
 			const wrapper = shallow(
 				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
 			);

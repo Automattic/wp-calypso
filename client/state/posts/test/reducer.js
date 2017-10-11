@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'counts',
 			'items',
@@ -53,13 +53,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index received posts by global ID', () => {
+		test( 'should index received posts by global ID', () => {
 			const state = items( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -84,7 +84,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate posts', () => {
+		test( 'should accumulate posts', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
@@ -106,7 +106,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should remove an item when delete action is dispatched', () => {
+		test( 'should remove an item when delete action is dispatched', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
@@ -128,7 +128,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
@@ -137,7 +137,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
 					ID: 841,
@@ -153,13 +153,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#queryRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track post query request fetching', () => {
+		test( 'should track post query request fetching', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST,
 				siteId: 2916284,
@@ -171,7 +171,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track post queries without specified site', () => {
+		test( 'should track post queries without specified site', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST,
 				query: { search: 'Hello' },
@@ -182,7 +182,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate queries', () => {
+		test( 'should accumulate queries', () => {
 			const original = deepFreeze( {
 				'2916284:{"search":"Hello"}': true,
 			} );
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track post query request success', () => {
+		test( 'should track post query request success', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -220,7 +220,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track post query request failure', () => {
+		test( 'should track post query request failure', () => {
 			const state = queryRequests( deepFreeze( {} ), {
 				type: POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -235,13 +235,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#queries()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track post query request success', () => {
+		test( 'should track post query request success', () => {
 			const state = queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -270,7 +270,7 @@ describe( 'reducer', () => {
 			] );
 		} );
 
-		it( 'should accumulate query request success', () => {
+		test( 'should accumulate query request success', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: POSTS_REQUEST_SUCCESS,
@@ -312,7 +312,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
 		} );
 
-		it( 'should return the same state if successful request has no changes', () => {
+		test( 'should return the same state if successful request has no changes', () => {
 			const action = {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -335,7 +335,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should track posts even if not associated with an existing site or query', () => {
+		test( 'should track posts even if not associated with an existing site or query', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -352,7 +352,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems() ).to.eql( [ postObject ] );
 		} );
 
-		it( 'should update received posts', () => {
+		test( 'should update received posts', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: POSTS_REQUEST_SUCCESS,
@@ -396,7 +396,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should apply pending restore status on restore actions', () => {
+		test( 'should apply pending restore status on restore actions', () => {
 			let original = deepFreeze( {} );
 			original = queries( original, {
 				type: POSTS_REQUEST_SUCCESS,
@@ -425,7 +425,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
-		it( 'should apply pending trash status on restore failure actions', () => {
+		test( 'should apply pending trash status on restore failure actions', () => {
 			let original = deepFreeze( {} );
 			original = queries( original, {
 				type: POSTS_REQUEST_SUCCESS,
@@ -460,7 +460,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
-		it( 'should apply save actions as partial received posts', () => {
+		test( 'should apply save actions as partial received posts', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: POSTS_REQUEST_SUCCESS,
@@ -499,7 +499,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should apply pending delete status on delete actions', () => {
+		test( 'should apply pending delete status on delete actions', () => {
 			let original = deepFreeze( {} );
 			original = queries( original, {
 				type: POSTS_REQUEST_SUCCESS,
@@ -528,7 +528,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
-		it( 'should restore item when post delete fails', () => {
+		test( 'should restore item when post delete fails', () => {
 			let original = deepFreeze( {} );
 			original = queries( original, {
 				type: POSTS_REQUEST_SUCCESS,
@@ -564,7 +564,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
-		it( 'should remove item when post delete action success dispatched', () => {
+		test( 'should remove item when post delete action success dispatched', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: POSTS_REQUEST_SUCCESS,
@@ -593,7 +593,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze(
 				queries( deepFreeze( {} ), {
 					type: POSTS_REQUEST_SUCCESS,
@@ -638,7 +638,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					data: {
@@ -685,7 +685,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: '{INVALID',
 			} );
@@ -697,13 +697,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#siteRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = siteRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should map site ID, post ID to true value if request in progress', () => {
+		test( 'should map site ID, post ID to true value if request in progress', () => {
 			const state = siteRequests( deepFreeze( {} ), {
 				type: POST_REQUEST,
 				siteId: 2916284,
@@ -717,7 +717,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate mappings', () => {
+		test( 'should accumulate mappings', () => {
 			const state = siteRequests(
 				deepFreeze( {
 					2916284: {
@@ -739,7 +739,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, post ID to false value if request finishes successfully', () => {
+		test( 'should map site ID, post ID to false value if request finishes successfully', () => {
 			const state = siteRequests(
 				deepFreeze( {
 					2916284: {
@@ -760,7 +760,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should map site ID, post ID to false value if request finishes with failure', () => {
+		test( 'should map site ID, post ID to false value if request finishes with failure', () => {
 			const state = siteRequests(
 				deepFreeze( {
 					2916284: {
@@ -783,13 +783,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#edits()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = edits( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track new post draft revisions by site ID', () => {
+		test( 'should track new post draft revisions by site ID', () => {
 			const state = edits( deepFreeze( {} ), {
 				type: POST_EDIT,
 				siteId: 2916284,
@@ -805,7 +805,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track existing post revisions by site ID, post ID', () => {
+		test( 'should track existing post revisions by site ID, post ID', () => {
 			const state = edits( deepFreeze( {} ), {
 				type: POST_EDIT,
 				siteId: 2916284,
@@ -822,7 +822,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate posts', () => {
+		test( 'should accumulate posts', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -851,7 +851,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate sites', () => {
+		test( 'should accumulate sites', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -882,7 +882,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should merge post revisions', () => {
+		test( 'should merge post revisions', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -908,7 +908,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should merge nested post revisions', () => {
+		test( 'should merge nested post revisions', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -944,7 +944,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should eliminate redundant data on posts received', () => {
+		test( 'should eliminate redundant data on posts received', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -975,7 +975,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should handle term shape differences on posts received', () => {
+		test( 'should handle term shape differences on posts received', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -1040,7 +1040,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should preserve term edit differences on posts received', () => {
+		test( 'should preserve term edit differences on posts received', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -1109,7 +1109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( "should ignore reset edits action when discarded site doesn't exist", () => {
+		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
 				type: POST_SAVE_SUCCESS,
@@ -1120,7 +1120,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should copy edits when the post is saved and prior postId was null', () => {
+		test( 'should copy edits when the post is saved and prior postId was null', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -1155,7 +1155,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( "should ignore stop editor action when site doesn't exist", () => {
+		test( "should ignore stop editor action when site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
 				type: EDITOR_STOP,
@@ -1166,7 +1166,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should discard edits when we stop editing the post', () => {
+		test( 'should discard edits when we stop editing the post', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
@@ -1194,7 +1194,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should reset edits when we start editing a post', () => {
+		test( 'should reset edits when we start editing a post', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {

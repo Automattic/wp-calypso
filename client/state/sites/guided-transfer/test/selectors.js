@@ -20,7 +20,7 @@ describe( 'selectors', () => {
 	const testSiteId = 100658273;
 
 	describe( '#isRequestingGuidedTransferStatus()', () => {
-		it( 'should return false for default state {}', () => {
+		test( 'should return false for default state {}', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.false;
 		} );
 
-		it( 'should return true when a request is underway', () => {
+		test( 'should return true when a request is underway', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 			expect( isRequestingGuidedTransferStatus( state, testSiteId ) ).to.be.true;
 		} );
 
-		it( 'should return false when a isFetching is false', () => {
+		test( 'should return false when a isFetching is false', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -64,7 +64,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getGuidedTransferIssue()', () => {
-		it( 'should return a single issue when no options specified', () => {
+		test( 'should return a single issue when no options specified', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -79,7 +79,7 @@ describe( 'selectors', () => {
 			expect( getGuidedTransferIssue( state, testSiteId ) ).to.eql( { reason: 'something' } );
 		} );
 
-		it( 'should return the first issue with given options', () => {
+		test( 'should return the first issue with given options', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -120,7 +120,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isGuidedTransferAvailableForAllSites()', () => {
-		it( 'should return false when unavailable', () => {
+		test( 'should return false when unavailable', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -135,7 +135,7 @@ describe( 'selectors', () => {
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
 		} );
 
-		it( 'should return false when on vacation', () => {
+		test( 'should return false when on vacation', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -150,7 +150,7 @@ describe( 'selectors', () => {
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
 		} );
 
-		it( 'should return true when no issues', () => {
+		test( 'should return true when no issues', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -163,7 +163,7 @@ describe( 'selectors', () => {
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
 		} );
 
-		it( 'should return true when theres only a site specific issue', () => {
+		test( 'should return true when theres only a site specific issue', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -180,7 +180,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isGuidedTransferSavingHostDetails()', () => {
-		it( 'should return false for default state {}', () => {
+		test( 'should return false for default state {}', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -192,7 +192,7 @@ describe( 'selectors', () => {
 			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.false;
 		} );
 
-		it( 'should return true when a request is underway', () => {
+		test( 'should return true when a request is underway', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {
@@ -207,7 +207,7 @@ describe( 'selectors', () => {
 			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.true;
 		} );
 
-		it( 'should return false when a isFetching is false', () => {
+		test( 'should return false when a isFetching is false', () => {
 			const state = deepFreeze( {
 				sites: {
 					guidedTransfer: {

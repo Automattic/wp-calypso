@@ -72,7 +72,7 @@ describe( 'handlers', () => {
 			},
 		};
 
-		it( 'should append product variations to an editProduct action', () => {
+		test( 'should append product variations to an editProduct action', () => {
 			const store = {
 				getState: () => rootState,
 			};
@@ -83,7 +83,7 @@ describe( 'handlers', () => {
 			expect( action.productVariations ).to.equal( existingProductAttributes );
 		} );
 
-		it( 'should append product variations to an editProductAttribute action', () => {
+		test( 'should append product variations to an editProductAttribute action', () => {
 			const store = {
 				getState: () => rootState,
 			};
@@ -99,7 +99,7 @@ describe( 'handlers', () => {
 			expect( action.productVariations ).to.equal( existingProductAttributes );
 		} );
 
-		it( 'should, for a newly created product edit, send undefined for the list of product variations', () => {
+		test( 'should, for a newly created product edit, send undefined for the list of product variations', () => {
 			const store = {
 				getState: () => rootState,
 			};
@@ -149,7 +149,7 @@ describe( 'handlers', () => {
 			},
 		};
 
-		it( 'should do nothing if an existing category is updated.', () => {
+		test( 'should do nothing if an existing category is updated.', () => {
 			const store = {
 				dispatch: spy(),
 				getState: () => rootState,
@@ -162,7 +162,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should add placeholder id to action for a create.', () => {
+		test( 'should add placeholder id to action for a create.', () => {
 			const store = {
 				dispatch: spy(),
 				getState: () => rootState,
@@ -177,7 +177,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should remove created category from a product that has it', () => {
+		test( 'should remove created category from a product that has it', () => {
 			const store = {
 				dispatch: spy(),
 				getState: () => rootState,
@@ -243,11 +243,11 @@ describe( 'handlers', () => {
 			};
 		} );
 
-		it( 'should return null when there are no edits', () => {
+		test( 'should return null when there are no edits', () => {
 			expect( makeProductActionList( null, 123, undefined ) ).to.equal.null;
 		} );
 
-		it( 'should return a single product create request', () => {
+		test( 'should return a single product create request', () => {
 			const product1 = { id: { index: 0 }, name: 'Product #1' };
 
 			const edits = {
@@ -270,7 +270,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should return multiple product create requests', () => {
+		test( 'should return multiple product create requests', () => {
 			const product1 = { id: { index: 0 }, name: 'Product #1' };
 			const product2 = { id: { index: 1 }, name: 'Product #2' };
 
@@ -304,7 +304,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should create an action list with success/failure actions', () => {
+		test( 'should create an action list with success/failure actions', () => {
 			const product1 = { id: { index: 0 }, name: 'Product #1' };
 
 			const edits = {
@@ -327,7 +327,7 @@ describe( 'handlers', () => {
 			expect( dispatch ).to.have.been.calledWith( failureAction );
 		} );
 
-		it( 'should create only new categories referenced by the products', () => {
+		test( 'should create only new categories referenced by the products', () => {
 			const category1 = {
 				id: { placeholder: 'productCategory_1' },
 				name: 'Category 1',
@@ -392,7 +392,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should create variations for a new product', () => {
+		test( 'should create variations for a new product', () => {
 			const product1 = { id: { placeholder: 0 }, name: 'Product #1', type: 'variable' };
 
 			const productEdits = {
@@ -448,7 +448,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should create variations for an existing product', () => {
+		test( 'should create variations for an existing product', () => {
 			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
 			const variationEdits = [
 				{
@@ -482,7 +482,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should update a variation for an existing product', () => {
+		test( 'should update a variation for an existing product', () => {
 			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
 			const variationEdits = [
 				{
@@ -516,7 +516,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should delete variations.', () => {
+		test( 'should delete variations.', () => {
 			const productEdits = {
 				updates: [ { id: 42, attributes: [] } ],
 			};

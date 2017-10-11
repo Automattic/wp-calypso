@@ -16,12 +16,12 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'markup', function() {
+describe( 'markup', () => {
 	let sandbox, markup, site;
 
 	useSandbox( newSandbox => ( sandbox = newSandbox ) );
 
-	before( () => {
+	beforeAll( () => {
 		markup = require( '../markup' );
 		site = {};
 	} );
@@ -30,21 +30,21 @@ describe( 'markup', function() {
 		sandbox.restore();
 	} );
 
-	describe( '#get()', function() {
-		it( 'should return an empty string if not passed any arguments', function() {
+	describe( '#get()', () => {
+		test( 'should return an empty string if not passed any arguments', () => {
 			var value = markup.get( site );
 
 			expect( value ).to.equal( '' );
 		} );
 
-		it( 'should defer to a specific mime type handler if one exists', function() {
+		test( 'should defer to a specific mime type handler if one exists', () => {
 			sandbox.stub( markup.mimeTypes, 'image' );
 			markup.get( site, { mime_type: 'image/png' } );
 
 			expect( markup.mimeTypes.image ).to.have.been.called;
 		} );
 
-		it( 'should return a link for a mime type prefix without a specific handler', function() {
+		test( 'should return a link for a mime type prefix without a specific handler', () => {
 			sandbox.stub( markup, 'link' );
 			markup.get( site, { mime_type: 'application/pdf' } );
 
@@ -52,8 +52,8 @@ describe( 'markup', function() {
 		} );
 	} );
 
-	describe( '#link()', function() {
-		it( 'should return a link for a mime type prefix without a specific handler', function() {
+	describe( '#link()', () => {
+		test( 'should return a link for a mime type prefix without a specific handler', () => {
 			var value = markup.link( {
 				URL: 'http://example.com/wp-content/uploads/document.pdf',
 				title: 'document',
@@ -65,8 +65,8 @@ describe( 'markup', function() {
 		} );
 	} );
 
-	describe( '#caption()', function() {
-		it( 'should accept a media object, returning a caption element', function() {
+	describe( '#caption()', () => {
+		test( 'should accept a media object, returning a caption element', () => {
 			var value = markup.caption( site, {
 				ID: 1,
 				URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -82,7 +82,7 @@ describe( 'markup', function() {
 			);
 		} );
 
-		it( 'should accept a non-captioned image, returning null', function() {
+		test( 'should accept a non-captioned image, returning null', () => {
 			var value = markup.caption( site, {
 				ID: 1,
 				URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -94,7 +94,7 @@ describe( 'markup', function() {
 			expect( value ).to.be.null;
 		} );
 
-		it( 'should accept a captioned string, returning a React element', function() {
+		test( 'should accept a captioned string, returning a React element', () => {
 			var value = markup.caption(
 				site,
 				'[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]'
@@ -107,9 +107,9 @@ describe( 'markup', function() {
 		} );
 	} );
 
-	describe( '.mimeTypes', function() {
-		describe( '#image()', function() {
-			it( 'should not set width auto if media width cannot be determined', function() {
+	describe( '.mimeTypes', () => {
+		describe( '#image()', () => {
+			test( 'should not set width auto if media width cannot be determined', () => {
 				var value = markup.mimeTypes.image( site, {
 					ID: 'media-4',
 					URL: 'http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71',
@@ -121,7 +121,7 @@ describe( 'markup', function() {
 				); // eslint-disable-line max-len
 			} );
 
-			it( 'should return an img element for an image', function() {
+			test( 'should return an img element for an image', () => {
 				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -135,7 +135,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should respect the max width for a site size', function() {
+			test( 'should respect the max width for a site size', () => {
 				const siteWithLargeSize = {
 					options: {
 						image_large_width: 1024,
@@ -160,7 +160,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should respect the max height for a site size', function() {
+			test( 'should respect the max height for a site size', () => {
 				const siteWithLargeSize = {
 					options: {
 						image_large_width: 1024,
@@ -185,7 +185,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should include a resize parameter if forceResize option passed', function() {
+			test( 'should include a resize parameter if forceResize option passed', () => {
 				var value = markup.mimeTypes.image(
 					site,
 					{
@@ -204,7 +204,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should avoid XSS because React', function() {
+			test( 'should avoid XSS because React', () => {
 				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: '""><SCRIPT>alert("XSS")</SCRIPT>"',
@@ -217,7 +217,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( "should attempt to find the site's thumbnail width if a size is specified", function() {
+			test( "should attempt to find the site's thumbnail width if a size is specified", () => {
 				var value;
 				const siteWithWidth = {
 					options: {
@@ -243,7 +243,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( "should attempt to find the media's own thumbnail width if a size is specified", function() {
+			test( "should attempt to find the media's own thumbnail width if a size is specified", () => {
 				var value;
 				const jetpackSite = { jetpack: true };
 
@@ -266,7 +266,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should wrap a captioned image in a caption shortcode', function() {
+			test( 'should wrap a captioned image in a caption shortcode', () => {
 				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -281,7 +281,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should calculate the height when specifying a size', function() {
+			test( 'should calculate the height when specifying a size', () => {
 				var value = markup.mimeTypes.image(
 					site,
 					{
@@ -301,7 +301,7 @@ describe( 'markup', function() {
 				);
 			} );
 
-			it( 'should include a data-istransient="istransient" attribute when media.transient is truthy', function() {
+			test( 'should include a data-istransient="istransient" attribute when media.transient is truthy', () => {
 				const value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -317,7 +317,7 @@ describe( 'markup', function() {
 				); // eslint-disable-line max-len
 			} );
 
-			it( 'should not include a data-istransient attribute when media.transient is falsy', function() {
+			test( 'should not include a data-istransient attribute when media.transient is falsy', () => {
 				const value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
@@ -334,8 +334,8 @@ describe( 'markup', function() {
 			} );
 		} );
 
-		describe( '#audio()', function() {
-			it( 'should return an `audio` shortcode for an audio item', function() {
+		describe( '#audio()', () => {
+			test( 'should return an `audio` shortcode for an audio item', () => {
 				var value = markup.mimeTypes.audio( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp3',
 				} );
@@ -346,8 +346,8 @@ describe( 'markup', function() {
 			} );
 		} );
 
-		describe( '#video()', function() {
-			it( 'should return a `wpvideo` shortcode for a VideoPress video', function() {
+		describe( '#video()', () => {
+			test( 'should return a `wpvideo` shortcode for a VideoPress video', () => {
 				var value = markup.mimeTypes.video( site, {
 					videopress_guid: '11acMj3O',
 				} );
@@ -355,7 +355,7 @@ describe( 'markup', function() {
 				expect( value ).to.equal( '[wpvideo 11acMj3O]' );
 			} );
 
-			it( 'should return a `video` shortcode for a video', function() {
+			test( 'should return a `video` shortcode for a video', () => {
 				var value = markup.mimeTypes.video( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp4',
 					height: 454,

@@ -11,12 +11,12 @@ import { expect } from 'chai';
 import { getMagicLoginCurrentView } from '../';
 
 describe( 'getMagicLoginCurrentView()', () => {
-	it( 'should return null if there is no information yet', () => {
+	test( 'should return null if there is no information yet', () => {
 		const isShowing = getMagicLoginCurrentView( undefined );
 		expect( isShowing ).to.be.null;
 	} );
 
-	it( 'should return the current view if set', () => {
+	test( 'should return the current view if set', () => {
 		const isShowing = getMagicLoginCurrentView( {
 			login: {
 				magicLogin: {

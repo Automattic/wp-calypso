@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveSite()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const site = { ID: 2916284, name: 'WordPress.com Example Blog' };
 			const action = receiveSite( site );
 
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 		} );
 	} );
 	describe( '#receiveSites()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const sites = [
 				{ ID: 2916284, name: 'WordPress.com Example Blog' },
 				{ ID: 77203074, name: 'WordPress.com Example Blog 2' },
@@ -70,7 +70,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveSiteUpdates()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const sites = [ { ID: 2916284, name: 'WordPress.com Example Blog' } ];
 
 			const action = receiveSiteUpdates( sites );
@@ -97,13 +97,13 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				requestSites()( spy );
 				expect( spy ).to.have.been.calledWith( {
 					type: SITES_REQUEST,
 				} );
 			} );
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return requestSites()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_RECEIVE,
@@ -114,7 +114,7 @@ describe( 'actions', () => {
 					} );
 				} );
 			} );
-			it( 'should dispatch success action when request completes', () => {
+			test( 'should dispatch success action when request completes', () => {
 				return requestSites()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_SUCCESS,
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestSites()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_REQUEST_FAILURE,
@@ -163,7 +163,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSite( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -172,7 +172,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive site when request completes', () => {
+		test( 'should dispatch receive site when request completes', () => {
 			return requestSite( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receiveSite( {
@@ -183,7 +183,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestSite( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_REQUEST_SUCCESS,
@@ -192,7 +192,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestSite( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_REQUEST_FAILURE,
@@ -218,7 +218,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch delete action when thunk triggered', () => {
+		test( 'should dispatch delete action when thunk triggered', () => {
 			deleteSite( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -227,13 +227,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive deleted site when request completes', () => {
+		test( 'should dispatch receive deleted site when request completes', () => {
 			return deleteSite( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveDeletedSite( 2916284 ) );
 			} );
 		} );
 
-		it( 'should dispatch delete success action when request completes', () => {
+		test( 'should dispatch delete success action when request completes', () => {
 			return deleteSite( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_SUCCESS,
@@ -242,7 +242,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request for delete fails', () => {
+		test( 'should dispatch fail action when request for delete fails', () => {
 			return deleteSite( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_FAILURE,

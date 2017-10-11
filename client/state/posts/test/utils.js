@@ -24,7 +24,7 @@ import {
 
 describe( 'utils', () => {
 	describe( 'isTermsEqual', () => {
-		it( 'should return false if term edits are the same as saved terms', () => {
+		test( 'should return false if term edits are the same as saved terms', () => {
 			const isEqual = isTermsEqual(
 				{
 					post_tag: [ 'ribs', 'chicken' ],
@@ -57,7 +57,7 @@ describe( 'utils', () => {
 			expect( isEqual ).to.be.true;
 		} );
 
-		it( 'should return false if term edits are not the same as saved terms', () => {
+		test( 'should return false if term edits are not the same as saved terms', () => {
 			const isEqual = isTermsEqual(
 				{
 					post_tag: [ 'ribs' ],
@@ -90,7 +90,7 @@ describe( 'utils', () => {
 			expect( isEqual ).to.be.false;
 		} );
 
-		it( 'should return false savedTerms is missing a taxonomy', () => {
+		test( 'should return false savedTerms is missing a taxonomy', () => {
 			const isEqual = isTermsEqual(
 				{
 					post_tag: [ 'ribs' ],
@@ -102,12 +102,12 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'normalizePostForApi()', () => {
-		it( 'should return null if post is falsey', () => {
+		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForApi();
 			expect( normalizedPost ).to.be.null;
 		} );
 
-		it( 'should return a normalized post object', () => {
+		test( 'should return a normalized post object', () => {
 			const post = {
 				ID: 841,
 				site_ID: 2916284,
@@ -133,12 +133,12 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'normalizePostForDisplay()', () => {
-		it( 'should return null if post is falsey', () => {
+		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForDisplay();
 			expect( normalizedPost ).to.be.null;
 		} );
 
-		it( 'should return a normalized post object', () => {
+		test( 'should return a normalized post object', () => {
 			const post = {
 				ID: 841,
 				site_ID: 2916284,
@@ -171,7 +171,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'normalizePostForState()', () => {
-		it( 'should deeply unset all meta', () => {
+		test( 'should deeply unset all meta', () => {
 			const original = deepFreeze( {
 				ID: 814,
 				meta: {},
@@ -253,7 +253,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getNormalizedPostsQuery()', () => {
-		it( 'should exclude default values', () => {
+		test( 'should exclude default values', () => {
 			const query = getNormalizedPostsQuery( {
 				page: 4,
 				number: 20,
@@ -266,7 +266,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getSerializedPostsQuery()', () => {
-		it( 'should return a JSON string of a normalized query', () => {
+		test( 'should return a JSON string of a normalized query', () => {
 			const serializedQuery = getSerializedPostsQuery( {
 				type: 'page',
 				page: 1,
@@ -275,7 +275,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should prefix site ID if specified', () => {
+		test( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQuery(
 				{
 					search: 'Hello',
@@ -288,7 +288,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'getDeserializedPostsQueryDetails()', () => {
-		it( 'should return undefined query and site if string does not contain JSON', () => {
+		test( 'should return undefined query and site if string does not contain JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( 'bad' );
 
 			expect( queryDetails ).to.eql( {
@@ -297,7 +297,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return query but not site if string does not contain site prefix', () => {
+		test( 'should return query but not site if string does not contain site prefix', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '{"search":"hello"}' );
 
 			expect( queryDetails ).to.eql( {
@@ -306,7 +306,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return query and site if string contains site prefix and JSON', () => {
+		test( 'should return query and site if string contains site prefix and JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '2916284:{"search":"hello"}' );
 
 			expect( queryDetails ).to.eql( {
@@ -317,7 +317,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getSerializedPostsQueryWithoutPage()', () => {
-		it( 'should return a JSON string of a normalized query omitting page', () => {
+		test( 'should return a JSON string of a normalized query omitting page', () => {
 			const serializedQuery = getSerializedPostsQueryWithoutPage( {
 				type: 'page',
 				page: 2,
@@ -326,7 +326,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should prefix site ID if specified', () => {
+		test( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedPostsQueryWithoutPage(
 				{
 					search: 'Hello',
@@ -340,7 +340,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'mergeIgnoringArrays()', () => {
-		it( 'should merge into an empty object', () => {
+		test( 'should merge into an empty object', () => {
 			const merged = mergeIgnoringArrays(
 				{},
 				{
@@ -353,7 +353,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should not modify array properties in the original object', () => {
+		test( 'should not modify array properties in the original object', () => {
 			const merged = mergeIgnoringArrays(
 				{
 					tags_by_id: [ 4, 5, 6 ],
@@ -366,7 +366,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should allow removing array items', () => {
+		test( 'should allow removing array items', () => {
 			const merged = mergeIgnoringArrays(
 				{},
 				{
@@ -382,7 +382,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should replace arrays with the new value', () => {
+		test( 'should replace arrays with the new value', () => {
 			const merged = mergeIgnoringArrays(
 				{},
 				{
@@ -400,7 +400,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getTermIdsFromEdits()', () => {
-		it( 'should return the same post edit object if no term edits have been made', () => {
+		test( 'should return the same post edit object if no term edits have been made', () => {
 			const normalizedPostEdits = getTermIdsFromEdits( {
 				title: 'Chewbacca Saves',
 			} );
@@ -410,7 +410,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return the add terms_by_id if terms have been edited', () => {
+		test( 'should return the add terms_by_id if terms have been edited', () => {
 			const originalPost = deepFreeze( {
 				title: 'Chewbacca Saves',
 				terms: {
@@ -441,7 +441,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should taxonomy terms_by_id to null if object is empty', () => {
+		test( 'should taxonomy terms_by_id to null if object is empty', () => {
 			const normalizedPostEdits = getTermIdsFromEdits( {
 				title: 'Chewbacca Saves',
 				terms: {
@@ -460,7 +460,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should not set terms_by_id for taxonomies that set an array on terms', () => {
+		test( 'should not set terms_by_id for taxonomies that set an array on terms', () => {
 			const normalizedPostEdits = getTermIdsFromEdits( {
 				title: 'Chewbacca Saves',
 				terms: {

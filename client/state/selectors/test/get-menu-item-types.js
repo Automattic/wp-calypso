@@ -66,7 +66,7 @@ describe( 'getMenuItemTypes()', () => {
 		},
 	];
 
-	it( 'should return an empty array if the site is untracked', () => {
+	test( 'should return an empty array if the site is untracked', () => {
 		const state = {
 			sites: {
 				items: {},
@@ -77,7 +77,7 @@ describe( 'getMenuItemTypes()', () => {
 		expect( items ).to.eql( [] );
 	} );
 
-	it( 'should return the default items if the site has not post types', () => {
+	test( 'should return the default items if the site has not post types', () => {
 		const state = {
 			sites: {
 				items: {
@@ -99,7 +99,7 @@ describe( 'getMenuItemTypes()', () => {
 		expect( items ).to.eql( defaultItems );
 	} );
 
-	it( 'should merge the default items with post types', () => {
+	test( 'should merge the default items with post types', () => {
 		const state = {
 			sites: {
 				items: {

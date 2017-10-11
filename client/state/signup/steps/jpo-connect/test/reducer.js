@@ -12,7 +12,7 @@ import reducer from '../reducer';
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_JPO_CONNECT_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should set connect to the given object', () => {
+	test( 'should set connect to the given object', () => {
 		const testJpoConnectObject = {
 			queryObject: { client_id: '123' },
 			isAuthorizing: true,
@@ -24,7 +24,7 @@ describe( 'reducer', () => {
 			} )
 		).to.deep.equal( testJpoConnectObject );
 	} );
-	it( 'should reset to an empty string', () => {
+	test( 'should reset to an empty string', () => {
 		expect(
 			reducer( 'previous state', {
 				type: SIGNUP_COMPLETE_RESET,

@@ -24,8 +24,8 @@ describe( 'promotions', () => {
 						list: {
 							currentPage: 12,
 							perPage: 30,
-						}
-					}
+						},
+					},
 				},
 				sites: {
 					123: {
@@ -39,7 +39,7 @@ describe( 'promotions', () => {
 	};
 
 	describe( '#getPromotions', () => {
-		it( 'should return promotions for a given site.', () => {
+		test( 'should return promotions for a given site.', () => {
 			const promotions = getPromotions( rootState, 123 );
 
 			expect( promotions ).to.exist;
@@ -50,7 +50,7 @@ describe( 'promotions', () => {
 	} );
 
 	describe( '#getPromotionsPage', () => {
-		it( 'should return only promotions for a given page.', () => {
+		test( 'should return only promotions for a given page.', () => {
 			const page = getPromotionsPage( rootState, 123, 1, 2 );
 
 			expect( page ).to.exist;
@@ -59,7 +59,7 @@ describe( 'promotions', () => {
 			expect( page[ 1 ].type ).to.equal( 'empty2' );
 		} );
 
-		it( 'should advance the offset for pages > 1.', () => {
+		test( 'should advance the offset for pages > 1.', () => {
 			const page = getPromotionsPage( rootState, 123, 2, 2 );
 
 			expect( page ).to.exist;
@@ -69,14 +69,14 @@ describe( 'promotions', () => {
 	} );
 
 	describe( '#getPromotionsCurrentPage', () => {
-		it( 'should return the current viewing page.', () => {
+		test( 'should return the current viewing page.', () => {
 			const page = getPromotionsCurrentPage( rootState );
 			expect( page ).to.equal( 12 );
 		} );
 	} );
 
 	describe( '#getPromotionsPerPage', () => {
-		it( 'should return the per-page setting for promotions.', () => {
+		test( 'should return the per-page setting for promotions.', () => {
 			const perPage = getPromotionsPerPage( rootState );
 			expect( perPage ).to.equal( 30 );
 		} );

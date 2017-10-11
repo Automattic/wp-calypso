@@ -27,7 +27,7 @@ describe( 'toValidId', () => {
 
 	testCases.forEach( function( testCase ) {
 		const [ provided, expected ] = testCase;
-		it( `'${ provided }' should yield '${ expected }'`, () => {
+		test( `'${ provided }' should yield '${ expected }'`, () => {
 			expect( toValidId( provided ) ).to.equal( expected );
 		} );
 	} );

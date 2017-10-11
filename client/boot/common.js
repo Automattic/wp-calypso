@@ -7,8 +7,6 @@
 import debugFactory from 'debug';
 import page from 'page';
 import qs from 'querystring';
-import ReactClass from 'react/lib/ReactClass';
-import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import url from 'url';
 
@@ -140,9 +138,6 @@ const unsavedFormsMiddleware = () => {
 
 export const locales = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
-
-	// Initialize i18n mixin
-	ReactClass.injection.injectMixin( i18n.mixin );
 
 	if ( window.i18nLocaleStrings ) {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );

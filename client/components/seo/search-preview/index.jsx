@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { firstValid, hardTruncation, shortEnough, truncatedAtSpace } from '../helpers';
@@ -34,7 +35,7 @@ export const SearchPreview = React.createClass( {
 
 		return (
 			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.translate( 'Search Preview' ) }</h2>
+				<h2 className="seo-search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">{ googleTitle( title ) }</div>
 					<div className="seo-search-preview__url">{ googleUrl( url ) } ▾</div>
@@ -57,4 +58,4 @@ SearchPreview.defaultProps = {
 	snippet: '',
 };
 
-export default SearchPreview;
+export default localize( SearchPreview );

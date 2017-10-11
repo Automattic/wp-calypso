@@ -23,7 +23,7 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
-		it( 'should return null if no site is selected', () => {
+		test( 'should return null if no site is selected', () => {
 			const selected = getSelectedSite( {
 				ui: {
 					selectedSiteId: null,
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 			expect( selected ).to.be.null;
 		} );
 
-		it( 'should return the object for the selected site', () => {
+		test( 'should return the object for the selected site', () => {
 			const selected = getSelectedSite( {
 				...userState,
 				sites: {
@@ -71,7 +71,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSelectedSiteId()', () => {
-		it( 'should return null if no site is selected', () => {
+		test( 'should return null if no site is selected', () => {
 			const selected = getSelectedSiteId( {
 				...userState,
 				ui: {
@@ -82,7 +82,7 @@ describe( 'selectors', () => {
 			expect( selected ).to.be.null;
 		} );
 
-		it( 'should return ID for the selected site', () => {
+		test( 'should return ID for the selected site', () => {
 			const selected = getSelectedSiteId( {
 				ui: {
 					selectedSiteId: 2916284,
@@ -94,7 +94,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSelectedSiteSlug()', () => {
-		it( 'should return null if no site is selected', () => {
+		test( 'should return null if no site is selected', () => {
 			const slug = getSelectedSiteSlug( {
 				ui: {
 					selectedSiteSlug: null,
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.be.null;
 		} );
 
-		it( 'should return slug for the selected site', () => {
+		test( 'should return slug for the selected site', () => {
 			const slug = getSelectedSiteSlug( {
 				sites: {
 					items: {
@@ -125,7 +125,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSection()', () => {
-		it( 'should return false if no section is assigned', () => {
+		test( 'should return false if no section is assigned', () => {
 			const section = getSection( {
 				ui: {
 					section: false,
@@ -135,7 +135,7 @@ describe( 'selectors', () => {
 			expect( section ).to.eql( false );
 		} );
 
-		it( 'should return the current section if there is one assigned', () => {
+		test( 'should return the current section if there is one assigned', () => {
 			const sectionObj = {
 				name: 'post-editor',
 				paths: [ '/post', '/page' ],
@@ -154,7 +154,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSectionName()', () => {
-		it( 'should return null if no section is assigned', () => {
+		test( 'should return null if no section is assigned', () => {
 			const sectionName = getSectionName( {
 				ui: {
 					section: false,
@@ -164,7 +164,7 @@ describe( 'selectors', () => {
 			expect( sectionName ).to.be.null;
 		} );
 
-		it( 'should return the name of the current section', () => {
+		test( 'should return the name of the current section', () => {
 			const sectionName = getSectionName( {
 				ui: {
 					section: {
@@ -182,7 +182,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSectionGroup()', () => {
-		it( 'should return null if no section is assigned', () => {
+		test( 'should return null if no section is assigned', () => {
 			const sectionName = getSectionGroup( {
 				ui: {
 					section: false,
@@ -192,7 +192,7 @@ describe( 'selectors', () => {
 			expect( sectionName ).to.be.null;
 		} );
 
-		it( 'should return the name of the current section', () => {
+		test( 'should return the name of the current section', () => {
 			const sectionName = getSectionGroup( {
 				ui: {
 					section: {
@@ -210,7 +210,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSiteSection()', () => {
-		it( 'should return false if no section is assigned', () => {
+		test( 'should return false if no section is assigned', () => {
 			const siteSection = isSiteSection( {
 				ui: {
 					section: false,
@@ -220,7 +220,7 @@ describe( 'selectors', () => {
 			expect( siteSection ).to.be.false;
 		} );
 
-		it( 'should return false if the current section is not site-specific', () => {
+		test( 'should return false if the current section is not site-specific', () => {
 			const siteSection = isSiteSection( {
 				ui: {
 					section: {
@@ -236,7 +236,7 @@ describe( 'selectors', () => {
 			expect( siteSection ).to.be.false;
 		} );
 
-		it( 'should return true if the current section is site-specific', () => {
+		test( 'should return true if the current section is site-specific', () => {
 			const siteSection = isSiteSection( {
 				ui: {
 					section: {
@@ -254,7 +254,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isSectionIsomorphic()', () => {
-		it( 'should return false if there is no section currently selected', () => {
+		test( 'should return false if there is no section currently selected', () => {
 			const selected = isSectionIsomorphic( {
 				ui: {
 					section: false,
@@ -264,7 +264,7 @@ describe( 'selectors', () => {
 			expect( selected ).to.be.false;
 		} );
 
-		it( 'should return true if current section is isomorphic', () => {
+		test( 'should return true if current section is isomorphic', () => {
 			const section = {
 				enableLoggedOut: true,
 				group: 'sites',
@@ -284,11 +284,11 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#hasSidebar()', () => {
-		it( 'should return false if set', () => {
+		test( 'should return false if set', () => {
 			expect( hasSidebar( { ui: { hasSidebar: false } } ) ).to.be.false;
 		} );
 
-		it( 'should be true if true and secondary does not override it', () => {
+		test( 'should be true if true and secondary does not override it', () => {
 			expect(
 				hasSidebar( {
 					ui: {
@@ -299,7 +299,7 @@ describe( 'selectors', () => {
 			).to.be.true;
 		} );
 
-		it( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
+		test( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
 			expect(
 				hasSidebar( {
 					ui: {

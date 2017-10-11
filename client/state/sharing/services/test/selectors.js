@@ -53,13 +53,13 @@ describe( 'selectors', () => {
 	};
 
 	describe( 'getKeyringServices()', () => {
-		it( 'should return empty object if there are no services', () => {
+		test( 'should return empty object if there are no services', () => {
 			const services = getKeyringServices( defaultState );
 
 			expect( services ).to.be.empty;
 		} );
 
-		it( 'should return the keyring services', () => {
+		test( 'should return the keyring services', () => {
 			const services = getKeyringServices( activeState );
 
 			expect( services ).to.eql( {
@@ -84,13 +84,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getKeyringServicesByType()', () => {
-		it( 'should return empty object if there are no services', () => {
+		test( 'should return empty object if there are no services', () => {
 			const services = getKeyringServicesByType( defaultState, 'other' );
 
 			expect( services ).to.be.empty;
 		} );
 
-		it( 'should return the keyring services with the correct type', () => {
+		test( 'should return the keyring services with the correct type', () => {
 			const services = getKeyringServicesByType( activeState, 'publicize' );
 
 			expect( services ).to.eql( [
@@ -101,13 +101,13 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getKeyringServiceByName()', () => {
-		it( 'should return false if there is no service', () => {
+		test( 'should return false if there is no service', () => {
 			const service = getKeyringServiceByName( defaultState, 'thingy' );
 
 			expect( service ).to.be.false;
 		} );
 
-		it( 'should return the named keyring service', () => {
+		test( 'should return the named keyring service', () => {
 			const service = getKeyringServiceByName( activeState, 'eventbrite' );
 
 			expect( service ).to.eql( activeState.sharing.services.items.eventbrite );
@@ -144,13 +144,13 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return empty object if there are no services', () => {
+		test( 'should return empty object if there are no services', () => {
 			const services = getEligibleKeyringServices( defaultState, 2916284, 'other' );
 
 			expect( services ).to.eql( [] );
 		} );
 
-		it( 'should return the keyring services with the correct type', () => {
+		test( 'should return the keyring services with the correct type', () => {
 			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
 
 			expect( services ).to.eql( [
@@ -159,7 +159,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should omit eventbrite if user can not manage_options', () => {
+		test( 'should omit eventbrite if user can not manage_options', () => {
 			state.currentUser.capabilities[ 2916284 ].manage_options = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
 			state.currentUser.capabilities[ 2916284 ].manage_options = true;
@@ -167,7 +167,7 @@ describe( 'selectors', () => {
 			expect( services ).to.eql( [] );
 		} );
 
-		it( 'should omit publicize services if user can not publish_posts', () => {
+		test( 'should omit publicize services if user can not publish_posts', () => {
 			state.currentUser.capabilities[ 2916284 ].publish_posts = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
 			state.currentUser.capabilities[ 2916284 ].publish_posts = true;
@@ -175,7 +175,7 @@ describe( 'selectors', () => {
 			expect( services ).to.eql( [] );
 		} );
 
-		it( 'should include services if required module is activated', () => {
+		test( 'should include services if required module is activated', () => {
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
 
 			expect( services ).to.eql( [
@@ -188,7 +188,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should omit services if required module is not activated', () => {
+		test( 'should omit services if required module is not activated', () => {
 			state.sites.items[ 2916284 ].options.active_modules = [];
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
 			state.sites.items[ 2916284 ].options.active_modules = [ 'publicize' ];
@@ -198,19 +198,19 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isKeyringServicesFetching()', () => {
-		it( 'should return false if there are no services', () => {
+		test( 'should return false if there are no services', () => {
 			const isRequesting = isKeyringServicesFetching( defaultState );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if a request is in progress for the site', () => {
+		test( 'should return true if a request is in progress for the site', () => {
 			const isRequesting = isKeyringServicesFetching( activeState );
 
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return false if a request has completed for the site', () => {
+		test( 'should return false if a request has completed for the site', () => {
 			const isRequesting = isKeyringServicesFetching( {
 				sharing: {
 					services: {

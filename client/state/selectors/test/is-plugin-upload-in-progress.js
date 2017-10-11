@@ -13,7 +13,7 @@ import { isPluginUploadInProgress } from 'state/selectors';
 const siteId = 77203074;
 
 describe( 'isPluginUploadInProgress', () => {
-	it( 'should return false by default', () => {
+	test( 'should return false by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -24,7 +24,7 @@ describe( 'isPluginUploadInProgress', () => {
 		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
 	} );
 
-	it( 'should return current value for site', () => {
+	test( 'should return current value for site', () => {
 		const stateFalse = {
 			plugins: {
 				upload: {

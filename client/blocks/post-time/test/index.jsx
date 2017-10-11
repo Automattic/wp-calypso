@@ -13,7 +13,7 @@ import React from 'react';
 import { PostTime } from 'blocks/post-time';
 
 describe( 'PostTime', () => {
-	it( 'should display a recent time if there is no post', () => {
+	test( 'should display a recent time if there is no post', () => {
 		const post = null;
 
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
@@ -22,7 +22,7 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( 'a few seconds ago' );
 	} );
 
-	it( 'should use the modified date if the post status is draft', () => {
+	test( 'should use the modified date if the post status is draft', () => {
 		const post = {
 			status: 'draft',
 			modified: '2016-09-14T15:47:33-04:00',
@@ -35,7 +35,7 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
-	it( 'should use the modified date if the post status is pending', () => {
+	test( 'should use the modified date if the post status is pending', () => {
 		const post = {
 			status: 'pending',
 			modified: '2016-09-14T15:47:33-04:00',
@@ -48,7 +48,7 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
 	} );
 
-	it( 'should use the actual date if the post status is not pending/draft', () => {
+	test( 'should use the actual date if the post status is not pending/draft', () => {
 		const post = {
 			status: 'publish',
 			modified: '2016-09-14T15:47:33-04:00',
@@ -61,7 +61,7 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( moment( post.date ).format( 'LLL' ) );
 	} );
 
-	it( 'should use a human-readable approximation for recent dates', () => {
+	test( 'should use a human-readable approximation for recent dates', () => {
 		const post = {
 			status: 'publish',
 			date: moment()
@@ -75,7 +75,7 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( '2 days ago' );
 	} );
 
-	it( 'should render placeholder when post is null', () => {
+	test( 'should render placeholder when post is null', () => {
 		const post = null;
 
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );

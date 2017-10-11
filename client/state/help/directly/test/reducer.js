@@ -23,17 +23,17 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'questionAsked', 'status' ] );
 	} );
 
 	describe( '#questionAsked()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = questionAsked( undefined, {} );
 			expect( state ).to.eql( null );
 		} );
 
-		it( 'should set once a question is asked', () => {
+		test( 'should set once a question is asked', () => {
 			const questionText =
 				'What is the answer to the ultimate question of life, the universe, and everything?';
 			const name = 'Douglas Adams';
@@ -45,22 +45,22 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#status()', () => {
-		it( 'should default to uninitialized state', () => {
+		test( 'should default to uninitialized state', () => {
 			const state = status( undefined, {} );
 			expect( state ).to.eql( STATUS_UNINITIALIZED );
 		} );
 
-		it( 'should mark when initialization starts', () => {
+		test( 'should mark when initialization starts', () => {
 			const state = status( undefined, { type: DIRECTLY_INITIALIZATION_START } );
 			expect( state ).to.eql( STATUS_INITIALIZING );
 		} );
 
-		it( 'should mark when initialization completes', () => {
+		test( 'should mark when initialization completes', () => {
 			const state = status( undefined, { type: DIRECTLY_INITIALIZATION_SUCCESS } );
 			expect( state ).to.eql( STATUS_READY );
 		} );
 
-		it( 'should mark when initialization fails', () => {
+		test( 'should mark when initialization fails', () => {
 			const state = status( undefined, { type: DIRECTLY_INITIALIZATION_ERROR } );
 			expect( state ).to.eql( STATUS_ERROR );
 		} );

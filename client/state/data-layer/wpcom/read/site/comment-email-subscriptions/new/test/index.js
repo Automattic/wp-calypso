@@ -22,7 +22,7 @@ import {
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailSubscription', () => {
-		it( 'should dispatch an http request and call through next', () => {
+		test( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
 			const action = subscribeToNewCommentEmail( 1234 );
 			requestCommentEmailSubscription( { dispatch }, action );
@@ -40,13 +40,13 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveCommentEmailSubscription', () => {
-		it( 'should do nothing if successful', () => {
+		test( 'should do nothing if successful', () => {
 			const dispatch = spy();
 			receiveCommentEmailSubscription( { dispatch }, null, { subscribed: true } );
 			expect( dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should dispatch an unsubscribe if it fails using next', () => {
+		test( 'should dispatch an unsubscribe if it fails using next', () => {
 			const dispatch = spy();
 			receiveCommentEmailSubscription(
 				{ dispatch },
@@ -67,7 +67,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveCommentEmailSubscriptionError', () => {
-		it( 'should dispatch an error notice and unsubscribe action using next', () => {
+		test( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const dispatch = spy();
 			receiveCommentEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
 			expect( dispatch ).to.have.been.calledWithMatch( {

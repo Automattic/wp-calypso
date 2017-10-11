@@ -57,11 +57,11 @@ describe( 'data layer', () => {
 		} );
 
 		describe( '#createPages()', () => {
-			it( 'should dispatch `removeNotice`', () => {
+			test( 'should dispatch `removeNotice`', () => {
 				expect( dispatch ).to.have.been.calledWith( removeNotice( 'wpjm-create-pages' ) );
 			} );
 
-			it( 'should dispatch one HTTP request for each title', () => {
+			test( 'should dispatch one HTTP request for each title', () => {
 				expect( dispatch ).to.have.been.calledWith(
 					http(
 						{
@@ -93,13 +93,13 @@ describe( 'data layer', () => {
 		} );
 
 		describe( '#announceFailure()', () => {
-			it( 'should dispatch `createPagesError`', () => {
+			test( 'should dispatch `createPagesError`', () => {
 				announceFailure( dispatch, siteId );
 
 				expect( dispatch ).to.have.been.calledWith( createPagesError( siteId ) );
 			} );
 
-			it( 'should dispatch `errorNotice`', () => {
+			test( 'should dispatch `errorNotice`', () => {
 				announceFailure( dispatch, siteId );
 
 				expect( dispatch ).to.have.been.calledWith(
@@ -111,21 +111,21 @@ describe( 'data layer', () => {
 		} );
 
 		describe( '#handleSuccess()', () => {
-			it( 'should not dispatch `createPagesError` or `nextStep` if not all requests have completed', () => {
+			test( 'should not dispatch `createPagesError` or `nextStep` if not all requests have completed', () => {
 				handleSuccess( { dispatch }, action );
 
 				expect( dispatch ).to.not.have.been.calledWith( createPagesError( siteId ) );
 				expect( dispatch ).to.not.have.been.calledWith( nextStep( siteId ) );
 			} );
 
-			it( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
+			test( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
 				handleFailure( { dispatch }, action );
 				handleSuccess( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledWith( createPagesError( siteId ) );
 			} );
 
-			it( 'should dispatch `nextStep` if all requests completed successfully', () => {
+			test( 'should dispatch `nextStep` if all requests completed successfully', () => {
 				handleSuccess( { dispatch }, action );
 				handleSuccess( { dispatch }, action );
 
@@ -134,13 +134,13 @@ describe( 'data layer', () => {
 		} );
 
 		describe( '#handleFailure()', () => {
-			it( 'should not dispatch `createPagesError` if not all requests have completed', () => {
+			test( 'should not dispatch `createPagesError` if not all requests have completed', () => {
 				handleFailure( { dispatch }, action );
 
 				expect( dispatch ).to.not.have.been.calledWith( createPagesError( siteId ) );
 			} );
 
-			it( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
+			test( 'should dispatch `createPagesError` if an error occurred with one of the requests', () => {
 				handleSuccess( { dispatch }, action );
 				handleFailure( { dispatch }, action );
 
@@ -157,7 +157,7 @@ describe( 'data layer', () => {
 			};
 
 			describe( '#fetchSetupStatus()', () => {
-				it( 'should dispatch an HTTP request to the status endpoint', () => {
+				test( 'should dispatch an HTTP request to the status endpoint', () => {
 					fetchSetupStatus( { dispatch }, action );
 
 					expect( dispatch ).to.have.been.calledWith(
@@ -176,7 +176,7 @@ describe( 'data layer', () => {
 			} );
 
 			describe( '#updateSetupStatus', () => {
-				it( 'should dispatch `updateStatus`', () => {
+				test( 'should dispatch `updateStatus`', () => {
 					updateSetupStatus( { dispatch }, action, { data: false } );
 
 					expect( dispatch ).to.have.been.calledWith( updateStatus( siteId, false ) );
@@ -184,7 +184,7 @@ describe( 'data layer', () => {
 			} );
 
 			describe( '#fetchSetupStatusError', () => {
-				it( 'should dispatch `fetchError`', () => {
+				test( 'should dispatch `fetchError`', () => {
 					fetchSetupStatusError( { dispatch }, action );
 
 					expect( dispatch ).to.have.been.calledWith( fetchStatusError( siteId ) );
@@ -193,7 +193,7 @@ describe( 'data layer', () => {
 		} );
 
 		describe( '#saveSetupStatus()', () => {
-			it( 'should dispatch an HTTP POST request to the status endpoint', () => {
+			test( 'should dispatch an HTTP POST request to the status endpoint', () => {
 				const saveAction = {
 					type: WP_JOB_MANAGER_SAVE_SETUP_STATUS,
 					setupStatus: false,

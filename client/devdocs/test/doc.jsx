@@ -22,7 +22,7 @@ jest.mock( 'devdocs/service', () => ( {
 
 describe( 'SingleDoc', () => {
 	describe( 'makeSnip', () => {
-		context( 'render test', () => {
+		describe( 'render test', () => {
 			let renderedSingleDoc;
 
 			beforeEach( () => {
@@ -31,7 +31,7 @@ describe( 'SingleDoc', () => {
 				);
 			} );
 
-			it( 'should render html with marked text', () => {
+			test( 'should render html with marked text', () => {
 				renderedSingleDoc.setState( { body: '<div><p>something hello</p></div>' } );
 				const html = ReactDom.findDOMNode( renderedSingleDoc.refs.body ).innerHTML;
 				expect( html ).to.equal( '<div><p>something <mark>hello</mark></p></div>' );

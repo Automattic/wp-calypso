@@ -17,7 +17,7 @@ import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
-	it( 'should mark the settings products tree as "loading"', () => {
+	test( 'should mark the settings products tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
@@ -28,7 +28,7 @@ describe( 'reducer', () => {
 		expect( newSiteData[ siteId ].settings.products ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const settings = [ {}, {} ];
 		const action = {
@@ -42,7 +42,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].settings.products ).to.deep.equal( settings );
 	} );
 
-	it( 'should store only product data from the action on batch', () => {
+	test( 'should store only product data from the action on batch', () => {
 		const siteId = 123;
 		const emptyState = {
 			123: {

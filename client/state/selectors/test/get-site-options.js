@@ -12,7 +12,7 @@ import { getSiteOptions } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getSiteOptions()', () => {
-	it( 'should return null if site is not found', () => {
+	test( 'should return null if site is not found', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -23,7 +23,7 @@ describe( 'getSiteOptions()', () => {
 		expect( siteOptions ).to.be.null;
 	} );
 
-	it( 'should return default options object if no options are found', () => {
+	test( 'should return default options object if no options are found', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -39,7 +39,7 @@ describe( 'getSiteOptions()', () => {
 		} );
 	} );
 
-	it( 'should return the options of the site if they exist with default_post_format added if it was not set', () => {
+	test( 'should return the options of the site if they exist with default_post_format added if it was not set', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -62,7 +62,7 @@ describe( 'getSiteOptions()', () => {
 		} );
 	} );
 
-	it( 'should return the options of the site with correct default_post_format added if it was set to 0', () => {
+	test( 'should return the options of the site with correct default_post_format added if it was set to 0', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -86,7 +86,7 @@ describe( 'getSiteOptions()', () => {
 		} );
 	} );
 
-	it( 'should return the options of the site if they exist', () => {
+	test( 'should return the options of the site if they exist', () => {
 		const state = {
 			...userState,
 			sites: {

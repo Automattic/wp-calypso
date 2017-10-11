@@ -25,18 +25,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track request fetching', () => {
+		test( 'should track request fetching', () => {
 			const state = requesting( undefined, {
 				type: POST_TYPES_TAXONOMIES_REQUEST,
 				siteId: 2916284,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requests for the same site', () => {
+		test( 'should accumulate requests for the same site', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requests for distinct sites', () => {
+		test( 'should accumulate requests for distinct sites', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request success', () => {
+		test( 'should track request success', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request failure', () => {
+		test( 'should track request failure', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: false,
@@ -150,13 +150,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track received post items by type, keyed by name', () => {
+		test( 'should track received post items by type, keyed by name', () => {
 			const state = items( undefined, {
 				type: POST_TYPES_TAXONOMIES_RECEIVE,
 				siteId: 2916284,
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should replace state with latest payload', () => {
+		test( 'should replace state with latest payload', () => {
 			const state = items( undefined, {
 				type: POST_TYPES_TAXONOMIES_RECEIVE,
 				siteId: 2916284,
@@ -205,7 +205,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -225,7 +225,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -245,7 +245,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {

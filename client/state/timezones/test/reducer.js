@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( timezonesReducer( undefined, {} ) ).to.have.keys( [
 			'byContinents',
 			'labels',
@@ -30,11 +30,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#rawOffsets()', () => {
-		it( 'should default to an empty action object', () => {
+		test( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index `rawOffsets` state', () => {
+		test( 'should index `rawOffsets` state', () => {
 			const initialState = undefined;
 
 			const action = timezonesReceive( {
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should override `rawOffsets` state', () => {
+		test( 'should override `rawOffsets` state', () => {
 			const initialState = {
 				'UTC+13.75': 'UTC+13:45',
 				'UTC+14': 'UTC+14',
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const initialState = {
 				rawOffsets: {
 					'UTC+13.75': 'UTC+13:45',
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const initialState = {
 				'UTC+0': 'UTC',
 				'UTC+13.75': 'UTC+13:45',
@@ -110,7 +110,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { rawOffsets: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
 			const newStateONE = rawOffsets( initialStateONE, { type: 'DESERIALIZE' } );
@@ -126,11 +126,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#labels()', () => {
-		it( 'should default to an empty action object', () => {
+		test( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index `labels` state', () => {
+		test( 'should index `labels` state', () => {
 			const initialState = undefined;
 
 			const action = timezonesReceive( {
@@ -151,7 +151,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should override `labels` state', () => {
+		test( 'should override `labels` state', () => {
 			const initialState = {
 				'Australia/Currie': 'Currie',
 				'Indian/Mauritius': 'Mauritius',
@@ -176,7 +176,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const initialState = {
 				labels: {
 					'Asia/Aqtobe': 'Aqtobe',
@@ -193,7 +193,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const initialState = {
 				'Asia/Aqtobe': 'Aqtobe',
 				'America/Boa_Vista': 'Boa Vista',
@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { labels: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
 			const newStateONE = labels( initialStateONE, { type: 'DESERIALIZE' } );
@@ -216,11 +216,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#byContinents()', () => {
-		it( 'should default to an empty action object', () => {
+		test( 'should default to an empty action object', () => {
 			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index `rawOffsets` state', () => {
+		test( 'should index `rawOffsets` state', () => {
 			const initialState = undefined;
 
 			const action = timezonesReceive( {
@@ -241,7 +241,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should override timezones.byContinents state', () => {
+		test( 'should override timezones.byContinents state', () => {
 			const initialState = {
 				Pacific: [ 'Pacific/Funafuti' ],
 			};
@@ -265,7 +265,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const initialState = {
 				byContinents: {
 					Asia: [ 'Asia/Aqtobe' ],
@@ -282,7 +282,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const initialState = {
 				Asia: [ 'Asia/Aqtobe' ],
 				America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
@@ -296,7 +296,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { byContinents: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
 			const newStateONE = byContinents( initialStateONE, { type: 'DESERIALIZE' } );

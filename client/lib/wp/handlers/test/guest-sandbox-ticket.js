@@ -22,7 +22,7 @@ describe( 'guest-sandbox-ticket', () => {
 	} );
 
 	describe( '#deleteOldTicket', () => {
-		it( 'should remove tickets older than two hours', () => {
+		test( 'should remove tickets older than two hours', () => {
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, {
 				value: 'foo',
 				createdDate: Date.now() - 1000 * 60 * 60 * 3, // three hours in the past
@@ -33,7 +33,7 @@ describe( 'guest-sandbox-ticket', () => {
 			expect( store.get( GUEST_TICKET_LOCALFORAGE_KEY ) ).to.be.undefined;
 		} );
 
-		it( 'should not remove tickets younger than two hours', () => {
+		test( 'should not remove tickets younger than two hours', () => {
 			const ticket = {
 				value: 'foo',
 				createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
@@ -48,7 +48,7 @@ describe( 'guest-sandbox-ticket', () => {
 	} );
 
 	describe( '#injectGuestSandboxTicketHandler', () => {
-		it( 'should update `wpcom` to add the ticket param if present', done => {
+		test( 'should update `wpcom` to add the ticket param if present', done => {
 			const ticket = {
 				value: 'foo',
 				createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
@@ -68,7 +68,7 @@ describe( 'guest-sandbox-ticket', () => {
 			expect( wpcom.request( { query: 'search=whatever' } ) );
 		} );
 
-		it( 'should not add ticket param if it is not present', done => {
+		test( 'should not add ticket param if it is not present', done => {
 			const wpcom = {
 				request( params ) {
 					expect( params.query ).to.equal( 'search=whatever' );
