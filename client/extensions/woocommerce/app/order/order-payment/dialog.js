@@ -24,6 +24,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import {
+	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderRefundTotal,
 	getOrderShippingTax,
@@ -94,7 +95,15 @@ class RefundDialog extends Component {
 
 	getInitialRefund = () => {
 		const { order } = this.props;
-		return parseFloat( getOrderShippingTax( order ) ) + parseFloat( order.shipping_total );
+		return (
+			sum(
+				order.fee_lines.map( ( item, i ) => {
+					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, i ) );
+				} )
+			) +
+			parseFloat( getOrderShippingTax( order ) ) +
+			parseFloat( order.shipping_total )
+		);
 	};
 
 	recalculateRefund = data => {
@@ -102,8 +111,9 @@ class RefundDialog extends Component {
 		if ( ! order ) {
 			return 0;
 		}
-		const subtotal = sum(
-			map( data.quantities, ( q, id ) => {
+		const subtotal = sum( [
+			...data.fees,
+			...map( data.quantities, ( q, id ) => {
 				id = parseInt( id );
 				const line_item = find( order.line_items, { id } );
 				if ( ! line_item ) {
@@ -117,8 +127,8 @@ class RefundDialog extends Component {
 
 				const tax = getOrderLineItemTax( order, id ) / line_item.quantity;
 				return ( price + tax ) * q;
-			} )
-		);
+			} ),
+		] );
 		const total = subtotal + ( parseFloat( data.shippingTotal ) || 0 );
 		return total;
 	};

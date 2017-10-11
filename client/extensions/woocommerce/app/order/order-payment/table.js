@@ -71,10 +71,21 @@ class OrderRefundTable extends Component {
 			this.setState( { shippingTotal }, this.triggerRecalculate );
 		} else {
 			// Name is `quantity-x`, where x is the ID in the line_items array
-			const i = event.target.name.split( '-' )[ 1 ];
-			const newQuants = this.state.quantities;
-			newQuants[ i ] = event.target.value;
-			this.setState( { quantities: newQuants }, this.triggerRecalculate );
+			const [ type, i ] = event.target.name.split( '-' );
+			const value = event.target.value;
+			if ( 'quantity' === type ) {
+				this.setState( prevState => {
+					const newQuants = prevState.quantities;
+					newQuants[ i ] = value;
+					return { quantities: newQuants };
+				}, this.triggerRecalculate );
+			} else {
+				this.setState( prevState => {
+					const newFees = prevState.fees;
+					newFees[ i ] = parseFloat( value );
+					return { fees: newFees };
+				}, this.triggerRecalculate );
+			}
 		}
 	};
 
