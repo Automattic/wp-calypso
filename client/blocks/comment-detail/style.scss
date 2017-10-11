@@ -201,15 +201,11 @@
 .comment-detail__comment-preview {
 	box-sizing: border-box;
 	line-height: 1.4;
-	max-height: 38px;
+	max-height: 56px;
 	overflow: hidden;
 	padding: 0 8px;
 	position: relative;
 	width: 60%;
-
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
 
 	&:after {
 		background: linear-gradient(
@@ -224,12 +220,22 @@
 			right: 0;
 		width: 30%;
 	}
-	@supports( -webkit-line-clamp: 2 ) {
+
+	@supports( -webkit-line-clamp: 3 ) {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
+
 		&:after {
 			background: transparent;
+		}
+	}
+
+	@include breakpoint( "<960px" ) {
+		width: 100%;
+
+		@supports( -webkit-line-clamp: 2 ) {
+			-webkit-line-clamp: 2;
 		}
 	}
 }
