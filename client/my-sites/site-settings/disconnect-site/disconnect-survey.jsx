@@ -16,41 +16,26 @@ import { isSiteOnPaidPlan } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class DisconnectSurvey extends Component {
-	state = {
-		reasonSelected: null,
-	};
-
-	renderFollowUp() {
-		// placeholder
-		return <Card className="disconnect-site__question">{ 'follow-up' }</Card>;
-	}
-
-	handleAnswerClick = event => {
-		this.setState( {
-			reasonSelected: event.currentTarget.dataset.reason,
-		} );
-	};
-
 	getReasons() {
 		const { isPaidPlan, translate } = this.props;
 
 		const reasons = [
-			{ slug: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
-			{ slug: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
+			{ slug: 'too-difficult', label: translate( 'It was too hard to configure Jetpack' ) },
+			{ slug: 'missing-feature', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
 		if ( isPaidPlan ) {
-			reasons.push( { slug: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
+			reasons.push( { slug: 'too-expensive', label: translate( 'This plan is too expensive' ) } );
 		}
 		return reasons;
 	}
 
-	renderEntryQuestion() {
+	render() {
 		const { translate, siteId, siteSlug } = this.props;
 		const reasons = this.getReasons();
 
 		return (
-			<div>
+			<div className="disconnect-site__survey main">
 				<QuerySitePlans siteId={ siteId } />
 				<Card className="disconnect-site__question">
 					{ translate(
@@ -62,24 +47,13 @@ class DisconnectSurvey extends Component {
 				</Card>
 				{ reasons.map( ( { label, slug } ) => (
 					<CompactCard
-						data-reason={ slug }
-						href="#"
+						href={ `/settings/disconnect-site/${ siteSlug }/${ slug }` }
 						key={ slug }
-						onClick={ this.handleAnswerClick }
 						className="disconnect-site__survey-one"
 					>
 						{ label }
 					</CompactCard>
 				) ) }
-			</div>
-		);
-	}
-
-	render() {
-		const { reasonSelected } = this.state;
-		return (
-			<div className="disconnect-site__survey main">
-				{ reasonSelected ? this.renderFollowUp( reasonSelected ) : this.renderEntryQuestion() }
 			</div>
 		);
 	}
