@@ -17,10 +17,8 @@ import Card from 'components/card';
 /**
  * Date Picker Demo
  */
-export default localize(
+const InputChronoExample = localize(
 	React.createClass( {
-		displayName: 'InputChrono',
-
 		mixins: [ PureRenderMixin ],
 
 		getInitialState() {
@@ -56,3 +54,7 @@ export default localize(
 		},
 	} )
 );
+
+InputChronoExample.displayName = 'InputChrono';
+
+export default InputChronoExample;
