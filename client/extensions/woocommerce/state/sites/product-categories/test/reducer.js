@@ -80,6 +80,24 @@ describe( 'reducer', () => {
 			products: {},
 			stripeConnectAccount: {},
 			tax: {},
+			email: {
+				settings: {},
+				settingsRequest: false,
+				settingsRequestError: false,
+				syncStatus: {},
+				syncStatusRequest: false,
+				syncStatusRequestError: false,
+				resyncRequest: false,
+				resyncRequestError: false,
+				apiKeySubmit: false,
+				apiKeySubbmitError: false,
+				storeInfoSubmit: false,
+				storeInfoSubmitError: false,
+				listsRequest: false,
+				listsRequestError: false,
+				newsletterSettingsSubmit: false,
+				newsletterSettingsSubmitError: false,
+			},
 		} );
 	} );
 
