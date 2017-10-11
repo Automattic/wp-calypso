@@ -5,7 +5,6 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
-import config from 'config';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
 
@@ -56,10 +55,6 @@ const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
  * @return {undefined} Nothing
  */
 export const fetchJITM = ( state, dispatch, action ) => {
-	if ( ! config.isEnabled( 'jitms' ) ) {
-		return;
-	}
-
 	if ( ! process.hasInitializedSites || ! process.hasInitializedSection ) {
 		return;
 	}
@@ -89,10 +84,6 @@ export const fetchJITM = ( state, dispatch, action ) => {
  * @param {function} dispatch A function to dispatch an action
  */
 export const handleRouteChange = ( { getState, dispatch }, action ) => {
-	if ( ! config.isEnabled( 'jitms' ) ) {
-		return;
-	}
-
 	if ( process.hasInitializedSection && action.section && process.lastSection === action.section.name ) {
 		return;
 	}
@@ -120,10 +111,6 @@ export const handleRouteChange = ( { getState, dispatch }, action ) => {
  * @param {function} dispatch The dispatch function
  */
 export const handleSiteSelection = ( { getState, dispatch }, action ) => {
-	if ( ! config.isEnabled( 'jitms' ) ) {
-		return;
-	}
-
 	if ( process.hasInitializedSites && process.lastSite === action.siteId ) {
 		return;
 	}

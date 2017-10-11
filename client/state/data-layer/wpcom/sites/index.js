@@ -5,6 +5,7 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
+import config from 'config';
 import activity from './activity';
 import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
@@ -22,7 +23,7 @@ export default mergeHandlers(
 	blogStickers,
 	comments,
 	commentsTree,
-	jitm,
+	config.isEnabled( 'jitms' ) ? jitm : null,
 	media,
 	plugins,
 	posts,
