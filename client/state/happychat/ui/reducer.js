@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -15,9 +17,7 @@ import { combineReducers, isValidStateWithSchema } from 'state/utils';
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
- *
- *
- * @format
+ * @param {Object} state Current state
  * @param {Object} action Action payload
  * @return {Object}        Updated state
  */
