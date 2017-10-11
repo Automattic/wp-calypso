@@ -78,14 +78,17 @@ class OrderPaymentCard extends Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchPaymentMethods( newSiteId );
 		}
+		// Has been opened and closed before, let's reset the values.
+		if ( newProps.isVisible && ! this.props.isVisible ) {
+			this.setState( {
+				errorMessage: false,
+				refundTotal: this.getInitialRefund(),
+				refundNote: '',
+			} );
+		}
 	};
 
 	toggleDialog = () => {
-		this.setState( {
-			errorMessage: false,
-			refundTotal: this.getInitialRefund(),
-			refundNote: '',
-		} );
 		this.props.toggleDialog();
 	};
 
