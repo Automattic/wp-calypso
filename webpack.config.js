@@ -174,6 +174,7 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.entry.vendor = [
 		'classnames',
 		'create-react-class',
+		'gridicons',
 		'i18n-calypso',
 		'lodash',
 		'moment',
@@ -184,6 +185,7 @@ if ( calypsoEnv === 'desktop' ) {
 		'react-redux',
 		'redux',
 		'redux-thunk',
+		'social-logos',
 		'store',
 		'wpcom',
 	];
