@@ -1,5 +1,4 @@
 .conversation-caterpillar.card {
-	cursor: pointer;
 	display: flex;
 	padding: 0;
 	padding-top: 20px;
@@ -18,12 +17,12 @@
 	flex-shrink: 0;
 }
 
-.conversation-caterpillar__show-all,
 .conversation-caterpillar__count {
-	color: $gray;
 	cursor: pointer;
+	color: $gray;
 	display: flex;
-	font-size: 13px;
+	margin-left: 8px;
+	font-size: 14px;
 	font-weight: 400;
 }
 
@@ -32,9 +31,20 @@
 	margin-right: 5px;
 }
 
+.conversation-caterpillar__count-fader {
+	display: flex;
+	flex: 1 1 auto;
+
+	&::after {
+		@include long-content-fade( $size: 35px );
+		height: 16px * 2;
+		width: 16px * 2;
+		z-index: 1;
+	}
+
+}
 .conversation-caterpillar__count {
 	flex-shrink: 1;
-	flex: 1 1 auto;
 	margin-left: 8px;
 	overflow: hidden;
 	position: relative;
@@ -49,16 +59,10 @@
 	&:hover {
 		color: $blue-medium;
 	}
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-		height: 16px * 2;
-		width: 16px * 2;
-		z-index: 1;
-	}
 }
 
 .conversation-caterpillar__gravatar {
+	cursor: pointer;
 	border: 2px solid $white;
 	height: 32px;
 	margin-left: -8px;
@@ -74,27 +78,5 @@
 		@include breakpoint( ">660px" ) {
    			display: inline;
    		}
-	}
-}
-
-.conversation-caterpillar__count {
-	color: $gray;
-	font-size: 14px;
-	font-weight: 400;
-	margin-left: 8px;
-	cursor: pointer;
-}
-
-.conversation-caterpillar__show-all {
-
-	&:hover {
-		color: $blue-medium;
-	}
-
-	.gridicon {
-
-		&:hover {
-			fill: $blue-medium;
-		}
 	}
 }

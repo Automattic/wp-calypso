@@ -93,8 +93,8 @@ class ConversationCaterpillarComponent extends React.Component {
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		return (
-			<Card className="conversation-caterpillar" onClick={ this.handleTickle }>
-				<div className="conversation-caterpillar__gravatars">
+			<Card className="conversation-caterpillar">
+				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -117,40 +117,43 @@ class ConversationCaterpillarComponent extends React.Component {
 						);
 					} ) }
 				</div>
-				<button
-					className="conversation-caterpillar__count"
-					title={
-						commentCount > 1 ? (
-							translate( 'View comments from %(commenterName)s and %(count)d more', {
+				<div className="conversation-caterpillar__count-fader">
+					<button
+						className="conversation-caterpillar__count"
+						onClick={ this.handleTickle }
+						title={
+							commentCount > 1 ? (
+								translate( 'View comments from %(commenterName)s and %(count)d more', {
+									args: {
+										commenterName: lastAuthorName,
+										count: commentCount - 1,
+									},
+								} )
+							) : (
+								translate( 'View comment from %(commenterName)s', {
+									args: {
+										commenterName: lastAuthorName,
+									},
+								} )
+							)
+						}
+					>
+						{ commentCount > 1 ? (
+							translate( '%(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastAuthorName,
 									count: commentCount - 1,
 								},
 							} )
 						) : (
-							translate( 'View comment from %(commenterName)s', {
+							translate( '%(commenterName)s commented', {
 								args: {
 									commenterName: lastAuthorName,
 								},
 							} )
-						)
-					}
-				>
-					{ commentCount > 1 ? (
-						translate( '%(commenterName)s and %(count)d more', {
-							args: {
-								commenterName: lastAuthorName,
-								count: commentCount - 1,
-							},
-						} )
-					) : (
-						translate( '%(commenterName)s commented', {
-							args: {
-								commenterName: lastAuthorName,
-							},
-						} )
-					) }
-				</button>
+						) }
+					</button>
+				</div>
 			</Card>
 		);
 	}
