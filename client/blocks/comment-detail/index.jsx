@@ -261,6 +261,7 @@ export class CommentDetail extends Component {
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
+			site,
 			siteBlacklist,
 			siteId,
 			translate,
@@ -310,6 +311,7 @@ export class CommentDetail extends Component {
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
+					site={ site }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
