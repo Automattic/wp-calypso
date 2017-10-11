@@ -42,12 +42,12 @@ import {
 import { receiveChatTranscript } from './actions';
 import {
 	isHappychatConnectionUninitialized,
-	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
-	isHappychatChatAssigned,
 	getGeoLocation,
 	getGroups,
 } from './selectors';
+import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
+import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import debugFactory from 'debug';

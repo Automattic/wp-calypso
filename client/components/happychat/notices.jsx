@@ -19,10 +19,10 @@ import {
 } from 'state/happychat/constants';
 import { localize } from 'i18n-calypso';
 import {
-	getHappychatStatus,
 	getHappychatConnectionStatus,
 	isHappychatServerReachable,
 } from 'state/happychat/selectors';
+import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
 
 /*
  * Renders any notices about the chat session to the user
@@ -79,7 +79,7 @@ class Notices extends Component {
 
 const mapState = state => ( {
 	isServerReachable: isHappychatServerReachable( state ),
-	chatStatus: getHappychatStatus( state ),
+	chatStatus: getHappychatChatStatus( state ),
 	connectionStatus: getHappychatConnectionStatus( state ),
 } );
 
