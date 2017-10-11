@@ -29,7 +29,7 @@ import OrderRefundTable from './table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
-class OrderPaymentCard extends Component {
+class RefundDialog extends Component {
 	static propTypes = {
 		isPaymentLoading: PropTypes.bool,
 		fetchPaymentMethods: PropTypes.func.isRequired,
@@ -228,4 +228,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
-)( localize( OrderPaymentCard ) );
+)( localize( RefundDialog ) );
