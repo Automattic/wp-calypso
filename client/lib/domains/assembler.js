@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
  */
 import { getDomainType } from './utils';
 
-function createDomainObjects( dataTransferObject ) {
+export function createDomainObjects( dataTransferObject ) {
 	let domains = [];
 
 	if ( ! Array.isArray( dataTransferObject ) ) {
@@ -53,7 +53,7 @@ function createDomainObjects( dataTransferObject ) {
 	return ensurePrimaryDomainIsFirst( domains );
 }
 
-function assembleGoogleAppsSubscription( googleAppsSubscription ) {
+export function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	if ( ! googleAppsSubscription ) {
 		return;
 	}

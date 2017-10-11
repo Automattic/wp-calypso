@@ -5,9 +5,33 @@
  */
 
 import i18n from 'i18n-calypso';
+import {
+	isDefaultLocale,
+	getLanguage,
+	getLocaleFromPath,
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	removeLocaleFromPath,
+} from './utils';
 
-module.exports = require( './utils.js' );
+export default {
+	isDefaultLocale,
+	getLanguage,
+	getLocaleFromPath,
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	removeLocaleFromPath,
+};
 
-module.exports.getLocaleSlug = function() {
+export {
+	isDefaultLocale,
+	getLanguage,
+	getLocaleFromPath,
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	removeLocaleFromPath,
+};
+
+export const getLocaleSlug = function() {
 	return i18n.getLocaleSlug();
 };

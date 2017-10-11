@@ -533,7 +533,7 @@ const controller = {
 export default controller;
 
 export const noSite = controller.noSite;
-export const sitesSelection = controller.sitesSelection;
+export const siteSelection = controller.siteSelection;
 export const jetpackModuleActive = controller.jetpackModuleActive;
 export const makeNavigation = controller.makeNavigation;
 export const navigation = controller.navigation;

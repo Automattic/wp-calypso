@@ -12,11 +12,11 @@ import emailValidator from 'email-validator';
  */
 import { isBusiness } from 'lib/products-values';
 
-function emailForwardingPlanLimit( plan ) {
+export function emailForwardingPlanLimit( plan ) {
 	return isBusiness( plan ) ? 100 : 5;
 }
 
-function validateAllFields( fieldValues ) {
+export function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,

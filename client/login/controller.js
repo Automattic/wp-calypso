@@ -35,7 +35,7 @@ const enhanceContextWithLogin = context => {
 	);
 };
 
-export default {
+const controller = {
 	login( context, next ) {
 		const { query: { client_id, redirect_to } } = context;
 
@@ -106,3 +106,9 @@ export default {
 		next();
 	},
 };
+
+const { magicLogin, magicLoginUse, login } = controller;
+
+export { magicLogin, magicLoginUse, login };
+
+export default controller;

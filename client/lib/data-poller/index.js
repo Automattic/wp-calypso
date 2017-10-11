@@ -73,9 +73,11 @@ function handleVisibilityChange() {
 	}
 }
 
+export { add, remove, pauseAll, resumePaused };
+
 export default {
-	add: add,
-	remove: remove,
-	pauseAll: pauseAll,
-	resumePaused: resumePaused,
+	add,
+	remove,
+	pauseAll,
+	resumePaused,
 };
