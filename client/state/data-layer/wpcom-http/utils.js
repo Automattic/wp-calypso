@@ -8,6 +8,11 @@ import schemaValidator from 'is-my-json-valid';
 import { get, identity, noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import warn from 'lib/warn';
+
+/**
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
@@ -46,18 +51,18 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
-class SchemaError extends Error {
+export class SchemaError extends Error {
 	constructor( errors ) {
 		super( 'Failed to validate with JSON schema' );
 		this.schemaErrors = errors;
 	}
 }
 
-class TransformerError extends Error {
-	constructor( error, transformer, data ) {
+export class TransformerError extends Error {
+	constructor( error, data, transformer ) {
 		super( error.message );
-		this.transformer = transformer;
 		this.inputData = data;
+		this.transformer = transformer;
 	}
 }
 
@@ -83,7 +88,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 		try {
 			return transformer( data );
 		} catch ( e ) {
-			throw new TransformerError( e, transformer, data );
+			throw new TransformerError( e, data, transformer );
 		}
 	};
 
@@ -157,4 +162,74 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 	}
 
 	return initiator( store, action );
+};
+
+/*
+ * Converts an application-level Calypso action that's handled by the data-layer middleware
+ * into a low-level action. For example, HTTP request that's being initiated, or a response
+ * action with a `meta.dataLayer` property.
+ */
+const createRequestAction = ( options, action ) => {
+	const {
+		initiate = noop,
+		onSuccess = noop,
+		onError = noop,
+		onProgress = noop,
+		fromApi = identity,
+	} = options;
+
+	const data = getData( action );
+	if ( data ) {
+		try {
+			return onSuccess( action, fromApi( data ) );
+		} catch ( err ) {
+			return onError( action, err );
+		}
+	}
+
+	const error = getError( action );
+	if ( error ) {
+		return onError( action, error );
+	}
+
+	const progress = getProgress( action );
+	if ( progress ) {
+		return onProgress( action, progress );
+	}
+
+	const initiator = initiate( action );
+	if ( initiator ) {
+		return Object.assign( {}, initiator, {
+			onSuccess: action,
+			onFailure: action,
+			onProgress: action,
+		} );
+	}
+};
+
+/*
+ * Create an effect handler for a particular data-layer action type.
+ */
+export const handleDataRequest = options => {
+	if ( ! options.initiate ) {
+		warn( 'initiate handler is not defined: you really should supply one' );
+	}
+
+	if ( ! options.onSuccess ) {
+		warn( 'onSuccess handler is not defined: you really should supply one' );
+	}
+
+	if ( ! options.onError ) {
+		warn( 'onError handler is not defined: please consider handling API errors correctly' );
+	}
+
+	const handler = ( store, action ) => {
+		// create the low-level action we want to dispatch
+		const requestAction = createRequestAction( options, action );
+		// dispatch the low level action (if any was created) and return the result
+		return requestAction ? store.dispatch( requestAction ) : undefined;
+	};
+
+	// Return an one-element array of handlers
+	return [ handler ];
 };
