@@ -33,7 +33,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			/>
 
 			<PurchaseDetail
-				icon="help"
+				icon={ <img src="/calypso/images/illustrations/support.svg" /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
 					'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
@@ -46,7 +46,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 			{ ! selectedFeature && (
 				<PurchaseDetail
-					icon="customize"
+					icon={ <img src="/calypso/images/upgrades/customize-theme.svg" /> }
 					title={ i18n.translate( 'Try a New Theme' ) }
 					description={ i18n.translate(
 						"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. " +
@@ -60,7 +60,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			{ ! selectedFeature &&
 			isEnabled( 'manage/plugins/upload' ) && (
 				<PurchaseDetail
-					icon="plugins"
+					icon={ <img src="/calypso/images/upgrades/plugins.svg" /> }
 					title={ i18n.translate( 'Add a Plugin' ) }
 					description={ i18n.translate(
 						'Search and add plugins right from your dashboard, or upload a plugin ' +
@@ -72,7 +72,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			) }
 
 			<PurchaseDetail
-				icon="stats-alt"
+				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 				title={ i18n.translate( 'Connect to Google Analytics' ) }
 				description={ i18n.translate(
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."

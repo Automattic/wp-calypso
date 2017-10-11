@@ -18,7 +18,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
-				icon="globe"
+				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 				title={ translate( 'Select your custom domain' ) }
 				description={ translate(
 					'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
@@ -38,7 +38,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return (
 			<PurchaseDetail
-				icon="globe"
+				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 				title={ translate( 'Custom Domain' ) }
 				description={ translate(
 					'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
