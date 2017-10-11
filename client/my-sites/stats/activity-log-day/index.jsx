@@ -94,11 +94,7 @@ class ActivityLogDay extends Component {
 		} );
 	};
 
-	handleCloseDay = () => {
-		this.setState( {
-			dayExpanded: false,
-		} );
-	};
+	handleCloseDay = () => this.setState( { dayExpanded: false } );
 
 	/**
 	 * Return a button to rewind to this point.
