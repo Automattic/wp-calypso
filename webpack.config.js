@@ -173,13 +173,13 @@ if ( calypsoEnv === 'desktop' ) {
 	// vendor chunk
 	webpackConfig.entry.vendor = [
 		'classnames',
+		'create-react-class',
 		'i18n-calypso',
 		'lodash',
 		'moment',
 		'page',
-		'react',
-		'create-react-class',
 		'prop-types',
+		'react',
 		'react-dom',
 		'react-redux',
 		'redux',
