@@ -23,7 +23,7 @@ const ConfirmDisconnection = ( { siteId, translate } ) => {
 	}
 
 	return (
-		<Main className="confirm-disconnection site-settings">
+		<Main className="disconnect-site__confirm">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<FormattedHeader
 				headerText={ translate( 'Confirm Disconnection' ) }
@@ -31,7 +31,7 @@ const ConfirmDisconnection = ( { siteId, translate } ) => {
 					'Confirm that you want to disconnect your site from WordPress.com.'
 				) }
 			/>
-			<Card className="confirm-disconnection__card" />
+			<Card className="disconnect-site__card" />
 		</Main>
 	);
 };
