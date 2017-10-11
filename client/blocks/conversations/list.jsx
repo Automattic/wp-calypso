@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, some } from 'lodash';
 
 /***
  * Internal dependencies
@@ -187,17 +187,15 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	renderCommentForm = () => {
-		const post = this.props.post;
+		const { post, commentsTree } = this.props;
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
 		if (
 			this.props.activeReplyCommentId ||
-			size(
-				filter( this.props.commentsTree, comment => {
-					return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-				} )
-			) > 0
+			some( commentsTree, comment => {
+				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+			} )
 		) {
 			return null;
 		}
