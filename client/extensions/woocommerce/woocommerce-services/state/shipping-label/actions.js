@@ -43,6 +43,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
@@ -554,6 +555,10 @@ const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error ) 
 	}
 };
 
+const getPDFFileName = ( orderId, isReprint = false ) => {
+	return `order-#${ orderId }-label` + ( isReprint ? '-reprint' : '' ) + '.pdf';
+};
+
 const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) => {
 	const errorLabel = find( labels, { status: 'PURCHASE_ERROR' } );
 	if ( errorLabel ) {
@@ -587,31 +592,35 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 		labelId: label.label_id,
 	} ) );
 	const state = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
-	if ( 'addon' === getPDFSupport() ) {
-		// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-		dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, printUrl } );
-	} else {
-		printDocument( printUrl )
-			.then( () => {
-				dispatch( NoticeActions.successNotice( translate(
-					'Your %(count)d shipping label was purchased successfully',
-					'Your %(count)d shipping labels were purchased successfully',
-					{
-						count: labels.length,
-						args: { count: labels.length },
-					}
-				) ) );
-			} )
-			.catch( ( err ) => {
-				console.error( err );
-				dispatch( NoticeActions.errorNotice( err.toString() ) );
-			} )
-			.then( () => {
-				dispatch( exitPrintingFlow( orderId, siteId, true ) );
-				dispatch( clearAvailableRates() );
-			} );
-	}
+	const printUrl = getPrintURL( siteId, state.paperSize, labelsToPrint );
+
+	api.get( siteId, printUrl )
+		.then( ( fileData ) => {
+			if ( 'addon' === getPDFSupport() ) {
+				// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData } );
+			} else {
+				printDocument( fileData, getPDFFileName( orderId ) )
+					.then( () => {
+						dispatch( NoticeActions.successNotice( translate(
+							'Your %(count)d shipping label was purchased successfully',
+							'Your %(count)d shipping labels were purchased successfully',
+							{
+								count: labels.length,
+								args: { count: labels.length },
+							}
+						) ) );
+					} )
+					.catch( ( err ) => {
+						console.error( err );
+						dispatch( NoticeActions.errorNotice( err.toString() ) );
+					} )
+					.then( () => {
+						dispatch( exitPrintingFlow( orderId, siteId, true ) );
+						dispatch( clearAvailableRates( orderId, siteId ) );
+					} );
+			}
+		} );
 };
 
 export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
@@ -678,11 +687,12 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	} );
 };
 
-export const confirmPrintLabel = ( orderId, siteId, url ) => ( dispatch ) => {
-	printDocument( url )
+export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	printDocument( shippingLabel.form.fileData, getPDFFileName( orderId ) )
 		.then( () => {
 			dispatch( exitPrintingFlow( orderId, siteId, true ) );
-			dispatch( clearAvailableRates() );
+			dispatch( clearAvailableRates( orderId, siteId ) );
 		} )
 		.catch( ( error ) => dispatch( NoticeActions.errorNotice( error.toString() ) ) );
 };
@@ -764,8 +774,15 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 		.then( () => setIsSaving( false ) );
 };
 
-export const openReprintDialog = ( orderId, siteId, labelId ) => {
-	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId, orderId, siteId };
+export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, getState ) => {
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId, orderId, siteId } );
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	const printUrl = getPrintURL( siteId, shippingLabel.paperSize, [ { labelId } ] );
+
+	api.get( siteId, printUrl )
+		.then( ( fileData ) => {
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY, labelId, orderId, siteId, fileData } );
+		} );
 };
 
 export const closeReprintDialog = ( orderId, siteId ) => {
@@ -775,11 +792,11 @@ export const closeReprintDialog = ( orderId, siteId ) => {
 export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT, orderId, siteId } );
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	const labelId = shippingLabel.reprintDialog.labelId;
-	printDocument( getPrintURL( shippingLabel.paperSize, [ { labelId } ] ) )
+
+	printDocument( shippingLabel.reprintDialog.fileData, getPDFFileName( orderId, true ) )
 		.catch( ( error ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
 		} )
-		.then( () => dispatch( closeReprintDialog() ) );
+		.then( () => dispatch( closeReprintDialog( orderId, siteId ) ) );
 };
