@@ -497,3 +497,15 @@ const Flows = {
 };
 
 export default Flows;
+export { filterFlowName, filterDestination };
+
+export const {
+    defaultFlowName,
+    resumingFlow,
+    getFlow,
+    getFlows,
+    preloadABTestVariationsForStep,
+    getABTestFilteredFlow,
+    insertStepIntoFlow,
+    removeStepFromFlow
+} = Flows;

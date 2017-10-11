@@ -53,9 +53,12 @@ const dnsTemplates = {
 	},
 };
 
-export default {
-	dnsTemplates,
-	domainAvailability,
-	registrar,
-	type,
+const exported = {
+    dnsTemplates,
+    domainAvailability,
+    registrar,
+    type
 };
+
+export default exported;
+export { dnsTemplates, domainAvailability, registrar, type };

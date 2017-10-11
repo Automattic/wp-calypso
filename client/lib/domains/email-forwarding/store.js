@@ -16,3 +16,7 @@ EmailForwardingStore.getByDomainName = function( domainName ) {
 };
 
 export default EmailForwardingStore;
+
+export const {
+ getByDomainName
+} = EmailForwardingStore;

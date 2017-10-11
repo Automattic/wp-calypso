@@ -93,13 +93,16 @@ const getNextPlugin = function( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-export default {
-	isRequesting,
-	hasRequested,
-	isStarted,
-	isFinished,
-	isInstalling,
-	getPluginsForSite,
-	getActivePlugin,
-	getNextPlugin,
+const exported = {
+    isRequesting,
+    hasRequested,
+    isStarted,
+    isFinished,
+    isInstalling,
+    getPluginsForSite,
+    getActivePlugin,
+    getNextPlugin
 };
+
+export default exported;
+export { isRequesting, hasRequested, isStarted, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };

@@ -143,7 +143,7 @@ function getThemeForDesignType( designType ) {
 	}
 }
 
-export default {
+const exported = {
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
 	getStepName: getStepName,
@@ -157,4 +157,21 @@ export default {
 	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue,
 	getThemeForDesignType: getThemeForDesignType,
+};
+
+export default exported;
+export {
+	getFlowName,
+	getFlowSteps,
+	getStepName,
+	getLocale,
+	getStepSectionName,
+	getStepUrl,
+	getValidPath,
+	getPreviousStepName,
+	getNextStepName,
+	getValueFromProgressStore,
+	getDestination,
+	mergeFormWithValue,
+	getThemeForDesignType,
 };

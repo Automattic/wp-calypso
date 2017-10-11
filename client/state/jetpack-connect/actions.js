@@ -63,8 +63,8 @@ const remoteAuthPath =
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
 
-export default {
-	confirmJetpackInstallStatus( status ) {
+const exported = {
+    confirmJetpackInstallStatus( status ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
@@ -73,7 +73,7 @@ export default {
 		};
 	},
 
-	dismissUrl( url ) {
+    dismissUrl( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -82,7 +82,7 @@ export default {
 		};
 	},
 
-	checkUrl( url, isUrlOnSites, flowType ) {
+    checkUrl( url, isUrlOnSites, flowType ) {
 		return dispatch => {
 			if ( _fetching[ url ] ) {
 				return;
@@ -179,7 +179,8 @@ export default {
 				} );
 		};
 	},
-	goToPlans( url ) {
+
+    goToPlans( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -195,7 +196,8 @@ export default {
 			page.redirect( JPC_PLANS_PAGE + urlToSlug( url ) );
 		};
 	},
-	goToRemoteAuth( url ) {
+
+    goToRemoteAuth( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -218,7 +220,8 @@ export default {
 			);
 		};
 	},
-	retryAuth( url, attemptNumber ) {
+
+    retryAuth( url, attemptNumber ) {
 		return dispatch => {
 			debug( 'retrying auth', url, attemptNumber );
 			dispatch( {
@@ -245,7 +248,8 @@ export default {
 			);
 		};
 	},
-	goToPluginInstall( url ) {
+
+    goToPluginInstall( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -268,7 +272,8 @@ export default {
 			);
 		};
 	},
-	goToPluginActivation( url ) {
+
+    goToPluginActivation( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT,
@@ -291,7 +296,8 @@ export default {
 			);
 		};
 	},
-	goBackToWpAdmin( url ) {
+
+    goBackToWpAdmin( url ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
@@ -300,7 +306,8 @@ export default {
 			externalRedirect( url );
 		};
 	},
-	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
+
+    goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
 		return dispatch => {
 			const url = addQueryArgs(
 				{ code: authorizationCode, state: queryObject.state },
@@ -314,7 +321,8 @@ export default {
 			externalRedirect( url );
 		};
 	},
-	createAccount( userData ) {
+
+    createAccount( userData ) {
 		return dispatch => {
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
 
@@ -342,7 +350,8 @@ export default {
 			} );
 		};
 	},
-	isUserConnected( siteId, siteIsOnSitesList ) {
+
+    isUserConnected( siteId, siteIsOnSitesList ) {
 		let accessibleSite;
 		return dispatch => {
 			dispatch( {
@@ -388,7 +397,8 @@ export default {
 				} );
 		};
 	},
-	authorize( queryObject ) {
+
+    authorize( queryObject ) {
 		return dispatch => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
 			debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
@@ -478,7 +488,8 @@ export default {
 				} );
 		};
 	},
-	validateSSONonce( siteId, ssoNonce ) {
+
+    validateSSONonce( siteId, ssoNonce ) {
 		return dispatch => {
 			debug( 'Attempting to validate SSO for ' + siteId );
 			dispatch( {
@@ -511,7 +522,8 @@ export default {
 				} );
 		};
 	},
-	authorizeSSO( siteId, ssoNonce, siteUrl ) {
+
+    authorizeSSO( siteId, ssoNonce, siteUrl ) {
 		return dispatch => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
 			dispatch( {
@@ -543,7 +555,8 @@ export default {
 				} );
 		};
 	},
-	selectPlanInAdvance( planSlug, site ) {
+
+    selectPlanInAdvance( planSlug, site ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
@@ -552,12 +565,35 @@ export default {
 			} );
 		};
 	},
-	completeFlow( site ) {
+
+    completeFlow( site ) {
 		return dispatch => {
 			dispatch( {
 				type: JETPACK_CONNECT_COMPLETE_FLOW,
 				site,
 			} );
 		};
-	},
+	}
 };
+
+export default exported;
+
+export const {
+    confirmJetpackInstallStatus,
+    dismissUrl,
+    checkUrl,
+    goToPlans,
+    goToRemoteAuth,
+    retryAuth,
+    goToPluginInstall,
+    goToPluginActivation,
+    goBackToWpAdmin,
+    goToXmlrpcErrorFallbackUrl,
+    createAccount,
+    isUserConnected,
+    authorize,
+    validateSSONonce,
+    authorizeSSO,
+    selectPlanInAdvance,
+    completeFlow
+} = exported;

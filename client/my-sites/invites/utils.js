@@ -8,8 +8,8 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
-export default {
-	acceptedNotice( invite, displayOnNextPage = true ) {
+const exported = {
+    acceptedNotice( invite, displayOnNextPage = true ) {
 		const site = (
 			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
 				{ get( invite, 'site.title' ) }
@@ -129,7 +129,7 @@ export default {
 		}
 	},
 
-	getRedirectAfterAccept( invite ) {
+    getRedirectAfterAccept( invite ) {
 		const readerPath = '/';
 		const postsListPath = '/posts/' + invite.site.ID;
 
@@ -152,5 +152,12 @@ export default {
 			default:
 				return postsListPath;
 		}
-	},
+	}
 };
+
+export default exported;
+
+export const {
+    acceptedNotice,
+    getRedirectAfterAccept
+} = exported;
