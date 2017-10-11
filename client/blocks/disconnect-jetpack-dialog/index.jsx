@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +17,13 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { disconnect } from 'state/jetpack/connection/actions';
+import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
+import { setAllSitesSelected } from 'state/ui/actions';
+import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getPlanClass } from 'lib/plans/constants';
+import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
 class DisconnectJetpackDialog extends PureComponent {
 	trackReadMoreClick = () => {
@@ -117,8 +125,62 @@ class DisconnectJetpackDialog extends PureComponent {
 		} );
 	}
 
+	disconnectJetpack = () => {
+		const {
+			onClose,
+			redirect,
+			site,
+			siteId,
+			siteTitle,
+			translate,
+			successNotice: showSuccessNotice,
+			errorNotice: showErrorNotice,
+			infoNotice: showInfoNotice,
+			removeNotice: removeInfoNotice,
+			disconnect: disconnectSite,
+			recordGoogleEvent: recordGAEvent,
+		} = this.props;
+
+		onClose();
+
+		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+
+		const { notice } = showInfoNotice(
+			translate( 'Disconnecting %(siteName)s.', { args: { siteName: siteTitle } } ),
+			{
+				isPersistent: true,
+				showDismiss: false,
+			}
+		);
+
+		disconnectSite( siteId ).then(
+			() => {
+				// Removing the domain from a domain-only site results
+				// in the site being deleted entirely. We need to call
+				// `receiveDeletedSiteDeprecated` here because the site
+				// exists in `sites-list` as well as the global store.
+				disconnectedSiteDeprecated( site );
+				this.props.setAllSitesSelected();
+				removeInfoNotice( notice.noticeId );
+				showSuccessNotice(
+					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: siteTitle } } )
+				);
+				recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
+			},
+			() => {
+				removeInfoNotice( notice.noticeId );
+				showErrorNotice(
+					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } )
+				);
+				recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
+			}
+		);
+
+		page.redirect( redirect );
+	};
+
 	render() {
-		const { onClose, onDisconnect, isVisible, translate, isBroken, siteName } = this.props;
+		const { onClose, isVisible, translate, isBroken, siteSlug } = this.props;
 		if ( isBroken ) {
 			return (
 				<Dialog
@@ -128,12 +190,12 @@ class DisconnectJetpackDialog extends PureComponent {
 				>
 					<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
 					<p className="disconnect-jetpack-dialog__highlight">
-						{ translate( 'WordPress.com has not been able to reach %(siteName)s for a while.', {
-							args: { siteName },
+						{ translate( 'WordPress.com has not been able to reach %(siteSlug)s for a while.', {
+							args: { siteSlug },
 						} ) }
 					</p>
 					<div className="disconnect-jetpack-dialog__button-wrap">
-						<Button primary scary onClick={ onDisconnect }>
+						<Button primary scary onClick={ this.disconnectJetpack }>
 							{ translate( 'Remove Site' ) }
 						</Button>
 					</div>
@@ -150,8 +212,8 @@ class DisconnectJetpackDialog extends PureComponent {
 				<h1>{ translate( 'Disconnect from WordPress.com?' ) }</h1>
 				<p className="disconnect-jetpack-dialog__highlight">
 					{ translate(
-						'By disconnecting %(siteName)s from WordPress.com you will no longer have access to the following:',
-						{ args: { siteName } }
+						'By disconnecting %(siteSlug)s from WordPress.com you will no longer have access to the following:',
+						{ args: { siteSlug } }
 					) }
 				</p>
 
@@ -159,7 +221,7 @@ class DisconnectJetpackDialog extends PureComponent {
 
 				<div className="disconnect-jetpack-dialog__button-wrap">
 					<Button onClick={ onClose }>{ translate( 'Stay Connected' ) }</Button>
-					<Button primary scary onClick={ onDisconnect }>
+					<Button primary scary onClick={ this.disconnectJetpack }>
 						{ translate( 'Disconnect', {
 							context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
 						} ) }
@@ -181,13 +243,33 @@ DisconnectJetpackDialog.displayName = 'DisconnectJetpackDialog';
 
 DisconnectJetpackDialog.propTypes = {
 	isVisible: PropTypes.bool,
-	onDisconnect: PropTypes.func,
 	onClose: PropTypes.func,
-	plan: PropTypes.string,
 	isBroken: PropTypes.bool,
-	siteName: PropTypes.string,
+	siteId: PropTypes.number,
+	// Connected props
+	plan: PropTypes.string,
+	siteSlug: PropTypes.string,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( DisconnectJetpackDialog ) );
+export default connect(
+	( state, { siteId } ) => {
+		const plan = getCurrentPlan( state, siteId );
+		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : 'is-free-plan';
+
+		return {
+			plan: planClass,
+			site: getSite( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			siteTitle: getSiteTitle( state, siteId ),
+		};
+	},
+	{
+		setAllSitesSelected,
+		recordGoogleEvent,
+		disconnect,
+		successNotice,
+		errorNotice,
+		infoNotice,
+		removeNotice,
+	}
+)( localize( DisconnectJetpackDialog ) );
