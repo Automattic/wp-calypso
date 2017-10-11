@@ -31,23 +31,23 @@ class DisconnectSurvey extends Component {
 		} );
 	};
 
-	getOptions() {
+	getReasons() {
 		const { isPaidPlan, translate } = this.props;
 
-		const options = [
+		const reasons = [
 			{ reason: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
 			{ reason: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
 		if ( isPaidPlan ) {
-			options.push( { reason: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
+			reasons.push( { reason: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
 		}
-		return options;
+		return reasons;
 	}
 
 	renderEntryQuestion() {
 		const { translate, siteId, siteSlug } = this.props;
-		const options = this.getOptions();
+		const reasons = this.getReasons();
 
 		return (
 			<div>
@@ -60,7 +60,7 @@ class DisconnectSurvey extends Component {
 						}
 					) }
 				</Card>
-				{ options.map( ( { label, reason } ) => (
+				{ reasons.map( ( { label, reason } ) => (
 					<CompactCard
 						data-reason={ reason }
 						href="#"
