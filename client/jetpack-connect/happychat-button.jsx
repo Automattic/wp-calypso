@@ -15,15 +15,17 @@ import { localize } from 'i18n-calypso';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
 import { isEnabled } from 'config';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasActiveHappychatSession, isHappychatAvailable } from 'state/happychat/selectors';
 
 const JetpackConnectHappychatButton = ( {
 	children,
 	isChatActive,
 	isChatAvailable,
+	isLoggedIn,
 	translate,
 } ) => {
-	if ( ! isEnabled( 'jetpack/happychat' ) ) {
+	if ( ! isEnabled( 'jetpack/happychat' ) || ! isLoggedIn ) {
 		return <div>{ children }</div>;
 	}
 
@@ -50,4 +52,5 @@ const JetpackConnectHappychatButton = ( {
 export default connect( state => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	isChatActive: hasActiveHappychatSession( state ),
+	isLoggedIn: Boolean( getCurrentUserId( state ) ),
 } ) )( localize( JetpackConnectHappychatButton ) );
