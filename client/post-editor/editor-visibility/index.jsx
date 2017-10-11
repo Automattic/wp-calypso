@@ -104,6 +104,14 @@ const EditorVisibility = React.createClass( {
 		postActions.edit( postEdits );
 	},
 
+	recordStats( newVisibility ) {
+		if ( this.getVisibility() !== newVisibility ) {
+			recordStat( 'visibility-set-' + newVisibility );
+			recordEvent( 'Changed visibility', newVisibility );
+			tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
+		}
+	},
+
 	updateVisibility( newVisibility ) {
 		const { siteId, postId } = this.props;
 		let reduxPostEdits;
@@ -123,12 +131,7 @@ const EditorVisibility = React.createClass( {
 				break;
 		}
 
-		recordStat( 'visibility-set-' + newVisibility );
-		recordEvent( 'Changed visibility', newVisibility );
-		tracks.recordEvent( 'calypso_editor_visibility_set', {
-			context: this.props.context,
-			visibility: newVisibility,
-		} );
+		this.recordStats( newVisibility );
 
 		// This is necessary for cases when the post is changed from private to another visibility
 		// since private has its own post status.
@@ -152,12 +155,7 @@ const EditorVisibility = React.createClass( {
 			sticky: false,
 		} );
 
-		recordStat( 'visibility-set-private' );
-		recordEvent( 'Changed visibility', 'private' );
-		tracks.recordEvent( 'calypso_editor_visibility_set', {
-			context: this.props.context,
-			visibility: 'private',
-		} );
+		this.recordStats( 'private' );
 	},
 
 	onPrivatePublish() {
