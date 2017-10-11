@@ -438,30 +438,19 @@
 	}
 }
 
-.comment-detail__author-more-info-toggle {
-	color: $gray;
-	cursor: pointer;
-	display: block;
+.popover.comment-detail__author-more-info {
+	/* applying a lower z-index to ensure it is layered behind global notice */
+	z-index: z-index( 'root', '.popover.comment-detail__author-more-info' );
+}
+
+.info-popover.comment-detail__author-more-info > .gridicon {
 	fill: $gray;
-	height: 24px;
 	margin-left: 8px;
+
 	&:focus,
 	&:hover {
 		color: $blue-wordpress;
 		fill: $blue-wordpress;
-	}
-}
-
-.comment-detail__author-more-info {
-	> .gridicon {
-		fill: $gray;
-		margin-left: 8px;
-
-		&:focus,
-		&:hover {
-			color: $blue-wordpress;
-			fill: $blue-wordpress;
-		}
 	}
 }
 
