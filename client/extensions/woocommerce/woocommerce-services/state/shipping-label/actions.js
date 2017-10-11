@@ -798,5 +798,5 @@ export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
 		} )
-		.then( () => dispatch( closeReprintDialog() ) );
+		.then( () => dispatch( closeReprintDialog( orderId, siteId ) ) );
 };
