@@ -14,7 +14,7 @@ import ReactDom from 'react-dom';
 import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
-import ConfirmDisconnection from './confirm-disconnection';
+import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
