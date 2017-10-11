@@ -25,6 +25,24 @@ import viewport from 'lib/viewport';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 
+const getRelativeTimePeriod = ( commentDate, site, moment ) => {
+	const localizedDate = convertDateToUserLocation(
+		commentDate || moment(),
+		timezone( site ),
+		gmtOffset( site )
+	);
+
+	if (
+		moment()
+			.subtract( 1, 'month' )
+			.isBefore( localizedDate )
+	) {
+		return localizedDate.fromNow();
+	}
+
+	return localizedDate.format( 'll LT' );
+};
+
 export class CommentDetailHeader extends Component {
 	state = {
 		showQuickActions: false,
@@ -132,11 +150,7 @@ export class CommentDetailHeader extends Component {
 								</div>
 							</div>
 							<div className="comment-detail__author-info-timestamp">
-								{ convertDateToUserLocation(
-									commentDate || moment(),
-									timezone( site ),
-									gmtOffset( site )
-								).fromNow() }
+								{ getRelativeTimePeriod( commentDate, site, moment ) }
 							</div>
 						</div>
 						<AutoDirection>
