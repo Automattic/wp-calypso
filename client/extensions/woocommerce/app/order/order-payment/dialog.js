@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { sum } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +23,11 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
+import {
+	getOrderLineItemTax,
+	getOrderRefundTotal,
+	getOrderShippingTax,
+} from 'woocommerce/lib/order-values';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
@@ -48,11 +53,15 @@ class OrderPaymentCard extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		errorMessage: false,
-		refundTotal: 0,
-		refundNote: '',
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			errorMessage: false,
+			refundTotal: this.getInitialRefund(),
+			refundNote: '',
+		};
+	}
 
 	componentDidMount = () => {
 		const { siteId } = this.props;
@@ -80,8 +89,37 @@ class OrderPaymentCard extends Component {
 		this.props.toggleDialog();
 	};
 
-	recalculateRefund = total => {
-		this.setState( { refundTotal: total } );
+	getInitialRefund = () => {
+		const { order } = this.props;
+		return parseFloat( getOrderShippingTax( order ) ) + parseFloat( order.shipping_total );
+	};
+
+	recalculateRefund = data => {
+		const { order } = this.props;
+		if ( ! order ) {
+			return 0;
+		}
+		const subtotal = sum(
+			data.quantities.map( ( q, i ) => {
+				if ( ! order.line_items[ i ] ) {
+					return 0;
+				}
+
+				const price = parseFloat( order.line_items[ i ].price );
+				if ( order.prices_include_tax ) {
+					return price * q;
+				}
+
+				const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
+				return ( price + tax ) * q;
+			} )
+		);
+		const total = subtotal + ( parseFloat( data.shippingTotal ) || 0 );
+		return total;
+	};
+
+	recalculateAndSetState = data => {
+		this.setState( { refundTotal: this.recalculateRefund( data ) } );
 	};
 
 	updateNote = event => {
@@ -183,7 +221,7 @@ class OrderPaymentCard extends Component {
 				additionalClassNames="order-payment__dialog woocommerce"
 			>
 				<h1>{ translate( 'Refund order' ) }</h1>
-				<OrderRefundTable order={ order } onChange={ this.recalculateRefund } />
+				<OrderRefundTable order={ order } onChange={ this.recalculateAndSetState } />
 				<form className="order-payment__container">
 					<FormLabel className="order-payment__note">
 						{ translate( 'Refund note', { comment: "Label for refund's comment field" } ) }
