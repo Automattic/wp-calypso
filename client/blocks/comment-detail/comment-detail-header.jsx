@@ -20,6 +20,7 @@ import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
+import viewport from 'lib/viewport';
 
 export class CommentDetailHeader extends Component {
 	state = {
@@ -136,7 +137,7 @@ export class CommentDetailHeader extends Component {
 					</div>
 				) }
 
-				{ ( showQuickActions || isExpanded ) &&
+				{ ( ( showQuickActions && ! viewport.isMobile() ) || isExpanded ) &&
 				! isEditMode && (
 					<CommentDetailActions
 						compact={ showQuickActions && ! isExpanded }
