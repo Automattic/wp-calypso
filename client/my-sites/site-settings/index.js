@@ -63,6 +63,14 @@ export default function() {
 			settingsController.setScroll,
 			controller.disconnectSite
 		);
+
+		page(
+			'/settings/disconnect-site/:site_id/confirm',
+			mySitesController.siteSelection,
+			mySitesController.navigation,
+			settingsController.setScroll,
+			controller.confirmDisconnection
+		);
 	}
 
 	page(
@@ -87,16 +95,6 @@ export default function() {
 		settingsController.setScroll,
 		controller.manageConnection
 	);
-
-	if ( config.isEnabled( 'manage/site-settings/disconnect-flow-confirmation' ) ) {
-		page(
-			'/settings/confirm-disconnection/:site_id',
-			mySitesController.siteSelection,
-			mySitesController.navigation,
-			settingsController.setScroll,
-			controller.confirmDisconnection
-		);
-	}
 
 	page(
 		'/settings/:section',
