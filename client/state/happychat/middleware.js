@@ -45,9 +45,9 @@ import {
 	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
 	isHappychatChatAssigned,
-	getGeoLocation,
 	getGroups,
 } from './selectors';
+import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import debugFactory from 'debug';

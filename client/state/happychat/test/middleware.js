@@ -94,8 +94,10 @@ describe( 'middleware', () => {
 	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
 		const state = {
 			happychat: {
-				geoLocation: {
-					city: 'Timisoara',
+				user: {
+					geoLocation: {
+						city: 'Timisoara',
+					},
 				},
 			},
 		};
@@ -140,7 +142,7 @@ describe( 'middleware', () => {
 					height: 'windowInnerHeight',
 				},
 				userAgent: 'navigatorUserAgent',
-				geoLocation: state.happychat.geoLocation,
+				geoLocation: state.happychat.user.geoLocation,
 			};
 
 			const getState = () => state;
