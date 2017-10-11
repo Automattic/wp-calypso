@@ -24,7 +24,6 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { isOrderFailed } from 'woocommerce/lib/order-status';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
 import PriceInput from 'woocommerce/components/price-input';
@@ -157,10 +156,6 @@ class OrderPaymentCard extends Component {
 		const { isPaymentLoading, order, isVisible, translate } = this.props;
 		const { errorMessage, refundNote } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
-
-		if ( isOrderFailed( order.status ) ) {
-			return null;
-		}
 
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
