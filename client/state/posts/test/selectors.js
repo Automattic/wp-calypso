@@ -893,6 +893,38 @@ describe( 'selectors', () => {
 
 			expect( isRequesting ).to.be.true;
 		} );
+
+		it( 'should return true for all-sites query', () => {
+			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+				{
+					posts: {
+						queryRequests: {
+							'{"status":"publish,private","author":null}': true,
+						},
+					},
+				},
+				null, // siteId
+				{ status: 'publish,private', author: null }
+			);
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false for single site when requesting all sites', () => {
+			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+				{
+					posts: {
+						queryRequests: {
+							'{"status":"publish,private","author":null}': true,
+						},
+					},
+				},
+				2916284,
+				{ status: 'publish,private', author: null }
+			);
+
+			expect( isRequesting ).to.be.false;
+		} );
 	} );
 
 	describe( '#getEditedPost()', () => {
