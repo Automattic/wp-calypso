@@ -83,7 +83,7 @@ class OrderPaymentCard extends Component {
 	toggleDialog = () => {
 		this.setState( {
 			errorMessage: false,
-			refundTotal: 0,
+			refundTotal: this.getInitialRefund(),
 			refundNote: '',
 		} );
 		this.props.toggleDialog();
