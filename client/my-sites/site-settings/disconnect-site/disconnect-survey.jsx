@@ -35,12 +35,12 @@ class DisconnectSurvey extends Component {
 		const { isPaidPlan, translate } = this.props;
 
 		const reasons = [
-			{ reason: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
-			{ reason: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
+			{ slug: 'tooHard', label: translate( 'It was too hard to configure Jetpack' ) },
+			{ slug: 'didNotInclude', label: translate( 'This plan didn’t include what I needed' ) },
 		];
 
 		if ( isPaidPlan ) {
-			reasons.push( { reason: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
+			reasons.push( { slug: 'tooExpensive', label: translate( 'This plan is too expensive' ) } );
 		}
 		return reasons;
 	}
@@ -60,11 +60,11 @@ class DisconnectSurvey extends Component {
 						}
 					) }
 				</Card>
-				{ reasons.map( ( { label, reason } ) => (
+				{ reasons.map( ( { label, slug } ) => (
 					<CompactCard
-						data-reason={ reason }
+						data-reason={ slug }
 						href="#"
-						key={ reason }
+						key={ slug }
 						onClick={ this.handleAnswerClick }
 						className="disconnect-site__survey-one"
 					>
