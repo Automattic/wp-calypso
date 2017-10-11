@@ -617,7 +617,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 					} )
 					.then( () => {
 						dispatch( exitPrintingFlow( orderId, siteId, true ) );
-						dispatch( clearAvailableRates() );
+						dispatch( clearAvailableRates( orderId, siteId ) );
 					} );
 			}
 		} );
@@ -692,7 +692,7 @@ export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) =
 	printDocument( shippingLabel.form.fileData, getPDFFileName( orderId ) )
 		.then( () => {
 			dispatch( exitPrintingFlow( orderId, siteId, true ) );
-			dispatch( clearAvailableRates() );
+			dispatch( clearAvailableRates( orderId, siteId ) );
 		} )
 		.catch( ( error ) => dispatch( NoticeActions.errorNotice( error.toString() ) ) );
 };
