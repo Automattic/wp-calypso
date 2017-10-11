@@ -66,12 +66,13 @@ export const EditorBasicsTour = makeTour(
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '-10px', zIndex: 'auto' } }
+			style={ { marginLeft: '-7px', zIndex: 'auto' } }
 		>
 			<p>
 				{ translate(
 					'Click the {{icon/}} to add images and other things, like a contact form. ' +
-						'If your site is on the Premium or Business plan, you can even add {{strong}}payment buttons{{/strong}}!',
+						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} -- ' +
+						'sell tickets, collect donations, accept tips, and more.',
 					{
 						components: {
 							strong: <strong />,
