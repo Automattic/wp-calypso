@@ -8,14 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { lastActivityTimestamp, lostFocusAt, message } from '../reducer';
+import { lastActivityTimestamp, message } from '../reducer';
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
-	SERIALIZE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -41,28 +38,6 @@ describe( 'reducers', () => {
 
 			result = lastActivityTimestamp( null, { type: HAPPYCHAT_SEND_MESSAGE } );
 			expect( result ).to.equal( NOW );
-		} );
-	} );
-
-	describe( '#lostFocusAt', () => {
-		useSandbox( sandbox => {
-			sandbox.stub( Date, 'now' ).returns( NOW );
-		} );
-
-		test( 'defaults to null', () => {
-			expect( lostFocusAt( undefined, {} ) ).to.be.null;
-		} );
-
-		test( 'SERIALIZEs to Date.now() if state is null', () => {
-			expect( lostFocusAt( null, { type: SERIALIZE } ) ).to.eql( NOW );
-		} );
-
-		test( 'returns Date.now() on HAPPYCHAT_BLUR actions', () => {
-			expect( lostFocusAt( null, { type: HAPPYCHAT_BLUR } ) ).to.eql( NOW );
-		} );
-
-		test( 'returns null on HAPPYCHAT_FOCUS actions', () => {
-			expect( lostFocusAt( 12345, { type: HAPPYCHAT_FOCUS } ) ).to.be.null;
 		} );
 	} );
 
