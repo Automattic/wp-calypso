@@ -6,7 +6,7 @@
 
 import analytics from 'lib/analytics';
 
-export default {
+const eventRecorder = {
 	recordEvent: function( eventAction ) {
 		analytics.ga.recordEvent( 'Me', eventAction );
 	},
@@ -65,4 +65,23 @@ export default {
 			}
 		};
 	},
+};
+
+export default eventRecorder;
+const {
+	recordEvent,
+	recordEventClosure,
+	recordCheckboxEvent,
+	recordRadioEvent,
+	recordClickEvent,
+	recordFocusEvent,
+} = eventRecorder;
+
+export {
+	recordEvent,
+	recordEventClosure,
+	recordCheckboxEvent,
+	recordRadioEvent,
+	recordClickEvent,
+	recordFocusEvent,
 };

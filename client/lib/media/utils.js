@@ -587,3 +587,6 @@ const MediaUtils = {
 };
 
 export default MediaUtils;
+
+const { userCan, getEditUrl, getPreviewUrl } = MediaUtils;
+export { userCan, getEditUrl, getPreviewUrl };
