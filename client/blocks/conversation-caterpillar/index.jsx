@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
@@ -45,23 +44,6 @@ class ConversationCaterpillarComponent extends React.Component {
 		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
-	};
-
-	handleShowAll = () => {
-		const { blogId, postId } = this.props;
-		const commentsToExpand = this.getExpandableComments();
-		this.props.expandComments( {
-			siteId: blogId,
-			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.full,
-		} );
-		recordAction( 'comment_show_all_click' );
-		recordGaEvent( 'Clicked Comment Show All' );
-		recordTrack( 'calypso_reader_comment_show_all_click', {
-			blog_id: blogId,
-			post_id: postId,
-		} );
 	};
 
 	handleTickle = () => {
@@ -168,14 +150,6 @@ class ConversationCaterpillarComponent extends React.Component {
 							},
 						} )
 					) }
-				</button>
-				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
-					<Gridicon
-						icon="chevron-down"
-						size={ 12 }
-						className="conversation-caterpillar__show-all-chevron"
-					/>
-					{ translate( 'Show all' ) }
 				</button>
 			</Card>
 		);
