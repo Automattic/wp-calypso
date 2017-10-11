@@ -25,7 +25,6 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
@@ -56,9 +55,6 @@ export const setHappychatAvailable = isAvailable => ( {
 	type: HAPPYCHAT_SET_AVAILABLE,
 	isAvailable,
 } );
-
-export const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
-export const clearChatMessage = () => setChatMessage( '' );
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
