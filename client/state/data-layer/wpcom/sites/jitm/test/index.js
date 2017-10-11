@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
 	describe( 'fetchJITM', () => {
-		it( 'should not dispatch', () => {
+		test( 'should not dispatch', () => {
 			const dispatch = spy();
 			const state = {};
 			const action = noop;
@@ -22,23 +24,23 @@ describe( 'jitms', () => {
 			expect( dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should dispatch', () => {
+		test( 'should dispatch', () => {
 			const dispatch = spy(),
 				state = {
 					sites: {
 						items: {
 							100: {
 								jetpack: true,
-							}
-						}
+							},
+						},
 					},
 					currentUser: {
-						id: 1000
+						id: 1000,
 					},
 					ui: {
 						section: {
-							name: 'test'
-						}
+							name: 'test',
+						},
 					},
 				},
 				action_site_selected = {
@@ -46,13 +48,15 @@ describe( 'jitms', () => {
 				},
 				getState = () => state,
 				action_loading = {
-					isLoading: true
-				}, action_loaded = {
-					isLoading: false
-				}, action_transition = {
+					isLoading: true,
+				},
+				action_loaded = {
+					isLoading: false,
+				},
+				action_transition = {
 					section: {
-						name: 'test'
-					}
+						name: 'test',
+					},
 				};
 
 			// walk through the happy case of the process
@@ -67,37 +71,42 @@ describe( 'jitms', () => {
 			expect( dispatch ).to.not.have.been.called;
 
 			handleRouteChange( { getState, dispatch }, action_transition );
-			expect( dispatch ).to.have.been.calledWithMatch( http( {
-				apiNamespace: 'rest',
-				method: 'GET',
-				path: '/v1.1/jetpack-blogs/100/rest-api/',
-				query: {
-					path: '/jetpack/v4/jitm',
-					query: JSON.stringify( { message_path: 'calypso:test:admin_notices' } ),
-					http_envelope: 1
-				}
-			}, action_transition ) );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				http(
+					{
+						apiNamespace: 'rest',
+						method: 'GET',
+						path: '/v1.1/jetpack-blogs/100/rest-api/',
+						query: {
+							path: '/jetpack/v4/jitm',
+							query: JSON.stringify( { message_path: 'calypso:test:admin_notices' } ),
+							http_envelope: 1,
+						},
+					},
+					action_transition
+				)
+			);
 		} );
 
-		it( 'should be not set a jitm if not a jetpack site', () => {
+		test( 'should be not set a jitm if not a jetpack site', () => {
 			const dispatch = spy(),
 				state = {
 					sites: {
 						items: {
 							100: {
 								jetpack: false,
-							}
-						}
+							},
+						},
 					},
 					currentUser: {
-						id: 1000
-					}
+						id: 1000,
+					},
 				},
 				getState = () => state,
 				action_transition = {
 					section: {
-						name: 'test'
-					}
+						name: 'test',
+					},
 				};
 
 			handleRouteChange( { getState, dispatch }, action_transition );

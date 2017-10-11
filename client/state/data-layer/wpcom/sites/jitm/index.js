@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -24,27 +26,24 @@ const process = {
 	lastSite: null,
 };
 
-const unescapeDecimalEntities = ( str ) => {
+const unescapeDecimalEntities = str => {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 };
 
-const transformApiRequest = ( { data: jitms } ) => jitms.map( ( jitm ) =>
-	( {
+const transformApiRequest = ( { data: jitms } ) =>
+	jitms.map( jitm => ( {
 		message: unescapeDecimalEntities( jitm.content.message ),
 		description: unescapeDecimalEntities( jitm.content.description ),
 		featureClass: jitm.feature_class,
 		callToAction: unescapeDecimalEntities( jitm.CTA.message ),
 		id: jitm.id,
-	} )
-);
+	} ) );
 
 const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
 	dispatch( {
 		type: JITM_SET,
 		keyedPath: messagePath + siteId,
-		jitms: jitms.map( jitm => (
-			{ ...jitm, lastUpdated: Date.now() }
-		) )
+		jitms: jitms.map( jitm => ( { ...jitm, lastUpdated: Date.now() } ) ),
 	} );
 
 /**
@@ -62,19 +61,26 @@ export const fetchJITM = ( state, dispatch, action ) => {
 	const currentSite = process.lastSite;
 
 	if ( ! isJetpackSite( state, currentSite ) ) {
-		return insertJITM( dispatch, currentSite, process.lastSection, [] );
+		return;
 	}
 
-	dispatch( http( {
-		apiNamespace: 'rest',
-		method: 'GET',
-		path: `/v1.1/jetpack-blogs/${ currentSite }/rest-api/`,
-		query: {
-			path: '/jetpack/v4/jitm',
-			query: JSON.stringify( { message_path: `calypso:${ process.lastSection }:admin_notices` } ),
-			http_envelope: 1
-		}
-	}, { ...action, messagePath: process.lastSection } ) );
+	dispatch(
+		http(
+			{
+				apiNamespace: 'rest',
+				method: 'GET',
+				path: `/v1.1/jetpack-blogs/${ currentSite }/rest-api/`,
+				query: {
+					path: '/jetpack/v4/jitm',
+					query: JSON.stringify( {
+						message_path: `calypso:${ process.lastSection }:admin_notices`,
+					} ),
+					http_envelope: 1,
+				},
+			},
+			{ ...action, messagePath: process.lastSection }
+		)
+	);
 };
 
 /**
@@ -84,7 +90,11 @@ export const fetchJITM = ( state, dispatch, action ) => {
  * @param {function} dispatch A function to dispatch an action
  */
 export const handleRouteChange = ( { getState, dispatch }, action ) => {
-	if ( process.hasInitializedSection && action.section && process.lastSection === action.section.name ) {
+	if (
+		process.hasInitializedSection &&
+		action.section &&
+		process.lastSection === action.section.name
+	) {
 		return;
 	}
 
@@ -115,7 +125,7 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
 		return;
 	}
 
-	process.hasInitializedSites = ! ! action.siteId;
+	process.hasInitializedSites = !! action.siteId;
 	process.lastSite = action.siteId;
 
 	fetchJITM( getState(), dispatch, action );
@@ -144,19 +154,13 @@ export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
 
 export default {
 	[ SECTION_SET ]: [
-		dispatchRequest(
-			handleRouteChange,
-			receiveJITM,
-			failedJITM,
-			{ fromApi: makeParser( schema, {}, transformApiRequest ) }
-		)
+		dispatchRequest( handleRouteChange, receiveJITM, failedJITM, {
+			fromApi: makeParser( schema, {}, transformApiRequest ),
+		} ),
 	],
 	[ SELECTED_SITE_SET ]: [
-		dispatchRequest(
-			handleSiteSelection,
-			receiveJITM,
-			failedJITM,
-			{ fromApi: makeParser( schema, {}, transformApiRequest ) }
-		)
+		dispatchRequest( handleSiteSelection, receiveJITM, failedJITM, {
+			fromApi: makeParser( schema, {}, transformApiRequest ),
+		} ),
 	],
 };
