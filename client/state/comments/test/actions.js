@@ -25,7 +25,7 @@ import {
 	unlikeComment,
 	setActiveReply,
 } from '../actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
+import { DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 				postId: POST_ID,
 				query: {
 					order: 'DESC',
-					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					number: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
 				},
 				direction: 'before',
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 				direction: 'before',
 				query: {
 					order: 'DESC',
-					number: NUMBER_OF_COMMENTS_PER_FETCH,
+					number: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'approved',
 				},
 			} );

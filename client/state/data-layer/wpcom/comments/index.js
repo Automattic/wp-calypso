@@ -150,6 +150,15 @@ export const addComments = ( { dispatch }, action, { comments, found } ) => {
 			totalCommentsCount: found,
 		} );
 	}
+
+	// if we wanted more comments than we could get in a single requesst
+	// then keep requesting more.
+	if ( action.totalNumber > action.query.number && comments.length === action.query.number ) {
+		const newAction = { ...action, totalNumber: action.totalNumber - comments.length };
+		delete action.meta.dataLayer;
+
+		dispatch( newAction );
+	}
 };
 
 export const writePostCommentSuccess = (

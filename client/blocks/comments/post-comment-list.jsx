@@ -18,7 +18,7 @@ import {
 	getCommentById,
 } from 'state/comments/selectors';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
+import { DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
@@ -63,8 +63,8 @@ class PostCommentList extends React.Component {
 	};
 
 	static defaultProps = {
-		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
-		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
+		pageSize: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
+		initialSize: DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,

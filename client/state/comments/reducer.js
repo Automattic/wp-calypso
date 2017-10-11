@@ -39,7 +39,7 @@ import {
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	PLACEHOLDER_STATE,
-	NUMBER_OF_COMMENTS_PER_FETCH,
+	DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
@@ -257,7 +257,7 @@ export const fetchStatus = createReducer(
 
 			const nextState = {
 				...get( state, stateKey, fetchStatusInitialState ),
-				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
+				[ direction ]: action.comments.length === DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH,
 				[ hasReceivedDirection ]: true,
 			};
 

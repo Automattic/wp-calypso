@@ -1,5 +1,6 @@
 /** @format */
-export const NUMBER_OF_COMMENTS_PER_FETCH = 50;
+export const DEFAULT_NUMBER_OF_COMMENTS_PER_FETCH = 50;
+export const MAX_NUMBER_OF_COMMENTS_PER_FETCH = 100;
 
 export const PLACEHOLDER_STATE = {
 	PENDING: 'PENDING',
