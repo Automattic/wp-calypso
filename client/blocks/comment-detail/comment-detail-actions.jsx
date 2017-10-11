@@ -17,8 +17,8 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 
 const commentActions = {
-	unapproved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
+	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 };
@@ -39,6 +39,7 @@ export const CommentDetailActions = ( {
 	commentIsLiked,
 	commentStatus,
 	deleteCommentPermanently,
+	toggleReply,
 	toggleApprove,
 	toggleEditMode,
 	toggleLike,
@@ -89,6 +90,13 @@ export const CommentDetailActions = ( {
 				>
 					<Gridicon icon="pencil" />
 					{ compact || <span>{ translate( 'Edit' ) }</span> }
+				</Button>
+			) }
+
+			{ hasAction( commentStatus, 'reply' ) &&
+			compact && (
+				<Button compact={ compact } className="comment-detail__action-edit" onClick={ toggleReply }>
+					<Gridicon icon="reply" />
 				</Button>
 			) }
 

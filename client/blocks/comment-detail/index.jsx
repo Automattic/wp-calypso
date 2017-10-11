@@ -93,6 +93,7 @@ export class CommentDetail extends Component {
 
 	state = {
 		isEditMode: false,
+		isReplyMode: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -121,6 +122,10 @@ export class CommentDetail extends Component {
 		!! this.props.authorEmail && !! this.props.siteBlacklist
 			? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
 			: false;
+
+	enterReplyState = () => this.setState( { isReplyMode: true } );
+
+	exitReplyState = () => this.setState( { isReplyMode: false } );
 
 	toggleApprove = e => {
 		e.stopPropagation();
@@ -163,8 +168,6 @@ export class CommentDetail extends Component {
 
 		this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 	};
-
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleSpam = e => {
 		e.stopPropagation();
@@ -310,6 +313,7 @@ export class CommentDetail extends Component {
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
+					toggleReply={ this.enterReplyState }
 					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
@@ -368,8 +372,11 @@ export class CommentDetail extends Component {
 									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
+									hasFocus={ this.state.isReplyMode }
 									postTitle={ postTitle }
 									replyComment={ replyComment }
+									enterReplyState={ this.enterReplyState }
+									exitReplyState={ this.exitReplyState }
 								/>
 							</div>
 						) }

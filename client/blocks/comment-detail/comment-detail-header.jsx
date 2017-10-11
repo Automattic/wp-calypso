@@ -45,6 +45,7 @@ export class CommentDetailHeader extends Component {
 			isEditMode,
 			isExpanded,
 			postTitle,
+			toggleReply,
 			toggleApprove,
 			toggleEditMode,
 			toggleExpanded,
@@ -142,6 +143,7 @@ export class CommentDetailHeader extends Component {
 						commentIsLiked={ commentIsLiked }
 						commentStatus={ commentStatus }
 						deleteCommentPermanently={ deleteCommentPermanently }
+						toggleReply={ toggleReply }
 						toggleApprove={ toggleApprove }
 						toggleEditMode={ toggleEditMode }
 						toggleLike={ toggleLike }
