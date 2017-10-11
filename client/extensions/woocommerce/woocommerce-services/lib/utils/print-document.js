@@ -35,30 +35,56 @@ const loadDocumentInFrame = ( url ) => {
 	} );
 };
 
+const buildBlob = ( b64Content, mimeType ) => {
+	const rawData = atob( b64Content );
+	const rawDataLen = rawData.length;
+	const binData = new Uint8Array( new ArrayBuffer( rawDataLen ) );
+	for ( let i = 0; i < rawDataLen; i++ ) {
+		binData[ i ] = rawData.charCodeAt( i );
+	}
+	return new Blob( [ binData ], { type: mimeType } );
+};
+
 /**
  * Opens the native printing dialog to print the given URL.
  * Falls back to opening the PDF in a new tab if opening the printing dialog is not supported.
- * @param {string} url URL of the document to print
+ * @param {Object} fileData Object with the PDF contents. It needs to have at least these properties:
+ * - {String} b64Content The PDF binary content, encoded in Base64
+ * - {String} mimeType The MIME Type of the file. Normally it will be "application/pdf"
+ * @param {String} fileName URL of the document to print
  * @returns {Promise} Promise that resolves if the printing dialog (or equivalent) was correctly
  * invoked, rejects otherwise.
  */
-export default ( url ) => {
+export default ( { b64Content, mimeType }, fileName ) => {
+	const blob = buildBlob( b64Content, mimeType );
+	const blobUrl = 'ie' !== getPDFSupport() ? URL.createObjectURL( blob ) : null; // IE has no use for "blob:" URLs
+
 	switch ( getPDFSupport() ) {
 		case 'native':
-			// Happy case where everything can happen automatically. Supported in Edge, Chrome and Safari
-			return loadDocumentInFrame( url )
+			// Happy case where everything can happen automatically. Supported in Chrome and Safari
+			return loadDocumentInFrame( blobUrl )
 				.then( () => {
 					iframe.contentWindow.print();
+					URL.revokeObjectURL( blobUrl );
 				} );
 
 		case 'addon':
 			// window.open will be blocked by the browser if this code isn't being executed from a direct user interaction
-			return window.open( url ) ? Promise.resolve() : Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
+			const success = window.open( blobUrl );
+			URL.revokeObjectURL( blobUrl );
+			return success ? Promise.resolve() : Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
+
+		case 'ie':
+			// Internet Explorer / Edge don't allow to load "blob:" URLs into an <iframe> or a new tab. The only solution is to download
+			return window.navigator.msSaveOrOpenBlob( blob, fileName )
+				? Promise.resolve()
+				: Promise.reject( new Error( 'Unable to download the PDF' ) );
 
 		default:
 			// If browser doesn't support PDFs at all, this will trigger the "Download" pop-up.
 			// No need to wait for the iframe to load, it will never finish.
-			loadDocumentInFrame( url );
+			loadDocumentInFrame( blobUrl );
+			URL.revokeObjectURL( blobUrl );
 			return Promise.resolve();
 	}
 };

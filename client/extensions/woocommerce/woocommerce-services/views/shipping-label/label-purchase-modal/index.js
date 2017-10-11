@@ -67,7 +67,7 @@ const PurchaseDialog = ( props ) => {
 
 	const getPurchaseButtonAction = () => {
 		if ( props.form.needsPrintConfirmation ) {
-			return () => props.confirmPrintLabel( props.orderId, props.siteId, props.form.printUrl );
+			return () => props.confirmPrintLabel( props.orderId, props.siteId );
 		}
 		return () => props.purchaseLabel( props.orderId, props.siteId );
 	};
