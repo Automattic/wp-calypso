@@ -132,8 +132,7 @@ export class CommentDetailAuthorMoreInfo extends Component {
 				</div>
 				{ this.showBlockUser() && (
 					<div className="comment-detail__author-more-element">
-						<Button compact onClick={ this.toggleBlockUser }>
-							<Gridicon icon="block" />
+						<Button scary={ ! authorIsBlocked } onClick={ this.toggleBlockUser }>
 							<span>
 								{ authorIsBlocked ? translate( 'Unblock user' ) : translate( 'Block user' ) }
 							</span>
