@@ -11,12 +11,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
+} from 'state/happychat/constants';
+import { localize } from 'i18n-calypso';
+import {
 	getHappychatStatus,
 	getHappychatConnectionStatus,
 	isHappychatServerReachable,

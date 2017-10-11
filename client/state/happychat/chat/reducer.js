@@ -20,8 +20,10 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
-import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from 'state/happychat/selectors';
-import { HAPPYCHAT_MAX_STORED_MESSAGES } from 'state/happychat/constants';
+import {
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	HAPPYCHAT_MAX_STORED_MESSAGES,
+} from 'state/happychat/constants';
 import { combineReducers } from 'state/utils';
 import { timelineSchema } from './schema';
 

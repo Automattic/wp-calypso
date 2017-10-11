@@ -27,7 +27,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from '../selectors';
+} from '../constants';
 import wpcom from 'lib/wp';
 import {
 	ANALYTICS_EVENT_RECORD,

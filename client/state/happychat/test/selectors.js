@@ -20,6 +20,8 @@ import {
 	HAPPYCHAT_CHAT_STATUS_NEW,
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
+} from 'state/happychat/constants';
+import {
 	canUserSendMessages,
 	getLostFocusTimestamp,
 	hasUnreadMessages,
