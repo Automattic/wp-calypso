@@ -142,6 +142,10 @@ class DomainSearchResults extends React.Component {
 
 		if ( this.props.suggestions.length ) {
 			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
+				if ( suggestion.is_placeholder ) {
+					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;
+				}
+
 				return (
 					<DomainRegistrationSuggestion
 						suggestion={ suggestion }
