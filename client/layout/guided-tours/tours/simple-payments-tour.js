@@ -27,12 +27,13 @@ export const SimplePaymentsTour = makeTour(
 			arrow="top-left"
 			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '22px', zIndex: 'auto' } }
+			style={ { marginLeft: '-10px', zIndex: 'auto' } }
 		>
 			<p>
 				{ translate(
 					'Did you know? ' +
-						'If your site is on the Premium or Business plan, you can add {{strong}}payment buttons{{/strong}} here!',
+						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} — ' +
+						'sell tickets, collect donations, accept tips, and more.',
 					{
 						components: {
 							strong: <strong />,
@@ -41,7 +42,7 @@ export const SimplePaymentsTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( 'Got it, sounds good!' ) }</Quit>
+				<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 			</ButtonRow>
 			<Link href="https://en.support.wordpress.com/simple-payments">
 				{ translate( 'Learn more about Simple Payments.' ) }
