@@ -24,7 +24,6 @@ import {
 	getJetpackSiteByUrl,
 } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -407,7 +406,6 @@ class JetpackConnectMain extends Component {
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<QuerySites allSites />
 					<FormattedHeader
 						headerText={ this.getTexts().headerTitle }
 						subHeaderText={ this.getTexts().headerSubtitle }
