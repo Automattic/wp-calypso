@@ -26,6 +26,19 @@ import { getPlanClass } from 'lib/plans/constants';
 import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
 class DisconnectJetpackDialog extends PureComponent {
+	static displayName = 'DisconnectJetpackDialog';
+
+	static propTypes = {
+		isBroken: PropTypes.bool,
+		isVisible: PropTypes.bool,
+		onClose: PropTypes.func,
+		redirect: PropTypes.string,
+		siteId: PropTypes.number,
+		// Connected props
+		plan: PropTypes.string,
+		siteSlug: PropTypes.string,
+	};
+
 	trackReadMoreClick = () => {
 		this.props.recordGoogleEvent(
 			'Disconnect Jetpack Dialog',
@@ -238,19 +251,6 @@ class DisconnectJetpackDialog extends PureComponent {
 		);
 	}
 }
-
-DisconnectJetpackDialog.displayName = 'DisconnectJetpackDialog';
-
-DisconnectJetpackDialog.propTypes = {
-	isBroken: PropTypes.bool,
-	isVisible: PropTypes.bool,
-	onClose: PropTypes.func,
-	redirect: PropTypes.string,
-	siteId: PropTypes.number,
-	// Connected props
-	plan: PropTypes.string,
-	siteSlug: PropTypes.string,
-};
 
 export default connect(
 	( state, { siteId } ) => {
