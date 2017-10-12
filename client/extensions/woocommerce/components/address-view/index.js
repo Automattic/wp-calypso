@@ -14,6 +14,8 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { getCountries } from 'woocommerce/lib/countries';
+import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
+import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -31,6 +33,7 @@ class AddressView extends Component {
 		} ),
 		isEditable: PropTypes.bool,
 		onChange: PropTypes.func,
+		showAllLocations: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -43,11 +46,11 @@ class AddressView extends Component {
 			postcode: '',
 		},
 		isEditable: false,
+		showAllLocations: false,
 	};
 
-	renderEditable = () => {
-		const { onChange, translate } = this.props;
-		const { city, country, postcode, street, street2, state } = this.props.address;
+	getCountryData = () => {
+		const { country } = this.props.address;
 		let countryData = find( getCountries(), { code: country || 'US' } );
 
 		// If we still haven't found any country data, default to US.
@@ -55,8 +58,67 @@ class AddressView extends Component {
 		if ( ! Boolean( countryData ) ) {
 			countryData = find( getCountries(), { code: 'US' } );
 		}
+		return countryData;
+	};
 
-		const { states, statesLabel } = countryData;
+	renderCountry = () => {
+		const { address: { country }, onChange, showAllLocations, translate } = this.props;
+		if ( showAllLocations ) {
+			return (
+				<FormFieldSet className="address-view__country">
+					<FormCountrySelectFromApi value={ country } onChange={ onChange } />
+				</FormFieldSet>
+			);
+		}
+		return (
+			<FormFieldSet className="address-view__country">
+				<FormLabel>{ translate( 'Country' ) }</FormLabel>
+				<FormSelect name="country" onChange={ onChange } value={ country || 'US' }>
+					{ getCountries().map( option => {
+						return (
+							<option key={ option.code } value={ option.code }>
+								{ option.name }
+							</option>
+						);
+					} ) }
+					<option key="XX" value="XX" disabled="disabled">
+						{ translate( 'More countries coming soon' ) }
+					</option>
+				</FormSelect>
+			</FormFieldSet>
+		);
+	};
+
+	renderState = () => {
+		const { address: { country, state }, onChange, showAllLocations } = this.props;
+		if ( showAllLocations ) {
+			return (
+				<FormFieldSet className="address-view__editable-state">
+					<FormStateSelectFromApi country={ country } value={ state } onChange={ onChange } />
+				</FormFieldSet>
+			);
+		}
+
+		const { states, statesLabel } = this.getCountryData();
+		return (
+			<FormFieldSet className="address-view__editable-state">
+				<FormLabel>{ statesLabel }</FormLabel>
+				<FormSelect name="state" onChange={ onChange } value={ state }>
+					{ states.map( option => {
+						return (
+							<option key={ option.code } value={ option.code }>
+								{ option.name }
+							</option>
+						);
+					} ) }
+				</FormSelect>
+			</FormFieldSet>
+		);
+	};
+
+	renderEditable = () => {
+		const { onChange, translate } = this.props;
+		const { city, postcode, street, street2 } = this.props.address;
 
 		return (
 			<div className="address-view__fields-editable">
@@ -72,38 +134,13 @@ class AddressView extends Component {
 						<FormLabel>{ translate( 'City' ) }</FormLabel>
 						<FormTextInput name="city" onChange={ onChange } value={ city } />
 					</FormFieldSet>
-					<FormFieldSet className="address-view__editable-state">
-						<FormLabel>{ statesLabel }</FormLabel>
-						<FormSelect name="state" onChange={ onChange } value={ state }>
-							{ states.map( option => {
-								return (
-									<option key={ option.code } value={ option.code }>
-										{ option.name }
-									</option>
-								);
-							} ) }
-						</FormSelect>
-					</FormFieldSet>
+					{ this.renderState() }
 					<FormFieldSet>
 						<FormLabel>{ translate( 'Postal code' ) }</FormLabel>
 						<FormTextInput name="postcode" onChange={ onChange } value={ postcode } />
 					</FormFieldSet>
 				</div>
-				<FormFieldSet className="address-view__country">
-					<FormLabel>{ translate( 'Country' ) }</FormLabel>
-					<FormSelect name="country" onChange={ onChange } value={ country || 'US' }>
-						{ getCountries().map( option => {
-							return (
-								<option key={ option.code } value={ option.code }>
-									{ option.name }
-								</option>
-							);
-						} ) }
-						<option key="XX" value="XX" disabled="disabled">
-							{ translate( 'More countries coming soon' ) }
-						</option>
-					</FormSelect>
-				</FormFieldSet>
+				{ this.renderCountry() }
 			</div>
 		);
 	};

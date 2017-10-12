@@ -212,6 +212,7 @@ class CustomerAddressDialog extends Component {
 					</div>
 					<AddressView
 						isEditable
+						showAllLocations
 						onChange={ this.onChange }
 						address={ getAddressViewFormat( address ) }
 					/>
