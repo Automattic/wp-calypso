@@ -98,26 +98,31 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='preconnect' href='https://accounts.google.com')
 				link(rel='preconnect' href='https://stats.g.doubleclick.net')
 
-		if shouldUsePreload
-			//- Preload our stylesheets
+		if shouldUseStylePreloadExternal
 			link(rel='preload' as='style' href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')
 			if shouldUseSingleCDN
 				link(rel='preload' as='style' href='//s0.wp.com/i/noticons/noticons.css?v=20150727')
 			else 
 				link(rel='preload' as='style' href='//s1.wp.com/i/noticons/noticons.css?v=20150727')
+
+		if shouldUseStylePreloadSection
 			if isRTL
-				link(rel='preload' as='style' href=urls['style-rtl.css'])
 				if sectionCssRtl
 					link(rel='preload' as='style' href=sectionCssRtl)
+			else
+				if sectionCss
+					link(rel='preload' as='style' href=sectionCss)
+		
+		if shouldUseStylePreloadCommon
+			if isRTL
+				link(rel='preload' as='style' href=urls['style-rtl.css'])
 			else
 				if 'development' === env || isDebug
 					link(rel='preload' as='style' href=urls['style-debug.css'])
 				else
 					link(rel='preload' as='style' href=urls['style.css'])
 
-				if sectionCss
-					link(rel='preload' as='style' href=sectionCss)
-
+		if shouldUseScriptPreload
 			//- Preload our scripts
 			if i18nLocaleScript
 				link(rel='preload' as='script' href=i18nLocaleScript)
