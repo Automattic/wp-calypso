@@ -27,19 +27,6 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';
 
-function isSafari() {
-	return typeof window !== 'undefined' && window.navigator.userAgent.match( /safari/i );
-}
-
-function shouldUseRedirectFlow() {
-	// If calypso is loaded in a popup, we don't want to open a second popup for social login
-	// let's use the redirect flow instead in that case
-	const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-	// also disable the popup flow for all safari versions
-	// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
-	return isPopup || isSafari();
-}
-
 class SocialLoginForm extends Component {
 	static propTypes = {
 		createSocialUser: PropTypes.func.isRequired,
@@ -48,6 +35,7 @@ class SocialLoginForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
+		uxMode: PropTypes.string.isRequired,
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
@@ -88,7 +76,7 @@ class SocialLoginForm extends Component {
 			() => {
 				this.recordEvent( 'calypso_login_social_login_success' );
 
-				onSuccess( redirectTo );
+				onSuccess();
 			},
 			error => {
 				if ( error.code === 'unknown_user' ) {
@@ -147,8 +135,8 @@ class SocialLoginForm extends Component {
 	}
 
 	render() {
-		const { redirectTo } = this.props;
-		const redirectUri = shouldUseRedirectFlow()
+		const { redirectTo, uxMode } = this.props;
+		const redirectUri = uxMode
 			? `https://${ ( typeof window !== 'undefined' && window.location.host ) +
 					login( { isNative: true, socialService: 'google' } ) }`
 			: null;
@@ -161,6 +149,7 @@ class SocialLoginForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
+						uxMode={ uxMode }
 						redirectUri={ redirectUri }
 						onClick={ this.trackGoogleLogin }
 					/>
