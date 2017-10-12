@@ -170,6 +170,7 @@
   "scripts": {
     "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --config webpack.config.js --profile --json > stats.json",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 0.0.0.0 -p 9898",
+    "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -r --use autoprefixer",
     "prebuild": "npm run -s install-if-deps-outdated",
     "build": "run-p -s build-devdocs:* build-server build-client-if-prod build-css",
@@ -274,6 +275,7 @@
     "nock": "8.0.0",
     "nodemon": "1.4.1",
     "prettier": "github:automattic/calypso-prettier#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
+    "pretty-bytes": "4.0.2",
     "react-addons-test-utils": "15.4.0",
     "react-codemod": "reactjs/react-codemod",
     "react-test-env": "0.2.0",
@@ -283,6 +285,7 @@
     "socket.io": "1.4.5",
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
+    "terminal-kit": "1.13.13",
     "uglify-js": "2.7.0",
     "webpack-bundle-analyzer": "2.8.2"
   },
