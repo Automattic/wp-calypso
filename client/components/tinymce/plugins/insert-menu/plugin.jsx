@@ -34,29 +34,6 @@ const initialize = editor => {
 			insertContentElm.innerHTML = renderToString(
 				<GridiconButton icon="add-outline" label={ i18n.translate( 'Add' ) } />
 			);
-
-			const addTooltipListener = ( el, text ) => {
-				el.addEventListener( 'mouseenter', () => {
-					// We need to select the tooltip during the `mouseenter` event and not outside.
-					// Otherwise, Tinymce renders an empty tooltip somewhere in the editor.
-					// The following code is very inspired by the `mouseenter` handler in TinyMCE
-					// (tinymce.core.ui.Widget.init)
-					const btnTooltip = this.tooltip();
-
-					btnTooltip.text( text );
-
-					const rel = btnTooltip.testMoveRel( el, [ 'bc-tc', 'bc-tl', 'bc-tr' ] );
-
-					btnTooltip.classes.toggle( 'tooltip-n', rel === 'bc-tc' );
-					btnTooltip.classes.toggle( 'tooltip-nw', rel === 'bc-tl' );
-					btnTooltip.classes.toggle( 'tooltip-ne', rel === 'bc-tr' );
-
-					btnTooltip.moveRel( el, rel );
-				} );
-			};
-
-			// Listen to `mouseenter` events on the (+)
-			addTooltipListener( insertContentElm, i18n.translate( 'Add content' ) );
 		},
 	} );
 };
