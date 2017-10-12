@@ -15,33 +15,26 @@ import { map } from 'lodash';
  */
 import { getPostRevisionChanges } from 'state/selectors';
 
+const renderHighlightedChanges = changes =>
+	map( changes, ( change, changeIndex ) => {
+		const changeClassNames = classNames( {
+			'editor-diff-viewer__additions': change.added,
+			'editor-diff-viewer__deletions': change.removed,
+		} );
+		return (
+			<span className={ changeClassNames } key={ changeIndex }>
+				{ change.value }
+			</span>
+		);
+	} );
+
 const EditorDiffViewer = ( { revisionChanges } ) => (
 	<div className="editor-diff-viewer">
 		<h1 className="editor-diff-viewer__title">
-			{ map( revisionChanges.title, ( change, changeIndex ) => {
-				const changeClassNames = classNames( {
-					'editor-diff-viewer__additions': change.added,
-					'editor-diff-viewer__deletions': change.removed,
-				} );
-				return (
-					<span className={ changeClassNames } key={ changeIndex }>
-						{ change.value }
-					</span>
-				);
-			} ) }
+			{ renderHighlightedChanges( revisionChanges.title ) }
 		</h1>
 		<pre className="editor-diff-viewer__content">
-			{ map( revisionChanges.content, ( change, changeIndex ) => {
-				const changeClassNames = classNames( {
-					'editor-diff-viewer__additions': change.added,
-					'editor-diff-viewer__deletions': change.removed,
-				} );
-				return (
-					<span className={ changeClassNames } key={ changeIndex }>
-						{ change.value }
-					</span>
-				);
-			} ) }
+			{ renderHighlightedChanges( revisionChanges.content ) }
 		</pre>
 	</div>
 );
