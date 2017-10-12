@@ -31,7 +31,7 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	const trackEvent = 'calypso_reader_permalink_click';
 
 	// Add source as Tracks event property
-	eventProperties = Object.assign( { source: source }, eventProperties );
+	eventProperties = Object.assign( { source }, eventProperties );
 
 	if ( post ) {
 		recordTrackForPost( trackEvent, post, eventProperties );
