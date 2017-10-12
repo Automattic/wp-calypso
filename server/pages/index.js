@@ -90,6 +90,10 @@ function generateStaticUrls() {
 			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
 	} );
 
+	if ( config( 'env' ) === 'development' ) {
+		urls.vendor = '/calypso/vendor.js';
+	}
+
 	return urls;
 }
 
