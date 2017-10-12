@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
@@ -71,7 +70,7 @@ describe( 'actions', () => {
 					} );
 				} )
 				.catch( err => {
-					assert.fail( err, undefined, 'errback should not have been called' );
+					expect( false ).toBe( true );
 				} );
 		} );
 	} );

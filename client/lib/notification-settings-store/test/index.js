@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import sinon from 'sinon';
 
 /**
@@ -44,7 +43,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should have a dispatch token', () => {
-		assert.property( NotificationSettingsStore, 'dispatchToken' );
+		expect( 'dispatchToken' in NotificationSettingsStore ).toBeTruthy();
 	} );
 
 	describe( 'get blog settings', () => {
@@ -77,8 +76,8 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
 
-			assert.equal( getNotificationSettingsStub.callCount, 1 );
-			assert.deepEqual( state.settings.toJS(), blogsSettings );
+			expect( getNotificationSettingsStub.callCount ).toEqual( 1 );
+			expect( state.settings.toJS() ).toEqual( blogsSettings );
 		} );
 	} );
 
@@ -109,8 +108,8 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
 
-			assert.equal( getNotificationSettingsStub.callCount, 1 );
-			assert.deepEqual( state.settings.toJS(), otherSettings );
+			expect( getNotificationSettingsStub.callCount ).toEqual( 1 );
+			expect( state.settings.toJS() ).toEqual( otherSettings );
 		} );
 	} );
 
@@ -127,8 +126,8 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'wpcom' );
 
-			assert.equal( getNotificationSettingsStub.callCount, 1 );
-			assert.deepEqual( state.settings.toJS(), emailSettings );
+			expect( getNotificationSettingsStub.callCount ).toEqual( 1 );
+			expect( state.settings.toJS() ).toEqual( emailSettings );
 		} );
 	} );
 
@@ -166,22 +165,22 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.toggle( 1234567, 'timeline', 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
-			assert.notOk(
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 123456 )
 					.getIn( [ 'timeline', 'new_comment' ] )
-			);
+			).toBeFalsy();
 
-			assert.ok(
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 1234567 )
 					.getIn( [ 'timeline', 'new_comment' ] )
-			);
-			assert.notOk(
+			).toBeTruthy();
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 1234567 )
 					.getIn( [ 'email', 'new_comment' ] )
-			);
+			).toBeFalsy();
 		} );
 
 		test( 'should toggle a device setting for a blog by device id and blog id', () => {
@@ -189,29 +188,29 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
 
-			assert.ok(
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 1234567 )
 					.get( 'devices' )
 					.find( device => device.get( 'device_id' ) === 1234 )
 					.get( 'new_comment' )
-			);
+			).toBeTruthy();
 
-			assert.notOk(
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 123456 )
 					.get( 'devices' )
 					.find( device => device.get( 'device_id' ) === 1234 )
 					.get( 'new_comment' )
-			);
+			).toBeFalsy();
 
-			assert.notOk(
+			expect(
 				state.settings
 					.find( blog => blog.get( 'blog_id' ) === 1234567 )
 					.get( 'devices' )
 					.find( device => device.get( 'device_id' ) === 123 )
 					.get( 'new_comment' )
-			);
+			).toBeFalsy();
 		} );
 	} );
 
@@ -236,7 +235,7 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.toggle( 'other', 'timeline', 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
-			assert.ok( state.settings.getIn( [ 'timeline', 'new_comment' ] ) );
+			expect( state.settings.getIn( [ 'timeline', 'new_comment' ] ) ).toBeTruthy();
 		} );
 
 		test( 'should toggle a device setting by device id', () => {
@@ -244,19 +243,19 @@ describe( 'index', () => {
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
 
-			assert.ok(
+			expect(
 				state.settings
 					.get( 'devices' )
 					.find( device => device.get( 'device_id' ) === 1234 )
 					.get( 'new_comment' )
-			);
+			).toBeTruthy();
 
-			assert.notOk(
+			expect(
 				state.settings
 					.get( 'devices' )
 					.find( device => device.get( 'device_id' ) === 12345 )
 					.get( 'new_comment' )
-			);
+			).toBeFalsy();
 		} );
 	} );
 
@@ -274,8 +273,8 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.toggle( 'wpcom', null, 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'wpcom' );
-			assert.ok( state.settings.get( 'new_comment' ) );
-			assert.notOk( state.settings.get( 'comment_like' ) );
+			expect( state.settings.get( 'new_comment' ) ).toBeTruthy();
+			expect( state.settings.get( 'comment_like' ) ).toBeFalsy();
 		} );
 	} );
 } );

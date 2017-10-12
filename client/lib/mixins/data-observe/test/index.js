@@ -4,12 +4,6 @@
  * @format
  */
 
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
-/* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 
@@ -29,15 +23,15 @@ describe( 'observe()', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado', 'pancho' );
 			mixin.componentDidMount.call( context );
-			assert.deepEqual( [ 'baba', 'dyado' ], context.onCalls );
-			assert.deepEqual( [], context.offCalls );
+			expect( [ 'baba', 'dyado' ] ).toEqual( context.onCalls );
+			expect( [] ).toEqual( context.offCalls );
 		} );
 		test( 'should not call .on() if the props are missing', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'wink', 'blurp', 'foo' );
 			mixin.componentDidMount.call( context );
-			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( [], context.offCalls );
+			expect( [] ).toEqual( context.onCalls );
+			expect( [] ).toEqual( context.offCalls );
 		} );
 	} );
 
@@ -46,15 +40,15 @@ describe( 'observe()', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'non-existant' );
 			mixin.componentWillUnmount.call( context );
-			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( [ 'baba' ], context.offCalls );
+			expect( [] ).toEqual( context.onCalls );
+			expect( [ 'baba' ] ).toEqual( context.offCalls );
 		} );
 		test( 'should not call .off() on the props if the props are missing', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'non-existant' );
 			mixin.componentWillUnmount.call( context );
-			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( [], context.offCalls );
+			expect( [] ).toEqual( context.onCalls );
+			expect( [] ).toEqual( context.offCalls );
 		} );
 	} );
 
@@ -63,8 +57,8 @@ describe( 'observe()', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado', 'wink' );
 			mixin.componentWillReceiveProps.call( context, context.props );
-			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( [], context.offCalls );
+			expect( [] ).toEqual( context.onCalls );
+			expect( [] ).toEqual( context.offCalls );
 		} );
 		test( 'should re-bind the event handlers if the props reference changed', () => {
 			var mixin = observe( 'baba', 'dyado' ),
@@ -73,15 +67,15 @@ describe( 'observe()', () => {
 				baba: context.props.baba,
 				dyado: mockEventEmitter( context, 'dyado' ),
 			} );
-			assert.deepEqual( [ 'dyado' ], context.onCalls );
-			assert.deepEqual( [ 'dyado' ], context.offCalls );
+			expect( [ 'dyado' ] ).toEqual( context.onCalls );
+			expect( [ 'dyado' ] ).toEqual( context.offCalls );
 		} );
 		test( 'should only unbind the event if the prop goes missing, but not bind it', () => {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado' );
 			mixin.componentWillReceiveProps.call( context, { baba: context.props.baba } );
-			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( [ 'dyado' ], context.offCalls );
+			expect( [] ).toEqual( context.onCalls );
+			expect( [ 'dyado' ] ).toEqual( context.offCalls );
 		} );
 		test( 'should only bind the event if the prop appears, but not unbind it', () => {
 			var mixin = observe( 'baba', 'dyado' ),
@@ -89,8 +83,8 @@ describe( 'observe()', () => {
 			mixin.componentWillReceiveProps.call( context, {
 				baba: mockEventEmitter( context, 'baba' ),
 			} );
-			assert.deepEqual( [ 'baba' ], context.onCalls );
-			assert.deepEqual( [], context.offCalls );
+			expect( [ 'baba' ] ).toEqual( context.onCalls );
+			expect( [] ).toEqual( context.offCalls );
 		} );
 	} );
 } );
@@ -113,19 +107,19 @@ function mockEventEmitter( context, name ) {
 	return {
 		on: function( event, callback ) {
 			context.onCalls.push( name );
-			assert.deepEqual( 'change', event );
-			assert.deepEqual( 'callback', callback );
+			expect( 'change' ).toEqual( event );
+			expect( 'callback' ).toEqual( callback );
 		},
 		off: function( event, callback ) {
 			context.offCalls.push( name );
-			assert.deepEqual( 'change', event );
-			assert.deepEqual( 'callback', callback );
+			expect( 'change' ).toEqual( event );
+			expect( 'callback' ).toEqual( callback );
 		},
 	};
 }
 
 function assertMixin( mixin ) {
-	assert.isFunction( mixin.componentDidMount );
-	assert.isFunction( mixin.componentWillUnmount );
-	assert.isFunction( mixin.componentWillReceiveProps );
+	expect( typeof mixin.componentDidMount ).toBe( 'function' );
+	expect( typeof mixin.componentWillUnmount ).toBe( 'function' );
+	expect( typeof mixin.componentWillReceiveProps ).toBe( 'function' );
 }

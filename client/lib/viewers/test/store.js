@@ -6,11 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import actions from './fixtures/actions';
 import site from './fixtures/site';
 
@@ -25,19 +20,19 @@ describe( 'Viewers Store', () => {
 
 	describe( 'Shape of store', () => {
 		test( 'Store should be an object', () => {
-			assert.isObject( ViewersStore );
+			expect( typeof ViewersStore ).toBe( 'object' );
 		} );
 
 		test( 'Store should have method emitChange', () => {
-			assert.isFunction( ViewersStore.emitChange );
+			expect( typeof ViewersStore.emitChange ).toBe( 'function' );
 		} );
 
 		test( 'Store should have method getViewers', () => {
-			assert.isFunction( ViewersStore.getViewers );
+			expect( typeof ViewersStore.getViewers ).toBe( 'function' );
 		} );
 
 		test( 'Store should have method getPaginationData', () => {
-			assert.isFunction( ViewersStore.getPaginationData );
+			expect( typeof ViewersStore.getPaginationData ).toBe( 'function' );
 		} );
 	} );
 
@@ -45,7 +40,7 @@ describe( 'Viewers Store', () => {
 		test( "Should return false when viewers haven't been fetched", () => {
 			const viewers = ViewersStore.getViewers( siteId );
 
-			assert.isFalse( viewers, 'viewers is false' );
+			expect( viewers ).toBe( false );
 		} );
 
 		test( 'Should return an array of objects when there are viewers', () => {
@@ -54,8 +49,8 @@ describe( 'Viewers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedViewers );
 			viewers = ViewersStore.getViewers( siteId );
 
-			assert.isArray( viewers, 'viewers is an array' );
-			assert.isObject( viewers[ 0 ] );
+			expect( Array.isArray( viewers ) ).toBe( true );
+			expect( typeof viewers[ 0 ] ).toBe( 'object' );
 		} );
 	} );
 
@@ -69,13 +64,13 @@ describe( 'Viewers Store', () => {
 		test( 'Fetching zero users should not affect store size', () => {
 			Dispatcher.handleServerAction( actions.fetchedViewersEmpty );
 			viewersAgain = ViewersStore.getViewers( siteId );
-			assert.equal( viewers.length, viewersAgain.length, 'the viewers store was not affected' );
+			expect( viewers.length ).toEqual( viewersAgain.length );
 		} );
 
 		test( 'Fetching more viewers should increase the store size', () => {
 			Dispatcher.handleServerAction( actions.fetchedMoreViewers );
 			viewersAgain = ViewersStore.getViewers( siteId );
-			assert.notEqual( viewersAgain.length, viewers.length, 'the viewers store increased' );
+			expect( viewersAgain.length ).not.toEqual( viewers.length );
 		} );
 	} );
 
@@ -87,15 +82,15 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'has the correct total viewers', () => {
-			assert.equal( pagination.totalViewers, 4 );
+			expect( pagination.totalViewers ).toEqual( 4 );
 		} );
 
 		test( 'has the correct number of viewers fetched', () => {
-			assert.equal( pagination.numViewersFetched, 2 );
+			expect( pagination.numViewersFetched ).toEqual( 2 );
 		} );
 
 		test( 'has the correct page', () => {
-			assert.equal( pagination.currentViewersPage, 1 );
+			expect( pagination.currentViewersPage ).toEqual( 1 );
 		} );
 
 		describe( 'after fetching more viewers', () => {
@@ -105,11 +100,11 @@ describe( 'Viewers Store', () => {
 			} );
 
 			test( 'has the correct updated number of viewers fetched', () => {
-				assert.equal( pagination.numViewersFetched, 4 );
+				expect( pagination.numViewersFetched ).toEqual( 4 );
 			} );
 
 			test( 'advances to the next page', () => {
-				assert.equal( pagination.currentViewersPage, 2 );
+				expect( pagination.currentViewersPage ).toEqual( 2 );
 			} );
 		} );
 	} );
@@ -124,7 +119,7 @@ describe( 'Viewers Store', () => {
 		test( 'Should remove a single viewer.', () => {
 			Dispatcher.handleServerAction( actions.removeViewer );
 			viewersAgain = ViewersStore.getViewers( siteId );
-			assert.lengthOf( viewersAgain, 1 );
+			expect( viewersAgain.length ).toBe( 1 );
 		} );
 
 		test( 'Should restore a single viewer on removal error.', () => {
@@ -132,11 +127,11 @@ describe( 'Viewers Store', () => {
 
 			Dispatcher.handleServerAction( actions.removeViewer );
 			viewersAfterRemove = ViewersStore.getViewers( siteId );
-			assert.lengthOf( viewersAfterRemove, 1 );
+			expect( viewersAfterRemove.length ).toBe( 1 );
 
 			Dispatcher.handleServerAction( actions.removeViewerError );
 			viewersAfterError = ViewersStore.getViewers( siteId );
-			assert.lengthOf( viewersAfterError, 2 );
+			expect( viewersAfterError.length ).toBe( 2 );
 		} );
 	} );
 } );

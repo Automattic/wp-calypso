@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
@@ -28,12 +27,12 @@ describe( 'DocsExample', () => {
 	test( 'should render', () => {
 		// TODO: when chai-enzyme is available use `shallow` instead
 		const docsExample = mount( <DocsExample { ...props }>{ childrenFixture }</DocsExample> );
-		assert.lengthOf( docsExample.find( '.docs-example' ), 1 );
-		assert.lengthOf( docsExample.find( '.docs-example__main' ), 1 );
-		assert.lengthOf( docsExample.find( '.docs-example__footer' ), 1 );
-		assert.ok( docsExample.contains( childrenFixture ) );
-		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 0 );
-		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 0 );
+		expect( docsExample.find( '.docs-example' ).length ).toBe( 1 );
+		expect( docsExample.find( '.docs-example__main' ).length ).toBe( 1 );
+		expect( docsExample.find( '.docs-example__footer' ).length ).toBe( 1 );
+		expect( docsExample.contains( childrenFixture ) ).toBeTruthy();
+		expect( docsExample.find( '.docs-example__toggle' ).length ).toBe( 0 );
+		expect( docsExample.find( '.docs-example__stats' ).length ).toBe( 0 );
 	} );
 
 	test( 'should render the toggle button', () => {
@@ -45,7 +44,7 @@ describe( 'DocsExample', () => {
 			<DocsExample { ...propsWithToggle }>{ childrenFixture }</DocsExample>
 		);
 
-		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 1 );
+		expect( docsExample.find( '.docs-example__toggle' ).length ).toBe( 1 );
 	} );
 
 	test( 'should render the stats', () => {
@@ -58,7 +57,7 @@ describe( 'DocsExample', () => {
 			<DocsExample { ...propsWithStats }>{ childrenFixture }</DocsExample>
 		);
 
-		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 1 );
+		expect( docsExample.find( '.docs-example__stats' ).length ).toBe( 1 );
 	} );
 } );
 
@@ -71,7 +70,7 @@ describe( 'DocsExampleToggle', () => {
 	test( 'should render', () => {
 		const docsExampleToggle = shallow( <DocsExampleToggle { ...props } /> );
 
-		assert.lengthOf( docsExampleToggle.find( Button ), 1 );
+		expect( docsExampleToggle.find( Button ).length ).toBe( 1 );
 	} );
 } );
 
@@ -83,12 +82,12 @@ describe( 'DocsExampleStats', () => {
 	test( 'should render', () => {
 		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
 
-		assert.lengthOf( docsExampleStats.find( 'p' ), 1 );
+		expect( docsExampleStats.find( 'p' ).length ).toBe( 1 );
 	} );
 
 	test( "should have the component's usage count", () => {
 		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
 
-		assert.lengthOf( docsExampleStats.find( Count ), 1 );
+		expect( docsExampleStats.find( Count ).length ).toBe( 1 );
 	} );
 } );

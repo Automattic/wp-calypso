@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -27,10 +26,10 @@ describe( 'getAccountRecoveryResetPasswordError()', () => {
 			},
 		} );
 
-		assert.deepEqual( getAccountRecoveryResetPasswordError( state ), error );
+		expect( getAccountRecoveryResetPasswordError( state ) ).toEqual( error );
 	} );
 
 	test( 'should return null as default value.', () => {
-		assert.isNull( getAccountRecoveryResetPasswordError( undefined ) );
+		expect( getAccountRecoveryResetPasswordError( undefined ) ).toBeNull();
 	} );
 } );

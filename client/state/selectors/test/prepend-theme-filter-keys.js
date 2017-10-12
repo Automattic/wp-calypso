@@ -3,19 +3,14 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { prependThemeFilterKeys } from '../';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {
 	test( 'should handle invalid input', () => {
-		assert.equal( prependThemeFilterKeys( state, '' ), '' );
-		assert.equal( prependThemeFilterKeys( state, '     ' ), '' );
-		assert.equal( prependThemeFilterKeys( state, ' tsr tsr .' ), '' );
+		expect( prependThemeFilterKeys( state, '' ) ).toEqual( '' );
+		expect( prependThemeFilterKeys( state, '     ' ) ).toEqual( '' );
+		expect( prependThemeFilterKeys( state, ' tsr tsr .' ) ).toEqual( '' );
 	} );
 
 	test( 'should prepend keys for valid terms and leave a trailing space', () => {

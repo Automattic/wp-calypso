@@ -6,11 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import actions from './lib/mock-actions';
 import site from './lib/mock-site';
 
@@ -28,7 +23,7 @@ describe( 'WPCOM Followers Store', () => {
 	} );
 
 	test( 'Store should be an object', () => {
-		assert.isObject( FollowersStore );
+		expect( typeof FollowersStore ).toBe( 'object' );
 	} );
 
 	describe( 'Fetch Followers', () => {
@@ -38,33 +33,33 @@ describe( 'WPCOM Followers Store', () => {
 
 		test( 'Should update the store on RECEIVE_FOLLOWERS', () => {
 			var followers = FollowersStore.getFollowers( options );
-			assert.equal( 2, followers.length );
+			expect( 2 ).toEqual( followers.length );
 		} );
 
 		test( 'The store should return an array of objects when fetching followers', () => {
 			var followers = FollowersStore.getFollowers( options );
-			assert.isArray( followers );
-			assert.isObject( followers[ 0 ] );
+			expect( Array.isArray( followers ) ).toBe( true );
+			expect( typeof followers[ 0 ] ).toBe( 'object' );
 		} );
 
 		test( 'Fetching more followers should update the array in the store', () => {
 			var followers = FollowersStore.getFollowers( options ),
 				followersAgain;
-			assert.equal( followers.length, 2 );
+			expect( followers.length ).toEqual( 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			followersAgain = FollowersStore.getFollowers( options );
-			assert.equal( followersAgain.length, 4 );
+			expect( followersAgain.length ).toEqual( 4 );
 		} );
 
 		test( 'Pagination data should update when we fetch more followers', () => {
 			var pagination = FollowersStore.getPaginationData( options );
-			assert.equal( pagination.totalFollowers, 4 );
-			assert.equal( pagination.numFollowersFetched, 2 );
-			assert.equal( pagination.followersCurrentPage, 1 );
+			expect( pagination.totalFollowers ).toEqual( 4 );
+			expect( pagination.numFollowersFetched ).toEqual( 2 );
+			expect( pagination.followersCurrentPage ).toEqual( 1 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			pagination = FollowersStore.getPaginationData( options );
-			assert.equal( pagination.numFollowersFetched, 4 );
-			assert.equal( pagination.followersCurrentPage, 2 );
+			expect( pagination.numFollowersFetched ).toEqual( 4 );
+			expect( pagination.followersCurrentPage ).toEqual( 2 );
 		} );
 	} );
 
@@ -76,23 +71,23 @@ describe( 'WPCOM Followers Store', () => {
 			var followers = FollowersStore.getFollowers( options ),
 				followersAgain;
 
-			assert.equal( followers.length, 2 );
+			expect( followers.length ).toEqual( 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			Dispatcher.handleServerAction( actions.removeFollowerSuccess );
 			followersAgain = FollowersStore.getFollowers( options );
-			assert.equal( followersAgain.length, 1 );
+			expect( followersAgain.length ).toEqual( 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
 			var followers = FollowersStore.getFollowers( options ),
 				followersAfterRemove,
 				followersAfterError;
-			assert.equal( followers.length, 2 );
+			expect( followers.length ).toEqual( 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			followersAfterRemove = FollowersStore.getFollowers( options );
-			assert.equal( followersAfterRemove.length, 1 );
+			expect( followersAfterRemove.length ).toEqual( 1 );
 			Dispatcher.handleServerAction( actions.removeFollowerError );
 			followersAfterError = FollowersStore.getFollowers( options );
-			assert.equal( followersAfterError.length, 2 );
+			expect( followersAfterError.length ).toEqual( 2 );
 		} );
 	} );
 } );

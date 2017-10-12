@@ -6,11 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import actions from './lib/mock-actions';
 import site from './lib/mock-site';
 
@@ -25,21 +20,21 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 	} );
 
 	test( 'Stores should be an object', () => {
-		assert.isObject( EarningsStore );
-		assert.isObject( SettingsStore );
-		assert.isObject( TosStore );
+		expect( typeof EarningsStore ).toBe( 'object' );
+		expect( typeof SettingsStore ).toBe( 'object' );
+		expect( typeof TosStore ).toBe( 'object' );
 	} );
 
 	test( 'Stores should have method getById', () => {
-		assert.isFunction( EarningsStore.getById );
-		assert.isFunction( SettingsStore.getById );
-		assert.isFunction( TosStore.getById );
+		expect( typeof EarningsStore.getById ).toBe( 'function' );
+		expect( typeof SettingsStore.getById ).toBe( 'function' );
+		expect( typeof TosStore.getById ).toBe( 'function' );
 	} );
 
 	test( 'Stores should have method emitChange', () => {
-		assert.isFunction( EarningsStore.emitChange );
-		assert.isFunction( SettingsStore.emitChange );
-		assert.isFunction( TosStore.emitChange );
+		expect( typeof EarningsStore.emitChange ).toBe( 'function' );
+		expect( typeof SettingsStore.emitChange ).toBe( 'function' );
+		expect( typeof TosStore.emitChange ).toBe( 'function' );
 	} );
 
 	describe( 'Fetch', () => {
@@ -54,9 +49,9 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 
-			assert.isObject( earnings );
-			assert.isObject( settings );
-			assert.isObject( tos );
+			expect( typeof earnings ).toBe( 'object' );
+			expect( typeof settings ).toBe( 'object' );
+			expect( typeof tos ).toBe( 'object' );
 		} );
 
 		test( 'The object should not be null after RECEIVE', () => {
@@ -64,9 +59,9 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 
-			assert.isNotNull( earnings.earnings );
-			assert.isNotNull( settings.settings );
-			assert.isNotNull( tos.tos );
+			expect( earnings.earnings ).not.toBeNull();
+			expect( settings.settings ).not.toBeNull();
+			expect( tos.tos ).not.toBeNull();
 		} );
 	} );
 } );

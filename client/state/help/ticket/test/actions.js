@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import sinon from 'sinon';
 
 /**
@@ -33,7 +32,7 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
 			const action = ticketSupportConfigurationRequestSuccess( dummyConfiguration );
 
-			assert.deepEqual( action, {
+			expect( action ).toEqual( {
 				type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 				configuration: dummyConfiguration,
 			} );
@@ -44,7 +43,7 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_FAILURE', () => {
 			const action = ticketSupportConfigurationRequestFailure( dummyError );
 
-			assert.deepEqual( action, {
+			expect( action ).toEqual( {
 				type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 				error: dummyError,
 			} );
@@ -64,15 +63,15 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			expect( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ).toBeTruthy();
 
 			action.then( () => {
-				assert(
+				expect(
 					spy.calledWith( {
 						type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 						configuration: dummyConfiguration,
 					} )
-				);
+				).toBeTruthy();
 			} );
 		} );
 	} );
@@ -87,17 +86,17 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			expect( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ).toBeTruthy();
 
 			action.then( () => {
-				assert(
+				expect(
 					spy.calledWith(
 						sinon.match( {
 							type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 							error: dummyError,
 						} )
 					)
-				);
+				).toBeTruthy();
 			} );
 		} );
 	} );
@@ -106,7 +105,7 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_DISMISS_ERROR', () => {
 			const action = ticketSupportConfigurationDismissError();
 
-			assert.deepEqual( action, {
+			expect( action ).toEqual( {
 				type: HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 			} );
 		} );

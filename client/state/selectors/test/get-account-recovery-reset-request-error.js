@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -27,7 +26,7 @@ describe( 'getAccountRecoveryResetRequestError()', () => {
 			},
 		} );
 
-		assert.deepEqual( getAccountRecoveryResetRequestError( state ), error );
+		expect( getAccountRecoveryResetRequestError( state ) ).toEqual( error );
 	} );
 
 	test( 'should return null when there is no error stored in the request-reset substate tree.', () => {
@@ -39,6 +38,6 @@ describe( 'getAccountRecoveryResetRequestError()', () => {
 			},
 		} );
 
-		assert.isNull( getAccountRecoveryResetRequestError( state ) );
+		expect( getAccountRecoveryResetRequestError( state ) ).toBeNull();
 	} );
 } );

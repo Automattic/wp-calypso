@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getAccountRecoveryResetOptions } from '../';
 
 describe( 'getAccountRecoveryResetOptions()', () => {
@@ -33,6 +28,6 @@ describe( 'getAccountRecoveryResetOptions()', () => {
 			},
 		};
 
-		assert.deepEqual( getAccountRecoveryResetOptions( state ), resetOptionItems );
+		expect( getAccountRecoveryResetOptions( state ) ).toEqual( resetOptionItems );
 	} );
 } );

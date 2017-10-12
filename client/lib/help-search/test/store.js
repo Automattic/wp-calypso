@@ -3,7 +3,6 @@
  * Internal dependencies
  */
 import actions from './lib/mock-actions';
-import { assert } from 'chai';
 
 describe( 'Help search Store', () => {
 	var Dispatcher, HelpSearchStore;
@@ -17,8 +16,8 @@ describe( 'Help search Store', () => {
 		test( 'Should return empty array when there are no help links', () => {
 			var helpLinks = HelpSearchStore.getHelpLinks();
 
-			assert( Array.isArray( helpLinks ), 'help links is not an array' );
-			assert( 0 === helpLinks.length, 'help links is empty' );
+			expect( Array.isArray( helpLinks ) ).toBeTruthy();
+			expect( 0 === helpLinks.length ).toBeTruthy();
 		} );
 
 		test( 'Should return an array of help link when there are help links', () => {
@@ -27,8 +26,8 @@ describe( 'Help search Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedHelpLinks );
 			helpLinks = HelpSearchStore.getHelpLinks();
 
-			assert( Array.isArray( helpLinks ), 'help links is not an array' );
-			assert.isObject( helpLinks[ 0 ] );
+			expect( Array.isArray( helpLinks ) ).toBeTruthy();
+			expect( typeof helpLinks[ 0 ] ).toBe( 'object' );
 		} );
 	} );
 } );

@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -16,6 +15,6 @@ describe( 'FeaturedImage', () => {
 		const nonExistantImage = 'http://sketchy-feed.com/missing-image-2.jpg';
 		const wrapper = shallow( <FeaturedImage src={ nonExistantImage } /> );
 		wrapper.instance().handleImageError();
-		assert.equal( '', wrapper.state( 'src' ) );
+		expect( '' ).toEqual( wrapper.state( 'src' ) );
 	} );
 } );

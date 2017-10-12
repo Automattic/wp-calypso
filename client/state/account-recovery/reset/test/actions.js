@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { requestReset, updatePasswordResetUserData, setResetMethod } from '../actions';
 import {
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,
@@ -25,7 +20,7 @@ describe( '#updatePasswordResetUserData', () => {
 		};
 		const action = updatePasswordResetUserData( userData );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 			userData,
 		} );
@@ -39,7 +34,7 @@ describe( '#requestReset', () => {
 
 		const action = requestReset( userData, method );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST,
 			userData,
 			method,
@@ -52,7 +47,7 @@ describe( '#setResetMethod', () => {
 		const method = 'primary_email';
 		const action = setResetMethod( method );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
 			method,
 		} );

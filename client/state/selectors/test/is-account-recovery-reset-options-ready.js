@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isAccountRecoveryResetOptionsReady } from '../';
 
 describe( 'isAccountRecoveryResetOptionsReady()', () => {
@@ -22,7 +17,7 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 			},
 		};
 
-		assert.isFalse( isAccountRecoveryResetOptionsReady( state ) );
+		expect( isAccountRecoveryResetOptionsReady( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if there is an existing error', () => {
@@ -45,7 +40,7 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 			},
 		};
 
-		assert.isFalse( isAccountRecoveryResetOptionsReady( state ) );
+		expect( isAccountRecoveryResetOptionsReady( state ) ).toBe( false );
 	} );
 
 	test( 'should return true if items array is populated and there is no error', () => {
@@ -64,6 +59,6 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 			},
 		};
 
-		assert.isTrue( isAccountRecoveryResetOptionsReady( state ) );
+		expect( isAccountRecoveryResetOptionsReady( state ) ).toBe( true );
 	} );
 } );

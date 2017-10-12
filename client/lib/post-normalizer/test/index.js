@@ -4,10 +4,6 @@
  */
 jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
-/**
- * External dependencies
- */
-import { assert } from 'chai';
 import { trim } from 'lodash';
 import { spy } from 'sinon';
 
@@ -23,7 +19,7 @@ function identifyTransform( post, callback ) {
 }
 
 function failIfCalledTransform() {
-	assert( false, 'should not have been called' );
+	expect( false ).toBeTruthy();
 	// intentionally don't call callback
 }
 
@@ -61,12 +57,12 @@ describe( 'index', () => {
 	} );
 
 	test( 'should export a function', () => {
-		assert.equal( typeof normalizer, 'function' );
+		expect( typeof normalizer ).toEqual( 'function' );
 	} );
 
 	test( 'should return null if passed null', done => {
 		normalizer( null, null, function( err, post ) {
-			assert.strictEqual( post, null );
+			expect( post ).toBe( null );
 			done( err );
 		} );
 	} );
@@ -74,7 +70,7 @@ describe( 'index', () => {
 	test( 'should return a copy of what it was passed', done => {
 		const post = {};
 		normalizer( post, [ identifyTransform ], function( err, normalized ) {
-			assert.notStrictEqual( normalized, post );
+			expect( normalized ).not.toBe( post );
 			done( err );
 		} );
 	} );
@@ -82,7 +78,7 @@ describe( 'index', () => {
 	test( 'should leave an empty object alone', done => {
 		const post = {};
 		normalizer( post, allTransforms, function( err, normalized ) {
-			assert.deepEqual( normalized, post );
+			expect( normalized ).toEqual( post );
 			done( err );
 		} );
 	} );
@@ -92,7 +88,7 @@ describe( 'index', () => {
 			title: 'title',
 		};
 		normalizer( post, [ asyncTransform, asyncTransform ], function( err, normalized ) {
-			assert.deepEqual( normalized, post );
+			expect( normalized ).toEqual( post );
 			done( err );
 		} );
 	} );
@@ -103,8 +99,8 @@ describe( 'index', () => {
 		}
 
 		normalizer( {}, [ errorInTransform, failIfCalledTransform ], function( err, normalized ) {
-			assert( err, 'error should have been supplied' );
-			assert( ! normalized, 'no normalized post should have been provided' );
+			expect( err ).toBeTruthy();
+			expect( ! normalized ).toBeTruthy();
 			done();
 		} );
 	} );
@@ -117,8 +113,8 @@ describe( 'index', () => {
 		}
 
 		normalizer( {}, [ errorInTransform, failIfCalledTransform ], function( err, normalized ) {
-			assert( err, 'error should have been supplied' );
-			assert( ! normalized, 'no normalized post should have been provided' );
+			expect( err ).toBeTruthy();
+			expect( ! normalized ).toBeTruthy();
 			done();
 		} );
 	} );
@@ -133,7 +129,7 @@ describe( 'index', () => {
 		};
 
 		normalizer( post, [ normalizer.decodeEntities ], function( err, normalized ) {
-			assert.deepEqual( normalized, {
+			expect( normalized ).toEqual( {
 				title: 'title <i>& bar</i>',
 				excerpt: 'excerpt & bar',
 				author: {
@@ -150,7 +146,7 @@ describe( 'index', () => {
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
-			assert.deepEqual( normalized, {
+			expect( normalized ).toEqual( {
 				excerpt: 'this is a longer excerpt\xA0bar',
 			} );
 			done( err );
@@ -163,7 +159,7 @@ describe( 'index', () => {
 		};
 
 		normalizer( post, [ normalizer.preventWidows ], function( err, normalized ) {
-			assert.deepEqual( normalized, {
+			expect( normalized ).toEqual( {
 				excerpt: '',
 			} );
 			done( err );
@@ -180,7 +176,7 @@ describe( 'index', () => {
 		};
 
 		normalizer( post, [ normalizer.stripHTML ], function( err, normalized ) {
-			assert.deepEqual( normalized, {
+			expect( normalized ).toEqual( {
 				title: 'title bar',
 				excerpt: 'excerpt bar',
 				author: {
@@ -199,7 +195,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.makeSiteIDSafeForAPI ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.normalized_site_id, '12345' );
+					expect( normalized.normalized_site_id ).toBe( '12345' );
 					done( err );
 				}
 			);
@@ -212,8 +208,8 @@ describe( 'index', () => {
 				},
 				[ normalizer.makeSiteIDSafeForAPI ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.normalized_site_id, 'foo/bar' );
-					assert.strictEqual( normalized.site_id, 'foo::bar' );
+					expect( normalized.normalized_site_id ).toBe( 'foo/bar' );
+					expect( normalized.site_id ).toBe( 'foo::bar' );
 					done( err );
 				}
 			);
@@ -249,27 +245,22 @@ describe( 'index', () => {
 				},
 			};
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
-				assert.strictEqual(
-					normalized.author.avatar_URL,
+				expect( normalized.author.avatar_URL ).toBe(
 					'http://example.com/me.jpg-SAFE?quality=80&strip=info&w=200'
 				);
-				assert.strictEqual(
-					normalized.featured_image,
+				expect( normalized.featured_image ).toBe(
 					'http://foo.bar/-SAFE?quality=80&strip=info&w=200'
 				);
-				assert.strictEqual(
-					normalized.post_thumbnail.URL,
+				expect( normalized.post_thumbnail.URL ).toBe(
 					'http://example.com/thumb.jpg-SAFE?quality=80&strip=info&w=200'
 				);
-				assert.strictEqual(
-					normalized.featured_media.uri,
+				expect( normalized.featured_media.uri ).toBe(
 					'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200'
 				);
-				assert.strictEqual(
-					normalized.attachments[ '1234' ].URL,
+				expect( normalized.attachments[ '1234' ].URL ).toBe(
 					'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200'
 				);
-				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
+				expect( normalized.attachments[ '3456' ].URL ).toBe( 'http://example.com/media.jpg' );
 				done( err );
 			} );
 		} );
@@ -281,7 +272,7 @@ describe( 'index', () => {
 				},
 			};
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
-				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg' );
+				expect( normalized.featured_media.uri ).toBe( 'http://example.com/media.jpg' );
 				done( err );
 			} );
 		} );
@@ -303,7 +294,7 @@ describe( 'index', () => {
 			};
 
 			normalizer( post, [ normalizer.pickPrimaryTag ], function( err, normalized ) {
-				assert.deepEqual( normalized.primary_tag, post.tags.second );
+				expect( normalized.primary_tag ).toEqual( post.tags.second );
 				done( err );
 			} );
 		} );
@@ -323,7 +314,7 @@ describe( 'index', () => {
 			};
 
 			normalizer( post, [ normalizer.pickPrimaryTag ], function( err, normalized ) {
-				assert.deepEqual( normalized.primary_tag, post.tags.first );
+				expect( normalized.primary_tag ).toEqual( post.tags.first );
 				done( err );
 			} );
 		} );
@@ -337,7 +328,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnMedia ] ) ],
 				function( err, normalized ) {
-					assert.deepEqual( normalized, { content: '<video></video>' } );
+					expect( normalized ).toEqual( { content: '<video></video>' } );
 					done( err );
 				}
 			);
@@ -350,7 +341,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.disableAutoPlayOnMedia ] ) ],
 				function( err, normalized ) {
-					assert.deepEqual( normalized, { content: '<audio></audio>' } );
+					expect( normalized ).toEqual( { content: '<audio></audio>' } );
 					done( err );
 				}
 			);
@@ -366,16 +357,16 @@ describe( 'index', () => {
 				err,
 				normalized
 			) {
-				assert.deepEqual( normalized, post );
+				expect( normalized ).toEqual( post );
 				done( err );
 			} );
 		} );
 
 		test( 'should provide a __contentDOM property to transforms and remove it after', done => {
 			function detectTimeTransform( post, dom ) {
-				assert.ok( dom );
-				assert.ok( dom.querySelectorAll );
-				assert.equal( dom.querySelectorAll( 'time' ).length, 1 );
+				expect( dom ).toBeTruthy();
+				expect( dom.querySelectorAll ).toBeTruthy();
+				expect( dom.querySelectorAll( 'time' ).length ).toEqual( 1 );
 				return post;
 			}
 			normalizer(
@@ -384,7 +375,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ detectTimeTransform ] ) ],
 				function( err, normalized ) {
-					assert.ok( normalized );
+					expect( normalized ).toBeTruthy();
 					done( err );
 				}
 			);
@@ -399,7 +390,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '<div>some content</div>' );
+					expect( normalized.content ).toEqual( '<div>some content</div>' );
 					done( err );
 				}
 			);
@@ -412,7 +403,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '<div><img align="right">some content</div>' );
+					expect( normalized.content ).toEqual( '<div><img align="right">some content</div>' );
 					done( err );
 				}
 			);
@@ -426,8 +417,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<div class="gallery" style="width: 100000px">' +
 							'<style>.gallery{}</style><div style="width:100px">some content</div></div>'
 					);
@@ -445,8 +435,7 @@ describe( 'index', () => {
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
 					/** @format */
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<div class="embed-twitter"><blockquote class="twitter-tweet">' +
 							'<p lang="en" dir="ltr"></p></blockquote>' +
 							'<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>'
@@ -464,8 +453,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<blockquote class="instagram-media" style="background:#FFF;">' +
 							'<div style="padding:8px;">' +
 							'<p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p>' +
@@ -484,7 +472,7 @@ describe( 'index', () => {
 				{ content: '', URL: 'javascript:foo' },
 				[ normalizer.makeLinksSafe ],
 				( err, normalized ) => {
-					assert.equal( normalized.URL, '' );
+					expect( normalized.URL ).toEqual( '' );
 					done( err );
 				}
 			);
@@ -505,7 +493,7 @@ describe( 'index', () => {
 					{ content: '<a href="' + badLink + '">hi there</a>' },
 					[ normalizer.withContentDOM( [ normalizer.content.makeContentLinksSafe ] ) ],
 					( err, normalized ) => {
-						assert.equal( normalized.content, '<a>hi there</a>' );
+						expect( normalized.content ).toEqual( '<a>hi there</a>' );
 						done( err );
 					}
 				);
@@ -522,8 +510,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">'
 					);
 					done( err );
@@ -539,8 +526,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<img src="http://example.wordpress.com/example.jpg-SAFE">' +
 							'<img src="http://example.wordpress.com/example2.jpg-SAFE">'
 					);
@@ -557,8 +543,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<img src="http://example.wordpress.com/example.jpg-SAFE">'
 					);
 					done( err );
@@ -574,8 +559,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
 							'<img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
 					);
@@ -592,7 +576,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '' );
+					expect( normalized.content ).toEqual( '' );
 					done( err );
 				}
 			);
@@ -607,8 +591,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ],
 				function( err, normalized ) {
-					assert.equal(
-						normalized.content,
+					expect( normalized.content ).toEqual(
 						'<img width="700" height="700" src="https://example.com/example.jpg?nope">'
 					);
 					done( err );
@@ -624,7 +607,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
+					expect( normalized.content ).toEqual( '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
@@ -638,7 +621,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
+					expect( normalized.content ).toEqual( '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
@@ -652,7 +635,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ],
 				function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
+					expect( normalized.content ).toEqual( '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
@@ -712,7 +695,7 @@ describe( 'index', () => {
 				};
 
 			normalizer( post, [ normalizer.waitForImagesToLoad ], function( err, normalized ) {
-				assert.equal( normalized.images.length, 2 );
+				expect( normalized.images.length ).toEqual( 2 );
 				done( err );
 			} );
 		} );
@@ -751,8 +734,8 @@ describe( 'index', () => {
 				err,
 				normalized
 			) {
-				assert.deepEqual( normalized.images, postRunThroughWaitForImagesToLoad.images );
-				assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/image.jpg' );
+				expect( normalized.images ).toEqual( postRunThroughWaitForImagesToLoad.images );
+				expect( normalized.canonical_image.uri ).toBe( 'http://example.com/image.jpg' );
 				done( err );
 			} );
 		} );
@@ -768,7 +751,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.pickCanonicalImage ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/featured.jpg' );
+					expect( normalized.canonical_image.uri ).toBe( 'http://example.com/featured.jpg' );
 					done( err );
 				}
 			);
@@ -791,7 +774,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.pickCanonicalImage ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/thumb.jpg' );
+					expect( normalized.canonical_image.uri ).toBe( 'http://example.com/thumb.jpg' );
 					done( err );
 				}
 			);
@@ -819,10 +802,10 @@ describe( 'index', () => {
 
 			normalizer.keepValidImages( 100, 200 )( post, callbackSpy );
 
-			assert.isTrue( callbackSpy.called );
+			expect( callbackSpy.called ).toBe( true );
 
-			assert.lengthOf( post.images, 1 );
-			assert.lengthOf( post.content_images, 2 );
+			expect( post.images.length ).toBe( 1 );
+			expect( post.content_images.length ).toBe( 2 );
 		} );
 	} );
 
@@ -834,8 +817,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual(
-						normalized.content,
+					expect( normalized.content ).toBe(
 						'<iframe src="https://example.com/" sandbox=""></iframe>'
 					);
 					done( err );
@@ -850,7 +832,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content, '<iframe src="https://spotify.com/"></iframe>' );
+					expect( normalized.content ).toBe( '<iframe src="https://spotify.com/"></iframe>' );
 					done( err );
 				}
 			);
@@ -863,8 +845,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual(
-						normalized.content,
+					expect( normalized.content ).toBe(
 						'<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>'
 					);
 					done( err );
@@ -879,7 +860,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content, '' );
+					expect( normalized.content ).toBe( '' );
 					done( err );
 				}
 			);
@@ -894,7 +875,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content, '' );
+					expect( normalized.content ).toBe( '' );
 					done( err );
 				}
 			);
@@ -908,7 +889,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content, '' );
+					expect( normalized.content ).toBe( '' );
 					done( err );
 				}
 			);
@@ -923,17 +904,16 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.lengthOf( normalized.content_embeds, 1 );
+					expect( normalized.content_embeds.length ).toBe( 1 );
 
 					const embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual(
-						embed.iframe,
+					expect( embed.iframe ).toBe(
 						'<iframe width="100" height="50" src="https://youtube.com"></iframe>'
 					);
-					assert.strictEqual( embed.height, 50 );
-					assert.strictEqual( embed.width, 100 );
-					assert.isNull( embed.type );
-					assert.strictEqual( embed.aspectRatio, 2 );
+					expect( embed.height ).toBe( 50 );
+					expect( embed.width ).toBe( 100 );
+					expect( embed.type ).toBeNull();
+					expect( embed.aspectRatio ).toBe( 2 );
 
 					done( err );
 				}
@@ -948,12 +928,12 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.lengthOf( normalized.content_media, 3 );
-					assert.lengthOf( normalized.content_images, 2 );
-					assert.lengthOf( normalized.content_embeds, 1 );
-					assert.equal( normalized.content_media[ 0 ], normalized.content_images[ 0 ] );
-					assert.equal( normalized.content_media[ 1 ], normalized.content_embeds[ 0 ] );
-					assert.equal( normalized.content_media[ 2 ], normalized.content_images[ 1 ] );
+					expect( normalized.content_media.length ).toBe( 3 );
+					expect( normalized.content_images.length ).toBe( 2 );
+					expect( normalized.content_embeds.length ).toBe( 1 );
+					expect( normalized.content_media[ 0 ] ).toEqual( normalized.content_images[ 0 ] );
+					expect( normalized.content_media[ 1 ] ).toEqual( normalized.content_embeds[ 0 ] );
+					expect( normalized.content_media[ 2 ] ).toEqual( normalized.content_images[ 1 ] );
 					done( err );
 				}
 			);
@@ -968,9 +948,9 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.lengthOf( normalized.content_media, 3 );
-					assert.lengthOf( normalized.content_images, 3 );
-					assert.lengthOf( normalized.content_embeds, 0 );
+					expect( normalized.content_media.length ).toBe( 3 );
+					expect( normalized.content_images.length ).toBe( 3 );
+					expect( normalized.content_embeds.length ).toBe( 0 );
 
 					done( err );
 				}
@@ -984,11 +964,10 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.lengthOf( normalized.content_embeds, 1 );
+					expect( normalized.content_embeds.length ).toBe( 1 );
 
 					const embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual(
-						embed.iframe,
+					expect( embed.iframe ).toBe(
 						'<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
 					);
 					done( err );
@@ -1005,7 +984,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'youtube' );
+					expect( normalized.content_embeds[ 0 ].type ).toBe( 'youtube' );
 					done( err );
 				}
 			);
@@ -1018,7 +997,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'vimeo' );
+					expect( normalized.content_embeds[ 0 ].type ).toBe( 'vimeo' );
 					done( err );
 				}
 			);
@@ -1030,7 +1009,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds );
+					expect( normalized.content_embeds ).not.toBeDefined();
 					done( err );
 				}
 			);
@@ -1042,7 +1021,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.deepEqual( normalized.content_embeds, [] );
+					expect( normalized.content_embeds ).toEqual( [] );
 					done( err );
 				}
 			);
@@ -1063,11 +1042,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ],
 				function( err, normalized ) {
-					assert.deepEqual(
-						normalized.content_embeds,
-						[],
-						'No content_embeds should have been found'
-					);
+					expect( normalized.content_embeds ).toEqual( [] );
 					done( err );
 				}
 			);
@@ -1084,9 +1059,9 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectPolls ] ) ],
 				function( err, normalized ) {
-					assert.include(
-						normalized.content,
-						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' //eslint-disable-line max-len
+					expect( normalized.content ).toContain(
+						//eslint-disable-line max-len
+						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>'
 					);
 					done( err );
 				}
@@ -1114,7 +1089,7 @@ describe( 'index', () => {
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeElementsBySelector ] ) ],
 				function( err, normalized ) {
-					assert.equal( trim( normalized.content ), '' );
+					expect( trim( normalized.content ) ).toEqual( '' );
 					done( err );
 				}
 			);
@@ -1127,7 +1102,7 @@ describe( 'index', () => {
 				err,
 				normalized
 			) {
-				assert.strictEqual( normalized.better_excerpt, expected );
+				expect( normalized.better_excerpt ).toBe( expected );
 				done( err );
 			} );
 		}
@@ -1195,7 +1170,7 @@ describe( 'index', () => {
 				err,
 				normalized
 			) {
-				assert.strictEqual( normalized.content_no_html, 'hi there' );
+				expect( normalized.content_no_html ).toBe( 'hi there' );
 				done( err );
 			} );
 		} );
@@ -1237,7 +1212,7 @@ describe( 'index', () => {
 				{ content: source },
 				[ normalizer.withContentDOM( [ linkJetpackCarousels ] ) ],
 				( err, normalized ) => {
-					assert.deepEqual( normalized.content.trim(), expected.trim() );
+					expect( normalized.content.trim() ).toEqual( expected.trim() );
 					done( err );
 				}
 			);

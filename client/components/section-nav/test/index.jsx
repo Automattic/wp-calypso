@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ReactDom from 'react-dom';
@@ -54,20 +53,20 @@ describe( 'section-nav', () => {
 		} );
 
 		test( 'should render a header and a panel', () => {
-			assert.equal( headerElem.props.className, 'section-nav__mobile-header' );
-			assert.equal( panelElem.props.className, 'section-nav__panel' );
-			assert.equal( headerTextElem.props.className, 'section-nav__mobile-header-text' );
+			expect( headerElem.props.className ).toEqual( 'section-nav__mobile-header' );
+			expect( panelElem.props.className ).toEqual( 'section-nav__panel' );
+			expect( headerTextElem.props.className ).toEqual( 'section-nav__mobile-header-text' );
 		} );
 
 		test( 'should render selectedText within mobile header', () => {
-			assert.equal( text, 'test' );
+			expect( text ).toEqual( 'test' );
 		} );
 
 		test( 'should render children', done => {
 			//React.Children.only should work here but gives an error about not being the only child
 			React.Children.map( panelElem.props.children, function( obj ) {
 				if ( obj.type === 'p' ) {
-					assert.equal( obj.props.children, 'mmyellow' );
+					expect( obj.props.children ).toEqual( 'mmyellow' );
 					done();
 				}
 			} );
@@ -83,7 +82,7 @@ describe( 'section-nav', () => {
 				<p>mmyellow</p>
 			);
 
-			assert.notEqual( component.props.children[ 0 ].className, 'section-nav__mobile-header' );
+			expect( component.props.children[ 0 ].className ).not.toEqual( 'section-nav__mobile-header' );
 		} );
 	} );
 
@@ -100,13 +99,13 @@ describe( 'section-nav', () => {
 				<p>placeholder</p>
 			);
 			const tree = TestUtils.renderIntoDocument( elem );
-			assert( ! tree.state.mobileOpen );
+			expect( ! tree.state.mobileOpen ).toBeTruthy();
 			TestUtils.Simulate.click(
 				ReactDom.findDOMNode(
 					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 				)
 			);
-			assert( tree.state.mobileOpen );
+			expect( tree.state.mobileOpen ).toBeTruthy();
 		} );
 
 		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', done => {
@@ -121,27 +120,27 @@ describe( 'section-nav', () => {
 			);
 			const tree = TestUtils.renderIntoDocument( elem );
 
-			assert( ! tree.state.mobileOpen );
+			expect( ! tree.state.mobileOpen ).toBeTruthy();
 			TestUtils.Simulate.click(
 				ReactDom.findDOMNode(
 					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 				)
 			);
-			assert( tree.state.mobileOpen );
+			expect( tree.state.mobileOpen ).toBeTruthy();
 			TestUtils.Simulate.click(
 				ReactDom.findDOMNode(
 					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 				)
 			);
-			assert( ! tree.state.mobileOpen );
+			expect( ! tree.state.mobileOpen ).toBeTruthy();
 			TestUtils.Simulate.click(
 				ReactDom.findDOMNode(
 					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 				)
 			);
-			assert( tree.state.mobileOpen );
+			expect( tree.state.mobileOpen ).toBeTruthy();
 
-			assert( spy.calledTwice );
+			expect( spy.calledTwice ).toBeTruthy();
 			done();
 		} );
 	} );

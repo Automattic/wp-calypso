@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
@@ -21,35 +20,35 @@ describe( 'index', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ noop } />
 		);
-		assert.equal( 1, bulkSelect.find( '.bulk-select' ).length );
+		expect( 1 ).toEqual( bulkSelect.find( '.bulk-select' ).length );
 	} );
 
 	test( 'should not be checked when initialized without selectedElements', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ noop } />
 		);
-		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
+		expect( 0 ).toEqual( bulkSelect.find( '.is-checked' ).length );
 	} );
 
 	test( 'should be checked when initialized with all elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 3 } totalElements={ 3 } onToggle={ noop } />
 		);
-		assert.equal( 1, bulkSelect.find( '.is-checked' ).length );
+		expect( 1 ).toEqual( bulkSelect.find( '.is-checked' ).length );
 	} );
 
 	test( 'should not be checked when initialized with some elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } />
 		);
-		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
+		expect( 0 ).toEqual( bulkSelect.find( '.is-checked' ).length );
 	} );
 
 	test( 'should render line gridicon when initialized with some elements selected', () => {
 		const bulkSelect = shallow(
 			<BulkSelect selectedElements={ 2 } totalElements={ 3 } onToggle={ noop } />
 		);
-		assert.equal( 1, bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
+		expect( 1 ).toEqual( bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
 	} );
 
 	test( 'should be call onToggle when clicked', () => {
@@ -61,12 +60,12 @@ describe( 'index', () => {
 			<BulkSelect selectedElements={ 0 } totalElements={ 3 } onToggle={ callback } />
 		);
 		bulkSelect.simulate( 'click' );
-		assert.equal( hasBeenCalled, true );
+		expect( hasBeenCalled ).toEqual( true );
 	} );
 
 	test( 'should be call onToggle with the new state when there are no selected elements', done => {
 		const callback = function( newState ) {
-			assert.equal( newState, true );
+			expect( newState ).toEqual( true );
 			done();
 		};
 		const bulkSelect = shallow(
@@ -77,7 +76,7 @@ describe( 'index', () => {
 
 	test( 'should be call onToggle with the new state when there are some selected elements', done => {
 		const callback = function( newState ) {
-			assert.equal( newState, false );
+			expect( newState ).toEqual( false );
 			done();
 		};
 		const bulkSelect = shallow(
@@ -88,7 +87,7 @@ describe( 'index', () => {
 
 	test( 'should be call onToggle with the new state when there all elements are selected', done => {
 		const callback = function( newState ) {
-			assert.equal( newState, false );
+			expect( newState ).toEqual( false );
 			done();
 		};
 		const bulkSelect = shallow(

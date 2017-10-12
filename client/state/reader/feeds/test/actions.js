@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
 import sinon from 'sinon';
 
 /**
@@ -52,7 +51,7 @@ describe( 'actions', () => {
 					} );
 				},
 				err => {
-					assert.fail( 'Errback should not be invoked!', err );
+					expect( false ).toBe( true );
 					return err;
 				}
 			);
@@ -82,7 +81,7 @@ describe( 'actions', () => {
 		test( 'should dispatch error, eventually', () => {
 			return request.then(
 				() => {
-					assert.fail( 'callback should not be invoked!', arguments );
+					expect( false ).toBe( true );
 					throw new Error( 'errback should have been invoked' );
 				},
 				() => {

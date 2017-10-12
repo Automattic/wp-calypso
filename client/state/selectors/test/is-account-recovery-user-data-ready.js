@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -23,7 +22,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 			},
 		} );
 
-		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
+		expect( isAccountRecoveryUserDataReady( state ) ).toBe( true );
 	} );
 
 	test( 'should return true if firstname, lastname, and url is set.', () => {
@@ -39,7 +38,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 			},
 		} );
 
-		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
+		expect( isAccountRecoveryUserDataReady( state ) ).toBe( true );
 	} );
 
 	test( 'should return false if one of ( firstname, lastname, url ) is missing.', () => {
@@ -54,7 +53,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 			},
 		} );
 
-		assert.isFalse( isAccountRecoveryUserDataReady( noFirstname ) );
+		expect( isAccountRecoveryUserDataReady( noFirstname ) ).toBe( false );
 
 		const noLastname = deepFreeze( {
 			accountRecovery: {
@@ -67,7 +66,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 			},
 		} );
 
-		assert.isFalse( isAccountRecoveryUserDataReady( noLastname ) );
+		expect( isAccountRecoveryUserDataReady( noLastname ) ).toBe( false );
 
 		const noUrl = deepFreeze( {
 			accountRecovery: {
@@ -80,10 +79,10 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 			},
 		} );
 
-		assert.isFalse( isAccountRecoveryUserDataReady( noUrl ) );
+		expect( isAccountRecoveryUserDataReady( noUrl ) ).toBe( false );
 	} );
 
 	test( 'should return false as default value', () => {
-		assert.isFalse( isAccountRecoveryUserDataReady( undefined ) );
+		expect( isAccountRecoveryUserDataReady( undefined ) ).toBe( false );
 	} );
 } );

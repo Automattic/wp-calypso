@@ -6,11 +6,6 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import userSettings from '..';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
@@ -23,17 +18,17 @@ describe( 'User Settings', () => {
 	} );
 
 	test( 'should consider overridden settings as saved', done => {
-		assert.isTrue( userSettings.updateSetting( 'test', true ) );
-		assert.isTrue( userSettings.updateSetting( 'lang_id', true ) );
+		expect( userSettings.updateSetting( 'test', true ) ).toBe( true );
+		expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
 
-		assert.isTrue( userSettings.unsavedSettings.test );
-		assert.isTrue( userSettings.unsavedSettings.lang_id );
+		expect( userSettings.unsavedSettings.test ).toBe( true );
+		expect( userSettings.unsavedSettings.lang_id ).toBe( true );
 
 		userSettings.saveSettings( assertCorrectSettingIsRemoved, { test: true } );
 
 		function assertCorrectSettingIsRemoved() {
-			assert.isUndefined( userSettings.unsavedSettings.test );
-			assert.isTrue( userSettings.unsavedSettings.lang_id );
+			expect( userSettings.unsavedSettings.test ).not.toBeDefined();
+			expect( userSettings.unsavedSettings.lang_id ).toBe( true );
 			done();
 		}
 	} );
@@ -77,22 +72,22 @@ describe( 'User Settings', () => {
 	} );
 
 	test( 'should support flat and deep settings', done => {
-		assert.isFalse( userSettings.settings.lang_id );
-		assert.isFalse( userSettings.settings.testParent.testChild );
+		expect( userSettings.settings.lang_id ).toBe( false );
+		expect( userSettings.settings.testParent.testChild ).toBe( false );
 
-		assert.isTrue( userSettings.updateSetting( 'lang_id', true ) );
-		assert.isTrue( userSettings.updateSetting( 'testParent.testChild', true ) );
+		expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
+		expect( userSettings.updateSetting( 'testParent.testChild', true ) ).toBe( true );
 
-		assert.isTrue( userSettings.unsavedSettings.lang_id );
-		assert.isTrue( userSettings.unsavedSettings.testParent.testChild );
+		expect( userSettings.unsavedSettings.lang_id ).toBe( true );
+		expect( userSettings.unsavedSettings.testParent.testChild ).toBe( true );
 
 		userSettings.saveSettings( assertCorrectSettingIsSaved );
 
 		function assertCorrectSettingIsSaved() {
-			assert.isUndefined( userSettings.unsavedSettings.lang_id );
-			assert.isUndefined( userSettings.unsavedSettings.testParent );
-			assert.isTrue( userSettings.settings.lang_id );
-			assert.isTrue( userSettings.settings.testParent.testChild );
+			expect( userSettings.unsavedSettings.lang_id ).not.toBeDefined();
+			expect( userSettings.unsavedSettings.testParent ).not.toBeDefined();
+			expect( userSettings.settings.lang_id ).toBe( true );
+			expect( userSettings.settings.testParent.testChild ).toBe( true );
 			done();
 		}
 	} );

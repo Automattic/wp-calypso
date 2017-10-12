@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { findIndex, isUndefined, some } from 'lodash';
 
 /**
@@ -27,20 +26,20 @@ describe( 'Users Store', () => {
 	} );
 
 	test( 'Store should be an object', () => {
-		assert.isObject( UsersStore );
+		expect( typeof UsersStore ).toBe( 'object' );
 	} );
 
 	test( 'Store should have method emitChange', () => {
-		assert.isFunction( UsersStore.emitChange );
+		expect( typeof UsersStore.emitChange ).toBe( 'function' );
 	} );
 
 	describe( 'Getting user by login', () => {
 		test( 'Store should have method getUserByLogin', () => {
-			assert.isFunction( UsersStore.getUserByLogin );
+			expect( typeof UsersStore.getUserByLogin ).toBe( 'function' );
 		} );
 
 		test( 'Should return undefined when user not in store', () => {
-			assert.isUndefined( UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login ) );
+			expect( UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login ) ).not.toBeDefined();
 		} );
 
 		test( 'Should return a user object when the user exists', () => {
@@ -48,8 +47,8 @@ describe( 'Users Store', () => {
 			Dispatcher.handleServerAction( actions.fetched );
 			user = UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login );
 
-			assert.isObject( user );
-			assert.equal( user.ID, usersData.users[ 0 ].ID );
+			expect( typeof user ).toBe( 'object' );
+			expect( user.ID ).toEqual( usersData.users[ 0 ].ID );
 		} );
 	} );
 
@@ -62,30 +61,30 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Should update the store on RECEIVE_USERS', () => {
-			assert.isNotNull( users );
+			expect( users ).not.toBeNull();
 		} );
 
 		test( 'The users store should return an array of objects when fetching users', () => {
-			assert.isArray( users );
-			assert.isObject( users[ 0 ] );
+			expect( Array.isArray( users ) ).toBe( true );
+			expect( typeof users[ 0 ] ).toBe( 'object' );
 		} );
 
 		test( 'A user object from the store should contain an array of roles', () => {
-			assert.isArray( users[ 0 ].roles );
+			expect( Array.isArray( users[ 0 ].roles ) ).toBe( true );
 		} );
 
 		test( 'Re-fetching a list of users when a users was deleted from the site should result in a smaller array', () => {
 			let lessUsers;
 			Dispatcher.handleServerAction( actions.fetchAgainUserDeleted );
 			lessUsers = UsersStore.getUsers( options );
-			assert.isBelow( lessUsers.length, users.length );
+			expect( lessUsers.length ).toBeLessThan( users.length );
 		} );
 
 		test( 'Fetching more users should add to the array of objects', () => {
 			let moreUsers;
 			Dispatcher.handleServerAction( actions.fetchMoreUsers );
 			moreUsers = UsersStore.getUsers( options );
-			assert.isAbove( moreUsers.length, users.length );
+			expect( moreUsers.length ).toBeGreaterThan( users.length );
 		} );
 	} );
 
@@ -97,15 +96,15 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'has the correct total users', () => {
-			assert.equal( pagination.totalUsers, 7 );
+			expect( pagination.totalUsers ).toEqual( 7 );
 		} );
 
 		test( 'has the correct offset', () => {
-			assert.equal( pagination.usersCurrentOffset, 0 );
+			expect( pagination.usersCurrentOffset ).toEqual( 0 );
 		} );
 
 		test( 'fetches the correct number of users', () => {
-			assert.equal( pagination.numUsersFetched, 5 );
+			expect( pagination.numUsersFetched ).toEqual( 5 );
 		} );
 
 		describe( 'after fetching more users', () => {
@@ -115,11 +114,11 @@ describe( 'Users Store', () => {
 			} );
 
 			test( 'has the correct offset', () => {
-				assert.equal( pagination.usersCurrentOffset, 5 );
+				expect( pagination.usersCurrentOffset ).toEqual( 5 );
 			} );
 
 			test( 'fetches the correct number of users', () => {
-				assert.equal( pagination.numUsersFetched, 7 );
+				expect( pagination.numUsersFetched ).toEqual( 7 );
 			} );
 		} );
 	} );
@@ -133,17 +132,17 @@ describe( 'Users Store', () => {
 
 		test( 'getUpdatedParams returns correct params', () => {
 			const updatedParams = UsersStore.getUpdatedParams( options );
-			assert.equal( updatedParams.offset, 0 );
-			assert.equal( updatedParams.number, usersData.found );
+			expect( updatedParams.offset ).toEqual( 0 );
+			expect( updatedParams.number ).toEqual( usersData.found );
 		} );
 
 		test( 'Polling updates expected users', () => {
 			const updatedUsers = UsersStore.getUsers( options );
-			assert.equal( updatedUsers.length, usersData.found );
+			expect( updatedUsers.length ).toEqual( usersData.found );
 
 			// The last two users should have a 'contributor' role
 			updatedUsers.slice( -2, 2 ).forEach( user => {
-				assert.equal( user.roles[ 0 ], 'contributor' );
+				expect( user.roles[ 0 ] ).toEqual( 'contributor' );
 			} );
 		} );
 	} );
@@ -160,7 +159,7 @@ describe( 'Users Store', () => {
 
 			Dispatcher.handleServerAction( actions.updateSingleUser );
 			usersAgain = UsersStore.getUsers( options );
-			assert.equal( usersAgain[ testUserIndex ].name, 'Test Won' );
+			expect( usersAgain[ testUserIndex ].name ).toEqual( 'Test Won' );
 		} );
 
 		test( 'Error should restore the updated user', () => {
@@ -168,15 +167,15 @@ describe( 'Users Store', () => {
 				user = UsersStore.getUser( siteId, userId );
 			let userAgain, userRestored;
 
-			assert.equal( user.name, 'Test One' );
+			expect( user.name ).toEqual( 'Test One' );
 
 			Dispatcher.handleServerAction( actions.updateSingleUser );
 			userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain.name, 'Test Won' );
+			expect( userAgain.name ).toEqual( 'Test Won' );
 
 			Dispatcher.handleServerAction( actions.updateUserError );
 			userRestored = UsersStore.getUser( siteId, userId );
-			assert.equal( userRestored.name, 'Test One' );
+			expect( userRestored.name ).toEqual( 'Test One' );
 		} );
 	} );
 
@@ -191,7 +190,7 @@ describe( 'Users Store', () => {
 		test( 'Should delete a specific user', () => {
 			Dispatcher.handleServerAction( actions.deleteUser );
 			userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain, null );
+			expect( userAgain ).toEqual( null );
 		} );
 
 		test( 'Error should restore the deleted user', () => {
@@ -199,11 +198,11 @@ describe( 'Users Store', () => {
 
 			Dispatcher.handleServerAction( actions.deleteUser );
 			userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain, null );
+			expect( userAgain ).toEqual( null );
 
 			Dispatcher.handleServerAction( actions.deleteUserError );
 			userRestored = UsersStore.getUser( siteId, userId );
-			assert.equal( userRestored.name, 'Test One' );
+			expect( userRestored.name ).toEqual( 'Test One' );
 		} );
 
 		test( 'There should be no undefined objects in user array after deleting a user', () => {
@@ -211,7 +210,7 @@ describe( 'Users Store', () => {
 			Dispatcher.handleServerAction( actions.deleteUser );
 			users = UsersStore.getUsers( options );
 			someUndefined = some( users, isUndefined );
-			assert.isFalse( someUndefined );
+			expect( someUndefined ).toBe( false );
 		} );
 	} );
 
@@ -222,10 +221,10 @@ describe( 'Users Store', () => {
 		test( 'Fetching a single user should add to the store', () => {
 			const users = UsersStore.getUsers( options );
 			let usersAgain;
-			assert.lengthOf( users, 5 );
+			expect( users.length ).toBe( 5 );
 			Dispatcher.handleServerAction( actions.receiveSingleUser );
 			usersAgain = UsersStore.getUsers( options );
-			assert.lengthOf( usersAgain, 6 );
+			expect( usersAgain.length ).toBe( 6 );
 		} );
 	} );
 } );

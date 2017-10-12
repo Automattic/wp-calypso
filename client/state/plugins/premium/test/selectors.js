@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -31,143 +30,145 @@ const state = deepFreeze( {
 
 describe( 'Premium Plugin Selectors', () => {
 	test( 'should contain isRequesting method', () => {
-		assert.equal( typeof selectors.isRequesting, 'function' );
+		expect( typeof selectors.isRequesting ).toEqual( 'function' );
 	} );
 
 	test( 'should contain isStarted method', () => {
-		assert.equal( typeof selectors.isStarted, 'function' );
+		expect( typeof selectors.isStarted ).toEqual( 'function' );
 	} );
 
 	test( 'should contain isFinished method', () => {
-		assert.equal( typeof selectors.isFinished, 'function' );
+		expect( typeof selectors.isFinished ).toEqual( 'function' );
 	} );
 
 	test( 'should contain getPluginsForSite method', () => {
-		assert.equal( typeof selectors.getPluginsForSite, 'function' );
+		expect( typeof selectors.getPluginsForSite ).toEqual( 'function' );
 	} );
 
 	test( 'should contain getActivePlugin method', () => {
-		assert.equal( typeof selectors.getActivePlugin, 'function' );
+		expect( typeof selectors.getActivePlugin ).toEqual( 'function' );
 	} );
 
 	test( 'should contain getNextPlugin method', () => {
-		assert.equal( typeof selectors.getNextPlugin, 'function' );
+		expect( typeof selectors.getNextPlugin ).toEqual( 'function' );
 	} );
 
 	describe( 'isRequesting', () => {
 		test( 'Should get `true` if the requested site is not in the current state', () => {
-			assert.equal( selectors.isRequesting( state, 'no.site' ), true );
+			expect( selectors.isRequesting( state, 'no.site' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `false` if the requested site is not being fetched', () => {
-			assert.equal( selectors.isRequesting( state, 'finished.site' ), false );
+			expect( selectors.isRequesting( state, 'finished.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `true` if the requested site is being fetched', () => {
-			assert.equal( selectors.isRequesting( state, 'wait.site' ), true );
+			expect( selectors.isRequesting( state, 'wait.site' ) ).toEqual( true );
 		} );
 	} );
 
 	describe( 'isStarted', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			assert.equal( selectors.isStarted( state, 'no.site' ), false );
+			expect( selectors.isStarted( state, 'no.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `false` if there are no plugins installing on the requested site', () => {
-			assert.equal( selectors.isStarted( state, 'start.site' ), false );
+			expect( selectors.isStarted( state, 'start.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `true` if there is a plugin installing on the requested site', () => {
-			assert.equal( selectors.isStarted( state, 'installing.site' ), true );
+			expect( selectors.isStarted( state, 'installing.site' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `true` if all plugins on the requested site are either done or have errors', () => {
-			assert.equal( selectors.isStarted( state, 'finished.site' ), true );
+			expect( selectors.isStarted( state, 'finished.site' ) ).toEqual( true );
 		} );
 	} );
 
 	describe( 'isFinished', () => {
 		test( 'Should get `true` if the requested site is not in the current state', () => {
-			assert.equal( selectors.isFinished( state, 'no.site' ), true );
+			expect( selectors.isFinished( state, 'no.site' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `false` if there is a plugin installing on the requested site', () => {
-			assert.equal( selectors.isFinished( state, 'installing.site' ), false );
+			expect( selectors.isFinished( state, 'installing.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `true` if all plugins on the requested site are either done or have errors', () => {
-			assert.equal( selectors.isFinished( state, 'finished.site' ), true );
+			expect( selectors.isFinished( state, 'finished.site' ) ).toEqual( true );
 		} );
 	} );
 
 	describe( 'isInstalling', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			assert.equal( selectors.isInstalling( state, 'no.site' ), false );
+			expect( selectors.isInstalling( state, 'no.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `true` if there is a plugin installing on the requested site', () => {
-			assert.equal( selectors.isInstalling( state, 'installing.site' ), true );
+			expect( selectors.isInstalling( state, 'installing.site' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', () => {
-			assert.equal( selectors.isInstalling( state, 'installing.site', 'akismet' ), true );
+			expect( selectors.isInstalling( state, 'installing.site', 'akismet' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', () => {
-			assert.equal( selectors.isInstalling( state, 'config.site', 'akismet' ), true );
+			expect( selectors.isInstalling( state, 'config.site', 'akismet' ) ).toEqual( true );
 		} );
 
 		test( 'Should get `false` if all plugins on the requested site are either done or have errors', () => {
-			assert.equal( selectors.isInstalling( state, 'finished.site' ), false );
+			expect( selectors.isInstalling( state, 'finished.site' ) ).toEqual( false );
 		} );
 	} );
 
 	describe( 'getPluginsForSite', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			assert.equal( selectors.getPluginsForSite( state, 'no.site' ), false );
+			expect( selectors.getPluginsForSite( state, 'no.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get the list of plugins if the site exists in the current state', () => {
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' ).length, 3 );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 0 ].slug, 'vaultpress' );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 1 ].slug, 'akismet' );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 2 ].slug, 'polldaddy' );
+			expect( selectors.getPluginsForSite( state, 'start.site' ).length ).toEqual( 3 );
+			expect( selectors.getPluginsForSite( state, 'start.site' )[ 0 ].slug ).toEqual(
+				'vaultpress'
+			);
+			expect( selectors.getPluginsForSite( state, 'start.site' )[ 1 ].slug ).toEqual( 'akismet' );
+			expect( selectors.getPluginsForSite( state, 'start.site' )[ 2 ].slug ).toEqual( 'polldaddy' );
 		} );
 	} );
 
 	describe( 'getActivePlugin', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			assert.equal( selectors.getActivePlugin( state, 'no.site' ), false );
+			expect( selectors.getActivePlugin( state, 'no.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `false` if no plugins on the requested site are currently being installed', () => {
-			assert.equal( selectors.getActivePlugin( state, 'start.site' ), false );
+			expect( selectors.getActivePlugin( state, 'start.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `false` if all plugins on the requested site are finished installing', () => {
-			assert.equal( selectors.getActivePlugin( state, 'finished.site' ), false );
+			expect( selectors.getActivePlugin( state, 'finished.site' ) ).toEqual( false );
 		} );
 
 		test( 'Should get `akismet` if akismet is the currently being installed on the requested site', () => {
-			assert.equal( selectors.getActivePlugin( state, 'installing.site' ).slug, 'akismet' );
+			expect( selectors.getActivePlugin( state, 'installing.site' ).slug ).toEqual( 'akismet' );
 		} );
 	} );
 
 	describe( 'getNextPlugin', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			assert.equal( selectors.getNextPlugin( state, 'no.site' ), false );
+			expect( selectors.getNextPlugin( state, 'no.site' ) ).toEqual( false );
 		} );
 
 		test( "Should get the first plugin in the list if the requested site hasn't started yet", () => {
-			assert.equal( selectors.getNextPlugin( state, 'start.site' ).slug, 'vaultpress' );
+			expect( selectors.getNextPlugin( state, 'start.site' ).slug ).toEqual( 'vaultpress' );
 		} );
 
 		test( 'Should get `polldaddy`, next in the list, if the requested site is installing akismet', () => {
-			assert.equal( selectors.getNextPlugin( state, 'installing.site' ).slug, 'polldaddy' );
+			expect( selectors.getNextPlugin( state, 'installing.site' ).slug ).toEqual( 'polldaddy' );
 		} );
 
 		test( 'Should get `false`, if the requested site is finished installing all plugins', () => {
-			assert.equal( selectors.getNextPlugin( state, 'finished.site' ), false );
+			expect( selectors.getNextPlugin( state, 'finished.site' ) ).toEqual( false );
 		} );
 	} );
 } );

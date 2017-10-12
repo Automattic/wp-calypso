@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { identity } from 'lodash';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
@@ -46,40 +45,35 @@ describe( 'Theme', () => {
 			} );
 
 			test( 'should render a <div> with a className of "theme"', () => {
-				assert( themeNode !== null, "DOM node doesn't exist" );
-				assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
-				assert.include(
-					themeNode.className,
-					'theme is-actionable',
-					'className does not contain "theme is-actionable"'
-				);
+				expect( themeNode !== null ).toBeTruthy();
+				expect( themeNode.nodeName === 'DIV' ).toBeTruthy();
+				expect( themeNode.className ).toContain( 'theme is-actionable' );
 
-				assert( themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name' );
+				expect(
+					themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name'
+				).toBeTruthy();
 			} );
 
 			test( 'should render a screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
-				assert.include( imgNode.getAttribute( 'src' ), '/theme/screenshot.png' );
+				expect( imgNode.getAttribute( 'src' ) ).toContain( '/theme/screenshot.png' );
 			} );
 
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
-				assert( props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
+				expect( props.onScreenshotClick.calledOnce ).toBeTruthy();
 			} );
 
 			test( 'should not show a price when there is none', () => {
-				assert(
-					themeNode.getElementsByClassName( 'price' ).length === 0,
-					'price should not appear'
-				);
+				expect( themeNode.getElementsByClassName( 'price' ).length === 0 ).toBeTruthy();
 			} );
 
 			test( 'should render a More button', () => {
 				const more = themeNode.getElementsByClassName( 'theme__more-button' );
 
-				assert( more.length === 1, 'More button container not found' );
-				assert( more[ 0 ].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
+				expect( more.length === 1 ).toBeTruthy();
+				expect( more[ 0 ].getElementsByTagName( 'button' ).length === 1 ).toBeTruthy();
 			} );
 		} );
 
@@ -93,7 +87,7 @@ describe( 'Theme', () => {
 			test( 'should not render a More button', () => {
 				const more = themeNode.getElementsByClassName( 'theme__more-button' );
 
-				assert( more.length === 0, 'More button container found' );
+				expect( more.length === 0 ).toBeTruthy();
 			} );
 		} );
 	} );
@@ -111,8 +105,8 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'should render a <div> with an is-placeholder class', () => {
-			assert( themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
-			assert.include( themeNode.className, 'is-placeholder', 'no is-placeholder' );
+			expect( themeNode.nodeName === 'DIV' ).toBeTruthy();
+			expect( themeNode.className ).toContain( 'is-placeholder' );
 		} );
 	} );
 
@@ -125,7 +119,9 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'should show a price', () => {
-			assert( themeNode.getElementsByClassName( 'theme-badge__price' )[ 0 ].textContent === '$50' );
+			expect(
+				themeNode.getElementsByClassName( 'theme-badge__price' )[ 0 ].textContent === '$50'
+			).toBeTruthy();
 		} );
 	} );
 } );
