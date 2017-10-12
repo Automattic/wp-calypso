@@ -3,7 +3,7 @@
  */
 import { get } from 'lodash';
 
-// path to mailchim setting state branch
+// path to MailChimp setting state branch
 const basePath = ( siteId ) => (
 	[
 		'extensions',
@@ -16,7 +16,7 @@ const basePath = ( siteId ) => (
 );
 
 /**
- * Returns true if currently requesting mailchim settings or false otherwise.
+ * Returns true if currently requesting MailChimp settings or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -41,6 +41,13 @@ export const requestingSettingsError = ( state, siteId ) => {
 	return get( state, path, null );
 };
 
+/**
+ * Returns MailChimp settings
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @return {Object}          MailChimp settings
+ */
 export const mailchimpSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'settings' ];
 
@@ -101,7 +108,7 @@ export const isApiKeyCorrect = ( state, siteId ) => {
 };
 
 /**
- * Returns true if currently requesting mailchim lists or false otherwise.
+ * Returns true if currently requesting MailChimp lists or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -118,7 +125,7 @@ export const isRequestingLists = ( state, siteId ) => {
  *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @return {?Object}         Theme object
+ * @return {Object}          Sync status
  */
 export const syncStatus = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'syncStatus' ];
@@ -127,7 +134,7 @@ export const syncStatus = ( state, siteId ) => {
 };
 
 /**
- * Returns true if currently requesting mailchim sync status or false otherwise.
+ * Returns true if currently requesting MailChimp sync status or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
@@ -140,7 +147,7 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
 };
 
 /**
- * Returns true if currently requesting mailchim resync procedure or false otherwise.
+ * Returns true if currently requesting MailChimp resync procedure or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID

@@ -201,10 +201,9 @@ export const requestSettings = ( siteId ) => ( dispatch, getState ) => {
  * @param  {String}        apiKey        MailChimp api key
  * @return {Function}                    Action thunk
  */
-export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch ) => {
+	if ( null == siteId || null == apiKey ) {
+		return;
 	}
 
 	dispatch( mailchimpApiKeySubmit( siteId ) );
@@ -225,10 +224,9 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch, getState 
  * @param  {Object}        storeInfo     MailChimp store info settings object
  * @return {Function}                    Action thunk
  */
-export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) => {
+	if ( null == siteId || null == storeInfo ) {
+		return;
 	}
 
 	dispatch( mailchimpStoreInfoSubmit( siteId ) );
@@ -250,10 +248,9 @@ export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch, get
  * @param  {Object}        campaignDefaults MailChimp campaign defaults settings object
  * @return {Function}                       Action thunk
  */
-export const submitMailchimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export const submitMailchimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch ) => {
+	if ( null == siteId || null == campaignDefaults ) {
+		return;
 	}
 
 	dispatch( mailchimpCampaignDefaultsSubmit( siteId ) );
@@ -343,10 +340,9 @@ export const requestResync = ( siteId ) => ( dispatch, getState ) => {
  * @param  {Object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
-export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch ) => {
+	if ( null == siteId || null == newsLetter ) {
+		return;
 	}
 
 	dispatch( mailchimpNewsletterSettingsSubmit( siteId ) );
