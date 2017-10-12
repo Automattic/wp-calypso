@@ -598,21 +598,12 @@ export class EditorHtmlToolbar extends Component {
 							>
 								<Button
 									borderless
-									className="editor-html-toolbar__button-insert-media"
-									compact
-									onClick={ this.openMediaModal }
-								>
-									<Gridicon icon="add-outline" />
-								</Button>
-								<Button
-									borderless
 									className="editor-html-toolbar__button-insert-content-dropdown"
 									compact
 									onClick={ this.toggleInsertContentMenu }
 								>
-									<Gridicon
-										icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' }
-									/>
+									<Gridicon icon="add-outline" />
+									<span>{ translate( 'Add' ) }</span>
 								</Button>
 							</div>
 							{ map( buttons, ( { disabled, label, onClick }, tag ) => (
