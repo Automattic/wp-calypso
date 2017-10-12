@@ -32,7 +32,7 @@ export const SimplePaymentsTour = makeTour(
 			<p>
 				{ translate(
 					'Did you know? ' +
-						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} -- ' +
+						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} — ' +
 						'sell tickets, collect donations, accept tips, and more.',
 					{
 						components: {
