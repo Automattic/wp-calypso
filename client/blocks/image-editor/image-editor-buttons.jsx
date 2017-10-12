@@ -46,7 +46,11 @@ class ImageEditorButtons extends Component {
 		return (
 			<div className="image-editor__buttons">
 				{ onCancel && (
-					<Button className="image-editor__buttons-button" onClick={ onCancel }>
+					<Button
+						className="image-editor__buttons-button"
+						onClick={ onCancel }
+						data-e2e-button="cancel"
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 				) }
@@ -54,6 +58,7 @@ class ImageEditorButtons extends Component {
 					className="image-editor__buttons-button"
 					disabled={ ! hasChanges }
 					onClick={ onReset }
+					data-e2e-button="reset"
 				>
 					{ translate( 'Reset' ) }
 				</Button>
@@ -62,6 +67,7 @@ class ImageEditorButtons extends Component {
 					disabled={ ! src }
 					primary
 					onClick={ onDone }
+					data-e2e-button="done"
 				>
 					{ doneButtonText || translate( ' Done ' ) }
 				</Button>

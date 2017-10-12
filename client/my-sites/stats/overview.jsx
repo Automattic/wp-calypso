@@ -20,7 +20,6 @@ import DatePicker from './stats-date-picker';
 import StatsNavigation from 'blocks/stats-navigation';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
-import QuerySites from 'components/data/query-sites';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getVisibleSites } from 'state/selectors';
@@ -97,7 +96,6 @@ class StatsOverview extends Component {
 
 		return (
 			<Main wideLayout>
-				<QuerySites allSites />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />

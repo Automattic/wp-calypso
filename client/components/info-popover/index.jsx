@@ -3,16 +3,15 @@
  *
  * @format
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import Popover from 'components/popover';
-import classNames from 'classnames';
 import analytics from 'lib/analytics';
 
 export default class InfoPopover extends Component {
@@ -20,6 +19,7 @@ export default class InfoPopover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		gaEventCategory: PropTypes.string,
+		iconSize: PropTypes.number,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
 			getDOMNode: PropTypes.func,
@@ -40,6 +40,7 @@ export default class InfoPopover extends Component {
 
 	static defaultProps = {
 		autoRtl: true,
+		iconSize: 18,
 		position: 'bottom',
 	};
 
@@ -72,7 +73,7 @@ export default class InfoPopover extends Component {
 					this.props.className
 				) }
 			>
-				<Gridicon icon="info-outline" size={ 18 } />
+				<Gridicon icon="info-outline" size={ this.props.iconSize } />
 				<Popover
 					autoRtl={ this.props.autoRtl }
 					id={ this.props.id }
