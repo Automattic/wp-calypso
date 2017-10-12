@@ -143,7 +143,7 @@ const PostTypeFilter = React.createClass( {
 				onClick={ this.clickMultiSelectButton }
 			>
 				<Gridicon icon="list-checkmark" />
-				<span className="post-type-filter__multi-select-button__text">
+				<span className="post-type-filter__multi-select-button-text">
 					{ translate( 'Select' ) }
 				</span>
 			</Button>
