@@ -157,7 +157,7 @@ class DisconnectJetpackDialog extends PureComponent {
 			() => {
 				// Removing the domain from a domain-only site results
 				// in the site being deleted entirely. We need to call
-				// `receiveDeletedSiteDeprecated` here because the site
+				// `disconnectedSiteDeprecated` here because the site
 				// exists in `sites-list` as well as the global store.
 				disconnectedSiteDeprecated( site );
 				this.props.setAllSitesSelected();
