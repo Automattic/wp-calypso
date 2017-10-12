@@ -14,8 +14,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Dialog from 'components/dialog';
 import Button from 'components/button';
+import Card from 'components/card';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
 import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
@@ -25,8 +25,8 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans/constants';
 import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
-class DisconnectJetpackDialog extends PureComponent {
-	static displayName = 'DisconnectJetpackDialog';
+class DisconnectJetpack extends PureComponent {
+	static displayName = 'DisconnectJetpack';
 
 	static propTypes = {
 		isBroken: PropTypes.bool,
@@ -128,10 +128,7 @@ class DisconnectJetpackDialog extends PureComponent {
 
 		return features.map( ( freature, index ) => {
 			return (
-				<div
-					key={ 'disconnect-jetpack-dialog__feature-' + index }
-					className="disconnect-jetpack-dialog__feature"
-				>
+				<div key={ 'disconnect-jetpack__feature-' + index } className="disconnect-jetpack__feature">
 					{ freature }
 				</div>
 			);
@@ -193,37 +190,31 @@ class DisconnectJetpackDialog extends PureComponent {
 	};
 
 	render() {
-		const { onClose, isVisible, translate, isBroken, siteSlug } = this.props;
+		const { onClose, translate, isBroken, siteSlug } = this.props;
 		if ( isBroken ) {
 			return (
-				<Dialog
-					isVisible={ isVisible }
-					additionalClassNames="disconnect-jetpack-dialog"
-					onClose={ onClose }
-				>
+				<Card className="disconnect-jetpack">
 					<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-					<p className="disconnect-jetpack-dialog__highlight">
+					<p className="disconnect-jetpack__highlight">
 						{ translate( 'WordPress.com has not been able to reach %(siteSlug)s for a while.', {
 							args: { siteSlug },
 						} ) }
 					</p>
-					<div className="disconnect-jetpack-dialog__button-wrap">
+					<div className="disconnect-jetpack__button-wrap">
 						<Button primary scary onClick={ this.disconnectJetpack }>
 							{ translate( 'Remove Site' ) }
 						</Button>
 					</div>
-				</Dialog>
+				</Card>
 			);
 		}
 
 		return (
-			<Dialog
-				isVisible={ isVisible }
-				additionalClassNames="disconnect-jetpack-dialog"
-				onClose={ onClose }
-			>
-				<h1>{ translate( 'Disconnect from WordPress.com?' ) }</h1>
-				<p className="disconnect-jetpack-dialog__highlight">
+			<Card className="disconnect-jetpack">
+				<h1 className="disconnect-jetpack__header">
+					{ translate( 'Disconnect from WordPress.com?' ) }
+				</h1>
+				<p className="disconnect-jetpack__highlight">
 					{ translate(
 						'By disconnecting %(siteSlug)s from WordPress.com you will no longer have access to the following:',
 						{ args: { siteSlug } }
@@ -232,7 +223,7 @@ class DisconnectJetpackDialog extends PureComponent {
 
 				{ this.planFeatures() }
 
-				<div className="disconnect-jetpack-dialog__button-wrap">
+				<div className="disconnect-jetpack__button-wrap">
 					<Button onClick={ onClose }>{ translate( 'Stay Connected' ) }</Button>
 					<Button primary scary onClick={ this.disconnectJetpack }>
 						{ translate( 'Disconnect', {
@@ -242,12 +233,12 @@ class DisconnectJetpackDialog extends PureComponent {
 				</div>
 				<a
 					onClick={ this.trackReadMoreClick }
-					className="disconnect-jetpack-dialog__more-info-link"
+					className="disconnect-jetpack__more-info-link"
 					href="https://jetpack.com/features/"
 				>
 					{ translate( 'Read More about Jetpack benefits' ) }
 				</a>
-			</Dialog>
+			</Card>
 		);
 	}
 }
@@ -273,4 +264,4 @@ export default connect(
 		infoNotice,
 		removeNotice,
 	}
-)( localize( DisconnectJetpackDialog ) );
+)( localize( DisconnectJetpack ) );

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
 
 class DisconnectJetpackButton extends Component {
