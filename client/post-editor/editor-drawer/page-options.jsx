@@ -30,7 +30,7 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	}
 
 	return (
-		<Accordion title={ title } e2etitle="page-options">
+		<Accordion title={ title } e2eTitle="page-options">
 			{ hierarchical && <PageParent /> }
 			<PageTemplates />
 			<PageOrder />
