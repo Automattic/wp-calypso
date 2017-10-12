@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { find, debounce, isNumber, indexOf, pull } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -13,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import TokenField from 'components/token-field';
@@ -113,25 +115,33 @@ class ProductVariationTypesForm extends Component {
 
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
 		const duplicateNameIssue = indexOf( attributeNameErrors, attribute.uid ) !== -1;
+		const classes = classNames( 'products__variation-types-form-fieldset', {
+			'is-error': duplicateNameIssue,
+		} );
 		return (
-			<div key={ index } className="products__variation-types-form-fieldset">
-				<FormTextInput
-					placeholder={ translate( 'Color' ) }
-					value={ attributeName }
-					id={ attribute.uid }
-					name="type"
-					className="products__variation-types-form-field"
-					isError={ duplicateNameIssue }
-					onChange={ this.updateNameHandler }
-				/>
-				<TokenField
-					placeholder={ translate( 'Red, Green, Blue' ) }
-					value={ attribute.options }
-					name="values"
-					disabled={ duplicateNameIssue }
-					/* eslint-disable react/jsx-no-bind */
-					onChange={ values => this.updateValues( values, attribute ) }
-				/>
+			<div key={ index }>
+				<div className={ classes }>
+					<FormTextInput
+						placeholder={ translate( 'Color' ) }
+						value={ attributeName }
+						id={ attribute.uid }
+						name="type"
+						className="products__variation-types-form-field"
+						isError={ duplicateNameIssue }
+						onChange={ this.updateNameHandler }
+					/>
+					<TokenField
+						placeholder={ translate( 'Red, Green, Blue' ) }
+						value={ attribute.options }
+						name="values"
+						disabled={ duplicateNameIssue }
+						/* eslint-disable react/jsx-no-bind */
+						onChange={ values => this.updateValues( values, attribute ) }
+					/>
+				</div>
+				{ duplicateNameIssue && (
+					<FormInputValidation isError text={ translate( 'Variation type already exists.' ) } />
+				) }
 			</div>
 		);
 	}
