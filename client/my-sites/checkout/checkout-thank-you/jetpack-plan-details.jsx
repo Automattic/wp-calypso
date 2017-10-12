@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { connect } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -87,22 +87,25 @@ const getTracksDataForAutoconfigHalt = selectedSite => {
 	const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {
-		return [ 'calypso_plans_autoconfig_halt_filemod', { error: reasons[ 0 ] } ];
+		return {
+			name: 'calypso_plans_autoconfig_halt_filemod',
+			properties: { error: reasons[ 0 ] },
+		};
 	}
 
 	if ( ! selectedSite.hasMinimumJetpackVersion ) {
-		return [
-			'calypso_plans_autoconfig_halt_jpversion',
-			{ jetpack_version: selectedSite.options.jetpack_version },
-		];
+		return {
+			name: 'calypso_plans_autoconfig_halt_jpversion',
+			properties: { jetpack_version: selectedSite.options.jetpack_version },
+		};
 	}
 
 	if ( selectedSite.is_multisite && ! selectedSite.isMainNetworkSite ) {
-		return [ 'calypso_plans_autoconfig_halt_multisite', undefined ];
+		return { name: 'calypso_plans_autoconfig_halt_multisite' };
 	}
 
 	if ( selectedSite.options.is_multi_network ) {
-		return [ 'calypso_plans_autoconfig_halt_multinetwork', undefined ];
+		return { name: 'calypso_plans_autoconfig_halt_multinetwork' };
 	}
 
 	return null;
@@ -116,7 +119,7 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 			return;
 		}
 
-		const [ name, properties ] = eventData;
+		const { name, properties } = eventData;
 
 		dispatch( recordTracksEvent( name, properties ) );
 	},
