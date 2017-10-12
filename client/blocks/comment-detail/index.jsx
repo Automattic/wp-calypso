@@ -22,63 +22,26 @@ import CommentDetailEdit from './comment-detail-edit';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import { getPostCommentsTree } from 'state/comments/selectors';
-import getSiteComment from 'state/selectors/get-site-comment';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSiteComment, getSiteSetting } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-
-/**
- * Creates a stripped down comment object containing only the information needed by
- * CommentList's change status functions and their respective undos.
- *
- * @param {Object} props The CommentDetail props object.
- * @param {Number} props.commentId The comment ID.
- * @param {Boolean} props.commentIsLiked The current comment i_like value.
- * @param {String} props.commentStatus The current comment status.
- * @param {Number} props.postId The comment's post ID.
- * @returns {Object} A stripped down comment object.
- */
-const getCommentStatusAction = ( { commentId, commentIsLiked, commentStatus, postId } ) => ( {
-	commentId,
-	isLiked: commentIsLiked,
-	postId,
-	status: commentStatus,
-} );
+import { isEmailBlacklisted } from './utils';
+import { getMinimalComment } from './utils';
 
 export class CommentDetail extends Component {
 	static propTypes = {
-		authorAvatarUrl: PropTypes.string,
-		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
-		authorId: PropTypes.number,
-		authorIp: PropTypes.string,
-		authorName: PropTypes.string,
-		authorUrl: PropTypes.string,
-		authorUsername: PropTypes.string,
-		commentContent: PropTypes.string,
-		commentDate: PropTypes.string,
+		comment: PropTypes.object,
 		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
-		commentRawContent: PropTypes.string,
 		commentStatus: PropTypes.string,
-		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		editComment: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		isLoading: PropTypes.bool,
-		isJetpack: PropTypes.bool,
-		isRawContentSupported: PropTypes.bool,
-		postAuthorDisplayName: PropTypes.string,
-		postTitle: PropTypes.string,
-		postUrl: PropTypes.string,
-		recordReaderArticleOpened: PropTypes.func,
-		recordReaderCommentOpened: PropTypes.func,
+		postId: PropTypes.number,
 		refreshCommentData: PropTypes.bool,
-		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
-		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
@@ -115,11 +78,6 @@ export class CommentDetail extends Component {
 		}
 	};
 
-	isAuthorBlacklisted = () =>
-		!! this.props.authorEmail && !! this.props.siteBlacklist
-			? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
-			: false;
-
 	toggleApprove = () => {
 		if ( this.state.isEditMode ) {
 			return;
@@ -129,7 +87,7 @@ export class CommentDetail extends Component {
 		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
 
 		setCommentStatus(
-			getCommentStatusAction( this.props ),
+			this.props.comment,
 			'approved' === commentStatus ? 'unapproved' : 'approved',
 			{
 				doPersist: shouldPersist,
@@ -155,10 +113,10 @@ export class CommentDetail extends Component {
 			return;
 		}
 
-		this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
+		this.props.toggleCommentLike( this.props.comment );
 	};
 
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
+	toggleSelected = () => this.props.toggleCommentSelected( this.props.comment );
 
 	toggleSpam = () => {
 		if ( this.state.isEditMode ) {
@@ -166,10 +124,7 @@ export class CommentDetail extends Component {
 		}
 
 		const { commentStatus, setCommentStatus } = this.props;
-		setCommentStatus(
-			getCommentStatusAction( this.props ),
-			'spam' === commentStatus ? 'approved' : 'spam'
-		);
+		setCommentStatus( this.props.comment, 'spam' === commentStatus ? 'approved' : 'spam' );
 	};
 
 	toggleTrash = () => {
@@ -178,10 +133,7 @@ export class CommentDetail extends Component {
 		}
 
 		const { commentStatus, setCommentStatus } = this.props;
-		setCommentStatus(
-			getCommentStatusAction( this.props ),
-			'trash' === commentStatus ? 'approved' : 'trash'
-		);
+		setCommentStatus( this.props.comment, 'trash' === commentStatus ? 'approved' : 'trash' );
 	};
 
 	setCardRef = card => {
@@ -218,43 +170,18 @@ export class CommentDetail extends Component {
 
 	render() {
 		const {
-			authorAvatarUrl,
-			authorEmail,
-			authorId,
-			authorIp,
-			authorName,
-			authorUrl,
-			authorUsername,
-			commentContent,
-			commentDate,
+			authorIsBlocked,
 			commentId,
 			commentIsLiked,
 			commentIsSelected,
-			commentRawContent,
 			commentStatus,
-			commentType,
-			commentUrl,
 			editComment,
 			isBulkEdit,
-			isEditCommentSupported,
 			isLoading,
-			parentCommentAuthorAvatarUrl,
-			parentCommentAuthorDisplayName,
-			parentCommentContent,
-			postAuthorDisplayName,
-			postId,
-			postTitle,
-			postUrl,
 			refreshCommentData,
-			repliedToComment,
 			replyComment,
-			siteBlacklist,
 			siteId,
-			translate,
 		} = this.props;
-
-		const authorDisplayName = authorName || translate( 'Anonymous' );
-		const authorIsBlocked = this.isAuthorBlacklisted();
 
 		const { isEditMode, isExpanded } = this.state;
 
@@ -282,20 +209,13 @@ export class CommentDetail extends Component {
 				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
 
 				<CommentDetailHeader
-					authorAvatarUrl={ authorAvatarUrl }
-					authorDisplayName={ authorDisplayName }
-					authorUrl={ authorUrl }
-					commentContent={ commentContent }
-					commentIsLiked={ commentIsLiked }
+					commentId={ commentId }
 					commentIsSelected={ commentIsSelected }
-					commentStatus={ commentStatus }
-					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isEditMode={ isEditMode }
 					isExpanded={ isExpanded }
-					postId={ postId }
-					postTitle={ postTitle }
+					siteId={ siteId }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
@@ -308,58 +228,27 @@ export class CommentDetail extends Component {
 					<div className="comment-detail__content">
 						<CommentDetailPost
 							commentId={ commentId }
-							parentCommentAuthorAvatarUrl={ parentCommentAuthorAvatarUrl }
-							parentCommentAuthorDisplayName={ parentCommentAuthorDisplayName }
-							parentCommentContent={ parentCommentContent }
-							postAuthorDisplayName={ postAuthorDisplayName }
-							postTitle={ postTitle }
-							postUrl={ postUrl }
 							siteId={ siteId }
 							onClick={ this.trackDeepReaderLinkClick }
 						/>
 
 						{ isEditMode && (
 							<CommentDetailEdit
-								authorDisplayName={ authorDisplayName }
-								authorUrl={ authorUrl }
 								closeEditMode={ this.toggleEditMode }
-								commentContent={ isEditCommentSupported ? commentRawContent : commentContent }
 								commentId={ commentId }
 								editComment={ editComment }
-								isAuthorRegistered={ authorId !== 0 }
-								isEditCommentSupported={ isEditCommentSupported }
-								postId={ postId }
 								siteId={ siteId }
 							/>
 						) }
 
 						{ ! isEditMode && (
 							<div>
-								<CommentDetailComment
-									authorAvatarUrl={ authorAvatarUrl }
-									authorDisplayName={ authorDisplayName }
-									authorEmail={ authorEmail }
-									authorId={ authorId }
-									authorIp={ authorIp }
-									authorIsBlocked={ authorIsBlocked }
-									authorUrl={ authorUrl }
-									authorUsername={ authorUsername }
-									commentContent={ commentContent }
-									commentDate={ commentDate }
-									commentId={ commentId }
-									commentStatus={ commentStatus }
-									commentType={ commentType }
-									commentUrl={ commentUrl }
-									repliedToComment={ repliedToComment }
-									siteBlacklist={ siteBlacklist }
-									siteId={ siteId }
-								/>
+								<CommentDetailComment commentId={ commentId } siteId={ siteId } />
+
 								<CommentDetailReply
-									authorAvatarUrl={ authorAvatarUrl }
-									authorDisplayName={ authorDisplayName }
-									comment={ getCommentStatusAction( this.props ) }
-									postTitle={ postTitle }
+									commentId={ commentId }
 									replyComment={ replyComment }
+									siteId={ siteId }
 								/>
 							</div>
 						) }
@@ -370,55 +259,25 @@ export class CommentDetail extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const { commentId, siteId } = ownProps;
-	const comment = ownProps.comment || getSiteComment( state, siteId, commentId );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
 
 	const isLoading = isUndefined( comment );
 
 	const postId = get( comment, 'post.ID' );
-
-	// TODO: eventually it will be returned already decoded from the data layer.
-	const postTitle = decodeEntities( get( comment, 'post.title' ) );
-
-	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
-	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
-
-	// TODO: eventually it will be returned already decoded from the data layer.
-	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
-
-	const authorName = decodeEntities( get( comment, 'author.name' ) );
-
-	const isJetpack = isJetpackSite( state, siteId );
+	const authorEmail = get( comment, 'author.email' );
+	const siteBlacklist = getSiteSetting( state, siteId, 'blacklist_keys' );
+	const authorIsBlocked = isEmailBlacklisted( siteBlacklist, authorEmail );
 
 	return {
-		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
-		authorEmail: get( comment, 'author.email' ),
-		authorId: get( comment, 'author.ID' ),
-		authorIp: get( comment, 'author.ip_address' ),
-		authorName,
-		authorUrl: get( comment, 'author.URL', '' ),
-		authorUsername: get( comment, 'author.nice_name' ),
-		commentContent: get( comment, 'content' ),
-		commentDate: get( comment, 'date' ),
+		authorIsBlocked,
+		comment: getMinimalComment( comment ),
 		commentId,
 		commentIsLiked: get( comment, 'i_like' ),
-		commentRawContent: get( comment, 'raw_content' ),
 		commentStatus: get( comment, 'status' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: get( comment, 'URL' ),
-		isEditCommentSupported: ! isJetpack || isJetpackMinimumVersion( state, siteId, '5.3' ),
-		isJetpack,
 		isLoading,
-		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
-		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
-		parentCommentContent,
-		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
-		postUrl: isJetpack ? get( comment, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
-		postTitle,
-		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
 	};
 };

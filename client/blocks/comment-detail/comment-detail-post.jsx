@@ -5,8 +5,9 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,11 @@ import { noop } from 'lodash';
 import Emojify from 'components/emojify';
 import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { decodeEntities, stripHTML } from 'lib/formatting';
+import { getPostCommentsTree } from 'state/comments/selectors';
+import { getSiteComment } from 'state/selectors';
+import { getGravatarUser, getPostTitle, getPostReaderUrl } from './utils';
 
 export const CommentDetailPost = ( {
 	commentId,
@@ -24,20 +30,21 @@ export const CommentDetailPost = ( {
 	postTitle,
 	postUrl,
 	onClick = noop,
+	recordReaderArticleOpened,
 	siteId,
 	translate,
 } ) => {
 	if ( parentCommentContent ) {
-		const author = {
-			avatar_URL: parentCommentAuthorAvatarUrl,
-			display_name: parentCommentAuthorDisplayName,
-		};
+		const gravatarUser = getGravatarUser( {
+			avatarUrl: parentCommentAuthorAvatarUrl,
+			displayName: parentCommentAuthorDisplayName,
+		} );
 
 		return (
 			<div className="comment-detail__post">
 				<div className="comment-detail__site-icon-author-avatar">
 					<SiteIcon siteId={ siteId } size={ 24 } />
-					<Gravatar user={ author } />
+					<Gravatar user={ gravatarUser } />
 				</div>
 				<div className="comment-detail__post-info">
 					{ parentCommentAuthorDisplayName && (
@@ -68,12 +75,48 @@ export const CommentDetailPost = ( {
 						</Emojify>
 					</span>
 				) }
-				<a href={ postUrl } onClick={ onClick }>
-					<Emojify>{ postTitle || translate( 'Untitled' ) }</Emojify>
+				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
+					<Emojify>{ postTitle }</Emojify>
 				</a>
 			</div>
 		</div>
 	);
 };
 
-export default localize( CommentDetailPost );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	const postId = get( comment, 'post.ID' );
+	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
+	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
+	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
+	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
+
+	return {
+		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
+		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
+		parentCommentContent,
+		// postAuthorDisplayName: get( comment, 'post.author.name' ), TODO: not available in the current data structure
+		postTitle: getPostTitle( comment ),
+		postUrl: getPostReaderUrl( siteId, postId ),
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	recordReaderArticleOpened: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_article_opened' ),
+				bumpStat( 'calypso_comment_management', 'article_opened' )
+			)
+		),
+	recordReaderCommentOpened: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_comment_opened' ),
+				bumpStat( 'calypso_comment_management', 'comment_opened' )
+			)
+		),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailPost ) );

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,9 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSiteSlug } from 'state/sites/selectors';
 import InfoPopover from 'components/info-popover';
+import { getSiteComment } from 'state/selectors';
+import { getAuthorDisplayName } from './utils';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 
 export class CommentDetailEdit extends Component {
 	static propTypes = {
@@ -139,8 +143,24 @@ export class CommentDetailEdit extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	siteSlug: getSiteSlug( state, siteId ),
-} );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	const isEditCommentSupported =
+		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' );
+	const commentContent = isEditCommentSupported
+		? get( comment, 'raw_content' )
+		: get( comment, 'content' );
+
+	return {
+		authorDisplayName: getAuthorDisplayName( comment ),
+		authorUrl: get( comment, 'author.URL', '' ),
+		commentContent,
+		isAuthorRegistered: 0 !== get( comment, 'author.ID' ),
+		isEditCommentSupported,
+		postId: get( comment, 'post.ID' ),
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+};
 
 export default connect( mapStateToProps )( localize( CommentDetailEdit ) );

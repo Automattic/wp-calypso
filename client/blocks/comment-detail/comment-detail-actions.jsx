@@ -5,15 +5,17 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { includes } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getSiteComment } from 'state/selectors';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
@@ -108,4 +110,13 @@ export const CommentDetailActions = ( {
 	);
 };
 
-export default localize( CommentDetailActions );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	return {
+		commentIsLiked: get( comment, 'i_like' ),
+		commentStatus: get( comment, 'status' ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( CommentDetailActions ) );

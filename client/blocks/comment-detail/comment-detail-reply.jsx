@@ -15,6 +15,8 @@ import classNames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSiteComment } from 'state/selectors';
+import { getAuthorDisplayName, getMinimalComment } from './utils';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
 const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines
@@ -160,8 +162,14 @@ export class CommentDetailReply extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	currentUser: getCurrentUser( state ),
-} );
+const mapStateToProps = ( state, { commentId, siteId } ) => {
+	const comment = getSiteComment( state, siteId, commentId );
+
+	return {
+		authorDisplayName: getAuthorDisplayName( comment ),
+		comment: getMinimalComment( comment ),
+		currentUser: getCurrentUser( state ),
+	};
+};
 
 export default connect( mapStateToProps )( localize( CommentDetailReply ) );
