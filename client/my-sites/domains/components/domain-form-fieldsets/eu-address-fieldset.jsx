@@ -7,13 +7,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import identity from 'lodash/identity';
 import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
 
-export class EuAddressFields extends Component {
+export class EuAddressFieldset extends Component {
 	static propTypes = {
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
@@ -27,7 +28,7 @@ export class EuAddressFields extends Component {
 	render() {
 		const { getFieldProps, translate } = this.props;
 		return (
-			<div className="domain-form-fieldsets__address-fields eu-address-fields">
+			<div className="domain-form-fieldsets__address-fields eu-address-fieldset">
 				<div>
 					<Input
 						label={ translate( 'Address' ) }
@@ -49,4 +50,4 @@ export class EuAddressFields extends Component {
 	}
 }
 
-export default EuAddressFields;
+export default localize( EuAddressFieldset );
