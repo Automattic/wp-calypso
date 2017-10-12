@@ -58,6 +58,7 @@ export class CommentDetailHeader extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentContent,
+			commentDate,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
@@ -66,7 +67,9 @@ export class CommentDetailHeader extends Component {
 			isBulkEdit,
 			isEditMode,
 			isExpanded,
+			moment,
 			postTitle,
+			site,
 			toggleReply,
 			toggleApprove,
 			toggleEditMode,
@@ -148,9 +151,9 @@ export class CommentDetailHeader extends Component {
 										} ) }
 									</Emojify>
 								</div>
-							</div>
-							<div className="comment-detail__author-info-timestamp">
-								{ getRelativeTimePeriod( commentDate, site, moment ) }
+								<div className="comment-detail__author-info-timestamp">
+									{ getRelativeTimePeriod( commentDate, site, moment ) }
+								</div>
 							</div>
 						</div>
 						<AutoDirection>
