@@ -93,6 +93,7 @@ export class CommentDetail extends Component {
 
 	state = {
 		isEditMode: false,
+		isReplyMode: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -101,7 +102,9 @@ export class CommentDetail extends Component {
 		}
 	}
 
-	deleteCommentPermanently = () => {
+	deleteCommentPermanently = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -120,7 +123,13 @@ export class CommentDetail extends Component {
 			? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
 			: false;
 
-	toggleApprove = () => {
+	enterReplyState = () => this.setState( { isReplyMode: true } );
+
+	exitReplyState = () => this.setState( { isReplyMode: false } );
+
+	toggleApprove = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -150,7 +159,9 @@ export class CommentDetail extends Component {
 		}
 	};
 
-	toggleLike = () => {
+	toggleLike = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -158,9 +169,9 @@ export class CommentDetail extends Component {
 		this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 	};
 
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
+	toggleSpam = e => {
+		e.stopPropagation();
 
-	toggleSpam = () => {
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -172,7 +183,9 @@ export class CommentDetail extends Component {
 		);
 	};
 
-	toggleTrash = () => {
+	toggleTrash = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -300,6 +313,7 @@ export class CommentDetail extends Component {
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
+					toggleReply={ this.enterReplyState }
 					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
@@ -358,8 +372,11 @@ export class CommentDetail extends Component {
 									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
+									hasFocus={ this.state.isReplyMode }
 									postTitle={ postTitle }
 									replyComment={ replyComment }
+									enterReplyState={ this.enterReplyState }
+									exitReplyState={ this.exitReplyState }
 								/>
 							</div>
 						) }

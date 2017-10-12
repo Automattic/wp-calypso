@@ -133,6 +133,7 @@
 		transform: rotate( 180deg );
 		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
 	}
+
 	.comment-detail__action-collapse:hover .gridicon {
 		fill: $blue-medium;
 	}
@@ -242,7 +243,18 @@
 	padding-left: 4px;
 	user-select: none;
 
-	.button.is-borderless {
+	&.is-quick {
+		position: absolute;
+		display: flex;
+		right: 44px;
+		padding: 0;
+
+		.gridicon {
+			vertical-align: baseline;
+		}
+	}
+
+	.button {
 		span {
 			display: none;
 			font-weight: normal;
