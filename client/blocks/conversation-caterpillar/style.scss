@@ -1,50 +1,24 @@
-.conversation-caterpillar.card {
-	cursor: pointer;
+.conversation-caterpillar {
 	display: flex;
-	padding: 0;
-	padding-top: 20px;
-	box-shadow: none;
-}
-
-.docs-example__wrapper .conversation-caterpillar.card {
-	padding: 24px;
-	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
 }
 
 .conversation-caterpillar__gravatars,
-.conversation-caterpillar__count
-.conversation-caterpillar__show-all {
+.conversation-caterpillar__count {
 	display: flex;
 	flex-shrink: 0;
 }
 
-.conversation-caterpillar__show-all,
 .conversation-caterpillar__count {
-	color: $gray;
 	cursor: pointer;
+	color: $gray;
 	display: flex;
-	font-size: 13px;
-	font-weight: 400;
-}
-
-.conversation-caterpillar__show-all-chevron {
-	margin-top: 3px;
-	margin-right: 5px;
-}
-
-.conversation-caterpillar__count {
-	flex-shrink: 1;
-	flex: 1 1 auto;
 	margin-left: 8px;
+	flex: 1 1 auto;
+	font-size: 14px;
+	font-weight: 400;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;
-
-	@include breakpoint( "<660px" ) {
-		padding: 0;
-		text-align: left;
-		white-space: normal;
-	}
 
 	&:hover {
 		color: $blue-medium;
@@ -56,9 +30,15 @@
 		width: 16px * 2;
 		z-index: 1;
 	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 0;
+		text-align: left;
+	}
 }
 
 .conversation-caterpillar__gravatar {
+	cursor: pointer;
 	border: 2px solid $white;
 	height: 32px;
 	margin-left: -8px;
@@ -77,24 +57,6 @@
 	}
 }
 
-.conversation-caterpillar__count {
-	color: $gray;
-	font-size: 14px;
-	font-weight: 400;
-	margin-left: 8px;
-	cursor: pointer;
-}
-
-.conversation-caterpillar__show-all {
-
-	&:hover {
-		color: $blue-medium;
-	}
-
-	.gridicon {
-
-		&:hover {
-			fill: $blue-medium;
-		}
-	}
+.conversations__stream .conversation-caterpillar {
+	margin-top: 20px;
 }
