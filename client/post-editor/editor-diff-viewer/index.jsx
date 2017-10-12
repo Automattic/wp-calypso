@@ -18,7 +18,7 @@ import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
 const EditorDiffViewer = ( { contentChanges, revision } ) => (
 	<div className="editor-diff-viewer">
 		<h1 className="editor-diff-viewer__title">{ get( revision, 'title' ) }</h1>
-		<div className="editor-diff-viewer__content">
+		<pre className="editor-diff-viewer__content">
 			{ map( contentChanges, ( change, changeIndex ) => {
 				const changeClassNames = classNames( {
 					'editor-diff-viewer__additions': change.added,
@@ -30,7 +30,7 @@ const EditorDiffViewer = ( { contentChanges, revision } ) => (
 					</span>
 				);
 			} ) }
-		</div>
+		</pre>
 	</div>
 );
 
