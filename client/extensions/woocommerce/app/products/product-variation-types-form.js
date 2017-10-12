@@ -93,7 +93,7 @@ class ProductVariationTypesForm extends Component {
 		const existingAttribute =
 			product.attributes &&
 			find( product.attributes, function( a ) {
-				return a.uid !== attributeId && a.name.toLowerCase() === name.toLowerCase();
+				return a.uid !== attributeId && a.name.trim().toLowerCase() === name.trim().toLowerCase();
 			} );
 
 		if ( existingAttribute ) {
