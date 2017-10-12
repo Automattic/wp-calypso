@@ -117,43 +117,41 @@ class ConversationCaterpillarComponent extends React.Component {
 						);
 					} ) }
 				</div>
-				<div className="conversation-caterpillar__count-fader">
-					<button
-						className="conversation-caterpillar__count"
-						onClick={ this.handleTickle }
-						title={
-							commentCount > 1 ? (
-								translate( 'View comments from %(commenterName)s and %(count)d more', {
-									args: {
-										commenterName: lastAuthorName,
-										count: commentCount - 1,
-									},
-								} )
-							) : (
-								translate( 'View comment from %(commenterName)s', {
-									args: {
-										commenterName: lastAuthorName,
-									},
-								} )
-							)
-						}
-					>
-						{ commentCount > 1 ? (
-							translate( '%(commenterName)s and %(count)d more', {
+				<button
+					className="conversation-caterpillar__count"
+					onClick={ this.handleTickle }
+					title={
+						commentCount > 1 ? (
+							translate( 'View comments from %(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastAuthorName,
 									count: commentCount - 1,
 								},
 							} )
 						) : (
-							translate( '%(commenterName)s commented', {
+							translate( 'View comment from %(commenterName)s', {
 								args: {
 									commenterName: lastAuthorName,
 								},
 							} )
-						) }
-					</button>
-				</div>
+						)
+					}
+				>
+					{ commentCount > 1 ? (
+						translate( '%(commenterName)s and %(count)d more', {
+							args: {
+								commenterName: lastAuthorName,
+								count: commentCount - 1,
+							},
+						} )
+					) : (
+						translate( '%(commenterName)s commented', {
+							args: {
+								commenterName: lastAuthorName,
+							},
+						} )
+					) }
+				</button>
 			</Card>
 		);
 	}
