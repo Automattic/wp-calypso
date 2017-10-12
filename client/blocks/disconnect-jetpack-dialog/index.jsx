@@ -242,9 +242,10 @@ class DisconnectJetpackDialog extends PureComponent {
 DisconnectJetpackDialog.displayName = 'DisconnectJetpackDialog';
 
 DisconnectJetpackDialog.propTypes = {
+	isBroken: PropTypes.bool,
 	isVisible: PropTypes.bool,
 	onClose: PropTypes.func,
-	isBroken: PropTypes.bool,
+	redirect: PropTypes.string,
 	siteId: PropTypes.number,
 	// Connected props
 	plan: PropTypes.string,
