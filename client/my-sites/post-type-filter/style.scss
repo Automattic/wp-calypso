@@ -1,0 +1,44 @@
+$section-nav-padding: 16px + 14px;
+$multi-select-height: 24px; // determined by gridicon
+
+.post-type-filter .section-nav-tab {
+	box-sizing: border-box;
+	height: 50px;
+}
+
+.post-type-filter__multi-select-button {
+	display: block;
+	height: 50px;
+
+	&.button.is-borderless { // for specificity
+		color: $blue-wordpress;
+
+		&:hover {
+			color: $link-highlight;
+		}
+
+		// Vertical padding is 26px (height - gridicon height - border)
+		// Bottom padding should be 2px less due to border
+		padding: 14px 8px 12px;
+
+		border-bottom: 2px solid transparent;
+		border-radius: 0;
+
+		&.is-enabled {
+			border-bottom-color: $gray-dark;
+			color: $gray-dark;
+		}
+
+		& .gridicon {
+			// TODO why is this necessary?
+			top: 2px;
+			padding-right: 4px;
+		}
+	}
+
+	// TODO why is this necessary?
+	& .post-type-filter__multi-select-button__text {
+		vertical-align: top;
+		line-height: 24px;
+	}
+}

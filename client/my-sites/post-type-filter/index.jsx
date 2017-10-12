@@ -4,9 +4,10 @@
  * @format
  */
 
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { compact, find, includes, reduce } from 'lodash';
 
@@ -18,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { mapPostStatus } from 'lib/route/path';
+import { isEnabled } from 'config';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
 import SectionNav from 'components/section-nav';
@@ -25,6 +27,8 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
+import Button from 'components/button';
+import Gridicon from 'gridicons';
 
 const PostTypeFilter = React.createClass( {
 	mixins: [ UrlSearch ],
@@ -40,6 +44,12 @@ const PostTypeFilter = React.createClass( {
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object,
+	},
+
+	getInitialState() {
+		return {
+			isMultiSelectEnabled: false,
+		};
 	},
 
 	getNavItems() {
@@ -109,6 +119,37 @@ const PostTypeFilter = React.createClass( {
 		);
 	},
 
+	clickMultiSelectButton() {
+		this.setState( {
+			isMultiSelectEnabled: ! this.state.isMultiSelectEnabled,
+		} );
+	},
+
+	renderMultiSelectButton() {
+		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
+			return null;
+		}
+
+		const { translate } = this.props;
+
+		const classes = classnames( 'post-type-filter__multi-select-button', {
+			'is-enabled': this.state.isMultiSelectEnabled,
+		} );
+
+		return (
+			<Button
+				className={ classes }
+				borderless
+				onClick={ this.clickMultiSelectButton }
+			>
+				<Gridicon icon="list-checkmark" />
+				<span className="post-type-filter__multi-select-button__text">
+					{ translate( 'Select' ) }
+				</span>
+			</Button>
+		);
+	},
+
 	render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
@@ -120,7 +161,7 @@ const PostTypeFilter = React.createClass( {
 		};
 
 		return (
-			<div>
+			<div className="post-type-filter">
 				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
 				<SectionNav
 					selectedText={
@@ -150,6 +191,7 @@ const PostTypeFilter = React.createClass( {
 						placeholder={ this.props.translate( 'Search…' ) }
 						delaySearch={ true }
 					/>
+					{ this.renderMultiSelectButton() }
 				</SectionNav>
 			</div>
 		);
