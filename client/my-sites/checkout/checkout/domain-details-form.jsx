@@ -55,7 +55,7 @@ import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import config from 'config';
-import GAppsFields from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
+import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
 import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
@@ -382,7 +382,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	renderDomainContactDetailsFields() {
-		const { translate, contactDetails } = this.props,
+		const { contactDetails } = this.props,
 			countryCode = ( contactDetails || {} ).countryCode;
 		return (
 			<div className="checkout__domain-contact-details-fields">
@@ -393,7 +393,6 @@ export class DomainDetailsForm extends PureComponent {
 				{ countryCode && (
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
-						translate={ translate }
 						countryCode={ countryCode }
 					/>
 				) }
@@ -403,13 +402,11 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	renderDetailsForm = () => {
-		const { translate } = this.props;
 		return (
 			<form>
 				{ this.renderNameFields() }
-
 				{ this.needsOnlyGoogleAppsDetails() ? (
-					<GAppsFields getFieldProps={ this.getFieldProps } translate={ translate } />
+					<GAppsFieldset getFieldProps={ this.getFieldProps } />
 				) : (
 					this.renderDomainContactDetailsFields()
 				) }

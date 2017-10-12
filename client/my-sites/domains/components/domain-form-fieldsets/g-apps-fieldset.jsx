@@ -7,13 +7,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import identity from 'lodash/identity';
 import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Input } from 'my-sites/domains/components/form';
+import { CountrySelect, Input } from 'my-sites/domains/components/form';
+import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 
-export class GAppsFields extends Component {
+const countriesList = countriesListForDomainRegistrations();
+
+export class GAppsFieldset extends Component {
 	static propTypes = {
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
@@ -27,23 +31,16 @@ export class GAppsFields extends Component {
 	render() {
 		const { getFieldProps, translate } = this.props;
 		return (
-			<div className="domain-form-fieldsets__address-fields g-apps-fields">
-				<div>
-					<Input
-						autoFocus
-						label={ this.props.translate( 'First Name' ) }
-						{ ...this.getFieldProps( 'first-name', true ) }
-					/>
-
-					<Input
-						label={ this.props.translate( 'Last Name' ) }
-						{ ...this.getFieldProps( 'last-name', true ) }
-					/>
-				</div>
+			<div className="domain-form-fieldsets__address-fields g-apps-fieldset">
+				<CountrySelect
+					label={ translate( 'Country' ) }
+					countriesList={ countriesList }
+					{ ...getFieldProps( 'country-code' ) }
+				/>
 				<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
 			</div>
 		);
 	}
 }
 
-export default GAppsFields;
+export default localize( GAppsFieldset );
