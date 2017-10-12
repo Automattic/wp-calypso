@@ -16,7 +16,6 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
 import { isAncestor } from 'blocks/comments/utils';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
@@ -93,7 +92,7 @@ class ConversationCaterpillarComponent extends React.Component {
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		return (
-			<Card className="conversation-caterpillar">
+			<div className="conversation-caterpillar">
 				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
@@ -152,7 +151,7 @@ class ConversationCaterpillarComponent extends React.Component {
 						} )
 					) }
 				</button>
-			</Card>
+			</div>
 		);
 	}
 }
