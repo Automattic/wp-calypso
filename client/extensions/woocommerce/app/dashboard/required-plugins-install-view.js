@@ -162,9 +162,6 @@ class RequiredPluginsInstallView extends Component {
 			woocommerce: translate( 'WooCommerce' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
-			'taxjar-simplified-taxes-for-woocommerce': translate(
-				'TaxJar - Sales Tax Automation for WooCommerce'
-			),
 		};
 	};
 
