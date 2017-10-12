@@ -22,6 +22,26 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import viewport from 'lib/viewport';
+import { convertDateToUserLocation } from 'components/post-schedule/utils';
+import { gmtOffset, timezone } from 'lib/site/utils';
+
+const getRelativeTimePeriod = ( commentDate, site, moment ) => {
+	const localizedDate = convertDateToUserLocation(
+		commentDate || moment(),
+		timezone( site ),
+		gmtOffset( site )
+	);
+
+	if (
+		moment()
+			.subtract( 1, 'month' )
+			.isBefore( localizedDate )
+	) {
+		return localizedDate.fromNow();
+	}
+
+	return localizedDate.format( 'll' );
+};
 
 export class CommentDetailHeader extends Component {
 	state = {
@@ -38,6 +58,7 @@ export class CommentDetailHeader extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentContent,
+			commentDate,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
@@ -46,7 +67,9 @@ export class CommentDetailHeader extends Component {
 			isBulkEdit,
 			isEditMode,
 			isExpanded,
+			moment,
 			postTitle,
+			site,
 			toggleReply,
 			toggleApprove,
 			toggleEditMode,
@@ -127,6 +150,9 @@ export class CommentDetailHeader extends Component {
 											},
 										} ) }
 									</Emojify>
+								</div>
+								<div className="comment-detail__author-info-timestamp">
+									{ getRelativeTimePeriod( commentDate, site, moment ) }
 								</div>
 							</div>
 						</div>
