@@ -7,7 +7,6 @@ const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const fs = require( 'fs' );
-const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -82,7 +81,11 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ 'happypack/loader' ]
+				loader: _.compact( [
+					'thread-loader',
+					process.env.NODE_ENV === 'development' && 'react-hot-loader',
+					babelLoader,
+				] ),
 			},
 			{
 				test: /extensions[\/\\]index/,
@@ -143,12 +146,6 @@ const webpackConfig = {
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
-		new HappyPack( {
-			loaders: _.compact( [
-				process.env.NODE_ENV === 'development' && 'react-hot-loader',
-				babelLoader
-			] )
-		} ),
 		new webpack.NamedModulesPlugin(),
 		new webpack.NamedChunksPlugin( chunk => {
 			if ( chunk.name ) {
