@@ -17,7 +17,7 @@ import { isEnabled } from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 import PostTime from 'reader/post-time';
 import Gravatar from 'components/gravatar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack, recordPermalinkClick } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
@@ -118,6 +118,19 @@ class PostComment extends React.PureComponent {
 			comment_id: this.props.commentId,
 			author_url: event.target.href,
 		} );
+	};
+
+	handleCommentPermalinkClick = event => {
+		recordPermalinkClick(
+			'timestamp_comment',
+			{},
+			{
+				blog_id: this.props.post.site_ID,
+				post_id: this.props.post.ID,
+				comment_id: this.props.commentId,
+				author_url: event.target.href,
+			}
+		);
 	};
 
 	getAllChildrenIds = id => {
@@ -399,7 +412,12 @@ class PostComment extends React.PureComponent {
 						</span>
 					) }
 					<div className="comments__comment-timestamp">
-						<a href={ comment.URL }>
+						<a
+							href={ comment.URL }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ this.handleCommentPermalinkClick }
+						>
 							<PostTime date={ comment.date } />
 						</a>
 					</div>
