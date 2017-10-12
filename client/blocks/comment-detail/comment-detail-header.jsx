@@ -12,6 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import AutoDirection from 'components/auto-direction';
 import Button from 'components/button';
 import CommentDetailActions from './comment-detail-actions';
@@ -137,7 +138,10 @@ export class CommentDetailHeader extends Component {
 					</div>
 				) }
 
-				{ ( ( showQuickActions && ! viewport.isMobile() ) || isExpanded ) &&
+				{ ( ( isEnabled( 'comments/management/quick-actions' ) &&
+					showQuickActions &&
+					! viewport.isMobile() ) ||
+					isExpanded ) &&
 				! isEditMode && (
 					<CommentDetailActions
 						compact={ showQuickActions && ! isExpanded }
