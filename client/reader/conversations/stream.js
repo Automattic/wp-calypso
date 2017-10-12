@@ -11,9 +11,12 @@ import { get } from 'lodash';
 import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
 import ConversationsIntro from './intro';
+import ConversationsEmptyContent from 'blocks/conversations/empty';
 
 export default function( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
+	const emptyContent = <ConversationsEmptyContent />;
+	const intro = <ConversationsIntro isInternal={ isInternal } />;
 	return (
 		<Stream
 			postsStore={ props.store }
@@ -23,9 +26,10 @@ export default function( props ) {
 			followSource="conversations"
 			useCompactCards={ true }
 			trackScrollPage={ props.trackScrollPage }
+			emptyContent={ emptyContent }
+			intro={ intro }
 		>
 			<DocumentHead title={ props.title } />
-			<ConversationsIntro isInternal={ isInternal } />
 		</Stream>
 	);
 }

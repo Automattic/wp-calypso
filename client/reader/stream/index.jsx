@@ -92,6 +92,7 @@ class ReaderStream extends React.Component {
 		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
+		intro: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -108,6 +109,7 @@ class ReaderStream extends React.Component {
 		transformStreamItems: identity,
 		isMain: true,
 		useCompactCards: false,
+		intro: null,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -484,6 +486,7 @@ class ReaderStream extends React.Component {
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
+				{ showingStream && this.state.posts.length ? this.props.intro : null }
 				{ body }
 				{ showingStream && store.isLastPage() && this.state.posts.length ? <ListEnd /> : null }
 			</TopLevel>
