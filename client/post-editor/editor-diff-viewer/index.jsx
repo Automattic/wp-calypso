@@ -8,18 +8,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
+import { getPostRevisionChanges } from 'state/selectors';
 
-const EditorDiffViewer = ( { contentChanges, revision } ) => (
+const EditorDiffViewer = ( { revisionChanges } ) => (
 	<div className="editor-diff-viewer">
-		<h1 className="editor-diff-viewer__title">{ get( revision, 'title' ) }</h1>
+		<h1 className="editor-diff-viewer__title">
+			{ map( revisionChanges.title, ( change, changeIndex ) => {
+				const changeClassNames = classNames( {
+					'editor-diff-viewer__additions': change.added,
+					'editor-diff-viewer__deletions': change.removed,
+				} );
+				return (
+					<span className={ changeClassNames } key={ changeIndex }>
+						{ change.value }
+					</span>
+				);
+			} ) }
+		</h1>
 		<pre className="editor-diff-viewer__content">
-			{ map( contentChanges, ( change, changeIndex ) => {
+			{ map( revisionChanges.content, ( change, changeIndex ) => {
 				const changeClassNames = classNames( {
 					'editor-diff-viewer__additions': change.added,
 					'editor-diff-viewer__deletions': change.removed,
@@ -35,7 +47,7 @@ const EditorDiffViewer = ( { contentChanges, revision } ) => (
 );
 
 EditorDiffViewer.propTypes = {
-	contentChanges: PropTypes.array.isRequired,
+	revisionChanges: PropTypes.object.isRequired,
 	postId: PropTypes.number,
 	revision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
@@ -43,6 +55,5 @@ EditorDiffViewer.propTypes = {
 };
 
 export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
-	contentChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
-	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
+	revisionChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
 } ) )( EditorDiffViewer );
