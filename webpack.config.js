@@ -81,7 +81,11 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ 'thread-loader', babelLoader ]
+				loader: _.compact( [
+					'thread-loader',
+					process.env.NODE_ENV === 'development' && 'react-hot-loader',
+					babelLoader,
+				] ),
 			},
 			{
 				test: /extensions[\/\\]index/,
