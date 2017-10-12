@@ -40,7 +40,7 @@ const getRelativeTimePeriod = ( commentDate, site, moment ) => {
 		return localizedDate.fromNow();
 	}
 
-	return localizedDate.format( 'll LT' );
+	return localizedDate.format( 'll' );
 };
 
 export class CommentDetailHeader extends Component {
