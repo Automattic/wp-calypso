@@ -12,15 +12,26 @@ import { localize } from 'i18n-calypso';
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import { updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import {
+	setEmailDetailsOption,
+	setFulfillOrderOption,
+	updatePaperSize,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	shouldFulfillOrder,
+	shouldEmailDetails,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
-	const { form, errors, paperSize, translate } = props;
+	const { orderId, siteId, form, errors, paperSize, translate, fulfillOrder, emailDetails } = props;
+
+	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
+	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
@@ -31,6 +42,14 @@ const Sidebar = ( props ) => {
 				value={ paperSize }
 				updateValue={ props.updatePaperSize }
 				error={ errors.paperSize } />
+			<FormLabel>
+				<FormCheckbox checked={ emailDetails } onChange={ onEmailDetailsChange } />
+				<span>{ translate( 'Email shipment details to the customer' ) }</span>
+			</FormLabel>
+			<FormLabel>
+				<FormCheckbox checked={ fulfillOrder } onChange={ onFulfillOrderChange } />
+				<span>{ translate( 'Mark the order as fulfilled' ) }</span>
+			</FormLabel>
 		</div>
 	);
 };
@@ -51,11 +70,17 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		paperSize: shippingLabel.paperSize,
 		form: shippingLabel.form,
 		errors: loaded && getFormErrors( state, orderId, siteId ).sidebar,
+		fulfillOrder: loaded && shouldFulfillOrder( state, orderId, siteId ),
+		emailDetails: loaded && shouldEmailDetails( state, orderId, siteId ),
 	};
 };
 
 const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( { updatePaperSize }, dispatch );
+	return bindActionCreators( {
+		setEmailDetailsOption,
+		setFulfillOrderOption,
+		updatePaperSize,
+	}, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( Sidebar ) );

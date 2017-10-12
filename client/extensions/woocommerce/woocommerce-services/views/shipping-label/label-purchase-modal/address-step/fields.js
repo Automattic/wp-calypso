@@ -17,6 +17,7 @@ import CountryDropdown from 'woocommerce/woocommerce-services/components/country
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
+import { decodeEntities } from 'lib/formatting';
 import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
 import {
 	selectNormalizedAddress,
@@ -65,7 +66,7 @@ const AddressFields = ( props ) => {
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 	const getId = ( fieldName ) => group + '_' + fieldName;
-	const getValue = ( fieldName ) => values[ fieldName ] || '';
+	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
 	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
 	const updatePhoneValue = ( value ) => props.updateAddressValue( orderId, siteId, group, 'phone', getPhoneNumber( value ) );

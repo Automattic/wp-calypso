@@ -3,15 +3,25 @@
 @import './packages-step/style';
 @import './rates-step/style';
 
+&.label-purchase-modal {
+	min-height: 90%;
+
+	.dialog__content {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+	}
+}
 
 .label-purchase-modal__sidebar {
 	flex-basis: 100%;
 	padding: 32px;
-	margin-bottom: 61px;
 
 	@include breakpoint( ">660px" ) {
 		flex-basis: 40%;
-		padding: 8px 0px 8px 16px;
+		padding: 24px;
+		margin-left: 24px;
+		background: $gray-light;
 	}
 
 	@include breakpoint( ">960px" ) {
@@ -23,6 +33,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	flex-grow: 1;
 
 	.gridicon.is-success {
 		color: $alert-green;
@@ -34,6 +45,18 @@
 
 	.is-error {
 		color: $alert-red;
+	}
+
+	.is-error,
+	.is-warning,
+	.is-success {
+		.gridicon {
+			margin-top: -2px;
+		}
+
+		span:first-child {
+			margin-right: 6px;
+		}
 	}
 
 	select {
@@ -49,6 +72,10 @@
 
 		&.is-expanded {
 			margin-bottom: 16px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 
@@ -65,7 +92,7 @@
 			cursor: pointer;
 		}
 
-		&.has-border{
+		&.has-border {
 			.foldable-card__summary,
 			.foldable-card__summary-expanded {
 				margin-right: 48px;
@@ -230,6 +257,16 @@
 	.foldable-card__summary {
 		opacity: 1;
 		display: inline-block;
+
+		> span:first-child {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+		}
+
+		svg:empty {
+			display: none;
+		}
 	}
 
 	.foldable-card.is-expanded {
@@ -253,30 +290,26 @@
 	.foldable-card.is-expanded {
 		.foldable-card__summary-expanded {
 			display: inline-block;
+
+			> span:first-child {
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+			}
 		}
 	}
 }
 
 .label-purchase-modal__body {
 	display: flex;
-	flex-wrap: wrap;
 	flex-grow: 1;
-	overflow-y: auto;
-	height: 100%;
-
-	@include breakpoint( ">660px" ) {
-		flex-wrap: nowrap;
-	}
 }
 
 .label-purchase-modal__main-section {
 	flex-basis: 100%;
-	padding: 8px 0;
 
 	@include breakpoint( ">660px" ) {
 		flex-basis: 60%;
-		overflow-y: auto;
-		padding: 16px 16px 8px 1px;
 	}
 
 	@include breakpoint( ">960px" ) {
@@ -310,10 +343,10 @@
 }
 
 .label-purchase-modal__step-title {
-	margin: 4px 0 0 8px;
+	margin: 0 0 0 8px;
 }
 
 .label-purchase-modal__button-spinner {
 	display: inline-block;
-    margin-bottom: -8px;
+	margin-bottom: -8px;
 }
