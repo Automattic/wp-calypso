@@ -26,7 +26,7 @@ import CalendarPopover from 'blocks/calendar-popover/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import CommentDetail from 'blocks/comment-detail/docs/example';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog/docs/example';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';

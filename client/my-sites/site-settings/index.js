@@ -63,6 +63,14 @@ export default function() {
 			settingsController.setScroll,
 			controller.disconnectSite
 		);
+
+		page(
+			'/settings/disconnect-site/:site_id/confirm',
+			mySitesController.siteSelection,
+			mySitesController.navigation,
+			settingsController.setScroll,
+			controller.confirmDisconnection
+		);
 	}
 
 	page(
