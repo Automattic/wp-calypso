@@ -27,6 +27,7 @@ class GoogleLoginButton extends Component {
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
+		uxMode: PropTypes.string,
 		recordTracksEvent: PropTypes.func.isRequired,
 		responseHandler: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -89,7 +90,7 @@ class GoogleLoginButton extends Component {
 						client_id: this.props.clientId,
 						scope: this.props.scope,
 						fetch_basic_profile: this.props.fetchBasicProfile,
-						ux_mode: this.props.redirectUri ? 'redirect' : 'popup',
+						ux_mode: this.props.uxMode,
 						redirect_uri: this.props.redirectUri,
 					} )
 					.then( () => {
