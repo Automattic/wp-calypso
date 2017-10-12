@@ -62,7 +62,7 @@ class DisconnectSiteLink extends Component {
 					onClose={ this.handleHideDialog }
 					isBroken={ false }
 					siteId={ siteId }
-					redirect="/stats"
+					disconnectHref="/stats"
 				/>
 			</div>
 		);

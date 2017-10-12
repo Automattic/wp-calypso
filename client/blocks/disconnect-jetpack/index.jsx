@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
-import page from 'page';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -29,14 +29,20 @@ class DisconnectJetpack extends PureComponent {
 	static displayName = 'DisconnectJetpack';
 
 	static propTypes = {
+		disconnectHref: PropTypes.string,
 		isBroken: PropTypes.bool,
-		isVisible: PropTypes.bool,
-		onClose: PropTypes.func,
-		redirect: PropTypes.string,
+		onDisconnect: PropTypes.func,
+		onStayConnected: PropTypes.func,
 		siteId: PropTypes.number,
+		stayConnectedHref: PropTypes.string,
 		// Connected props
 		plan: PropTypes.string,
 		siteSlug: PropTypes.string,
+	};
+
+	static defaultProps = {
+		onDisconnect: noop,
+		onStayConnected: noop,
 	};
 
 	trackReadMoreClick = () => {
@@ -137,8 +143,7 @@ class DisconnectJetpack extends PureComponent {
 
 	disconnectJetpack = () => {
 		const {
-			onClose,
-			redirect,
+			onDisconnect,
 			site,
 			siteId,
 			siteTitle,
@@ -151,7 +156,7 @@ class DisconnectJetpack extends PureComponent {
 			recordGoogleEvent: recordGAEvent,
 		} = this.props;
 
-		onClose();
+		onDisconnect();
 
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
@@ -185,12 +190,17 @@ class DisconnectJetpack extends PureComponent {
 				recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
 			}
 		);
-
-		page.redirect( redirect );
 	};
 
 	render() {
-		const { onClose, translate, isBroken, siteSlug } = this.props;
+		const {
+			disconnectHref,
+			isBroken,
+			onStayConnected,
+			siteSlug,
+			stayConnectedHref,
+			translate,
+		} = this.props;
 		if ( isBroken ) {
 			return (
 				<Card className="disconnect-jetpack">
@@ -224,8 +234,10 @@ class DisconnectJetpack extends PureComponent {
 				{ this.planFeatures() }
 
 				<div className="disconnect-jetpack__button-wrap">
-					<Button onClick={ onClose }>{ translate( 'Stay Connected' ) }</Button>
-					<Button primary scary onClick={ this.disconnectJetpack }>
+					<Button href={ stayConnectedHref } onClick={ onStayConnected }>
+						{ translate( 'Stay Connected' ) }
+					</Button>
+					<Button primary scary href={ disconnectHref } onClick={ this.disconnectJetpack }>
 						{ translate( 'Disconnect', {
 							context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
 						} ) }
