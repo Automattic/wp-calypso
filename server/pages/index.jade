@@ -82,9 +82,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			link(rel='preconnect' href='//s0.wp.com')
 			if ! shouldUseSingleCDN
 				link(rel='preconnect' href='//s1.wp.com')
-
-			//- Preconnect to Google's font CDN. Note the mandatory crossorigin attr for fonts.
-			link(rel='preconnect' crossorigin href='https://fonts.gstatic.com')
 			
 			//- Preconnect to our API.
 			link(rel='preconnect' href='https://public-api.wordpress.com')
