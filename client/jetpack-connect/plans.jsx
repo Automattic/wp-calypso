@@ -281,7 +281,7 @@ class Plans extends Component {
 			return <QueryPlans />;
 		}
 
-		const helpButtonText = translate( 'Need help?' );
+		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
 			<div>
@@ -301,8 +301,8 @@ class Plans extends Component {
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
-						<JetpackConnectHappychatButton text={ helpButtonText }>
-							<HelpButton onClick={ this.handleHelpButtonClick } text={ helpButtonText } />
+						<JetpackConnectHappychatButton label={ helpButtonLabel }>
+							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
