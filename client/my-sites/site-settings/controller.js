@@ -114,6 +114,10 @@ const controller = {
 		renderPage( context, <DisconnectSite /> );
 	},
 
+	disconnectSiteConfirm( context ) {
+		renderPage( context, <ConfirmDisconnection /> );
+	},
+
 	startOver( context ) {
 		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
 
@@ -133,10 +137,6 @@ const controller = {
 		}
 
 		renderPage( context, <ThemeSetup /> );
-	},
-
-	confirmDisconnection( context ) {
-		renderPage( context, <ConfirmDisconnection /> );
 	},
 
 	manageConnection( context ) {

@@ -69,7 +69,7 @@ export default function() {
 			mySitesController.siteSelection,
 			mySitesController.navigation,
 			settingsController.setScroll,
-			controller.confirmDisconnection
+			controller.disconnectSiteConfirm
 		);
 	}
 
