@@ -71,7 +71,7 @@ export const EditorBasicsTour = makeTour(
 			<p>
 				{ translate(
 					'Click the {{icon/}} to add images and other things, like a contact form. ' +
-						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} -- ' +
+						'Sites on the Premium and Business plans can add {{strong}}payment buttons{{/strong}} — ' +
 						'sell tickets, collect donations, accept tips, and more.',
 					{
 						components: {
