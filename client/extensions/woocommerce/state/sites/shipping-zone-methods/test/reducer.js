@@ -14,7 +14,7 @@ import { WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST } from 'woocommerce/state/act
 import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'fetch shipping zone methods', () => {
-	it( 'should mark the shipping zone methods list as "loading"', () => {
+	test( 'should mark the shipping zone methods list as "loading"', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {
@@ -34,7 +34,7 @@ describe( 'fetch shipping zone methods', () => {
 } );
 
 describe( 'fetch shipping zone methods - success', () => {
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {
@@ -71,7 +71,7 @@ describe( 'fetch shipping zone methods - success', () => {
 		expect( newState[ siteId ].shippingZones ).to.deep.equal( [ { id: 1, methodIds: [ 4, 7 ] } ] );
 	} );
 
-	it( 'should overwrite previous methods with the same ID', () => {
+	test( 'should overwrite previous methods with the same ID', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {

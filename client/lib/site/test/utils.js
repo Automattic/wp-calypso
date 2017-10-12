@@ -12,25 +12,25 @@ import SiteUtils from 'lib/site/utils';
 
 const assert = chai.assert;
 
-describe( 'Site Utils', function() {
-	describe( 'canUpdateFiles', function() {
-		it( 'Should have a method canUpdateFiles.', function() {
+describe( 'Site Utils', () => {
+	describe( 'canUpdateFiles', () => {
+		test( 'Should have a method canUpdateFiles.', () => {
 			assert.isFunction( SiteUtils.canUpdateFiles );
 		} );
 
-		it( 'Should return false when no site object is passed in.', function() {
+		test( 'Should return false when no site object is passed in.', () => {
 			assert.isFalse( SiteUtils.canUpdateFiles() );
 		} );
 
-		it( 'Should return false when passed an empty object.', function() {
+		test( 'Should return false when passed an empty object.', () => {
 			assert.isFalse( SiteUtils.canUpdateFiles( {} ) );
 		} );
 
-		it( 'Should return false when passed an object without options.', function() {
+		test( 'Should return false when passed an object without options.', () => {
 			assert.isFalse( SiteUtils.canUpdateFiles( { hello: 'not important' } ) );
 		} );
 
-		it( 'Should return false when passed an site object that has something value in the file_mod_option.', function() {
+		test( 'Should return false when passed an site object that has something value in the file_mod_option.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				options: {
@@ -43,7 +43,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
-		it( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', function() {
+		test( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				is_multisite: true,
@@ -57,7 +57,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
-		it( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', function() {
+		test( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				is_multisite: false,
@@ -71,7 +71,7 @@ describe( 'Site Utils', function() {
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 
-		it( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', function() {
+		test( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				is_multisite: true,
@@ -85,7 +85,7 @@ describe( 'Site Utils', function() {
 			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
 		} );
 
-		it( 'Should return false when passed a site  that has compares ftp to http protocolls for unmapped_url and main_network_site.', function() {
+		test( 'Should return false when passed a site  that has compares ftp to http protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				is_multisite: true,
@@ -99,7 +99,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
 		} );
 
-		it( 'Should return true when passed a site that has all the right settings permissions to be able to update files.', function() {
+		test( 'Should return true when passed a site that has all the right settings permissions to be able to update files.', () => {
 			const site = {
 				hasMinimumJetpackVersion: true,
 				is_multisite: true,
@@ -114,24 +114,24 @@ describe( 'Site Utils', function() {
 		} );
 	} );
 
-	describe( 'isMainNetworkSite', function() {
-		it( 'Should have a method isMainNetworkSite.', function() {
+	describe( 'isMainNetworkSite', () => {
+		test( 'Should have a method isMainNetworkSite.', () => {
 			assert.isFunction( SiteUtils.isMainNetworkSite );
 		} );
 
-		it( 'Should return false when no site object is passed in.', function() {
+		test( 'Should return false when no site object is passed in.', () => {
 			assert.isFalse( SiteUtils.isMainNetworkSite() );
 		} );
 
-		it( 'Should return false when passed an empty object.', function() {
+		test( 'Should return false when passed an empty object.', () => {
 			assert.isFalse( SiteUtils.isMainNetworkSite( {} ) );
 		} );
 
-		it( 'Should return false when passed an object without options.', function() {
+		test( 'Should return false when passed an object without options.', () => {
 			assert.isFalse( SiteUtils.isMainNetworkSite( { hello: 'not important' } ) );
 		} );
 
-		it( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', function() {
+		test( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', () => {
 			const site = {
 				is_multisite: true,
 				options: {
@@ -142,7 +142,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
-		it( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', function() {
+		test( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', () => {
 			const site = {
 				is_multisite: false,
 				options: {
@@ -153,7 +153,7 @@ describe( 'Site Utils', function() {
 			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
-		it( 'Should return false when passed a site that a part of a multi network.', function() {
+		test( 'Should return false when passed a site that a part of a multi network.', () => {
 			const site = {
 				options: {
 					is_multi_network: true,
@@ -162,7 +162,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
-		it( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', function() {
+		test( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
 				is_multisite: true,
 				options: {
@@ -173,7 +173,7 @@ describe( 'Site Utils', function() {
 			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
-		it( 'Should return false when passed a site that has compares ftp to http protocolls for unmapped_url and main_network_site.', function() {
+		test( 'Should return false when passed a site that has compares ftp to http protocolls for unmapped_url and main_network_site.', () => {
 			const site = {
 				is_multisite: true,
 				options: {
@@ -184,7 +184,7 @@ describe( 'Site Utils', function() {
 			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
 		} );
 
-		it( 'Does not explode when unmapped_url is not defined', function() {
+		test( 'Does not explode when unmapped_url is not defined', () => {
 			const site = {
 				is_multisite: true,
 				options: {},

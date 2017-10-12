@@ -11,11 +11,11 @@ import { expect } from 'chai';
 import { getSuggestedUsername } from '../selectors';
 
 describe( 'selectors', () => {
-	it( 'should return string if no username suggestions', () => {
+	test( 'should return string if no username suggestions', () => {
 		expect( getSuggestedUsername( { signup: undefined } ) ).to.be.eql( '' );
 	} );
 
-	it( 'should return suggestedUsername', () => {
+	test( 'should return suggestedUsername', () => {
 		expect(
 			getSuggestedUsername( {
 				signup: {

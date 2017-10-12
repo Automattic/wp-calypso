@@ -12,7 +12,7 @@ import { areAllSitesSingleUser } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'areAllSitesSingleUser()', () => {
-	it( "should return false sites haven't been fetched yet", () => {
+	test( "should return false sites haven't been fetched yet", () => {
 		const state = {
 			...userState,
 			sites: {
@@ -24,7 +24,7 @@ describe( 'areAllSitesSingleUser()', () => {
 		expect( allAreSingleUser ).to.be.false;
 	} );
 
-	it( "should return false if single_user_site isn't true for all sites", () => {
+	test( "should return false if single_user_site isn't true for all sites", () => {
 		const state = {
 			...userState,
 			sites: {
@@ -48,7 +48,7 @@ describe( 'areAllSitesSingleUser()', () => {
 		expect( allAreSingleUser ).to.be.false;
 	} );
 
-	it( 'should return true if single_user_site is true for all sites', () => {
+	test( 'should return true if single_user_site is true for all sites', () => {
 		const state = {
 			...userState,
 			sites: {

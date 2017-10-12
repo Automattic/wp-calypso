@@ -13,7 +13,7 @@ import { getCurrentLayoutFocus } from '../../layout-focus/selectors';
 describe( 'selectors', () => {
 	let state;
 
-	before( () => {
+	beforeAll( () => {
 		state = {
 			ui: {
 				layoutFocus: {
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentLayoutFocus', () => {
-		it( 'returns the current layout focus area', () => {
+		test( 'returns the current layout focus area', () => {
 			expect( getCurrentLayoutFocus( state ) ).to.equal( 'sites' );
 		} );
 	} );

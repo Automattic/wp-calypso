@@ -20,7 +20,7 @@ import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/act
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {
-		it( 'should dispatch an http request', () => {
+		test( 'should dispatch an http request', () => {
 			const dispatch = spy();
 			const action = removeBlogSticker( 123, 'broken-in-reader' );
 			requestBlogStickerRemove( { dispatch }, action );
@@ -38,7 +38,7 @@ describe( 'blog-sticker-remove', () => {
 	} );
 
 	describe( 'receiveBlogStickerRemove', () => {
-		it( 'should dispatch a notice', () => {
+		test( 'should dispatch a notice', () => {
 			const dispatch = spy();
 			receiveBlogStickerRemove(
 				{ dispatch },
@@ -52,7 +52,7 @@ describe( 'blog-sticker-remove', () => {
 			} );
 		} );
 
-		it( 'should dispatch a sticker removal if it fails', () => {
+		test( 'should dispatch a sticker removal if it fails', () => {
 			const dispatch = spy();
 			receiveBlogStickerRemove(
 				{ dispatch },
@@ -70,7 +70,7 @@ describe( 'blog-sticker-remove', () => {
 	} );
 
 	describe( 'receiveBlogStickerRemoveError', () => {
-		it( 'should dispatch an error notice and add sticker action', () => {
+		test( 'should dispatch an error notice and add sticker action', () => {
 			const dispatch = spy();
 			receiveBlogStickerRemoveError(
 				{ dispatch },

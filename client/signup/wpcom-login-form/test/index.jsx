@@ -21,7 +21,7 @@ describe( 'WpcomLoginForm', () => {
 		redirectTo: 'https://test.wordpress.com',
 	};
 
-	it( 'should render default fields as expected.', () => {
+	test( 'should render default fields as expected.', () => {
 		const wrapper = shallow( <WpcomLoginForm { ...props } /> );
 
 		// should render root form element
@@ -46,7 +46,7 @@ describe( 'WpcomLoginForm', () => {
 		expect( wrapper.find( 'form > input[name="log"]' ).prop( 'value' ) ).to.equal( 'another_log' );
 	} );
 
-	it( 'should render extra fields if extraFields prop is passed.', () => {
+	test( 'should render extra fields if extraFields prop is passed.', () => {
 		const wrapper = shallow(
 			<WpcomLoginForm
 				{ ...props }
@@ -62,7 +62,7 @@ describe( 'WpcomLoginForm', () => {
 		expect( wrapper.find( 'input[name="lorem"]' ).prop( 'value' ) ).to.equal( 'ipsum' );
 	} );
 
-	it( 'its action should be under the wpcom subdomain that `redirectTo` prop contains.', () => {
+	test( 'its action should be under the wpcom subdomain that `redirectTo` prop contains.', () => {
 		const wrapper = shallow(
 			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
 		);
@@ -77,7 +77,7 @@ describe( 'WpcomLoginForm', () => {
 		);
 	} );
 
-	it( 'its action should has no subdomain when `hostname` is wpcalypso.wpcom or horizon.wpcom.', () => {
+	test( 'its action should has no subdomain when `hostname` is wpcalypso.wpcom or horizon.wpcom.', () => {
 		const wrapper = shallow(
 			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
 		);
@@ -110,7 +110,7 @@ describe( 'WpcomLoginForm', () => {
 		);
 	} );
 
-	it( 'its action should has no subdomain when `redirectTo` prop is not a subdomain of wpcom.', () => {
+	test( 'its action should has no subdomain when `redirectTo` prop is not a subdomain of wpcom.', () => {
 		const wrapper = shallow( <WpcomLoginForm { ...props } redirectTo="https://wordpress.org" /> );
 
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal(

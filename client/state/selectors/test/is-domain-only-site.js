@@ -13,7 +13,7 @@ import { isDomainOnlySite } from '../';
 describe( '#isDomainOnlySite()', () => {
 	const siteId = 77203074;
 
-	it( 'should return null if the site is unknown', () => {
+	test( 'should return null if the site is unknown', () => {
 		const result = isDomainOnlySite(
 			{
 				sites: {
@@ -26,7 +26,7 @@ describe( '#isDomainOnlySite()', () => {
 		expect( result ).to.be.null;
 	} );
 
-	it( 'it should return false if the site does not have the domain only option set to true', () => {
+	test( 'it should return false if the site does not have the domain only option set to true', () => {
 		const result = isDomainOnlySite(
 			{
 				sites: {
@@ -47,7 +47,7 @@ describe( '#isDomainOnlySite()', () => {
 		expect( result ).to.be.false;
 	} );
 
-	it( 'it should return false if the site has the domain only option set to true', () => {
+	test( 'it should return false if the site has the domain only option set to true', () => {
 		const result = isDomainOnlySite(
 			{
 				sites: {

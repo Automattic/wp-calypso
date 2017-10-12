@@ -19,10 +19,10 @@ import { ThemesList } from '../';
 jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
 jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
 
-describe( 'ThemesList', function() {
+describe( 'ThemesList', () => {
 	let props, themesList, themesListElement;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		props = {
 			themes: [
 				{
@@ -47,21 +47,21 @@ describe( 'ThemesList', function() {
 		themesList = React.createElement( ThemesList, props );
 	} );
 
-	describe( 'propTypes', function() {
-		it( 'specifies the required propType', function() {
+	describe( 'propTypes', () => {
+		test( 'specifies the required propType', () => {
 			assert( themesList.type.propTypes.themes, 'themes propType missing' );
 		} );
 	} );
 
-	describe( 'rendering', function() {
-		beforeEach( function() {
+	describe( 'rendering', () => {
+		beforeEach( () => {
 			const shallowRenderer = TestUtils.createRenderer();
 
 			shallowRenderer.render( themesList );
 			themesListElement = shallowRenderer.getRenderOutput();
 		} );
 
-		it( 'should render a div with a className of "themes-list"', function() {
+		test( 'should render a div with a className of "themes-list"', () => {
 			assert( themesListElement, 'element does not exist' );
 			assert(
 				themesListElement.props.className === 'themes-list',
@@ -69,8 +69,8 @@ describe( 'ThemesList', function() {
 			);
 		} );
 
-		context( 'when no themes are found', function() {
-			beforeEach( function() {
+		describe( 'when no themes are found', () => {
+			beforeEach( () => {
 				const shallowRenderer = TestUtils.createRenderer();
 				props.themes = [];
 				themesList = React.createElement( ThemesList, props );
@@ -79,7 +79,7 @@ describe( 'ThemesList', function() {
 				themesListElement = shallowRenderer.getRenderOutput();
 			} );
 
-			it( 'displays the EmptyContent component', function() {
+			test( 'displays the EmptyContent component', () => {
 				assert( themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
 			} );
 		} );

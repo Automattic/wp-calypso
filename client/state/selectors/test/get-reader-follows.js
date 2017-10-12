@@ -64,7 +64,7 @@ describe( 'getReaderFollows()', () => {
 		},
 	} );
 
-	it( 'should not return follows with an error set and should fill in feed and site when available', () => {
+	test( 'should not return follows with an error set and should fill in feed and site when available', () => {
 		const follows = getReaderFollows( state );
 		expect( follows ).to.eql( [
 			{

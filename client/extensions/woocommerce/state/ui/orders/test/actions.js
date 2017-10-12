@@ -20,7 +20,7 @@ describe( 'actions', () => {
 	describe( '#clearOrderEdits()', () => {
 		const siteId = '123';
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			clearOrderEdits( siteId )( dispatch, getState );
@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	describe( '#editOrder()', () => {
 		const siteId = '123';
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const order = {
@@ -53,7 +53,7 @@ describe( 'actions', () => {
 	describe( '#updateCurrentOrdersQuery()', () => {
 		const siteId = '123';
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			updateCurrentOrdersQuery( siteId, { page: 2, search: 'test' } )( dispatch, getState );

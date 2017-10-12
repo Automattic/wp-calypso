@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#clearPurchases', () => {
-		it( 'should return a `PURCHASES_REMOVE` action', () => {
+		test( 'should return a `PURCHASES_REMOVE` action', () => {
 			expect( clearPurchases() ).to.be.eql( {
 				type: PURCHASES_REMOVE,
 			} );
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 				.reply( 200, { upgrade: purchases[ 0 ] } );
 		} );
 
-		it( 'should dispatch fetch/complete actions', () => {
+		test( 'should dispatch fetch/complete actions', () => {
 			const promise = cancelPrivacyProtection( purchaseId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 				.reply( 200, purchases );
 		} );
 
-		it( 'should dispatch fetch/complete actions', () => {
+		test( 'should dispatch fetch/complete actions', () => {
 			const promise = fetchSitePurchases( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 				.reply( 200, purchases );
 		} );
 
-		it( 'should dispatch fetch/complete actions', () => {
+		test( 'should dispatch fetch/complete actions', () => {
 			const promise = fetchUserPurchases( userId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 				.reply( 200, response );
 		} );
 
-		it( 'should dispatch fetch/complete actions', () => {
+		test( 'should dispatch fetch/complete actions', () => {
 			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
@@ -156,7 +156,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch/remove actions', () => {
+		test( 'should dispatch fetch/remove actions', () => {
 			return removePurchase( purchaseId, userId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_FAILED,

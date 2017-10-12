@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay, filter } from 'lodash';
+import { get, size, takeRight, delay, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -253,6 +253,11 @@ class PostCommentList extends React.Component {
 	setActiveReplyComment = commentId => {
 		const siteId = get( this.props, 'post.site_ID' );
 		const postId = get( this.props, 'post.ID' );
+
+		if ( ! siteId || ! postId ) {
+			return;
+		}
+
 		this.props.setActiveReply( {
 			siteId,
 			postId,
@@ -273,17 +278,15 @@ class PostCommentList extends React.Component {
 	};
 
 	renderCommentForm = () => {
-		const post = this.props.post;
+		const { post, commentsTree } = this.props;
 		const commentText = this.state.commentText;
 
 		// Are we displaying the comment form at the top-level?
 		if (
 			this.props.activeReplyCommentId ||
-			size(
-				filter( this.props.commentsTree, comment => {
-					return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-				} )
-			) > 0
+			some( commentsTree, comment => {
+				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+			} )
 		) {
 			return null;
 		}

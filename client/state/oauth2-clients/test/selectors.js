@@ -12,13 +12,13 @@ import { getOAuth2Client } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getOAuth2Client()', () => {
-		it( 'should return null if no state provided', () => {
+		test( 'should return null if no state provided', () => {
 			const client = getOAuth2Client();
 
 			expect( client ).to.be.null;
 		} );
 
-		it( 'should return null if wrong client id provided', () => {
+		test( 'should return null if wrong client id provided', () => {
 			const client = getOAuth2Client(
 				{
 					oauth2Clients: {
@@ -36,7 +36,7 @@ describe( 'selectors', () => {
 			expect( client ).to.be.null;
 		} );
 
-		it( 'should return data', () => {
+		test( 'should return data', () => {
 			const client = getOAuth2Client(
 				{
 					oauth2Clients: {

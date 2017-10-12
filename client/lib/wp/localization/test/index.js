@@ -20,20 +20,20 @@ describe( 'index', () => {
 	} );
 
 	describe( '#addLocaleQueryParam()', () => {
-		it( 'should not modify params if locale unknown', () => {
+		test( 'should not modify params if locale unknown', () => {
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
 			expect( params ).to.eql( { query: 'search=foo' } );
 		} );
 
-		it( 'should not modify params if locale is default', () => {
+		test( 'should not modify params if locale is default', () => {
 			setLocale( 'en' );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
 			expect( params ).to.eql( { query: 'search=foo' } );
 		} );
 
-		it( 'should include the locale query parameter for a non-default locale', () => {
+		test( 'should include the locale query parameter for a non-default locale', () => {
 			setLocale( 'fr' );
 			const params = addLocaleQueryParam( { query: 'search=foo' } );
 
@@ -44,14 +44,14 @@ describe( 'index', () => {
 	} );
 
 	describe( '#injectLocalization()', () => {
-		it( 'should return a modified object', () => {
+		test( 'should return a modified object', () => {
 			const wpcom = { request() {} };
 			injectLocalization( wpcom );
 
 			expect( wpcom.localized ).to.exist;
 		} );
 
-		it( 'should override the default request method', () => {
+		test( 'should override the default request method', () => {
 			const request = () => {};
 			const wpcom = { request };
 			injectLocalization( wpcom );
@@ -59,7 +59,7 @@ describe( 'index', () => {
 			expect( wpcom.request ).to.not.equal( request );
 		} );
 
-		it( 'should modify params by default', done => {
+		test( 'should modify params by default', done => {
 			setLocale( 'fr' );
 			const wpcom = {
 				request( params ) {
@@ -74,13 +74,13 @@ describe( 'index', () => {
 	} );
 
 	describe( '#bindState()', () => {
-		it( 'should set initial locale from state', () => {
+		test( 'should set initial locale from state', () => {
 			getCurrentUserLocaleMock.mockReturnValueOnce( 'fr' );
 			bindState( { subscribe() {}, getState() {} } );
 			expect( getLocale() ).to.equal( 'fr' );
 		} );
 
-		it( 'should subscribe to the store, setting locale on change', () => {
+		test( 'should subscribe to the store, setting locale on change', () => {
 			let listener;
 			bindState( {
 				subscribe( _listener ) {

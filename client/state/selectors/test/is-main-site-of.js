@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isMainSiteOf } from '../';
 
 describe( 'isMainSiteOf()', () => {
-	it( 'should return null if no sites exist in state', () => {
+	test( 'should return null if no sites exist in state', () => {
 		const state = {
 			sites: {
 				items: {},
@@ -20,7 +20,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
 
-	it( 'should return null if no site with id equal to mainSiteId exists in state', () => {
+	test( 'should return null if no site with id equal to mainSiteId exists in state', () => {
 		const state = {
 			sites: {
 				items: {
@@ -39,7 +39,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
 
-	it( 'should return null if no site with id equal to secondarySiteId exists in state', () => {
+	test( 'should return null if no site with id equal to secondarySiteId exists in state', () => {
 		const state = {
 			sites: {
 				items: {
@@ -58,7 +58,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.null;
 	} );
 
-	it( 'should return false if site mainSiteId is not a main site', () => {
+	test( 'should return false if site mainSiteId is not a main site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -86,7 +86,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
 
-	it( 'should return false if site secondarySiteId is not a secondary site', () => {
+	test( 'should return false if site secondarySiteId is not a secondary site', () => {
 		const state = {
 			sites: {
 				items: {
@@ -114,7 +114,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
 
-	it( 'should return false if site mainSiteId is not the main site of site secondarySiteId', () => {
+	test( 'should return false if site mainSiteId is not the main site of site secondarySiteId', () => {
 		const state = {
 			sites: {
 				items: {
@@ -142,7 +142,7 @@ describe( 'isMainSiteOf()', () => {
 		expect( isMainSiteOf( state, 1, 2 ) ).be.false;
 	} );
 
-	it( 'should return true if site mainSiteId is the main site of site secondarySiteId', () => {
+	test( 'should return true if site mainSiteId is the main site of site secondarySiteId', () => {
 		const state = {
 			sites: {
 				items: {

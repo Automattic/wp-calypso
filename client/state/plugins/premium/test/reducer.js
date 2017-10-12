@@ -31,14 +31,14 @@ import {
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {
-		it( 'should track when fetches start', () => {
+		test( 'should track when fetches start', () => {
 			const state = isRequesting( undefined, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 				siteId: 'one.site',
 			} );
 			expect( state ).to.eql( { 'one.site': true } );
 		} );
-		it( 'keeps track of multiple sites', () => {
+		test( 'keeps track of multiple sites', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
 			const state = isRequesting( originalState, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
@@ -46,7 +46,7 @@ describe( 'premium reducer', () => {
 			} );
 			expect( state ).to.eql( { 'one.site': true, 'two.site': true } );
 		} );
-		it( 'should track when fetches end', () => {
+		test( 'should track when fetches end', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
 			const state = isRequesting( originalState, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -54,7 +54,7 @@ describe( 'premium reducer', () => {
 			} );
 			expect( state ).to.eql( { 'one.site': false } );
 		} );
-		it( 'should track when fetches end for many sites', () => {
+		test( 'should track when fetches end for many sites', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
 			const state = isRequesting( originalState, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -62,7 +62,7 @@ describe( 'premium reducer', () => {
 			} );
 			expect( state ).to.eql( { 'one.site': true, 'two.site': false } );
 		} );
-		it( 'should not change when plugin status updates', () => {
+		test( 'should not change when plugin status updates', () => {
 			const originalState = deepFreeze( { 'one.site': false } );
 			const state = isRequesting( originalState, {
 				type: PLUGIN_SETUP_INSTALL,
@@ -73,7 +73,7 @@ describe( 'premium reducer', () => {
 	} );
 
 	describe( 'plugins', () => {
-		it( 'should load the install instructions', () => {
+		test( 'should load the install instructions', () => {
 			const originalState = deepFreeze( { 'one.site': [] } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -83,7 +83,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': initSite } );
 		} );
 
-		it( 'should keep track of install instructions for multiple sites', () => {
+		test( 'should keep track of install instructions for multiple sites', () => {
 			const originalState = deepFreeze( { 'one.site': installingSite } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -93,7 +93,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': installingSite, 'two.site': initSite } );
 		} );
 
-		it( 'should track when a plugin has started installing', () => {
+		test( 'should track when a plugin has started installing', () => {
 			const originalState = deepFreeze( { 'one.site': initSite } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_INSTALL,
@@ -127,7 +127,7 @@ describe( 'premium reducer', () => {
 			} );
 		} );
 
-		it( 'should track when a plugin is being activated', () => {
+		test( 'should track when a plugin is being activated', () => {
 			const originalState = deepFreeze( { 'one.site': installingSite } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_ACTIVATE,
@@ -137,7 +137,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': activatingSite } );
 		} );
 
-		it( 'should track when a plugin is being configured', () => {
+		test( 'should track when a plugin is being configured', () => {
 			const originalState = deepFreeze( { 'one.site': activatingSite } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_CONFIGURE,
@@ -147,7 +147,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': configuringSite } );
 		} );
 
-		it( 'should track when a plugin has successfully finished', () => {
+		test( 'should track when a plugin has successfully finished', () => {
 			const originalState = deepFreeze( { 'one.site': configuringSite } );
 			const state = plugins( originalState, {
 				type: PLUGIN_SETUP_FINISH,
@@ -157,7 +157,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': finishedPluginSite } );
 		} );
 
-		it( 'should track any errors when installing a plugin', () => {
+		test( 'should track any errors when installing a plugin', () => {
 			const originalState = deepFreeze( {
 				'one.site': [
 					{

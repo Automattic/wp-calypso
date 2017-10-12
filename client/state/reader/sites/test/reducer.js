@@ -21,11 +21,11 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'should return an empty map by default', () => {
+		test( 'should return an empty map by default', () => {
 			expect( items( undefined, {} ) ).to.deep.equal( {} );
 		} );
 
-		it( 'should update the state when receiving a feed', () => {
+		test( 'should update the state when receiving a feed', () => {
 			expect(
 				items(
 					{},
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should fallback to using the domain for the title if name is missing', () => {
+		test( 'should fallback to using the domain for the title if name is missing', () => {
 			expect(
 				items(
 					{},
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set the domain and slug from the url', () => {
+		test( 'should set the domain and slug from the url', () => {
 			expect(
 				items(
 					{},
@@ -88,7 +88,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set the domain and slug from the url unless it is a site redirect', () => {
+		test( 'should set the domain and slug from the url unless it is a site redirect', () => {
 			expect(
 				items(
 					{},
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should decode entities in the site description', () => {
+		test( 'should decode entities in the site description', () => {
 			expect(
 				items(
 					{},
@@ -136,12 +136,12 @@ describe( 'reducer', () => {
 				.that.equals( 'Apples&Pears' );
 		} );
 
-		it( 'should serialize site entries', () => {
+		test( 'should serialize site entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );
 		} );
 
-		it( 'should not serialize errors', () => {
+		test( 'should not serialize errors', () => {
 			const stateWithErrors = deepFreeze( {
 				12: { ID: 12, name: 'yes' },
 				666: {
@@ -154,7 +154,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it(
+		test(
 			'should reject deserializing entries it cannot validate',
 			sinon.test( function() {
 				const unvalidatedObject = deepFreeze( { hi: 'there' } );
@@ -163,7 +163,7 @@ describe( 'reducer', () => {
 			} )
 		);
 
-		it( 'should deserialize good things', () => {
+		test( 'should deserialize good things', () => {
 			const validState = deepFreeze( {
 				1234: {
 					ID: 1234,
@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
 		} );
 
-		it( 'should stash an error object in the map if the request fails', () => {
+		test( 'should stash an error object in the map if the request fails', () => {
 			expect(
 				items(
 					{},
@@ -186,7 +186,7 @@ describe( 'reducer', () => {
 			).to.deep.equal( { 666: { ID: 666, is_error: true } } );
 		} );
 
-		it( 'should overwrite an existing entry on receiving a new feed', () => {
+		test( 'should overwrite an existing entry on receiving a new feed', () => {
 			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
 			expect(
 				items( startingState, {
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 			).to.deep.equal( { 666: { ID: 666, name: 'new', title: 'new' } } );
 		} );
 
-		it( 'should leave an existing entry alone if an error is received', () => {
+		test( 'should leave an existing entry alone if an error is received', () => {
 			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
 			expect(
 				items( startingState, {
@@ -210,7 +210,7 @@ describe( 'reducer', () => {
 			).to.deep.equal( startingState );
 		} );
 
-		it( 'should accept updates', () => {
+		test( 'should accept updates', () => {
 			const startingState = deepFreeze( {
 				666: { ID: 666, name: 'valid' },
 				777: { ID: 777, name: 'second valid' },
@@ -234,7 +234,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'isRequestingFeed', () => {
-		it( 'should add to the set of feeds inflight', () => {
+		test( 'should add to the set of feeds inflight', () => {
 			expect(
 				queuedRequests(
 					{},
@@ -246,7 +246,7 @@ describe( 'reducer', () => {
 			).to.deep.equal( { 1: true } );
 		} );
 
-		it( 'should remove the feed from the set inflight', () => {
+		test( 'should remove the feed from the set inflight', () => {
 			expect(
 				queuedRequests( deepFreeze( { 1: true } ), {
 					type: READER_SITE_REQUEST_SUCCESS,
@@ -257,7 +257,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'lastFetched', () => {
-		it( 'should update the last fetched time on request success', () => {
+		test( 'should update the last fetched time on request success', () => {
 			const original = deepFreeze( {} );
 			const action = {
 				type: READER_SITE_REQUEST_SUCCESS,
@@ -268,7 +268,7 @@ describe( 'reducer', () => {
 				.that.is.a( 'number' );
 		} );
 
-		it( 'should update the last fetched time on site update', () => {
+		test( 'should update the last fetched time on site update', () => {
 			const original = deepFreeze( {} );
 			const action = {
 				type: READER_SITE_UPDATE,

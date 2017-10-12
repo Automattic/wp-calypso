@@ -85,7 +85,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#advancedSettingsFetch()', () => {
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			advancedSettingsFetch( 100658273 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', done => {
+		test( 'should dispatch receive action when request completes', done => {
 			advancedSettingsFetch( 100658273 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		it( 'should dispatch fail action when request fails', done => {
+		test( 'should dispatch fail action when request fails', done => {
 			advancedSettingsFetch( 0 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#advancedSettingsReceive()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = advancedSettingsReceive( 100658273, SAMPLE_ADVANCED_SETTINGS );
 
 			expect( action ).to.deep.equal( {
@@ -135,7 +135,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#advancedSettingsFail()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const error = new Error( 'An error occurred fetching advanced settings' );
 			const action = advancedSettingsFail( 100658273, error );
 
@@ -148,7 +148,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#startExport()', () => {
-		it( 'should dispatch start export action when thunk triggered', () => {
+		test( 'should dispatch start export action when thunk triggered', () => {
 			startExport( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -158,7 +158,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch custom export action when thunk triggered', done => {
+		test( 'should dispatch custom export action when thunk triggered', done => {
 			startExport( 2916284, false )( spy, getStateCustomSettings )
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -171,7 +171,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		it( 'should dispatch export started action when request completes', done => {
+		test( 'should dispatch export started action when request completes', done => {
 			startExport( 2916284 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledTwice;
@@ -185,7 +185,7 @@ describe( 'actions', () => {
 				.catch( done );
 		} );
 
-		it( 'should dispatch export failed action when request fails', done => {
+		test( 'should dispatch export failed action when request fails', done => {
 			startExport( 77203074 )( spy, getState )
 				.then( () => {
 					expect( spy ).to.have.been.calledTwice;
@@ -201,7 +201,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setPostTypeFilters()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			expect( setPostTypeFieldValue( 1, 'post', 'author', 2 ) ).to.deep.equal( {
 				type: EXPORT_POST_TYPE_FIELD_SET,
 				siteId: 1,
@@ -213,7 +213,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#exportStatusFetch()', () => {
-		it( 'should dispatch fetch export status action when thunk triggered', () => {
+		test( 'should dispatch fetch export status action when thunk triggered', () => {
 			return exportStatusFetch( 100658273 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_STATUS_FETCH,
@@ -222,7 +222,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch export complete action when an export has completed', () => {
+		test( 'should dispatch export complete action when an export has completed', () => {
 			return exportStatusFetch( 100658273 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {
@@ -232,7 +232,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch export failure action when an export has failed', () => {
+		test( 'should dispatch export failure action when an export has failed', () => {
 			return exportStatusFetch( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 				expect( spy ).to.have.been.calledWithMatch( {

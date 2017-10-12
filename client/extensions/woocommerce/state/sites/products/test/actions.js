@@ -61,7 +61,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with products list when request completes', () => {
+		test( 'should dispatch a success action with products list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProducts( siteId, { page: 1 } )( dispatch, getState );
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProducts( 234, { page: 'invalid' } )( dispatch, getState );
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if products are already loading for this page', () => {
+		test( 'should not dispatch if products are already loading for this page', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -167,7 +167,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
@@ -179,7 +179,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with results when request completes', () => {
+		test( 'should dispatch a success action with results when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
@@ -196,7 +196,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProductSearchResults( 234, 'invalid', 'testing' )( dispatch, getState );
@@ -209,7 +209,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if results are already loading for this page', () => {
+		test( 'should not dispatch if results are already loading for this page', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -232,7 +232,7 @@ describe( 'actions', () => {
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
 
-		it( 'should get query from state if no new query is passed', () => {
+		test( 'should get query from state if no new query is passed', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -268,7 +268,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#clearProductSearch()', () => {
 		const siteId = '123';
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const dispatch = spy();
 			dispatch( clearProductSearch( siteId ) );
 			expect( dispatch ).to.have.been.calledWith( {
@@ -290,7 +290,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			deleteProduct( siteId, 1 )( dispatch, getState );
@@ -301,7 +301,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with deleted product data when request completes', () => {
+		test( 'should dispatch a success action with deleted product data when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = deleteProduct( siteId, 523 )( dispatch, getState );
@@ -314,7 +314,7 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
-		it( 'should dispatch an error when the request fails', () => {
+		test( 'should dispatch an error when the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = deleteProduct( 234, 511 )( dispatch, getState );

@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getJetpackSettingsSaveError } from '../';
 
 describe( 'getJetpackSettingsSaveError()', () => {
-	it( 'should return false if the site is not attached', () => {
+	test( 'should return false if the site is not attached', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -26,7 +26,7 @@ describe( 'getJetpackSettingsSaveError()', () => {
 		expect( error ).to.be.false;
 	} );
 
-	it( 'should return false if the save the last request has no error', () => {
+	test( 'should return false if the save the last request has no error', () => {
 		const state = {
 			jetpack: {
 				settings: {
@@ -41,7 +41,7 @@ describe( 'getJetpackSettingsSaveError()', () => {
 		expect( error ).to.be.false;
 	} );
 
-	it( 'should return the error if the save request status has an error', () => {
+	test( 'should return the error if the save request status has an error', () => {
 		const state = {
 			jetpack: {
 				settings: {

@@ -5,7 +5,7 @@
 import { getActiveReplyCommentId } from '../';
 
 describe( 'getActiveReplyCommentId()', () => {
-	it( 'should return the active reply comment ID for a known site and post', () => {
+	test( 'should return the active reply comment ID for a known site and post', () => {
 		const prevState = {
 			comments: {
 				activeReplies: {
@@ -19,7 +19,7 @@ describe( 'getActiveReplyCommentId()', () => {
 		expect( nextState ).toEqual( 124 );
 	} );
 
-	it( 'should return null for an unknown site and post', () => {
+	test( 'should return null for an unknown site and post', () => {
 		const prevState = {
 			comments: {
 				activeReplies: {

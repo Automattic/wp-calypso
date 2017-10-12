@@ -235,7 +235,7 @@ class GoogleVoucherDetails extends Component {
 				<QuerySiteVouchers siteId={ selectedSite.ID } />
 				<PurchaseDetails
 					id="google-credits"
-					icon="tag"
+					icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 					title={ translate( 'Google AdWords credit' ) }
 					description={ translate(
 						'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.',

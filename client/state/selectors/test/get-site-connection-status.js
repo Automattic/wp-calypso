@@ -13,7 +13,7 @@ import { getSiteConnectionStatus } from '../';
 describe( 'getSiteConnectionStatus()', () => {
 	const siteId = 2916284;
 
-	it( 'should return connection status for a known site', () => {
+	test( 'should return connection status for a known site', () => {
 		const state = {
 			sites: {
 				connection: {
@@ -27,7 +27,7 @@ describe( 'getSiteConnectionStatus()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const state = {
 			sites: {
 				connection: {

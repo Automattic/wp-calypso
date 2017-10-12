@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isSiteUpgradeable } from '../';
 
 describe( 'isSiteUpgradeable()', () => {
-	it( 'should return null if no siteId is given', () => {
+	test( 'should return null if no siteId is given', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -35,7 +35,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.null;
 	} );
 
-	it( 'should return null if there is no site with that siteId', () => {
+	test( 'should return null if there is no site with that siteId', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -57,7 +57,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.null;
 	} );
 
-	it( 'should return null if there is no current user', () => {
+	test( 'should return null if there is no current user', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -79,7 +79,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.null;
 	} );
 
-	it( 'should return false if the user cannot manage the site ', () => {
+	test( 'should return false if the user cannot manage the site ', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -108,7 +108,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.false;
 	} );
 
-	it( 'should return true if the user can manage the site ', () => {
+	test( 'should return true if the user can manage the site ', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {

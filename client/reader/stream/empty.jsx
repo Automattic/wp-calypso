@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { isDiscoverEnabled } from 'reader/discover/helper';
 
 class FollowingEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -24,7 +23,7 @@ class FollowingEmptyContent extends React.Component {
 	};
 
 	render() {
-		const action = isDiscoverEnabled() ? (
+		const action = (
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }
@@ -32,7 +31,7 @@ class FollowingEmptyContent extends React.Component {
 				>
 					{ this.props.translate( 'Find Sites to Follow' ) }
 				</a>
-			) : null,
+			),
 			secondaryAction = null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

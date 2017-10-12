@@ -27,7 +27,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isRequestingTermsForQuery()', () => {
-		it( 'should return false if no request exists', () => {
+		test( 'should return false if no request exists', () => {
 			const requesting = isRequestingTermsForQuery(
 				{
 					terms: {
@@ -42,7 +42,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return false if query is not requesting', () => {
+		test( 'should return false if query is not requesting', () => {
 			const requesting = isRequestingTermsForQuery(
 				{
 					terms: {
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return true if query is in progress', () => {
+		test( 'should return true if query is in progress', () => {
 			const requesting = isRequestingTermsForQuery(
 				{
 					terms: {
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isRequestingTermsForQueryIgnoringPage()', () => {
-		it( 'should return false if no request exists', () => {
+		test( 'should return false if no request exists', () => {
 			const requesting = isRequestingTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -101,7 +101,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return false if query is not requesting', () => {
+		test( 'should return false if query is not requesting', () => {
 			const requesting = isRequestingTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -135,7 +135,7 @@ describe( 'selectors', () => {
 			expect( requesting ).to.be.false;
 		} );
 
-		it( 'should return true if any query is in progress', () => {
+		test( 'should return true if any query is in progress', () => {
 			const requesting = isRequestingTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -171,7 +171,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsForQuery()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const terms = getTermsForQuery(
 				{
 					terms: {
@@ -186,7 +186,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return an empty array if no matches exist', () => {
+		test( 'should return an empty array if no matches exist', () => {
 			const terms = getTermsForQuery(
 				{
 					terms: {
@@ -212,7 +212,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.eql( [] );
 		} );
 
-		it( 'should return matching terms', () => {
+		test( 'should return matching terms', () => {
 			const terms = getTermsForQuery(
 				{
 					terms: {
@@ -254,7 +254,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsForQueryIgnoringPage', () => {
-		it( 'should return null if site has not received terms', () => {
+		test( 'should return null if site has not received terms', () => {
 			const terms = getTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -271,7 +271,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return null if site is not tracking query for taxonomy', () => {
+		test( 'should return null if site is not tracking query for taxonomy', () => {
 			const terms = getTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -309,7 +309,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return terms ignoring page param', () => {
+		test( 'should return terms ignoring page param', () => {
 			const terms = getTermsForQueryIgnoringPage(
 				{
 					terms: {
@@ -360,7 +360,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTermsLastPageForQuery()', () => {
-		it( 'should return null if the taxonomy is not tracked', () => {
+		test( 'should return null if the taxonomy is not tracked', () => {
 			const lastPage = getTermsLastPageForQuery(
 				{
 					terms: {
@@ -375,7 +375,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.be.null;
 		} );
 
-		it( 'should return null if the terms query is not tracked', () => {
+		test( 'should return null if the terms query is not tracked', () => {
 			const lastPage = getTermsLastPageForQuery(
 				{
 					terms: {
@@ -392,7 +392,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.be.null;
 		} );
 
-		it( 'should return the last page value for a query', () => {
+		test( 'should return the last page value for a query', () => {
 			const lastPage = getTermsLastPageForQuery(
 				{
 					terms: {
@@ -430,7 +430,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.equal( 2 );
 		} );
 
-		it( 'should return the last page value for a terms query, even if including page param', () => {
+		test( 'should return the last page value for a terms query, even if including page param', () => {
 			const lastPage = getTermsLastPageForQuery(
 				{
 					terms: {
@@ -468,7 +468,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.equal( 2 );
 		} );
 
-		it( 'should return 1 if there are no results for a query', () => {
+		test( 'should return 1 if there are no results for a query', () => {
 			const lastPage = getTermsLastPageForQuery(
 				{
 					terms: {
@@ -497,7 +497,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTerms()', () => {
-		it( 'should return null if no site exists', () => {
+		test( 'should return null if no site exists', () => {
 			const terms = getTerms(
 				{
 					terms: {
@@ -511,7 +511,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return null if no terms exist for site taxonomy', () => {
+		test( 'should return null if no terms exist for site taxonomy', () => {
 			const terms = getTerms(
 				{
 					terms: {
@@ -537,7 +537,7 @@ describe( 'selectors', () => {
 			expect( terms ).to.be.null;
 		} );
 
-		it( 'should return array of matching terms for site taxonomy combo', () => {
+		test( 'should return array of matching terms for site taxonomy combo', () => {
 			const terms = getTerms(
 				{
 					terms: {
@@ -578,7 +578,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getTerm()', () => {
-		it( 'should return null if no site exists', () => {
+		test( 'should return null if no site exists', () => {
 			const term = getTerm(
 				{
 					terms: {
@@ -593,7 +593,7 @@ describe( 'selectors', () => {
 			expect( term ).to.be.null;
 		} );
 
-		it( 'should return term', () => {
+		test( 'should return term', () => {
 			const term = getTerm(
 				{
 					terms: {
@@ -627,7 +627,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return null if term does not exist', () => {
+		test( 'should return null if term does not exist', () => {
 			const term = getTerm(
 				{
 					terms: {
@@ -660,7 +660,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'countFoundTermsForQuery()', () => {
-		it( 'should return null if no matching query results exist', () => {
+		test( 'should return null if no matching query results exist', () => {
 			const count = countFoundTermsForQuery(
 				{
 					terms: {
@@ -675,7 +675,7 @@ describe( 'selectors', () => {
 			expect( count ).to.be.null;
 		} );
 
-		it( 'should return the found value of the query', () => {
+		test( 'should return the found value of the query', () => {
 			const count = countFoundTermsForQuery(
 				{
 					terms: {

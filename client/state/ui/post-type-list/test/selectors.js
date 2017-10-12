@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isSharePanelOpen } from '../selectors';
 
 describe( 'isSharePanelOpen', () => {
-	it( 'should return true if the Share panel is open', () => {
+	test( 'should return true if the Share panel is open', () => {
 		const postGlobalId = 4;
 		const isOpen = isSharePanelOpen(
 			{
@@ -27,7 +27,7 @@ describe( 'isSharePanelOpen', () => {
 		expect( isOpen ).to.be.true;
 	} );
 
-	it( 'should return false if the Share panel is not open', () => {
+	test( 'should return false if the Share panel is not open', () => {
 		const postGlobalId = 4;
 		const isOpen = isSharePanelOpen(
 			{

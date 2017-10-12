@@ -12,7 +12,7 @@ import { getSiteComputedAttributes } from '../utils';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 describe( 'utils', () => {
 	describe( 'getSiteComputedAttributes()', () => {
-		it( 'should return null if site is not found', () => {
+		test( 'should return null if site is not found', () => {
 			const state = {
 				...userState,
 				sites: {
@@ -23,7 +23,7 @@ describe( 'utils', () => {
 			expect( computedAttributes ).to.be.null;
 		} );
 
-		it( 'should return the "mandatory" attributes', () => {
+		test( 'should return the "mandatory" attributes', () => {
 			const state = {
 				...userState,
 				sites: {
@@ -52,7 +52,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
+		test( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
 			const options = {
 				default_post_format: 'test',
 				is_mapped_domain: true,

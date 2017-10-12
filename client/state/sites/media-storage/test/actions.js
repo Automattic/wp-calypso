@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveMediaStorage()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const siteId = 2916284;
 			const mediaStorage = {
 				max_storage_bytes: -1,
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestMediaStorage( 2916284 )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_MEDIA_STORAGE_REQUEST,
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestMediaStorage( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_MEDIA_STORAGE_RECEIVE,
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return requestMediaStorage( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestMediaStorage( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,

@@ -12,7 +12,7 @@ import { isJetpackUserMaster } from '../';
 import { dataItems } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackUserMaster()', () => {
-	it( "should return true if the user is the master user of the site's connection", () => {
+	test( "should return true if the user is the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'isJetpackUserMaster()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( "should return false if the user is not the master user of the site's connection", () => {
+	test( "should return false if the user is not the master user of the site's connection", () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -38,7 +38,7 @@ describe( 'isJetpackUserMaster()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the information is not known yet', () => {
+	test( 'should return null if the information is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

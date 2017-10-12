@@ -19,7 +19,7 @@ import {
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 describe( 'isUserEligible()', () => {
-	it( 'makes all users eligible if no start date is defined in the config', () => {
+	test( 'makes all users eligible if no start date is defined in the config', () => {
 		const state = {
 			users: {
 				items: {
@@ -35,7 +35,7 @@ describe( 'isUserEligible()', () => {
 		expect( eligible ).to.be.true;
 	} );
 
-	it( 'does not show the first view if the user does not have a start date', () => {
+	test( 'does not show the first view if the user does not have a start date', () => {
 		const state = {
 			users: {
 				items: {
@@ -52,7 +52,7 @@ describe( 'isUserEligible()', () => {
 		expect( eligible ).to.be.false;
 	} );
 
-	it( 'shows the first view if the user registered after the first view start date', () => {
+	test( 'shows the first view if the user registered after the first view start date', () => {
 		const state = {
 			users: {
 				items: {
@@ -69,7 +69,7 @@ describe( 'isUserEligible()', () => {
 		expect( eligible ).to.be.true;
 	} );
 
-	it( 'does not show the first view if the user registered before the first view start date', () => {
+	test( 'does not show the first view if the user registered before the first view start date', () => {
 		const state = {
 			users: {
 				items: {
@@ -89,7 +89,7 @@ describe( 'isUserEligible()', () => {
 
 describe( 'selectors', () => {
 	describe( '#getConfigForCurrentView()', () => {
-		it( 'should return false if there is no first view config for the active path', () => {
+		test( 'should return false if there is no first view config for the active path', () => {
 			const firstViewConfig = getConfigForCurrentView( {
 				ui: {
 					actionLog: [
@@ -107,7 +107,7 @@ describe( 'selectors', () => {
 			expect( firstViewConfig ).to.be.false;
 		} );
 
-		it( 'should return the stats config object when the stats first view is enabled and the most recent route is a stats page', () => {
+		test( 'should return the stats config object when the stats first view is enabled and the most recent route is a stats page', () => {
 			const firstViewConfig = getConfigForCurrentView( {
 				ui: {
 					actionLog: [
@@ -159,7 +159,7 @@ describe( 'selectors', () => {
 			enabled: true,
 		};
 
-		it(
+		test(
 			'should return true if the preferences have been fetched, the config has a first view for the current view,' +
 				' and it is not disabled',
 			() => {
@@ -191,7 +191,7 @@ describe( 'selectors', () => {
 			}
 		);
 
-		it( 'should return true if preferences have been fetched and the history is empty', () => {
+		test( 'should return true if preferences have been fetched and the history is empty', () => {
 			const viewEnabled = isViewEnabled(
 				{
 					currentUser,
@@ -213,7 +213,7 @@ describe( 'selectors', () => {
 			expect( viewEnabled ).to.be.true;
 		} );
 
-		it( 'should return false if the view is disabled', () => {
+		test( 'should return false if the view is disabled', () => {
 			const viewEnabled = isViewEnabled(
 				{
 					currentUser,
@@ -241,7 +241,7 @@ describe( 'selectors', () => {
 			expect( viewEnabled ).to.be.false;
 		} );
 
-		it( 'should return false if the view is disabled in the config', () => {
+		test( 'should return false if the view is disabled in the config', () => {
 			const viewEnabled = isViewEnabled(
 				{
 					currentUser,
@@ -268,7 +268,7 @@ describe( 'selectors', () => {
 			expect( viewEnabled ).to.be.false;
 		} );
 
-		it( "should return false if the preferences haven't been fetched", () => {
+		test( "should return false if the preferences haven't been fetched", () => {
 			const viewEnabled = isViewEnabled(
 				{
 					currentUser,
@@ -298,7 +298,7 @@ describe( 'selectors', () => {
 			enabled: true,
 		};
 
-		it( 'should return true if the first view was hidden since entering the current section', () => {
+		test( 'should return true if the first view was hidden since entering the current section', () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -334,7 +334,7 @@ describe( 'selectors', () => {
 			expect( wasFirstViewHidden ).to.be.true;
 		} );
 
-		it( 'should return false if the first view was not hidden since entering current section', () => {
+		test( 'should return false if the first view was not hidden since entering current section', () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -372,7 +372,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#secondsSpentOnCurrentView()', () => {
-		it( 'should return -1 if the action log is empty', () => {
+		test( 'should return -1 if the action log is empty', () => {
 			const actions = [];
 
 			const seconds = secondsSpentOnCurrentView( {
@@ -384,7 +384,7 @@ describe( 'selectors', () => {
 			expect( seconds ).to.equal( -1 );
 		} );
 
-		it( 'should return 3 when now is 3000 millis after the last action in the log', () => {
+		test( 'should return 3 when now is 3000 millis after the last action in the log', () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -405,7 +405,7 @@ describe( 'selectors', () => {
 			expect( seconds ).to.equal( 3 );
 		} );
 
-		it( 'should return 5.678 when now is 5678 millis after the last action in the log', () => {
+		test( 'should return 5.678 when now is 5678 millis after the last action in the log', () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -433,7 +433,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#bucketedTimeSpentOnCurrentView()', () => {
-		it( "should return 'unknown' when the action log is empty", () => {
+		test( "should return 'unknown' when the action log is empty", () => {
 			const actions = [];
 
 			const bucket = bucketedTimeSpentOnCurrentView( {
@@ -445,7 +445,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( 'unknown' );
 		} );
 
-		it( "should return 'under2' when now is 1999 millis after the last action in the log", () => {
+		test( "should return 'under2' when now is 1999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -466,7 +466,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( 'under2' );
 		} );
 
-		it( "should return '2-5' when now is 2000 millis after the last action in the log", () => {
+		test( "should return '2-5' when now is 2000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -487,7 +487,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '2-5' );
 		} );
 
-		it( "should return '2-5' when now is 4999 millis after the last action in the log", () => {
+		test( "should return '2-5' when now is 4999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -508,7 +508,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '2-5' );
 		} );
 
-		it( "should return '5-10' when now is 5000 millis after the last action in the log", () => {
+		test( "should return '5-10' when now is 5000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -529,7 +529,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '5-10' );
 		} );
 
-		it( "should return '5-10' when now is 9999 millis after the last action in the log", () => {
+		test( "should return '5-10' when now is 9999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -550,7 +550,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '5-10' );
 		} );
 
-		it( "should return '10-20' when now is 10000 millis after the last action in the log", () => {
+		test( "should return '10-20' when now is 10000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -571,7 +571,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '10-20' );
 		} );
 
-		it( "should return '10-20' when now is 19999 millis after the last action in the log", () => {
+		test( "should return '10-20' when now is 19999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -592,7 +592,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '10-20' );
 		} );
 
-		it( "should return '20-60' when now is 20000 millis after the last action in the log", () => {
+		test( "should return '20-60' when now is 20000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -613,7 +613,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '20-60' );
 		} );
 
-		it( "should return '20-60' when now is 59999 millis after the last action in the log", () => {
+		test( "should return '20-60' when now is 59999 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,
@@ -634,7 +634,7 @@ describe( 'selectors', () => {
 			expect( bucket ).to.equal( '20-60' );
 		} );
 
-		it( "should return '60plus' when now is 60000 millis after the last action in the log", () => {
+		test( "should return '60plus' when now is 60000 millis after the last action in the log", () => {
 			const actions = [
 				{
 					type: ROUTE_SET,

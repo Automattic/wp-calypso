@@ -24,11 +24,11 @@ const validResponse = {
 };
 
 describe( 'validate()', () => {
-	it( 'should validate successfully and throw nothing.', () => {
+	test( 'should validate successfully and throw nothing.', () => {
 		assert.doesNotThrow( () => validate( validResponse ) );
 	} );
 
-	it( 'should invalidate missing keys and throw an error.', () => {
+	test( 'should invalidate missing keys and throw an error.', () => {
 		assert.throws(
 			() =>
 				validate( {
@@ -38,7 +38,7 @@ describe( 'validate()', () => {
 		);
 	} );
 
-	it( 'should invalidate unexpected value type and throw an error', () => {
+	test( 'should invalidate unexpected value type and throw an error', () => {
 		assert.throws(
 			() =>
 				validate( {
@@ -58,7 +58,7 @@ describe( 'handleRequestResetOptions()', () => {
 	};
 
 	describe( 'success', () => {
-		it( 'should dispatch RECEIVE action on success', done => {
+		test( 'should dispatch RECEIVE action on success', done => {
 			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ) {
 					assert.isTrue(
@@ -75,7 +75,7 @@ describe( 'handleRequestResetOptions()', () => {
 			requestResetOptionsSuccess( { dispatch }, { userData }, validResponse );
 		} );
 
-		it( 'should dispatch UPDATE_USER_DATA action on success', done => {
+		test( 'should dispatch UPDATE_USER_DATA action on success', done => {
 			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ) {
 					assert.isTrue(
@@ -99,7 +99,7 @@ describe( 'handleRequestResetOptions()', () => {
 			message: 'Something wrong!',
 		};
 
-		it( 'should dispatch ERROR action on failure', done => {
+		test( 'should dispatch ERROR action on failure', done => {
 			const dispatch = sinon.spy( () => {
 				assert.isTrue(
 					dispatch.calledWithMatch( {
@@ -114,7 +114,7 @@ describe( 'handleRequestResetOptions()', () => {
 			requestResetOptionsError( { dispatch }, { userData }, errorResponse );
 		} );
 
-		it( 'should dispatch ERROR action on validation failure', done => {
+		test( 'should dispatch ERROR action on validation failure', done => {
 			const invalidResponse = {
 				primary_email: 'foo@example.com',
 			};

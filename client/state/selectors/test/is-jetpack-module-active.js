@@ -12,7 +12,7 @@ import { isJetpackModuleActive } from '../';
 import { modules as MODULES_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isJetpackModuleActive()', () => {
-	it( 'should return true if the module is currently active', () => {
+	test( 'should return true if the module is currently active', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -25,7 +25,7 @@ describe( 'isJetpackModuleActive()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the module is currently not active', () => {
+	test( 'should return false if the module is currently not active', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -38,7 +38,7 @@ describe( 'isJetpackModuleActive()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if that module is not known', () => {
+	test( 'should return null if that module is not known', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {

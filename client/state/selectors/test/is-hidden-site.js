@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isHiddenSite } from '../';
 
 describe( 'isHiddenSite()', () => {
-	it( 'should return null if the site is not known', () => {
+	test( 'should return null if the site is not known', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {
@@ -28,7 +28,7 @@ describe( 'isHiddenSite()', () => {
 		expect( isHidden ).to.be.null;
 	} );
 
-	it( 'should return false for public sites', () => {
+	test( 'should return false for public sites', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {
@@ -45,7 +45,7 @@ describe( 'isHiddenSite()', () => {
 		expect( isHidden ).to.be.false;
 	} );
 
-	it( 'should return true for hidden sites', () => {
+	test( 'should return true for hidden sites', () => {
 		const isHidden = isHiddenSite(
 			{
 				siteSettings: {

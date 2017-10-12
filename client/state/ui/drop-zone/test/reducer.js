@@ -12,7 +12,7 @@ import dropZone from '../reducer';
 import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should show DropZone', () => {
+	test( 'should show DropZone', () => {
 		expect(
 			dropZone(
 				{},
@@ -24,7 +24,7 @@ describe( 'reducer', () => {
 		).to.be.eql( { isVisible: { testZone: true } } );
 	} );
 
-	it( 'should hide DropZone', () => {
+	test( 'should hide DropZone', () => {
 		expect(
 			dropZone(
 				{ isVisible: { testZone: false } },

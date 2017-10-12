@@ -25,7 +25,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receivePostTypes()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePostTypes( 2916284, [ { name: 'post', label: 'Posts' } ] );
 
 			expect( action ).to.eql( {
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostTypes( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPostTypes( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePostTypes( 2916284, [
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPostTypes( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_REQUEST_SUCCESS,
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestPostTypes( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_REQUEST_FAILURE,

@@ -29,13 +29,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting value to true if request in progress', () => {
+		test( 'should set requesting value to true if request in progress', () => {
 			const state = requesting( undefined, {
 				type: POST_STATS_REQUEST,
 				siteId: 2916284,
@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values (stat)', () => {
+		test( 'should accumulate requesting values (stat)', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: true },
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values (postId)', () => {
+		test( 'should accumulate requesting values (postId)', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: true },
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values (siteId)', () => {
+		test( 'should accumulate requesting values (siteId)', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: true },
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes successfully', () => {
+		test( 'should set request to false if request finishes successfully', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: true },
@@ -139,7 +139,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes with failure', () => {
+		test( 'should set request to false if request finishes with failure', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: true },
@@ -161,13 +161,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index post stats by site ID, post id and stat', () => {
+		test( 'should index post stats by site ID, post id and stat', () => {
 			const state = items( null, {
 				type: POST_STATS_RECEIVE,
 				siteId: 2916284,
@@ -182,7 +182,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate stats', () => {
+		test( 'should accumulate stats', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -205,7 +205,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate post IDs', () => {
+		test( 'should accumulate post IDs', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -226,7 +226,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate site IDs', () => {
+		test( 'should accumulate site IDs', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -249,7 +249,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous stat value of same site ID, post ID and stat key', () => {
+		test( 'should override previous stat value of same site ID, post ID and stat key', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -269,7 +269,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -284,7 +284,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const previousState = deepFreeze( {
 				2916284: {
 					2454: { views: 2 },
@@ -299,7 +299,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: { views: 2 },
 			} );

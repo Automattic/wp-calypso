@@ -12,7 +12,7 @@ import { getSiteIconUrl } from '../';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getSiteIconUrl()', () => {
-	it( 'should return null if neither the site nor site settings are known', () => {
+	test( 'should return null if neither the site nor site settings are known', () => {
 		const iconUrl = getSiteIconUrl(
 			{
 				sites: {
@@ -31,7 +31,7 @@ describe( 'getSiteIconUrl()', () => {
 		expect( iconUrl ).to.be.null;
 	} );
 
-	it( 'should the site icon image as a fallback if the media is not known for the assigned icon ID', () => {
+	test( 'should the site icon image as a fallback if the media is not known for the assigned icon ID', () => {
 		const iconUrl = getSiteIconUrl(
 			{
 				sites: {
@@ -58,7 +58,7 @@ describe( 'getSiteIconUrl()', () => {
 		);
 	} );
 
-	it( 'should return the media URL via the site icon media ID', () => {
+	test( 'should return the media URL via the site icon media ID', () => {
 		const iconUrl = getSiteIconUrl(
 			{
 				sites: {

@@ -32,7 +32,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleStepNext', () => {
-		it( 'should annotate the actionList to the reducer state', () => {
+		test( 'should annotate the actionList to the reducer state', () => {
 			const actionListBefore = {
 				nextSteps: [ fxt.stepA, fxt.stepB, fxt.stepC ],
 			};
@@ -48,7 +48,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
 		} );
 
-		it( 'should run the first step in the list', () => {
+		test( 'should run the first step in the list', () => {
 			const actionListBefore = {
 				nextSteps: [ fxt.stepA, fxt.stepB, fxt.stepC ],
 			};
@@ -65,7 +65,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
 		} );
 
-		it( 'should run a middle step in the list', () => {
+		test( 'should run a middle step in the list', () => {
 			const actionListBefore = {
 				prevSteps: [ fxt.stepASuccessful ],
 				currentStep: null,
@@ -84,7 +84,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
 		} );
 
-		it( 'should run a last step in the list', () => {
+		test( 'should run a last step in the list', () => {
 			const actionListBefore = {
 				prevSteps: [ fxt.stepASuccessful, fxt.stepBSuccessful ],
 				currentStep: null,
@@ -103,7 +103,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListStepSuccess( actionListAfter ) );
 		} );
 
-		it( 'should propagate an error state', () => {
+		test( 'should propagate an error state', () => {
 			const actionListBefore = {
 				prevSteps: [ fxt.stepASuccessful ],
 				currentStep: null,
@@ -124,7 +124,7 @@ describe( 'handlers', () => {
 			);
 		} );
 
-		it( 'should pass data from one step to future steps', () => {
+		test( 'should pass data from one step to future steps', () => {
 			const data = { one: 1, two: 2, three: 3 };
 
 			const step1 = {
@@ -186,7 +186,7 @@ describe( 'handlers', () => {
 			expect( step2Success.actionList.data ).to.equal( data );
 		} );
 
-		it( 'should ignore a next request while a current step is still running.', () => {
+		test( 'should ignore a next request while a current step is still running.', () => {
 			const actionList = {
 				prevSteps: [],
 				currentStep: fxt.stepA,
@@ -198,7 +198,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should ignore a next request if there are no more steps.', () => {
+		test( 'should ignore a next request if there are no more steps.', () => {
 			const actionList = {
 				prevSteps: [ fxt.stepA, fxt.stepB ],
 				currentStep: null,
@@ -212,7 +212,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleStepSuccess', () => {
-		it( 'should annotate the actionList to the reducer state', () => {
+		test( 'should annotate the actionList to the reducer state', () => {
 			const actionListBefore = {
 				prevSteps: [],
 				currentStep: fxt.stepAStarted,
@@ -230,7 +230,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
 		} );
 
-		it( 'should complete the first step in the list and call middle step', () => {
+		test( 'should complete the first step in the list and call middle step', () => {
 			const actionListBefore = {
 				prevSteps: [],
 				currentStep: fxt.stepAStarted,
@@ -248,7 +248,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListStepNext( actionListAfter ) );
 		} );
 
-		it( 'should complete the middle step in the list and call last step', () => {
+		test( 'should complete the middle step in the list and call last step', () => {
 			const actionListBefore = {
 				prevSteps: [ fxt.stepASuccessful ],
 				currentStep: fxt.stepBStarted,
@@ -266,7 +266,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListStepNext( actionListAfter ) );
 		} );
 
-		it( 'should run onSuccess after the last step', () => {
+		test( 'should run onSuccess after the last step', () => {
 			const onSuccess = ( dispatch, actionList ) =>
 				dispatch( { type: '%% action list success %%', actionList } );
 
@@ -295,7 +295,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should ignore a success request when there is no current step.', () => {
+		test( 'should ignore a success request when there is no current step.', () => {
 			const actionList = {
 				prevSteps: [ fxt.stepA ],
 				currentStep: null,
@@ -309,7 +309,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleStepFailure', () => {
-		it( 'should annotate the actionList to the reducer state', () => {
+		test( 'should annotate the actionList to the reducer state', () => {
 			const onFailure = ( dispatch, actionList ) =>
 				dispatch( { type: '%% action list failure %%', actionList } );
 
@@ -336,7 +336,7 @@ describe( 'handlers', () => {
 			expect( store.dispatch ).to.have.been.calledWith( actionListAnnotate( actionListAfter ) );
 		} );
 
-		it( 'should run onFailure after any failure', () => {
+		test( 'should run onFailure after any failure', () => {
 			const onFailure = ( dispatch, actionList ) =>
 				dispatch( { type: '%% action list failure %%', actionList } );
 
@@ -369,7 +369,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should ignore a failure request when there is no current step.', () => {
+		test( 'should ignore a failure request when there is no current step.', () => {
 			const actionList = {
 				prevSteps: [ fxt.stepA ],
 				currentStep: null,

@@ -20,6 +20,10 @@ module.exports = function( authCookieValue, callback ) {
 	if ( authCookieValue ) {
 		authCookieValue = decodeURIComponent( authCookieValue );
 
+		if ( typeof API_KEY !== 'string' ) {
+			throw new Error( 'Unable to boostrap user because of invalid API key in secrets.json' );
+		}
+
 		hmac = crypto.createHmac( 'md5', API_KEY );
 		hmac.update( authCookieValue );
 		hash = hmac.digest( 'hex' );

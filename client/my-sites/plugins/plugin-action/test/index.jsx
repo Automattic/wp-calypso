@@ -17,21 +17,21 @@ import PluginAction from '../plugin-action';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 
-describe( 'PluginAction', function() {
-	describe( 'rendering with form toggle', function() {
-		it( 'should have plugin-action class', function() {
+describe( 'PluginAction', () => {
+	describe( 'rendering with form toggle', () => {
+		test( 'should have plugin-action class', () => {
 			const wrapper = shallow( <PluginAction /> );
 
 			expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 		} );
 
-		it( 'should render compact form toggle when no children passed', function() {
+		test( 'should render compact form toggle when no children passed', () => {
 			const wrapper = mount( <PluginAction /> );
 
 			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 1 );
 		} );
 
-		it( 'should render a plugin action label', function() {
+		test( 'should render a plugin action label', () => {
 			const wrapper = shallow(
 				<PluginAction label="hello">
 					<span />
@@ -42,8 +42,8 @@ describe( 'PluginAction', function() {
 		} );
 	} );
 
-	describe( 'rendering children', function() {
-		it( 'should not render a form toggle when children exist', function() {
+	describe( 'rendering children', () => {
+		test( 'should not render a form toggle when children exist', () => {
 			const wrapper = mount(
 				<PluginAction>
 					<span />
@@ -53,7 +53,7 @@ describe( 'PluginAction', function() {
 			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
 		} );
 
-		it( 'should render child within plugin-action__children container', function() {
+		test( 'should render child within plugin-action__children container', () => {
 			const wrapper = mount(
 					<PluginAction>
 						<span />
@@ -65,7 +65,7 @@ describe( 'PluginAction', function() {
 			expect( children.props().children.type ).to.equal( 'span' );
 		} );
 
-		it( 'should render a plugin action label', function() {
+		test( 'should render a plugin action label', () => {
 			const wrapper = mount(
 				<PluginAction label="hello">
 					<span />

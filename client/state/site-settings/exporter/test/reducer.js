@@ -19,7 +19,7 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'selectedAdvancedSettings', () => {
-		it( 'should set post category', () => {
+		test( 'should set post category', () => {
 			const state = selectedAdvancedSettings(
 				{},
 				{
@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set page author', () => {
+		test( 'should set page author', () => {
 			const state = selectedAdvancedSettings(
 				{},
 				{
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#fetchingAdvancedSettings()', () => {
-		it( 'should index fetching status by site ID', () => {
+		test( 'should index fetching status by site ID', () => {
 			const state = fetchingAdvancedSettings( null, {
 				type: EXPORT_ADVANCED_SETTINGS_FETCH,
 				siteId: 100658273,
@@ -67,7 +67,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( { 100658273: true } );
 		} );
 
-		it( 'should reset fetching status after receive', () => {
+		test( 'should reset fetching status after receive', () => {
 			const state = fetchingAdvancedSettings( null, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( { 100658273: false } );
 		} );
 
-		it( 'should reset fetching status after fail', () => {
+		test( 'should reset fetching status after fail', () => {
 			const state = fetchingAdvancedSettings( null, {
 				type: EXPORT_ADVANCED_SETTINGS_FAIL,
 				siteId: 100658273,
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( { 100658273: false } );
 		} );
 
-		it( 'should not replace fetching status with other site', () => {
+		test( 'should not replace fetching status with other site', () => {
 			const state = fetchingAdvancedSettings(
 				{
 					100658273: true,
@@ -103,7 +103,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#advancedSettings()', () => {
-		it( 'should index settings by site ID', () => {
+		test( 'should index settings by site ID', () => {
 			const state = advancedSettings( null, {
 				type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
 				siteId: 100658273,
@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should replace known settings for site', () => {
+		test( 'should replace known settings for site', () => {
 			let state = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 
 			state = advancedSettings( state, {
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not replace known settings with other sites', () => {
+		test( 'should not replace known settings with other sites', () => {
 			let state = { 100658273: SAMPLE_ADVANCED_SETTINGS };
 
 			state = advancedSettings( state, {

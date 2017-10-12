@@ -8,10 +8,10 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-describe( 'ButtonGroup', function() {
+describe( 'ButtonGroup', () => {
 	let sandbox, ButtonGroup, Button;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		sandbox = sinon.sandbox.create();
 		sandbox.stub( console, 'error' );
 		sandbox.stub( console, 'log' );
@@ -20,16 +20,16 @@ describe( 'ButtonGroup', function() {
 		Button = require( 'components/button' );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		sandbox.restore();
 	} );
 
-	it( 'should have ButtonGroup class', function() {
+	test( 'should have ButtonGroup class', () => {
 		const buttonGroup = shallow( <ButtonGroup /> );
 		assert.equal( 1, buttonGroup.find( '.button-group' ).length );
 	} );
 
-	it( 'should contains the same number of .button nodes than <Button>s it receives', function() {
+	test( 'should contains the same number of .button nodes than <Button>s it receives', () => {
 		const buttonGroup = shallow(
 			<ButtonGroup>
 				<Button>test</Button>
@@ -39,12 +39,12 @@ describe( 'ButtonGroup', function() {
 		assert.equal( 2, buttonGroup.find( Button ).length );
 	} );
 
-	it( 'should get the busy `is-busy` class when passed the `busy` prop', function() {
+	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
 		const buttonGroup = shallow( <ButtonGroup busy /> );
 		assert.equal( 1, buttonGroup.find( '.is-busy' ).length );
 	} );
 
-	it( 'should throw an error if any of the children is not a <Button>', function() {
+	test( 'should throw an error if any of the children is not a <Button>', () => {
 		shallow(
 			<ButtonGroup>
 				<div id="test">test</div>

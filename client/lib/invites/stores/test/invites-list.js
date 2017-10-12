@@ -11,7 +11,7 @@ import { assert } from 'chai';
 import Dispatcher from 'dispatcher';
 import { action as ActionTypes } from 'lib/invites/constants';
 
-describe( 'List Invites Store', function() {
+describe( 'List Invites Store', () => {
 	let ListInvitesStore;
 	const siteId = 123;
 	const actions = {
@@ -53,21 +53,21 @@ describe( 'List Invites Store', function() {
 		},
 	};
 
-	beforeEach( function() {
+	beforeEach( () => {
 		ListInvitesStore = require( 'lib/invites/stores/invites-list' );
 	} );
 
-	describe( 'Listing invites', function() {
-		beforeEach( function() {
+	describe( 'Listing invites', () => {
+		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.receiveInvites );
 		} );
 
-		it( 'List of invites should be an object', function() {
+		test( 'List of invites should be an object', () => {
 			const invites = ListInvitesStore.getInvites( siteId );
 			assert.isObject( invites );
 		} );
 
-		it( 'Fetching more invites should add to the object', function() {
+		test( 'Fetching more invites should add to the object', () => {
 			const invites = ListInvitesStore.getInvites( siteId );
 			let invitesAgain = [];
 			assert.equal( 1, invites.size );

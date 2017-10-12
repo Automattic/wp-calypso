@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSiteIconId } from '../';
 
 describe( 'getSiteIconId()', () => {
-	it( 'should return null if neither the site nor settings are known', () => {
+	test( 'should return null if neither the site nor settings are known', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -27,7 +27,7 @@ describe( 'getSiteIconId()', () => {
 		expect( id ).to.be.null;
 	} );
 
-	it( 'should prefer site state', () => {
+	test( 'should prefer site state', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -55,7 +55,7 @@ describe( 'getSiteIconId()', () => {
 		expect( id ).to.equal( 42 );
 	} );
 
-	it( 'should prefer site state, even if unset', () => {
+	test( 'should prefer site state, even if unset', () => {
 		const id = getSiteIconId(
 			{
 				sites: {
@@ -80,7 +80,7 @@ describe( 'getSiteIconId()', () => {
 		expect( id ).to.be.null;
 	} );
 
-	it( 'should fall back to settings state', () => {
+	test( 'should fall back to settings state', () => {
 		const id = getSiteIconId(
 			{
 				sites: {

@@ -12,7 +12,7 @@ import { getNetworkSites } from '../';
 import { userState } from './fixtures/user-state';
 
 describe( 'getNetworkSites()', () => {
-	it( 'should return null if no sites exist in state', () => {
+	test( 'should return null if no sites exist in state', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -22,7 +22,7 @@ describe( 'getNetworkSites()', () => {
 		expect( getNetworkSites( state, 1 ) ).to.be.null;
 	} );
 
-	it( 'should return null if main site is not found', () => {
+	test( 'should return null if main site is not found', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -42,7 +42,7 @@ describe( 'getNetworkSites()', () => {
 		expect( getNetworkSites( state, 2 ) ).to.be.null;
 	} );
 
-	it( 'should return null if site is not a main site', () => {
+	test( 'should return null if site is not a main site', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -59,7 +59,7 @@ describe( 'getNetworkSites()', () => {
 		expect( getNetworkSites( state, 1 ) ).to.be.null;
 	} );
 
-	it( 'should return an empty array if no secondary sites exist', () => {
+	test( 'should return an empty array if no secondary sites exist', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -81,7 +81,7 @@ describe( 'getNetworkSites()', () => {
 		expect( getNetworkSites( state, 1 ) ).to.be.an( 'array' ).that.is.empty;
 	} );
 
-	it( 'should return an array with secondary sites if they exist', () => {
+	test( 'should return an array with secondary sites if they exist', () => {
 		const state = {
 			...userState,
 			sites: {

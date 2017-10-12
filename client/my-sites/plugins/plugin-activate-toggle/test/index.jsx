@@ -26,25 +26,25 @@ jest.mock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', () =
 	require( 'components/empty-component' )
 );
 
-describe( 'PluginActivateToggle', function() {
+describe( 'PluginActivateToggle', () => {
 	const analyticsMock = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
 		translate: spy(),
 	};
 
-	afterEach( function() {
+	afterEach( () => {
 		mockedActions.togglePluginActivation.reset();
 		analyticsMock.recordGoogleEvent.reset();
 	} );
 
-	it( 'should render the component', function() {
+	test( 'should render the component', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 	} );
 
-	it( 'should register an event when the subcomponent action is executed', function() {
+	test( 'should register an event when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );
@@ -53,7 +53,7 @@ describe( 'PluginActivateToggle', function() {
 		expect( analyticsMock.recordTracksEvent.called ).to.equal( true );
 	} );
 
-	it( 'should call an action when the subcomponent action is executed', function() {
+	test( 'should call an action when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );

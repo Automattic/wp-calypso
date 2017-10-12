@@ -14,13 +14,13 @@ import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		context( 'NOTICE_CREATE', () => {
-			it( 'should properly add new notice', () => {
+		describe( 'NOTICE_CREATE', () => {
+			test( 'should properly add new notice', () => {
 				const notice = { noticeId: 1, text: 'Example Notice Text' };
 				const original = deepFreeze( {} );
 				const state = items( original, {
@@ -34,8 +34,8 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		context( 'NOTICE_REMOVE', () => {
-			it( 'should properly remove selected notice', () => {
+		describe( 'NOTICE_REMOVE', () => {
+			test( 'should properly remove selected notice', () => {
 				const original = deepFreeze( {
 					1: { noticeId: 1 },
 					2: { noticeId: 2 },
@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 				} );
 			} );
 
-			it( 'should return same state on remove attempt if notice not tracked', () => {
+			test( 'should return same state on remove attempt if notice not tracked', () => {
 				const original = deepFreeze( {
 					1: { noticeId: 1 },
 					3: { noticeId: 3 },
@@ -66,8 +66,8 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		context( 'ROUTE_SET', () => {
-			it( 'should remove notices on route set', () => {
+		describe( 'ROUTE_SET', () => {
+			test( 'should remove notices on route set', () => {
 				const original = deepFreeze( {
 					1: { noticeId: 1 },
 				} );
@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {} );
 			} );
 
-			it( 'should preserve persistent notices on route set', () => {
+			test( 'should preserve persistent notices on route set', () => {
 				const original = deepFreeze( {
 					1: { noticeId: 1 },
 					2: { noticeId: 2, isPersistent: true },
@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 				} );
 			} );
 
-			it( 'should preserve altered notice to be displayed on next page on route set', () => {
+			test( 'should preserve altered notice to be displayed on next page on route set', () => {
 				const original = deepFreeze( {
 					1: { noticeId: 1 },
 					2: { noticeId: 2, displayOnNextPage: true },

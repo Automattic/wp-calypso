@@ -12,7 +12,7 @@ import { sortPagesHierarchically } from '../helpers';
 
 describe( 'helpers', () => {
 	describe( 'sortPagesHierarchically()', () => {
-		it( 'should place children under parents', () => {
+		test( 'should place children under parents', () => {
 			const testData = [
 				{
 					ID: 1,
@@ -56,7 +56,7 @@ describe( 'helpers', () => {
 			] );
 		} );
 
-		it( 'should sort first by hierarchy, then by menu_order', () => {
+		test( 'should sort first by hierarchy, then by menu_order', () => {
 			const testData = [
 				{
 					ID: 1,
@@ -116,7 +116,7 @@ describe( 'helpers', () => {
 			] );
 		} );
 
-		it( 'should place orphaned children at top-level, with their children properly beneath them', () => {
+		test( 'should place orphaned children at top-level, with their children properly beneath them', () => {
 			const testData = [
 				{
 					ID: 1,

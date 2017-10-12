@@ -37,7 +37,7 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 		},
 	};
 
-	it( 'should return empty array if no connections for site', () => {
+	test( 'should return empty array if no connections for site', () => {
 		const connections = getBrokenSiteUserConnectionsForService(
 			{
 				sharing: {
@@ -54,7 +54,7 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 		expect( connections ).to.be.empty;
 	} );
 
-	it( 'should return empty array if no connections for service', () => {
+	test( 'should return empty array if no connections for service', () => {
 		const connections = getBrokenSiteUserConnectionsForService(
 			state,
 			2916284,
@@ -65,13 +65,13 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 		expect( connections ).to.be.empty;
 	} );
 
-	it( 'should return empty array if all connections ok', () => {
+	test( 'should return empty array if all connections ok', () => {
 		const connections = getBrokenSiteUserConnectionsForService( state, 2916284, 26957695, 'path' );
 
 		expect( connections ).to.be.empty;
 	} );
 
-	it( 'should return connection if any connections broken', () => {
+	test( 'should return connection if any connections broken', () => {
 		const connections = getBrokenSiteUserConnectionsForService(
 			state,
 			2916284,
@@ -92,7 +92,7 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 } );
 
 describe( '#getConnectionsBySiteId()', () => {
-	it( 'should return an empty array for a site which has not yet been fetched', () => {
+	test( 'should return an empty array for a site which has not yet been fetched', () => {
 		const connections = getConnectionsBySiteId(
 			{
 				sharing: {
@@ -107,7 +107,7 @@ describe( '#getConnectionsBySiteId()', () => {
 		expect( connections ).to.eql( [] );
 	} );
 
-	it( 'should return an array of connection objects received for the site', () => {
+	test( 'should return an array of connection objects received for the site', () => {
 		const connections = getConnectionsBySiteId(
 			{
 				sharing: {
@@ -127,7 +127,7 @@ describe( '#getConnectionsBySiteId()', () => {
 } );
 
 describe( '#getSiteUserConnections()', () => {
-	it( 'should return an empty array for a site which has not yet been fetched', () => {
+	test( 'should return an empty array for a site which has not yet been fetched', () => {
 		const connections = getSiteUserConnections(
 			{
 				sharing: {
@@ -143,7 +143,7 @@ describe( '#getSiteUserConnections()', () => {
 		expect( connections ).to.eql( [] );
 	} );
 
-	it( 'should return an array of connection objects received for the site available to a user', () => {
+	test( 'should return an array of connection objects received for the site available to a user', () => {
 		const connections = getSiteUserConnections(
 			{
 				sharing: {
@@ -168,7 +168,7 @@ describe( '#getSiteUserConnections()', () => {
 } );
 
 describe( '#getSiteUserConnectionsForService()', () => {
-	it( 'should return an empty array for a site which has not yet been fetched', () => {
+	test( 'should return an empty array for a site which has not yet been fetched', () => {
 		const connections = getSiteUserConnectionsForService(
 			{
 				sharing: {
@@ -185,7 +185,7 @@ describe( '#getSiteUserConnectionsForService()', () => {
 		expect( connections ).to.eql( [] );
 	} );
 
-	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
+	test( 'should return an array of connection objects received for the site that are available to the current user', () => {
 		const connections = getSiteUserConnectionsForService(
 			{
 				sharing: {
@@ -271,13 +271,13 @@ describe( '#getRemovableConnections()', () => {
 		},
 	};
 
-	it( 'should return an empty array for a site which has not yet been fetched', () => {
+	test( 'should return an empty array for a site which has not yet been fetched', () => {
 		const connections = getRemovableConnections( state, 'path' );
 
 		expect( connections ).to.eql( [] );
 	} );
 
-	it( 'should return an array of connection objects that are removable by the current user', () => {
+	test( 'should return an array of connection objects that are removable by the current user', () => {
 		const connections = getRemovableConnections( state, 'twitter' );
 
 		expect( connections ).to.eql( [
@@ -292,7 +292,7 @@ describe( '#getRemovableConnections()', () => {
 		] );
 	} );
 
-	it( 'should return an array of connection objects for the current user that are removable by that same user', () => {
+	test( 'should return an array of connection objects for the current user that are removable by that same user', () => {
 		state.currentUser.capabilities[ 2916284 ].edit_others_posts = false;
 		const connections = getRemovableConnections( state, 'twitter' );
 
@@ -309,7 +309,7 @@ describe( '#getRemovableConnections()', () => {
 } );
 
 describe( '#hasFetchedConnections()', () => {
-	it( 'should return false if connections have not been fetched for a site', () => {
+	test( 'should return false if connections have not been fetched for a site', () => {
 		const hasFetched = hasFetchedConnections(
 			{
 				sharing: {
@@ -324,7 +324,7 @@ describe( '#hasFetchedConnections()', () => {
 		expect( hasFetched ).to.be.false;
 	} );
 
-	it( 'should return true if connections have completed fetching for a site', () => {
+	test( 'should return true if connections have completed fetching for a site', () => {
 		const hasFetched = hasFetchedConnections(
 			{
 				sharing: {
@@ -343,7 +343,7 @@ describe( '#hasFetchedConnections()', () => {
 } );
 
 describe( 'isFetchingConnection()', () => {
-	it( 'should return false if fetch has never been triggered for a connection', () => {
+	test( 'should return false if fetch has never been triggered for a connection', () => {
 		const isFetching = isFetchingConnection(
 			{
 				sharing: {
@@ -358,7 +358,7 @@ describe( 'isFetchingConnection()', () => {
 		expect( isFetching ).to.be.false;
 	} );
 
-	it( 'should return true if connection is currently fetching', () => {
+	test( 'should return true if connection is currently fetching', () => {
 		const isFetching = isFetchingConnection(
 			{
 				sharing: {
@@ -375,7 +375,7 @@ describe( 'isFetchingConnection()', () => {
 		expect( isFetching ).to.be.true;
 	} );
 
-	it( 'should return false if connection is not currently being fetched', () => {
+	test( 'should return false if connection is not currently being fetched', () => {
 		const isFetching = isFetchingConnection(
 			{
 				sharing: {
@@ -392,7 +392,7 @@ describe( 'isFetchingConnection()', () => {
 		expect( isFetching ).to.be.false;
 	} );
 
-	it( 'should return false if connections are fetching, but not the given connection', () => {
+	test( 'should return false if connections are fetching, but not the given connection', () => {
 		const isFetching = isFetchingConnection(
 			{
 				sharing: {
@@ -411,7 +411,7 @@ describe( 'isFetchingConnection()', () => {
 } );
 
 describe( '#isFetchingConnections()', () => {
-	it( 'should return false if fetch has never been triggered for site', () => {
+	test( 'should return false if fetch has never been triggered for site', () => {
 		const isFetching = isFetchingConnections(
 			{
 				sharing: {
@@ -426,7 +426,7 @@ describe( '#isFetchingConnections()', () => {
 		expect( isFetching ).to.be.false;
 	} );
 
-	it( 'should return true if connections are currently fetching for a site', () => {
+	test( 'should return true if connections are currently fetching for a site', () => {
 		const isFetching = isFetchingConnections(
 			{
 				sharing: {
@@ -443,7 +443,7 @@ describe( '#isFetchingConnections()', () => {
 		expect( isFetching ).to.be.true;
 	} );
 
-	it( 'should return false if connections are not currently fetching for a site', () => {
+	test( 'should return false if connections are not currently fetching for a site', () => {
 		const isFetching = isFetchingConnections(
 			{
 				sharing: {
@@ -460,7 +460,7 @@ describe( '#isFetchingConnections()', () => {
 		expect( isFetching ).to.be.false;
 	} );
 
-	it( 'should return false if connections are fetching, but not for the given site', () => {
+	test( 'should return false if connections are fetching, but not for the given site', () => {
 		const isFetching = isFetchingConnections(
 			{
 				sharing: {

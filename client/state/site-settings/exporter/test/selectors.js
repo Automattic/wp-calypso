@@ -13,7 +13,7 @@ import { isExporting, isDateRangeValid } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isExporting()', () => {
-		it( 'should return false if state is not known', () => {
+		test( 'should return false if state is not known', () => {
 			const exporting = isExporting(
 				{
 					siteSettings: {
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 			expect( exporting ).to.eql( false );
 		} );
 
-		it( `should return false if an export hasn't started yet`, () => {
+		test( `should return false if an export hasn't started yet`, () => {
 			const exporting = isExporting(
 				{
 					siteSettings: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 			expect( exporting ).to.eql( false );
 		} );
 
-		it( 'should return true if an export is in progress', () => {
+		test( 'should return true if an export is in progress', () => {
 			const exporting = isExporting(
 				{
 					siteSettings: {
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 			expect( exporting ).to.eql( true );
 		} );
 
-		it( 'should return invalid date if start date is after end date', () => {
+		test( 'should return invalid date if start date is after end date', () => {
 			const state = {
 				siteSettings: {
 					exporter: {
@@ -81,7 +81,7 @@ describe( 'selectors', () => {
 			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
 		} );
 
-		it( 'should return valid date if end date is after start date', () => {
+		test( 'should return valid date if end date is after start date', () => {
 			const state = {
 				siteSettings: {
 					exporter: {
@@ -100,7 +100,7 @@ describe( 'selectors', () => {
 			expect( isDateRangeValid( state, 100658273, 'page' ) ).to.equal( true );
 		} );
 
-		it( 'should return valid date if end date is the same as start date', () => {
+		test( 'should return valid date if end date is the same as start date', () => {
 			const state = {
 				siteSettings: {
 					exporter: {

@@ -16,7 +16,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#getDomainsSuggestions()', () => {
-		it( 'should return domain suggestions for a given query', () => {
+		test( 'should return domain suggestions for a given query', () => {
 			const state = {
 				domains: {
 					suggestions: {
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isRequestingDomainsSuggestions()', () => {
-		it( 'should return requesting domains suggestion state for a given query', () => {
+		test( 'should return requesting domains suggestion state for a given query', () => {
 			const state = {
 				domains: {
 					suggestions: {
@@ -108,7 +108,7 @@ describe( 'selectors', () => {
 			expect( isRequestingDomainsSuggestions( state, notDefined ) ).to.equal( false );
 		} );
 		describe( '#getDomainsSuggestionsError()', () => {
-			it( 'should return requesting domains suggestion state for a given query', () => {
+			test( 'should return requesting domains suggestion state for a given query', () => {
 				const error = new Error( 'something went wrong' );
 				const state = {
 					domains: {

@@ -19,7 +19,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isRequestingWordAdsApproval()', () => {
-		it( 'should return requesting site ID', () => {
+		test( 'should return requesting site ID', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -36,7 +36,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isRequestingWordAdsApprovalForSite()', () => {
-		it( 'should return requesting site ID', () => {
+		test( 'should return requesting site ID', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -53,7 +53,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getWordAdsError()', () => {
-		it( 'should return word ads error', () => {
+		test( 'should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -69,7 +69,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getWordAdsErrorForSite()', () => {
-		it( 'should return word ads error', () => {
+		test( 'should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -88,7 +88,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getWordAdsSuccess()', () => {
-		it( 'should return word ads error', () => {
+		test( 'should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#getWordAdsSuccessForSite()', () => {
-		it( 'should return word ads error', () => {
+		test( 'should return word ads error', () => {
 			const state = {
 				wordads: {
 					approve: {

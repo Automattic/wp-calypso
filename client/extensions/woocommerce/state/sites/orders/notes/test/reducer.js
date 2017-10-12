@@ -24,12 +24,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'isLoading', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = isLoading( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should store the currently loading order notes', () => {
+		test( 'should store the currently loading order notes', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST,
 				siteId: 123,
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: true } );
 		} );
 
-		it( 'should should show that request has loaded on success', () => {
+		test( 'should should show that request has loaded on success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: false } );
 		} );
 
-		it( 'should should show that request has loaded on failure', () => {
+		test( 'should should show that request has loaded on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 				siteId: 123,
@@ -63,12 +63,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'isSaving', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = isSaving( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should flag that a note is currently being saved for an order', () => {
+		test( 'should flag that a note is currently being saved for an order', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE,
 				siteId: 123,
@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: true } );
 		} );
 
-		it( 'should show that the order has finished saving on a success', () => {
+		test( 'should show that the order has finished saving on a success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,
@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: false } );
 		} );
 
-		it( 'should show that the order has finished saving on a failure', () => {
+		test( 'should show that the order has finished saving on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
 				siteId: 123,
@@ -104,12 +104,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = items( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should store the order notes in state', () => {
+		test( 'should store the order notes in state', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( notesById );
 		} );
 
-		it( 'should add more order notes onto the existing note list', () => {
+		test( 'should add more order notes onto the existing note list', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -133,7 +133,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 3: note } );
 		} );
 
-		it( 'should add the created note to the note list', () => {
+		test( 'should add the created note to the note list', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,
@@ -145,7 +145,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 3: note } );
 		} );
 
-		it( 'should do nothing on a failure', () => {
+		test( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 				siteId: 123,
@@ -159,12 +159,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'orders', () => {
-		it( 'should have no change by default', () => {
+		test( 'should have no change by default', () => {
 			const newState = orders( undefined, {} );
 			expect( newState ).to.eql( {} );
 		} );
 
-		it( 'should store the note IDs for the requested order', () => {
+		test( 'should store the note IDs for the requested order', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -175,7 +175,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: [ 1, 2 ] } );
 		} );
 
-		it( "should add a second order's notes as a second list", () => {
+		test( "should add a second order's notes as a second list", () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,
@@ -187,7 +187,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 50: [ 3 ] } );
 		} );
 
-		it( "should add the created note to order's note list", () => {
+		test( "should add the created note to order's note list", () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: [ 1, 2, 3 ] } );
 		} );
 
-		it( 'should do nothing on a failure', () => {
+		test( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 				siteId: 123,

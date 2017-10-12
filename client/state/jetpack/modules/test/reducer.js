@@ -30,12 +30,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'state should default to empty object', () => {
+		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should activate a module', () => {
+		test( 'should activate a module', () => {
 			const stateIn = MODULES_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ][ 'module-a' ].active ).to.be.true;
 		} );
 
-		it( 'should deactivate a module', () => {
+		test( 'should deactivate a module', () => {
 			const stateIn = MODULES_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ][ 'module-b' ].active ).to.be.false;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const stateIn = MODULES_FIXTURE,
 				action = {
 					type: SERIALIZE,
@@ -68,7 +68,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const stateIn = MODULES_FIXTURE,
 				action = {
 					type: DESERIALIZE,
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should replace the items object for the site with a new list of modules', () => {
+		test( 'should replace the items object for the site with a new list of modules', () => {
 			const stateIn = MODULES_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -89,7 +89,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ] ).to.eql( MODULES_FIXTURE[ siteId ] );
 		} );
 
-		it( 'should update modules activation state when updating settings', () => {
+		test( 'should update modules activation state when updating settings', () => {
 			const siteId = 123456,
 				stateIn = {
 					123456: {
@@ -124,7 +124,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update modules activation state when receiving new settings', () => {
+		test( 'should update modules activation state when receiving new settings', () => {
 			const siteId = 123456,
 				stateIn = {
 					123456: {
@@ -161,13 +161,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requests', () => {
-		it( 'state should default to initialState', () => {
+		test( 'state should default to initialState', () => {
 			const state = requestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
 		describe( '#moduleActivation', () => {
-			it( 'should set [ siteId ][ moduleSlug ].activating to true when activating a module', () => {
+			test( 'should set [ siteId ][ moduleSlug ].activating to true when activating a module', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -179,7 +179,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.true;
 			} );
 
-			it( 'should set [ siteId ][ moduleSlug ].activating to false when module has been activated', () => {
+			test( 'should set [ siteId ][ moduleSlug ].activating to false when module has been activated', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -191,7 +191,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
 			} );
 
-			it( 'should set [ siteId ][ moduleSlug ].activating to false when activating a module fails', () => {
+			test( 'should set [ siteId ][ moduleSlug ].activating to false when activating a module fails', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -205,7 +205,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( '#moduleDeactivation', () => {
-			it( 'should set [ siteId ][ moduleSlug ].deactivating to true when deactivating a module', () => {
+			test( 'should set [ siteId ][ moduleSlug ].deactivating to true when deactivating a module', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -217,7 +217,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.true;
 			} );
 
-			it( 'should set [ siteId ][ moduleSlug ].deactivating to false when module has been deactivated', () => {
+			test( 'should set [ siteId ][ moduleSlug ].deactivating to false when module has been deactivated', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -229,7 +229,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
 			} );
 
-			it( 'should set [ siteId ][ moduleSlug ].deactivating to false when deactivating a module fails', () => {
+			test( 'should set [ siteId ][ moduleSlug ].deactivating to false when deactivating a module fails', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -243,7 +243,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( '#moduleListFetching', () => {
-			it( 'should set [ siteId ].fetchingModules to true when requesting the module list', () => {
+			test( 'should set [ siteId ].fetchingModules to true when requesting the module list', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ].fetchingModules ).to.be.true;
 			} );
 
-			it( 'should set [ siteId ].fetchingModules to false when the module list has been received', () => {
+			test( 'should set [ siteId ].fetchingModules to false when the module list has been received', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -266,7 +266,7 @@ describe( 'reducer', () => {
 				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
 			} );
 
-			it( 'should set [ siteId ].fetchingModules to false when requesting the module list fails', () => {
+			test( 'should set [ siteId ].fetchingModules to false when requesting the module list fails', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					siteId = 123456,
 					action = {
@@ -280,7 +280,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'should not persist state', () => {
+			test( 'should not persist state', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					action = {
 						type: SERIALIZE,
@@ -289,7 +289,7 @@ describe( 'reducer', () => {
 				expect( stateOut ).to.eql( {} );
 			} );
 
-			it( 'should not load persisted state', () => {
+			test( 'should not load persisted state', () => {
 				const stateIn = REQUESTS_FIXTURE,
 					action = {
 						type: DESERIALIZE,

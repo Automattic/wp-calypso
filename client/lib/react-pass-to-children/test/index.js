@@ -25,14 +25,14 @@ PassThrough = React.createClass( {
 	},
 } );
 
-describe( 'index', function() {
+describe( 'index', () => {
 	var renderer;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		renderer = TestUtils.createRenderer();
 	} );
 
-	it( 'should accept a single child and pass along props', function() {
+	test( 'should accept a single child and pass along props', () => {
 		var result;
 
 		renderer.render(
@@ -46,7 +46,7 @@ describe( 'index', function() {
 		expect( result.props ).to.eql( DUMMY_PROPS );
 	} );
 
-	it( 'should accept multiple children and wrap them in a div', function() {
+	test( 'should accept multiple children and wrap them in a div', () => {
 		var result;
 
 		renderer.render(
@@ -62,7 +62,7 @@ describe( 'index', function() {
 		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
 	} );
 
-	it( 'should accept multiple children and pass along props to each', function( done ) {
+	test( 'should accept multiple children and pass along props to each', done => {
 		var result;
 
 		renderer.render(
@@ -83,7 +83,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'should accept multiple children, including nulls', function() {
+	test( 'should accept multiple children, including nulls', () => {
 		var result;
 
 		renderer.render(
@@ -98,7 +98,7 @@ describe( 'index', function() {
 		expect( React.Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
 	} );
 
-	it( 'should preserve props passed to the children', function() {
+	test( 'should preserve props passed to the children', () => {
 		var result;
 
 		renderer.render(
@@ -116,7 +116,7 @@ describe( 'index', function() {
 		);
 	} );
 
-	it( 'should preserve props passed to the instance itself', function() {
+	test( 'should preserve props passed to the instance itself', () => {
 		var result;
 
 		renderer.render(

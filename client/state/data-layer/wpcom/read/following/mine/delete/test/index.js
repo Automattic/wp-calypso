@@ -16,7 +16,7 @@ import { follow, unfollow } from 'state/reader/follows/actions';
 
 describe( 'following/mine/delete', () => {
 	describe( 'requestUnfollow', () => {
-		it( 'should dispatch a http request', () => {
+		test( 'should dispatch a http request', () => {
 			const dispatch = spy();
 			const action = unfollow( 'http://example.com' );
 			const getState = () => ( {
@@ -49,7 +49,7 @@ describe( 'following/mine/delete', () => {
 	} );
 
 	describe( 'receiveUnfollow', () => {
-		it( 'should dispatch an error notice and refollow when subscribed is true', () => {
+		test( 'should dispatch an error notice and refollow when subscribed is true', () => {
 			const dispatch = spy();
 			const action = unfollow( 'http://example.com' );
 			const getState = () => ( {
@@ -73,7 +73,7 @@ describe( 'following/mine/delete', () => {
 	} );
 
 	describe( 'followError', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
 			const action = unfollow( 'http://example.com' );
 			const getState = () => ( {

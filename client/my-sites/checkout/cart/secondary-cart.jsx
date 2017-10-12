@@ -15,7 +15,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import CartBody from 'my-sites/checkout/cart/cart-body';
-import CartMessagesMixin from './cart-messages-mixin';
+import CartMessages from './cart-messages';
 import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
 import CartPlanAd from './cart-plan-ad';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
@@ -31,7 +31,7 @@ const SecondaryCart = React.createClass( {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
-	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
+	mixins: [ observe( 'sites' ) ],
 
 	getInitialState() {
 		return {
@@ -70,6 +70,7 @@ const SecondaryCart = React.createClass( {
 		if ( ! cart.hasLoadedFromServer ) {
 			return (
 				<Sidebar className={ cartClasses }>
+					<CartMessages cart={ cart } selectedSite={ selectedSite } />
 					<CartSummaryBar additionalClasses="cart-header" />
 					<CartBodyLoadingPlaceholder />
 				</Sidebar>
@@ -78,6 +79,7 @@ const SecondaryCart = React.createClass( {
 
 		return (
 			<Sidebar className={ cartClasses }>
+				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<CartSummaryBar additionalClasses="cart-header" />
 				<CartPlanAd selectedSite={ selectedSite } cart={ cart } />
 				<CartBody ref="cartBody" cart={ cart } selectedSite={ selectedSite } showCoupon={ true } />

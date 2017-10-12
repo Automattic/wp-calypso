@@ -25,12 +25,12 @@ const sites = freeze( [
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should add rec results to an empty object', () => {
+		test( 'should add rec results to an empty object', () => {
 			const prevState = {};
 			const action = receiveRecommendedSites( { seed, sites } );
 			const nextState = items( prevState, action );
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should add recs to an already populated object', () => {
+		test( 'should add recs to an already populated object', () => {
 			const prevState = {
 				42: [ { feedId: 233434 } ],
 			};
@@ -54,11 +54,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#pagingOffset', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			expect( pagingOffset( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should set the offset of a seed to the specified number', () => {
+		test( 'should set the offset of a seed to the specified number', () => {
 			const prevState = {};
 			const action = receiveRecommendedSites( { seed, offset: 20 } );
 			const nextState = pagingOffset( prevState, action );
@@ -68,7 +68,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should never let the offset for a seed get smaller', () => {
+		test( 'should never let the offset for a seed get smaller', () => {
 			const prevState = { [ seed ]: 42 };
 			const action = receiveRecommendedSites( { seed, offset: 20 } );
 			const nextState = pagingOffset( prevState, action );

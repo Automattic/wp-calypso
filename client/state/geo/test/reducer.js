@@ -22,18 +22,18 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'reducer', () => {
 	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'geo' ] );
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set site ID to true value if request in progress', () => {
+		test( 'should set site ID to true value if request in progress', () => {
 			const state = requesting( undefined, {
 				type: GEO_REQUEST,
 			} );
@@ -41,7 +41,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( true );
 		} );
 
-		it( 'should set site ID to false if request succeeds', () => {
+		test( 'should set site ID to false if request succeeds', () => {
 			const state = requesting( true, {
 				type: GEO_REQUEST_SUCCESS,
 			} );
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( false );
 		} );
 
-		it( 'should set site ID to false if request fails', () => {
+		test( 'should set site ID to false if request fails', () => {
 			const state = requesting( true, {
 				type: GEO_REQUEST_FAILURE,
 			} );
@@ -59,13 +59,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'geo()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = geo( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should track received geo data', () => {
+		test( 'should track received geo data', () => {
 			const state = geo( undefined, {
 				type: GEO_RECEIVE,
 				geo: {
@@ -88,7 +88,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				latitude: '39.36006',
 				longitude: '-84.30994',
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				country_short: true,
 			} );

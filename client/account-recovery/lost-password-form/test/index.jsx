@@ -16,7 +16,7 @@ import React from 'react';
 import { LostPasswordFormComponent } from '..';
 
 describe( 'LostPassword', () => {
-	it( 'should render as expected', () => {
+	test( 'should render as expected', () => {
 		const wrapper = shallow( <LostPasswordFormComponent /> );
 
 		expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be
@@ -24,8 +24,8 @@ describe( 'LostPassword', () => {
 		expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
 
-	context( 'events', () => {
-		it( 'submit button should be disabled if user login is blank', function() {
+	describe( 'events', () => {
+		test( 'submit button should be disabled if user login is blank', () => {
 			const wrapper = mount( <LostPasswordFormComponent className="test__test" /> );
 			wrapper.setState( { userLoginFormValue: '' } );
 
@@ -35,7 +35,7 @@ describe( 'LostPassword', () => {
 			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled when isRequesting is true', function() {
+		test( 'should be disabled when isRequesting is true', () => {
 			const wrapper = mount(
 				<LostPasswordFormComponent className="test__test" isRequesting={ true } />
 			);

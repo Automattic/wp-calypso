@@ -47,10 +47,10 @@ function testController( options ) {
 	return formState.Controller( assign( defaults, options ) );
 }
 
-describe( 'index', function() {
-	describe( '#Controller', function() {
-		describe( '#getInitialState', function() {
-			it( 'returns disabled fields', function() {
+describe( 'index', () => {
+	describe( '#Controller', () => {
+		describe( '#getInitialState', () => {
+			test( 'returns disabled fields', () => {
 				var controller = testController( { fieldNames: [ 'firstName' ] } ),
 					state = controller.getInitialState();
 
@@ -58,7 +58,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'enables the fields on the first event', function( done ) {
+		test( 'enables the fields on the first event', done => {
 			var onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
@@ -72,8 +72,8 @@ describe( 'index', function() {
 			} );
 		} );
 
-		describe( '#handleFieldChange', function() {
-			it( 'updates the field value', function( done ) {
+		describe( '#handleFieldChange', () => {
+			test( 'updates the field value', done => {
 				var onNewState, controller;
 
 				onNewState = checkNthState( 1, function( state ) {
@@ -92,7 +92,7 @@ describe( 'index', function() {
 				} );
 			} );
 
-			it( 'validates the new value', function( done ) {
+			test( 'validates the new value', done => {
 				var validatorFunction, onNewState, controller;
 
 				validatorFunction = function( fieldValues, onComplete ) {
@@ -116,8 +116,8 @@ describe( 'index', function() {
 				} );
 			} );
 
-			context( 'when there are multiple changes at once', function() {
-				it( 'only shows errors for the latest values', function( done ) {
+			describe( 'when there are multiple changes at once', () => {
+				test( 'only shows errors for the latest values', done => {
 					var validatorFunction, onNewState, controller;
 
 					validatorFunction = function( fieldValues, onComplete ) {

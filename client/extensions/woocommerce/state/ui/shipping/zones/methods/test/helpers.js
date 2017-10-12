@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { mergeMethodEdits } from '../helpers';
 
 describe( 'mergeMethodEdits', () => {
-	it( 'should return the current edits when there are no saved edits', () => {
+	test( 'should return the current edits when there are no saved edits', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -34,7 +34,7 @@ describe( 'mergeMethodEdits', () => {
 		);
 	} );
 
-	it( 'should return the saved edits when there are no current edits', () => {
+	test( 'should return the saved edits when there are no current edits', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 } } ],
 			updates: [ { id: 1, title: 'Wololo' } ],
@@ -57,7 +57,7 @@ describe( 'mergeMethodEdits', () => {
 		);
 	} );
 
-	it( 'should return the union of all the edits', () => {
+	test( 'should return the union of all the edits', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 } } ],
 			updates: [ { id: 1, title: 'Wololo' } ],
@@ -85,7 +85,7 @@ describe( 'mergeMethodEdits', () => {
 		} );
 	} );
 
-	it( 'should merge edits for the same shipping zone method', () => {
+	test( 'should merge edits for the same shipping zone method', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 }, key: 'value', title: 'Wololo' } ],
 			updates: [ { id: 1, key: 'value', title: 'Wololo' } ],
@@ -113,7 +113,7 @@ describe( 'mergeMethodEdits', () => {
 		} );
 	} );
 
-	it( 'should remove previous updates or creates for a method that has been deleted', () => {
+	test( 'should remove previous updates or creates for a method that has been deleted', () => {
 		const zoneMethodEdits = {
 			creates: [ { id: { index: 0 }, title: 'Wololo' } ],
 			updates: [ { id: 1, title: 'Wololo' } ],
@@ -141,7 +141,7 @@ describe( 'mergeMethodEdits', () => {
 		} );
 	} );
 
-	it( 'should preserve the open method id', () => {
+	test( 'should preserve the open method id', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -164,7 +164,7 @@ describe( 'mergeMethodEdits', () => {
 		);
 	} );
 
-	it( 'should preserve the isNew state', () => {
+	test( 'should preserve the isNew state', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],
@@ -187,7 +187,7 @@ describe( 'mergeMethodEdits', () => {
 		);
 	} );
 
-	it( 'should preserve the changed type state', () => {
+	test( 'should preserve the changed type state', () => {
 		const zoneMethodEdits = {
 			creates: [],
 			updates: [],

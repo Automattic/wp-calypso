@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveThumbnail', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const embedUrl = 'embedUrl';
 			const thumbnailUrl = 'thumbnailUrl';
 			const action = receiveThumbnail( embedUrl, thumbnailUrl );
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 				.reply( 500, deepFreeze( {} ) );
 		} );
 
-		it( 'vimeo: should dispatch properly when receiving a valid response', () => {
+		test( 'vimeo: should dispatch properly when receiving a valid response', () => {
 			const dispatchSpy = sinon.spy();
 			const request = requestThumbnail( successfulEmbedUrl )( dispatchSpy );
 
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'youtube: should dispatch action with thumbnail instantly', () => {
+		test( 'youtube: should dispatch action with thumbnail instantly', () => {
 			const dispatchSpy = sinon.spy();
 			requestThumbnail( youtubeEmbedUrl )( dispatchSpy );
 
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 			expect( dispatchSpy.calledOnce );
 		} );
 
-		it( 'should dispatch the right actions if network request fails', () => {
+		test( 'should dispatch the right actions if network request fails', () => {
 			const dispatchSpy = sinon.spy();
 			const request = requestThumbnail( failureEmbedUrl )( dispatchSpy );
 
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a failure action instantly if unsupported', () => {
+		test( 'should dispatch a failure action instantly if unsupported', () => {
 			const dispatchSpy = sinon.spy();
 			requestThumbnail( unsupportedEmbedUrl )( dispatchSpy );
 

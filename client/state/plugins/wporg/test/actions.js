@@ -24,20 +24,20 @@ const testDispatch = ( test, testCallNumber ) => {
 	};
 };
 
-describe( 'WPorg Data Actions', function() {
-	beforeEach( function() {
+describe( 'WPorg Data Actions', () => {
+	beforeEach( () => {
 		wporg.reset();
 	} );
 
-	it( 'Actions should be an object', function() {
+	test( 'Actions should be an object', () => {
 		assert.isObject( WPorgActions );
 	} );
 
-	it( 'Actions should have method fetchPluginData', function() {
+	test( 'Actions should have method fetchPluginData', () => {
 		assert.isFunction( WPorgActions.fetchPluginData );
 	} );
 
-	it( 'FetchPluginData action should make a request', function( done ) {
+	test( 'FetchPluginData action should make a request', done => {
 		WPorgActions.fetchPluginData( 'test' )(
 			testDispatch( function() {
 				assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
@@ -46,7 +46,7 @@ describe( 'WPorg Data Actions', function() {
 		);
 	} );
 
-	it( "FetchPluginData action shouldn't return an error", function( done ) {
+	test( "FetchPluginData action shouldn't return an error", done => {
 		WPorgActions.fetchPluginData( 'test' )(
 			testDispatch( function( action ) {
 				done( action.error );
@@ -54,7 +54,7 @@ describe( 'WPorg Data Actions', function() {
 		);
 	} );
 
-	it( 'FetchPluginData action should return a plugin ', function( done ) {
+	test( 'FetchPluginData action should return a plugin ', done => {
 		WPorgActions.fetchPluginData( 'test' )(
 			testDispatch( function( action ) {
 				assert.equal( action.data.slug, 'test' );
@@ -63,7 +63,7 @@ describe( 'WPorg Data Actions', function() {
 		);
 	} );
 
-	it( "FetchPluginData action should not make another request if there's already one in progress", function() {
+	test( "FetchPluginData action should not make another request if there's already one in progress", () => {
 		wporg.deactivatedCallbacks = true;
 		WPorgActions.fetchPluginData( 'test' )( function() {} );
 		WPorgActions.fetchPluginData( 'test' )( function() {} );

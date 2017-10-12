@@ -12,7 +12,7 @@ import { getJetpackModules } from '../';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'getJetpackModules()', () => {
-	it( 'should return data for all modules for a known site', () => {
+	test( 'should return data for all modules for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
@@ -27,7 +27,7 @@ describe( 'getJetpackModules()', () => {
 		expect( output ).to.eql( MODULE_DATA_FIXTURE );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {

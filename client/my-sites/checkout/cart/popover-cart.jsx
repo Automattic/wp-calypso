@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessagesMixin from './cart-messages-mixin';
+import CartMessages from './cart-messages';
 import CartButtons from './cart-buttons';
 import Count from 'components/count';
 import Popover from 'components/popover';
@@ -45,9 +45,8 @@ const PopoverCart = React.createClass( {
 		return reject( this.props.cart.products, isCredits ).length;
 	},
 
-	mixins: [ CartMessagesMixin ],
-
 	render: function() {
+		const { cart, selectedSite } = this.props;
 		let countBadge;
 		const classes = classNames( {
 			'popover-cart': true,
@@ -65,6 +64,7 @@ const PopoverCart = React.createClass( {
 
 		return (
 			<div>
+				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
 					<button className="cart-toggle-button" ref="toggleButton" onClick={ this.onToggle }>
 						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>

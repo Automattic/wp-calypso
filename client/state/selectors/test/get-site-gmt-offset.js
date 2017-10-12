@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getSiteGmtOffset } from '../';
 
 describe( 'getSiteGmtOffset()', () => {
-	it( 'should return null if the site has never been fetched', () => {
+	test( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {},
@@ -22,7 +22,7 @@ describe( 'getSiteGmtOffset()', () => {
 		expect( offset ).to.be.null;
 	} );
 
-	it( 'should return null if the site-settings has never been fetched', () => {
+	test( 'should return null if the site-settings has never been fetched', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {
@@ -35,7 +35,7 @@ describe( 'getSiteGmtOffset()', () => {
 		expect( offset ).to.be.null;
 	} );
 
-	it( 'should return the site-settings utc offset', () => {
+	test( 'should return the site-settings utc offset', () => {
 		const stateTree = {
 			siteSettings: {
 				items: {

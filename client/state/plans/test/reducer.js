@@ -36,16 +36,16 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( plansReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'error' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty Array', () => {
+		test( 'should default to an empty Array', () => {
 			expect( itemsReducer( undefined, [] ) ).to.eql( [] );
 		} );
 
-		it( 'should index items state', () => {
+		test( 'should index items state', () => {
 			const initialState = undefined;
 			const plans = WPCOM_RESPONSE;
 			const action = plansReceiveAction( plans );
@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should override plans', () => {
+		test( 'should override plans', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = plansReceiveAction( plans );
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'SERIALIZE' };
@@ -85,7 +85,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
@@ -98,7 +98,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			// product_id should be `Number`
 			const plans = [ { product_id: '234234' } ];
 			const initialState = plans;
@@ -114,11 +114,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should return FALSE when initial state is undefined and action is unknown', () => {
+		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
 			expect( requestReducer( undefined, {} ) ).to.eql( false );
 		} );
 
-		it( 'should return TRUE when initial state is undefined and action is REQUEST', () => {
+		test( 'should return TRUE when initial state is undefined and action is REQUEST', () => {
 			const initialState = undefined;
 			const action = requestPlans();
 			const expectedState = true;
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should update `requesting` state on SUCCESS', () => {
+		test( 'should update `requesting` state on SUCCESS', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;
@@ -142,7 +142,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should update `requesting` state on FAILURE', () => {
+		test( 'should update `requesting` state on FAILURE', () => {
 			const initialState = true;
 			const action = plansRequestFailureAction();
 			const expectedState = false;
@@ -157,11 +157,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#errors()', () => {
-		it( 'should return FALSE when initial state is undefined and action is unknown', () => {
+		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
 			expect( errorReducer( undefined, {} ) ).to.eql( false );
 		} );
 
-		it( 'should set `error` state to TRUE on FAILURE', () => {
+		test( 'should set `error` state to TRUE on FAILURE', () => {
 			const initialState = undefined;
 			const action = plansRequestFailureAction();
 			const expectedState = true;
@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should set `error` state to FALSE on REQUEST', () => {
+		test( 'should set `error` state to FALSE on REQUEST', () => {
 			const initialState = true;
 			const action = requestPlans();
 			const expectedState = false;
@@ -186,7 +186,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( expectedState );
 		} );
 
-		it( 'should set `error` state to FALSE on SUCCESS', () => {
+		test( 'should set `error` state to FALSE on SUCCESS', () => {
 			const initialState = true;
 			const action = plansRequestSuccessAction();
 			const expectedState = false;

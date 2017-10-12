@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getPosterUploadProgress } from '../';
 
 describe( 'getPosterUploadProgress()', () => {
-	it( 'should return the upload progress', () => {
+	test( 'should return the upload progress', () => {
 		const percentage = 50;
 		const uploadProgress = getPosterUploadProgress( {
 			ui: {

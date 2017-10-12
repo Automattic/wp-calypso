@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#receiveStatus()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveStatus( siteId, status.data );
 
 			expect( action ).to.eql( {
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
+		test( 'should dispatch request action when thunk triggered', () => {
 			requestStatus( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -69,13 +69,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestStatus( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveStatus( siteId, status.data ) );
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestStatus( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,

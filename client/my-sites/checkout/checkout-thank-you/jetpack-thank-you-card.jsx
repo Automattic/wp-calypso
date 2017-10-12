@@ -25,10 +25,7 @@ import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
 import JetpackSite from 'lib/site/jetpack';
 import support from 'lib/url/support';
-import Card from 'components/card';
 import utils from 'lib/site/utils';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
 import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
@@ -409,99 +406,6 @@ class JetpackThankYouCard extends Component {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
 		}
 		return reason;
-	}
-
-	renderErrorDetail() {
-		const { translate, selectedSite } = this.props;
-		if ( ! this.isErrored() ) {
-			return null;
-		}
-
-		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
-		let reason;
-		if ( reasons && reasons.length > 0 ) {
-			reason = translate(
-				'We are unable to install the Akismet and VaultPress plugins that power the spam protection, backup, ' +
-					"and security features of your Jetpack plan due to your site's current " +
-					'file permissions settings. You must either install them manually or change your file permissions.'
-			);
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
-		} else if ( ! selectedSite.hasMinimumJetpackVersion ) {
-			reason = translate(
-				'We are unable to install the Akismet and VaultPress plugins that power the spam protection, backup, ' +
-					'and security features of your Jetpack plan because your site has an older version of Jetpack. ' +
-					'Please upgrade Jetpack and try again.'
-			);
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
-				jetpack_version: selectedSite.options.jetpack_version,
-			} );
-		} else if ( ! selectedSite.isMainNetworkSite() ) {
-			reason = translate(
-				'We are unable to install the Akismet and VaultPress plugins that power the spam protection, backup, ' +
-					'and security features of your Jetpack plan because your site is part of a multi-site network, but is not ' +
-					'the main network site.'
-			);
-
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
-		} else if ( selectedSite.options.is_multi_network ) {
-			reason = translate(
-				'We are unable to install the Akismet and VaultPress plugins that power the spam protection, backup, ' +
-					'and security features of your Jetpack plan because your site is part of a multi-network.'
-			);
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
-		} else {
-			const erroredPlugins = reduce(
-				this.props.plugins,
-				( erroredList, plugin ) => {
-					if ( 'error' === plugin.status ) {
-						erroredList.push( plugin.slug );
-					}
-					return erroredList;
-				},
-				[]
-			);
-
-			if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'akismet' ) ) {
-				reason = translate(
-					'We are unable to automatically configure the Akismet plugin which powers the spam protection feature of ' +
-						'your Jetpack plan. Please continue with manual setup or contact ' +
-						'support by clicking one of the buttons below.'
-				);
-			} else if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'vaultpress' ) ) {
-				reason = translate(
-					'We are unable to automatically configure the VaultPress plugin which powers the security and backup ' +
-						'features of your Jetpack plan. Please continue with manual setup or contact ' +
-						'support by clicking one of the buttons below.'
-				);
-			} else {
-				reason = translate(
-					'We are unable to automatically configure the Akismet and VaultPress plugins that power the spam protection, ' +
-						'backup, and security features of your Jetpack plan. Please continue with manual setup or contact ' +
-						'support by clicking one of the buttons below.'
-				);
-			}
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
-		}
-
-		return (
-			<div>
-				<Card className="checkout-thank-you__jetpack-error-card">
-					<h3 className="checkout-thank-you__jetpack-error-heading">
-						{ translate( 'We had trouble setting up your plan' ) }
-					</h3>
-					<p className="checkout-thank-you__jetpack-error-explanation">{ reason }</p>
-					<FormButtonsBar>
-						<FormButton href={ support.JETPACK_CONTACT_SUPPORT }>
-							{ translate( 'Get Help' ) }
-						</FormButton>
-
-						<FormButton isPrimary={ false } href={ support.SETTING_UP_PREMIUM_SERVICES }>
-							{ translate( 'Learn more about manual set up' ) }
-						</FormButton>
-					</FormButtonsBar>
-				</Card>
-			</div>
-		);
 	}
 
 	renderErrorNotice() {

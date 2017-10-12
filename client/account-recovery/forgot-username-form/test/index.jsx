@@ -22,7 +22,7 @@ describe( 'ForgotUsername', () => {
 		'.forgot-username-form__site-url-input',
 	];
 
-	it( 'should render as expected', () => {
+	test( 'should render as expected', () => {
 		const wrapper = shallow( <ForgotUsernameFormComponent /> );
 
 		// Expect the fields to be enabled
@@ -33,8 +33,8 @@ describe( 'ForgotUsername', () => {
 		expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
 
-	context( 'fields', () => {
-		it( 'should be disabled when isRequesting is on', function() {
+	describe( 'fields', () => {
+		test( 'should be disabled when isRequesting is on', () => {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test" isRequesting={ true } />
 			);
@@ -46,8 +46,8 @@ describe( 'ForgotUsername', () => {
 		} );
 	} );
 
-	context( 'submit button', () => {
-		it( 'should be disabled if firstName is blank', function() {
+	describe( 'submit button', () => {
+		test( 'should be disabled if firstName is blank', () => {
 			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
 			wrapper.setState( {
 				firstName: '',
@@ -59,7 +59,7 @@ describe( 'ForgotUsername', () => {
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled if lastName is blank', function() {
+		test( 'should be disabled if lastName is blank', () => {
 			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
 			wrapper.setState( {
 				firstName: 'Foo',
@@ -71,7 +71,7 @@ describe( 'ForgotUsername', () => {
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled if url is blank', function() {
+		test( 'should be disabled if url is blank', () => {
 			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
 			wrapper.setState( {
 				firstName: 'Foo',
@@ -83,7 +83,7 @@ describe( 'ForgotUsername', () => {
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be enabled when all fields are filled in', function() {
+		test( 'should be enabled when all fields are filled in', () => {
 			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
 			wrapper.setState( {
 				firstName: 'Foo',
@@ -96,7 +96,7 @@ describe( 'ForgotUsername', () => {
 				.ok;
 		} );
 
-		it( 'should be disabled when submitted', function() {
+		test( 'should be disabled when submitted', () => {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test" isRequesting={ true } />
 			);

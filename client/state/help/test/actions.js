@@ -13,7 +13,7 @@ import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#selectSiteId()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = selectSiteId( 1 );
 
 			expect( action ).to.eql( {

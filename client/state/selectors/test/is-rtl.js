@@ -11,13 +11,13 @@ import { expect } from 'chai';
 import { isRtl } from '../';
 
 describe( 'isRtl()', () => {
-	it( 'should return null if the value is not known', () => {
+	test( 'should return null if the value is not known', () => {
 		const result = isRtl( {} );
 
 		expect( result ).to.be.null;
 	} );
 
-	it( 'should return true if the localeSlug is RTL language', () => {
+	test( 'should return true if the localeSlug is RTL language', () => {
 		const result = isRtl( {
 			ui: {
 				language: {
@@ -29,7 +29,7 @@ describe( 'isRtl()', () => {
 		expect( result ).to.be.true;
 	} );
 
-	it( 'should return true if the localeSlug is LTR language', () => {
+	test( 'should return true if the localeSlug is LTR language', () => {
 		const result = isRtl( {
 			ui: {
 				language: {

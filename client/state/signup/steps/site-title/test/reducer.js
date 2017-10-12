@@ -12,7 +12,7 @@ import signupDependencyStore from '../reducer';
 import { SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should update the site title', () => {
+	test( 'should update the site title', () => {
 		expect(
 			signupDependencyStore(
 				{},

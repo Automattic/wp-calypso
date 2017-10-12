@@ -12,7 +12,7 @@ import { isFrontPage, isPostsPage } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isFrontPage()', () => {
-		it( 'should return true if the page is set as the front page', () => {
+		test( 'should return true if the page is set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 			expect( result ).to.eql( true );
 		} );
 
-		it( 'should return false if the page is not set as the front page', () => {
+		test( 'should return false if the page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -58,7 +58,7 @@ describe( 'selectors', () => {
 			expect( result ).to.eql( false );
 		} );
 
-		it( 'should return false if a static page is not set as the front page', () => {
+		test( 'should return false if a static page is not set as the front page', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -81,7 +81,7 @@ describe( 'selectors', () => {
 			expect( result ).to.eql( false );
 		} );
 
-		it( 'should return false if the site is not known', () => {
+		test( 'should return false if the site is not known', () => {
 			const result = isFrontPage(
 				{
 					sites: {
@@ -97,7 +97,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPostsPage()', () => {
-		it( 'should return true if the page is set as the posts page', () => {
+		test( 'should return true if the page is set as the posts page', () => {
 			const result = isPostsPage(
 				{
 					sites: {
@@ -119,7 +119,7 @@ describe( 'selectors', () => {
 			expect( result ).to.eql( true );
 		} );
 
-		it( 'should return false if the page is not set as the posts page', () => {
+		test( 'should return false if the page is not set as the posts page', () => {
 			const result = isPostsPage(
 				{
 					sites: {
@@ -141,7 +141,7 @@ describe( 'selectors', () => {
 			expect( result ).to.eql( false );
 		} );
 
-		it( 'should return false if the site is not known', () => {
+		test( 'should return false if the site is not known', () => {
 			const result = isPostsPage(
 				{
 					sites: {

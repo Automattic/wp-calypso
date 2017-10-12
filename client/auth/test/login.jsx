@@ -27,17 +27,17 @@ jest.mock( 'lib/analytics', () => ( {
 	},
 } ) );
 
-describe( 'LoginTest', function() {
+describe( 'LoginTest', () => {
 	const page = shallow( <Login translate={ identity } /> );
 
-	it( 'OTP is not present on first render', function( done ) {
+	test( 'OTP is not present on first render', done => {
 		page.setState( { requires2fa: false }, function() {
 			expect( page.find( { name: 'auth_code' } ) ).to.have.length( 0 );
 			done();
 		} );
 	} );
 
-	it( 'cannot submit until login details entered', function( done ) {
+	test( 'cannot submit until login details entered', done => {
 		expect( page.find( FormButton ).props().disabled ).to.be.true;
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
 			expect( page.find( FormButton ).props().disabled ).to.be.false;
@@ -45,14 +45,14 @@ describe( 'LoginTest', function() {
 		} );
 	} );
 
-	it( 'shows OTP box with valid login', function( done ) {
+	test( 'shows OTP box with valid login', done => {
 		page.setState( { login: 'test', password: 'test', requires2fa: true }, function() {
 			expect( page.find( { name: 'auth_code' } ) ).to.have.length( 1 );
 			done();
 		} );
 	} );
 
-	it( 'prevents change of login when asking for OTP', function( done ) {
+	test( 'prevents change of login when asking for OTP', done => {
 		page.setState( { login: 'test', password: 'test', requires2fa: true }, function() {
 			expect( page.find( { name: 'login' } ).props().disabled ).to.be.true;
 			expect( page.find( { name: 'password' } ).props().disabled ).to.be.true;
@@ -60,7 +60,7 @@ describe( 'LoginTest', function() {
 		} );
 	} );
 
-	it( 'submits login form', function( done ) {
+	test( 'submits login form', done => {
 		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
 			page.find( 'form' ).simulate( 'submit', { preventDefault: noop, stopPropagation: noop } );
 

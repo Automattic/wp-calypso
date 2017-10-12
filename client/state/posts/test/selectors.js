@@ -49,7 +49,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPost()', () => {
-		it( 'should return null if the global ID is not tracked', () => {
+		test( 'should return null if the global ID is not tracked', () => {
 			const post = getPost(
 				{
 					posts: {
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 			expect( post ).to.be.null;
 		} );
 
-		it( 'should return null if there is no manager associated with the path site', () => {
+		test( 'should return null if there is no manager associated with the path site', () => {
 			const post = getPost(
 				{
 					posts: {
@@ -79,7 +79,7 @@ describe( 'selectors', () => {
 			expect( post ).to.be.null;
 		} );
 
-		it( 'should return the object for the post global ID', () => {
+		test( 'should return the object for the post global ID', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -107,7 +107,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNormalizedPost()', () => {
-		it( 'should return null if the post is not tracked', () => {
+		test( 'should return null if the post is not tracked', () => {
 			const normalizedPost = getNormalizedPost(
 				{
 					posts: {
@@ -121,7 +121,7 @@ describe( 'selectors', () => {
 			expect( normalizedPost ).to.be.null;
 		} );
 
-		it( 'should return a normalized copy of the post', () => {
+		test( 'should return a normalized copy of the post', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -170,7 +170,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePosts()', () => {
-		it( 'should return an array of post objects for the site', () => {
+		test( 'should return an array of post objects for the site', () => {
 			const postObjects = {
 				2916284: {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -213,7 +213,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePost()', () => {
-		it( 'should return null if the post is not known for the site', () => {
+		test( 'should return null if the post is not known for the site', () => {
 			const post = getSitePost(
 				{
 					posts: {
@@ -227,7 +227,7 @@ describe( 'selectors', () => {
 			expect( post ).to.be.null;
 		} );
 
-		it( 'should return the object for the post site ID, post ID pair', () => {
+		test( 'should return the object for the post site ID, post ID pair', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -253,7 +253,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const sitePosts = getSitePostsForQuery(
 				{
 					posts: {
@@ -267,7 +267,7 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return null if the query is not tracked to the query manager', () => {
+		test( 'should return null if the query is not tracked to the query manager', () => {
 			const sitePosts = getSitePostsForQuery(
 				{
 					posts: {
@@ -286,7 +286,7 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return an array of normalized known queried posts', () => {
+		test( 'should return an array of normalized known queried posts', () => {
 			const sitePosts = getSitePostsForQuery(
 				{
 					posts: {
@@ -323,7 +323,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( "should return null if we know the number of found items but the requested set hasn't been received", () => {
+		test( "should return null if we know the number of found items but the requested set hasn't been received", () => {
 			const sitePosts = getSitePostsForQuery(
 				{
 					posts: {
@@ -356,7 +356,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingSitePostsForQuery()', () => {
-		it( 'should return false if the site has not been queried', () => {
+		test( 'should return false if the site has not been queried', () => {
 			const isRequesting = isRequestingSitePostsForQuery(
 				{
 					posts: {
@@ -370,7 +370,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site has not been queried for the specific query', () => {
+		test( 'should return false if the site has not been queried for the specific query', () => {
 			const isRequesting = isRequestingSitePostsForQuery(
 				{
 					posts: {
@@ -386,7 +386,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site has been queried for the specific query', () => {
+		test( 'should return true if the site has been queried for the specific query', () => {
 			const isRequesting = isRequestingSitePostsForQuery(
 				{
 					posts: {
@@ -402,7 +402,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
 			const isRequesting = isRequestingSitePostsForQuery(
 				{
 					posts: {
@@ -420,7 +420,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSitePostsFoundForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const found = getSitePostsFoundForQuery(
 				{
 					posts: {
@@ -434,7 +434,7 @@ describe( 'selectors', () => {
 			expect( found ).to.be.null;
 		} );
 
-		it( 'should return the found items for a site query', () => {
+		test( 'should return the found items for a site query', () => {
 			const found = getSitePostsFoundForQuery(
 				{
 					posts: {
@@ -465,7 +465,7 @@ describe( 'selectors', () => {
 			expect( found ).to.equal( 1 );
 		} );
 
-		it( 'should return zero if in-fact there are zero items', () => {
+		test( 'should return zero if in-fact there are zero items', () => {
 			const found = getSitePostsFoundForQuery(
 				{
 					posts: {
@@ -491,7 +491,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsLastPageForQuery()', () => {
-		it( 'should return null if the site query is not tracked', () => {
+		test( 'should return null if the site query is not tracked', () => {
 			const lastPage = getSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -505,7 +505,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.be.null;
 		} );
 
-		it( 'should return the last page value for a site query', () => {
+		test( 'should return the last page value for a site query', () => {
 			const lastPage = getSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -536,7 +536,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.equal( 1 );
 		} );
 
-		it( 'should return the last page value for a site query, even if including page param', () => {
+		test( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -567,7 +567,7 @@ describe( 'selectors', () => {
 			expect( lastPage ).to.equal( 4 );
 		} );
 
-		it( 'should return 1 if there are no found posts', () => {
+		test( 'should return 1 if there are no found posts', () => {
 			const lastPage = getSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -593,7 +593,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isSitePostsLastPageForQuery()', () => {
-		it( 'should return null if the last page is not known', () => {
+		test( 'should return null if the last page is not known', () => {
 			const isLastPage = isSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -607,7 +607,7 @@ describe( 'selectors', () => {
 			expect( isLastPage ).to.be.null;
 		} );
 
-		it( 'should return false if the query explicit value is not the last page', () => {
+		test( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -638,7 +638,7 @@ describe( 'selectors', () => {
 			expect( isLastPage ).to.be.false;
 		} );
 
-		it( 'should return true if the query explicit value is the last page', () => {
+		test( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -669,7 +669,7 @@ describe( 'selectors', () => {
 			expect( isLastPage ).to.be.true;
 		} );
 
-		it( 'should return true if the query implicit value is the last page', () => {
+		test( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isSitePostsLastPageForQuery(
 				{
 					posts: {
@@ -702,7 +702,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePostsForQueryIgnoringPage()', () => {
-		it( 'should return null if the query is not tracked', () => {
+		test( 'should return null if the query is not tracked', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -717,7 +717,7 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return null if the query manager has not received items for query', () => {
+		test( 'should return null if the query manager has not received items for query', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -737,7 +737,7 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return a concatenated array of all site posts ignoring page', () => {
+		test( 'should return a concatenated array of all site posts ignoring page', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -800,7 +800,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( "should omit found items for which the requested result hasn't been received", () => {
+		test( "should omit found items for which the requested result hasn't been received", () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -848,7 +848,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isRequestingSitePostsForQueryIgnoringPage()', () => {
-		it( 'should return false if not requesting for query', () => {
+		test( 'should return false if not requesting for query', () => {
 			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -862,7 +862,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true requesting for query at exact page', () => {
+		test( 'should return true requesting for query at exact page', () => {
 			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -878,7 +878,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.true;
 		} );
 
-		it( 'should return true requesting for query without page specified', () => {
+		test( 'should return true requesting for query without page specified', () => {
 			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
 				{
 					posts: {
@@ -932,7 +932,7 @@ describe( 'selectors', () => {
 			getEditedPost.memoizedSelector.cache.clear();
 		} );
 
-		it( 'should return the original post if no revisions exist on site', () => {
+		test( 'should return the original post if no revisions exist on site', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -960,7 +960,7 @@ describe( 'selectors', () => {
 			expect( editedPost ).to.equal( postObject );
 		} );
 
-		it( 'should return revisions for a new draft', () => {
+		test( 'should return revisions for a new draft', () => {
 			const editedPost = getEditedPost(
 				{
 					posts: {
@@ -981,7 +981,7 @@ describe( 'selectors', () => {
 			expect( editedPost ).to.eql( { title: 'Ribs &amp; Chicken' } );
 		} );
 
-		it( 'should return revisions for a draft if the original is unknown', () => {
+		test( 'should return revisions for a draft if the original is unknown', () => {
 			const editedPost = getEditedPost(
 				{
 					posts: {
@@ -1003,7 +1003,7 @@ describe( 'selectors', () => {
 			expect( editedPost ).to.eql( { title: 'Hello World!' } );
 		} );
 
-		it( 'should return revisions merged with the original post', () => {
+		test( 'should return revisions merged with the original post', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1040,7 +1040,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return revisions merged with original post nested properties', () => {
+		test( 'should return revisions merged with original post nested properties', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1084,7 +1084,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return revisions with array properties overwriting objects', () => {
+		test( 'should return revisions with array properties overwriting objects', () => {
 			// This tests the initial edit of a non-hierarchical taxonomy
 			// TODO avoid changing the shape of the `terms` state - see:
 			// https://github.com/Automattic/wp-calypso/pull/6548#issuecomment-233148766
@@ -1144,7 +1144,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return revisions with array properties overwriting previous versions', () => {
+		test( 'should return revisions with array properties overwriting previous versions', () => {
 			// This tests removal of a term from a non-hierarchical taxonomy
 			const editedPost = getEditedPost(
 				{
@@ -1201,7 +1201,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPostEdits()', () => {
-		it( 'should return null if no edits exist for a new post', () => {
+		test( 'should return null if no edits exist for a new post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1216,7 +1216,7 @@ describe( 'selectors', () => {
 			expect( postEdits ).to.be.null;
 		} );
 
-		it( 'should return null if no edits exist for an existing post', () => {
+		test( 'should return null if no edits exist for an existing post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1232,7 +1232,7 @@ describe( 'selectors', () => {
 			expect( postEdits ).to.be.null;
 		} );
 
-		it( 'should return the edited attributes for a new post', () => {
+		test( 'should return the edited attributes for a new post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1255,7 +1255,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return the edited attributes for an existing post', () => {
+		test( 'should return the edited attributes for an existing post', () => {
 			const postEdits = getPostEdits(
 				{
 					posts: {
@@ -1281,7 +1281,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getEditedPostValue()', () => {
-		it( 'should return undefined if the post does not exist', () => {
+		test( 'should return undefined if the post does not exist', () => {
 			const editedPostValue = getEditedPostValue(
 				{
 					posts: {
@@ -1298,7 +1298,7 @@ describe( 'selectors', () => {
 			expect( editedPostValue ).to.be.undefined;
 		} );
 
-		it( 'should return the assigned post value', () => {
+		test( 'should return the assigned post value', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1333,7 +1333,7 @@ describe( 'selectors', () => {
 			expect( editedPostValue ).to.equal( 'Hello World!' );
 		} );
 
-		it( 'should return the assigned nested post value', () => {
+		test( 'should return the assigned nested post value', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1374,7 +1374,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isEditedPostPrivate()', () => {
-		it( 'should return false if the post does not exist', () => {
+		test( 'should return false if the post does not exist', () => {
 			const privatePost = isEditedPostPrivate(
 				{
 					posts: {
@@ -1390,7 +1390,7 @@ describe( 'selectors', () => {
 			expect( privatePost ).to.be.false;
 		} );
 
-		it( 'should return false if post password is a zero length string', () => {
+		test( 'should return false if post password is a zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1425,7 +1425,7 @@ describe( 'selectors', () => {
 			expect( privatePost ).to.be.false;
 		} );
 
-		it( 'should return true if post password is a non-zero length string', () => {
+		test( 'should return true if post password is a non-zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1460,7 +1460,7 @@ describe( 'selectors', () => {
 			expect( privatePost ).to.be.true;
 		} );
 
-		it( 'should return true if post password is whitespace only', () => {
+		test( 'should return true if post password is whitespace only', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1497,7 +1497,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPrivateEditedPostPasswordValid()', () => {
-		it( 'should return false if the post does not exist', () => {
+		test( 'should return false if the post does not exist', () => {
 			const isPasswordValid = isPrivateEditedPostPasswordValid(
 				{
 					posts: {
@@ -1513,7 +1513,7 @@ describe( 'selectors', () => {
 			expect( isPasswordValid ).to.be.false;
 		} );
 
-		it( 'should return false if post password is a zero length string', () => {
+		test( 'should return false if post password is a zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1548,7 +1548,7 @@ describe( 'selectors', () => {
 			expect( isPasswordValid ).to.be.false;
 		} );
 
-		it( 'should return true if post password is a non-zero length string', () => {
+		test( 'should return true if post password is a non-zero length string', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1583,7 +1583,7 @@ describe( 'selectors', () => {
 			expect( isPasswordValid ).to.be.true;
 		} );
 
-		it( 'should return false if post password is whitespace only', () => {
+		test( 'should return false if post password is whitespace only', () => {
 			const postObject = {
 				ID: 841,
 				site_ID: 2916284,
@@ -1624,7 +1624,7 @@ describe( 'selectors', () => {
 			isEditedPostDirty.memoizedSelector.cache.clear();
 		} );
 
-		it( 'should return false if there are no edits for the post', () => {
+		test( 'should return false if there are no edits for the post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1649,7 +1649,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return false if edited with a type', () => {
+		test( 'should return false if edited with a type', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1681,7 +1681,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return false if newly edited with custom type', () => {
+		test( 'should return false if newly edited with custom type', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1701,7 +1701,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return false if no saved post and value matches default for new post', () => {
+		test( 'should return false if no saved post and value matches default for new post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1721,7 +1721,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return true if no saved post and value does not match default for new post', () => {
+		test( 'should return true if no saved post and value does not match default for new post', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1741,7 +1741,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.true;
 		} );
 
-		it( 'should return true if no saved post and no default exists for key', () => {
+		test( 'should return true if no saved post and no default exists for key', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1761,7 +1761,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.true;
 		} );
 
-		it( 'should return false if saved post value equals edited post value', () => {
+		test( 'should return false if saved post value equals edited post value', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1793,7 +1793,7 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.false;
 		} );
 
-		it( 'should return true if saved post value does not equal edited post value', () => {
+		test( 'should return true if saved post value does not equal edited post value', () => {
 			const isDirty = isEditedPostDirty(
 				{
 					posts: {
@@ -1827,7 +1827,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPostPreviewUrl()', () => {
-		it( 'should return null if the post is not known', () => {
+		test( 'should return null if the post is not known', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -1845,7 +1845,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.be.null;
 		} );
 
-		it( 'should return null if the post has no URL', () => {
+		test( 'should return null if the post has no URL', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -1873,7 +1873,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.be.null;
 		} );
 
-		it( 'should return null if the post is trashed', () => {
+		test( 'should return null if the post is trashed', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -1903,7 +1903,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.be.null;
 		} );
 
-		it( 'should prefer the post preview URL if available', () => {
+		test( 'should prefer the post preview URL if available', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -1934,7 +1934,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.equal( 'https://example.com/preview-url' );
 		} );
 
-		it( 'should use post URL if preview URL not available', () => {
+		test( 'should use post URL if preview URL not available', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -1964,7 +1964,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.equal( 'https://example.com/post-url' );
 		} );
 
-		it( 'should change http to https if mapped domain', () => {
+		test( 'should change http to https if mapped domain', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -2006,7 +2006,7 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.equal( 'https://example.wordpress.com/post-url' );
 		} );
 
-		it( 'should append preview query argument to non-published posts', () => {
+		test( 'should append preview query argument to non-published posts', () => {
 			const previewUrl = getPostPreviewUrl(
 				{
 					...userState,
@@ -2038,7 +2038,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPostPublished()', () => {
-		it( 'should return null if the post is not known', () => {
+		test( 'should return null if the post is not known', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2052,7 +2052,7 @@ describe( 'selectors', () => {
 			expect( isPublished ).to.be.null;
 		} );
 
-		it( 'should return true if the post status is publish', () => {
+		test( 'should return true if the post status is publish', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2077,7 +2077,7 @@ describe( 'selectors', () => {
 			expect( isPublished ).to.be.true;
 		} );
 
-		it( 'should return true if the post status is private', () => {
+		test( 'should return true if the post status is private', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2102,7 +2102,7 @@ describe( 'selectors', () => {
 			expect( isPublished ).to.be.true;
 		} );
 
-		it( 'should return false if the post status is draft', () => {
+		test( 'should return false if the post status is draft', () => {
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2127,7 +2127,7 @@ describe( 'selectors', () => {
 			expect( isPublished ).to.be.false;
 		} );
 
-		it( 'should return false if the post status is future and date is in future', () => {
+		test( 'should return false if the post status is future and date is in future', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() + tenMinutes;
 			const isPublished = isPostPublished(
@@ -2155,7 +2155,7 @@ describe( 'selectors', () => {
 			expect( isPublished ).to.be.false;
 		} );
 
-		it( 'should return true if the post status is future and date is in past', () => {
+		test( 'should return true if the post status is future and date is in past', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() - tenMinutes;
 			const isPublished = isPostPublished(
@@ -2185,7 +2185,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getEditedPostSlug()', () => {
-		it( 'should return undefined if the post is not known', () => {
+		test( 'should return undefined if the post is not known', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2199,7 +2199,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.be.undefined;
 		} );
 
-		it( 'should return post.slug if post is published', () => {
+		test( 'should return post.slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2226,7 +2226,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'chewbacca' );
 		} );
 
-		it( 'should return decoded non-latin post.slug if post is published', () => {
+		test( 'should return decoded non-latin post.slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2253,7 +2253,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'זהו עין הנמר' );
 		} );
 
-		it( 'should return undecoded post.slug if post with malformed URI sequence is published', () => {
+		test( 'should return undecoded post.slug if post with malformed URI sequence is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2282,7 +2282,7 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		it( 'should return decoded post.slug with emoji sequences if post is published', () => {
+		test( 'should return decoded post.slug with emoji sequences if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2309,7 +2309,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( '🙈🙊🙉' );
 		} );
 
-		it( 'should return edited slug if post is not published', () => {
+		test( 'should return edited slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2345,7 +2345,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'jedi' );
 		} );
 
-		it( 'should return suggested-slug if post is not published', () => {
+		test( 'should return suggested-slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2374,7 +2374,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'chewbacca' );
 		} );
 
-		it( 'should return slug if post is not published and slug is set', () => {
+		test( 'should return slug if post is not published and slug is set', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2404,7 +2404,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'jedi' );
 		} );
 
-		it( 'should return edited slug if post is published', () => {
+		test( 'should return edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2440,7 +2440,7 @@ describe( 'selectors', () => {
 			expect( slug ).to.eql( 'ewok' );
 		} );
 
-		it( 'should return an empty edited slug if post is published', () => {
+		test( 'should return an empty edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
 					posts: {
@@ -2478,7 +2478,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSitePostsByTerm()', () => {
-		it( 'should return an array of post objects for the site matching the termId', () => {
+		test( 'should return an array of post objects for the site matching the termId', () => {
 			const postObjects = {
 				2916284: {
 					'3d097cb7c5473c169bba0eb8e3c6cb64': {

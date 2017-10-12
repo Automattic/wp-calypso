@@ -20,7 +20,7 @@ describe( 'selectors', () => {
 	describe( 'getFeed()', () => {
 		const primaryFeed = [ 1, 2, 3, 4, 5 ];
 
-		it( 'should return an empty array if no state exists', () => {
+		test( 'should return an empty array if no state exists', () => {
 			const state = {
 				extensions: {
 					zoninator: {
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 			expect( feed ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty array if no feed is attached for the given site ID', () => {
+		test( 'should return an empty array if no feed is attached for the given site ID', () => {
 			const state = {
 				extensions: {
 					zoninator: {
@@ -54,7 +54,7 @@ describe( 'selectors', () => {
 			expect( feed ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty array if no feed is attached for the given zone ID', () => {
+		test( 'should return an empty array if no feed is attached for the given zone ID', () => {
 			const state = {
 				extensions: {
 					zoninator: {
@@ -74,7 +74,7 @@ describe( 'selectors', () => {
 			expect( feed ).to.deep.equal( [] );
 		} );
 
-		it( 'should return a feed for the given site and zone ID', () => {
+		test( 'should return a feed for the given site and zone ID', () => {
 			const state = {
 				extensions: {
 					zoninator: {

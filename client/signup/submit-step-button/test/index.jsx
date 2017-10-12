@@ -18,14 +18,14 @@ jest.mock( 'lib/signup/actions', () => ( {
 } ) );
 
 describe( 'SubmitStepButton', () => {
-	it( 'should render buttonText prop within a child button', () => {
+	test( 'should render buttonText prop within a child button', () => {
 		const wrapper = shallow( <SubmitStepButton buttonText="SubmitStepButton: buttonText" /> );
 
 		expect( wrapper.find( 'button' ) ).to.have.length( 1 );
 		expect( wrapper.find( 'button' ).text() ).to.equal( 'SubmitStepButton: buttonText' );
 	} );
 
-	it( 'should trigger both submitSignupStep action creator and goToNextStep prop when clicked.', () => {
+	test( 'should trigger both submitSignupStep action creator and goToNextStep prop when clicked.', () => {
 		const goToNextStep = stub();
 		const wrapper = shallow(
 			<SubmitStepButton

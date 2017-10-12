@@ -18,19 +18,19 @@ import Dispatcher from 'dispatcher';
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
-describe( 'progress-store', function() {
+describe( 'progress-store', () => {
 	let SignupProgressStore, SignupActions;
 
-	before( () => {
+	beforeAll( () => {
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
 	} );
 
-	it( 'should return an empty at first', function() {
+	test( 'should return an empty at first', () => {
 		assert.equal( SignupProgressStore.get().length, 0 );
 	} );
 
-	it( 'should store a new step', function() {
+	test( 'should store a new step', () => {
 		SignupActions.submitSignupStep( {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
@@ -40,7 +40,7 @@ describe( 'progress-store', function() {
 		assert.equal( SignupProgressStore.get()[ 0 ].stepName, 'site-selection' );
 	} );
 
-	describe( 'timestamps', function() {
+	describe( 'timestamps', () => {
 		let clock;
 
 		beforeEach( () => {
@@ -51,7 +51,7 @@ describe( 'progress-store', function() {
 			clock.restore();
 		} );
 
-		it( 'should be updated at each step', function() {
+		test( 'should be updated at each step', () => {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
 				data: {
@@ -63,7 +63,7 @@ describe( 'progress-store', function() {
 		} );
 	} );
 
-	it( 'should not store the same step twice', function() {
+	test( 'should not store the same step twice', () => {
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 
 		assert.equal( SignupProgressStore.get().length, 1 );
@@ -74,7 +74,7 @@ describe( 'progress-store', function() {
 		} );
 	} );
 
-	it( 'should not be possible to mutate', function() {
+	test( 'should not be possible to mutate', () => {
 		assert.equal( SignupProgressStore.get().length, 1 );
 
 		// attempt to mutate
@@ -83,7 +83,7 @@ describe( 'progress-store', function() {
 		assert.equal( SignupProgressStore.get().length, 1 );
 	} );
 
-	it( 'should store multiple steps in order', function() {
+	test( 'should store multiple steps in order', () => {
 		SignupActions.submitSignupStep( { stepName: 'theme-selection' } );
 
 		assert.equal( SignupProgressStore.get().length, 2 );
@@ -91,7 +91,7 @@ describe( 'progress-store', function() {
 		assert.equal( SignupProgressStore.get()[ 1 ].stepName, 'theme-selection' );
 	} );
 
-	it( 'should mark submitted steps without an API request method as completed', function() {
+	test( 'should mark submitted steps without an API request method as completed', () => {
 		SignupActions.submitSignupStep( { stepName: 'step-without-api' } );
 
 		assert.equal(
@@ -100,7 +100,7 @@ describe( 'progress-store', function() {
 		);
 	} );
 
-	it( 'should mark submitted steps with an API request method as pending', function() {
+	test( 'should mark submitted steps with an API request method as pending', () => {
 		SignupActions.submitSignupStep( {
 			stepName: 'asyncStep',
 		} );
@@ -108,7 +108,7 @@ describe( 'progress-store', function() {
 		assert.equal( find( SignupProgressStore.get(), { stepName: 'asyncStep' } ).status, 'pending' );
 	} );
 
-	it( 'should mark only new saved steps as in-progress', function() {
+	test( 'should mark only new saved steps as in-progress', () => {
 		SignupActions.saveSignupStep( { stepName: 'site-selection' } );
 		defer( () => {
 			assert.notEqual( SignupProgressStore.get()[ 0 ].status, 'in-progress' );
@@ -120,7 +120,7 @@ describe( 'progress-store', function() {
 		} );
 	} );
 
-	it( 'should set the status of a signup step', function() {
+	test( 'should set the status of a signup step', () => {
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 		assert.equal( SignupProgressStore.get()[ 0 ].status, 'completed' );
 

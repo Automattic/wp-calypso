@@ -10,8 +10,8 @@ import { expect } from 'chai';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
-describe( 'KeyboardShortcuts', function() {
-	it( 'should emit events to subscribers', function() {
+describe( 'KeyboardShortcuts', () => {
+	test( 'should emit events to subscribers', () => {
 		var arbitraryData = 'hello, world?',
 			eventResult = '',
 			handleEvent = function( data ) {

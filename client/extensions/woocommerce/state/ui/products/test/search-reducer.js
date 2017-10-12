@@ -23,7 +23,7 @@ import products from 'woocommerce/state/sites/products/test/fixtures/products';
 
 describe( 'reducer', () => {
 	describe( 'productsRequest', () => {
-		it( 'should store the requested page', () => {
+		test( 'should store the requested page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
 				siteId: 123,
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'productsRequestSuccess', () => {
-		it( 'should store the current page', () => {
+		test( 'should store the current page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 				siteId: 123,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			const newState = productsSearchRequestSuccess( undefined, action );
 			expect( newState.currentPage ).to.eql( 2 );
 		} );
-		it( 'should store product ids for the current page', () => {
+		test( 'should store product ids for the current page', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
 				siteId: 123,
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( 'productsSearchClear', () => {
-		it( 'should reset the search state', () => {
+		test( 'should reset the search state', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
 				siteId: 123,

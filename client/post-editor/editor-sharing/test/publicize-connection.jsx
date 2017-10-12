@@ -37,9 +37,9 @@ var CONNECTION = {
 	label: 'Twitter',
 };
 
-describe( 'PublicizeConnection', function() {
-	describe( '#isConnectionSkipped()', function() {
-		it( 'should return true if connection is already skipped', function() {
+describe( 'PublicizeConnection', () => {
+	describe( '#isConnectionSkipped()', () => {
+		test( 'should return true if connection is already skipped', () => {
 			var post, tree;
 
 			post = {
@@ -51,7 +51,7 @@ describe( 'PublicizeConnection', function() {
 			expect( tree.isConnectionSkipped() ).to.equal( true );
 		} );
 
-		it( 'should return false if connection is not skipped', function() {
+		test( 'should return false if connection is not skipped', () => {
 			var post, tree;
 
 			post = {
@@ -67,8 +67,8 @@ describe( 'PublicizeConnection', function() {
 		} );
 	} );
 
-	describe( '#isConnectionDone()', function() {
-		it( 'should return true if connection is already publicized to', function() {
+	describe( '#isConnectionDone()', () => {
+		test( 'should return true if connection is already publicized to', () => {
 			var post, tree;
 
 			post = {
@@ -80,7 +80,7 @@ describe( 'PublicizeConnection', function() {
 			expect( tree.isConnectionDone() ).to.equal( true );
 		} );
 
-		it( 'should return false if connection is not publicized to yet', function() {
+		test( 'should return false if connection is not publicized to yet', () => {
 			var post, tree;
 
 			post = {

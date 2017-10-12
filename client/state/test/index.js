@@ -13,14 +13,14 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
-		it( 'can be called without specifying initialState', () => {
+		test( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
 			const reduxStoreWithEmptyState = createReduxStore( {} ).getState();
 			expect( reduxStoreNoArgs ).to.be.an( 'object' );
 			expect( reduxStoreWithEmptyState ).to.eql( reduxStoreNoArgs );
 		} );
 
-		it( 'should return same state on unhandled action', () => {
+		test( 'should return same state on unhandled action', () => {
 			// If you're here investigating why tests are failing, you should
 			// ensure that your reducer is not returning a new state object if
 			// it's not handling the action (i.e. that nothing has changed)
@@ -32,7 +32,7 @@ describe( 'index', () => {
 			expect( store.getState() ).to.equal( originalState );
 		} );
 
-		it( 'is instantiated with initialState', () => {
+		test( 'is instantiated with initialState', () => {
 			const user = { ID: 1234, display_name: 'test user', username: 'testuser' };
 			const initialState = {
 				currentUser: { id: 1234 },
@@ -49,7 +49,7 @@ describe( 'index', () => {
 				sandbox.stub( console, 'error' );
 			} );
 
-			it( 'ignores non-existent keys', () => {
+			test( 'ignores non-existent keys', () => {
 				expect( console.error.calledOnce ).to.eql( false );
 				const reduxStoreNoArgs = createReduxStore().getState();
 				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();

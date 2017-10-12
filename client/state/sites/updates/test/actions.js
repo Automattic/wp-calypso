@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#siteUpdatesReceiveAction()', () => {
-		it( 'should return a site updates receive action object', () => {
+		test( 'should return a site updates receive action object', () => {
 			const updates = {
 				plugins: 1,
 			};
@@ -51,7 +51,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#siteUpdatesRequestAction()', () => {
-		it( 'should return a site updates request action object', () => {
+		test( 'should return a site updates request action object', () => {
 			const action = siteUpdatesRequestAction( siteId );
 
 			expect( action ).to.eql( {
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#siteUpdatesRequestSuccessAction()', () => {
-		it( 'should return a site updates request success action object', () => {
+		test( 'should return a site updates request success action object', () => {
 			const action = siteUpdatesRequestSuccessAction( siteId );
 
 			expect( action ).to.eql( {
@@ -73,7 +73,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#siteUpdatesRequestFailureAction()', () => {
-		it( 'should return a site updates request failure action object', () => {
+		test( 'should return a site updates request failure action object', () => {
 			const error = 'There was an error while getting the update data for this site.';
 			const action = siteUpdatesRequestFailureAction( siteId, error );
 
@@ -86,7 +86,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateWordPress()', () => {
-		it( 'should dispatch a site wordpress update request action', () => {
+		test( 'should dispatch a site wordpress update request action', () => {
 			updateWordPress( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -104,7 +104,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch site wordpress update request success action upon success', () => {
+			test( 'should dispatch site wordpress update request success action upon success', () => {
 				return updateWordPress( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
@@ -124,7 +124,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch site wordpress update request failure action upon error', () => {
+			test( 'should dispatch site wordpress update request failure action upon error', () => {
 				return updateWordPress( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,

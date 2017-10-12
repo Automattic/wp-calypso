@@ -12,12 +12,12 @@ import { findThemeFilterTerm } from '../';
 import { state } from './fixtures/theme-filters';
 
 describe( 'findThemeFilterTerm()', () => {
-	it( 'should return null for an inexistent term slug', () => {
+	test( 'should return null for an inexistent term slug', () => {
 		const term = findThemeFilterTerm( state, 'blahg' );
 		expect( term ).to.be.null;
 	} );
 
-	it( 'should return the filter term object for a given term slug', () => {
+	test( 'should return the filter term object for a given term slug', () => {
 		const term = findThemeFilterTerm( state, 'blog' );
 		expect( term ).to.deep.equal( {
 			name: 'Blog',
@@ -26,7 +26,7 @@ describe( 'findThemeFilterTerm()', () => {
 		} );
 	} );
 
-	it( 'should return the filter term object for a given tax:term slug', () => {
+	test( 'should return the filter term object for a given tax:term slug', () => {
 		const term = findThemeFilterTerm( state, 'style:bright' );
 		expect( term ).to.deep.equal( {
 			name: 'Bright',

@@ -136,7 +136,7 @@ class Order extends Component {
 				<div className="order__container">
 					<OrderDetails orderId={ orderId } />
 					<OrderNotes orderId={ orderId } siteId={ site.ID } />
-					<OrderCustomer order={ order } />
+					<OrderCustomer orderId={ orderId } />
 				</div>
 			</Main>
 		);

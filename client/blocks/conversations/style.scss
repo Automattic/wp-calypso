@@ -90,3 +90,13 @@
 .is-group-reader .conversations__stream .like-button__label-status {
 	display: inline;
 }
+
+// Conversations empty state
+.main .conversations__empty-content.empty-content {
+	margin-top: 30px;
+	max-width: 650px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 70px;
+	}
+}

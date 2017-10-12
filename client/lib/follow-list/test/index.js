@@ -8,29 +8,29 @@ jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 import { assert } from 'chai';
 import sinon from 'sinon';
 
-describe( 'index', function() {
+describe( 'index', () => {
 	var FollowList, FollowListSite, followList, site;
 
-	before( () => {
+	beforeAll( () => {
 		FollowList = require( 'lib/follow-list' );
 		FollowListSite = require( 'lib/follow-list/site' );
 		followList = new FollowList();
 		site = new FollowListSite( { site_id: 95327318, is_following: false } );
 	} );
 
-	describe( 'FollowList', function() {
-		describe( 'add', function() {
-			it( 'should add a site', function() {
+	describe( 'FollowList', () => {
+		describe( 'add', () => {
+			test( 'should add a site', () => {
 				followList.add( { site_id: 95327318, is_following: false } );
 				assert.equal( followList.data.length, 1 );
 			} );
 
-			it( 'should create an instance of FollowListSite', function() {
+			test( 'should create an instance of FollowListSite', () => {
 				followList.add( { site_id: 95327318, is_following: false } );
 				assert.isTrue( followList.data[ 0 ] instanceof FollowListSite );
 			} );
 
-			it( 'should not add a duplicate site_id', function() {
+			test( 'should not add a duplicate site_id', () => {
 				followList.add( { site_id: 95327318, is_following: false } );
 				assert.equal( followList.data.length, 1 );
 				followList.add( { site_id: 95327318, is_following: false } );
@@ -40,16 +40,16 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'FollowListSite', function() {
-		describe( 'instantiation', function() {
-			it( 'should set the attributes', function() {
+	describe( 'FollowListSite', () => {
+		describe( 'instantiation', () => {
+			test( 'should set the attributes', () => {
 				assert.equal( site.site_id, 95327318 );
 				assert.equal( site.is_following, false );
 			} );
 		} );
 
-		describe( 'follow', function() {
-			it( 'should call the follow endpoint and execute the callback', function() {
+		describe( 'follow', () => {
+			test( 'should call the follow endpoint and execute the callback', () => {
 				var changeCallback = sinon.spy();
 				site.on( 'change', changeCallback );
 				site.follow();
@@ -57,7 +57,7 @@ describe( 'index', function() {
 				assert.isTrue( site.is_following );
 			} );
 
-			it( 'should not call the follow endpoint or execute the callback if already following', function() {
+			test( 'should not call the follow endpoint or execute the callback if already following', () => {
 				var changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
@@ -67,8 +67,8 @@ describe( 'index', function() {
 			} );
 		} );
 
-		describe( 'unfollow', function() {
-			it( 'should call the unfollow endpoint and execute the callback', function() {
+		describe( 'unfollow', () => {
+			test( 'should call the unfollow endpoint and execute the callback', () => {
 				var changeCallback = sinon.spy();
 				site.is_following = true;
 				site.on( 'change', changeCallback );
@@ -77,7 +77,7 @@ describe( 'index', function() {
 				assert.isFalse( site.is_following );
 			} );
 
-			it( 'should not call the unfollow endpoint or execute the callback if already following', function() {
+			test( 'should not call the unfollow endpoint or execute the callback if already following', () => {
 				var changeCallback = sinon.spy();
 				site.is_following = false;
 				site.on( 'change', changeCallback );

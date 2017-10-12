@@ -17,18 +17,18 @@ import {
 } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'fetchingItems' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index settings by site ID', () => {
+		test( 'should index settings by site ID', () => {
 			const siteId = 2916284;
 			const status = deepFreeze( {
 				unsafe: 'mature',
@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous status', () => {
+		test( 'should override previous status', () => {
 			const original = deepFreeze( {
 				2916284: {
 					unsafe: 'mature',
@@ -78,13 +78,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#fetchingItems()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = fetchingItems( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index fetching state by site ID', () => {
+		test( 'should index fetching state by site ID', () => {
 			const state = fetchingItems( undefined, {
 				type: WORDADS_STATUS_REQUEST,
 				siteId: 2916284,
@@ -95,7 +95,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update fetching state by site ID on success', () => {
+		test( 'should update fetching state by site ID on success', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update fetching state by site ID on failure', () => {
+		test( 'should update fetching state by site ID on failure', () => {
 			const originalState = deepFreeze( {
 				2916284: true,
 			} );
@@ -123,7 +123,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetchingItems by site ID', () => {
+		test( 'should accumulate fetchingItems by site ID', () => {
 			const originalState = deepFreeze( {
 				2916284: false,
 			} );

@@ -30,13 +30,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting value to true if request in progress', () => {
+		test( 'should set requesting value to true if request in progress', () => {
 			const state = requesting( undefined, {
 				type: SHARING_BUTTONS_REQUEST,
 				siteId: 2916284,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values', () => {
+		test( 'should accumulate requesting values', () => {
 			const previousState = deepFreeze( {
 				2916284: true,
 			} );
@@ -62,7 +62,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes successfully', () => {
+		test( 'should set request to false if request finishes successfully', () => {
 			const previousState = deepFreeze( {
 				2916284: true,
 			} );
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes with failure', () => {
+		test( 'should set request to false if request finishes with failure', () => {
 			const previousState = deepFreeze( {
 				2916284: true,
 			} );
@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const previousState = deepFreeze( {
 				2916284: true,
 			} );
@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
 				2916284: true,
 			} );
@@ -114,13 +114,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'saveRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = saveRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set request status to pending if request in progress', () => {
+		test( 'should set request status to pending if request in progress', () => {
 			const state = saveRequests( undefined, {
 				type: SHARING_BUTTONS_SAVE,
 				siteId: 2916284,
@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate save requests statuses', () => {
+		test( 'should accumulate save requests statuses', () => {
 			const previousState = deepFreeze( {
 				2916284: { saving: true, status: 'pending' },
 			} );
@@ -146,7 +146,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to success if request finishes successfully', () => {
+		test( 'should set save request to success if request finishes successfully', () => {
 			const previousState = deepFreeze( {
 				2916284: { saving: true, status: 'pending' },
 			} );
@@ -160,7 +160,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to error if request finishes with failure', () => {
+		test( 'should set save request to error if request finishes with failure', () => {
 			const previousState = deepFreeze( {
 				2916284: { saving: true, status: 'pending' },
 			} );
@@ -174,7 +174,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const previousState = deepFreeze( {
 				2916284: { saving: true, status: 'pending' },
 			} );
@@ -185,7 +185,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
 				2916284: { saving: true, status: 'pending' },
 			} );
@@ -198,13 +198,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index settings by site ID', () => {
+		test( 'should index settings by site ID', () => {
 			const settings = [ { ID: 'facebook', name: 'Facebook' } ];
 			const state = items( null, {
 				type: SHARING_BUTTONS_RECEIVE,
@@ -217,7 +217,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate settings', () => {
+		test( 'should accumulate settings', () => {
 			const settings = [ { ID: 'facebook', name: 'Facebook' } ];
 			const previousState = deepFreeze( {
 				2916284: [ { ID: 'twitter', name: 'Twitter' } ],
@@ -234,7 +234,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous settings of same site ID', () => {
+		test( 'should override previous settings of same site ID', () => {
 			const settings = [ { ID: 'facebook', name: 'Facebook' } ];
 			const previousState = deepFreeze( {
 				2916284: [ { ID: 'twitter', name: 'Twitter' } ],
@@ -250,7 +250,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
+		test( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
 			const settings = [
 				{ ID: 'facebook', name: 'New Facebook' },
 				{ ID: 'twitter', name: 'Twitter' },
@@ -273,7 +273,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const previousState = deepFreeze( {
 				2916284: [ { ID: 'facebook', name: 'Facebook' } ],
 			} );
@@ -284,7 +284,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const previousState = deepFreeze( {
 				2916284: [ { ID: 'facebook', name: 'Facebook' } ],
 			} );
@@ -295,7 +295,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: 2,
 			} );

@@ -37,7 +37,7 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveRewindStatus', () => {
-	it( 'should dispatch rewind status update action', () => {
+	test( 'should dispatch rewind status update action', () => {
 		const dispatch = sinon.spy();
 		receiveRewindStatus( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -52,7 +52,7 @@ describe( 'receiveRewindStatus', () => {
 } );
 
 describe( 'receiveRewindStatusError', () => {
-	it( 'should dispatch rewind status error action', () => {
+	test( 'should dispatch rewind status error action', () => {
 		const dispatch = sinon.spy();
 		receiveRewindStatusError( { dispatch }, { siteId: SITE_ID }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(

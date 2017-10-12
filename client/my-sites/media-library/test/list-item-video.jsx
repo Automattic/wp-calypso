@@ -21,10 +21,10 @@ const WIDTH = 450;
 
 const styleUrl = url => `url(${ url })`;
 
-describe( 'MediaLibraryListItem video', function() {
+describe( 'MediaLibraryListItem video', () => {
 	let wrapper;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		if ( wrapper ) {
 			wrapper.unmount();
 		}
@@ -41,26 +41,26 @@ describe( 'MediaLibraryListItem video', function() {
 		/>
 	);
 
-	context( 'thumbnail display mode', function() {
-		it( 'defaults to photon', function() {
+	describe( 'thumbnail display mode', () => {
+		test( 'defaults to photon', () => {
 			wrapper = shallow( getItem() );
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
 
-		it( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', function() {
+		test( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', () => {
 			wrapper = shallow( getItem( 'MEDIA_IMAGE_PHOTON' ) );
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
 
-		it( 'returns a photon thumbnail for type MEDIA_IMAGE_RESIZER', function() {
+		test( 'returns a photon thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 'MEDIA_IMAGE_RESIZER' ) );
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
 		} );
 
-		it( 'returns existing fmt_hd thumbnail for type MEDIA_IMAGE_THUMBNAIL', function() {
+		test( 'returns existing fmt_hd thumbnail for type MEDIA_IMAGE_THUMBNAIL', () => {
 			wrapper = shallow( getItem( 'MEDIA_IMAGE_THUMBNAIL' ) );
 
 			expect( wrapper.props().style.backgroundImage ).to.be.equal(

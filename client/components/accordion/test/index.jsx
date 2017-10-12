@@ -11,15 +11,15 @@ import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 import React from 'react';
 
-describe( 'Accordion', function() {
+describe( 'Accordion', () => {
 	let Accordion, AccordionStatus;
 
-	before( () => {
+	beforeAll( () => {
 		Accordion = require( '../' );
 		AccordionStatus = require( '../status' );
 	} );
 
-	it( 'should render as expected with a title and content', function() {
+	test( 'should render as expected with a title and content', () => {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
 		expect( wrapper ).to.have.className( 'accordion' );
@@ -33,7 +33,7 @@ describe( 'Accordion', function() {
 		expect( wrapper.find( '.accordion__content' ) ).to.have.text( 'Content' );
 	} );
 
-	it( 'should accept an icon prop to be rendered', function() {
+	test( 'should accept an icon prop to be rendered', () => {
 		const wrapper = shallow(
 			<Accordion title="Section" icon={ <Gridicon icon="time" /> }>
 				Content
@@ -44,7 +44,7 @@ describe( 'Accordion', function() {
 		expect( wrapper.find( '.accordion__icon' ) ).to.have.descendants( Gridicon );
 	} );
 
-	it( 'should accept a subtitle prop to be rendered aside the title', function() {
+	test( 'should accept a subtitle prop to be rendered aside the title', () => {
 		const wrapper = shallow(
 			<Accordion title="Section" subtitle="Subtitle">
 				Content
@@ -55,7 +55,7 @@ describe( 'Accordion', function() {
 		expect( wrapper.find( '.accordion__subtitle' ) ).to.have.text( 'Subtitle' );
 	} );
 
-	it( 'should accept a status prop to be rendered in the toggle', () => {
+	test( 'should accept a status prop to be rendered in the toggle', () => {
 		const status = {
 			type: 'error',
 			text: 'Warning!',
@@ -73,12 +73,12 @@ describe( 'Accordion', function() {
 		expect( wrapper.find( AccordionStatus ).props() ).to.eql( status );
 	} );
 
-	context( 'events', () => {
+	describe( 'events', () => {
 		function simulateClick( wrapper ) {
 			wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 		}
 
-		it( 'should toggle when clicked', function() {
+		test( 'should toggle when clicked', () => {
 			const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
 			simulateClick( wrapper );
@@ -86,7 +86,7 @@ describe( 'Accordion', function() {
 			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
 		} );
 
-		it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
+		test( 'should accept an onToggle function handler to be invoked when toggled', done => {
 			const wrapper = shallow(
 				<Accordion title="Section" onToggle={ finishTest }>
 					Content
@@ -105,7 +105,7 @@ describe( 'Accordion', function() {
 			}
 		} );
 
-		it( 'should always use the initialExpanded prop, if specified', function( done ) {
+		test( 'should always use the initialExpanded prop, if specified', done => {
 			const wrapper = shallow(
 				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>
 					Content

@@ -32,7 +32,7 @@ describe( 'utils', () => {
 	let reducer;
 
 	describe( 'extendAction()', () => {
-		it( 'should return an updated action object, merging data', () => {
+		test( 'should return an updated action object, merging data', () => {
 			const action = extendAction(
 				{
 					type: 'ACTION_TEST',
@@ -56,7 +56,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return an updated action thunk, merging data on dispatch', () => {
+		test( 'should return an updated action thunk, merging data on dispatch', () => {
 			const dispatch = spy();
 			const action = extendAction(
 				thunkDispatch =>
@@ -83,7 +83,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return an updated nested action thunk, merging data on dispatch', () => {
+		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
 			const dispatch = spy();
 			const action = extendAction(
 				thunkDispatch =>
@@ -115,22 +115,22 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#createReducer()', () => {
-		context( 'only default behavior', () => {
-			before( () => {
+		describe( 'only default behavior', () => {
+			beforeAll( () => {
 				reducer = createReducer();
 			} );
 
-			it( 'should return a function', () => {
+			test( 'should return a function', () => {
 				expect( reducer ).to.be.a.function;
 			} );
 
-			it( 'should return initial state when invalid action passed', () => {
+			test( 'should return initial state when invalid action passed', () => {
 				const invalidAction = {};
 
 				expect( reducer( currentState, invalidAction ) ).to.be.deep.equal( currentState );
 			} );
 
-			it( 'should return initial state when unknown action type passed', () => {
+			test( 'should return initial state when unknown action type passed', () => {
 				const unknownAction = {
 					type: 'UNKNOWN',
 				};
@@ -138,24 +138,24 @@ describe( 'utils', () => {
 				expect( reducer( currentState, unknownAction ) ).to.be.deep.equal( currentState );
 			} );
 
-			it( 'should return default null state when serialize action type passed', () => {
+			test( 'should return default null state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).to.be.null;
 			} );
 
-			it( 'should return default null state when deserialize action type passed', () => {
+			test( 'should return default null state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.null;
 			} );
 
-			it( 'should throw an error when passed an undefined type', () => {
+			test( 'should throw an error when passed an undefined type', () => {
 				expect( () => reducer( undefined, { type: undefined } ) ).to.throw;
 			} );
 		} );
 
-		context( 'with reducers and default state provided', () => {
+		describe( 'with reducers and default state provided', () => {
 			const initialState = {},
 				TEST_ADD = 'TEST_ADD';
 
-			before( () => {
+			beforeAll( () => {
 				reducer = createReducer( initialState, {
 					[ TEST_ADD ]: ( state, action ) => {
 						return {
@@ -165,15 +165,15 @@ describe( 'utils', () => {
 				} );
 			} );
 
-			it( 'should return default {} state when SERIALIZE action type passed', () => {
+			test( 'should return default {} state when SERIALIZE action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).to.be.equal( initialState );
 			} );
 
-			it( 'should return default {} state when DESERIALIZE action type passed', () => {
+			test( 'should return default {} state when DESERIALIZE action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.equal( initialState );
 			} );
 
-			it( 'should add new value to test array when acc action passed', () => {
+			test( 'should add new value to test array when acc action passed', () => {
 				const addAction = {
 					type: TEST_ADD,
 					value: 'four',
@@ -188,48 +188,48 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		context( 'with schema provided', () => {
+		describe( 'with schema provided', () => {
 			const initialState = {};
 
-			before( () => {
+			beforeAll( () => {
 				reducer = createReducer( initialState, {}, testSchema );
 			} );
 
-			it( 'should return initial state when serialize action type passed', () => {
+			test( 'should return initial state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( currentState );
 			} );
 
-			it( 'should return initial state when valid initial state and deserialize action type passed', () => {
+			test( 'should return initial state when valid initial state and deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( currentState );
 			} );
 
-			it( 'should return default state when invalid initial state and deserialize action type passed', () => {
+			test( 'should return default state when invalid initial state and deserialize action type passed', () => {
 				expect( reducer( { invalid: 'state' }, actionDeserialize ) ).to.be.deep.equal(
 					initialState
 				);
 			} );
 		} );
 
-		context( 'with default actions overrides', () => {
+		describe( 'with default actions overrides', () => {
 			const overriddenState = { overridden: 'state' };
 
-			before( () => {
+			beforeAll( () => {
 				reducer = createReducer( null, {
 					[ SERIALIZE ]: () => overriddenState,
 					[ DESERIALIZE ]: () => overriddenState,
 				} );
 			} );
 
-			it( 'should return overridden state when serialize action type passed', () => {
+			test( 'should return overridden state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( overriddenState );
 			} );
 
-			it( 'should return overridden state when deserialize action type passed', () => {
+			test( 'should return overridden state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
 			} );
 		} );
 
-		it( 'should cache the serialize result on custom serialization behavior', () => {
+		test( 'should cache the serialize result on custom serialization behavior', () => {
 			const monitor = stub().returnsArg( 0 );
 
 			reducer = createReducer(
@@ -274,7 +274,7 @@ describe( 'utils', () => {
 			Bonobo: 13,
 		} );
 
-		it( 'should only accept string-type key names', () => {
+		test( 'should only accept string-type key names', () => {
 			expect( () => keyedReducer( null, age ) ).to.throw( TypeError );
 			expect( () => keyedReducer( undefined, age ) ).to.throw( TypeError );
 			expect( () => keyedReducer( [], age ) ).to.throw( TypeError );
@@ -286,7 +286,7 @@ describe( 'utils', () => {
 			expect( () => keyedReducer( 'key', age ) ).to.not.throw( TypeError );
 		} );
 
-		it( 'should only accept a function as the reducer argument', () => {
+		test( 'should only accept a function as the reducer argument', () => {
 			expect( () => keyedReducer( 'key', null ) ).to.throw( TypeError );
 			expect( () => keyedReducer( 'key', undefined ) ).to.throw( TypeError );
 			expect( () => keyedReducer( 'key', [] ) ).to.throw( TypeError );
@@ -299,14 +299,14 @@ describe( 'utils', () => {
 			expect( () => keyedReducer( 'key', () => {} ).to.not.throw( TypeError ) );
 		} );
 
-		it( 'should create keyed state given simple reducers', () => {
+		test( 'should create keyed state given simple reducers', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( undefined, grow( 'Calypso' ) ) ).to.eql( {
 				Calypso: 1,
 			} );
 		} );
 
-		it( 'should only affect the keyed item in a collection', () => {
+		test( 'should only affect the keyed item in a collection', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, grow( 'Calypso' ) ) ).to.eql( {
 				Bonobo: 13,
@@ -314,17 +314,17 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should skip if no key is provided in the action', () => {
+		test( 'should skip if no key is provided in the action', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'GROW' } ) ).to.equal( prevState );
 		} );
 
-		it( 'should handle falsey keys', () => {
+		test( 'should handle falsey keys', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).to.eql( { '0': 11 } );
 		} );
 
-		it( 'should handle coerced-to-string keys', () => {
+		test( 'should handle coerced-to-string keys', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { '10': 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
 			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
@@ -332,22 +332,22 @@ describe( 'utils', () => {
 			expect( keyed( { '10': 10 }, grow( 10 ) ) ).to.eql( { '10': 11 } );
 		} );
 
-		it( 'should return without changes if no actual changes occur', () => {
+		test( 'should return without changes if no actual changes occur', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Bonobo' } ) ).to.equal( prevState );
 		} );
 
-		it( 'should not initialize a state if no changes and not keyed (simple state)', () => {
+		test( 'should not initialize a state if no changes and not keyed (simple state)', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
 		} );
 
-		it( 'should remove keys if set back to initialState', () => {
+		test( 'should remove keys if set back to initialState', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( {} );
 		} );
 
-		it( 'should remove keys if set to undefined', () => {
+		test( 'should remove keys if set to undefined', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { 10: 10 }, remove( '10' ) ) ).to.eql( {} );
 		} );
@@ -382,40 +382,40 @@ describe( 'utils', () => {
 		};
 		date.hasCustomPersistence = true;
 
-		it( 'should return initial state without a schema on SERIALIZE', () => {
+		test( 'should return initial state without a schema on SERIALIZE', () => {
 			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, write ) ).to.equal( 0 );
 		} );
 
-		it( 'should return initial state without a schema on DESERIALIZE', () => {
+		test( 'should return initial state without a schema on DESERIALIZE', () => {
 			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, load ) ).to.equal( 0 );
 		} );
 
-		it( 'should invalidate DESERIALIZED state', () => {
+		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( -5, load ) ).to.equal( 0 );
 		} );
 
-		it( 'should not invalidate normal state', () => {
+		test( 'should not invalidate normal state', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( -5, normal ) ).to.equal( -5 );
 		} );
 
-		it( 'should validate initial state', () => {
+		test( 'should validate initial state', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( 5, load ) ).to.equal( 5 );
 		} );
 
-		it( 'actions work as expected with schema', () => {
+		test( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 
-		it( 'actions work as expected without schema', () => {
+		test( 'actions work as expected without schema', () => {
 			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
@@ -467,32 +467,32 @@ describe( 'utils', () => {
 			height: 171,
 		} );
 
-		it( 'should return initial state on init', () => {
+		test( 'should return initial state on init', () => {
 			const state = reducers( undefined, write );
 			expect( state ).to.eql( { age: 0, height: 160 } );
 		} );
 
-		it( 'should not persist height, because it is missing a schema', () => {
+		test( 'should not persist height, because it is missing a schema', () => {
 			const state = reducers( appState, write );
 			expect( state ).to.eql( { age: 20, height: 160 } );
 		} );
 
-		it( 'should not load height, because it is missing a schema', () => {
+		test( 'should not load height, because it is missing a schema', () => {
 			const state = reducers( appState, load );
 			expect( state ).to.eql( { age: 20, height: 160 } );
 		} );
 
-		it( 'should validate age', () => {
+		test( 'should validate age', () => {
 			const state = reducers( { age: -5 }, load );
 			expect( state ).to.eql( { age: 0, height: 160 } );
 		} );
 
-		it( 'actions work as expected', () => {
+		test( 'actions work as expected', () => {
 			const state = reducers( appState, grow );
 			expect( state ).to.eql( { age: 21, height: 172 } );
 		} );
 
-		it( 'nested reducers work on load', () => {
+		test( 'nested reducers work on load', () => {
 			reducers = combineReducers( {
 				age,
 				height,
@@ -515,7 +515,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'nested reducers work on persist', () => {
+		test( 'nested reducers work on persist', () => {
 			reducers = combineReducers( {
 				age,
 				height,
@@ -532,7 +532,7 @@ describe( 'utils', () => {
 			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
 		} );
 
-		it( 'deeply nested reducers work on load', () => {
+		test( 'deeply nested reducers work on load', () => {
 			reducers = combineReducers( {
 				age,
 				height,
@@ -561,7 +561,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'deeply nested reducers work on persist', () => {
+		test( 'deeply nested reducers work on persist', () => {
 			reducers = combineReducers( {
 				age,
 				height,
@@ -587,7 +587,7 @@ describe( 'utils', () => {
 			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
 		} );
 
-		it( 'deeply nested reducers work with reducer with a custom handler', () => {
+		test( 'deeply nested reducers work with reducer with a custom handler', () => {
 			reducers = combineReducers( {
 				height,
 				date,
@@ -609,7 +609,7 @@ describe( 'utils', () => {
 			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
 		} );
 
-		it( 'uses the provided validation from withSchemaValidation', () => {
+		test( 'uses the provided validation from withSchemaValidation', () => {
 			reducers = combineReducers( {
 				height: withSchemaValidation( schema, height ),
 				count,
@@ -622,7 +622,7 @@ describe( 'utils', () => {
 			expect( invalid ).to.eql( { height: 160, count: 1 } );
 		} );
 
-		it( 'uses the provided validation from createReducer', () => {
+		test( 'uses the provided validation from createReducer', () => {
 			reducers = combineReducers( {
 				height: createReducer( 160, {}, schema ),
 				count,
@@ -654,18 +654,18 @@ describe( 'utils', () => {
 		};
 		let wrapped;
 
-		before( () => ( wrapped = withoutPersistence( age ) ) );
+		beforeAll( () => ( wrapped = withoutPersistence( age ) ) );
 
-		it( 'should pass through normal actions', () => {
+		test( 'should pass through normal actions', () => {
 			expect( wrapped( 10, { type: 'GROW' } ) ).to.equal( 11 );
 			expect( wrapped( 10, { type: 'FADE' } ) ).to.equal( 10 );
 		} );
 
-		it( 'should DESERIALIZE to `initialState`', () => {
+		test( 'should DESERIALIZE to `initialState`', () => {
 			expect( wrapped( 10, { type: DESERIALIZE } ) ).to.equal( 0 );
 		} );
 
-		it( 'should SERIALIZE to `null`', () => {
+		test( 'should SERIALIZE to `null`', () => {
 			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.null;
 		} );
 	} );
@@ -699,7 +699,7 @@ describe( 'utils', () => {
 			connectedFailureActionCreator = () => failureActionCreator;
 		} );
 
-		it( 'should call apropriate action creators on success', () => {
+		test( 'should call apropriate action creators on success', () => {
 			const actionCreator = cachingActionCreatorFactory(
 				successfulWorker,
 				connectedLoadingActionCreator,
@@ -716,7 +716,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should call apropriate action creators on failure', () => {
+		test( 'should call apropriate action creators on failure', () => {
 			const actionCreator = cachingActionCreatorFactory(
 				failingWorker,
 				connectedLoadingActionCreator,
@@ -733,7 +733,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should cache same parameters successful call', () => {
+		test( 'should cache same parameters successful call', () => {
 			const actionCreator = cachingActionCreatorFactory(
 				successfulWorker,
 				connectedLoadingActionCreator,
@@ -747,7 +747,7 @@ describe( 'utils', () => {
 			return secondCall.then( () => expect( successfulWorker ).to.be.calledOnce );
 		} );
 
-		it( 'should not cache same parameters failed call', () => {
+		test( 'should not cache same parameters failed call', () => {
 			const actionCreator = cachingActionCreatorFactory(
 				failingWorker,
 				connectedLoadingActionCreator,

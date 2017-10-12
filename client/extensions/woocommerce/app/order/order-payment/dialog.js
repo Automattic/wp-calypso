@@ -29,7 +29,7 @@ import OrderRefundTable from './table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
-class OrderPaymentCard extends Component {
+class RefundDialog extends Component {
 	static propTypes = {
 		isPaymentLoading: PropTypes.bool,
 		fetchPaymentMethods: PropTypes.func.isRequired,
@@ -157,10 +157,6 @@ class OrderPaymentCard extends Component {
 		const { errorMessage, refundNote } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 
-		if ( 'cancelled' === order.status || 'failed' === order.status ) {
-			return null;
-		}
-
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
 			refundTotal = formatCurrency( this.state.refundTotal, order.currency );
@@ -232,4 +228,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
-)( localize( OrderPaymentCard ) );
+)( localize( RefundDialog ) );

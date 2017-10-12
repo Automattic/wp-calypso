@@ -19,6 +19,14 @@
 
 .editor-diff-viewer__content {
 	padding: 11px;
+	white-space: pre-wrap;
+	// following css is a reset from the general <pre> rule that matches
+	background: transparent;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	margin-bottom: inherit;
+	overflow: auto;
 }
 
 .editor-diff-viewer__additions {

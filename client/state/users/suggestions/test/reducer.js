@@ -20,12 +20,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should insert a new suggestion', () => {
+		test( 'should insert a new suggestion', () => {
 			const original = {
 				124: [ { user_login: 'wordpress1' } ],
 			};
@@ -43,12 +43,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by site ID', () => {
+		test( 'should index requesting state by site ID', () => {
 			const siteId = 123;
 			const state = requesting( undefined, {
 				type: USER_SUGGESTIONS_REQUEST,
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting state for sites', () => {
+		test( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
 				124: false,
 			} );
@@ -73,7 +73,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous requesting state', () => {
+		test( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				124: false,
 				123: true,
@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'never persists state', () => {
+			test( 'never persists state', () => {
 				const original = deepFreeze( {
 					124: false,
 					123: true,
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {} );
 			} );
 
-			it( 'never loads persisted state', () => {
+			test( 'never loads persisted state', () => {
 				const original = deepFreeze( {
 					124: false,
 					123: true,

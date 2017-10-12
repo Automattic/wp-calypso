@@ -13,7 +13,7 @@ jest.mock( 'tinymce/tinymce', () => ( {} ) );
 
 describe( 'wpcom-sourcecode', () => {
 	describe( '#wrapPre()', () => {
-		it( 'should wrap a code shortcode', () => {
+		test( 'should wrap a code shortcode', () => {
 			const wrapped = wrapPre( {
 				content: '[code lang="javascript"]const noop = () => {};[/code]',
 			} );
@@ -23,7 +23,7 @@ describe( 'wpcom-sourcecode', () => {
 			);
 		} );
 
-		it( 'should not encode entities when initial non-load', () => {
+		test( 'should not encode entities when initial non-load', () => {
 			const wrapped = wrapPre( {
 				content: '[code lang="javascript"]const noop = () =&gt; {};[/code]',
 				initial: true,
@@ -34,7 +34,7 @@ describe( 'wpcom-sourcecode', () => {
 			);
 		} );
 
-		it( 'should encode entities when initial load', () => {
+		test( 'should encode entities when initial load', () => {
 			const wrapped = wrapPre( {
 				content: '[code lang="javascript"]const noop = () => {};[/code]',
 				initial: true,
@@ -46,7 +46,7 @@ describe( 'wpcom-sourcecode', () => {
 			);
 		} );
 
-		it( 'should wrap a sourcecode shortcode', () => {
+		test( 'should wrap a sourcecode shortcode', () => {
 			const wrapped = wrapPre( {
 				content: '[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]',
 			} );
@@ -58,7 +58,7 @@ describe( 'wpcom-sourcecode', () => {
 	} );
 
 	describe( '#unwrapPre()', () => {
-		it( 'should unwrap a code shortcode', () => {
+		test( 'should unwrap a code shortcode', () => {
 			const unwrapped = unwrapPre( {
 				content: '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>',
 			} );
@@ -68,7 +68,7 @@ describe( 'wpcom-sourcecode', () => {
 			);
 		} );
 
-		it( 'should unwrap a sourcecode shortcode', () => {
+		test( 'should unwrap a sourcecode shortcode', () => {
 			const unwrapped = unwrapPre( {
 				content: '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>',
 			} );
@@ -78,7 +78,7 @@ describe( 'wpcom-sourcecode', () => {
 			);
 		} );
 
-		it( 'should gracefully handle surrounding content', () => {
+		test( 'should gracefully handle surrounding content', () => {
 			const unwrapped = unwrapPre( {
 				content:
 					'<p>foo</p><p><pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre></p><p>bar</p>',

@@ -35,7 +35,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#receiveProductsList()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveProductsList( { guided_transfer } );
 
 			expect( action ).to.eql( {
@@ -58,13 +58,13 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestProductsList()( spy );
 
 			expect( spy ).to.have.been.calledWith( { type: PRODUCTS_LIST_REQUEST } );
 		} );
 
-		it( 'should dispatch product list receive action when request completes', () => {
+		test( 'should dispatch product list receive action when request completes', () => {
 			return requestProductsList()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
@@ -73,7 +73,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestProductsList()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,

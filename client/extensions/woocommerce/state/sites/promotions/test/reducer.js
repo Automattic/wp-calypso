@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 		totalProducts: 4,
 	};
 
-	it( 'should store coupons', () => {
+	test( 'should store coupons', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		expect( state1.coupons ).to.exist;
 		expect( state1.coupons.length ).to.equal( 7 );
@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 		expect( state2.coupons[ 6 ] ).to.equal( coupons2[ 1 ] );
 	} );
 
-	it( 'should store products', () => {
+	test( 'should store products', () => {
 		const state1 = reducer( undefined, productsAction1 );
 		expect( state1.products ).to.exist;
 		expect( state1.products.length ).to.equal( 4 );
@@ -105,7 +105,7 @@ describe( 'reducer', () => {
 		expect( state2.products[ 3 ] ).to.equal( products2[ 0 ] );
 	} );
 
-	it( 'should not calculate promotions if coupons are not complete', () => {
+	test( 'should not calculate promotions if coupons are not complete', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		const state2 = reducer( state1, productsAction1 );
 		const state3 = reducer( state2, productsAction2 );
@@ -113,7 +113,7 @@ describe( 'reducer', () => {
 		expect( state3.promotions ).to.be.null;
 	} );
 
-	it( 'should not calculate promotions if products are not complete', () => {
+	test( 'should not calculate promotions if products are not complete', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		const state2 = reducer( state1, productsAction1 );
 		const state3 = reducer( state2, couponsAction2 );
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 		expect( state3.promotions ).to.be.null;
 	} );
 
-	it( 'should calculate promotions if both products and coupons are complete', () => {
+	test( 'should calculate promotions if both products and coupons are complete', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		const state2 = reducer( state1, productsAction1 );
 		const state3 = reducer( state2, couponsAction2 );
@@ -136,7 +136,7 @@ describe( 'reducer', () => {
 		expect( state4.promotions[ 1 ].name ).to.equal( coupons1[ 4 ].code );
 	} );
 
-	it( 'should sort promotions by end date, then start date', () => {
+	test( 'should sort promotions by end date, then start date', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		const state2 = reducer( state1, productsAction1 );
 		const state3 = reducer( state2, couponsAction2 );

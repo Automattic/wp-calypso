@@ -17,7 +17,7 @@ import PostQueryManager from 'lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorLastDraftPost()', () => {
-		it( 'should return null if no last draft set', () => {
+		test( 'should return null if no last draft set', () => {
 			const post = getEditorLastDraftPost( {
 				posts: {
 					queries: {},
@@ -36,7 +36,7 @@ describe( 'selectors', () => {
 			expect( post ).to.be.null;
 		} );
 
-		it( 'should return last draft edited post object', () => {
+		test( 'should return last draft edited post object', () => {
 			const post = getEditorLastDraftPost( {
 				posts: {
 					queries: {
@@ -80,7 +80,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getEditorLastDraftSiteId()', () => {
-		it( 'should return the last draft site ID state', () => {
+		test( 'should return the last draft site ID state', () => {
 			const siteId = getEditorLastDraftSiteId( {
 				ui: {
 					editor: {
@@ -97,7 +97,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getEditorLastDraftPostId()', () => {
-		it( 'should return the last draft post ID state', () => {
+		test( 'should return the last draft post ID state', () => {
 			const postId = getEditorLastDraftPostId( {
 				ui: {
 					editor: {

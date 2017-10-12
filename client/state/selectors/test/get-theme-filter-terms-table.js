@@ -12,7 +12,7 @@ import { state } from './fixtures/theme-filters';
 import { getThemeFilterTermsTable } from 'state/selectors';
 
 describe( 'getThemeFilterTermsTable()', () => {
-	it( 'should return a dictionary mapping terms to taxonomies', () => {
+	test( 'should return a dictionary mapping terms to taxonomies', () => {
 		const table = getThemeFilterTermsTable( state );
 		expect( table ).to.deep.equal( {
 			artwork: 'subject',

@@ -30,18 +30,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'counts' ] );
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track request fetching', () => {
+		test( 'should track request fetching', () => {
 			const state = requesting( undefined, {
 				type: POST_COUNTS_REQUEST,
 				siteId: 2916284,
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requests for the same site', () => {
+		test( 'should accumulate requests for the same site', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requests for distinct sites', () => {
+		test( 'should accumulate requests for distinct sites', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request success', () => {
+		test( 'should track request success', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: true,
@@ -126,7 +126,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track request failure', () => {
+		test( 'should track request failure', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: false,
@@ -159,13 +159,13 @@ describe( 'reducer', () => {
 			counts( undefined, { type: POST_COUNTS_RESET_INTERNAL_STATE } );
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = counts( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track received post counts by type', () => {
+		test( 'should track received post counts by type', () => {
 			const state = counts( undefined, {
 				type: POST_COUNTS_RECEIVE,
 				siteId: 2916284,
@@ -186,7 +186,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate received post counts for site', () => {
+		test( 'should accumulate received post counts for site', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -219,7 +219,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should replace received post counts for site type', () => {
+		test( 'should replace received post counts for site type', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -256,7 +256,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should transition trashed posts counts to the void when deleting', () => {
+		test( 'should transition trashed posts counts to the void when deleting', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -295,7 +295,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( "should transition an updated post's count to its new status when changed", () => {
+		test( "should transition an updated post's count to its new status when changed", () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -330,7 +330,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should transition status when saving a post with status value', () => {
+		test( 'should transition status when saving a post with status value', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
@@ -365,7 +365,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should never decrement a status count into negatives', () => {
+		test( 'should never decrement a status count into negatives', () => {
 			let state = counts( undefined, {
 				type: POST_COUNTS_RECEIVE,
 				siteId: 2916284,
@@ -400,7 +400,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -418,7 +418,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {
@@ -436,7 +436,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					post: {

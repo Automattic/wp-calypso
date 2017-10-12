@@ -37,7 +37,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a connection status request action when thunk triggered', () => {
+			test( 'should dispatch a connection status request action when thunk triggered', () => {
 				requestConnectionStatus( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -46,7 +46,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch connection status request success and receive actions upon success', () => {
+			test( 'should dispatch connection status request success and receive actions upon success', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_CONNECTION_STATUS_RECEIVE,
@@ -74,7 +74,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch connection status request failure action upon error', () => {
+			test( 'should dispatch connection status request failure action upon error', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,

@@ -21,27 +21,27 @@ describe( 'reducer', () => {
 	// Uses default data but reduces the size of this data set for tests
 	const initialState = pick( initialClientsData, [ 930, 973 ] );
 
-	it( 'should throw an error when no parameter is provided', () => {
+	test( 'should throw an error when no parameter is provided', () => {
 		expect( () => reducer() ).to.throw( TypeError );
 	} );
 
-	it( 'should throw an error when no action is provided', () => {
+	test( 'should throw an error when no action is provided', () => {
 		expect( () => reducer( {} ) ).to.throw( TypeError );
 	} );
 
-	it( 'should return the current state for an empty action', () => {
+	test( 'should return the current state for an empty action', () => {
 		const newState = reducer( initialState, {} );
 
 		expect( newState ).to.be.eql( initialState );
 	} );
 
-	it( 'should return the current state for an unknown action type', () => {
+	test( 'should return the current state for an unknown action type', () => {
 		const newState = reducer( initialState, { type: 'BUY_BURGER' } );
 
 		expect( newState ).to.be.eql( initialState );
 	} );
 
-	it( 'should return the current state when fetching client data starts', () => {
+	test( 'should return the current state when fetching client data starts', () => {
 		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST,
 			clientId: 930,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.deep.equal( initialState );
 	} );
 
-	it( 'should return updated state with updated data when client data was fetched successful', () => {
+	test( 'should return updated state with updated data when client data was fetched successful', () => {
 		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 			data: {
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return updated state with new data when client data was fetched successful', () => {
+	test( 'should return updated state with new data when client data was fetched successful', () => {
 		const newState = reducer( initialState, {
 			type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 			data: {
@@ -112,7 +112,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should not persist state', () => {
+	test( 'should not persist state', () => {
 		const newState = reducer( undefined, {
 			type: SERIALIZE,
 		} );
@@ -120,7 +120,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.deep.equal( initialClientsData );
 	} );
 
-	it( 'should not load persisted state', () => {
+	test( 'should not load persisted state', () => {
 		const newState = reducer( undefined, {
 			type: DESERIALIZE,
 		} );

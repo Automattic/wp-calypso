@@ -494,6 +494,7 @@
 
 .jetpack-connect__plans-nav-buttons {
 	text-align: center;
+	margin-bottom: 17px;
 
 	.button .gridicon {
 		padding-left: 4px;
@@ -509,10 +510,6 @@
 	padding: 16px 24px;
 	text-align: left;
 	width: 100%;
-
-	&:visited {
-		color: $gray;
-	}
 
 	&:hover {
 		color: $blue-medium;
@@ -561,4 +558,8 @@
 			top: 4px;
 		}
 	}
+}
+
+.jetpack-connect__auth-form-header-image {
+	text-align: center;
 }

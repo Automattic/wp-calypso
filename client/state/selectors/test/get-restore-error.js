@@ -13,7 +13,7 @@ import { getRestoreError } from 'state/selectors';
 const SITE_ID = 1234;
 
 describe( 'getRestoreError()', () => {
-	it( 'should return null if no error exists for a site', () => {
+	test( 'should return null if no error exists for a site', () => {
 		const result = getRestoreError(
 			{
 				activityLog: {
@@ -25,7 +25,7 @@ describe( 'getRestoreError()', () => {
 		expect( result ).to.be.null;
 	} );
 
-	it( 'should return an existing error for a site', () => {
+	test( 'should return an existing error for a site', () => {
 		const error = {
 			error: 'error',
 			message: 'Error.',

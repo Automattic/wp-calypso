@@ -12,7 +12,7 @@ import sinon from 'sinon';
 describe( 'scroll-to', () => {
 	let scrollTo;
 
-	before( () => {
+	beforeAll( () => {
 		scrollTo = require( '..' );
 		sinon.spy( window, 'scrollTo' );
 	} );
@@ -21,7 +21,7 @@ describe( 'scroll-to', () => {
 		window.scrollTo.reset();
 	} );
 
-	it( 'window position x', done => {
+	test( 'window position x', done => {
 		scrollTo( {
 			x: 500,
 			y: 300,
@@ -33,7 +33,7 @@ describe( 'scroll-to', () => {
 			},
 		} );
 	} );
-	it( 'window position y', done => {
+	test( 'window position y', done => {
 		scrollTo( {
 			x: 0,
 			y: 100,

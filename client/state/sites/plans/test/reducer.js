@@ -21,20 +21,20 @@ import {
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {
-		it( 'should return an empty state when original state is undefined and action is empty', () => {
+		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = plans( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return an empty state when original state and action are empty', () => {
+		test( 'should return an empty state when original state and action are empty', () => {
 			const original = Object.freeze( {} ),
 				state = plans( original, {} );
 
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should return an empty state when original state is undefined and action is unknown', () => {
+		test( 'should return an empty state when original state is undefined and action is unknown', () => {
 			const state = plans( undefined, {
 				type: 'SAY_HELLO',
 				siteId: 11111111,
@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return the original state when action is unknown', () => {
+		test( 'should return the original state when action is unknown', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should return the initial state with requesting enabled when fetching is triggered', () => {
+		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH,
 				siteId: 11111111,
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return the original state with an error and requesting disabled when fetching failed', () => {
+		test( 'should return the original state with an error and requesting disabled when fetching failed', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return a list of plans with loaded from server enabled and requesting disabled when fetching completed', () => {
+		test( 'should return a list of plans with loaded from server enabled and requesting disabled when fetching completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId: 11111111,
@@ -118,7 +118,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate plans for different sites', () => {
+		test( 'should accumulate plans for different sites', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
@@ -148,7 +148,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous plans of the same site', () => {
+		test( 'should override previous plans of the same site', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: null,
@@ -172,7 +172,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return the original state with updating enabled when trial cancelation is triggered', () => {
+		test( 'should return the original state with updating enabled when trial cancelation is triggered', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
@@ -196,7 +196,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
+		test( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: [],
@@ -221,7 +221,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return a list of plans with loaded from server enabled and requesting disabled when trial cancelation completed', () => {
+		test( 'should return a list of plans with loaded from server enabled and requesting disabled when trial cancelation completed', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 				siteId: 11111111,
@@ -238,7 +238,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return an empty state when original state is undefined and removal is triggered', () => {
+		test( 'should return an empty state when original state is undefined and removal is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_REMOVE,
 				siteId: 11111111,
@@ -247,7 +247,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return the original state when removal is triggered for an unknown site', () => {
+		test( 'should return the original state when removal is triggered for an unknown site', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: null,
@@ -264,7 +264,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should remove plans for a given site when removal is triggered', () => {
+		test( 'should remove plans for a given site when removal is triggered', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: null,

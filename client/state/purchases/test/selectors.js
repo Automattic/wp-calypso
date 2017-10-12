@@ -20,7 +20,7 @@ import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
-		it( 'should return different purchases when the purchase data changes', () => {
+		test( 'should return different purchases when the purchase data changes', () => {
 			const initialPurchases = Object.freeze( [
 				{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
 				{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
@@ -58,7 +58,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getByPurchaseId', () => {
-		it( 'should return a purchase by its ID', () => {
+		test( 'should return a purchase by its ID', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -122,7 +122,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isFetchingUserPurchases', () => {
-		it( 'should return the current state of the user purchases request', () => {
+		test( 'should return the current state of the user purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isFetchingSitePurchases', () => {
-		it( 'should return the current state of the site purchases request', () => {
+		test( 'should return the current state of the site purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -156,7 +156,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSitePurchases', () => {
-		it( 'should return purchases of specific site', () => {
+		test( 'should return purchases of specific site', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -190,7 +190,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getIncludedDomainPurchase', () => {
-		it( 'should return included domain with subscription', () => {
+		test( 'should return included domain with subscription', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -239,7 +239,7 @@ describe( 'selectors', () => {
 			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
 		] );
 
-		it( 'should return false because there is no purchases', () => {
+		test( 'should return false because there is no purchases', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -254,7 +254,7 @@ describe( 'selectors', () => {
 			expect( isUserPaid( state, targetUserId ) ).to.be.false;
 		} );
 
-		it( 'should return true because there are purchases from the target user', () => {
+		test( 'should return true because there are purchases from the target user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -269,7 +269,7 @@ describe( 'selectors', () => {
 			expect( isUserPaid( state, targetUserId ) ).to.be.true;
 		} );
 
-		it( 'should return false because there are no purchases from this user', () => {
+		test( 'should return false because there are no purchases from this user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -284,7 +284,7 @@ describe( 'selectors', () => {
 			expect( isUserPaid( state, 65535 ) ).to.be.false;
 		} );
 
-		it( 'should return false because the data is not ready.', () => {
+		test( 'should return false because the data is not ready.', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,

@@ -5,11 +5,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, some } from 'lodash';
 
 /***
  * Internal dependencies
  */
+import { getActiveReplyCommentId } from 'state/selectors';
 import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {
@@ -21,11 +22,11 @@ import {
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentForm from 'blocks/comments/form';
-import { requestPostComments, requestComment } from 'state/comments/actions';
+import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
- * Some of it is boilerplate stolen from PostCommnentList (all the activeXCommentId bits) but the special
+ * Some of it is boilerplate stolen from PostCommentList (all the activeXCommentId bits) but the special
  * convos parts are related to:
  *  1. caterpillars
  *  2. commentsToShow
@@ -39,7 +40,7 @@ import { requestPostComments, requestComment } from 'state/comments/actions';
  *   hands that down to all of the PostComments so they will know how to render.
  *
  * This component will also display a caterpillar if it has any children comments that are hidden.
- * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost
+ * It can determine hidden state by seeing that the number of commentsToShow < totalCommentsForPost.
  */
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
@@ -56,17 +57,15 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	state = {
-		activeReplyCommentId: null,
 		activeEditCommentId: null,
 	};
 
-	resetActiveReplyComment = () => this.setState( { activeReplyCommentId: null } );
 	onEditCommentClick = commentId => this.setState( { activeEditCommentId: commentId } );
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 	onUpdateCommentText = commentText => this.setState( { commentText: commentText } );
 
 	onReplyClick = commentId => {
-		this.setState( { activeReplyCommentId: commentId } );
+		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_click', {
@@ -76,11 +75,12 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	onReplyCancel = () => {
+		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentId,
+			comment_id: this.props.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
@@ -101,6 +101,7 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	componentDidMount() {
+		this.resetActiveReplyComment();
 		this.reqMoreComments();
 	}
 
@@ -166,6 +167,50 @@ export class ConversationCommentList extends React.Component {
 		return { ...startingExpanded, ...expansions };
 	};
 
+	setActiveReplyComment = commentId => {
+		const siteId = get( this.props, 'post.site_ID' );
+		const postId = get( this.props, 'post.ID' );
+
+		if ( ! siteId || ! postId ) {
+			return;
+		}
+
+		this.props.setActiveReply( {
+			siteId,
+			postId,
+			commentId,
+		} );
+	};
+
+	resetActiveReplyComment = () => {
+		this.setActiveReplyComment( null );
+	};
+
+	renderCommentForm = () => {
+		const { post, commentsTree } = this.props;
+		const commentText = this.state.commentText;
+
+		// Are we displaying the comment form at the top-level?
+		if (
+			this.props.activeReplyCommentId ||
+			some( commentsTree, comment => {
+				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
+			} )
+		) {
+			return null;
+		}
+
+		return (
+			<PostCommentForm
+				ref="postCommentForm"
+				post={ post }
+				parentCommentId={ null }
+				commentText={ commentText }
+				onUpdateCommentText={ this.onUpdateCommentText }
+			/>
+		);
+	};
+
 	render() {
 		const { commentsTree, post, enableCaterpillar } = this.props;
 
@@ -201,7 +246,7 @@ export class ConversationCommentList extends React.Component {
 								commentsToShow={ commentsToShow }
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
-								activeReplyCommentId={ this.state.activeReplyCommentId }
+								activeReplyCommentId={ this.props.activeReplyCommentId }
 								onEditCommentClick={ this.onEditCommentClick }
 								onEditCommentCancel={ this.onEditCommentCancel }
 								activeEditCommentId={ this.state.activeEditCommentId }
@@ -213,15 +258,7 @@ export class ConversationCommentList extends React.Component {
 							/>
 						);
 					} ) }
-					{ ! this.state.activeReplyCommentId && (
-						<PostCommentForm
-							ref="postCommentForm"
-							post={ post }
-							parentCommentId={ null }
-							commentText={ this.state.commentText }
-							onUpdateCommentText={ this.onUpdateCommentText }
-						/>
-					) }
+					{ this.renderCommentForm() }
 				</ul>
 			</div>
 		);
@@ -240,9 +277,14 @@ const ConnectedConversationCommentList = connect(
 				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
 			expansions: getExpansionsForPost( state, siteId, postId ),
 			hiddenComments: getHiddenCommentsForPost( state, siteId, postId ),
+			activeReplyCommentId: getActiveReplyCommentId( {
+				state,
+				siteId,
+				postId,
+			} ),
 		};
 	},
-	{ requestPostComments, requestComment }
+	{ requestPostComments, requestComment, setActiveReply }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

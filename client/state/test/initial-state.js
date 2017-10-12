@@ -46,7 +46,7 @@ describe( 'initial-state', () => {
 		clock = fakeClock;
 	} );
 
-	before( () => {
+	beforeAll( () => {
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
@@ -62,7 +62,7 @@ describe( 'initial-state', () => {
 
 				useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
-				before( done => {
+				beforeAll( done => {
 					window.initialReduxState = serverState;
 					sandbox.spy( console, 'error' );
 					const reduxReady = function( reduxStore ) {
@@ -71,16 +71,16 @@ describe( 'initial-state', () => {
 					};
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
-				after( () => {
+				afterAll( () => {
 					window.initialReduxState = null;
 				} );
-				it( 'builds store without errors', () => {
+				test( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
-				it( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
-				it( 'builds state using server state', () => {
+				test( 'builds state using server state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
 				} );
 			} );
@@ -101,7 +101,7 @@ describe( 'initial-state', () => {
 						},
 						_timestamp: Date.now(),
 					};
-					before( done => {
+					beforeAll( done => {
 						isEnabled.mockReturnValue( true );
 						isSupportUserSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { id: 123456789 } };
@@ -117,21 +117,21 @@ describe( 'initial-state', () => {
 						};
 						createReduxStoreFromPersistedInitialState( reduxReady );
 					} );
-					after( () => {
+					afterAll( () => {
 						isEnabled.mockReturnValue( false );
 						isSupportUserSession.mockReturnValue( false );
 						window.initialReduxState = null;
 					} );
-					it( 'builds store without errors', () => {
+					test( 'builds store without errors', () => {
 						expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 					} );
-					it( 'does not build using local forage state', () => {
+					test( 'does not build using local forage state', () => {
 						expect( state.postTypes.items[ 2916284 ] ).to.equal( undefined );
 					} );
-					it( 'does not add timestamp to store', () => {
+					test( 'does not add timestamp to store', () => {
 						expect( state._timestamp ).to.equal( undefined );
 					} );
-					it( 'does not build state using server state', () => {
+					test( 'does not build state using server state', () => {
 						expect( state.currentUser.id ).to.equal( null );
 					} );
 				} );
@@ -161,7 +161,7 @@ describe( 'initial-state', () => {
 							},
 						},
 					};
-				before( done => {
+				beforeAll( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
@@ -176,20 +176,20 @@ describe( 'initial-state', () => {
 					};
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
-				after( () => {
+				afterAll( () => {
 					window.initialReduxState = null;
 					isEnabled.mockReturnValue( false );
 				} );
-				it( 'builds store without errors', () => {
+				test( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
-				it( 'builds state using local forage state', () => {
+				test( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
 				} );
-				it( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
-				it( 'server state shallowly overrides local forage state', () => {
+				test( 'server state shallowly overrides local forage state', () => {
 					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
 				} );
 			} );
@@ -206,7 +206,7 @@ describe( 'initial-state', () => {
 						},
 					},
 				};
-				before( done => {
+				beforeAll( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
@@ -232,20 +232,20 @@ describe( 'initial-state', () => {
 					};
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
-				after( () => {
+				afterAll( () => {
 					window.initialReduxState = null;
 					isEnabled.mockReturnValue( false );
 				} );
-				it( 'builds store without errors', () => {
+				test( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
-				it( 'builds using server state', () => {
+				test( 'builds using server state', () => {
 					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
 				} );
-				it( 'does not build using local forage state', () => {
+				test( 'does not build using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( null );
 				} );
-				it( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
 			} );
@@ -266,7 +266,7 @@ describe( 'initial-state', () => {
 						_timestamp: Date.now(),
 					},
 					serverState = {};
-				before( done => {
+				beforeAll( done => {
 					window.initialReduxState = serverState;
 					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
@@ -281,18 +281,18 @@ describe( 'initial-state', () => {
 					};
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
-				after( () => {
+				afterAll( () => {
 					window.initialReduxState = null;
 					isEnabled.mockReturnValue( false );
 				} );
-				it( 'builds store without errors', () => {
+				test( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
-				it( 'builds state using local forage state', () => {
+				test( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
 					expect( state.postTypes.items ).to.equal( savedState.postTypes.items );
 				} );
-				it( 'does not add timestamp to store', () => {
+				test( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
 			} );
@@ -304,7 +304,7 @@ describe( 'initial-state', () => {
 
 		useSandbox( _sandbox => ( sandbox = _sandbox ) );
 
-		before( () => {
+		beforeAll( () => {
 			sandbox.stub( localforage, 'setItem' ).returns( Promise.resolve() );
 		} );
 
@@ -317,7 +317,7 @@ describe( 'initial-state', () => {
 			);
 		} );
 
-		it( 'should persist state for first dispatch', () => {
+		test( 'should persist state for first dispatch', () => {
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
@@ -328,7 +328,7 @@ describe( 'initial-state', () => {
 			expect( localforage.setItem ).to.have.been.calledOnce;
 		} );
 
-		it( 'should persist state for changed state', () => {
+		test( 'should persist state for changed state', () => {
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
@@ -346,7 +346,7 @@ describe( 'initial-state', () => {
 			expect( localforage.setItem ).to.have.been.calledTwice;
 		} );
 
-		it( 'should not persist state for unchanged state', () => {
+		test( 'should not persist state for unchanged state', () => {
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
@@ -364,7 +364,7 @@ describe( 'initial-state', () => {
 			expect( localforage.setItem ).to.have.been.calledOnce;
 		} );
 
-		it( 'should throttle', () => {
+		test( 'should throttle', () => {
 			store.dispatch( {
 				type: 'foo',
 				data: 1,

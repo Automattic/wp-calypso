@@ -33,7 +33,7 @@ describe( '#httpHandler', () => {
 		dispatch = sinon.spy();
 	} );
 
-	it( 'should call `onSuccess` when a response returns with data', () => {
+	test( 'should call `onSuccess` when a response returns with data', () => {
 		const data = { value: 1 };
 
 		superagentMock.setResponse( true, data );
@@ -47,7 +47,7 @@ describe( '#httpHandler', () => {
 		);
 	} );
 
-	it( 'should call `onFailure` when a response returns with error', () => {
+	test( 'should call `onFailure` when a response returns with error', () => {
 		const data = { error: 'bad, bad request!' };
 		superagentMock.setResponse( false, data );
 
@@ -62,7 +62,7 @@ describe( '#httpHandler', () => {
 		);
 	} );
 
-	it( 'should reject invalid headers', () => {
+	test( 'should reject invalid headers', () => {
 		const headers = [ { key: 'Accept', value: 'something' } ];
 		httpHandler(
 			{
@@ -85,7 +85,7 @@ describe( '#httpHandler', () => {
 		);
 	} );
 
-	it( 'should set appropriate headers', () => {
+	test( 'should set appropriate headers', () => {
 		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
 
 		superagentMock.setResponse( true, {} );
@@ -106,7 +106,7 @@ describe( '#httpHandler', () => {
 		);
 	} );
 
-	it( 'should set appropriate query string', () => {
+	test( 'should set appropriate query string', () => {
 		const queryParams = [ [ 'statement', 'hello world' ], [ 'regex', '/.$/' ] ];
 
 		const queryString = 'statement=hello%20world&regex=%2F.%24%2F';
@@ -127,7 +127,7 @@ describe( '#httpHandler', () => {
 		expect( superagentMock.getLastRequest().query ).to.have.been.calledWith( queryString );
 	} );
 
-	it( 'should not set empty query string', () => {
+	test( 'should not set empty query string', () => {
 		const queryParams = [];
 
 		superagentMock.setResponse( true, {} );

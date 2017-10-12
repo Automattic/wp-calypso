@@ -19,7 +19,7 @@ describe( 'Dropdown', () => {
 		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
-	it( 'should render a dropdown given a list of options and the current selection', () => {
+	test( 'should render a dropdown given a list of options and the current selection', () => {
 		const wrapper = shallow(
 			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);
@@ -44,7 +44,7 @@ describe( 'Dropdown', () => {
 		expect( items.at( 1 ).prop( 'icon' ) ).to.equal( 'star' );
 	} );
 
-	it( 'should be toggled by clicking the selected item', () => {
+	test( 'should be toggled by clicking the selected item', () => {
 		const wrapper = shallow(
 			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);
@@ -60,7 +60,7 @@ describe( 'Dropdown', () => {
 		expect( wrapper.hasClass( 'is-collapsed' ) ).to.equal( true );
 	} );
 
-	it( 'should close after invoking onSelect from its children', () => {
+	test( 'should close after invoking onSelect from its children', () => {
 		const wrapper = shallow(
 			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);

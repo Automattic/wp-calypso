@@ -23,13 +23,13 @@ describe( 'SearchUrl', () => {
 		onPage = sandbox.stub( page, 'show' );
 	} );
 
-	it( 'should call onSearch if provided', () => {
+	test( 'should call onSearch if provided', () => {
 		searchUrl( SEARCH_KEYWORD, '', onSearch );
 
 		expect( onSearch ).to.have.been.calledWith( SEARCH_KEYWORD );
 	} );
 
-	it( 'should replace existing search keyword', () => {
+	test( 'should replace existing search keyword', () => {
 		global.window = { location: { href: 'http://example.com/cat' } };
 
 		searchUrl( SEARCH_KEYWORD, 'existing' );
@@ -37,7 +37,7 @@ describe( 'SearchUrl', () => {
 		expect( onReplace ).to.have.been.calledWith( '/cat?s=' + SEARCH_KEYWORD );
 	} );
 
-	it( 'should set page URL if no existing keyword', () => {
+	test( 'should set page URL if no existing keyword', () => {
 		global.window = { location: { href: 'http://example.com/cat' } };
 
 		searchUrl( SEARCH_KEYWORD );

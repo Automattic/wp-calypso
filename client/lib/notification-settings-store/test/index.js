@@ -30,11 +30,11 @@ describe( 'index', () => {
 	const changeSpy = sinon.spy();
 	const getNotificationSettingsStub = undocumented().me().getNotificationSettings;
 
-	before( () => {
+	beforeAll( () => {
 		NotificationSettingsStore.on( 'change', changeSpy );
 	} );
 
-	after( () => {
+	afterAll( () => {
 		NotificationSettingsStore.off( 'change', changeSpy );
 	} );
 
@@ -43,12 +43,12 @@ describe( 'index', () => {
 		changeSpy.reset();
 	} );
 
-	it( 'should have a dispatch token', () => {
+	test( 'should have a dispatch token', () => {
 		assert.property( NotificationSettingsStore, 'dispatchToken' );
 	} );
 
 	describe( 'get blog settings', () => {
-		it( 'should return an array of blog settings', () => {
+		test( 'should return an array of blog settings', () => {
 			const blogsSettings = [
 				{
 					blog_id: 123456,
@@ -83,7 +83,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'get other site settings', () => {
-		it( 'should return an object for comments on other blogs', () => {
+		test( 'should return an object for comments on other blogs', () => {
 			const otherSettings = {
 				timeline: {
 					new_comment: false,
@@ -115,7 +115,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'get email from WordPress settings', () => {
-		it( 'should return an object for WP email settings', () => {
+		test( 'should return an object for WP email settings', () => {
 			const emailSettings = {
 				new_comment: false,
 				comment_like: true,
@@ -162,7 +162,7 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.fetchSettings();
 		} );
 
-		it( 'should toggle a blog setting by stream and blog id', () => {
+		test( 'should toggle a blog setting by stream and blog id', () => {
 			NotificationSettingsStoreActions.toggle( 1234567, 'timeline', 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
@@ -184,7 +184,7 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should toggle a device setting for a blog by device id and blog id', () => {
+		test( 'should toggle a device setting for a blog by device id and blog id', () => {
 			NotificationSettingsStoreActions.toggle( 1234567, 1234, 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'blogs' );
@@ -232,14 +232,14 @@ describe( 'index', () => {
 			NotificationSettingsStoreActions.fetchSettings();
 		} );
 
-		it( 'should toggle a a setting by stream', () => {
+		test( 'should toggle a a setting by stream', () => {
 			NotificationSettingsStoreActions.toggle( 'other', 'timeline', 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
 			assert.ok( state.settings.getIn( [ 'timeline', 'new_comment' ] ) );
 		} );
 
-		it( 'should toggle a device setting by device id', () => {
+		test( 'should toggle a device setting by device id', () => {
 			NotificationSettingsStoreActions.toggle( 'other', 1234, 'new_comment' );
 
 			const state = NotificationSettingsStore.getStateFor( 'other' );
@@ -261,7 +261,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'when toggle other blogs settings', () => {
-		it( 'should toggle a a setting by stream', () => {
+		test( 'should toggle a a setting by stream', () => {
 			const wpcomSettings = {
 				new_comment: false,
 				comment_like: false,

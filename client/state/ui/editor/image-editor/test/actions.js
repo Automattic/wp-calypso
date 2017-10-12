@@ -38,7 +38,7 @@ import {
 
 describe( 'actions', () => {
 	describe( '#resetImageEditorState()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = resetImageEditorState();
 
 			expect( action ).to.eql( {
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object with additional data if specified', () => {
+		test( 'should return an action object with additional data if specified', () => {
 			const action = resetImageEditorState( { aspectRatio: AspectRatios.FREE } );
 
 			expect( action ).to.eql( {
@@ -60,7 +60,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#resetAllImageEditorState()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = resetAllImageEditorState();
 
 			expect( action ).to.eql( {
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return an action object with additional data if specified', () => {
+		test( 'should return an action object with additional data if specified', () => {
 			const action = resetAllImageEditorState( { aspectRatio: AspectRatios.FREE } );
 
 			expect( action ).to.eql( {
@@ -82,7 +82,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#imageEditorRotateCounterclockwise()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = imageEditorRotateCounterclockwise();
 
 			expect( action ).to.eql( {
@@ -92,7 +92,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#imageEditorFlip()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = imageEditorFlip();
 
 			expect( action ).to.eql( {
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setImageEditorFileInfo()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setImageEditorFileInfo( 'testSrc', 'testFileName', 'image/jpg', 'My Title' );
 
 			expect( action ).to.eql( {
@@ -116,7 +116,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setImageEditorCropBounds()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setImageEditorCropBounds( 100, 200, 300, 400 );
 
 			expect( action ).to.eql( {
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#imageEditorComputedCrop()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = imageEditorComputedCrop( 0.2, 0.3, 0.4, 0.5 );
 
 			expect( action ).to.eql( {
@@ -143,7 +143,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	it( 'should return an action object', () => {
+	test( 'should return an action object', () => {
 		const action = imageEditorCrop( 0.2, 0.3, 0.4, 0.5 );
 
 		expect( action ).to.eql( {
@@ -156,7 +156,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setImageEditorAspectRatio()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setImageEditorAspectRatio( AspectRatios.ORIGINAL );
 
 			expect( action ).to.eql( {
@@ -167,7 +167,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setImageEditorDefaultAspectRatio()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setImageEditorDefaultAspectRatio( AspectRatios.ORIGINAL );
 
 			expect( action ).to.eql( {
@@ -178,7 +178,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setImageEditorImageHasLoaded()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setImageEditorImageHasLoaded( 123, 456 );
 
 			expect( action ).to.eql( {

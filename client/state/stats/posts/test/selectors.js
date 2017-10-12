@@ -12,7 +12,7 @@ import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPostStats()', () => {
-		it( 'should return false if the stat is not attached', () => {
+		test( 'should return false if the stat is not attached', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -29,7 +29,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the stat is not fetching', () => {
+		test( 'should return false if the stat is not fetching', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -46,7 +46,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site is fetching', () => {
+		test( 'should return true if the site is fetching', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -65,7 +65,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostStat()', () => {
-		it( 'should return null if the site is not tracked', () => {
+		test( 'should return null if the site is not tracked', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -82,7 +82,7 @@ describe( 'selectors', () => {
 			expect( statValue ).to.be.null;
 		} );
 
-		it( 'should return the post stat for a siteId, postId and stat key', () => {
+		test( 'should return the post stat for a siteId, postId and stat key', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -101,7 +101,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPostStats()', () => {
-		it( 'should return null if the site is not tracked', () => {
+		test( 'should return null if the site is not tracked', () => {
 			const state = {
 				stats: {
 					posts: {
@@ -118,7 +118,7 @@ describe( 'selectors', () => {
 			expect( statValue ).to.be.null;
 		} );
 
-		it( 'should return the post stats for a siteId, postId', () => {
+		test( 'should return the post stats for a siteId, postId', () => {
 			const state = {
 				stats: {
 					posts: {

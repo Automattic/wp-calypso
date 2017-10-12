@@ -11,12 +11,12 @@ import React from 'react';
 describe( 'PostStatus', () => {
 	let PostStatus;
 
-	before( () => {
+	beforeAll( () => {
 		PostStatus = require( '..' ).PostStatus;
 	} );
 
-	context( 'no post', () => {
-		it( 'should be empty', () => {
+	describe( 'no post', () => {
+		test( 'should be empty', () => {
 			const PostStatusComponent = <PostStatus translate={ identity } />;
 			const wrapper = shallow( PostStatusComponent );
 
@@ -24,9 +24,9 @@ describe( 'PostStatus', () => {
 		} );
 	} );
 
-	context( 'post', () => {
-		context( 'sticky', () => {
-			it( 'should render the primary components', () => {
+	describe( 'post', () => {
+		describe( 'sticky', () => {
+			test( 'should render the primary components', () => {
 				const PostStatusComponent = <PostStatus post={ { sticky: true } } translate={ identity } />;
 				const wrapper = shallow( PostStatusComponent );
 
@@ -40,9 +40,9 @@ describe( 'PostStatus', () => {
 			} );
 		} );
 
-		context( 'not sticky', () => {
-			context( 'pending', () => {
-				it( 'should render the primary components', () => {
+		describe( 'not sticky', () => {
+			describe( 'pending', () => {
+				test( 'should render the primary components', () => {
 					const PostStatusComponent = (
 						<PostStatus post={ { sticky: false, status: 'pending' } } translate={ identity } />
 					);
@@ -58,8 +58,8 @@ describe( 'PostStatus', () => {
 				} );
 			} );
 
-			context( 'future', () => {
-				it( 'should render the primary components', () => {
+			describe( 'future', () => {
+				test( 'should render the primary components', () => {
 					const PostStatusComponent = (
 						<PostStatus post={ { sticky: false, status: 'future' } } translate={ identity } />
 					);
@@ -75,8 +75,8 @@ describe( 'PostStatus', () => {
 				} );
 			} );
 
-			context( 'trash', () => {
-				it( 'should render the primary components', () => {
+			describe( 'trash', () => {
+				test( 'should render the primary components', () => {
 					const PostStatusComponent = (
 						<PostStatus post={ { sticky: false, status: 'trash' } } translate={ identity } />
 					);
@@ -92,8 +92,8 @@ describe( 'PostStatus', () => {
 				} );
 			} );
 
-			context( 'unhandled status', () => {
-				it( 'should be empty', () => {
+			describe( 'unhandled status', () => {
+				test( 'should be empty', () => {
 					const PostStatusComponent = (
 						<PostStatus post={ { sticky: false, status: 'wow' } } translate={ identity } />
 					);

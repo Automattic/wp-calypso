@@ -72,17 +72,17 @@ describe( 'assembler', () => {
 			type: domainTypes.WPCOM,
 		} );
 
-	it( 'should produce empty array when null data transfer object passed', () => {
+	test( 'should produce empty array when null data transfer object passed', () => {
 		expect( domainsAssembler.createDomainObjects( null ) ).to.be.eql( [] );
 	} );
 
-	it( 'should produce array with domains even when there is no primary domain', () => {
+	test( 'should produce array with domains even when there is no primary domain', () => {
 		expect( domainsAssembler.createDomainObjects( [ redirectDataTransferObject ] ) ).to.be.eql( [
 			redirectDomainObject,
 		] );
 	} );
 
-	it( 'should produce array with registered domain first when registered domain is set as primary domain', () => {
+	test( 'should produce array with registered domain first when registered domain is set as primary domain', () => {
 		expect(
 			domainsAssembler.createDomainObjects( [
 				mappedDataTransferObject,

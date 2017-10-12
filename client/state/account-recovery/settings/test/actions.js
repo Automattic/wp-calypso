@@ -94,7 +94,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#accountRecoverySettingsFetchSuccess()', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
 			const action = accountRecoverySettingsFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -104,7 +104,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#accountRecoverySettingsFetchFailed()', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
 			const action = accountRecoverySettingsFetchFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -158,7 +158,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with the new phone data', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with the new phone data', () => {
 			const phone = dummyData.phone;
 			const action = updateAccountRecoveryPhoneSuccess( phone );
 
@@ -171,7 +171,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED with target: phone', () => {
 			const action = updateAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -218,7 +218,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneSuccess();
 
 			assert.deepEqual( action, {
@@ -229,7 +229,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -279,7 +279,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with target: email', () => {
 			const action = updateAccountRecoveryEmailSuccess( dummyData.email );
 
 			assert.deepEqual( action, {
@@ -291,7 +291,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FAILED with target: email', () => {
 			const action = updateAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -338,7 +338,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: email', () => {
 			const action = deleteAccountRecoveryEmailSuccess();
 
 			assert.deepEqual( action, {
@@ -349,7 +349,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: email', () => {
 			const action = deleteAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -361,7 +361,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryEmailValidationSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: email', () => {
 			const action = resendAccountRecoveryEmailValidationSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
@@ -371,7 +371,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryEmailValidationFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: email', () => {
 			const action = resendAccountRecoveryEmailValidationFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
@@ -417,7 +417,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryPhoneValidationSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: phone', () => {
 			const action = resendAccountRecoveryPhoneValidationSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
@@ -427,7 +427,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryPhoneValidationFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: phone', () => {
 			const action = resendAccountRecoveryPhoneValidationFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
@@ -473,7 +473,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#validateAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS', () => {
 			const action = validateAccountRecoveryPhoneSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
@@ -482,7 +482,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#validateAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED', () => {
 			const action = validateAccountRecoveryPhoneFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,

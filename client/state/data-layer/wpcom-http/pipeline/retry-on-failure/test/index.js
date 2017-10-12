@@ -47,7 +47,7 @@ describe( '#retryOnFailure', () => {
 		store = { dispatch };
 	} );
 
-	it( 'should pass through initially successful requests', () => {
+	test( 'should pass through initially successful requests', () => {
 		const inbound = { nextData: 1, originalRequest: getSites, store };
 
 		expect( retryOnFailure( inbound ) ).to.equal( inbound );
@@ -56,7 +56,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
-	it( 'should pass through no-retry failed requests', () => {
+	test( 'should pass through no-retry failed requests', () => {
 		const originalRequest = { ...getSites, options: { retryPolicy: noRetry() } };
 		const inbound = { nextError, originalRequest, store };
 
@@ -66,7 +66,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
-	it( 'should pass through POST requests', () => {
+	test( 'should pass through POST requests', () => {
 		const originalRequest = { ...getSites, method: 'POST' };
 		const inbound = { nextError, originalRequest, store };
 
@@ -76,7 +76,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
-	it( 'should requeue a plain failed request', () => {
+	test( 'should requeue a plain failed request', () => {
 		const inbound = { nextError, originalRequest: getSites, store };
 
 		expect( retryWithDelay( 1337 )( inbound ) ).to.have.property( 'shouldAbort', true );
@@ -86,7 +86,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch ).to.have.been.calledWith( withRetries( 1 )( getSites ) );
 	} );
 
-	it( 'should requeue only up to `maxAttempts`', () => {
+	test( 'should requeue only up to `maxAttempts`', () => {
 		const originalRequest = { ...getSites, options: { retryPolicy: { maxAttempts: 3 } } };
 		const inbound = { nextError, originalRequest, store };
 		const retryIt = retryWithDelay( 1337 );
@@ -127,7 +127,7 @@ describe( '#retryOnFailure', () => {
 		expect( dispatch.callCount ).to.equal( 3 );
 	} );
 
-	it( 'should handle `exponentialBackoff`', () => {
+	test( 'should handle `exponentialBackoff`', () => {
 		const originalRequest = {
 			...getSites,
 			options: { retryPolicy: exponentialBackoff( { delay: 1000, maxAttempts: 5 } ) },

@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isRequestingPostLikes } from '../';
 
 describe( 'isRequestingPostLikes()', () => {
-	it( 'should return false if the site has never been fetched', () => {
+	test( 'should return false if the site has never been fetched', () => {
 		const isRequesting = isRequestingPostLikes(
 			{
 				posts: {
@@ -27,7 +27,7 @@ describe( 'isRequestingPostLikes()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return false if the post has never been fetched', () => {
+	test( 'should return false if the post has never been fetched', () => {
 		const isRequesting = isRequestingPostLikes(
 			{
 				posts: {
@@ -47,7 +47,7 @@ describe( 'isRequestingPostLikes()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return false if the post is not fetching', () => {
+	test( 'should return false if the post is not fetching', () => {
 		const isRequesting = isRequestingPostLikes(
 			{
 				posts: {
@@ -67,7 +67,7 @@ describe( 'isRequestingPostLikes()', () => {
 		expect( isRequesting ).to.be.false;
 	} );
 
-	it( 'should return true if the post is fetching', () => {
+	test( 'should return true if the post is fetching', () => {
 		const isRequesting = isRequestingPostLikes(
 			{
 				posts: {

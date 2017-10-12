@@ -12,7 +12,7 @@ import reducer, { postId } from '../reducer';
 import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'postId',
 			'lastDraft',
@@ -23,13 +23,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#postId()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = postId( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should update the tracked id when starting the editor', () => {
+		test( 'should update the tracked id when starting the editor', () => {
 			const state = postId( undefined, {
 				type: EDITOR_START,
 				siteId: 1,
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 184 );
 		} );
 
-		it( 'should update the tracked post id if we save a draft post', () => {
+		test( 'should update the tracked post id if we save a draft post', () => {
 			const state = postId( null, {
 				type: POST_SAVE_SUCCESS,
 				siteId: 1,
@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 184 );
 		} );
 
-		it( 'should not update the tracked post id if we save a draft post but we already switched the tracked post ID', () => {
+		test( 'should not update the tracked post id if we save a draft post but we already switched the tracked post ID', () => {
 			const state = postId( 10, {
 				type: POST_SAVE_SUCCESS,
 				siteId: 1,

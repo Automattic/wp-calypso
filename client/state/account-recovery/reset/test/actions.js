@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 
 describe( '#updatePasswordResetUserData', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
+	test( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
 		const userData = {
 			user: 'foo',
 			firstName: 'Foo',
@@ -33,7 +33,7 @@ describe( '#updatePasswordResetUserData', () => {
 } );
 
 describe( '#requestReset', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUET_RESET', () => {
+	test( 'should return action ACCOUNT_RECOVERY_RESET_REQUET_RESET', () => {
 		const userData = { user: 'foo' };
 		const method = 'primary_email';
 
@@ -48,7 +48,7 @@ describe( '#requestReset', () => {
 } );
 
 describe( '#setResetMethod', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_SET_METHOD', () => {
+	test( 'should return action ACCOUNT_RECOVERY_RESET_SET_METHOD', () => {
 		const method = 'primary_email';
 		const action = setResetMethod( method );
 

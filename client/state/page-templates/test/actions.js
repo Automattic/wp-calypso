@@ -23,7 +23,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receivePageTemplates()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePageTemplates( 2916284, [
 				{ label: 'Full Width', file: 'fullwidth.php' },
 			] );
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPageTemplates( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPageTemplates( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePageTemplates( 2916284, [ { label: 'Full Width', file: 'fullwidth.php' } ] )
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPageTemplates( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PAGE_TEMPLATES_REQUEST_SUCCESS,
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestPageTemplates( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PAGE_TEMPLATES_REQUEST_FAILURE,

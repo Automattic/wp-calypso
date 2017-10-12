@@ -13,7 +13,7 @@ import reducer from '../reducer';
 import { WOOCOMMERCE_UI_ORDERS_SET_QUERY } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should store the current query', () => {
+	test( 'should store the current query', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -25,7 +25,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( { currentPage: 2, currentSearch: '' } );
 	} );
 
-	it( 'should update the current page when changed', () => {
+	test( 'should update the current page when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( { currentPage: 2, currentSearch: '' } );
 	} );
 
-	it( 'should update the current search when changed', () => {
+	test( 'should update the current search when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,

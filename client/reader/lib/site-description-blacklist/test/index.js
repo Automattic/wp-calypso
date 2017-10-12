@@ -10,12 +10,12 @@ import { expect } from 'chai';
 import { isSiteDescriptionBlacklisted } from '../';
 
 describe( 'isSiteDescriptionBlacklisted', () => {
-	it( 'should return true if a site description is blacklisted', function() {
+	test( 'should return true if a site description is blacklisted', () => {
 		const blackListedDescription = 'Just another WordPress site';
 		expect( isSiteDescriptionBlacklisted( blackListedDescription ) ).to.be.true;
 	} );
 
-	it( 'should return false if a site description is not blacklisted', function() {
+	test( 'should return false if a site description is not blacklisted', () => {
 		const unBlackListedDescription = 'My site is marvellous';
 		expect( isSiteDescriptionBlacklisted( unBlackListedDescription ) ).to.be.false;
 	} );

@@ -39,7 +39,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch keyring connections receive action when request completes', () => {
+			test( 'should dispatch keyring connections receive action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_CONNECTIONS_RECEIVE,
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch keyring connections request success action when request completes', () => {
+			test( 'should dispatch keyring connections request success action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
@@ -76,7 +76,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -84,7 +84,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch keyring connections request fail action when request fails', () => {
+			test( 'should dispatch keyring connections request fail action when request fails', () => {
 				return requestKeyringConnections()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -96,7 +96,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteKeyringConnection()', () => {
-		it( 'should dispatch delete action', () => {
+		test( 'should dispatch delete action', () => {
 			const action = deleteKeyringConnection( { ID: 2 } );
 
 			expect( action ).to.eql( {
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch delete action when request completes', () => {
+		test( 'should dispatch delete action when request completes', () => {
 			deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE,
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,

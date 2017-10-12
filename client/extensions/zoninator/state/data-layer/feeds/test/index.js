@@ -54,7 +54,7 @@ const getState = () => ( {
 } );
 
 describe( '#requestZoneFeed()', () => {
-	it( 'should dispatch a HTTP request to the feed endpoint', () => {
+	test( 'should dispatch a HTTP request to the feed endpoint', () => {
 		const dispatch = sinon.spy();
 
 		requestZoneFeed( { dispatch }, dummyAction );
@@ -73,7 +73,7 @@ describe( '#requestZoneFeed()', () => {
 		);
 	} );
 
-	it( 'should dispatch `removeNotice`', () => {
+	test( 'should dispatch `removeNotice`', () => {
 		const dispatch = sinon.spy();
 
 		requestZoneFeed( { dispatch }, dummyAction );
@@ -83,7 +83,7 @@ describe( '#requestZoneFeed()', () => {
 } );
 
 describe( '#requestZoneFeedError()', () => {
-	it( 'should dispatch `errorNotice`', () => {
+	test( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 
 		requestZoneFeedError( { dispatch, getState }, dummyAction );
@@ -101,7 +101,7 @@ describe( '#requestZoneFeedError()', () => {
 } );
 
 describe( '#updateZoneFeed()', () => {
-	it( 'should dispatch `updateFeed`', () => {
+	test( 'should dispatch `updateFeed`', () => {
 		const dispatch = sinon.spy();
 
 		updateZoneFeed( { dispatch }, dummyAction, { data: apiResponse } );
@@ -114,7 +114,7 @@ describe( '#updateZoneFeed()', () => {
 } );
 
 describe( '#saveZoneFeed()', () => {
-	it( 'should dispatch a HTTP request to the feed endpoint', () => {
+	test( 'should dispatch a HTTP request to the feed endpoint', () => {
 		const dispatch = sinon.spy();
 
 		saveZoneFeed( { dispatch }, dummyAction );
@@ -135,7 +135,7 @@ describe( '#saveZoneFeed()', () => {
 		);
 	} );
 
-	it( 'should dispatch `removeNotice`', () => {
+	test( 'should dispatch `removeNotice`', () => {
 		const dispatch = sinon.spy();
 
 		saveZoneFeed( { dispatch }, dummyAction );
@@ -143,7 +143,7 @@ describe( '#saveZoneFeed()', () => {
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-save-feed' ) );
 	} );
 
-	it( 'should dispatch `startSubmit`', () => {
+	test( 'should dispatch `startSubmit`', () => {
 		const dispatch = sinon.spy();
 
 		saveZoneFeed( { dispatch }, dummyAction );
@@ -153,7 +153,7 @@ describe( '#saveZoneFeed()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	it( 'should dispatch `stopSubmit`', () => {
+	test( 'should dispatch `stopSubmit`', () => {
 		const dispatch = sinon.spy();
 
 		announceSuccess( { dispatch }, dummyAction );
@@ -161,7 +161,7 @@ describe( '#announceSuccess()', () => {
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
 	} );
 
-	it( 'should dispatch `initialize`', () => {
+	test( 'should dispatch `initialize`', () => {
 		const dispatch = sinon.spy();
 
 		announceSuccess( { dispatch }, dummyAction );
@@ -171,7 +171,7 @@ describe( '#announceSuccess()', () => {
 		);
 	} );
 
-	it( 'should dispatch `successNotice`', () => {
+	test( 'should dispatch `successNotice`', () => {
 		const dispatch = sinon.spy();
 
 		announceSuccess( { dispatch }, dummyAction );
@@ -181,7 +181,7 @@ describe( '#announceSuccess()', () => {
 		);
 	} );
 
-	it( 'should dispatch `updateFeed`', () => {
+	test( 'should dispatch `updateFeed`', () => {
 		const dispatch = sinon.spy();
 
 		announceSuccess( { dispatch }, dummyAction );
@@ -191,7 +191,7 @@ describe( '#announceSuccess()', () => {
 } );
 
 describe( '#announceFailure()', () => {
-	it( 'should dispatch `stopSubmit`', () => {
+	test( 'should dispatch `stopSubmit`', () => {
 		const dispatch = sinon.spy();
 
 		announceFailure( { dispatch }, dummyAction );
@@ -199,7 +199,7 @@ describe( '#announceFailure()', () => {
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( dummyAction.form ) );
 	} );
 
-	it( 'should dispatch `errorNotice`', () => {
+	test( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 
 		announceFailure( { dispatch }, dummyAction );

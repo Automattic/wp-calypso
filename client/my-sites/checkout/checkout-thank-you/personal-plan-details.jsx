@@ -27,7 +27,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 			/>
 
 			<PurchaseDetail
-				icon="speaker"
+				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

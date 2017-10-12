@@ -44,27 +44,27 @@ describe( 'MediaLibrary', () => {
 
 	const getItem = source => mount( <MediaLibrary store={ store } source={ source } /> );
 
-	context( 'keyring request', () => {
-		it( 'is issued when component mounted and viewing an external source', () => {
+	describe( 'keyring request', () => {
+		test( 'is issued when component mounted and viewing an external source', () => {
 			getItem( 'google_photos' );
 
 			expect( requestStub ).to.have.been.calledOnce;
 		} );
 
-		it( 'is not issued when component mounted and viewing wordpress', () => {
+		test( 'is not issued when component mounted and viewing wordpress', () => {
 			getItem( '' );
 
 			expect( requestStub ).to.have.not.been.notCalled;
 		} );
 
-		it( 'is issued when component source changes and now viewing an external source', () => {
+		test( 'is issued when component source changes and now viewing an external source', () => {
 			const library = getItem( '' );
 
 			library.setProps( { source: 'google_photos' } );
 			expect( requestStub ).to.have.been.calledOnce;
 		} );
 
-		it( 'is not issued when component source changes and not viewing an external source', () => {
+		test( 'is not issued when component source changes and not viewing an external source', () => {
 			const library = getItem( '' );
 
 			library.setProps( { source: '' } );

@@ -20,7 +20,7 @@ import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestUpdatePostEmailSubscription', () => {
-		it( 'should dispatch an http request with revert info on the success and failure actions', () => {
+		test( 'should dispatch an http request with revert info on the success and failure actions', () => {
 			const dispatch = spy();
 			const getState = () => {
 				return {
@@ -64,7 +64,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveUpdatePostEmailSubscription', () => {
-		it( 'should dispatch an update with the previous state if it is called with null', () => {
+		test( 'should dispatch an update with the previous state if it is called with null', () => {
 			const dispatch = spy();
 			const previousState = 'instantly';
 			receiveUpdatePostEmailSubscription(
@@ -80,7 +80,7 @@ describe( 'comment-email-subscriptions', () => {
 			);
 		} );
 
-		it( 'should dispatch an update with the previous state if it fails', () => {
+		test( 'should dispatch an update with the previous state if it fails', () => {
 			const dispatch = spy();
 			const previousState = 'instantly';
 			receiveUpdatePostEmailSubscription(
@@ -98,7 +98,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveUpdatePostEmailSubscriptionError', () => {
-		it( 'should dispatch an error and an update to the previous state', () => {
+		test( 'should dispatch an error and an update to the previous state', () => {
 			const dispatch = spy();
 			const previousState = 'instantly';
 			receiveUpdatePostEmailSubscriptionError(
