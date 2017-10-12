@@ -94,23 +94,22 @@ function getLocation( path ) {
 	return 'unknown';
 }
 
-export function recordTrack( eventName, eventProperties ) {
+/**
+ * @param {*} eventName track event name
+ * @param {*} eventProperties extra event props
+ * @param {String} $2.pathnameOverride Overwrites the location for ui_algo Useful for when
+ *   recordTrack() is called after loading the next window.
+ *   For example: opening an article (calypso_reader_article_opened) would call
+ *   recordTrack after changing windows and would result in a `ui_algo: single_post`
+ *   regardless of the stream the post was opened. This now allows the article_opened
+ *   Tracks event to correctly specify which stream the post was opened.
+ */
+export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
 	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
-	// Get location from locationPath and set as ui_algo prop.
-	let locationPath = window.location.pathname;
-	/* Overwrites the existing locationPath if provided in eventProperties
-	Useful for when recordTrack() is called after loading the next window.
-	For example: opening an article (calypso_reader_article_opened) would call
-	recordTrack after changing windows and would result in a `ui_algo: single_post`
-	regardless of the stream the post was opened. This now allows the article_opened
-	Tracks event to correctly specify which stream the post was opened. */
-	if ( eventProperties && 'overwriteLocationPath' in eventProperties ) {
-		locationPath = eventProperties.overwriteLocationPath;
-		delete eventProperties.overwriteLocationPath;
-	}
-	eventProperties = Object.assign( { ui_algo: getLocation( locationPath ) }, eventProperties );
+	const location = getLocation( pathnameOverride || window.location.pathname );
+	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
 
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
@@ -165,7 +164,7 @@ export const recordTracksRailcarInteract = partial(
 	'calypso_traintracks_interact'
 );
 
-export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
+export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack(
 		eventName,
 		assign(
@@ -177,7 +176,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 				is_jetpack: post.is_jetpack,
 			},
 			additionalProps
-		)
+		),
+		options
 	);
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		// check for overrides for the railcar

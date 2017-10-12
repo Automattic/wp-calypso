@@ -245,9 +245,14 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			recordTrackForPost( 'calypso_reader_article_opened', post, {
-				overwriteLocationPath: this.props.referralStream,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_opened',
+				post,
+				{},
+				{
+					pathnameOverride: this.props.referralStream,
+				}
+			);
 			this.hasLoaded = true;
 		}
 	};
