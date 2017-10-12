@@ -51,11 +51,22 @@ class StateSelect extends Component {
 
 	render() {
 		const classes = classNames( this.props.additionalClasses, 'state' );
+		const {
+			countryCode,
+			countryStates,
+			errorMessage,
+			name,
+			value,
+			disabled,
+			onChange,
+			isError,
+			inputRef,
+		} = this.props;
 
 		return (
 			<div>
-				{ this.props.countryCode && <QueryCountryStates countryCode={ this.props.countryCode } /> }
-				{ isEmpty( this.props.countryStates ) ? (
+				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
+				{ isEmpty( countryStates ) ? (
 					<Input ref="input" { ...this.props } />
 				) : (
 					<div className={ classes }>
@@ -65,26 +76,24 @@ class StateSelect extends Component {
 						<FormSelect
 							ref="input"
 							id={ `${ this.constructor.name }-${ this.instance }` }
-							name={ this.props.name }
-							value={ this.props.value }
-							disabled={ this.props.disabled }
-							onChange={ this.props.onChange }
+							name={ name }
+							value={ value }
+							disabled={ disabled }
+							onChange={ onChange }
 							onClick={ this.recordStateSelectClick }
-							isError={ this.props.isError }
-							inputRef={ this.props.inputRef }
+							isError={ isError }
+							inputRef={ inputRef }
 						>
-							<option key="--" value="--" disabled="disabled">
+							<option key="--" value="" disabled="disabled">
 								{ this.props.translate( 'Select State' ) }
 							</option>
-							{ this.props.countryStates.map( state => (
+							{ countryStates.map( state => (
 								<option key={ state.code } value={ state.code }>
 									{ state.name }
 								</option>
 							) ) }
 						</FormSelect>
-						{ this.props.errorMessage && (
-							<FormInputValidation text={ this.props.errorMessage } isError />
-						) }
+						{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
 					</div>
 				) }
 			</div>
