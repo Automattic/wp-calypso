@@ -412,7 +412,12 @@ class PostComment extends React.PureComponent {
 						</span>
 					) }
 					<div className="comments__comment-timestamp">
-						<a href={ comment.URL } onClick={ this.handleCommentPermalinkClick }>
+						<a
+							href={ comment.URL }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ this.handleCommentPermalinkClick }
+						>
 							<PostTime date={ comment.date } />
 						</a>
 					</div>
