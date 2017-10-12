@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import Spinner from 'components/spinner';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
@@ -29,7 +28,11 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
-	const { translate } = props;
+	const { loaded, translate } = props;
+
+	if ( ! loaded ) {
+		return null;
+	}
 
 	const getPurchaseButtonLabel = () => {
 		if ( props.form.needsPrintConfirmation ) {
@@ -74,27 +77,30 @@ const PurchaseDialog = ( props ) => {
 
 	const buttons = [
 		{
-			isDisabled: ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ),
+			disabled: ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ),
 			onClick: getPurchaseButtonAction(),
 			isPrimary: true,
 			label: getPurchaseButtonLabel(),
+			action: 'purchase',
 		},
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );
 
 	if ( ! props.form.needsPrintConfirmation ) {
-		buttons.push( {
+		buttons.unshift( {
 			onClick: onClose,
 			label: translate( 'Cancel' ),
+			action: 'cancel',
 		} );
 	}
 
 	return (
 		<Dialog
-			additionalClassNames="woocommerce"
+			additionalClassNames="woocommerce label-purchase-modal"
 			isVisible={ props.showPurchaseDialog }
-			onClose={ onClose } >
+			onClose={ onClose }
+			buttons={ buttons } >
 			<div className="label-purchase-modal__content">
 				<FormSectionHeading>
 					{ 1 === props.form.packages.selected.length
@@ -124,7 +130,6 @@ const PurchaseDialog = ( props ) => {
 						siteId={ props.siteId }
 						orderId={ props.orderId } />
 				</div>
-				<ActionButtons buttons={ buttons } />
 			</div>
 		</Dialog>
 	);
@@ -140,6 +145,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 	return {
+		loaded,
 		form: loaded && shippingLabel.form,
 		storeOptions,
 		showPurchaseDialog: shippingLabel.showPurchaseDialog,

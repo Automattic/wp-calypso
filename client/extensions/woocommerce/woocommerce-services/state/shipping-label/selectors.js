@@ -20,6 +20,11 @@ export const isLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
 	return shippingLabel && shippingLabel.loaded;
 };
 
+export const isEnabled = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel && shippingLabel.enabled;
+};
+
 export const isFetching = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.isFetching;
@@ -33,6 +38,34 @@ export const isError = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 export const getLabels = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.loaded ? shippingLabel.labels : [];
+};
+
+export const shouldFulfillOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel && shippingLabel.fulfillOrder;
+};
+
+export const shouldEmailDetails = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel && shippingLabel.emailDetails;
+};
+
+export const getLabelsCount = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	if ( ! shippingLabel || ! shippingLabel.labels ) {
+		return 0;
+	}
+
+	return shippingLabel.labels.length;
+};
+
+export const getSelectedPaymentMethod = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	if ( ! shippingLabel ) {
+		return null;
+	}
+
+	return shippingLabel.paymentMethod;
 };
 
 export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

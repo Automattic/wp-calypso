@@ -55,6 +55,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import initializeLabelsState from 'woocommerce/woocommerce-services/lib/initialize-labels-state';
@@ -70,10 +72,10 @@ const generateUniqueBoxId = ( keyBase, boxIds ) => {
 const reducers = {};
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT ] =
-	( state, { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
+	( state, { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled } ) => {
 		return {
 			...state,
-			...initializeLabelsState( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods ),
+			...initializeLabelsState( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled ),
 		};
 	};
 
@@ -550,6 +552,20 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE ] = ( state, { package
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE ] = ( state, { value } ) => {
 	return { ...state,
 		paperSize: value,
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS ] = ( state, { value } ) => {
+	return {
+		...state,
+		emailDetails: value,
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER ] = ( state, { value } ) => {
+	return {
+		...state,
+		fulfillOrder: value,
 	};
 };
 

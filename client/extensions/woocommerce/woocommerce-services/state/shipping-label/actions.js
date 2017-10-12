@@ -16,7 +16,9 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import { getShippingLabel, getFormErrors } from './selectors';
+import { getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -59,6 +61,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_ADD_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ADDED_ITEM,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types.js';
 
 const FORM_STEPS = [ 'origin', 'destination', 'packages', 'rates' ];
@@ -67,7 +71,7 @@ export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING, orderId, siteId, isFetching: true } );
 
 	api.get( siteId, api.url.orderLabels( orderId ) )
-		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods } ) => {
+		.then( ( { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled } ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 				siteId,
@@ -78,6 +82,7 @@ export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 				storeOptions,
 				paymentMethod,
 				numPaymentMethods,
+				enabled,
 			} );
 		} )
 		.catch( ( error ) => {
@@ -539,6 +544,24 @@ export const updatePaperSize = ( orderId, siteId, value ) => {
 	};
 };
 
+export const setEmailDetailsOption = ( orderId, siteId, value ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
+		siteId,
+		orderId,
+		value,
+	};
+};
+
+export const setFulfillOrderOption = ( orderId, siteId, value ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
+		siteId,
+		orderId,
+		value,
+	};
+};
+
 const purchaseLabelResponse = ( orderId, siteId, response, error ) => {
 	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE, orderId, siteId, response, error };
 };
@@ -581,6 +604,31 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	}
 
 	dispatch( purchaseLabelResponse( orderId, siteId, labels, false ) );
+
+	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
+		dispatch( updateOrder( siteId, {
+			id: orderId,
+			status: 'completed',
+		} ) );
+	}
+
+	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
+		const trackingNumbers = labels.map( ( label ) => label.tracking );
+
+		const note = {
+			note: translate(
+				'Your order consisting of %(packageNum)d package has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
+					'The tracking numbers are %(trackingNumbers)s.',
+				{
+					args: { packageNum: trackingNumbers.length, trackingNumbers: trackingNumbers.join( ', ' ) },
+					count: trackingNumbers.length,
+				}
+			),
+			customer_note: true,
+		};
+		dispatch( createNote( siteId, orderId, note ) );
+	}
 
 	const labelsToPrint = labels.map( ( label, index ) => ( {
 		caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {

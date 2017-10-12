@@ -1,19 +1,21 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import request from 'woocommerce/state/sites/request';
 
 export * as url from './url';
 
-const handleError = jsonError => {
-	if ( jsonError.data.message ) {
+const handleError = ( jsonError ) => {
+	if ( jsonError && jsonError.message ) {
+		throw jsonError.message;
+	}
+
+	if ( jsonError && jsonError.data && jsonError.data.message ) {
 		throw jsonError.data.message;
 	}
 
-	throw JSON.stringify( jsonError );
+	throw jsonError;
 };
 
 export const post = ( siteId, url, data ) =>
