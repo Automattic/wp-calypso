@@ -2,6 +2,11 @@
 	display: flex;
 	flex-direction: column;
 	padding: 0;
+	flex-grow: 0;
+
+	@include breakpoint( ">660px" ) {
+		width: 640px;
+	}
 
 	.order__detail-header,
 	.order__details-total {
