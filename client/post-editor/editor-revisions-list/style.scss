@@ -1,6 +1,12 @@
 /** @format */
 @import 'components/accordion/style';
 
+.editor-revisions-list {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
 .editor-revisions-list__button {
 	// NOTE: this is imitating the style of an accordion (with subtitle), with
 	// support for being "selected" and no right arrow
@@ -53,6 +59,14 @@
 	color: $gray-text-min;
 }
 
+.editor-revisions-list__scroller {
+	padding: 10px 0;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
 .editor-revisions-list__list,
 .editor-revisions-list__header {
 	background: $white;
@@ -62,7 +76,6 @@
 }
 
 .editor-revisions-list__header {
-	margin-bottom: 10px;
 	padding: 1rem;
 }
 

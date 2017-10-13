@@ -102,7 +102,7 @@ export default class EditorSidebar extends Component {
 						selectRevision={ selectRevision }
 					/>
 				</SidebarRegion>
-				<SidebarRegion className="editor-sidebar__nested-region">
+				<SidebarRegion className="editor-sidebar__nested-region editor-sidebar__nonscrolling-region">
 					{ nestedSidebar === NESTED_SIDEBAR_REVISIONS && (
 						<EditorRevisionsList
 							loadRevision={ loadRevision }

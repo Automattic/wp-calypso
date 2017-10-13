@@ -65,7 +65,7 @@ class EditorRevisionsList extends PureComponent {
 
 	render() {
 		return (
-			<div>
+			<div className="editor-revisions-list">
 				<QueryPostRevisions
 					postId={ this.props.postId }
 					postType={ this.props.type }
@@ -76,21 +76,23 @@ class EditorRevisionsList extends PureComponent {
 					loadRevision={ this.loadRevision }
 					selectedRevisionId={ this.props.selectedRevisionId }
 				/>
-				<ul className="editor-revisions-list__list">
-					{ map( this.props.revisions, revision => {
-						const itemClasses = classNames( 'editor-revisions-list__revision', {
-							'is-selected': revision.id === this.props.selectedRevisionId,
-						} );
-						return (
-							<li className={ itemClasses } key={ revision.id }>
-								<EditorRevisionsListItem
-									revision={ revision }
-									selectRevision={ this.props.selectRevision }
-								/>
-							</li>
-						);
-					} ) }
-				</ul>
+				<div className="editor-revisions-list__scroller">
+					<ul className="editor-revisions-list__list">
+						{ map( this.props.revisions, revision => {
+							const itemClasses = classNames( 'editor-revisions-list__revision', {
+								'is-selected': revision.id === this.props.selectedRevisionId,
+							} );
+							return (
+								<li className={ itemClasses } key={ revision.id }>
+									<EditorRevisionsListItem
+										revision={ revision }
+										selectRevision={ this.props.selectRevision }
+									/>
+								</li>
+							);
+						} ) }
+					</ul>
+				</div>
 			</div>
 		);
 	}
