@@ -18,6 +18,8 @@ import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
+import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
+import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
 import { mapPostStatus } from 'lib/route/path';
 import { isEnabled } from 'config';
 import UrlSearch from 'lib/mixins/url-search';
@@ -44,12 +46,6 @@ const PostTypeFilter = React.createClass( {
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object,
-	},
-
-	getInitialState() {
-		return {
-			isMultiSelectEnabled: false,
-		};
 	},
 
 	getNavItems() {
@@ -119,29 +115,23 @@ const PostTypeFilter = React.createClass( {
 		);
 	},
 
-	clickMultiSelectButton() {
-		this.setState( {
-			isMultiSelectEnabled: ! this.state.isMultiSelectEnabled,
-		} );
-	},
-
 	renderMultiSelectButton() {
 		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const {
+			translate,
+			isMultiSelectEnabled: isMultiSelectButtonEnabled,
+			toggleMultiSelect: onMultiSelectClick,
+		} = this.props;
 
 		const classes = classnames( 'post-type-filter__multi-select-button', {
-			'is-enabled': this.state.isMultiSelectEnabled,
+			'is-enabled': isMultiSelectButtonEnabled,
 		} );
 
 		return (
-			<Button
-				className={ classes }
-				borderless
-				onClick={ this.clickMultiSelectButton }
-			>
+			<Button className={ classes } borderless onClick={ onMultiSelectClick }>
 				<Gridicon icon="list-checkmark" />
 				<span className="post-type-filter__multi-select-button-text">
 					{ translate( 'Select' ) }
@@ -198,35 +188,41 @@ const PostTypeFilter = React.createClass( {
 	},
 } );
 
-export default connect( ( state, { query } ) => {
-	const siteId = getSelectedSiteId( state );
-	let authorToggleHidden = false;
-	if ( query.type === 'post' ) {
-		if ( siteId ) {
-			authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+export default connect(
+	( state, { query } ) => {
+		const siteId = getSelectedSiteId( state );
+		let authorToggleHidden = false;
+		if ( query.type === 'post' ) {
+			if ( siteId ) {
+				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+			} else {
+				authorToggleHidden = areAllSitesSingleUser( state );
+			}
 		} else {
-			authorToggleHidden = areAllSitesSingleUser( state );
+			// Hide for Custom Post Types
+			authorToggleHidden = true;
 		}
-	} else {
-		// Hide for Custom Post Types
-		authorToggleHidden = true;
+
+		const props = {
+			siteId,
+			authorToggleHidden,
+			jetpack: isJetpackSite( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			isMultiSelectEnabled: isMultiSelectEnabled( state ),
+		};
+
+		if ( ! query ) {
+			return props;
+		}
+
+		return {
+			...props,
+			counts: query.author
+				? getNormalizedMyPostCounts( state, siteId, query.type )
+				: getNormalizedPostCounts( state, siteId, query.type ),
+		};
+	},
+	{
+		toggleMultiSelect,
 	}
-
-	const props = {
-		siteId,
-		authorToggleHidden,
-		jetpack: isJetpackSite( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-	};
-
-	if ( ! query ) {
-		return props;
-	}
-
-	return {
-		...props,
-		counts: query.author
-			? getNormalizedMyPostCounts( state, siteId, query.type )
-			: getNormalizedPostCounts( state, siteId, query.type ),
-	};
-} )( localize( PostTypeFilter ) );
+)( localize( PostTypeFilter ) );

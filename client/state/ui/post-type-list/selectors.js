@@ -10,3 +10,7 @@ export function isPostSelected( state, postGlobalId ) {
 export function getSelectedPostsCount( state ) {
 	return state.ui.postTypeList.selectedPosts.length;
 }
+
+export function isMultiSelectEnabled( state ) {
+	return state.ui.postTypeList.isMultiSelectEnabled;
+}
