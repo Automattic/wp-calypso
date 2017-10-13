@@ -84,7 +84,11 @@ class OrderDetailsTable extends Component {
 	};
 
 	onChange = event => {
-		this.props.onChange( event );
+		const { order } = this.props;
+		// Name is `quantity-x`, where x is the ID of the item
+		const id = parseInt( event.target.name.split( '-' )[ 1 ] );
+		const line_item = find( order.line_items, { id } );
+		this.props.onChange( { ...line_item, quantity: event.target.value } );
 	};
 
 	renderQuantity = item => {
