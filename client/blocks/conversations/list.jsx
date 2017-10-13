@@ -156,8 +156,10 @@ export class ConversationCommentList extends React.Component {
 
 		const minId = min( commentIds );
 		const startingCommentIds = sortedComments
-			.map( comment => comment.ID )
-			.filter( id => id >= minId );
+			.filter( comment => {
+				return comment.ID >= minId || comment.isPlaceholder;
+			} )
+			.map( comment => comment.ID );
 
 		const parentIds = compact(
 			map( startingCommentIds, id => this.getParentId( commentsTree, id ) )
