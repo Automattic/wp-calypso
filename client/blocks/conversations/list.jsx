@@ -5,7 +5,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, some, min } from 'lodash';
+import {
+	map,
+	zipObject,
+	fill,
+	size,
+	filter,
+	get,
+	compact,
+	partition,
+	some,
+	min,
+	noop,
+} from 'lodash';
 
 /***
  * Internal dependencies
@@ -50,11 +62,13 @@ export class ConversationCommentList extends React.Component {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
 		shouldRequestComments: PropTypes.bool,
+		setActiveReply: PropTypes.func,
 	};
 
 	static defaultProps = {
 		enableCaterpillar: true,
 		shouldRequestComments: true,
+		setActiveReply: noop,
 	};
 
 	state = {
