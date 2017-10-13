@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
-class FormCountrySelectFromApi extends Component {
+class FormStateSelectFromApi extends Component {
 	static propTypes = {
 		country: PropTypes.string.isRequired,
 		locationsList: PropTypes.arrayOf(
@@ -103,4 +103,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchLocations }, dispatch )
-)( localize( FormCountrySelectFromApi ) );
+)( localize( FormStateSelectFromApi ) );
