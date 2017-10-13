@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, some } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, some, min } from 'lodash';
 
 /***
  * Internal dependencies
@@ -15,9 +15,10 @@ import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {
 	commentsFetchingStatus,
-	getPostCommentsTree,
+	getDateSortedPostComments,
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
+	getPostCommentsTree,
 } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -149,18 +150,26 @@ export class ConversationCommentList extends React.Component {
 		return inaccessible.concat( this.getInaccessibleParentsIds( commentsTree, accessible ) );
 	};
 
+	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree } = this.props;
+		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
 
-		const parentIds = compact( map( commentIds, id => this.getParentId( commentsTree, id ) ) );
+		const minId = min( commentIds );
+		const startingCommentIds = sortedComments
+			.map( comment => comment.ID )
+			.filter( id => id >= minId );
+
+		const parentIds = compact(
+			map( startingCommentIds, id => this.getParentId( commentsTree, id ) )
+		);
 		const commentExpansions = fill(
-			Array( commentIds.length ),
+			Array( startingCommentIds.length ),
 			POST_COMMENT_DISPLAY_TYPES.excerpt
 		);
 		const parentExpansions = fill( Array( parentIds.length ), POST_COMMENT_DISPLAY_TYPES.excerpt );
 
 		const startingExpanded = zipObject(
-			commentIds.concat( parentIds ),
+			startingCommentIds.concat( parentIds ),
 			commentExpansions.concat( parentExpansions )
 		);
 
@@ -272,6 +281,7 @@ const ConnectedConversationCommentList = connect(
 		return {
 			siteId,
 			postId,
+			sortedComments: getDateSortedPostComments( state, siteId, postId ),
 			commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
 			commentsFetchingStatus:
 				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
