@@ -228,7 +228,7 @@ export const openPrintingFlow = ( orderId, siteId ) => (
 			form.packages.all && Object.keys( form.packages.all ).length &&
 			! hasNonEmptyLeaves( errors.packages )
 		) {
-			return getLabelRates( orderId, siteId, dispatch, getState, expandStepAfterAction, { orderId } );
+			return getLabelRates( orderId, siteId, dispatch, getState, expandStepAfterAction );
 		}
 
 		// Otherwise, just expand the next errant step unless the
@@ -302,7 +302,7 @@ export const confirmAddressSuggestion = ( orderId, siteId, group ) => ( dispatch
 		group,
 	} );
 
-	const handleResponse = () => {
+	const expandNextStep = () => {
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState, storeOptions, group );
 	};
 
@@ -310,16 +310,17 @@ export const confirmAddressSuggestion = ( orderId, siteId, group ) => ( dispatch
 
 	const errors = getFormErrors( state, orderId, siteId );
 
-	// If all prerequisite steps are error free, fetch new rates
+	// If all prerequisite steps are error free, fetch new rates, otherwise expand the erroneous step
 	if (
 		hasNonEmptyLeaves( errors.origin ) ||
 		hasNonEmptyLeaves( errors.destination ) ||
 		hasNonEmptyLeaves( errors.packages )
 	) {
+		expandNextStep();
 		return;
 	}
 
-	getLabelRates( orderId, siteId, dispatch, getState, handleResponse, { orderId } );
+	getLabelRates( orderId, siteId, dispatch, getState, expandNextStep );
 };
 
 export const submitAddressForNormalization = ( orderId, siteId, group ) => ( dispatch, getState ) => {
@@ -329,29 +330,30 @@ export const submitAddressForNormalization = ( orderId, siteId, group ) => ( dis
 		if ( ! success ) {
 			return;
 		}
-		const { values, normalized, expanded } = shippingLabel.form[ group ];
+		const { values, normalized, expanded } = getShippingLabel( getState(), orderId, siteId ).form[ group ];
 
 		if ( isEqual( values, normalized ) ) {
 			if ( expanded ) {
 				dispatch( toggleStep( orderId, siteId, group ) );
 			}
 
-			const handleRatesResponse = () => {
+			const expandNextStep = () => {
 				expandFirstErroneousStep( orderId, siteId, dispatch, getState, storeOptions, group );
 			};
 
 			const errors = getFormErrors( getState(), orderId, siteId );
 
-			// If all prerequisite steps are error free, fetch new rates
+			// If all prerequisite steps are error free, fetch new rates, otherwise expand the erroneous step
 			if (
 				hasNonEmptyLeaves( errors.origin ) ||
 				hasNonEmptyLeaves( errors.destination ) ||
 				hasNonEmptyLeaves( errors.packages )
 			) {
+				expandNextStep();
 				return;
 			}
 
-			getLabelRates( orderId, siteId, dispatch, getState, handleRatesResponse, { orderId } );
+			getLabelRates( orderId, siteId, dispatch, getState, expandNextStep );
 		}
 	};
 
@@ -522,7 +524,7 @@ export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => 
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState, storeOptions, 'packages' );
 	};
 
-	getLabelRates( orderId, siteId, dispatch, getState, handleResponse, { orderId } );
+	getLabelRates( orderId, siteId, dispatch, getState, handleResponse );
 };
 
 export const updateRate = ( orderId, siteId, packageId, value ) => {
@@ -574,7 +576,7 @@ const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error ) 
 		dispatch( NoticeActions.errorNotice( error.toString() ) );
 		//re-request the rates on failure to avoid attempting repurchase of the same shipment id
 		dispatch( clearAvailableRates( orderId, siteId ) );
-		getLabelRates( orderId, siteId, dispatch, getState, noop, { orderId } );
+		getLabelRates( orderId, siteId, dispatch, getState, noop );
 	}
 };
 

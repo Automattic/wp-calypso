@@ -11,10 +11,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSite } from 'state/sites/selectors';
 import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const ItemInfo = ( props ) => {
-	const { orderId, siteId, item, itemIndex, translate } = props;
+	const { orderId, siteId, site, item, itemIndex, translate } = props;
 	const onMoveClick = () => props.openItemMove( orderId, siteId, itemIndex );
 
 	const renderMoveToPackage = () => {
@@ -25,15 +27,19 @@ const ItemInfo = ( props ) => {
 		);
 	};
 
+	const productLink = item.url
+		? <a
+			href={ getLink( '/store/product/:site/' + item.product_id, site ) }
+			target="_blank"
+			rel="noopener noreferrer">
+			{ item.name }
+		</a>
+		: item.name;
+
 	return (
 		<div key={ itemIndex } className="packages-step__item">
 			<div className="packages-step__item-name">
-					<span>
-						{ item.url
-							? <a href={ item.url } target="_blank" rel="noopener noreferrer">{ item.name }</a>
-							: item.name
-						}
-					</span>
+				<span>{ productLink }</span>
 				{ item.attributes && <p>{ item.attributes }</p> }
 			</div>
 			<div>
@@ -51,10 +57,11 @@ ItemInfo.propTypes = {
 	openItemMove: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( {
+export default connect(
+	( state, { siteId } ) => ( {
+		site: getSite( state, siteId ),
+	} ),
+	( dispatch ) => bindActionCreators( {
 		openItemMove,
-	}, dispatch );
-};
-
-export default connect( null, mapDispatchToProps )( localize( ItemInfo ) );
+	}, dispatch )
+	)( localize( ItemInfo ) );

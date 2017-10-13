@@ -32,6 +32,7 @@ const Sidebar = ( props ) => {
 
 	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
 	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
@@ -40,7 +41,7 @@ const Sidebar = ( props ) => {
 				valuesMap={ getPaperSizes( form.origin.values.country ) }
 				title={ translate( 'Paper size' ) }
 				value={ paperSize }
-				updateValue={ props.updatePaperSize }
+				updateValue={ onPaperSizeChange }
 				error={ errors.paperSize } />
 			<FormLabel>
 				<FormCheckbox checked={ emailDetails } onChange={ onEmailDetailsChange } />

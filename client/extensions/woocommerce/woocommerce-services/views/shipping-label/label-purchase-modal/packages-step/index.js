@@ -15,7 +15,6 @@ import PackageInfo from './package-info';
 import MoveItemDialog from './move-item';
 import AddItemDialog from './add-item';
 import StepConfirmationButton from '../step-confirmation-button';
-import Notice from 'components/notice';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
 import {
@@ -30,7 +29,6 @@ const PackagesStep = ( props ) => {
 		siteId,
 		orderId,
 		selected,
-		all,
 		weightUnit,
 		errors,
 		expanded,
@@ -43,7 +41,6 @@ const PackagesStep = ( props ) => {
 	const isValidWeight = packageIds.reduce( ( result, pId ) => ( result && 0 < selected[ pId ].weight ), true );
 	const isValidPackageType = packageIds.reduce( ( result, pId ) => ( result && 'not_selected' !== selected[ pId ].box_id ), true );
 	const isValidPackages = 0 < packageIds.length;
-	const hasAnyPackagesConfigured = all && Object.keys( all ).length;
 
 	const getContainerState = () => {
 		if ( ! isValidPackages ) {
@@ -95,30 +92,7 @@ const PackagesStep = ( props ) => {
 			} );
 		}
 
-		if ( ! hasAnyPackagesConfigured ) {
-			return { isWarning: true, summary };
-		}
-
 		return { isSuccess: true, summary };
-	};
-
-	const renderWarning = () => {
-		if ( ! hasAnyPackagesConfigured ) {
-			const className = 'error-notice';
-
-			return <Notice
-				className={ className }
-				status="is-warning"
-				showDismiss={ false } >
-				<span>{ translate(
-					'There are no packages configured. The items have been packed individually. ' +
-					'You can add or enable packages using the {{a}}Packaging Manager{{/a}}.',
-					{ components: { a: <a href="admin.php?page=wc-settings&tab=shipping&section=package-settings" /> } }
-				) }</span>
-			</Notice>;
-		}
-
-		return null;
 	};
 
 	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'packages' );
@@ -129,8 +103,6 @@ const PackagesStep = ( props ) => {
 			{ ...getContainerState() }
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler } >
-
-			{ renderWarning() }
 			<div className="packages-step__contents">
 				<PackageList
 					siteId={ props.siteId }

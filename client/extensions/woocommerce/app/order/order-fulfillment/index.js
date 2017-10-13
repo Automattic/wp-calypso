@@ -140,15 +140,13 @@ class OrderFulfillment extends Component {
 			hasLabelsPaymentMethod,
 		} = this.props;
 		const isShippable = ! isOrderFinished( order.status );
+		const hideLabels = labelsLoaded && ( ! hasLabelsPaymentMethod || ! labelsEnabled );
 
-		if (
-			( ! wcsEnabled && ! isShippable ) ||
-			( labelsLoaded && ( ! hasLabelsPaymentMethod || ! labelsEnabled ) )
-		) {
+		if ( ! isShippable && ( ! wcsEnabled || hideLabels ) ) {
 			return null;
 		}
 
-		if ( ! wcsEnabled ) {
+		if ( ! wcsEnabled || hideLabels ) {
 			return (
 				<Button primary onClick={ this.toggleDialog }>
 					{ translate( 'Fulfill' ) }
