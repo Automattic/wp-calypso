@@ -47,37 +47,37 @@ describe( 'getOrderDiscountTax', () => {
 } );
 
 describe( 'getOrderFeeTax', () => {
-	it( 'should be a function', () => {
+	test( 'should be a function', () => {
 		expect( getOrderFeeTax ).to.be.a( 'function' );
 	} );
 
-	it( 'should get the correct tax amount', () => {
+	test( 'should get the correct tax amount', () => {
 		expect( getOrderFeeTax( orderWithTax, 0 ) ).to.eql( 0.1262 );
 	} );
 
-	it( 'should get the correct tax amount with multiple fees', () => {
+	test( 'should get the correct tax amount with multiple fees', () => {
 		expect( getOrderFeeTax( orderWithCoupons, 1 ) ).to.eql( 0.625 );
 	} );
 
-	it( 'should return 0 if there is no tax', () => {
+	test( 'should return 0 if there is no tax', () => {
 		expect( getOrderFeeTax( orderWithoutTax, 0 ) ).to.eql( 0 );
 	} );
 } );
 
 describe( 'getOrderFeeTotalTax', () => {
-	it( 'should be a function', () => {
+	test( 'should be a function', () => {
 		expect( getOrderFeeTotalTax ).to.be.a( 'function' );
 	} );
 
-	it( 'should get the correct tax amount', () => {
+	test( 'should get the correct tax amount', () => {
 		expect( getOrderFeeTotalTax( orderWithTax ) ).to.eql( 0.1262 );
 	} );
 
-	it( 'should get the correct tax amount with multiple fees', () => {
+	test( 'should get the correct tax amount with multiple fees', () => {
 		expect( getOrderFeeTotalTax( orderWithCoupons ) ).to.eql( 0.9375 );
 	} );
 
-	it( 'should return 0 if there is no tax', () => {
+	test( 'should return 0 if there is no tax', () => {
 		expect( getOrderFeeTotalTax( orderWithoutTax ) ).to.eql( 0 );
 	} );
 } );
@@ -145,7 +145,7 @@ describe( 'getOrderTotalTax', () => {
 		expect( getOrderTotalTax ).to.be.a( 'function' );
 	} );
 
-	it( 'should get the correct tax amount', () => {
+	test( 'should get the correct tax amount', () => {
 		expect( getOrderTotalTax( orderWithTax ) ).to.eql( 7.3 );
 	} );
 
@@ -153,43 +153,43 @@ describe( 'getOrderTotalTax', () => {
 		expect( getOrderTotalTax( orderWithoutTax ) ).to.eql( 0 );
 	} );
 
-	it( 'should get the correct tax amount with multiple coupons', () => {
+	test( 'should get the correct tax amount with multiple coupons', () => {
 		expect( getOrderTotalTax( orderWithCoupons ) ).to.eql( 5.3618 );
 	} );
 } );
 
 describe( 'getOrderFeeTotal', () => {
-	it( 'should be a function', () => {
+	test( 'should be a function', () => {
 		expect( getOrderFeeTotal ).to.be.a( 'function' );
 	} );
 
-	it( 'should get the correct tax amount', () => {
+	test( 'should get the correct tax amount', () => {
 		expect( getOrderFeeTotal( orderWithTax ) ).to.eql( 1.53 );
 	} );
 
-	it( 'should get the correct tax amount with multiple fees', () => {
+	test( 'should get the correct tax amount with multiple fees', () => {
 		expect( getOrderFeeTotal( orderWithCoupons ) ).to.eql( 15 );
 	} );
 
-	it( 'should return 0 if there is no tax', () => {
+	test( 'should return 0 if there is no tax', () => {
 		expect( getOrderFeeTotal( orderWithoutTax ) ).to.eql( 20 );
 	} );
 } );
 
 describe( 'getOrderRefundTotal', () => {
-	it( 'should be a function', () => {
+	test( 'should be a function', () => {
 		expect( getOrderRefundTotal ).to.be.a( 'function' );
 	} );
 
-	it( 'should get the correct refund amount', () => {
+	test( 'should get the correct refund amount', () => {
 		expect( getOrderRefundTotal( orderWithCoupons ) ).to.eql( -10.0 );
 	} );
 
-	it( 'should return 0 if there are no refunds', () => {
+	test( 'should return 0 if there are no refunds', () => {
 		expect( getOrderRefundTotal( orderWithoutTax ) ).to.eql( 0 );
 	} );
 
-	it( 'should get the correct refund amount with multiple refunds', () => {
+	test( 'should get the correct refund amount with multiple refunds', () => {
 		expect( getOrderRefundTotal( orderWithRefunds ) ).to.eql( -25.0 );
 	} );
 } );
