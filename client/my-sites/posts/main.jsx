@@ -56,11 +56,7 @@ const PostsMain = React.createClass( {
 	},
 
 	showDrafts() {
-		const { isJetpack, isMultiSelect } = this.props;
-
-		if ( isMultiSelect ) {
-			return false;
-		}
+		const { isJetpack } = this.props;
 
 		// Jetpack sites can have malformed counts
 		if (
@@ -90,11 +86,15 @@ const PostsMain = React.createClass( {
 			return null;
 		}
 
-		const { draftCount, translate } = this.props;
+		const { draftCount, translate, isMultiSelect } = this.props;
 		const isLoading = draftCount !== 0 && this.props.loadingDrafts;
 
+		const classes = classnames( 'posts__recent-drafts', {
+			'is-multiselect': isMultiSelect,
+		} );
+
 		return (
-			<div className="posts__recent-drafts">
+			<div className={ classes }>
 				<QueryPosts siteId={ siteId } query={ this.props.draftsQuery } />
 				<QueryPostCounts siteId={ siteId } type="post" />
 				<SectionHeader className="posts__drafts-header" label={ translate( 'Latest Drafts' ) }>
