@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import classnames from 'classnames';
@@ -20,18 +21,19 @@ import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import Emojify from 'components/emojify';
 
 class CrossPost extends PureComponent {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		isSelected: React.PropTypes.bool.isRequired,
-		xMetadata: React.PropTypes.object.isRequired,
-		xPostedTo: React.PropTypes.array,
-		handleClick: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired,
-		postKey: React.PropTypes.object,
-		site: React.PropTypes.object,
-		feed: React.PropTypes.object,
+		post: PropTypes.object.isRequired,
+		isSelected: PropTypes.bool.isRequired,
+		xMetadata: PropTypes.object.isRequired,
+		xPostedTo: PropTypes.array,
+		handleClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		postKey: PropTypes.object,
+		site: PropTypes.object,
+		feed: PropTypes.object,
 	};
 
 	handleTitleClick = event => {
@@ -134,21 +136,22 @@ class CrossPost extends PureComponent {
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
 					{ index + 2 < array.length && <span>, </span> }
-					{ index + 2 === array.length &&
+					{ index + 2 === array.length && (
 						<span>
 							{' '}
 							{ this.props.translate( 'and', {
 								comment:
 									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
 							} ) }{' '}
-						</span> }
+						</span>
+					) }
 				</span>
 			);
 		} );
 	};
 
 	render() {
-		const { post, postKey, site, feed } = this.props;
+		const { post, postKey, site, feed, translate } = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -164,6 +167,10 @@ class CrossPost extends PureComponent {
 		let xpostTitle = post.title;
 		xpostTitle = xpostTitle.replace( /x-post:/i, '' );
 
+		if ( ! xpostTitle ) {
+			xpostTitle = `(${ translate( 'no title' ) })`;
+		}
+
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
 				<ReaderAvatar
@@ -174,7 +181,7 @@ class CrossPost extends PureComponent {
 					isCompact={ true }
 				/>
 				<div className="reader__x-post">
-					{ post.title &&
+					{ post.title && (
 						<h1 className="reader__post-title">
 							<a
 								className="reader__post-title-link"
@@ -183,10 +190,11 @@ class CrossPost extends PureComponent {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ xpostTitle }
+								<Emojify>{ xpostTitle }</Emojify>
 							</a>
-						</h1> }
-					{ this.getDescription( post.author.first_name ) }
+						</h1>
+					) }
+					<Emojify>{ this.getDescription( post.author.first_name ) }</Emojify>
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

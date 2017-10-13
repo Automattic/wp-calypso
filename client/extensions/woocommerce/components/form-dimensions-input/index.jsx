@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -13,13 +17,11 @@ import { noop } from 'lodash';
  */
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getDimensionsUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
 
 class FormDimensionsInput extends Component {
-
 	static propTypes = {
 		className: PropTypes.string,
 		dimensions: PropTypes.shape( {
@@ -36,7 +38,7 @@ class FormDimensionsInput extends Component {
 		className: '',
 		onChange: noop,
 		noWrap: false,
-	}
+	};
 
 	componentDidMount() {
 		const { siteId } = this.props;
@@ -62,7 +64,7 @@ class FormDimensionsInput extends Component {
 					name="length"
 					placeholder={ translate( 'L', { comment: 'Length placeholder for dimensions input' } ) }
 					type="number"
-					value={ dimensions && dimensions.length || '' }
+					value={ ( dimensions && dimensions.length ) || '' }
 					onChange={ onChange }
 					className="form-dimensions-input__length"
 				/>
@@ -70,7 +72,7 @@ class FormDimensionsInput extends Component {
 					name="width"
 					placeholder={ translate( 'W', { comment: 'Width placeholder for dimensions input' } ) }
 					type="number"
-					value={ dimensions && dimensions.width || '' }
+					value={ ( dimensions && dimensions.width ) || '' }
 					onChange={ onChange }
 					className="form-dimensions-input__width"
 				/>
@@ -80,7 +82,7 @@ class FormDimensionsInput extends Component {
 					suffix={ dimensionsUnit }
 					type="number"
 					noWrap={ noWrap }
-					value={ dimensions && dimensions.height || '' }
+					value={ ( dimensions && dimensions.height ) || '' }
 					onChange={ onChange }
 					className="form-dimensions-input__height"
 				/>
@@ -92,7 +94,7 @@ class FormDimensionsInput extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const dimensionsUnitSetting = site && getDimensionsUnitSetting( state, site.ID );
-	const dimensionsUnit = dimensionsUnitSetting && dimensionsUnitSetting.value || 'in';
+	const dimensionsUnit = ( dimensionsUnitSetting && dimensionsUnitSetting.value ) || 'in';
 
 	return {
 		siteId: site && site.ID,

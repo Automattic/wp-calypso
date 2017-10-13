@@ -56,26 +56,29 @@ export function requestTagImages( tag, limit = 5 ) {
 
 		debug( `Requesting tag images for tag ${ tag }` );
 
-		return wpcom.undocumented().readTagImages( query ).then(
-			data => {
-				dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
+		return wpcom
+			.undocumented()
+			.readTagImages( query )
+			.then(
+				data => {
+					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
 
-				dispatch( {
-					type: READER_TAG_IMAGES_REQUEST_SUCCESS,
-					tag,
-					data,
-				} );
-			},
-			error => {
-				// dispatch an empty array so we stop requesting it
-				dispatch( receiveTagImages( tag, [] ) );
+					dispatch( {
+						type: READER_TAG_IMAGES_REQUEST_SUCCESS,
+						tag,
+						data,
+					} );
+				},
+				error => {
+					// dispatch an empty array so we stop requesting it
+					dispatch( receiveTagImages( tag, [] ) );
 
-				dispatch( {
-					type: READER_TAG_IMAGES_REQUEST_FAILURE,
-					tag,
-					error,
-				} );
-			}
-		);
+					dispatch( {
+						type: READER_TAG_IMAGES_REQUEST_FAILURE,
+						tag,
+						error,
+					} );
+				}
+			);
 	};
 }

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -15,7 +19,7 @@ export default React.createClass( {
 
 	propTypes: {
 		value: PropTypes.string,
-		label: PropTypes.string
+		label: PropTypes.string,
 	},
 
 	render() {
@@ -41,5 +45,5 @@ export default React.createClass( {
 				</li>
 			</ul>
 		);
-	}
+	},
 } );

@@ -1,0 +1,34 @@
+.disconnect-site {
+	&.site-settings {
+	position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+	}
+}
+
+.disconnect-site__card {
+		position: relative;
+		padding: 24px;
+
+		@include breakpoint( "<480px" ) {
+			max-width: 300px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 2em;
+			max-width: 500px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: 17px;
+			max-width: 800px;
+		}
+	}
+
+.disconnect-site__skip-survey {
+		&.main {
+			margin: 16px 0 24px 0;
+			text-align: center;
+		}
+}

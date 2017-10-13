@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import cssSafeUrl from 'lib/css-safe-url';
 
@@ -11,17 +14,8 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import classNames from 'classnames';
 import SocialLogo from 'social-logos';
 
-const PostShareConnection = ( {
-	connection,
-	isActive,
-	onToggle,
-} ) => {
-	const {
-		external_display,
-		external_profile_picture,
-		keyring_connection_ID,
-		service,
-	} = connection;
+const PostShareConnection = ( { connection, isActive, onToggle } ) => {
+	const { external_display, external_profile_picture, keyring_connection_ID, service } = connection;
 
 	const toggle = () => onToggle( keyring_connection_ID );
 
@@ -29,13 +23,12 @@ const PostShareConnection = ( {
 		'post-share__service': true,
 		[ service ]: true,
 		'is-active': isActive,
-		'is-broken': status === 'broken'
+		'is-broken': status === 'broken',
 	} );
 
 	const accountImageStyle = {};
 	if ( external_profile_picture ) {
-		accountImageStyle.backgroundImage =
-			'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
+		accountImageStyle.backgroundImage = 'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
 	} else {
 		// Display a solid color circle: lighten( $gray, 10% )
 		accountImageStyle.backgroundColor = 'rgb( 168, 190, 206 )';
@@ -43,10 +36,7 @@ const PostShareConnection = ( {
 
 	return (
 		<div onClick={ toggle } className={ classes }>
-			<div
-				className="post-share__service-account-image"
-				style={ accountImageStyle }
-			>
+			<div className="post-share__service-account-image" style={ accountImageStyle }>
 				&nbsp;
 			</div>
 

@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { some, times } from 'lodash';
 
@@ -31,16 +35,14 @@ const PurchasesSite = ( {
 	if ( isPlaceholder ) {
 		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
-		items = purchases.map(
-			purchase => (
-				<PurchaseItem
-					key={ purchase.id }
-					slug={ slug }
-					isDisconnectedSite={ ! site }
-					purchase={ purchase }
-				/>
-			)
-		);
+		items = purchases.map( purchase => (
+			<PurchaseItem
+				key={ purchase.id }
+				slug={ slug }
+				isDisconnectedSite={ ! site }
+				purchase={ purchase }
+			/>
+		) );
 	}
 
 	const isJetpack = some( purchases, purchase => isJetpackPlan( purchase ) );
@@ -57,20 +59,20 @@ const PurchasesSite = ( {
 
 			{ items }
 
-			{ ! isPlaceholder && hasLoadedSite && ! site
-				? <PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
-				: null }
+			{ ! isPlaceholder && hasLoadedSite && ! site ? (
+				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } domain={ domain } />
+			) : null }
 		</div>
 	);
 };
 
 PurchasesSite.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	siteId: React.PropTypes.number,
-	purchases: React.PropTypes.array,
-	name: React.PropTypes.string,
-	domain: React.PropTypes.string,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	siteId: PropTypes.number,
+	purchases: PropTypes.array,
+	name: PropTypes.string,
+	domain: PropTypes.string,
+	slug: PropTypes.string,
 };
 
 export default connect( ( state, { siteId } ) => ( {

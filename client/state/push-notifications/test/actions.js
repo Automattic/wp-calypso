@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,16 +8,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 import {
 	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 } from 'state/action-types';
-import {
-	apiNotReady,
-	receiveUnregisterDevice,
-	sendSubscriptionToWPCOM,
-} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -34,14 +32,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {
-		it( 'should return an action object with empty data for empty input', () => {
+		test( 'should return an action object with empty data for empty input', () => {
 			expect( receiveUnregisterDevice() ).to.eql( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 				data: {},
 			} );
 		} );
 
-		it( 'should return an action object with provided data intact', () => {
+		test( 'should return an action object with provided data intact', () => {
 			const data = {
 				devicestuff: 'some_value',
 			};
@@ -53,7 +51,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'apiNotReady()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			expect( apiNotReady() ).to.eql( {
 				type: PUSH_NOTIFICATIONS_API_NOT_READY,
 			} );
@@ -66,18 +64,18 @@ describe( 'actions', () => {
 		const getState = () => ( { pushNotifications: { settings: {}, system: {} } } );
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( API_DOMAIN )
 					.persist()
 					.post( `/rest/v1.1/devices/new` )
 					.reply( 200, { ID: 123, settings: {} } );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return sendSubscriptionToWPCOM( 'someTruthyValue' )( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
 						type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-						data: {}
+						data: {},
 					} );
 				} );
 			} );

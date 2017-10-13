@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -24,17 +28,17 @@ class QueryHappinessEngineers extends Component {
 
 QueryHappinessEngineers.propTypes = {
 	isRequestingHappinessEngineers: PropTypes.bool,
-	fetchHappinessEngineers: PropTypes.func
+	fetchHappinessEngineers: PropTypes.func,
 };
 
 QueryHappinessEngineers.defaultProps = {
-	fetchHappinessEngineers: () => {}
+	fetchHappinessEngineers: () => {},
 };
 
 export default connect(
 	state => {
 		return {
-			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state )
+			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
 		};
 	},
 	{ fetchHappinessEngineers }

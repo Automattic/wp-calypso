@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,16 +11,16 @@ import { expect } from 'chai';
 import { getSitesItems } from '../';
 
 describe( 'getSitesItems()', () => {
-	it( 'should return site items if sites exist', () => {
+	test( 'should return site items if sites exist', () => {
 		const state = {
 			sites: {
-				items: { 1: { ID: 1 } },
+				items: { 13434: { ID: 13434 } },
 			},
 		};
-		expect( getSitesItems( state ) ).to.eql( { 1: { ID: 1 } } );
+		expect( getSitesItems( state ) ).to.eql( { 13434: { ID: 13434 } } );
 	} );
 
-	it( 'should return empty object if site items are empty', () => {
+	test( 'should return empty object if site items are empty', () => {
 		const state = {
 			sites: {
 				items: {},
@@ -27,7 +29,7 @@ describe( 'getSitesItems()', () => {
 		expect( getSitesItems( state ) ).to.eql( {} );
 	} );
 
-	it( 'should return empty object if site items are null (not loaded)', () => {
+	test( 'should return empty object if site items are null (not loaded)', () => {
 		const state = {
 			sites: {
 				items: null,

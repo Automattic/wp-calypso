@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -18,7 +22,14 @@ import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-function PostActionsEllipsisMenuEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {
+function PostActionsEllipsisMenuEdit( {
+	translate,
+	siteId,
+	canEdit,
+	status,
+	editUrl,
+	isKnownType,
+} ) {
 	if ( 'trash' === status || ! canEdit ) {
 		return null;
 	}
@@ -42,7 +53,7 @@ PostActionsEllipsisMenuEdit.propTypes = {
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	editUrl: PropTypes.string,
-	isKnownType: PropTypes.bool
+	isKnownType: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -66,6 +77,6 @@ export default connect( ( state, ownProps ) => {
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
-		isKnownType: !! type
+		isKnownType: !! type,
 	};
 } )( localize( PostActionsEllipsisMenuEdit ) );

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	getRawSite,
 	getSiteDomain,
@@ -9,7 +12,7 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isSiteConflicting,
-	isSitePreviewable
+	isSitePreviewable,
 } from 'state/sites/selectors';
 import { canCurrentUser, getSiteOptions } from 'state/selectors';
 import { withoutHttp } from 'lib/url';
@@ -34,14 +37,17 @@ export const getSiteComputedAttributes = ( state, siteId ) => {
 		is_previewable: !! isSitePreviewable( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
-		title: getSiteTitle( state, siteId )
+		title: getSiteTitle( state, siteId ),
 	};
 
+	// If a WordPress.com site has a mapped domain create a `wpcom_url`
+	// attribute to allow site selection with either domain.
 	if ( getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId ) ) {
 		computedAttributes.wpcom_url = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
 	}
 
-	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+	// we only need to use the unmapped URL for conflicting sites
+	if ( computedAttributes.hasConflict ) {
 		computedAttributes.URL = getSiteOption( state, siteId, 'unmapped_url' );
 	}
 

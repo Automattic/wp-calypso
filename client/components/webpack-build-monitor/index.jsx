@@ -5,147 +5,117 @@
  * External dependencies
  */
 import React from 'react';
-import { createStore } from 'redux';
 import classNames from 'classnames';
-import { find, includes, startsWith, identity } from 'lodash';
+import { find, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import { combineReducers } from 'state/utils';
-
-// Action dispatched by wrapped console
-const CONSOLE_MESSAGE = 'CONSOLE_MESSAGE';
-
-const CONNECTED = 'CONNECTED';
-const DISCONNECTED = 'DISCONNECTED';
-const BUILDING_CSS = 'BUILDING_CSS';
-const BUILDING_JS = 'BUILDING_JS';
-const BUILDING_BOTH = 'BUILDING_BOTH';
-const ERROR = 'ERROR';
-const IDLE = 'IDLE';
-
-const doneBuilding = typeDone => state => {
-	if ( state === ERROR ) {
-		return state;
-	} else if ( state === BUILDING_BOTH ) {
-		return typeDone === BUILDING_JS ? BUILDING_CSS : BUILDING_JS;
-	}
-	return IDLE;
-};
-
-const buildJs = state => ( state === BUILDING_CSS ? BUILDING_BOTH : BUILDING_JS );
-const buildCss = state => ( state === BUILDING_JS ? BUILDING_BOTH : BUILDING_CSS );
 
 const MESSAGE_STATUS_MAP = {
-	'[HMR] connected': () => CONNECTED,
-	'[WDS] Disconnected!': () => DISCONNECTED,
-	'[HMR] bundle rebuilding': state => buildJs( state ),
-	'Building CSS…': state => buildCss( state ),
-	'CSS build failed': () => ERROR,
-	'[WDS] Nothing changed.': doneBuilding( BUILDING_JS ),
-	'Reloading CSS: ': doneBuilding( BUILDING_CSS ),
-	'[HMR] bundle rebuilt in': doneBuilding( BUILDING_JS ),
+	'[HMR] connected': { isConnected: true },
+	'[WDS] Disconnected!': { isConnected: false },
+	'[HMR] bundle rebuilding': { isBuildingJs: true },
+	'[HMR] Cannot find update (Full reload needed)': { needsReload: true },
+	"[HMR] The following modules couldn't be hot updated": { needsReload: true },
+	'Building CSS…': { isBuildingCss: true },
+	'CSS build failed': { hasError: true },
+	'[WDS] Nothing changed.': { isBuildingJs: false },
+	'Reloading CSS: ': { isBuildingCss: false },
+	'[HMR] bundle rebuilt in': { isBuildingJs: false },
 };
 
-const buildStatusReducer = ( state = IDLE, { type, message } ) => {
-	if ( type !== CONSOLE_MESSAGE ) {
-		return state;
+let buildState = {
+	hasError: false,
+	isBuildingCss: false,
+	isBuildingJs: false,
+	isConnected: true,
+	needsReload: false,
+};
+
+const interceptConsole = ( consoleObject, updater ) => {
+	[ 'error', 'log', 'warn' ].forEach( method => {
+		const unwrapped = consoleObject[ method ];
+
+		consoleObject[ method ] = ( msg, ...args ) => {
+			const stateUpdates = find( MESSAGE_STATUS_MAP, ( v, prefix ) => startsWith( msg, prefix ) );
+
+			if ( stateUpdates ) {
+				buildState = { ...buildState, ...stateUpdates };
+				updater( buildState );
+			}
+
+			unwrapped( msg, ...args );
+		};
+	} );
+};
+
+const getMessage = ( { hasError, isBuildingCss, isBuildingJs, isConnected } ) => {
+	if ( ! isConnected ) {
+		return 'Dev Server disconnected';
 	}
 
-	const getNextState =
-		find( MESSAGE_STATUS_MAP, ( v, messagePrefix ) => startsWith( message, messagePrefix ) ) ||
-		identity;
-
-	return getNextState( state );
-};
-
-const reloadReducer = ( state = false, { type, message } ) => {
-	if ( type !== CONSOLE_MESSAGE || state ) {
-		return state;
+	if ( hasError ) {
+		return 'Build error';
 	}
 
-	if ( startsWith( message, "[HMR] The following modules couldn't be hot updated" ) ) {
-		return true;
+	if ( isBuildingCss && isBuildingJs ) {
+		return 'Rebuilding JS and CSS';
 	}
 
-	return state;
+	if ( isBuildingCss ) {
+		return 'Building CSS';
+	}
+
+	if ( isBuildingJs ) {
+		return 'Rebuilding JavaScript';
+	}
+
+	return '';
 };
 
-const store = createStore(
-	combineReducers( {
-		buildStatus: buildStatusReducer,
-		reloadRequired: reloadReducer,
-	} )
-);
-
-const wrapConsole = fn => ( message, ...args ) => {
-	Promise.resolve().then( () => store.dispatch( { type: CONSOLE_MESSAGE, message } ) );
-	fn.call( window, message, ...args );
-};
-
-console.error = wrapConsole( console.error );
-console.warn = wrapConsole( console.warn );
-console.log = wrapConsole( console.log );
-
-const STATUS_TEXTS = {
-	[ DISCONNECTED ]: 'Dev Server disconnected',
-	[ ERROR ]: 'Build error',
-	[ BUILDING_JS ]: 'Rebuilding Javascript',
-	[ BUILDING_CSS ]: 'Rebuilding CSS',
-	[ BUILDING_BOTH ]: 'Rebuilding JS and CSS',
-};
-
-const RELOAD_REQUIRED_ELEMENT = (
-	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-	<div className="webpack-build-monitor is-warning">Need to refresh</div>
-);
+let alreadyExists = false;
 
 class WebpackBuildMonitor extends React.PureComponent {
-	state = {
-		buildStatus: IDLE,
-		reloadRequired: false,
-	};
+	state = buildState;
 
 	componentDidMount() {
-		this.unsubscribe = store.subscribe(
-			( () => {
-				let prevState = undefined;
-				return () => {
-					const nextState = store.getState();
-					if ( nextState !== prevState ) {
-						this.setState( nextState );
-						prevState = nextState;
-					}
-				};
-			} )()
-		);
-	}
+		if ( alreadyExists ) {
+			return console.error(
+				'There should only be a single build monitor loaded. ' +
+					"Please make sure we're not trying to load more than one at a time."
+			);
+		}
+		alreadyExists = true;
 
-	componentWillUnmount() {
-		this.unsubscribe();
+		interceptConsole( console, state => this.setState( state ) );
 	}
 
 	render() {
-		const { buildStatus, reloadRequired } = this.state;
+		const { hasError, isBuildingCss, isBuildingJs, isConnected, needsReload } = this.state;
 
-		if ( buildStatus === IDLE ) {
-			return reloadRequired && RELOAD_REQUIRED_ELEMENT;
+		const isBusy = isBuildingCss || isBuildingJs;
+
+		if ( ! isBusy && needsReload ) {
+			return <div className="webpack-build-monitor is-warning">Need to refresh</div>;
 		}
 
-		const text = STATUS_TEXTS[ buildStatus ] || '';
-
-		const classnames = classNames( 'webpack-build-monitor', {
-			'is-error': status === ERROR || status === DISCONNECTED,
-			'is-warning': reloadRequired,
-		} );
+		// if we're not doing anything
+		// then we don't need to show anything
+		if ( ! isBusy ) {
+			return null;
+		}
 
 		return (
-			<div className={ classnames }>
-				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], buildStatus ) &&
-					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
-				{ text }
+			<div
+				className={ classNames( 'webpack-build-monitor', {
+					'is-error': hasError || ! isConnected,
+					'is-warning': needsReload,
+				} ) }
+			>
+				{ isBusy && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
+				{ getMessage( this.state ) }
 			</div>
 		);
 	}

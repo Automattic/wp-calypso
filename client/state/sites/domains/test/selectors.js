@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,23 +13,19 @@ import {
 	getDomainsBySite,
 	getDomainsBySiteId,
 	isRequestingSiteDomains,
-	getDecoratedSiteDomains
+	getDecoratedSiteDomains,
 } from '../selectors';
-
-/**
- * Fixture data
- */
 import {
 	SITE_ID_FIRST as firstSiteId,
 	SITE_ID_SECOND as secondSiteId,
 	DOMAIN_PRIMARY,
 	DOMAIN_NOT_PRIMARY,
-	getStateInstance
+	getStateInstance,
 } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getDomainsBySite()', () => {
-		it( 'should return domains by site', () => {
+		test( 'should return domains by site', () => {
 			const state = getStateInstance();
 
 			const firstDomains = getDomainsBySite( state, { ID: firstSiteId } );
@@ -41,7 +39,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getDomainsBySiteId()', () => {
-		it( 'should return domains by site id', () => {
+		test( 'should return domains by site id', () => {
 			const state = getStateInstance();
 			const domains = getDomainsBySiteId( state, firstSiteId );
 			expect( domains ).to.eql( [ DOMAIN_PRIMARY ] );
@@ -49,7 +47,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingSiteDomains()', () => {
-		it( 'should return true if we are fetching domains', () => {
+		test( 'should return true if we are fetching domains', () => {
 			const state = getStateInstance();
 
 			expect( isRequestingSiteDomains( state, firstSiteId ) ).to.equal( false );
@@ -59,7 +57,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#decorateSiteDomains()', () => {
-		it( 'should return decorated site domains with autoRenewalMoment', () => {
+		test( 'should return decorated site domains with autoRenewalMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
@@ -67,10 +65,12 @@ describe( 'selectors', () => {
 
 			const domainAutoRenewalMoment = moment( domains[ 0 ].autoRenewalDate );
 
-			expect( decoratedDomains[ 0 ].autoRenewalMoment.date() ).to.equal( domainAutoRenewalMoment.date() );
+			expect( decoratedDomains[ 0 ].autoRenewalMoment.date() ).to.equal(
+				domainAutoRenewalMoment.date()
+			);
 		} );
 
-		it( 'should return decorated site domains with registrationMoment', () => {
+		test( 'should return decorated site domains with registrationMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
@@ -78,10 +78,12 @@ describe( 'selectors', () => {
 
 			const domainRegistrationMoment = moment( domains[ 0 ].registrationDate );
 
-			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal( domainRegistrationMoment.date() );
+			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal(
+				domainRegistrationMoment.date()
+			);
 		} );
 
-		it( 'should return decorated site domains with expirationMoment', () => {
+		test( 'should return decorated site domains with expirationMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
 
@@ -89,7 +91,9 @@ describe( 'selectors', () => {
 
 			const domainExpirationMoment = moment( domains[ 0 ].expiry );
 
-			expect( decoratedDomains[ 0 ].expirationMoment.date() ).to.equal( domainExpirationMoment.date() );
+			expect( decoratedDomains[ 0 ].expirationMoment.date() ).to.equal(
+				domainExpirationMoment.date()
+			);
 		} );
 	} );
 } );

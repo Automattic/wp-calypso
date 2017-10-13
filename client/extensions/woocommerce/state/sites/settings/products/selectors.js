@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find, get, isArray } from 'lodash';
 
 /**
@@ -40,7 +43,7 @@ export const areSettingsProductsLoading = ( state, siteId = getSelectedSiteId( s
  */
 export function getWeightUnitSetting( state, siteId = getSelectedSiteId( state ) ) {
 	const productsSettings = getRawProductsSettings( state, siteId );
-	const unit = find( productsSettings, ( item ) => item.id === 'woocommerce_weight_unit' );
+	const unit = find( productsSettings, item => item.id === 'woocommerce_weight_unit' );
 	return unit || {};
 }
 
@@ -53,6 +56,6 @@ export function getWeightUnitSetting( state, siteId = getSelectedSiteId( state )
  */
 export function getDimensionsUnitSetting( state, siteId = getSelectedSiteId( state ) ) {
 	const productsSettings = getRawProductsSettings( state, siteId );
-	const unit = find( productsSettings, ( item ) => item.id === 'woocommerce_dimension_unit' );
+	const unit = find( productsSettings, item => item.id === 'woocommerce_dimension_unit' );
 	return unit || {};
 }

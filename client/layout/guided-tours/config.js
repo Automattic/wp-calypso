@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { combineTours } from 'layout/guided-tours/config-elements';
 import { MainTour } from 'layout/guided-tours/tours/main-tour';
 import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site-preview-tour';

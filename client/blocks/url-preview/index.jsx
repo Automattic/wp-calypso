@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -49,12 +53,15 @@ export default function urlPreview( WebPreview ) {
 				debug( 'no preview url and no site url were found for this site' );
 				return null;
 			}
-			const previewUrl = addQueryArgs( {
-				iframe: true,
-				theme_preview: true,
-				'frame-nonce': this.props.selectedSiteNonce,
-				cachebust: this.state.previewCount,
-			}, this.getBasePreviewUrl() );
+			const previewUrl = addQueryArgs(
+				{
+					iframe: true,
+					theme_preview: true,
+					'frame-nonce': this.props.selectedSiteNonce,
+					cachebust: this.state.previewCount,
+				},
+				this.getBasePreviewUrl()
+			);
 			debug( 'using this preview url', previewUrl );
 			return previewUrl;
 		}
@@ -110,8 +117,5 @@ export default function urlPreview( WebPreview ) {
 		};
 	}
 
-	return connect(
-		mapStateToProps,
-		{ closePreview }
-	)( UrlPreview );
+	return connect( mapStateToProps, { closePreview } )( UrlPreview );
 }

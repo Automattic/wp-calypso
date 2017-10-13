@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -25,7 +28,6 @@ import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 
 export class EditPostStatus extends Component {
-
 	static propTypes = {
 		moment: PropTypes.func,
 		setPostDate: PropTypes.func,
@@ -63,7 +65,7 @@ export class EditPostStatus extends Component {
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
-			sticky: ! this.props.post.sticky
+			sticky: ! this.props.post.sticky,
 		} );
 	};
 
@@ -74,7 +76,7 @@ export class EditPostStatus extends Component {
 		recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
-			status: pending ? 'draft' : 'pending'
+			status: pending ? 'draft' : 'pending',
 		} );
 	};
 
@@ -95,15 +97,16 @@ export class EditPostStatus extends Component {
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
 
-		const adminUrl = this.props.site &&
-			this.props.site.options &&
-			this.props.site.options.admin_url;
+		const adminUrl =
+			this.props.site && this.props.site.options && this.props.site.options.admin_url;
 
 		return (
 			<div className="edit-post-status">
 				{ this.renderPostScheduling() }
 				{ this.renderPostVisibility() }
-				{ this.props.type === 'post' && ! isPostPrivate && ! isPasswordProtected &&
+				{ this.props.type === 'post' &&
+				! isPostPrivate &&
+				! isPasswordProtected && (
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Stick to the front page' ) }
@@ -117,8 +120,10 @@ export class EditPostStatus extends Component {
 							aria-label={ translate( 'Stick post to the front page' ) }
 						/>
 					</label>
-				}
-				{ ( ! isPublished && ! isScheduled && canPublish ) &&
+				) }
+				{ ! isPublished &&
+				! isScheduled &&
+				canPublish && (
 					<label className="edit-post-status__pending-review">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Pending review' ) }
@@ -132,8 +137,8 @@ export class EditPostStatus extends Component {
 							aria-label={ translate( 'Request review for post' ) }
 						/>
 					</label>
-				}
-				{ ( isPublished || isScheduled || isPending && ! canPublish ) &&
+				) }
+				{ ( isPublished || isScheduled || ( isPending && ! canPublish ) ) && (
 					<Button
 						className="edit-post-status__revert-to-draft"
 						onClick={ this.revertToDraft }
@@ -141,7 +146,7 @@ export class EditPostStatus extends Component {
 					>
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
-				}
+				) }
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
@@ -153,12 +158,7 @@ export class EditPostStatus extends Component {
 	}
 
 	renderPostScheduling() {
-		return (
-			<EditorPublishDate
-				post={ this.props.post }
-				setPostDate={ this.props.setPostDate }
-			/>
-		);
+		return <EditorPublishDate post={ this.props.post } setPostDate={ this.props.setPostDate } />;
 	}
 
 	renderPostVisibility() {
@@ -187,14 +187,12 @@ export class EditPostStatus extends Component {
 			context: 'post-settings',
 		};
 
-		return (
-			<EditorVisibility { ...props } />
-		);
+		return <EditorVisibility { ...props } />;
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
@@ -202,7 +200,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
-			post
+			post,
 		};
 	},
 	{ editPost }

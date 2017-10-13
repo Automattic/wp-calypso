@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +18,8 @@ const ShippingOrigin = ( { translate } ) => {
 		<div className="shipping__origin">
 			<ExtendedHeader
 				label={ translate( 'Shipping Origin' ) }
-				description={ translate( 'The address of where you will be shipping from.' ) } />
+				description={ translate( 'The address of where you will be shipping from.' ) }
+			/>
 			<StoreAddress showLabel={ false } />
 		</div>
 	);

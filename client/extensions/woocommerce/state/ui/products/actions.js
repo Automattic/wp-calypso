@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
@@ -47,7 +50,7 @@ export function editProductAddCategory( siteId, product, categoryId ) {
 }
 
 export function editProductRemoveCategory( siteId, product, categoryId ) {
-	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
+	const categories = product.categories.filter( c => categoryId !== c.id );
 
 	return editProduct( siteId, product, { categories } );
 }
@@ -67,4 +70,3 @@ export function createProductActionList( successAction, failureAction ) {
 		failureAction,
 	};
 }
-

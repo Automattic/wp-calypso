@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import { injectLocalization } from './localization';
@@ -14,4 +17,4 @@ if ( config.isEnabled( 'support-user' ) ) {
 // Inject localization helpers to `wpcom` instance
 wpcom = injectLocalization( wpcom );
 
-module.exports = wpcom;
+export default wpcom;

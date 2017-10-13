@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,13 +12,13 @@ import { getJetpackSetting } from '../';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'getJetpackSetting()', () => {
-	it( 'should return a certain setting for a known site', () => {
+	test( 'should return a certain setting for a known site', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
-						items: SETTINGS_FIXTURE
-					}
-				}
+						items: SETTINGS_FIXTURE,
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'setting_1';
@@ -24,15 +26,15 @@ describe( 'getJetpackSetting()', () => {
 		expect( output ).to.eql( SETTINGS_FIXTURE[ siteId ][ setting ] );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	test( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
 						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ]
-						}
-					}
-				}
+							654321: SETTINGS_FIXTURE[ 12345678 ],
+						},
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'setting_1';
@@ -40,15 +42,15 @@ describe( 'getJetpackSetting()', () => {
 		expect( output ).to.be.null;
 	} );
 
-	it( 'should return null for an unknown setting', () => {
+	test( 'should return null for an unknown setting', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
 						items: {
-							654321: SETTINGS_FIXTURE[ 12345678 ]
-						}
-					}
-				}
+							654321: SETTINGS_FIXTURE[ 12345678 ],
+						},
+					},
+				},
 			},
 			siteId = 12345678,
 			setting = 'unexisting_setting';

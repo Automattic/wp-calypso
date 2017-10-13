@@ -1,15 +1,17 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import olarkMock from './mock/olark';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Olark events', () => {
 	let olarkEvents;
 
-	useFakeDom();
-
-	before( () => {
+	beforeAll( () => {
 		/**
 		 * Defining the global window and window.olark object here will prevent the real olark api located at lib/olark-api
 		 * from being created because it will generate a bunch of javascript errors about missing window and
@@ -25,7 +27,7 @@ describe( 'Olark events', () => {
 	} );
 
 	// Test that a listener for the api.chat.onReady event will always have it's callback executed if the event has already fired.
-	it( 'should trigger on api.chat.onReady', ( done ) => {
+	test( 'should trigger on api.chat.onReady', done => {
 		olarkEvents.on( 'api.chat.onReady', () => {
 			done();
 		} );
@@ -33,7 +35,7 @@ describe( 'Olark events', () => {
 
 	// Test that nested event listener callbacks for the api.chat.onReady event will always be executed if the event has already fired.
 	// #9668 fixes a bug where this nesting of events doesn't work properly.
-	it( 'should trigger on nested api.chat.onReady', ( done ) => {
+	test( 'should trigger on nested api.chat.onReady', done => {
 		olarkEvents.on( 'api.chat.onReady', () => {
 			olarkEvents.on( 'api.chat.onReady', () => {
 				done();

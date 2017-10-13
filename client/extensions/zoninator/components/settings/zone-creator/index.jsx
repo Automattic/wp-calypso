@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React from 'react';
+
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -16,37 +19,37 @@ import ZoneDetailsForm from '../../forms/zone-details-form';
 import { addZone } from '../../../state/zones/actions';
 import { settingsPath } from '../../../app/util';
 
-const ZoneCreator = ( {
-	saveZone,
-	siteId,
-	siteSlug,
-	translate,
-} ) => (
-	<div>
-		<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
-			{ translate( 'Add a zone' ) }
-		</HeaderCake>
+class ZoneCreator extends PureComponent {
+	static propTypes = {
+		addZone: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	};
 
-		<ZoneDetailsForm label={ translate( 'New zone' ) } siteId={ siteId } onSubmit={ saveZone } />
-	</div>
-);
+	save = ( form, data ) => this.props.addZone( this.props.siteId, form, data );
 
-ZoneCreator.propTypes = {
-	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
-	saveZone: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
-};
+	render() {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<div>
+				<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
+					{ translate( 'Add a zone' ) }
+				</HeaderCake>
+
+				<ZoneDetailsForm label={ translate( 'New zone' ) } onSubmit={ this.save } />
+			</div>
+		);
+	}
+}
 
 const connectComponent = connect(
 	state => ( {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
-	{ saveZone: addZone },
+	{ addZone }
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( ZoneCreator );
+export default flowRight( connectComponent, localize )( ZoneCreator );

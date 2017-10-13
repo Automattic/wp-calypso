@@ -1,10 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { head, values } from 'lodash';
-const debug = require( 'debug' )( 'calypso:validate-fieldset' ); // eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:validate-fieldset' );
 
 /**
  * Internal dependencies
@@ -18,7 +22,8 @@ export default class ValidationFieldset extends Component {
 			<FormInputValidation
 				isError={ true }
 				isValid={ false }
-				text={ head( values( this.props.errorMessages ) ) } />
+				text={ head( values( this.props.errorMessages ) ) }
+			/>
 		);
 
 		return <div className="validation-fieldset__validation-message">{ validationElement }</div>;

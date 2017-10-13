@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, flowRight } from 'lodash';
+import { get, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-	hasSiteStatsQueryFailed
+	hasSiteStatsQueryFailed,
 } from 'state/stats/lists/selectors';
 
 class StatModuleFollowersPage extends Component {
@@ -38,7 +41,7 @@ class StatModuleFollowersPage extends Component {
 			perPage,
 			requestingFollowers,
 			siteId,
-			translate
+			translate,
 		} = this.props;
 		const noData = ! get( data, 'posts' );
 		const isLoading = requestingFollowers && noData;
@@ -49,8 +52,8 @@ class StatModuleFollowersPage extends Component {
 			{
 				'is-loading': isLoading,
 				'has-no-data': noData,
-				'is-showing-error': hasError || noData
-			}
+				'is-showing-error': hasError || noData,
+			},
 		];
 
 		const total = get( data, 'total' );
@@ -63,16 +66,20 @@ class StatModuleFollowersPage extends Component {
 				endIndex = total;
 			}
 
-			paginationSummary = translate( 'Showing %(startIndex)s - %(endIndex)s of %(total)s %(itemType)s followers', {
-				context: 'pagination',
-				comment: '"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com followers',
-				args: {
-					startIndex: numberFormat( startIndex ),
-					endIndex: numberFormat( endIndex ),
-					total: numberFormat( total ),
-					itemType: translate( 'Comments' )
+			paginationSummary = translate(
+				'Showing %(startIndex)s - %(endIndex)s of %(total)s %(itemType)s followers',
+				{
+					context: 'pagination',
+					comment:
+						'"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com followers',
+					args: {
+						startIndex: numberFormat( startIndex ),
+						endIndex: numberFormat( endIndex ),
+						total: numberFormat( total ),
+						itemType: translate( 'Comments' ),
+					},
 				}
-			} );
+			);
 
 			paginationSummary = (
 				<div className="module-content-text module-content-text-stat">
@@ -81,7 +88,9 @@ class StatModuleFollowersPage extends Component {
 			);
 		}
 
-		const pagination = <Pagination page={ page } perPage={ perPage } total={ total } pageClick={ pageClick } />;
+		const pagination = (
+			<Pagination page={ page } perPage={ perPage } total={ total } pageClick={ pageClick } />
+		);
 
 		let followers;
 		let labelLegend;
@@ -89,11 +98,13 @@ class StatModuleFollowersPage extends Component {
 		if ( data && data.posts ) {
 			followers = <StatsList data={ data.posts } moduleName="Followers" />;
 			labelLegend = translate( 'Post', {
-				context: 'noun'
+				context: 'noun',
 			} );
 			valueLegend = translate( 'Followers' );
 		} else if ( data && data.subscribers ) {
-			followers = <StatsList data={ data.subscribers } followList={ followList } moduleName="Followers" />;
+			followers = (
+				<StatsList data={ data.subscribers } followList={ followList } moduleName="Followers" />
+			);
 			labelLegend = translate( 'Follower' );
 			valueLegend = translate( 'Since' );
 		}
@@ -103,9 +114,11 @@ class StatModuleFollowersPage extends Component {
 				<SectionHeader label={ translate( 'Comments Followers' ) } />
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
-						{ noData && ! hasError && ! isLoading &&
+						{ noData &&
+						! hasError &&
+						! isLoading && (
 							<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-						}
+						) }
 
 						{ paginationSummary }
 
@@ -130,20 +143,22 @@ class StatModuleFollowersPage extends Component {
 const connectComponent = connect( ( state, { page, perPage } ) => {
 	const query = {
 		max: perPage,
-		page
+		page,
 	};
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		requestingFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsCommentFollowers', query ),
+		requestingFollowers: isRequestingSiteStatsForQuery(
+			state,
+			siteId,
+			'statsCommentFollowers',
+			query
+		),
 		data: getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', query ),
 		hasError: hasSiteStatsQueryFailed( state, siteId, 'statsCommentFollowers', query ),
 		query,
-		siteId
+		siteId,
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatModuleFollowersPage );
+export default flowRight( connectComponent, localize )( StatModuleFollowersPage );

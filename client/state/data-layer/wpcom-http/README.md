@@ -191,14 +191,20 @@ dispatchRequest( fetchMenu, addMenuItems, alertFailure );
 dispatchRequest( sendRecipe, indicateSuccess, removeRecipe, { onProgress: updateRecipeProgress } );
 ```
 
-### Helpers
+### `dispatchRequest()` helper
 
-Most likely you will want to use the provided helper methods and structure your code into three pieces: a function which generates the descriptive HTTP requests; a function which handles successful responses; and a function which handles failing responses.
-If you are uploading a file you will have a fourth function which handles progress events.
+Although there's lot of machinery going on here and possibly many things to keep track of, thankfully we have a helper designed to make it all smooth.
+That helper is the `dispatchRequest()` function and it handles all of the networking-related specifics for you so that you can focus on logic designed to issue and respond to network requests.
+At its most basic form it implies three actions we need to provide: a function which generates descriptive HTTP requests; a function which handles successful responses; and a function which handles failing responses.
+Additionally there are other semantics of network requests it can manage.
 
-Each of these functions will take the normal middleware arguments; additionally the success, failure, and progress functions take an additional argument which is the response data or error respectively.
+ - A function to handle progress events during data uploads
+ - A schema to validate the response data and fail invalid formats
+ - A way to indicate data "freshness" or how new data must be to fetch it (coming soon!)
+
+Each of these lifecycle functions will take as arguments the Redux store, the associated action, and the data coming from the response.
 Please note that for this example we have included a progress event even though one would not normally exist for liking posts.
-Its inclusion her is meant merely to illustrate how the pieces can fit together.
+Its inclusion here is meant merely to illustrate how the pieces can fit together.
 
 ```js
 // API Middleware, Post Like
@@ -234,7 +240,12 @@ const likePost = ( { dispatch }, action ) => {
  *
  * This is the place to map fromAPI to Calypso formats
  */
-const verifyLike = ( { dispatch }, { siteId, postId } data ) => {
+const verifyLike = ( { dispatch }, { siteId, postId }, data ) => {
+	if ( ! data.hasOwnProperty( 'i_like' ) ) {
+		// something went wrong, so failover
+		return undoLike( { dispatch }, { siteId, postId }, 'Invalid data' );
+	}
+
 	// this is a response to data coming in from the data layer,
 	// so skip further data-layer middleware with local
 	dispatch( bypassDataLayer( {
@@ -277,3 +288,44 @@ export default {
 
 It's important that perform the mapping stage when handling API request responses to go _from_ the API's native data format _to_ Calypso's native data format.
 These middleware functions are the perfect place to perform this mapping because it will leave API-specific code separated into specific places that are relatively easy to find.
+
+See how ugly that validation is though? We can let the data layer do it for us.
+Let's create a schema for the response.
+The schema doesn't have to match everything in the response.
+It's allowed to be a conformal spec where we can ignore anything beyond what we need.
+
+```js
+// defines the shape and type of data we can recognize
+const likeSchema = {
+	id : "sites-posts-likes-new-response",
+	title : "New Like Response",
+	type : "object",
+	$schema : "http://json-schema.org/draft-04/schema#",
+	properties : {
+		i_like : {
+			 type : "boolean"
+		}
+	},
+	required : [
+		"i_like"
+	]
+};
+
+// change the shape of the data and maybe add more information
+const toLike = ( { i_like } ) => ( {
+	isLiked: i_like,
+	lastLiked: Date.now()
+} );
+
+export default {
+	[ LIKE_POST ]: [ dispatchRequest(
+		likePost, // initiate the request
+		verifyLike, // update the Redux store if need be
+		undoLike, // remove the like if we failed
+		{
+			fromApi: makeParser( likeSchema, {}, toLike ), // validate and convert to internal Calypso object
+			onProgress: updateProgress, // update progress tracking UI
+		}
+	) ]
+}
+```

@@ -1,3 +1,4 @@
+/** @format */
 export const lastUpdate = {
 	type: 'number',
 	minimum: 0,
@@ -26,5 +27,5 @@ export const eligibility = {
 		lastUpdate,
 		eligibilityHolds,
 		eligibilityWarnings,
-	}
+	},
 };

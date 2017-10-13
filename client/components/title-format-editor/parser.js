@@ -1,3 +1,4 @@
+/** @format */
 import {
 	compact,
 	flowRight as compose,
@@ -7,10 +8,7 @@ import {
 	matchesProperty,
 	reduce,
 } from 'lodash';
-import {
-	convertFromRaw,
-	convertToRaw,
-} from 'draft-js';
+import { convertFromRaw, convertToRaw } from 'draft-js';
 
 /*
  * The functions in this file convert between the
@@ -90,24 +88,25 @@ export const fromEditor = content => {
 	const entities = get( rawContent, 'entityMap' );
 
 	// [ output, index, text ]
-	const [ o, i, t ] = ranges.reduce( ( [ output, lastIndex, remainingText ], next ) => {
-		const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
-		const textBlock = next.offset > lastIndex
-			? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
-			: null;
+	const [ o, i, t ] = ranges.reduce(
+		( [ output, lastIndex, remainingText ], next ) => {
+			const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+			const textBlock =
+				next.offset > lastIndex
+					? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
+					: null;
 
-		return [ [
-			...output,
-			textBlock,
-			{ type: tokenName }
-		], next.offset + next.length, remainingText ];
-	}, [ [], 0, text ] );
+			return [
+				[ ...output, textBlock, { type: tokenName } ],
+				next.offset + next.length,
+				remainingText,
+			];
+		},
+		[ [], 0, text ]
+	);
 
 	// add final remaining text not captured by any entity ranges
-	return compact( [
-		...o,
-		i < t.length && { type: 'string', value: t.slice( i ) }
-	] );
+	return compact( [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ] );
 };
 
 const isTextPiece = matchesProperty( 'type', 'string' );
@@ -115,7 +114,7 @@ const isTextPiece = matchesProperty( 'type', 'string' );
 const emptyBlockMap = {
 	text: '',
 	entityRanges: [],
-	type: 'unstyled'
+	type: 'unstyled',
 };
 
 /**
@@ -157,7 +156,7 @@ const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type
 const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
 	key: entityGuide.length,
 	length: tokenTitle( type, tokens ).length,
-	offset
+	offset,
 } );
 
 /**
@@ -182,20 +181,23 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} blockMap for use in ContentState
  */
-const buildBlockMap = compose(
-	( format, tokens ) => reduce( format, ( [ block, lastIndex, entityGuide ], piece ) => [
-		{
-			...block,
-			entityRanges: isTextPiece( piece )
-				? block.entityRanges // text pieces don't add entities
-				: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
-			text: block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
-		},
-		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length ),
-		isTextPiece( piece )
-			? entityGuide
-			: [ ...entityGuide, piece.type ]
-	], [ emptyBlockMap, 0, [] ] )
+const buildBlockMap = compose( ( format, tokens ) =>
+	reduce(
+		format,
+		( [ block, lastIndex, entityGuide ], piece ) => [
+			{
+				...block,
+				entityRanges: isTextPiece( piece )
+					? block.entityRanges // text pieces don't add entities
+					: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
+				text:
+					block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
+			},
+			lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length ),
+			isTextPiece( piece ) ? entityGuide : [ ...entityGuide, piece.type ],
+		],
+		[ emptyBlockMap, 0, [] ]
+	)
 );
 
 /**
@@ -206,17 +208,19 @@ const buildBlockMap = compose(
  * @returns {ContentState} content for editor
  */
 export const toEditor = ( format, tokens ) => {
-	const [ blocks, /* lastIndex */, entityGuide ] = buildBlockMap( format, tokens );
+	const [ blocks /* lastIndex */, , entityGuide ] = buildBlockMap( format, tokens );
 
 	return convertFromRaw( {
 		blocks: [ blocks ],
-		entityMap: fromPairs( map( entityGuide, ( name, key ) => ( [
-			key, // entity key is position in list
-			{
-				type: 'TOKEN',
-				mutability: 'IMMUTABLE',
-				data: { name }
-			}
-		] ) ) )
+		entityMap: fromPairs(
+			map( entityGuide, ( name, key ) => [
+				key, // entity key is position in list
+				{
+					type: 'TOKEN',
+					mutability: 'IMMUTABLE',
+					data: { name },
+				},
+			] )
+		),
 	} );
 };

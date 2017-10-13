@@ -8,8 +8,8 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { items } from '../reducer';
 import { receiveUnfollowTag, receiveTags } from '../actions';
+import { items } from '../reducer';
 
 // helpers
 const keyById = tags => keyBy( tags, 'id' );
@@ -34,12 +34,12 @@ const TAG2 = {
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an null', () => {
+		test( 'should default to an null', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( null );
 		} );
 
-		it( 'should add single tag in the payload to state', () => {
+		test( 'should add single tag in the payload to state', () => {
 			const prevState = {};
 			const action = receiveTags( { payload: [ TAG1 ] } );
 
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( { [ TAG1.id ]: TAG1 } );
 		} );
 
-		it( 'should add multiple tags in the payload to state', () => {
+		test( 'should add multiple tags in the payload to state', () => {
 			const prevState = {};
 			const action = receiveTags( { payload: [ TAG1, TAG2 ] } );
 
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( keyById( [ TAG1, TAG2 ] ) );
 		} );
 
-		it( 'should update tags that have changed', () => {
+		test( 'should update tags that have changed', () => {
 			const prevState = keyById( [ TAG1, TAG2 ] );
 			const action = receiveTags( {
 				payload: [ { ...TAG1, title: 'NotChickens' } ],
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
 		} );
 
-		it( 'should unfollow a tag if requested to do so', () => {
+		test( 'should unfollow a tag if requested to do so', () => {
 			const prevState = keyById( [ TAG1, TAG2 ] );
 			const action = receiveUnfollowTag( { payload: TAG1.id } );
 			const state = items( prevState, action );
@@ -73,7 +73,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( keyById( [ unfollow( TAG1 ), TAG2 ] ) );
 		} );
 
-		it( 'should mark everything as unfollowed if requested to do so', () => {
+		test( 'should mark everything as unfollowed if requested to do so', () => {
 			const prevState = keyById( [ follow( TAG1 ), follow( TAG2 ) ] );
 			const action = receiveTags( { payload: [], resetFollowingData: true } );
 			const state = items( prevState, action );

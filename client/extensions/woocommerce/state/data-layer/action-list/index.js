@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactor from 'debug';
 
 const debug = debugFactor( 'woocommerce:action-list' );
@@ -8,10 +11,7 @@ const debug = debugFactor( 'woocommerce:action-list' );
 /**
  * Internal dependencies
  */
-import {
-	actionListStepNext,
-	actionListAnnotate,
-} from 'woocommerce/state/action-list/actions';
+import { actionListStepNext, actionListAnnotate } from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
 	WOOCOMMERCE_ACTION_LIST_STEP_SUCCESS,
@@ -74,7 +74,7 @@ export function handleStepSuccess( { dispatch }, action, now = Date.now() ) {
 	}
 }
 
-export function handleStepFailure( { dispatch, getState }, action, now = Date.now() ) {
+export function handleStepFailure( { dispatch }, action, now = Date.now() ) {
 	const { actionList, error } = action;
 	const { prevSteps, currentStep, nextSteps } = actionList;
 
@@ -96,4 +96,3 @@ export function handleStepFailure( { dispatch, getState }, action, now = Date.no
 		actionList.onFailure( dispatch, nextActionList );
 	}
 }
-

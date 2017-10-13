@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter, get, orderBy } from 'lodash';
 
 /**
@@ -10,8 +13,11 @@ import createSelector from 'lib/create-selector';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status
-		? filter( comments, comment => ( 'approved' === comment.status || 'unapproved' === comment.status ) )
-		: filter( comments, comment => ( status === comment.status ) );
+		? filter(
+				comments,
+				comment => 'approved' === comment.status || 'unapproved' === comment.status
+			)
+		: filter( comments, comment => status === comment.status );
 }
 
 /**

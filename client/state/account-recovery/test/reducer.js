@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,16 +8,15 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
+import reducer from '../reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'state/action-types';
 
-import reducer from '../reducer';
-
 describe( '#account-recovery/isFetchingSettings reducer :', () => {
-	it( 'should set isFetchingSettings flag.', () => {
+	test( 'should set isFetchingSettings flag.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
 		} );
@@ -23,7 +24,7 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 		assert.isTrue( state.isFetchingSettings );
 	} );
 
-	it( 'should unset isFetchingSettings flag on success.', () => {
+	test( 'should unset isFetchingSettings flag on success.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			settings: {
@@ -37,7 +38,7 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 		assert.isFalse( state.isFetchingSettings );
 	} );
 
-	it( 'should unset isFetchingSettings flag on failure.', () => {
+	test( 'should unset isFetchingSettings flag on failure.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 		} );

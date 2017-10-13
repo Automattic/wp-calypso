@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { toArray } from 'lodash';
 
 function FakeWPCOM() {
@@ -20,13 +23,13 @@ FakeWPCOM.prototype.cart = function() {
 			isResolved: false,
 			method: method,
 			cart: arrayArguments[ 2 ],
-			callback: arrayArguments[ 3 ]
+			callback: arrayArguments[ 3 ],
 		} );
 	} else {
 		this._requests.push( {
 			isResolved: false,
 			method: method,
-			callback: arrayArguments[ 2 ]
+			callback: arrayArguments[ 2 ],
 		} );
 	}
 };
@@ -50,4 +53,4 @@ FakeWPCOM.prototype.getRequest = function( index ) {
 	return this._requests[ index ];
 };
 
-module.exports = FakeWPCOM;
+export default FakeWPCOM;

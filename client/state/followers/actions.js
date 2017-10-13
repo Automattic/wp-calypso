@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-const debug = require( 'debug' )( 'calypso:followers-actions' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:followers-actions' );
 
 /**
  * Internal dependencies
@@ -13,36 +18,41 @@ import {
 	FOLLOWERS_REQUEST_ERROR,
 	FOLLOWER_REMOVE_ERROR,
 	FOLLOWER_REMOVE_REQUEST,
-	FOLLOWER_REMOVE_SUCCESS
+	FOLLOWER_REMOVE_SUCCESS,
 } from 'state/action-types';
 
 export default {
 	fetchFollowers( query, silentUpdate = false ) {
-		return ( dispatch ) => {
+		return dispatch => {
 			// TODO: Componentes should not fetch if already fetching
 			debug( 'fetching followers', query );
 			if ( ! silentUpdate ) {
 				dispatch( {
 					type: FOLLOWERS_REQUEST,
-					query
+					query,
 				} );
 			}
-			wpcom.site( query.siteId ).statsFollowers( query )
+			wpcom
+				.site( query.siteId )
+				.statsFollowers( query )
 				.then( data => dispatch( { type: FOLLOWERS_RECEIVE, query, data } ) )
 				.catch( error => dispatch( { type: FOLLOWERS_REQUEST_ERROR, query, error } ) );
 		};
 	},
 	removeFollower( siteId, follower ) {
-		return ( dispatch ) => {
+		return dispatch => {
 			debug( 'removing follower', follower, siteId );
 			dispatch( {
 				type: FOLLOWER_REMOVE_REQUEST,
 				siteId: siteId,
-				follower: follower
+				follower: follower,
 			} );
-			wpcom.undocumented().site( siteId ).removeFollower( follower.ID )
+			wpcom
+				.undocumented()
+				.site( siteId )
+				.removeFollower( follower.ID )
 				.then( data => dispatch( { type: FOLLOWER_REMOVE_SUCCESS, siteId, follower, data } ) )
 				.catch( error => dispatch( { type: FOLLOWER_REMOVE_ERROR, siteId, follower, error } ) );
 		};
-	}
+	},
 };

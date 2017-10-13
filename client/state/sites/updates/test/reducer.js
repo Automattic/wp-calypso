@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../reducer';
 import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
@@ -19,21 +21,21 @@ import {
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
-import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
 			'requesting',
 			'wordpressUpdateStatus',
-			'errors'
+			'errors',
 		] );
 	} );
 
@@ -51,13 +53,13 @@ describe( 'reducer', () => {
 			total: 1,
 		};
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store all updates when receiving site updates', () => {
+		test( 'should store all updates when receiving site updates', () => {
 			const state = items( undefined, {
 				type: SITE_UPDATES_RECEIVE,
 				siteId: 2916284,
@@ -69,9 +71,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate updates when receiving site updates', () => {
+		test( 'should accumulate updates when receiving site updates', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITE_UPDATES_RECEIVE,
@@ -85,7 +87,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite updates when receiving site updates', () => {
+		test( 'should overwrite updates when receiving site updates', () => {
 			const original = deepFreeze( {
 				2916284: exampleUpdates,
 				77203074: exampleUpdates,
@@ -102,7 +104,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should store site updates when receiving a site', () => {
+		test( 'should store site updates when receiving a site', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
 				site: { ID: 2916284, updates: exampleUpdates },
@@ -113,13 +115,13 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate site updates when receiving a site', () => {
+		test( 'should accumulate site updates when receiving a site', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 77203074, updates: exampleUpdates }
+				site: { ID: 77203074, updates: exampleUpdates },
 			} );
 
 			expect( state ).to.eql( {
@@ -128,14 +130,14 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite site updates when receiving a site', () => {
+		test( 'should overwrite site updates when receiving a site', () => {
 			const original = deepFreeze( {
 				2916284: exampleUpdates,
 				77203074: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284, updates: someOtherUpdates }
+				site: { ID: 2916284, updates: someOtherUpdates },
 			} );
 
 			expect( state ).to.eql( {
@@ -144,22 +146,22 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not store updates if missing when receiving a site', () => {
+		test( 'should not store updates if missing when receiving a site', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284 }
+				site: { ID: 2916284 },
 			} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store all updates when receiving sites', () => {
+		test( 'should store all updates when receiving sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
 					{ ID: 2916284, updates: exampleUpdates },
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+					{ ID: 77203074, updates: exampleUpdates },
+				],
 			} );
 
 			expect( state ).to.eql( {
@@ -168,15 +170,13 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate updates when receiving sites', () => {
+		test( 'should accumulate updates when receiving sites', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+				sites: [ { ID: 77203074, updates: exampleUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -185,16 +185,14 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite updates when receiving sites', () => {
+		test( 'should overwrite updates when receiving sites', () => {
 			const original = deepFreeze( {
 				2916284: exampleUpdates,
 				77203074: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284, updates: someOtherUpdates }
-				]
+				sites: [ { ID: 2916284, updates: someOtherUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -203,24 +201,22 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not store updates if missing when receiving sites', () => {
+		test( 'should not store updates if missing when receiving sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284 }
-				]
+				sites: [ { ID: 2916284 } ],
 			} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store all updates when updating sites', () => {
+		test( 'should store all updates when updating sites', () => {
 			const state = items( undefined, {
 				type: SITES_UPDATE,
 				sites: [
 					{ ID: 2916284, updates: exampleUpdates },
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+					{ ID: 77203074, updates: exampleUpdates },
+				],
 			} );
 
 			expect( state ).to.eql( {
@@ -229,15 +225,13 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate updates when updating sites', () => {
+		test( 'should accumulate updates when updating sites', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 77203074, updates: exampleUpdates }
-				]
+				sites: [ { ID: 77203074, updates: exampleUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -246,16 +240,14 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite updates when updating sites', () => {
+		test( 'should overwrite updates when updating sites', () => {
 			const original = deepFreeze( {
 				2916284: exampleUpdates,
 				77203074: exampleUpdates,
 			} );
 			const state = items( original, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 2916284, updates: someOtherUpdates }
-				]
+				sites: [ { ID: 2916284, updates: someOtherUpdates } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -264,18 +256,16 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not store updates if missing when updating sites', () => {
+		test( 'should not store updates if missing when updating sites', () => {
 			const state = items( undefined, {
 				type: SITES_UPDATE,
-				sites: [
-					{ ID: 2916284 }
-				]
+				sites: [ { ID: 2916284 } ],
 			} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should reduce wordpress and total updates count after successful wordpress update', () => {
+		test( 'should reduce wordpress and total updates count after successful wordpress update', () => {
 			const original = deepFreeze( {
 				2916284: {
 					plugins: 1,
@@ -303,27 +293,27 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: exampleUpdates
+				2916284: exampleUpdates,
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should return initial state when state is invalid', () => {
+		test( 'should return initial state when state is invalid', () => {
 			const original = deepFreeze( {
-				2916284: { plugins: false }
+				2916284: { plugins: false },
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
@@ -332,171 +322,171 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site updates request started', () => {
+		test( 'should track site updates request started', () => {
 			const state = requesting( undefined, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
-		it( 'should accumulate site updates requests started', () => {
+		test( 'should accumulate site updates requests started', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track site updates request succeeded', () => {
+		test( 'should track site updates request succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track site updates request failed', () => {
+		test( 'should track site updates request failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_UPDATES_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 	} );
 
 	describe( 'wordpressUpdateStatus()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = wordpressUpdateStatus( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site wordpress core update status request succeeded', () => {
+		test( 'should track site wordpress core update status request succeeded', () => {
 			const original = deepFreeze( {
-				77203074: true
+				77203074: true,
 			} );
 			const state = wordpressUpdateStatus( original, {
 				type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track site wordpress core update status request failed', () => {
+		test( 'should track site wordpress core update status request failed', () => {
 			const original = deepFreeze( {
 				2916284: true,
 			} );
 			const state = wordpressUpdateStatus( original, {
 				type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 	} );
 
 	describe( 'errors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = errors( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track site updates request started', () => {
+		test( 'should track site updates request started', () => {
 			const state = errors( undefined, {
 				type: SITE_UPDATES_REQUEST,
-				siteId: 2916284
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false
-			} );
-		} );
-
-		it( 'should accumulate site updates requests started', () => {
-			const original = deepFreeze( {
-				2916284: false
-			} );
-			const state = errors( original, {
-				type: SITE_UPDATES_REQUEST,
-				siteId: 77203074
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
 			} );
 		} );
 
-		it( 'should track site updates request succeeded', () => {
+		test( 'should accumulate site updates requests started', () => {
+			const original = deepFreeze( {
+				2916284: false,
+			} );
+			const state = errors( original, {
+				type: SITE_UPDATES_REQUEST,
+				siteId: 77203074,
+			} );
+
+			expect( state ).to.eql( {
+				2916284: false,
+				77203074: false,
+			} );
+		} );
+
+		test( 'should track site updates request succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 			const state = errors( original, {
 				type: SITE_UPDATES_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track site updates request failed', () => {
+		test( 'should track site updates request failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 			const state = errors( original, {
 				type: SITE_UPDATES_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 	} );

@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { assign, noop } from 'lodash';
 import pick from 'component-file-picker';
@@ -28,11 +32,11 @@ export default class FilePicker extends React.Component {
 FilePicker.displayName = 'FilePicker';
 
 FilePicker.propTypes = {
-	multiple: React.PropTypes.bool,
-	directory: React.PropTypes.bool,
-	accept: React.PropTypes.string,
-	onClick: React.PropTypes.func,
-	onPick: React.PropTypes.func,
+	multiple: PropTypes.bool,
+	directory: PropTypes.bool,
+	accept: PropTypes.string,
+	onClick: PropTypes.func,
+	onPick: PropTypes.func,
 };
 
 FilePicker.defaultProps = {
@@ -40,5 +44,5 @@ FilePicker.defaultProps = {
 	directory: false,
 	accept: null,
 	onClick: noop,
-	onPick: noop
+	onPick: noop,
 };

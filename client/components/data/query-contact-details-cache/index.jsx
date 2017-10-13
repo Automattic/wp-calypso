@@ -1,17 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getContactDetailsCache,
-	isRequestingContactDetailsCache,
-} from 'state/selectors';
+import { getContactDetailsCache, isRequestingContactDetailsCache } from 'state/selectors';
 import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
@@ -29,11 +30,11 @@ class QueryContactDetailsCache extends Component {
 
 QueryContactDetailsCache.propTypes = {
 	isRequesting: PropTypes.bool.isRequired,
-	requestContactDetailsCache: PropTypes.func.isRequired
+	requestContactDetailsCache: PropTypes.func.isRequired,
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		contactDetailsCache: getContactDetailsCache( state ),
 		isRequesting: isRequestingContactDetailsCache( state ),
 	} ),

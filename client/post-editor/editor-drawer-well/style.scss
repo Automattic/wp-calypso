@@ -39,32 +39,6 @@
 	width: 100%;
 }
 
-.editor-drawer-well__remove {
-	position: absolute;
-		top: 0;
-		/*rtl:ignore*/
-		right: 0;
-	width: 28px;
-	height: 28px;
-	/*rtl:ignore*/
-	transform: translate( 25%, -25% );
-	border: 1px solid lighten( $gray, 10% );
-	border-radius: 50%;
-	background-color: $gray-light;
-	cursor: pointer;
-}
-
-.editor-drawer-well__remove .editor-drawer-well__remove-icon.gridicon {
-	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate( -50%, -50% );
-	width: 24px;
-	height: 24px;
-	margin: 0;
-	color: lighten( $gray, 10% );
-}
-
 .editor-drawer-well.is-hidden {
 	.editor-drawer-well__content, .editor-drawer-well__placeholder {
 		opacity: 0;

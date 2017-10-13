@@ -1,21 +1,16 @@
+/** @format */
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	receiveRewindStatus,
-	receiveRewindStatusError,
-} from '../';
-import {
-	updateRewindStatus,
-	rewindStatusError,
-} from 'state/activity-log/actions';
+import { receiveRewindStatus, receiveRewindStatusError } from '../';
+import { updateRewindStatus, rewindStatusError } from 'state/activity-log/actions';
 
 const SITE_ID = 77203074;
 
@@ -42,34 +37,30 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveRewindStatus', () => {
-	it( 'should dispatch rewind status update action', () => {
+	test( 'should dispatch rewind status update action', () => {
 		const dispatch = sinon.spy();
 		receiveRewindStatus( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			updateRewindStatus(
-				SITE_ID, {
-					active: true,
-					firstBackupDate: '2017-05-04 05:00:00',
-					isPressable: false,
-					plan: 'jetpack-premium',
-				}
-			)
+			updateRewindStatus( SITE_ID, {
+				active: true,
+				firstBackupDate: '2017-05-04 05:00:00',
+				isPressable: false,
+				plan: 'jetpack-premium',
+			} )
 		);
 	} );
 } );
 
 describe( 'receiveRewindStatusError', () => {
-	it( 'should dispatch rewind status error action', () => {
+	test( 'should dispatch rewind status error action', () => {
 		const dispatch = sinon.spy();
 		receiveRewindStatusError( { dispatch }, { siteId: SITE_ID }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			rewindStatusError(
-				SITE_ID, {
-					error: 'vp_api_error',
-					message: 'no site found.',
-					status: 400,
-				}
-			)
+			rewindStatusError( SITE_ID, {
+				error: 'vp_api_error',
+				message: 'no site found.',
+				status: 400,
+			} )
 		);
 	} );
 } );

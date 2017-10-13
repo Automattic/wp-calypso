@@ -1,10 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';
@@ -20,24 +23,30 @@ const textField = ( field, index ) => (
 const textarea = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<textarea></textarea>
+		<textarea />
 	</PreviewFieldset>
 );
 
 const checkbox = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
-		<label><input type="checkbox" />{ field.label }<PreviewRequired required={ field.required } /></label>
+		<label>
+			<input type="checkbox" />
+			{ field.label }
+			<PreviewRequired required={ field.required } />
+		</label>
 	</PreviewFieldset>
 );
 
 const select = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-			<select>
-				{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
+		<select>
+			{ []
+				.concat( field.options.split( ',' ) )
+				.map( ( option, optionIndex ) => (
 					<option key={ 'contact-form-select-option-' + optionIndex }>{ option }</option>
 				) ) }
-			</select>
+		</select>
 	</PreviewFieldset>
 );
 
@@ -45,7 +54,10 @@ const radio = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
 		{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
-			<label key={ 'contact-form-radio-' + optionIndex }><input type="radio" /><span>{ option }</span></label>
+			<label key={ 'contact-form-radio-' + optionIndex }>
+				<input type="radio" />
+				<span>{ option }</span>
+			</label>
 		) ) }
 	</PreviewFieldset>
 );
@@ -58,7 +70,7 @@ const fieldTypes = {
 	textarea,
 	checkbox,
 	select,
-	radio
+	radio,
 };
 
 export default function( field ) {

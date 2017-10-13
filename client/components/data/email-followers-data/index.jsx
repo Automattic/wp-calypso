@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { isEqual } from 'lodash';
 import debugModule from 'debug';
@@ -22,7 +26,7 @@ export default React.createClass( {
 	displayName: 'EmailFollowersData',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired
+		fetchOptions: PropTypes.object.isRequired,
 	},
 
 	getInitialState() {
@@ -30,7 +34,7 @@ export default React.createClass( {
 			followers: false,
 			totalFollowers: false,
 			currentPage: false,
-			fetchInitialized: false
+			fetchInitialized: false,
 		};
 	},
 
@@ -39,7 +43,11 @@ export default React.createClass( {
 		this.fetchIfEmpty( this.props.fetchOptions );
 		this._poller = pollers.add(
 			EmailFollowersStore,
-			EmailFollowersActions.fetchFollowers.bind( EmailFollowersActions, this.props.fetchOptions, true ),
+			EmailFollowersActions.fetchFollowers.bind(
+				EmailFollowersActions,
+				this.props.fetchOptions,
+				true
+			),
 			{ leading: false }
 		);
 	},
@@ -54,7 +62,11 @@ export default React.createClass( {
 			pollers.remove( this._poller );
 			this._poller = pollers.add(
 				EmailFollowersStore,
-				EmailFollowersActions.fetchFollowers.bind( EmailFollowersActions, nextProps.fetchOptions, true ),
+				EmailFollowersActions.fetchFollowers.bind(
+					EmailFollowersActions,
+					nextProps.fetchOptions,
+					true
+				),
 				{ leading: false }
 			);
 		}
@@ -113,11 +125,11 @@ export default React.createClass( {
 		this.setState( {
 			followers: EmailFollowersStore.getFollowers( fetchOptions ),
 			totalFollowers: EmailFollowersStore.getPaginationData( fetchOptions ).totalFollowers,
-			currentPage: EmailFollowersStore.getPaginationData( fetchOptions ).followersCurrentPage
+			currentPage: EmailFollowersStore.getPaginationData( fetchOptions ).followersCurrentPage,
 		} );
 	},
 
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
-	}
+	},
 } );

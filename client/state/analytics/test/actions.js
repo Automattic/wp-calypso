@@ -1,28 +1,24 @@
+/** @format */
 /**
  * External dependencies
  */
-import { flowRight } from 'lodash';
 import { expect } from 'chai';
+import { flowRight } from 'lodash';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { composeAnalytics, withAnalytics, bumpStat, setTracksAnonymousUserId } from '../actions.js';
 import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKS_ANONID_SET,
 } from 'state/action-types';
-import {
-	composeAnalytics,
-	withAnalytics,
-	bumpStat,
-	setTracksAnonymousUserId,
-} from '../actions.js';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {
-		it( 'should wrap an existing action', () => {
+		test( 'should wrap an existing action', () => {
 			const testAction = { type: 'RETICULATE_SPLINES' };
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 			const expected = Object.assign( statBump, testAction );
@@ -31,7 +27,7 @@ describe( 'middleware', () => {
 			expect( composite ).to.deep.equal( expected );
 		} );
 
-		it( 'should trigger analytics and run passed thunks', () => {
+		test( 'should trigger analytics and run passed thunks', () => {
 			const dispatch = spy();
 			const testAction = dispatcher => dispatcher( { type: 'test' } );
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
@@ -40,7 +36,7 @@ describe( 'middleware', () => {
 			expect( dispatch ).to.have.been.calledTwice;
 		} );
 
-		it( 'should compose multiple analytics calls', () => {
+		test( 'should compose multiple analytics calls', () => {
 			const composite = composeAnalytics(
 				bumpStat( 'spline_types', 'ocean' ),
 				bumpStat( 'spline_types', 'river' )
@@ -48,12 +44,12 @@ describe( 'middleware', () => {
 			const expected = [
 				{
 					type: ANALYTICS_STAT_BUMP,
-					payload: { group: 'spline_types', name: 'ocean' }
+					payload: { group: 'spline_types', name: 'ocean' },
 				},
 				{
 					type: ANALYTICS_STAT_BUMP,
-					payload: { group: 'spline_types', name: 'river' }
-				}
+					payload: { group: 'spline_types', name: 'river' },
+				},
 			];
 
 			expect( composite.type ).to.equal( ANALYTICS_MULTI_TRACK );
@@ -61,7 +57,7 @@ describe( 'middleware', () => {
 			expect( composite.meta.analytics ).to.deep.equal( expected );
 		} );
 
-		it( 'should compose multiple analytics calls without other actions', () => {
+		test( 'should compose multiple analytics calls without other actions', () => {
 			const composite = composeAnalytics(
 				bumpStat( 'spline_types', 'ocean' ),
 				bumpStat( 'spline_types', 'river' )
@@ -73,7 +69,7 @@ describe( 'middleware', () => {
 			expect( actual.meta.analytics ).to.have.lengthOf( 2 );
 		} );
 
-		it( 'should compose multiple analytics calls with normal actions', () => {
+		test( 'should compose multiple analytics calls with normal actions', () => {
 			const composite = flowRight(
 				withAnalytics( bumpStat( 'spline_types', 'ocean' ) ),
 				withAnalytics( bumpStat( 'spline_types', 'river' ) ),
@@ -83,13 +79,13 @@ describe( 'middleware', () => {
 			expect( composite.meta.analytics ).to.have.lengthOf( 2 );
 		} );
 
-		it( 'should allow setting Tracks anonymous ID', () => {
+		test( 'should allow setting Tracks anonymous ID', () => {
 			const tracksAction = setTracksAnonymousUserId( 'abcd1234' );
 			const expected = [
 				{
 					type: ANALYTICS_TRACKS_ANONID_SET,
-					payload: 'abcd1234'
-				}
+					payload: 'abcd1234',
+				},
 			];
 			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
 			expect( tracksAction.meta.analytics ).to.deep.equal( expected );

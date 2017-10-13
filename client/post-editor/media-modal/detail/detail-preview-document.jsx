@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
@@ -9,7 +13,7 @@ export default React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewDocument',
 
 	propTypes: {
-		className: React.PropTypes.string,
+		className: PropTypes.string,
 	},
 
 	render() {
@@ -20,5 +24,5 @@ export default React.createClass( {
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);
-	}
+	},
 } );

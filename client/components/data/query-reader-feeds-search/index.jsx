@@ -1,13 +1,21 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { requestFeedSearch, SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
+import {
+	requestFeedSearch,
+	SORT_BY_LAST_UPDATED,
+	SORT_BY_RELEVANCE,
+} from 'state/reader/feed-searches/actions';
 
 class QueryFeedSearch extends Component {
 	static propTypes = {

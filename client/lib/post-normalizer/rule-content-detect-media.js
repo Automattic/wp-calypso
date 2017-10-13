@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'get-video-id';
 
@@ -32,15 +35,12 @@ function isCandidateForContentImage( image ) {
 		return false;
 	}
 
-	const ineligibleCandidateUrlParts = [
-		'gravatar.com',
-		'/wpcom-smileys/',
-	];
+	const ineligibleCandidateUrlParts = [ 'gravatar.com', '/wpcom-smileys/' ];
 
 	const imageUrl = image.getAttribute( 'src' );
 
-	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts,
-		( urlPart ) => includes( imageUrl.toLowerCase(), urlPart )
+	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, urlPart =>
+		includes( imageUrl.toLowerCase(), urlPart )
 	);
 
 	return ! ( isTrackingPixel( image ) || imageShouldBeExcludedFromCandidacy );
@@ -50,7 +50,7 @@ function isCandidateForContentImage( image ) {
 * @param {image} image - the image
 * @returns {object} metadata - regarding the image or null
 */
-const detectImage = ( image ) => {
+const detectImage = image => {
 	if ( isCandidateForContentImage( image ) ) {
 		const { width, height } = deduceImageWidthAndHeight( image ) || { width: 0, height: 0 };
 		return {
@@ -67,7 +67,7 @@ const detectImage = ( image ) => {
  * @param {Node} iframe - DOM node for an iframe
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
-const getAutoplayIframe = ( iframe ) => {
+const getAutoplayIframe = iframe => {
 	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress' ];
 	const metadata = getEmbedMetadata( iframe.src );
 	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {
@@ -82,7 +82,7 @@ const getAutoplayIframe = ( iframe ) => {
 	return null;
 };
 
-const getEmbedType = ( iframe ) => {
+const getEmbedType = iframe => {
 	let node = iframe;
 	let matches;
 
@@ -92,7 +92,7 @@ const getEmbedType = ( iframe ) => {
 		}
 		matches = node.className.match( /\bembed-([-a-zA-Z0-9_]+)\b/ );
 		if ( matches ) {
-			return ( matches[ 1 ] );
+			return matches[ 1 ];
 		}
 	} while ( ( node = node.parentNode ) );
 
@@ -103,7 +103,7 @@ const getEmbedType = ( iframe ) => {
  * @param {Node} iframe - a DOM node for an iframe
  * @returns {metadata} metadata - metadata for an embed
  */
-const detectEmbed = ( iframe ) => {
+const detectEmbed = iframe => {
 	if ( ! iframeIsWhitelisted( iframe ) ) {
 		return false;
 	}
@@ -134,7 +134,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, ( element ) => {
+	const contentMedia = map( media, element => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {

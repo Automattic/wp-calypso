@@ -22,31 +22,33 @@ export function recordGaEvent( action, label, value ) {
 	ga.recordEvent( 'Reader', action, label, value );
 }
 
-export function recordPermalinkClick( where, post ) {
+export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	mc.bumpStat( {
 		reader_actions: 'visited_post_permalink',
-		reader_permalink_source: where,
+		reader_permalink_source: source,
 	} );
-	recordGaEvent( 'Clicked Post Permalink', where );
+	recordGaEvent( 'Clicked Post Permalink', source );
 	const trackEvent = 'calypso_reader_permalink_click';
-	const args = {
-		source: where,
-	};
+
+	// Add source as Tracks event property
+	eventProperties = Object.assign( { source }, eventProperties );
+
 	if ( post ) {
-		recordTrackForPost( trackEvent, post, args );
+		recordTrackForPost( trackEvent, post, eventProperties );
 	} else {
-		recordTrack( trackEvent, args );
+		recordTrack( trackEvent, eventProperties );
 	}
 }
 
-function getLocation() {
-	if ( typeof window === 'undefined' ) {
+function getLocation( path ) {
+	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-
-	const path = window.location.pathname;
 	if ( path === '/' ) {
 		return 'following';
+	}
+	if ( path.indexOf( '/read/a8c' ) === 0 ) {
+		return 'following_a8c';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
@@ -84,15 +86,30 @@ function getLocation() {
 	if ( path.indexOf( '/read/search' ) === 0 ) {
 		return 'search';
 	}
+	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {
+		return 'conversations_a8c';
+	}
+	if ( path.indexOf( '/read/conversations' ) === 0 ) {
+		return 'conversations';
+	}
 	return 'unknown';
 }
 
-export function recordTrack( eventName, eventProperties ) {
+/**
+ * @param {*} eventName track event name
+ * @param {*} eventProperties extra event props
+ * @param {String} $2.pathnameOverride Overwrites the location for ui_algo Useful for when
+ *   recordTrack() is called after loading the next window.
+ *   For example: opening an article (calypso_reader_article_opened) would call
+ *   recordTrack after changing windows and would result in a `ui_algo: single_post`
+ *   regardless of the stream the post was opened. This now allows the article_opened
+ *   Tracks event to correctly specify which stream the post was opened.
+ */
+export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
 	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
-	// Add location as ui_algo prop
-	const location = getLocation();
+	const location = getLocation( pathnameOverride || window.location.pathname );
 	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
 
 	if ( subCount != null ) {
@@ -148,7 +165,7 @@ export const recordTracksRailcarInteract = partial(
 	'calypso_traintracks_interact'
 );
 
-export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
+export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack(
 		eventName,
 		assign(
@@ -160,7 +177,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 				is_jetpack: post.is_jetpack,
 			},
 			additionalProps
-		)
+		),
+		options
 	);
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		// check for overrides for the railcar
@@ -199,7 +217,7 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.source || getLocation();
+	const source = additionalProps.source || getLocation( window.location.pathname );
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -214,7 +232,7 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = getLocation();
+	const source = getLocation( window.location.pathname );
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

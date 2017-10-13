@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +16,9 @@ import { DEFAULT_POST_QUERY } from './constants';
  * PostQueryManager manages posts which can be queried and change over time
  */
 export default class PostQueryManager extends PaginatedQueryManager {
+	static QueryKey = PostQueryKey;
+	static DefaultQuery = DEFAULT_POST_QUERY;
+
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
@@ -23,7 +27,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @return {Boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
-		const queryWithDefaults = Object.assign( {}, DEFAULT_POST_QUERY, query );
+		const queryWithDefaults = Object.assign( {}, this.DefaultQuery, query );
 		return every( queryWithDefaults, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
@@ -95,9 +99,14 @@ export default class PostQueryManager extends PaginatedQueryManager {
 					return get( post, 'author.ID', post.author ) === value;
 
 				case 'status':
-					return 'any' === value || String( value ).split( ',' ).some( ( status ) => {
-						return status === post[ key ];
-					} );
+					return (
+						'any' === value ||
+						String( value )
+							.split( ',' )
+							.some( status => {
+								return status === post[ key ];
+							} )
+					);
 			}
 
 			return true;
@@ -114,7 +123,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @return {Number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */
-	compare( query, postA, postB ) {
+	static compare( query, postA, postB ) {
 		let order;
 
 		switch ( query.order_by ) {
@@ -123,7 +132,8 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				break;
 
 			case 'comment_count':
-				order = get( postA.discussion, 'comment_count', 0 ) - get( postB.discussion, 'comment_count', 0 );
+				order =
+					get( postA.discussion, 'comment_count', 0 ) - get( postB.discussion, 'comment_count', 0 );
 				break;
 
 			case 'title':
@@ -147,7 +157,3 @@ export default class PostQueryManager extends PaginatedQueryManager {
 		return order || 0;
 	}
 }
-
-PostQueryManager.QueryKey = PostQueryKey;
-
-PostQueryManager.DEFAULT_QUERY = DEFAULT_POST_QUERY;

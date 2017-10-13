@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -19,17 +23,12 @@ import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
-	withAnalytics
+	withAnalytics,
 } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	get,
-	identity,
-	includes,
-	noop
-} from 'lodash';
+import { get, identity, includes, noop } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
@@ -54,23 +53,23 @@ class AppBanner extends Component {
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
-		currentSection: React.PropTypes.string,
-		dismissedUntil: React.PropTypes.object,
-		fetchingPreferences: React.PropTypes.bool,
+		currentSection: PropTypes.string,
+		dismissedUntil: PropTypes.object,
+		fetchingPreferences: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		saveDismissTime: noop,
 		translate: identity,
 		recordAppBannerOpen: noop,
-		userAgent: ( typeof window !== 'undefined' ) ? navigator.userAgent : '',
+		userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
 	};
 
-	stopBubblingEvents = ( event ) => {
+	stopBubblingEvents = event => {
 		event.stopPropagation();
 	};
 
-	preventNotificationsClose = ( appBanner ) => {
+	preventNotificationsClose = appBanner => {
 		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
@@ -104,7 +103,7 @@ class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = ( event ) => {
+	dismiss = event => {
 		event.preventDefault();
 		const { currentSection, dismissedUntil } = this.props;
 
@@ -158,7 +157,10 @@ class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) } ref={ this.preventNotificationsClose }>
+			<Card
+				className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+				ref={ this.preventNotificationsClose }
+			>
 				<TrackComponentView
 					eventName="calypso_mobile_app_banner_impression"
 					eventProperties={ {
@@ -183,10 +185,7 @@ class AppBanner extends Component {
 					>
 						{ translate( 'Open in app' ) }
 					</Button>
-					<a
-						className="app-banner__no-thanks-button"
-						onClick={ this.dismiss }
-					>
+					<a className="app-banner__no-thanks-button" onClick={ this.dismiss }>
 						{ translate( 'No thanks' ) }
 					</a>
 				</div>
@@ -195,7 +194,7 @@ class AppBanner extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 
@@ -208,17 +207,22 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	recordAppBannerOpen: ( sectionName ) => composeAnalytics(
-		recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
-		bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
-	),
-	saveDismissTime: ( sectionName, currentDimissTimes ) => withAnalytics(
+	recordAppBannerOpen: sectionName =>
 		composeAnalytics(
-			recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
-			bumpStat( 'calypso_mobile_app_banner', 'banner_dismiss' )
+			recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+			bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
 		),
-		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName, currentDimissTimes ) )
-	),
+	saveDismissTime: ( sectionName, currentDimissTimes ) =>
+		withAnalytics(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+				bumpStat( 'calypso_mobile_app_banner', 'banner_dismiss' )
+			),
+			savePreference(
+				APP_BANNER_DISMISS_TIMES_PREFERENCE,
+				getNewDismissTimes( sectionName, currentDimissTimes )
+			)
+		),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );

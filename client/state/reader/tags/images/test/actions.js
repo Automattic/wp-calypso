@@ -2,22 +2,21 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { receiveTagImages, requestTagImages } from '../actions';
 import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
-import { receiveTagImages, requestTagImages } from '../actions';
-
-const sampleSuccessResponse = require( './sample-responses.json' );
+import useNock from 'test/helpers/use-nock';
+import sampleSuccessResponse from './sample-responses.json';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -27,7 +26,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveTagImages()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const images = [];
 			const tag = 'banana';
 			const action = receiveTagImages( tag, images );
@@ -47,7 +46,7 @@ describe( 'actions', () => {
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
 		} );
 
-		it( 'should dispatch properly when receiving a valid response', () => {
+		test( 'should dispatch properly when receiving a valid response', () => {
 			const dispatchSpy = sinon.stub();
 			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			const request = requestTagImages( 'banana' )( dispatchSpy );

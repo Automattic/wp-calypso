@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -19,7 +22,7 @@ const PluginSiteDisabledManage = ( {
 	plugin,
 	remoteManagementUrl,
 	site,
-	translate
+	translate,
 } ) => {
 	const url = remoteManagementUrl + '&section=plugins';
 	const message = isNetwork
@@ -53,8 +56,6 @@ const PluginSiteDisabledManage = ( {
 	);
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, get( ownProps, 'site.ID' ) )
-	} )
-)( localize( PluginSiteDisabledManage ) );
+export default connect( ( state, ownProps ) => ( {
+	remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, get( ownProps, 'site.ID' ) ),
+} ) )( localize( PluginSiteDisabledManage ) );

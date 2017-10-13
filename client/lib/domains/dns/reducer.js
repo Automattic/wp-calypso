@@ -1,9 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { findIndex, pick, reject } from 'lodash';
 
-import update from 'react-addons-update';
+import { findIndex, pick, reject } from 'lodash';
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
@@ -14,8 +16,8 @@ import { addMissingWpcomRecords, removeDuplicateWpcomRecords } from './';
 function updateDomainState( state, domainName, dns ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || getInitialStateForDomain(), dns )
-		}
+			$set: Object.assign( {}, state[ domainName ] || getInitialStateForDomain(), dns ),
+		},
 	};
 
 	return update( state, command );
@@ -23,19 +25,19 @@ function updateDomainState( state, domainName, dns ) {
 
 function addDns( state, domainName, record ) {
 	const newRecord = Object.assign( {}, record, {
-		isBeingAdded: true
+		isBeingAdded: true,
 	} );
 
 	return update( state, {
 		[ domainName ]: {
 			isSubmittingForm: { $set: true },
 			records: {
-				$apply: ( records ) => {
+				$apply: records => {
 					const added = records.concat( [ newRecord ] );
 					return removeDuplicateWpcomRecords( domainName, added );
-				}
-			}
-		}
+				},
+			},
+		},
 	} );
 }
 
@@ -49,15 +51,15 @@ function deleteDns( state, domainName, record ) {
 	const command = {
 		[ domainName ]: {
 			records: {
-				$apply: ( records ) => {
+				$apply: records => {
 					const deleted = reject( records, ( _, current ) => {
 						return index === current;
 					} );
 
 					return addMissingWpcomRecords( domainName, deleted );
-				}
-			}
-		}
+				},
+			},
+		},
 	};
 
 	return update( state, command );
@@ -75,10 +77,10 @@ function updateDnsState( state, domainName, record, updatedFields ) {
 		[ domainName ]: {
 			records: {
 				[ index ]: {
-					$merge: updatedRecord
-				}
-			}
-		}
+					$merge: updatedRecord,
+				},
+			},
+		},
 	};
 
 	return update( state, command );
@@ -94,7 +96,7 @@ function getInitialStateForDomain() {
 		isFetching: false,
 		hasLoadedFromServer: false,
 		isSubmittingForm: false,
-		records: null
+		records: null,
 	};
 }
 
@@ -104,19 +106,19 @@ function reducer( state, payload ) {
 	switch ( action.type ) {
 		case ActionTypes.DNS_FETCH:
 			state = updateDomainState( state, action.domainName, {
-				isFetching: true
+				isFetching: true,
 			} );
 			break;
 		case ActionTypes.DNS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
-				hasLoadedFromServer: true
+				hasLoadedFromServer: true,
 			} );
 			break;
 		case ActionTypes.DNS_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
-				isFetching: false
+				isFetching: false,
 			} );
 			break;
 		case ActionTypes.DNS_ADD:
@@ -124,28 +126,28 @@ function reducer( state, payload ) {
 			break;
 		case ActionTypes.DNS_ADD_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
-				isSubmittingForm: false
+				isSubmittingForm: false,
 			} );
 			state = updateDnsState( state, action.domainName, action.record, {
-				isBeingAdded: false
+				isBeingAdded: false,
 			} );
 			break;
 		case ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				records: action.records,
 				isFetching: false,
-				hasLoadedFromServer: true
+				hasLoadedFromServer: true,
 			} );
 			break;
 		case ActionTypes.DNS_ADD_FAILED:
 			state = updateDomainState( state, action.domainName, {
-				isSubmittingForm: false
+				isSubmittingForm: false,
 			} );
 			state = deleteDns( state, action.domainName, action.record );
 			break;
 		case ActionTypes.DNS_DELETE:
 			state = updateDnsState( state, action.domainName, action.record, {
-				isBeingDeleted: true
+				isBeingDeleted: true,
 			} );
 			break;
 		case ActionTypes.DNS_DELETE_COMPLETED:
@@ -153,7 +155,7 @@ function reducer( state, payload ) {
 			break;
 		case ActionTypes.DNS_DELETE_FAILED:
 			state = updateDnsState( state, action.domainName, action.record, {
-				isBeingDeleted: false
+				isBeingDeleted: false,
 			} );
 			break;
 	}
@@ -161,7 +163,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	getInitialStateForDomain,
-	reducer
-};
+export { getInitialStateForDomain, reducer };

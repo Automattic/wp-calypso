@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { items, requesting } from '../reducer';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
@@ -14,20 +17,17 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should insert a new suggestion', () => {
+		test( 'should insert a new suggestion', () => {
 			const original = {
-				124: [
-					{ user_login: 'wordpress1' }
-				]
+				124: [ { user_login: 'wordpress1' } ],
 			};
 			const newSuggestion = {
 				user_login: 'wordpress2',
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: USER_SUGGESTIONS_RECEIVE,
 				suggestions: [ newSuggestion ],
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ][ 0 ] ).to.eql( newSuggestion );
@@ -43,66 +43,66 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by site ID', () => {
+		test( 'should index requesting state by site ID', () => {
 			const siteId = 123;
 			const state = requesting( undefined, {
 				type: USER_SUGGESTIONS_REQUEST,
 				siteId,
 			} );
 			expect( state ).to.eql( {
-				123: true
+				123: true,
 			} );
 		} );
 
-		it( 'should accumulate requesting state for sites', () => {
+		test( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
-				124: false
+				124: false,
 			} );
 			const state = requesting( original, {
 				type: USER_SUGGESTIONS_REQUEST,
-				siteId: 123
+				siteId: 123,
 			} );
 			expect( state ).to.eql( {
 				124: false,
-				123: true
+				123: true,
 			} );
 		} );
 
-		it( 'should override previous requesting state', () => {
+		test( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				124: false,
-				123: true
+				123: true,
 			} );
 			const state = requesting( original, {
 				type: USER_SUGGESTIONS_REQUEST_SUCCESS,
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state ).to.eql( {
 				124: false,
-				123: false
+				123: false,
 			} );
 		} );
 
 		describe( 'persistence', () => {
-			it( 'never persists state', () => {
+			test( 'never persists state', () => {
 				const original = deepFreeze( {
 					124: false,
-					123: true
+					123: true,
 				} );
 				const state = requesting( original, { type: SERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 
-			it( 'never loads persisted state', () => {
+			test( 'never loads persisted state', () => {
 				const original = deepFreeze( {
 					124: false,
-					123: true
+					123: true,
 				} );
 				const state = requesting( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );

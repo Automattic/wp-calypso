@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { moment } from 'i18n-calypso';
 
 /**
@@ -10,6 +13,6 @@ import { moment } from 'i18n-calypso';
  * @param  {Object}  transaction  Transaction object
  * @return {Object}               Updated transaction with date converted from string to a Date object.
  */
-export const parseTransactionDate = ( transaction ) => {
+export const parseTransactionDate = transaction => {
 	return { ...transaction, date: moment( transaction.date ).toDate() };
 };

@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,68 +14,63 @@ import { localize } from 'i18n-calypso';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 class RebrandCitiesWelcomeStep extends Component {
-	handleSubmit = ( event ) => {
-		event.preventDefault();
+	handleSubmit = siteTitle => {
+		const { goToNextStep, stepName, stepSectionName, translate } = this.props;
 
-		const {
-			goToNextStep,
+		this.props.setSiteTitle( siteTitle );
+
+		SignupActions.submitSignupStep( {
+			isPurchasingItem: false,
+			processingMessage: translate( 'Setting up your site' ),
+			siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 			stepName,
 			stepSectionName,
-			translate,
-		} = this.props;
-
-		SignupActions.submitSignupStep(
-			{
-				isPurchasingItem: false,
-				processingMessage: translate( 'Setting up your site' ),
-				siteUrl: generateUniqueRebrandCitiesSiteUrl(),
-				stepName,
-				stepSectionName,
-			}
-		);
+		} );
 
 		goToNextStep();
-	}
+	};
 
 	renderContent() {
 		const { translate } = this.props;
-		const buttonClass = 'button is-primary';
 		return (
-			<button className={ buttonClass } onClick={ this.handleSubmit }>
-				{ translate( 'Create your account' ) }
-			</button>
+			<div className="rebrand-cities-welcome__site-title-field">
+				<FormTextInputWithAction
+					action={ translate( 'Create account' ) }
+					placeholder={ translate( 'Enter your business name' ) }
+					onAction={ this.handleSubmit }
+				/>
+			</div>
 		);
 	}
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			signupProgress,
-			stepName,
-			translate,
-		} = this.props;
+		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
 		return (
 			<div className="rebrand-cities-welcome">
 				<div className="rebrand-cities-welcome__illustration-wrapper">
-					<div className="rebrand-cities-welcome__illustration"></div>
+					<div className="rebrand-cities-welcome__illustration" />
 				</div>
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ translate( 'Connect your business to the online world' ) }
-					subHeaderText={ translate( 'Rebrand Cities and WordPress.com have partnered ' +
-						'to get your business online. We’ll need you to create a WordPress.com ' +
-						'account to get you started.' ) }
+					subHeaderText={ translate(
+						'Rebrand Cities and WordPress.com have partnered ' +
+							'to get your business online. We’ll need you to create a WordPress.com ' +
+							'account to get you started.'
+					) }
 					signupProgress={ signupProgress }
-					stepContent={ this.renderContent() } />
+					stepContent={ this.renderContent() }
+				/>
 			</div>
 		);
 	}
 }
 
-export default localize( RebrandCitiesWelcomeStep );
+export default connect( null, { setSiteTitle } )( localize( RebrandCitiesWelcomeStep ) );

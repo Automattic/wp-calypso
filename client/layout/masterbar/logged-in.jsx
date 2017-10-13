@@ -1,9 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -25,16 +29,16 @@ import { getStatsPathForTab } from 'lib/route/path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId } from 'state/selectors';
+import { getPrimarySiteId } from 'state/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
-		domainOnlySite: React.PropTypes.bool,
-		user: React.PropTypes.object,
-		sites: React.PropTypes.object,
-		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		siteSlug: React.PropTypes.string,
+		domainOnlySite: PropTypes.bool,
+		user: PropTypes.object,
+		sites: PropTypes.object,
+		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string,
 	},
 
 	clickMySites() {
@@ -72,13 +76,16 @@ const MasterbarLoggedIn = React.createClass( {
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
-					tooltip={ translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
+					tooltip={ translate( 'View a list of your sites and access their dashboards', {
+						textOnly: true,
+					} ) }
 					preloadSection={ () => preload( domainOnlySite ? 'domains' : 'stats' ) }
 				>
-					{ this.props.user.get().site_count > 1
-						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					}
+					{ this.props.user.get().site_count > 1 ? (
+						translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+					) : (
+						translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+					) }
 				</Item>
 				<Item
 					tipTarget="reader"
@@ -93,7 +100,7 @@ const MasterbarLoggedIn = React.createClass( {
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
-				{ ! domainOnlySite &&
+				{ ! domainOnlySite && (
 					<Publish
 						user={ this.props.user }
 						isActive={ this.isActive( 'post' ) }
@@ -102,14 +109,16 @@ const MasterbarLoggedIn = React.createClass( {
 					>
 						{ translate( 'Write' ) }
 					</Publish>
-				}
+				) }
 				<Item
 					tipTarget="me"
 					url="/me"
 					icon="user-circle"
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
-					tooltip={ translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }
+					tooltip={ translate( 'Update your profile, personal settings, and more', {
+						textOnly: true,
+					} ) }
 					preloadSection={ () => preload( 'me' ) }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
@@ -130,32 +139,35 @@ const MasterbarLoggedIn = React.createClass( {
 				</Notifications>
 			</Masterbar>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
-	// Falls back to using the user's primary site if no site has been selected
-	// by the user yet
-	const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+export default connect(
+	state => {
+		// Falls back to using the user's primary site if no site has been selected
+		// by the user yet
+		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
-	let siteSlug = getSiteSlug( state, siteId );
-	let domainOnlySite = false;
+		let siteSlug = getSiteSlug( state, siteId );
+		let domainOnlySite = false;
 
-	if ( siteSlug ) {
-		domainOnlySite = isDomainOnlySite( state, siteId );
-	} else {
-		// Retrieves the site from the Sites store when the global state tree doesn't contain the list of sites yet
-		const site = getSite( state, siteId );
+		if ( siteSlug ) {
+			domainOnlySite = isDomainOnlySite( state, siteId );
+		} else {
+			// Retrieves the site from the Sites store when the global state tree doesn't contain the list of sites yet
+			const site = getSite( state, siteId );
 
-		if ( site ) {
-			siteSlug = site.slug;
-			domainOnlySite = get( site, 'options.is_domain_only', false );
+			if ( site ) {
+				siteSlug = site.slug;
+				domainOnlySite = get( site, 'options.is_domain_only', false );
+			}
 		}
-	}
 
-	return {
-		isNotificationsShowing: isNotificationsOpen( state ),
-		siteSlug,
-		domainOnlySite
-	};
-}, { setNextLayoutFocus } )( localize( MasterbarLoggedIn ) );
+		return {
+			isNotificationsShowing: isNotificationsOpen( state ),
+			siteSlug,
+			domainOnlySite,
+		};
+	},
+	{ setNextLayoutFocus }
+)( localize( MasterbarLoggedIn ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -23,7 +26,7 @@ class QueryAccountRecoverySettings extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		isFetching: isFetchingAccountRecoverySettings( state ),
 	} ),
 	{ accountRecoverySettingsFetch }

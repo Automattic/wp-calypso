@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, padEnd, trimEnd } from 'lodash';
+import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,7 +82,7 @@ const validate = ( values, props ) => {
 	const errors = {};
 
 	if ( ! values.title ) {
-		errors.title = translate( 'Product name can not be empty.' );
+		errors.title = translate( 'This can not be empty.' );
 	}
 
 	if ( ! values.price ) {
@@ -138,7 +138,7 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 		<FieldsetRenderer
 			inputComponent={ FormCurrencyInput }
 			{ ...price }
-			{ ...props }
+			{ ...omit( props, [ 'names' ] ) }
 			currencySymbolPrefix={ currency.input.value }
 			onCurrencyChange={ currency.input.onChange }
 			currencyList={ VISUAL_CURRENCY_LIST }
@@ -183,7 +183,6 @@ class ProductForm extends Component {
 					<ReduxFormFieldset
 						name="title"
 						label={ translate( 'What are you selling?' ) }
-						placeholder={ translate( 'Product name' ) }
 						component={ FormTextInput }
 					/>
 					<ReduxFormFieldset

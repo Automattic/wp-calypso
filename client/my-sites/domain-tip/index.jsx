@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
+import { getDomainsSuggestions } from 'state/domains/suggestions/selectors';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -27,7 +30,7 @@ function getQueryObject( site, siteSlug ) {
 	return {
 		query: siteSlug.split( '.' )[ 0 ],
 		quantity: 1,
-		vendor: 'domainsbot'
+		vendor: 'domainsbot',
 	};
 }
 
@@ -54,7 +57,9 @@ class DomainTip extends React.Component {
 		return (
 			<UpgradeNudge
 				title={ translate( 'Get a free Custom Domain' ) }
-				message={ translate( 'Custom domains are free when you upgrade to a Premium or Business plan.' ) }
+				message={ translate(
+					'Custom domains are free when you upgrade to a Premium or Business plan.'
+				) }
 				feature={ FEATURE_CUSTOM_DOMAIN }
 				event={ event }
 			/>
@@ -69,10 +74,16 @@ class DomainTip extends React.Component {
 			site,
 			siteSlug,
 			suggestions,
-			translate
+			translate,
 		} = this.props;
 
-		if ( ! site || site.jetpack || ! siteSlug || domainsWithPlansOnly || ! isFreePlan( site.plan ) ) {
+		if (
+			! site ||
+			site.jetpack ||
+			! siteSlug ||
+			domainsWithPlansOnly ||
+			! isFreePlan( site.plan )
+		) {
 			return this.domainUpgradeNudge();
 		}
 
@@ -82,28 +93,24 @@ class DomainTip extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<QueryDomainsSuggestions
-					query={ query }
-					quantity={ quantity }
-					vendor={ vendor }
-				/>
-				{
-					suggestion
-						? <UpgradeNudge
-							event={ `domain_tip_${ event }` }
-							shouldDisplay={ this.noticeShouldDisplay }
-							feature={ FEATURE_CUSTOM_DOMAIN }
-							title={ translate( '{{span}}%(domain)s{{/span}} is available!', {
-								args: { domain: suggestion.domain_name },
-								components: {
-									span: <span className="domain-tip__suggestion" />
-								}
-							} ) }
-							message={ translate( 'Upgrade your plan to register a domain.' ) }
-							href={ `/domains/add/${ siteSlug }` }
-						/>
-						: this.domainUpgradeNudge()
-				}
+				<QueryDomainsSuggestions query={ query } quantity={ quantity } vendor={ vendor } />
+				{ suggestion ? (
+					<UpgradeNudge
+						event={ `domain_tip_${ event }` }
+						shouldDisplay={ this.noticeShouldDisplay }
+						feature={ FEATURE_CUSTOM_DOMAIN }
+						title={ translate( '{{span}}%(domain)s{{/span}} is available!', {
+							args: { domain: suggestion.domain_name },
+							components: {
+								span: <span className="domain-tip__suggestion" />,
+							},
+						} ) }
+						message={ translate( 'Upgrade your plan to register a domain.' ) }
+						href={ `/domains/add/${ siteSlug }` }
+					/>
+				) : (
+					this.domainUpgradeNudge()
+				) }
 			</div>
 		);
 	}
@@ -118,6 +125,6 @@ export default connect( ( state, ownProps ) => {
 		suggestions: queryObject && getDomainsSuggestions( state, queryObject ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		site: site,
-		siteSlug: siteSlug
+		siteSlug: siteSlug,
 	};
 } )( localize( DomainTip ) );

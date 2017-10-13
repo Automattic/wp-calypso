@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -13,14 +17,14 @@ import Card from 'components/card';
 /**
  * Date Picker Demo
  */
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'InputChrono',
 
 	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return {
-			date: this.moment()
+			date: this.props.moment(),
 		};
 	},
 
@@ -45,10 +49,8 @@ export default React.createClass( {
 	render() {
 		return (
 			<Card style={ { width: '300px', margin: 0 } }>
-				<InputChrono
-					value={ this.state.date.calendar() }
-					onSet={ this.onSet }/>
+				<InputChrono value={ this.state.date.calendar() } onSet={ this.onSet } />
 			</Card>
 		);
-	}
-} );
+	},
+}));

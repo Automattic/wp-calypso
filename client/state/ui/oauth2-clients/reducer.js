@@ -1,15 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-import {
-	ROUTE_SET,
-} from 'state/action-types';
+import { ROUTE_SET } from 'state/action-types';
 
 export const currentClientId = createReducer( null, {
 	[ ROUTE_SET ]: ( state, { path, query } ) => {
@@ -22,7 +23,7 @@ export const currentClientId = createReducer( null, {
 		}
 
 		return state;
-	}
+	},
 } );
 
 export default combineReducers( {

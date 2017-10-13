@@ -2,12 +2,15 @@
  * Mixin that will scroll to the bottom of a scrollable container whenever it's rendered.
  * When the scrollable element is scrolled manually by the user autoscroll is disabled until the
  * user scrolls back to the bottom of the content.
- *
+ * 
  * To use declare the mixin and then call the `setupAutoscroll( node )` method on your component
  * where `node` is an html element with scrolling enabled.
- *
+ * 
  * After every update the content will be scrolled to the bottom of the content.
+ *
+ * @format
  */
+
 export default {
 	componentWillMount() {
 		this._autoscroll_enabled = true;
@@ -66,5 +69,5 @@ export default {
 		if ( this._autoscroll_enabled !== enable ) {
 			this._autoscroll_enabled = enable;
 		}
-	}
+	},
 };

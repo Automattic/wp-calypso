@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,17 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
-import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducers', () => {
 	describe( '#WOOCOMMERCE_SETUP_CHOICES_REQUEST', () => {
-		it( 'should mark the setup choices tree as "loading"', () => {
+		test( 'should mark the setup choices tree as "loading"', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETUP_CHOICES_REQUEST,
@@ -29,7 +31,7 @@ describe( 'reducers', () => {
 	} );
 
 	describe( '#WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS', () => {
-		it( 'should store data from the action', () => {
+		test( 'should store data from the action', () => {
 			const siteId = 123;
 			const setupChoices = {
 				finished_initial_setup: true,
@@ -54,7 +56,7 @@ describe( 'reducers', () => {
 	} );
 
 	describe( '#WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS', () => {
-		it( 'should store data from the action', () => {
+		test( 'should store data from the action', () => {
 			const siteId = 123;
 			const setupChoices = {
 				finished_initial_setup: true,

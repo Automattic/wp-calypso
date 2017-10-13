@@ -1,130 +1,128 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import assert from 'assert';
-import { noop } from 'lodash';
 
 /**
-* Internal dependencies
-*/
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+ * Internal dependencies
+ */
+import postUtils from '../utils';
 
-describe( 'utils', function() {
-	let postUtils;
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
-	useFakeDom();
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
-
-	before( () => {
-		postUtils = require( '../utils' );
-	} );
-
-	describe( '#getEditURL', function() {
-		it( 'should return correct path type=post is supplied', function() {
-			const url = postUtils.getEditURL( { ID: 123, type: 'post' }, { slug: 'en.blog.wordpress.com' } );
+describe( 'utils', () => {
+	describe( '#getEditURL', () => {
+		test( 'should return correct path type=post is supplied', () => {
+			const url = postUtils.getEditURL(
+				{ ID: 123, type: 'post' },
+				{ slug: 'en.blog.wordpress.com' }
+			);
 			assert( url === '/post/en.blog.wordpress.com/123' );
 		} );
 
-		it( 'should return correct path type=page is supplied', function() {
-			const url = postUtils.getEditURL( { ID: 123, type: 'page' }, { slug: 'en.blog.wordpress.com' } );
+		test( 'should return correct path type=page is supplied', () => {
+			const url = postUtils.getEditURL(
+				{ ID: 123, type: 'page' },
+				{ slug: 'en.blog.wordpress.com' }
+			);
 			assert( url === '/page/en.blog.wordpress.com/123' );
 		} );
 
-		it( 'should return correct path when custom post type is supplied', function() {
-			const url = postUtils.getEditURL( { ID: 123, type: 'jetpack-portfolio' }, { slug: 'en.blog.wordpress.com' } );
+		test( 'should return correct path when custom post type is supplied', () => {
+			const url = postUtils.getEditURL(
+				{ ID: 123, type: 'jetpack-portfolio' },
+				{ slug: 'en.blog.wordpress.com' }
+			);
 			assert( url === '/edit/jetpack-portfolio/en.blog.wordpress.com/123' );
 		} );
 	} );
 
-	describe( '#getVisibility', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#getVisibility', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.getVisibility() === undefined );
 		} );
 
-		it( 'should return public when password and private are not set', function() {
+		test( 'should return public when password and private are not set', () => {
 			assert( postUtils.getVisibility( {} ) === 'public' );
 		} );
 
-		it( 'should return private when post#status is private', function() {
+		test( 'should return private when post#status is private', () => {
 			assert( postUtils.getVisibility( { status: 'private' } ) === 'private' );
 		} );
 
-		it( 'should return password when post#password is set', function() {
+		test( 'should return password when post#password is set', () => {
 			assert( postUtils.getVisibility( { password: 'unicorn' } ) === 'password' );
 		} );
 	} );
 
-	describe( '#isPrivate', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#isPrivate', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.isPrivate() === undefined );
 		} );
 
-		it( 'should return true when post.status is private', function() {
+		test( 'should return true when post.status is private', () => {
 			assert( postUtils.isPrivate( { status: 'private' } ) );
 		} );
 
-		it( 'should return false when post.status is not private', function() {
+		test( 'should return false when post.status is not private', () => {
 			assert( ! postUtils.isPrivate( { status: 'draft' } ) );
 		} );
 	} );
 
-	describe( '#isPublished', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#isPublished', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.isPublished() === undefined );
 		} );
 
-		it( 'should return true when post.status is private', function() {
+		test( 'should return true when post.status is private', () => {
 			assert( postUtils.isPublished( { status: 'private' } ) );
 		} );
 
-		it( 'should return true when post.status is publish', function() {
+		test( 'should return true when post.status is publish', () => {
 			assert( postUtils.isPublished( { status: 'publish' } ) );
 		} );
 
-		it( 'should return false when post.status is not publish or private', function() {
+		test( 'should return false when post.status is not publish or private', () => {
 			assert( ! postUtils.isPublished( { status: 'draft' } ) );
 		} );
 	} );
 
-	describe( '#isPending', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#isPending', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.isPending() === undefined );
 		} );
 
-		it( 'should return true when post.status is pending', function() {
+		test( 'should return true when post.status is pending', () => {
 			assert( postUtils.isPending( { status: 'pending' } ) );
 		} );
 
-		it( 'should return false when post.status is not pending', function() {
+		test( 'should return false when post.status is not pending', () => {
 			assert( ! postUtils.isPending( { status: 'draft' } ) );
 		} );
 	} );
 
-	describe( '#isBackDatedPublished', function() {
-		it( 'should return false when no post is supplied', function() {
+	describe( '#isBackDatedPublished', () => {
+		test( 'should return false when no post is supplied', () => {
 			assert( ! postUtils.isBackDatedPublished() );
 		} );
 
-		it( 'should return false when status !== future', function() {
+		test( 'should return false when status !== future', () => {
 			assert( ! postUtils.isBackDatedPublished( { status: 'draft' } ) );
 		} );
 
-		it( 'should return false when status === future and date is in future', function() {
+		test( 'should return false when status === future and date is in future', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() + tenMinutes;
 
 			assert( ! postUtils.isBackDatedPublished( { status: 'future', date: postDate } ) );
 		} );
 
-		it( 'should return true when status === future and date is in the past', function() {
+		test( 'should return true when status === future and date is in the past', () => {
 			const tenMinutes = 1000 * 60;
 			const postDate = Date.now() - tenMinutes;
 
@@ -132,109 +130,111 @@ describe( 'utils', function() {
 		} );
 	} );
 
-	describe( '#removeSlug', function() {
-		it( 'should return undefined when no path is supplied', function() {
+	describe( '#removeSlug', () => {
+		test( 'should return undefined when no path is supplied', () => {
 			assert( postUtils.removeSlug() === undefined );
 		} );
 
-		it( 'should strip slug on post URL', function() {
-			const noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' );
+		test( 'should strip slug on post URL', () => {
+			const noSlug = postUtils.removeSlug(
+				'https://en.blog.wordpress.com/2015/08/26/new-action-bar/'
+			);
 			assert( noSlug === 'https://en.blog.wordpress.com/2015/08/26/' );
 		} );
 
-		it( 'should strip slug on page URL', function() {
+		test( 'should strip slug on page URL', () => {
 			const noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
 			assert( noSlug === 'https://en.blog.wordpress.com/' );
 		} );
 	} );
 
-	describe( '#getPermalinkBasePath', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#getPermalinkBasePath', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.getPermalinkBasePath() === undefined );
 		} );
 
-		it( 'should return post.URL when post is published', function() {
+		test( 'should return post.URL when post is published', () => {
 			const path = postUtils.getPermalinkBasePath( {
 				status: 'publish',
-				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/'
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
 			} );
 			assert( path === 'https://en.blog.wordpress.com/2015/08/26/' );
 		} );
 
-		it( 'should use permalink_URL when not published and present', function() {
+		test( 'should use permalink_URL when not published and present', () => {
 			const path = postUtils.getPermalinkBasePath( {
 				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
-				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/'
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
 			} );
 			assert( path === 'http://zo.mg/a/permalink/' );
 		} );
 	} );
 
-	describe( '#getPagePath', function() {
-		it( 'should return undefined when no post is supplied', function() {
+	describe( '#getPagePath', () => {
+		test( 'should return undefined when no post is supplied', () => {
 			assert( postUtils.getPagePath() === undefined );
 		} );
 
-		it( 'should return post.URL without slug when page is published', function() {
+		test( 'should return post.URL without slug when page is published', () => {
 			const path = postUtils.getPagePath( {
 				status: 'publish',
-				URL: 'http://zo.mg/a/permalink/'
+				URL: 'http://zo.mg/a/permalink/',
 			} );
 			assert( path === 'http://zo.mg/a/' );
 		} );
 
-		it( 'should use permalink_URL when not published and present', function() {
+		test( 'should use permalink_URL when not published and present', () => {
 			const path = postUtils.getPagePath( {
 				status: 'draft',
-				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' }
+				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
 			} );
 			assert( path === 'http://zo.mg/a/permalink/' );
 		} );
 	} );
 
-	describe( '#getFeaturedImageId()', function() {
-		it( 'should return undefined when no post is specified', function() {
+	describe( '#getFeaturedImageId()', () => {
+		test( 'should return undefined when no post is specified', () => {
 			assert( postUtils.getFeaturedImageId() === undefined );
 		} );
 
-		it( 'should return a non-URL featured_image property', function() {
+		test( 'should return a non-URL featured_image property', () => {
 			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'media-1',
 				post_thumbnail: {
-					ID: 1
-				}
+					ID: 1,
+				},
 			} );
 
 			assert( id === 'media-1' );
 		} );
 
-		it( 'should return a `null` featured_image property', function() {
+		test( 'should return a `null` featured_image property', () => {
 			// This describes the behavior of unassigning a featured image
 			// from the current post
 			const id = postUtils.getFeaturedImageId( {
 				featured_image: null,
 				post_thumbnail: {
-					ID: 1
-				}
+					ID: 1,
+				},
 			} );
 
 			assert( id === null );
 		} );
 
-		it( 'should fall back to post thumbnail object ID if exists, if featured_image is URL', function() {
+		test( 'should fall back to post thumbnail object ID if exists, if featured_image is URL', () => {
 			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'https://example.com/image.png',
 				post_thumbnail: {
-					ID: 1
-				}
+					ID: 1,
+				},
 			} );
 
 			assert( id === 1 );
 		} );
 
-		it( 'should return undefined if featured_image is URL and post thumbnail object doesn\'t exist', function() {
+		test( "should return undefined if featured_image is URL and post thumbnail object doesn't exist", () => {
 			const id = postUtils.getFeaturedImageId( {
-				featured_image: 'https://example.com/image.png'
+				featured_image: 'https://example.com/image.png',
 			} );
 
 			assert( id === undefined );

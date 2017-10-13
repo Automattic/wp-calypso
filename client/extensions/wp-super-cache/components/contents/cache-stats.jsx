@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -45,66 +48,49 @@ class CacheStats extends Component {
 
 	state = {
 		url: '',
-	}
+	};
 
-	deleteFile = ( event ) => {
+	deleteFile = event => {
 		const url = get( event, 'currentTarget.dataset.url', '' );
 
 		if ( ! url ) {
 			return;
 		}
 
-		const {
-			isCached,
-			isSupercache,
-			siteId,
-		} = this.props;
+		const { isCached, isSupercache, siteId } = this.props;
 
 		this.setState( { url } );
 		this.props.deleteFile( siteId, url, isSupercache, isCached );
-	}
+	};
 
 	render() {
-		const {
-			files,
-			header,
-			isDeleting,
-			translate,
-		} = this.props;
+		const { files, header, isDeleting, translate } = this.props;
 
 		return (
-			<FoldableCard
-				compact
-				className="wp-super-cache__foldable-card"
-				header={ header }>
+			<FoldableCard compact className="wp-super-cache__foldable-card" header={ header }>
 				<table className="wp-super-cache__stats">
 					<thead>
 						<tr className="wp-super-cache__stats-header-row">
 							<th className="wp-super-cache__stats-header-column">{ translate( 'URI' ) }</th>
 							<th className="wp-super-cache__stats-header-column">{ translate( 'Files' ) }</th>
 							<th className="wp-super-cache__stats-header-column">{ translate( 'Age' ) }</th>
-							<th className="wp-super-cache__stats-header-column"></th>
+							<th className="wp-super-cache__stats-header-column" />
 						</tr>
 					</thead>
 					<tbody>
 						{ map( files, ( { files: count, lower_age, upper_age }, url ) => (
 							<tr className="wp-super-cache__stat" key={ url }>
-								<td className="wp-super-cache__stat-dir">
-									{ url }
-								</td>
-								<td>
-									{ count }
-								</td>
-								<td className="wp-super-cache__stat-age">
-									{ getAge( lower_age, upper_age ) }
-								</td>
+								<td className="wp-super-cache__stat-dir">{ url }</td>
+								<td>{ count }</td>
+								<td className="wp-super-cache__stat-age">{ getAge( lower_age, upper_age ) }</td>
 								<td className="wp-super-cache__stat-action">
 									<Button
 										compact
-										busy={ isDeleting && ( this.state.url === url ) }
+										busy={ isDeleting && this.state.url === url }
 										data-url={ url }
 										disabled={ isDeleting }
-										onClick={ this.deleteFile }>
+										onClick={ this.deleteFile }
+									>
 										{ translate( 'Delete' ) }
 									</Button>
 								</td>
@@ -118,7 +104,7 @@ class CacheStats extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -129,7 +115,4 @@ const connectComponent = connect(
 	{ deleteFile }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( CacheStats );
+export default flowRight( connectComponent, localize )( CacheStats );

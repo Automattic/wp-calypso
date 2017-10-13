@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -18,7 +21,7 @@ class GoogleAppsUsersForm extends React.Component {
 		return `google-apps-dialog__user-field google-apps-dialog__user-${ fieldName }`;
 	}
 
-	updateInputField = ( event ) => {
+	updateInputField = event => {
 		this.props.updateField( this.props.index, event );
 	};
 
@@ -36,13 +39,10 @@ class GoogleAppsUsersForm extends React.Component {
 
 	render() {
 		const { index, user, domain, onBlur, translate } = this.props;
-		const contactText = translate(
-			'contact',
-			{
-				context: 'part of e-mail address',
-				comment: 'As it would be part of an e-mail address contact@example.com'
-			}
-		);
+		const contactText = translate( 'contact', {
+			context: 'part of e-mail address',
+			comment: 'As it would be part of an e-mail address contact@example.com',
+		} );
 		const emailError = get( user, 'email.error', false );
 		const firstNameError = get( user, 'firstName.error', false );
 		const lastNameError = get( user, 'lastName.error', false );
@@ -59,7 +59,8 @@ class GoogleAppsUsersForm extends React.Component {
 						isError={ emailError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
-						onClick={ this.recordInputFocusEmail } />
+						onClick={ this.recordInputFocusEmail }
+					/>
 					{ emailError ? <FormInputValidation text={ emailError } isError={ true } /> : null }
 				</FormFieldset>
 
@@ -72,8 +73,11 @@ class GoogleAppsUsersForm extends React.Component {
 						isError={ firstNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
-						onClick={ this.recordInputFocusFirstName } />
-					{ firstNameError ? <FormInputValidation text={ firstNameError } isError={ true } /> : null }
+						onClick={ this.recordInputFocusFirstName }
+					/>
+					{ firstNameError ? (
+						<FormInputValidation text={ firstNameError } isError={ true } />
+					) : null }
 				</FormFieldset>
 
 				<FormFieldset className={ this.fieldClasses( 'last-name' ) }>
@@ -85,7 +89,8 @@ class GoogleAppsUsersForm extends React.Component {
 						isError={ lastNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
-						onClick={ this.recordInputFocusLastName } />
+						onClick={ this.recordInputFocusLastName }
+					/>
 					{ lastNameError ? <FormInputValidation text={ lastNameError } isError={ true } /> : null }
 				</FormFieldset>
 			</div>

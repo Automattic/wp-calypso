@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, Component } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 
@@ -20,7 +24,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 	};
 
 	static defaultProps = {
-		onLoad: noop
+		onLoad: noop,
 	};
 
 	constructor( props ) {
@@ -45,7 +49,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 
 	render() {
 		const src = url( this.props.item, {
-			photon: this.props.site && ! this.props.site.is_private
+			photon: this.props.site && ! this.props.site.is_private,
 		} );
 		const uploading = isItemBeingUploaded( this.props.item );
 		const loading = this.state.loading;
@@ -65,7 +69,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 			'is-image',
 			{ 'is-uploading': uploading },
 			{ 'is-loading': loading },
-			{ 'is-blob': isBlob },
+			{ 'is-blob': isBlob }
 		);
 
 		// A fake image element is added behind the preloading image
@@ -77,7 +81,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 			'is-fake',
 			{ 'is-uploading': uploading },
 			{ 'is-loading': loading },
-			{ 'is-blob': isBlob },
+			{ 'is-blob': isBlob }
 		);
 
 		return (
@@ -87,7 +91,8 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					width={ this.props.item.width }
 					height={ this.props.item.height }
 					alt={ this.props.item.alt || this.props.item.title }
-					className={ fakeClasses } />
+					className={ fakeClasses }
+				/>
 
 				<ImagePreloader
 					src={ src }
@@ -96,7 +101,8 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					onLoad={ this.onImagePreloaderLoad }
 					placeholder={ <span /> }
 					alt={ this.props.item.alt || this.props.item.title }
-					className={ classes } />
+					className={ classes }
+				/>
 
 				{ ( uploading || loading ) && <Spinner /> }
 			</div>

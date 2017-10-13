@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -12,7 +16,7 @@ const LikeIcons = ( { size } ) => (
 );
 
 LikeIcons.propTypes = {
-	size: React.PropTypes.number,
+	size: PropTypes.number,
 };
 
 LikeIcons.defaultProps = {

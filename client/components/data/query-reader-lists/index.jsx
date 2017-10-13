@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -27,22 +31,25 @@ class QueryReaderLists extends Component {
 
 QueryReaderLists.propTypes = {
 	isRequestingSubscribedLists: PropTypes.bool,
-	requestSubscribedLists: PropTypes.func
+	requestSubscribedLists: PropTypes.func,
 };
 
 QueryReaderLists.defaultProps = {
-	requestSubscribedLists: () => {}
+	requestSubscribedLists: () => {},
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
-			isRequestingSubscribedLists: isRequestingSubscribedLists( state )
+			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestSubscribedLists
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestSubscribedLists,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderLists );

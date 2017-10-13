@@ -1,3 +1,4 @@
+/** @format */
 
 export const isRequestingSiteUpdates = ( state, siteId ) => {
 	return state.sites.updates.requesting[ siteId ] || false;

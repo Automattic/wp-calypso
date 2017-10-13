@@ -1,27 +1,23 @@
+/** @format */
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	FIRST_VIEW_HIDE,
-	ROUTE_SET,
-} from 'state/action-types';
-import {
-	hideView
-} from '../actions';
+import { hideView } from '../actions';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 	const getState = () => ( {
 		preferences: {
 			remoteValues: {
-				firstViewHistory: []
-			}
+				firstViewHistory: [],
+			},
 		},
 		ui: {
 			actionLog: [
@@ -29,8 +25,8 @@ describe( 'actions', () => {
 					type: ROUTE_SET,
 					path: '/stats',
 				},
-			]
-		}
+			],
+		},
 	} );
 
 	beforeEach( () => {
@@ -38,12 +34,12 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#hideView()', () => {
-		it( 'should dispatch hide action when thunk triggered', () => {
-			hideView( { view: 'stats', enabled: false } ) ( spy, getState );
+		test( 'should dispatch hide action when thunk triggered', () => {
+			hideView( { view: 'stats', enabled: false } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: FIRST_VIEW_HIDE,
-				view: 'stats'
+				view: 'stats',
 			} );
 		} );
 	} );

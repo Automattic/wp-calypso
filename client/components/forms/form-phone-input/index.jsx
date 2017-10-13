@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -44,23 +47,14 @@ export class FormPhoneInput extends React.Component {
 	};
 
 	componentWillMount() {
-		this._maybeSetCountryStateFromList();
+		this.maybeSetCountryStateFromList();
 	}
 
 	componentDidUpdate() {
-		this._maybeSetCountryStateFromList();
+		this.maybeSetCountryStateFromList();
 	}
 
 	render() {
-		var countryValueLink = {
-				value: this.state.countryCode,
-				requestChange: this._handleCountryChange,
-			},
-			phoneValueLink = {
-				value: this.state.phoneNumber,
-				requestChange: this._handlePhoneChange,
-			};
-
 		return (
 			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-fieldset__country">
@@ -75,57 +69,55 @@ export class FormPhoneInput extends React.Component {
 						disabled={ this.props.isDisabled }
 						name="country_code"
 						ref="countryCode"
-						valueLink={ countryValueLink }
+						value={ this.state.countryCode }
+						onChange={ this.handleCountryChange }
 					/>
 				</FormFieldset>
 
 				<FormFieldset className="form-fieldset__phone-number">
-					<FormLabel htmlFor="phone_number">
-						{ this.props.translate( 'Phone Number' ) }
-					</FormLabel>
+					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone Number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
 						name="phone_number"
-						valueLink={ phoneValueLink }
+						value={ this.state.phoneNumber }
+						onChange={ this.handlePhoneChange }
 					/>
 				</FormFieldset>
 			</div>
 		);
 	}
 
-	_getCountryData = () => {
+	getCountryData() {
 		// TODO: move this to country-list or CountrySelect
 		return find( this.props.countriesList.get(), {
 			code: this.state.countryCode,
 		} );
+	}
+
+	handleCountryChange = event => {
+		this.setState( { countryCode: event.target.value }, this.triggerOnChange );
 	};
 
-	_handleCountryChange = newValue => {
-		this.setState( { countryCode: newValue }, this._triggerOnChange );
+	handlePhoneChange = event => {
+		this.setState( { phoneNumber: event.target.value }, this.triggerOnChange );
 	};
 
-	_handlePhoneChange = newValue => {
-		this.setState( { phoneNumber: newValue }, this._triggerOnChange );
-	};
-
-	_triggerOnChange = () => {
+	triggerOnChange = () => {
 		this.props.onChange( this.getValue() );
 	};
 
-	_cleanNumber = number => {
+	cleanNumber( number ) {
 		return number.replace( CLEAN_REGEX, '' );
-	};
+	}
 
 	// Set the default state of the country code selector, if not already set
-	_maybeSetCountryStateFromList = () => {
-		var countries;
-
+	maybeSetCountryStateFromList() {
 		if ( this.state.countryCode ) {
 			return;
 		}
 
-		countries = this.props.countriesList.get();
+		const countries = this.props.countriesList.get();
 		if ( ! countries.length ) {
 			return;
 		}
@@ -133,18 +125,18 @@ export class FormPhoneInput extends React.Component {
 		this.setState( {
 			countryCode: countries[ 0 ].code,
 		} );
-	};
+	}
 
-	_validate = number => {
+	validate( number ) {
 		return phoneValidation( number );
-	};
+	}
 
-	getValue = () => {
-		var countryData = this._getCountryData(),
-			numberClean = this._cleanNumber( this.state.phoneNumber ),
+	getValue() {
+		const countryData = this.getCountryData(),
+			numberClean = this.cleanNumber( this.state.phoneNumber ),
 			countryNumericCode = countryData ? countryData.numeric_code : '',
 			numberFull = countryNumericCode + numberClean,
-			isValid = this._validate( numberFull );
+			isValid = this.validate( numberFull );
 
 		return {
 			isValid: ! isValid.error,
@@ -153,7 +145,7 @@ export class FormPhoneInput extends React.Component {
 			phoneNumber: numberClean,
 			phoneNumberFull: numberFull,
 		};
-	};
+	}
 }
 
 export default localize( FormPhoneInput );

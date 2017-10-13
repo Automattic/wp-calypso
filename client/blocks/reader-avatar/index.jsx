@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { startsWith, endsWith, noop, get } from 'lodash';
 
@@ -86,33 +87,30 @@ const ReaderAvatar = ( {
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
 
-	const siteIconElement =
-		hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const avatarElement =
-		( hasAvatar || showPlaceholder ) &&
-		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
+	const siteIconElement = hasSiteIcon && (
+		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
+	);
+	const avatarElement = ( hasAvatar || showPlaceholder ) && (
+		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
+	);
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
 		<div className={ classes } onClick={ onClick } aria-hidden="true">
-			{ siteUrl
-				? <a href={ siteUrl }>
-						{ iconElements }
-					</a>
-				: iconElements }
+			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
 };
 
 ReaderAvatar.propTypes = {
-	author: React.PropTypes.object,
-	siteIcon: React.PropTypes.string,
-	feedIcon: React.PropTypes.string,
-	siteUrl: React.PropTypes.string,
-	preferGravatar: React.PropTypes.bool,
-	showPlaceholder: React.PropTypes.bool,
-	isCompact: React.PropTypes.bool,
-	onClick: React.PropTypes.func,
+	author: PropTypes.object,
+	siteIcon: PropTypes.string,
+	feedIcon: PropTypes.string,
+	siteUrl: PropTypes.string,
+	preferGravatar: PropTypes.bool,
+	showPlaceholder: PropTypes.bool,
+	isCompact: PropTypes.bool,
+	onClick: PropTypes.func,
 };
 
 ReaderAvatar.defaultProps = {

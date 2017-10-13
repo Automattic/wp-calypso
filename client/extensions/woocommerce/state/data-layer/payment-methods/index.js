@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { put } from 'woocommerce/state/data-layer/request/actions';
 import { savePaymentMethodSuccess } from 'woocommerce/state/sites/payment-methods/actions';
 import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE } from 'woocommerce/state/action-types';
@@ -19,7 +22,7 @@ export default {
 				enabled: method.enabled ? 'yes' : 'no',
 			};
 
-			Object.keys( method.settings ).map( ( settingKey ) => {
+			Object.keys( method.settings ).map( settingKey => {
 				settings[ settingKey ] = method.settings[ settingKey ].value;
 			} );
 
@@ -39,7 +42,9 @@ export default {
 				dispatch( successAction );
 			};
 
-			store.dispatch( put( siteId, `payment_gateways/${ method.id }`, payload, updatedAction, failureAction ) );
+			store.dispatch(
+				put( siteId, `payment_gateways/${ method.id }`, payload, updatedAction, failureAction )
+			);
 		},
 	],
 };

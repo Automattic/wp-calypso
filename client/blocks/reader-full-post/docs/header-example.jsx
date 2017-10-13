@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -10,10 +12,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import ReaderFullPostHeader from 'blocks/reader-full-post/header';
 import Card from 'components/card';
 
-module.exports = React.createClass( {
-	displayName: 'ReaderFullPostHeader',
-
-	mixins: [ PureRenderMixin ],
+export default class ReaderFullPostHeaderExample extends React.PureComponent {
+	static displayName = 'ReaderFullPostHeaderExample';
 
 	render() {
 		const post = {
@@ -54,5 +54,5 @@ module.exports = React.createClass( {
 				<ReaderFullPostHeader post={ post } />
 			</Card>
 		);
-	},
-} );
+	}
+}

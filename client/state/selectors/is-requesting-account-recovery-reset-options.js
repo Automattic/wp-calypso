@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -10,6 +13,6 @@ import { get } from 'lodash';
  * @return {Boolean} If the request is in progress
  */
 
-export default ( state ) => {
+export default state => {
 	return get( state, 'accountRecovery.reset.options.isRequesting', false );
 };

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { makeLayout } from 'controller';
 import { siteSelection, sites, makeNavigation } from 'my-sites/controller';
 import { preview } from './controller';

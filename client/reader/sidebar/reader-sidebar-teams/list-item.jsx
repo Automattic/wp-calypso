@@ -1,12 +1,13 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -49,9 +50,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 						8.9zm6.9-9.5c0-3.3-2.4-6.3-6.8-6.3s-6.8 3-6.8 6.3v.4c0 3.3 2.4 6.4 6.8 6.4s6.8-3 6.8-6.4V12z" />
 					<path d="M14.1 8.5c.6.4.7 1.2.4 1.7l-2.9 4.6c-.4.6-1.2.8-1.7.4-.7-.4-.9-1.2-.5-1.8l2.9-4.6c.4-.5 1.2-.7 1.8-.3z" />
 				</svg>
-				<span className="menu-link-text">
-					{ team.title }
-				</span>
+				<span className="menu-link-text">{ team.title }</span>
 			</a>
 		</li>
 	);
@@ -59,8 +58,8 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 };
 
 ReaderSidebarTeamsListItem.propTypes = {
-	team: React.PropTypes.object.isRequired,
-	path: React.PropTypes.string.isRequired,
+	team: PropTypes.object.isRequired,
+	path: PropTypes.string.isRequired,
 };
 
 export default localize( ReaderSidebarTeamsListItem );

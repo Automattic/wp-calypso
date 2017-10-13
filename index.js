@@ -14,7 +14,7 @@ var pkg = require( './package.json' ),
 	config = require( 'config' );
 
 var start = Date.now(),
-	port = process.env.PORT || 3000,
+	port = process.env.PORT || config( 'port' ),
 	host = process.env.HOST || config( 'hostname' ),
 	app = boot(),
 	server,

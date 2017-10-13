@@ -1,18 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import {
-	difference,
-	get,
-	includes,
-	isEqual,
-	range,
-	size,
-	throttle,
-} from 'lodash';
+import { difference, get, includes, isEqual, range, size, throttle } from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';
@@ -25,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQuery,
 	getSitePostsForQueryIgnoringPage,
-	getSitePostsLastPageForQuery
+	getSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
@@ -66,7 +62,7 @@ class PostTypeList extends Component {
 		this.rowHeights = {};
 
 		this.state = {
-			requestedPages: this.getInitialRequestedPages( this.props )
+			requestedPages: this.getInitialRequestedPages( this.props ),
 		};
 	}
 
@@ -89,7 +85,7 @@ class PostTypeList extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.query, nextProps.query ) ) {
 			this.setState( {
-				requestedPages: this.getInitialRequestedPages( nextProps )
+				requestedPages: this.getInitialRequestedPages( nextProps ),
 			} );
 		}
 	}
@@ -105,7 +101,7 @@ class PostTypeList extends Component {
 		this.setState( {
 			windowWidth: window.innerWidth,
 		} );
-	}
+	};
 
 	getInitialRequestedPages( props ) {
 		// If we have no posts or we're otherwise not expecting any posts to be
@@ -132,17 +128,20 @@ class PostTypeList extends Component {
 		}
 
 		const { requestedPages } = this.state;
-		const pagesToRequest = difference( range(
-			this.getPageForIndex( startIndex - LOAD_OFFSET ),
-			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
-		), requestedPages );
+		const pagesToRequest = difference(
+			range(
+				this.getPageForIndex( startIndex - LOAD_OFFSET ),
+				this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+			),
+			requestedPages
+		);
 
 		if ( ! pagesToRequest.length ) {
 			return;
 		}
 
 		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest )
+			requestedPages: requestedPages.concat( pagesToRequest ),
 		} );
 	}
 
@@ -154,12 +153,7 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return (
-			<PostItem
-				key="placeholder"
-				largeTitle={ this.props.largeTitles }
-			/>
-		);
+		return <PostItem key="placeholder" largeTitle={ this.props.largeTitles } />;
 	}
 
 	renderPostRow( { index } ) {
@@ -215,22 +209,16 @@ class PostTypeList extends Component {
 		const { query, siteId, posts } = this.props;
 		const isEmpty = query && posts && ! posts.length && this.isLastPage();
 		const classes = classnames( 'post-type-list', {
-			'is-empty': isEmpty
+			'is-empty': isEmpty,
 		} );
 
 		return (
 			<div className={ classes }>
-				{ query && this.state.requestedPages.map( ( page ) => (
-					<QueryPosts
-						key={ `query-${ page }` }
-						siteId={ siteId }
-						query={ { ...query, page } } />
-				) ) }
-				{ isEmpty && (
-					<PostTypeListEmptyContent
-						type={ query.type }
-						status={ query.status } />
-				) }
+				{ query &&
+					this.state.requestedPages.map( page => (
+						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
+					) ) }
+				{ isEmpty && <PostTypeListEmptyContent type={ query.type } status={ query.status } /> }
 				{ ! isEmpty && (
 					<WindowScroller key={ JSON.stringify( query ) }>
 						{ ( { height, scrollTop } ) => (
@@ -245,7 +233,8 @@ class PostTypeList extends Component {
 										ref={ this.setListRef }
 										rowRenderer={ this.cellRendererWrapper }
 										rowHeight={ this.getPostRowHeight }
-										rowCount={ size( this.props.posts ) } />
+										rowCount={ size( this.props.posts ) }
+									/>
 								) }
 							</AutoSizer>
 						) }
@@ -265,6 +254,9 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		lastPage,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		requestingLastPage: isRequestingSitePostsForQuery( state, siteId, { ...ownProps.query, page: lastPage } )
+		requestingLastPage: isRequestingSitePostsForQuery( state, siteId, {
+			...ownProps.query,
+			page: lastPage,
+		} ),
 	};
 } )( PostTypeList );

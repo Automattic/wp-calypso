@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,12 +18,13 @@ function PostTypeForbidden( { translate } ) {
 		<EmptyContent
 			illustration="/calypso/images/illustrations/whoops.svg"
 			title={ translate( 'You need permission to manage this post type' ) }
-			line={ translate( 'Ask your site administrator to grant you access' ) } />
+			line={ translate( 'Ask your site administrator to grant you access' ) }
+		/>
 	);
 }
 
 PostTypeForbidden.propTypes = {
-	translate: PropTypes.func
+	translate: PropTypes.func,
 };
 
 export default localize( PostTypeForbidden );

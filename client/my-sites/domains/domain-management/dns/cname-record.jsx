@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -16,10 +20,10 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 
 class CnameRecord extends React.Component {
 	static propTypes = {
-		fieldValues: React.PropTypes.object.isRequired,
-		onChange: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		show: React.PropTypes.bool.isRequired
+		fieldValues: PropTypes.object.isRequired,
+		onChange: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		show: PropTypes.bool.isRequired,
 	};
 
 	static initialFields = {
@@ -36,36 +40,23 @@ class CnameRecord extends React.Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Name', { context: 'Dns Record' } ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={
-							translate(
-								'Enter subdomain (required)',
-								{
-									context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
-								}
-							)
-						}
+						placeholder={ translate( 'Enter subdomain (required)', {
+							context:
+								'Placeholder shown when entering the required subdomain part of a new DNS record',
+						} ) }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Name' ) }
-							isError
-						/>
-					}
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Alias Of' ) }
-					</FormLabel>
+					<FormLabel>{ translate( 'Alias Of' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
@@ -73,12 +64,9 @@ class CnameRecord extends React.Component {
 						value={ fieldValues.data }
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'example.com' } } ) }
 					/>
-					{ ! isDataValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Target Host' ) }
-							isError
-						/>
-					}
+					{ ! isDataValid && (
+						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError />
+					) }
 				</FormFieldset>
 			</div>
 		);

@@ -1,25 +1,21 @@
+/** @format */
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import {
-	updateUploadProgress,
-	uploadComplete,
-	uploadPlugin,
-	receiveError,
-} from '../';
+import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
+import Dispatcher from 'dispatcher';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'state/plugins/upload/actions';
-import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';
@@ -44,7 +40,7 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'uploadPlugin', () => {
-	it( 'should distpatch an http request', () => {
+	test( 'should distpatch an http request', () => {
 		const dispatch = sinon.spy();
 		uploadPlugin( { dispatch }, { siteId, file: 'xyz' } );
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -56,42 +52,66 @@ describe( 'uploadPlugin', () => {
 } );
 
 describe( 'uploadComplete', () => {
-	it( 'should dispatch plugin upload complete action', () => {
-		const dispatch = sinon.spy();
-		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
-			completePluginUpload( siteId, pluginId )
-		);
+	let sandbox;
+	const site = {
+		ID: siteId,
+		URL: 'https://wordpress.com',
+	};
+	const getState = () => ( {
+		sites: {
+			items: {
+				[ siteId ]: site,
+			},
+		},
+		currentUser: {
+			capabilities: {
+				edit_theme_options: true,
+			},
+		},
 	} );
 
-	it( 'should dispatch plugin install request success', () => {
+	beforeEach( () => {
+		sandbox = sinon.sandbox.create();
+		sandbox.stub( Dispatcher, 'handleServerAction' );
+	} );
+
+	afterEach( () => {
+		sandbox.restore();
+	} );
+
+	test( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
-		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith( {
-			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
-			siteId,
-			pluginId,
+		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
+		expect( dispatch ).to.have.been.calledWith( completePluginUpload( siteId, pluginId ) );
+	} );
+
+	test( 'should dispatch a receive installed plugin action', () => {
+		const dispatch = sinon.spy();
+
+		uploadComplete( { dispatch, getState }, { siteId }, SUCCESS_RESPONSE );
+
+		expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+			type: 'RECEIVE_INSTALLED_PLUGIN',
+			action: 'PLUGIN_UPLOAD',
+			site,
+			plugin: SUCCESS_RESPONSE,
 			data: SUCCESS_RESPONSE,
 		} );
 	} );
 } );
 
 describe( 'receiveError', () => {
-	it( 'should dispatch plugin upload error', () => {
+	test( 'should dispatch plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
-			pluginUploadError( siteId, ERROR_RESPONSE )
-		);
+		expect( dispatch ).to.have.been.calledWith( pluginUploadError( siteId, ERROR_RESPONSE ) );
 	} );
 } );
 
 describe( 'updateUploadProgress', () => {
-	it( 'should dispatch plugin upload progress update', () => {
+	test( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
 		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
-		expect( dispatch ).to.have.been.calledWith(
-			updatePluginUploadProgress( siteId, 50 )
-		);
+		expect( dispatch ).to.have.been.calledWith( updatePluginUploadProgress( siteId, 50 ) );
 	} );
 } );

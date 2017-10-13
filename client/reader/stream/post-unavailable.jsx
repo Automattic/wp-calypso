@@ -42,14 +42,10 @@ class PostUnavailable extends React.PureComponent {
 				</div>
 
 				<div className="reader__post-excerpt">
-					<p>
-						{ errorMessage }
-					</p>
-					{ config.isEnabled( 'reader/full-errors' )
-						? <pre>
-								{ JSON.stringify( this.props.post, null, '  ' ) }
-							</pre>
-						: null }
+					<p>{ errorMessage }</p>
+					{ config.isEnabled( 'reader/full-errors' ) ? (
+						<pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
+					) : null }
 				</div>
 			</Card>
 		);

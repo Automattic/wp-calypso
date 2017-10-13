@@ -1,15 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { moment } from 'i18n-calypso';
-import {
-	flatten,
-	isDate,
-	omit,
-	some,
-	values,
-	without,
-} from 'lodash';
+import { flatten, isDate, omit, some, values, without } from 'lodash';
 
 function formatDate( date ) {
 	return moment( date ).format( 'MMM D, YYYY' );
@@ -70,7 +66,7 @@ function filter( transactions, params ) {
 	return transactions;
 }
 
-module.exports = {
+export default {
 	formatDate: formatDate,
-	filter: filter
+	filter: filter,
 };

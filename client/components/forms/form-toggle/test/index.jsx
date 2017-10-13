@@ -1,10 +1,15 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import assert from 'assert';
+import { mount, shallow } from 'enzyme';
+import { noop, uniq } from 'lodash';
 import React from 'react';
-import { noop, uniq } from 'lodash';
-import { mount, shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -12,35 +17,30 @@ import { mount, shallow } from 'enzyme';
 import FormToggle from '../';
 import CompactFormToggle from '../compact';
 
-describe( 'index', function() {
-	describe( 'rendering', function() {
-		it( 'should have is-compact class', function() {
+describe( 'index', () => {
+	describe( 'rendering', () => {
+		test( 'should have is-compact class', () => {
 			const toggle = shallow( <CompactFormToggle /> );
 			assert( toggle.hasClass( 'is-compact' ) );
 		} );
 	} );
 } );
 
-describe( 'FormToggle', function() {
-	require( 'test/helpers/use-fake-dom' )();
-
-	describe( 'rendering', function() {
-		it( 'should have form-toggle class', function() {
+describe( 'FormToggle', () => {
+	describe( 'rendering', () => {
+		test( 'should have form-toggle class', () => {
 			const toggle = shallow( <FormToggle /> );
 			assert( toggle.find( '.form-toggle' ).length === 1 );
 		} );
 
-		it( 'should not have is-compact class', function() {
+		test( 'should not have is-compact class', () => {
 			const toggle = shallow( <FormToggle /> );
 			assert( toggle.find( '.is-compact' ).length === 0 );
 		} );
 
-		it( 'should be checked when checked is true', function() {
+		test( 'should be checked when checked is true', () => {
 			[ true, false ].forEach( function( bool ) {
-				const toggle = shallow(
-					<FormToggle checked={ bool }
-						onChange={ noop } />
-        );
+				const toggle = shallow( <FormToggle checked={ bool } onChange={ noop } /> );
 				const toggleInput = toggle.find( '.form-toggle' );
 
 				assert( 0 < toggleInput.length, 'a form toggle was rendered' );
@@ -48,7 +48,7 @@ describe( 'FormToggle', function() {
 			} );
 		} );
 
-		it( 'should fire onChange event with value param when clicked', function( done ) {
+		test( 'should fire onChange event with value param when clicked', done => {
 			const toggle = shallow(
 				<FormToggle
 					checked={ false }
@@ -56,13 +56,13 @@ describe( 'FormToggle', function() {
 						assert( checked, 'onChange handler was called with a value param' );
 						done();
 					} }
-				/>,
+				/>
 			);
 
 			toggle.find( '.form-toggle__switch' ).simulate( 'click' );
 		} );
 
-		it( 'should not be disabled when disabled is false', function() {
+		test( 'should not be disabled when disabled is false', () => {
 			const toggle = shallow( <FormToggle checked={ false } disabled={ false } /> );
 			const toggleInput = toggle.find( '.form-toggle' );
 
@@ -70,7 +70,7 @@ describe( 'FormToggle', function() {
 			assert( false === toggleInput.props().disabled, 'form toggle disabled equals boolean' );
 		} );
 
-		it( 'should be disabled when disabled is true', function() {
+		test( 'should be disabled when disabled is true', () => {
 			const toggle = shallow( <FormToggle checked={ false } disabled={ true } /> );
 			const toggleInput = toggle.find( '.form-toggle' );
 
@@ -78,7 +78,7 @@ describe( 'FormToggle', function() {
 			assert( true === toggleInput.props().disabled, 'form toggle disabled equals boolean' );
 		} );
 
-		it( 'should have a label whose htmlFor matches the checkbox id', function() {
+		test( 'should have a label whose htmlFor matches the checkbox id', () => {
 			const toggle = shallow( <FormToggle checked={ false } /> );
 			const toggleInput = toggle.find( '.form-toggle__switch' );
 			const toggleLabel = toggle.find( 'label' );
@@ -86,7 +86,7 @@ describe( 'FormToggle', function() {
 			assert( toggleInput.id === toggleLabel.htmlFor );
 		} );
 
-		it( 'should create unique ids for each toggle', function() {
+		test( 'should create unique ids for each toggle', () => {
 			const toggles = mount(
 				<div>
 					<FormToggle checked={ false } />
@@ -95,8 +95,9 @@ describe( 'FormToggle', function() {
 				</div>
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
-			const ids = toggleInputs.map( ( input ) => input.props().id );
-			return ids.length === uniq( ids ).length;
+			const ids = toggleInputs.map( input => input.props().id );
+
+			assert( ids.length === uniq( ids ).length );
 		} );
 	} );
 } );

@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
@@ -9,27 +12,30 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( {}, {
-	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: () => {
-		return LOADING;
-	},
+export default createReducer(
+	{},
+	{
+		[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: () => {
+			return LOADING;
+		},
 
-	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
+		[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS ]: ( state, { data } ) => {
+			return data;
+		},
 
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdated,
-} );
+		[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdated,
+	}
+);
 
 function productCategoryUpdated( state, action ) {
 	const { data } = action;
-	const productCategories = ( state !== LOADING ? state : [] );
+	const productCategories = state !== LOADING ? state : [];
 	return updateCachedProductCategory( productCategories, data );
 }
 
 function updateCachedProductCategory( productCategories, category ) {
 	let found = false;
-	const newCategories = productCategories.map( ( c ) => {
+	const newCategories = productCategories.map( c => {
 		if ( c.id === category.id ) {
 			found = true;
 			return category;
@@ -42,4 +48,3 @@ function updateCachedProductCategory( productCategories, category ) {
 	}
 	return newCategories;
 }
-

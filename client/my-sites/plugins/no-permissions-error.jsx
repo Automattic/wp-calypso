@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { localize } from 'i18n-calypso';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -18,15 +22,18 @@ const NoPermissionsError = ( { title, translate } ) => (
 		{ title && <DocumentHead title={ title } /> }
 		<SidebarNavigation />
 		<EmptyContent
-			title={ preventWidows( translate( 'Oops! You don\'t have permission to manage plugins.' ) ) }
-			line={ preventWidows( translate( 'If you think you should, contact this site\'s administrator.' ) ) }
-			illustration="/calypso/images/illustrations/illustration-500.svg" />
+			title={ preventWidows( translate( "Oops! You don't have permission to manage plugins." ) ) }
+			line={ preventWidows(
+				translate( "If you think you should, contact this site's administrator." )
+			) }
+			illustration="/calypso/images/illustrations/illustration-500.svg"
+		/>
 	</Main>
 );
 
 NoPermissionsError.propTypes = {
 	title: PropTypes.string,
-	translate: PropTypes.func.isRequired
+	translate: PropTypes.func.isRequired,
 };
 
 export default localize( NoPermissionsError );

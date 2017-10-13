@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -40,7 +42,7 @@ function buildEmptyWhois( type ) {
 		countryName: '',
 		email: '',
 		phone: '',
-		fax: ''
+		fax: '',
 	};
 }
 
@@ -60,7 +62,7 @@ function buildWhois( suffix, type ) {
 		countryName: COUNTRY + suffix,
 		email: EMAIL + suffix,
 		phone: PHONE + suffix,
-		fax: FAX + suffix
+		fax: FAX + suffix,
 	};
 }
 
@@ -80,70 +82,65 @@ function buildWhoisTranferObject( suffix, type ) {
 		cc: COUNTRY + suffix,
 		email: EMAIL + suffix,
 		phone: PHONE + suffix,
-		fax: FAX + suffix
+		fax: FAX + suffix,
 	};
 }
 
 describe( 'assembler', () => {
 	const { REGISTRANT, PRIVACY_SERVICE } = whoisType;
 
-	it( 'should return WHOIS with empty contact info when there is no valid entry in data transfer object', () => {
+	test( 'should return WHOIS with empty contact info when there is no valid entry in data transfer object', () => {
 		const invalidDataTransferObject = [ { type: 'anything' } ],
-			expectedDomainWhois = [
-				buildEmptyWhois( REGISTRANT ),
-				buildEmptyWhois( PRIVACY_SERVICE )
-			];
+			expectedDomainWhois = [ buildEmptyWhois( REGISTRANT ), buildEmptyWhois( PRIVACY_SERVICE ) ];
 
-		expect( whoisAssembler.createDomainWhois( invalidDataTransferObject ) ).to.be.eql( expectedDomainWhois );
+		expect( whoisAssembler.createDomainWhois( invalidDataTransferObject ) ).to.be.eql(
+			expectedDomainWhois
+		);
 	} );
 
-	it( 'should return WHOIS with empty contact info when there is an empty registrant entry in data transfer object', () => {
-		const emptyDataTransferObject = [ {
-				type: REGISTRANT
-			} ],
-			expectedDomainWhois = [
-				buildEmptyWhois( REGISTRANT ),
-				buildEmptyWhois( PRIVACY_SERVICE )
-			];
-
-		expect( whoisAssembler.createDomainWhois( emptyDataTransferObject ) ).to.be.eql( expectedDomainWhois );
-	} );
-
-	it( 'should return full registrant and empty privacy service WHOIS when there is only registrant entry in data transfer object', () => {
-		const registrantDataTransferObject = [
-				buildWhoisTranferObject( 1, REGISTRANT )
+	test( 'should return WHOIS with empty contact info when there is an empty registrant entry in data transfer object', () => {
+		const emptyDataTransferObject = [
+				{
+					type: REGISTRANT,
+				},
 			],
-			expectedDomainWhois = [
-				buildWhois( 1, REGISTRANT ),
-				buildEmptyWhois( PRIVACY_SERVICE )
-			];
+			expectedDomainWhois = [ buildEmptyWhois( REGISTRANT ), buildEmptyWhois( PRIVACY_SERVICE ) ];
 
-		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql( expectedDomainWhois );
+		expect( whoisAssembler.createDomainWhois( emptyDataTransferObject ) ).to.be.eql(
+			expectedDomainWhois
+		);
 	} );
 
-	it( 'should return full registrant and privacy service WHOIS when there are both entries in data transfer object', () => {
+	test( 'should return full registrant and empty privacy service WHOIS when there is only registrant entry in data transfer object', () => {
+		const registrantDataTransferObject = [ buildWhoisTranferObject( 1, REGISTRANT ) ],
+			expectedDomainWhois = [ buildWhois( 1, REGISTRANT ), buildEmptyWhois( PRIVACY_SERVICE ) ];
+
+		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql(
+			expectedDomainWhois
+		);
+	} );
+
+	test( 'should return full registrant and privacy service WHOIS when there are both entries in data transfer object', () => {
 		const registrantDataTransferObject = [
 				buildWhoisTranferObject( 1, REGISTRANT ),
-				buildWhoisTranferObject( 2, PRIVACY_SERVICE )
+				buildWhoisTranferObject( 2, PRIVACY_SERVICE ),
 			],
-			expectedDomainWhois = [
-				buildWhois( 1, REGISTRANT ),
-				buildWhois( 2, PRIVACY_SERVICE )
-			];
+			expectedDomainWhois = [ buildWhois( 1, REGISTRANT ), buildWhois( 2, PRIVACY_SERVICE ) ];
 
-		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql( expectedDomainWhois );
+		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql(
+			expectedDomainWhois
+		);
 	} );
 
-	it( 'should return full registrant and privacy service WHOIS when data transfer object is shuffled', () => {
+	test( 'should return full registrant and privacy service WHOIS when data transfer object is shuffled', () => {
 		const registrantDataTransferObject = [
 				buildWhoisTranferObject( 2, PRIVACY_SERVICE ),
-				buildWhoisTranferObject( 1, REGISTRANT )
+				buildWhoisTranferObject( 1, REGISTRANT ),
 			],
-			expectedDomainWhois = [
-				buildWhois( 1, REGISTRANT ),
-				buildWhois( 2, PRIVACY_SERVICE )
-			];
+			expectedDomainWhois = [ buildWhois( 1, REGISTRANT ), buildWhois( 2, PRIVACY_SERVICE ) ];
 
-		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql( expectedDomainWhois );
+		expect( whoisAssembler.createDomainWhois( registrantDataTransferObject ) ).to.be.eql(
+			expectedDomainWhois
+		);
 	} );
 } );

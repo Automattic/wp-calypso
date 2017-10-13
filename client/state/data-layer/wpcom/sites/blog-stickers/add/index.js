@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
 
@@ -23,7 +26,7 @@ export function requestBlogStickerAdd( { dispatch }, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -45,16 +48,18 @@ export function receiveBlogStickerAdd( store, action, response ) {
 			} ),
 			{
 				duration: 5000,
-			},
-		),
+			}
+		)
 	);
 }
 
 export function receiveBlogStickerAddError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) )
 	);
-	dispatch( bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
+	dispatch(
+		bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) )
+	);
 }
 
 export default {

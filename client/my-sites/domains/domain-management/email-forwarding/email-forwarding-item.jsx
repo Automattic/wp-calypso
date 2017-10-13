@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
@@ -26,26 +30,35 @@ const EmailForwardingItem = React.createClass( {
 			return;
 		}
 
-		upgradesActions.deleteEmailForwarding( domain, mailbox, ( error ) => {
+		upgradesActions.deleteEmailForwarding( domain, mailbox, error => {
 			this.recordEvent( 'deleteClick', domain, mailbox, forward_address, ! error );
 
 			if ( error ) {
-				notices.error( error.message || this.translate( 'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-					{
-						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
-						}
-					} )
+				notices.error(
+					error.message ||
+						this.props.translate(
+							'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+							{
+								components: {
+									contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+								},
+							}
+						)
 				);
 			} else {
 				notices.success(
-					this.translate( 'Yay, e-mail forwarding for %(email)s has been successfully deleted.', {
-						args: {
-							email: email
+					this.props.translate(
+						'Yay, e-mail forwarding for %(email)s has been successfully deleted.',
+						{
+							args: {
+								email: email,
+							},
 						}
-					} ), {
-						duration: 5000
-					} );
+					),
+					{
+						duration: 5000,
+					}
+				);
 			}
 		} );
 	},
@@ -61,22 +74,27 @@ const EmailForwardingItem = React.createClass( {
 			this.recordEvent( 'resendVerificationClick', domain, mailbox, forward_address, ! error );
 
 			if ( error || ! response.sent ) {
-				notices.error( this.translate( 'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-					{
-						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT }/>
+				notices.error(
+					this.props.translate(
+						'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+						{
+							components: {
+								contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+							},
 						}
-					} )
+					)
 				);
 			} else {
 				notices.success(
-					this.translate( 'Yay, successfully sent confirmation email to %(email)s!', {
+					this.props.translate( 'Yay, successfully sent confirmation email to %(email)s!', {
 						args: {
-							email: forward_address
-						}
-					} ), {
-						duration: 5000
-					} );
+							email: forward_address,
+						},
+					} ),
+					{
+						duration: 5000,
+					}
+				);
 			}
 		} );
 	},
@@ -88,27 +106,40 @@ const EmailForwardingItem = React.createClass( {
 					<Gridicon icon="trash" />
 				</Button>
 
-				{ ! this.props.emailData.active && <Button disabled={ this.props.emailData.temporary } borderless onClick={ this.resendVerificationEmail } title={ this.translate( 'Resend Verification Email', { context: 'Email Forwarding' } ) }><Gridicon icon="mail" /></Button> }
+				{ ! this.props.emailData.active && (
+					<Button
+						disabled={ this.props.emailData.temporary }
+						borderless
+						onClick={ this.resendVerificationEmail }
+						title={ this.props.translate( 'Resend Verification Email', {
+							context: 'Email Forwarding',
+						} ) }
+					>
+						<Gridicon icon="mail" />
+					</Button>
+				) }
 
-				<span>{ this.translate( '{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
-					{
-						components: {
-							strong1: <strong />,
-							strong2: <strong />,
-							em: <em />
-						},
-						args: {
-							email: this.props.emailData.email,
-							forwardTo: this.props.emailData.forward_address
+				<span>
+					{ this.props.translate(
+						'{{strong1}}%(email)s{{/strong1}} {{em}}forwards to{{/em}} {{strong2}}%(forwardTo)s{{/strong2}}',
+						{
+							components: {
+								strong1: <strong />,
+								strong2: <strong />,
+								em: <em />,
+							},
+							args: {
+								email: this.props.emailData.email,
+								forwardTo: this.props.emailData.forward_address,
+							},
 						}
-					} ) }</span>
+					) }
+				</span>
 			</li>
 		);
-	}
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( EmailForwardingItem );
-
+export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
+	localize( EmailForwardingItem )
+);

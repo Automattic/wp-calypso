@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getSerializedQuery } from 'state/followers/utils';
 /**
  * Returns a list of followers for the given Query.
@@ -14,7 +17,9 @@ export function getFollowersForQuery( state, query ) {
 	if ( ! state.followers.queries[ serializedQuery ] ) {
 		return null;
 	}
-	return state.followers.queries[ serializedQuery ].map( ( Id ) => {
-		return state.followers.items[ Id ];
-	} ).filter( Boolean );
+	return state.followers.queries[ serializedQuery ]
+		.map( Id => {
+			return state.followers.items[ Id ];
+		} )
+		.filter( Boolean );
 }

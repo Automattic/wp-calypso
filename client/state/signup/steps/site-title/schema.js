@@ -1,3 +1,4 @@
+/** @format */
 export const siteTitleSchema = {
-	type: [ 'string', 'null' ]
+	type: [ 'string', 'null' ],
 };

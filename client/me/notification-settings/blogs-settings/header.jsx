@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import Immutable from 'immutable';
 import { includes, zip } from 'lodash';
@@ -17,7 +21,7 @@ class BlogSettingsHeader extends PureComponent {
 		site: PropTypes.object.isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
 		disableToggle: PropTypes.bool,
-		onToggle: PropTypes.func.isRequired
+		onToggle: PropTypes.func.isRequired,
 	};
 
 	state = { isExpanded: false };
@@ -30,7 +34,11 @@ class BlogSettingsHeader extends PureComponent {
 		const isExpanded = ! this.state.isExpanded;
 		this.setState( { isExpanded } );
 
-		analytics.ga.recordEvent( 'Notification Settings', isExpanded ? 'Expanded Site' : 'Collapsed Site', this.props.site.name );
+		analytics.ga.recordEvent(
+			'Notification Settings',
+			isExpanded ? 'Expanded Site' : 'Collapsed Site',
+			this.props.site.name
+		);
 
 		this.props.onToggle();
 	};
@@ -45,7 +53,8 @@ class BlogSettingsHeader extends PureComponent {
 			.map( sizeAndSum )
 			.toArray();
 
-		counts = this.props.settings.get( 'devices' )
+		counts = this.props.settings
+			.get( 'devices' )
 			.map( device => device.filter( ( _, key ) => key !== 'device_id' ) )
 			.map( sizeAndSum )
 			.toArray()
@@ -68,18 +77,22 @@ class BlogSettingsHeader extends PureComponent {
 		const { site } = this.props;
 
 		return (
-			<header key={ site.wpcom_url } className="blogs-settings__header" onClick={ this.toggleExpanded }>
+			<header
+				key={ site.wpcom_url }
+				className="blogs-settings__header"
+				onClick={ this.toggleExpanded }
+			>
 				<SiteInfo site={ site } indicator={ false } />
 				<div className="blogs-settings__header-legend">
 					<em>{ this.getLegend() }</em>
 				</div>
-				{ ! this.props.disableToggle
-					? (
-							<div className="blogs-settings__header-expand">
-								<a className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }></a>
-							</div>
-						)
-					: null }
+				{ ! this.props.disableToggle ? (
+					<div className="blogs-settings__header-expand">
+						<a
+							className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }
+						/>
+					</div>
+				) : null }
 			</header>
 		);
 	}

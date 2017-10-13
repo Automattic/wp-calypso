@@ -1,17 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	NOT_SUBMITTED,
-	SUBMITTING,
-	SUBMIT_FAILURE,
-	SUBMITTED,
-} from './constants';
+import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import { getSectionName } from 'state/ui/selectors';
 
 const SECTION_NAME_WHITELIST = [
@@ -40,8 +38,7 @@ export function isSectionEligibleForNpsSurvey( state ) {
 }
 
 export function isSectionAndSessionEligibleForNpsSurvey( state ) {
-	return isSectionEligibleForNpsSurvey( state ) &&
-		isSessionEligibleForNpsSurvey( state );
+	return isSectionEligibleForNpsSurvey( state ) && isSessionEligibleForNpsSurvey( state );
 }
 
 export function wasNpsSurveyShownThisSession( state ) {
@@ -77,11 +74,9 @@ export function getNpsSurveyScore( state ) {
 }
 
 export function hasAnsweredNpsSurvey( state ) {
-	return ! isNpsSurveyNotSubmitted( state ) &&
-		Number.isInteger( getNpsSurveyScore( state ) );
+	return ! isNpsSurveyNotSubmitted( state ) && Number.isInteger( getNpsSurveyScore( state ) );
 }
 
 export function hasAnsweredNpsSurveyWithNoScore( state ) {
-	return ! isNpsSurveyNotSubmitted( state ) &&
-		! Number.isInteger( getNpsSurveyScore( state ) );
+	return ! isNpsSurveyNotSubmitted( state ) && ! Number.isInteger( getNpsSurveyScore( state ) );
 }

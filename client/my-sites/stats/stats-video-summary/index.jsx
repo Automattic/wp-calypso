@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
@@ -11,8 +15,11 @@ import { flowRight } from 'lodash';
  */
 import SummaryChart from '../stats-summary';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSiteStatsNormalizedData,
+	isRequestingSiteStatsForQuery,
+} from 'state/stats/lists/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {
@@ -20,26 +27,29 @@ class StatsVideoSummary extends Component {
 		isRequesting: PropTypes.bool,
 		siteId: PropTypes.number,
 		summaryData: PropTypes.object,
-	}
+	};
 
 	state = {
-		selectedBar: null
+		selectedBar: null,
 	};
 
 	selectBar = bar => {
 		this.setState( {
-			selectedBar: bar
+			selectedBar: bar,
 		} );
 	};
 
 	render() {
-		const { query, isRequesting, moment, siteId, summaryData, translate } = this.props;
-		const data = summaryData && summaryData.data ? summaryData.data.map( item => {
-			return {
-				...item,
-				period: moment( item.period ).format( 'MMM D' ),
-			};
-		} ) : [];
+		const { query, isRequesting, moment, siteId, summaryData, translate } = this.props;
+		const data =
+			summaryData && summaryData.data
+				? summaryData.data.map( item => {
+						return {
+							...item,
+							period: moment( item.period ).format( 'MMM D' ),
+						};
+					} )
+				: [];
 		let selectedBar = this.state.selectedBar;
 		if ( ! selectedBar && !! data.length ) {
 			selectedBar = data[ data.length - 1 ];
@@ -65,21 +75,16 @@ class StatsVideoSummary extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state, { postId } ) => {
-		const query = { postId };
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( ( state, { postId } ) => {
+	const query = { postId };
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			summaryData: getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ),
-			isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ),
-			query,
-			siteId,
-		};
-	}
-);
+	return {
+		summaryData: getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ),
+		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ),
+		query,
+		siteId,
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsVideoSummary );
+export default flowRight( connectComponent, localize )( StatsVideoSummary );

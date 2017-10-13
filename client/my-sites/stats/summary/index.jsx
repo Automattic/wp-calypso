@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component } from 'react';
+
+import React, { Component } from 'react';
 import page from 'page';
 import { merge } from 'lodash';
 import { connect } from 'react-redux';
@@ -28,7 +31,9 @@ const StatsStrings = statsStringsFactory();
 class StatsSummary extends Component {
 	goBack = () => {
 		const pathParts = this.props.path.split( '/' );
-		const queryString = this.props.context.querystring ? '?' + this.props.context.querystring : null;
+		const queryString = this.props.context.querystring
+			? '?' + this.props.context.querystring
+			: null;
 
 		if ( history.length ) {
 			history.back();
@@ -55,55 +60,66 @@ class StatsSummary extends Component {
 		const query = {
 			period: period,
 			date: endOf.format( 'YYYY-MM-DD' ),
-			max: 0
+			max: 0,
 		};
 
 		switch ( this.props.context.params.module ) {
-
 			case 'referrers':
 				title = translate( 'Referrers' );
-				summaryView = <StatsModule
-					key="referrers-summary"
-					path="referrers"
-					moduleStrings={ StatsStrings.referrers }
-					period={ this.props.period }
-					query={ merge( {}, statsQueryOptions, query ) }
-					statType="statsReferrers"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="referrers-summary"
+						path="referrers"
+						moduleStrings={ StatsStrings.referrers }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsReferrers"
+						summary
+					/>
+				);
 				break;
 
 			case 'clicks':
 				title = translate( 'Clicks' );
-				summaryView = <StatsModule
-					key="clicks-summary"
-					path="clicks"
-					moduleStrings={ StatsStrings.clicks }
-					period={ this.props.period }
-					query={ merge( {}, statsQueryOptions, query ) }
-					statType="statsClicks"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="clicks-summary"
+						path="clicks"
+						moduleStrings={ StatsStrings.clicks }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsClicks"
+						summary
+					/>
+				);
 				break;
 
 			case 'countryviews':
 				title = translate( 'Countries' );
-				summaryView = <Countries
+				summaryView = (
+					<Countries
 						key="countries-summary"
 						path="countryviews"
 						period={ this.props.period }
 						query={ merge( {}, statsQueryOptions, query ) }
-						summary={ true } />;
+						summary={ true }
+					/>
+				);
 				break;
 
 			case 'posts':
 				title = translate( 'Posts & Pages' );
-				summaryView = <StatsModule
-					key="posts-summary"
-					path="posts"
-					moduleStrings={ StatsStrings.posts }
-					period={ this.props.period }
-					query={ merge( {}, statsQueryOptions, query ) }
-					statType="statsTopPosts"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="posts-summary"
+						path="posts"
+						moduleStrings={ StatsStrings.posts }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsTopPosts"
+						summary
+					/>
+				);
 				break;
 
 			case 'authors':
@@ -127,26 +143,32 @@ class StatsSummary extends Component {
 
 			case 'videoplays':
 				title = translate( 'Videos' );
-				summaryView = <StatsModule
-					key="videoplays-summary"
-					path="videoplays"
-					moduleStrings={ StatsStrings.videoplays }
-					period={ this.props.period }
-					query={ query }
-					statType="statsVideoPlays"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="videoplays-summary"
+						path="videoplays"
+						moduleStrings={ StatsStrings.videoplays }
+						period={ this.props.period }
+						query={ query }
+						statType="statsVideoPlays"
+						summary
+					/>
+				);
 				break;
 
 			case 'podcastdownloads':
 				title = translate( 'Podcasts' );
-				summaryView = <StatsModule
-					key="podcastdownloads-summary"
-					path="podcastdownloads"
-					moduleStrings={ StatsStrings.podcastdownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsPodcastDownloads"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="podcastdownloads-summary"
+						path="podcastdownloads"
+						moduleStrings={ StatsStrings.podcastdownloads }
+						period={ this.props.period }
+						query={ query }
+						statType="statsPodcastDownloads"
+						summary
+					/>
+				);
 				break;
 
 			case 'videodetails':
@@ -178,14 +200,17 @@ class StatsSummary extends Component {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
-				summaryView = <StatsModule
-					key="search-terms-summary"
-					path="searchterms"
-					moduleStrings={ StatsStrings.search }
-					period={ this.props.period }
-					query={ merge( {}, statsQueryOptions, query ) }
-					statType="statsSearchTerms"
-					summary />;
+				summaryView = (
+					<StatsModule
+						key="search-terms-summary"
+						path="searchterms"
+						moduleStrings={ StatsStrings.search }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsSearchTerms"
+						summary
+					/>
+				);
 				break;
 		}
 
@@ -195,9 +220,7 @@ class StatsSummary extends Component {
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>
-						{ title }
-					</HeaderCake>
+					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
 					{ summaryViews }
 				</div>
 				<JetpackColophon />
@@ -210,8 +233,6 @@ export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId: getSelectedSiteId( state ),
-		media: context.params.module === 'videodetails'
-			? getMediaItem( state, siteId, postId )
-			: false,
+		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 	};
 } )( localize( StatsSummary ) );

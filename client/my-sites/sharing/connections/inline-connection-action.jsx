@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,7 +18,8 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import requestExternalAccess from 'lib/sharing';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
-export const getNamedConnectedService = ( state, name ) => getKeyringConnections( state ).filter( item => item.service === name );
+export const getNamedConnectedService = ( state, name ) =>
+	getKeyringConnections( state ).filter( item => item.service === name );
 
 const STATUS_UNKNOWN = 'unknown';
 const STATUS_NOT_CONNECTED = 'not-connected';
@@ -57,7 +61,10 @@ class InlineConnectButton extends Component {
 
 	onAction() {
 		const { service } = this.props;
-		const connectionStatus = this.getConnectionStatus( this.props.connectedService, this.state.isFetching );
+		const connectionStatus = this.getConnectionStatus(
+			this.props.connectedService,
+			this.state.isFetching
+		);
 
 		if ( STATUS_RECONNECT === connectionStatus ) {
 			this.refresh( service );
@@ -95,7 +102,10 @@ class InlineConnectButton extends Component {
 	}
 
 	render() {
-		const connectionStatus = this.getConnectionStatus( this.props.connectedService, this.props.isFetching );
+		const connectionStatus = this.getConnectionStatus(
+			this.props.connectedService,
+			this.props.isFetching
+		);
 		const { isConnecting, isRefreshing } = this.state;
 		const { service } = this.props;
 
@@ -106,7 +116,8 @@ class InlineConnectButton extends Component {
 				onAction={ this.handleAction }
 				isConnecting={ isConnecting }
 				isRefreshing={ isRefreshing }
-				isDisconnecting={ false } />
+				isDisconnecting={ false }
+			/>
 		);
 	}
 }

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import {
-	areTaxRatesLoaded,
-	areTaxRatesLoading,
-} from './selectors';
+
+import { areTaxRatesLoaded, areTaxRatesLoading } from './selectors';
 import { setError } from '../../status/wc-api/actions';
 import {
 	WOOCOMMERCE_TAXRATES_REQUEST,
@@ -28,8 +28,9 @@ export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispa
 
 	dispatch( getAction );
 
-	return wp.req.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
-		.then( ( data ) => {
+	return wp.req
+		.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
+		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 				siteId,

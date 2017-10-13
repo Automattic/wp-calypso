@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -15,11 +18,13 @@ import { localize } from 'i18n-calypso';
 import Count from 'components/count';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -31,7 +36,7 @@ class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		site: PropTypes.object,
-	}
+	};
 
 	componentDidMount = () => {
 		const { productsLoaded, site } = this.props;
@@ -40,29 +45,39 @@ class StoreSidebar extends Component {
 			this.props.fetchSetupChoices( site.ID );
 			this.props.fetchOrders( site.ID );
 
+			// TODO This check can be removed when we launch reviews.
+			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+				this.props.fetchReviews( site.ID, { status: 'pending' } );
+			}
+
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( site.ID, 1 );
+				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		const { productsLoaded, site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
 		const oldSiteId = site ? site.ID : null;
 
-		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
+		if ( newSiteId && oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
 			this.props.fetchOrders( newSiteId );
 
+			// TODO This check can be removed when we launch reviews.
+			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+				this.props.fetchReviews( newSiteId, { status: 'pending' } );
+			}
+
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
+				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
-	}
+	};
 
-	isItemLinkSelected = ( paths ) => {
+	isItemLinkSelected = paths => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
 		}
@@ -70,7 +85,7 @@ class StoreSidebar extends Component {
 		return paths.some( function( path ) {
 			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
-	}
+	};
 
 	dashboard = () => {
 		const { site, siteSuffix, translate } = this.props;
@@ -90,7 +105,7 @@ class StoreSidebar extends Component {
 				link={ link }
 			/>
 		);
-	}
+	};
 
 	products = () => {
 		const { site, siteSuffix, translate } = this.props;
@@ -110,28 +125,27 @@ class StoreSidebar extends Component {
 				label={ translate( 'Products' ) }
 				link={ link }
 			>
-				<SidebarButton disabled={ ! site } href={ addLink } >
+				<SidebarButton disabled={ ! site } href={ addLink }>
 					{ translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
-	}
+	};
 
 	reviews = () => {
 		if ( ! config.isEnabled( 'woocommerce/extension-reviews' ) ) {
 			return null;
 		}
 
-		const { site, siteSuffix, translate } = this.props;
+		const { site, siteSuffix, translate, totalPendingReviews } = this.props;
 		const link = '/store/reviews' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link ] );
+		const selected = this.isItemLinkSelected( [ '/store/reviews' ] );
 		const classes = classNames( {
 			reviews: true,
 			'is-placeholder': ! site,
 			selected,
 		} );
 
-		// TODO Add bubble containing count of unapproved reviews.
 		return (
 			<SidebarItem
 				className={ classes }
@@ -139,17 +153,15 @@ class StoreSidebar extends Component {
 				label={ translate( 'Reviews' ) }
 				link={ link }
 			>
+				{ totalPendingReviews ? <Count count={ totalPendingReviews } /> : null }
 			</SidebarItem>
 		);
-	}
+	};
 
 	orders = () => {
 		const { orders, site, siteSuffix, translate } = this.props;
 		const link = '/store/orders' + siteSuffix;
-		const childLinks = [
-			'/store/order',
-			'/store/orders',
-		];
+		const childLinks = [ '/store/order', '/store/orders' ];
 		const selected = this.isItemLinkSelected( childLinks );
 		const classes = classNames( {
 			orders: true,
@@ -158,19 +170,11 @@ class StoreSidebar extends Component {
 		} );
 
 		return (
-			<SidebarItem
-				className={ classes }
-				icon="pages"
-				label={ translate( 'Orders' ) }
-				link={ link }
-			>
-				{ orders.length
-					? <Count count={ orders.length } />
-					: null
-				}
+			<SidebarItem className={ classes } icon="pages" label={ translate( 'Orders' ) } link={ link }>
+				{ orders.length ? <Count count={ orders.length } /> : null }
 			</SidebarItem>
 		);
-	}
+	};
 
 	promotions = () => {
 		// TODO: Remove this check when ready to release to production.
@@ -180,10 +184,7 @@ class StoreSidebar extends Component {
 
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/promotions' + siteSuffix;
-		const validLinks = [
-			'/store/promotions',
-			'/store/promotion',
-		];
+		const validLinks = [ '/store/promotions', '/store/promotion' ];
 
 		const selected = this.isItemLinkSelected( validLinks );
 		const classes = classNames( {
@@ -195,13 +196,12 @@ class StoreSidebar extends Component {
 		return (
 			<SidebarItem
 				className={ classes }
-				icon="star-outline"
+				icon="gift"
 				label={ translate( 'Promotions' ) }
 				link={ link }
-			>
-			</SidebarItem>
+			/>
 		);
-	}
+	};
 
 	settings = () => {
 		const { site, siteSuffix, translate } = this.props;
@@ -226,16 +226,10 @@ class StoreSidebar extends Component {
 				link={ link }
 			/>
 		);
-	}
+	};
 
 	render = () => {
-		const {
-			finishedAddressSetup,
-			hasProducts,
-			path,
-			site,
-			siteSuffix,
-		} = this.props;
+		const { finishedAddressSetup, hasProducts, path, site, siteSuffix } = this.props;
 
 		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
 		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
@@ -257,7 +251,7 @@ class StoreSidebar extends Component {
 				</SidebarMenu>
 			</Sidebar>
 		);
-	}
+	};
 }
 
 function mapStateToProps( state ) {
@@ -266,11 +260,13 @@ function mapStateToProps( state ) {
 	const orders = getNewOrders( state );
 	const productsLoaded = areProductsLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
+	const totalPendingReviews = getTotalReviews( state, { status: 'pending' } );
 
 	return {
 		finishedAddressSetup,
 		hasProducts,
 		orders,
+		totalPendingReviews,
 		productsLoaded,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
@@ -282,6 +278,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchOrders,
 			fetchProducts,
+			fetchReviews,
 			fetchSetupChoices,
 		},
 		dispatch

@@ -1,26 +1,28 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { useFakeTimers } from 'test/helpers/use-sinon';
 import events from 'events';
 import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import analytics from '../../lib/analytics';
 import { logSectionResponseTime } from 'pages/analytics';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 
-describe( 'index', function() {
-	describe( 'logResponseTime middleware', function() {
+describe( 'index', () => {
+	describe( 'logResponseTime middleware', () => {
 		// Stub request, response, and next
 		let request, response, next;
 		let request2, response2;
-		beforeEach( function() {
+		beforeEach( () => {
 			request = { context: {} };
 			request2 = { context: {} };
 			response = new events.EventEmitter();
@@ -28,62 +30,67 @@ describe( 'index', function() {
 			next = noop;
 		} );
 
-		context( 'when rendering a section', function() {
-			useFakeTimers();
+		describe( 'when rendering a section', () => {
+			let clock;
 
-			beforeEach( function() {
+			useFakeTimers( newClock => ( clock = newClock ) );
+
+			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 				request.context.sectionName = 'reader';
 			} );
 
-			afterEach( function() {
+			afterEach( () => {
 				analytics.statsd.recordTiming.restore();
 			} );
 
-			it( 'logs response time analytics', function() {
+			test( 'logs response time analytics', () => {
 				// Clear throttling
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 
 				logSectionResponseTime( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
-					'reader', 'response-time', TWO_SECONDS
+					'reader',
+					'response-time',
+					TWO_SECONDS
 				);
 			} );
 
-			it( 'throttles calls to log analytics', function() {
+			test( 'throttles calls to log analytics', () => {
 				// Clear throttling
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 
 				logSectionResponseTime( request, response, next );
 				logSectionResponseTime( request2, response2, next );
 
 				response.emit( 'finish' );
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
 				response2.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
 
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
+				response.emit( 'finish' );
+				response2.emit( 'finish' );
+
 				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
 			} );
 		} );
 
-		context( 'when not rendering a section', function() {
-			beforeEach( function() {
+		describe( 'when not rendering a section', () => {
+			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 			} );
 
-			afterEach( function() {
+			afterEach( () => {
 				analytics.statsd.recordTiming.restore();
 			} );
 
-			it( 'does not log response time analytics', function() {
+			test( 'does not log response time analytics', () => {
 				logSectionResponseTime( request, response, next );
 
 				// Mock the "finish" event

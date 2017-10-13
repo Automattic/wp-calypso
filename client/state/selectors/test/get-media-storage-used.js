@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import { expect } from 'chai';
 import { getMediaStorageUsed } from '..';
 
 describe( 'getMediaStorageUsed()', () => {
-	it( 'should return null if the site is unknown', () => {
+	test( 'should return null if the site is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -24,7 +26,7 @@ describe( 'getMediaStorageUsed()', () => {
 		expect( getMediaStorageUsed( state, 123 ) ).to.be.null;
 	} );
 
-	it( 'should return null if usage is unknown', () => {
+	test( 'should return null if usage is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -38,19 +40,22 @@ describe( 'getMediaStorageUsed()', () => {
 		expect( getMediaStorageUsed( state, 123 ) ).to.be.null;
 	} );
 
-	it( 'should return the storage used for a site', () => {
+	test( 'should return the storage used for a site', () => {
 		const storage_used_bytes = 1029384756;
-		const result = getMediaStorageUsed( {
-			sites: {
-				mediaStorage: {
-					items: {
-						123: {
-							storage_used_bytes,
+		const result = getMediaStorageUsed(
+			{
+				sites: {
+					mediaStorage: {
+						items: {
+							123: {
+								storage_used_bytes,
+							},
 						},
 					},
 				},
 			},
-		}, 123 );
+			123
+		);
 
 		expect( result ).to.equal( storage_used_bytes );
 	} );

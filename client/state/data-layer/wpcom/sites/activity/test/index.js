@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
+import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
+import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { activityLogError, activityLogRequest } from 'state/activity-log/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 77203074;
 
@@ -63,19 +63,22 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveActivityLog', () => {
-	it( 'should dispatch activity log update action', () => {
+	test( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.called.once;
-		expect( dispatch.args[ 0 ][ 0 ] ).to.be
-			.an( 'object' )
-			.that.has.keys( [ 'type', 'siteId', 'data' ] )
-			.that.has.property( 'type', ACTIVITY_LOG_UPDATE );
+		expect( dispatch.args[ 0 ][ 0 ] )
+			.to.be.an( 'object' )
+			.that.has.keys( [ 'data', 'found', 'query', 'siteId', 'type' ] )
+			.that.includes( {
+				found: 1,
+				type: ACTIVITY_LOG_UPDATE,
+			} );
 	} );
 } );
 
 describe( 'receiveActivityLogError', () => {
-	it( 'should dispatch activity log error action', () => {
+	test( 'should dispatch activity log error action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLogError( { dispatch }, { siteId: SITE_ID }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -88,7 +91,7 @@ describe( 'receiveActivityLogError', () => {
 } );
 
 describe( 'handleActivityLogRequest', () => {
-	it( 'should dispatch HTTP action with default when no params are passed', () => {
+	test( 'should dispatch HTTP action with default when no params are passed', () => {
 		const action = activityLogRequest( SITE_ID );
 		const dispatch = sinon.spy();
 
@@ -108,7 +111,7 @@ describe( 'handleActivityLogRequest', () => {
 		);
 	} );
 
-	it( 'should dispatch HTTP action with provided parameters', () => {
+	test( 'should dispatch HTTP action with provided parameters', () => {
 		const action = activityLogRequest( SITE_ID, {
 			date_end: 1500300000000,
 			date_start: 1500000000000,
@@ -140,7 +143,7 @@ describe( 'handleActivityLogRequest', () => {
 		);
 	} );
 
-	it( 'should handle camelCase parameters', () => {
+	test( 'should handle camelCase parameters', () => {
 		const action = activityLogRequest( SITE_ID, {
 			dateEnd: 1500300000000,
 			dateStart: 1500000000000,

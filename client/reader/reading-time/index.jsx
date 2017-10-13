@@ -30,11 +30,7 @@ class ReadingTime extends React.PureComponent {
 			components: { Time: approxTime },
 		} );
 
-		return (
-			<span className="byline__reading-time reading-time">
-				{ readingTime }
-			</span>
-		);
+		return <span className="byline__reading-time reading-time">{ readingTime }</span>;
 	}
 }
 

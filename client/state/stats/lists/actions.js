@@ -1,12 +1,15 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import wpcom from 'lib/wp';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS
+	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -30,7 +33,7 @@ export function receiveSiteStats( siteId, statType, query, data ) {
 		statType,
 		siteId,
 		query,
-		data
+		data,
 	};
 }
 
@@ -44,43 +47,46 @@ export function receiveSiteStats( siteId, statType, query, data ) {
  * @return {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_STATS_REQUEST,
 			statType,
 			siteId,
-			query
+			query,
 		} );
-		const isUndocumented = includes( [
-			'statsPodcastDownloads',
-			'statsOrders',
-			'statsTopSellers',
-			'statsTopCategories',
-			'statsTopCoupons',
-			'statsTopEarners',
-		], statType );
+		const isUndocumented = includes(
+			[
+				'statsPodcastDownloads',
+				'statsOrders',
+				'statsTopSellers',
+				'statsTopCategories',
+				'statsTopCoupons',
+				'statsTopEarners',
+			],
+			statType
+		);
 		const options = 'statsVideo' === statType ? query.postId : query;
-		const site = isUndocumented
-			? wpcom.undocumented().site( siteId )
-			: wpcom.site( siteId );
+		const site = isUndocumented ? wpcom.undocumented().site( siteId ) : wpcom.site( siteId );
 
-		return site[ statType ]( options ).then( data => {
-			dispatch( receiveSiteStats( siteId, statType, query, data ) );
-			dispatch( {
-				type: SITE_STATS_REQUEST_SUCCESS,
-				statType,
-				siteId,
-				query,
-				date: Date.now()
+		return site[ statType ]( options )
+			.then( data => {
+				dispatch( receiveSiteStats( siteId, statType, query, data ) );
+				dispatch( {
+					type: SITE_STATS_REQUEST_SUCCESS,
+					statType,
+					siteId,
+					query,
+					date: Date.now(),
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_STATS_REQUEST_FAILURE,
+					statType,
+					siteId,
+					query,
+					error,
+				} );
 			} );
-		} ).catch( error => {
-			dispatch( {
-				type: SITE_STATS_REQUEST_FAILURE,
-				statType,
-				siteId,
-				query,
-				error
-			} );
-		} );
 	};
 }

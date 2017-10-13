@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -8,16 +11,15 @@ import React from 'react';
  */
 import HeaderButton from 'components/header-button';
 
-export default function HeaderButtonExample() {
+const HeaderButtonExample = () => {
 	const onClick = () => alert( 'clicked me!' );
 	return (
 		<div>
-			<HeaderButton
-				icon="plus-small"
-				label="Add Plugin"
-				onClick={ onClick }
-			/>
+			<HeaderButton icon="plus-small" label="Add Plugin" onClick={ onClick } />
 		</div>
-		);
-}
+	);
+};
 
+HeaderButtonExample.displayName = 'HeaderButton';
+
+export default HeaderButtonExample;

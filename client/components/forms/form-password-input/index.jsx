@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';

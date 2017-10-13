@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { THEME_BACK_PATH_SET } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -8,7 +11,7 @@ import { combineReducers } from 'state/utils';
 function backPath( state = '/themes', action ) {
 	switch ( action.type ) {
 		case THEME_BACK_PATH_SET:
-			return ( action.path !== undefined ) ? action.path : state;
+			return action.path !== undefined ? action.path : state;
 	}
 	return state;
 }

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -19,11 +23,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import UpgradesNavigation from 'my-sites/domains/navigation';
 import EmptyContent from 'components/empty-content';
 import paths from 'my-sites/domains/paths';
-import {
-	hasGoogleApps,
-	hasGoogleAppsSupportedDomain,
-	getSelectedDomain
-} from 'lib/domains';
+import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 
@@ -32,21 +32,15 @@ class Email extends React.Component {
 		domains: PropTypes.object.isRequired,
 		products: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		user: PropTypes.object.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
-		googleAppsUsersLoaded: PropTypes.bool.isRequired
+		googleAppsUsersLoaded: PropTypes.bool.isRequired,
 	};
 
 	render() {
 		return (
-			<Main
-				className="domain-management-email"
-				wideLayout={ isPlanFeaturesEnabled() }
-			>
+			<Main className="domain-management-email" wideLayout={ isPlanFeaturesEnabled() }>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }
 				{ this.content() }
@@ -59,7 +53,8 @@ class Email extends React.Component {
 			return (
 				<Header
 					onClick={ this.goToEditOrList }
-					selectedDomainName={ this.props.selectedDomainName }>
+					selectedDomainName={ this.props.selectedDomainName }
+				>
 					{ this.props.translate( 'Email' ) }
 				</Header>
 			);
@@ -68,16 +63,19 @@ class Email extends React.Component {
 			<UpgradesNavigation
 				path={ this.props.context.path }
 				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
 
 	content() {
-		if ( ! (
-			this.props.domains.hasLoadedFromServer &&
-			this.props.googleAppsUsersLoaded &&
-			this.props.products.gapps
-		) ) {
+		if (
+			! (
+				this.props.domains.hasLoadedFromServer &&
+				this.props.googleAppsUsersLoaded &&
+				this.props.products.gapps
+			)
+		) {
 			return <Placeholder />;
 		}
 
@@ -94,11 +92,7 @@ class Email extends React.Component {
 	}
 
 	emptyContent() {
-		const {
-			selectedSite,
-			selectedDomainName,
-			translate,
-			} = this.props;
+		const { selectedSite, selectedDomainName, translate } = this.props;
 		let emptyContentProps;
 
 		if ( selectedDomainName ) {
@@ -106,27 +100,28 @@ class Email extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
+				secondaryActionURL: paths.domainManagementEmailForwarding(
+					selectedSite.slug,
+					selectedDomainName
+				),
 			};
 		} else {
 			emptyContentProps = {
 				title: translate( 'Enable powerful email features.' ),
 				line: translate(
 					'To set up email forwarding, G Suite, and other email ' +
-					'services for your site, upgrade your site’s web address ' +
-					'to a professional custom domain.'
-				)
+						'services for your site, upgrade your site’s web address ' +
+						'to a professional custom domain.'
+				),
 			};
 		}
 		Object.assign( emptyContentProps, {
 			illustration: '/calypso/images/illustrations/customDomain.svg',
 			action: translate( 'Add a Custom Domain' ),
-			actionURL: '/domains/add/' + this.props.selectedSite.slug
+			actionURL: '/domains/add/' + this.props.selectedSite.slug,
 		} );
 
-		return (
-			<EmptyContent { ...emptyContentProps } />
-		);
+		return <EmptyContent { ...emptyContentProps } />;
 	}
 
 	googleAppsUsersCard() {
@@ -138,22 +133,31 @@ class Email extends React.Component {
 			<div>
 				<EmailVerificationGate
 					noticeText={ this.props.translate( 'You must verify your email to purchase G Suite.' ) }
-					noticeStatus="is-info">
+					noticeStatus="is-info"
+				>
 					<AddGoogleAppsCard { ...this.props } />
 				</EmailVerificationGate>
-				{ this.props.selectedDomainName && <VerticalNav>
-					<VerticalNavItem
-						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
-						{ this.props.translate( 'Email Forwarding' ) }
-					</VerticalNavItem>
-				</VerticalNav> }
+				{ this.props.selectedDomainName && (
+					<VerticalNav>
+						<VerticalNavItem
+							path={ paths.domainManagementEmailForwarding(
+								this.props.selectedSite.slug,
+								this.props.selectedDomainName
+							) }
+						>
+							{ this.props.translate( 'Email Forwarding' ) }
+						</VerticalNavItem>
+					</VerticalNav>
+				) }
 			</div>
 		);
 	}
 
 	goToEditOrList = () => {
 		if ( this.props.selectedDomainName ) {
-			page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+			page(
+				paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+			);
 		} else {
 			page( paths.domainManagementList( this.props.selectedSite.slug ) );
 		}

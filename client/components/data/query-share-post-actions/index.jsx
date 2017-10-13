@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -9,7 +13,10 @@ import { connect } from 'react-redux';
  */
 import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
 import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
-import { fetchPostShareActionsScheduled, fetchPostShareActionsPublished } from 'state/sharing/publicize/publicize-actions/actions';
+import {
+	fetchPostShareActionsScheduled,
+	fetchPostShareActionsPublished,
+} from 'state/sharing/publicize/publicize-actions/actions';
 
 class QuerySharePostActions extends Component {
 	static propTypes = {
@@ -28,9 +35,11 @@ class QuerySharePostActions extends Component {
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
+		if (
+			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
-			this.props.status === nextProps.status ) {
+			this.props.status === nextProps.status
+		) {
 			return false;
 		}
 		return true;

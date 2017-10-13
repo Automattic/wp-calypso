@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, mapValues, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,28 +27,19 @@ class ZoneDetailsForm extends PureComponent {
 		handleSubmit: PropTypes.func.isRequired,
 		label: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
 		submitting: PropTypes.bool.isRequired,
 		translate: PropTypes.func.isRequired,
-	}
+	};
 
-	save = data => this.props.onSubmit( this.props.siteId, form, data );
+	save = data => this.props.onSubmit( form, mapValues( data, trim ) );
 
 	render() {
-		const {
-			handleSubmit,
-			label,
-			submitting,
-			translate,
-		} = this.props;
+		const { handleSubmit, label, submitting, translate } = this.props;
 
 		return (
 			<form onSubmit={ handleSubmit( this.save ) }>
 				<SectionHeader label={ label }>
-					<FormButton
-						compact
-						disabled={ submitting }
-						isSubmitting={ submitting }>
+					<FormButton compact disabled={ submitting } isSubmitting={ submitting }>
 						{ translate( 'Save' ) }
 					</FormButton>
 				</SectionHeader>
@@ -53,11 +47,13 @@ class ZoneDetailsForm extends PureComponent {
 					<ReduxFormFieldset
 						name="name"
 						label={ translate( 'Zone name' ) }
-						component={ FormTextInput } />
+						component={ FormTextInput }
+					/>
 					<ReduxFormFieldset
 						name="description"
 						label={ translate( 'Zone description' ) }
-						component={ FormTextarea } />
+						component={ FormTextarea }
+					/>
 				</CompactCard>
 			</form>
 		);
@@ -65,9 +61,14 @@ class ZoneDetailsForm extends PureComponent {
 }
 
 const createReduxForm = reduxForm( {
+	enableReinitialize: true,
 	form,
 	validate: ( data, { translate } ) => {
 		const errors = {};
+
+		if ( ! /[a-z0-9]/i.test( data.name ) ) {
+			errors.name = translate( 'Zone name must contain at least one alphanumeric character.' );
+		}
 
 		if ( ! data.name ) {
 			errors.name = translate( 'Zone name cannot be empty.' );
@@ -77,7 +78,4 @@ const createReduxForm = reduxForm( {
 	},
 } );
 
-export default flowRight(
-	localize,
-	createReduxForm,
-)( ZoneDetailsForm );
+export default flowRight( localize, createReduxForm )( ZoneDetailsForm );

@@ -1,11 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +39,7 @@ class StatsCommentFollows extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	paginationHandler = ( pageNum ) => {
+	paginationHandler = pageNum => {
 		let path = '/stats/follows/comment/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
@@ -53,9 +57,7 @@ class StatsCommentFollows extends Component {
 				<StatsFirstView />
 
 				<div id="my-stats-content" className="follows-detail follows-detail-comment">
-					<HeaderCake onClick={ this.goBack }>
-						{ translate( 'Comments Followers' ) }
-					</HeaderCake>
+					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
 					<Followers
 						path="comment-follow-summary"
 						followList={ followList }
@@ -70,17 +72,14 @@ class StatsCommentFollows extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			slug: getSiteSlug( state, siteId )
+			slug: getSiteSlug( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsCommentFollows );
+export default flowRight( connectComponent, localize )( StatsCommentFollows );

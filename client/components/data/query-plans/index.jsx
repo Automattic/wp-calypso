@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -24,17 +28,17 @@ class QueryPlans extends Component {
 
 QueryPlans.propTypes = {
 	requestingPlans: PropTypes.bool,
-	requestPlans: PropTypes.func
+	requestPlans: PropTypes.func,
 };
 
 QueryPlans.defaultProps = {
-	requestPlans: () => {}
+	requestPlans: () => {},
 };
 
 export default connect(
 	state => {
 		return {
-			requestingPlans: isRequestingPlans( state )
+			requestingPlans: isRequestingPlans( state ),
 		};
 	},
 	{ requestPlans }

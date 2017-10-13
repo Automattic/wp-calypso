@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
@@ -11,6 +14,8 @@ import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
+import { v4 as uuid } from 'uuid';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -35,7 +40,12 @@ import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
+import {
+	getEditorPostId,
+	getEditorPath,
+	isConfirmationSidebarEnabled,
+	isEditorOnlyRouteInHistory,
+} from 'state/ui/editor/selectors';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -49,7 +59,7 @@ import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus, setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
@@ -58,9 +68,13 @@ import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import {
+	NESTED_SIDEBAR_NONE,
+	NESTED_SIDEBAR_REVISIONS,
+} from 'post-editor/editor-sidebar/constants';
+import { removep } from 'lib/formatting';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -69,6 +83,7 @@ export const PostEditor = React.createClass( {
 		setEditorModePreference: PropTypes.func,
 		setEditorSidebar: PropTypes.func,
 		setLayoutFocus: PropTypes.func.isRequired,
+		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
 		user: PropTypes.object,
@@ -115,7 +130,7 @@ export const PostEditor = React.createClass( {
 			post: PostEditStore.get(),
 			isNew: PostEditStore.isNew(),
 			isAutosaving: PostEditStore.isAutosaving(),
-			isLoading: PostEditStore.isLoading()
+			isLoading: PostEditStore.isLoading(),
 		};
 	},
 
@@ -133,7 +148,7 @@ export const PostEditor = React.createClass( {
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
-			isEditorInitialized: false
+			isEditorInitialized: false,
 		} );
 	},
 
@@ -191,8 +206,10 @@ export const PostEditor = React.createClass( {
 			page.replace( nextProps.editPath, null, false, false );
 		}
 
-		if ( nextProps.siteId !== siteId ||
-			( nextProps.siteId === siteId && nextProps.postId !== postId ) ) {
+		if (
+			nextProps.siteId !== siteId ||
+			( nextProps.siteId === siteId && nextProps.postId !== postId )
+		) {
 			this.useDefaultSidebarFocus( nextProps );
 		}
 	},
@@ -203,7 +220,10 @@ export const PostEditor = React.createClass( {
 
 	useDefaultSidebarFocus( nextProps ) {
 		const props = nextProps || this.props;
-		if ( isWithinBreakpoint( '>660px' ) && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
+		if (
+			isWithinBreakpoint( '>660px' ) &&
+			( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection )
+		) {
 			this.props.setLayoutFocus( 'sidebar' );
 		}
 	},
@@ -219,7 +239,8 @@ export const PostEditor = React.createClass( {
 	setConfirmationSidebar: function( { status, context = null } ) {
 		const allowedStatuses = [ 'closed', 'open', 'publishing' ];
 		const confirmationSidebar = allowedStatuses.indexOf( status ) > -1 ? status : 'closed';
-		const editorSidebarPreference = this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
+		const editorSidebarPreference =
+			this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
 		this.setState( { confirmationSidebar } );
 
 		switch ( confirmationSidebar ) {
@@ -265,10 +286,7 @@ export const PostEditor = React.createClass( {
 
 	selectRevision: function( selectedRevisionId ) {
 		this.setState( { selectedRevisionId } );
-		if (
-			selectedRevisionId !== null &&
-			isWithinBreakpoint( '<660px' )
-		) {
+		if ( selectedRevisionId !== null && isWithinBreakpoint( '<660px' ) ) {
 			this.props.setLayoutFocus( 'content' );
 		}
 	},
@@ -302,7 +320,7 @@ export const PostEditor = React.createClass( {
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
 		const classes = classNames( 'post-editor', {
-			'is-loading': ! this.state.isEditorInitialized
+			'is-loading': ! this.state.isEditorInitialized,
 		} );
 		return (
 			<div className={ classes }>
@@ -366,43 +384,45 @@ export const PostEditor = React.createClass( {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								<StatusLabel
-									post={ this.state.savedPost }
-									type={ this.props.type }
-								/>
+								<StatusLabel post={ this.state.savedPost } type={ this.props.type } />
 							</div>
-							<div className={ classNames(
-								'post-editor__inner-content',
-								{ 'is-shown': this.state.nestedSidebar === NESTED_SIDEBAR_NONE }
-							) }>
+							<div
+								className={ classNames( 'post-editor__inner-content', {
+									'is-shown': this.state.nestedSidebar === NESTED_SIDEBAR_NONE,
+								} ) }
+							>
 								<FeaturedImage
 									site={ site }
 									post={ this.state.post }
-									maxWidth={ 1462 } />
+									maxWidth={ 1462 }
+									hasDropZone={ true }
+								/>
 								<div className="post-editor__header">
-									<EditorTitle
-										onChange={ this.onEditorTitleChange }
-										tabIndex={ 1 } />
-									{ this.state.post && isPage && site
-										? <EditorPageSlug
-											path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
-												? utils.getPagePath( this.state.post )
-												: siteURL
+									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
+									{ this.state.post && isPage && site ? (
+										<EditorPageSlug
+											path={
+												this.state.post.URL && this.state.post.URL !== siteURL ? (
+													utils.getPagePath( this.state.post )
+												) : (
+													siteURL
+												)
 											}
-											/>
-										: null
-									}
+										/>
+									) : null }
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
 											selected={ mode === 'tinymce' }
 											onClick={ this.switchEditorVisualMode }
-											title={ this.props.translate( 'Edit with a visual editor' ) }>
+											title={ this.props.translate( 'Edit with a visual editor' ) }
+										>
 											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
 										</SegmentedControlItem>
 										<SegmentedControlItem
 											selected={ mode === 'html' }
 											onClick={ this.switchEditorHtmlMode }
-											title={ this.props.translate( 'Edit the raw HTML code' ) }>
+											title={ this.props.translate( 'Edit the raw HTML code' ) }
+										>
 											HTML
 										</SegmentedControlItem>
 									</SegmentedControl>
@@ -420,10 +440,9 @@ export const PostEditor = React.createClass( {
 									onFocus={ this.onEditorFocus }
 									onMouseUp={ this.copySelectedText }
 									onBlur={ this.copySelectedText }
-									onTextEditorChange={ this.onEditorTextContentChange } />
-								<EditorWordCount
-									selectedText={ this.state.selectedText }
+									onTextEditorChange={ this.onEditorTextContentChange }
 								/>
+								<EditorWordCount selectedText={ this.state.selectedText } />
 							</div>
 							{ this.state.nestedSidebar === NESTED_SIDEBAR_REVISIONS && (
 								<EditorDiffViewer
@@ -452,9 +471,9 @@ export const PostEditor = React.createClass( {
 						loadRevision={ this.loadRevision }
 						selectedRevisionId={ this.state.selectedRevisionId }
 						selectRevision={ this.selectRevision }
-						/>
-					{ this.props.isSitePreviewable
-						? <EditorPreview
+					/>
+					{ this.props.isSitePreviewable ? (
+						<EditorPreview
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
 							onEdit={ this.onPreviewEdit }
@@ -462,41 +481,35 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
+							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
-						: null }
+					) : null }
 					<EditorNotice
 						{ ...this.state.notice }
 						onDismissClick={ this.hideNotice }
-						onViewClick={ this.onPreview } />
+						onViewClick={ this.onPreview }
+					/>
 				</div>
-				{ isTrashed
-					? <RestorePostDialog
-						onClose={ this.onClose }
-						onRestore={ this.onSaveTrashed }
-					/>
-				: null }
-				{ this.state.showVerifyEmailDialog
-					? <VerifyEmailDialog
-						onClose={ this.closeVerifyEmailDialog }
-					/>
-				: null }
-				{ isInvalidURL
-					? <InvalidURLDialog
-						post={ this.state.post }
-						onClose={ this.onClose }
-					/>
-				: null }
-				{ hasAutosave && this.state.showAutosaveDialog
-					? <RestorePostDialog
+				{ isTrashed ? (
+					<RestorePostDialog onClose={ this.onClose } onRestore={ this.onSaveTrashed } />
+				) : null }
+				{ this.state.showVerifyEmailDialog ? (
+					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+				) : null }
+				{ isInvalidURL ? (
+					<InvalidURLDialog post={ this.state.post } onClose={ this.onClose } />
+				) : null }
+				{ hasAutosave && this.state.showAutosaveDialog ? (
+					<RestorePostDialog
 						onRestore={ this.restoreAutosave }
 						onClose={ this.closeAutosaveDialog }
 						isAutosave={ true }
 					/>
-				: null }
+				) : null }
 			</div>
 		);
 	},
@@ -530,18 +543,26 @@ export const PostEditor = React.createClass( {
 	onEditedPostChange: function() {
 		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
 			loadingError = PostEditStore.getLoadingError(),
-			postEditState, post, site;
+			postEditState,
+			post,
+			site;
 
 		if ( loadingError ) {
 			this.setState( { loadingError } );
 		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
 			// is new or loading
-			this.setState( this.getInitialState(), () => this.editor && this.editor.setEditorContent( '' ) );
+			this.setState(
+				this.getInitialState(),
+				() => this.editor && this.editor.setEditorContent( '' )
+			);
 		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
 			// Is a copy of an existing post.
 			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
 			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
-			this.setState( this.getInitialState(), () => this.editor && this.editor.setEditorContent( this.state.post.content ) );
+			this.setState(
+				this.getInitialState(),
+				() => this.editor && this.editor.setEditorContent( this.state.post.content )
+			);
 		} else {
 			postEditState = this.getPostEditState();
 			post = postEditState.post;
@@ -623,7 +644,7 @@ export const PostEditor = React.createClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		const edits = {
 			...this.props.edits,
-			content: this.editor.getContent()
+			content: this.editor.getContent(),
 		};
 		actions.edit( edits );
 
@@ -660,9 +681,14 @@ export const PostEditor = React.createClass( {
 
 		let path;
 		switch ( type ) {
-			case 'page': path = '/pages'; break;
-			case 'post': path = '/posts'; break;
-			default: path = `/types/${ type }`;
+			case 'page':
+				path = '/pages';
+				break;
+			case 'post':
+				path = '/posts';
+				break;
+			default:
+				path = `/types/${ type }`;
 		}
 
 		if ( type === 'post' && site && ! site.jetpack && ! site.single_user_site ) {
@@ -678,7 +704,7 @@ export const PostEditor = React.createClass( {
 
 	onMoreInfoAboutEmailVerify: function() {
 		this.setState( {
-			showVerifyEmailDialog: true
+			showVerifyEmailDialog: true,
 		} );
 	},
 
@@ -689,8 +715,8 @@ export const PostEditor = React.createClass( {
 			this.setState( {
 				notice: {
 					status: 'is-error',
-					message: 'trashFailure'
-				}
+					message: 'trashFailure',
+				},
 			} );
 		} else {
 			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
@@ -710,25 +736,31 @@ export const PostEditor = React.createClass( {
 			edits.status = status;
 		}
 
-		if ( ! utils.isPublished( this.state.savedPost ) &&
-			( ! status && utils.isPublished( this.state.post ) || utils.isPublished( edits ) ) ) {
+		if (
+			! utils.isPublished( this.state.savedPost ) &&
+			( ( ! status && utils.isPublished( this.state.post ) ) || utils.isPublished( edits ) )
+		) {
 			return;
 		}
 
 		edits.content = this.editor.getContent();
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited( edits, { isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled }, function( error ) {
-			if ( error && 'NO_CHANGE' !== error.message ) {
-				this.onSaveDraftFailure( error );
-			} else {
-				this.onSaveDraftSuccess();
-			}
+		actions.saveEdited(
+			edits,
+			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
+			function( error ) {
+				if ( error && 'NO_CHANGE' !== error.message ) {
+					this.onSaveDraftFailure( error );
+				} else {
+					this.onSaveDraftSuccess();
+				}
 
-			if ( 'function' === typeof callback ) {
-				callback( error );
-			}
-		}.bind( this ) );
+				if ( 'function' === typeof callback ) {
+					callback( error );
+				}
+			}.bind( this )
+		);
 
 		this.setState( { isSaving: true } );
 	},
@@ -759,7 +791,7 @@ export const PostEditor = React.createClass( {
 
 		if ( this.state.previewAction !== action ) {
 			this.setState( {
-				previewAction: action
+				previewAction: action,
 			} );
 		}
 
@@ -768,7 +800,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( ! this._previewWindow || this._previewWindow.closed ) {
-			this._previewWindow	= window.open( 'about:blank', 'WordPress.com Post Preview' );
+			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
 		}
 
 		if ( this.state.savedPost && this.state.savedPost.status ) {
@@ -798,9 +830,12 @@ export const PostEditor = React.createClass( {
 			this.autosave();
 			// to avoid a weird UX we clear the iframe when (auto)saving
 			// so we need to delay opening it a bit to avoid flickering
-			setTimeout( function() {
-				this.setState( { showPreview: true } );
-			}.bind( this ), 150 );
+			setTimeout(
+				function() {
+					this.setState( { showPreview: true } );
+				}.bind( this ),
+				150
+			);
 		} else {
 			this.setState( { showPreview: true } );
 		}
@@ -819,6 +854,15 @@ export const PostEditor = React.createClass( {
 	},
 
 	onPreviewEdit: function() {
+		if ( this.props.editorSidebarPreference === 'open' ) {
+			// When returning to the editor from the preview, set the "next
+			// layout focus" to the sidebar if the editor sidebar should be
+			// visible.  Otherwise, according to its default behavior, the
+			// LAYOUT_NEXT_FOCUS_ACTIVATE action will cause the 'content'
+			// layout area to be activated, which hides the editor sidebar.
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
@@ -845,21 +889,15 @@ export const PostEditor = React.createClass( {
 	onPublish: function( isConfirmed = false ) {
 		const edits = {
 			...this.props.edits,
-			status: 'publish'
+			status: 'publish',
 		};
 
-		if (
-			this.props.isConfirmationSidebarEnabled &&
-			false === isConfirmed
-		) {
+		if ( this.props.isConfirmationSidebarEnabled && false === isConfirmed ) {
 			this.setConfirmationSidebar( { status: 'open' } );
 			return;
 		}
 
-		if (
-			this.props.isConfirmationSidebarEnabled &&
-			'open' === this.state.confirmationSidebar
-		) {
+		if ( this.props.isConfirmationSidebarEnabled && 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
@@ -874,17 +912,21 @@ export const PostEditor = React.createClass( {
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.editor.getContent();
 
-		actions.saveEdited( edits, { isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled }, function( error ) {
-			if ( error && 'NO_CHANGE' !== error.message ) {
-				this.onPublishFailure( error );
-			} else {
-				this.onPublishSuccess();
-			}
-		}.bind( this ) );
+		actions.saveEdited(
+			edits,
+			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
+			function( error ) {
+				if ( error && 'NO_CHANGE' !== error.message ) {
+					this.onPublishFailure( error );
+				} else {
+					this.onPublishSuccess();
+				}
+			}.bind( this )
+		);
 
 		this.setState( {
 			isSaving: true,
-			isPublishing: true
+			isPublishing: true,
 		} );
 	},
 
@@ -926,8 +968,8 @@ export const PostEditor = React.createClass( {
 			notice: {
 				status: 'is-error',
 				error,
-				message
-			}
+				message,
+			},
 		} );
 
 		window.scrollTo( 0, 0 );
@@ -957,8 +999,8 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		const currentDate = this.moment( date );
-		const modifiedDate = this.moment( savedPost.date );
+		const currentDate = this.props.moment( date );
+		const modifiedDate = this.props.moment( savedPost.date );
 		const dateChange = ! (
 			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
 			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
@@ -985,14 +1027,15 @@ export const PostEditor = React.createClass( {
 		this.setState( {
 			notice: {
 				status: 'is-warning',
-				message: 'warnPublishDateChange'
-			}
+				message: 'warnPublishDateChange',
+			},
 		} );
 	},
 
 	onSaveSuccess: function( message ) {
 		const post = PostEditStore.get();
-		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
+		const isNotPrivateOrIsConfirmed =
+			'private' !== post.status || 'closed' !== this.state.confirmationSidebar;
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
@@ -1008,7 +1051,7 @@ export const PostEditor = React.createClass( {
 
 		const nextState = {
 			isSaving: false,
-			isPublishing: false
+			isPublishing: false,
 		};
 
 		if ( message ) {
@@ -1017,12 +1060,21 @@ export const PostEditor = React.createClass( {
 				message,
 			};
 
+			const referrer = get( window, 'document.referrer', '' );
+			const referrerDomain = parseUrl( referrer ).hostname;
+			const shouldReturnToSite =
+				'updated' === message &&
+				this.props.isEditorOnlyRouteInHistory &&
+				referrerDomain === this.props.selectedSiteDomain;
+
+			if ( shouldReturnToSite ) {
+				window.location.href = this.getExternalUrl();
+				return;
+			}
+
 			window.scrollTo( 0, 0 );
 
-			if (
-				this.props.isSitePreviewable &&
-				isNotPrivateOrIsConfirmed
-			) {
+			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed ) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
@@ -1046,10 +1098,243 @@ export const PostEditor = React.createClass( {
 		return editorMode;
 	},
 
+	getContainingTagInfo: function( content, cursorPosition ) {
+		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
+		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
+
+		if ( lastLtPos > lastGtPos ) {
+			// inside a tag that was opened, but not closed
+
+			// find what the tag is
+			const tagContent = content.substr( lastLtPos );
+			const tagMatch = tagContent.match( /<\s*(\/)?(\w+)/ );
+			if ( ! tagMatch ) {
+				return null;
+			}
+
+			const tagType = tagMatch[ 2 ];
+			const closingGt = tagContent.indexOf( '>' );
+			const isClosingTag = !! tagMatch[ 1 ];
+
+			return {
+				ltPos: lastLtPos,
+				gtPos: lastLtPos + closingGt + 1, // offset by one to get the position _after_ the character,
+				tagType,
+				isClosingTag,
+			};
+		}
+		return null;
+	},
+
+	getCursorMarkerSpan: function( type ) {
+		const tagType = type ? type : 'start';
+
+		return `<span
+				data-mce-type="bookmark"
+				id="mce_SELREST_${ tagType }"
+				data-mce-style="overflow:hidden;line-height:0"
+				style="overflow:hidden;line-height:0"
+			>&#65279;</span>`;
+	},
+
+	addHTMLBookmarkInTextAreaContent: function() {
+		const textArea = this.editor._editor.getElement();
+
+		let htmlModeCursorStartPosition = textArea.selectionStart;
+		let htmlModeCursorEndPosition = textArea.selectionEnd;
+
+		// check if the cursor is in a tag and if so, adjust it
+		const isCursorStartInTag = this.getContainingTagInfo(
+			textArea.value,
+			htmlModeCursorStartPosition
+		);
+		if ( isCursorStartInTag ) {
+			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
+		}
+
+		const isCursorEndInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorEndPosition );
+		if ( isCursorEndInTag ) {
+			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
+		}
+
+		const mode = htmlModeCursorStartPosition !== htmlModeCursorEndPosition ? 'range' : 'single';
+
+		let selectedText = null;
+
+		if ( mode === 'range' ) {
+			const bookMarkEnd = this.getCursorMarkerSpan( 'end' );
+
+			selectedText = [
+				textArea.value.slice( htmlModeCursorStartPosition, htmlModeCursorEndPosition ),
+				bookMarkEnd,
+			].join( '' );
+		}
+
+		textArea.value = [
+			textArea.value.slice( 0, htmlModeCursorStartPosition ), // text until the cursor/selection position
+			this.getCursorMarkerSpan( 'start' ), // cursor/selection start marker
+			selectedText, // selected text with end cursor/position marker
+			textArea.value.slice( htmlModeCursorEndPosition ), // text from last cursor/selection position to end
+		].join( '' );
+
+		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
+	},
+
+	focusHTMLBookmarkInVisualEditor: function( ed ) {
+		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
+		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
+
+		if ( ! startNode ) {
+			return;
+		}
+
+		ed.target.focus();
+
+		if ( ! endNode ) {
+			ed.target.selection.select( startNode );
+		} else {
+			const selection = document.createRange();
+			selection.setStart( startNode, 0 );
+			selection.setEnd( endNode, 0 );
+
+			ed.target.selection.setRng( selection );
+			endNode.parentNode.removeChild( endNode );
+		}
+
+		startNode.parentNode.removeChild( startNode );
+
+		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
+	},
+
+	/**
+	 * Finds the current selection position in the Visual editor.
+	 *
+	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
+	 *
+	 * @param {Object} editor The editor where we must find the selection
+	 * @returns {null | Object} The selection range position in the editor
+	 */
+	findBookmarkedPosition: function( editor ) {
+		// Get the TinyMCE `window` reference, since we need to access the raw selection.
+		const TinyMCEWIndow = editor.getWin();
+
+		const selection = TinyMCEWIndow.getSelection();
+
+		if ( selection.rangeCount <= 0 ) {
+			// no selection, no need to continue.
+			return;
+		}
+
+		/**
+		 * The ID is used to avoid replacing user generated content, that may coincide with the
+		 * format specified below.
+		 * @type {string}
+		 */
+		const selectionID = 'SELRES_' + uuid();
+
+		/**
+		 * Create two marker elements that will be used to mark the start and the end of the range.
+		 *
+		 * The elements have hardcoded style that makes them invisible. This is done to avoid seeing
+		 * random content flickering in the editor when switching between modes.
+		 */
+		const startElement = document.createElement( 'span' );
+		startElement.className = 'mce_SELRES_start';
+		startElement.style.display = 'inline-block';
+		startElement.style.width = 0;
+		startElement.style.overflow = 'hidden';
+		startElement.style.lineHeight = '0px';
+		startElement.innerHTML = selectionID;
+
+		const endElement = document.createElement( 'span' );
+		endElement.className = 'mce_SELRES_end';
+		endElement.style.display = 'inline-block';
+		endElement.style.width = 0;
+		endElement.style.overflow = 'hidden';
+		endElement.style.lineHeight = '0px';
+		endElement.innerHTML = selectionID;
+
+		/**
+		 * Black magic start.
+		 *
+		 * Inspired by https://stackoverflow.com/a/17497803/153310
+		 *
+		 * Why do it this way and not with TinyMCE's bookmarks?
+		 *
+		 * TinyMCE's bookmarks are very nice when working with selections and positions, BUT
+		 * there is no way to determine the precise position of the bookmark when switching modes, since
+		 * TinyMCE does some serialization of the content, to fix things like shortcodes, run plugins, prettify
+		 * HTML code and so on. In this process, the bookmark markup gets lost.
+		 *
+		 * If we decide to hook right after the bookmark is added, we can see where the bookmark is in the raw HTML
+		 * in TinyMCE. Unfortunately this state is before the serialization, so any visual markup in the content will
+		 * throw off the positioning.
+		 *
+		 * To avoid this, we insert two custom `span`s that will serve as the markers at the beginning and end of the
+		 * selection.
+		 *
+		 * Why not use TinyMCE's selection API or the DOM API to wrap the contents? Because if we do that, this creates
+		 * a new node, which is inserted in the dom. Now this will be fine, if we worked with fixed selections to
+		 * full nodes. Unfortunately in our case, the user can select whatever they like, which means that the
+		 * selection may start in the middle of one node and end in the middle of a completely different one. If we
+		 * wrap the selection in another node, this will create artifacts in the content.
+		 *
+		 * Using the method below, we insert the custom `span` nodes at the start and at the end of the selection.
+		 * This helps us not break the content and also gives us the option to work with multi-node selections without
+		 * breaking the markup.
+		 */
+		const range = selection.getRangeAt( 0 );
+		const startNode = range.startContainer;
+		const startOffset = range.startOffset;
+		const boundaryRange = range.cloneRange();
+
+		boundaryRange.collapse( false );
+		boundaryRange.insertNode( endElement );
+		boundaryRange.setStart( startNode, startOffset );
+		boundaryRange.collapse( true );
+		boundaryRange.insertNode( startElement );
+
+		range.setStartAfter( startElement );
+		range.setEndBefore( endElement );
+		selection.removeAllRanges();
+		selection.addRange( range );
+
+		/**
+		 * Now the editor's content has the start/end nodes.
+		 *
+		 * Unfortunately the content goes through some more changes after this step, before it gets inserted
+		 * in the `textarea`. This means that we have to do some minor cleanup on our own here.
+		 */
+		const content = removep( editor.getContent() );
+
+		const startRegex = new RegExp(
+			'<span[^>]*\\s*class="mce_SELRES_start"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
+		);
+
+		const endRegex = new RegExp(
+			'<span[^>]*\\s*class="mce_SELRES_end"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
+		);
+
+		const startMatch = content.match( startRegex );
+		const endMatch = content.match( endRegex );
+		if ( ! startMatch ) {
+			return null;
+		}
+
+		return {
+			start: startMatch.index,
+
+			// We need to adjust the end position to discard the length of the range start marker
+			end: endMatch ? endMatch.index - startMatch[ 0 ].length : null,
+		};
+	},
+
 	switchEditorMode: function( mode ) {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
+			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
+
 			this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
@@ -1057,6 +1342,11 @@ export const PostEditor = React.createClass( {
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
+
+			this.editor.setSelection( selectionRange );
+		} else if ( mode === 'tinymce' ) {
+			this.addHTMLBookmarkInTextAreaContent();
+			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
 		this.props.setEditorModePreference( mode );
@@ -1064,23 +1354,25 @@ export const PostEditor = React.createClass( {
 		// Defer actions until next available tick to avoid
 		// dispatching inside a dispatch which can happen if for example the
 		// title field is focused when toggling the editor.
-		this._switchEditorTimeout = setTimeout( function() {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( { content: content } );
+		this._switchEditorTimeout = setTimeout(
+			function() {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				actions.edit( { content: content } );
 
-			if ( mode === 'html' ) {
-				// Set raw content directly to avoid race conditions
-				actions.editRawContent( content );
-			} else {
-				this.saveRawContent();
-			}
-		}.bind( this ), 0 );
-	}
-
+				if ( mode === 'html' ) {
+					// Set raw content directly to avoid race conditions
+					actions.editRawContent( content );
+				} else {
+					this.saveRawContent();
+				}
+			}.bind( this ),
+			0
+		);
+	},
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const userId = getCurrentUserId( state );
@@ -1089,6 +1381,7 @@ export default connect(
 			siteId,
 			postId,
 			selectedSite: getSelectedSite( state ),
+			selectedSiteDomain: getSiteDomain( state, siteId ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
@@ -1098,21 +1391,26 @@ export default connect(
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSitePreviewable: isSitePreviewable( state, siteId ),
+			isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 			isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			setEditorLastDraft,
-			resetEditorLastDraft,
-			receivePost,
-			editPost,
-			savePostSuccess,
-			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
-			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
-			setLayoutFocus,
-			saveConfirmationSidebarPreference,
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				setEditorLastDraft,
+				resetEditorLastDraft,
+				receivePost,
+				editPost,
+				savePostSuccess,
+				setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+				setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
+				setLayoutFocus,
+				setNextLayoutFocus,
+				saveConfirmationSidebarPreference,
+			},
+			dispatch
+		);
 	},
 	null,
 	{ pure: false }

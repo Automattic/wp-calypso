@@ -1,4 +1,4 @@
-.guided-tours__step {
+.card.guided-tours__step {
 	position: fixed;
 	width: calc( 100% - 10px );
 	max-width: 410px;
@@ -43,7 +43,7 @@
 	}
 }
 
-.guided-tours__step-first {
+.card.guided-tours__step-first {
 	animation-duration: 0.25s;
 	animation-name: guided-tours__step-slidein;
 	animation-timing-function: ease-out;
@@ -51,7 +51,7 @@
 	animation-fill-mode: both;
 }
 
-.guided-tours__step-finish {
+.card.guided-tours__step-finish {
 	top: 20%;
 }
 

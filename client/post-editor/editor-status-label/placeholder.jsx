@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -27,8 +31,8 @@ function EditorStatusLabelPlaceholder( { translate, siteId, typeSlug, type, clas
 	} else if ( type ) {
 		label = translate( 'Loading %(postType)s…', {
 			args: {
-				postType: decodeEntities( type.labels.singular_name )
-			}
+				postType: decodeEntities( type.labels.singular_name ),
+			},
 		} );
 	} else {
 		label = translate( 'Loading…' );
@@ -36,9 +40,9 @@ function EditorStatusLabelPlaceholder( { translate, siteId, typeSlug, type, clas
 
 	return (
 		<button className={ classes }>
-			{ 'post' !== typeSlug && 'page' !== typeSlug && siteId && (
-				<QueryPostTypes siteId={ siteId } />
-			) }
+			{ 'post' !== typeSlug &&
+			'page' !== typeSlug &&
+			siteId && <QueryPostTypes siteId={ siteId } /> }
 			<strong>{ label }</strong>
 		</button>
 	);
@@ -49,10 +53,10 @@ EditorStatusLabelPlaceholder.propTypes = {
 	siteId: PropTypes.number,
 	typeSlug: PropTypes.string,
 	type: PropTypes.object,
-	className: PropTypes.string
+	className: PropTypes.string,
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const props = { siteId };
 
@@ -63,6 +67,6 @@ export default connect( ( state ) => {
 
 	return Object.assign( props, {
 		typeSlug: post.type,
-		type: getPostType( state, siteId, post.type )
+		type: getPostType( state, siteId, post.type ),
 	} );
 } )( localize( EditorStatusLabelPlaceholder ) );

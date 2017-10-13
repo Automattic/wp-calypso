@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
-const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
 /**
  * Internal dependencies
@@ -10,7 +14,6 @@ const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
 import config from 'config';
 
 export default class WpcomLoginForm extends Component {
-
 	form = null;
 
 	componentDidMount() {
@@ -22,9 +25,11 @@ export default class WpcomLoginForm extends Component {
 		const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
 		let subdomain = '';
 
-		if ( subdomainRegExp.test( this.props.redirectTo ) &&
+		if (
+			subdomainRegExp.test( this.props.redirectTo ) &&
 			config( 'hostname' ) !== 'wpcalypso.wordpress.com' &&
-			config( 'hostname' ) !== 'horizon.wordpress.com' ) {
+			config( 'hostname' ) !== 'horizon.wordpress.com'
+		) {
 			subdomain = this.props.redirectTo.match( subdomainRegExp )[ 1 ] + '.';
 		}
 
@@ -40,16 +45,18 @@ export default class WpcomLoginForm extends Component {
 
 		return (
 			<div>
-				{ Object.keys( extraFields ).map( ( field ) => {
-					return <input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />;
+				{ Object.keys( extraFields ).map( field => {
+					return (
+						<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
+					);
 				} ) }
 			</div>
 		);
 	}
 
-	storeFormRef = ( form ) => {
+	storeFormRef = form => {
 		this.form = form;
-	}
+	};
 
 	render() {
 		return (

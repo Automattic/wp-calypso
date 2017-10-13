@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,31 +9,29 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestNotificationSettings, updateSettings, handleError } from '../';
 import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
-import {
-	requestNotificationSettings,
-	updateSettings,
-	handleError,
-} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( '#requestNotificationSettings()', () => {
-	it( 'should dispatch HTTP request to the user notification settings endpoint', () => {
+	test( 'should dispatch HTTP request to the user notification settings endpoint', () => {
 		const dispatch = spy();
 
 		requestNotificationSettings( { dispatch } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1.1',
-			method: 'GET',
-			path: '/me/notifications/settings'
-		} ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http( {
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/me/notifications/settings',
+			} )
+		);
 	} );
 } );
 
 describe( '#updateSettings()', () => {
-	it( 'should dispatch notification settings', () => {
+	test( 'should dispatch notification settings', () => {
 		const dispatch = spy();
 
 		updateSettings( { dispatch }, null, {} );
@@ -39,13 +39,13 @@ describe( '#updateSettings()', () => {
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( {
 			type: NOTIFICATION_SETTINGS_UPDATE,
-			settings: {}
+			settings: {},
 		} );
 	} );
 } );
 
 describe( '#handleError()', () => {
-	it( 'should dispatch error notice', () => {
+	test( 'should dispatch error notice', () => {
 		const dispatch = spy();
 
 		handleError( { dispatch } );
@@ -54,8 +54,8 @@ describe( '#handleError()', () => {
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			type: NOTICE_CREATE,
 			notice: {
-				status: 'is-error'
-			}
+				status: 'is-error',
+			},
 		} );
 	} );
 } );

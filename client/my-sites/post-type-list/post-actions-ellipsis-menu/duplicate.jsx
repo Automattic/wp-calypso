@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,9 +25,15 @@ import { bumpStat } from 'state/analytics/actions';
 
 const bumpDuplicateStat = () => bumpStat( 'calypso_cpt_actions', 'duplicate' );
 
-function PostActionsEllipsisMenuDuplicate(
-	{ translate, siteId, canEdit, duplicateUrl, isKnownType, bumpDuplicateStat: handleStatBump, status }
-) {
+function PostActionsEllipsisMenuDuplicate( {
+	translate,
+	siteId,
+	canEdit,
+	duplicateUrl,
+	isKnownType,
+	bumpDuplicateStat: handleStatBump,
+	status,
+} ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
 	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit || ! validStatus ) {
@@ -50,27 +59,30 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	bumpDuplicateStat: PropTypes.func,
 };
 
-export default connect( ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
-		return {};
-	}
+export default connect(
+	( state, { globalId } ) => {
+		const post = getPost( state, globalId );
+		if ( ! post ) {
+			return {};
+		}
 
-	const type = getPostType( state, post.site_ID, post.type );
-	const userId = getCurrentUserId( state );
-	const isAuthor = get( post.author, 'ID' ) === userId;
+		const type = getPostType( state, post.site_ID, post.type );
+		const userId = getCurrentUserId( state );
+		const isAuthor = get( post.author, 'ID' ) === userId;
 
-	let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
-	const typeCapability = get( type, [ 'capabilities', capability ] );
-	if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
-		capability = typeCapability;
-	}
+		let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
+		const typeCapability = get( type, [ 'capabilities', capability ] );
+		if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
+			capability = typeCapability;
+		}
 
-	return {
-		status: post.status,
-		siteId: post.site_ID,
-		canEdit: canCurrentUser( state, post.site_ID, capability ),
-		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
-		isKnownType: !! type
-	};
-}, { bumpDuplicateStat } )( localize( PostActionsEllipsisMenuDuplicate ) );
+		return {
+			status: post.status,
+			siteId: post.site_ID,
+			canEdit: canCurrentUser( state, post.site_ID, capability ),
+			duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
+			isKnownType: !! type,
+		};
+	},
+	{ bumpDuplicateStat }
+)( localize( PostActionsEllipsisMenuDuplicate ) );

@@ -1,9 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { camelCase, each, kebabCase } from 'lodash';
 import fs from 'fs';
+import { camelCase, each, kebabCase } from 'lodash';
 import path from 'path';
 
 /**
@@ -23,7 +25,7 @@ import * as selectors from '../';
 const RX_JS_EXTENSION = /\.js$/;
 
 describe( 'selectors', () => {
-	it( 'should match every selector to its default export', () => {
+	test( 'should match every selector to its default export', () => {
 		each( selectors, ( selector, key ) => {
 			const module = require( '../' + kebabCase( key ) );
 			const defaultExport = module.default ? module.default : module;
@@ -31,13 +33,13 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	it( 'should export every selector file', ( done ) => {
+	test( 'should export every selector file', done => {
 		fs.readdir( path.join( __dirname, '..' ), ( error, files ) => {
 			if ( error ) {
 				return done( error );
 			}
 
-			each( files, ( file ) => {
+			each( files, file => {
 				if ( ! RX_JS_EXTENSION.test( file ) || 'index.js' === file ) {
 					return;
 				}

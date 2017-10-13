@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -18,7 +21,7 @@ import support from 'lib/url/support';
 class Locked extends React.Component {
 	state = {
 		submitting: false,
-		showDialog: false
+		showDialog: false,
 	};
 
 	unlockAndRequestTransferCode = () => {
@@ -28,11 +31,11 @@ class Locked extends React.Component {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
 			unlock: true,
-			disablePrivacy: privateDomain && hasPrivacyProtection
+			disablePrivacy: privateDomain && hasPrivacyProtection,
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, ( error ) => {
+		requestTransferCode( options, error => {
 			if ( error ) {
 				this.setState( { submitting: false } );
 			}
@@ -45,11 +48,11 @@ class Locked extends React.Component {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
 			unlock: false,
-			disablePrivacy: false
+			disablePrivacy: false,
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, ( error ) => {
+		requestTransferCode( options, error => {
 			this.setState( { submitting: false } );
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
 		} );
@@ -64,14 +67,14 @@ class Locked extends React.Component {
 			<p>
 				{ this.props.translate(
 					'This Top Level Domain (TLD) requires that we manually request a ' +
-					'transfer code on your behalf. After we have received it, we will ' +
-					'email it to you.'
+						'transfer code on your behalf. After we have received it, we will ' +
+						'email it to you.'
 				) }
 			</p>
 		);
 	}
 
-	handleGiveMeTheCodeClick = ( event ) => {
+	handleGiveMeTheCodeClick = event => {
 		event.preventDefault();
 		this.requestTransferCode();
 	};
@@ -85,13 +88,21 @@ class Locked extends React.Component {
 				<Card className="transfer-card">
 					<div>
 						<p>
-							{ privateDomain
-								? translate( 'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
-									'Your contact information will be publicly available during the transfer period.' )
-								: translate( 'To transfer your domain, we must unlock it.' )
-							} <a
-									href={ support.TRANSFER_DOMAIN_REGISTRATION }
-									target="_blank" rel="noopener noreferrer">{ translate( 'Learn More.' ) }</a>
+							{ privateDomain ? (
+								translate(
+									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
+										'Your contact information will be publicly available during the transfer period.'
+								)
+							) : (
+								translate( 'To transfer your domain, we must unlock it.' )
+							) }{' '}
+							<a
+								href={ support.TRANSFER_DOMAIN_REGISTRATION }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ translate( 'Learn More.' ) }
+							</a>
 						</p>
 						<p className="transfer__small-text">
 							<a href="" onClick={ this.handleGiveMeTheCodeClick }>
@@ -103,7 +114,8 @@ class Locked extends React.Component {
 							className="transfer__action-button"
 							onClick={ this.unlockAndRequestTransferCode }
 							primary
-							disabled={ this.state.submitting }>
+							disabled={ this.state.submitting }
+						>
 							{ translate( 'Update Settings And Continue' ) }
 						</Button>
 					</div>
@@ -111,7 +123,6 @@ class Locked extends React.Component {
 			</div>
 		);
 	}
-
 }
 
 export default localize( Locked );

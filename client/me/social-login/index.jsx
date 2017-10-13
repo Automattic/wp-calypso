@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +16,6 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
  */
 import config from 'config';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
 import FormButton from 'components/forms/form-button';
 import Main from 'components/main';
@@ -63,7 +65,7 @@ class SocialLogin extends Component {
 		this.props.disconnectSocialUser( 'google' ).then( () => this.refreshUser() );
 	};
 
-	handleGoogleLoginResponse = ( response ) => {
+	handleGoogleLoginResponse = response => {
 		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
@@ -78,14 +80,20 @@ class SocialLogin extends Component {
 	};
 
 	renderContent() {
-		const { translate } = this.props;
+		const { translate, errorUpdatingSocialConnection } = this.props;
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Manage Social Login Connections' ) } />
+				{ errorUpdatingSocialConnection && (
+					<Notice status={ 'is-error' } showDismiss={ false }>
+						{ errorUpdatingSocialConnection.message }
+					</Notice>
+				) }
 				<CompactCard>
-					{ translate( 'You’ll be able to log in faster by linking your WordPress.com account with your ' +
-						'social networks. We’ll never post without your permission.' ) }
+					{ translate(
+						'You’ll be able to log in faster by linking your WordPress.com account with your ' +
+							'social networks. We’ll never post without your permission.'
+					) }
 				</CompactCard>
 				{ this.renderGoogleConnection() }
 			</div>
@@ -94,7 +102,9 @@ class SocialLogin extends Component {
 
 	renderActionButton( onClickAction = null ) {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
-		const buttonLabel = isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' );
+		const buttonLabel = isUserConnectedToGoogle
+			? translate( 'Disconnect' )
+			: translate( 'Connect' );
 		const disableButton = isUpdatingSocialConnection || this.state.fetchingUser;
 
 		return (
@@ -103,23 +113,18 @@ class SocialLogin extends Component {
 				disabled={ disableButton }
 				compact={ true }
 				isPrimary={ ! isUserConnectedToGoogle }
-				onClick={ onClickAction }>
+				onClick={ onClickAction }
+			>
 				{ buttonLabel }
 			</FormButton>
 		);
 	}
 
 	renderGoogleConnection() {
-		const { errorUpdatingSocialConnection, isUserConnectedToGoogle } = this.props;
+		const { isUserConnectedToGoogle } = this.props;
 
 		return (
 			<CompactCard>
-				{
-					errorUpdatingSocialConnection &&
-						<Notice status={ 'is-error' } showDismiss={ false }>
-							{ errorUpdatingSocialConnection.message }
-						</Notice>
-				}
 				<div className="social-login__header">
 					<div className="social-login__header-info">
 						<div className="social-login__header-icon">
@@ -129,15 +134,16 @@ class SocialLogin extends Component {
 					</div>
 
 					<div className="social-login__header-action">
-						{
-							isUserConnectedToGoogle
-								? this.renderActionButton( this.disconnectFromGoogle )
-								: <GoogleLoginButton
-									clientId={ config( 'google_oauth_client_id' ) }
-									responseHandler={ this.handleGoogleLoginResponse }>
-									{ this.renderActionButton() }
-								</GoogleLoginButton>
-						}
+						{ isUserConnectedToGoogle ? (
+							this.renderActionButton( this.disconnectFromGoogle )
+						) : (
+							<GoogleLoginButton
+								clientId={ config( 'google_oauth_client_id' ) }
+								responseHandler={ this.handleGoogleLoginResponse }
+							>
+								{ this.renderActionButton() }
+							</GoogleLoginButton>
+						) }
 					</div>
 				</div>
 			</CompactCard>
@@ -163,7 +169,7 @@ class SocialLogin extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const currentUser = getCurrentUser( state );
 
 		return {

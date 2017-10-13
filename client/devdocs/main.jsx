@@ -1,30 +1,35 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debug from 'debug';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { isFunction } from 'lodash';
-const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var DocService = require( './service' ),
-	Card = require( 'components/card' ),
-	Main = require( 'components/main' ),
-	SearchCard = require( 'components/search-card' );
+import DocService from './service';
+import DocumentHead from 'components/data/document-head';
+import Card from 'components/card';
+import Main from 'components/main';
+import SearchCard from 'components/search-card';
 
 /**
  * Constants
  */
 
-var DEFAULT_FILES = [
+const DEFAULT_FILES = [
 	'docs/guide/index.md',
 	'README.md',
 	'.github/CONTRIBUTING.md',
 	'docs/coding-guidelines.md',
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',
-	'docs/coding-guidelines/html.md'
+	'docs/coding-guidelines/html.md',
 ];
 
 /**
@@ -33,95 +38,101 @@ var DEFAULT_FILES = [
 
 const log = debug( 'calypso:devdocs' );
 
-module.exports = React.createClass( {
-	displayName: 'Devdocs',
-	propTypes: {
-		term: React.PropTypes.string
-	},
+export default class Devdocs extends React.Component {
+	static displayName = 'Devdocs';
 
-	getDefaultProps: function() {
-		return {
-			term: ''
-		};
-	},
+	static propTypes = {
+		term: PropTypes.string,
+	};
 
-	getInitialState: function() {
-		return {
-			term: this.props.term,
-			results: [],
-			defaultResults: [],
-			inputValue: '',
-			searching: false
-		};
-	},
+	static defaultProps = {
+		term: '',
+	};
+
+	state = {
+		term: this.props.term,
+		results: [],
+		defaultResults: [],
+		inputValue: '',
+		searching: false,
+	};
 
 	// load default files if not already cached
-	loadDefaultFiles: function() {
+	loadDefaultFiles = () => {
 		if ( this.state.defaultResults.length ) {
 			return;
 		}
 
-		DocService.list( DEFAULT_FILES, function( err, results ) {
-			if ( !err && this.isMounted() ) {
-				this.setState( {
-					defaultResults: results
-				} );
-			}
-		}.bind( this ) );
-	},
+		DocService.list(
+			DEFAULT_FILES,
+			function( err, results ) {
+				if ( ! err ) {
+					this.setState( {
+						defaultResults: results,
+					} );
+				}
+			}.bind( this )
+		);
+	};
 
-	componentDidMount: function() {
-		var term = this.state.term;
+	componentDidMount() {
+		const { term } = this.state;
 		this.loadDefaultFiles();
 		if ( ! term ) {
 			return;
 		}
 		this.onSearchChange( this.state.term );
 		this.onSearch( this.state.term );
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( isFunction( this.props.onSearchChange ) ) {
 			this.props.onSearchChange( this.state.term );
 		}
-	},
+	}
 
-	notFound: function() {
-		return this.state.inputValue && this.state.term && ! this.state.results.length && ! this.state.searching;
-	},
+	notFound = () => {
+		return (
+			this.state.inputValue &&
+			this.state.term &&
+			! this.state.results.length &&
+			! this.state.searching
+		);
+	};
 
-	onSearchChange: function( term ) {
+	onSearchChange = term => {
 		this.setState( {
 			inputValue: term,
 			term: term,
-			searching: !! term
+			searching: !! term,
 		} );
-	},
+	};
 
-	onSearch: function( term ) {
+	onSearch = term => {
 		if ( ! term ) {
 			return;
 		}
-		DocService.search( term, function( err, results ) {
-			if ( err ) {
-				log( 'search error: %o', err );
-			}
+		DocService.search(
+			term,
+			function( err, results ) {
+				if ( err ) {
+					log( 'search error: %o', err );
+				}
 
-			this.setState( {
-				results: results,
-				searching: false
-			} );
-		}.bind( this ) );
-	},
+				this.setState( {
+					results: results,
+					searching: false,
+				} );
+			}.bind( this )
+		);
+	};
 
-	results: function() {
-		var searchResults;
-
+	results = () => {
 		if ( this.notFound() ) {
 			return <p>Not Found</p>;
 		}
 
-		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
+		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
 			let url = '/devdocs/' + result.path;
 
@@ -133,7 +144,9 @@ module.exports = React.createClass( {
 				<Card compact className="devdocs__result" key={ result.path }>
 					<header className="devdocs__result-header">
 						<h1 className="devdocs__result-title">
-							<a className="devdocs__result-link" href={ url }>{ result.title }</a>
+							<a className="devdocs__result-link" href={ url }>
+								{ result.title }
+							</a>
 						</h1>
 						<h2 className="devdocs__result-path">{ result.path }</h2>
 					</header>
@@ -141,29 +154,30 @@ module.exports = React.createClass( {
 				</Card>
 			);
 		}, this );
-	},
+	};
 
-	snippet: function( result ) {
+	snippet = result => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
-		var parts = result.snippet.split(/(<mark>.*?<\/mark>)/);
+		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
 				{ parts.map( function( part, i ) {
-					var markMatch = part.match( /<mark>(.*?)<\/mark>/ );
+					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
 						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
-					} else {
-						return part;
 					}
+					return part;
 				} ) }
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<Main className="devdocs">
+				<DocumentHead title="Calypso Docs" />
+
 				<SearchCard
 					autoFocus
 					placeholder="Search documentation…"
@@ -173,10 +187,8 @@ module.exports = React.createClass( {
 					onSearchChange={ this.onSearchChange }
 					onSearch={ this.onSearch }
 				/>
-				<div className="devdocs__results">
-					{ this.results() }
-				</div>
+				<div className="devdocs__results">{ this.results() }</div>
 			</Main>
 		);
 	}
-} );
+}

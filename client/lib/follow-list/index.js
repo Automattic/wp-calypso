@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FollowListSite = require( './site.js' );
+import FollowListSite from './site.js';
 
 /**
  * FollowList component
@@ -19,7 +22,6 @@ function FollowList() {
 	}
 	this.data = [];
 }
-
 
 /**
  * Adds a new follower object to the data store
@@ -37,4 +39,4 @@ FollowList.prototype.siteExists = function( site_id ) {
 	return find( this.data, { site_id } ) || false;
 };
 
-module.exports = FollowList;
+export default FollowList;

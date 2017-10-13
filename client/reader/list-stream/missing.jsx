@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -11,13 +12,12 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 import QueryReaderList from 'components/data/query-reader-list';
-
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 class ListMissing extends React.Component {
 	static propTypes = {
-		owner: React.PropTypes.string.isRequired,
-		slug: React.PropTypes.string.isRequired,
+		owner: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 	};
 
 	recordAction = () => {
@@ -42,15 +42,15 @@ class ListMissing extends React.Component {
 					{ this.props.translate( 'Back to Followed Sites' ) }
 				</a>
 			),
-			secondaryAction = isDiscoverEnabled()
-				? <a
-						className="empty-content__action button"
-						onClick={ this.recordSecondaryAction }
-						href="/discover"
-					>
-						{ this.props.translate( 'Explore Discover' ) }
-					</a>
-				: null;
+			secondaryAction = isDiscoverEnabled() ? (
+				<a
+					className="empty-content__action button"
+					onClick={ this.recordSecondaryAction }
+					href="/discover"
+				>
+					{ this.props.translate( 'Explore Discover' ) }
+				</a>
+			) : null;
 
 		return (
 			<div>

@@ -69,14 +69,17 @@
 		min-height: 0;
 	}
 
+	.empty-content.has-title-only .empty-content__title {
+		margin-bottom: 16px;
+	}
+
 	.upgrade-nudge.card.editor-simple-payments-modal__nudge-nudge {
 		flex-shrink: 0;
-		margin: 0;
 		text-align: left;
+	}
 
-		@include breakpoint( ">480px" ) {
-			width: 70%;
-		}
+	.empty-content__action {
+		margin-top: 16px;
 	}
 
 	.upgrade-jetpack {
@@ -95,9 +98,11 @@
 	text-decoration: none;
 }
 
-.editor-simple-payments-modal__navigation {
+.editor-simple-payments-modal__navigation.card {
+	height: 48px;
 	margin: 0;
 	flex: none;
+	z-index: 1;
 }
 
 .editor-simple-payments-modal__form {
@@ -149,7 +154,7 @@
 	overflow-y: auto;
 }
 
-.editor-simple-payments-modal__list-item {
+.editor-simple-payments-modal__list-item.card {
 	display: flex;
 	align-items: center;
 

@@ -1,11 +1,15 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
-import React from 'react';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { mount } from 'enzyme';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -29,73 +33,58 @@ const Greeting = React.createClass( {
 				</RootChild>
 			</div>
 		);
-	}
+	},
 } );
 
-describe( 'RootChild', function() {
+describe( 'RootChild', () => {
 	var container;
 
-	useFakeDom();
-
-	before( function() {
+	beforeAll( function() {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		ReactDom.unmountComponentAtNode( container );
 	} );
 
-	describe( 'rendering', function() {
-		it( 'should render any children as descendants of body', function() {
+	describe( 'rendering', () => {
+		test( 'should render any children as descendants of body', () => {
 			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
-			expect( tree.refs.parentChild
-				.parentNode.className
-			).to.equal( 'parent' );
+			expect( tree.refs.parentChild.parentNode.className ).to.equal( 'parent' );
 
-			expect( tree.refs.rootChild
-				.parentNode
-				.parentNode
-			).to.eql( document.body );
+			expect( tree.refs.rootChild.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'accepts props to be added to a wrapper element', function() {
-			var tree = ReactDom.render( React.createElement( Greeting, {
-				rootChildProps: { className: 'wrapper' }
-			} ), container );
+		test( 'accepts props to be added to a wrapper element', () => {
+			var tree = ReactDom.render(
+				React.createElement( Greeting, {
+					rootChildProps: { className: 'wrapper' },
+				} ),
+				container
+			);
 
-			expect( tree.refs.rootChild
-				.parentNode
-				.className )
-			.to.equal( 'wrapper' );
+			expect( tree.refs.rootChild.parentNode.className ).to.equal( 'wrapper' );
 
-			expect( tree.refs.rootChild
-				.parentNode
-				.parentNode
-				.parentNode
-			).to.eql( document.body );
+			expect( tree.refs.rootChild.parentNode.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'should update the children if parent is re-rendered', function() {
+		test( 'should update the children if parent is re-rendered', () => {
 			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
-			expect( tree.ref( 'rootChild' )
-				.text()
-			).to.equal( 'Hello Universe!' );
+			expect( tree.ref( 'rootChild' ).text() ).to.equal( 'Hello Universe!' );
 			tree.detach();
 		} );
 	} );
 
-	describe( 'unmounting', function() {
-		it( 'should destroy the root child when the component is unmounted', function() {
+	describe( 'unmounting', () => {
+		test( 'should destroy the root child when the component is unmounted', () => {
 			ReactDom.render( React.createElement( Greeting ), container );
 			ReactDom.unmountComponentAtNode( container );
 
-			expect( [].slice.call(
-				document.body.querySelectorAll( '*' )
-			) ).to.eql( [ container ] );
+			expect( [].slice.call( document.body.querySelectorAll( '*' ) ) ).to.eql( [ container ] );
 		} );
 	} );
 } );

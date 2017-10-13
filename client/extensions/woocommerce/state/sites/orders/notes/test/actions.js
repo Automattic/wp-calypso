@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,8 +10,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchNotes, createNote } from '../actions';
+import notes from './fixtures/notes';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
@@ -18,15 +20,13 @@ import {
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import notes from './fixtures/notes';
 
 describe( 'actions', () => {
 	describe( '#fetchNotes()', () => {
 		const siteId = '123';
 		const orderId = 45;
 
-		useSandbox();
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -41,18 +41,22 @@ describe( 'actions', () => {
 						message: 'Invalid order ID.',
 						error: 'woocommerce_rest_shop_order_invalid_id',
 						status: 404,
-					}
+					},
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchNotes( siteId, orderId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_NOTES_REQUEST, siteId, orderId } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_NOTES_REQUEST,
+				siteId,
+				orderId,
+			} );
 		} );
 
-		it( 'should dispatch a success action with the notes list when request completes', () => {
+		test( 'should dispatch a success action with the notes list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchNotes( siteId, orderId )( dispatch, getState );
@@ -67,7 +71,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchNotes( siteId, 0 )( dispatch, getState );
@@ -80,7 +84,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if notes are already loading for this site/order', () => {
+		test( 'should not dispatch if notes are already loading for this site/order', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -91,12 +95,12 @@ describe( 'actions', () => {
 										isLoading: {
 											[ orderId ]: true,
 										},
-									}
-								}
-							}
-						}
-					}
-				}
+									},
+								},
+							},
+						},
+					},
+				},
 			} );
 			const dispatch = spy();
 			fetchNotes( siteId, orderId )( dispatch, getState );
@@ -112,8 +116,7 @@ describe( 'actions', () => {
 			customer_note: true,
 		};
 
-		useSandbox();
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -125,18 +128,22 @@ describe( 'actions', () => {
 					data: {
 						error: 'rest_missing_callback_param',
 						message: 'Missing parameter(s): note',
-					}
+					},
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			createNote( siteId, orderId, note )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDER_NOTE_CREATE, siteId, orderId } );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE,
+				siteId,
+				orderId,
+			} );
 		} );
 
-		it( 'should dispatch a success action with the notes list when request completes', () => {
+		test( 'should dispatch a success action with the notes list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = createNote( siteId, orderId, note )( dispatch, getState );
@@ -151,7 +158,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = createNote( 234, 0, {} )( dispatch, getState );

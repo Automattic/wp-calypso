@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { omit } from 'lodash';
 import classNames from 'classnames';
 
@@ -24,7 +28,7 @@ export default React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
 		filterRenderResult: PropTypes.func,
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	componentDidMount() {
@@ -79,5 +83,5 @@ export default React.createClass( {
 				/>
 			</ShortcodeData>
 		);
-	}
+	},
 } );

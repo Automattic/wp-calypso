@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter, includes, isEmpty, last, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,11 +12,7 @@ const ESC_KEY_CODE = 27;
 let components = [];
 
 function onKeydown( event ) {
-	if (
-		! isEmpty( components ) &&
-		event.keyCode === ESC_KEY_CODE &&
-		! isInput( event.target )
-	) {
+	if ( ! isEmpty( components ) && event.keyCode === ESC_KEY_CODE && ! isInput( event.target ) ) {
 		const component = last( components );
 
 		component.onEscape();
@@ -46,26 +45,26 @@ function stopCloseOnEscForComponent( component ) {
 	}
 }
 
-export default class CloseOnEscape extends Component {
-
-	static propTypes = {
-		onEscape: PropTypes.func,
-	};
-
-	static defaultProps = {
-		onEscape: noop,
-	};
-
-	componentDidMount = () => {
+class CloseOnEscape extends Component {
+	componentDidMount() {
 		startCloseOnEscForComponent( this, this.props.onEscape );
-	};
+	}
 
-	componentWillUnmount = () => {
+	componentWillUnmount() {
 		stopCloseOnEscForComponent( this, this.props.onEscape );
-	};
+	}
 
 	render() {
 		return null;
 	}
-
 }
+
+CloseOnEscape.propTypes = {
+	onEscape: PropTypes.func,
+};
+
+CloseOnEscape.defaultProps = {
+	onEscape: noop,
+};
+
+export default CloseOnEscape;

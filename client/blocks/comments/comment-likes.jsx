@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { get, pick } from 'lodash';
 import { connect } from 'react-redux';
@@ -56,16 +60,16 @@ class CommentLikeButtonContainer extends React.Component {
 }
 
 CommentLikeButtonContainer.propTypes = {
-	siteId: React.PropTypes.number.isRequired,
-	postId: React.PropTypes.number.isRequired,
-	commentId: React.PropTypes.number.isRequired,
-	showZeroCount: React.PropTypes.bool,
-	tagName: React.PropTypes.string,
+	siteId: PropTypes.number.isRequired,
+	postId: PropTypes.number.isRequired,
+	commentId: PropTypes.number.isRequired,
+	showZeroCount: PropTypes.bool,
+	tagName: PropTypes.string,
 
 	// connected props:
-	commentLike: React.PropTypes.object.isRequired,
-	likeComment: React.PropTypes.func.isRequired,
-	unlikeComment: React.PropTypes.func.isRequired,
+	commentLike: PropTypes.object.isRequired,
+	likeComment: PropTypes.func.isRequired,
+	unlikeComment: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -78,6 +82,6 @@ export default connect(
 				likeComment,
 				unlikeComment,
 			},
-			dispatch,
-		),
+			dispatch
+		)
 )( CommentLikeButtonContainer );

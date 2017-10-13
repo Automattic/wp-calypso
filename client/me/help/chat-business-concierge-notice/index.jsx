@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { identity } from 'lodash';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 
@@ -43,9 +47,10 @@ class ChatBusinessConciergeNotice extends Component {
 				<HelpTeaserButton
 					title={ translate( 'Chat is temporarily closed.' ) }
 					description={ translate(
-						'We\'re still available over email in the meantime. ' +
-						'Chat will be back on Friday, July 21st!'
-					) } />
+						"We're still available over email in the meantime. " +
+							'Chat will be back on Friday, July 21st!'
+					) }
+				/>
 			);
 		}
 
@@ -54,13 +59,12 @@ class ChatBusinessConciergeNotice extends Component {
 				onClick={ this.trackCalendlyOfferClick }
 				href="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
 				title={ translate( 'Chat with us over screenshare!' ) }
-				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) } />
+				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
+			/>
 		);
-	}
+	};
 }
 
-export default connect(
-	( state ) => ( {
-		isBusinessPlanUser: isBusinessPlanUser( state ),
-	} )
-)( localize( ChatBusinessConciergeNotice ) );
+export default connect( state => ( {
+	isBusinessPlanUser: isBusinessPlanUser( state ),
+} ) )( localize( ChatBusinessConciergeNotice ) );

@@ -3,21 +3,21 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { map } from 'lodash';
 import deepFreeze from 'deep-freeze';
+import { map } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { requestTags, receiveTagsSuccess, receiveTagsError } from '../';
+import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import {
 	requestTags as requestTagsAction,
 	receiveTags as receiveTagsAction,
 } from 'state/reader/tags/items/actions';
-import { requestTags, receiveTagsSuccess, receiveTagsError } from '../';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { NOTICE_CREATE } from 'state/action-types';
 
 const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [
@@ -53,7 +53,7 @@ const slug = 'chickens';
 describe( 'wpcom-api', () => {
 	describe( 'request tags', () => {
 		describe( '#requestTags', () => {
-			it( 'single tag: should dispatch HTTP request to tag endpoint', () => {
+			test( 'single tag: should dispatch HTTP request to tag endpoint', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 
@@ -71,7 +71,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
+			test( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
 				const action = requestTagsAction();
 				const dispatch = sinon.spy();
 
@@ -91,7 +91,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsResponse', () => {
-			it( 'single tag: should normalize + dispatch', () => {
+			test( 'single tag: should normalize + dispatch', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 
@@ -106,7 +106,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'multiple tags: should dispatch the tags', () => {
+			test( 'multiple tags: should dispatch the tags', () => {
 				const action = requestTagsAction();
 				const dispatch = sinon.spy();
 
@@ -128,7 +128,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsError', () => {
-			it( 'should dispatch an error notice', () => {
+			test( 'should dispatch an error notice', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 				const error = 'could not find tag(s)';

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,7 +15,7 @@ import { isEqual } from 'lodash';
 import Card from 'components/card';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
@@ -29,7 +32,7 @@ class StoreStatsModule extends Component {
 	};
 
 	state = {
-		loaded: false
+		loaded: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -51,12 +54,17 @@ class StoreStatsModule extends Component {
 		return (
 			<div className="store-stats-module">
 				{ header }
-				{ isLoading && <Card><StatsModulePlaceholder isLoading={ isLoading } /></Card> }
-				{ ! isLoading && hasEmptyData &&
+				{ isLoading && (
+					<Card>
+						<StatsModulePlaceholder isLoading={ isLoading } />
+					</Card>
+				) }
+				{ ! isLoading &&
+				hasEmptyData && (
 					<Card className="stats-module is-showing-error has-no-data">
 						<ErrorPanel message={ emptyMessage } />
 					</Card>
-				}
+				) }
 				{ ! isLoading && ! hasEmptyData && children }
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -64,12 +72,10 @@ class StoreStatsModule extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, statType, query } ) => {
-		const statsData = getSiteStatsNormalizedData( state, siteId, statType, query );
-		return {
-			data: ( statType === 'statsOrders' ) ? statsData.data : statsData,
-			requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
-		};
-	}
-)( StoreStatsModule );
+export default connect( ( state, { siteId, statType, query } ) => {
+	const statsData = getSiteStatsNormalizedData( state, siteId, statType, query );
+	return {
+		data: statType === 'statsOrders' ? statsData.data : statsData,
+		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
+	};
+} )( StoreStatsModule );

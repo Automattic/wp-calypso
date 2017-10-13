@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -50,15 +54,16 @@ class ConnectionsList extends PureComponent {
 
 		return (
 			<div className="post-share__connections">
-				{ connections.map( connection =>
-					<Connection { ...{
-						connection,
-						onToggle,
-						isActive: connection.isActive,
-						key: connection.keyring_connection_ID,
-					} }
+				{ connections.map( connection => (
+					<Connection
+						{ ...{
+							connection,
+							onToggle,
+							isActive: connection.isActive,
+							key: connection.keyring_connection_ID,
+						} }
 					/>
-				) }
+				) ) }
 			</div>
 		);
 	}
@@ -70,9 +75,7 @@ export const NoConnectionsNotice = ( { siteSlug, translate } ) => (
 		showDismiss={ false }
 		text={ translate( 'Connect an account to get started.' ) }
 	>
-		<NoticeAction href={ `/sharing/${ siteSlug }` }>
-			{ translate( 'Settings' ) }
-		</NoticeAction>
+		<NoticeAction href={ `/sharing/${ siteSlug }` }>{ translate( 'Settings' ) }</NoticeAction>
 	</Notice>
 );
 

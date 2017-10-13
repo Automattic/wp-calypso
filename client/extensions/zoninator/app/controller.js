@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -11,9 +14,9 @@ import { getSiteFragment, sectionify } from 'lib/route';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 
-export const renderTab = ( component ) => ( context ) => {
+export const renderTab = component => context => {
 	const siteId = getSiteFragment( context.path );
-	const zoneId = context.params.zone;
+	const zoneId = parseInt( context.params.zone, 10 ) || 0;
 
 	let baseAnalyticsPath = sectionify( context.path );
 
@@ -38,10 +41,8 @@ export const renderTab = ( component ) => ( context ) => {
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 	renderWithReduxStore(
-		<Settings>
-			{ React.createElement( component, { zoneId } ) }
-		</Settings>,
+		<Settings>{ React.createElement( component, { zoneId } ) }</Settings>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 };

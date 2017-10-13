@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -35,19 +39,17 @@ class EditorThemeHelp extends PureComponent {
 		}
 
 		return (
-			<a className={ className } href={ themeHelpPath } onClick={ this.recordClick } >
+			<a className={ className } href={ themeHelpPath } onClick={ this.recordClick }>
 				{ translate( 'Need help setting up your site?' ) }
 			</a>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			themeHelpPath: getSiteThemeShowcasePath( state, siteId )
-		};
-	}
-)( localize( EditorThemeHelp ) );
+	return {
+		themeHelpPath: getSiteThemeShowcasePath( state, siteId ),
+	};
+} )( localize( EditorThemeHelp ) );

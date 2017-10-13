@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,7 +14,7 @@ import {
 	isCurrentlyEditingShippingZone,
 	canChangeShippingZoneTitle,
 	canRemoveShippingZone,
-	canEditShippingZoneLocations
+	canEditShippingZoneLocations,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
@@ -21,7 +23,7 @@ const emptyZoneLocations = { country: [], continent: [], state: [], postcode: []
 
 describe( 'selectors', () => {
 	describe( 'getShippingZones', () => {
-		it( 'should return an empty list when the zones are being loaded', () => {
+		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: LOADING,
@@ -32,7 +34,7 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty list when some zone methods are still being loaded', () => {
+		test( 'should return an empty list when some zone methods are still being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -47,7 +49,7 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty list when some zone locations are still being loaded', () => {
+		test( 'should return an empty list when some zone locations are still being loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -62,7 +64,7 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty list when the zones didn\'t load', () => {
+		test( "should return an empty list when the zones didn't load", () => {
 			const state = createState( {
 				site: {
 					shippingZones: null,
@@ -73,7 +75,7 @@ describe( 'selectors', () => {
 			expect( getShippingZones( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return the WC-API zones list if there are no edits in the state', () => {
+		test( 'should return the WC-API zones list if there are no edits in the state', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -91,7 +93,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should apply the "edits" changes to the zone list', () => {
+		test( 'should apply the "edits" changes to the zone list', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -99,20 +101,18 @@ describe( 'selectors', () => {
 						{ id: 2, methodIds: [], name: 'Zone2' },
 						{ id: 3, methodIds: [], name: 'Zone3' },
 					],
-					shippingZoneLocations: { 1: emptyZoneLocations, 2: emptyZoneLocations, 3: emptyZoneLocations },
+					shippingZoneLocations: {
+						1: emptyZoneLocations,
+						2: emptyZoneLocations,
+						3: emptyZoneLocations,
+					},
 				},
 				ui: {
 					shipping: {
 						zones: {
-							creates: [
-								{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
-							],
-							updates: [
-								{ id: 2, name: 'EditedZone2' },
-							],
-							deletes: [
-								{ id: 1 },
-							],
+							creates: [ { id: { index: 0 }, methodIds: [], name: 'NewZone4' } ],
+							updates: [ { id: 2, name: 'EditedZone2' } ],
+							deletes: [ { id: 1 } ],
 							currentlyEditingId: null,
 						},
 					},
@@ -126,12 +126,10 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should NOT apply the uncommitted changes made in the modal', () => {
+		test( 'should NOT apply the uncommitted changes made in the modal', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [], name: 'Zone1' },
-					],
+					shippingZones: [ { id: 1, methodIds: [], name: 'Zone1' } ],
 					shippingZoneLocations: { 1: emptyZoneLocations },
 				},
 				ui: {
@@ -147,10 +145,12 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZones( state ) ).to.deep.equal( [ { id: 1, methodIds: [], name: 'Zone1' } ] );
+			expect( getShippingZones( state ) ).to.deep.equal( [
+				{ id: 1, methodIds: [], name: 'Zone1' },
+			] );
 		} );
 
-		it( 'should order the zones without any edits', () => {
+		test( 'should order the zones without any edits', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -180,7 +180,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should order the zones overlaid with edits', () => {
+		test( 'should order the zones overlaid with edits', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -205,9 +205,7 @@ describe( 'selectors', () => {
 								{ id: { index: 2 }, methodIds: [], name: 'NewZone123' },
 								{ id: { index: 0 }, methodIds: [], name: 'NewZone4' },
 							],
-							updates: [
-								{ id: 2, name: 'EditedZone2' },
-							],
+							updates: [ { id: 2, name: 'EditedZone2' } ],
 							deletes: [],
 							currentlyEditingId: null,
 						},
@@ -228,12 +226,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZone', () => {
-		it( 'should return null when there is no zone being edited', () => {
+		test( 'should return null when there is no zone being edited', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneLocations: { 1: emptyZoneLocations },
 				},
 				ui: {
@@ -249,7 +245,7 @@ describe( 'selectors', () => {
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.false;
 		} );
 
-		it( 'should return the zone being edited, even if there are no changes in that zone', () => {
+		test( 'should return the zone being edited, even if there are no changes in that zone', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
@@ -270,16 +266,18 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, methodIds: [], name: 'MyZone' } );
+			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( {
+				id: 1,
+				methodIds: [],
+				name: 'MyZone',
+			} );
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.true;
 		} );
 
-		it( 'should return the zone being edited, with both the committed and non-committed changes overlayed', () => {
+		test( 'should return the zone being edited, with both the committed and non-committed changes overlayed', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [], name: 'MyZone' },
-					],
+					shippingZones: [ { id: 1, methodIds: [], name: 'MyZone' } ],
 					shippingZoneLocations: { 1: emptyZoneLocations },
 				},
 				ui: {
@@ -294,11 +292,15 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: 1, methodIds: [], name: 'MyNewZone' } );
+			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( {
+				id: 1,
+				methodIds: [],
+				name: 'MyNewZone',
+			} );
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.true;
 		} );
 
-		it( 'should return the zone being edited when it is a newly created zone with temporary ID', () => {
+		test( 'should return the zone being edited when it is a newly created zone with temporary ID', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -315,27 +317,30 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( { id: { index: 0 }, name: 'MyNewZone' } );
+			expect( getCurrentlyEditingShippingZone( state ) ).to.deep.equal( {
+				id: { index: 0 },
+				name: 'MyNewZone',
+			} );
 			expect( isCurrentlyEditingShippingZone( state ) ).to.be.true;
 		} );
 	} );
 
 	describe( 'is shipping zone editable', () => {
-		it( 'is editable when it\'s a locally created zone', () => {
+		test( "is editable when it's a locally created zone", () => {
 			const zoneId = { index: 0 };
 			expect( canChangeShippingZoneTitle( zoneId ) ).to.be.true;
 			expect( canRemoveShippingZone( zoneId ) ).to.be.true;
 			expect( canEditShippingZoneLocations( zoneId ) ).to.be.true;
 		} );
 
-		it( 'is editable when it\'s a regular zone', () => {
+		test( "is editable when it's a regular zone", () => {
 			const zoneId = 7;
 			expect( canChangeShippingZoneTitle( zoneId ) ).to.be.true;
 			expect( canRemoveShippingZone( zoneId ) ).to.be.true;
 			expect( canEditShippingZoneLocations( zoneId ) ).to.be.true;
 		} );
 
-		it( 'is NOT editable when it\'s the "Locations not covered by your other zones" zone', () => {
+		test( 'is NOT editable when it\'s the "Locations not covered by your other zones" zone', () => {
 			const zoneId = 0;
 			expect( canChangeShippingZoneTitle( zoneId ) ).to.be.false;
 			expect( canRemoveShippingZone( zoneId ) ).to.be.false;

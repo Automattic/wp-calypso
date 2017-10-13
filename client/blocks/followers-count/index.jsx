@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -23,21 +26,21 @@ class FollowersCount extends Component {
 		return (
 			<div className="followers-count">
 				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				{ isNumber( followers ) &&
+				{ isNumber( followers ) && (
 					<Button
 						borderless
 						href={ '/people/followers/' + slug }
 						title={ translate( 'Total of WordPress and Email Followers' ) }
-						>
+					>
 						{ translate( 'Followers' ) } <Count count={ followers } />
 					</Button>
-				}
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteId = get( site, 'ID' );
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );

@@ -1,6 +1,11 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -14,79 +19,76 @@ import classNames from 'classnames';
  */
 var noop = () => {};
 
-export default React.createClass( {
-	propTypes: {
-		date: React.PropTypes.object,
-		inputChronoDisplayed: React.PropTypes.bool,
-		onDateChange: React.PropTypes.func,
-	},
+export default localize(
+	React.createClass( {
+		displayName: 'PostScheduleHeader',
 
-	getDefaultProps() {
-		return {
-			inputChronoDisplayed: true,
-			onDateChange: noop
-		};
-	},
+		propTypes: {
+			date: PropTypes.object,
+			inputChronoDisplayed: PropTypes.bool,
+			onDateChange: PropTypes.func,
+		},
 
-	getInitialState() {
-		return {
-			showYearControls: false
-		}
-	},
+		getDefaultProps() {
+			return {
+				inputChronoDisplayed: true,
+				onDateChange: noop,
+			};
+		},
 
-	setToCurrentMonth() {
-		var month = this.moment().month();
-		this.props.onDateChange( this.props.date.month( month ) );
-	},
+		getInitialState() {
+			return {
+				showYearControls: false,
+			};
+		},
 
-	setToCurrentYear() {
-		var year = this.moment().year();
-		this.props.onDateChange( this.props.date.year( year ) );
-	},
+		setToCurrentMonth() {
+			var month = this.props.moment().month();
+			this.props.onDateChange( this.props.date.month( month ) );
+		},
 
-	setYear( modifier ) {
-		var date = this.moment( this.props.date );
-		date.year( date.year() + modifier );
+		setToCurrentYear() {
+			var year = this.props.moment().year();
+			this.props.onDateChange( this.props.date.year( year ) );
+		},
 
-		if ( 0 > date.year() || date.year() > 9999 ) {
-			return null;
-		}
+		setYear( modifier ) {
+			var date = this.props.moment( this.props.date );
+			date.year( date.year() + modifier );
 
-		this.props.onDateChange( date );
-	},
+			if ( 0 > date.year() || date.year() > 9999 ) {
+				return null;
+			}
 
-	render() {
-		const headerClasses = classNames( 'post-schedule__header', { 'is-input-chrono-displayed': this.props.inputChronoDisplayed } );
+			this.props.onDateChange( date );
+		},
 
-		return (
-			<div className={ headerClasses }>
-				<span
-					className="post-schedule__header-month"
-					onClick={ this.setToCurrentMonth }
-				>
-					{ this.props.date.format( 'MMMM' ) }
-				</span>
+		render() {
+			const headerClasses = classNames( 'post-schedule__header', {
+				'is-input-chrono-displayed': this.props.inputChronoDisplayed,
+			} );
 
-				<div
-					className="post-schedule__header-year"
-					onMouseEnter={ () => {
-						this.setState( { showYearControls: true } );
-					} }
-
-					onMouseLeave={ () => {
-						this.setState( { showYearControls: false } );
-					} }
-				>
-					<span onClick={ this.setToCurrentYear }>
-						{ this.props.date.format( 'YYYY' ) }
+			return (
+				<div className={ headerClasses }>
+					<span className="post-schedule__header-month" onClick={ this.setToCurrentMonth }>
+						{ this.props.date.format( 'MMMM' ) }
 					</span>
 
-					{
-						this.state.showYearControls &&
-						<HeaderControl onYearChange={ this.setYear } />
-					}
+					<div
+						className="post-schedule__header-year"
+						onMouseEnter={ () => {
+							this.setState( { showYearControls: true } );
+						} }
+						onMouseLeave={ () => {
+							this.setState( { showYearControls: false } );
+						} }
+					>
+						<span onClick={ this.setToCurrentYear }>{ this.props.date.format( 'YYYY' ) }</span>
+
+						{ this.state.showYearControls && <HeaderControl onYearChange={ this.setYear } /> }
+					</div>
 				</div>
-			</div>
-		);
-	}
-} );
+			);
+		},
+	} )
+);

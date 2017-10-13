@@ -12,7 +12,7 @@
 		width: 82%;
 	}
 
-	.happiness-support__gravatar {
+	.happiness-support__illustration {
 		display: none;
 	}
 
@@ -35,18 +35,14 @@
 	margin-top: 16px;
 }
 
-.happiness-support__gravatar {
+.happiness-support__illustration {
 	float: right;
+	width: 150px;
 	margin-left: 30px;
 	text-align: center;
 
-	.gravatar {
-		display: block;
-
-		@include breakpoint( "<660px" ) {
-			height: 68px;
-			width: 68px;
-		}
+	@include breakpoint( "<660px" ) {
+		width: 68px;
 	}
 }
 

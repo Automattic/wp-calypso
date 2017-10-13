@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -11,7 +14,6 @@ import { isRequestingZones } from '../../../state/zones/selectors';
 import { requestZones } from '../../../state/zones/actions';
 
 class QueryZones extends Component {
-
 	componentWillMount() {
 		this.requestZones( this.props );
 	}
@@ -39,7 +41,7 @@ class QueryZones extends Component {
 
 const connectComponent = connect(
 	( state, { siteId } ) => ( { fetchingZones: isRequestingZones( state, siteId ) } ),
-	{ requestZones },
+	{ requestZones }
 );
 
 export default connectComponent( QueryZones );

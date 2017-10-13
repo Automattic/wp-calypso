@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -20,62 +22,62 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isDeletingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: undefined,
-				}
+				},
 			};
 			const isDeleting = isDeletingCache( state, primarySiteId );
 
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: true, status: 'pending' },
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingCache( state, secondarySiteId );
 
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not being deleted', () => {
+		test( 'should return false if the cache is not being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: false, status: 'success' },
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingCache( state, primarySiteId );
 
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is being deleted', () => {
+		test( 'should return true if the cache is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: true, status: 'pending' },
+							},
+						},
+					},
+				},
 			};
 			const isDeleting = isDeletingCache( state, primarySiteId );
 
@@ -84,51 +86,51 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isCacheDeleteSuccessful()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: true, status: 'pending' },
+							},
+						},
+					},
+				},
 			};
 			const isSuccessful = isCacheDeleteSuccessful( state, secondarySiteId );
 
 			expect( isSuccessful ).to.be.false;
 		} );
 
-		it( 'should return true if the delete request status is success', () => {
+		test( 'should return true if the delete request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: false, status: 'success' },
+							},
+						},
+					},
+				},
 			};
 			const isSuccessful = isCacheDeleteSuccessful( state, primarySiteId );
 
 			expect( isSuccessful ).to.be.true;
 		} );
 
-		it( 'should return false if the delete request status is error', () => {
+		test( 'should return false if the delete request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'error' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: false, status: 'error' },
+							},
+						},
+					},
+				},
 			};
 			const isSuccessful = isCacheDeleteSuccessful( state, primarySiteId );
 
@@ -137,68 +139,68 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCacheDeleteStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
+		test( 'should return undefined if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: true, status: 'pending' },
+							},
+						},
+					},
+				},
 			};
 			const status = getCacheDeleteStatus( state, secondarySiteId );
 
 			expect( status ).to.be.undefined;
 		} );
 
-		it( 'should return success if the delete request status is success', () => {
+		test( 'should return success if the delete request status is success', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'success' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: false, status: 'success' },
+							},
+						},
+					},
+				},
 			};
 			const status = getCacheDeleteStatus( state, primarySiteId );
 
 			expect( status ).to.eql( 'success' );
 		} );
 
-		it( 'should return error if the delete request status is error', () => {
+		test( 'should return error if the delete request status is error', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: false, status: 'error' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: false, status: 'error' },
+							},
+						},
+					},
+				},
 			};
 			const status = getCacheDeleteStatus( state, primarySiteId );
 
 			expect( status ).to.eql( 'error' );
 		} );
 
-		it( 'should return pending if the delete request status is pending', () => {
+		test( 'should return pending if the delete request status is pending', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							deleteStatus: {
-								[ primarySiteId ]: { deleting: true, status: 'pending' }
-							}
-						}
-					}
-				}
+								[ primarySiteId ]: { deleting: true, status: 'pending' },
+							},
+						},
+					},
+				},
 			};
 			const status = getCacheDeleteStatus( state, primarySiteId );
 
@@ -207,64 +209,64 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isTestingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cache: {}
+						cache: {},
 					},
-				}
+				},
 			};
 			const isTesting = isTestingCache( state, primarySiteId );
 
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							testing: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isTesting = isTestingCache( state, secondarySiteId );
 
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not being tested', () => {
+		test( 'should return false if the cache is not being tested', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							testing: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isTesting = isTestingCache( state, primarySiteId );
 
 			expect( isTesting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is being tested', () => {
+		test( 'should return true if the cache is being tested', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							testing: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isTesting = isTestingCache( state, primarySiteId );
 
@@ -277,51 +279,51 @@ describe( 'selectors', () => {
 			attempts: {
 				first: {
 					status: 'OK',
-				}
-			}
+				},
+			},
 		};
 
-		it( 'should return empty object if no state exists', () => {
+		test( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cache: {}
-					}
-				}
+						cache: {},
+					},
+				},
 			};
 			const results = getCacheTestResults( state, primarySiteId );
 
 			expect( results ).to.be.empty;
 		} );
 
-		it( 'should return empty object if the site is not attached', () => {
+		test( 'should return empty object if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							items: {
 								[ primarySiteId ]: primaryResults,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const results = getCacheTestResults( state, secondarySiteId );
 
 			expect( results ).to.be.empty;
 		} );
 
-		it( 'should return the cache test results for a siteId', () => {
+		test( 'should return the cache test results for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							items: {
 								[ primarySiteId ]: primaryResults,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const results = getCacheTestResults( state, primarySiteId );
 
@@ -330,64 +332,64 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPreloadingCache()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cache: {}
+						cache: {},
 					},
-				}
+				},
 			};
 			const isPreloading = isPreloadingCache( state, primarySiteId );
 
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							preloading: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isPreloading = isPreloadingCache( state, secondarySiteId );
 
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not preloading', () => {
+		test( 'should return false if the cache is not preloading', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							preloading: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isPreloading = isPreloadingCache( state, primarySiteId );
 
 			expect( isPreloading ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is preloading', () => {
+		test( 'should return true if the cache is preloading', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
 						cache: {
 							preloading: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 			const isPreloading = isPreloadingCache( state, primarySiteId );
 

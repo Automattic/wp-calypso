@@ -889,3 +889,9 @@ ul.domain-connect__dns-list
 		width: 60px;
 	}
 }
+
+.domain-only-site__placeholder {
+	h2 {
+		@include placeholder();
+	}
+}

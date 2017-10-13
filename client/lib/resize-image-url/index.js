@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { get, assign, omit, includes, mapValues, findKey } from 'lodash';
 import { parse, format } from 'url';
 
@@ -39,7 +42,7 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
  */
 const SERVICE_HOSTNAME_PATTERNS = {
 	photon: /(^i\d\.wp\.com|(^|\.)wordpress\.com)$/,
-	gravatar: /(^|\.)gravatar\.com$/
+	gravatar: /(^|\.)gravatar\.com$/,
 };
 
 /**
@@ -48,7 +51,7 @@ const SERVICE_HOSTNAME_PATTERNS = {
  * @param  {Number} value Original value
  * @return {Number}       Updated value
  */
-const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
+const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 
 /**
  * Changes the sizing parameters on a URL. Works for WordPress.com, Photon, and
@@ -77,13 +80,14 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
 	if ( 'number' === typeof resize ) {
-		const service = findKey( SERVICE_HOSTNAME_PATTERNS, String.prototype.match.bind( parsedUrl.hostname ) );
+		const service = findKey(
+			SERVICE_HOSTNAME_PATTERNS,
+			String.prototype.match.bind( parsedUrl.hostname )
+		);
 		if ( 'gravatar' === service ) {
 			resize = { s: resize };
 		} else {
-			resize = height > 0
-				? { fit: [ resize, height ].join() }
-				: { w: resize };
+			resize = height > 0 ? { fit: [ resize, height ].join() } : { w: resize };
 
 			// External URLs are made "safe" (i.e. passed through Photon), so
 			// recurse with an assumed set of query arguments for Photon
@@ -94,15 +98,21 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
-	assign( parsedUrl.query, mapValues( resize, ( value, key ) => {
-		if ( 'resize' === key || 'fit' === key ) {
-			return value.split( ',' ).map( scaleByFactor ).join( ',' );
-		} else if ( includes( SIZE_PARAMS, key ) ) {
-			return scaleByFactor( value );
-		}
+	assign(
+		parsedUrl.query,
+		mapValues( resize, ( value, key ) => {
+			if ( 'resize' === key || 'fit' === key ) {
+				return value
+					.split( ',' )
+					.map( scaleByFactor )
+					.join( ',' );
+			} else if ( includes( SIZE_PARAMS, key ) ) {
+				return scaleByFactor( value );
+			}
 
-		return value;
-	} ) );
+			return value;
+		} )
+	);
 
 	delete parsedUrl.search;
 

@@ -1,11 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	get,
-	map,
-	toPairs,
-} from 'lodash';
+
+import { get, map, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,5 +33,8 @@ export default function getTimezones( state ) {
 		return null;
 	}
 
-	return map( continents, zones => [ zones[ 0 ], map( zones[ 1 ], value => [ value, getTimezonesLabel( state, value ) ] ) ] );
+	return map( continents, zones => [
+		zones[ 0 ],
+		map( zones[ 1 ], value => [ value, getTimezonesLabel( state, value ) ] ),
+	] );
 }

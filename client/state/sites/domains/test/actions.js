@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,14 +13,8 @@ import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
 	domainsRequestFailureAction,
-	fetchSiteDomains
+	fetchSiteDomains,
 } from '../actions';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-/**
- * Fixture data
- */
 import {
 	SITE_ID_FIRST as siteId,
 	REST_API_RESPONSE as wpcomResponse,
@@ -27,8 +23,10 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST,
 	ACTION_SITE_DOMAIN_REQUEST_SUCCESS,
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
-	ERROR_MESSAGE_RESPONSE as errorResponse
+	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -39,43 +37,43 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'Actions creators', () => {
-		it( '#domainsReceiveAction()', () => {
+		test( '#domainsReceiveAction()', () => {
 			const { domains } = wpcomResponse;
 			const action = domainsReceiveAction( siteId, domains );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_RECEIVE );
 		} );
 
-		it( '#domainsRequestAction()', () => {
+		test( '#domainsRequestAction()', () => {
 			const action = domainsRequestAction( siteId );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST );
 		} );
 
-		it( '#domainsRequestSuccessAction()', () => {
+		test( '#domainsRequestSuccessAction()', () => {
 			const action = domainsRequestSuccessAction( siteId );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_SUCCESS );
 		} );
 
-		it( '#domainsRequestFailureAction()', () => {
+		test( '#domainsRequestFailureAction()', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
 		} );
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )
 				.reply( 200, wpcomResponse );
 		} );
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
+		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = domainsRequestAction( siteId );
 			fetchSiteDomains( siteId )( spy );
 			expect( spy ).to.have.been.calledWith( action );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
+		test( 'should dispatch RECEIVE action when request completes', () => {
 			const { domains } = wpcomResponse;
 			const action = domainsReceiveAction( siteId, domains );
 
@@ -86,14 +84,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )
 				.reply( 403, wpcomErrorResponse );
 		} );
 
-		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {
+		test( 'should dispatch REQUEST_FAILURE action when request failed', () => {
 			const { message } = wpcomErrorResponse;
 			const requestAction = domainsRequestAction( siteId );
 			const failureAction = domainsRequestFailureAction( siteId, message );

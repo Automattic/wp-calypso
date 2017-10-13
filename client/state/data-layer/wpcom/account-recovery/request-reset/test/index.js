@@ -1,88 +1,88 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import sinon from 'sinon';
+import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-
-import { handleRequestReset } from '../';
-import useNock from 'test/helpers/use-nock';
-
+import { requestReset, handleError, handleSuccess } from '../';
+import { setResetMethod } from 'state/account-recovery/reset/actions';
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'handleRequestReset()', () => {
-	const apiBaseUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/wpcom/v2/account-recovery/request-reset';
+describe( 'account-recovery/request-reset', () => {
+	describe( '#requestReset', () => {
+		test( 'should dispatch HTTP request to account recovery request reset endpoint', () => {
+			const dispatchSpy = spy();
+			const dummyAction = {
+				userData: {
+					user: 'foo',
+				},
+				method: 'primary_email',
+			};
 
-	const userData = { user: 'foo' };
-	const method = 'primary-email';
+			requestReset( { dispatch: dispatchSpy }, dummyAction );
 
-	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.persist()
-				.post( endpoint )
-				.reply( 200, { success: true } )
-		) );
-
-		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-					} ) );
-
-					done();
-				}
-			} );
-
-			handleRequestReset( { dispatch }, { userData, method } );
-		} );
-
-		it( 'should dispatch SET_METHOD action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_METHOD ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
-						method,
-					} ) );
-
-					done();
-				}
-			} );
-
-			handleRequestReset( { dispatch }, { userData, method } );
+			const { userData, method } = dummyAction;
+			expect( dispatchSpy ).to.have.been.calledOnce;
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/request-reset',
+						body: {
+							...userData,
+							method,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 
-	describe( 'failure', () => {
-		const errorResponse = {
-			status: 400,
-			message: 'Something wrong!',
-		};
+	describe( '#handleError', () => {
+		test( 'should dispatch failure action with error message', () => {
+			const dispatchSpy = spy();
+			const message = 'This is an error message.';
+			const rawError = Error( message );
 
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
+			handleError( { dispatch: dispatchSpy }, null, rawError );
 
-		it( 'should dispatch ERROR action on failure', () => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-					error: errorResponse,
-				} ) )
+			expect( dispatchSpy ).to.have.been.calledOnce;
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+				error: message,
 			} );
+		} );
+	} );
 
-			handleRequestReset( { dispatch }, { userData, method } );
+	describe( '#handleSuccess', () => {
+		test( 'should dispatch success action and set reset method action', () => {
+			const dispatchSpy = spy();
+			const dummyAction = {
+				userData: {
+					user: 'foo',
+				},
+				method: 'primary_email',
+			};
+			const { method } = dummyAction;
+
+			handleSuccess( { dispatch: dispatchSpy }, dummyAction );
+
+			expect( dispatchSpy ).to.have.been.calledTwice;
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+			} );
+			expect( dispatchSpy ).to.have.been.calledWith( setResetMethod( method ) );
 		} );
 	} );
 } );

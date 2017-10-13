@@ -1,62 +1,53 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debug from 'debug';
+import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import url from 'url';
+import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'lib/analytics';
+import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:layout' );
 
-var LoadingError = React.createClass( {
+const LoadingErrorMessage = localize( ( { translate } ) => (
+	<EmptyContent
+		illustration="/calypso/images/illustrations/illustration-500.svg"
+		title={ translate( "We're sorry, but an unexpected error has occurred" ) }
+	/>
+) );
 
-	statics: {
-		isRetry: function() {
-			var parsed = url.parse( location.href, true );
-			return parsed.query.retry === '1';
-		},
+export function isRetry() {
+	const parsed = url.parse( location.href, true );
+	return parsed.query.retry === '1';
+}
 
-		retry: function( chunkName ) {
-			var parsed;
-			if ( ! LoadingError.isRetry() ) {
-				parsed = url.parse( location.href, true );
+export function retry( chunkName ) {
+	if ( ! isRetry() ) {
+		const parsed = url.parse( location.href, true );
 
-				analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
+		analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
 
-				// Trigger a full page load which should include script tags for the current chunk
-				window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
-			}
-		},
-
-		show: function( chunkName ) {
-			log( 'Chunk %s could not be loaded', chunkName );
-			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-			ReactDom.render(
-				React.createElement( LoadingError, {} ),
-				document.getElementById( 'primary' )
-			);
-		}
-	},
-
-	render: function() {
-		return (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
-		);
+		// Trigger a full page load which should include script tags for the current chunk
+		window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
 	}
+}
 
-} );
-
-module.exports = LoadingError;
+export function show( chunkName ) {
+	log( 'Chunk %s could not be loaded', chunkName );
+	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
+	ReactDom.render( <LoadingErrorMessage />, document.getElementById( 'primary' ) );
+}

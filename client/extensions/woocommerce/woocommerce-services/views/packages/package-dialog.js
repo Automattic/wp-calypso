@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -21,7 +24,7 @@ import PredefinedPackages from './predefined-packages';
 import SegmentedControl from 'components/segmented-control';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
-const AddPackageDialog = ( props ) => {
+const AddPackageDialog = props => {
 	const {
 		siteId,
 		form,
@@ -36,18 +39,9 @@ const AddPackageDialog = ( props ) => {
 		translate,
 	} = props;
 
-	const {
-		showModal,
-		mode,
-		packages,
-		packageSchema,
-		predefinedSchema,
-		packageData,
-	} = form;
+	const { showModal, mode, packages, packageSchema, predefinedSchema, packageData } = form;
 
-	const {
-		index,
-	} = packageData;
+	const { index } = packageData;
 
 	const customPackages = packages.custom;
 	const isEditing = 'edit' === mode;
@@ -60,11 +54,12 @@ const AddPackageDialog = ( props ) => {
 			return;
 		}
 
-		const editName = 'number' === typeof packageData.index ? customPackages[ packageData.index ].name : null;
+		const editName =
+			'number' === typeof packageData.index ? customPackages[ packageData.index ].name : null;
 
 		//get reserved box names:
 		const boxNames = concat(
-			difference( customPackages.map( ( boxPackage ) => boxPackage.name ), [ editName ] ), //existing custom boxes
+			difference( customPackages.map( boxPackage => boxPackage.name ), [ editName ] ), //existing custom boxes
 			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);
@@ -87,10 +82,10 @@ const AddPackageDialog = ( props ) => {
 		savePackage( siteId, filteredPackageData );
 	};
 
-	const onClose = () => ( dismissModal( siteId ) );
+	const onClose = () => dismissModal( siteId );
 	const onRemove = () => removePackage( siteId, index );
 
-	const switchMode = ( option ) => {
+	const switchMode = option => {
 		setAddMode( siteId, option.value );
 	};
 
@@ -101,16 +96,14 @@ const AddPackageDialog = ( props ) => {
 	let doneButtonLabel;
 	if ( isAddingCustom || ( isAddingPredefined && 0 === predefinedPackagesSummary.removed ) ) {
 		doneButtonLabel = translate( 'Add package', 'Add packages', {
-			count: isAddingCustom ? 1 : predefinedPackagesSummary.added
+			count: isAddingCustom ? 1 : predefinedPackagesSummary.added,
 		} );
 	} else {
 		doneButtonLabel = translate( 'Done' );
 	}
 
 	const buttons = [
-		<FormButton onClick={ onSave }>
-			{ doneButtonLabel }
-		</FormButton>,
+		<FormButton onClick={ onSave }>{ doneButtonLabel }</FormButton>,
 		<FormButton onClick={ onClose } isPrimary={ false }>
 			{ translate( 'Cancel' ) }
 		</FormButton>,
@@ -119,11 +112,17 @@ const AddPackageDialog = ( props ) => {
 	if ( isEditing ) {
 		buttons.unshift( {
 			action: 'delete',
-			label: <span>{ translate( '{{icon/}} Delete this package', { components: {
-				icon: <Gridicon icon="trash" />,
-			} } ) }</span>,
+			label: (
+				<span>
+					{ translate( '{{icon/}} Delete this package', {
+						components: {
+							icon: <Gridicon icon="trash" />,
+						},
+					} ) }
+				</span>
+			),
 			onClick: onRemove,
-			additionalClassNames: 'packages__delete is-scary is-borderless'
+			additionalClassNames: 'packages__delete is-scary is-borderless',
 		} );
 	}
 
@@ -132,16 +131,20 @@ const AddPackageDialog = ( props ) => {
 			isVisible={ showModal }
 			additionalClassNames="packages__add-edit-dialog woocommerce"
 			onClose={ onClose }
-			buttons={ buttons }>
+			buttons={ buttons }
+		>
 			<FormSectionHeading>{ heading }</FormSectionHeading>
-			{ showSegmentedControl && <SegmentedControl
-				className="packages__mode-select"
-				initialSelected={ mode }
-				onSelect={ switchMode }
-				options={ [
-					{ value: 'add-custom', label: 'Custom package' },
-					{ value: 'add-predefined', label: 'Service package' },
-				] } /> }
+			{ showSegmentedControl && (
+				<SegmentedControl
+					className="packages__mode-select"
+					initialSelected={ mode }
+					onSelect={ switchMode }
+					options={ [
+						{ value: 'add-custom', label: 'Custom package' },
+						{ value: 'add-predefined', label: 'Service package' },
+					] }
+				/>
+			) }
 			{ showEdit && <EditPackage { ...props } /> }
 			{ showPredefined && <PredefinedPackages { ...props } /> }
 		</Dialog>
@@ -162,6 +165,6 @@ AddPackageDialog.propTypes = {
 	setAddMode: PropTypes.func.isRequired,
 };
 
-export default connect( ( state ) => ( {
+export default connect( state => ( {
 	predefinedPackagesSummary: getPredefinedPackagesChangesSummary( state ),
 } ) )( localize( AddPackageDialog ) );

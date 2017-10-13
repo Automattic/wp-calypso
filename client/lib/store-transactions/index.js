@@ -1,18 +1,30 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isEmpty, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:store-transactions' ),
-	Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:store-transactions' );
+import { Readable } from 'stream';
+import inherits from 'inherits';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	paygateLoader = require( 'lib/paygate-loader' ),
-	validateCardDetails = require( 'lib/credit-card-details' ).validateCardDetails,
-	transactionStepTypes = require( './step-types' );
+import paygateLoader from 'lib/paygate-loader';
+import { validateCardDetails } from 'lib/credit-card-details';
+import {
+	INPUT_VALIDATION,
+	RECEIVED_PAYMENT_KEY_RESPONSE,
+	RECEIVED_WPCOM_RESPONSE,
+	SUBMITTING_PAYMENT_KEY_REQUEST,
+	SUBMITTING_WPCOM_REQUEST,
+} from './step-types';
+import wp from 'lib/wp';
+
+const wpcom = wp.undocumented();
 
 /**
  * Make a purchase on WordPress.com.
@@ -53,8 +65,7 @@ inherits( TransactionFlow, Readable );
  * while the first one finises.
  */
 TransactionFlow.prototype._read = function() {
-	var paymentMethod,
-		paymentHandler;
+	var paymentMethod, paymentHandler;
 
 	if ( this._hasStarted ) {
 		return false;
@@ -74,81 +85,87 @@ TransactionFlow.prototype._pushStep = function( options ) {
 	var defaults = {
 		first: false,
 		last: false,
-		timestamp: Date.now()
+		timestamp: Date.now(),
 	};
 
 	this.push( Object.assign( defaults, options ) );
 };
 
 TransactionFlow.prototype._paymentHandlers = {
-	'WPCOM_Billing_MoneyPress_Stored': function() {
+	WPCOM_Billing_MoneyPress_Stored: function() {
 		const {
 			mp_ref: payment_key,
 			stored_details_id,
-			payment_partner
+			payment_partner,
 		} = this._initialData.payment.storedCard;
 
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
 		this._submitWithPayment( {
 			payment_method: 'WPCOM_Billing_MoneyPress_Stored',
 			payment_key,
 			payment_partner,
-			stored_details_id
+			stored_details_id,
 		} );
 	},
 
-	'WPCOM_Billing_MoneyPress_Paygate': function() {
+	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
 			validation = validateCardDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
-				name: transactionStepTypes.INPUT_VALIDATION,
+				name: INPUT_VALIDATION,
 				error: new ValidationError( 'invalid-card-details', validation.errors ),
 				first: true,
-				last: true
+				last: true,
 			} );
 			return;
 		}
 
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new card' );
 
-		this._createPaygateToken( function( paygateToken ) {
-			const { name, country, 'postal-code': zip } = newCardDetails;
+		this._createPaygateToken(
+			function( paygateToken ) {
+				const { name, country, 'postal-code': zip } = newCardDetails;
 
-			this._submitWithPayment( {
-				payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-				payment_key: paygateToken,
-				name,
-				zip,
-				country
-			} );
-		}.bind( this ) );
+				this._submitWithPayment( {
+					payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
+					payment_key: paygateToken,
+					name,
+					zip,
+					country,
+				} );
+			}.bind( this )
+		);
 	},
 
-	'WPCOM_Billing_WPCOM': function() {
-		this._pushStep( { name: transactionStepTypes.INPUT_VALIDATION, first: true } );
+	WPCOM_Billing_WPCOM: function() {
+		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		this._submitWithPayment( { payment_method: 'WPCOM_Billing_WPCOM' } );
-	}
+	},
 };
 
 TransactionFlow.prototype._createPaygateToken = function( callback ) {
-	this._pushStep( { name: transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST } );
+	this._pushStep( { name: SUBMITTING_PAYMENT_KEY_REQUEST } );
 
-	createPaygateToken( 'new_purchase', this._initialData.payment.newCardDetails, function( error, paygateToken ) {
-		if ( error ) {
-			return this._pushStep( {
-				name: transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE,
-				error: error,
-				last: true
-			} );
-		}
+	createPaygateToken(
+		'new_purchase',
+		this._initialData.payment.newCardDetails,
+		function( error, paygateToken ) {
+			if ( error ) {
+				return this._pushStep( {
+					name: RECEIVED_PAYMENT_KEY_RESPONSE,
+					error: error,
+					last: true,
+				} );
+			}
 
-		this._pushStep( { name: transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE } );
-		callback( paygateToken );
-	}.bind( this ) );
+			this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
+			callback( paygateToken );
+		}.bind( this )
+	);
 };
 
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
@@ -156,55 +173,62 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 		transaction = {
 			cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 			domain_details: this._initialData.domainDetails,
-			payment: payment
+			payment: payment,
 		};
 
-	this._pushStep( { name: transactionStepTypes.SUBMITTING_WPCOM_REQUEST } );
+	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
 
-	wpcom.transactions( 'POST', transaction, function( error, data ) {
-		if ( error ) {
-			return this._pushStep( {
-				name: transactionStepTypes.RECEIVED_WPCOM_RESPONSE,
-				error: error,
-				last: true
+	wpcom.transactions(
+		'POST',
+		transaction,
+		function( error, data ) {
+			if ( error ) {
+				return this._pushStep( {
+					name: RECEIVED_WPCOM_RESPONSE,
+					error: error,
+					last: true,
+				} );
+			}
+
+			this._pushStep( {
+				name: RECEIVED_WPCOM_RESPONSE,
+				data: data,
+				last: true,
 			} );
-		}
-
-		this._pushStep( {
-			name: transactionStepTypes.RECEIVED_WPCOM_RESPONSE,
-			data: data,
-			last: true
-		} );
-		onComplete();
-	}.bind( this ) );
+			onComplete();
+		}.bind( this )
+	);
 };
 
 function createPaygateToken( requestType, cardDetails, callback ) {
-	wpcom.paygateConfiguration( {
-		request_type: requestType,
-		country: cardDetails.country,
-	}, function( error, configuration ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
-			var parameters;
+	wpcom.paygateConfiguration(
+		{
+			request_type: requestType,
+			country: cardDetails.country,
+		},
+		function( error, configuration ) {
 			if ( error ) {
 				callback( error );
 				return;
 			}
 
-			Paygate.setProcessor( configuration.processor );
-			Paygate.setApiUrl( configuration.api_url );
-			Paygate.setPublicKey( configuration.public_key );
-			Paygate.setEnvironment( configuration.environment );
+			paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
+				var parameters;
+				if ( error ) {
+					callback( error );
+					return;
+				}
 
-			parameters = getPaygateParameters( cardDetails );
-			Paygate.createToken( parameters, onSuccess, onFailure );
-		} );
-	} );
+				Paygate.setProcessor( configuration.processor );
+				Paygate.setApiUrl( configuration.api_url );
+				Paygate.setPublicKey( configuration.public_key );
+				Paygate.setEnvironment( configuration.environment );
+
+				parameters = getPaygateParameters( cardDetails );
+				Paygate.createToken( parameters, onSuccess, onFailure );
+			} );
+		}
+	);
 
 	function onSuccess( data ) {
 		if ( data.is_error ) {
@@ -227,7 +251,7 @@ function getPaygateParameters( cardDetails ) {
 		zip: cardDetails[ 'postal-code' ],
 		country: cardDetails.country,
 		exp_month: cardDetails[ 'expiration-date' ].substring( 0, 2 ),
-		exp_year: '20' + cardDetails[ 'expiration-date' ].substring( 3, 5 )
+		exp_year: '20' + cardDetails[ 'expiration-date' ].substring( 3, 5 ),
 	};
 }
 
@@ -238,7 +262,7 @@ function hasDomainDetails( transaction ) {
 function newCardPayment( newCardDetails ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
-		newCardDetails: newCardDetails || {}
+		newCardDetails: newCardDetails || {},
 	};
 }
 
@@ -259,5 +283,5 @@ export default {
 	hasDomainDetails,
 	newCardPayment,
 	storedCardPayment,
-	submit
+	submit,
 };

@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
@@ -9,8 +13,8 @@ export default React.createClass( {
 	displayName: 'LoggedOutFormLinks',
 
 	propTypes: {
-		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
+		children: PropTypes.node.isRequired,
+		className: PropTypes.string,
 	},
 
 	render() {
@@ -22,5 +26,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</div>
 		);
-	}
+	},
 } );

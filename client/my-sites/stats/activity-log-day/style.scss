@@ -33,6 +33,12 @@
 		}
 	}
 
+	.foldable-card__main {
+		@include breakpoint( "<480px" ) {
+			flex: 3 1;
+		}
+	}
+
 	.foldable-card.card.is-expanded {
 		box-shadow: none;
 
@@ -45,6 +51,16 @@
 
 .activity-log-day__day {
 	font-weight: 600;
+}
+
+.activity-log-day__rewind-button {
+	em {
+		font-style: normal;
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
 }
 
 .activity-log-day__events {
@@ -69,3 +85,4 @@
 		margin-top: .2em;
 	}
 }
+

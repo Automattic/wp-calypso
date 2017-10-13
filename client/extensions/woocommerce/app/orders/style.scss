@@ -15,6 +15,14 @@
 		&:hover {
 			background: lighten( $gray, 35% );
 		}
+
+		&.orders__status-processing {
+			background: lighten( $blue-light, 25% );
+
+			&:hover {
+				background: lighten( $blue-light, 24% );
+			}
+		}
 	}
 
 	.orders__row-placeholder span {

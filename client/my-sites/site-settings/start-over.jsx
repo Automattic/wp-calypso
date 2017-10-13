@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -33,14 +36,14 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 					<ActionPanelTitle>{ translate( 'Start Over' ) }</ActionPanelTitle>
 					<p>
 						{ translate(
-							'If you want a site but don\'t want any of the posts and pages you have now, our support ' +
-							'team can delete your posts, pages, media, and comments for you.'
+							"If you want a site but don't want any of the posts and pages you have now, our support " +
+								'team can delete your posts, pages, media, and comments for you.'
 						) }
 					</p>
 					<p>
 						{ translate(
 							'This will keep your site and URL active, but give you a fresh start on your content ' +
-							'creation. Just contact us to have your current content cleared out.'
+								'creation. Just contact us to have your current content cleared out.'
 						) }
 					</p>
 					<p>
@@ -52,13 +55,12 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				<ActionPanelFooter>
 					<Button
 						className="settings-action-panel__support-button is-external"
-						href={ support.EMPTY_SITE }>
+						href={ support.EMPTY_SITE }
+					>
 						{ translate( 'Follow the Steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
-					<Button
-						className="settings-action-panel__support-button"
-						href="/help/contact">
+					<Button className="settings-action-panel__support-button" href="/help/contact">
 						{ translate( 'Contact Support' ) }
 					</Button>
 				</ActionPanelFooter>
@@ -67,8 +69,6 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} )
-)( localize( StartOver ) );
+export default connect( state => ( {
+	selectedSiteSlug: getSelectedSiteSlug( state ),
+} ) )( localize( StartOver ) );

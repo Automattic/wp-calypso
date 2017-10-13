@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -10,12 +13,7 @@ import { get } from 'lodash';
  */
 import PlanStorage from '../index';
 import PlanStorageBar from '../bar';
-import {
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_FREE,
-} from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL, PLAN_FREE } from 'lib/plans/constants';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -23,16 +21,16 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {
 		red: {
 			storage_used_bytes: 11362335981,
-			max_storage_bytes: 13958643712
+			max_storage_bytes: 13958643712,
 		},
 		yellow: {
 			storage_used_bytes: 1971389988,
-			max_storage_bytes: 3221225472
+			max_storage_bytes: 3221225472,
 		},
 		green: {
 			storage_used_bytes: 167503724,
-			max_storage_bytes: 3221225472
-		}
+			max_storage_bytes: 3221225472,
+		},
 	};
 
 	if ( ! siteSlug ) {
@@ -82,17 +80,15 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	);
 };
 
-const ConnectedPlanStorageExample = connect(
-	( state ) => {
-		const siteId = get( getCurrentUser( state ), 'primary_blog', null );
-		const siteSlug = getSiteSlug( state, siteId );
+const ConnectedPlanStorageExample = connect( state => {
+	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
+	const siteSlug = getSiteSlug( state, siteId );
 
-		return {
-			siteId,
-			siteSlug,
-		};
-	}
-)( PlanStorageExample );
+	return {
+		siteId,
+		siteSlug,
+	};
+} )( PlanStorageExample );
 
 ConnectedPlanStorageExample.displayName = 'PlanStorage';
 

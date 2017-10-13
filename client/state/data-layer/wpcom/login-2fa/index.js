@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -34,25 +37,28 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 	const authType = 'push';
 
 	store.dispatch(
-		http( {
-			url: addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', getLocaleSlug() ),
-			method: 'POST',
-			headers: [
-				[ 'Content-Type', 'application/x-www-form-urlencoded' ],
-			],
-			withCredentials: true,
-			body: {
-				user_id: getTwoFactorUserId( store.getState() ),
-				auth_type: authType,
-				two_step_nonce: getTwoFactorAuthNonce( store.getState(), authType ),
-				remember_me: getRememberMe( store.getState() ),
-				two_step_push_token: getTwoFactorPushToken( store.getState() ),
-				client_id: config( 'wpcom_signup_id' ),
-				client_secret: config( 'wpcom_signup_key' ),
+		http(
+			{
+				url: addLocaleToWpcomUrl(
+					'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
+					getLocaleSlug()
+				),
+				method: 'POST',
+				headers: [ [ 'Content-Type', 'application/x-www-form-urlencoded' ] ],
+				withCredentials: true,
+				body: {
+					user_id: getTwoFactorUserId( store.getState() ),
+					auth_type: authType,
+					two_step_nonce: getTwoFactorAuthNonce( store.getState(), authType ),
+					remember_me: getRememberMe( store.getState() ),
+					two_step_push_token: getTwoFactorPushToken( store.getState() ),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				},
 			},
-		},
-		action
-	) );
+			action
+		)
+	);
 };
 
 const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
@@ -93,13 +99,15 @@ const receivedTwoFactorPushNotificationError = ( store, action, error ) => {
 const makePushNotificationRequest = dispatchRequest(
 	requestTwoFactorPushNotificationStatus,
 	receivedTwoFactorPushNotificationApproved,
-	receivedTwoFactorPushNotificationError,
+	receivedTwoFactorPushNotificationError
 );
 
 export default {
-	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [ ( store, action ) => {
-		// We need to store to update for `getTwoFactorPushPollInProgress` selector
-		store.dispatch( bypassDataLayer( action ) );
-		return makePushNotificationRequest( store, action );
-	} ],
+	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [
+		( store, action ) => {
+			// We need to store to update for `getTwoFactorPushPollInProgress` selector
+			store.dispatch( bypassDataLayer( action ) );
+			return makePushNotificationRequest( store, action );
+		},
+	],
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,13 +11,13 @@ import PaginatedQueryKey from '../key';
 
 describe( 'PaginatedQueryKey', () => {
 	describe( '.stringify()', () => {
-		it( 'should return a JSON string of the object', () => {
+		test( 'should return a JSON string of the object', () => {
 			const key = PaginatedQueryKey.stringify( { ok: true } );
 
 			expect( key ).to.equal( '[["ok",true]]' );
 		} );
 
-		it( 'should omit pagination query parameters', () => {
+		test( 'should omit pagination query parameters', () => {
 			const key = PaginatedQueryKey.stringify( { ok: true, page: 2 } );
 
 			expect( key ).to.equal( '[["ok",true]]' );
@@ -24,13 +25,13 @@ describe( 'PaginatedQueryKey', () => {
 	} );
 
 	describe( '.parse()', () => {
-		it( 'should return an object of the JSON string', () => {
+		test( 'should return an object of the JSON string', () => {
 			const query = PaginatedQueryKey.parse( '[["ok",true]]' );
 
 			expect( query ).to.eql( { ok: true } );
 		} );
 
-		it( 'should omit pagination query parameters', () => {
+		test( 'should omit pagination query parameters', () => {
 			const query = PaginatedQueryKey.parse( '[["ok",true],["page",2]]' );
 
 			expect( query ).to.eql( { ok: true } );

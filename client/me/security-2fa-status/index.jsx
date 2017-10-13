@@ -1,46 +1,52 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-status' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
-	displayName: 'Security2faStatus',
+export default localize(
+	React.createClass( {
+		displayName: 'Security2faStatus',
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+		componentDidMount: function() {
+			debug( this.constructor.displayName + ' React component is mounted.' );
+		},
 
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+		componentWillUnmount: function() {
+			debug( this.constructor.displayName + ' React component will unmount.' );
+		},
 
-	render: function() {
-		return (
-			<p>
-				{
-					this.props.twoStepEnabled
-					? this.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__on"/>
+		render: function() {
+			return (
+				<p>
+					{ this.props.twoStepEnabled ? (
+						this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__on" />,
+								},
 							}
-						}
-					)
-					: this.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__off"/>
+						)
+					) : (
+						this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__off" />,
+								},
 							}
-						}
-					)
-				}
-			</p>
-		);
-	}
-} );
+						)
+					) }
+				</p>
+			);
+		},
+	} )
+);

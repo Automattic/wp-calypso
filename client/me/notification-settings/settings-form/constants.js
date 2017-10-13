@@ -1,3 +1,4 @@
+/** @format */
 export const NOTIFICATIONS_EXCEPTIONS = {
-	email: [ 'achievement', 'scheduled_publicize' ]
+	email: [ 'achievement', 'scheduled_publicize' ],
 };

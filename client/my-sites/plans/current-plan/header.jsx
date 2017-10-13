@@ -1,9 +1,13 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { invoke } from 'lodash';
 
 /**
@@ -23,7 +27,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL
+	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import purchasesPaths from 'me/purchases/paths';
 
@@ -33,7 +37,7 @@ class CurrentPlanHeader extends Component {
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: React.PropTypes.oneOf( [
+		currentPlanSlug: PropTypes.oneOf( [
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
 			PLAN_JETPACK_FREE,
@@ -43,7 +47,7 @@ class CurrentPlanHeader extends Component {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_PERSONAL
+			PLAN_PERSONAL,
 		] ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -57,13 +61,7 @@ class CurrentPlanHeader extends Component {
 	};
 
 	renderPurchaseInfo() {
-		const {
-			currentPlan,
-			currentPlanSlug,
-			selectedSite,
-			isExpiring,
-			translate
-		} = this.props;
+		const { currentPlan, currentPlanSlug, selectedSite, isExpiring, translate } = this.props;
 
 		if ( ! currentPlan || currentPlanSlug === PLAN_JETPACK_FREE ) {
 			return null;
@@ -71,26 +69,31 @@ class CurrentPlanHeader extends Component {
 
 		const hasAutoRenew = currentPlan.autoRenew;
 		const classes = classNames( 'current-plan__header-purchase-info', {
-			'is-expiring': isExpiring
+			'is-expiring': isExpiring,
 		} );
 
 		return (
 			<Card className="current-plan__header-purchase-info-wrapper" compact>
 				<div className={ classes }>
 					<span className="current-plan__header-expires-in">
-						{ hasAutoRenew && currentPlan.autoRenewDateMoment
-							? translate( 'Set to Auto Renew on %s.', { args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ) } )
-							: translate( 'Expires on %s.', { args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ) } )
-						}
+						{ hasAutoRenew && currentPlan.autoRenewDateMoment ? (
+							translate( 'Set to Auto Renew on %s.', {
+								args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
+							} )
+						) : (
+							translate( 'Expires on %s.', {
+								args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
+							} )
+						) }
 					</span>
-					{ currentPlan.userIsOwner &&
-					<Button compact href={ purchasesPaths.managePurchase( selectedSite.slug, currentPlan.id ) }>
-						{ hasAutoRenew
-							? translate( 'Manage Payment' )
-							: translate( 'Renew Now' )
-						}
-					</Button>
-					}
+					{ currentPlan.userIsOwner && (
+						<Button
+							compact
+							href={ purchasesPaths.managePurchase( selectedSite.slug, currentPlan.id ) }
+						>
+							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+						</Button>
+					) }
 				</div>
 			</Card>
 		);
@@ -103,7 +106,7 @@ class CurrentPlanHeader extends Component {
 			isPlaceholder,
 			title,
 			tagLine,
-			selectedSite
+			selectedSite,
 		} = this.props;
 
 		return (
@@ -111,25 +114,22 @@ class CurrentPlanHeader extends Component {
 				<div className="current-plan__header-item">
 					<div className="current-plan__header-item-content">
 						<div className="current-plan__header-icon">
-							{
-								currentPlanSlug &&
-								<PlanIcon plan={ currentPlanSlug } />
-							}
+							{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
 						</div>
 						<div className="current-plan__header-copy">
-							<h1 className={
-								classNames( 'current-plan__header-heading', {
-									'is-placeholder': isPlaceholder
-								} )
-							} >
+							<h1
+								className={ classNames( 'current-plan__header-heading', {
+									'is-placeholder': isPlaceholder,
+								} ) }
+							>
 								{ title }
 							</h1>
 
-							<h2 className={
-								classNames( 'current-plan__header-text', {
-									'is-placeholder': isPlaceholder
-								} )
-							} >
+							<h2
+								className={ classNames( 'current-plan__header-text', {
+									'is-placeholder': isPlaceholder,
+								} ) }
+							>
 								{ tagLine }
 							</h2>
 						</div>

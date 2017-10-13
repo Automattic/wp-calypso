@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import React from 'react';
+import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 /**
@@ -35,7 +39,7 @@ const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
  * @param {String} text text to examine
  * @returns {number} index not within a tag
  */
-const getTaglessIndex = ( text ) => {
+const getTaglessIndex = text => {
 	let isTagOpen = false;
 
 	for ( let i = 0; i < text.length; i++ ) {
@@ -61,7 +65,7 @@ const getTaglessIndex = ( text ) => {
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
-const getContent = ( reactElement ) => {
+const getContent = reactElement => {
 	if ( ! reactElement ) {
 		return null;
 	}
@@ -87,7 +91,8 @@ const getContent = ( reactElement ) => {
 		}
 
 		const taglessIndex = getTaglessIndex( html );
-		const startIndex = taglessIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE < html.length ? taglessIndex : 0;
+		const startIndex =
+			taglessIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE < html.length ? taglessIndex : 0;
 
 		return stripHTML( html.substring( startIndex, startIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE ) );
 	}
@@ -108,7 +113,7 @@ const getContent = ( reactElement ) => {
  * @param {string} text the text to be examined
  * @returns {string} either 'rtl' or 'ltr'
  */
-const getTextMainDirection = ( text ) => {
+const getTextMainDirection = text => {
 	let rtlCount = 0;
 	let ltrCount = 0;
 
@@ -121,7 +126,7 @@ const getTextMainDirection = ( text ) => {
 		}
 	}
 
-	if ( ( rtlCount + ltrCount ) === 0 ) {
+	if ( rtlCount + ltrCount === 0 ) {
 		return user.isRTL() ? 'rtl' : 'ltr';
 	}
 
@@ -132,8 +137,8 @@ const getDirectionProps = ( child, direction ) => ( {
 	direction: direction,
 	style: Object.assign( {}, get( child, 'props.style', {} ), {
 		direction: direction,
-		textAlign: direction === 'rtl' ? 'right' : 'left'
-	} )
+		textAlign: direction === 'rtl' ? 'right' : 'left',
+	} ),
 } );
 
 const getChildDirection = child => {
@@ -161,7 +166,7 @@ const inlineComponents = [ Emojify ];
  * @param {React.Element} child
  * @returns {React.Element} transformed child
  */
-const setChildDirection = ( child ) => {
+const setChildDirection = child => {
 	const childDirection = getChildDirection( child );
 
 	if ( childDirection ) {
@@ -190,7 +195,11 @@ const setChildDirection = ( child ) => {
 			return setChildDirection( innerChild );
 		} );
 
-		return React.cloneElement( child, innerChildDirection ? getDirectionProps( child, innerChildDirection ) : null, children );
+		return React.cloneElement(
+			child,
+			innerChildDirection ? getDirectionProps( child, innerChildDirection ) : null,
+			children
+		);
 	}
 
 	return child;
@@ -201,7 +210,7 @@ const setChildDirection = ( child ) => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-const AutoDirection = ( props ) => {
+const AutoDirection = props => {
 	const { children } = props;
 	const directionedChild = setChildDirection( children );
 

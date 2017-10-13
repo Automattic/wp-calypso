@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
 
 /**
@@ -15,7 +18,7 @@ export function setEditorLastDraft( siteId, postId ) {
 	return {
 		type: EDITOR_LAST_DRAFT_SET,
 		siteId,
-		postId
+		postId,
 	};
 }
 

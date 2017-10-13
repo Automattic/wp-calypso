@@ -1,24 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	fromPairs,
-	map,
-	mapValues,
-} from 'lodash';
+
+import { fromPairs, map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { TIMEZONES_REQUEST } from 'state/action-types';
-
-import {
-	timezonesRequestSuccess,
-	timezonesRequestFailure,
-	timezonesReceive,
-} from 'state/timezones/actions';
+import { timezonesReceive } from 'state/timezones/actions';
 
 /**
  * Converts an value/label pairs from API into object whose
@@ -31,9 +25,8 @@ import {
  * @param {ValueLabelRecord[]} pairs - timezone values and display labels
  * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
  */
-const timezonePairsToMap = pairs => (
-	fromPairs( map( pairs, ( { label, value } ) => ( [ value, label ] ) ) )
-);
+const timezonePairsToMap = pairs =>
+	fromPairs( map( pairs, ( { label, value } ) => [ value, label ] ) );
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
@@ -44,22 +37,27 @@ const timezonePairsToMap = pairs => (
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {
 	rawOffsets: timezonePairsToMap( manual_utc_offsets ),
 	labels: timezonePairsToMap( timezones ),
-	byContinents: mapValues( timezones_by_continent, zones => map( zones, ( { value } ) => ( value ) ) )
+	byContinents: mapValues( timezones_by_continent, zones => map( zones, ( { value } ) => value ) ),
 } );
 
 /*
  * Start a request to WordPress.com server to get the timezones data
  */
-export const fetchTimezones = ( { dispatch } ) =>
-	wpcom.req.get( '/timezones', { apiNamespace: 'wpcom/v2' } )
-		.then( data => {
-			dispatch( timezonesRequestSuccess() );
-			dispatch( timezonesReceive( fromApi( data ) ) );
-		} )
-		.catch( error => {
-			dispatch( timezonesRequestFailure( error ) );
-		} );
+export const fetchTimezones = ( { dispatch }, action ) =>
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: '/timezones',
+				apiNamespace: 'wpcom/v2',
+			},
+			action
+		)
+	);
+
+export const addTimezones = ( { dispatch }, action, data ) =>
+	dispatch( timezonesReceive( fromApi( data ) ) );
 
 export default {
-	[ TIMEZONES_REQUEST ]: [ fetchTimezones ],
+	[ TIMEZONES_REQUEST ]: [ dispatchRequest( fetchTimezones, addTimezones ) ],
 };

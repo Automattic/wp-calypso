@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,17 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
-import { ERROR, LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 } from 'woocommerce/state/action-types';
+import { ERROR, LOADING } from 'woocommerce/state/constants';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'generalRequest', () => {
-		it( 'should mark the settings general tree as "loading" if no settings are loaded', () => {
+		test( 'should mark the settings general tree as "loading" if no settings are loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -27,39 +29,39 @@ describe( 'reducer', () => {
 			const newSiteData = reducer( {}, action );
 			expect( newSiteData[ siteId ].settings.general ).to.eql( LOADING );
 		} );
-		it( 'should do nothing if settings are already loaded', () => {
+		test( 'should do nothing if settings are already loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 				siteId,
 				meta: { dataLayer: { doBypass: true } },
 			};
-			const data = [ {
-				id: 'woocommerce_default_country',
-				label: 'Base location',
-				description: 'This is the base location for your business.',
-				type: 'select',
-				'default': 'GB',
-				tip: 'This is the base location for your business. Tax rates will be based on this country.',
-				value: 'US:MA',
-				options: {},
-			} ];
+			const data = [
+				{
+					id: 'woocommerce_default_country',
+					label: 'Base location',
+					description: 'This is the base location for your business.',
+					type: 'select',
+					default: 'GB',
+					tip:
+						'This is the base location for your business. Tax rates will be based on this country.',
+					value: 'US:MA',
+					options: {},
+				},
+			];
 			const state = {
 				123: {
 					settings: {
 						general: data,
-					}
-				}
+					},
+				},
 			};
 			const newSiteData = reducer( state, action );
 			expect( newSiteData[ siteId ].settings.general ).to.eql( data );
 		} );
-		it( 'should store data from the action', () => {
+		test( 'should store data from the action', () => {
 			const siteId = 123;
-			const settings = [
-				{},
-				{},
-			];
+			const settings = [ {}, {} ];
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
@@ -70,7 +72,7 @@ describe( 'reducer', () => {
 			expect( newState[ siteId ].settings ).to.exist;
 			expect( newState[ siteId ].settings.general ).to.deep.equal( settings );
 		} );
-		it( 'should handle error from the action', () => {
+		test( 'should handle error from the action', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -85,14 +87,14 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'settings batch', () => {
-		it( 'should merge data from the action', () => {
+		test( 'should merge data from the action', () => {
 			const siteId = 123;
 			const emptyState = {
 				123: {
 					settings: {
-						general: []
-					}
-				}
+						general: [],
+					},
+				},
 			};
 			const streetSetting = {
 				group_id: 'general',
@@ -114,10 +116,7 @@ describe( 'reducer', () => {
 				siteId,
 				data: { update: [ streetSetting, citySetting ] },
 			};
-			const updatedSettings = [
-				updatedStreetSetting,
-				citySetting,
-			];
+			const updatedSettings = [ updatedStreetSetting, citySetting ];
 			const updateAction = {
 				type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 				siteId,

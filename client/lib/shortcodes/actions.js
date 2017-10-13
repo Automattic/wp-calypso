@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
@@ -21,14 +24,17 @@ import { ActionTypes } from './constants';
 export function fetch( siteId, shortcode ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.FETCH_SHORTCODE,
-		payload: { siteId, shortcode }
+		payload: { siteId, shortcode },
 	} );
 
-	wpcom.undocumented().site( siteId ).shortcodes( { shortcode }, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_SHORTCODE,
-			payload: { siteId, shortcode, data },
-			error: error
+	wpcom
+		.undocumented()
+		.site( siteId )
+		.shortcodes( { shortcode }, ( error, data ) => {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.RECEIVE_SHORTCODE,
+				payload: { siteId, shortcode, data },
+				error: error,
+			} );
 		} );
-	} );
 }

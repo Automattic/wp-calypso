@@ -1,12 +1,22 @@
 Happychat State
 ==========
 
-A module for managing user state.
+Happychat state shape is:
+
+- connection
+  - error: one of the HAPPYCHAT_CONNECTION_ERROR_* [constants](./constants.js)
+  - isAvailable: whether the Happychat service is accepting new chats.
+  - status: one of the HAPPYCHAT_CONNECTION_STATUS_* [constants](./constants.js)
+- chatStatus
+- lastActivityTimestamp
+- lostFocusAt
+- message: current message as typed by the customer in the happychat client.
+- timeline: array of timeline messages, as received from the Happychat service.
+- geoLocation
 
 ## Actions
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
-
 
 ### `connectChat()`
 
@@ -22,22 +32,6 @@ Updates the pending message that the user is composing in the Happychat client.
 
 Sends the message as a chat message to the Happychat service.
 
-
-## Reducers
-
-The included reducers add the following keys to the global state tree, under `happychat`:
-
-### `timeline`
-
-An array of timeline events as received from the Happychat service.
-
-### `message`
-
-The current message as typed by the customer in the happychat client.
-
-### `status`
-
-The current connection status of the Happychat client
 
 ## Selectors
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,11 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getLastApiError,
-	getLastApiErrorCode,
-	getLastApiErrorMessage,
-} from '../selectors';
+import { getLastApiError, getLastApiErrorCode, getLastApiErrorMessage } from '../selectors';
 
 describe( 'selectors', () => {
 	let stateWithoutError;
@@ -23,8 +21,7 @@ describe( 'selectors', () => {
 					site: {
 						1337: {
 							status: {
-								wcApi: {
-								},
+								wcApi: {},
 							},
 						},
 					},
@@ -55,15 +52,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getLastApiError', () => {
-		it( 'should not provide an error if none is logged.', () => {
+		test( 'should not provide an error if none is logged.', () => {
 			expect( getLastApiError( stateWithoutError, 1337 ) ).to.not.exist;
 		} );
 
-		it( 'should not provide an error if no site data exists.', () => {
+		test( 'should not provide an error if no site data exists.', () => {
 			expect( getLastApiError( stateWithoutError, 1338 ) ).to.not.exist;
 		} );
 
-		it( 'should provide last error if it exists.', () => {
+		test( 'should provide last error if it exists.', () => {
 			const err = getLastApiError( stateWithError, 1337 );
 			expect( err ).to.exist;
 			expect( err.code ).to.equal( 404 );
@@ -72,31 +69,30 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getLastApiErrorCode', () => {
-		it( 'should not provide an error code if none is logged.', () => {
+		test( 'should not provide an error code if none is logged.', () => {
 			expect( getLastApiErrorCode( stateWithoutError, 1337 ) ).to.not.exist;
 		} );
 
-		it( 'should not provide an error code if no site data exists.', () => {
+		test( 'should not provide an error code if no site data exists.', () => {
 			expect( getLastApiErrorCode( stateWithoutError, 1338 ) ).to.not.exist;
 		} );
 
-		it( 'should match output from getLastApiError.', () => {
+		test( 'should match output from getLastApiError.', () => {
 			expect( getLastApiErrorCode( stateWithError, 1337 ) ).to.equal( 404 );
 		} );
 	} );
 
 	describe( 'getLastApiErrorMessage', () => {
-		it( 'should not provide an error message if none is logged.', () => {
+		test( 'should not provide an error message if none is logged.', () => {
 			expect( getLastApiErrorCode( stateWithoutError, 1337 ) ).to.not.exist;
 		} );
 
-		it( 'should not provide an error message if no site data exists.', () => {
+		test( 'should not provide an error message if no site data exists.', () => {
 			expect( getLastApiErrorCode( stateWithoutError, 1338 ) ).to.not.exist;
 		} );
 
-		it( 'should match output from getLastApiError.', () => {
+		test( 'should match output from getLastApiError.', () => {
 			expect( getLastApiErrorMessage( stateWithError, 1337 ) ).to.equal( 'Not found' );
 		} );
 	} );
 } );
-

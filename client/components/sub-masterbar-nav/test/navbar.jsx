@@ -1,26 +1,26 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Navbar from '../navbar';
 import Item from '../item';
+import Navbar from '../navbar';
 
 describe( 'Navbar', () => {
 	const options = [
 		{ label: 'sites', uri: '/sites', icon: 'star' },
-		{ label: 'more', uri: '/more', icon: 'star' }
+		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
-	it( 'should render a navbar given a list of options', () => {
-		const wrapper = shallow(
-			<Navbar options={ options } />
-		);
+	test( 'should render a navbar given a list of options', () => {
+		const wrapper = shallow( <Navbar options={ options } /> );
 
 		const items = wrapper.find( Item );
 
@@ -36,10 +36,8 @@ describe( 'Navbar', () => {
 		expect( items.at( 1 ).prop( 'isSelected' ) ).to.equal( false );
 	} );
 
-	it( 'should higlight currently selected option', () => {
-		const wrapper = shallow(
-			<Navbar selected={ options[ 1 ] } options={ options } />
-		);
+	test( 'should higlight currently selected option', () => {
+		const wrapper = shallow( <Navbar selected={ options[ 1 ] } options={ options } /> );
 
 		const items = wrapper.find( Item );
 

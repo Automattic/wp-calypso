@@ -1,17 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getSiteGmtOffset,
-	getSiteTimezoneValue,
-} from 'state/selectors';
+import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
 import Popover from 'components/popover';
 import PostSchedule from 'components/post-schedule';
 
@@ -26,7 +27,7 @@ class CalendarPopover extends Component {
 		// popover props
 		autoPosition: PropTypes.bool,
 		closeOnEsc: PropTypes.bool,
-		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
 		rootClassName: PropTypes.string,
@@ -65,18 +66,21 @@ class CalendarPopover extends Component {
 	};
 
 	renderScheduler() {
-		const schedulerProps = Object.assign( {}, pick( this.props, [
-			'events',
-			'posts',
-			'site',
-			'disabledDays',
-			'enableOutsideDays',
-			'modifiers',
-			'onDateChange',
-			'onMonthChange',
-			'onDayMouseEnter',
-			'onDayMouseLeave',
-		] ) );
+		const schedulerProps = Object.assign(
+			{},
+			pick( this.props, [
+				'events',
+				'posts',
+				'site',
+				'disabledDays',
+				'enableOutsideDays',
+				'modifiers',
+				'onDateChange',
+				'onMonthChange',
+				'onDayMouseEnter',
+				'onDayMouseLeave',
+			] )
+		);
 
 		return (
 			<PostSchedule
@@ -91,25 +95,25 @@ class CalendarPopover extends Component {
 	}
 
 	render() {
-		const popoverProps = Object.assign( {}, pick( this.props, [
-			'autoPosition',
-			'closeOnEsc',
-			'context',
-			'ignoreContext',
-			'isVisible',
-			'position',
-			'rootClassName',
-			'showDelay',
-			'onClose',
-			'onShow',
-		] ) );
+		const popoverProps = Object.assign(
+			{},
+			pick( this.props, [
+				'autoPosition',
+				'closeOnEsc',
+				'context',
+				'ignoreContext',
+				'isVisible',
+				'position',
+				'rootClassName',
+				'showDelay',
+				'onClose',
+				'onShow',
+			] )
+		);
 
 		return (
 			<div className="calendar-popover">
-				<Popover
-					{ ...popoverProps }
-					className="calendar-popover__popover"
-				>
+				<Popover { ...popoverProps } className="calendar-popover__popover">
 					{ this.renderScheduler() }
 				</Popover>
 			</div>
@@ -117,9 +121,7 @@ class CalendarPopover extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		gmtOffset: getSiteGmtOffset( state, siteId ),
-		timezoneValue: getSiteTimezoneValue( state, siteId ),
-	} )
- )( CalendarPopover );
+export default connect( ( state, { siteId } ) => ( {
+	gmtOffset: getSiteGmtOffset( state, siteId ),
+	timezoneValue: getSiteTimezoneValue( state, siteId ),
+} ) )( CalendarPopover );

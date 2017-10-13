@@ -1,0 +1,50 @@
+/** @format */
+.stats-navigation {
+	.section-nav__panel {
+		padding-right: 0;
+
+		@include breakpoint( '>480px' ) {
+			padding-right: 16px;
+		}
+	}
+	.segmented-control {
+		margin-left: 0;
+
+		@include breakpoint( '>480px' ) {
+			margin-left: 16px;
+		}
+	}
+	.followers-count .button {
+		margin-left: 16px;
+
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
+	}
+	.stats-navigation__intervals.is-standalone.segmented-control {
+		display: flex;
+
+		@include breakpoint( '>960px' ) {
+			display: none;
+		}
+	}
+	.stats-navigation__intervals.segmented-control {
+		display: none;
+
+		@include breakpoint( '>960px' ) {
+			display: flex;
+		}
+	}
+}
+
+.stats-navigation__intervals.segmented-control {
+	&.is-standalone {
+		max-width: 100%;
+		margin: 8px 9px;
+
+		@include breakpoint( '>480px' ) {
+			max-width: 400px;
+			margin: 16px auto;
+		}
+	}
+}

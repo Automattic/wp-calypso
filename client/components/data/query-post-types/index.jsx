@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEqual, pick } from 'lodash';
 
@@ -19,7 +23,7 @@ class QueryPostTypes extends Component {
 		requestingPostTypes: PropTypes.bool,
 		themeSlug: PropTypes.string,
 		postTypeSettings: PropTypes.object,
-		requestPostTypes: PropTypes.func
+		requestPostTypes: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -27,15 +31,11 @@ class QueryPostTypes extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const {
-			postTypeSettings,
-			siteId,
-			themeSlug
-		} = this.props;
+		const { postTypeSettings, siteId, themeSlug } = this.props;
 		const {
 			postTypeSettings: nextPostTypeSettings,
 			siteId: nextSiteId,
-			themeSlug: nextThemeSlug
+			themeSlug: nextThemeSlug,
 		} = nextProps;
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
 		const hasPostTypeSettingChanged = ! isEqual( postTypeSettings, nextPostTypeSettings );
@@ -65,7 +65,7 @@ export default connect(
 		return {
 			postTypeSettings: pick( settings, [ 'jetpack_portfolio', 'jetpack_testimonial' ] ),
 			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId ),
-			themeSlug: getSiteOption( state, ownProps.siteId, 'theme_slug' )
+			themeSlug: getSiteOption( state, ownProps.siteId, 'theme_slug' ),
 		};
 	},
 	{ requestPostTypes }

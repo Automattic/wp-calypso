@@ -33,8 +33,6 @@
 }
 
 .is-section-stats .followers-count .button {
-	margin-right: 16px;
-
 	@include breakpoint( "<480px" ) {
 		display: none;
 	}

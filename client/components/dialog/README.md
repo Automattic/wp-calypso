@@ -16,43 +16,43 @@ readable, with a minimal amount of boilerplate code required to show a dialog.
 ### Basic Usage
 
 ```js
-var MyComponent = React.createClass( {
-	getInitialState: function() {
-		return {
-			showDialog: false
-		};
-	},
+class MyComponent extends React.Component {
+	state = {
+		showDialog: false
+	}
 
-	render: function() {
-		var buttons = [
-			{ action: 'cancel', label: this.translate( 'Cancel' ) },
-			{ action: 'delete', label: this.translate( 'Delete Everything' ), isPrimary: true },
+	render() {
+		const { translate } = this.props;
+
+		const buttons = [
+			{ action: 'cancel', label: translate( 'Cancel' ) },
+			{ action: 'delete', label: translate( 'Delete Everything' ), isPrimary: true },
 			<MyCustomButton />
 		];
-		
+
 		return (
 			<div>
-				<button onClick={this._onShowDialog}>Show Dialog</button>
+				<button onClick={ this.onShowDialog }>Show Dialog</button>
 
-				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this._onCloseDialog }>
-					<h1>{ this.translate( 'Confirmation' ) }</h1>
-					<p>{ this.translate( 'Do you want to delete everything?' ) }</p>
+				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+					<h1>{ translate( 'Confirmation' ) }</h1>
+					<p>{ translate( 'Do you want to delete everything?' ) }</p>
 				</Dialog>
 			</div>
 		);
-	},
-	
-	_onShowDialog: function() {
+	}
+
+	onShowDialog = () => {
 		this.setState( { showDialog: true } );
-	},
-	
-	_onCloseDialog: function( action ) {
+	}
+
+	onCloseDialog = ( action ) => {
 		// action is the `action` property of the button clicked to close the dialog. If the dialog is closed
 		// by pressing ESC or clicking outside of the dialog, action will be `undefined`
-		
+
 		this.setState( { showDialog: false } );
 	}
-} );
+}
 
 ReactDom.render(
 	<MyComponent />,
@@ -66,22 +66,24 @@ You can attach `onClick` handlers for dialog buttons. The `onClick` handler will
 called will close the dialog the dialog button is a member of.
 
 ```js
-	render: function() {
+	render() {
+		const { translate } = this.props;
+
 		buttons = [
-			{ action: 'more-options', label: this.translate( 'More Options…' ), onClick: this._onMoreOptions },
-			{ action: 'cancel', label: this.translate( 'Cancel' ) },
-			{ action: 'save', label: this.translate( 'Save' ), isPrimary: true }
+			{ action: 'more-options', label: translate( 'More Options…' ), onClick: this.onMoreOptions },
+			{ action: 'cancel', label: translate( 'Cancel' ) },
+			{ action: 'save', label: translate( 'Save' ), isPrimary: true }
 		];
-		
+
 		return (
-			<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this._onCloseDialog }>
-				<h1>{ this.translate( 'Dialog Title' ) }</h1>
-				<p>{ this.translate( 'Dialog content' ) }</p>
+			<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+				<h1>{ translate( 'Dialog Title' ) }</h1>
+				<p>{ translate( 'Dialog content' ) }</p>
 			</Dialog>
 		);
-	},
-	
-	_onMoreOptions: function( closeDialog ) {
+	}
+
+	onMoreOptions = ( closeDialog ) => {
 		// call the passed in `closeDialog` function to close the dialog the dialog button is
 		// a member of
 	}
@@ -94,20 +96,22 @@ the button spec. The ReactElement cannot close the dialog directly, but you coul
 through the Dialog's host.
 
 ```js
-	render: function() {
-		buttons = [
-			<MyCustomButton onAction={ this._onCustomButtonAction } />
+	render() {
+		const { translate } = this.props;
+
+		const buttons = [
+			<MyCustomButton onAction={ this.onCustomButtonAction } />
 		];
 
 		return (
-			<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this._onCloseDialog }>
-				<h1>{ this.translate( 'Dialog Title' ) }</h1>
-				<p>{ this.translate( 'Dialog content' ) }</p>
+			<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+				<h1>{ translate( 'Dialog Title' ) }</h1>
+				<p>{ translate( 'Dialog content' ) }</p>
 			</Dialog>
 		);
 	},
 
-	_onCustomButtonAction: function() {
+	onCustomButtonAction = () => {
 		this.setState( { showDialog: false } );
 	}
 
@@ -142,11 +146,18 @@ can `@extend` the base `dialog` SCSS classes if you just want to tweak things a 
 (not the backdrop)
 
 ```js
-	render: function() {
+	render {
+		const { translate } = this.props;
+
 		return (
-			<Dialog baseClassName="custom-dialog" additionalClassNames="critical error" isVisible={ this.state.showDialog } onClose={ this._onCloseDialog }>
-				<h1>{ this.translate( 'Dialog Title' ) }</h1>
-				<p>{ this.translate( 'Dialog content' ) }</p>
+			<Dialog
+				baseClassName="custom-dialog"
+				additionalClassNames="critical error"
+				isVisible={ this.state.showDialog }
+				onClose={ this.onCloseDialog }
+			>
+				<h1>{ translate( 'Dialog Title' ) }</h1>
+				<p>{ translate( 'Dialog content' ) }</p>
 			</Dialog>
 		);
 	}

@@ -362,7 +362,7 @@
 			background: transparent;
 		}
 
-		.new-card-header {
+		.checkout__new-card-header {
 			color: $blue-medium;
 			font-weight: 400;
 			margin-bottom: 15px;
@@ -676,153 +676,6 @@
 	}
 }
 
-.privacy-protection-dialog.dialog.card {
-	max-height: 95%;
-	overflow-y: auto;
-
-	.dialog__content {
-		header {
-			text-align: center;
-
-			h1 {
-				font-size: 30px;
-				font-weight: 200;
-				line-height: 130%;
-				height: auto;
-			}
-
-			p {
-				font-size: 13px;
-			}
-
-			.line-break {
-				@include breakpoint( ">660px" ) {
-					display: block;
-				}
-			}
-		}
-	}
-
-	.privacy-features {
-		border-bottom: 1px solid $gray-light;
-		border-top: 1px solid $gray-light;
-		list-style: none;
-		margin: 20px 0;
-		padding: 5px 0;
-
-		li {
-			padding: 5px 10px;
-			text-align: center;
-
-			@include breakpoint( ">660px" ) {
-				display: inline-block;
-				padding: 5px 30px;
-			}
-		}
-
-		h2 {
-			font-size: 14px;
-			font-weight: 600;
-
-			&:before {
-				@include noticon( '\f418', 28px );
-				color: $alert-green;
-				vertical-align: middle;
-			}
-		}
-	}
-
-	.privacy-comparison {
-		list-style: none;
-		margin: 0;
-		padding: 0 0 20px 0;
-
-		@include breakpoint( ">660px" ) {
-			overflow: auto;
-			padding-top: 20px;
-		}
-
-		li {
-			border: 1px solid lighten( $gray, 30% );
-			border-radius: 3px;
-			box-sizing: border-box;
-			margin: 40px 0 0 0;
-			padding: 20px;
-			position: relative;
-
-			@include breakpoint( ">660px" ) {
-				float: left;
-				margin: 0 2%;
-				width: 46%;
-			}
-
-			&:before {
-				border-radius: 50%;
-				color: #FFF;
-				display: block;
-				height: 25px;
-				position: absolute;
-				left: -8px;
-				top: -8px;
-				width: 25px;
-			}
-
-			&.with-privacy:before {
-				@include noticon( '\f418', 25px );
-				background: $alert-green;
-			}
-
-			&.without-privacy:before {
-				background: $alert-yellow;
-				content: '!';
-				font-size: 18px;
-				font-weight: 600;
-				line-height: 25px;
-				text-align: center;
-			}
-
-			h3 {
-				font-size: 16px;
-				font-weight: 600;
-				margin: 0;
-				text-align: center;
-			}
-
-			.privacy-price {
-				color: $gray;
-				font-size: 13px;
-				font-style: italic;
-				font-weight: 400;
-				text-align: center;
-			}
-
-			.privacy-free-text {
-				color: $alert-green;
-			}
-
-			p {
-				background: $gray-light;
-				font-size: 12px;
-				margin: 20px -20px;
-				min-height: 144px;
-				padding: 20px;
-
-				span {
-					display: block;
-					width: 100%;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-			}
-
-			.button {
-				width: 100%;
-			}
-		}
-	}
-}
-
 // If there's no sidebar, we don't show the cart on the checkout page.
 
 @include breakpoint( ">660px" ) {
@@ -888,43 +741,6 @@
 
 .checkout__domain-details-form-submit-button {
 	clear: both;
-}
-
-.checkout__privacy-protection-checkbox {
-	&.card {
-		display: flex;
-	}
-
-	.gridicon {
-		display: none;
-
-		@include breakpoint( ">660px" ) {
-			background: darken( $gray, 20% );
-			border-radius: 50%;
-			color: $white;
-			display: block;
-			padding: 15px;
-		}
-	}
-}
-
-.checkout__privacy-protection-checkbox-description {
-	font-size: 13px;
-	padding-left: 16px;
-
-	@include breakpoint( ">660px" ) {
-		padding-right: 48px;
-	}
-}
-
-.checkout__privacy-protection-checkbox-heading {
-	font-size: 15px;
-}
-
-.checkout__privacy-protection-checkbox-text {
-	color: $gray;
-	font-style: italic;
-	margin: 4px 0 0 0;
 }
 
 .checkout__privacy-protection-price-text {

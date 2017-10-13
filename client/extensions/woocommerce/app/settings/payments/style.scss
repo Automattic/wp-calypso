@@ -12,6 +12,16 @@
 
 	.dialog__action-buttons {
 		overflow: visible;
+
+		.button {
+			&.is-borderless {
+				color: $blue-wordpress;
+
+				&:hover {
+					color: $link-highlight;
+				}
+			}
+		}
 	}
 }
 
@@ -192,6 +202,12 @@
 	}
 }
 
+.payments__method-edit-header {
+	font-size: 18px;
+	justify-content: space-between;
+	padding: 0 0 16px 0;
+}
+
 .payments__method-edit-fields {
 	padding: 16px;
 	border-top: 1px solid $border-ultra-light-gray;
@@ -264,4 +280,9 @@
 	align-self: flex-end;
 	height: 26px;
 	width: 54px;
+}
+
+.payments__method-stripe-force-flow {
+	float: left;
+	margin-left: 0;
 }

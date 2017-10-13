@@ -1,49 +1,41 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
+import { getPostRevisionChanges } from 'state/selectors';
+import EditorDiffChanges from './changes';
 
-const EditorDiffViewer = ( { contentChanges, revision } ) => (
+const EditorDiffViewer = ( { revisionChanges } ) => (
 	<div className="editor-diff-viewer">
 		<h1 className="editor-diff-viewer__title">
-			{ get( revision, 'title' ) }
+			<EditorDiffChanges changes={ revisionChanges.title } />
 		</h1>
-		<div className="editor-diff-viewer__content">
-			{ map( contentChanges, ( change, changeIndex ) => {
-				const changeClassNames = classNames( {
-					'editor-diff-viewer__additions': change.added,
-					'editor-diff-viewer__deletions': change.removed,
-				} );
-				return (
-					<span className={ changeClassNames } key={ changeIndex }>
-						{ change.value }
-					</span>
-				);
-			} ) }
-		</div>
+		<pre className="editor-diff-viewer__content">
+			<EditorDiffChanges changes={ revisionChanges.content } />
+		</pre>
 	</div>
 );
 
 EditorDiffViewer.propTypes = {
-	contentChanges: PropTypes.array.isRequired,
+	revisionChanges: PropTypes.shape( {
+		title: PropTypes.array,
+		content: PropTypes.array,
+	} ).isRequired,
 	postId: PropTypes.number,
 	revision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number,
 };
 
-export default connect(
-	( state, { siteId, postId, selectedRevisionId } ) => ( {
-		contentChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
-		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
-	} )
-)( EditorDiffViewer );
+export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
+	revisionChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
+} ) )( EditorDiffViewer );

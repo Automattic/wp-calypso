@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -30,39 +33,33 @@ export class MediaLibraryDataSource extends Component {
 
 	togglePopover = () => {
 		this.setState( { popover: ! this.state.popover } );
-	}
+	};
 
 	changeSource = item => {
 		const { target } = item;
-		const action = target.getAttribute( 'action' ) ? target.getAttribute( 'action' ) : target.parentNode.getAttribute( 'action' );
+		const action = target.getAttribute( 'action' )
+			? target.getAttribute( 'action' )
+			: target.parentNode.getAttribute( 'action' );
 		const newSource = action ? action : '';
 
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
 		}
-	}
+	};
 
 	renderScreenReader( selected ) {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<span className="screen-reader-text">
-				{ selected && selected.label }
-			</span>
-		);
+		return <span className="screen-reader-text">{ selected && selected.label }</span>;
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderMenuItems( sources ) {
-		return sources.map( item =>
-			<PopoverMenuItem
-				action={ item.value }
-				key={ item.value }
-				onClick={ this.changeSource }
-			>
+		return sources.map( item => (
+			<PopoverMenuItem action={ item.value } key={ item.value } onClick={ this.changeSource }>
 				{ item.icon }
 				{ item.label }
 			</PopoverMenuItem>
-		);
+		) );
 	}
 
 	render() {
@@ -71,12 +68,12 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: '',
 				label: translate( 'WordPress library' ),
-				icon: <Gridicon icon="my-sites" size={ 24 } />
+				icon: <Gridicon icon="my-sites" size={ 24 } />,
 			},
 			{
 				value: 'google_photos',
 				label: translate( 'Photos from Your Google library' ),
-				icon: <img src="/calypso/images/sharing/google-photos-logo.svg" width="24" height="24" />
+				icon: <img src="/calypso/images/sharing/google-photos-logo.svg" width="24" height="24" />,
 			},
 		];
 		const currentSelected = find( sources, item => item.value === source );
@@ -107,8 +104,8 @@ export class MediaLibraryDataSource extends Component {
 						isVisible={ this.state.popover }
 						position="bottom right"
 						onClose={ this.togglePopover }
-						className="is-dialog-visible media-library__header-popover">
-
+						className="is-dialog-visible media-library__header-popover"
+					>
 						{ this.renderMenuItems( sources ) }
 					</PopoverMenu>
 				</Button>

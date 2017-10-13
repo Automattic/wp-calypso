@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 import { truncate, includes } from 'lodash';
 
@@ -55,7 +58,6 @@ import {
 	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
 import purchasesPaths from 'me/purchases/paths';
-
 import { dispatchSuccess, dispatchError } from './utils';
 
 import {
@@ -81,7 +83,7 @@ export function onPostDeleteFailure( dispatch, action, getState ) {
 	let message;
 	if ( post ) {
 		message = translate( 'An error occurred while deleting "%s"', {
-			args: [ truncate( post.title, { length: 24 } ) ]
+			args: [ truncate( post.title, { length: 24 } ) ],
 		} );
 	} else {
 		message = translate( 'An error occurred while deleting the post' );
@@ -96,7 +98,7 @@ export function onPostRestoreFailure( dispatch, action, getState ) {
 	let message;
 	if ( post ) {
 		message = translate( 'An error occurred while restoring "%s"', {
-			args: [ truncate( post.title, { length: 24 } ) ]
+			args: [ truncate( post.title, { length: 24 } ) ],
 		} );
 	} else {
 		message = translate( 'An error occurred while restoring the post' );
@@ -122,74 +124,113 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
-export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispatch(
-	successNotice( translate( 'The %(service)s account was successfully connected.', {
-		args: { service: connection.label },
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionCreate = ( dispatch, { connection } ) =>
+	dispatch(
+		successNotice(
+			translate( 'The %(service)s account was successfully connected.', {
+				args: { service: connection.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) => dispatch(
-	errorNotice( error.message || translate( 'An error occurred while connecting the account.', {
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) =>
+	dispatch(
+		errorNotice(
+			error.message ||
+				translate( 'An error occurred while connecting the account.', {
+					context: 'Sharing: Publicize connection confirmation',
+				} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
-	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
-		args: { service: connection.label },
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionDelete = ( dispatch, { connection } ) =>
+	dispatch(
+		successNotice(
+			translate( 'The %(service)s account was successfully disconnected.', {
+				args: { service: connection.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
-	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
-		args: { service: error.label },
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) =>
+	dispatch(
+		errorNotice(
+			translate( 'The %(service)s account was unable to be disconnected.', {
+				args: { service: error.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
-	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
-		args: { service: connection.label },
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) =>
+	dispatch(
+		successNotice(
+			translate( 'The %(service)s account was successfully reconnected.', {
+				args: { service: connection.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
-	errorNotice( translate( 'The %(service)s account was unable to be reconnected.', {
-		args: { service: error.label },
-		context: 'Sharing: Publicize reconnection confirmation'
-	} ) )
-);
+export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) =>
+	dispatch(
+		errorNotice(
+			translate( 'The %(service)s account was unable to be reconnected.', {
+				args: { service: error.label },
+				context: 'Sharing: Publicize reconnection confirmation',
+			} )
+		)
+	);
 
-export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispatch(
-	successNotice( translate( 'The %(service)s account was successfully updated.', {
-		args: { service: connection.label },
-		context: 'Sharing: Publicize connection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) =>
+	dispatch(
+		successNotice(
+			translate( 'The %(service)s account was successfully updated.', {
+				args: { service: connection.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
-	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
-		args: { service: error.label },
-		context: 'Sharing: Publicize reconnection confirmation'
-	} ), { id: 'publicize' } )
-);
+export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) =>
+	dispatch(
+		errorNotice(
+			translate( 'The %(service)s account was unable to be updated.', {
+				args: { service: error.label },
+				context: 'Sharing: Publicize reconnection confirmation',
+			} ),
+			{ id: 'publicize' }
+		)
+	);
 
-const onThemeDeleteSuccess = ( dispatch, { themeName } ) => dispatch(
-	successNotice( translate( 'Deleted theme %(themeName)s.', {
-		args: { themeName },
-		context: 'Themes: Theme delete confirmation',
-	} ), { duration: 5000 } )
-);
+const onThemeDeleteSuccess = ( dispatch, { themeName } ) =>
+	dispatch(
+		successNotice(
+			translate( 'Deleted theme %(themeName)s.', {
+				args: { themeName },
+				context: 'Themes: Theme delete confirmation',
+			} ),
+			{ duration: 5000 }
+		)
+	);
 
-const onThemeDeleteFailure = ( dispatch, { themeId } ) => dispatch(
-	errorNotice( translate( 'Problem deleting %(themeId)s. Check theme is not active.', {
-		args: { themeId },
-		context: 'Themes: Theme delete failure',
-	} ) )
-);
+const onThemeDeleteFailure = ( dispatch, { themeId } ) =>
+	dispatch(
+		errorNotice(
+			translate( 'Problem deleting %(themeId)s. Check theme is not active.', {
+				args: { themeId },
+				context: 'Themes: Theme delete failure',
+			} )
+		)
+	);
 
 const onThemeActivateFailure = ( dispatch, { error } ) => {
 	if ( includes( error.error, 'theme_not_found' ) ) {
@@ -198,19 +239,23 @@ const onThemeActivateFailure = ( dispatch, { error } ) => {
 	return dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
 };
 
-const onSiteMonitorSettingsUpdateSuccess = ( dispatch ) => dispatch(
-	successNotice( translate( 'Settings saved successfully!' ) )
-);
+const onSiteMonitorSettingsUpdateSuccess = dispatch =>
+	dispatch( successNotice( translate( 'Settings saved successfully!' ) ) );
 
-const onSiteMonitorSettingsUpdateFailure = ( dispatch ) => dispatch(
-	successNotice( translate( 'There was a problem saving your changes. Please, try again.' ) )
-);
+const onSiteMonitorSettingsUpdateFailure = dispatch =>
+	dispatch(
+		successNotice( translate( 'There was a problem saving your changes. Please, try again.' ) )
+	);
 
-const onSiteDelete = ( dispatch, { siteId }, getState ) => dispatch(
-	successNotice( translate( '%(siteDomain)s is being deleted.', {
-		args: { siteDomain: getSiteDomain( getState(), siteId ) }
-	} ), { duration: 5000, id: 'site-delete' } )
-);
+const onSiteDelete = ( dispatch, { siteId }, getState ) =>
+	dispatch(
+		successNotice(
+			translate( '%(siteDomain)s is being deleted.', {
+				args: { siteDomain: getSiteDomain( getState(), siteId ) },
+			} ),
+			{ duration: 5000, id: 'site-delete' }
+		)
+	);
 
 const onSiteDeleteReceive = ( dispatch, { siteId, silent }, getState ) => {
 	if ( silent ) {
@@ -218,20 +263,28 @@ const onSiteDeleteReceive = ( dispatch, { siteId, silent }, getState ) => {
 	}
 
 	return dispatch(
-		successNotice( translate( '%(siteDomain)s has been deleted.', {
-			args: { siteDomain: getSiteDomain( getState(), siteId ) }
-		} ), { duration: 5000, id: 'site-delete' } )
+		successNotice(
+			translate( '%(siteDomain)s has been deleted.', {
+				args: { siteDomain: getSiteDomain( getState(), siteId ) },
+			} ),
+			{ duration: 5000, id: 'site-delete' }
+		)
 	);
 };
 
 const onSiteDeleteFailure = ( dispatch, { error } ) => {
 	if ( error.error === 'active-subscriptions' ) {
-		return dispatch( errorNotice( translate( 'You must cancel any active subscriptions prior to deleting your site.' ), {
-			id: 'site-delete',
-			showDismiss: false,
-			button: translate( 'Manage Purchases' ),
-			href: purchasesPaths.purchasesRoot()
-		} ) );
+		return dispatch(
+			errorNotice(
+				translate( 'You must cancel any active subscriptions prior to deleting your site.' ),
+				{
+					id: 'site-delete',
+					showDismiss: false,
+					button: translate( 'Manage Purchases' ),
+					href: purchasesPaths.purchasesRoot(),
+				}
+			)
+		);
 	}
 	return dispatch( errorNotice( error.message ) );
 };
@@ -250,10 +303,14 @@ export const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: onResentAccountRecoveryEmailValidationFailed,
 	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: onAccountRecoveryPhoneValidationSuccess,
 	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: onAccountRecoveryPhoneValidationFailed,
-	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: dispatchError( translate(
-		'There was a problem sending your receipt. Please try again later or contact support.'
-	) ),
-	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: dispatchSuccess( translate( 'Your receipt was sent by email successfully.' ) ),
+	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: dispatchError(
+		translate(
+			'There was a problem sending your receipt. Please try again later or contact support.'
+		)
+	),
+	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: dispatchSuccess(
+		translate( 'Your receipt was sent by email successfully.' )
+	),
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},
@@ -282,7 +339,9 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_REFRESH_FAILURE ]: onPublicizeConnectionRefreshFailure,
 	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
-	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess(
+		translate( 'Thanks for confirming those details!' )
+	),
 	[ SITE_DELETE ]: onSiteDelete,
 	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
 	[ SITE_DELETE_RECEIVE ]: onSiteDeleteReceive,
@@ -297,7 +356,7 @@ export const handlers = {
  * Middleware
  */
 
-export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
+export default ( { dispatch, getState } ) => next => action => {
 	if ( handlers.hasOwnProperty( action.type ) ) {
 		handlers[ action.type ]( dispatch, action, getState );
 	}

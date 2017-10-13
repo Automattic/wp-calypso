@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -9,4 +12,4 @@ import { get } from 'lodash';
  * @param  {Object} state Global state tree.
  * @return {?String}      Validation key string.
  */
-export default ( state ) => get( state, 'accountRecovery.reset.key', null );
+export default state => get( state, 'accountRecovery.reset.key', null );

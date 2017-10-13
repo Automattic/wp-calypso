@@ -1,4 +1,8 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+/**
+ * /* eslint-disable wpcalypso/jsx-classname-namespace
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -9,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import shortcodeUtils from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
@@ -25,50 +29,52 @@ class SimplePaymentsView extends Component {
 		const { translate, productId, product, siteId } = this.props;
 
 		if ( ! product ) {
-			return ( <QuerySimplePayments siteId={ siteId } productId={ productId } /> );
+			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
 		}
 
 		const { productImage } = this.props;
-		const { title, description, price, currency, multiple, featuredImageId: productImageId } = product;
+		const {
+			title,
+			description,
+			price,
+			currency,
+			multiple,
+			featuredImageId: productImageId,
+		} = product;
 
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
 				{ productImageId && <QueryMedia siteId={ siteId } mediaId={ productImageId } /> }
 				<div className="wpview-type-simple-payments__wrapper">
-				{ productImage &&
-					<div className="wpview-type-simple-payments__image-part">
-						<figure className="wpview-type-simple-payments__image-figure">
-							<img
-								className="wpview-type-simple-payments__image"
-								src={ productImage.URL }
-							/>
-						</figure>
-					</div>
-				}
+					{ productImage && (
+						<div className="wpview-type-simple-payments__image-part">
+							<figure className="wpview-type-simple-payments__image-figure">
+								<img className="wpview-type-simple-payments__image" src={ productImage.URL } />
+							</figure>
+						</div>
+					) }
 					<div className="wpview-type-simple-payments__text-part">
-						<div className="wpview-type-simple-payments__title">
-							{ title }
-						</div>
-						<div className="wpview-type-simple-payments__description">
-							{ description }
-						</div>
+						<div className="wpview-type-simple-payments__title">{ title }</div>
+						<div className="wpview-type-simple-payments__description">{ description }</div>
 						<div className="wpview-type-simple-payments__price-part">
 							{ formatCurrency( price, currency ) }
 						</div>
 						<div className="wpview-type-simple-payments__pay-part">
-							{ multiple &&
-							<div className="wpview-type-simple-payments__pay-quantity">
-								<input
-									className="wpview-type-simple-payments__pay-quantity-input"
-									type="text"
-									value="1"
-									readOnly
-								/>
-							</div>
-							}
+							{ multiple && (
+								<div className="wpview-type-simple-payments__pay-quantity">
+									<input
+										className="wpview-type-simple-payments__pay-quantity-input"
+										type="text"
+										value="1"
+										readOnly
+									/>
+								</div>
+							) }
 							<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
 								<div className="wpview-type-simple-payments__pay-paypal-button-content">
-									<span className="wpview-type-simple-payments__pay-paypal-button-text">{ translate( 'Pay with' ) }</span>
+									<span className="wpview-type-simple-payments__pay-paypal-button-text">
+										{ translate( 'Pay with' ) }
+									</span>
 									<span className="wpview-type-simple-payments_paypal-logo" />
 								</div>
 							</div>
@@ -98,7 +104,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 	};
 } )( localize( SimplePaymentsView ) );
 
-SimplePaymentsView.match = ( content ) => {
+SimplePaymentsView.match = content => {
 	const match = shortcodeUtils.next( 'simple-payment', content );
 
 	if ( match ) {
@@ -106,13 +112,13 @@ SimplePaymentsView.match = ( content ) => {
 			index: match.index,
 			content: match.content,
 			options: {
-				shortcode: match.shortcode
-			}
+				shortcode: match.shortcode,
+			},
 		};
 	}
 };
 
-SimplePaymentsView.serialize = ( content ) => {
+SimplePaymentsView.serialize = content => {
 	return encodeURIComponent( content );
 };
 

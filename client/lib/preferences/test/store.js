@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,26 +10,22 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { USER_SETTING_KEY } from '../constants';
-import useMockery from 'test/helpers/use-mockery';
 
-describe( 'PreferencesStore', function() {
+describe( 'PreferencesStore', () => {
 	let Dispatcher, PreferencesStore, handler;
 
-	// makes sure we always load fresh instance of Dispatcher
-	useMockery();
-
-	before( function() {
+	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
 		sinon.spy( Dispatcher, 'register' );
 		PreferencesStore = require( '../store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		PreferencesStore._preferences = undefined;
 	} );
 
-	after( function() {
+	afterAll( function() {
 		Dispatcher.register.restore();
 	} );
 
@@ -36,30 +34,30 @@ describe( 'PreferencesStore', function() {
 			action: {
 				type: 'RECEIVE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: preferences
-				}
-			}
+					[ USER_SETTING_KEY ]: preferences,
+				},
+			},
 		} );
 	}
 
-	describe( '#getAll()', function() {
-		it( 'should return undefined if preferences have never been received', function() {
+	describe( '#getAll()', () => {
+		test( 'should return undefined if preferences have never been received', () => {
 			expect( PreferencesStore.getAll() ).to.be.undefined;
 		} );
 
-		it( 'should return an empty object if preferences were received but empty', function() {
+		test( 'should return an empty object if preferences were received but empty', () => {
 			dispatchReceivePreferences( {} );
 
 			expect( PreferencesStore.getAll() ).to.eql( {} );
 		} );
 
-		it( 'should return all received preferences', function() {
+		test( 'should return all received preferences', () => {
 			dispatchReceivePreferences( { one: 1 } );
 
 			expect( PreferencesStore.getAll() ).to.eql( { one: 1 } );
 		} );
 
-		it( 'should merge multiple received preferences', function() {
+		test( 'should merge multiple received preferences', () => {
 			dispatchReceivePreferences( { one: 1 } );
 			dispatchReceivePreferences( { two: 2 } );
 
@@ -67,18 +65,18 @@ describe( 'PreferencesStore', function() {
 		} );
 	} );
 
-	describe( '#get()', function() {
-		it( 'should return a single value', function() {
+	describe( '#get()', () => {
+		test( 'should return a single value', () => {
 			dispatchReceivePreferences( { one: 1 } );
 
 			expect( PreferencesStore.get( 'one' ) ).to.equal( 1 );
 		} );
 
-		it( 'should return undefined for a key which was never defined', function() {
+		test( 'should return undefined for a key which was never defined', () => {
 			expect( PreferencesStore.get( 'one' ) ).to.be.undefined;
 		} );
 
-		it( 'should return undefined for a key which was removed', function() {
+		test( 'should return undefined for a key which was removed', () => {
 			dispatchReceivePreferences( { one: 1 } );
 			dispatchReceivePreferences( { one: null } );
 
@@ -86,8 +84,8 @@ describe( 'PreferencesStore', function() {
 		} );
 	} );
 
-	describe( '.dispatchToken', function() {
-		it( 'should emit a change event when receiving updates', function( done ) {
+	describe( '.dispatchToken', () => {
+		test( 'should emit a change event when receiving updates', done => {
 			PreferencesStore.on( 'change', done );
 
 			dispatchReceivePreferences( {} );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -22,7 +25,6 @@ import TableRow from 'woocommerce/components/table/table-row';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsWidgetList extends Component {
-
 	static propTypes = {
 		data: PropTypes.array.isRequired,
 		deltas: PropTypes.array.isRequired,
@@ -35,27 +37,29 @@ class StoreStatsWidgetList extends Component {
 		const { data, deltas, query, selectedDate, widgets } = this.props;
 		const { unit } = query;
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
-		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter( key => key !== 'period' )[ 0 ];
+		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter(
+			key => key !== 'period'
+		)[ 0 ];
 		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
 		const periodFormat = getPeriodFormat( unit, sincePeriod.reference_period );
 		const values = [
 			{
 				key: 'title',
-				label: translate( 'Stat' )
+				label: translate( 'Stat' ),
 			},
 			{
 				key: 'value',
-				label: translate( 'Value' )
+				label: translate( 'Value' ),
 			},
 			{
 				key: 'sparkline',
-				label: translate( 'Trend' )
+				label: translate( 'Trend' ),
 			},
 			{
 				key: 'delta',
 				label: `${ translate( 'Since' ) } \
-				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`
-			}
+				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`,
+			},
 		];
 
 		const titles = (
@@ -78,22 +82,27 @@ class StoreStatsWidgetList extends Component {
 		const widgetData = widgets.map( widget => {
 			const timeSeries = data.map( row => +row[ widget.key ] );
 			const delta = getDelta( deltas, selectedDate, widget.key );
-			const deltaValue = ( delta.direction === 'is-undefined-increase' )
-				? '-'
-				: Math.abs( Math.round( delta.percentage_change * 100 ) );
+			const deltaValue =
+				delta.direction === 'is-undefined-increase'
+					? '-'
+					: Math.abs( Math.round( delta.percentage_change * 100 ) );
 			return {
 				title: widget.title,
 				value: formatValue( timeSeries[ selectedIndex ], widget.format, sincePeriod.currency ),
-				sparkline: <Sparkline
-					aspectRatio={ 3 }
-					data={ timeSeries }
-					highlightIndex={ selectedIndex }
-					maxHeight={ 50 }
-				/>,
-				delta: <Delta
-					value={ `${ deltaValue }%` }
-					className={ `${ delta.favorable } ${ delta.direction }` }
-				/>
+				sparkline: (
+					<Sparkline
+						aspectRatio={ 3 }
+						data={ timeSeries }
+						highlightIndex={ selectedIndex }
+						maxHeight={ 50 }
+					/>
+				),
+				delta: (
+					<Delta
+						value={ `${ deltaValue }%` }
+						className={ `${ delta.favorable } ${ delta.direction }` }
+					/>
+				),
 			};
 		} );
 
@@ -117,12 +126,10 @@ class StoreStatsWidgetList extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, statType, query } ) => {
-		const siteStats = getSiteStatsNormalizedData( state, siteId, statType, query );
-		return {
-			data: siteStats.data,
-			deltas: siteStats.deltas,
-		};
-	}
-)( StoreStatsWidgetList );
+export default connect( ( state, { siteId, statType, query } ) => {
+	const siteStats = getSiteStatsNormalizedData( state, siteId, statType, query );
+	return {
+		data: siteStats.data,
+		deltas: siteStats.deltas,
+	};
+} )( StoreStatsWidgetList );

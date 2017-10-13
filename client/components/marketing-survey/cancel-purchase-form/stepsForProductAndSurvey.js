@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import * as plans from 'lib/plans/constants';
 import { includesProduct } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
@@ -25,7 +28,10 @@ export default function stepsForProductAndSurvey( survey, product, canChat ) {
 			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 		}
 
-		if ( includesProduct( PERSONAL_PREMIUM_PLANS, product ) && abtest( 'ATUpgradeOnCancel' ) === 'show' ) {
+		if (
+			includesProduct( PERSONAL_PREMIUM_PLANS, product ) &&
+			abtest( 'ATUpgradeOnCancel' ) === 'show'
+		) {
 			return [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
 		}
 	}

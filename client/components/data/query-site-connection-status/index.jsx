@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -14,7 +18,7 @@ class QuerySiteConnectionStatus extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		requestingSiteConnectionStatus: PropTypes.bool,
-		requestConnectionStatus: PropTypes.func
+		requestConnectionStatus: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -43,7 +47,7 @@ class QuerySiteConnectionStatus extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingSiteConnectionStatus: isRequestingSiteConnectionStatus( state, ownProps.siteId )
+			requestingSiteConnectionStatus: isRequestingSiteConnectionStatus( state, ownProps.siteId ),
 		};
 	},
 	{ requestConnectionStatus }

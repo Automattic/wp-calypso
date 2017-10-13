@@ -1,10 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:site' );
+
+export default React.createClass( {
 	displayName: 'SitePlaceholder',
 
 	componentDidMount: function() {
@@ -23,5 +27,5 @@ module.exports = React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

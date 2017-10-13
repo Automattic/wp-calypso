@@ -3,7 +3,7 @@
 	"author": "Automattic",
 	"description": "Zone Manager (Zoninator)",
 	"version": "0.0.1",
-	"env_id": [ "development", "wpcalypso" ],
+	"env_id": [ "development", "wpcalypso", "stage" ],
 	"section": {
 		"name": "zoninator",
 		"paths": [ "/extensions/zoninator" ],

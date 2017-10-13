@@ -11,6 +11,7 @@ import { slugToCamelCase } from 'devdocs/docs-example/util';
  * Internal dependencies
  */
 import Collection from 'devdocs/design/search-collection';
+import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
@@ -25,7 +26,7 @@ import CalendarPopover from 'blocks/calendar-popover/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import CommentDetail from 'blocks/comment-detail/docs/example';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog/docs/example';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
@@ -81,34 +82,34 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 
-export default React.createClass( {
-	displayName: 'AppComponents',
+export default class AppComponents extends React.Component {
+	static displayName = 'AppComponents';
+	state = { filter: '' };
 
-	getInitialState() {
-		return { filter: '' };
-	},
-
-	onSearch( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents() {
+	backToComponents = () => {
 		page( '/devdocs/blocks/' );
-	},
+	};
 
 	render() {
 		return (
-			<Main className="design">
-				{ this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-							{ slugToCamelCase( this.props.component ) }
-						</HeaderCake>
-					: <SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ this.state.filter }
-							placeholder="Search blocks…"
-							analyticsGroup="Docs"
-						/> }
+			<Main className="design design__blocks">
+				<DocumentHead title="Blocks" />
+				{ this.props.component ? (
+					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
+						{ slugToCamelCase( this.props.component ) }
+					</HeaderCake>
+				) : (
+					<SearchCard
+						onSearch={ this.onSearch }
+						initialValue={ this.state.filter }
+						placeholder="Search blocks…"
+						analyticsGroup="Docs"
+					/>
+				) }
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }
@@ -178,5 +179,5 @@ export default React.createClass( {
 				</Collection>
 			</Main>
 		);
-	},
-} );
+	}
+}

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,6 +27,7 @@ import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
+import Search from 'my-sites/site-settings/search';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -55,7 +59,7 @@ const SiteSettingsTraffic = ( {
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="traffic" />
 
-			{ jetpackSettingsUiSupported &&
+			{ jetpackSettingsUiSupported && (
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }
 					setFieldValue={ setFieldValue }
@@ -63,15 +67,15 @@ const SiteSettingsTraffic = ( {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-			}
-			{ jetpackSettingsUiSupported &&
+			) }
+			{ jetpackSettingsUiSupported && (
 				<JetpackAds
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-			}
+			) }
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -79,9 +83,10 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ isJetpack
-				? <AmpJetpack />
-				: <AmpWpcom
+			{ isJetpack ? (
+				<AmpJetpack />
+			) : (
+				<AmpWpcom
 					submitForm={ submitForm }
 					trackEvent={ trackEvent }
 					updateFields={ updateFields }
@@ -89,11 +94,16 @@ const SiteSettingsTraffic = ( {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-			}
+			) }
 			<SeoSettingsHelpCard />
 			<SeoSettingsMain />
 			<AnalyticsSettings />
 			<Sitemaps
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+			<Search
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
@@ -103,20 +113,18 @@ const SiteSettingsTraffic = ( {
 	);
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
+const connectComponent = connect( state => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
 
-		return {
-			site,
-			isJetpack,
-			jetpackSettingsUiSupported,
-		};
-	}
-);
+	return {
+		site,
+		isJetpack,
+		jetpackSettingsUiSupported,
+	};
+} );
 
 const getFormSettings = partialRight( pick, [
 	'stats',
@@ -134,8 +142,6 @@ const getFormSettings = partialRight( pick, [
 	'blog_public',
 ] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsTraffic );
+export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
+	SiteSettingsTraffic
+);

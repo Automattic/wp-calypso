@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,17 +9,17 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
-	COMMENTS_DELETE,
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-	NOTICE_CREATE
-} from 'state/action-types';
-import {
 	createPlaceholderComment,
 	dispatchNewCommentRequest,
 	updatePlaceholderComment,
 	handleWriteCommentFailure,
 } from '../utils';
+import {
+	COMMENTS_DELETE,
+	COMMENTS_RECEIVE,
+	COMMENTS_COUNT_INCREMENT,
+	NOTICE_CREATE,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
@@ -26,7 +27,7 @@ describe( 'utility functions', () => {
 	useFakeTimers();
 
 	describe( '#createPlaceholderComment()', () => {
-		it( 'should return a comment placeholder', () => {
+		test( 'should return a comment placeholder', () => {
 			const placeholder = createPlaceholderComment( 'comment text', 1, 2 );
 
 			expect( placeholder ).to.eql( {
@@ -38,7 +39,7 @@ describe( 'utility functions', () => {
 				placeholderState: 'PENDING',
 				post: { ID: 1 },
 				status: 'pending',
-				type: 'comment'
+				type: 'comment',
 			} );
 		} );
 	} );
@@ -48,7 +49,7 @@ describe( 'utility functions', () => {
 			type: 'DUMMY',
 			siteId: 2916284,
 			postId: 1010,
-			commentText: 'comment text'
+			commentText: 'comment text',
 		};
 		const placeholder = {
 			ID: 'placeholder-0',
@@ -59,10 +60,10 @@ describe( 'utility functions', () => {
 			placeholderState: 'PENDING',
 			post: { ID: 1010 },
 			status: 'pending',
-			type: 'comment'
+			type: 'comment',
 		};
 
-		it( 'should dispatch a http request action to the specified path', () => {
+		test( 'should dispatch a http request action to the specified path', () => {
 			const dispatch = spy();
 
 			dispatchNewCommentRequest( dispatch, action, '/sites/foo/comments' );
@@ -75,25 +76,27 @@ describe( 'utility functions', () => {
 				skipSort: false,
 				comments: [ placeholder ],
 			} );
-			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.1',
-				method: 'POST',
-				path: '/sites/foo/comments',
-				body: { content: 'comment text' },
-				onSuccess: { ...action, placeholderId: placeholder.ID },
-				onFailure: action
-			} ) );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				http( {
+					apiVersion: '1.1',
+					method: 'POST',
+					path: '/sites/foo/comments',
+					body: { content: 'comment text' },
+					onSuccess: { ...action, placeholderId: placeholder.ID },
+					onFailure: action,
+				} )
+			);
 		} );
 	} );
 
 	describe( '#updatePlaceholderComment()', () => {
-		it( 'should remove the placeholder comment', () => {
+		test( 'should remove the placeholder comment', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
 				parentCommentId: null,
-				placeholderId: 'placeholder-id'
+				placeholderId: 'placeholder-id',
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
@@ -104,17 +107,17 @@ describe( 'utility functions', () => {
 				type: COMMENTS_DELETE,
 				siteId: 2916284,
 				postId: 1010,
-				commentId: 'placeholder-id'
+				commentId: 'placeholder-id',
 			} );
 		} );
 
-		it( 'should dispatch a comments receive action', () => {
+		test( 'should dispatch a comments receive action', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
 				parentCommentId: null,
-				placeholderId: 'placeholder-id'
+				placeholderId: 'placeholder-id',
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
@@ -126,17 +129,17 @@ describe( 'utility functions', () => {
 				siteId: 2916284,
 				postId: 1010,
 				comments: [ { ID: 1, content: 'this is the content' } ],
-				skipSort: false
+				skipSort: false,
 			} );
 		} );
 
-		it( 'should dispatch a comments count increment action', () => {
+		test( 'should dispatch a comments count increment action', () => {
 			const dispatch = spy();
 			const action = {
 				siteId: 2916284,
 				postId: 1010,
 				parentCommentId: null,
-				placeholderId: 'placeholder-id'
+				placeholderId: 'placeholder-id',
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
@@ -146,29 +149,28 @@ describe( 'utility functions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: COMMENTS_COUNT_INCREMENT,
 				siteId: 2916284,
-				postId: 1010
+				postId: 1010,
 			} );
 		} );
 	} );
 
 	describe( '#handleWriteCommentFailure()', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
 			const getState = () => ( {
 				posts: {
-					queries: {}
-				}
+					queries: {},
+				},
 			} );
 
 			handleWriteCommentFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
 
-			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 				notice: {
 					status: 'is-error',
-					text: 'Could not add a reply to this post'
-				}
+					text: 'Could not add a reply to this post',
+				},
 			} );
 		} );
 	} );

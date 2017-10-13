@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -16,7 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
+	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -30,7 +34,7 @@ const Sso = ( {
 	selectedSiteId,
 	ssoModuleActive,
 	ssoModuleUnavailable,
-	translate
+	translate,
 } ) => {
 	return (
 		<div>
@@ -57,7 +61,12 @@ const Sso = ( {
 					<div className="sso__module-settings site-settings__child-settings">
 						<CompactFormToggle
 							checked={ !! fields.jetpack_sso_match_by_email }
-							disabled={ isRequestingSettings || isSavingSettings || ! ssoModuleActive || ssoModuleUnavailable }
+							disabled={
+								isRequestingSettings ||
+								isSavingSettings ||
+								! ssoModuleActive ||
+								ssoModuleUnavailable
+							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_match_by_email' ) }
 						>
 							{ translate( 'Match accounts using email addresses' ) }
@@ -65,7 +74,12 @@ const Sso = ( {
 
 						<CompactFormToggle
 							checked={ !! fields.jetpack_sso_require_two_step }
-							disabled={ isRequestingSettings || isSavingSettings || ! ssoModuleActive || ssoModuleUnavailable }
+							disabled={
+								isRequestingSettings ||
+								isSavingSettings ||
+								! ssoModuleActive ||
+								ssoModuleUnavailable
+							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_require_two_step' ) }
 						>
 							{ translate( 'Require two-step authentication' ) }
@@ -80,7 +94,7 @@ const Sso = ( {
 Sso.defaultProps = {
 	isSavingSettings: false,
 	isRequestingSettings: true,
-	fields: {}
+	fields: {},
 };
 
 Sso.propTypes = {
@@ -90,16 +104,18 @@ Sso.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'sso' );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'sso'
+	);
 
-		return {
-			selectedSiteId,
-			ssoModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'sso' ),
-			ssoModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		};
-	}
-)( localize( Sso ) );
+	return {
+		selectedSiteId,
+		ssoModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'sso' ),
+		ssoModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+	};
+} )( localize( Sso ) );

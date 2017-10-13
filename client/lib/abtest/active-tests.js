@@ -1,4 +1,5 @@
-module.exports = {
+/** @format */
+export default {
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
@@ -15,6 +16,14 @@ module.exports = {
 			hideSurveyStep: 80,
 		},
 		defaultVariation: 'hideSurveyStep',
+	},
+	signupPressableStoreFlow: {
+		datestamp: '20171018',
+		variations: {
+			atomic: 99,
+			pressable: 1,
+		},
+		defaultVariation: 'atomic',
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
@@ -68,42 +77,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	jetpackConnectPlansCopyChanges: {
-		datestamp: '20170728',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'modified',
-	},
-	readerIntroIllustration: {
-		datestamp: '20170718',
-		variations: {
-			blue: 33,
-			lightBlue: 33,
-			white: 34,
-		},
-		defaultVariation: 'white',
-		assignmentMethod: 'userId',
-	},
-	postSignupUpgradeScreen: {
-		datestamp: '20170810',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-	privacyNoPopup: {
-		datestamp: '20170830',
-		variations: {
-			original: 50,
-			nopopup: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -111,6 +84,16 @@ module.exports = {
 			show: 50,
 		},
 		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	recommendShortestDomain: {
+		datestamp: '20171010',
+		variations: {
+			shortest: 50,
+			original: 50,
+		},
+		defaultVariation: 'original',
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},

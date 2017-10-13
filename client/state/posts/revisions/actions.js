@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
@@ -20,7 +23,7 @@ export const requestPostRevisions = ( siteId, postId, postType = 'post' ) => ( {
 	type: POST_REVISIONS_REQUEST,
 	postId,
 	postType,
-	siteId
+	siteId,
 } );
 
 /**
@@ -32,7 +35,8 @@ export const requestPostRevisions = ( siteId, postId, postType = 'post' ) => ( {
  */
 export const receivePostRevisionsSuccess = ( siteId, postId ) => ( {
 	type: POST_REVISIONS_REQUEST_SUCCESS,
-	siteId, postId,
+	siteId,
+	postId,
 } );
 
 /**
@@ -45,7 +49,9 @@ export const receivePostRevisionsSuccess = ( siteId, postId ) => ( {
  */
 export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
 	type: POST_REVISIONS_REQUEST_FAILURE,
-	siteId, postId, error
+	siteId,
+	postId,
+	error,
 } );
 
 /**
@@ -61,5 +67,7 @@ export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
 	// coupling it to how the WP-API returns revisions, instead of being able
 	// to "receive" large (possibly unrelated) batch of revisions.
 	type: POST_REVISIONS_RECEIVE,
-	siteId, postId, revisions,
+	siteId,
+	postId,
+	revisions,
 } );

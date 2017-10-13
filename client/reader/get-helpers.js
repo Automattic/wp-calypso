@@ -21,7 +21,7 @@ import { isSiteDescriptionBlacklisted } from 'reader/lib/site-description-blackl
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
 	const siteUrl = !! site && ( site.URL || site.domain );
-	const feedUrl = !! feed && feed.URL;
+	const feedUrl = !! feed && ( feed.URL || feed.feed_URL );
 	const postUrl = !! post && post.site_URL;
 
 	return siteUrl || feedUrl || postUrl;
@@ -61,7 +61,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = feed.name || feed.title;
 	} else if ( ! isDefaultSiteTitle && post && post.site_name ) {
 		siteName = post.site_name;
-	} else if ( ( site && site.is_error ) || ( feed && feed.is_error && ! post ) ) {
+	} else if ( site && site.is_error && ( feed && feed.is_error && ! post ) ) {
 		siteName = translate( 'Error fetching feed' );
 	} else if ( site && site.domain ) {
 		siteName = site.domain;

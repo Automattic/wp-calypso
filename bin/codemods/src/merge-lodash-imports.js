@@ -16,6 +16,9 @@
  * @param api
  * @returns {string}
  */
+
+const config = require( './config' );
+
 export default function transformer( file, api ) {
 	const specSorter = ( a, b ) => a.imported.name.localeCompare( b.imported.name );
 
@@ -35,16 +38,18 @@ export default function transformer( file, api ) {
 
 	sourceDecs.forEach( dec => {
 		decs.push( dec );
-		j( dec ).find( j.ImportSpecifier ).forEach( spec => {
-			const local = spec.value.local.name;
-			const name = spec.value.imported.name;
+		j( dec )
+			.find( j.ImportSpecifier )
+			.forEach( spec => {
+				const local = spec.value.local.name;
+				const name = spec.value.imported.name;
 
-			if ( local === name ) {
-				lodash.add( name );
-			} else {
-				maps.set( name, ( maps.get( name ) || new Set() ).add( local ) );
-			}
-		} );
+				if ( local === name ) {
+					lodash.add( name );
+				} else {
+					maps.set( name, ( maps.get( name ) || new Set() ).add( local ) );
+				}
+			} );
 	} );
 
 	// Insert new statement above first existing lodash import
@@ -86,5 +91,5 @@ export default function transformer( file, api ) {
 	// remove old declarations
 	decs.forEach( dec => j( dec ).remove() );
 
-	return source.toSource( { quote: 'single' } );
+	return source.toSource( config.recastOptions );
 }

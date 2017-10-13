@@ -1,6 +1,10 @@
-/*
+/**
+ * /*
  * External dependencies
+ *
+ * @format
  */
+
 import debugModule from 'debug';
 import { noop } from 'lodash';
 
@@ -99,7 +103,9 @@ export function recordSaveEvent( context ) {
 
 	debug(
 		'recordSaveEvent %s currentStatus=%s nextStatus=%s',
-		tracksEventName, currentStatus, nextStatus
+		tracksEventName,
+		currentStatus,
+		nextStatus
 	);
 
 	analytics.tracks.recordEvent( tracksEventName, {

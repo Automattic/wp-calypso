@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -37,8 +41,8 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 };
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
-	purchaseId: React.PropTypes.number.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+	purchaseId: PropTypes.number.isRequired,
+	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
 export default CancelPurchaseLoadingPlaceholder;

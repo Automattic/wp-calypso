@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -45,7 +48,10 @@ export class UserStep extends Component {
 			this.setState( { submitting: false } );
 		}
 
-		if ( this.props.flowName !== nextProps.flowName || this.props.subHeaderText !== nextProps.subHeaderText ) {
+		if (
+			this.props.flowName !== nextProps.flowName ||
+			this.props.subHeaderText !== nextProps.subHeaderText
+		) {
 			this.setSubHeaderText( nextProps );
 		}
 	}
@@ -63,18 +69,28 @@ export class UserStep extends Component {
 			if ( isWooOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
 					components: {
-						a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
-							target="_blank" rel="noopener noreferrer" />,
+						a: (
+							<a
+								href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
 					},
-					comment: 'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com'
+					comment:
+						'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com',
 				} );
 			} else {
-				subHeaderText = translate( 'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}', {
-					components: {
-						a: <a href={ support.WPCC } target="_blank" />,
-					},
-					comment: 'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com'
-				} );
+				subHeaderText = translate(
+					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
+					{
+						components: {
+							a: <a href={ support.WPCC } target="_blank" />,
+						},
+						comment:
+							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
+					}
+				);
 			}
 		} else if ( 1 === signupUtils.getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
@@ -84,14 +100,14 @@ export class UserStep extends Component {
 		this.setState( { subHeaderText } );
 	}
 
-	save = ( form ) => {
+	save = form => {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
-			form: form
+			form: form,
 		} );
 	};
 
-	submit = ( data ) => {
+	submit = data => {
 		const { flowName, stepName, oauth2Signup, translate } = this.props;
 		const dependencies = {};
 
@@ -100,13 +116,17 @@ export class UserStep extends Component {
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
 		}
 
-		SignupActions.submitSignupStep( {
-			processingMessage: translate( 'Creating your account' ),
-			flowName,
-			stepName,
-			oauth2Signup,
-			...data
-		}, null, dependencies );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: translate( 'Creating your account' ),
+				flowName,
+				stepName,
+				oauth2Signup,
+				...data,
+			},
+			null,
+			dependencies
+		);
 
 		this.props.goToNextStep();
 	};
@@ -116,8 +136,8 @@ export class UserStep extends Component {
 			...form,
 			password: {
 				...form.password,
-				value: ''
-			}
+				value: '',
+			},
 		};
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
@@ -159,7 +179,8 @@ export class UserStep extends Component {
 		if ( flowName === 'wpcc' && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
-				comment: "'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')"
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
 			} );
 		}
 
@@ -171,17 +192,19 @@ export class UserStep extends Component {
 			return this.props.queryObject.oauth2_redirect;
 		}
 
-		const stepAfterRedirect = signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
+		const stepAfterRedirect =
+			signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
 			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + signupUtils.getStepUrl(
-				this.props.flowName,
-				stepAfterRedirect
-			);
+		return this.originUrl() + signupUtils.getStepUrl( this.props.flowName, stepAfterRedirect );
 	}
 
 	originUrl() {
-		return window.location.protocol + '//' + window.location.hostname +
-			( window.location.port ? ':' + window.location.port : '' );
+		return (
+			window.location.protocol +
+			'//' +
+			window.location.hostname +
+			( window.location.port ? ':' + window.location.port : '' )
+		);
 	}
 
 	submitButtonText() {
@@ -232,11 +255,11 @@ export class UserStep extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
-		recordTracksEvent
+		recordTracksEvent,
 	}
 )( localize( UserStep ) );

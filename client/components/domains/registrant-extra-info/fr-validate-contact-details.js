@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isString, reduce, update } from 'lodash';
 import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
@@ -48,10 +51,11 @@ const reverseMessageMap = {
 };
 
 function ruleNameFromMessage( message ) {
-	return reverseMessageMap[ message ] ||
-		( isString( message ) &&
-			message.match( /^must be (.*) format$/ ) && 'format' ) ||
-		message;
+	return (
+		reverseMessageMap[ message ] ||
+		( isString( message ) && message.match( /^must be (.*) format$/ ) && 'format' ) ||
+		message
+	);
 }
 
 /*
@@ -66,10 +70,11 @@ export default function validateContactDetails( contactDetails ) {
 		validate.errors,
 		( accumulatedErrors, { field, message } ) => {
 			// Drop 'data.' prefix
-			const path = String( field ).split( '.' ).slice( 1 );
+			const path = String( field )
+				.split( '.' )
+				.slice( 1 );
 
-			const appendThisMessage = ( before ) =>
-				[ ...( before || [] ), ruleNameFromMessage( message ) ];
+			const appendThisMessage = before => [ ...( before || [] ), ruleNameFromMessage( message ) ];
 
 			return update( accumulatedErrors, path, appendThisMessage );
 		},

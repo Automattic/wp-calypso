@@ -1,14 +1,19 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var debug = require( 'debug' )( 'calypso:me:form-base' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:me:form-base' );
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' );
+import notices from 'notices';
 
-module.exports = {
+export default {
 	componentDidMount: function() {
 		this.props.userSettings.getSettings();
 	},
@@ -19,7 +24,7 @@ module.exports = {
 	},
 
 	getDisabledState: function() {
-		return ( this.state.submittingForm );
+		return this.state.submittingForm;
 	},
 
 	componentWillReceiveProps: function( nextProp ) {
@@ -45,7 +50,7 @@ module.exports = {
 	showNotice: function() {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			notices.success( this.props.translate( 'Settings saved successfully!' ) );
 			this.state.showNotice = false;
 		}
 	},
@@ -55,7 +60,7 @@ module.exports = {
 			value: this.props.userSettings.getSetting( settingName ),
 			requestChange: function( value ) {
 				this.props.userSettings.updateSetting( settingName, value );
-			}.bind( this )
+			}.bind( this ),
 		};
 	},
 
@@ -64,31 +69,33 @@ module.exports = {
 		debug( 'Submitting form' );
 
 		this.setState( { submittingForm: true } );
-		this.props.userSettings.saveSettings( function( error, response ) {
-			this.setState( { submittingForm: false } );
-			if ( error ) {
-				debug( 'Error saving settings: ' + JSON.stringify( error ) );
+		this.props.userSettings.saveSettings(
+			function( error, response ) {
+				this.setState( { submittingForm: false } );
+				if ( error ) {
+					debug( 'Error saving settings: ' + JSON.stringify( error ) );
 
-				// handle error case here
-				if ( error.message ) {
-					notices.error( error.message );
+					// handle error case here
+					if ( error.message ) {
+						notices.error( error.message );
+					} else {
+						notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
+					}
 				} else {
-					notices.error( this.translate( 'There was a problem saving your changes.' ) );
-				}
-			} else {
-				this.props.markSaved && this.props.markSaved();
+					this.props.markSaved && this.props.markSaved();
 
-				if ( this.state && this.state.redirect ) {
-					// Sometimes changes in settings require a url refresh to update the UI.
-					// For example when the user changes the language.
-					window.location = this.state.redirect + '?updated=success';
-					return;
-				}
+					if ( this.state && this.state.redirect ) {
+						// Sometimes changes in settings require a url refresh to update the UI.
+						// For example when the user changes the language.
+						window.location = this.state.redirect + '?updated=success';
+						return;
+					}
 
-				this.setState( { showNotice: true } );
-				this.showNotice();
-				debug( 'Settings saved successfully ' + JSON.stringify( response ) );
-			}
-		}.bind( this ) );
-	}
+					this.setState( { showNotice: true } );
+					this.showNotice();
+					debug( 'Settings saved successfully ' + JSON.stringify( response ) );
+				}
+			}.bind( this )
+		);
+	},
 };

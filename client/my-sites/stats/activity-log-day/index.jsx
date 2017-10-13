@@ -1,13 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, map } from 'lodash';
+import { flatMap, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +32,9 @@ class ActivityLogDay extends Component {
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
+		requestedRestoreActivityId: PropTypes.string,
 		requestRestore: PropTypes.func.isRequired,
+		rewindConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
 
@@ -43,22 +48,17 @@ class ActivityLogDay extends Component {
 		isRewindActive: true,
 	};
 
-	handleClickRestore = ( event ) => {
+	handleClickRestore = event => {
 		event.stopPropagation();
-		const {
-			tsEndOfSiteDay,
-			requestRestore,
-		} = this.props;
-		requestRestore( tsEndOfSiteDay, 'day' );
+		const { logs, requestRestore } = this.props;
+		const lastLogId = get( logs, [ 0, 'activityId' ], null );
+		if ( lastLogId ) {
+			requestRestore( lastLogId, 'day' );
+		}
 	};
 
 	trackOpenDay = () => {
-		const {
-			logs,
-			moment,
-			recordTracksEvent,
-			tsEndOfSiteDay,
-		} = this.props;
+		const { logs, moment, recordTracksEvent, tsEndOfSiteDay } = this.props;
 
 		recordTracksEvent( 'calypso_activitylog_day_expand', {
 			log_count: logs.length,
@@ -74,11 +74,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	renderRewindButton( type = '' ) {
-		const {
-			disableRestore,
-			hideRestore,
-			isToday,
-		} = this.props;
+		const { disableRestore, hideRestore, isToday } = this.props;
 
 		if ( hideRestore || isToday ) {
 			return null;
@@ -92,9 +88,10 @@ class ActivityLogDay extends Component {
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
-				<Gridicon icon="history" size={ 18 } />
-				{ ' ' }
-				{ this.props.translate( 'Rewind to this day' ) }
+				<Gridicon icon="history" size={ 18 } />{' '}
+				{ this.props.translate( 'Rewind {{em}}to this day{{/em}}', {
+					components: { em: <em /> },
+				} ) }
 			</Button>
 		);
 	}
@@ -105,14 +102,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Heading to display with date and number of events
 	 */
 	renderEventsHeading() {
-		const {
-			applySiteOffset,
-			isToday,
-			logs,
-			moment,
-			translate,
-			tsEndOfSiteDay,
-		} = this.props;
+		const { applySiteOffset, isToday, logs, moment, translate, tsEndOfSiteDay } = this.props;
 
 		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
 		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
@@ -120,20 +110,24 @@ class ActivityLogDay extends Component {
 		return (
 			<div>
 				<div className="activity-log-day__day">
-					{ isToday
-						? translate( '%s — Today', {
+					{ isToday ? (
+						translate( '%s — Today', {
 							args: formattedDate,
 							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
 						} )
-						: formattedDate }
+					) : (
+						formattedDate
+					) }
 				</div>
 				<div className="activity-log-day__events">
-					{ isEmpty( logs )
-						? noActivityText
-						: translate( '%d Event', '%d Events', {
+					{ isEmpty( logs ) ? (
+						noActivityText
+					) : (
+						translate( '%d Event', '%d Events', {
 							args: logs.length,
 							count: logs.length,
-						} ) }
+						} )
+					) }
 				</div>
 			</div>
 		);
@@ -146,7 +140,9 @@ class ActivityLogDay extends Component {
 			hideRestore,
 			isToday,
 			logs,
+			requestedRestoreActivityId,
 			requestRestore,
+			rewindConfirmDialog,
 			siteId,
 		} = this.props;
 
@@ -163,7 +159,8 @@ class ActivityLogDay extends Component {
 					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 				>
 					{ hasLogs &&
-						map( logs, log =>
+						flatMap( logs, log => [
+							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
 							<ActivityLogItem
 								applySiteOffset={ applySiteOffset }
 								disableRestore={ disableRestore }
@@ -172,8 +169,8 @@ class ActivityLogDay extends Component {
 								log={ log }
 								requestRestore={ requestRestore }
 								siteId={ siteId }
-							/>
-						) }
+							/>,
+						] ) }
 				</FoldableCard>
 			</div>
 		);

@@ -1,1 +1,2 @@
-module.exports = require( 'he' ).decode;
+/** @format */
+export default require( 'he' ).decode;

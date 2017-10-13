@@ -1,67 +1,77 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import IO from 'socket.io-client';
-import { EventEmitter } from 'events';
-import config from 'config';
 import { v4 as uuid } from 'uuid';
+import { isString } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
+import {
+	receiveChatEvent,
+	requestChatTranscript,
+	setConnected,
+	setConnecting,
+	setDisconnected,
+	setHappychatAvailable,
+	setReconnecting,
+} from 'state/happychat/connection/actions';
+import { setHappychatChatStatus } from 'state/happychat/actions';
 
-/*
- * Happychat client connection for Socket.IO
- */
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
-class Connection extends EventEmitter {
+const buildConnection = socket =>
+	isString( socket )
+		? new IO( socket ) // If socket is an URL, connect to server.
+		: socket; // If socket is not an url, use it directly. Useful for testing.
 
-	open( signer_user_id, jwt, locale, groups ) {
-		if ( ! this.openSocket ) {
-			this.openSocket = new Promise( resolve => {
-				const url = config( 'happychat_url' );
-				const socket = new IO( url );
-				socket
-					.once( 'connect', () => debug( 'connected' ) )
-					.on( 'init', () => {
-						this.emit( 'connected' );
-						resolve( socket );
-					} )
-					.on( 'token', handler => {
-						handler( { signer_user_id, jwt, locale, groups } );
-					} )
-					.on( 'unauthorized', () => {
-						socket.close();
-						debug( 'not authorized' );
-					} )
-					.on( 'disconnect', reason => this.emit( 'disconnect', reason ) )
-					.on( 'reconnecting', () => this.emit( 'reconnecting' ) )
-					// Received a chat message
-					.on( 'message', message => this.emit( 'message', message ) )
-					// Received chat status new/assigning/assigned/missed/pending/abandoned
-					.on( 'status', status => this.emit( 'status', status ) )
-					// If happychat is currently accepting chats
-					.on( 'accept', accept => this.emit( 'accept', accept ) );
-			} );
-		} else {
-			debug( 'socket already initiaized' );
+class Connection {
+	init( url, dispatch, { signer_user_id, jwt, locale, groups, geo_location } ) {
+		if ( this.openSocket ) {
+			debug( 'socket is already connected' );
+			return this.openSocket;
 		}
+
+		dispatch( setConnecting() );
+
+		const socket = buildConnection( url );
+		this.openSocket = new Promise( resolve => {
+			// TODO: reject this promise
+			socket
+				.once( 'connect', () => debug( 'connected' ) )
+				.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
+				.on( 'init', () => {
+					dispatch( setConnected( { signer_user_id, locale, groups, geo_location } ) );
+					// TODO: There's no need to dispatch a separate action to request a transcript.
+					// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
+					dispatch( requestChatTranscript() );
+					resolve( socket );
+				} )
+				.on( 'unauthorized', () => socket.close() )
+				.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
+				.on( 'reconnecting', () => dispatch( setReconnecting() ) )
+				.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
+				.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) )
+				.on( 'message', message => dispatch( receiveChatEvent( message ) ) );
+		} );
+
 		return this.openSocket;
 	}
 
 	typing( message ) {
-		this.openSocket
-		.then(
+		this.openSocket.then(
 			socket => socket.emit( 'typing', { message } ),
 			e => debug( 'failed to send typing', e )
 		);
 	}
 
 	notTyping() {
-		this.openSocket
-		.then(
+		this.openSocket.then(
 			socket => socket.emit( 'typing', false ),
 			e => debug( 'failed to send typing', e )
 		);
@@ -76,12 +86,13 @@ class Connection extends EventEmitter {
 
 	sendEvent( message ) {
 		this.openSocket.then(
-			socket => socket.emit( 'message', {
-				text: message,
-				id: uuid(),
-				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
-				meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT }
-			} ),
+			socket =>
+				socket.emit( 'message', {
+					text: message,
+					id: uuid(),
+					type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
+					meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT },
+				} ),
 			e => debug( 'failed to send message', e )
 		);
 	}
@@ -100,12 +111,13 @@ class Connection extends EventEmitter {
 
 	sendLog( message ) {
 		this.openSocket.then(
-			socket => socket.emit( 'message', {
-				text: message,
-				id: uuid(),
-				type: HAPPYCHAT_MESSAGE_TYPES.LOG,
-				meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG }
-			} ),
+			socket =>
+				socket.emit( 'message', {
+					text: message,
+					id: uuid(),
+					type: HAPPYCHAT_MESSAGE_TYPES.LOG,
+					meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG },
+				} ),
 			e => debug( 'failed to send message', e )
 		);
 	}
@@ -116,31 +128,35 @@ class Connection extends EventEmitter {
 	 */
 	sendInfo( info ) {
 		this.openSocket.then(
-			socket => socket.emit( 'message', {
-				id: uuid(),
-				meta: { ...info, forOperator: true },
-				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_INFO,
-			} ),
+			socket =>
+				socket.emit( 'message', {
+					id: uuid(),
+					meta: { ...info, forOperator: true },
+					type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_INFO,
+				} ),
 			e => debug( 'failed to send message', e )
 		);
 	}
 
 	transcript( timestamp ) {
-		return this.openSocket.then( socket => Promise.race( [
-			new Promise( ( resolve, reject ) => {
-				socket.emit( 'transcript', timestamp || null, ( e, result ) => {
-					if ( e ) {
-						return reject( new Error( e ) );
-					}
-					resolve( result );
-				} );
-			} ),
-			new Promise( ( resolve, reject ) => setTimeout( () => {
-				reject( Error( 'timeout' ) );
-			}, 10000 ) )
-		] ) );
+		return this.openSocket.then( socket =>
+			Promise.race( [
+				new Promise( ( resolve, reject ) => {
+					socket.emit( 'transcript', timestamp || null, ( e, result ) => {
+						if ( e ) {
+							return reject( new Error( e ) );
+						}
+						resolve( result );
+					} );
+				} ),
+				new Promise( ( resolve, reject ) =>
+					setTimeout( () => {
+						reject( Error( 'timeout' ) );
+					}, 10000 )
+				),
+			] )
+		);
 	}
-
 }
 
 export default () => new Connection();

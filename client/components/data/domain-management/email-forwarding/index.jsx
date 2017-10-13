@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +20,7 @@ function getStateFromStores( props ) {
 	return {
 		emailForwarding: EmailForwardingStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
+		selectedSite: props.selectedSite,
 	};
 }
 

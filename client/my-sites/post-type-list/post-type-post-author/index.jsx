@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,16 +22,14 @@ function PostTypePostAuthor( { name } ) {
 
 	return (
 		<div className="post-type-post-author">
-			<div className="post-type-post-author__name">
-				{ name }
-			</div>
+			<div className="post-type-post-author__name">{ name }</div>
 		</div>
 	);
 }
 
 PostTypePostAuthor.propTypes = {
 	globalId: PropTypes.string,
-	name: PropTypes.string
+	name: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {

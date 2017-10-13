@@ -43,11 +43,11 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 				value={ currencyValue }
 				onChange={ onCurrencyChange }
 			>
-				{ currencyList.map( ( { code, label = code } ) =>
+				{ currencyList.map( ( { code, label = code } ) => (
 					<option key={ code } value={ code }>
 						{ label }
 					</option>
-				) }
+				) ) }
 			</select>
 		</span>
 	);

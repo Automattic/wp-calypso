@@ -1,47 +1,53 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
-var assert = require( 'chai' ).assert;
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
  */
-var actions = require( './lib/mock-actions' ),
-	site = require( './lib/mock-site' ),
-	options = { siteId: site.ID },
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+import actions from './lib/mock-actions';
+import site from './lib/mock-site';
 
-describe( 'Email Followers Store', function() {
+/**
+ * Internal dependencies
+ */
+const options = { siteId: site.ID };
+
+describe( 'Email Followers Store', () => {
 	var Dispatcher, EmailFollowersStore;
 
-	useFakeDom();
-
-	beforeEach( function() {
+	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
 		EmailFollowersStore = require( 'lib/email-followers/store' );
 	} );
 
-	it( 'Store should be an object', function() {
+	test( 'Store should be an object', () => {
 		assert.isObject( EmailFollowersStore );
 	} );
 
-	describe( 'Fetch Email Followers', function() {
-		beforeEach( function() {
+	describe( 'Fetch Email Followers', () => {
+		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 
-		it( 'Should update the store on RECEIVE_EMAIL_FOLLOWERS', function() {
+		test( 'Should update the store on RECEIVE_EMAIL_FOLLOWERS', () => {
 			var followers = EmailFollowersStore.getFollowers( options );
 			assert.equal( 2, followers.length );
 		} );
 
-		it( 'The store should return an array of objects when fetching email followers', function() {
+		test( 'The store should return an array of objects when fetching email followers', () => {
 			var followers = EmailFollowersStore.getFollowers( options );
 			assert.isArray( followers );
 			assert.isObject( followers[ 0 ] );
 		} );
 
-		it( 'Fetching more email followers should update the array in the store', function() {
+		test( 'Fetching more email followers should update the array in the store', () => {
 			var followers = EmailFollowersStore.getFollowers( options ),
 				followersAgain;
 			assert.equal( followers.length, 2 );
@@ -50,7 +56,7 @@ describe( 'Email Followers Store', function() {
 			assert.equal( followersAgain.length, 4 );
 		} );
 
-		it( 'Pagination data should update when we fetch more email followers', function() {
+		test( 'Pagination data should update when we fetch more email followers', () => {
 			var pagination = EmailFollowersStore.getPaginationData( options );
 			assert.equal( pagination.totalFollowers, 4 );
 			assert.equal( pagination.numFollowersFetched, 2 );
@@ -62,11 +68,11 @@ describe( 'Email Followers Store', function() {
 		} );
 	} );
 
-	describe( 'Remove follower', function() {
-		beforeEach( function() {
+	describe( 'Remove follower', () => {
+		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
-		it( 'Should remove a single follower.', function() {
+		test( 'Should remove a single follower.', () => {
 			var followers = EmailFollowersStore.getFollowers( options ),
 				followersAgain;
 
@@ -76,7 +82,7 @@ describe( 'Email Followers Store', function() {
 			followersAgain = EmailFollowersStore.getFollowers( options );
 			assert.equal( followersAgain.length, 1 );
 		} );
-		it( 'Should restore a single follower on removal error.', function() {
+		test( 'Should restore a single follower on removal error.', () => {
 			var followers = EmailFollowersStore.getFollowers( options ),
 				followersAfterRemove,
 				followersAfterError;

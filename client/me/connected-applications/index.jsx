@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -42,7 +45,7 @@ const ConnectedApplications = createReactClass( {
 
 	getDefaultProps: function() {
 		return {
-			applicationID: 0
+			applicationID: 0,
 		};
 	},
 
@@ -57,23 +60,29 @@ const ConnectedApplications = createReactClass( {
 	revokeConnection: function( applicationID, callback ) {
 		const application = this.props.connectedAppsData.getApplication( applicationID );
 		if ( 'undefined' !== typeof application ) {
-			this.props.connectedAppsData.revoke( parseInt( applicationID, 10 ), function( error ) {
-				debug( 'API call to revoke application is completed.' );
-				if ( error ) {
-					debug( 'There was an error revoking an application.' );
-					notices.clearNotices( 'notices' );
-					callback( error );
-				} else {
-					debug( 'Application connection was successfully revoked.' );
-					this.props.successNotice(
-						this.props.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
-							args: {
-								applicationTitle: application.title
-							}
-						} )
-					);
-				}
-			}.bind( this ) );
+			this.props.connectedAppsData.revoke(
+				parseInt( applicationID, 10 ),
+				function( error ) {
+					debug( 'API call to revoke application is completed.' );
+					if ( error ) {
+						debug( 'There was an error revoking an application.' );
+						notices.clearNotices( 'notices' );
+						callback( error );
+					} else {
+						debug( 'Application connection was successfully revoked.' );
+						this.props.successNotice(
+							this.props.translate(
+								'%(applicationTitle)s no longer has access to your WordPress.com account.',
+								{
+									args: {
+										applicationTitle: application.title,
+									},
+								}
+							)
+						);
+					}
+				}.bind( this )
+			);
 		}
 	},
 
@@ -82,21 +91,18 @@ const ConnectedApplications = createReactClass( {
 		return (
 			<EmptyContent
 				title={ translate( "You haven't connected any apps yet." ) }
-				line={ translate(
-					'You can get started with the {{link}}WordPress mobile apps!{{/link}}',
-					{
-						components: {
-							link: (
-								<a
-									href="https://apps.wordpress.org/"
-									target="_blank"
-									rel="noopener noreferrer"
-									title="WordPress Mobile Apps"
-								/>
-							),
-						},
-					}
-				) }
+				line={ translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
+					components: {
+						link: (
+							<a
+								href="https://apps.wordpress.org/"
+								target="_blank"
+								rel="noopener noreferrer"
+								title="WordPress Mobile Apps"
+							/>
+						),
+					},
+				} ) }
 			/>
 		);
 	},
@@ -121,18 +127,18 @@ const ConnectedApplications = createReactClass( {
 	},
 
 	renderConnectedApps: function() {
-		return ( this.props.connectedAppsData.initialized
-		? this.props.connectedAppsData.get().map( function( connection ) {
-			return (
-					<ConnectedAppItem
-						connection={ connection }
-						key={ connection.ID }
-						connectedApplications={ this.props.connectedAppsData }
-						revoke={ this.revokeConnection }
-					/>
-				);
-		}, this )
-		: this.renderPlaceholders() );
+		return this.props.connectedAppsData.initialized
+			? this.props.connectedAppsData.get().map( function( connection ) {
+					return (
+						<ConnectedAppItem
+							connection={ connection }
+							key={ connection.ID }
+							connectedApplications={ this.props.connectedAppsData }
+							revoke={ this.revokeConnection }
+						/>
+					);
+				}, this )
+			: this.renderPlaceholders();
 	},
 
 	renderConnectedAppsList: function() {
@@ -170,7 +176,6 @@ const ConnectedApplications = createReactClass( {
 	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( localize( ConnectedApplications ) );
+export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
+	localize( ConnectedApplications )
+);

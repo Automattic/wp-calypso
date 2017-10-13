@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
@@ -14,17 +18,15 @@ export default React.createClass( {
 	displayName: 'LoggedOutForm',
 
 	propTypes: {
-		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
+		children: PropTypes.node.isRequired,
+		className: PropTypes.string,
 	},
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form', this.props.className ) } >
-				<form { ...omit( this.props, 'className' ) }>
-					{ this.props.children }
-				</form>
+			<Card className={ classnames( 'logged-out-form', this.props.className ) }>
+				<form { ...omit( this.props, 'className' ) }>{ this.props.children }</form>
 			</Card>
 		);
-	}
+	},
 } );

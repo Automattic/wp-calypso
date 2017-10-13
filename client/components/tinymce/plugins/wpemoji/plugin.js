@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import tinymce from 'tinymce/tinymce';
 import twemoji from 'twemoji';
 import config from 'config';
@@ -23,7 +26,7 @@ function wpemoji( editor ) {
 			}
 
 			return false;
-		}() );
+		} )();
 
 	function setImgAttr( image ) {
 		image.className = 'emoji';
@@ -40,7 +43,7 @@ function wpemoji( editor ) {
 				return {
 					'data-mce-resize': 'false',
 					'data-mce-placeholder': '1',
-					'data-wp-emoji': '1'
+					'data-wp-emoji': '1',
 				};
 			},
 			callback: ( icon, options ) => {
@@ -87,7 +90,7 @@ function wpemoji( editor ) {
 		// Thankfully it triggers the 'input' event.
 		// This works in Android and iOS as well.
 		editor.on( 'keydown keyup', function( event ) {
-			typing = ( event.type === 'keydown' );
+			typing = event.type === 'keydown';
 		} );
 
 		editor.on( 'input', function() {
@@ -127,7 +130,10 @@ function wpemoji( editor ) {
 	} );
 
 	editor.on( 'resolvename', function( event ) {
-		if ( event.target.nodeName === 'IMG' && editor.dom.getAttrib( event.target, 'data-wp-emoji' ) ) {
+		if (
+			event.target.nodeName === 'IMG' &&
+			editor.dom.getAttrib( event.target, 'data-wp-emoji' )
+		) {
 			event.preventDefault();
 		}
 	} );
@@ -136,4 +142,3 @@ function wpemoji( editor ) {
 export default function() {
 	tinymce.PluginManager.add( 'wpemoji', wpemoji );
 }
-

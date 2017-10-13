@@ -1,3 +1,4 @@
+/** @format */
 
 export function registerServerWorker( options = {} ) {
 	const path = options.path || '/service-worker.js';
@@ -5,9 +6,5 @@ export function registerServerWorker( options = {} ) {
 }
 
 export function isServiceWorkerSupported() {
-	return (
-		window &&
-		'serviceWorker' in window.navigator &&
-		'ServiceWorkerRegistration' in window
-	);
+	return window && 'serviceWorker' in window.navigator && 'ServiceWorkerRegistration' in window;
 }

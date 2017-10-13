@@ -2,47 +2,47 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
 import closest from 'component-closest';
-import page from 'page';
-import url from 'url';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { defer, startsWith, identity, every } from 'lodash';
-import store from 'store';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
+import { defer, startsWith, identity, every } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import store from 'store';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderListsStore from 'lib/reader-lists/lists';
+import ReaderSidebarHelper from './helper';
+import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarTags from './reader-sidebar-tags';
+import ReaderSidebarTeams from './reader-sidebar-teams';
+import AppPromo from 'blocks/app-promo';
+import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderTeams from 'components/data/query-reader-teams';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import ReaderSidebarTags from './reader-sidebar-tags';
-import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarTeams from './reader-sidebar-teams';
-import ReaderSidebarHelper from './helper';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
-import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
-import QueryReaderLists from 'components/data/query-reader-lists';
-import QueryReaderTeams from 'components/data/query-reader-teams';
 import observe from 'lib/mixins/data-observe';
-import config from 'config';
+import ReaderListsStore from 'lib/reader-lists/lists';
 import userSettings from 'lib/user-settings';
-import AppPromo from 'blocks/app-promo';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
-import { localize } from 'i18n-calypso';
-import { getTagStreamUrl } from 'reader/route';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { getSubscribedLists } from 'state/reader/lists/selectors';
+import { getReaderTeams } from 'state/selectors';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import url from 'url';
 
 export const ReaderSidebar = createReactClass( {
 	displayName: 'ReaderSidebar',
@@ -154,9 +154,7 @@ export const ReaderSidebar = createReactClass( {
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<SidebarMenu>
-						<SidebarHeading>
-							{ this.props.translate( 'Streams' ) }
-						</SidebarHeading>
+						<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
 						<ul>
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, {
@@ -177,7 +175,7 @@ export const ReaderSidebar = createReactClass( {
 									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
-							{ config.isEnabled( 'reader/conversations' ) &&
+							{ config.isEnabled( 'reader/conversations' ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations',
@@ -196,10 +194,11 @@ export const ReaderSidebar = createReactClass( {
 											{ this.props.translate( 'Conversations' ) }
 										</span>
 									</a>
-								</li> }
+								</li>
+							) }
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 							{ config.isEnabled( 'reader/conversations' ) &&
-								isAutomatticTeamMember( this.props.teams ) &&
+							isAutomatticTeamMember( this.props.teams ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
@@ -225,24 +224,23 @@ export const ReaderSidebar = createReactClass( {
 										</svg>
 										<span className="menu-link-text">A8C Conversations</span>
 									</a>
-								</li> }
+								</li>
+							) }
 
-							{ isDiscoverEnabled()
-								? <li
-										className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
-											'sidebar-streams__discover': true,
-										} ) }
-									>
-										<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
-											<Gridicon icon="my-sites" />
-											<span className="menu-link-text">
-												{ this.props.translate( 'Discover' ) }
-											</span>
-										</a>
-									</li>
-								: null }
+							{ isDiscoverEnabled() ? (
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {
+										'sidebar-streams__discover': true,
+									} ) }
+								>
+									<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
+										<Gridicon icon="my-sites" />
+										<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
+									</a>
+								</li>
+							) : null }
 
-							{ config.isEnabled( 'reader/search' ) &&
+							{ config.isEnabled( 'reader/search' ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, {
 										'sidebar-streams__search': true,
@@ -250,11 +248,10 @@ export const ReaderSidebar = createReactClass( {
 								>
 									<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
 										<Gridicon icon="search" size={ 24 } />
-										<span className="menu-link-text">
-											{ this.props.translate( 'Search' ) }
-										</span>
+										<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 									</a>
-								</li> }
+								</li>
+							) }
 
 							<li
 								className={ ReaderSidebarHelper.itemLinkClass(
@@ -265,9 +262,7 @@ export const ReaderSidebar = createReactClass( {
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
 									<Gridicon icon="star" size={ 24 } />
-									<span className="menu-link-text">
-										{ this.props.translate( 'My Likes' ) }
-									</span>
+									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 								</a>
 							</li>
 						</ul>
@@ -275,16 +270,16 @@ export const ReaderSidebar = createReactClass( {
 
 					<QueryReaderLists />
 					<QueryReaderTeams />
-					{ this.props.subscribedLists && this.props.subscribedLists.length
-						? <ReaderSidebarLists
-								lists={ this.props.subscribedLists }
-								path={ this.props.path }
-								isOpen={ this.props.isListsOpen }
-								onClick={ this.props.toggleListsVisibility }
-								currentListOwner={ this.state.currentListOwner }
-								currentListSlug={ this.state.currentListSlug }
-							/>
-						: null }
+					{ this.props.subscribedLists && this.props.subscribedLists.length ? (
+						<ReaderSidebarLists
+							lists={ this.props.subscribedLists }
+							path={ this.props.path }
+							isOpen={ this.props.isListsOpen }
+							onClick={ this.props.toggleListsVisibility }
+							currentListOwner={ this.state.currentListOwner }
+							currentListSlug={ this.state.currentListSlug }
+						/>
+					) : null }
 					<ReaderSidebarTags
 						tags={ this.props.followedTags }
 						path={ this.props.path }
@@ -295,10 +290,11 @@ export const ReaderSidebar = createReactClass( {
 					/>
 				</SidebarRegion>
 
-				{ this.props.shouldRenderAppPromo &&
+				{ this.props.shouldRenderAppPromo && (
 					<div className="sidebar__app-promo">
 						<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
-					</div> }
+					</div>
+				) }
 
 				<SidebarFooter />
 			</Sidebar>

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const FAQItem = ( { question, answer } ) => {
 	return (
@@ -15,8 +19,7 @@ const FAQItem = ( { question, answer } ) => {
 FAQItem.propTypes = {
 	// Translations can include <a> links, that's why propType `node` is needed.
 	question: PropTypes.node.isRequired,
-	answer: PropTypes.node.isRequired
+	answer: PropTypes.node.isRequired,
 };
 
 export default FAQItem;
-

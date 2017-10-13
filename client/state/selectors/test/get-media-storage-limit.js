@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,7 +11,7 @@ import { expect } from 'chai';
 import { getMediaStorageLimit } from '..';
 
 describe( 'getMediaStorageLimit()', () => {
-	it( 'should return null if the site is unknown', () => {
+	test( 'should return null if the site is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -24,7 +26,7 @@ describe( 'getMediaStorageLimit()', () => {
 		expect( getMediaStorageLimit( state, 123 ) ).to.be.null;
 	} );
 
-	it( 'should return null if the limit is unknown', () => {
+	test( 'should return null if the limit is unknown', () => {
 		const state = {
 			sites: {
 				mediaStorage: {
@@ -38,19 +40,22 @@ describe( 'getMediaStorageLimit()', () => {
 		expect( getMediaStorageLimit( state, 123 ) ).to.be.null;
 	} );
 
-	it( 'should return the limit for a site', () => {
+	test( 'should return the limit for a site', () => {
 		const max_storage_bytes = 1029384756;
-		const result = getMediaStorageLimit( {
-			sites: {
-				mediaStorage: {
-					items: {
-						123: {
-							max_storage_bytes,
+		const result = getMediaStorageLimit(
+			{
+				sites: {
+					mediaStorage: {
+						items: {
+							123: {
+								max_storage_bytes,
+							},
 						},
 					},
 				},
 			},
-		}, 123 );
+			123
+		);
 
 		expect( result ).to.equal( max_storage_bytes );
 	} );

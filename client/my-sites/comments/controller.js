@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,28 +11,24 @@ import { each, includes, startsWith } from 'lodash';
  * Internal dependencies
  */
 import CommentsManagement from './main';
-import config from 'config';
-import route from 'lib/route';
+import route, { addQueryArgs } from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
-const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
-if ( config.isEnabled( 'comments/management/all-list' ) ) {
-	VALID_STATUSES.push( 'all' );
-}
+const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 
 export const getRedirectUrl = ( status, siteFragment ) => {
 	const statusValidity = isValidStatus( status );
 	if ( status === siteFragment ) {
-		return `/comments/pending/${ siteFragment }`;
+		return `/comments/all/${ siteFragment }`;
 	}
 	if ( ! statusValidity && ! siteFragment ) {
-		return '/comments/pending';
+		return '/comments/all';
 	}
 	if ( ! statusValidity && siteFragment ) {
-		return `/comments/pending/${ siteFragment }`;
+		return `/comments/all/${ siteFragment }`;
 	}
 	if ( statusValidity && ! siteFragment ) {
 		return `/comments/${ status }`;
@@ -49,14 +46,30 @@ export const redirect = function( context, next ) {
 	next();
 };
 
+const changePage = ( status, siteFragment ) => pageNumber => {
+	if ( window ) {
+		window.scrollTo( 0, 0 );
+	}
+
+	return page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
+};
+
 export const comments = function( context ) {
-	const { status } = context.params;
+	const status = 'pending' === context.params.status ? 'unapproved' : context.params.status;
 	const siteFragment = route.getSiteFragment( context.path );
+
+	const pageNumber = parseInt( context.query.page, 10 );
+	if ( isNaN( pageNumber ) || pageNumber === 0 ) {
+		return changePage( context.params.status, siteFragment )( 1 );
+	}
+
 	renderWithReduxStore(
 		<CommentsManagement
 			basePath={ context.path }
+			page={ pageNumber }
+			changePage={ changePage( status, siteFragment ) }
 			siteFragment={ siteFragment }
-			status={ 'pending' === status ? 'unapproved' : status }
+			status={ status }
 		/>,
 		'primary',
 		context.store

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -11,19 +14,15 @@ import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 
-module.exports = function() {
-	page(
-		'/settings',
-		mySitesController.siteSelection,
-		controller.redirectToGeneral
-	);
+export default function() {
+	page( '/settings', mySitesController.siteSelection, controller.redirectToGeneral );
 	page(
 		'/settings/general/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
 		settingsController.setScroll,
 		settingsController.siteSettings,
-		controller.general,
+		controller.general
 	);
 
 	page(
@@ -56,6 +55,16 @@ module.exports = function() {
 		settingsController.setScroll,
 		controller.deleteSite
 	);
+
+	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		page(
+			'/settings/disconnect-site/:site_id',
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSite
+		);
+	}
+
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
@@ -85,4 +94,4 @@ module.exports = function() {
 		mySitesController.siteSelection,
 		mySitesController.sites
 	);
-};
+}

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,28 +18,22 @@ import SectionHeader from 'components/section-header';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 class PostCard extends Component {
-
 	static propTypes = {
 		editorPath: PropTypes.string.isRequired,
 		post: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
-			URL: PropTypes.string.isRequired,
+			url: PropTypes.string.isRequired,
 		} ).isRequired,
 		remove: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = ( event ) => {
+	handleMouseDown = event => {
 		event.stopPropagation();
 		event.preventDefault();
-	}
+	};
 
 	render() {
-		const {
-			editorPath,
-			post: { URL, title },
-			remove,
-			translate,
-		} = this.props;
+		const { editorPath, post: { url, title }, remove, translate } = this.props;
 
 		const postCardClass = 'zoninator__zone-list-item';
 
@@ -45,21 +42,16 @@ class PostCard extends Component {
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }
-					href={ URL }
-					target="_blank">
+					href={ url }
+					draggable="false"
+					target="_blank"
+				>
 					{ translate( 'View' ) }
 				</Button>
-				<Button
-					compact
-					onMouseDown={ this.handleMouseDown }
-					href={ editorPath }>
+				<Button compact onMouseDown={ this.handleMouseDown } href={ editorPath } draggable="false">
 					{ translate( 'Edit' ) }
 				</Button>
-				<Button
-					compact
-					scary
-					onMouseDown={ this.handleMouseDown }
-					onClick={ remove }>
+				<Button compact scary onMouseDown={ this.handleMouseDown } onClick={ remove }>
 					{ translate( 'Remove' ) }
 				</Button>
 			</SectionHeader>
@@ -68,10 +60,7 @@ class PostCard extends Component {
 }
 
 const connectComponent = connect( ( state, { post } ) => ( {
-	editorPath: getEditorPath( state, post.site_ID, post.ID ),
+	editorPath: getEditorPath( state, post.siteId, post.id ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

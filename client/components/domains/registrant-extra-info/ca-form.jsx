@@ -1,18 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import {
-	camelCase,
-	difference,
-	isEmpty,
-	keys,
-	map,
-	pick,
-} from 'lodash';
+import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,8 +45,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			GOV: translate( 'Government' ),
 			EDU: translate( 'Educational Institution' ),
 			ASS: translate( 'Unincorporated Association', {
-				comment: 'Refers to Canadian legal concept -- encompasses entities ' +
-					'like religious congregations, social clubs, community groups, etc'
+				comment:
+					'Refers to Canadian legal concept -- encompasses entities ' +
+					'like religious congregations, social clubs, community groups, etc',
 			} ),
 			HOP: translate( 'Hospital' ),
 			PRT: translate( 'Partnership' ),
@@ -59,25 +56,28 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			PLT: translate( 'Political Party' ),
 			LAM: translate( 'Library, Archive, or Museum' ),
 			TRS: translate( 'Trust', {
-				comment: 'Refers to the legal concept of trust (noun)'
+				comment: 'Refers to the legal concept of trust (noun)',
 			} ),
 			ABO: translate( 'Aboriginal Peoples', {
-				comment: 'Refers to indigenous peoples, specifically of Canada.'
+				comment: 'Refers to indigenous peoples, specifically of Canada.',
 			} ),
 			INB: translate( 'Indian Band', {
-				comment: 'Refers to Canadian legal concept -- Indian meaning the ' +
+				comment:
+					'Refers to Canadian legal concept -- Indian meaning the ' +
 					'indigeonous people of North America and band meaning a small ' +
-					'group or community'
+					'group or community',
 			} ),
 			LGR: translate( 'Legal Representative' ),
 			OMK: translate( 'Official Mark', {
-				comment: 'Refers to a Canadian legal concept -- similar to a trademark'
+				comment: 'Refers to a Canadian legal concept -- similar to a trademark',
 			} ),
 			MAJ: translate( 'Her Majesty the Queen' ),
 		};
-		const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
-			<option value={ optionValue } key={ optionValue }>{ text }</option>
-		);
+		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
+			<option value={ optionValue } key={ optionValue }>
+				{ text }
+			</option>
+		) );
 
 		this.state = {
 			legalTypes,
@@ -90,7 +90,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetailsExtra ),
+			keys( this.props.contactDetailsExtra )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -108,7 +108,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		} );
 	}
 
-	handleChangeEvent = ( event ) => {
+	handleChangeEvent = event => {
 		const { target } = event;
 		let value = target.value;
 
@@ -120,40 +120,37 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.updateContactDetailsCache( {
 			extra: { [ camelCase( event.target.id ) ]: value },
 		} );
-	}
+	};
 
-	handleInvalidSubmit = ( event ) => {
+	handleInvalidSubmit = event => {
 		event.preventDefault();
 		this.registerClick();
-	}
+	};
 
 	registerClick = () => {
 		this.setState( { hasBeenClicked: true } );
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
 		const { legalTypeOptions, hasBeenClicked } = this.state;
-		const {
-			legalType,
-			ciraAgreementAccepted,
-		} = { ...defaultValues, ...this.props.contactDetailsExtra };
+		const { legalType, ciraAgreementAccepted } = {
+			...defaultValues,
+			...this.props.contactDetailsExtra,
+		};
 
 		const validatingSubmitButton = ciraAgreementAccepted
 			? this.props.children
-			: React.cloneElement(
-				this.props.children,
-				{ onClick: this.handleInvalidSubmit } );
+			: React.cloneElement( this.props.children, { onClick: this.handleInvalidSubmit } );
 
 		const showValidationError = hasBeenClicked && ! ciraAgreementAccepted;
 
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
-					{ translate(
-						'Almost done! We need some extra details to register your %(tld)s domain.',
-						{ args: { tld: '.ca' } }
-					) }
+					{ translate( 'Almost done! We need some extra details to register your %(tld)s domain.', {
+						args: { tld: '.ca' },
+					} ) }
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="legal-type">
@@ -163,29 +160,29 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						id="legal-type"
 						value={ legalType }
 						className="registrant-extra-info__form-legal-type"
-						onChange={ this.handleChangeEvent }>
+						onChange={ this.handleChangeEvent }
+					>
 						{ legalTypeOptions }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="legal-type">
-						{ translate( 'CIRA Agreement' ) }
-					</FormLabel>
+					<FormLabel htmlFor="legal-type">{ translate( 'CIRA Agreement' ) }</FormLabel>
 					<FormLabel>
 						<FormCheckbox
 							id="cira-agreement-accepted"
 							checked={ ciraAgreementAccepted }
-							onChange={ this.handleChangeEvent } />
-						<span>{
-							translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}',
-								{
-									components: {
-										a: <a target="_blank" rel="noopener noreferrer" href={ ciraAgreementUrl } />,
-									},
-								}
-							)
-						}</span>
-						{ showValidationError ? <FormInputValidation text={ translate( 'Required' ) } isError={ true } /> : null }
+							onChange={ this.handleChangeEvent }
+						/>
+						<span>
+							{ translate( 'I have read and agree to the {{a}}CIRA Registrant Agreement{{/a}}', {
+								components: {
+									a: <a target="_blank" rel="noopener noreferrer" href={ ciraAgreementUrl } />,
+								},
+							} ) }
+						</span>
+						{ showValidationError ? (
+							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
+						) : null }
 					</FormLabel>
 				</FormFieldset>
 
@@ -198,7 +195,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 export default connect(
 	state => ( {
 		contactDetailsExtra: getContactDetailsExtraCache( state ),
-		userWpcomLang: getCurrentUserLocale( state )
+		userWpcomLang: getCurrentUserLocale( state ),
 	} ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize, translate } from 'i18n-calypso';
@@ -79,7 +82,7 @@ export class CountedTextarea extends React.Component {
 						'countPlaceholderLength',
 						'moment',
 						'numberFormat',
-						'translate',
+						'translate'
 					) }
 					className="counted-textarea__input"
 				/>

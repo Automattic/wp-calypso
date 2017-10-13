@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { eligibility } from './eligibility/schema';
 
 export const status = {

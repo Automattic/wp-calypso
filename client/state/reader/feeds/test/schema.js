@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assert } from 'chai';
 import validate from 'is-my-json-valid';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { itemsSchema } from '../schema';
 
@@ -16,7 +16,7 @@ describe( 'schema', () => {
 		validator = validate( itemsSchema );
 	} );
 
-	it( 'should validate the basic object', () => {
+	test( 'should validate the basic object', () => {
 		const isValid = validator( {
 			1234: {
 				feed_ID: 1,
@@ -26,7 +26,7 @@ describe( 'schema', () => {
 		assert.isTrue( isValid, validator.error );
 	} );
 
-	it( 'should validate a full object', () => {
+	test( 'should validate a full object', () => {
 		const isValid = validator( {
 			1234: {
 				feed_ID: 1,
@@ -42,7 +42,7 @@ describe( 'schema', () => {
 		assert.isTrue( isValid, validator.error );
 	} );
 
-	it( 'should allow null props', () => {
+	test( 'should allow null props', () => {
 		const isValid = validator( {
 			1234: {
 				feed_ID: 1,
@@ -58,7 +58,7 @@ describe( 'schema', () => {
 		assert.isTrue( isValid, validator.error );
 	} );
 
-	it( 'shall not let bad data pass', () => {
+	test( 'shall not let bad data pass', () => {
 		assert.isFalse(
 			validator( {
 				1234: {

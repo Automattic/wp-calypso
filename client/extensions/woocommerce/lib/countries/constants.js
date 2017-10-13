@@ -1,6 +1,7 @@
-
 /**
  * This file contains helper constants for countries.
+ *
+ * @format
  */
 
 export const DESTINATION_BASED_SALES_TAX = 'DESTINATION_BASED_SALES_TAX';

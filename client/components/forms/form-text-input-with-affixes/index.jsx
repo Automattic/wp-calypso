@@ -25,17 +25,11 @@ export default class extends React.Component {
 
 		return (
 			<div className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': noWrap } ) }>
-				{ prefix &&
-					<span className="form-text-input-with-affixes__prefix">
-						{ prefix }
-					</span> }
+				{ prefix && <span className="form-text-input-with-affixes__prefix">{ prefix }</span> }
 
 				<FormTextInput { ...rest } />
 
-				{ suffix &&
-					<span className="form-text-input-with-affixes__suffix">
-						{ suffix }
-					</span> }
+				{ suffix && <span className="form-text-input-with-affixes__suffix">{ suffix }</span> }
 			</div>
 		);
 	}

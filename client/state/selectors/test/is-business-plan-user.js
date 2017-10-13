@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,7 @@ import { isBusinessPlanUser } from '../';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {
-	it( 'should return true if any purchase is a business plan.', () => {
+	test( 'should return true if any purchase is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,
@@ -25,7 +27,7 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						user_id: '123',
 						product_slug: PLAN_BUSINESS,
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
@@ -34,7 +36,7 @@ describe( 'isBusinessPlanUser()', () => {
 		assert.isTrue( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if non of the purchases is a business plan.', () => {
+	test( 'should return false if non of the purchases is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,
@@ -48,7 +50,7 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						user_id: '123',
 						product_slug: 'yet-another-plan',
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},
@@ -57,25 +59,26 @@ describe( 'isBusinessPlanUser()', () => {
 		assert.isFalse( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if current user id is null.', () => {
+	test( 'should return false if current user id is null.', () => {
 		const state = deepFreeze( {
-			currentUser: {}
+			currentUser: {},
 		} );
 
 		assert.isFalse( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if purchasing data is null.', () => {
+	test( 'should return false if purchasing data is null.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,
 			},
 			purchases: {
 				data: [
-					{  // intentionally put a purchase that doesn't belong to the user 123 here.
+					{
+						// intentionally put a purchase that doesn't belong to the user 123 here.
 						user_id: '789',
 						product_slug: PLAN_BUSINESS,
-					}
+					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
 			},

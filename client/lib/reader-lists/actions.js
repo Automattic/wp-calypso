@@ -1,3 +1,4 @@
+/** @format */
 // External dependencies
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
@@ -170,4 +171,4 @@ const ReaderListActions = {
 	},
 };
 
-module.exports = ReaderListActions;
+export default ReaderListActions;

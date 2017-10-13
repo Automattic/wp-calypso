@@ -85,6 +85,17 @@
 		width: 0;
 	}
 
+	&.has-active-drop-zone {
+		/*
+		 * Allow the dropzone to overflow the toolbar and expand to fill the entire editor body.
+		 * `static` prevents `.html-editor-toolbar` from setting the positioning context for its
+		 * children (including the dropzone), which would constrain them to the dimensions of the
+		 * toolbar. Instead, it will be constrained to the next highest positioned element,
+		 * `.tinymce-container.`
+		 */
+		position: static;
+	}
+
 	.button {
 		border-right: 1px solid lighten( $gray, 30% );
 		color: darken( $gray, 20% );
@@ -119,39 +130,34 @@
 	display: inline-block;
 	height: 38px;
 
-	.editor-html-toolbar__button-insert-media.button {
-		border-right-color: transparent;
-		height: 38px;
-		margin: 0;
-		padding: 6px 7px 8px 7px;
-		.gridicon {
-			height: 24px;
-			width: 24px;
-		}
-	}
-
 	.editor-html-toolbar__button-insert-content-dropdown.button {
 		border-right: 1px solid lighten( $gray, 30% );
 		height: 38px;
 		margin: 0;
 		min-width: auto;
-		padding: 10px 5px 14px 5px;
-		.gridicon {
-			color: $gray;
-			height: 14px;
-			width: 14px;
-		}
-	}
+		padding: 6px 12px 8px 10px;
+		text-transform: none;
 
-	&:hover {
-		.editor-html-toolbar__button-insert-media.button {
-			border-right-color: lighten( $gray, 30% );
+		.gridicon {
+			height: 24px;
+			margin-right: 4px;
+			vertical-align: sub;
+			width: 24px;
 		}
-		.button .gridicon {
-			color: lighten( $gray, 10% );
+
+		span {
+			font-size: 13px;
+			font-weight: 400;
 		}
-		.button:hover .gridicon {
-			color: $gray-dark;
+
+		@include breakpoint( "<660px" ) {
+			padding: 6px 12px 8px 12px;
+			.gridicon {
+				margin-right: 0;
+			}
+			span {
+				display: none;
+			}
 		}
 	}
 }
@@ -179,9 +185,9 @@
 			color: $gray;
 		}
 		span {
-			color: darken( $gray, 30% );
+			color: $gray-text-min;
 			display: inline-block;
-			font-size: 14px;
+			font-size: 13px;
 			margin-left: 8px;
 			margin-top: 2px;
 			vertical-align: top;

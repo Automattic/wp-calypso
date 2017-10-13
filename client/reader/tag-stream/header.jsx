@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -24,12 +25,12 @@ const TAG_HEADER_HEIGHT = 140;
 
 class TagStreamHeader extends React.Component {
 	static propTypes = {
-		isPlaceholder: React.PropTypes.bool,
-		showFollow: React.PropTypes.bool,
-		following: React.PropTypes.bool,
-		onFollowToggle: React.PropTypes.func,
-		tagImages: React.PropTypes.array,
-		showBack: React.PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		showFollow: PropTypes.bool,
+		following: PropTypes.bool,
+		onFollowToggle: PropTypes.func,
+		tagImages: PropTypes.array,
+		showBack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -94,7 +95,7 @@ class TagStreamHeader extends React.Component {
 		return (
 			<div className={ classes }>
 				<QueryReaderTagImages tag={ imageSearchString } />
-				{ showFollow &&
+				{ showFollow && (
 					<div className="tag-stream__header-follow">
 						<FollowButton
 							followLabel={ translate( 'Follow Tag' ) }
@@ -103,14 +104,15 @@ class TagStreamHeader extends React.Component {
 							following={ following }
 							onFollowToggle={ onFollowToggle }
 						/>
-					</div> }
+					</div>
+				) }
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
 						<Gridicon icon="tag" size={ 24 } />
 						{ title }
 					</h1>
-					{ tagImage &&
+					{ tagImage && (
 						<div className="tag-stream__header-image-byline">
 							{ translate( '{{photoByWrapper}}Photo by{{/photoByWrapper}} {{authorLink/}}', {
 								components: {
@@ -118,7 +120,8 @@ class TagStreamHeader extends React.Component {
 									authorLink,
 								},
 							} ) }
-						</div> }
+						</div>
+					) }
 				</div>
 			</div>
 		);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,5 +13,10 @@ import { get } from 'lodash';
  * @return {Boolean} True if the comment tree has been initialized
  */
 export default function isCommentsTreeInitialized( state, siteId, status ) {
+	if ( 'all' === status ) {
+		const tree = get( state, [ 'comments', 'treesInitialized', siteId ] );
+		return tree && ( tree.approved || tree.unapproved );
+	}
+
 	return get( state, [ 'comments', 'treesInitialized', siteId, status ], false );
 }

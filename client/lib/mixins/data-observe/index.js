@@ -1,9 +1,12 @@
-var debug = require( 'debug' )( 'calypso:data-observe' );
+/** @format */
+/**
+ * External dependencies
+ */
+import debugFactory from 'debug';
 
-module.exports = function() {
-	var propNames = Array.prototype.slice.call( arguments );
+const debug = debugFactory( 'calypso:data-observe' );
 
-
+export default function( ...propNames ) {
 	return {
 		componentDidMount: function() {
 			propNames.forEach( function( propName ) {
@@ -37,15 +40,11 @@ module.exports = function() {
 					}
 				}
 			}, this );
-
 		},
 
 		update: function() {
-			if ( this.isMounted() ) {
-				debug( 'Re-rendering ' + this.constructor.displayName + ' component.' );
-				this.forceUpdate();
-			}
-		}
-
+			debug( 'Re-rendering ' + this.constructor.displayName + ' component.' );
+			this.forceUpdate();
+		},
 	};
-};
+}

@@ -1,19 +1,20 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { sample } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gravatar from 'components/gravatar';
-import { isHappychatAvailable } from 'state/happychat/selectors';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import support from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
@@ -31,18 +32,11 @@ export class HappinessSupport extends Component {
 		showLiveChatButton: false,
 	};
 
-	state = {
-		user: sample( [
-			{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
-			{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
-		] )
-	};
-
 	onLiveChatButtonClick = () => {
 		if ( this.props.liveChatButtonEventName ) {
 			this.props.recordTracksEvent( this.props.liveChatButtonEventName );
 		}
-	}
+	};
 
 	renderContactButton() {
 		let url = support.CALYPSO_CONTACT,
@@ -62,19 +56,20 @@ export class HappinessSupport extends Component {
 
 	renderLiveChatButton() {
 		return (
-			<HappychatButton borderless={ false } onClick={ this.onLiveChatButtonClick } className="happiness-support__livechat-button">
+			<HappychatButton
+				borderless={ false }
+				onClick={ this.onLiveChatButtonClick }
+				className="happiness-support__livechat-button"
+			>
 				{ this.props.translate( 'Ask a question' ) }
 			</HappychatButton>
 		);
 	}
 
-	renderGravatar() {
+	renderIllustration() {
 		return (
-			<div className="happiness-support__gravatar">
-				<Gravatar user={ this.state.user } size={ 80 } />
-				<em className="happiness-support__gravatar-name">
-					{ this.state.user.display_name }
-				</em>
+			<div className="happiness-support__illustration">
+				<img src="/calypso/images/illustrations/happiness-support.svg" />
 			</div>
 		);
 	}
@@ -87,7 +82,12 @@ export class HappinessSupport extends Component {
 		}
 
 		return (
-			<Button href={ url } target="_blank" rel="noopener noreferrer" className="happiness-support__support-button">
+			<Button
+				href={ url }
+				target="_blank"
+				rel="noopener noreferrer"
+				className="happiness-support__support-button"
+			>
 				{ this.props.translate( 'Search our support site' ) }
 			</Button>
 		);
@@ -101,7 +101,7 @@ export class HappinessSupport extends Component {
 
 		return (
 			<div className={ classNames( 'happiness-support', classes ) }>
-				{ this.renderGravatar() }
+				{ this.renderIllustration() }
 
 				<h3 className="happiness-support__heading">
 					{ translate( 'Enjoy priority support from our Happiness Engineers' ) }
@@ -112,15 +112,19 @@ export class HappinessSupport extends Component {
 						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.', // eslint-disable-line max-len
 						{
 							components: {
-								strong: <strong />
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
 
 				<div className="happiness-support__buttons">
 					{ showLiveChatButton && <HappychatConnection /> }
-					{ showLiveChatButton && liveChatAvailable ? this.renderLiveChatButton() : this.renderContactButton() }
+					{ showLiveChatButton && liveChatAvailable ? (
+						this.renderLiveChatButton()
+					) : (
+						this.renderContactButton()
+					) }
 					{ this.renderSupportButton() }
 				</div>
 			</div>
@@ -129,10 +133,8 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => {
-		return {
-			liveChatAvailable: isHappychatAvailable( state ),
-		};
-	},
+	state => ( {
+		liveChatAvailable: isHappychatAvailable( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( HappinessSupport ) );

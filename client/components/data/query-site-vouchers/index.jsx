@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -11,7 +15,6 @@ import { isRequestingSiteVouchers } from 'state/sites/vouchers/selectors';
 import { requestSiteVouchers as requestVouchers } from 'state/sites/vouchers/actions';
 
 class QuerySiteVouchers extends Component {
-
 	constructor( props ) {
 		super( props );
 		this.requestVouchers = this.requestVouchers.bind( this );
@@ -22,9 +25,11 @@ class QuerySiteVouchers extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingSiteVouchers ||
+		if (
+			nextProps.requestingSiteVouchers ||
 			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
+			this.props.siteId === nextProps.siteId
+		) {
 			return;
 		}
 		this.requestVouchers( nextProps );
@@ -44,17 +49,17 @@ class QuerySiteVouchers extends Component {
 QuerySiteVouchers.propTypes = {
 	siteId: PropTypes.number,
 	requestingVouchers: PropTypes.bool,
-	requestVouchers: PropTypes.func
+	requestVouchers: PropTypes.func,
 };
 
 QuerySiteVouchers.defaultProps = {
-	requestVouchers: () => {}
+	requestVouchers: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingSiteVouchers: isRequestingSiteVouchers( state, ownProps.siteId )
+			requestingSiteVouchers: isRequestingSiteVouchers( state, ownProps.siteId ),
 		};
 	},
 	{ requestVouchers }

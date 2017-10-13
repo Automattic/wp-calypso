@@ -1,4 +1,9 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,32 +12,20 @@ import { constant, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
+jest.mock( 'layout/guided-tours/config', () => {
+	return require( 'state/ui/guided-tours/test/fixtures/config' );
+} );
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'selectors', () => {
 	let clock;
-	let getGuidedTourState;
-	let findEligibleTour;
-	let hasTourJustBeenVisible;
-
-	useFakeDom();
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;
-	} );
-
-	useMockery( mockery => {
-		mockery.registerSubstitute(
-				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/fixtures/config' );
-
-		const selectors = require( '../selectors' );
-		getGuidedTourState = selectors.getGuidedTourState;
-		findEligibleTour = selectors.findEligibleTour;
-		hasTourJustBeenVisible = selectors.hasTourJustBeenVisible;
 	} );
 
 	describe( '#isConflictingWithFirstView', () => {
@@ -40,33 +33,35 @@ describe( 'selectors', () => {
 
 		const withEligibleFirstView = {
 			currentUser: {
-				id: 73705554
+				id: 73705554,
 			},
 			users: {
 				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' }
-				}
+					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
+				},
 			},
 			ui: {
-				actionLog: [ {
-					type: 'ROUTE_SET',
-					path: '/stats'
-				} ],
+				actionLog: [
+					{
+						type: 'ROUTE_SET',
+						path: '/stats',
+					},
+				],
 				queryArguments: {
-					initial: {}
+					initial: {},
 				},
 				section: {
 					name: 'stats',
-					paths: [ '/stats' ]
-				}
+					paths: [ '/stats' ],
+				},
 			},
 			preferences: {
 				remoteValues: {
 					firstViewHistory: [],
 					'guided-tours-history': [],
 				},
-				lastFetchedTimestamp: now
-			}
+				lastFetchedTimestamp: now,
+			},
 		};
 
 		const withFirstViewAndTourRequest = {
@@ -75,10 +70,10 @@ describe( 'selectors', () => {
 				...withEligibleFirstView.ui,
 				queryArguments: {
 					initial: {
-						tour: 'main'
-					}
-				}
-			}
+						tour: 'main',
+					},
+				},
+			},
 		};
 
 		const havingJustSeenTour = {
@@ -96,18 +91,20 @@ describe( 'selectors', () => {
 						type: 'GUIDED_TOUR_UPDATE',
 						shouldShow: false,
 						timestamp: now - 30000,
-					}
+					},
 				],
 			},
 			preferences: {
 				remoteValues: {
-					firstViewHistory: [ {
-						view: 'stats',
-						timestamp: now - 30000
-					} ]
+					firstViewHistory: [
+						{
+							view: 'stats',
+							timestamp: now - 30000,
+						},
+					],
 				},
-				lastFetchedTimestamp: now - 10000
-			}
+				lastFetchedTimestamp: now - 10000,
+			},
 		};
 
 		const havingSeenTourEarlier = {
@@ -125,72 +122,78 @@ describe( 'selectors', () => {
 						type: 'GUIDED_TOUR_UPDATE',
 						shouldShow: false,
 						timestamp: now - 120000,
-					}
+					},
 				],
 			},
 			preferences: {
 				remoteValues: {
-					firstViewHistory: [ {
-						view: 'stats',
-						timestamp: now - 120000
-					} ]
+					firstViewHistory: [
+						{
+							view: 'stats',
+							timestamp: now - 120000,
+						},
+					],
 				},
-				lastFetchedTimestamp: now - 10000
-			}
+				lastFetchedTimestamp: now - 10000,
+			},
 		};
 
-		it( 'expects shouldViewBeVisible to work normally', () => {
+		test( 'expects shouldViewBeVisible to work normally', () => {
 			expect( shouldViewBeVisible( withEligibleFirstView ) ).to.be.true;
 		} );
 
-		it( 'should short-circuit findEligibleTour', () => {
+		test( 'should short-circuit findEligibleTour', () => {
 			clock.tick( now );
 			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
 			expect( findEligibleTour( havingJustSeenTour ) ).to.be.undefined;
 		} );
 
-		it( 'should reallow tours after a while', () => {
+		test( 'should reallow tours after a while', () => {
 			expect( findEligibleTour( havingSeenTourEarlier ) ).to.equal( 'stats' );
 		} );
 	} );
 
 	describe( '#hasTourJustBeenVisible', () => {
-		it( 'should return false when no tour has been seen', () => {
+		test( 'should return false when no tour has been seen', () => {
 			const state = { ui: { actionLog: [] } };
 			expect( hasTourJustBeenVisible( state ) ).to.be.undefined;
 		} );
 
-		it( 'should return true when a tour has just been seen', () => {
+		test( 'should return true when a tour has just been seen', () => {
 			const now = 1478623930204;
 			const state = {
 				ui: {
-					actionLog: [ {
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 10000, // 10 seconds earlier
-					} ]
-				}
+					actionLog: [
+						{
+							type: 'GUIDED_TOUR_UPDATE',
+							shouldShow: false,
+							timestamp: now - 10000, // 10 seconds earlier
+						},
+					],
+				},
 			};
 			expect( hasTourJustBeenVisible( state, now ) ).to.be.true;
 		} );
 
-		it( 'should return false when a tour has been seen longer ago', () => {
+		test( 'should return false when a tour has been seen longer ago', () => {
 			const now = 1478623930204;
 			const state = {
 				ui: {
-					actionLog: [ {
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 120000, // 2 minutes earlier
-					} ]
-				}
+					actionLog: [
+						{
+							type: 'GUIDED_TOUR_UPDATE',
+							shouldShow: false,
+							timestamp: now - 120000, // 2 minutes earlier
+						},
+					],
+				},
 			};
 			expect( hasTourJustBeenVisible( state, now ) ).to.be.falsey;
 		} );
 	} );
 
 	describe( '#getGuidedTourState()', () => {
-		it( 'should return an empty object if no state is present', () => {
+		test( 'should return an empty object if no state is present', () => {
 			const tourState = getGuidedTourState( {
 				ui: {
 					shouldShow: false,
@@ -283,19 +286,19 @@ describe( 'selectors', () => {
 			finished: true,
 		};
 
-		it( 'should return undefined if nothing relevant in log', () => {
+		test( 'should return undefined if nothing relevant in log', () => {
 			const state = makeState( { actionLog: [ { type: 'IRRELEVANT' } ] } );
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should find `themes` when applicable', () => {
+		test( 'should find `themes` when applicable', () => {
 			const state = makeState( { actionLog: [ navigateToThemes ] } );
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( 'themes' );
 		} );
-		it( 'should not find `themes` if previously seen', () => {
+		test( 'should not find `themes` if previously seen', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				toursHistory: [ themesTourSeen ],
@@ -305,7 +308,7 @@ describe( 'selectors', () => {
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should see to it that an ongoing tour is selected', () => {
+		test( 'should see to it that an ongoing tour is selected', () => {
 			const havingStartedTour = makeState( {
 				actionLog: [ mainTourStarted, navigateToThemes ],
 			} );
@@ -316,17 +319,17 @@ describe( 'selectors', () => {
 			expect( findEligibleTour( havingStartedTour ) ).to.equal( 'main' );
 			expect( findEligibleTour( havingQuitTour ) ).to.equal( 'themes' );
 		} );
-		it( 'should favor a tour launched via query arguments', () => {
+		test( 'should favor a tour launched via query arguments', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				toursHistory: [ mainTourSeen, themesTourSeen ],
-				queryArguments: { tour: 'main' }
+				queryArguments: { tour: 'main' },
 			} );
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( 'main' );
 		} );
-		it( 'should dismiss a requested tour at the end', () => {
+		test( 'should dismiss a requested tour at the end', () => {
 			const mainTourJustSeen = {
 				tourName: 'main',
 				timestamp: 1338,
@@ -335,16 +338,16 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				toursHistory: [ themesTourSeen, mainTourJustSeen ],
-				queryArguments: { tour: 'main', _timestamp: 0 }
+				queryArguments: { tour: 'main', _timestamp: 0 },
 			} );
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should respect tour "when" conditions', () => {
+		test( 'should respect tour "when" conditions', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
-				userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				userData: { date: new Date().toJSON() }, // user was created just now
 			} );
 			const tour = findEligibleTour( state );
 
@@ -354,7 +357,7 @@ describe( 'selectors', () => {
 			// `themes`, so the selector should prefer the former.
 			expect( tour ).to.equal( 'main' );
 		} );
-		it( 'shouldn\'t show a requested tour twice', () => {
+		test( "shouldn't show a requested tour twice", () => {
 			/*
 			 * Assume that a lot has happened during a Calypso session, so the
 			 * action log doesn't contain actions specific to Guided Tours
@@ -363,16 +366,16 @@ describe( 'selectors', () => {
 			const state = makeState( {
 				actionLog: times( 50, constant( navigateToTest ) ),
 				toursHistory: [ testTourSeen, themesTourSeen ],
-				queryArguments: { tour: 'themes', _timestamp: 0 }
+				queryArguments: { tour: 'themes', _timestamp: 0 },
 			} );
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should bail if user preferences are stale', () => {
+		test( 'should bail if user preferences are stale', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
-				userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				userData: { date: new Date().toJSON() }, // user was created just now
 			} );
 			delete state.preferences.lastFetchedTimestamp;
 			const tour = findEligibleTour( state );
@@ -380,17 +383,17 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( undefined );
 		} );
 		describe( 'picking a tour based on the most recent actions', () => {
-			it( 'should pick `themes`', () => {
+			test( 'should pick `themes`', () => {
 				const state = makeState( {
-					actionLog: [ navigateToThemes, navigateToTest ]
+					actionLog: [ navigateToThemes, navigateToTest ],
 				} );
 				const tour = findEligibleTour( state );
 
 				expect( tour ).to.equal( 'test' );
 			} );
-			it( 'should pick `test`', () => {
+			test( 'should pick `test`', () => {
 				const state = makeState( {
-					actionLog: [ navigateToTest, navigateToThemes ]
+					actionLog: [ navigateToTest, navigateToThemes ],
 				} );
 				const tour = findEligibleTour( state );
 

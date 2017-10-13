@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import getBoundingClientRect from 'bounding-client-rect';
 import debugFactory from 'debug';
 
@@ -24,15 +27,17 @@ function updateViewport() {
 }
 
 const opposite = {
-	top: 'bottom', bottom: 'top',
-	left: 'right', right: 'left'
+	top: 'bottom',
+	bottom: 'top',
+	left: 'right',
+	right: 'left',
 };
 
 const adjacent = {
 	top: 'right',
 	left: 'top',
 	bottom: 'left',
-	right: 'bottom'
+	right: 'bottom',
 };
 
 //let viewport;
@@ -80,7 +85,7 @@ const suggested = ( pos, el, target ) => {
 		top: targetPosition.top - h,
 		bottom: viewport.height - targetPosition.bottom - h,
 		left: targetPosition.left - w,
-		right: viewport.width - targetPosition.right - w
+		right: viewport.width - targetPosition.right - w,
 	};
 
 	const arrayPositions = pos.split( /\s+/ );
@@ -102,7 +107,7 @@ function choosePrimary( prefered, room ) {
 		prefered,
 		opposite[ prefered ],
 		adjacent[ prefered ],
-		opposite[ adjacent[ prefered ] ]
+		opposite[ adjacent[ prefered ] ],
 	];
 
 	let best = -Infinity;
@@ -118,7 +123,7 @@ function choosePrimary( prefered, room ) {
 
 		// less chopped of than other sides
 		if ( space > best ) {
-			best = space, bestPos = prefered;
+			( best = space ), ( bestPos = prefered );
 		}
 	}
 
@@ -131,23 +136,21 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 
 	const order = prefered
 		? [
-			isVertical
-				? `${ primary } ${ prefered }`
-				: `${ prefered } ${ primary }`,
-			primary,
-			isVertical
-				? `${ primary } ${ opposite[ prefered ] }`
-				: `${ opposite[ prefered ] } ${ primary }`
-		]
+				isVertical ? `${ primary } ${ prefered }` : `${ prefered } ${ primary }`,
+				primary,
+				isVertical
+					? `${ primary } ${ opposite[ prefered ] }`
+					: `${ opposite[ prefered ] } ${ primary }`,
+			]
 		: [
-			primary,
-			isVertical
-				? `${ primary } ${ adjacent[ primary ] }`
-				: `${ adjacent[ primary ] } ${ primary }`,
-			isVertical
-				? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
-				: `${ opposite[ adjacent[ primary ] ] } ${ primary }`
-		];
+				primary,
+				isVertical
+					? `${ primary } ${ adjacent[ primary ] }`
+					: `${ adjacent[ primary ] } ${ primary }`,
+				isVertical
+					? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
+					: `${ opposite[ adjacent[ primary ] ] } ${ primary }`,
+			];
 
 	let bestPos;
 	let best = 0;
@@ -159,15 +162,13 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 		const offRight = off.left + w;
 		const offBottom = off.top + h;
 		const yVisible = Math.min(
-			off.top < viewport.top
-				? offBottom - viewport.top
-				: viewport.bottom - off.top, h
+			off.top < viewport.top ? offBottom - viewport.top : viewport.bottom - off.top,
+			h
 		);
 
 		const xVisible = Math.min(
-			off.left < viewport.left
-				? offRight - viewport.left
-				: viewport.right - off.left, w
+			off.left < viewport.left ? offRight - viewport.left : viewport.right - off.left,
+			w
 		);
 
 		const area = xVisible * yVisible;
@@ -179,7 +180,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 
 		// shows more of the tip than the other positions
 		if ( area > best ) {
-			best = area, bestPos = pos;
+			( best = area ), ( bestPos = pos );
 		}
 	}
 
@@ -216,84 +217,84 @@ function offset( pos, el, target ) {
 		case 'top':
 			_pos = {
 				top: to.top - eh,
-				left: to.left + tw / 2 - ew / 2
+				left: to.left + tw / 2 - ew / 2,
 			};
 			break;
 
 		case 'bottom':
 			_pos = {
 				top: to.top + th,
-				left: to.left + tw / 2 - ew / 2
+				left: to.left + tw / 2 - ew / 2,
 			};
 			break;
 
 		case 'right':
 			_pos = {
 				top: to.top + th / 2 - eh / 2,
-				left: to.left + tw
+				left: to.left + tw,
 			};
 			break;
 
 		case 'left':
 			_pos = {
 				top: to.top + th / 2 - eh / 2,
-				left: to.left - ew
+				left: to.left - ew,
 			};
 			break;
 
 		case 'top left':
 			_pos = {
 				top: to.top - eh,
-				left: to.left + tw / 2 - ew + pad
+				left: to.left + tw / 2 - ew + pad,
 			};
 			break;
 
 		case 'top right':
 			_pos = {
 				top: to.top - eh,
-				left: to.left + tw / 2 - pad
+				left: to.left + tw / 2 - pad,
 			};
 			break;
 
 		case 'bottom left':
 			_pos = {
 				top: to.top + th,
-				left: to.left + tw / 2 - ew + pad
+				left: to.left + tw / 2 - ew + pad,
 			};
 			break;
 
 		case 'bottom right':
 			_pos = {
 				top: to.top + th,
-				left: to.left + tw / 2 - pad
+				left: to.left + tw / 2 - pad,
 			};
 			break;
 
 		case 'left top':
 			_pos = {
 				top: to.top + th / 2 - eh,
-				left: to.left - ew
+				left: to.left - ew,
 			};
 			break;
 
 		case 'left bottom':
 			_pos = {
 				top: to.top + th / 2,
-				left: to.left - ew
+				left: to.left - ew,
 			};
 			break;
 
 		case 'right top':
 			_pos = {
 				top: to.top + th / 2 - eh,
-				left: to.left + tw
+				left: to.left + tw,
 			};
 			break;
 
 		case 'right bottom':
 			_pos = {
 				top: to.top + th / 2,
-				left: to.left + tw
+				left: to.left + tw,
 			};
 			break;
 
@@ -324,7 +325,7 @@ function _offset( box, doc ) {
 
 	return {
 		top: box.top + scrollTop - clientTop,
-		left: box.left + scrollLeft - clientLeft
+		left: box.left + scrollLeft - clientLeft,
 	};
 }
 
@@ -346,18 +347,13 @@ const isElement = obj => {
 		//Using W3 DOM2 (works for FF, Opera and Chrom)
 		return obj instanceof HTMLElement;
 	} catch ( error ) {
-		return ( typeof obj === 'object' ) &&
-			( obj.nodeType === 1 ) &&
-			( typeof obj.style === 'object' ) &&
-			( typeof obj.ownerDocument === 'object' );
+		return (
+			typeof obj === 'object' &&
+			obj.nodeType === 1 &&
+			typeof obj.style === 'object' &&
+			typeof obj.ownerDocument === 'object'
+		);
 	}
 };
 
-export {
-	constrainLeft,
-	bindWindowListeners,
-	unbindWindowListeners,
-	suggested,
-	offset,
-	isElement
-};
+export { constrainLeft, bindWindowListeners, unbindWindowListeners, suggested, offset, isElement };

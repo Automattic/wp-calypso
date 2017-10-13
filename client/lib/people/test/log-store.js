@@ -1,4 +1,9 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -6,15 +11,12 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import site from './fixtures/site';
 import actions from './fixtures/actions';
+import site from './fixtures/site';
 import userActions from 'lib/users/test/fixtures/actions';
 
 describe( 'Viewers Store', () => {
 	let Dispatcher, PeopleLogStore;
-
-	useFakeDom();
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -23,42 +25,42 @@ describe( 'Viewers Store', () => {
 	} );
 
 	describe( 'Shape of store', () => {
-		it( 'Store should be an object', () => {
+		test( 'Store should be an object', () => {
 			assert.isObject( PeopleLogStore );
 		} );
 
-		it( 'Store should have method emitChange', () => {
+		test( 'Store should have method emitChange', () => {
 			assert.isFunction( PeopleLogStore.emitChange );
 		} );
 
-		it( 'Store should have method hasUnauthorizedError', () => {
+		test( 'Store should have method hasUnauthorizedError', () => {
 			assert.isFunction( PeopleLogStore.hasUnauthorizedError );
 		} );
 
-		it( 'Store should have method getErrors', () => {
+		test( 'Store should have method getErrors', () => {
 			assert.isFunction( PeopleLogStore.getErrors );
 		} );
 	} );
 
 	describe( 'hasUnauthorizedError', () => {
-		it( 'Should return false when there are no errors', () => {
+		test( 'Should return false when there are no errors', () => {
 			assert.isFalse( PeopleLogStore.hasUnauthorizedError( site.ID ) );
 		} );
 
-		it( 'Should return true when there is an unauthorized error', () => {
+		test( 'Should return true when there is an unauthorized error', () => {
 			Dispatcher.handleServerAction( actions.unauthorizedFetchingUsers );
 			assert.isTrue( PeopleLogStore.hasUnauthorizedError( site.ID ) );
 		} );
 	} );
 
 	describe( 'Logging and retrieving errors', () => {
-		it( 'getErrors should return an empty array when there are no errors', () => {
+		test( 'getErrors should return an empty array when there are no errors', () => {
 			const errors = PeopleLogStore.getErrors();
 			assert.isArray( errors );
 			assert.lengthOf( errors, 0, 'there are no errors' );
 		} );
 
-		it( 'An error should increase the number of errors in the store', () => {
+		test( 'An error should increase the number of errors in the store', () => {
 			let errors;
 			Dispatcher.handleServerAction( actions.errorWhenFetchingUsers );
 			errors = PeopleLogStore.getErrors();
@@ -68,19 +70,19 @@ describe( 'Viewers Store', () => {
 	} );
 
 	describe( 'inProgress and completed actions', () => {
-		it( 'getInProgress should return an empty array on init', () => {
+		test( 'getInProgress should return an empty array on init', () => {
 			const inProgress = PeopleLogStore.getInProgress();
 			assert.isArray( inProgress );
 			assert.lengthOf( inProgress, 0, 'there are no in progress actions' );
 		} );
 
-		it( 'getCompleted should return an empty array on init', () => {
+		test( 'getCompleted should return an empty array on init', () => {
 			const completed = PeopleLogStore.getCompleted();
 			assert.isArray( completed );
 			assert.lengthOf( completed, 0, 'there are no completed actions' );
 		} );
 
-		it( 'An action should increase the number of inProgress in the store', () => {
+		test( 'An action should increase the number of inProgress in the store', () => {
 			let inProgress;
 			Dispatcher.handleServerAction( userActions.deleteUser );
 			inProgress = PeopleLogStore.getInProgress();
@@ -88,7 +90,7 @@ describe( 'Viewers Store', () => {
 			assert.lengthOf( inProgress, 1, 'there is one in progress' );
 		} );
 
-		it( 'An error should decrease the number of inProgress in the store', () => {
+		test( 'An error should decrease the number of inProgress in the store', () => {
 			let inProgress;
 			Dispatcher.handleServerAction( userActions.deleteUser );
 			inProgress = PeopleLogStore.getInProgress();
@@ -99,7 +101,7 @@ describe( 'Viewers Store', () => {
 			assert.lengthOf( inProgress, 0, 'there is none in progress' );
 		} );
 
-		it( 'A completed action should decrease the number of inProgress in the store', () => {
+		test( 'A completed action should decrease the number of inProgress in the store', () => {
 			let inProgress;
 			Dispatcher.handleServerAction( userActions.deleteUser );
 			inProgress = PeopleLogStore.getInProgress();

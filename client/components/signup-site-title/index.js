@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,7 +18,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-
 import { translate } from 'i18n-calypso';
 
 const SignupSiteTitle = React.createClass( {
@@ -32,9 +34,9 @@ const SignupSiteTitle = React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: this.props.siteTitle
-				}
-			}
+					value: this.props.siteTitle,
+				},
+			},
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
@@ -47,7 +49,7 @@ const SignupSiteTitle = React.createClass( {
 	handleChangeEvent( event ) {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
-			value: event.target.value
+			value: event.target.value,
 		} );
 	},
 
@@ -82,11 +84,9 @@ const SignupSiteTitle = React.createClass( {
 				{ this.formFields() }
 			</LoggedOutForm>
 		);
-	}
+	},
 } );
 
-export default connect(
-	state => ( {
-		siteTitle: getSiteTitle( state ),
-	} )
-)( SignupSiteTitle );
+export default connect( state => ( {
+	siteTitle: getSiteTitle( state ),
+} ) )( SignupSiteTitle );

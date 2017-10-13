@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { omit } from 'lodash';
@@ -17,7 +20,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class PriceInput extends Component {
-
 	static propTypes = {
 		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		currency: PropTypes.string,
@@ -28,21 +30,23 @@ class PriceInput extends Component {
 
 	render() {
 		const { siteId, value, currency, currencySetting } = this.props;
-		const props = { ...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId', 'dispatch' ] ) };
+		const props = {
+			...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId', 'dispatch' ] ),
+		};
 		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
 		const currencyObject = getCurrencyObject( value, displayCurrency );
 		return (
 			<div>
 				<QuerySettingsGeneral siteId={ siteId } />
-				{ currencyObject
-					? <FormCurrencyInput
-							currencySymbolPrefix={ currencyObject.symbol }
-							value={ value }
-							{ ...props } />
-					: <FormTextInput
-							value={ value }
-							{ ...omit( props, [ 'noWrap', 'min' ] ) } />
-				}
+				{ currencyObject ? (
+					<FormCurrencyInput
+						currencySymbolPrefix={ currencyObject.symbol }
+						value={ value }
+						{ ...props }
+					/>
+				) : (
+					<FormTextInput value={ value } { ...omit( props, [ 'noWrap', 'min' ] ) } />
+				) }
 			</div>
 		);
 	}

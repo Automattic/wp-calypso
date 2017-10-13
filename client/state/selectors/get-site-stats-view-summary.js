@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { moment } from 'i18n-calypso';
 import { round } from 'lodash';
 
@@ -19,7 +22,7 @@ import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 export default function getSiteStatsViewSummary( state, siteId ) {
 	const query = {
 		stat_fields: 'views',
-		quantity: -1
+		quantity: -1,
 	};
 	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
 
@@ -29,7 +32,7 @@ export default function getSiteStatsViewSummary( state, siteId ) {
 
 	const viewSummary = {};
 
-	viewData.data.forEach( ( item ) => {
+	viewData.data.forEach( item => {
 		const [ date, value ] = item;
 		const momentDate = moment( date );
 		const { years, months } = momentDate.toObject();
@@ -43,12 +46,13 @@ export default function getSiteStatsViewSummary( state, siteId ) {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth: momentDate.daysInMonth()
+				daysInMonth: momentDate.daysInMonth(),
 			};
 		}
 		viewSummary[ years ][ months ].total += value;
 		viewSummary[ years ][ months ].data.push( item );
-		const average = viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
+		const average =
+			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
 		viewSummary[ years ][ months ].average = round( average, 0 );
 	} );
 

@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -41,7 +44,13 @@ export default [
 				'please {{a}}use our transfer out feature{{/a}} if you want to use this domain again in the future.',
 			{
 				components: {
-					a: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer" />,
+					a: (
+						<a
+							href={ support.TRANSFER_DOMAIN_REGISTRATION }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		),

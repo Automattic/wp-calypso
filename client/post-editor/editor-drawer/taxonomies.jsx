@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { reduce, size, map, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -39,45 +43,44 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, tax
 
 	return (
 		<div className="editor-drawer__taxonomies">
-			{ siteId && postType && (
-				<QueryTaxonomies { ...{ siteId, postType } } />
-			) }
-			{ reduce( taxonomies, ( memo, taxonomy ) => {
-				const { name, label, hierarchical } = taxonomy;
+			{ siteId && postType && <QueryTaxonomies { ...{ siteId, postType } } /> }
+			{ reduce(
+				taxonomies,
+				( memo, taxonomy ) => {
+					const { name, label, hierarchical } = taxonomy;
 
-				if ( isSkippedTaxonomy( postType, name ) ) {
-					return memo;
-				}
-
-				const taxonomyTerms = get( terms, name );
-				const taxonomyTermsCount = size( taxonomyTerms );
-
-				let subtitle;
-				if ( taxonomyTermsCount > 2 ) {
-					subtitle = translate( '%d selected', '%d selected', {
-						count: taxonomyTermsCount,
-						args: [ taxonomyTermsCount ]
-					} );
-				} else {
-					// Terms can be an array of strings or objects with `name`
-					subtitle = map( taxonomyTerms, ( term ) => {
-						return decodeEntities( term.name || term );
-					} ).join( ', ' );
-				}
-
-				return memo.concat(
-					<Accordion
-						key={ name }
-						title={ label }
-						subtitle={ subtitle }
-					>
-					{ hierarchical
-						? <TermSelector compact taxonomyName={ name } />
-						: <TermTokenField taxonomyName={ name } />
+					if ( isSkippedTaxonomy( postType, name ) ) {
+						return memo;
 					}
-					</Accordion>
-				);
-			}, [] ) }
+
+					const taxonomyTerms = get( terms, name );
+					const taxonomyTermsCount = size( taxonomyTerms );
+
+					let subtitle;
+					if ( taxonomyTermsCount > 2 ) {
+						subtitle = translate( '%d selected', '%d selected', {
+							count: taxonomyTermsCount,
+							args: [ taxonomyTermsCount ],
+						} );
+					} else {
+						// Terms can be an array of strings or objects with `name`
+						subtitle = map( taxonomyTerms, term => {
+							return decodeEntities( term.name || term );
+						} ).join( ', ' );
+					}
+
+					return memo.concat(
+						<Accordion key={ name } title={ label } subtitle={ subtitle } e2eTitle="taxonomies">
+							{ hierarchical ? (
+								<TermSelector compact taxonomyName={ name } />
+							) : (
+								<TermTokenField taxonomyName={ name } />
+							) }
+						</Accordion>
+					);
+				},
+				[]
+			) }
 		</div>
 	);
 }
@@ -87,14 +90,11 @@ EditorDrawerTaxonomies.propTypes = {
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
 	isSupported: PropTypes.bool,
-	terms: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array
-	] ),
+	terms: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
 	taxonomies: PropTypes.array,
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
@@ -105,6 +105,6 @@ export default connect( ( state ) => {
 		postType,
 		isSupported,
 		terms: getEditedPostValue( state, siteId, postId, 'terms' ),
-		taxonomies: getPostTypeTaxonomies( state, siteId, postType )
+		taxonomies: getPostTypeTaxonomies( state, siteId, postType ),
 	};
 } )( localize( EditorDrawerTaxonomies ) );

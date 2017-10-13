@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
@@ -54,8 +58,8 @@ export class SharingService extends Component {
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
-		service: PropTypes.object.isRequired,       // The single service object
-		siteId: PropTypes.number,                   // The site ID for which connections are created
+		service: PropTypes.object.isRequired, // The single service object
+		siteId: PropTypes.number, // The site ID for which connections are created
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
 		translate: PropTypes.func,
 		updateSiteConnection: PropTypes.func,
@@ -117,7 +121,11 @@ export class SharingService extends Component {
 				// Since we have a Keyring connection to work with, we can immediately
 				// create or update the connection
 				this.createOrUpdateConnection( keyringConnectionId, externalUserId );
-				this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button in Modal', this.props.service.ID );
+				this.props.recordGoogleEvent(
+					'Sharing',
+					'Clicked Connect Button in Modal',
+					this.props.service.ID
+				);
 			} else {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
@@ -134,11 +142,18 @@ export class SharingService extends Component {
 		} else {
 			// If an account wasn't selected from the dialog or the user cancels
 			// the connection, the dialog should simply close
-			this.props.warningNotice( this.props.translate( 'The connection could not be made because no account was selected.', {
-				comment: 'Warning notice when sharing connection dialog was closed without selection'
-			} ), { id: 'publicize' } );
+			this.props.warningNotice(
+				this.props.translate( 'The connection could not be made because no account was selected.', {
+					comment: 'Warning notice when sharing connection dialog was closed without selection',
+				} ),
+				{ id: 'publicize' }
+			);
 			this.setState( { isConnecting: false } );
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.props.service.ID );
+			this.props.recordGoogleEvent(
+				'Sharing',
+				'Clicked Cancel Button in Modal',
+				this.props.service.ID
+			);
 		}
 
 		// Reset active account selection
@@ -152,7 +167,9 @@ export class SharingService extends Component {
 	 * @param {Number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
 	createOrUpdateConnection = ( keyringConnectionId, externalUserId = 0 ) => {
-		const existingConnection = find( this.props.siteUserConnections, { keyring_connection_ID: keyringConnectionId } );
+		const existingConnection = find( this.props.siteUserConnections, {
+			keyring_connection_ID: keyringConnectionId,
+		} );
 
 		if ( this.props.siteId && existingConnection ) {
 			// If a Keyring connection is already in use by another connection,
@@ -165,7 +182,11 @@ export class SharingService extends Component {
 	};
 
 	connectAnother = () => {
-		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
+		this.props.recordGoogleEvent(
+			'Sharing',
+			'Clicked Connect Another Account Button',
+			this.props.service.ID
+		);
 		this.addConnection( this.props.service );
 	};
 
@@ -176,7 +197,8 @@ export class SharingService extends Component {
 	 * @param  {Boolean}  shared     Whether the connection can be used by other users.
 	 * @return {Function}            Action thunk
 	 */
-	toggleSitewideConnection = ( connection, shared ) => this.props.updateSiteConnection( connection, { shared } );
+	toggleSitewideConnection = ( connection, shared ) =>
+		this.props.updateSiteConnection( connection, { shared } );
 
 	/**
 	 * Lets users re-authenticate their Keyring connections if lost.
@@ -187,8 +209,10 @@ export class SharingService extends Component {
 	refresh = ( connections = this.props.brokenConnections ) => {
 		this.setState( { isRefreshing: true } );
 
-		this.getConnections( connections ).map( ( connection ) => {
-			const keyringConnection = find( this.props.keyringConnections, { ID: connection.keyring_connection_ID } );
+		this.getConnections( connections ).map( connection => {
+			const keyringConnection = find( this.props.keyringConnections, {
+				ID: connection.keyring_connection_ID,
+			} );
 
 			if ( keyringConnection ) {
 				// Attempt to create a new connection. If a Keyring connection ID
@@ -199,10 +223,13 @@ export class SharingService extends Component {
 					this.fetchConnection( connection );
 				} );
 			} else {
-				this.props.errorNotice( this.props.translate( 'The %(service)s account was unable to be reconnected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize reconnection confirmation'
-				} ), { id: 'publicize' } );
+				this.props.errorNotice(
+					this.props.translate( 'The %(service)s account was unable to be reconnected.', {
+						args: { service: this.props.service.label },
+						context: 'Sharing: Publicize reconnection confirmation',
+					} ),
+					{ id: 'publicize' }
+				);
 			}
 		} );
 	};
@@ -212,7 +239,7 @@ export class SharingService extends Component {
 	 *
 	 * @param {Object} connection Connection to update.
 	 */
-	fetchConnection = ( connection ) => {
+	fetchConnection = connection => {
 		this.props.fetchConnection( this.props.siteId, connection.ID );
 	};
 
@@ -240,11 +267,11 @@ export class SharingService extends Component {
 		super( ...arguments );
 
 		this.state = {
-			isOpen: false,                // The service is visually opened
-			isConnecting: false,          // A pending connection is awaiting authorization
-			isDisconnecting: false,       // A pending disconnection is awaiting completion
-			isRefreshing: false,          // A pending refresh is awaiting completion
-			isSelectingAccount: false,    // The modal to select an account is open
+			isOpen: false, // The service is visually opened
+			isConnecting: false, // A pending connection is awaiting authorization
+			isDisconnecting: false, // A pending disconnection is awaiting completion
+			isRefreshing: false, // A pending refresh is awaiting completion
+			isSelectingAccount: false, // The modal to select an account is open
 			isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
 		};
 	}
@@ -324,19 +351,25 @@ export class SharingService extends Component {
 			// select, we must assume the user closed the popup
 			// before completing the authorization step.
 			this.props.failCreateConnection( {
-				message: this.props.translate( 'The %(service)s connection could not be made because no account was selected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} ),
+				message: this.props.translate(
+					'The %(service)s connection could not be made because no account was selected.',
+					{
+						args: { service: this.props.service.label },
+						context: 'Sharing: Publicize connection confirmation',
+					}
+				),
 			} );
 			this.setState( { isConnecting: false } );
 		} else if ( ! hasAnyConnectionOptions ) {
 			// Similarly warn user if all options are connected
 			this.props.failCreateConnection( {
-				message: this.props.translate( 'The %(service)s connection could not be made because all available accounts are already connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} )
+				message: this.props.translate(
+					'The %(service)s connection could not be made because all available accounts are already connected.',
+					{
+						args: { service: this.props.service.label },
+						context: 'Sharing: Publicize connection confirmation',
+					}
+				),
 			} );
 			this.setState( { isConnecting: false } );
 		}
@@ -350,7 +383,8 @@ export class SharingService extends Component {
 			<SocialLogo
 				icon={ replace( this.props.service.ID, '_', '-' ) }
 				size={ 48 }
-				className="sharing-service__logo" />
+				className="sharing-service__logo"
+			/>
 		);
 	}
 
@@ -371,7 +405,8 @@ export class SharingService extends Component {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
-						numberOfConnections={ this.getConnections().length } />
+						numberOfConnections={ this.getConnections().length }
+					/>
 				</div>
 			</div>
 		);
@@ -383,7 +418,8 @@ export class SharingService extends Component {
 				onAction={ this.performAction }
 				isConnecting={ this.state.isConnecting }
 				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting } />
+				isDisconnecting={ this.state.isDisconnecting }
+			/>
 		);
 
 		return (
@@ -392,18 +428,27 @@ export class SharingService extends Component {
 					isVisible={ this.state.isSelectingAccount }
 					service={ this.props.service }
 					accounts={ accounts }
-					onAccountSelected={ this.addConnection } />
+					onAccountSelected={ this.addConnection }
+				/>
 				<FoldableCard
 					className={ classNames }
 					header={ header }
 					clickableHeader
 					compact
 					summary={ action }
-					expandedSummary={ action } >
-					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': this.props.isFetching } ) }>
+					expandedSummary={ action }
+				>
+					<div
+						className={ classnames( 'sharing-service__content', {
+							'is-placeholder': this.props.isFetching,
+						} ) }
+					>
 						<ServiceExamples service={ this.props.service } />
-						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
-							{ connections.map( ( connection ) =>
+						<ServiceConnectedAccounts
+							connect={ this.connectAnother }
+							service={ this.props.service }
+						>
+							{ connections.map( connection => (
 								<Connection
 									key={ connection.keyring_connection_ID }
 									connection={ connection }
@@ -413,8 +458,9 @@ export class SharingService extends Component {
 									onRefresh={ this.refresh }
 									onToggleSitewideConnection={ this.toggleSitewideConnection }
 									service={ this.props.service }
-									showDisconnect={ connections.length > 1 || 'broken' === connection.status } />
-							) }
+									showDisconnect={ connections.length > 1 || 'broken' === connection.status }
+								/>
+							) ) }
 						</ServiceConnectedAccounts>
 						<ServiceTip service={ this.props.service } />
 					</div>
@@ -440,7 +486,12 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			const userId = getCurrentUserId( state );
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
-				brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
+				brokenConnections: getBrokenSiteUserConnectionsForService(
+					state,
+					siteId,
+					userId,
+					service.ID
+				),
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
@@ -461,7 +512,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
-			...mapDispatchToProps
+			...mapDispatchToProps,
 		}
 	)( localize( sharingService ) );
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,62 +8,52 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import enrichedSurveyData from '../enrichedSurveyData';
 
-describe( 'enrichedSurveyData', function() {
-	let enrichedSurveyData;
+jest.mock( 'lib/analytics', () => ( {} ) );
 
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
+describe( 'enrichedSurveyData', () => {
+	test( 'should duplicate survey data if no site or purchase are provided', () => {
+		expect( enrichedSurveyData( { key: 'value' }, moment() ) ).to.deep.equal( {
+			key: 'value',
+			purchase: null,
+			purchaseId: null,
+		} );
 	} );
 
-	before( function() {
-		enrichedSurveyData = require( '../enrichedSurveyData' );
-	} );
-
-	it( 'should duplicate survey data if no site or purchase are provided', function() {
-		expect(
-			enrichedSurveyData( { key: 'value' }, moment() )
-		).to.deep.equal(
-			{
-				key: 'value',
-				purchase: null,
-				purchaseId: null,
-			}
+	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
+		const site = null;
+		const purchase = { id: 'purchase id', productSlug: 'product slug' };
+		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).to.equal(
+			'product slug'
 		);
 	} );
 
-	it( 'should add purchase id and slug to survey data if purchase is provided', function() {
+	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
 		const site = null;
 		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect(
-			enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase
-		).to.equal( 'product slug' );
+		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).to.equal(
+			'product slug'
+		);
 	} );
 
-	it( 'should add purchase id and slug to survey data if purchase is provided', function() {
-		const site = null;
-		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect(
-			enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase
-		).to.equal( 'product slug' );
-	} );
-
-	it( 'should add daysSincePurchase to survey data when purchase.subscribedDate is provided', function() {
+	test( 'should add daysSincePurchase to survey data when purchase.subscribedDate is provided', () => {
 		const site = null;
 		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
 		expect(
-			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).daysSincePurchase
+			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
+				.daysSincePurchase
 		).to.equal( 10 );
 	} );
 
-	it( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', function() {
+	test( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', () => {
 		const site = {
-			options: { created_at: '2017-01-09T03:00:00+00:00' }
+			options: { created_at: '2017-01-09T03:00:00+00:00' },
 		};
 		const purchase = null;
 		expect(
-			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).daysSinceSiteCreation
+			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase )
+				.daysSinceSiteCreation
 		).to.equal( 10 );
 	} );
 } );

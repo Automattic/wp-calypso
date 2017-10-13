@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,16 +9,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import { requestEmailVerification, handleSuccess, handleError } from '../';
+import { EMAIL_VERIFY_REQUEST_SUCCESS, EMAIL_VERIFY_REQUEST_FAILURE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	requestEmailVerification,
-	handleSuccess,
-	handleError,
-} from '../';
-import {
-	EMAIL_VERIFY_REQUEST_SUCCESS,
-	EMAIL_VERIFY_REQUEST_FAILURE,
-} from 'state/action-types';
 
 describe( 'send-email-verification', () => {
 	describe( '#requestEmailVerification', () => {
@@ -25,13 +20,18 @@ describe( 'send-email-verification', () => {
 
 		requestEmailVerification( { dispatch: dispatchSpy }, dummyAction );
 
-		it( 'should dispatch HTTP request to plans endpoint', () => {
+		test( 'should dispatch HTTP request to plans endpoint', () => {
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				apiVersion: '1.1',
-				method: 'POST',
-				path: '/me/send-verification-email',
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						apiVersion: '1.1',
+						method: 'POST',
+						path: '/me/send-verification-email',
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 
@@ -42,7 +42,7 @@ describe( 'send-email-verification', () => {
 
 		handleError( { dispatch: dispatchSpy }, null, rawError );
 
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: EMAIL_VERIFY_REQUEST_FAILURE,
 				message,
@@ -55,7 +55,7 @@ describe( 'send-email-verification', () => {
 
 		handleSuccess( { dispatch: dispatchSpy } );
 
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
 		} );
 	} );

@@ -1,15 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
-import * as stats from 'lib/posts/stats';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
@@ -30,32 +32,26 @@ class EditorDrawerFeaturedImage extends Component {
 	};
 
 	state = {
-		isSelecting: false
+		isSelecting: false,
 	};
 
 	startSelecting = () => this.setState( { isSelecting: true } );
 	endSelecting = () => this.setState( { isSelecting: false } );
 
-	removeImage() {
-		PostActions.edit( {
-			featured_image: ''
-		} );
-
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	}
-
 	render() {
 		const { translate, site, post, isDrawerHidden } = this.props;
 
 		return (
-			<Accordion title={ translate( 'Featured Image' ) } forceExpand={ isDrawerHidden } e2eTitle={ 'featured-image' }>
+			<Accordion
+				title={ translate( 'Featured Image' ) }
+				forceExpand={ isDrawerHidden }
+				e2eTitle="featured-image"
+			>
 				<EditorDrawerWell
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }
 					customDropZone={ <FeaturedImageDropZone /> }
-					onRemove={ this.removeImage }
 					isHidden={ isDrawerHidden }
 				>
 					<FeaturedImage
@@ -70,8 +66,6 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		isDrawerHidden: isDropZoneVisible( state, 'featuredImage' )
-	} )
-)( localize( EditorDrawerFeaturedImage ) );
+export default connect( state => ( {
+	isDrawerHidden: isDropZoneVisible( state, 'featuredImage' ),
+} ) )( localize( EditorDrawerFeaturedImage ) );

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import urlModule from 'url';
 
 /**
@@ -22,22 +24,16 @@ class SiteCard extends Component {
 			site_url: PropTypes.string.isRequired,
 			client_id: PropTypes.string.isRequired,
 		} ).isRequired,
-		isAlreadyOnSitesList: PropTypes.bool
+		isAlreadyOnSitesList: PropTypes.bool,
 	};
 
 	render() {
-		const {
-			site_icon,
-			blogname,
-			home_url,
-			site_url,
-			client_id
-		} = this.props.queryObject;
+		const { site_icon, blogname, home_url, site_url, client_id } = this.props.queryObject;
 		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
 		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( home_url );
 		const parsedUrl = urlModule.parse( url );
-		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
+		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
 		const site = {
 			ID: null,
 			url: url,
@@ -45,7 +41,7 @@ class SiteCard extends Component {
 			domain: parsedUrl.host + path,
 			icon: siteIcon,
 			is_vip: false,
-			title: decodeEntities( blogname )
+			title: decodeEntities( blogname ),
 		};
 
 		return (

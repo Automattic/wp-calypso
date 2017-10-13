@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { find, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
 
 /**
@@ -48,15 +51,14 @@ export const getContinents = createSelector(
 		if ( ! areLocationsLoaded( state, siteId ) ) {
 			return [];
 		}
-		const continents = getRawLocations( state, siteId ).map( continent => omit( continent, 'countries' ) );
+		const continents = getRawLocations( state, siteId ).map( continent =>
+			omit( continent, 'countries' )
+		);
 		return sortBy( continents, 'name' );
 	},
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areLocationsLoaded( state, siteId );
-		return [
-			loaded,
-			loaded && getRawLocations( state, siteId ),
-		];
+		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
 
@@ -80,10 +82,7 @@ export const getCountries = createSelector(
 	},
 	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areLocationsLoaded( state, siteId );
-		return [
-			loaded,
-			loaded && getRawLocations( state, siteId ),
-		];
+		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
 
@@ -98,7 +97,9 @@ export const getCountryName = createSelector(
 		if ( ! areLocationsLoaded( state, siteId ) ) {
 			return countryCode;
 		}
-		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
+		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), {
+			code: countryCode,
+		} );
 		if ( ! country ) {
 			return countryCode;
 		}
@@ -106,10 +107,7 @@ export const getCountryName = createSelector(
 	},
 	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areLocationsLoaded( state, siteId );
-		return [
-			loaded,
-			loaded && getRawLocations( state, siteId ),
-		];
+		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
 
@@ -124,7 +122,9 @@ export const getStates = createSelector(
 		if ( ! areLocationsLoaded( state, siteId ) ) {
 			return [];
 		}
-		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), { code: countryCode } );
+		const country = find( flatMap( getRawLocations( state, siteId ), 'countries' ), {
+			code: countryCode,
+		} );
 		if ( ! country ) {
 			return [];
 		}
@@ -132,10 +132,7 @@ export const getStates = createSelector(
 	},
 	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areLocationsLoaded( state, siteId );
-		return [
-			loaded,
-			loaded && getRawLocations( state, siteId ),
-		];
+		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
 

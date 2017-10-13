@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import sidebar from './sidebar/reducer';
 import { combineReducers } from 'state/utils';
 import cardExpansions from './card-expansions/reducer';

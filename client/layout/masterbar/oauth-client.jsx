@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import Gridicon from 'gridicons';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -25,7 +28,9 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 
 				{ isWooOAuth2Client( oauth2Client ) ? (
 					<li className="masterbar__oauth-client-close">
-						<a href="https://woocommerce.com">Cancel <span>X</span></a>
+						<a href="https://woocommerce.com">
+							Cancel <span>X</span>
+						</a>
 					</li>
 				) : (
 					<li className="masterbar__oauth-client-wpcc-sign-in">

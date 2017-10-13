@@ -7,7 +7,6 @@
 
 .product-purchase-features-list__item {
 	page-break-inside: avoid; // For Firefox
-	overflow: hidden; // For Firefox and IE
 	break-inside: avoid-column; // For IE
 	-webkit-column-break-inside: avoid; // For others
 

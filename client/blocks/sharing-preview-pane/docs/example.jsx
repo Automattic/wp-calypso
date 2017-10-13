@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
@@ -19,24 +22,28 @@ import QuerySites from 'components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	<div>
-		{ site && <p>Site: <strong>{ site.name } ({ siteId })</strong></p> }
+		{ site && (
+			<p>
+				Site:{' '}
+				<strong>
+					{ site.name } ({ siteId })
+				</strong>
+			</p>
+		) }
 		<Card>
 			<QuerySites siteId={ siteId } />
 			<QueryPublicizeConnections siteId={ siteId } />
-			{ siteId && (
-				<QueryPosts
-					siteId={ siteId }
-					query={ { number: 1, type: 'post' } } />
-			) }
+			{ siteId && <QueryPosts siteId={ siteId } query={ { number: 1, type: 'post' } } /> }
 			<SharingPreviewPane
 				message="Do you have a trip coming up?"
 				postId={ postId }
-				siteId={ siteId } />
+				siteId={ siteId }
+			/>
 		</Card>
 	</div>
 );
 
-const ConnectedSharingPreviewPaneExample = connect( ( state ) => {
+const ConnectedSharingPreviewPaneExample = connect( state => {
 	const user = getCurrentUser( state );
 	const siteId = get( user, 'primary_blog' );
 	const site = getSite( state, siteId );

@@ -5,6 +5,15 @@
 	background: lighten( $gray, 20% );
 	border-radius: 4px;
 
+	&.is-processing {
+		background: lighten( $alert-green, 20% );
+		color: darken( $alert-green, 30% );
+
+		span + span {
+			border-color: $alert-green;
+		}
+	}
+
 	&.is-failed {
 		background: lighten( $alert-red, 20% );
 		color: darken( $alert-red, 30% );

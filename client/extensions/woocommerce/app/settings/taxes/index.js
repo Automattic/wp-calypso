@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -22,15 +25,10 @@ import {
 	getShippingIsTaxFree,
 } from 'woocommerce/state/sites/settings/tax/selectors';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import {
-	updateTaxesEnabledSetting,
-} from 'woocommerce/state/sites/settings/general/actions';
+import { updateTaxesEnabledSetting } from 'woocommerce/state/sites/settings/general/actions';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import {
-	fetchTaxSettings,
-	updateTaxSettings,
-} from 'woocommerce/state/sites/settings/tax/actions';
+import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
@@ -66,13 +64,13 @@ class SettingsTaxes extends Component {
 		if ( site && site.ID ) {
 			this.props.fetchTaxSettings( site.ID );
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		if ( ! this.state.userBeganEditing ) {
 			const { site } = this.props;
-			const newSiteId = newProps.site && newProps.site.ID || null;
-			const oldSiteId = site && site.ID || null;
+			const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+			const oldSiteId = ( site && site.ID ) || null;
 			if ( oldSiteId !== newSiteId ) {
 				this.props.fetchTaxSettings( newSiteId );
 			}
@@ -83,21 +81,21 @@ class SettingsTaxes extends Component {
 				taxesEnabled: newProps.taxesEnabled,
 			} );
 		}
-	}
+	};
 
 	onEnabledChange = () => {
 		this.setState( { taxesEnabled: ! this.state.taxesEnabled, userBeganEditing: true } );
-	}
+	};
 
-	onCheckboxChange = ( event ) => {
+	onCheckboxChange = event => {
 		const option = event.target.name;
 		const value = event.target.checked;
 		this.setState( { [ option ]: value, userBeganEditing: true } );
-	}
+	};
 
 	pageHasChanges = () => {
 		return this.state.userBeganEditing;
-	}
+	};
 
 	onSave = ( event, onSuccessExtra ) => {
 		const { site, translate } = this.props;
@@ -110,20 +108,22 @@ class SettingsTaxes extends Component {
 			if ( onSuccessExtra ) {
 				onSuccessExtra();
 			}
-			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000, displayOnNextPage: true } );
+			return successNotice( translate( 'Settings updated successfully.' ), {
+				duration: 4000,
+				displayOnNextPage: true,
+			} );
 		};
 
 		const onFailure = () => {
 			this.setState( { isSaving: false } );
-			return errorNotice( translate( 'There was a problem saving your changes. Please try again.' ) );
+			return errorNotice(
+				translate( 'There was a problem saving your changes. Please try again.' )
+			);
 		};
 
 		// TODO - chain these
 
-		this.props.updateTaxesEnabledSetting(
-			site.ID,
-			this.state.taxesEnabled,
-		);
+		this.props.updateTaxesEnabledSetting( site.ID, this.state.taxesEnabled );
 
 		this.props.updateTaxSettings(
 			site.ID,
@@ -134,7 +134,7 @@ class SettingsTaxes extends Component {
 		);
 	};
 
-	onAddressChange = ( address ) => {
+	onAddressChange = address => {
 		const { site } = this.props;
 		this.props.fetchTaxRates( site.ID, address, true );
 	};
@@ -148,8 +148,8 @@ class SettingsTaxes extends Component {
 		}
 
 		const breadcrumbs = [
-			( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
-			( <span>{ translate( 'Taxes' ) }</span> ),
+			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
+			<span>{ translate( 'Taxes' ) }</span>,
 		];
 
 		return (
@@ -161,8 +161,15 @@ class SettingsTaxes extends Component {
 				<div className="taxes__nexus">
 					<ExtendedHeader
 						label={ translate( 'Store Address' ) }
-						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
-					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } showLabel={ false } />
+						description={ translate(
+							'The address of where your business is located for tax purposes.'
+						) }
+					/>
+					<StoreAddress
+						className="taxes__store-address"
+						onSetAddress={ this.onAddressChange }
+						showLabel={ false }
+					/>
 				</div>
 				<TaxesRates
 					taxesEnabled={ this.state.taxesEnabled }
@@ -176,8 +183,7 @@ class SettingsTaxes extends Component {
 				/>
 			</Main>
 		);
-	}
-
+	};
 }
 
 function mapStateToProps( state ) {
@@ -202,7 +208,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchTaxRates,
 			fetchTaxSettings,
 			updateTaxesEnabledSetting,
-			updateTaxSettings
+			updateTaxSettings,
 		},
 		dispatch
 	);

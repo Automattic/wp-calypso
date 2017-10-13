@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
 
 /**
@@ -20,11 +23,13 @@ export default createReducer( null, {
 
 export function productsRequestSuccess( state, action ) {
 	const prevState = state || {};
-	const { page, products } = action;
-	const productIds = products.map( ( p ) => {
+	const { params, products } = action;
+	const page = params.page || null;
+	const productIds = products.map( p => {
 		return p.id;
 	} );
-	return { ...prevState,
+	return {
+		...prevState,
 		currentPage: page,
 		productIds,
 		requestedPage: null,
@@ -33,8 +38,10 @@ export function productsRequestSuccess( state, action ) {
 
 export function productsRequest( state, action ) {
 	const prevState = state || {};
-	const { page } = action;
-	return { ...prevState,
+	const { params } = action;
+	const page = params.page || null;
+	return {
+		...prevState,
 		requestedPage: page,
 	};
 }
@@ -43,7 +50,8 @@ export function productsDeleteSuccess( state, action ) {
 	const prevState = state || {};
 	const prevProductIds = prevState.productIds || [];
 	const newProductIds = prevProductIds.filter( id => id !== action.data.id );
-	return { ...prevState,
+	return {
+		...prevState,
 		productIds: newProductIds,
 	};
 }

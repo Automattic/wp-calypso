@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,

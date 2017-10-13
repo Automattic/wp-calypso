@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -36,7 +40,7 @@ class PostActionsEllipsisMenuView extends Component {
 		previewUrl: '',
 	};
 
-	previewPost = ( event ) => {
+	previewPost = event => {
 		const { isPreviewable, previewUrl } = this.props;
 		mc.bumpStat( 'calypso_cpt_actions', 'view' );
 		if ( ! isPreviewable ) {
@@ -61,10 +65,13 @@ class PostActionsEllipsisMenuView extends Component {
 				onClick={ this.previewPost }
 				icon="visible"
 				target="_blank"
-				rel="noopener noreferrer">
-				{ includes( [ 'publish', 'private' ], status )
-					? translate( 'View', { context: 'verb' } )
-					: translate( 'Preview', { context: 'verb' } ) }
+				rel="noopener noreferrer"
+			>
+				{ includes( [ 'publish', 'private' ], status ) ? (
+					translate( 'View', { context: 'verb' } )
+				) : (
+					translate( 'Preview', { context: 'verb' } )
+				) }
 			</PopoverMenuItem>
 		);
 	}
@@ -80,7 +87,7 @@ export default connect(
 		return {
 			status: post.status,
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID )
+			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }

@@ -1,7 +1,13 @@
-var page = require( 'page' ),
-	config = require( 'config' );
+/**
+ * Internal dependencies
+ *
+ * @format
+ */
 
-module.exports = function redirect( path ) {
+import page from 'page';
+import config from 'config';
+
+export default function redirect( path ) {
 	if ( config( 'env' ) === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}
@@ -11,4 +17,4 @@ module.exports = function redirect( path ) {
 	setTimeout( function() {
 		page.replace( path );
 	}, 0 );
-};
+}

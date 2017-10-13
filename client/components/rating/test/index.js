@@ -1,96 +1,72 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
-import { shallow } from 'enzyme';
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
+import { each } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Rating from 'components/rating';
 
-describe( '<Rating />', function() {
-	describe( 'check props size', function() {
-		it( 'should fill in the parent component if no size', function() {
-			const wrapper = shallow(
-				<Rating />
-			);
+describe( '<Rating />', () => {
+	describe( 'check props size', () => {
+		test( 'should be set to 24px if no size', () => {
+			const wrapper = shallow( <Rating /> );
 
-			const component = wrapper.find( 'div' );
-			expect( component.props().style.width ).to.equal( '100%' );
+			const component = wrapper.find( 'div.rating' );
+			expect( component.props().style.width ).to.equal( '120px' ); // 24 * 5 = 120;
 		} );
 
-		it( 'should use size if passed', function() {
-			const size = 50,
-				wrapper = shallow(
-					<Rating
-						size={ size }
-					/>
-				);
+		test( 'should use size if passed', () => {
+			const size = 48,
+				wrapper = shallow( <Rating size={ size } /> );
 
-			const component = wrapper.find( 'div' );
-			expect( component.props().style.width ).to.equal( ( size * 5 ) + 'px' );
+			const component = wrapper.find( 'div.rating' );
+			expect( component.props().style.width ).to.equal( size * 5 + 'px' );
+		} );
+
+		test( 'should use size in each star', () => {
+			const rating = 30,
+				size = 48,
+				wrapper = shallow( <Rating rating={ rating } size={ size } /> );
+
+			wrapper.find( 'svg' ).forEach( node => {
+				expect( node.props().style.width ).to.equal( size + 'px' );
+			} );
 		} );
 	} );
 
-	describe( 'check props rating', function() {
-		it( 'should render 5 spans without rating', function() {
-			const wrapper = shallow(
-					<Rating />
-				);
+	describe( 'check props rating', () => {
+		test( 'should render full width mask for no rating', () => {
+			const size = 24, // use default size
+				wrapper = shallow( <Rating size={ size } /> );
 
-			const component = wrapper.find( 'span' );
-			expect( component.nodes.length ).to.equal( 5 );
-			expect( component ).to.have.exactly( 5 ).descendants( '.noticon-rating-empty' );
+			const component = wrapper.find( 'div.rating__overlay' );
+			expect( component.props().style.clipPath ).to.equal( 'inset(0 ' + size * 5 + 'px 0 0 )' );
+			expect( component.props().style.clip ).to.equal( 'rect(0, 0px, ' + size + 'px, 0)' );
 		} );
 
-		it( 'should render 1.5 stars with rating 30', function() {
-			const rating = 30,
-				wrapper = shallow(
-					<Rating
-						rating={ rating }
-					/>
+		test( 'should render rating clipping mask properly', () => {
+			each( [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ], function( ratingValue ) {
+				const size = 24; // use default size
+				const wrapper = shallow( <Rating rating={ ratingValue } size={ size } /> );
+
+				const roundRating = Math.round( ratingValue / 10 ) * 10;
+				const ratingWidth = size * 5;
+				const maskPosition = roundRating / 100 * ratingWidth;
+				const clipPathMaskPosition = ratingWidth - roundRating / 100 * ratingWidth;
+				const component = wrapper.find( 'div.rating__overlay' );
+				expect( component.props().style.clipPath ).to.equal(
+					'inset(0 ' + clipPathMaskPosition + 'px 0 0 )'
 				);
-
-			const component = wrapper.find( 'span' );
-			expect( component.nodes.length ).to.equal( 5 );
-			expect( component ).to.have.exactly( 1 ).descendants( '.noticon-rating-full' );
-			expect( component ).to.have.exactly( 1 ).descendants( '.noticon-rating-half' );
-			expect( component ).to.have.exactly( 3 ).descendants( '.noticon-rating-empty' );
-		} );
-
-		it( 'should use size in each star', function() {
-			const rating = 30,
-				size = 10,
-				wrapper = shallow(
-					<Rating
-						rating={ rating }
-						size={ size }
-					/>
+				expect( component.props().style.clip ).to.equal(
+					'rect(0, ' + maskPosition + 'px, ' + size + 'px, 0)'
 				);
-
-			wrapper.find( 'span' ).forEach(
-				( node ) => {
-					expect( node.props().style.fontSize ).to.equal( size + 'px' );
-				}
-			);
-		} );
-
-		it( 'if no size it should inherit', function() {
-			const rating = 30,
-				wrapper = shallow(
-					<Rating
-						rating={ rating
-						}
-					/>
-				);
-
-			wrapper.find( 'span' ).forEach(
-				( node ) => {
-					expect( node.props().style.fontSize ).to.equal( 'inherit' );
-				}
-			);
+			} );
 		} );
 	} );
 } );

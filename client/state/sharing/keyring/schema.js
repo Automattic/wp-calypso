@@ -1,3 +1,4 @@
+/** @format */
 export const itemSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -23,6 +24,6 @@ export const itemSchema = {
 				type: { type: 'string' },
 				user_ID: { type: 'integer' },
 			},
-		}
+		},
 	},
 };

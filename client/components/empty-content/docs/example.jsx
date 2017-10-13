@@ -1,6 +1,9 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ *
+ * @format
+ */
+
 import React from 'react';
 
 /**

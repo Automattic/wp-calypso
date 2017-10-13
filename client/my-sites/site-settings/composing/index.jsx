@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -48,7 +52,7 @@ const Composing = ( {
 				/>
 			</CardComponent>
 
-			{ jetpackSettingsUISupported &&
+			{ jetpackSettingsUISupported && (
 				<AfterTheDeadline
 					fields={ fields }
 					handleToggle={ handleToggle }
@@ -56,8 +60,8 @@ const Composing = ( {
 					isSavingSettings={ isSavingSettings }
 					setFieldValue={ setFieldValue }
 				/>
-			}
-			{ hasDateTimeFormats &&
+			) }
+			{ hasDateTimeFormats && (
 				<DateTimeFormat
 					fields={ fields }
 					handleSelect={ handleSelect }
@@ -65,7 +69,7 @@ const Composing = ( {
 					isSavingSettings={ isSavingSettings }
 					updateFields={ updateFields }
 				/>
-			}
+			) }
 		</div>
 	);
 };
@@ -88,14 +92,12 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteIsJetpack = isJetpackSite( state, siteId );
 
-		return {
-			hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
-			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
-		};
-	}
-)( Composing );
+	return {
+		hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
+		jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
+	};
+} )( Composing );

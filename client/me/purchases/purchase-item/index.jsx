@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -19,14 +23,14 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
-import { isPlan, isDomainProduct, isTheme } from 'lib/products-values';
+import { isDomainProduct, isGoogleApps, isPlan, isTheme } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
 import paths from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
+const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {
@@ -64,7 +68,8 @@ class PurchaseItem extends Component {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow(),
 							},
-							context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+							context:
+								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
 						{ this.trackImpression( 'purchase-expiring' ) }
 					</Notice>
@@ -88,7 +93,8 @@ class PurchaseItem extends Component {
 						args: {
 							timeSinceExpiry: expiredText,
 						},
-						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+						context:
+							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
 					{ this.trackImpression( 'purchase-expired' ) }
 				</Notice>
@@ -123,6 +129,41 @@ class PurchaseItem extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	renderIcon() {
+		const { purchase } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPlan( purchase ) ) {
+			return (
+				<div className="purchase-item__plan-icon">
+					<PlanIcon plan={ purchase.productSlug } />
+				</div>
+			);
+		}
+
+		let icon;
+		if ( isDomainProduct( purchase ) ) {
+			icon = 'domains';
+		} else if ( isTheme( purchase ) ) {
+			icon = 'themes';
+		} else if ( isGoogleApps( purchase ) ) {
+			icon = 'mail';
+		}
+
+		if ( ! icon ) {
+			return null;
+		}
+
+		return (
+			<div className="purchase-item__plan-icon">
+				<Gridicon icon={ icon } size={ 24 } />
+			</div>
+		);
+	}
+
 	render() {
 		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
 		const classes = classNames(
@@ -132,44 +173,17 @@ class PurchaseItem extends Component {
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
 
-		let icon;
-		if ( purchase && isPlan( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
-				</div>
-			);
-		} else if ( purchase && isDomainProduct( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<Gridicon icon="domains" size={ 24 } />
-				</div>
-			);
-		} else if ( purchase && isTheme( purchase ) ) {
-			icon = (
-				<div className="purchase-item__plan-icon">
-					<Gridicon icon="themes" size={ 24 } />
-				</div>
-			);
-		}
-
 		let content;
 		if ( isPlaceholder ) {
 			content = this.placeholder();
 		} else {
 			content = (
 				<span className="purchase-item__wrapper">
-					{ icon }
+					{ this.renderIcon() }
 					<div className="purchase-item__details">
-						<div className="purchase-item__title">
-							{ getName( this.props.purchase ) }
-						</div>
-						<div className="purchase-item__purchase-type">
-							{ purchaseType( this.props.purchase ) }
-						</div>
-						<div className="purchase-item__purchase-date">
-							{ this.renewsOrExpiresOn() }
-						</div>
+						<div className="purchase-item__title">{ getName( purchase ) }</div>
+						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
+						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
 					</div>
 				</span>
 			);
@@ -195,10 +209,10 @@ class PurchaseItem extends Component {
 }
 
 PurchaseItem.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	isDisconnectedSite: React.PropTypes.bool,
-	purchase: React.PropTypes.object,
-	slug: React.PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	isDisconnectedSite: PropTypes.bool,
+	purchase: PropTypes.object,
+	slug: PropTypes.string,
 };
 
 export default localize( PurchaseItem );

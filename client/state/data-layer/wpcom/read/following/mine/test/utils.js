@@ -1,5 +1,5 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -31,20 +31,20 @@ const successfulApiResponse = freeze( {
 } );
 
 describe( '#isValidApiResponse', () => {
-	it( 'should return false for invalid responses', () => {
+	test( 'should return false for invalid responses', () => {
 		expect( isValidApiResponse( {} ) ).not.ok;
 		expect( isValidApiResponse( { notExpected: 'true' } ) ).not.ok;
 		expect( isValidApiResponse( { subscriptions: 'notAnArray' } ) ).not.ok;
 	} );
 
-	it( 'should return true for happy cases', () => {
+	test( 'should return true for happy cases', () => {
 		expect( isValidApiResponse( { subscriptions: [] } ) ).ok;
 		expect( isValidApiResponse( successfulApiResponse ) ).ok;
 	} );
 } );
 
 describe( '#subscriptionsFromApi', () => {
-	it( 'should return subscriptions from the apiResponse', () => {
+	test( 'should return subscriptions from the apiResponse', () => {
 		const transformedSubs = [
 			{
 				ID: 12345,
@@ -64,7 +64,7 @@ describe( '#subscriptionsFromApi', () => {
 		expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
 	} );
 
-	it( 'should return an empty list from invalid apiResponse', () => {
+	test( 'should return an empty list from invalid apiResponse', () => {
 		expect( subscriptionsFromApi( { notExpected: 'true' } ) ).eql( [] );
 		expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).eql( [] );
 	} );

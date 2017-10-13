@@ -1,78 +1,82 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import sinon from 'sinon';
+import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-
-import { handleResetPasswordRequest } from '../';
-import useNock from 'test/helpers/use-nock';
-
+import { resetPassword, handleError, handleSuccess } from '../';
 import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
-describe( 'handleResetPasswordRequest()', () => {
-	const apiBaseUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/wpcom/v2/account-recovery/reset';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-	const params = {
-		userData: {
-			user: 'foo',
-		},
-		method: 'primary_email',
-		key: 'a-super-secret-key',
-		password: 'my-new-password-which-I-cannot-remember',
-	};
+describe( 'account-recovery/reset', () => {
+	describe( '#handleResetPasswordRequest', () => {
+		test( 'should dispatch HTTP request to account recovery reset endpoint', () => {
+			const dispatchSpy = spy();
+			const dummyAction = {
+				userData: {
+					user: 'foo',
+				},
+				method: 'primary_email',
+				key: 'a-super-secret-key',
+				password: 'my-new-password-which-I-cannot-remember',
+			};
 
-	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( 200, { success: true } )
-		) );
+			resetPassword( { dispatch: dispatchSpy }, dummyAction );
 
-		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWith( {
-					type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
-				} ) );
-
-				done();
-			} );
-
-			handleResetPasswordRequest( { dispatch }, params );
+			const { userData, method, key, password } = dummyAction;
+			expect( dispatchSpy ).to.have.been.calledOnce;
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/reset',
+						body: {
+							...userData,
+							method,
+							key,
+							password,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 
-	describe( 'failure', () => {
-		const errorResponse = {
-			status: 400,
-			message: 'Something wrong!',
-		};
+	describe( '#requestResetPasswordError', () => {
+		test( 'should dispatch failure action with error message', () => {
+			const dispatchSpy = spy();
+			const message = 'This is an error message.';
+			const rawError = Error( message );
 
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
+			handleError( { dispatch: dispatchSpy }, null, rawError );
 
-		it( 'should dispatch ERROR action on failure', ( done ) => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-					error: errorResponse,
-				} ) )
-
-				done();
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
+				error: message,
 			} );
+		} );
+	} );
 
-			handleResetPasswordRequest( { dispatch }, params );
+	describe( '#requestResetPasswordSuccess', () => {
+		test( 'should dispatch success action', () => {
+			const dispatchSpy = spy();
+
+			handleSuccess( { dispatch: dispatchSpy } );
+
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
+			} );
 		} );
 	} );
 } );
-

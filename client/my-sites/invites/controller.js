@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import ReactDom from 'react-dom';
 import React from 'react';
 import store from 'store';
@@ -78,17 +81,14 @@ export function acceptInvite( context ) {
 	}
 
 	renderWithReduxStore(
-		React.createElement(
-			InviteAccept,
-			{
-				siteId: context.params.site_id,
-				inviteKey: context.params.invitation_key,
-				activationKey: context.params.activation_key,
-				authKey: context.params.auth_key,
-				locale: getLocale( context.params ),
-				path: context.path
-			}
-		),
+		React.createElement( InviteAccept, {
+			siteId: context.params.site_id,
+			inviteKey: context.params.invitation_key,
+			activationKey: context.params.activation_key,
+			authKey: context.params.auth_key,
+			locale: getLocale( context.params ),
+			path: context.path,
+		} ),
 		document.getElementById( 'primary' ),
 		context.store
 	);

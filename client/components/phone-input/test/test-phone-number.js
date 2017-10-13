@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,7 @@ import { groupBy, pickBy, forIn } from 'lodash';
 /**
  * Internal dependencies
  */
+import { countries } from '../data';
 import {
 	findCountryFromNumber,
 	formatNumber,
@@ -15,79 +18,101 @@ import {
 	toIcannFormat,
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
-	toE164
+	toE164,
 } from '../phone-number';
-
-import { countries } from '../data';
 
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
 		const countriesShareDialCode = pickBy(
 			groupBy( Object.values( countries ), 'dialCode' ),
-			val => val.length > 1 );
+			val => val.length > 1
+		);
 
 		describe( 'countries sharing dial code should have priority data', () => {
 			forIn( countriesShareDialCode, ( countriesWithDialCode, dialCode ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( country =>
-						it( country.isoCode, () =>
-							ok( country.priority, `"${ country.isoCode }" has no priority` ) ) );
+						test( country.isoCode, () =>
+							ok( country.priority, `"${ country.isoCode }" has no priority` )
+						)
+					);
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'findPattern( number, patterns )', () => {
-		it( 'should be able to find a pattern', () => {
+		test( 'should be able to find a pattern', () => {
 			ok( findPattern( '4259999999', countries.US.patterns ) );
 		} );
 	} );
 
 	describe( 'makeTemplate( pattern )', () => {
-		it( 'should be able to make templates', () => {
-			equal( makeTemplate( '4259999999', countries.US.patterns ), '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
-			equal( makeTemplate( '4259999', countries.US.patterns ), '...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
+		test( 'should be able to make templates', () => {
+			equal(
+				makeTemplate( '4259999999', countries.US.patterns ),
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER )
+			);
+			equal(
+				makeTemplate( '4259999', countries.US.patterns ),
+				'...-....'.replace( /\./g, DIGIT_PLACEHOLDER )
+			);
 		} );
 	} );
 
 	describe( 'applyTemplate( number, template, positionTracking )', () => {
-		it( 'should be able to apply basic templates', () => {
-			equal( applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) ), '(425) 999-9999' );
+		test( 'should be able to apply basic templates', () => {
+			equal(
+				applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) ),
+				'(425) 999-9999'
+			);
 		} );
 
-		it( 'should be able to partially apply templates', () => {
+		test( 'should be able to partially apply templates', () => {
 			equal( applyTemplate( '4259', '...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) ), '425-9' );
 		} );
 
-		it( 'should be able to track the position of the cursor', () => {
+		test( 'should be able to track the position of the cursor', () => {
 			// 425|9999999 -> pos: 3
 			const positionTracking = { pos: 3 };
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 6 );
 
 			positionTracking.pos = 1;
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 2 );
 
 			positionTracking.pos = 4;
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 7 );
 		} );
 	} );
 
 	describe( 'findCountryFromNumber( number )', () => {
-		it( 'should guess a dial code with explicit dial code', () => {
+		test( 'should guess a dial code with explicit dial code', () => {
 			equal( findCountryFromNumber( '+90' ).isoCode, 'TR' );
 			equal( findCountryFromNumber( '0090' ).isoCode, 'TR' );
 		} );
 
-		it( 'should guess a shared dial code with area code', () => {
+		test( 'should guess a shared dial code with area code', () => {
 			equal( findCountryFromNumber( '+1604' ).isoCode, 'CA', 'Failed to figure out Canadian' );
 			equal( findCountryFromNumber( '+1425' ).isoCode, 'US', 'Failed to figure out U.S.' );
 			equal( findCountryFromNumber( '+14' ).isoCode, 'US', 'Failed to figure out U.S.' );
 		} );
 
-		it( 'should guess a country as soon as possible', () => {
+		test( 'should guess a country as soon as possible', () => {
 			equal( findCountryFromNumber( '+1' ).isoCode, 'US' );
 			equal( findCountryFromNumber( '+14' ).isoCode, 'US' );
 			equal( findCountryFromNumber( '+142' ).isoCode, 'US' );
@@ -99,7 +124,7 @@ describe( 'metadata:', () => {
 			equal( findCountryFromNumber( '+1604' ).isoCode, 'CA' );
 		} );
 
-		it( 'should guess countries with full numbers', () => {
+		test( 'should guess countries with full numbers', () => {
 			equal( findCountryFromNumber( '+14255222222' ).isoCode, 'US' );
 			equal( findCountryFromNumber( '+16043412222' ).isoCode, 'CA' );
 			equal( findCountryFromNumber( '+905333239999' ).isoCode, 'TR' );
@@ -110,12 +135,12 @@ describe( 'metadata:', () => {
 
 	describe( 'formatNumber', () => {
 		describe( 'In international format', () => {
-			it( 'should format full length numbers', () => {
+			test( 'should format full length numbers', () => {
 				equal( formatNumber( '+14252222222', countries.US ), '+1 425-222-2222' );
 				equal( formatNumber( '+905325555555', countries.TR ), '+90 532 555 55 55' );
 			} );
 
-			it( 'should format as you type', () => {
+			test( 'should format as you type', () => {
 				equal( formatNumber( '+1', countries.US ), '+1' );
 				equal( formatNumber( '+14', countries.US ), '+14' );
 				equal( formatNumber( '+142', countries.US ), '+1 42' );
@@ -155,13 +180,13 @@ describe( 'metadata:', () => {
 		} );
 
 		describe( 'In national format', () => {
-			it( 'should format full length numbers', () => {
+			test( 'should format full length numbers', () => {
 				equal( formatNumber( '4252222222', countries.US ), '(425) 222-2222' );
 				equal( formatNumber( '05325555555', countries.TR ), '0532 555 55 55' );
 				equal( formatNumber( '0215369851', countries.AU ), '02 1536 9851' );
 			} );
 
-			it( 'should format as you type', () => {
+			test( 'should format as you type', () => {
 				equal( formatNumber( '4', countries.US ), '4' );
 				equal( formatNumber( '42', countries.US ), '42' );
 				equal( formatNumber( '425', countries.US ), '425' );
@@ -185,7 +210,7 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '6046559999', countries.US ), '(604) 655-9999' );
 			} );
 
-			it( 'should not add a prefix when the country does not have national prefix', () => {
+			test( 'should not add a prefix when the country does not have national prefix', () => {
 				equal( formatNumber( '9876543210', countries.IS ), '9876543210' );
 				equal( formatNumber( '+96', countries.IQ ), '+96' );
 				equal( formatNumber( '+126', countries.AG ), '+126' );
@@ -193,10 +218,10 @@ describe( 'metadata:', () => {
 		} );
 
 		describe( 'NANPA', () => {
-			it( 'should format full length numbers', () => {
+			test( 'should format full length numbers', () => {
 				equal( formatNumber( '14252222222', countries.US ), '1 425-222-2222' );
 			} );
-			it( 'should format as you type', () => {
+			test( 'should format as you type', () => {
 				equal( formatNumber( '14', countries.US ), '14' );
 				equal( formatNumber( '142', countries.US ), '1 42' );
 				equal( formatNumber( '1425', countries.US ), '1 425' );
@@ -211,7 +236,7 @@ describe( 'metadata:', () => {
 		} );
 
 		describe( 'sanitization', () => {
-			it( 'should strip non-digits on <3 length strings', () => {
+			test( 'should strip non-digits on <3 length strings', () => {
 				equal( formatNumber( '1aaaa', countries.US ), '1' );
 				equal( formatNumber( '1a', countries.US ), '1' );
 			} );
@@ -220,11 +245,11 @@ describe( 'metadata:', () => {
 
 	describe( 'toE164', () => {
 		describe( 'from national formats', () => {
-			it( 'should be able to handle NANPA', () => {
+			test( 'should be able to handle NANPA', () => {
 				equal( toE164( '14256559999', countries.US ), '+14256559999' );
 				equal( toE164( '4256559999', countries.US ), '+14256559999' );
 			} );
-			it( 'should be able to handle Europe', () => {
+			test( 'should be able to handle Europe', () => {
 				equal( toE164( '05325556677', countries.TR ), '+905325556677' );
 				equal( toE164( '01234567890', countries.GB ), '+441234567890' );
 				equal( toE164( '012345678', countries.IT ), '+39012345678' );
@@ -232,20 +257,18 @@ describe( 'metadata:', () => {
 		} );
 	} );
 
-
 	describe( 'toIcannFormat', () => {
-		it( 'should be able to handle NANPA', () => {
+		test( 'should be able to handle NANPA', () => {
 			equal( toIcannFormat( '14256559999', countries.US ), '+1.4256559999' );
 			equal( toIcannFormat( '4256559999', countries.US ), '+1.4256559999' );
 		} );
-		it( 'should be able to handle Europe', () => {
+		test( 'should be able to handle Europe', () => {
 			equal( toIcannFormat( '05325556677', countries.TR ), '+90.5325556677' );
 			equal( toIcannFormat( '01234567890', countries.GB ), '+44.1234567890' );
 			equal( toIcannFormat( '012345678', countries.IT ), '+39.012345678' );
 		} );
-		it( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
+		test( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
 			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
 		} );
 	} );
 } );
-

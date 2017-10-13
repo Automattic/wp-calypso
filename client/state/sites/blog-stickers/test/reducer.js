@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,84 +18,84 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'should return an empty list by default', () => {
+		test( 'should return an empty list by default', () => {
 			expect( items( undefined, {} ) ).to.deep.equal( {} );
 		} );
 
-		it( 'should append a single sticker when received', () => {
+		test( 'should append a single sticker when received', () => {
 			expect(
 				items( deepFreeze( {} ), {
 					type: SITES_BLOG_STICKER_LIST_RECEIVE,
 					payload: { blogId: 123, stickers: [ 'dont-recommend' ] },
-				} ),
+				} )
 			).to.deep.equal( { 123: [ 'dont-recommend' ] } );
 		} );
 
-		it( 'should append multiple stickers when received', () => {
+		test( 'should append multiple stickers when received', () => {
 			expect(
 				items( deepFreeze( { 123: [ 'dont-recommend' ] } ), {
 					type: SITES_BLOG_STICKER_LIST_RECEIVE,
 					payload: { blogId: 456, stickers: [ 'dont-recommend', 'broken-in-reader' ] },
-				} ),
+				} )
 			).to.deep.equal( {
 				123: [ 'dont-recommend' ],
 				456: [ 'dont-recommend', 'broken-in-reader' ],
 			} );
 		} );
 
-		it( 'should replace existing stickers for a blog when received', () => {
+		test( 'should replace existing stickers for a blog when received', () => {
 			expect(
 				items( deepFreeze( { 123: [ 'dont-recommend' ] } ), {
 					type: SITES_BLOG_STICKER_LIST_RECEIVE,
 					payload: { blogId: 123, stickers: [ 'okapi-friendly', 'broken-in-reader' ] },
-				} ),
+				} )
 			).to.deep.equal( { 123: [ 'okapi-friendly', 'broken-in-reader' ] } );
 		} );
 
-		it( 'should add a new sticker to a blog we do not yet have stickers for', () => {
+		test( 'should add a new sticker to a blog we do not yet have stickers for', () => {
 			expect(
 				items( deepFreeze( { 456: [ 'dont-recommend' ] } ), {
 					type: SITES_BLOG_STICKER_ADD,
 					payload: { blogId: 123, stickerName: 'okapi-friendly' },
-				} ),
+				} )
 			).to.deep.equal( { 123: [ 'okapi-friendly' ], 456: [ 'dont-recommend' ] } );
 		} );
 
-		it( 'should add a new sticker to a blog we already have stickers for', () => {
+		test( 'should add a new sticker to a blog we already have stickers for', () => {
 			expect(
 				items( deepFreeze( { 123: [ 'dont-recommend' ] } ), {
 					type: SITES_BLOG_STICKER_ADD,
 					payload: { blogId: 123, stickerName: 'okapi-friendly' },
-				} )[ 123 ],
+				} )[ 123 ]
 			).to.have.members( [ 'okapi-friendly', 'dont-recommend' ] );
 		} );
 
-		it( 'should not add a duplicate sticker', () => {
+		test( 'should not add a duplicate sticker', () => {
 			const initialState = deepFreeze( { 123: [ 'dont-recommend' ] } );
 			expect(
 				items( initialState, {
 					type: SITES_BLOG_STICKER_ADD,
 					payload: { blogId: 123, stickerName: 'dont-recommend' },
-				} ),
+				} )
 			).to.deep.equal( initialState );
 		} );
 
-		it( 'should remove a sticker', () => {
+		test( 'should remove a sticker', () => {
 			expect(
 				items( deepFreeze( { 123: [ 'dont-recommend' ] } ), {
 					type: SITES_BLOG_STICKER_REMOVE,
 					payload: { blogId: 123, stickerName: 'dont-recommend' },
-				} ),
+				} )
 			).to.deep.equal( { 123: [] } );
 		} );
 
-		it( 'should not remove any stickers if the blog does not have that sticker', () => {
+		test( 'should not remove any stickers if the blog does not have that sticker', () => {
 			const initialState = deepFreeze( { 123: [ 'okapi-friendly' ] } );
 			expect(
 				items( initialState, {
 					type: SITES_BLOG_STICKER_REMOVE,
 					payload: { blogId: 123, stickerName: 'dont-recommend' },
-				} ),
+				} )
 			).to.equal( initialState );
 		} );
 	} );

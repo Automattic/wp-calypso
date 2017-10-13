@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import activity from './activity';
 import automatedTransfer from './automated-transfer';
@@ -21,5 +24,5 @@ export default mergeHandlers(
 	media,
 	plugins,
 	posts,
-	simplePayments,
+	simplePayments
 );

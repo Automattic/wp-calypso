@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
@@ -34,14 +38,13 @@ const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
 let InviteAccept = React.createClass( {
-
 	getInitialState() {
 		return {
 			invite: false,
 			error: false,
 			user: userModule.get(),
-			matchEmailError: false
-		}
+			matchEmailError: false,
+		};
 	},
 
 	componentWillMount() {
@@ -71,7 +74,7 @@ let InviteAccept = React.createClass( {
 			// add subscription-related keys to the invite
 			Object.assign( invite, {
 				activationKey: this.props.activationKey,
-				authKey: this.props.authKey
+				authKey: this.props.authKey,
 			} );
 		}
 		this.setState( { invite, error } );
@@ -91,7 +94,9 @@ let InviteAccept = React.createClass( {
 	},
 
 	decline() {
-		this.props.infoNotice( this.translate( 'You declined to join.' ), { displayOnNextPage: true } );
+		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
+			displayOnNextPage: true,
+		} );
 		page( '/' );
 	},
 
@@ -116,9 +121,7 @@ let InviteAccept = React.createClass( {
 			return;
 		}
 
-		return (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		);
+		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
 	},
 
 	renderForm() {
@@ -134,12 +137,10 @@ let InviteAccept = React.createClass( {
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: this.isMatchEmailError()
+			forceMatchingEmail: this.isMatchEmailError(),
 		};
 
-		return user
-			? <LoggedIn { ... props } user={ this.state.user } />
-			: <LoggedOut { ... props } />;
+		return user ? <LoggedIn { ...props } user={ this.state.user } /> : <LoggedOut { ...props } />;
 	},
 
 	renderError() {
@@ -147,15 +148,13 @@ let InviteAccept = React.createClass( {
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
 		let props = {
-			title: this.translate(
-				'Oops, that invite is not valid',
-				{ context: 'Title that is display to users when attempting to accept an invalid invite.' }
-			),
-			line: this.translate(
-				"We weren't able to verify that invitation.",
-				{ context: 'Message that is displayed to users when an invitation is invalid.' }
-			),
-			illustration: '/calypso/images/illustrations/whoops.svg'
+			title: this.props.translate( 'Oops, that invite is not valid', {
+				context: 'Title that is display to users when attempting to accept an invalid invite.',
+			} ),
+			line: this.props.translate( "We weren't able to verify that invitation.", {
+				context: 'Message that is displayed to users when an invitation is invalid.',
+			} ),
+			illustration: '/calypso/images/illustrations/whoops.svg',
 		};
 
 		if ( error.error && error.message ) {
@@ -164,29 +163,29 @@ let InviteAccept = React.createClass( {
 				case 'already_subscribed':
 					Object.assign( props, {
 						title: error.message, // "You are already a (follower|member) of this site"
-						line: this.translate( 'Would you like to accept the invite with a different account?' ),
-						action: this.translate( 'Switch Accounts' ),
+						line: this.props.translate(
+							'Would you like to accept the invite with a different account?'
+						),
+						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
-						action: this.translate( 'Switch Accounts' ),
+						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				default:
 					Object.assign( props, {
-						line: error.message
+						line: error.message,
 					} );
 					break;
 			}
 		}
 
-		return (
-			<EmptyContent { ...props } />
-		);
+		return <EmptyContent { ...props } />;
 	},
 
 	renderNoticeAction() {
@@ -197,10 +196,10 @@ let InviteAccept = React.createClass( {
 		}
 
 		let props,
-			actionText = this.translate( 'Switch Accounts' );
+			actionText = this.props.translate( 'Switch Accounts' );
 
 		if ( ! user ) {
-			actionText = this.translate( 'Sign In' );
+			actionText = this.props.translate( 'Sign In' );
 		}
 
 		if ( invite.knownUser ) {
@@ -209,38 +208,39 @@ let InviteAccept = React.createClass( {
 			props = { onClick: this.signUpLink };
 		}
 
-		return (
-			<NoticeAction { ... props } >
-				{ actionText }
-			</NoticeAction>
-		);
+		return <NoticeAction { ...props }>{ actionText }</NoticeAction>;
 	},
 
 	render() {
-		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
+		const formClasses = classNames( 'invite-accept__form', {
+				'is-error': !! this.isInvalidInvite(),
+			} ),
 			{ invite, user } = this.state;
 
 		return (
 			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
-					{ this.isMatchEmailError() && user &&
+					{ this.isMatchEmailError() &&
+					user && (
 						<Notice
-							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
+								args: { email: invite.sentTo },
+							} ) }
 							status="is-error"
-							showDismiss={ false } >
+							showDismiss={ false }
+						>
 							{ this.renderNoticeAction() }
 						</Notice>
-					}
-					{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+					) }
+					{ ! this.isInvalidInvite() && <InviteHeader { ...invite } /> }
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
-)( InviteAccept );
+export default connect( null, dispatch =>
+	bindActionCreators( { successNotice, infoNotice }, dispatch )
+)( localize( InviteAccept ) );

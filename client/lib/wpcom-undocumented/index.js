@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import wpcomFactory from 'wpcom';
 import inherits from 'inherits';
 import { assign } from 'lodash';
@@ -37,11 +40,7 @@ function WPCOMUndocumented( token, reqHandler ) {
 		if ( this.isTokenLoaded() ) {
 			// authToken is used in wpcom-xhr-request,
 			// which is used for the signup flow in the REST Proxy
-			params = assign(
-				{},
-				params,
-				{ authToken: this._token, token: this._token }
-			);
+			params = assign( {}, params, { authToken: this._token, token: this._token } );
 		}
 
 		return reqHandler( params, fn );

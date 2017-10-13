@@ -1,92 +1,80 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import sinon from 'sinon';
+import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-
-import { handleValidateRequest } from '../';
-import useNock from 'test/helpers/use-nock';
-
 import {
-	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
-	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
-} from 'state/action-types';
+	handleValidateRequest,
+	handleValidateRequestSuccess,
+	handleValidateRequestFailure,
+} from '../';
+import {
+	validateRequestSuccess,
+	validateRequestError,
+	setValidationKey,
+} from 'state/account-recovery/reset/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handleValidateRequest()', () => {
-	const apiBaseUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/wpcom/v2/account-recovery/validate';
-
-	const userData = { user: 'foo' };
-	const method = 'primary_email';
-	const key = 'a-super-secret-key';
-
 	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.persist()
-				.post( endpoint )
-				.reply( 200, { success: true } )
-		) );
+		test( 'should dispatch SUCCESS action on success', () => {
+			const dispatch = spy();
+			const action = {
+				type: 'DUMMY_ACTION',
+				userData: { user: 'foo' },
+				method: 'primary_email',
+				key: 'a-super-secret-key',
+			};
+			const { userData, method, key } = action;
 
-		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-					} ) );
+			handleValidateRequest( { dispatch }, action );
 
-					done();
-				}
-			} );
-
-			handleValidateRequest( { dispatch }, { userData, method, key } );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/validate',
+						body: {
+							...userData,
+							method,
+							key,
+						},
+					},
+					action
+				)
+			);
 		} );
 
-		it( 'should dispatch SET_VALIDATION_KEY action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
-				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
-						key: key,
-					} ) );
+		test( 'should dispatch SET_VALIDATION_KEY action on success', () => {
+			const dispatch = spy();
+			const action = {
+				type: 'DUMMY_ACTION',
+				userData: { user: 'foo' },
+				method: 'primary_email',
+				key: 'a-super-secret-key',
+			};
 
-					done();
-				}
-			} );
+			handleValidateRequestSuccess( { dispatch }, action );
 
-			handleValidateRequest( { dispatch }, { userData, method, key } );
+			expect( dispatch ).to.have.been.calledWith( validateRequestSuccess() );
+			expect( dispatch ).to.have.been.calledWith( setValidationKey( action.key ) );
 		} );
-	} );
 
-	describe( 'failure', () => {
-		const errorResponse = {
-			status: 400,
-			message: 'Something wrong!',
-		};
+		test( 'should dispatch ERROR action on failure', () => {
+			const dispatch = spy();
+			const error = 'something bad happened';
+			handleValidateRequestFailure( { dispatch }, {}, error );
 
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
-
-		it( 'should dispatch ERROR action on failure', ( done ) => {
-			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
-					error: errorResponse,
-				} ) )
-
-				done();
-			} );
-
-			handleValidateRequest( { dispatch }, { userData, method, key } );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( validateRequestError( error ) );
 		} );
 	} );
 } );
-

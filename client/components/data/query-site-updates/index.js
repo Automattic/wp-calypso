@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,11 +18,11 @@ class QuerySiteUpdates extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		requestingSiteUpdates: PropTypes.bool,
-		requestUpdates: PropTypes.func
+		requestUpdates: PropTypes.func,
 	};
 
 	static defaultProps = {
-		requestUpdates: () => {}
+		requestUpdates: () => {},
 	};
 
 	constructor( props ) {
@@ -35,7 +38,7 @@ class QuerySiteUpdates extends Component {
 		if (
 			nextProps.requestingSiteUpdates ||
 			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId )
+			this.props.siteId === nextProps.siteId
 		) {
 			return;
 		}
@@ -57,7 +60,7 @@ class QuerySiteUpdates extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingSiteUpdates: isRequestingSiteUpdates( state, ownProps.siteId )
+			requestingSiteUpdates: isRequestingSiteUpdates( state, ownProps.siteId ),
 		};
 	},
 	{ requestUpdates }

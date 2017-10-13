@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,13 +11,13 @@ import { assert } from 'chai';
 import { isAccountRecoveryResetOptionsReady } from '../';
 
 describe( 'isAccountRecoveryResetOptionsReady()', () => {
-	it( 'should return false if items array is empty', () => {
+	test( 'should return false if items array is empty', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
 					options: {
 						items: [],
-					}
+					},
 				},
 			},
 		};
@@ -23,7 +25,7 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 		assert.isFalse( isAccountRecoveryResetOptionsReady( state ) );
 	} );
 
-	it( 'should return false if there is an existing error', () => {
+	test( 'should return false if there is an existing error', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
@@ -32,13 +34,13 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 							{
 								email: 'primary@example.com',
 								sms: '1234567',
-							}
+							},
 						],
 						error: {
 							status: 404,
 							message: 'Something wrong!',
 						},
-					}
+					},
 				},
 			},
 		};
@@ -46,7 +48,7 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 		assert.isFalse( isAccountRecoveryResetOptionsReady( state ) );
 	} );
 
-	it( 'should return true if items array is populated and there is no error', () => {
+	test( 'should return true if items array is populated and there is no error', () => {
 		const state = {
 			accountRecovery: {
 				reset: {
@@ -55,9 +57,9 @@ describe( 'isAccountRecoveryResetOptionsReady()', () => {
 							{
 								email: 'primary@example.com',
 								sms: '1234567',
-							}
+							},
 						],
-					}
+					},
 				},
 			},
 		};

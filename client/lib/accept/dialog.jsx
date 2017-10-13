@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -17,7 +21,7 @@ const AcceptDialog = React.createClass( {
 		onClose: PropTypes.func.isRequired,
 		confirmButtonText: PropTypes.node,
 		cancelButtonText: PropTypes.node,
-		options: PropTypes.object
+		options: PropTypes.object,
 	},
 
 	getInitialState: function() {
@@ -39,14 +43,18 @@ const AcceptDialog = React.createClass( {
 		return [
 			{
 				action: 'cancel',
-				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.props.translate( 'Cancel' ),
+				label: this.props.cancelButtonText
+					? this.props.cancelButtonText
+					: this.props.translate( 'Cancel' ),
 			},
 			{
 				action: 'accept',
-				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
+				label: this.props.confirmButtonText
+					? this.props.confirmButtonText
+					: this.props.translate( 'OK' ),
 				isPrimary: true,
-				additionalClassNames
-			}
+				additionalClassNames,
+			},
 		];
 	},
 
@@ -60,11 +68,12 @@ const AcceptDialog = React.createClass( {
 				buttons={ this.getActionButtons() }
 				onClose={ this.onClose }
 				className="accept-dialog"
-				isVisible>
+				isVisible
+			>
 				{ this.props.message }
 			</Dialog>
 		);
-	}
+	},
 } );
 
 export default localize( AcceptDialog );

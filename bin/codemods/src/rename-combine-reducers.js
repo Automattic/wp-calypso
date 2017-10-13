@@ -19,6 +19,8 @@
  } );
  */
 
+const config = require( './config' );
+
 module.exports = function ( file, api ) {
 	// alias the jscodeshift API
 	const j = api.jscodeshift;
@@ -96,5 +98,5 @@ module.exports = function ( file, api ) {
 	combineReducerIdentifier.forEach( renameIdentifier( 'combineReducers' ) );
 
 	// print
-	return root.toSource( { quote: 'single' } );
+	return root.toSource( config.recastOptions );
 };

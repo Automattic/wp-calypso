@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,25 +8,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	variationUpdated,
-} from '../reducer';
-
-import {
-	productVariationUpdated,
-} from '../actions';
+import { productVariationUpdated } from '../actions';
+import { variationUpdated } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#variationUpdated', () => {
-		it( 'should store a new variation via update', () => {
+		test( 'should store a new variation via update', () => {
 			const variation1 = {
 				id: 202,
 				attributes: [
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 			const action = productVariationUpdated( 123, 66, variation1 );
 			const state = variationUpdated( undefined, action );
@@ -32,15 +29,15 @@ describe( 'reducer', () => {
 			expect( state[ 66 ] ).to.eql( [ variation1 ] );
 		} );
 
-		it( 'should overwrite an existing variation via update', () => {
+		test( 'should overwrite an existing variation via update', () => {
 			const variation1Before = {
 				id: 202,
 				attributes: [
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 
 			const variation1After = {
@@ -49,8 +46,8 @@ describe( 'reducer', () => {
 					{
 						id: 9,
 						option: 'Red',
-					}
-				]
+					},
+				],
 			};
 			const actionBefore = productVariationUpdated( 123, 66, variation1Before );
 			const actionAfter = productVariationUpdated( 123, 66, variation1After );
@@ -62,15 +59,15 @@ describe( 'reducer', () => {
 			expect( state2[ 66 ] ).to.eql( [ variation1After ] );
 		} );
 
-		it( 'should remove an existing variation if passed "undefined" for a variation', () => {
+		test( 'should remove an existing variation if passed "undefined" for a variation', () => {
 			const variation1Before = {
 				id: 202,
 				attributes: [
 					{
 						id: 9,
 						option: 'Black',
-					}
-				]
+					},
+				],
 			};
 
 			const actionBefore = productVariationUpdated( 123, 66, variation1Before );
@@ -84,4 +81,3 @@ describe( 'reducer', () => {
 		} );
 	} );
 } );
-

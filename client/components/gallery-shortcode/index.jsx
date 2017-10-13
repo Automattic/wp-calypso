@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { assign, omit, pick } from 'lodash';
@@ -31,7 +35,7 @@ export default React.createClass( {
 		orderBy: PropTypes.string,
 		link: PropTypes.string,
 		size: PropTypes.string,
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -46,35 +50,36 @@ export default React.createClass( {
 		const filtered = assign( {}, rendered, {
 			scripts: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js'
-				}
+					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
+				},
 			},
 			styles: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css'
+					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css',
 				},
 				'gallery-styles': {
-					src: 'https://widgets.wp.com/gallery-preview/style.css'
-				}
-			}
+					src: 'https://widgets.wp.com/gallery-preview/style.css',
+				},
+			},
 		} );
 
 		if ( 'slideshow' === this.getAttributes().type ) {
 			assign( filtered, {
 				scripts: {
 					'jquery-cycle': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js'
+						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
 					},
 					'jetpack-slideshow': {
 						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
-						extra: 'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };'
-					}
+						extra:
+							'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };',
+					},
 				},
 				styles: {
 					'jetpack-slideshow': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css'
-					}
-				}
+						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
+					},
+				},
 			} );
 		}
 
@@ -114,9 +119,10 @@ export default React.createClass( {
 				{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
 				siteId={ this.props.siteId }
 				filterRenderResult={ this.filterRenderResult }
-				className={ classes }>
+				className={ classes }
+			>
 				{ shortcode }
 			</Shortcode>
 		);
-	}
+	},
 } );

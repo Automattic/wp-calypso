@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -26,7 +31,7 @@ const ContactFormDialog = React.createClass( {
 		contactForm: PropTypes.shape( {
 			to: PropTypes.string,
 			subject: PropTypes.string,
-			fields: PropTypes.array.isRequired
+			fields: PropTypes.array.isRequired,
 		} ).isRequired,
 		onInsert: PropTypes.func.isRequired,
 		onChangeTabs: PropTypes.func.isRequired,
@@ -34,26 +39,30 @@ const ContactFormDialog = React.createClass( {
 		onFieldAdd: PropTypes.func.isRequired,
 		onFieldRemove: PropTypes.func.isRequired,
 		onFieldUpdate: PropTypes.func.isRequired,
-		onSettingsUpdate: PropTypes.func.isRequired
+		onSettingsUpdate: PropTypes.func.isRequired,
 	},
 
 	getActionButtons() {
-		const isValidForm = validateFormFields( this.props.contactForm.fields ) && validateSettingsToEmail( this.props.contactForm.to );
+		const isValidForm =
+			validateFormFields( this.props.contactForm.fields ) &&
+			validateSettingsToEmail( this.props.contactForm.to );
 		const actionButtons = [
 			<FormButton
 				key="save"
 				data-e2e-button="save"
 				disabled={ ! isValidForm }
-				onClick={ this.props.onInsert } >
-				{ this.props.isEdit ? this.translate( 'Update' ) : this.translate( 'Insert' ) }
+				onClick={ this.props.onInsert }
+			>
+				{ this.props.isEdit ? this.props.translate( 'Update' ) : this.props.translate( 'Insert' ) }
 			</FormButton>,
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
 				data-e2e-button="cancel"
-				onClick={ this.props.onClose } >
-				{ this.translate( 'Cancel' ) }
-			</FormButton>
+				onClick={ this.props.onClose }
+			>
+				{ this.props.translate( 'Cancel' ) }
+			</FormButton>,
 		];
 
 		if ( this.props.activeTab === 'fields' ) {
@@ -63,11 +72,12 @@ const ContactFormDialog = React.createClass( {
 						key="add"
 						isPrimary={ false }
 						data-e2e-button="add"
-						onClick={ this.props.onFieldAdd } >
-						{ this.translate( 'Add New Field' ) }
+						onClick={ this.props.onFieldAdd }
+					>
+						{ this.props.translate( 'Add New Field' ) }
 					</FormButton>
 				</div>,
-				...actionButtons
+				...actionButtons,
 			];
 		}
 
@@ -86,30 +96,34 @@ const ContactFormDialog = React.createClass( {
 			onFieldAdd,
 			onFieldUpdate,
 			onFieldRemove,
-			onSettingsUpdate
+			onSettingsUpdate,
 		} = this.props;
 
-		const content = activeTab === 'fields'
-			? <FieldList { ...{ fields, onFieldAdd, onFieldRemove, onFieldUpdate } } />
-			: <FormSettings { ...{ to, subject, email, title, postType, onUpdate: onSettingsUpdate } } />;
+		const content =
+			activeTab === 'fields' ? (
+				<FieldList { ...{ fields, onFieldAdd, onFieldRemove, onFieldUpdate } } />
+			) : (
+				<FormSettings { ...{ to, subject, email, title, postType, onUpdate: onSettingsUpdate } } />
+			);
 
 		return (
 			<Dialog
 				isVisible={ showDialog }
 				onClose={ onClose }
 				buttons={ this.getActionButtons() }
-				additionalClassNames="editor-contact-form-modal" >
+				additionalClassNames="editor-contact-form-modal"
+			>
 				<Navigation { ...{ activeTab, onChangeTabs, fieldCount: fields.length } } />
 				{ content }
 			</Dialog>
 		);
-	}
+	},
 } );
 
 export default connect( state => {
 	return {
 		post: PostEditStore.get() || {},
 		currentUser: getCurrentUser( state ),
-		contactForm: state.ui.editor.contactForm
+		contactForm: state.ui.editor.contactForm,
 	};
-} )( ContactFormDialog );
+} )( localize( ContactFormDialog ) );

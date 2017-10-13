@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,37 +9,34 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import reducer, { items, requesting } from '../reducer';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
-import reducer, { items, requesting } from '../reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'requesting',
-		] );
+	test( 'should export expected reducer keys', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store connection status when received', () => {
+		test( 'should store connection status when received', () => {
 			const state = items( undefined, {
 				type: SITE_CONNECTION_STATUS_RECEIVE,
 				siteId: 2916284,
@@ -49,9 +48,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate connection statuses when receiving for new sites', () => {
+		test( 'should accumulate connection statuses when receiving for new sites', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = items( original, {
 				type: SITE_CONNECTION_STATUS_RECEIVE,
@@ -65,7 +64,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should overwrite connection status when receiving for an existing site', () => {
+		test( 'should overwrite connection status when receiving for an existing site', () => {
 			const original = deepFreeze( {
 				2916284: true,
 				77203074: false,
@@ -82,18 +81,18 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
@@ -102,82 +101,82 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track connection status request when started', () => {
+		test( 'should track connection status request when started', () => {
 			const state = requesting( undefined, {
 				type: SITE_CONNECTION_STATUS_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
-		it( 'should accumulate connection status requests when started', () => {
+		test( 'should accumulate connection status requests when started', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_CONNECTION_STATUS_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track connection status request when succeeded', () => {
+		test( 'should track connection status request when succeeded', () => {
 			const original = deepFreeze( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
-		it( 'should track connection status request when failed', () => {
+		test( 'should track connection status request when failed', () => {
 			const original = deepFreeze( {
 				2916284: false,
-				77203074: true
+				77203074: true,
 			} );
 			const state = requesting( original, {
 				type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: false,
-				77203074: false
+				77203074: false,
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, { type: DESERIALIZE } );
 

@@ -1,7 +1,11 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 /**
@@ -14,11 +18,10 @@ import NavItem from 'components/section-nav/item';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
-
 	static propTypes = {
 		section: PropTypes.string,
 		// Connected props
-		site: PropTypes.object
+		site: PropTypes.object,
 	};
 
 	getStrings() {
@@ -38,7 +41,7 @@ export class SiteSettingsNavigation extends Component {
 		const selectedText = strings[ section ];
 
 		if ( ! site ) {
-			return ( <SectionNav /> );
+			return <SectionNav />;
 		}
 
 		if ( section === 'guidedTransfer' ) {
@@ -47,26 +50,26 @@ export class SiteSettingsNavigation extends Component {
 		}
 
 		return (
-			<SectionNav selectedText={ selectedText } >
+			<SectionNav selectedText={ selectedText }>
 				<NavTabs>
-					<NavItem
-						path={ `/settings/general/${ site.slug }` }
-						selected={ section === 'general' } >
-							{ strings.general }
+					<NavItem path={ `/settings/general/${ site.slug }` } selected={ section === 'general' }>
+						{ strings.general }
 					</NavItem>
 
 					<NavItem
 						path={ `/settings/writing/${ site.slug }` }
 						preloadSectionName="settings-writing"
-						selected={ section === 'writing' } >
-							{ strings.writing }
+						selected={ section === 'writing' }
+					>
+						{ strings.writing }
 					</NavItem>
 
 					<NavItem
 						path={ `/settings/discussion/${ site.slug }` }
 						preloadSectionName="settings-discussion"
-						selected={ section === 'discussion' } >
-							{ strings.discussion }
+						selected={ section === 'discussion' }
+					>
+						{ strings.discussion }
 					</NavItem>
 
 					<NavItem
@@ -77,22 +80,22 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.traffic }
 					</NavItem>
 
-					{
-						config.isEnabled( 'manage/security' ) && site.jetpack &&
-							<NavItem path={ `/settings/security/${ site.slug }` }
+					{ config.isEnabled( 'manage/security' ) &&
+					site.jetpack && (
+						<NavItem
+							path={ `/settings/security/${ site.slug }` }
 							preloadSectionName="settings-security"
-							selected={ section === 'security' } >
-								{ strings.security }
+							selected={ section === 'security' }
+						>
+							{ strings.security }
 						</NavItem>
-					}
+					) }
 				</NavTabs>
 			</SectionNav>
 		);
 	}
 }
 
-export default connect(
-	state => ( {
-		site: getSelectedSite( state )
-	} )
-)( localize( SiteSettingsNavigation ) );
+export default connect( state => ( {
+	site: getSelectedSite( state ),
+} ) )( localize( SiteSettingsNavigation ) );

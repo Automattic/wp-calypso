@@ -1,45 +1,80 @@
+/** @format */
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import { noop, snakeCase } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
-import { getOrderTotalTax } from 'woocommerce/lib/order-taxes';
+import { getCurrencyDefaults } from 'lib/format-currency';
+import PriceInput from 'woocommerce/components/price-input';
 
 class OrderTotalRow extends Component {
 	static propTypes = {
-		order: PropTypes.shape( {
-			currency: PropTypes.string.isRequired,
-			total: PropTypes.string.isRequired,
-		} ),
+		currency: PropTypes.string.isRequired,
+		isEditable: PropTypes.bool,
+		label: PropTypes.string.isRequired,
+		name: PropTypes.string,
+		numberFormat: PropTypes.func,
+		onChange: PropTypes.func,
 		showTax: PropTypes.bool,
-	}
+		taxValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		translate: PropTypes.func.isRequired,
+		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+	};
 
-	render() {
-		const { order, showTax, translate } = this.props;
-		if ( ! order ) {
-			return null;
+	static defaultProps = {
+		currency: 'USD',
+		isEditable: false,
+		onChange: noop,
+	};
+
+	renderEditable = () => {
+		const { className, currency, label, value, onChange, numberFormat } = this.props;
+		let name = this.props.name;
+		if ( ! name ) {
+			name = snakeCase( label );
 		}
+		const { decimal, grouping, precision } = getCurrencyDefaults( currency );
+		const total = numberFormat( Math.abs( value ), {
+			decimals: precision,
+			decPoint: decimal,
+			thousandsSep: grouping,
+		} );
 
-		const taxValue = getOrderTotalTax( order );
-		const tax = (
-			<div className="order-details__totals-tax">
-				{ formatCurrency( taxValue, order.currency ) }
+		const classes = classnames( className, 'order-details__total order-details__total-edit' );
+		return (
+			<div className={ classes }>
+				<div className="order-details__totals-label">{ label }</div>
+				<div className="order-details__totals-value">
+					<PriceInput name={ name } onChange={ onChange } currency={ currency } value={ total } />
+				</div>
 			</div>
 		);
+	};
+
+	render() {
+		if ( this.props.isEditable ) {
+			return this.renderEditable();
+		}
+		const { className, currency, label, value, showTax, taxValue } = this.props;
+
+		const tax = (
+			<div className="order-details__totals-tax">{ formatCurrency( taxValue, currency ) }</div>
+		);
+		const classes = classnames( className, 'order-details__total' );
 
 		return (
-			<div className="order-details__total">
-				<div className="order-details__totals-label">{ translate( 'Total' ) }</div>
+			<div className={ classes }>
+				<div className="order-details__totals-label">{ label }</div>
 				{ showTax && tax }
-				<div className="order-details__totals-value">
-					{ formatCurrency( order.total, order.currency ) }
-				</div>
+				<div className="order-details__totals-value">{ formatCurrency( value, currency ) }</div>
 			</div>
 		);
 	}

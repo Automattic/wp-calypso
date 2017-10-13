@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -10,7 +14,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
-export default React.createClass( {
+export default localize(React.createClass({
 	displayName: 'DropZones',
 
 	mixins: [ PureRenderMixin ],
@@ -21,36 +25,40 @@ export default React.createClass( {
 
 	onFilesDrop( files ) {
 		this.setState( {
-			lastDroppedFiles: files
+			lastDroppedFiles: files,
 		} );
 	},
 
 	renderContainerContent() {
 		const style = {
 			lineHeight: '100px',
-			textAlign: 'center'
+			textAlign: 'center',
 		};
 		let fileNames;
 
 		if ( this.state.lastDroppedFiles ) {
-			fileNames = this.state.lastDroppedFiles.map( function( file ) {
-				return file.name;
-			} ).join( ', ' );
+			fileNames = this.state.lastDroppedFiles
+				.map( function( file ) {
+					return file.name;
+				} )
+				.join( ', ' );
 		}
 
 		return (
-			<Card style={ style }>
-				{ fileNames
-					? this.translate( 'You dropped: %s', { args: fileNames } )
-					: this.translate( 'This is a droppable area' ) }
+            <Card style={ style }>
+				{ fileNames ? (
+					this.props.translate( 'You dropped: %s', { args: fileNames } )
+				) : (
+					this.props.translate( 'This is a droppable area' )
+				) }
 			</Card>
-		);
+        );
 	},
 
 	renderContainer() {
 		const style = {
 			position: 'relative',
-			height: '150px'
+			height: '150px',
 		};
 
 		return (
@@ -63,5 +71,5 @@ export default React.createClass( {
 
 	render() {
 		return this.renderContainer();
-	}
-} );
+	},
+}));

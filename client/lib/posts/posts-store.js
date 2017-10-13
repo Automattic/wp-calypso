@@ -1,14 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isEqual } from 'lodash';
-const debug = require( 'debug' )( 'calypso:posts' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:posts' );
 
 /**
  * Internal dependencies
  */
-var utils = require( './utils' ),
-	Dispatcher = require( 'dispatcher' );
+import utils from './utils';
+import Dispatcher from 'dispatcher';
 
 var _posts = {},
 	PostsStore;
@@ -50,7 +54,7 @@ function setAll( posts, responseSource ) {
 PostsStore = {
 	get: function( globalID ) {
 		return _posts[ globalID ];
-	}
+	},
 };
 
 PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -73,4 +77,4 @@ PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = PostsStore;
+export default PostsStore;
