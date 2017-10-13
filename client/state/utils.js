@@ -129,8 +129,11 @@ export const keyedReducer = ( keyName, reducer, globalActions ) => {
 		}
 
 		// don't allow coercion of key name: null => 0
-		const itemKey = get( action, keyName );
-		if ( ! itemKey ) {
+		const itemKey = get( action, keyName, undefined );
+
+		// if the action doesn't contain a valid reference
+		// then return without any updates
+		if ( null === itemKey || undefined === itemKey ) {
 			return state;
 		}
 
