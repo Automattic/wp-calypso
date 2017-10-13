@@ -6,6 +6,7 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -23,6 +24,7 @@ const JetpackConnectHappychatButton = ( {
 	isChatActive,
 	isChatAvailable,
 	isLoggedIn,
+	label,
 	translate,
 } ) => {
 	if ( ! isEnabled( 'jetpack/happychat' ) || ! isLoggedIn ) {
@@ -44,9 +46,13 @@ const JetpackConnectHappychatButton = ( {
 			borderless={ false }
 		>
 			<HappychatConnection />
-			<Gridicon icon="chat" /> { translate( 'Get help connecting your site' ) }
+			<Gridicon icon="chat" /> { label || translate( 'Get help connecting your site' ) }
 		</HappychatButton>
 	);
+};
+
+JetpackConnectHappychatButton.propTypes = {
+	label: PropTypes.string,
 };
 
 export default connect( state => ( {

@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { localize } from 'i18n-calypso';
 
-const JetpackConnectHelpButton = ( { translate, onClick } ) => {
+const JetpackConnectHelpButton = ( { label, translate, onClick } ) => {
 	return (
 		<LoggedOutFormLinkItem
 			className="jetpack-connect__help-button"
@@ -21,13 +21,14 @@ const JetpackConnectHelpButton = ( { translate, onClick } ) => {
 			rel="noopener noreferrer"
 			onClick={ onClick }
 		>
-			<Gridicon icon="help-outline" /> { translate( 'Get help connecting your site' ) }
+			<Gridicon icon="help-outline" /> { label || translate( 'Get help connecting your site' ) }
 		</LoggedOutFormLinkItem>
 	);
 };
 
 JetpackConnectHelpButton.propTypes = {
 	onClick: PropTypes.func,
+	label: PropTypes.string,
 };
 
 export default localize( JetpackConnectHelpButton );
