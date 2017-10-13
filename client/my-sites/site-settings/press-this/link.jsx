@@ -67,24 +67,6 @@ class PressThisLink extends React.Component {
 	};
 
 	/**
-	 * Legacy press-this pointing to wp-admin. This will be
-	 * deprecated and removed soon.
-	 * @return {string} javascript pseudo-protocol link
-	 */
-	pressThisWPAdmin() {
-		const site = this.props.site;
-		const adminURL = site && site.options && site.options.admin_url;
-		return [
-			/* eslint-disable max-len */
-			"javascript:var d=document,w=window,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),f='", // eslint-disable-line no-script-url
-			adminURL,
-			"press-this.php',l=d.location,e=encodeURIComponent,u=f+'?u='+e(l.href)+'&t='+e(d.title)+'&s='+e(s)+'&v=4';a=function(){",
-			"if(!w.open(u,'t','toolbar=0,resizable=1,scrollbars=1,status=1,width=720,height=570'))l.href=u;};if (/Firefox/.test(navigator.userAgent)) setTimeout(a, 0); else a();void(0)",
-			/* eslint-enable max-len */
-		].join( '' );
-	}
-
-	/**
 	 * generate press-this link pointing to current environment
 	 * @return {string} javascript pseudo-protocol link
 	 */
