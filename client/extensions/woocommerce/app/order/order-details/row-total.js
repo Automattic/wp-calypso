@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import PriceInput from 'woocommerce/components/price-input';
 
 class OrderTotalRow extends Component {
@@ -40,13 +41,14 @@ class OrderTotalRow extends Component {
 		if ( ! name ) {
 			name = snakeCase( label );
 		}
+		const total = getCurrencyFormatDecimal( value );
 
 		const classes = classnames( className, 'order-details__total order-details__total-edit' );
 		return (
 			<div className={ classes }>
 				<div className="order-details__totals-label">{ label }</div>
 				<div className="order-details__totals-value">
-					<PriceInput name={ name } onChange={ onChange } currency={ currency } value={ value } />
+					<PriceInput name={ name } onChange={ onChange } currency={ currency } value={ total } />
 				</div>
 			</div>
 		);

@@ -23,6 +23,7 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderFeeTax,
 	getOrderLineItemTax,
@@ -147,7 +148,8 @@ class RefundDialog extends Component {
 		const { order, paymentMethod, siteId, translate } = this.props;
 		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
-		if ( this.state.refundTotal > maxRefund ) {
+		const thisRefund = getCurrencyFormatDecimal( this.state.refundTotal );
+		if ( thisRefund > maxRefund ) {
 			this.setState( {
 				errorMessage: translate(
 					'Refund must be less than or equal to the order balance, %(total)s',
@@ -159,13 +161,13 @@ class RefundDialog extends Component {
 				),
 			} );
 			return;
-		} else if ( this.state.refundTotal <= 0 ) {
+		} else if ( thisRefund <= 0 ) {
 			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
 			return;
 		}
 		this.toggleDialog();
 		const refundObj = {
-			amount: this.state.refundTotal.toPrecision(),
+			amount: thisRefund.toPrecision(),
 			reason: this.state.refundNote,
 			api_refund: paymentMethod && -1 !== paymentMethod.method_supports.indexOf( 'refunds' ),
 		};

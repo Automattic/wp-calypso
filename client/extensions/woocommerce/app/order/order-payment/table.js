@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
@@ -145,10 +146,14 @@ class OrderRefundTable extends Component {
 
 	renderOrderFees = ( item, i ) => {
 		const { order } = this.props;
-		const value = this.state.fees[ i ];
+		const value = getCurrencyFormatDecimal( this.state.fees[ i ] );
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
-				<TableItem isRowHeader colSpan="3" className="order-payment__item-product order-details__item-product">
+				<TableItem
+					isRowHeader
+					colSpan="3"
+					className="order-payment__item-product order-details__item-product"
+				>
 					{ item.name }
 				</TableItem>
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
