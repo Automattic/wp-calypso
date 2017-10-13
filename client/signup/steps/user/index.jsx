@@ -240,9 +240,8 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-
 		let socialService, socialServiceResponse;
-		const hashObject = this.props.initialContext && this.props.initialContext.query.hash;
+		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
 			socialService = getSocialServiceFromClientId( clientId );

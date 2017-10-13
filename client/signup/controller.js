@@ -61,7 +61,9 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
-		initialContext = Object.assign( {}, context );
+		if ( ! initialContext ) {
+			initialContext = Object.assign( {}, context );
+		}
 
 		next();
 	},
