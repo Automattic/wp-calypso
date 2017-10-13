@@ -17,6 +17,42 @@ var getCallee = require( '../util/get-callee' ),
 // Rule Definition
 //------------------------------------------------------------------------------
 
+function containsThreeDots( string ) {
+	return -1 !== string.indexOf( '...' );
+}
+
+function replaceThreeDotsWithEllipsis( string ) {
+	return string.replace( /\.\.\./g, '…' );
+}
+
+function makeFixerFunction( arg ) {
+	return fixer => {
+		switch ( arg.type ) {
+			case 'TemplateLiteral':
+				return arg.quasis.reduce( ( fixes, quasi ) => {
+					if (
+						'TemplateElement' === quasi.type &&
+						containsThreeDots( quasi.value.raw )
+					) {
+						fixes.push(
+							fixer.replaceTextRange(
+								[ quasi.start, quasi.end ],
+								replaceThreeDotsWithEllipsis( quasi.value.raw )
+							)
+						);
+					}
+					return fixes;
+				}, [] );
+
+			case 'Literal':
+				return [ fixer.replaceText( arg, replaceThreeDotsWithEllipsis( arg.raw ) ) ];
+
+			case 'BinaryExpression':
+				return [ ...makeFixerFunction( arg.left )( fixer ), ...makeFixerFunction( arg.right )( fixer ) ];
+		}
+	};
+}
+
 var rule = module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
@@ -26,13 +62,11 @@ var rule = module.exports = function( context ) {
 
 			node.arguments.forEach( function( arg ) {
 				var argumentString = getTextContentFromNode( arg );
-				if ( argumentString && -1 !== argumentString.indexOf( '...' ) ) {
+				if ( argumentString && containsThreeDots( argumentString ) ) {
 					context.report( {
 						node: arg,
 						message: rule.ERROR_MESSAGE,
-						fix: function( fixer ) {
-							return fixer.replaceText( arg, argumentString.replace( /\.\.\./g, '…' ) );
-						},
+						fix: makeFixerFunction( arg ),
 					} );
 				}
 			} );
