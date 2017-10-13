@@ -87,7 +87,7 @@ export const message = ( state = '', action ) => {
  * @return {Object}        Updated state
  *
  */
-const timeline_event = ( state = {}, action ) => {
+const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
@@ -135,7 +135,7 @@ export const timeline = ( state = [], action ) => {
 			if ( get( action, 'event.meta.forOperator', false ) ) {
 				return state;
 			}
-			const event = timeline_event( {}, action );
+			const event = timelineEvent( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
 		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
