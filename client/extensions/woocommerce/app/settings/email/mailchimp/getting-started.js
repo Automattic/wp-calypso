@@ -23,7 +23,7 @@ const GettingStarted = localize( ( { translate, onClick } ) => {
 			<Card className="mailchimp__getting-started-title">
 				<div className="mailchimp__getting-started-title-text">MailChimp</div>
 				<div className="mailchimp__getting-started-subtitle-text">
-					{ translate( 'Allow your customers subscribe to your MailChimp email list' ) }
+					{ translate( 'Allow your customers to subscribe to your MailChimp email list.' ) }
 				</div>
 			</Card>
 			<Card className="mailchimp__getting-started-content">
