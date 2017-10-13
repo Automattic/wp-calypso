@@ -6,11 +6,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -27,6 +29,8 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
+		isEditing: PropTypes.bool,
+		onChange: PropTypes.func,
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
 			discount_total: PropTypes.string.isRequired,
@@ -40,6 +44,11 @@ class OrderDetailsTable extends Component {
 			slug: PropTypes.string.isRequired,
 		} ),
 		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		isEditing: false,
+		onChange: noop,
 	};
 
 	shouldShowTax = () => {
@@ -74,24 +83,55 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItems = item => {
-		const { order, site } = this.props;
+	onChange = event => {
+		this.props.onChange( event );
+	};
+
+	renderQuantity = item => {
+		const { isEditing } = this.props;
+		if ( isEditing ) {
+			return (
+				<FormTextInput
+					type="number"
+					name={ `quantity-${ item.id }` }
+					onChange={ this.onChange }
+					value={ item.quantity }
+				/>
+			);
+		}
+		return item.quantity;
+	};
+
+	renderName = item => {
+		const { isEditing, site } = this.props;
+		if ( isEditing ) {
+			return <span className="order-details__item-link">{ item.name }</span>;
+		}
+		return (
+			<a
+				href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }
+				className="order-details__item-link"
+			>
+				{ item.name }
+			</a>
+		);
+	};
+
+	renderOrderItems = ( item, i ) => {
+		const { order } = this.props;
 		const tax = getOrderLineItemTax( order, item.id );
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
-					<a
-						href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }
-						className="order-details__item-link"
-					>
-						{ item.name }
-					</a>
+					{ this.renderName( item ) }
 					<span className="order-details__item-sku">{ item.sku }</span>
 				</TableItem>
 				<TableItem className="order-details__item-cost">
 					{ formatCurrency( item.price, order.currency ) }
 				</TableItem>
-				<TableItem className="order-details__item-quantity">{ item.quantity }</TableItem>
+				<TableItem className="order-details__item-quantity">
+					{ this.renderQuantity( item, i ) }
+				</TableItem>
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>

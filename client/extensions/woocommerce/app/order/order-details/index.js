@@ -56,7 +56,7 @@ class OrderDetails extends Component {
 	renderDetails = () => {
 		const { isEditing, order, site } = this.props;
 		if ( isEditing ) {
-			return <OrderDetailsTable order={ order } site={ site } />;
+			return <OrderDetailsTable order={ order } site={ site } isEditing />;
 		}
 
 		return [
