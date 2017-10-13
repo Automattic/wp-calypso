@@ -46,6 +46,7 @@ import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-hap
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import buildConnection from 'lib/happychat/connection';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:actions' );
 
@@ -308,7 +309,7 @@ export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
 	if ( connection == null ) {
-		connection = require( './common' ).connection;
+		connection = buildConnection();
 	}
 
 	return store => next => action => {
