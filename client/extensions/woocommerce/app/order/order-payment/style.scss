@@ -23,6 +23,19 @@
 	.order-payment__item-total .form-text-input-with-affixes__prefix {
 		max-width: 14px;
 	}
+
+	.form-text-input-with-affixes,
+	.form-text-input-with-suffixes {
+		max-width: 130px;
+
+		input {
+			text-align: left;
+		}
+	}
+
+	.order-payment__amount-label {
+		margin-right: 16px;
+	}
 }
 
 .order-payment__container {
@@ -59,11 +72,7 @@
 		padding-bottom: 16px;
 		margin-bottom: 16px;
 		border-bottom: 1px solid lighten( $gray, 30% );
-
-		.order-payment__amount-label,
-		.order-payment__amount-value {
-			flex: 1;
-		}
+		justify-content: flex-end;
 	}
 
 	.order-payment__method h3 {
