@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyDefaults } from 'lib/format-currency';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
@@ -145,20 +144,13 @@ class OrderRefundTable extends Component {
 	};
 
 	renderOrderFees = ( item, i ) => {
-		const { numberFormat, order } = this.props;
-		const { decimal, grouping, precision } = getCurrencyDefaults( order.currency );
-		const value = numberFormat( Math.abs( this.state.fees[ i ] ), {
-			decimals: precision,
-			decPoint: decimal,
-			thousandsSep: grouping,
-		} );
+		const { order } = this.props;
+		const value = this.state.fees[ i ];
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
-				<TableItem isRowHeader className="order-payment__item-product order-details__item-product">
+				<TableItem isRowHeader colSpan="3" className="order-payment__item-product order-details__item-product">
 					{ item.name }
 				</TableItem>
-				<TableItem className="order-payment__item-cost order-details__item-cost" />
-				<TableItem className="order-payment__item-quantity order-details__item-quantity" />
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
 					<PriceInput
 						name={ `fee_line-${ i }` }
