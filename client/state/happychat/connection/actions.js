@@ -14,7 +14,6 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
@@ -37,8 +36,6 @@ export const setHappychatAvailable = isAvailable => ( {
 } );
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
-
-export const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
 
 /**
  * Returns an action object that sends information about the customer to happychat
