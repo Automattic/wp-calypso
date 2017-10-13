@@ -77,6 +77,9 @@ class FormCountrySelectFromApi extends Component {
 					this.renderDisabled()
 				) : (
 					<FormSelect id="state" name="state" onChange={ onChange } value={ value }>
+						<option key="default" value="" disabled>
+							{ translate( 'Select State' ) }
+						</option>
 						{ locationsList.map( this.renderOption ) }
 					</FormSelect>
 				) }
