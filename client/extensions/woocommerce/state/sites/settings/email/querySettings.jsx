@@ -30,7 +30,7 @@ class QueryMailChimpSettings extends Component {
 	}
 
 	request( props ) {
-		if ( ! props.isRequesting ) {
+		if ( ! props.isRequesting && props.siteId ) {
 			props.requestSettings( props.siteId );
 		}
 	}

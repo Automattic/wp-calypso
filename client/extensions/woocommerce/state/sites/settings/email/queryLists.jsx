@@ -13,7 +13,7 @@ import { isRequestingLists } from './selectors';
 
 class QueryMailChimpLists extends Component {
 	static propTypes = {
-		siteId:	PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestLists: PropTypes.func.isRequired,
 	}
@@ -30,7 +30,7 @@ class QueryMailChimpLists extends Component {
 	}
 
 	request( props ) {
-		if ( ! props.isRequesting ) {
+		if ( ! props.isRequesting && props.siteId ) {
 			props.requestLists( props.siteId );
 		}
 	}

@@ -50,7 +50,7 @@ class QueryMailChimpSyncStatus extends Component {
 	}
 
 	triggerRequest = ( props ) => {
-		if ( ! props.isRequesting ) {
+		if ( ! props.isRequesting && ! props.isRequestingResync && props.siteId ) {
 			props.request( props.siteId );
 		}
 	}
