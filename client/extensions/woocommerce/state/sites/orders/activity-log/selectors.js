@@ -97,7 +97,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 							type: EVENT_TYPES.LABEL_REFUND_COMPLETED,
 							timestamp: label.refund.refund_date,
 							labelIndex,
-							amount: parseFloat( label.refund.amount ),
+							amount: parseFloat( label.refund.amount ) || label.refundable_amount,
 							currency: label.currency,
 						} );
 						break;

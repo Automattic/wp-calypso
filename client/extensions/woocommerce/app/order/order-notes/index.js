@@ -12,25 +12,31 @@ import { sortBy, keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import { areOrderNotesLoaded, getOrderNotes } from 'woocommerce/state/sites/orders/notes/selectors';
+import {
+	isActivityLogLoaded,
+	getActivityLogEvents,
+} from 'woocommerce/state/sites/orders/activity-log/selectors';
 import Card from 'components/card';
 import CreateOrderNote from './new-note';
 import OrderNote from './note';
 import OrderNotesByDay from './day';
 import SectionHeader from 'components/section-header';
 
-function getSortedNotes( notes ) {
-	const notesByDay = {};
-	notes.forEach( note => {
-		const day = moment( note.date_created_gmt ).format( 'YYYYMMDD' );
-		if ( notesByDay[ day ] ) {
-			notesByDay[ day ].push( note );
-			notesByDay[ day ] = sortBy( notesByDay[ day ], 'date_created' ).reverse();
+function getSortedEvents( events ) {
+	const eventsByDay = {};
+	events.forEach( event => {
+		const day = moment( event.timestamp ).format( 'YYYYMMDD' );
+		if ( eventsByDay[ day ] ) {
+			eventsByDay[ day ].push( event );
 		} else {
-			notesByDay[ day ] = [ note ];
+			eventsByDay[ day ] = [ event ];
 		}
 	} );
-	return notesByDay;
+
+	keys( eventsByDay ).forEach( day => {
+		eventsByDay[ day ] = sortBy( eventsByDay[ day ], [ 'timestamp', 'key' ] ).reverse();
+	} );
+	return eventsByDay;
 }
 
 class OrderNotes extends Component {
@@ -51,23 +57,30 @@ class OrderNotes extends Component {
 	};
 
 	renderNotes = () => {
-		const { days, notesByDay, translate } = this.props;
+		const { days, eventsByDay, translate } = this.props;
 		if ( ! days.length ) {
 			return <p>{ translate( 'No activity yet' ) }</p>;
 		}
 
 		return days.map( ( day, index ) => {
-			const notes = notesByDay[ day ];
+			const events = eventsByDay[ day ];
 			return (
 				<OrderNotesByDay
 					key={ day }
-					count={ notes.length }
+					count={ events.length }
 					date={ day }
 					index={ index }
 					isOpen={ index === this.state.openIndex }
 					onClick={ this.toggleOpenDay }
 				>
-					{ notes.map( note => <OrderNote { ...note } key={ note.id } /> ) }
+					{ events.map( event => (
+						<OrderNote
+							key={ `${ event.type }-${ event.key }` }
+							event={ event }
+							orderId={ this.props.orderId }
+							siteId={ this.props.siteId }
+						/>
+					) ) }
 				</OrderNotesByDay>
 			);
 		} );
@@ -77,22 +90,22 @@ class OrderNotes extends Component {
 		const noop = () => {};
 		return (
 			<OrderNotesByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
-				<OrderNote note="" />
+				<OrderNote />
 			</OrderNotesByDay>
 		);
 	};
 
 	render() {
-		const { areNotesLoaded, orderId, siteId, translate } = this.props;
+		const { isLoaded, orderId, siteId, translate } = this.props;
 		const classes = classNames( {
-			'is-placeholder': ! areNotesLoaded,
+			'is-placeholder': ! isLoaded,
 		} );
 
 		return (
 			<div className="order-notes">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
 				<Card className={ classes }>
-					{ areNotesLoaded ? this.renderNotes() : this.renderPlaceholder() }
+					{ isLoaded ? this.renderNotes() : this.renderPlaceholder() }
 					<CreateOrderNote orderId={ orderId } siteId={ siteId } />
 				</Card>
 			</div>
@@ -102,19 +115,18 @@ class OrderNotes extends Component {
 
 export default connect( ( state, props ) => {
 	const orderId = props.orderId || false;
-	const siteId = props.siteId || false;
-	const areNotesLoaded = areOrderNotesLoaded( state, orderId );
-	const notes = getOrderNotes( state, orderId );
-	const notesByDay = notes.length ? getSortedNotes( notes ) : false;
-	const days = notesByDay ? keys( notesByDay ) : [];
+
+	const isLoaded = isActivityLogLoaded( state, orderId );
+	const events = getActivityLogEvents( state, orderId );
+
+	const eventsByDay = events.length ? getSortedEvents( events ) : {};
+	const days = eventsByDay ? keys( eventsByDay ) : [];
 	days.sort().reverse();
 
 	return {
-		areNotesLoaded,
+		isLoaded,
 		days,
-		notes,
-		notesByDay,
-		orderId,
-		siteId,
+		events,
+		eventsByDay,
 	};
 } )( localize( OrderNotes ) );
