@@ -62,16 +62,6 @@ export const getGroups = ( state, siteId ) => {
 	return groups;
 };
 
-/**
- * Returns the geo location of the current user, based happychat session initiation (on ip)
- *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current user geo location
- */
-export function getGeoLocation( state ) {
-	return state.happychat.geoLocation || null;
-}
-
 export const getHappychatChatStatus = createSelector( state => state.happychat.chatStatus );
 
 export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
