@@ -1,8 +1,4 @@
-/**
- *  format
- *
- * @format
- */
+/** @format */
 
 export default {
 	type: 'object',

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Get the high watermark for a Reader stream
  *
