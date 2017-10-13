@@ -100,12 +100,14 @@ describe( 'getPostRevisionChanges', () => {
 		const diff = getPostRevisionChanges( outOfOrderState, 12345678, 10, 11 );
 		expect( diff.content ).to.eql( [
 			{
+				count: 3,
 				added: true,
 				value: 'Hello World',
 			},
 		] );
 		expect( diff.title ).to.eql( [
 			{
+				count: 3,
 				added: true,
 				value: 'Test Title',
 			},
@@ -116,12 +118,14 @@ describe( 'getPostRevisionChanges', () => {
 		const diff = getPostRevisionChanges( outOfOrderState, 12345678, 10, 16 );
 		expect( diff.content ).to.eql( [
 			{
+				count: 11,
 				added: true,
 				value: 'L’usage d’un instrument savant',
 			},
 		] );
 		expect( diff.title ).to.eql( [
 			{
+				count: 5,
 				added: true,
 				value: 'Foo & Baz',
 			},
