@@ -22,6 +22,7 @@ import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
 import PostItem from 'blocks/post-item';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQuery,
@@ -55,7 +56,11 @@ const PostsMain = React.createClass( {
 	},
 
 	showDrafts() {
-		const { isJetpack } = this.props;
+		const { isJetpack, isMultiSelect } = this.props;
+
+		if ( isMultiSelect ) {
+			return false;
+		}
 
 		// Jetpack sites can have malformed counts
 		if (
@@ -180,6 +185,7 @@ function mapStateToProps( state, { author } ) {
 		draftsQuery,
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isMultiSelect: isMultiSelectEnabled( state ),
 		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
 		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
 		newPostPath: getEditorNewPostPath( state, siteId ),
