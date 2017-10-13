@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -26,7 +25,7 @@ describe( '#isHappychatServerReachable', () => {
 				},
 			},
 		} );
-		expect( isHappychatServerReachable( state ) ).to.be.true;
+		expect( isHappychatServerReachable( state ) ).toBeTruthy();
 	} );
 
 	it( 'should return true if error is: Forced Close', () => {
@@ -37,7 +36,7 @@ describe( '#isHappychatServerReachable', () => {
 				},
 			},
 		} );
-		expect( isHappychatServerReachable( state ) ).to.be.true;
+		expect( isHappychatServerReachable( state ) ).toBeTruthy();
 	} );
 
 	it( 'should return true if error is: Transport Close', () => {
@@ -48,7 +47,7 @@ describe( '#isHappychatServerReachable', () => {
 				},
 			},
 		} );
-		expect( isHappychatServerReachable( state ) ).to.be.true;
+		expect( isHappychatServerReachable( state ) ).toBeTruthy();
 	} );
 
 	it( 'should return true if error is: Transport Error', () => {
@@ -59,7 +58,7 @@ describe( '#isHappychatServerReachable', () => {
 				},
 			},
 		} );
-		expect( isHappychatServerReachable( state ) ).to.be.true;
+		expect( isHappychatServerReachable( state ) ).toBeTruthy();
 	} );
 
 	it( 'should return false if error is: Ping Timeout', () => {
@@ -70,6 +69,6 @@ describe( '#isHappychatServerReachable', () => {
 				},
 			},
 		} );
-		expect( isHappychatServerReachable( state ) ).to.be.false;
+		expect( isHappychatServerReachable( state ) ).toBeFalsy();
 	} );
 } );

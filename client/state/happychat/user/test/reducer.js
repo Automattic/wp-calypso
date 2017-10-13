@@ -1,26 +1,21 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { HAPPYCHAT_CONNECTED, DESERIALIZE } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_INIT, DESERIALIZE } from 'state/action-types';
 import { geoLocation } from '../reducer';
 
 describe( '#geoLocation()', () => {
 	test( 'should default to null', () => {
 		const state = geoLocation( undefined, {} );
 
-		expect( state ).to.be.null;
+		expect( state ).toBeNull();
 	} );
 
 	test( 'should set the current user geolocation', () => {
 		const state = geoLocation( null, {
-			type: HAPPYCHAT_CONNECTED,
+			type: HAPPYCHAT_IO_RECEIVE_INIT,
 			user: {
 				geoLocation: {
 					country_long: 'Romania',
@@ -29,7 +24,7 @@ describe( '#geoLocation()', () => {
 			},
 		} );
 
-		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
+		expect( state ).toEqual( { country_long: 'Romania', city: 'Timisoara' } );
 	} );
 
 	test( 'deserializes correctly', () => {
@@ -40,6 +35,6 @@ describe( '#geoLocation()', () => {
 			}
 		);
 
-		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
+		expect( state ).toEqual( { country_long: 'Romania', city: 'Timisoara' } );
 	} );
 } );

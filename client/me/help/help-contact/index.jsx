@@ -29,6 +29,7 @@ import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import getUserInfo from 'state/happychat/selectors/get-user-info';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
 	isTicketSupportEligible,
@@ -40,8 +41,9 @@ import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
-	sendChatMessage as sendHappychatMessage,
+	sendMessage as sendHappychatMessage,
 	sendUserInfo,
+	sendNotTyping,
 } from 'state/happychat/connection/actions';
 import { openChat as openHappychat } from 'state/happychat/ui/actions';
 import {
@@ -144,8 +146,9 @@ class HelpContact extends React.Component {
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
+		this.props.sendUserInfo( this.props.onGetUserInfo( { site, howCanWeHelp, howYouFeel } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
+		this.props.sendNotTyping( message );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
@@ -748,6 +751,7 @@ export default connect(
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
+			onGetUserInfo: getUserInfo( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
@@ -767,6 +771,7 @@ export default connect(
 		openHappychat,
 		sendHappychatMessage,
 		sendUserInfo,
+		sendNotTyping,
 		askDirectlyQuestion,
 		initializeDirectly,
 	}

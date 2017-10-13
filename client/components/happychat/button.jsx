@@ -20,17 +20,21 @@ import viewport from 'lib/viewport';
 import { hasUnreadMessages } from 'state/happychat/selectors';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { connectChat } from 'state/happychat/connection/actions';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
+import getHappychatConfig from 'state/happychat/selectors/get-happychat-config';
+import { initConnection } from 'state/happychat/connection/actions';
 import { openChat } from 'state/happychat/ui/actions';
 import Button from 'components/button';
 
-class HappychatButton extends Component {
+export class HappychatButton extends Component {
 	static propTypes = {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
-		connectChat: PropTypes.func,
+		getConfig: PropTypes.func,
+		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,
 		isChatAvailable: PropTypes.bool,
+		isConnectionUninitialized: PropTypes.bool,
 		onClick: PropTypes.func,
 		openChat: PropTypes.func,
 		translate: PropTypes.func,
@@ -39,9 +43,11 @@ class HappychatButton extends Component {
 	static defaultProps = {
 		allowMobileRedirect: false,
 		borderless: true,
-		connectChat: noop,
+		getConfig: noop,
+		initConnection: noop,
 		isChatActive: false,
 		isChatAvailable: false,
+		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
 		translate: identity,
@@ -60,7 +66,10 @@ class HappychatButton extends Component {
 	};
 
 	componentDidMount() {
-		this.props.connectChat();
+		// only init connection if it hasn't already initialized
+		if ( this.props.isConnectionUninitialized ) {
+			this.props.initConnection( this.props.getConfig() );
+		}
 	}
 
 	render() {
@@ -102,9 +111,11 @@ export default connect(
 		hasUnread: hasUnreadMessages( state ),
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		getConfig: getHappychatConfig( state ),
+		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 	} ),
 	{
 		openChat,
-		connectChat,
+		initConnection,
 	}
 )( localize( HappychatButton ) );
