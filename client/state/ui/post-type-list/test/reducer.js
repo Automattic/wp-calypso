@@ -10,13 +10,15 @@ import { expect } from 'chai';
  */
 import reducer, { postTypeList } from '../reducer';
 import {
+	POST_TYPE_LIST_SELECTION_RESET,
+	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'activeSharePanels' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'activeSharePanels', 'selectedPosts' ] );
 	} );
 
 	describe( '#postTypeList()', () => {
@@ -80,6 +82,47 @@ describe( 'reducer', () => {
 			);
 
 			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
+		} );
+
+		test( 'should add postGlobalId to the state when toggling selectedPosts with a new globalId', () => {
+			const existingPostGlobalId = 'abcdef0123456789';
+			const postGlobalId = '0123456789abcdef';
+			const state = postTypeList(
+				{ selectedPosts: [ existingPostGlobalId ] },
+				{
+					type: POST_TYPE_LIST_SELECTION_TOGGLE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.selectedPosts ).to.eql( [ existingPostGlobalId, postGlobalId ] );
+		} );
+
+		test( 'should remove postGlobalId from the state when toggling selectedPosts with an existing globalId', () => {
+			const existingPostGlobalId = 'abcdef0123456789';
+			const postGlobalId = '0123456789abcdef';
+			const state = postTypeList(
+				{ selectedPosts: [ existingPostGlobalId, postGlobalId ] },
+				{
+					type: POST_TYPE_LIST_SELECTION_TOGGLE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.selectedPosts ).to.eql( [ existingPostGlobalId ] );
+		} );
+
+		test( 'should clear all selectedPosts state when reseting selectedPosts', () => {
+			const existingPostGlobalId = 'abcdef0123456789';
+			const postGlobalId = '0123456789abcdef';
+			const state = postTypeList(
+				{ selectedPosts: [ existingPostGlobalId, postGlobalId ] },
+				{
+					type: POST_TYPE_LIST_SELECTION_RESET,
+				}
+			);
+
+			expect( state.selectedPosts ).to.be.empty;
 		} );
 	} );
 } );
