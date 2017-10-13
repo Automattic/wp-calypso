@@ -159,6 +159,8 @@ export class CommentDetail extends Component {
 		}
 	};
 
+	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
+
 	toggleLike = e => {
 		e.stopPropagation();
 
