@@ -11,6 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
+import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import PrimaryDomainButton from './primary-domain-button';
 import SectionHeader from 'components/section-header';
 
@@ -31,6 +32,7 @@ class Header extends React.Component {
 		return (
 			<SectionHeader label={ domain.name }>
 				<DomainPrimaryFlag domain={ domain } />
+				<DomainTransferFlag domain={ domain } />
 
 				{ this.props.selectedSite &&
 				! this.props.selectedSite.jetpack && (

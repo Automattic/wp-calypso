@@ -202,12 +202,11 @@ class CheckoutThankYouHeader extends PureComponent {
 	render() {
 		const { isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
-		let svg = 'thank-you.svg';
 
+		let svg = 'thank-you.svg';
 		if ( isDomainTransfer( primaryPurchase ) ) {
 			svg = 'check-emails-desktop.svg';
 		}
-
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
 		}

@@ -11,6 +11,14 @@ const type = keyMirror( {
 	REGISTERED: null,
 	SITE_REDIRECT: null,
 	WPCOM: null,
+	TRANSFER: null,
+} );
+
+const transferStatus = keyMirror( {
+	PENDING_OWNER: null,
+	PENDING_REGISTRY: null,
+	CANCELLED: null,
+	COMPLETED: null,
 } );
 
 const registrar = {
@@ -58,4 +66,5 @@ export default {
 	domainAvailability,
 	registrar,
 	type,
+	transferStatus,
 };

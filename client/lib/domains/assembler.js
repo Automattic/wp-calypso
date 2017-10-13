@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getDomainType } from './utils';
+import { getDomainType, getTransferStatus } from './utils';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -46,6 +46,7 @@ function createDomainObjects( dataTransferObject ) {
 			subscriptionId: domain.subscription_id,
 			transferLockOnWhoisUpdateOptional: domain.transfer_lock_on_whois_update_optional,
 			type: getDomainType( domain ),
+			transferStatus: getTransferStatus( domain ),
 			whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 		};
 	} );
