@@ -103,10 +103,10 @@ const i18nUtils = {
 export default i18nUtils;
 
 export const {
-    isDefaultLocale,
-    getLanguage,
-    getLocaleFromPath,
-    addLocaleToPath,
-    addLocaleToWpcomUrl,
-    removeLocaleFromPath
+	isDefaultLocale,
+	getLanguage,
+	getLocaleFromPath,
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	removeLocaleFromPath,
 } = i18nUtils;

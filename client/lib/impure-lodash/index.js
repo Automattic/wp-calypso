@@ -11,9 +11,9 @@ import {
 } from 'lodash';
 
 const exported = {
-    debounce,
-    isPlainObject,
-    uniqueId
+	debounce,
+	isPlainObject,
+	uniqueId,
 };
 
 export default exported;

@@ -219,23 +219,37 @@ function decodeURIComponentIfValid( encodedURIComponent ) {
 }
 
 const exported = {
-    decodeURIIfValid,
-    decodeURIComponentIfValid,
-    isOutsideCalypso,
-    isExternal,
-    isHttps,
-    withoutHttp,
-    addSchemeIfMissing,
-    setUrlScheme,
-    urlToSlug,
-    urlToDomainAndPath,
+	decodeURIIfValid,
+	decodeURIComponentIfValid,
+	isOutsideCalypso,
+	isExternal,
+	isHttps,
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
+	urlToSlug,
+	urlToDomainAndPath,
 
-    // [TODO]: Move lib/route/add-query-args contents here
+	// [TODO]: Move lib/route/add-query-args contents here
 	addQueryArgs,
 
-    resemblesUrl,
-    omitUrlParams
+	resemblesUrl,
+	omitUrlParams,
 };
 
 export default exported;
-export { decodeURIIfValid, decodeURIComponentIfValid, isOutsideCalypso, isExternal, isHttps, withoutHttp, addSchemeIfMissing, setUrlScheme, urlToSlug, urlToDomainAndPath, addQueryArgs, resemblesUrl, omitUrlParams };
+export {
+	decodeURIIfValid,
+	decodeURIComponentIfValid,
+	isOutsideCalypso,
+	isExternal,
+	isHttps,
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
+	urlToSlug,
+	urlToDomainAndPath,
+	addQueryArgs,
+	resemblesUrl,
+	omitUrlParams,
+};

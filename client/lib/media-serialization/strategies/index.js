@@ -7,12 +7,12 @@ import * as api from './api';
 import * as unknown from './unknown';
 
 const exported = {
-  dom,
-  string,
-  shortcode,
-  object,
-  api,
-  unknown
+	dom,
+	string,
+	shortcode,
+	object,
+	api,
+	unknown,
 };
 
 export default exported;

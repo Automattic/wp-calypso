@@ -18,6 +18,4 @@ const featureDetection = {
 
 export default featureDetection;
 
-export const {
-    supportsCssCustomProperties
-} = featureDetection;
+export const { supportsCssCustomProperties } = featureDetection;

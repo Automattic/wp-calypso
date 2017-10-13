@@ -278,13 +278,20 @@ function fullCreditsPayment() {
 }
 
 const exported = {
-    createPaygateToken,
-    fullCreditsPayment,
-    hasDomainDetails,
-    newCardPayment,
-    storedCardPayment,
-    submit
+	createPaygateToken,
+	fullCreditsPayment,
+	hasDomainDetails,
+	newCardPayment,
+	storedCardPayment,
+	submit,
 };
 
 export default exported;
-export { createPaygateToken, fullCreditsPayment, hasDomainDetails, newCardPayment, storedCardPayment, submit };
+export {
+	createPaygateToken,
+	fullCreditsPayment,
+	hasDomainDetails,
+	newCardPayment,
+	storedCardPayment,
+	submit,
+};

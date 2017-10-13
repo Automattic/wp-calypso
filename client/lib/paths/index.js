@@ -80,11 +80,11 @@ function jetpackModules( site, module ) {
 }
 
 const exported = {
-    jetpackModules,
-    login,
-    newPost,
-    newPage,
-    publicizeConnections
+	jetpackModules,
+	login,
+	newPost,
+	newPage,
+	publicizeConnections,
 };
 
 export default exported;

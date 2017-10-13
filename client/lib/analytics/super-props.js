@@ -8,7 +8,7 @@ import config from 'config';
 import { assign } from 'lodash';
 
 const exported = {
-    getAll: function( selectedSite, siteCount ) {
+	getAll: function( selectedSite, siteCount ) {
 		let siteProps = {};
 		const defaultProps = {
 			environment: config( 'env' ),
@@ -34,11 +34,9 @@ const exported = {
 		}
 
 		return assign( defaultProps, siteProps );
-	}
+	},
 };
 
 export default exported;
 
-export const {
-    getAll
-} = exported;
+export const { getAll } = exported;

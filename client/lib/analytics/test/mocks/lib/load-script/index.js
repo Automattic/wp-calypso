@@ -16,7 +16,7 @@ function fakeLoader( url, callback ) {
 fakeLoader.urlsLoaded = [];
 
 const exported = {
-    loadScript: fakeLoader
+	loadScript: fakeLoader,
 };
 
 export default exported;
