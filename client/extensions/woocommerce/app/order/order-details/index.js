@@ -46,7 +46,7 @@ class OrderDetails extends Component {
 	updateLineItems = item => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
-			this.props.editOrder( siteId, { id: order.id, line_items: [ item ] } );
+			this.props.editOrder( siteId, { id: order.id, line_items: item } );
 		}
 	};
 
