@@ -65,7 +65,7 @@ export default function() {
 		);
 
 		page(
-			'/settings/disconnect-site/:site_id/confirm',
+			'/settings/disconnect-site/confirm/:site_id',
 			mySitesController.siteSelection,
 			mySitesController.navigation,
 			settingsController.setScroll,
