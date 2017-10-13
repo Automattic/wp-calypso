@@ -175,8 +175,7 @@ export const ReaderSidebar = createReactClass( {
 									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
-							{ config.isEnabled( 'reader/conversations' ) &&
-							isAutomatticTeamMember( this.props.teams ) && (
+							{ config.isEnabled( 'reader/conversations' ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations',
@@ -198,8 +197,7 @@ export const ReaderSidebar = createReactClass( {
 								</li>
 							) }
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
-							{ config.isEnabled( 'reader/conversations' ) &&
-							isAutomatticTeamMember( this.props.teams ) && (
+							{ isAutomatticTeamMember( this.props.teams ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
