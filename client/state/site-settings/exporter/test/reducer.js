@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducers';
 import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
 import {
-	EXPORT_ADVANCED_SETTINGS_FAIL,
+	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_FIELD_SET,
@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 
 		test( 'should reset fetching status after fail', () => {
 			const state = fetchingAdvancedSettings( null, {
-				type: EXPORT_ADVANCED_SETTINGS_FAIL,
+				type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 				siteId: 100658273,
 				advancedSettings: {},
 			} );
