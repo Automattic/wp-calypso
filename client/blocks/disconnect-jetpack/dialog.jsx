@@ -10,9 +10,16 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import DisconnectJetpack from '.';
+import DisconnectJetpack from './';
 
-const DisconnectJetpackDialog = ( { isBroken, isVisible, onClose, disconnectHref, siteId } ) => (
+const DisconnectJetpackDialog = ( {
+	disconnectHref,
+	isBroken,
+	isVisible,
+	onClose,
+	siteId,
+	stayConnectedHref,
+} ) => (
 	<Dialog
 		isVisible={ isVisible }
 		additionalClassNames="disconnect-jetpack-dialog"
@@ -21,9 +28,10 @@ const DisconnectJetpackDialog = ( { isBroken, isVisible, onClose, disconnectHref
 		<DisconnectJetpack
 			disconnectHref={ disconnectHref }
 			isBroken={ isBroken }
-			onDisconnect={ onClose }
-			onStayConnected={ onClose }
+			onDisconnectClick={ onClose }
+			onStayConnectedClick={ onClose }
 			siteId={ siteId }
+			stayConnectedHref={ stayConnectedHref }
 		/>
 	</Dialog>
 );
@@ -33,7 +41,6 @@ DisconnectJetpackDialog.propTypes = {
 	isBroken: PropTypes.bool,
 	isVisible: PropTypes.bool,
 	onClose: PropTypes.func,
-	redirect: PropTypes.string,
 	siteId: PropTypes.number,
 	stayConnectedHref: PropTypes.string,
 };

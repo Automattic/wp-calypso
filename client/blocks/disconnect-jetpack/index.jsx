@@ -26,23 +26,30 @@ import { getPlanClass } from 'lib/plans/constants';
 import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
 class DisconnectJetpack extends PureComponent {
-	static displayName = 'DisconnectJetpack';
-
 	static propTypes = {
 		disconnectHref: PropTypes.string,
 		isBroken: PropTypes.bool,
-		onDisconnect: PropTypes.func,
-		onStayConnected: PropTypes.func,
+		onDisconnectClick: PropTypes.func,
+		onStayConnectedClick: PropTypes.func,
 		siteId: PropTypes.number,
 		stayConnectedHref: PropTypes.string,
 		// Connected props
 		plan: PropTypes.string,
+		site: PropTypes.object,
 		siteSlug: PropTypes.string,
+		siteTitle: PropTypes.string,
+		setAllSitesSelected: PropTypes.func,
+		recordGoogleEvent: PropTypes.func,
+		disconnect: PropTypes.func,
+		successNotice: PropTypes.func,
+		errorNotice: PropTypes.func,
+		infoNotice: PropTypes.func,
+		removeNotice: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onDisconnect: noop,
-		onStayConnected: noop,
+		onDisconnectClick: noop,
+		onStayConnectedClick: noop,
 	};
 
 	trackReadMoreClick = () => {
@@ -143,7 +150,7 @@ class DisconnectJetpack extends PureComponent {
 
 	disconnectJetpack = () => {
 		const {
-			onDisconnect,
+			onDisconnectClick,
 			site,
 			siteId,
 			siteTitle,
@@ -156,7 +163,7 @@ class DisconnectJetpack extends PureComponent {
 			recordGoogleEvent: recordGAEvent,
 		} = this.props;
 
-		onDisconnect();
+		onDisconnectClick();
 
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
@@ -196,7 +203,7 @@ class DisconnectJetpack extends PureComponent {
 		const {
 			disconnectHref,
 			isBroken,
-			onStayConnected,
+			onStayConnectedClick,
 			siteSlug,
 			stayConnectedHref,
 			translate,
@@ -234,7 +241,7 @@ class DisconnectJetpack extends PureComponent {
 				{ this.planFeatures() }
 
 				<div className="disconnect-jetpack__button-wrap">
-					<Button href={ stayConnectedHref } onClick={ onStayConnected }>
+					<Button href={ stayConnectedHref } onClick={ onStayConnectedClick }>
 						{ translate( 'Stay Connected' ) }
 					</Button>
 					<Button primary scary href={ disconnectHref } onClick={ this.disconnectJetpack }>
