@@ -237,8 +237,6 @@ describe( 'middleware', () => {
 			sandbox.stub( wpcom, 'request', ( args, callback ) => callback( null, {} ) );
 		} );
 
-		const wasHappychatRecentlyActive = jest.fn();
-
 		test( 'should connect the chat if user was recently connected', () => {
 			connectIfRecentlyActive( connection, storeRecentlyActive ).then( () => {
 				expect( connection.init ).to.have.been.called;
