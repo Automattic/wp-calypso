@@ -115,6 +115,7 @@ const controller = {
 	},
 
 	disconnectSiteConfirm( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		renderPage( context, <ConfirmDisconnection /> );
 	},
 
