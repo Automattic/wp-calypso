@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { find, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -87,8 +87,14 @@ class OrderDetailsTable extends Component {
 		const { order } = this.props;
 		// Name is `quantity-x`, where x is the ID of the item
 		const id = parseInt( event.target.name.split( '-' )[ 1 ] );
-		const line_item = find( order.line_items, { id } );
-		this.props.onChange( { ...line_item, quantity: event.target.value } );
+		const item = find( order.line_items, { id } );
+		if ( ! item ) {
+			return;
+		}
+		const quantity = parseInt( event.target.value );
+		const total = parseFloat( item.price ) * quantity;
+		// @todo Can we live-update the tax? Should we "hide" that somehow
+		this.props.onChange( { ...item, quantity, total } );
 	};
 
 	renderQuantity = item => {
