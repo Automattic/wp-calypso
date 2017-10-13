@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { findIndex, get, isUndefined, map, omitBy } from 'lodash';

@@ -1,7 +1,11 @@
 /**
- * External dependencies
+ *  @format
  *
  * @format
+ */
+
+/**
+ * External dependencies
  */
 
 import React from 'react';
