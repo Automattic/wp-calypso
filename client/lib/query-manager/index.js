@@ -27,6 +27,8 @@ export const DELETE_PATCH_KEY = '__DELETE';
  * responsible for implementing its matching, merging, and sorting behaviors.
  */
 export default class QueryManager {
+	static QueryKey = QueryKey;
+
 	/**
 	 * Constructs a new instance of QueryManager
 	 *
@@ -62,7 +64,7 @@ export default class QueryManager {
 	 * @param  {Boolean} patch       Use patching application
 	 * @return {?Object}             Item to track, or undefined to omit
 	 */
-	mergeItem( item, revisedItem, patch = false ) {
+	static mergeItem( item, revisedItem, patch = false ) {
 		if ( patch ) {
 			if ( revisedItem[ DELETE_PATCH_KEY ] ) {
 				return undefined;
@@ -95,7 +97,7 @@ export default class QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	compare( query, itemA, itemB ) {
+	static compare( query, itemA, itemB ) {
 		if ( itemA === itemB ) {
 			return 0;
 		}
@@ -113,7 +115,7 @@ export default class QueryManager {
 	 * @param  {Array}  items Items by which to sort
 	 * @param  {Object} query Query object
 	 */
-	sort( keys, items, query ) {
+	static sort( keys, items, query ) {
 		keys.sort( ( keyA, keyB ) => {
 			if ( ! items[ keyA ] || ! items[ keyB ] ) {
 				// One of the items has yet to be removed from the
@@ -233,7 +235,7 @@ export default class QueryManager {
 			( memo, receivedItem ) => {
 				const receivedItemKey = receivedItem[ this.options.itemKey ];
 				const item = this.getItem( receivedItemKey );
-				const mergedItem = this.mergeItem( item, receivedItem, options.patch );
+				const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
 
 				if ( undefined === mergedItem ) {
 					if ( item ) {
@@ -388,7 +390,7 @@ export default class QueryManager {
 						);
 
 						// Re-sort the set
-						this.sort( memo[ queryKey ].itemKeys, nextItems, query );
+						this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
 					}
 				} );
 
@@ -411,5 +413,3 @@ export default class QueryManager {
 		);
 	}
 }
-
-QueryManager.QueryKey = QueryKey;

@@ -52,26 +52,26 @@ describe( 'QueryManager', () => {
 
 	describe( '#mergeItem()', () => {
 		test( 'should return the revised item by default', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { ID: 152 } );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { ID: 152 } );
 
 			expect( merged ).to.eql( { ID: 152 } );
 		} );
 
 		test( 'should return a merged item when patching', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { changed: true }, true );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { changed: true }, true );
 
 			expect( merged ).to.eql( { ID: 144, changed: true } );
 		} );
 
 		test( 'should not mutate the original copy', () => {
 			const original = Object.freeze( { ID: 144 } );
-			const merged = manager.mergeItem( original, { changed: true }, true );
+			const merged = QueryManager.mergeItem( original, { changed: true }, true );
 
 			expect( merged ).to.not.equal( original );
 		} );
 
 		test( 'should return undefined if revised item includes delete key and patching', () => {
-			const merged = manager.mergeItem( { ID: 144 }, { [ DELETE_PATCH_KEY ]: true }, true );
+			const merged = QueryManager.mergeItem( { ID: 144 }, { [ DELETE_PATCH_KEY ]: true }, true );
 
 			expect( merged ).to.be.undefined;
 		} );
@@ -89,15 +89,15 @@ describe( 'QueryManager', () => {
 
 	describe( '#compare()', () => {
 		test( 'should return 0 for equal items', () => {
-			expect( manager.compare( {}, 40, 40 ) ).to.equal( 0 );
+			expect( QueryManager.compare( {}, 40, 40 ) ).to.equal( 0 );
 		} );
 
 		test( 'should return a number less than zero if the first argument is larger', () => {
-			expect( manager.compare( {}, 50, 40 ) ).to.be.lt( 0 );
+			expect( QueryManager.compare( {}, 50, 40 ) ).to.be.lt( 0 );
 		} );
 
 		test( 'should return a number greater than zero if the first argument is smaller', () => {
-			expect( manager.compare( {}, 30, 40 ) ).to.be.gt( 0 );
+			expect( QueryManager.compare( {}, 30, 40 ) ).to.be.gt( 0 );
 		} );
 	} );
 
@@ -272,7 +272,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
@@ -281,7 +281,7 @@ describe( 'QueryManager', () => {
 
 		test( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager ).to.equal( newManager );
@@ -348,7 +348,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it is omitted from items', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( manager, 'mergeItem' ).returns( undefined );
+			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
@@ -367,7 +367,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should compare items appended to query set', () => {
 			manager = manager.receive( [ { ID: 140 }, { ID: 160 } ], { query: {} } );
-			sandbox.stub( manager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
@@ -432,6 +432,36 @@ describe( 'QueryManager', () => {
 			expect( manager.getFound( {} ) ).to.equal( 2 );
 			expect( newManager.getFound( {} ) ).to.equal( 2 );
 			expect( newManager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+		} );
+
+		it( 'should sort items when merging queries', () => {
+			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
+				item =>
+					( manager = manager.receive( item, {
+						mergeQuery: true,
+						query: {},
+					} ) )
+			);
+			// console.log( manager.data.queries );
+			expect( manager.getItems( {} ) ).to.eql( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
+		} );
+
+		it( 'should sort when extended using subclassed static compare', () => {
+			let sortingManager = new class extends QueryManager {
+				static compare( query, a, b ) {
+					return a.ID - b.ID;
+				}
+			}();
+			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
+				item =>
+					( sortingManager = sortingManager.receive( item, {
+						mergeQuery: true,
+						query: {},
+					} ) )
+			);
+			// console.log( sortingManager.data.queries );
+			expect( sortingManager.getItems( {} ) ).to.eql( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
 		} );
 	} );
 
