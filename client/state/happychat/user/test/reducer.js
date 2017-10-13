@@ -32,7 +32,7 @@ describe( '#geoLocation()', () => {
 		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 	} );
 
-	test( 'returns valid geolocation', () => {
+	test( 'deserializes correctly', () => {
 		const state = geoLocation(
 			{ country_long: 'Romania', city: 'Timisoara' },
 			{

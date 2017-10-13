@@ -30,6 +30,6 @@ describe( 'getGeoLocation', () => {
 				},
 			},
 		} );
-		expect( selected.city ).to.equal( 'Timisoara' );
+		expect( selected ).to.eql( { city: 'Timisoara' } );
 	} );
 } );
