@@ -9,6 +9,6 @@ export default {
 	additionalProperties: false,
 	patternProperties: {
 		// todo: does this match everything? thats what i want
-		'': { type: 'date-time' },
+		'': { type: 'number' },
 	},
 };

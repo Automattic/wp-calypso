@@ -26,3 +26,5 @@ export const watermarks = keyedReducer(
 		schema
 	)
 );
+
+watermarks.hasCustomPersistence = true;
