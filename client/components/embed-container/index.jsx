@@ -23,6 +23,7 @@ const embedsToLookFor = {
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
 	'.embed-reddit': embedReddit,
+	'a[href*="pinterest.com"]': embedPinterest,
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
@@ -117,6 +118,17 @@ function embedFacebook( domNode ) {
 function embedReddit( domNode ) {
 	debug( 'processing reddit for ', domNode );
 	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
+}
+
+function embedPinterest( domNode ) {
+	debug( 'processing pinterest for ', domNode );
+
+	// todo this is just the very minimum needed to make the preview work in some cases
+	// it doesn't always work, though, like when pasting in a new url, or canceling and re-opening
+	// so we may need to do some of the things that the similar functions do, like returning
+	// early if the resource is already defined, etc
+
+	loadAndRun( 'https://assets.pinterest.com/js/pinit.js', noop );
 }
 
 let tumblrLoader;

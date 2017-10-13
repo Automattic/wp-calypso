@@ -1,9 +1,10 @@
+/** @jest-environment jsdom */
+
 /**
  * External dependencies
  *
  * @format
  */
-
 import React from 'react';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
@@ -49,10 +50,7 @@ describe( 'EmbedDialog', () => {
 			/>
 		);
 		const mockChangeEvent = {
-			target: {
-				value: newUrl,
-				focus: noop,
-			},
+			target: { value: newUrl },
 		};
 		let inputField = wrapper.find( FormTextInput ).get( 0 );
 
@@ -66,11 +64,7 @@ describe( 'EmbedDialog', () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=R54QEvTyqO4';
 		const newUrl = 'https://videopress.com/v/x4IYthy7';
 		const mockChangeEvent = {
-			target: {
-				value: newUrl,
-				focus: noop,
-				// might be able to remove these if remove the calls
-			},
+			target: { value: newUrl },
 		};
 		let currentUrl = originalUrl;
 		const onUpdate = url => {
@@ -96,10 +90,7 @@ describe( 'EmbedDialog', () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 		const newUrl = 'https://videopress.com/v/GtWYbzhZ';
 		const mockChangeEvent = {
-			target: {
-				value: newUrl,
-				focus: noop,
-			},
+			target: { value: newUrl },
 		};
 		const noopSpy = spy( noop );
 		let currentUrl = originalUrl;
@@ -124,7 +115,8 @@ describe( 'EmbedDialog', () => {
 		assert.strictEqual( currentUrl, originalUrl );
 	} );
 
-	// should test valid vs invalid embed urls? maybe only once get to preview PR -- maybe not
-	// update the preview when new url given (other PR)
+	// todo
+	// should test valid vs invalid embed urls?
+	// test updating the preview when new url given (other PR)
 	// anything else new to test?
 } );
