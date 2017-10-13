@@ -57,11 +57,7 @@ class ActivityLogDay extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// if Rewind dialog is being displayed and it's then canceled or a different Rewind button is clicked
-		if (
-			this.state.rewindHere &&
-			( isEmpty( nextProps.requestedRewind ) ||
-				this.props.requestedRewind !== nextProps.requestedRewind )
-		) {
+		if ( this.state.rewindHere && this.props.requestedRewind !== nextProps.requestedRewind ) {
 			this.setState( {
 				rewindHere: false,
 			} );
