@@ -31,9 +31,6 @@ export default class EmbedViewManager extends EventEmitter {
 	updateSite( selectedSiteId ) {
 		const siteId = selectedSiteId || getSelectedSiteId( this.store.getState() );
 
-		// how can i tell the views to only update if the url actually changed?
-		// don't update just b/c the store changed, make sure the change is relevant to the view first
-
 		if ( ! this.hasOwnProperty( 'siteId' ) ) {
 			// First update (after adding initial listener) should trigger a
 			// fetch, but not emit a change event

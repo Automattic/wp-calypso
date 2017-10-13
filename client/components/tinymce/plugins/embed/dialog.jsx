@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { assign, debounce } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -15,8 +15,9 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import EmbedViewManager from 'components/tinymce/plugins/wpcom-view/views/embed'
+import EmbedContainer from 'components/embed-container';
 import FormTextInput from 'components/forms/form-text-input';
+import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /*
@@ -44,94 +45,125 @@ export class EmbedDialog extends React.Component {
 	state = {
 		embedUrl: this.props.embedUrl,
 		previewUrl: this.props.embedUrl,
-		// might be nice if don't need a second field here, but i think it's introduce extra unnecessary render() calls if only used props.embedUrl
+			// might be simpler to get rid of previewUrl and just use embedUrl
+			// but i think that'd introduce extra unnecessary render() calls
+			// might not to revisit that now that using previewMarkup, though
+		previewMarkup: [],
 	};
 
-	constructor( props ) {
-		super( ...arguments );
-
-		this.embedViewManager = new EmbedViewManager();
-		// maybe instead of creating a new manager, we should reuse the existing one?
-		// but how would that change anything? because the first one is still going to have registered its listeners etc
-		this.embedViewManager.updateSite( this.props.siteId );
-		this.embedView = this.embedViewManager.getComponent();
-	}
-
 	componentWillMount() {
+		/**
+		 * Prepare the markup for the new embed URL
+		 *
+		 * @todo: Making an API request directly is a bit of a hack. The ideal solution would be to
+		 *        reuse EmbedViewManager and EmbedView, but that leads to a messy complications. When
+		 *        pasting a new URL into the input field, all instances of wpcom-views/embed on the
+		 *        screen would be refreshed, causing TinyMCE's selection to be unset. Because of that,
+		 *        the new URL would be inserted at the beginning of the editor body, rather than
+		 *        replacing the old URL. Troubleshooting proved to be very difficult.
+		 *        See `p1507898606000351-slack-delta-samus` for more details.
+		 */
 		this.debouncedUpdateEmbedPreview = debounce( function() {
-			this.embedViewManager.fetchEmbed( this.state.embedUrl );
-			// todo this causes the tinymce selection to be unset,
-			// which leads to the new embed url being inserted at the begining of the editor instead of replacing the old embed url
-
-			// ok, yeah, that's what's happening. when enter new url (before clicking update), it fetches the new embed,
-			// calls setmarkers(), BeforeSetContent handler, removeview() (and others in between)
-			// that happens for all the views on the page, not just the one in the modal that we want to update
-			// then they all get re-created, but the selection isn't restored to the new view in the modal, so it's falsy when we try to insert the new url
-			// and tinymce just sticks it at the begining
-
-			// we don't want all the views to be updated, b/c it causes a flash that the user sees.
-			// only want the view inside the modal updated
-			// if can make that happen, then that might avoid unsetting the selection too
-			// or at least it gets you closer to that point
-
-			// it might be ok that the view gets deselected, as long as its reselected later on - is that was `toSelect` is for?
-			// but maybe want to prevent it from getting deselected in the first place
-			// is it updating all of them b/c it emits a 'change' event that they're all subscribed to, or something else?
-			// try to narrow down exactly what triggers it
-
-			// could try to save a copy of this.props.editor.selection.getNode() before calling fetchEmbed, then
-			// restore it after, but that's not really addressing the real problem.
-			// also might not work b/c original node gets deleted during changes? might need to wait until fetchEmbed finished async process too
-
-
 			this.setState( { previewUrl: this.state.embedUrl } );
-				// maybe wait until fetchEmbed finishes to update the previewurl?
-				// test w/ throttled network connection to see if introduces race conditions
 
-			// show an error in the preview box if fetching the embed failed / it's an invalid URL
-				// right now it just continues showing the last valid preview
-				// don't wanna do if they're still typing though. debounce might be enough to fix that, but still could be annoying.
-				// need to play with
+			// todo should probably add an animated loading block so the user gets some visual feedback while they wait for the new embed to load
 
-			// maybe add a animated loading block so the user gets some visual feedback while they wait for the new embed to load
-				// throttle connection to see how bad/long it takes
+			// Use cached data if it's available
+			if ( this.state.previewMarkup[ this.state.embedUrl ] ) {
+				return;
+			}
+
+			// Fetch fresh data from the API
+			wpcom.undocumented().site( this.props.siteId ).embeds(
+				{ embed_url: this.state.embedUrl },
+				( error, data ) => {
+					const { previewMarkup, embedUrl } = this.state;
+
+					let cachedMarkup;
+
+					if ( data && data.result ) {
+						cachedMarkup = data.result;
+						// todo need to do more to check that data.result is valid before using it?
+					} else {
+						console.log('lookup error:', error);
+							// todo add details? or just generic error message
+
+						cachedMarkup = 'error foo';
+
+						// todo handle errors
+							// xhr errors in `error` var
+							// and also application layer errors in `data.error` or however wpcom.js signals a error to the caller
+							// add unit tests for those. mock the xhr
+
+						// todo show an error in the preview box if fetching the embed failed / it's an invalid URL
+							// right now it just continues showing the last valid preview
+							// don't wanna do if they're still typing though. debounce might be enough to fix that, but still could be annoying.
+							// need to play with
+							// how to detect from the markup if it was an error? it'll be dependent on the service etc, right? or maybe wpcom.js normalizes it into a standard error format?
+					}
+
+					this.setState( {
+						// SECURITY WARNING: The value of previewMarkup is later used with
+						// dangerouslySetInnerHtml, so it must never be changed to include
+						// untrusted data.
+						previewMarkup: assign(
+							previewMarkup,
+							{ [ embedUrl ]: cachedMarkup }
+						),
+						// todo merge() or other function would be better than assign() ^^^?
+					} );
+				}
+			);
 		}, 500 );
+		// todo this doesn't need to be inside compwillmount? it can just be regular function below?
+		// that'd be cleaner and more consistent, but i was thinking it had to be declared in here for some reason. not sure about that anymore.
 
-		// this doesn't need to be inside compwillmount? can just be regular function below?
+		// Prepare the initial markup before the first render()
+		this.debouncedUpdateEmbedPreview();
+		// todo should probably call flush() so it runs immediately instead of debouncing for 500ms
+		// todo would this be more appropriate somewhere later in the lifecycle?
 	}
 
 	/**
-	 * Reset `state.embedUrl` whenever the component's dialog is opened or closed.
+	 * Reset some of the state whenever the component's dialog is opened or closed.
 	 *
 	 * If this were not done, then switching back and forth between multiple embeds would result in
-	 * `state.embedUrl` being incorrect. For example, when the second embed was opened,
-	 * `state.embedUrl` would equal the value of the first embed, since it initially set the
-	 * state.
+	 * the previous URL being displayed in the input field and preview. For example, when the second
+	 * embed was opened, `state.previewUrl` would equal the value of the first embed, since it
+	 * initially set the state.
 	 *
 	 * @param {object} nextProps The properties that will be received.
 	 */
 	componentWillReceiveProps = nextProps => {
 		this.setState( {
 			embedUrl: nextProps.embedUrl,
+			previewUrl: nextProps.embedUrl,
+		}, () => {
+			// Refresh the preview
+			this.debouncedUpdateEmbedPreview();
+				// todo should probably call immediately w/ .flush() instead of waiting for debounce
+				// todo maybe pass new value directly instead of waiting for setstate to completely asyncronously?
+				// todo should probably only call if props.isvisible? otherwise calling when closing the dialog, which is wasteful and unnecessary
 		} );
+
+		// todo this whole flow is getting a little complicated.
+			// state is updated here, and also updated in the debounced function, and maybe other places.
+			// and the functions are dependent on whether or not the state has been updated, etc.
+			// try to simplify everything
 	};
 
 	onChangeEmbedUrl = event => {
 		this.setState( { embedUrl: event.target.value }, () => {
 			this.debouncedUpdateEmbedPreview();
-			// i think this should wait until state is updated, b/c debounced function expected this.state.embedurl to have been updated when its called
+			// todo i think this should wait until state is updated, b/c debounced function expected this.state.embedurl to have been updated when its called
 			// it seems to work being called immediately, but that could just be b/c fast enough to usually win race condition?
 			// alternate might be to pass the new url as param, instead of waiting. that might be better
 		} );
 
-		// the focus is jumping back to the start of the editor, probably caused by the selection problem described in debouncedUpdateEmbedPreview()
-		// once that's fixed, test to make sure it goes back to the selected view like it should
-
-		//event.target.focus();
-			//todo hack to avoid focus stealiing
-			// this might have performance issues, but probably not if this entire function is debounced?
-				// see https://github.com/Automattic/wp-calypso/pull/17152#discussion_r142263113
-			// don't even need this anymore?
+		// todo when you click Update, the focus is jumping back to the start of the editor, instead of the position it was in before opening the dialog
+			// doesn't happen when click Cancel, though
+			// might not be impactful enough to spend time fixing
+			// might be easy to fix with wpcom-view::select() or editor.selection.set() or something, though
 	};
 
 	onUpdate = () => {
@@ -175,41 +207,62 @@ export class EmbedDialog extends React.Component {
 					onKeyDown={ this.onKeyDownEmbedUrl }
 				/>
 
-				<this.embedView content={ this.state.previewUrl } />
+
+
+				{/* todo another approach would be to use an iframe instead of a div
+				<iframe className="embed__preview" srcDoc={ this.state.previewMarkup[ this.state.previewUrl ] } />
+
+				that feels a bit safer because we can sandbox it to improve security, but maybe it's not needed because the markup
+				returned by the api is always trusted? i think it is, but need to verify
+
+				using an iframe seems to work, but is probably redundant since the API markup always returns things in an iframe anyway?
+				not 100% sure it always does, though
+				if use iframe, add sandbox attribute and disable everything except `allow-scripts`?
+
+				need to use ResizeableIframe to deal w/ unknown dimensions of various embeds?
+				maybe try again to just use EmbedView, even if you have to modify it to accept a url prop or something
+					use it directly, though, don't mess with EmbedViewManager
+				*/}
+
+				{/* This is safe because previewMarkup comes from our API endpoint */}
+					{/* are you sure that makes it safe? get security review */}
+				{ this.state.previewMarkup[ this.state.previewUrl ] &&
+					<EmbedContainer>
+						<div className="embed__preview" dangerouslySetInnerHTML={ { '__html' : this.state.previewMarkup[ this.state.previewUrl ] } } />
+					</EmbedContainer>
+				}
 			</Dialog>
 		);
 
-		{/*
-			saw some situations when switching between embeds where the url was correct when opening the dialog, but the preview was the previous video
-				open first embed, change url to https://www.youtube.com/watch?v=ghrL82cc-ss, update
-				open second embed, it'll show videopress url, but https://www.youtube.com/watch?v=ghrL82cc-ss as the preview
-				might only happen w/ the focus bug, or some other conditions, but test for this once other things are working
+		{/* todo
 
-			do we have any non-video embeds? if so, test those too
+			test various embed services, both whitelisted and generic oembed
+				not embedding correctly in editor, before preview, but maybe these aren't supposed to be handled by wpcom-view/embed?
+					shortcodes: vr, archiveorg, twitch
+					oembed: eventbrite, bandcamp,
 
-			exception thrown when change it twice in a row. - only in FF
-				maybe related to needing to debounce?
+			bug: open the dialog, everything looks good. then click cancel button, then open it again. now it doesn't render at all.
+				only happens with some services, like pinterest & fb, maybe others from embedcotainer?
+				might need to EmbedContainer::embedPinterest() detect if already loaded and return early, or could need something totally different.
 
-			Warning: unmountComponentAtNode(): The node you're attempting to unmount was rendered by another copy of React.
-				wrapConsole/<
-				app:///./client/components/webpack-build-monitor/index.jsx:174:3
-				printWarning
-				app:///./node_modules/fbjs/lib/warning.js:35:7
-				warning
-				app:///./node_modules/fbjs/lib/warning.js:59:7
-				unmountComponentAtNode
-				app:///./node_modules/react-dom/lib/ReactMount.js:443:15
-				wpview/</<
-		   >>>	app:///./client/components/tinymce/plugins/wpcom-view/plugin.js:287:5
-				...
-			*/}
+			bug: open the dialog, the input field has the focus. click outside the field (but still within modal), input loses focus. that's all normal.
+				now, try to click back into the field (but not on the text itself, just the whitespace). it won't focus
+				sometimes it won't focus when clicking on the text either, or have to click several times.
+
+			chrome console warning: "Refused to display 'https://www.facebook.com/xti.php?xt=AZW4yx3ElFj8wS2zZ0awYZYeCHQX9GKfcaP5HUVhjVUJe2rhI0dScOBaE4IALljF-1-71pVsHv4FYfcrV6ozzCPdIBMFedrUFTypnEMwzlYEJ9YvnQhpZG4rWmmMFM2YjhtMLSx-PiBt9vIW1iFuPVuadBkqQffHDRynmqZNDMSykA&isv=1&cts=1508425830&csp' in a frame because it set 'X-Frame-Options' to 'sameorigin'."
+				it happens intermittently, though, and the embed still works, so not sure if it's an issue
+
+		*/}
 	}
 }
 
-const connectedLocalizedEmbedDialog = connect( ( state, { siteId } ) => {
-	siteId = siteId ? siteId : getSelectedSiteId( state );
+const connectedEmbedDialog = connect( ( state, { siteId } ) => {
+	return {
+		siteId: siteId ? siteId : getSelectedSiteId( state )
+	}
+} )( EmbedDialog );
 
-	return { siteId };
-} )( localize( EmbedDialog ) );
-
-export default localize( connectedLocalizedEmbedDialog );
+export default localize( connectedEmbedDialog );
+	// todo should localize() and then connect()? for consistency in dev tools element tree?
+	// the code reads cleaning having it this way, though, since localize() is concise enough to fit in the export statement,
+	// but connect() needs several lines and extra logic, so it's nicer to have it as a separate piece

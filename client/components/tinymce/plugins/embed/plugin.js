@@ -46,7 +46,6 @@ const embed = editor => {
 		// instead of having to tab back to the editor.
 		if ( ! visible ) {
 			editor.focus();
-			// maybe it won't be necessary after setting up embed/dialog updating similar to wplink/dialog?
 		}
 	};
 
@@ -58,18 +57,6 @@ const embed = editor => {
 
 	editor.on( 'remove', () => {
 		ReactDom.unmountComponentAtNode( embedDialogContainer );
-		{/*
-		Warning: unmountComponentAtNode(): Render methods should be a pure function of props and state;
-		triggering nested component updates from render is not allowed.
-		If necessary, trigger nested updates in componentDidUpdate.
-		Check the render method of EmbedDialog.
-
-		shouldn't this only fire when unmounting tinymce and navigating to another page?
-		why doesn't this error happen for other plugins like wplink? or maybe it does? check
-
-		this is no longer here now that it's rendered with redux store? i don't see how the two are connected though.
-		*/}
-
 		embedDialogContainer.parentNode.removeChild( embedDialogContainer );
 		embedDialogContainer = null;
 	} );

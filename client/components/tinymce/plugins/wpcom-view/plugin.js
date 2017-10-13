@@ -197,26 +197,15 @@ function wpview( editor ) {
 		} );
 	}
 
-	/**
-	 * Select a view and setup clipboard
-	 *
-	 * @see https://www.tinymce.com/docs/api/tinymce.dom/tinymce.dom.selection/ for background
-	 *      information on TinyMCE selection.
-	 *
-	 * @param {object} viewNode The DOM node that will be set as the currently selected node.
-	 */
 	function select( viewNode ) {
 		var clipboard,
 			dom = editor.dom;
 
 		if ( ! viewNode ) {
-			console.log( 'select() return early' );
 			return;
 		}
 
 		if ( viewNode !== selected ) {
-			console.log( 'changing selection to: ', viewNode );
-
 			// Make sure that the editor is focused.
 			// It is possible that the editor is not focused when the mouse event fires
 			// without focus, the selection will not work properly.
@@ -263,9 +252,6 @@ function wpview( editor ) {
 			dom = editor.dom;
 
 		if ( selected ) {
-			console.log( 'deselecting: ', selected );
-			//debugger;
-
 			clipboard = editor.dom.select( '.wpview-clipboard', selected )[ 0 ];
 			dom.unbind( clipboard );
 			dom.remove( clipboard );
@@ -884,13 +870,8 @@ function wpview( editor ) {
 	editor.on( 'ExecCommand', function( args ) {
 		var toSelect, node;
 
-		console.log( 'execcommand toselect: ', toSelect);
 		// Don't steal the focus from `.embed-dialog__url`
 		if ( 'embedDialog' === args.command ) {
-			/// hmmm,i wonder if this is interferring, preventing the toSelect from getting reselected?
-				// doesn't seem to, but should take another look once you understand the problem more
-
-			//console.log( 'would have returned early' );
 			return;
 		}
 
