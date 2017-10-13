@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -62,7 +62,7 @@ class DisconnectSiteLink extends Component {
 					onClose={ this.handleHideDialog }
 					isBroken={ false }
 					siteId={ siteId }
-					redirect="/stats"
+					disconnectHref="/stats"
 				/>
 			</div>
 		);
