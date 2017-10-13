@@ -41,7 +41,7 @@ class OrderRefundTable extends Component {
 		super( props );
 		const shippingTax = getOrderShippingTax( props.order );
 		this.state = {
-			quantities: [],
+			quantities: {},
 			shippingTotal: parseFloat( shippingTax ) + parseFloat( props.order.shipping_total ),
 		};
 	}
@@ -95,11 +95,11 @@ class OrderRefundTable extends Component {
 		);
 	};
 
-	renderOrderItems = ( item, i ) => {
+	renderOrderItems = item => {
 		const { order } = this.props;
-		const tax = getOrderLineItemTax( order, i );
+		const tax = getOrderLineItemTax( order, item.id );
 		return (
-			<TableRow key={ i } className="order-payment__items order-details__items">
+			<TableRow key={ item.id } className="order-payment__items order-details__items">
 				<TableItem isRowHeader className="order-payment__item-product order-details__item-product">
 					<span className="order-payment__item-link order-details__item-link">{ item.name }</span>
 					<span className="order-payment__item-sku order-details__item-sku">{ item.sku }</span>
@@ -110,11 +110,11 @@ class OrderRefundTable extends Component {
 				<TableItem className="order-payment__item-quantity order-details__item-quantity">
 					<FormTextInput
 						type="number"
-						name={ `quantity-${ i }` }
+						name={ `quantity-${ item.id }` }
 						onChange={ this.onChange }
 						min="0"
 						max={ item.quantity }
-						value={ this.state.quantities[ i ] || 0 }
+						value={ this.state.quantities[ item.id ] || 0 }
 					/>
 				</TableItem>
 				<TableItem className="order-payment__item-tax order-details__item-tax">

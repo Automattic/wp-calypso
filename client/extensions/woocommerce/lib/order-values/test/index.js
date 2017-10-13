@@ -49,19 +49,19 @@ describe( 'getOrderLineItemTax', () => {
 	} );
 
 	test( 'should get the correct tax amount', () => {
-		expect( getOrderLineItemTax( orderWithTax, 0 ) ).to.eql( 5.3964 );
+		expect( getOrderLineItemTax( orderWithTax, 15 ) ).to.eql( 5.3964 );
 	} );
 
 	test( 'should get the correct tax amount for the second item', () => {
-		expect( getOrderLineItemTax( orderWithTax, 1 ) ).to.eql( 1.1424 );
+		expect( getOrderLineItemTax( orderWithTax, 19 ) ).to.eql( 1.1424 );
 	} );
 
 	test( 'should return 0 if there is no tax', () => {
-		expect( getOrderLineItemTax( orderWithoutTax, 0 ) ).to.eql( 0 );
+		expect( getOrderLineItemTax( orderWithoutTax, 1 ) ).to.eql( 0 );
 	} );
 
 	test( 'should get the correct tax amount for an item with multiple coupons', () => {
-		expect( getOrderLineItemTax( orderWithCoupons, 1 ) ).to.eql( 2.3109 );
+		expect( getOrderLineItemTax( orderWithCoupons, 27 ) ).to.eql( 2.3109 );
 	} );
 } );
 
