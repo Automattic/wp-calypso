@@ -359,16 +359,8 @@
 		margin-top: -10px;
 	}
 
-	&.is-drake {
-		margin-top: -72px;
-
-		@include breakpoint( ">480px" ) {
-			margin-top: -90px;
-		}
-
-		.empty-content__title {
-			margin-top: 0;
-		}
+	&.is-following-empty {
+		margin-top: 25px;
 	}
 }
 

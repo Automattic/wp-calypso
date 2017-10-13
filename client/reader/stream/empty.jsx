@@ -37,13 +37,13 @@ class FollowingEmptyContent extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<EmptyContent
-				className="is-drake"
+				className="is-following-empty"
 				title={ this.props.translate( 'Welcome to Reader' ) }
 				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-all-done.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/reader/reader-welcome-illustration.svg' }
+				illustrationWidth={ 380 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
