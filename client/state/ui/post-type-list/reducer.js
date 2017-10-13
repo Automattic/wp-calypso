@@ -10,8 +10,7 @@ import { without } from 'lodash';
  * Internal dependencies
  */
 import {
-	POST_TYPE_LIST_MULTI_SELECTION_TOGGLE,
-	POST_TYPE_LIST_SELECTION_RESET,
+	POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
@@ -25,15 +24,11 @@ const initialState = {
 
 export const postTypeList = ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case POST_TYPE_LIST_MULTI_SELECTION_TOGGLE:
+		case POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE:
 			return {
 				...state,
 				isMultiSelectEnabled: ! state.isMultiSelectEnabled,
-			};
-		case POST_TYPE_LIST_SELECTION_RESET:
-			return {
-				...state,
-				selectedPosts: [],
+				selectedPosts: state.isMultiSelectEnabled ? state.selectedPosts : [],
 			};
 		case POST_TYPE_LIST_SELECTION_TOGGLE:
 			if ( state.selectedPosts.indexOf( action.postGlobalId ) > -1 ) {

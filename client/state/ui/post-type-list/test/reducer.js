@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import reducer, { postTypeList } from '../reducer';
 import {
-	POST_TYPE_LIST_SELECTION_RESET,
+	POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
@@ -116,17 +116,30 @@ describe( 'reducer', () => {
 			expect( state.selectedPosts ).to.eql( [ existingPostGlobalId ] );
 		} );
 
-		test( 'should clear all selectedPosts state when reseting selectedPosts', () => {
-			const existingPostGlobalId = 'abcdef0123456789';
+		test( 'should clear all selectedPosts state when toggling on selection mode', () => {
 			const postGlobalId = '0123456789abcdef';
 			const state = postTypeList(
-				{ selectedPosts: [ existingPostGlobalId, postGlobalId ] },
+				{ selectedPosts: [ postGlobalId ], isMultiSelectEnabled: false },
 				{
-					type: POST_TYPE_LIST_SELECTION_RESET,
+					type: POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
 				}
 			);
 
 			expect( state.selectedPosts ).to.be.empty;
+			expect( state.isMultiSelectEnabled ).to.be.true;
+		} );
+
+		test( 'should maintain all selectedPosts state when toggling off selection mode', () => {
+			const postGlobalId = '0123456789abcdef';
+			const state = postTypeList(
+				{ selectedPosts: [ postGlobalId ], isMultiSelectEnabled: true },
+				{
+					type: POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
+				}
+			);
+
+			expect( state.selectedPosts ).to.be.eql( [ postGlobalId ] );
+			expect( state.isMultiSelectEnabled ).to.be.false;
 		} );
 	} );
 } );
