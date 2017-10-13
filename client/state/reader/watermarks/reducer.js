@@ -7,21 +7,22 @@
 /**
  * External Dependencies
  */
-// import { get } from 'lodash';
+import { max } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { READER_RAISE_WATERMARK } from 'action-types';
-import { createReducer } from 'state/utils';
+import { READER_VIEW_STREAM } from 'state/action-types';
+import { createReducer, keyedReducer } from 'state/utils';
 import schema from './watermark-schema';
 
-export const watermarks = createReducer(
-	{},
-	{
-		[ READER_RAISE_WATERMARK ]: ( state, action ) => {
-			return null;
+export const watermarks = keyedReducer(
+	'streamId',
+	createReducer(
+		undefined,
+		{
+			[ READER_VIEW_STREAM ]: ( state, action ) => max( [ +state, +action.mark ] ),
 		},
-	},
-	schema
+		schema
+	)
 );
