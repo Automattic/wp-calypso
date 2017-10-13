@@ -6,6 +6,13 @@ export const HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT = 'ping timeout';
 export const HAPPYCHAT_CONNECTION_ERROR_TRANSPORT_CLOSE = 'transport close';
 export const HAPPYCHAT_CONNECTION_ERROR_TRANSPORT_ERROR = 'transport error';
 
+// connection status
+export const HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED = 'uninitialized';
+export const HAPPYCHAT_CONNECTION_STATUS_CONNECTING = 'connecting';
+export const HAPPYCHAT_CONNECTION_STATUS_CONNECTED = 'connected';
+export const HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED = 'disconnected';
+export const HAPPYCHAT_CONNECTION_STATUS_RECONNECTING = 'reconnecting';
+
 // Max number of messages to save between refreshes
 export const HAPPYCHAT_MAX_STORED_MESSAGES = 30;
 

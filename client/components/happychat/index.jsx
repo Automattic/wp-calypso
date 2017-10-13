@@ -13,7 +13,7 @@ import GridIcon from 'gridicons';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getHappychatConnectionStatus } from 'state/happychat/selectors';
+import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import { openChat, closeChat, minimizeChat, minimizedChat } from 'state/ui/happychat/actions';
 import { blur, focus } from 'state/happychat/actions';
 import { isHappychatMinimizing, isHappychatOpen } from 'state/ui/happychat/selectors';

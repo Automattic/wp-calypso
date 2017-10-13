@@ -24,7 +24,6 @@ import {
 	getLostFocusTimestamp,
 	hasUnreadMessages,
 	hasActiveHappychatSession,
-	isHappychatAvailable,
 	wasHappychatRecentlyActive,
 	getGroups,
 } from '../selectors';
@@ -95,7 +94,7 @@ describe( 'selectors', () => {
 		test( 'should return false if Happychat is not connected', () => {
 			const state = deepFreeze( {
 				happychat: {
-					connectionStatus: 'uninitialized',
+					connection: { status: 'uninitialized' },
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
 				},
 			} );
@@ -106,7 +105,7 @@ describe( 'selectors', () => {
 			messagingDisabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
-						connectionStatus: 'connected',
+						connection: { status: 'connected' },
 						chatStatus: status,
 					},
 				} );
@@ -118,7 +117,7 @@ describe( 'selectors', () => {
 			messagingEnabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
-						connectionStatus: 'connected',
+						connection: { status: 'connected' },
 						chatStatus: status,
 					},
 				} );
@@ -132,7 +131,7 @@ describe( 'selectors', () => {
 			// a factor when determining if a user should be able to send messages to the service.
 			const state = deepFreeze( {
 				happychat: {
-					connectionStatus: 'connected',
+					connection: { status: 'connected' },
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
 					isAvailable: false,
 				},
@@ -218,38 +217,6 @@ describe( 'selectors', () => {
 				const state = deepFreeze( { happychat: { chatStatus: status } } );
 				expect( hasActiveHappychatSession( state ) ).to.be.true;
 			} );
-		} );
-	} );
-
-	describe( '#isHappychatAvailable', () => {
-		test( "should be false if there's no active connection", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'uninitialized',
-					isAvailable: true,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.false;
-		} );
-
-		test( "should be false if Happychat isn't accepting new connections", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'connected',
-					isAvailable: false,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.false;
-		} );
-
-		test( "should be true when there's a connection and connections are being accepted", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'connected',
-					isAvailable: true,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.true;
 		} );
 	} );
 
