@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 /**
@@ -21,8 +22,10 @@ import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'blocks/reader-visit-link';
-import Popover from 'components/popover';
-import PostLikes from 'blocks/post-likes';
+import ReaderPopoverMenu from 'components/reader-popover/menu';
+import QueryPostLikes from 'components/data/query-post-likes';
+import { getPostLikes } from 'state/selectors';
+import Gravatar from 'components/gravatar';
 
 class ReaderPostActions extends React.Component {
 	static propTypes = {
@@ -64,6 +67,7 @@ class ReaderPostActions extends React.Component {
 			visitUrl,
 			fullPost,
 			translate,
+			likes,
 		} = this.props;
 
 		const onEditClick = () => {
@@ -81,6 +85,7 @@ class ReaderPostActions extends React.Component {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<ul className={ listClassnames }>
+				{ ! likes && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ showVisit && (
 					<li className="reader-post-actions__item reader-post-actions__visit">
 						<ReaderVisitLink
@@ -125,10 +130,10 @@ class ReaderPostActions extends React.Component {
 						className="reader-post-actions__item"
 						onMouseOver={ this.showLikesTooltip }
 						onMouseOut={ this.hideLikesTooltip }
-						ref={ this.handleLikeButtonMount }
 					>
 						<LikeButton
 							key="like-button"
+							getRef={ this.handleLikeButtonMount }
 							siteId={ +post.site_ID }
 							postId={ +post.ID }
 							post={ post }
@@ -139,14 +144,23 @@ class ReaderPostActions extends React.Component {
 							iconSize={ iconSize }
 							showZeroCount={ false }
 						/>
-						<Popover
-							isVisible={ this.state.showLikesTooltip }
+						<ReaderPopoverMenu
+							isVisible={ this.state.showLikesTooltip && likes && likes.length }
 							onClose={ this.hideLikesTooltip }
 							context={ this.likeButtonRef }
-							postition="top"
+							position="top"
+							popoverTitle={ translate( 'Liked by' ) }
 						>
-							<PostLikes siteId={ post.site_ID } postId={ post.ID } />
-						</Popover>
+							{ likes &&
+								likes.map( like => {
+									return (
+										<div className="reader-post-actions__liker" key={ like.ID }>
+											<Gravatar user={ like } size={ 24 } />
+											<span className="reader-post-actions__liker-name">{ like.name }</span>
+										</div>
+									);
+								} ) }
+						</ReaderPopoverMenu>
 					</li>
 				) }
 				{ showMenu && (
@@ -164,4 +178,6 @@ class ReaderPostActions extends React.Component {
 	}
 }
 
-export default localize( ReaderPostActions );
+export default connect( ( state, ownProps ) => ( {
+	likes: getPostLikes( state, ownProps.post.site_ID, ownProps.post.ID ),
+} ) )( localize( ReaderPostActions ) );
