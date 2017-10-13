@@ -174,37 +174,61 @@ class ActivityLogDay extends Component {
 			requestRestore,
 			rewindConfirmDialog,
 			siteId,
+			tsEndOfSiteDay,
 		} = this.props;
 
 		const hasLogs = ! isEmpty( logs ),
 			rewindHere = this.state.rewindHere,
 			dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
+		let hasConfirmDialog = false;
+
+		const items =
+			hasLogs &&
+			flatMap( logs, log => {
+				const restoreThis = log.activityId === requestedRestoreActivityId;
+				if ( ! hasConfirmDialog ) {
+					hasConfirmDialog =
+						restoreThis &&
+						( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= log.activityTs &&
+							log.activityTs <= tsEndOfSiteDay );
+				}
+				return [
+					restoreThis && rewindConfirmDialog,
+					<ActivityLogItem
+						applySiteOffset={ applySiteOffset }
+						disableRestore={ disableRestore }
+						hideRestore={ hideRestore }
+						key={ log.activityId }
+						log={ log }
+						requestRestore={ requestRestore }
+						siteId={ siteId }
+					/>,
+				];
+			} );
+
+		const rewindButton = hasLogs
+			? this.renderRewindButton( hasConfirmDialog ? '' : 'primary' )
+			: null;
+
 		return (
-			<div className={ classnames( 'activity-log-day', { 'is-empty': ! hasLogs } ) }>
+			<div
+				className={ classnames( 'activity-log-day', {
+					'is-empty': ! hasLogs,
+					'has-rewind-dialog': hasConfirmDialog,
+				} ) }
+			>
 				<FoldableCard
 					clickableHeader={ hasLogs && ! rewindHere }
 					expanded={ hasLogs && ( isToday || dayExpanded ) }
-					expandedSummary={ hasLogs ? this.renderRewindButton() : null }
+					expandedSummary={ rewindButton }
+					summary={ rewindButton }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay }
-					summary={ hasLogs ? this.renderRewindButton( 'primary' ) : null }
 					disableToggle={ rewindHere }
 				>
-					{ hasLogs &&
-						flatMap( logs, log => [
-							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
-							<ActivityLogItem
-								applySiteOffset={ applySiteOffset }
-								disableRestore={ disableRestore }
-								hideRestore={ hideRestore }
-								key={ log.activityId }
-								log={ log }
-								requestRestore={ requestRestore }
-								siteId={ siteId }
-							/>,
-						] ) }
+					{ items }
 				</FoldableCard>
 			</div>
 		);
