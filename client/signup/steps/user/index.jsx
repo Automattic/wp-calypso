@@ -163,7 +163,7 @@ export class UserStep extends Component {
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
-			queryArgs: this.props.queryObject || {},
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
 		} );
 	};
 
@@ -206,8 +206,12 @@ export class UserStep extends Component {
 	}
 
 	getRedirectToAfterLoginUrl() {
-		if ( this.props.oauth2Signup && this.props.queryObject.oauth2_redirect ) {
-			return this.props.queryObject.oauth2_redirect;
+		if (
+			this.props.oauth2Signup &&
+			this.props.initialContext &&
+			this.props.initialContext.query.oauth2_redirect
+		) {
+			return this.props.initialContext.query.oauth2_redirect;
 		}
 
 		const stepAfterRedirect =
