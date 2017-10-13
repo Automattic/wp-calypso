@@ -100,7 +100,7 @@ class GoogleLoginButton extends Component {
 						const currentUser = googleAuth.currentUser.get();
 
 						// handle social authentication response from a redirect-based oauth2 flow
-						if ( currentUser ) {
+						if ( currentUser && this.props.uxMode === 'redirect' ) {
 							this.props.responseHandler( currentUser, false );
 						}
 
