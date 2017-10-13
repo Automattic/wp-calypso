@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { sum } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,40 +55,20 @@ class OrderRefundTable extends Component {
 		return !! order.tax_lines.length;
 	};
 
-	recalculateRefund = () => {
-		const { order } = this.props;
-		if ( ! order ) {
-			return 0;
-		}
-		const subtotal = sum(
-			this.state.quantities.map( ( q, i ) => {
-				if ( ! order.line_items[ i ] ) {
-					return 0;
-				}
-
-				const price = parseFloat( order.line_items[ i ].price );
-				if ( order.prices_include_tax ) {
-					return price * q;
-				}
-
-				const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
-				return ( price + tax ) * q;
-			} )
-		);
-		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
-		this.props.onChange( total );
+	triggerRecalculate = () => {
+		this.props.onChange( this.state );
 	};
 
 	onChange = event => {
 		if ( 'shipping_total' === event.target.name ) {
 			const shippingTotal = event.target.value.replace( /[^0-9,.]/g, '' );
-			this.setState( { shippingTotal }, this.recalculateRefund );
+			this.setState( { shippingTotal }, this.triggerRecalculate );
 		} else {
 			// Name is `quantity-x`, where x is the ID in the line_items array
 			const i = event.target.name.split( '-' )[ 1 ];
 			const newQuants = this.state.quantities;
 			newQuants[ i ] = event.target.value;
-			this.setState( { quantities: newQuants }, this.recalculateRefund );
+			this.setState( { quantities: newQuants }, this.triggerRecalculate );
 		}
 	};
 
