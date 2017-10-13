@@ -43,7 +43,7 @@ function getSectionLoaders( sections ) {
 function requireTemplate( section ) {
 	const result = section.paths.reduce( function( acc, path ) {
 		return acc.concat( [
-			'page( getPathRegExp( ' + JSON.stringify( path ) + ', function( context, next ) {',
+			'page( getPathRegExp( ' + JSON.stringify( path ) + ' ), function( context, next ) {',
 			'	var envId = ' + JSON.stringify( section.envId ) + ';',
 			'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
 			'		return next();',
