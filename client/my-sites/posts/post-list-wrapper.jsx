@@ -28,6 +28,7 @@ class PostListWrapper extends React.Component {
 			status: mapPostStatus( this.props.statusSlug ),
 			author: this.props.author,
 			search: this.props.search,
+			number: 40,
 		};
 
 		if ( this.props.category ) {
