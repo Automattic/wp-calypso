@@ -28,7 +28,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateUninitialized ) ).to.be.equals(
+			expect( getHappychatConnectionStatus( stateUninitialized ) ).to.equal(
 				HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED
 			);
 		} );
