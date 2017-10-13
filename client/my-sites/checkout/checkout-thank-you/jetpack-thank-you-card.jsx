@@ -107,18 +107,6 @@ class JetpackThankYouCard extends Component {
 		this.sentTracks = true;
 	}
 
-	trackManualInstall() {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
-	}
-
-	trackManagePlans() {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
-	}
-
-	trackContactSupport() {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
-	}
-
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
@@ -138,6 +126,7 @@ class JetpackThankYouCard extends Component {
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
 
 		page.exit( '/checkout/thank-you/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -595,6 +584,7 @@ class JetpackThankYouCard extends Component {
 			"Now that we've taken care of the plan, it's time to power up your site."
 		);
 		if ( 100 === progress ) {
+			this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
 			return translate( "You are powered up, it's time to see your site." );
 		}
 
