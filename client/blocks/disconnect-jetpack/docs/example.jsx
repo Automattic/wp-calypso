@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import DisconnectJetpackDialog from '../';
+import DisconnectJetpackDialog from '../dialog';
 import Card from 'components/card';
 import Button from 'components/button';
 
@@ -48,9 +48,6 @@ class DisconnectJetpackDialogExample extends Component {
 					isVisible={ this.state.isVisible.free }
 					siteId={ this.props.primarySiteId }
 					onClose={ this.toggleVisibilityFree }
-					onDisconnect={ this.toggleVisibilityFree }
-					siteName="example.com"
-					plan="free"
 				/>
 
 				<p>
@@ -60,9 +57,6 @@ class DisconnectJetpackDialogExample extends Component {
 					isVisible={ this.state.isVisible.personal }
 					siteId={ this.props.primarySiteId }
 					onClose={ this.toggleVisibilityPersonal }
-					onDisconnect={ this.toggleVisibilityPersonal }
-					siteName="example.com"
-					plan="personal"
 				/>
 
 				<p>
@@ -72,9 +66,6 @@ class DisconnectJetpackDialogExample extends Component {
 					isVisible={ this.state.isVisible.premium }
 					siteId={ this.props.primarySiteId }
 					onClose={ this.toggleVisibilityPremium }
-					onDisconnect={ this.toggleVisibilityPremium }
-					siteName="example.com"
-					plan="premium"
 				/>
 
 				<p>
@@ -86,9 +77,6 @@ class DisconnectJetpackDialogExample extends Component {
 					isVisible={ this.state.isVisible.professional }
 					siteId={ this.props.primarySiteId }
 					onClose={ this.toggleVisibilityProfessional }
-					onDisconnect={ this.toggleVisibilityProfessional }
-					siteName="example.com"
-					plan="professional"
 				/>
 
 				<p>
@@ -100,9 +88,6 @@ class DisconnectJetpackDialogExample extends Component {
 					isVisible={ this.state.isVisible.broken }
 					siteId={ this.props.primarySiteId }
 					onClose={ this.toggleVisibilityBroken }
-					onDisconnect={ this.toggleVisibilityBroken }
-					siteName="example.com"
-					plan="personal"
 					isBroken={ true }
 				/>
 			</Card>

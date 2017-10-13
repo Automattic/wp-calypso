@@ -9,13 +9,16 @@ import { cloneDeep, includes, omit, range } from 'lodash';
  */
 import QueryManager from '../';
 import PaginatedQueryKey from './key';
-import { DEFAULT_QUERY, PAGINATION_QUERY_KEYS } from './constants';
+import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 
 /**
  * PaginatedQueryManager manages paginated data which can be queried and
  * change over time
  */
 export default class PaginatedQueryManager extends QueryManager {
+	static QueryKey = PaginatedQueryKey;
+	static DefaultQuery = DEFAULT_PAGINATED_QUERY;
+
 	/**
 	 * Returns true if the specified query is an object containing one or more
 	 * query pagination keys.
@@ -53,8 +56,8 @@ export default class PaginatedQueryManager extends QueryManager {
 		}
 
 		// Slice the unpaginated set of data
-		const page = query.page || this.constructor.DEFAULT_QUERY.page;
-		const perPage = query.number || this.constructor.DEFAULT_QUERY.number;
+		const page = query.page || this.constructor.DefaultQuery.page;
+		const perPage = query.number || this.constructor.DefaultQuery.number;
 		const startOffset = ( page - 1 ) * perPage;
 
 		return dataIgnoringPage.slice( startOffset, startOffset + perPage );
@@ -96,7 +99,7 @@ export default class PaginatedQueryManager extends QueryManager {
 			return found;
 		}
 
-		const perPage = query.number || this.constructor.DEFAULT_QUERY.number;
+		const perPage = query.number || this.constructor.DefaultQuery.number;
 		return Math.ceil( found / perPage );
 	}
 
@@ -148,9 +151,8 @@ export default class PaginatedQueryManager extends QueryManager {
 		}
 
 		const queryKey = this.constructor.QueryKey.stringify( options.query );
-		const page = options.query.page || this.constructor.DEFAULT_QUERY.page;
-		const perPage =
-			options.query.number || this.constructor.DEFAULT_QUERY.number;
+		const page = options.query.page || this.constructor.DefaultQuery.page;
+		const perPage = options.query.number || this.constructor.DefaultQuery.number;
 		const startOffset = ( page - 1 ) * perPage;
 		const nextQuery = nextManager.data.queries[ queryKey ];
 
@@ -241,7 +243,3 @@ export default class PaginatedQueryManager extends QueryManager {
 		);
 	}
 }
-
-PaginatedQueryManager.QueryKey = PaginatedQueryKey;
-
-PaginatedQueryManager.DEFAULT_QUERY = DEFAULT_QUERY;

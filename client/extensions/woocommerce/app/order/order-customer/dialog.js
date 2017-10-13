@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import emailValidator from 'email-validator';
 import { get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -15,6 +16,7 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
@@ -69,6 +71,7 @@ class CustomerAddressDialog extends Component {
 		this.state = {
 			address: props.address,
 			phoneCountry: 'US',
+			emailValidMessage: false,
 		};
 	}
 
@@ -90,18 +93,31 @@ class CustomerAddressDialog extends Component {
 	};
 
 	onChange = event => {
+		const value = event.target.value;
 		let name = event.target.name;
-		if ( 'street' === event.target.name ) {
+		if ( 'street' === name ) {
 			name = 'address_1';
-		} else if ( 'street2' === event.target.name ) {
+		} else if ( 'street2' === name ) {
 			name = 'address_2';
 		}
-		const value = event.target.value;
 		this.setState( prevState => {
 			const { address } = prevState;
 			const newState = { ...address, [ name ]: value };
 			return { address: newState };
 		} );
+	};
+
+	validateEmail = event => {
+		const { translate } = this.props;
+		if ( ! emailValidator.validate( event.target.value ) ) {
+			this.setState( {
+				emailValidMessage: translate( 'Please enter a valid email address.' ),
+			} );
+		} else {
+			this.setState( {
+				emailValidMessage: false,
+			} );
+		}
 	};
 
 	toggleShipping = () => {
@@ -114,7 +130,7 @@ class CustomerAddressDialog extends Component {
 
 	renderBillingFields = () => {
 		const { isBilling, translate } = this.props;
-		const { address } = this.state;
+		const { address, emailValidMessage } = this.state;
 		if ( ! isBilling ) {
 			return null;
 		}
@@ -136,7 +152,9 @@ class CustomerAddressDialog extends Component {
 						name="email"
 						value={ get( address, 'email', '' ) }
 						onChange={ this.onChange }
+						onBlur={ this.validateEmail }
 					/>
+					{ emailValidMessage && <FormInputValidation text={ emailValidMessage } isError /> }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
@@ -153,10 +171,10 @@ class CustomerAddressDialog extends Component {
 
 	render() {
 		const { isBilling, isVisible, translate } = this.props;
-		const { address } = this.state;
+		const { address, emailValidMessage } = this.state;
 		const dialogButtons = [
 			<Button onClick={ this.closeDialog }>{ translate( 'Close' ) }</Button>,
-			<Button primary onClick={ this.updateAddress }>
+			<Button primary onClick={ this.updateAddress } disabled={ !! emailValidMessage }>
 				{ translate( 'Save' ) }
 			</Button>,
 		];

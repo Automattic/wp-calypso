@@ -24,9 +24,24 @@ const TEXTAREA_VERTICAL_BORDER = 2;
 export class CommentDetailReply extends Component {
 	state = {
 		commentText: '',
-		hasFocus: false,
 		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
+
+	componentDidMount() {
+		if ( this.props.hasFocus ) {
+			this.textarea.focus();
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.hasFocus !== nextProps.hasFocus ) {
+			this.setState( {
+				textareaHeight: nextProps.hasFocus
+					? this.calculateTextareaHeight()
+					: TEXTAREA_HEIGHT_COLLAPSED,
+			} );
+		}
+	}
 
 	bindTextareaRef = textarea => {
 		this.textarea = textarea;
@@ -59,7 +74,7 @@ export class CommentDetailReply extends Component {
 			: translate( 'Reply to comment…' );
 	};
 
-	handleTextChange = event => {
+	onChange = event => {
 		const { value } = event.target;
 		const textareaHeight = this.calculateTextareaHeight();
 
@@ -68,12 +83,6 @@ export class CommentDetailReply extends Component {
 			textareaHeight,
 		} );
 	};
-
-	setFocus = () =>
-		this.setState( {
-			hasFocus: true,
-			textareaHeight: this.calculateTextareaHeight(),
-		} );
 
 	submit = () => {
 		const { comment, replyComment } = this.props;
@@ -88,7 +97,7 @@ export class CommentDetailReply extends Component {
 		this.submit();
 	};
 
-	submitCommentOnCtrlEnter = event => {
+	onKeyDown = event => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -96,15 +105,9 @@ export class CommentDetailReply extends Component {
 		}
 	};
 
-	unsetFocus = () =>
-		this.setState( {
-			hasFocus: false,
-			textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
-		} );
-
 	render() {
-		const { currentUser, translate } = this.props;
-		const { commentText, hasFocus, textareaHeight } = this.state;
+		const { currentUser, hasFocus, translate, enterReplyState, exitReplyState } = this.props;
+		const { commentText, textareaHeight } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
@@ -135,10 +138,10 @@ export class CommentDetailReply extends Component {
 				<AutoDirection>
 					<textarea
 						className={ textareaClasses }
-						onBlur={ this.unsetFocus }
-						onChange={ this.handleTextChange }
-						onFocus={ this.setFocus }
-						onKeyDown={ this.submitCommentOnCtrlEnter }
+						onBlur={ exitReplyState }
+						onChange={ this.onChange }
+						onFocus={ enterReplyState }
+						onKeyDown={ this.onKeyDown }
 						placeholder={ this.getTextareaPlaceholder() }
 						ref={ this.bindTextareaRef }
 						style={ textareaStyle }

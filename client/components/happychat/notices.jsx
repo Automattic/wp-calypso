@@ -18,9 +18,9 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	getHappychatStatus,
-	getHappychatConnectionStatus,
-	isHappychatServerReachable,
 } from 'state/happychat/selectors';
+import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
+import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 
 /*
  * Renders any notices about the chat session to the user

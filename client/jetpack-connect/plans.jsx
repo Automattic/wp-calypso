@@ -270,7 +270,7 @@ class Plans extends Component {
 	}
 
 	render() {
-		const { isRtlLayout } = this.props;
+		const { isRtlLayout, translate } = this.props;
 
 		if (
 			this.redirecting ||
@@ -280,6 +280,8 @@ class Plans extends Component {
 		) {
 			return <QueryPlans />;
 		}
+
+		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
 			<div>
@@ -299,8 +301,8 @@ class Plans extends Component {
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
-						<JetpackConnectHappychatButton>
-							<HelpButton onClick={ this.handleHelpButtonClick } />
+						<JetpackConnectHappychatButton label={ helpButtonLabel }>
+							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

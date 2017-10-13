@@ -85,12 +85,9 @@ const DEFAULT_POST = {
 	],
 };
 
-describe( 'PostQueryManager', () => {
-	let manager;
-	beforeEach( () => {
-		manager = new PostQueryManager();
-	} );
+const makeComparator = query => ( a, b ) => PostQueryManager.compare( query, a, b );
 
+describe( 'PostQueryManager', () => {
 	describe( '#matches()', () => {
 		describe( 'query.search', () => {
 			test( 'should return false for a non-matching search', () => {
@@ -804,7 +801,7 @@ describe( 'PostQueryManager', () => {
 		describe( 'query.order', () => {
 			test( 'should sort descending by default', () => {
 				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'ID',
 					} )
 				);
@@ -814,7 +811,7 @@ describe( 'PostQueryManager', () => {
 
 			test( 'should reverse order when specified as ascending', () => {
 				const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-					manager.compare.bind( manager, {
+					makeComparator( {
 						order_by: 'ID',
 						order: 'ASC',
 					} )
@@ -836,7 +833,7 @@ describe( 'PostQueryManager', () => {
 				} );
 
 				test( 'should order by date', () => {
-					const sorted = [ olderPost, newerPost ].sort( manager.compare.bind( manager, {} ) );
+					const sorted = [ olderPost, newerPost ].sort( makeComparator( {} ) );
 
 					expect( sorted ).to.eql( [ newerPost, olderPost ] );
 				} );
@@ -854,7 +851,7 @@ describe( 'PostQueryManager', () => {
 
 				test( 'should order by modified', () => {
 					const sorted = [ olderPost, newerPost ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'modified',
 						} )
 					);
@@ -875,7 +872,7 @@ describe( 'PostQueryManager', () => {
 
 				test( 'should sort by title', () => {
 					const sorted = [ aPost, zPost ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'title',
 						} )
 					);
@@ -900,7 +897,7 @@ describe( 'PostQueryManager', () => {
 
 				test( 'should sort by comment count', () => {
 					const sorted = [ unpopularPost, popularPost ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'comment_count',
 						} )
 					);
@@ -912,7 +909,7 @@ describe( 'PostQueryManager', () => {
 			describe( 'ID', () => {
 				test( 'should sort by ID', () => {
 					const sorted = [ { ID: 200 }, { ID: 400 } ].sort(
-						manager.compare.bind( manager, {
+						makeComparator( {
 							order_by: 'ID',
 						} )
 					);

@@ -481,41 +481,53 @@ export class EditorHtmlToolbar extends Component {
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
-	renderExternal() {
+	renderAddEverythingDropdown = () => {
 		const { translate } = this.props;
 
-		if ( ! config.isEnabled( 'external-media' ) ) {
-			return null;
-		}
+		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
+			'is-visible': this.state.showInsertContentMenu,
+		} );
 
 		return (
-			<div
-				className="editor-html-toolbar__insert-content-dropdown-item"
-				onClick={ this.openGoogleModal }
-			>
-				<Gridicon icon="add-image" />
-				<span data-e2e-insert-type="google-media">{ translate( 'Add from Google' ) }</span>
+			<div className={ insertContentClasses }>
+				<div
+					className="editor-html-toolbar__insert-content-dropdown-item"
+					onClick={ this.openMediaModal }
+				>
+					<Gridicon icon="add-image" />
+					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
+				</div>
+
+				{ config.isEnabled( 'external-media' ) && (
+					<div
+						className="editor-html-toolbar__insert-content-dropdown-item"
+						onClick={ this.openGoogleModal }
+					>
+						<Gridicon icon="add-image" />
+						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
+					</div>
+				) }
+
+				<div
+					className="editor-html-toolbar__insert-content-dropdown-item"
+					onClick={ this.openContactFormDialog }
+				>
+					<Gridicon icon="mention" />
+					<span data-e2e-insert-type="contact-form">{ translate( 'Contact Form' ) }</span>
+				</div>
+
+				{ config.isEnabled( 'simple-payments' ) && (
+					<div
+						className="editor-html-toolbar__insert-content-dropdown-item"
+						onClick={ this.openSimplePaymentsDialog }
+					>
+						<Gridicon icon="money" />
+						<span data-e2e-insert-type="payment-button">{ translate( 'Payment Button' ) }</span>
+					</div>
+				) }
 			</div>
 		);
-	}
-
-	renderSimplePaymentsButton() {
-		const { translate } = this.props;
-
-		if ( ! config.isEnabled( 'simple-payments' ) ) {
-			return null;
-		}
-
-		return (
-			<div
-				className="editor-html-toolbar__insert-content-dropdown-item"
-				onClick={ this.openSimplePaymentsDialog }
-			>
-				<Gridicon icon="money" />
-				<span data-e2e-insert-type="payment-button">{ translate( 'Add Payment Button' ) }</span>
-			</div>
-		);
-	}
+	};
 
 	render() {
 		const { site, translate } = this.props;
@@ -525,9 +537,6 @@ export class EditorHtmlToolbar extends Component {
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
 			'has-active-drop-zone': this.props.isDropZoneVisible,
-		} );
-		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
-			'is-visible': this.state.showInsertContentMenu,
 		} );
 
 		const buttons = {
@@ -589,21 +598,12 @@ export class EditorHtmlToolbar extends Component {
 							>
 								<Button
 									borderless
-									className="editor-html-toolbar__button-insert-media"
-									compact
-									onClick={ this.openMediaModal }
-								>
-									<Gridicon icon="add-outline" />
-								</Button>
-								<Button
-									borderless
 									className="editor-html-toolbar__button-insert-content-dropdown"
 									compact
 									onClick={ this.toggleInsertContentMenu }
 								>
-									<Gridicon
-										icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' }
-									/>
+									<Gridicon icon="add-outline" />
+									<span>{ translate( 'Add' ) }</span>
 								</Button>
 							</div>
 							{ map( buttons, ( { disabled, label, onClick }, tag ) => (
@@ -622,27 +622,7 @@ export class EditorHtmlToolbar extends Component {
 							) ) }
 						</div>
 
-						<div className={ insertContentClasses }>
-							<div
-								className="editor-html-toolbar__insert-content-dropdown-item"
-								onClick={ this.openMediaModal }
-							>
-								<Gridicon icon="add-image" />
-								<span data-e2e-insert-type="media">{ translate( 'Add Media' ) }</span>
-							</div>
-
-							{ this.renderExternal() }
-
-							<div
-								className="editor-html-toolbar__insert-content-dropdown-item"
-								onClick={ this.openContactFormDialog }
-							>
-								<Gridicon icon="mention" />
-								<span data-e2e-insert-type="contact-form">{ translate( 'Add Contact Form' ) }</span>
-							</div>
-
-							{ this.renderSimplePaymentsButton() }
-						</div>
+						{ this.renderAddEverythingDropdown() }
 					</div>
 				</div>
 

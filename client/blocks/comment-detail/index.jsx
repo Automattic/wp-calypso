@@ -25,7 +25,7 @@ import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSite, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -93,6 +93,7 @@ export class CommentDetail extends Component {
 
 	state = {
 		isEditMode: false,
+		isReplyMode: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -101,7 +102,9 @@ export class CommentDetail extends Component {
 		}
 	}
 
-	deleteCommentPermanently = () => {
+	deleteCommentPermanently = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -120,7 +123,13 @@ export class CommentDetail extends Component {
 			? -1 !== this.props.siteBlacklist.split( '\n' ).indexOf( this.props.authorEmail )
 			: false;
 
-	toggleApprove = () => {
+	enterReplyState = () => this.setState( { isReplyMode: true } );
+
+	exitReplyState = () => this.setState( { isReplyMode: false } );
+
+	toggleApprove = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -150,7 +159,9 @@ export class CommentDetail extends Component {
 		}
 	};
 
-	toggleLike = () => {
+	toggleLike = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -158,9 +169,9 @@ export class CommentDetail extends Component {
 		this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 	};
 
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
+	toggleSpam = e => {
+		e.stopPropagation();
 
-	toggleSpam = () => {
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -172,7 +183,9 @@ export class CommentDetail extends Component {
 		);
 	};
 
-	toggleTrash = () => {
+	toggleTrash = e => {
+		e.stopPropagation();
+
 		if ( this.state.isEditMode ) {
 			return;
 		}
@@ -248,6 +261,7 @@ export class CommentDetail extends Component {
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
+			site,
 			siteBlacklist,
 			siteId,
 			translate,
@@ -286,6 +300,7 @@ export class CommentDetail extends Component {
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
+					commentDate={ commentDate }
 					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
@@ -296,10 +311,12 @@ export class CommentDetail extends Component {
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
+					site={ site }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
+					toggleReply={ this.enterReplyState }
 					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
@@ -358,8 +375,11 @@ export class CommentDetail extends Component {
 									authorAvatarUrl={ authorAvatarUrl }
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
+									hasFocus={ this.state.isReplyMode }
 									postTitle={ postTitle }
 									replyComment={ replyComment }
+									enterReplyState={ this.enterReplyState }
+									exitReplyState={ this.exitReplyState }
 								/>
 							</div>
 						) }
@@ -420,6 +440,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
+		site: getSite( state, siteId ),
 	};
 };
 

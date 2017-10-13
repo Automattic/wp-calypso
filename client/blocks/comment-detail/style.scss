@@ -77,10 +77,16 @@
 	float: left;
 }
 
-.comment-detail__author-info-element {
+.comment-detail__author-info-element,
+.comment-detail__author-info-timestamp {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.comment-detail__author-info-timestamp {
+	font-size: 12px;
+	margin-top: 2px;
 }
 
 .comment-detail__header {
@@ -133,6 +139,7 @@
 		transform: rotate( 180deg );
 		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
 	}
+
 	.comment-detail__action-collapse:hover .gridicon {
 		fill: $blue-medium;
 	}
@@ -194,15 +201,11 @@
 .comment-detail__comment-preview {
 	box-sizing: border-box;
 	line-height: 1.4;
-	max-height: 38px;
+	max-height: 56px;
 	overflow: hidden;
 	padding: 0 8px;
 	position: relative;
 	width: 60%;
-
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
 
 	&:after {
 		background: linear-gradient(
@@ -217,12 +220,22 @@
 			right: 0;
 		width: 30%;
 	}
-	@supports( -webkit-line-clamp: 2 ) {
+
+	@supports( -webkit-line-clamp: 3 ) {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
+
 		&:after {
 			background: transparent;
+		}
+	}
+
+	@include breakpoint( "<960px" ) {
+		width: 100%;
+
+		@supports( -webkit-line-clamp: 2 ) {
+			-webkit-line-clamp: 2;
 		}
 	}
 }
@@ -242,7 +255,18 @@
 	padding-left: 4px;
 	user-select: none;
 
-	.button.is-borderless {
+	&.is-quick {
+		position: absolute;
+		display: flex;
+		right: 44px;
+		padding: 0;
+
+		.gridicon {
+			vertical-align: baseline;
+		}
+	}
+
+	.button {
 		span {
 			display: none;
 			font-weight: normal;
@@ -637,6 +661,11 @@
 		&:after {
 			background: transparent;
 		}
+	}
+
+	.comment-detail__comment-preview {
+		height: 56px;
+		max-height: 56px;
 	}
 
 	.comment-detail__header.is-preview {

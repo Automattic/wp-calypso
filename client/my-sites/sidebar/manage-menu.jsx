@@ -93,10 +93,7 @@ class ManageMenu extends PureComponent {
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
-		];
-
-		if ( config.isEnabled( 'manage/media' ) ) {
-			items.push( {
+			{
 				name: 'media',
 				label: this.props.translate( 'Media' ),
 				capability: 'upload_files',
@@ -106,11 +103,8 @@ class ManageMenu extends PureComponent {
 				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
-			} );
-		}
-
-		if ( config.isEnabled( 'comments/management' ) ) {
-			items.push( {
+			},
+			{
 				name: 'comments',
 				label: this.props.translate( 'Comments' ),
 				capability: 'moderate_comments',
@@ -119,8 +113,8 @@ class ManageMenu extends PureComponent {
 				link: '/comments',
 				wpAdminLink: 'edit-comments.php',
 				showOnAllMySites: false,
-			} );
-		}
+			},
+		];
 
 		return items;
 	}

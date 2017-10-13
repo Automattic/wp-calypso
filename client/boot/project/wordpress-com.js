@@ -16,7 +16,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import { initialize as initializeHappychat } from 'state/happychat/actions';
+import { initialize as initializeHappychat } from 'state/happychat/connection/actions';
 import analytics from 'lib/analytics';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import route from 'lib/route';

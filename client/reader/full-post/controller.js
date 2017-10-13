@@ -57,6 +57,7 @@ export function blogPost( context ) {
 			blogId={ blogId }
 			postId={ postId }
 			referral={ referral }
+			referralStream={ context.lastRoute }
 			onClose={ function() {
 				page.back( context.lastRoute || '/' );
 			} }
@@ -86,6 +87,7 @@ export function feedPost( context ) {
 			feedId={ feedId }
 			postId={ postId }
 			onClose={ closer }
+			referralStream={ context.lastRoute }
 			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),

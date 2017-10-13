@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { lastActivityTimestamp, lostFocusAt, message, geoLocation } from '../reducer';
+import { lastActivityTimestamp, lostFocusAt, message } from '../reducer';
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_BLUR,
@@ -16,8 +16,6 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	SERIALIZE,
-	DESERIALIZE,
-	HAPPYCHAT_CONNECTED,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -82,39 +80,6 @@ describe( 'reducers', () => {
 			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'abcd' };
 			const result = message( 'abcd', action );
 			expect( result ).to.eql( '' );
-		} );
-	} );
-
-	describe( '#geoLocation()', () => {
-		test( 'should default to null', () => {
-			const state = geoLocation( undefined, {} );
-
-			expect( state ).to.be.null;
-		} );
-
-		test( 'should set the current user geolocation', () => {
-			const state = geoLocation( null, {
-				type: HAPPYCHAT_CONNECTED,
-				user: {
-					geo_location: {
-						country_long: 'Romania',
-						city: 'Timisoara',
-					},
-				},
-			} );
-
-			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
-		} );
-
-		test( 'returns valid geolocation', () => {
-			const state = geoLocation(
-				{ country_long: 'Romania', city: 'Timisoara' },
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 		} );
 	} );
 } );

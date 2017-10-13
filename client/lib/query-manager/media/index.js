@@ -16,6 +16,9 @@ import { DEFAULT_MEDIA_QUERY } from './constants';
  * MediaQueryManager manages media which can be queried and change over time
  */
 export default class MediaQueryManager extends PaginatedQueryManager {
+	static QueryKey = MediaQueryKey;
+	static DefaultQuery = DEFAULT_MEDIA_QUERY;
+
 	/**
 	 * Returns true if the media item matches the given query, or false
 	 * otherwise.
@@ -25,7 +28,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @return {Boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
-		return every( { ...DEFAULT_MEDIA_QUERY, ...query }, ( value, key ) => {
+		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
 					if ( ! value ) {
@@ -85,7 +88,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @return {Number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */
-	compare( query, mediaA, mediaB ) {
+	static compare( query, mediaA, mediaB ) {
 		let order;
 
 		switch ( query.order_by ) {
@@ -110,7 +113,3 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 		return order || 0;
 	}
 }
-
-MediaQueryManager.QueryKey = MediaQueryKey;
-
-MediaQueryManager.DEFAULT_QUERY = DEFAULT_MEDIA_QUERY;

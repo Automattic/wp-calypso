@@ -22,12 +22,16 @@ import middleware, {
 	updateChatPreferences,
 	sendInfo,
 } from '../middleware';
-import * as selectors from '../selectors';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 } from '../selectors';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+} from 'state/happychat/constants';
 import wpcom from 'lib/wp';
 import {
 	ANALYTICS_EVENT_RECORD,
@@ -46,7 +50,7 @@ describe( 'middleware', () => {
 		let dispatch, getState;
 		const uninitializedState = deepFreeze( {
 			currentUser: { id: 1, capabilities: {} },
-			happychat: { connectionStatus: 'uninitialized' },
+			happychat: { connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED } },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
 			sites: {
@@ -74,8 +78,12 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should not attempt to connect when Happychat has been initialized', () => {
-			const connectedState = { happychat: { connectionStatus: 'connected' } };
-			const connectingState = { happychat: { connectionStatus: 'connecting' } };
+			const connectedState = {
+				happychat: { connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED } },
+			};
+			const connectingState = {
+				happychat: { connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTING } },
+			};
 
 			return Promise.all( [
 				connectChat( connection, { dispatch, getState: getState.returns( connectedState ) } ),
@@ -94,8 +102,10 @@ describe( 'middleware', () => {
 	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
 		const state = {
 			happychat: {
-				geoLocation: {
-					city: 'Timisoara',
+				user: {
+					geoLocation: {
+						city: 'Timisoara',
+					},
 				},
 			},
 		};
@@ -140,7 +150,7 @@ describe( 'middleware', () => {
 					height: 'windowInnerHeight',
 				},
 				userAgent: 'navigatorUserAgent',
-				geoLocation: state.happychat.geoLocation,
+				geoLocation: state.happychat.user.geoLocation,
 			};
 
 			const getState = () => state;
@@ -167,10 +177,12 @@ describe( 'middleware', () => {
 		// connectChat. So we need to build up all the objects to make connectChat execute
 		// without errors. It may be worth pulling each of these helpers out into their
 		// own modules, so that we can stub them and simplify our tests.
-		let connection, dispatch, getState;
-		const uninitializedState = deepFreeze( {
+		const recentlyActiveState = deepFreeze( {
 			currentUser: { id: 1, capabilities: {} },
-			happychat: { connectionStatus: 'uninitialized' },
+			happychat: {
+				connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED },
+				lastActivityTimestamp: Date.now(),
+			},
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
 			sites: {
@@ -187,27 +199,54 @@ describe( 'middleware', () => {
 				},
 			},
 		} );
+		const storeRecentlyActive = {
+			dispatch: noop,
+			getState: stub().returns( recentlyActiveState ),
+		};
 
+		const notRecentlyActiveState = deepFreeze( {
+			currentUser: { id: 1, capabilities: {} },
+			happychat: {
+				connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED },
+				lastActivityTimestamp: null, // no record of last activity
+			},
+			users: { items: { 1: {} } },
+			help: { selectedSiteId: 2647731 },
+			sites: {
+				items: {
+					2647731: {
+						ID: 2647731,
+						name: 'Manual Automattic Updates',
+					},
+				},
+			},
+			ui: {
+				section: {
+					name: 'reader',
+				},
+			},
+		} );
+		const storeNotRecentlyActive = {
+			dispatch: noop,
+			getState: stub().returns( notRecentlyActiveState ),
+		};
+
+		let connection;
 		useSandbox( sandbox => {
 			connection = {
 				init: sandbox.stub().returns( Promise.resolve() ),
 			};
-			dispatch = sandbox.stub();
-			getState = sandbox.stub().returns( uninitializedState );
 			sandbox.stub( wpcom, 'request', ( args, callback ) => callback( null, {} ) );
-			sandbox.stub( selectors, 'wasHappychatRecentlyActive' );
 		} );
 
 		test( 'should connect the chat if user was recently connected', () => {
-			selectors.wasHappychatRecentlyActive.returns( true );
-			connectIfRecentlyActive( connection, { dispatch, getState } ).then( () => {
+			connectIfRecentlyActive( connection, storeRecentlyActive ).then( () => {
 				expect( connection.init ).to.have.been.called;
 			} );
 		} );
 
 		test( 'should not connect the chat if user was not recently connected', () => {
-			selectors.wasHappychatRecentlyActive.returns( false );
-			connectIfRecentlyActive( connection, { dispatch, getState } ).then( () => {
+			connectIfRecentlyActive( connection, storeNotRecentlyActive ).then( () => {
 				expect( connection.init ).to.not.have.been.called;
 			} );
 		} );
@@ -272,7 +311,7 @@ describe( 'middleware', () => {
 		test( 'should send the locale and groups through the connection and send a preferences signal', () => {
 			const state = {
 				happychat: {
-					connectionStatus: 'connected',
+					connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
 				},
 				currentUser: {
 					locale: 'en',
@@ -331,14 +370,18 @@ describe( 'middleware', () => {
 				},
 			},
 			happychat: {
-				connectionStatus: 'connected',
-				isAvailable: true,
+				connection: {
+					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+					isAvailable: true,
+				},
 				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 			},
 		};
+
 		beforeEach( () => {
 			connection = { sendEvent: stub() };
 		} );
+
 		test( 'should sent the page URL the user is in', () => {
 			const getState = () => state;
 			sendRouteSetEventMessage( connection, { getState }, action );
@@ -346,15 +389,21 @@ describe( 'middleware', () => {
 				'Looking at https://wordpress.com/me?support_user=Link'
 			);
 		} );
+
 		test( 'should not sent the page URL the user is in when client not connected', () => {
 			const getState = () =>
-				Object.assign( {}, state, { happychat: { connectionStatus: 'uninitialized' } } );
+				Object.assign( {}, state, {
+					happychat: { connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED } },
+				} );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
 		} );
+
 		test( 'should not sent the page URL the user is in when chat is not assigned', () => {
 			const getState = () =>
-				Object.assign( {}, state, { happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING } } );
+				Object.assign( {}, state, {
+					happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING },
+				} );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
 		} );
@@ -422,19 +471,19 @@ describe( 'middleware', () => {
 	describe( '#sendActionLogsAndEvents', () => {
 		const assignedState = deepFreeze( {
 			happychat: {
-				connectionStatus: 'connected',
+				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
 				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 			},
 		} );
 		const unassignedState = deepFreeze( {
 			happychat: {
-				connectionStatus: 'connected',
+				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
 				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			},
 		} );
 		const unconnectedState = deepFreeze( {
 			happychat: {
-				connectionStatus: 'uninitialized',
+				connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED },
 				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			},
 		} );
