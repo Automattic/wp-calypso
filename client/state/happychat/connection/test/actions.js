@@ -14,11 +14,11 @@ import { setConnected } from '../actions';
 describe( 'actions', () => {
 	describe( '#setConnected()', () => {
 		test( 'should return an action object', () => {
-			const action = setConnected( { geo_location: { country_long: 'Romania' } } );
+			const action = setConnected( { geoLocation: { country_long: 'Romania' } } );
 
 			expect( action ).to.eql( {
 				type: HAPPYCHAT_CONNECTED,
-				user: { geo_location: { country_long: 'Romania' } },
+				user: { geoLocation: { country_long: 'Romania' } },
 			} );
 		} );
 	} );
