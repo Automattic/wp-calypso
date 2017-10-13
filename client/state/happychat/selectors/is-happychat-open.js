@@ -12,7 +12,7 @@ import { getSectionName } from 'state/ui/selectors';
  * @param {Object} state - global redux state
  * @returns {Boolean}
  */
-export const isHappychatOpen = createSelector(
+export default createSelector(
 	state => state.happychat.ui.isOpen && getSectionName( state ) !== 'happychat',
 	state => [ state.happychat.ui.isOpen, getSectionName( state ) ]
 );
