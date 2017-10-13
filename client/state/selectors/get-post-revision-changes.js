@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { findIndex, get, isUndefined, map, omitBy } from 'lodash';
@@ -13,20 +13,24 @@ import createSelector from 'lib/create-selector';
 import { diffWords } from 'lib/text-utils';
 import getPostRevisions from 'state/selectors/get-post-revisions';
 
+const diffKey = ( key, obj1, obj2 ) =>
+	map( diffWords( get( obj1, key, '' ), get( obj2, key, '' ) ), change =>
+		omitBy( change, isUndefined )
+	);
+
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
 		const orderedRevisions = getPostRevisions( state, siteId, postId, 'display' );
 		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
 		if ( revisionIndex === -1 ) {
-			return [];
+			return { content: [], title: [] };
 		}
-		return map(
-			diffWords(
-				get( orderedRevisions, [ revisionIndex + 1, 'content' ], '' ),
-				orderedRevisions[ revisionIndex ].content
-			),
-			change => omitBy( change, isUndefined )
-		);
+		const previousRevision = orderedRevisions[ revisionIndex + 1 ];
+		const currentRevision = orderedRevisions[ revisionIndex ];
+		return {
+			content: diffKey( 'content', previousRevision, currentRevision ),
+			title: diffKey( 'title', previousRevision, currentRevision ),
+		};
 	},
 	state => [ state.posts.revisions.revisions ]
 );
