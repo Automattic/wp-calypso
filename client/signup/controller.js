@@ -41,16 +41,16 @@ export default {
 				stepSectionName = utils.getStepSectionName( context.params );
 			let urlWithoutLocale = utils.getStepUrl( flowName, stepName, stepSectionName );
 
+			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+				return page.redirect( urlWithoutLocale );
+			}
+
 			if ( ! isEmpty( context.query ) ) {
 				urlWithoutLocale += '?' + context.querystring;
 			}
 
 			if ( ! isEmpty( context.hash ) ) {
 				urlWithoutLocale += '#' + context.hashstring;
-			}
-
-			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-				return page.redirect( urlWithoutLocale );
 			}
 
 			window.location = urlWithoutLocale;
