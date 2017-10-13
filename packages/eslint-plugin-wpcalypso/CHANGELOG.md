@@ -1,3 +1,7 @@
+#### v4.0.1 (2017-10-13)
+
+- Fix: i18n-ellipsis: Running the fixer for this rule no longer incorrectly removes quotes
+
 #### v4.0.0 (2017-09-07)
 
 - Breaking: Upgraded ESLint from 3.x to 4.x. [See v4.0.0 Migration Guide](https://eslint.org/docs/user-guide/migrating-to-4.0.0)
