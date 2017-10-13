@@ -108,16 +108,6 @@ export default class FoldableCardExample extends PureComponent {
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
-				<div>
-					<FoldableCard
-						header="This is a expanded foldable card that can't be closed"
-						disableToggle={ true }
-						expanded={ true }
-						screenReaderText="More"
-					>
-						These are the card contents
-					</FoldableCard>
-				</div>
 			</div>
 		);
 	}

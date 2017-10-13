@@ -25,7 +25,6 @@ class FoldableCard extends Component {
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,
 		disabled: PropTypes.bool,
-		disableToggle: PropTypes.bool,
 		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		expanded: PropTypes.bool,
 		icon: PropTypes.string,
@@ -43,7 +42,6 @@ class FoldableCard extends Component {
 		icon: 'chevron-down',
 		expanded: false,
 		screenReaderText: false,
-		disableToggle: false,
 	};
 
 	state = {
@@ -87,10 +85,7 @@ class FoldableCard extends Component {
 	}
 
 	renderActionButton() {
-		let clickAction = ! this.props.clickableHeader ? this.getClickAction() : null;
-		if ( this.props.disableToggle ) {
-			clickAction = null;
-		}
+		const clickAction = ! this.props.clickableHeader ? this.getClickAction() : null;
 		if ( this.props.actionButton ) {
 			return (
 				<div className="foldable-card__action" onClick={ clickAction }>
@@ -103,7 +98,7 @@ class FoldableCard extends Component {
 			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
 				<button
-					disabled={ this.props.disabled || this.props.disableToggle }
+					disabled={ this.props.disabled }
 					type="button"
 					className="foldable-card__action foldable-card__expand"
 					onClick={ clickAction }

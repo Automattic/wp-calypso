@@ -20,6 +20,7 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getRequestedRewind } from 'state/selectors';
+import { rewindRequestDismiss as rewindRequestDismissAction } from 'state/activity-log/actions';
 
 /**
  * Module constants
@@ -43,6 +44,7 @@ class ActivityLogDay extends Component {
 		isToday: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestedRewind: PropTypes.string,
+		rewindRequestDismiss: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -91,7 +93,21 @@ class ActivityLogDay extends Component {
 		} );
 	};
 
-	handleCloseDay = () => this.setState( { dayExpanded: false } );
+	closeDayOnly = () =>
+		this.setState( {
+			rewindHere: false,
+			dayExpanded: false,
+		} );
+
+	closeDayAndRewindDialog = () => {
+		const { recordTracksEvent, rewindRequestDismiss, siteId } = this.props;
+		recordTracksEvent( 'calypso_activitylog_restore_cancel' );
+		rewindRequestDismiss( siteId );
+		this.closeDayOnly();
+	};
+
+	handleCloseDay = hasConfirmDialog =>
+		hasConfirmDialog ? this.closeDayAndRewindDialog : this.closeDayOnly;
 
 	/**
 	 * Return a button to rewind to this point.
@@ -215,14 +231,13 @@ class ActivityLogDay extends Component {
 				} ) }
 			>
 				<FoldableCard
-					clickableHeader={ hasLogs && ! rewindHere }
+					clickableHeader={ hasLogs }
 					expanded={ hasLogs && ( isToday || dayExpanded ) }
 					expandedSummary={ rewindButton }
 					summary={ rewindButton }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
-					onClose={ this.handleCloseDay }
-					disableToggle={ rewindHere }
+					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
 					{ items }
 				</FoldableCard>
@@ -241,5 +256,6 @@ export default connect(
 	},
 	{
 		recordTracksEvent: recordTracksEventAction,
+		rewindRequestDismiss: rewindRequestDismissAction,
 	}
 )( localize( ActivityLogDay ) );

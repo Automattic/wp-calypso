@@ -42,4 +42,3 @@ render: function() {
 * `onOpen`: function to be executed in addition to the expand action when the card is opened
 * `summary`: string or component to show next to the action button when closed
 * `clickableHeader`: boolean indicating if the whole header can be clicked to open the card
-* `disableToggle`: boolean indicating if the chevron up/down button can toggle the card. This is useful for example if you've expanded the card and want to prevent users from closing it unless some action inside the card is completed.

@@ -118,12 +118,6 @@ button.foldable-card__action {
 		fill: $gray;
 	}
 
-	&[disabled] .gridicon,
-	&[disabled]:hover .gridicon {
-		fill: lighten( $gray, 30% );
-		cursor: default;
-	}
-
 	&:hover .gridicon {
 		fill: $blue-medium;
 	}
