@@ -6,41 +6,30 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getPostRevisionChanges } from 'state/selectors';
-
-const renderHighlightedChanges = changes =>
-	map( changes, ( change, changeIndex ) => {
-		const changeClassNames = classNames( {
-			'editor-diff-viewer__additions': change.added,
-			'editor-diff-viewer__deletions': change.removed,
-		} );
-		return (
-			<span className={ changeClassNames } key={ changeIndex }>
-				{ change.value }
-			</span>
-		);
-	} );
+import EditorDiffChanges from './changes';
 
 const EditorDiffViewer = ( { revisionChanges } ) => (
 	<div className="editor-diff-viewer">
 		<h1 className="editor-diff-viewer__title">
-			{ renderHighlightedChanges( revisionChanges.title ) }
+			<EditorDiffChanges changes={ revisionChanges.title } />
 		</h1>
 		<pre className="editor-diff-viewer__content">
-			{ renderHighlightedChanges( revisionChanges.content ) }
+			<EditorDiffChanges changes={ revisionChanges.content } />
 		</pre>
 	</div>
 );
 
 EditorDiffViewer.propTypes = {
-	revisionChanges: PropTypes.object.isRequired,
+	revisionChanges: PropTypes.shape( {
+		title: PropTypes.array,
+		content: PropTypes.array,
+	} ).isRequired,
 	postId: PropTypes.number,
 	revision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
