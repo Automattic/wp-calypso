@@ -21,7 +21,7 @@ import { disconnect } from 'state/jetpack/connection/actions';
 import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSitePlanSlug } from 'state/sites/selectors';
 import { getPlanClass } from 'lib/plans/constants';
 import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
@@ -257,8 +257,8 @@ class DisconnectJetpack extends PureComponent {
 
 export default connect(
 	( state, { siteId } ) => {
-		const plan = getCurrentPlan( state, siteId );
-		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : 'is-free-plan';
+		const planSlug = getSitePlanSlug( state, siteId );
+		const planClass = planSlug ? getPlanClass( planSlug ) : 'is-free-plan';
 
 		return {
 			plan: planClass,
