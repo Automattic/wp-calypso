@@ -129,10 +129,10 @@ describe( 'reducer', () => {
 
 		expect( state4.promotions ).to.exist;
 		expect( state4.promotions[ 0 ].type ).to.equal( 'product_sale' );
-		expect( state4.promotions[ 0 ].id ).to.equal( 'product:' + products1[ 0 ].id );
+		expect( state4.promotions[ 0 ].id ).to.exist;
 		expect( state4.promotions[ 0 ].name ).to.equal( products1[ 0 ].name );
-		expect( state4.promotions[ 1 ].type ).to.equal( 'coupon' );
-		expect( state4.promotions[ 1 ].id ).to.equal( 'coupon:' + coupons1[ 4 ].id );
+		expect( state4.promotions[ 1 ].type ).to.equal( 'percent' );
+		expect( state4.promotions[ 1 ].id ).to.exist;
 		expect( state4.promotions[ 1 ].name ).to.equal( coupons1[ 4 ].code );
 	} );
 
@@ -144,15 +144,15 @@ describe( 'reducer', () => {
 
 		expect( state4.promotions ).to.exist;
 		expect( state4.promotions.length ).to.equal( 10 );
-		expect( state4.promotions[ 0 ].product ).to.equal( products1[ 0 ] );
-		expect( state4.promotions[ 1 ].coupon ).to.equal( coupons1[ 4 ] );
-		expect( state4.promotions[ 2 ].coupon ).to.equal( coupons2[ 0 ] );
-		expect( state4.promotions[ 3 ].product ).to.equal( products2[ 0 ] );
-		expect( state4.promotions[ 4 ].coupon ).to.equal( coupons1[ 1 ] );
-		expect( state4.promotions[ 5 ].product ).to.equal( products1[ 1 ] );
-		expect( state4.promotions[ 6 ].coupon ).to.equal( coupons1[ 0 ] );
-		expect( state4.promotions[ 7 ].coupon ).to.equal( coupons1[ 3 ] );
-		expect( state4.promotions[ 8 ].coupon ).to.equal( coupons1[ 2 ] );
-		expect( state4.promotions[ 9 ].coupon ).to.equal( coupons2[ 1 ] );
+		expect( state4.promotions[ 0 ].name ).to.equal( products1[ 0 ].name );
+		expect( state4.promotions[ 1 ].name ).to.equal( coupons1[ 4 ].code );
+		expect( state4.promotions[ 2 ].name ).to.equal( coupons2[ 0 ].code );
+		expect( state4.promotions[ 3 ].name ).to.equal( products2[ 0 ].name );
+		expect( state4.promotions[ 4 ].name ).to.equal( coupons1[ 1 ].code );
+		expect( state4.promotions[ 5 ].name ).to.equal( products1[ 1 ].name );
+		expect( state4.promotions[ 6 ].name ).to.equal( coupons1[ 0 ].code );
+		expect( state4.promotions[ 7 ].name ).to.equal( coupons1[ 3 ].code );
+		expect( state4.promotions[ 8 ].name ).to.equal( coupons1[ 2 ].code );
+		expect( state4.promotions[ 9 ].name ).to.equal( coupons2[ 1 ].code );
 	} );
 } );
