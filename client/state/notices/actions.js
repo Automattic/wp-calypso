@@ -4,7 +4,7 @@
  * @format
  */
 
-import { uniqueId } from 'lodash';
+import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Internal dependencies
