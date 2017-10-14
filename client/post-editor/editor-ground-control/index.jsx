@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get, identity, noop } from 'lodash';
@@ -263,10 +261,8 @@ export class EditorGroundControl extends PureComponent {
 		const { isSaving, translate } = this.props;
 		const isSaveEnabled = this.isSaveEnabled();
 		const shouldShowStatusLabel = this.shouldShowStatusLabel();
-		const hasRevisions = (
-			isEnabled( 'post-editor/revisions' ) &&
-			get( this.props.post, 'revisions.length' )
-		);
+		const hasRevisions =
+			isEnabled( 'post-editor/revisions' ) && get( this.props.post, 'revisions.length' );
 
 		return (
 			<Card className="editor-ground-control">
@@ -324,16 +320,12 @@ export class EditorGroundControl extends PureComponent {
 						) }
 					</div>
 				) }
-				<HistoryButton
-					selectRevision={ this.props.selectRevision }
-					setNestedSidebar={ this.props.setNestedSidebar }
-				/>
-				{ hasRevisions &&
+				{ hasRevisions && (
 					<HistoryButton
 						selectRevision={ this.props.selectRevision }
 						setNestedSidebar={ this.props.setNestedSidebar }
 					/>
-				}
+				) }
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);
