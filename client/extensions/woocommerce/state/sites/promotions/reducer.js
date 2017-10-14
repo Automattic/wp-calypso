@@ -14,6 +14,7 @@ import {
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { createPromotionFromProduct, createPromotionFromCoupon } from './helpers';
 
 const initialState = {
 	coupons: null,
@@ -90,28 +91,6 @@ function calculatePromotions( coupons, products ) {
 	}
 
 	return null;
-}
-
-function createPromotionFromProduct( product ) {
-	return {
-		id: 'product:' + product.id,
-		type: 'product_sale',
-		name: product.name,
-		startDate: product.date_on_sale_from_gmt,
-		endDate: product.date_on_sale_to_gmt,
-		product,
-	};
-}
-
-function createPromotionFromCoupon( coupon ) {
-	return {
-		id: 'coupon:' + coupon.id,
-		type: 'coupon',
-		name: coupon.code,
-		startDate: coupon.date_created_gmt,
-		endDate: coupon.date_expires_gmt,
-		coupon,
-	};
 }
 
 function comparePromotions( a, b ) {
