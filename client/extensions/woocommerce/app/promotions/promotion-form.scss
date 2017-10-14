@@ -30,45 +30,33 @@
 			height: 400px;
 		}
 	}
+
+	.form-label {
+		display: inline-block;
+		margin-bottom: 5px;
+	}
 }
 
-.form-label {
-	margin-bottom: 5px;
+.promotions__promotion-form-type-header {
+	.section-header__label {
+		flex-grow: 0;
+		margin-right: 25px;
+	}
+
+	.section-header__label::before {
+		display: none; // TODO: Find a better way to make this not fade.
+	}
 }
 
-.promotions__promotion-form-discount-type-and-amount {
-	display: flex;
+.promotions__promotion-form-label-required {
+	color: $gray;
+	display: inline-block;
+	margin-left: 15px;
+}
 
-	@include breakpoint( ">960px" ) {
-		align-items: flex-end;
-	}
-
-	.form-fieldset {
-		flex: 1;
-		margin-right: 16px;
-
-		&:last-child {
-			margin-right: 0;
-		}
-	}
-
-	@include breakpoint( "<960px" ) {
-		flex-direction: column;
-
-		label + select {
-			width: 100%;
-		}
-
-		.form-fieldset {
-			margin-right: 0;
-			width: 100%;
-		}
-	}
-
-	.form-select {
-		@include breakpoint( ">960px" ) {
-			max-width: 200px;
-		}
-	}
+.promotions__promotion-form-field-footnote {
+	font-style: italic;
+	margin-top: 5px;
+	margin-left: 5px;
 }
 

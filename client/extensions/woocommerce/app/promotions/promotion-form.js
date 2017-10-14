@@ -4,12 +4,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PromotionFormTypeCard from './promotion-form-type-card';
-import PromotionFormCouponCard from './promotion-form-coupon-card';
+import PromotionFormCard from './promotion-form-card';
+import PromotionFormTypeHeader from './promotion-form-type-header';
 
 function renderPlaceholder() {
 	const { className } = this.props;
@@ -20,28 +21,6 @@ function renderPlaceholder() {
 			<div></div>
 		</div>
 	);
-}
-
-function renderEditCard( siteId, currency, promotion, editPromotion ) {
-	if ( ! promotion ) {
-		return null;
-	}
-
-	switch ( promotion.type ) {
-		case 'coupon':
-			return (
-				<PromotionFormCouponCard
-					siteId={ siteId }
-					promotion={ promotion }
-					editPromotion={ editPromotion }
-				/>
-			);
-		case 'product_sale':
-			// TODO: implement product sale UI.
-			return null;
-		default:
-			return null;
-	}
 }
 
 export default class PromotionForm extends React.PureComponent {
@@ -56,21 +35,25 @@ export default class PromotionForm extends React.PureComponent {
 	};
 
 	render() {
-		const { siteId, currency, promotion, editPromotion } = this.props;
+		const { siteId, currency, editPromotion } = this.props;
 
 		if ( ! siteId ) {
 			return renderPlaceholder();
 		}
 
+		const promotion = this.props.promotion ||
+			{ id: { placeholder: uniqueId( 'promotion_' ) }, type: 'percent' };
+
 		return (
 			<div className={ classNames( 'promotions__form', this.props.className ) }>
-				<PromotionFormTypeCard
-					siteId={ siteId }
-					promotion={ promotion }
-					editPromotion={ editPromotion }
-				/>
+				<PromotionFormTypeHeader { ...{ siteId, promotion, editPromotion } } />
 
-				{ renderEditCard( siteId, currency, promotion, editPromotion ) }
+				<PromotionFormCard { ...{
+					siteId,
+					currency,
+					promotion,
+					editPromotion,
+				} } />
 			</div>
 		);
 	}
