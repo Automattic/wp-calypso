@@ -189,9 +189,9 @@ class ActivityLogDay extends Component {
 			tsEndOfSiteDay,
 		} = this.props;
 
-		const hasLogs = ! isEmpty( logs ),
-			rewindHere = this.state.rewindHere,
-			dayExpanded = this.state.dayExpanded ? true : rewindHere;
+		const hasLogs = ! isEmpty( logs );
+		const rewindHere = this.state.rewindHere;
+		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
 		let hasConfirmDialog = false;
 
