@@ -1,0 +1,36 @@
+.custom-tree-selector {
+	position: relative;
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+
+	.form-checkbox {
+		margin-top: 4px;
+		margin-left: 8px;
+		margin-right: 8px;
+	}
+}
+
+.custom-tree-selector__indent {
+	margin-left: 30px;
+}
+
+.custom-tree-selector__placeholder {
+	@include placeholder();
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-left: 8px;
+	margin-right: 8px;
+	width: 75%;
+}
+
+.custom-tree-selector__label {
+	display: block;
+	margin-left: 24px;
+	transition: all 200ms ease-out;
+	color: $gray-dark;
+
+	&:hover {
+		color: $blue-medium;
+	}
+}
+
