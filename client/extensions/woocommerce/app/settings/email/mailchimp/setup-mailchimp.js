@@ -98,7 +98,7 @@ class MailChimpSetup extends React.Component {
 		newSettings.store_locale = settings.store_locale || 'en';
 		newSettings.campaign_language = settings.campaign_language || settings.store_locale;
 		newSettings.campaign_permission_reminder = settings.campaign_permission_reminder ||
-			'You were subscribed to the newsletter from ' + settings.store_name;
+			this.props.translate( 'You were subscribed to the newsletter from ' ) + settings.store_name;
 		newSettings.admin_email = settings.admin_email || nextProps.currentUserEmail || '';
 		newSettings.store_timezone = settings.store_timezone || nextProps.timezone || 'America/New_York';
 		newSettings.mailchimp_lists = settings.mailchimp_lists;
@@ -133,8 +133,7 @@ class MailChimpSetup extends React.Component {
 		if ( ! hasAllKeys ) {
 			return false;
 		}
-		const hasEmptyValues = this.hasEmptyValues( settings );
-		if ( hasEmptyValues ) {
+		if ( this.hasEmptyValues( settings ) ) {
 			return false;
 		}
 		if ( settings.store_phone.length <= 6 ) {
@@ -149,6 +148,10 @@ class MailChimpSetup extends React.Component {
 		if ( ! hasAllKeys ) {
 			return false;
 		}
+		if ( this.hasEmptyValues( settings ) ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -212,24 +215,24 @@ class MailChimpSetup extends React.Component {
 			return <StoreInfoStep
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
-				validateFields={ false }
+				validateFields={ settings_values_missing }
 			/>;
 		}
 		if ( step === CAMPAIGN_DEFAULTS_STEP ) {
 			return <CampaignDefaultsStep
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
-				validateFields={ false }
+				validateFields={ settings_values_missing }
 			/>;
 		}
 		if ( step === NEWSLETTER_SETTINGS_STEP ) {
 			return <NewsletterSettings
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
-				validateFields={ false }
+				validateFields={ settings_values_missing }
 			/>;
 		}
-		return <div></div>;
+		return null;
 	}
 
 	render() {
@@ -245,13 +248,13 @@ class MailChimpSetup extends React.Component {
 		if ( ! hasMailChimp ) {
 			return (
 				<Dialog
-					isVisible={ true }
+					isVisible
 					buttons={ null }
 					className={ dialogClass }>
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<RequiredPluginsInstallView
 						site={ { ID: siteId } }
-						skipConfirmation ={ true } />
+						skipConfirmation />
 				</Dialog>
 			);
 		}
@@ -262,7 +265,7 @@ class MailChimpSetup extends React.Component {
 
 		return (
 				<Dialog
-					isVisible={ true }
+					isVisible
 					buttons={ buttons }
 					onClose={ this.props.onClose }
 					className={ dialogClass }>
@@ -270,10 +273,12 @@ class MailChimpSetup extends React.Component {
 					<ProgressBar
 						value={ stepNum + 1 }
 						total={ 5 }
-						compact={ true } />
+						compact
+					/>
 					<ProgressIndicator
 						stepNumber={ stepNum }
-						totalSteps={ 5 } />
+						totalSteps={ 5 }
+					/>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
 						</div>
