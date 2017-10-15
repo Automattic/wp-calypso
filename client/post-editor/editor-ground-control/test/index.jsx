@@ -64,17 +64,17 @@ describe( 'EditorGroundControl', () => {
 		} );
 	} );
 
-	describe( '#isSaveEnabled()', () => {
+	describe( '#isSaveAvailable()', () => {
 		test( 'should return false if form is saving', () => {
 			var tree = shallow( <EditorGroundControl isSaving /> ).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.false;
+			expect( tree.isSaveAvailable() ).to.be.false;
 		} );
 
 		test( 'should return false if saving is blocked', () => {
 			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.false;
+			expect( tree.isSaveAvailable() ).to.be.false;
 		} );
 
 		test( 'should return false if post does not exist', () => {
@@ -82,7 +82,7 @@ describe( 'EditorGroundControl', () => {
 				<EditorGroundControl isSaving={ false } hasContent isDirty />
 			).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.false;
+			expect( tree.isSaveAvailable() ).to.be.false;
 		} );
 
 		test( 'should return true if dirty and post has content and post is not published', () => {
@@ -90,13 +90,13 @@ describe( 'EditorGroundControl', () => {
 				<EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty />
 			).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.true;
+			expect( tree.isSaveAvailable() ).to.be.true;
 		} );
 
 		test( 'should return false if dirty, but post has no content', () => {
 			var tree = shallow( <EditorGroundControl isSaving={ false } isDirty /> ).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.false;
+			expect( tree.isSaveAvailable() ).to.be.false;
 		} );
 
 		test( 'should return false if dirty and post is published', () => {
@@ -104,7 +104,7 @@ describe( 'EditorGroundControl', () => {
 				<EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty />
 			).instance();
 
-			expect( tree.isSaveEnabled() ).to.be.false;
+			expect( tree.isSaveAvailable() ).to.be.false;
 		} );
 	} );
 
