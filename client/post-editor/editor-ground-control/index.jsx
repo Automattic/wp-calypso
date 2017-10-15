@@ -158,7 +158,7 @@ export class EditorGroundControl extends PureComponent {
 		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	}
 
-	isSaveEnabled() {
+	isSaveAvailable() {
 		return (
 			! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
@@ -259,7 +259,7 @@ export class EditorGroundControl extends PureComponent {
 
 	render() {
 		const { isSaving, translate } = this.props;
-		const isSaveEnabled = this.isSaveEnabled();
+		const isSaveAvailable = this.isSaveAvailable();
 		const shouldShowStatusLabel = this.shouldShowStatusLabel();
 
 		return (
@@ -296,9 +296,9 @@ export class EditorGroundControl extends PureComponent {
 						</span>
 					</div>
 				) }
-				{ ( isSaveEnabled || shouldShowStatusLabel ) && (
+				{ ( isSaveAvailable || shouldShowStatusLabel ) && (
 					<div className="editor-ground-control__status">
-						{ isSaveEnabled && (
+						{ isSaveAvailable && (
 							<button
 								className="editor-ground-control__save button is-link"
 								onClick={ this.onSaveButtonClick }
@@ -307,7 +307,7 @@ export class EditorGroundControl extends PureComponent {
 								{ translate( 'Save' ) }
 							</button>
 						) }
-						{ ! isSaveEnabled &&
+						{ ! isSaveAvailable &&
 						shouldShowStatusLabel && (
 							<span
 								className="editor-ground-control__save-status"
