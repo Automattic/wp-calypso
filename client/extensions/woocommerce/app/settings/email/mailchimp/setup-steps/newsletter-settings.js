@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingLists } from 'woocommerce/state/sites/settings/email/selectors';
-import { localize } from 'i18n-calypso';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -21,8 +21,8 @@ const NewsletterSettings = ( { storeData, onChange, siteId, isRequesting, transl
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
 			<QueryMailChimpLists siteId={ siteId } />
-			<div>Pick a list, you will not able to change it for now so pick carfully</div>
-			<div>Create you list at mailchimp.com if you have not done it aready</div>
+			<div>{ translate( 'Pick a list, you will not able to change it for now so pick carefully' ) }</div>
+			<div>{ translate( 'Create you list at mailchimp.com if you have not done it aready' ) }</div>
 			<FormLabel>
 				{ translate( 'Newsletter' ) }
 			</FormLabel>
