@@ -23,8 +23,7 @@ const Email = ( { site, siteId, translate, className } ) => {
 
 	return (
 		<Main className={ classNames( 'email', className ) }>
-			<ActionHeader breadcrumbs={ breadcrumbs }>
-			</ActionHeader>
+			<ActionHeader breadcrumbs={ breadcrumbs } />
 			<SettingsNavigation activeSection="email" />
 			<MailChimp siteId={ siteId } />
 		</Main>
@@ -32,7 +31,9 @@ const Email = ( { site, siteId, translate, className } ) => {
 };
 
 Email.propTypes = {
-	className: PropTypes.string
+	className: PropTypes.string,
+	siteId: PropTypes.number,
+	site: PropTypes.object,
 };
 
 export default localize( Email );

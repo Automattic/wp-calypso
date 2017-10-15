@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { filter, matches } from 'lodash';
@@ -9,17 +10,17 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
+import { getPlugins } from 'state/plugins/installed/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRequestingForSites } from 'state/plugins/installed/selectors';
+import { localize } from 'i18n-calypso';
+import { mailchimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/email/querySettings';
-import { isRequestingForSites } from 'state/plugins/installed/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { localize } from 'i18n-calypso';
-import { mailchimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
-import Card from 'components/card';
 
 class MailChimp extends React.Component {
 
@@ -39,35 +40,46 @@ class MailChimp extends React.Component {
 	}
 
 	render() {
-		const { siteId, isRequestingMailChimpSettings, isRequestingPlugins } = this.props;
+		const { hasMailChimp, isRequestingMailChimpSettings, isRequestingPlugins, siteId, settings, translate } = this.props;
 		const className = classNames( 'mailchimp__main', { mailchimp__loading: isRequestingMailChimpSettings } );
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
-		const mailChimpIsReady = ! isRequestingData && ( this.props.settings.active_tab === 'sync' );
+		const mailChimpIsReady = ! isRequestingData &&
+			( settings && settings.active_tab === 'sync' );
+		const gettingStarted = ! setupWizardStarted && ! isRequestingData &&
+			( settings && settings.active_tab !== 'sync' );
 		return (
 			<div className={ className }>
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ isRequestingData && <Card> Mailchimp is Loading </Card> }
+				{ isRequestingData && <Card>{ translate( 'Mailchimp is Loading' ) }</Card> }
 				{ mailChimpIsReady && <MailChimpDashboard siteId={ siteId } onClick={ this.startWizard } /> }
-				{ ! setupWizardStarted && ! isRequestingData && this.props.settings.active_tab !== 'sync' &&
-					<MailChimpGettingStarted
+				{ gettingStarted &&
+						<MailChimpGettingStarted
 							siteId={ siteId }
 							isPlaceholder={ isRequestingMailChimpSettings }
 							onClick={ this.startWizard } />
 				}
 				{ setupWizardStarted &&
 					<MailChimpSetup
-							hasMailChimp={ this.props.hasMailChimp }
-							settings={ this.props.settings }
-							siteId={ this.props.siteId }
-							activeTab={ this.state.activeTab }
+							hasMailChimp={ hasMailChimp }
+							settings={ settings }
+							siteId={ siteId }
 							onClose={ this.closeWizard } />
 				}
 			</div>
 		);
 	}
 }
+
+MailChimp.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	sitePlugins: PropTypes.array,
+	hasMailChimp: PropTypes.bool,
+	isRequestingPlugins: PropTypes.bool,
+	isRequestingMailChimpSettings: PropTypes.bool,
+	settings: PropTypes.object,
+};
 
 const MailChimpConnected = connect(
 	( state ) => {
@@ -78,15 +90,14 @@ const MailChimpConnected = connect(
 		const sitePlugins = getPlugins( state, [ siteId ] );
 		const mailChimp = filter( sitePlugins, matches( { id: mailChimpId } ) );
 		const hasMailChimp = !! mailChimp.length;
-		const version = hasMailChimp ? mailChimp[ 0 ].version : '0';
+		const settings = mailchimpSettings( state, siteId );
 		return {
 			siteId,
 			sitePlugins,
 			hasMailChimp,
-			version,
 			isRequestingPlugins,
 			isRequestingMailChimpSettings,
-			settings: mailchimpSettings( state, siteId ),
+			settings: settings || {},
 		};
 	}
 )( MailChimp );
