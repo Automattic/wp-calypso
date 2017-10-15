@@ -131,9 +131,14 @@ class EditContactInfoFormCard extends React.Component {
 	};
 
 	setFormState = state => {
+		// eslint-disable-next-line
+		console.log( 'setFormState this.state.hasUnmounted 1', this.state.hasUnmounted );
+
 		if ( this.state.hasUnmounted ) {
 			return;
 		}
+		// eslint-disable-next-line
+		console.log( 'setFormState this.state.hasUnmounted 2', this.state.hasUnmounted );
 
 		const messages = formState.getErrorMessages( state );
 
