@@ -40,24 +40,39 @@ const StoreInfo = ( { storeData, onChange, validateFields } ) => {
 		onChange( event );
 	};
 
+	const isError = ( name ) => {
+		if ( name === 'store_phone' ) {
+			return validateFields && ! ( storeData.name && storeData[ name ].length >= 6 );
+		}
+		return validateFields && ! storeData[ name ];
+	};
+
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
-			<div>{ translate( 'Make sure that store informatin is correct. Every field is required' ) }</div>
+			<div>{ translate( 'Make sure that store informatin is correct. Every field is required.' ) }</div>
 			<SettingsPaymentsLocationCurrency />
-			{ fields.map( ( item, index ) => (
-				<div key={ index }>
-					<FormLabel>
-						{ item.label }
-					</FormLabel>
-					<FormTextInput
-						name={ item.name }
-						isError={ validateFields && ! storeData[ item.name ] }
-						onChange={ onChange }
-						value={ storeData[ item.name ] || '' }
-					/>
-					{ ( validateFields && ! storeData[ item.name ] ) && <FormInputValidation iserror text="field is required" /> }
-				</div>
-			) ) }
+			{ fields.map( ( item, index ) => {
+				const error = isError( item.name );
+				const errorMsg = item.name === 'store_phone'
+					? translate( 'number need at least 6 digits' )
+					: translate( 'field is required' );
+				return (
+					<div key={ index }>
+						<FormLabel>
+							{ item.label }
+						</FormLabel>
+						<FormTextInput
+							name={ item.name }
+							isError={ error }
+							onChange={ onChange }
+							value={ storeData[ item.name ] || '' }
+						/>
+						{ error && <FormInputValidation
+							isError
+							text={ errorMsg } /> }
+					</div>
+				);
+			} ) }
 			<FormLabel>
 				{ translate( 'Locale' ) }
 				<LanguagePicker
@@ -79,7 +94,7 @@ const StoreInfo = ( { storeData, onChange, validateFields } ) => {
 
 StoreInfo.propTypes = {
 	onChange: PropTypes.func.isRequired,
-	storeData: PropTypes.object,
+	storeData: PropTypes.object.isRequired,
 	validateFields: PropTypes.bool
 };
 
