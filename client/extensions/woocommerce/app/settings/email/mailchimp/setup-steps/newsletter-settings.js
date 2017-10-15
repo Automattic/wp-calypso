@@ -22,7 +22,7 @@ const NewsletterSettings = ( { storeData, onChange, siteId, isRequesting, transl
 		<FormFieldset className="setup-steps__store-info-field">
 			<QueryMailChimpLists siteId={ siteId } />
 			<div>{ translate( 'Pick a list, you will not able to change it for now so pick carefully' ) }</div>
-			<div>{ translate( 'Create you list at mailchimp.com if you have not done it aready' ) }</div>
+			<div>{ translate( 'Create your list at mailchimp.com if you have not done it aready' ) }</div>
 			<FormLabel>
 				{ translate( 'Newsletter' ) }
 			</FormLabel>
