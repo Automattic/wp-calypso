@@ -10,7 +10,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"support_locales": [ "en", "es", "pt-br" ],
+	"support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
@@ -75,6 +79,7 @@
 		"reader/following-intro": true,
 		"reader/full-errors": false,
 		"reader/search": true,
+		"reader/conversations": false,
 		"resume-editing": true,
 		"republicize": false,
 		"rubberband-scroll-disable": false,
