@@ -215,3 +215,16 @@ export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) 
 	const orders = getNewOrders( state, siteId );
 	return sumBy( orders, order => parseFloat( order.total ) );
 };
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number} Total from all new orders without PayPal Pending Orders.
+ */
+export const getNewOrdersWithoutPayPalPendingRevenue = (
+	state,
+	siteId = getSelectedSiteId( state )
+) => {
+	const orders = getNewOrdersWithoutPayPalPending( state, siteId );
+	return sumBy( orders, order => parseFloat( order.total ) );
+};

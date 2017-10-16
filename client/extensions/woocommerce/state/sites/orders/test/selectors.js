@@ -20,6 +20,7 @@ import {
 	isOrderUpdating,
 	getNewOrders,
 	getNewOrdersRevenue,
+	getNewOrdersWithoutPayPalPendingRevenue,
 	getNewOrdersWithoutPayPalPending,
 } from '../selectors';
 import order from './fixtures/order';
@@ -396,6 +397,28 @@ describe( 'selectors', () => {
 			expect( getNewOrdersWithoutPayPalPending( loadedStatePayPal, 321 ) ).to.not.have.members(
 				paypalPendingOrder
 			);
+		} );
+	} );
+
+	describe( '#getNewOrdersWithoutPayPalPendingRevenue', () => {
+		it( 'should be 0 when woocommerce state is not available.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 when orders are loading.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should return the total of new orders only', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
+		} );
+
+		it( 'should be 0 when orders are loaded only for a different site.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided and not include PayPal Pending Order.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
 		} );
 	} );
 } );
