@@ -26,16 +26,16 @@ const ThemesRelatedCard = React.createClass( {
 
 	getRelatedThemes() {
 		let themes = new Set( [
-			'twentysixteen',
-			'rowling',
+			'independent-publisher-2',
 			'hemingway-rewritten',
-			'gazette',
-			'intergalactic-2',
-			'isola',
-			'edin',
-			'sela',
-			'pique',
-			'harmonic',
+			'penscratch-2',
+			'cols',
+			'twentyfifteen',
+			'bushwick',
+			'radcliffe-2',
+			'karuna',
+			'dara',
+			'lodestar',
 		] );
 
 		//Remove current theme so we will not show it as related
