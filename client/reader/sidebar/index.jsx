@@ -197,8 +197,7 @@ export const ReaderSidebar = createReactClass( {
 								</li>
 							) }
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
-							{ config.isEnabled( 'reader/conversations' ) &&
-							isAutomatticTeamMember( this.props.teams ) && (
+							{ isAutomatticTeamMember( this.props.teams ) && (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass(
 										'/read/conversations/a8c',
