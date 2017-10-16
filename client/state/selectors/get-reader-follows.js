@@ -22,6 +22,7 @@ import { getFeed } from 'state/reader/feeds/selectors';
  */
 const getReaderFollows = createSelector(
 	state => {
+		// remove subs where the sub has an error
 		const items = reject( values( state.reader.follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
@@ -31,9 +32,12 @@ const getReaderFollows = createSelector(
 			feed: getFeed( state, item.feed_ID ),
 		} ) );
 
+		// remove subs where the feed or site has an error
 		const withoutErrors = reject(
 			withSiteAndFeed,
-			item => ( item.site && item.site.is_error ) || ( item.feed && item.feed.is_error )
+			item =>
+				( item.site && item.site.is_error && item.site.error.code === 410 ) ||
+				( item.feed && item.feed.is_error )
 		);
 		return withoutErrors;
 	},

@@ -45,10 +45,8 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
-	// marking a site as a failure to request also temporarily deletes it from
-	// following/manage.  we only want to do that in the case of 403 which can sometimes also be 404s
-	// in disguise signifying that the site was deleted.
-	if ( action.error && action.error.code !== 403 ) {
+	// 410 means site moved. site used to be wpcom but is no longer
+	if ( action.error && action.error.code !== 410 ) {
 		return state;
 	}
 
@@ -57,6 +55,7 @@ function handleRequestFailure( state, action ) {
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,
 			is_error: true,
+			error: action.error,
 		},
 	} );
 }

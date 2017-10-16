@@ -52,15 +52,15 @@ export function requestSite( siteId ) {
 					} );
 					return data;
 				},
-				function failure( err ) {
+				function failure( error ) {
 					dispatch( {
 						type: READER_SITE_REQUEST_FAILURE,
 						payload: {
 							ID: siteId,
 						},
-						error: err,
+						error,
 					} );
-					throw err;
+					throw error;
 				}
 			);
 	};
