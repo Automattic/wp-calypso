@@ -28,6 +28,15 @@ console.log(
 // Make quick pass over config files on every change
 require( '../server/config/validate-config-keys' );
 
+const dirtyFiles = new Set(
+	execSync( 'git diff --name-only --diff-filter=ACM' )
+		.toString()
+		.split( '\n' )
+		.map( name => name.trim() )
+		.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) )
+		.map( file => path.join( __dirname, '../', file ) )
+);
+
 const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
 	.toString()
 	.split( '\n' )
@@ -36,14 +45,32 @@ const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
 
 // run prettier for any files in the commit that have @format within their first docblock
 files
-	.map( file => path.join( __dirname, '../', file ) )
-	.forEach( file => {
-		const text = fs.readFileSync( file, 'utf8' );
+	.map( file => [ file, path.join( __dirname, '../', file ) ] )
+	.forEach( ( [ file, fullPath ] ) => {
+		const text = fs.readFileSync( fullPath, 'utf8' );
 		if ( shouldFormat( text ) ) {
-			console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
 			const formattedText = prettier.format( text, {} );
-			fs.writeFileSync( file, formattedText );
-			execSync( `git add ${ file }` );
+
+			// No change required.
+			if ( text === formattedText ) {
+				return;
+			}
+
+			// File has unstaged changes. It's a bad idea to modify and add it before commit.
+			if ( dirtyFiles.has( fullPath ) ) {
+				console.log(
+					chalk.red(
+						`Prettier will not be attempted for file: ${ chalk.white(
+							file
+						) } because it has unstaged changes.`
+					)
+				);
+				return;
+			}
+
+			fs.writeFileSync( fullPath, formattedText );
+			console.log( `Prettier formatting file: ${ fullPath } because it contains the @format flag` );
+			execSync( `git add ${ fullPath }` );
 		}
 	} );
 
