@@ -36,7 +36,7 @@ class FollowingManageEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
-				className="is-following-manage-empty"
+				className="following-manage__empty"
 				action={ action }
 				title={ this.props.translate( "You haven't followed any sites yet" ) }
 				line={ this.props.translate( 'Search for a site above or explore Discover.' ) }

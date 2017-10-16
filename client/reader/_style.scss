@@ -353,13 +353,14 @@
 
 .is-group-reader .main .empty-content,
 .is-reader-page .main .empty-content {
+
 	padding-top: 0;
 
 	.empty-content__title {
 		margin-top: -10px;
 	}
 
-	&.is-following-empty {
+	&.stream__empty{
 		margin-top: 25px;
 	}
 }

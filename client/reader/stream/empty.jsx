@@ -37,7 +37,7 @@ class FollowingEmptyContent extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<EmptyContent
-				className="is-following-empty"
+				className="stream__empty"
 				title={ this.props.translate( 'Welcome to Reader' ) }
 				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
 				action={ action }
