@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -25,11 +24,6 @@ import {
 } from 'state/posts/selectors';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
-
-/**
- * Constants
- */
-const debug = debugFactory( 'calypso:post-type-list' );
 
 class PostTypeList extends Component {
 	static propTypes = {
@@ -63,7 +57,6 @@ class PostTypeList extends Component {
 		this.state = {
 			maxRequestedPage,
 		};
-		debug( 'init', { maxRequestedPage, posts: this.props.posts } );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -76,25 +69,6 @@ class PostTypeList extends Component {
 			);
 			this.setState( {
 				maxRequestedPage,
-			} );
-			debug(
-				'reset maxRequestedPage to %d due to query change',
-				maxRequestedPage,
-				{
-					prevQuery: this.props.query,
-					nextQuery: nextProps.query,
-				}
-			);
-		}
-
-		const prevLength = this.props.posts && this.props.posts.length;
-		const nextLength = nextProps.posts && nextProps.posts.length;
-		if ( prevLength !== nextLength ) {
-			debug( 'posts.length changed', {
-				prevLength,
-				nextLength,
-				maxRequestedPage: this.state.maxRequestedPage,
-				lastPage: nextProps.lastPage,
 			} );
 		}
 	}
@@ -172,11 +146,6 @@ class PostTypeList extends Component {
 		) {
 			this.setState( {
 				maxRequestedPage: maxRequestedPage + 1,
-			} );
-			debug( 'incremented maxRequestedPage', {
-				maxRequestedPage: maxRequestedPage + 1,
-				pixelsBelowViewport,
-				lastPage,
 			} );
 		}
 	}
