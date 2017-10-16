@@ -45,10 +45,18 @@ class PostTypeBulkEditBar extends React.Component {
 		return (
 			<Card className="post-type-list__bulk-edit-bar">
 				<Count count={ selectedPostsCount } />
-				<Button primary onClick={ this.onEdit }>
+				<Button
+					primary
+					onClick={ this.onEdit }
+					disabled={ selectedPostsCount === 0 }
+				>
 					{ translate( 'Edit' ) }
 				</Button>
-				<Button scary onClick={ this.onDelete }>
+				<Button
+					scary
+					onClick={ this.onDelete }
+					disabled={ selectedPostsCount === 0 }
+				>
 					{ translate( 'Delete' ) }
 				</Button>
 			</Card>
