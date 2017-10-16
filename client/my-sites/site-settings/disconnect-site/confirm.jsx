@@ -23,7 +23,7 @@ const ConfirmDisconnection = ( { siteId, siteSlug, translate } ) => {
 	}
 
 	return (
-		<Main className="disconnect-site__confirm disconnect-site site-settings">
+		<Main className="disconnect-site__confirm">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<FormattedHeader
 				headerText={ translate( 'Confirm Disconnection' ) }
