@@ -60,6 +60,7 @@ const Account = localize(
 	React.createClass( {
 		displayName: 'Account',
 
+		// form-base mixin is needed for getDisabledState() (and possibly other uses?)
 		mixins: [ formBase, observe( 'userSettings', 'username' ), eventRecorder ],
 
 		propTypes: {
