@@ -30,6 +30,7 @@ export const postTypeList = ( state = initialState, action ) => {
 				isMultiSelectEnabled: ! state.isMultiSelectEnabled,
 				selectedPosts: state.isMultiSelectEnabled ? state.selectedPosts : [],
 			};
+
 		case POST_TYPE_LIST_SELECTION_TOGGLE:
 			if ( state.selectedPosts.indexOf( action.postGlobalId ) > -1 ) {
 				return {
@@ -37,12 +38,17 @@ export const postTypeList = ( state = initialState, action ) => {
 					selectedPosts: without( state.selectedPosts, action.postGlobalId ),
 				};
 			}
-			return { ...state, selectedPosts: [ ...state.selectedPosts, action.postGlobalId ] };
+			return {
+				...state,
+				selectedPosts: [ ...state.selectedPosts, action.postGlobalId ],
+			};
+
 		case POST_TYPE_LIST_SHARE_PANEL_HIDE:
 			return {
 				...state,
 				activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
 			};
+
 		case POST_TYPE_LIST_SHARE_PANEL_TOGGLE:
 			if ( state.activeSharePanels.indexOf( action.postGlobalId ) > -1 ) {
 				return {
@@ -50,7 +56,10 @@ export const postTypeList = ( state = initialState, action ) => {
 					activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
 				};
 			}
-			return { ...state, activeSharePanels: [ action.postGlobalId ] };
+			return {
+				...state,
+				activeSharePanels: [ action.postGlobalId ],
+			};
 	}
 
 	return state;

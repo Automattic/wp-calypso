@@ -138,7 +138,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.selectedPosts ).to.be.eql( [ postGlobalId ] );
+			expect( state.selectedPosts ).to.eql( [ postGlobalId ] );
 			expect( state.isMultiSelectEnabled ).to.be.false;
 		} );
 	} );
