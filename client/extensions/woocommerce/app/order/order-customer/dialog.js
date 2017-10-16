@@ -103,6 +103,10 @@ class CustomerAddressDialog extends Component {
 		this.setState( prevState => {
 			const { address } = prevState;
 			const newState = { ...address, [ name ]: value };
+			// If country changed, we should also reset the state
+			if ( 'country' === name ) {
+				newState.state = '';
+			}
 			return { address: newState };
 		} );
 	};
@@ -212,6 +216,7 @@ class CustomerAddressDialog extends Component {
 					</div>
 					<AddressView
 						isEditable
+						showAllLocations
 						onChange={ this.onChange }
 						address={ getAddressViewFormat( address ) }
 					/>
