@@ -18,7 +18,6 @@ import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
@@ -38,7 +37,6 @@ class PostTypeList extends Component {
 		posts: PropTypes.array,
 		isRequestingPosts: PropTypes.bool,
 		lastPage: PropTypes.number,
-		isRequestingLastPage: PropTypes.bool,
 	};
 
 	constructor() {
@@ -150,13 +148,6 @@ class PostTypeList extends Component {
 		}
 	}
 
-	isLastPage() {
-		const { lastPage, isRequestingLastPage } = this.props;
-		const { maxRequestedPage } = this.state;
-
-		return maxRequestedPage === lastPage && ! isRequestingLastPage;
-	}
-
 	renderPlaceholder() {
 		return <PostItem key="placeholder" largeTitle={ this.props.largeTitles } />;
 	}
@@ -226,9 +217,5 @@ export default connect( ( state, ownProps ) => {
 			ownProps.query
 		),
 		lastPage,
-		isRequestingLastPage: isRequestingSitePostsForQuery( state, siteId, {
-			...ownProps.query,
-			page: lastPage,
-		} ),
 	};
 } )( PostTypeList );
