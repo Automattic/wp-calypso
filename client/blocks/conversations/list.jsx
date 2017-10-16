@@ -169,7 +169,7 @@ export class ConversationCommentList extends React.Component {
 		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
 
 		const minId = min( commentIds );
-		const startingCommentIds = sortedComments
+		const startingCommentIds = ( sortedComments || [] )
 			.filter( comment => {
 				return comment.ID >= minId || comment.isPlaceholder;
 			} )
