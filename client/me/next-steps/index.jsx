@@ -15,7 +15,7 @@ import NextStepsBox from './next-steps-box';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import steps from './steps';
 import analytics from 'lib/analytics';
-import productsValues from 'lib/products-values';
+import { isPlan } from 'lib/products-values';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 import sitesFactory from 'lib/sites-list';
@@ -163,7 +163,7 @@ export default localize(
 
 		userHasPurchasedAPlan: function() {
 			return this.props.sites.get().some( function( site ) {
-				return productsValues.isPlan( site.plan );
+				return isPlan( site.plan );
 			} );
 		},
 
