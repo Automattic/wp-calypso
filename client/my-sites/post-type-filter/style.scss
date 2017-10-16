@@ -31,6 +31,14 @@
 			top: 2px;
 			padding-right: 4px;
 		}
+
+		@include breakpoint( "<480px" ) {
+			position: absolute;
+			top: 0;
+			right: 50px;
+			height: 46px;
+			padding: 12px 8px 10px;
+		}
 	}
 
 	// TODO why is this necessary?
