@@ -268,8 +268,15 @@ const CheckoutThankYou = React.createClass( {
 
 		const { signupIsStore } = this.props;
 
-		// streamlined paid NUX thanks page
-		if ( this.isNewUser() && wasDotcomPlanPurchased ) {
+		if ( wasDotcomPlanPurchased && signupIsStore ) {
+			return (
+				<Main className="checkout-thank-you">
+					{ this.renderConfirmationNotice() }
+					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
+				</Main>
+			);
+		} else if ( this.isNewUser() && wasDotcomPlanPurchased ) {
+			// streamlined paid NUX thanks page
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
@@ -281,13 +288,6 @@ const CheckoutThankYou = React.createClass( {
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 					<JetpackThankYouCard siteId={ this.props.selectedSite.ID } />
-				</Main>
-			);
-		} else if ( wasDotcomPlanPurchased && signupIsStore ) {
-			return (
-				<Main className="checkout-thank-you">
-					{ this.renderConfirmationNotice() }
-					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
 		}
