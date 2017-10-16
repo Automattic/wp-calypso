@@ -27,6 +27,7 @@ import { sortPopularCountriesToTop } from 'woocommerce/lib/countries';
 
 class FormCountrySelectFromApi extends Component {
 	static propTypes = {
+		isLoaded: PropTypes.bool.isRequired,
 		locationsList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				code: PropTypes.string.isRequired,

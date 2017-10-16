@@ -23,6 +23,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 class FormStateSelectFromApi extends Component {
 	static propTypes = {
 		country: PropTypes.string.isRequired,
+		isLoaded: PropTypes.bool.isRequired,
 		locationsList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				code: PropTypes.string.isRequired,
@@ -61,7 +62,9 @@ class FormStateSelectFromApi extends Component {
 		const { translate } = this.props;
 		return (
 			<FormSelect disabled>
-				<option>{ translate( 'N/A' ) }</option>
+				<option>
+					{ translate( 'N/A', { comment: "The currently-selected country doesn't have states" } ) }
+				</option>
 			</FormSelect>
 		);
 	};
@@ -78,7 +81,9 @@ class FormStateSelectFromApi extends Component {
 				) : (
 					<FormSelect id="state" name="state" onChange={ onChange } value={ value }>
 						<option key="default" value="" disabled>
-							{ translate( 'Select State' ) }
+							{ translate( 'Select State', {
+								comment: 'Label for customer address, state/province dropdown',
+							} ) }
 						</option>
 						{ locationsList.map( this.renderOption ) }
 					</FormSelect>
