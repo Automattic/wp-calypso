@@ -3,7 +3,7 @@
  This codemod updates
 
  export default someHoC( React.createClass( {
-	displayName: 'SomeDisplayName',
+    displayName: 'SomeDisplayName',
  } ) );
 
  to
@@ -17,30 +17,19 @@
  and
 
  export default someHoC( class extends {Component|PureComponent|React.Component} {
-	static displayName = 'SomeDisplayName';
+    static displayName = 'SomeDisplayName';
  } );
 
  to
 
  class SomeDisplayName extends {Component|PureComponent|React.Component} {
-	static displayName = 'SomeDisplayName';
+    static displayName = 'SomeDisplayName';
  };
 
  export default someHoC( SomeDisplayName );
  */
 
-const createClassIdentifier = {
-	type: 'CallExpression',
-	callee: {
-		type: 'MemberExpression',
-		object: {
-			name: 'React',
-		},
-		property: {
-			name: 'createClass',
-		},
-	},
-};
+import * as _ from 'lodash';
 
 const displayNamePropertyIdentifier = {
 	key: {
@@ -50,91 +39,73 @@ const displayNamePropertyIdentifier = {
 
 const isValidComponentString = string => string === 'Component' || string === 'PureComponent';
 
-const argIsCreateClassInstance = arg =>
-	arg.get( 'callee', 'object', 'name' ).value === 'React' &&
-	arg.get( 'callee', 'property', 'name' ).value === 'createClass';
+const isCreateClassComponent = arg =>
+	_.get( arg, [ 'callee', 'object', 'name' ] ) === 'React' &&
+	_.get( arg, [ 'callee', 'property', 'name' ] ) === 'createClass';
 
-const argIsExtendsComponentInstance = arg =>
-	arg.get( 'type' ).value === 'ClassExpression' &&
-	( isValidComponentString( arg.get( 'superClass', 'name' ).value ) ||
-		( arg.get( 'superClass', 'object', 'name' ).value === 'React' &&
-			isValidComponentString( arg.get( 'superClass', 'property', 'name' ).value ) ) );
+const isEs6ClassComponent = arg =>
+	_.get( arg, 'type' ) === 'ClassExpression' &&
+	( isValidComponentString( _.get( arg, [ 'superClass', 'name' ] ) ) ||
+		( _.get( arg, [ 'superClass', 'object', 'name' ] ) === 'React' &&
+			isValidComponentString( _.get( arg, [ 'superClass', 'property', 'name' ] ) ) ) );
 
-const argIsComponent = arg =>
-	argIsCreateClassInstance( arg ) || argIsExtendsComponentInstance( arg );
+const isComponent = arg => isCreateClassComponent( arg ) || isEs6ClassComponent( arg );
 
-const getMatchingArg = args => args.filter( argIsComponent )[ 0 ];
+const getComponentFromArgs = args => _.filter( args, isComponent )[ 0 ];
+
+const classToIdentifier = ( displayName, j ) => arg =>
+	isComponent( arg ) ? j.identifier( displayName ) : arg;
+
+const extractDisplayName = ( reactComponent, j ) => {
+	if ( ! reactComponent ) {
+		return;
+	}
+	const component = j( reactComponent );
+	// can work on both es6 classes and React.createClass functions.
+	return []
+		.concat(
+			component.find( j.Property, displayNamePropertyIdentifier ).nodes(),
+			component.find( j.ClassProperty, displayNamePropertyIdentifier ).nodes()
+		)
+		.map( node => _.get( node, 'value.value' ) )[ 0 ];
+};
 
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 	const root = j( file.source );
 
-	// string => object =>
-	const replaceClassOrGetValue = displayName => arg =>
-		argIsComponent( arg ) ? j.identifier( displayName ) : arg.value;
+	const defaultExportDeclaration = _.head( root.find( j.ExportDefaultDeclaration ).nodes() );
+	const hocIdentifier = _.get( defaultExportDeclaration, [ 'declaration', 'callee', 'name' ] );
 
-	const exportDefaultDeclarations = root.find( j.ExportDefaultDeclaration );
+	const args = _.get( defaultExportDeclaration, [ 'declaration', 'arguments' ] );
+	const component = getComponentFromArgs( args );
+	const displayName = extractDisplayName( component, j );
 
-	exportDefaultDeclarations.forEach( node => {
-		const calleeNameValue = node.get( 'declaration', 'callee', 'name' ).value;
+	// noop if the file does not have a default export of a react component that has a displayName
+	if ( ! defaultExportDeclaration || ! component || ! displayName ) {
+		return file;
+	}
 
-		if ( ! calleeNameValue ) {
-			// return early, no immediate function call
-			return;
-		}
+	const isCreateClass = isCreateClassComponent( component );
 
-		const exportDefaultInstance = j( node );
-
-		const args = node.get( 'declaration', 'arguments' );
-		const matchingArg = getMatchingArg( args );
-
-		if ( ! matchingArg ) {
-			// return early, no createClass or extends Component argument found
-			return;
-		}
-
-		const isCreateClassInstance = argIsCreateClassInstance( matchingArg );
-
-		const propertyType = isCreateClassInstance ? j.Property : j.ClassProperty;
-
-		const classExpressions = isCreateClassInstance
-			? exportDefaultInstance.find( j.CallExpression, createClassIdentifier )
-			: exportDefaultInstance.find( j.ClassExpression );
-
-		const displayNameValue = classExpressions
-			.find( propertyType, displayNamePropertyIdentifier )
-			.at( 0 )
-			.get( 'value', 'value' ).value;
-
-		if ( ! displayNameValue ) {
-			// return early, no displayNameValue
-			return;
-		}
-
-		exportDefaultInstance.replaceWith( node => [
-			isCreateClassInstance
+	return root
+		.find( j.ExportDefaultDeclaration )
+		.replaceWith( () => [
+			isCreateClass
 				? // if createClass, replace with const x = React.createClass...
 					j.variableDeclaration( 'const', [
-						j.variableDeclarator( j.identifier( displayNameValue ), matchingArg.value ),
+						j.variableDeclarator( j.identifier( displayName ), component ),
 					] )
 				: // else Replace with class x extends {original-super-class}...
-					j.classDeclaration(
-						j.identifier( displayNameValue ),
-						matchingArg.value.body,
-						matchingArg.value.superClass
-					),
-			// In both cases export with export default calleeName( x ),
+					j.classDeclaration( j.identifier( displayName ), component.body, component.superClass ),
+			// In both cases export with export default hoc( ...args, displayName, ...args ),
 			// maintaining argument position
 			j.exportDefaultDeclaration(
 				j.callExpression(
-					j.identifier( calleeNameValue ),
-					args.map( replaceClassOrGetValue( displayNameValue ) )
+					j.identifier( hocIdentifier ),
+					args.map( classToIdentifier( displayName, j ) )
 				)
 			),
-		] );
-	} );
-
-	return exportDefaultDeclarations.toSource( {
-		useTabs: true,
-	} );
+		] )
+		.toSource( { useTabs: true } );
 }
