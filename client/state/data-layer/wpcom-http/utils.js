@@ -134,7 +134,10 @@ const defaultOptions = {
  + @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( store, action ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) => (
+	store,
+	action
+) => {
 	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
 	const error = getError( action );
