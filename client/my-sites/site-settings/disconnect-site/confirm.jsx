@@ -23,23 +23,21 @@ const ConfirmDisconnection = ( { siteId, siteSlug, translate } ) => {
 	}
 
 	return (
-		<div className="disconnect-site__confirm disconnect-site site-settings">
-			<Main>
-				<DocumentHead title={ translate( 'Site Settings' ) } />
-				<FormattedHeader
-					headerText={ translate( 'Confirm Disconnection' ) }
-					subHeaderText={ translate(
-						'Confirm that you want to disconnect your site from WordPress.com.'
-					) }
-				/>
-				<DisconnectJetpack
-					disconnectHref="/stats"
-					isBroken={ false }
-					siteId={ siteId }
-					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
-				/>
-			</Main>
-		</div>
+		<Main className="disconnect-site__confirm disconnect-site site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<FormattedHeader
+				headerText={ translate( 'Confirm Disconnection' ) }
+				subHeaderText={ translate(
+					'Confirm that you want to disconnect your site from WordPress.com.'
+				) }
+			/>
+			<DisconnectJetpack
+				disconnectHref="/stats"
+				isBroken={ false }
+				siteId={ siteId }
+				stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
+			/>
+		</Main>
 	);
 };
 

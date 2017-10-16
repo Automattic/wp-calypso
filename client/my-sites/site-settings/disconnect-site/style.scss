@@ -1,33 +1,34 @@
-/** @format */
 .disconnect-site {
 	&.site-settings {
-		// Bit hacky -- compensate the padding added for the sidebar (which we aren't showing here).
-		margin-left: -340px;
+	position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 	}
 }
 
 .disconnect-site__card {
-	position: relative;
-	padding: 24px;
+		position: relative;
+		padding: 24px;
 
-	@include breakpoint( '<480px' ) {
-		max-width: 300px;
-	}
+		@include breakpoint( "<480px" ) {
+			max-width: 300px;
+		}
 
-	@include breakpoint( '<660px' ) {
-		margin-top: 2em;
-		max-width: 500px;
-	}
+		@include breakpoint( "<660px" ) {
+			margin-top: 2em;
+			max-width: 500px;
+		}
 
-	@include breakpoint( '>660px' ) {
-		margin-top: 17px;
-		max-width: 800px;
+		@include breakpoint( ">660px" ) {
+			margin-top: 17px;
+			max-width: 800px;
+		}
 	}
-}
 
 .disconnect-site__skip-survey {
-	&.main {
-		margin: 16px 0 24px 0;
-		text-align: center;
-	}
+		&.main {
+			margin: 16px 0 24px 0;
+			text-align: center;
+		}
 }

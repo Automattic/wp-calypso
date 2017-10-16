@@ -26,19 +26,17 @@ class DisconnectSite extends Component {
 			return <Placeholder />;
 		}
 		return (
-			<div className="disconnect-site site-settings">
-				<Main>
-					<DocumentHead title={ translate( 'Site Settings' ) } />
-					<FormattedHeader
-						headerText={ translate( 'Disconnect Site' ) }
-						subHeaderText={ translate(
-							'Tell us why you want to disconnect your site from WordPress.com.'
-						) }
-					/>
-					<Card className="disconnect-site__card"> </Card>
-					<SkipSurvey />
-				</Main>
-			</div>
+			<Main className="disconnect-site site-settings">
+				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<FormattedHeader
+					headerText={ translate( 'Disconnect Site' ) }
+					subHeaderText={ translate(
+						'Tell us why you want to disconnect your site from WordPress.com.'
+					) }
+				/>
+				<Card className="disconnect-site__card"> </Card>
+				<SkipSurvey />
+			</Main>
 		);
 	}
 }
