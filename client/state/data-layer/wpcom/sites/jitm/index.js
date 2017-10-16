@@ -101,20 +101,23 @@ export const fetchJITM = ( state, dispatch, action ) => {
  */
 export const doDismissJITM = ( { dispatch }, action ) =>
 	dispatch(
-		http( {
-			apiNamespace: 'rest',
-			method: 'POST',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
-			query: {
-				path: '/jetpack/v4/jitm',
-				body: JSON.stringify( {
-					feature_class: action.featureClass,
-					id: action.id,
-				} ),
-				http_envelope: 1,
-				json: false,
+		http(
+			{
+				apiNamespace: 'rest',
+				method: 'POST',
+				path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+				query: {
+					path: '/jetpack/v4/jitm',
+					body: JSON.stringify( {
+						feature_class: action.featureClass,
+						id: action.id,
+					} ),
+					http_envelope: 1,
+					json: false,
+				},
 			},
-		} )
+			action
+		)
 	);
 
 /**
