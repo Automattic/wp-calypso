@@ -14,19 +14,19 @@ import FormTextInput from 'components/forms/form-text-input';
 import { translate } from 'i18n-calypso';
 
 // Get reed of this, this should not be visible to the user - he does not need this.
-const CampaignDefaults = ( { storeData, onChange, validateFields } ) => {
+const CampaignDefaults = ( { storeData = {}, onChange, validateFields } ) => {
 	const fields = [
 		{ name: 'campaign_from_name', label: translate( 'From' ) },
 		{ name: 'campaign_from_email', label: translate( 'From Email' ) },
 		{ name: 'campaign_subject', label: translate( 'Subject' ) },
-		{ name: 'campaign_language', label: translate( 'Language' ) },
 		{ name: 'campaign_permission_reminder', label: translate( 'Permission reminder' ) },
+		// campaign_language will be silently passed based on choice from the previous step.
 	];
 
 	return (
 		<div>
 			<div className="setup-steps__campaign-defaults-title">
-				{ translate( 'Campaign default values' ) }
+				{ translate( 'Campaign Email Settings.' ) }
 			</div>
 			<FormFieldset className="setup-steps__campaign-defaults">
 				{ fields.map( ( item, index ) => (
@@ -50,8 +50,8 @@ const CampaignDefaults = ( { storeData, onChange, validateFields } ) => {
 
 CampaignDefaults.propTypes = {
 	onChange: PropTypes.func.isRequired,
-	storeData: PropTypes.object,
-	validateFields: PropTypes.bool
+	storeData: PropTypes.object.isRequired,
+	validateFields: PropTypes.bool,
 };
 
 export default CampaignDefaults;
