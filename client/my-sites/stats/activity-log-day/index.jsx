@@ -193,31 +193,13 @@ class ActivityLogDay extends Component {
 		const rewindHere = this.state.rewindHere;
 		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
-		let hasConfirmDialog = false;
-
-		const items =
+		const hasConfirmDialog =
 			hasLogs &&
-			flatMap( logs, log => {
-				const restoreThis = log.activityId === requestedRestoreActivityId;
-				if ( ! hasConfirmDialog ) {
-					hasConfirmDialog =
-						restoreThis &&
-						( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= log.activityTs &&
-							log.activityTs <= tsEndOfSiteDay );
-				}
-				return [
-					restoreThis && rewindConfirmDialog,
-					<ActivityLogItem
-						applySiteOffset={ applySiteOffset }
-						disableRestore={ disableRestore }
-						hideRestore={ hideRestore }
-						key={ log.activityId }
-						log={ log }
-						requestRestore={ requestRestore }
-						siteId={ siteId }
-					/>,
-				];
-			} );
+			logs.some(
+				( { activityId, activityTs } ) =>
+					activityId === requestedRestoreActivityId &&
+					( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
+			);
 
 		const rewindButton = hasLogs
 			? this.renderRewindButton( hasConfirmDialog ? '' : 'primary' )
@@ -239,7 +221,19 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
-					{ items }
+					{ hasLogs &&
+						flatMap( logs, log => [
+							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
+							<ActivityLogItem
+								applySiteOffset={ applySiteOffset }
+								disableRestore={ disableRestore }
+								hideRestore={ hideRestore }
+								key={ log.activityId }
+								log={ log }
+								requestRestore={ requestRestore }
+								siteId={ siteId }
+							/>,
+						] ) }
 				</FoldableCard>
 			</div>
 		);
