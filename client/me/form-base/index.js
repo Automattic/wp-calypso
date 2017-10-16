@@ -55,13 +55,18 @@ export default {
 		}
 	},
 
-	valueLink: function( settingName ) {
-		return {
-			value: this.props.userSettings.getSetting( settingName ),
-			requestChange: function( value ) {
-				this.props.userSettings.updateSetting( settingName, value );
-			}.bind( this ),
-		};
+	getSetting: function( settingName ) {
+		return this.props.userSettings.getSetting( settingName ) || '';
+	},
+
+	toggleSetting: function( event ) {
+		const { name } = event.currentTarget;
+		this.props.userSettings.updateSetting( name, ! this.getSetting( name ) );
+	},
+
+	updateSetting: function( event ) {
+		const { name, value } = event.currentTarget;
+		this.props.userSettings.updateSetting( name, value );
 	},
 
 	submitForm: function( event ) {

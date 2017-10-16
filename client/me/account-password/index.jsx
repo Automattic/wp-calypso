@@ -45,6 +45,7 @@ const AccountPassword = React.createClass( {
 
 	getInitialState: function() {
 		return {
+			password: '',
 			pendingValidation: true,
 			savingPassword: false,
 			isUnsaved: false,
@@ -70,7 +71,8 @@ const AccountPassword = React.createClass( {
 		);
 	},
 
-	handlePasswordChange: function( newPassword ) {
+	handlePasswordChange: function( event ) {
+		const newPassword = event.currentTarget.value;
 		debug( 'Handle password change has been called.' );
 		this.debouncedPasswordValidate();
 		this.setState( {
@@ -128,10 +130,6 @@ const AccountPassword = React.createClass( {
 
 	render: function() {
 		const { translate } = this.props;
-		const passwordValueLink = {
-			value: this.state.password,
-			requestChange: this.handlePasswordChange,
-		};
 		const passwordInputClasses = classNames( {
 			'account-password__password-field': true,
 			'is-error': this.props.accountPasswordData.getValidationFailures().length,
@@ -149,8 +147,9 @@ const AccountPassword = React.createClass( {
 						className={ passwordInputClasses }
 						id="password"
 						name="password"
+						onChange={ this.handlePasswordChange }
 						onFocus={ this.recordFocusEvent( 'New Password Field' ) }
-						valueLink={ passwordValueLink }
+						value={ this.state.password }
 						submitting={ this.state.savingPassword }
 					/>
 
