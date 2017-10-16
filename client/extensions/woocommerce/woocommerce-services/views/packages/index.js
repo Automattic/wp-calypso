@@ -129,7 +129,7 @@ Packages.propTypes = {
 		dimensionUnit: PropTypes.string,
 		weightUnit: PropTypes.string,
 		packageSchema: PropTypes.object,
-		predefinedSchema: PropTypes.object,
+		predefinedSchema: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
 	} ).isRequired,
 };
 
@@ -141,7 +141,7 @@ export default connect(
 			siteId,
 			isFetching: ! form || ! form.packages || form.isFetching,
 			form,
-			allSelectedPackages: getAllSelectedPackages( state, siteId ),
+			allSelectedPackages: getAllSelectedPackages( state, siteId ) || [],
 		};
 	},
 	dispatch => ( {
