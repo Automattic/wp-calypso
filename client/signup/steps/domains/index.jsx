@@ -209,7 +209,9 @@ class DomainsStep extends React.Component {
 				offerMappingOption={ ! this.props.isDomainOnly }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly }
+				includeWordPressDotCom={
+					! this.props.isDomainOnly && 'atomic-store' !== this.props.flowName
+				}
 				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
