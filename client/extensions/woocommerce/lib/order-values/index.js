@@ -97,14 +97,3 @@ export function getOrderFeeTotal( order ) {
 	const fees = get( order, 'fee_lines', [] );
 	return reduce( fees, ( sum, value ) => sum + parseFloat( value.total ), 0 );
 }
-
-/**
- * Get the refund value on a given order
- *
- * @param {Object} order An order as returned from API
- * @return {Float} The refund amount as a decimal number
- */
-export function getOrderRefundTotal( order ) {
-	const refunds = get( order, 'refunds', [] );
-	return reduce( refunds, ( sum, value ) => sum + parseFloat( value.total ), 0 );
-}

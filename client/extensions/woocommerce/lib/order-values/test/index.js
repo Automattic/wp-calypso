@@ -14,7 +14,6 @@ import {
 	getOrderFeeTotal,
 	getOrderFeeTotalTax,
 	getOrderLineItemTax,
-	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderSubtotalTax,
 	getOrderTotalTax,
@@ -22,7 +21,6 @@ import {
 import orderWithTax from './fixtures/order';
 import orderWithoutTax from './fixtures/order-no-tax';
 import orderWithCoupons from './fixtures/order-with-coupons';
-import orderWithRefunds from './fixtures/order-with-refunds';
 
 describe( 'getOrderDiscountTax', () => {
 	test( 'should be a function', () => {
@@ -173,23 +171,5 @@ describe( 'getOrderFeeTotal', () => {
 
 	test( 'should return 0 if there is no tax', () => {
 		expect( getOrderFeeTotal( orderWithoutTax ) ).to.eql( 20 );
-	} );
-} );
-
-describe( 'getOrderRefundTotal', () => {
-	test( 'should be a function', () => {
-		expect( getOrderRefundTotal ).to.be.a( 'function' );
-	} );
-
-	test( 'should get the correct refund amount', () => {
-		expect( getOrderRefundTotal( orderWithCoupons ) ).to.eql( -10.0 );
-	} );
-
-	test( 'should return 0 if there are no refunds', () => {
-		expect( getOrderRefundTotal( orderWithoutTax ) ).to.eql( 0 );
-	} );
-
-	test( 'should get the correct refund amount with multiple refunds', () => {
-		expect( getOrderRefundTotal( orderWithRefunds ) ).to.eql( -25.0 );
 	} );
 } );
