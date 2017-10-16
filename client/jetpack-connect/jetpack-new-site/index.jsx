@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -136,11 +135,4 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			recordTracksEvent,
-		},
-		dispatch
-	)
-)( localize( JetpackNewSite ) );
+export default connect( null, { recordTracksEvent } )( localize( JetpackNewSite ) );

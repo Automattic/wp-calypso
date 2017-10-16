@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import { get, map } from 'lodash';
 import Gridicon from 'gridicons';
@@ -484,12 +483,8 @@ export default connect(
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 		};
 	},
-	dispatch =>
-		bindActionCreators(
-			{
-				authorizeSSO,
-				validateSSONonce,
-			},
-			dispatch
-		)
+	{
+		authorizeSSO,
+		validateSSONonce,
+	}
 )( localize( JetpackSsoForm ) );
