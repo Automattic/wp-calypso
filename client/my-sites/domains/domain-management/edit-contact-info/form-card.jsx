@@ -74,6 +74,8 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	componentWillMount() {
+		// eslint-disable-next-line
+		console.log( 'form card  this.props.contactInformation', this.props.contactInformation );
 		const contactInformation = omit( this.props.contactInformation, [
 			'countryName',
 			'stateName',
