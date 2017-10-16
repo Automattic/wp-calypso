@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -90,11 +95,8 @@ export const fetchJITM = ( state, dispatch, action ) => {
  * @param {function} dispatch A function to dispatch an action
  */
 export const handleRouteChange = ( { getState, dispatch }, action ) => {
-	if (
-		process.hasInitializedSection &&
-		action.section &&
-		process.lastSection === action.section.name
-	) {
+	const sectionName = get( action, [ 'section', 'name' ] );
+	if ( process.hasInitializedSection && action.section && process.lastSection === sectionName ) {
 		return;
 	}
 
@@ -109,7 +111,7 @@ export const handleRouteChange = ( { getState, dispatch }, action ) => {
 			return;
 	}
 
-	process.lastSection = action.section.name;
+	process.lastSection = sectionName;
 
 	fetchJITM( getState(), dispatch, action );
 };
