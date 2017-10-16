@@ -14,6 +14,7 @@ import {
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
+	ROUTE_SET,
 } from 'state/action-types';
 
 const initialState = {
@@ -41,6 +42,13 @@ export const postTypeList = ( state = initialState, action ) => {
 			return {
 				...state,
 				selectedPosts: [ ...state.selectedPosts, action.postGlobalId ],
+			};
+
+		case ROUTE_SET:
+			return {
+				...state,
+				isMultiSelectEnabled: false,
+				selectedPosts: [],
 			};
 
 		case POST_TYPE_LIST_SHARE_PANEL_HIDE:

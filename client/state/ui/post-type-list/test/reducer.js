@@ -14,6 +14,7 @@ import {
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
+	ROUTE_SET,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -140,6 +141,27 @@ describe( 'reducer', () => {
 
 			expect( state.selectedPosts ).to.eql( [ postGlobalId ] );
 			expect( state.isMultiSelectEnabled ).to.be.false;
+		} );
+
+		test( 'should reset isMultiSelectEnabled and selectedPosts when navigating', () => {
+			const postGlobalId = '0123456789abcdef';
+			const state = postTypeList(
+				{
+					isMultiSelectEnabled: true,
+					selectedPosts: [ postGlobalId ],
+					activeSharePanels: [],
+				}, {
+					type: ROUTE_SET,
+					path: '/',
+					query: {},
+				}
+			);
+
+			expect( state ).to.eql( {
+				isMultiSelectEnabled: false,
+				selectedPosts: [],
+				activeSharePanels: [],
+			} );
 		} );
 	} );
 } );
