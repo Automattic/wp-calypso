@@ -26,6 +26,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
+import { setSection } from 'state/ui/actions';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -111,11 +112,13 @@ const controller = {
 
 	disconnectSite( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		renderPage( context, <DisconnectSite /> );
 	},
 
 	disconnectSiteConfirm( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		renderPage( context, <ConfirmDisconnection /> );
 	},
 
