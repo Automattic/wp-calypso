@@ -59,16 +59,14 @@ export default {
 		return this.props.userSettings.getSetting( settingName );
 	},
 
-	toggleSetting: function( settingName ) {
-		return () => {
-			this.props.userSettings.updateSetting( settingName, ! this.getSetting( settingName ) );
-		};
+	toggleSetting: function( event ) {
+		const { name } = event.currentTarget;
+		this.props.userSettings.updateSetting( name, ! this.getSetting( name ) );
 	},
 
-	updateSetting: function( settingName ) {
-		return event => {
-			this.props.userSettings.updateSetting( settingName, event.currentTarget.value );
-		};
+	updateSetting: function( event ) {
+		const { name, value } = event.currentTarget;
+		this.props.userSettings.updateSetting( name, value );
 	},
 
 	submitForm: function( event ) {

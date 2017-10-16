@@ -68,7 +68,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="first_name"
 										name="first_name"
-										onChange={ this.updateSetting( 'first_name' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'First Name Field' ) }
 										value={ this.getSetting( 'first_name' ) }
 									/>
@@ -80,7 +80,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="last_name"
 										name="last_name"
-										onChange={ this.updateSetting( 'last_name' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Last Name Field' ) }
 										value={ this.getSetting( 'last_name' ) }
 									/>
@@ -94,7 +94,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="display_name"
 										name="display_name"
-										onChange={ this.updateSetting( 'display_name' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Display Name Field' ) }
 										value={ this.getSetting( 'display_name' ) }
 									/>
@@ -108,7 +108,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="description"
 										name="description"
-										onChange={ this.updateSetting( 'description' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'About Me Field' ) }
 										value={ this.getSetting( 'description' ) }
 									/>

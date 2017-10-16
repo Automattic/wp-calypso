@@ -95,7 +95,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="subscription_delivery_email_default"
 										name="subscription_delivery_email_default"
-										onChange={ this.updateSetting( 'subscription_delivery_email_default' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
 										value={ this.getSetting( 'subscription_delivery_email_default' ) }
 									>
@@ -120,7 +120,7 @@ export default protectForm(
 											disabled={ this.getDisabledState() }
 											id="subscription_delivery_jabber_default"
 											name="subscription_delivery_jabber_default"
-											onChange={ this.toggleSetting( 'subscription_delivery_jabber_default' ) }
+											onChange={ this.toggleSetting }
 											onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) }
 										/>
 										<span>
@@ -137,7 +137,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="subscription_delivery_mail_option"
 										name="subscription_delivery_mail_option"
-										onChange={ this.updateSetting( 'subscription_delivery_mail_option' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Email Delivery Format' ) }
 										value={ this.getSetting( 'subscription_delivery_mail_option' ) }
 									>
@@ -155,7 +155,7 @@ export default protectForm(
 										className="me-notification-settings__delivery-window"
 										id="subscription_delivery_day"
 										name="subscription_delivery_day"
-										onChange={ this.updateSetting( 'subscription_delivery_day' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Email Delivery Window Day' ) }
 										value={ this.getSetting( 'subscription_delivery_day' ) }
 									>
@@ -172,7 +172,7 @@ export default protectForm(
 										disabled={ this.getDisabledState() }
 										id="subscription_delivery_hour"
 										name="subscription_delivery_hour"
-										onChange={ this.updateSetting( 'subscription_delivery_hour' ) }
+										onChange={ this.updateSetting }
 										onFocus={ this.recordFocusEvent( 'Email Delivery Window Time' ) }
 										value={ this.getSetting( 'subscription_delivery_hour' ) }
 									>
@@ -205,7 +205,7 @@ export default protectForm(
 											disabled={ this.getDisabledState() }
 											id="subscription_delivery_email_blocked"
 											name="subscription_delivery_email_blocked"
-											onChange={ this.toggleSetting( 'subscription_delivery_email_blocked' ) }
+											onChange={ this.toggleSetting }
 											onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }
 										/>
 										<span>
