@@ -549,7 +549,10 @@ export default React.createClass( {
 		 * for some refactoring in the near future, so that will be a more convenient time to
 		 * clean this up.
 		 */
-		const containerClassName = classnames( 'tinymce-container', 'editor-mode-' + mode );
+		const containerClassName = classnames(
+			'tinymce-container',
+			'editor-mode-' + mode
+		);
 
 		return (
 			<div className={ containerClassName }>

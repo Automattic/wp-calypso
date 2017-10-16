@@ -74,6 +74,7 @@ const POST_TYPE_SUPPORTS = {
 };
 
 class EditorDrawer extends Component {
+
 	static propTypes = {
 		site: PropTypes.object,
 		savedPost: PropTypes.object,
@@ -366,7 +367,7 @@ EditorDrawer.displayName = 'EditorDrawer';
 const enhance = flow(
 	localize,
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
