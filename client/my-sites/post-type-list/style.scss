@@ -9,10 +9,9 @@
 	padding-top: 8px;
 	padding-bottom: 8px;
 
-	// Override styles from _forms.scss
-	input[type=checkbox] + span.count {
+	.count {
 		display: inline-block;
-		margin: 0 8px 0 16px;
+		margin-right: 8px;
 	}
 
 	.button {

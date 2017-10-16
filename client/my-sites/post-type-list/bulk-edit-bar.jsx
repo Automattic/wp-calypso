@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
 import Count from 'components/count';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -45,7 +44,6 @@ class PostTypeBulkEditBar extends React.Component {
 
 		return (
 			<Card className="post-type-list__bulk-edit-bar">
-				<FormCheckbox indeterminate />
 				<Count count={ selectedPostsCount } />
 				<Button primary onClick={ this.onEdit }>
 					{ translate( 'Edit' ) }
