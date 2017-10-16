@@ -172,7 +172,23 @@ input[type=checkbox] {
 		speak: none;
 		color: $blue-medium;
 	}
-	&:disabled:checked:before {
+
+	// `indeterminate` should override `checked`
+	&.is-indeterminate:before {
+		@include clear-text;
+
+		content: '\f421';
+		margin: -2px 0 0 -2px;
+		float: left;
+		display: inline-block;
+		vertical-align: middle;
+		width: 16px;
+		font: 400 19px/1 Noticons;
+		speak: none;
+		color: $blue-medium;
+	}
+
+	&:disabled:before {
 		color: lighten( $gray, 10% );
 	}
 }

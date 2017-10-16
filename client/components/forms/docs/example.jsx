@@ -53,11 +53,22 @@ class FormFields extends React.PureComponent {
 	static displayName = 'FormFields'; // Needed for devdocs/design
 
 	state = {
+		triStateCheckbox: null,
 		checkedRadio: 'first',
 		toggled: false,
 		compactToggled: false,
 		phoneInput: { countryCode: 'US', value: '' },
 		currencyInput: { currency: 'USD', value: '' },
+	};
+
+	handleTriStateCheckbox = () => {
+		if ( this.state.triStateCheckbox === false ) {
+			this.setState( { triStateCheckbox: null } );
+		} else if ( this.state.triStateCheckbox === null ) {
+			this.setState( { triStateCheckbox: true } );
+		} else {
+			this.setState( { triStateCheckbox: false } );
+		}
 	};
 
 	handleRadioChange = event => {
@@ -115,6 +126,18 @@ class FormFields extends React.PureComponent {
 						<FormLabel>
 							<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
 							<span>Email me when someone Likes one of my comments.</span>
+						</FormLabel>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLegend>Form Checkbox (indeterminate)</FormLegend>
+						<FormLabel>
+							<FormCheckbox
+								onChange={ this.handleTriStateCheckbox }
+								checked={ this.state.triStateCheckbox !== false }
+								indeterminate={ this.state.triStateCheckbox === null }
+							/>
+							<span>This checkbox can be in the "indeterminate" state</span>
 						</FormLabel>
 					</FormFieldset>
 
