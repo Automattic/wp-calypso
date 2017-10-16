@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {
@@ -89,10 +91,11 @@ DisconnectJetpackButton.propTypes = {
 	linkDisplay: PropTypes.bool,
 	isMock: PropTypes.bool,
 	text: PropTypes.string,
+	recordGoogleEvent: PropTypes.func.isRequired,
 };
 
 DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default localize( DisconnectJetpackButton );
+export default connect( null, { recordGoogleEvent } )( localize( DisconnectJetpackButton ) );
