@@ -111,13 +111,8 @@ class PreviewToolbar extends Component {
 								key={ device }
 								selected={ device === currentDevice }
 								onClick={ partial( setDeviceViewport, device ) }
-								icon={
-									<Gridicon
-										size={ 18 }
-										icon={ this.devices[ device ].icon }
-										data-e2e-title={ device }
-									/>
-								}
+								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
+								e2eTitle={ device }
 							>
 								{ this.devices[ device ].title }
 							</DropdownItem>
