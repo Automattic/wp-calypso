@@ -60,8 +60,8 @@ export default {
 	},
 
 	updateSetting: function( settingName ) {
-		return value => {
-			this.props.userSettings.updateSetting( settingName, value );
+		return event => {
+			this.props.userSettings.updateSetting( settingName, event.currentTarget.value );
 		};
 	},
 
