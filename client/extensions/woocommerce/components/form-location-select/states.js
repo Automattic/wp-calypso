@@ -70,8 +70,11 @@ class FormStateSelectFromApi extends Component {
 	};
 
 	render() {
-		const { locationsList, isLoaded, onChange, translate, value } = this.props;
-		const statesLabel = translate( 'State' );
+		const { country, locationsList, isLoaded, onChange, translate, value } = this.props;
+		let statesLabel = translate( 'State' );
+		if ( 'CA' === country ) {
+			statesLabel = translate( 'Province' );
+		}
 
 		return (
 			<div>
