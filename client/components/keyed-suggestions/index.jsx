@@ -135,12 +135,12 @@ class KeyedSuggestions extends React.Component {
 	onMouseDown = event => {
 		event.stopPropagation();
 		event.preventDefault();
-		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
+		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.props.suggest( suggestion );
 	};
 
 	onMouseOver = event => {
-		const suggestion = event.target.textContent.split( ' ' )[ 0 ];
+		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( suggestion ),
 			currentSuggestion: suggestion,
