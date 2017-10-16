@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
@@ -21,6 +20,14 @@ import {
 } from 'state/ui/post-type-list/selectors';
 
 class PostTypeBulkEditBar extends React.Component {
+	onEdit() {
+		alert( 'You clicked the Edit button 😊' );
+	}
+
+	onDelete() {
+		alert( 'You clicked the Delete button 😊' );
+	}
+
 	render() {
 		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
 			return null;
@@ -40,10 +47,10 @@ class PostTypeBulkEditBar extends React.Component {
 			<Card className="post-type-list__bulk-edit-bar">
 				<FormCheckbox indeterminate />
 				<Count count={ selectedPostsCount } />
-				<Button primary onClick={ () => alert( '😊' ) }>
+				<Button primary onClick={ this.onEdit }>
 					{ translate( 'Edit' ) }
 				</Button>
-				<Button scary onClick={ () => alert( '😊' ) }>
+				<Button scary onClick={ this.onDelete }>
 					{ translate( 'Delete' ) }
 				</Button>
 			</Card>
