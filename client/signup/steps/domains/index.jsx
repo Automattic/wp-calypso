@@ -31,6 +31,7 @@ import {
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
 
 const productsList = productsListFactory();
 
@@ -192,6 +193,10 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
+	isDomainForAtomicSite = () => {
+		return 'store' === this.props.designType;
+	};
+
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
@@ -209,9 +214,7 @@ class DomainsStep extends React.Component {
 				offerMappingOption={ ! this.props.isDomainOnly }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={
-					! this.props.isDomainOnly && 'atomic-store' !== this.props.flowName
-				}
+				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
 				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
@@ -333,6 +336,7 @@ export default connect(
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
 		surveyVertical: getSurveyVertical( state ),
+		designType: getDesignType( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
