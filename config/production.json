@@ -113,7 +113,7 @@
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
