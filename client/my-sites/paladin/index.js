@@ -9,18 +9,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
+import { siteSelection, sites, navigation } from 'my-sites/controller';
 import paladinController from './controller';
 import config from 'config';
 
 export default function() {
 	if ( config.isEnabled( 'paladin' ) ) {
-		page( '/paladin', controller.siteSelection, controller.sites );
-		page(
-			'/paladin/:domain',
-			controller.siteSelection,
-			controller.navigation,
-			paladinController.activate
-		);
+		page( '/paladin', siteSelection, sites );
+		page( '/paladin/:domain', siteSelection, navigation, paladinController.activate );
 	}
 }

@@ -297,246 +297,233 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 	}
 }
 
-const controller = {
-	// Clears selected site from global redux state
-	noSite( context, next ) {
-		context.store.dispatch( setSelectedSiteId( null ) );
-		return next();
-	},
+// Clears selected site from global redux state
+export const noSite = ( context, next ) => {
+	context.store.dispatch( setSelectedSiteId( null ) );
+	return next();
+};
 
-	/*
-	 * Set up site selection based on last URL param and/or handle no-sites error cases
-	 */
-	siteSelection( context, next ) {
-		const { getState, dispatch } = getStore( context );
-		const siteFragment = context.params.site || route.getSiteFragment( context.path );
-		const basePath = route.sectionify( context.path, siteFragment );
-		const currentUser = user.get();
-		const hasOneSite = currentUser.visible_site_count === 1;
-		const allSitesPath = route.sectionify( context.path, siteFragment );
-		const primaryId = getPrimarySiteId( getState() );
-		const primary = getSite( getState(), primaryId ) || '';
+/*
+ * Set up site selection based on last URL param and/or handle no-sites error cases
+ */
+export const siteSelection = ( context, next ) => {
+	const { getState, dispatch } = getStore( context );
+	const siteFragment = context.params.site || route.getSiteFragment( context.path );
+	const basePath = route.sectionify( context.path, siteFragment );
+	const currentUser = user.get();
+	const hasOneSite = currentUser.visible_site_count === 1;
+	const allSitesPath = route.sectionify( context.path, siteFragment );
+	const primaryId = getPrimarySiteId( getState() );
+	const primary = getSite( getState(), primaryId ) || '';
 
-		const redirectToPrimary = () => {
-			let redirectPath = `${ context.pathname }/${ primary.slug }`;
+	const redirectToPrimary = () => {
+		let redirectPath = `${ context.pathname }/${ primary.slug }`;
 
-			redirectPath = context.querystring
-				? `${ redirectPath }?${ context.querystring }`
-				: redirectPath;
+		redirectPath = context.querystring
+			? `${ redirectPath }?${ context.querystring }`
+			: redirectPath;
 
-			page.redirect( redirectPath );
-		};
+		page.redirect( redirectPath );
+	};
 
-		if ( currentUser && currentUser.site_count === 0 ) {
-			renderEmptySites( context );
-			return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
-		}
+	if ( currentUser && currentUser.site_count === 0 ) {
+		renderEmptySites( context );
+		return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
+	}
 
-		if ( currentUser && currentUser.visible_site_count === 0 ) {
-			renderNoVisibleSites( context );
-			return analytics.pageView.record(
-				basePath,
-				`${ sitesPageTitleForAnalytics } > All Sites Hidden`
-			);
-		}
-
-		// Ignore the user account settings page
-		if ( /^\/settings\/account/.test( context.path ) ) {
-			return next();
-		}
-
-		/**
-		 * If the user has only one site, redirect to the single site
-		 * context instead of rendering the all-site views.
-		 *
-		 * Note: The redirectToPrimary function will be continually executed
-		 * by repeatedly querying /stats/day/undefined until the /sites
-		 * endpoint has returned.
-		 */
-		if ( hasOneSite && ! siteFragment ) {
-			const hasInitialized = getSites( getState() ).length;
-			if ( hasInitialized ) {
-				if ( primary ) {
-					redirectToPrimary();
-				} else {
-					// If the primary site does not exist, skip redirect
-					// and display a useful error notification
-					showMissingPrimaryError( currentUser, dispatch );
-				}
-				return;
-			}
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: redirectToPrimary,
-			} );
-		}
-
-		// If the path fragment does not resemble a site, set all sites to visible
-		if ( ! siteFragment ) {
-			dispatch( setAllSitesSelected() );
-			return next();
-		}
-
-		const siteId = getSiteId( getState(), siteFragment );
-		if ( siteId ) {
-			dispatch( setSelectedSiteId( siteId ) );
-			const selectionComplete = onSelectedSiteAvailable( context );
-
-			// if there was a redirect, we should terminate processing of next routes
-			// and let the redirect proceed
-			if ( ! selectionComplete ) {
-				return;
-			}
-		} else {
-			// if sites has fresh data and siteId is invalid
-			// redirect to allSitesPath
-			if ( ! isRequestingSites( getState() ) ) {
-				return page.redirect( allSitesPath );
-			}
-
-			let waitingNotice;
-			let freshSiteId;
-			const selectOnSitesChange = () => {
-				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
-				freshSiteId = getSiteId( getState(), siteFragment );
-				dispatch( setSelectedSiteId( freshSiteId ) );
-				if ( getSite( getState(), freshSiteId ) ) {
-					onSelectedSiteAvailable( context );
-					if ( waitingNotice ) {
-						notices.removeNotice( waitingNotice );
-					}
-				} else if ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) {
-					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), {
-						showDismiss: false,
-					} );
-					dispatch( {
-						type: SITES_ONCE_CHANGED,
-						listener: selectOnSitesChange,
-					} );
-					dispatch( requestSites() );
-				} else {
-					page.redirect( allSitesPath );
-				}
-			};
-			// Otherwise, check when sites has loaded
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: selectOnSitesChange,
-			} );
-		}
-		next();
-	},
-
-	jetpackModuleActive( moduleId, redirect ) {
-		return function( context, next ) {
-			const { getState } = getStore( context );
-			const siteId = getSelectedSiteId( getState() );
-			const isJetpack = isJetpackSite( getState(), siteId );
-			const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
-
-			if ( ! isJetpack ) {
-				return next();
-			}
-
-			if ( isModuleActive || false === redirect ) {
-				next();
-			} else {
-				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-			}
-		};
-	},
-
-	makeNavigation: function( context, next ) {
-		context.secondary = createNavigation( context );
-		next();
-	},
-
-	navigation: function( context, next ) {
-		// Render the My Sites navigation in #secondary
-		renderWithReduxStore(
-			createNavigation( context ),
-			document.getElementById( 'secondary' ),
-			context.store
+	if ( currentUser && currentUser.visible_site_count === 0 ) {
+		renderNoVisibleSites( context );
+		return analytics.pageView.record(
+			basePath,
+			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
 		);
-		next();
-	},
+	}
 
-	jetPackWarning( context, next ) {
+	// Ignore the user account settings page
+	if ( /^\/settings\/account/.test( context.path ) ) {
+		return next();
+	}
+
+	/**
+	 * If the user has only one site, redirect to the single site
+	 * context instead of rendering the all-site views.
+	 *
+	 * Note: The redirectToPrimary function will be continually executed
+	 * by repeatedly querying /stats/day/undefined until the /sites
+	 * endpoint has returned.
+	 */
+	if ( hasOneSite && ! siteFragment ) {
+		const hasInitialized = getSites( getState() ).length;
+		if ( hasInitialized ) {
+			if ( primary ) {
+				redirectToPrimary();
+			} else {
+				// If the primary site does not exist, skip redirect
+				// and display a useful error notification
+				showMissingPrimaryError( currentUser, dispatch );
+			}
+			return;
+		}
+		dispatch( {
+			type: SITES_ONCE_CHANGED,
+			listener: redirectToPrimary,
+		} );
+	}
+
+	// If the path fragment does not resemble a site, set all sites to visible
+	if ( ! siteFragment ) {
+		dispatch( setAllSitesSelected() );
+		return next();
+	}
+
+	const siteId = getSiteId( getState(), siteFragment );
+	if ( siteId ) {
+		dispatch( setSelectedSiteId( siteId ) );
+		const selectionComplete = onSelectedSiteAvailable( context );
+
+		// if there was a redirect, we should terminate processing of next routes
+		// and let the redirect proceed
+		if ( ! selectionComplete ) {
+			return;
+		}
+	} else {
+		// if sites has fresh data and siteId is invalid
+		// redirect to allSitesPath
+		if ( ! isRequestingSites( getState() ) ) {
+			return page.redirect( allSitesPath );
+		}
+
+		let waitingNotice;
+		let freshSiteId;
+		const selectOnSitesChange = () => {
+			// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+			freshSiteId = getSiteId( getState(), siteFragment );
+			dispatch( setSelectedSiteId( freshSiteId ) );
+			if ( getSite( getState(), freshSiteId ) ) {
+				onSelectedSiteAvailable( context );
+				if ( waitingNotice ) {
+					notices.removeNotice( waitingNotice );
+				}
+			} else if ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) {
+				waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), {
+					showDismiss: false,
+				} );
+				dispatch( {
+					type: SITES_ONCE_CHANGED,
+					listener: selectOnSitesChange,
+				} );
+				dispatch( requestSites() );
+			} else {
+				page.redirect( allSitesPath );
+			}
+		};
+		// Otherwise, check when sites has loaded
+		dispatch( {
+			type: SITES_ONCE_CHANGED,
+			listener: selectOnSitesChange,
+		} );
+	}
+	next();
+};
+
+export const jetpackModuleActive = ( moduleId, redirect ) => {
+	return function( context, next ) {
 		const { getState } = getStore( context );
-		const Main = require( 'components/main' );
-		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-		const basePath = route.sectionify( context.path );
-		const selectedSite = getSelectedSite( getState() );
+		const siteId = getSelectedSiteId( getState() );
+		const isJetpack = isJetpackSite( getState(), siteId );
+		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
 
-		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
-			renderWithReduxStore(
-				<Main>
-					<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
-				</Main>,
-				document.getElementById( 'primary' ),
-				context.store
-			);
+		if ( ! isJetpack ) {
+			return next();
+		}
 
-			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
-		} else {
+		if ( isModuleActive || false === redirect ) {
 			next();
+		} else {
+			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
 		}
-	},
+	};
+};
 
-	sites( context ) {
-		const { dispatch } = getStore( context );
-		if ( context.query.verified === '1' ) {
-			notices.success(
-				i18n.translate(
-					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
-				)
-			);
-		}
-		/**
-		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
-		 */
-		removeSidebar( context );
-		dispatch( setLayoutFocus( 'content' ) );
+export const makeNavigation = ( context, next ) => {
+	context.secondary = createNavigation( context );
+	next();
+};
 
+export const navigation = ( context, next ) => {
+	// Render the My Sites navigation in #secondary
+	renderWithReduxStore(
+		createNavigation( context ),
+		document.getElementById( 'secondary' ),
+		context.store
+	);
+	next();
+};
+
+export const jetPackWarning = ( context, next ) => {
+	const { getState } = getStore( context );
+	const Main = require( 'components/main' );
+	const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+	const basePath = route.sectionify( context.path );
+	const selectedSite = getSelectedSite( getState() );
+
+	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
 		renderWithReduxStore(
-			createSitesComponent( context ),
+			<Main>
+				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
+			</Main>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	},
 
-	/**
-	 * Middleware that adds the site selector screen to the layout
-	 * without rendering the layout. For use with isomorphic routing
-	 * @see {@link https://github.com/Automattic/wp-calypso/blob/master/docs/isomorphic-routing.md }
-	 *
-	 * To show the site selector screen using traditional multi-tree
-	 * layout, use the sites() middleware above.
-	 *
-	 * @param {object} context -- Middleware context
-	 * @param {function} next -- Call next middleware in chain
-	 */
-	makeSites( context, next ) {
-		context.store.dispatch( setLayoutFocus( 'content' ) );
-		context.store.dispatch(
-			setSection( {
-				group: 'sites',
-				secondary: false,
-			} )
-		);
-
-		context.primary = createSitesComponent( context );
+		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
+	} else {
 		next();
-	},
+	}
 };
 
-export default controller;
+export const sites = context => {
+	const { dispatch } = getStore( context );
+	if ( context.query.verified === '1' ) {
+		notices.success(
+			i18n.translate(
+				"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+			)
+		);
+	}
+	/**
+	 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
+	 */
+	removeSidebar( context );
+	dispatch( setLayoutFocus( 'content' ) );
 
-export const noSite = controller.noSite;
-export const siteSelection = controller.siteSelection;
-export const jetpackModuleActive = controller.jetpackModuleActive;
-export const makeNavigation = controller.makeNavigation;
-export const navigation = controller.navigation;
-export const jetPackWarning = controller.jetPackWarning;
-export const sites = controller.sites;
-export const makeSites = controller.makeSites;
+	renderWithReduxStore(
+		createSitesComponent( context ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
+/**
+ * Middleware that adds the site selector screen to the layout
+ * without rendering the layout. For use with isomorphic routing
+ * @see {@link https://github.com/Automattic/wp-calypso/blob/master/docs/isomorphic-routing.md }
+ *
+ * To show the site selector screen using traditional multi-tree
+ * layout, use the sites() middleware above.
+ *
+ * @param {object} context -- Middleware context
+ * @param {function} next -- Call next middleware in chain
+ */
+export const makeSites = ( context, next ) => {
+	context.store.dispatch( setLayoutFocus( 'content' ) );
+	context.store.dispatch(
+		setSection( {
+			group: 'sites',
+			secondary: false,
+		} )
+	);
+
+	context.primary = createSitesComponent( context );
+	next();
+};

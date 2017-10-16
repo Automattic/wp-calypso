@@ -11,13 +11,13 @@ import page from 'page';
  */
 import controller from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
-import mySitesController from 'my-sites/controller';
+import { siteSelection, navigation } from 'my-sites/controller';
 
 export default function() {
 	page(
 		'/settings/discussion/:site_id',
-		mySitesController.siteSelection,
-		mySitesController.navigation,
+		siteSelection,
+		navigation,
 		settingsController.siteSettings,
 		controller.discussion
 	);

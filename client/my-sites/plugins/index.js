@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
+import { siteSelection, navigation, sites } from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -27,9 +27,9 @@ const ifSimpleSiteThenRedirectTo = path => ( context, next ) => {
 
 export default function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page( '/plugins/setup', controller.siteSelection, pluginsController.setupPlugins );
+		page( '/plugins/setup', siteSelection, pluginsController.setupPlugins );
 
-		page( '/plugins/setup/:site', controller.siteSelection, pluginsController.setupPlugins );
+		page( '/plugins/setup/:site', siteSelection, pluginsController.setupPlugins );
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
@@ -59,54 +59,44 @@ export default function() {
 		} );
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
-			page( '/plugins/upload', controller.sites );
-			page(
-				'/plugins/upload/:site_id',
-				controller.siteSelection,
-				controller.navigation,
-				pluginsController.upload
-			);
+			page( '/plugins/upload', sites );
+			page( '/plugins/upload/:site_id', siteSelection, navigation, pluginsController.upload );
 		}
 
-		page(
-			'/plugins',
-			controller.siteSelection,
-			controller.navigation,
-			pluginsController.browsePlugins
-		);
+		page( '/plugins', siteSelection, navigation, pluginsController.browsePlugins );
 
 		page(
 			'/plugins/manage/:site?',
-			controller.siteSelection,
-			controller.navigation,
+			siteSelection,
+			navigation,
 			ifSimpleSiteThenRedirectTo( '/plugins' ),
 			pluginsController.plugins.bind( null, 'all' ),
-			controller.sites
+			sites
 		);
 
 		[ 'active', 'inactive', 'updates' ].forEach( filter =>
 			page(
 				`/plugins/${ filter }/:site_id?`,
-				controller.siteSelection,
-				controller.navigation,
+				siteSelection,
+				navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
 				pluginsController.plugins.bind( null, filter ),
-				controller.sites
+				sites
 			)
 		);
 
 		page(
 			'/plugins/:plugin/:site_id?',
-			controller.siteSelection,
-			controller.navigation,
+			siteSelection,
+			navigation,
 			pluginsController.maybeBrowsePlugins,
 			pluginsController.plugin
 		);
 
 		page(
 			'/plugins/:plugin/eligibility/:site_id',
-			controller.siteSelection,
-			controller.navigation,
+			siteSelection,
+			navigation,
 			pluginsController.eligibility
 		);
 
