@@ -1,0 +1,25 @@
+.rates-step__package-container {
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.rates-step__package-container .form-server-error {
+	margin-left: -2px; // align with form-input-validation gridicon
+}
+
+.rates-step__package-container .form-fieldset ~ .form-server-error {
+	// when there is a rates drop-down
+	margin-top: -1em;
+}
+
+.rates-step__package-heading {
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.notice.rates-step__notice {
+	margin: -24px -24px 24px;
+	width: inherit;
+}

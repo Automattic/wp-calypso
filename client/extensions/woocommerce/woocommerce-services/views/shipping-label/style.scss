@@ -1,0 +1,98 @@
+@import './label-purchase-modal/style';
+.shipping-label__payment .gridicon.notice__icon {
+	align-self: flex-start;
+	margin-top: 8px;
+}
+
+.shipping-label__item {
+	p {
+		margin-bottom: 3px;
+		text-align: left;
+
+		&.shipping-label__item-tracking {
+			font-size: 12px;
+
+			a:focus {
+				outline: none;
+				box-shadow: none;
+			}
+		}
+	}
+
+	.shipping-label__new-label-button {
+		width: 100%;
+		margin-top: 16px;
+	}
+
+	.shipping-label__item-actions {
+		display: flex;
+		justify-content: space-between;
+		font-size: 12px;
+		margin-bottom: 0;
+
+		a {
+			display: inline-block;
+			margin-top: 10px;
+		}
+
+		span svg,
+		a svg {
+			position: relative;
+			top: 2px;
+			margin-right: 2px;
+		}
+
+		.is-refund-pending {
+			color: $alert-yellow;
+		}
+
+		.is-refund-checking {
+			color: $alert-yellow;
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.is-refund-complete {
+			color: $alert-green;
+		}
+
+		.is-refund-rejected {
+			color: $alert-red;
+		}
+	}
+
+	.shipping-label__purchase-error {
+		color: $alert-red;
+		cursor: help;
+		text-decoration: underline;
+		text-decoration-color: $alert-red;
+		text-decoration-style: dotted;
+	}
+}
+
+&.dialog.card.label-reprint-modal {
+	.shipping-label__reprint-modal-notice {
+		color: darken($gray, 10);
+		font-style: italic;
+	}
+}
+
+&.dialog.card.label-refund-modal {
+	dd {
+		margin-left: 0;
+	}
+}
+
+.error-notice {
+	margin: -24px -24px 24px -24px;
+	width: inherit;
+
+	.notice__icon {
+		display: none;
+	}
+}
+
+.shipping-label__loading-spinner,
+.label-purchase-modal__loading-spinner {
+	margin: 8px auto;
+	text-align: center;
+}

@@ -11,7 +11,7 @@ import { includes, reduce, filter, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import getPDFSupport from '../utils/pdf-support';
+import * as api from '../../api';
 
 const PAPER_SIZES = {
 	a4: {
@@ -41,23 +41,16 @@ export const getPaperSizes = country =>
 		{}
 	);
 
-const _getPDFURL = ( paperSize, labels, baseURL, nonce ) => {
+export const getPrintURL = ( siteId, paperSize, labels ) => {
 	if ( ! PAPER_SIZES[ paperSize ] ) {
 		throw new Error( `Invalid paper size: ${ paperSize }` );
 	}
 	const params = {
-		_wpnonce: nonce,
 		paper_size: paperSize,
-		'label_ids[]': filter( map( labels, 'labelId' ) ),
-		'captions[]': filter( map( labels, 'caption' ) ),
+		// send params as a CSV to avoid conflicts with some plugins out there (woocommerce-services #1111)
+		label_id_csv: filter( map( labels, 'labelId' ) ).join( ',' ),
+		caption_csv: filter( map( labels, ( l ) => ( l.caption ? encodeURIComponent( l.caption ) : null ) ) ).join( ',' ),
+		json: true,
 	};
-	return baseURL + '?' + querystring.stringify( params );
-};
-
-export const getPrintURL = ( paperSize, labels, { labelsPrintURL, nonce } ) => {
-	return _getPDFURL( paperSize, labels, labelsPrintURL, nonce );
-};
-
-export const getPreviewURL = ( paperSize, labels, { labelsPreviewURL, nonce } ) => {
-	return getPDFSupport() ? _getPDFURL( paperSize, labels, labelsPreviewURL, nonce ) : null;
+	return api.url.labelsPrint() + '?' + querystring.stringify( params );
 };
