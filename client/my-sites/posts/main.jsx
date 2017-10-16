@@ -16,6 +16,7 @@ import { map } from 'lodash';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostListWrapper from './post-list-wrapper';
+import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import config from 'config';
 import Main from 'components/main';
 import QueryPosts from 'components/data/query-posts';
@@ -143,6 +144,7 @@ const PostsMain = React.createClass( {
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
+					<PostTypeBulkEditBar />
 					<PostListWrapper { ...this.props } />
 				</div>
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
