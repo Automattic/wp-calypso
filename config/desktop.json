@@ -29,6 +29,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/personalPlan": true,
+		"jitms": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,
 		"login/wp-login": false,

@@ -49,6 +49,7 @@ import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
+import JITM from 'blocks/jitm';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -169,6 +170,7 @@ const Layout = React.createClass( {
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
+					{ config.isEnabled( 'jitms' ) && <JITM /> }
 					{ this.renderWelcome() }
 					<GlobalNotices
 						id="notices"

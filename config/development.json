@@ -66,6 +66,7 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack_core_inline_update": true,
+		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
