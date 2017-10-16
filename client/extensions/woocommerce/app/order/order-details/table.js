@@ -73,11 +73,11 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItems = ( item, i ) => {
+	renderOrderItems = item => {
 		const { order, site } = this.props;
-		const tax = getOrderLineItemTax( order, i );
+		const tax = getOrderLineItemTax( order, item.id );
 		return (
-			<TableRow key={ i } className="order-details__items">
+			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
 					<a
 						href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }

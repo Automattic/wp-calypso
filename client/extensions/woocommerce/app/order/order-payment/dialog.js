@@ -6,8 +6,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { find, map, sum } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { sum } from 'lodash';
 
 /**
  * Internal dependencies
@@ -103,17 +103,19 @@ class RefundDialog extends Component {
 			return 0;
 		}
 		const subtotal = sum(
-			data.quantities.map( ( q, i ) => {
-				if ( ! order.line_items[ i ] ) {
+			map( data.quantities, ( q, id ) => {
+				id = parseInt( id );
+				const line_item = find( order.line_items, { id } );
+				if ( ! line_item ) {
 					return 0;
 				}
 
-				const price = parseFloat( order.line_items[ i ].price );
+				const price = parseFloat( line_item.price );
 				if ( order.prices_include_tax ) {
 					return price * q;
 				}
 
-				const tax = getOrderLineItemTax( order, i ) / order.line_items[ i ].quantity;
+				const tax = getOrderLineItemTax( order, id ) / line_item.quantity;
 				return ( price + tax ) * q;
 			} )
 		);

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, reduce } from 'lodash';
+import { find, get, reduce } from 'lodash';
 
 /**
  * Get the total tax for the discount value
@@ -20,11 +20,12 @@ export function getOrderDiscountTax( order ) {
  * Get the total tax for a given line item's value
  *
  * @param {Object} order An order as returned from API
- * @param {Number} index The index of a line item in this order
+ * @param {Number} id The ID of the line_item
  * @return {Float} Tax amount as a decimal number
  */
-export function getOrderLineItemTax( order, index ) {
-	const tax = get( order, `line_items[${ index }].taxes[0].total`, 0 );
+export function getOrderLineItemTax( order, id ) {
+	const items = get( order, 'line_items', [] );
+	const tax = get( find( items, { id } ), 'taxes[0].total', 0 );
 	return parseFloat( tax ) || 0;
 }
 
@@ -47,7 +48,7 @@ export function getOrderShippingTax( order ) {
  */
 export function getOrderSubtotalTax( order ) {
 	const items = get( order, 'line_items', [] );
-	return reduce( items, ( sum, value, key ) => sum + getOrderLineItemTax( order, key ), 0 );
+	return reduce( items, ( sum, value ) => sum + getOrderLineItemTax( order, value.id ), 0 );
 }
 
 /**
