@@ -31,6 +31,7 @@ class DisconnectJetpack extends PureComponent {
 		isBroken: PropTypes.bool,
 		onDisconnectClick: PropTypes.func,
 		onStayConnectedClick: PropTypes.func,
+		showTitle: PropTypes.bool,
 		siteId: PropTypes.number,
 		stayConnectedHref: PropTypes.string,
 		// Connected props
@@ -48,6 +49,7 @@ class DisconnectJetpack extends PureComponent {
 	};
 
 	static defaultProps = {
+		showTitle: true,
 		onDisconnectClick: noop,
 		onStayConnectedClick: noop,
 	};
@@ -204,6 +206,7 @@ class DisconnectJetpack extends PureComponent {
 			disconnectHref,
 			isBroken,
 			onStayConnectedClick,
+			showTitle,
 			siteSlug,
 			stayConnectedHref,
 			translate,
@@ -211,7 +214,7 @@ class DisconnectJetpack extends PureComponent {
 		if ( isBroken ) {
 			return (
 				<Card className="disconnect-jetpack">
-					<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
+					{ showTitle && <h1>{ translate( 'Disconnect Jetpack' ) }</h1> }
 					<p className="disconnect-jetpack__highlight">
 						{ translate( 'WordPress.com has not been able to reach %(siteSlug)s for a while.', {
 							args: { siteSlug },
@@ -228,9 +231,11 @@ class DisconnectJetpack extends PureComponent {
 
 		return (
 			<Card className="disconnect-jetpack">
-				<h1 className="disconnect-jetpack__header">
-					{ translate( 'Disconnect from WordPress.com?' ) }
-				</h1>
+				{ showTitle && (
+					<h1 className="disconnect-jetpack__header">
+						{ translate( 'Disconnect from WordPress.com?' ) }
+					</h1>
+				) }
 				<p className="disconnect-jetpack__highlight">
 					{ translate(
 						'By disconnecting %(siteSlug)s from WordPress.com you will no longer have access to the following:',

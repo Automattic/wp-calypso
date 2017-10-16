@@ -34,6 +34,7 @@ const ConfirmDisconnection = ( { siteId, siteSlug, translate } ) => {
 			<DisconnectJetpack
 				disconnectHref="/stats"
 				isBroken={ false }
+				showTitle={ false }
 				siteId={ siteId }
 				stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 			/>
