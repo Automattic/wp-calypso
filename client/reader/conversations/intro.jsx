@@ -70,11 +70,11 @@ class ConversationsIntro extends React.Component {
 										'and reply to all your P2 conversations in one place. ' +
 										"Automattic P2 posts you've liked or commented on " +
 										'will appear when they have new comments.' +
-										'{{a}} More info {{/a}}.',
+										'{{a}} More info. {{/a}}',
 									{
 										components: {
 											strong: <strong />,
-											a: <a href="https://readersquad.wordpress.com/?p=15654" />,
+											a: <a href="http://wp.me/p5PDj3-44u" />,
 										},
 									}
 								)
