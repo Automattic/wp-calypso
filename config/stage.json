@@ -13,7 +13,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"support_locales": [ "en", "es", "pt-br" ],
+	"support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
@@ -89,6 +93,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
