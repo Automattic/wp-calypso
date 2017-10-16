@@ -77,8 +77,8 @@ export default function transformer( file, api ) {
 	const defaultExportDeclaration = _.head( root.find( j.ExportDefaultDeclaration ).nodes() );
 	const hocIdentifier = _.get( defaultExportDeclaration, [ 'declaration', 'callee', 'name' ] );
 
-	const args = _.get( defaultExportDeclaration, [ 'declaration', 'arguments' ] );
-	const component = getComponentFromArgs( args );
+	const hocArgs = _.get( defaultExportDeclaration, [ 'declaration', 'arguments' ] );
+	const component = getComponentFromArgs( hocArgs );
 	const displayName = extractDisplayName( component, j );
 
 	// noop if the file does not have a default export of a react component that has a displayName
@@ -103,7 +103,7 @@ export default function transformer( file, api ) {
 			j.exportDefaultDeclaration(
 				j.callExpression(
 					j.identifier( hocIdentifier ),
-					args.map( classToIdentifier( displayName, j ) )
+					hocArgs.map( classToIdentifier( displayName, j ) )
 				)
 			),
 		] )
