@@ -56,7 +56,7 @@ export default {
 	},
 
 	getSetting: function( settingName ) {
-		return this.props.userSettings.getSetting( settingName );
+		return this.props.userSettings.getSetting( settingName ) || '';
 	},
 
 	toggleSetting: function( event ) {
