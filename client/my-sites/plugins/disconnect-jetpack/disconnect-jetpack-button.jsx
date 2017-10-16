@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {
@@ -24,19 +25,18 @@ class DisconnectJetpackButton extends Component {
 
 	handleClick = event => {
 		event.preventDefault();
-		const { isMock, recordGoogleEvent: recordGAEvent } = this.props;
+		const { isMock } = this.props;
 
 		if ( isMock ) {
 			return;
 		}
 		this.setState( { dialogVisible: true } );
-		recordGAEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	};
 
 	hideDialog = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
 		this.setState( { dialogVisible: false } );
-		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 	};
 
 	render() {
