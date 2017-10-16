@@ -340,7 +340,7 @@ export const requestResync = ( siteId ) => ( dispatch, getState ) => {
  * @param  {Object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
-export const submitMailchimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch ) => {
+export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch ) => {
 	if ( null == siteId || null == newsLetter ) {
 		return;
 	}
