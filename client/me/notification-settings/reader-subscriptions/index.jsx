@@ -120,7 +120,7 @@ export default protectForm(
 											disabled={ this.getDisabledState() }
 											id="subscription_delivery_jabber_default"
 											name="subscription_delivery_jabber_default"
-											onChange={ this.updateSetting( 'subscription_delivery_jabber_default' ) }
+											onChange={ this.toggleSetting( 'subscription_delivery_jabber_default' ) }
 											onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) }
 										/>
 										<span>
@@ -205,7 +205,7 @@ export default protectForm(
 											disabled={ this.getDisabledState() }
 											id="subscription_delivery_email_blocked"
 											name="subscription_delivery_email_blocked"
-											onChange={ this.updateSetting( 'subscription_delivery_email_blocked' ) }
+											onChange={ this.toggleSetting( 'subscription_delivery_email_blocked' ) }
 											onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }
 										/>
 										<span>
