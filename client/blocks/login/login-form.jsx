@@ -227,7 +227,7 @@ export class LoginForm extends Component {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
 							onChange={ this.onChangeField }
-							id="usernameOrEmail-srs"
+							id="usernameOrEmail-srs2"
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
