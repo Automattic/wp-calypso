@@ -23,7 +23,7 @@ const fields = [
 	{ name: 'admin_email', label: translate( 'Admin Email' ) },
 ];
 
-const StoreInfo = ( { storeData, onChange, validateFields } ) => {
+const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 	const onTimezoneSelect = ( value ) => {
 		const e = { target: {
 			name: 'store_timezone',
@@ -54,7 +54,7 @@ const StoreInfo = ( { storeData, onChange, validateFields } ) => {
 			{ fields.map( ( item, index ) => {
 				const error = isError( item.name );
 				const errorMsg = item.name === 'store_phone'
-					? translate( 'number need at least 6 digits' )
+					? translate( 'number needs at least 6 digits' )
 					: translate( 'field is required' );
 				return (
 					<div key={ index }>
@@ -95,7 +95,7 @@ const StoreInfo = ( { storeData, onChange, validateFields } ) => {
 StoreInfo.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	storeData: PropTypes.object.isRequired,
-	validateFields: PropTypes.bool
+	validateFields: PropTypes.bool,
 };
 
 export default StoreInfo;
