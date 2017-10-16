@@ -40,8 +40,9 @@ class PostItem extends React.Component {
 		this.props.hideSharePanel( this.props.globalId );
 	};
 
-	toggleCurrentPostSelection = () => {
+	toggleCurrentPostSelection = event => {
 		this.props.togglePostSelection( this.props.globalId );
+		event.stopPropagation();
 	};
 
 	inAllSitesModeWithMultipleUsers() {
@@ -71,7 +72,10 @@ class PostItem extends React.Component {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
 			multiSelectEnabled && (
-				<div className="post-item__select">
+				<div
+					className="post-item__select"
+					onClick={ this.toggleCurrentPostSelection }
+				>
 					<FormInputCheckbox
 						checked={ isCurrentPostSelected }
 						onClick={ this.toggleCurrentPostSelection }
