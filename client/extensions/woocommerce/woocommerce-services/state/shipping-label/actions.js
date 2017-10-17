@@ -570,14 +570,10 @@ const purchaseLabelResponse = ( orderId, siteId, response, error ) => {
 
 const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error ) => {
 	dispatch( purchaseLabelResponse( orderId, siteId, null, true ) );
-	if ( 'rest_cookie_invalid_nonce' === error ) {
-		dispatch( exitPrintingFlow( orderId, siteId, true ) );
-	} else {
-		dispatch( NoticeActions.errorNotice( error.toString() ) );
-		//re-request the rates on failure to avoid attempting repurchase of the same shipment id
-		dispatch( clearAvailableRates( orderId, siteId ) );
-		getLabelRates( orderId, siteId, dispatch, getState, noop );
-	}
+	dispatch( NoticeActions.errorNotice( error.toString() ) );
+	//re-request the rates on failure to avoid attempting repurchase of the same shipment id
+	dispatch( clearAvailableRates( orderId, siteId ) );
+	getLabelRates( orderId, siteId, dispatch, getState, noop );
 };
 
 const getPDFFileName = ( orderId, isReprint = false ) => {
