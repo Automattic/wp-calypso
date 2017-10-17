@@ -1263,7 +1263,7 @@ Undocumented.prototype.discoverFeed = function( query, fn ) {
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1276,7 +1276,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(

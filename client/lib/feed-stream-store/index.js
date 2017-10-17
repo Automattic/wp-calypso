@@ -145,7 +145,7 @@ function getStoreForFeed( storeId ) {
 	return new FeedStream( {
 		id: storeId,
 		fetcher: fetcher,
-		keyMaker: feedKeyMaker,
+		keyMaker: mixedKeyMaker,
 		onNextPageFetch: addMetaToNextPageFetch,
 	} );
 }
