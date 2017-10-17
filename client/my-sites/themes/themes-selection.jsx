@@ -12,6 +12,7 @@ import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
@@ -140,11 +141,15 @@ class ThemesSelection extends Component {
 	render() {
 		const { source, query, listLabel, themesCount } = this.props;
 
+		const upsellUrl =
+			abtest( 'unlimitedThemeNudge' ) === 'show' && `/plans/${ this.props.siteSlug }`;
+
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
+					upsellUrl={ upsellUrl }
 					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
