@@ -40,7 +40,9 @@ PromotionFormTypeHeader.PropTypes = {
 	siteId: PropTypes.number,
 	promotion: PropTypes.shape( {
 		id: PropTypes.isRequired,
-		type: PropTypes.string.isRequired,
+		type: PropTypes.oneOf(
+			[ 'product_sale', 'fixed_product', 'fixed_cart', 'percent' ]
+		).isRequired,
 	} ),
 	editPromotion: PropTypes.func.isRequired,
 };
