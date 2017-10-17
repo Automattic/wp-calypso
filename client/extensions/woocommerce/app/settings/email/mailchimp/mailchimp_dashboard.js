@@ -15,8 +15,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import FormToggle from 'components/forms/form-toggle';
-import FormRadio from 'components/forms/form-radio';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/email/querySyncStatus';
@@ -109,8 +108,10 @@ SyncTab.propTypes = {
 };
 
 const Settings = localize( ( { translate, settings, oldCheckbox, isSaving, onChange, onSave } ) => {
-	const onRadioChange = ( e ) => {
-		onChange( { mailchimp_checkbox_defaults: e.target.value } );
+	const onCheckedStateChange = () => {
+		const currentValue = settings.mailchimp_checkbox_defaults;
+		const nextValue = currentValue === 'check' ? 'uncheck' : 'check';
+		onChange( { mailchimp_checkbox_defaults: nextValue } );
 	};
 
 	const onNewsletterLabelChange = ( e ) => {
@@ -132,40 +133,31 @@ const Settings = localize( ( { translate, settings, oldCheckbox, isSaving, onCha
 			<span className="mailchimp__dashboard-settings-form">
 				<FormFieldset>
 					<FormLegend>{ translate( 'Newsletter subscriptions' ) }</FormLegend>
-					<FormLabel>
-						<FormToggle
+					<FormLabel className="mailchimp__dashboard-settings-form-field">
+						<CompactFormToggle
 							checked={ toggle }
 							onChange={ onToggleSubscribeMessage }
 							id="show-subscribe-message"
 						/>
 						<span>{ translate( 'Show a subscribe message to customer at checkout' ) }</span>
 					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							disabled={ ! toggle }
-							value="check"
+					<FormLabel className="mailchimp__dashboard-settings-form-field">
+						<FormCheckbox
+							className="mailchimp__dashboard-settings-form-checkbox"
 							checked={ 'check' === subscriptionPromptState }
-							onChange={ onRadioChange }
+							disabled={ ! toggle }
+							onChange={ onCheckedStateChange }
 						/>
 						<span>{ translate( 'Subscribe message is checked by default' ) }</span>
 					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							disabled={ ! toggle }
-							value="uncheck"
-							checked={ 'uncheck' === subscriptionPromptState }
-							onChange={ onRadioChange }
+					<FormLabel className="mailchimp__dashboard-settings-form-field">
+						<span>{ translate( 'Subscribe message' ) }</span>
+						<FormTextInput
+							name="newsletter_label"
+							onChange={ onNewsletterLabelChange }
+							value={ settings.newsletter_label }
 						/>
-						<span>{ translate( 'Subscribe message is unchecked by default' ) }</span>
 					</FormLabel>
-					<FormLabel>
-						{ translate( 'Subscribe message' ) }
-					</FormLabel>
-					<FormTextInput
-						name="newsletter_label"
-						onChange={ onNewsletterLabelChange }
-						value={ settings.newsletter_label }
-					/>
 				</FormFieldset>
 			</span>
 			<span className="mailchimp__dashboard-settings-preview">
@@ -214,7 +206,7 @@ class MailChimpDashboard extends React.Component {
 			if ( nextProps.newsletterSettingsSubmitError ) {
 				nextProps.errorNotice( translate( 'There was a problem saving the email settings. Please try again.' ) );
 			} else {
-				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
+				nextProps.successNotice( translate( 'Email settings saved.' ), /*{ duration: 4000 }*/ );
 			}
 		}
 	}
@@ -279,7 +271,7 @@ MailChimpDashboard.propTypes = {
 	syncStatusData: PropTypes.object,
 	isRequestingSettings: PropTypes.bool,
 	isSaving: PropTypes.bool,
-	newsletterSettingsSubmitError: PropTypes.onOfType( [
+	newsletterSettingsSubmitError: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.bool,
 	] ),
