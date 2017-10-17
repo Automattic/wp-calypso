@@ -39,7 +39,7 @@ class DisconnectSurvey extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<Card className="disconnect-site__question">
 					{ translate(
-						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com ',
+						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
 						{
 							args: { siteName: siteSlug },
 						}
