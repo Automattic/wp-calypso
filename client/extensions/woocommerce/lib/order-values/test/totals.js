@@ -14,7 +14,7 @@ import {
 	getOrderRefundTotal,
 	getOrderShippingTotal,
 	getOrderSubtotal,
-	// getOrderTotal,
+	getOrderTotal,
 } from '../totals';
 import orderWithTax from './fixtures/order';
 import orderWithoutTax from './fixtures/order-no-tax';
@@ -108,5 +108,23 @@ describe( 'getOrderSubtotal', () => {
 
 	it( 'should return 0 if there are no line_items', () => {
 		expect( getOrderSubtotal( { line_items: [] } ) ).to.eql( 0 );
+	} );
+} );
+
+describe( 'getOrderTotal', () => {
+	it( 'should be a function', () => {
+		expect( getOrderTotal ).to.be.a( 'function' );
+	} );
+
+	it( 'should get the sum of line_item totals', () => {
+		expect( getOrderTotal( orderWithTax ).toFixed( 2 ) ).to.eql( '62.98' );
+	} );
+
+	it( 'should get the sum of line_item totals regardless of coupons', () => {
+		expect( getOrderTotal( orderWithCoupons ).toFixed( 2 ) ).to.eql( '59.67' );
+	} );
+
+	it( 'should return 0 if there is nothing in the order', () => {
+		expect( getOrderTotal( { line_items: [] } ) ).to.eql( 0 );
 	} );
 } );
