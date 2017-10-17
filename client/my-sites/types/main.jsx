@@ -28,14 +28,25 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
+			<PageViewTracker
+				path={ siteId ? '/types/:site' : '/types' }
+				title="Custom Post Type"
+			/>
 			<SidebarNavigation />
-			{ userCanEdit &&
+			{ false !== userCanEdit &&
 			false !== postTypeSupported && [
-				<PostTypeFilter key="filter" query={ query } />,
-				<PostTypeList key="list" query={ query } largeTitles={ true } wrapTitles={ true } />,
+				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
+				<PostTypeList
+					key="list"
+					query={ userCanEdit ? query : null }
+					largeTitles={ true }
+					wrapTitles={ true }
+					scrollContainer={ document.body }
+				/>,
 			] }
-			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ false === postTypeSupported && (
+				<PostTypeUnsupported type={ query.type } />
+			) }
 			{ false === userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
@@ -57,7 +68,11 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		postType,
-		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
+		postTypeSupported: isPostTypeSupported(
+			state,
+			siteId,
+			ownProps.query.type
+		),
 		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
 } )( Types );

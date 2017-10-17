@@ -28,15 +28,27 @@ class PostListWrapper extends React.Component {
 			status: mapPostStatus( this.props.statusSlug ),
 			author: this.props.author,
 			search: this.props.search,
-			category: this.props.category,
-			tag: this.props.tag,
+			number: 40,
 		};
 
+		if ( this.props.category ) {
+			query.category = this.props.category;
+		}
+		if ( this.props.tag ) {
+			query.tag = this.props.tag;
+		}
 		if ( this.props.withCounts ) {
 			query.meta = 'counts';
 		}
 
-		return <PostTypeList query={ query } largeTitles={ true } wrapTitles={ true } />;
+		return (
+			<PostTypeList
+				query={ query }
+				largeTitles={ true }
+				wrapTitles={ true }
+				scrollContainer={ document.body }
+			/>
+		);
 	}
 
 	render() {
