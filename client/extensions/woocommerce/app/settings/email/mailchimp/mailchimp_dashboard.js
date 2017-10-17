@@ -274,6 +274,22 @@ class MailChimpDashboard extends React.Component {
 	}
 }
 
+MailChimpDashboard.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	syncStatusData: PropTypes.object,
+	isRequestingSettings: PropTypes.bool,
+	isSaving: PropTypes.bool,
+	newsletterSettingsSubmitError: PropTypes.onOfType( [
+		PropTypes.object,
+		PropTypes.bool,
+	] ),
+	settings: PropTypes.object.isRequired,
+	errorNotice: PropTypes.func.isRequired,
+	successNotice: PropTypes.func.isRequired,
+	submitMailChimpNewsletterSettings: PropTypes.func.isRequired,
+	requestResync: PropTypes.func.isRequired,
+};
+
 export default connect(
 	( state, { siteId } ) => ( {
 		siteId,
