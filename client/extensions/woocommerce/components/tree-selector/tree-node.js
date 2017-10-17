@@ -22,8 +22,8 @@ const TreeNode = ( {
 			<FormLabel>
 				{ renderSelector( node, onNodeSelect ) }
 				<span className="tree-selector__label">{ node.label }</span>
-				{ children }
 			</FormLabel>
+			{ children }
 		</div>
 	);
 };
@@ -37,7 +37,7 @@ export default TreeNode;
 
 function renderSelector( node, onNodeSelect ) {
 	if ( null === node.onSelect ) {
-		return null;
+		return ( <span className="tree-selector__unselectable-blank" /> );
 	}
 
 	const onChange = generateOnChange( node, onNodeSelect );
