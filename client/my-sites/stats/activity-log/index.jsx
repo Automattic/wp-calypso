@@ -54,6 +54,7 @@ import {
 	getSiteTimezoneValue,
 	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
+import { getLastRestore } from 'state/selectors';
 
 /**
  * Module constants
@@ -190,7 +191,6 @@ class ActivityLog extends Component {
 		if ( status === 'finished' ) {
 			return (
 				<div>
-					<QueryActivityLog siteId={ siteId } />
 					{ errorCode ? (
 						<ErrorBanner
 							errorCode={ errorCode }
@@ -376,6 +376,7 @@ class ActivityLog extends Component {
 			timezone,
 			translate,
 			restoreProgress,
+			lastRestore,
 		} = this.props;
 
 		if ( false === canViewActivityLog ) {
@@ -390,6 +391,13 @@ class ActivityLog extends Component {
 			);
 		}
 
+		console.log( restoreProgress );
+		console.log( siteId && ( ! restoreProgress || 'finished' !== restoreProgress.status ) );
+
+		const restoreInProgress =
+			restoreProgress &&
+			( 'running' === restoreProgress.status || 'queued' === restoreProgress.status );
+
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
@@ -398,7 +406,14 @@ class ActivityLog extends Component {
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
-				{ ! restoreProgress && <QueryRewindRestoreStatus siteId={ siteId } /> }
+				{ siteId &&
+				restoreInProgress && (
+					<QueryRewindRestoreStatus
+						siteId={ siteId }
+						restoreId={ lastRestore.restore_id }
+						timestamp={ new Date( lastRestore.when ).getTime() }
+					/>
+				) }
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
@@ -438,6 +453,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
+			lastRestore: getLastRestore( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),

@@ -13,7 +13,6 @@ import { delay } from 'lodash';
  * Internal dependencies
  */
 import { getRewindRestoreProgress as getRewindRestoreProgressAction } from 'state/activity-log/actions';
-import { getLastRestore } from 'state/selectors';
 
 class QueryRewindRestoreStatus extends PureComponent {
 	static propTypes = {
@@ -39,19 +38,7 @@ class QueryRewindRestoreStatus extends PureComponent {
 	}
 
 	componentWillMount() {
-		const restoreProps = Object.assign( {}, this.props );
-		const { restoreId, timestamp, lastRestore } = this.props;
-		if ( ! restoreId && lastRestore.restore_id ) {
-			restoreProps.restoreId = lastRestore.restore_id;
-		}
-		if ( ! timestamp && lastRestore.when ) {
-			restoreProps.timestamp = new Date( lastRestore.when ).getTime();
-		}
-		console.log( 'this.props', this.props );
-		console.log( 'lastRestore', lastRestore );
-		if ( restoreProps.restoreId && restoreProps.timestamp ) {
-			this.query( restoreProps );
-		}
+		this.query( this.props );
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -66,11 +53,6 @@ class QueryRewindRestoreStatus extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		lastRestore: getLastRestore( state, siteId ),
-	} ),
-	{
-		getRewindRestoreProgress: getRewindRestoreProgressAction,
-	}
-)( QueryRewindRestoreStatus );
+export default connect( null, {
+	getRewindRestoreProgress: getRewindRestoreProgressAction,
+} )( QueryRewindRestoreStatus );
