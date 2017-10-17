@@ -58,10 +58,14 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
-		page( '/settings/disconnect-site/:step(confirm)?', mySitesController.sites );
+		const reasonSlugs = Object.keys( reasons );
+		page(
+			`/settings/disconnect-site/:step(${ [ ...reasonSlugs, 'confirm' ].join( '|' ) })?`,
+			mySitesController.sites
+		);
 
 		page(
-			`/settings/disconnect-site/:reason(${ Object.keys( reasons ).join( '|' ) })?/:site_id`,
+			`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
 			mySitesController.siteSelection,
 			settingsController.setScroll,
 			controller.disconnectSite
