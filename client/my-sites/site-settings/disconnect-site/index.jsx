@@ -33,7 +33,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 	}
 
 	const ReasonComponent = get( reasonComponents, reason, DisconnectSurvey );
-	const confirmHref = '/settings/manage-connection/confirm/' + siteSlug;
+	const confirmHref = '/settings/disconnect-site/confirm/' + siteSlug;
 
 	let backHref = '/settings/manage-connection/' + siteSlug;
 	if ( reason ) {
