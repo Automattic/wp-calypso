@@ -83,7 +83,7 @@ export default function transformer( file, api ) {
 
 	// noop if the file does not have a default export of a react component that has a displayName
 	if ( ! defaultExportDeclaration || ! component || ! displayName ) {
-		return file;
+		return;
 	}
 
 	const isCreateClass = isCreateClassComponent( component );
