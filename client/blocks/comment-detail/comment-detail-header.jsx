@@ -4,10 +4,11 @@
  * @format
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { noop, get, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import { urlToDomainAndPath } from 'lib/url';
 import viewport from 'lib/viewport';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
+import { selectComment } from 'state/ui/comments/selected/actions';
 
 const getRelativeTimePeriod = ( commentDate, site, moment ) => {
 	const localizedDate = convertDateToUserLocation(
@@ -199,4 +201,13 @@ export class CommentDetailHeader extends Component {
 	}
 }
 
-export default localize( CommentDetailHeader );
+const mapStateToProps = ( state, { siteId, commentId } ) => ( {
+	commentIsSelected:
+		indexOf( get( state, [ 'ui', 'comments', 'selected', siteId ] ), commentId ) > -1,
+} );
+
+const mapDispatchToProps = ( dispatch, { siteId, commentId } ) => ( {
+	toggleSelected: () => dispatch( selectComment( siteId, commentId ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailHeader ) );

@@ -254,6 +254,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		visibleComments,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		selectedCount: ( get( state, [ 'ui', 'comments', 'selected', siteId ] ) || [] ).length,
 	};
 };
 

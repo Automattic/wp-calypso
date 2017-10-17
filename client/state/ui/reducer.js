@@ -13,6 +13,7 @@ import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
+import comments from './comments/reducer';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -94,6 +95,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 };
 
 const reducer = combineReducers( {
+	comments,
 	section,
 	isLoading,
 	layoutFocus,
