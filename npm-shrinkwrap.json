@@ -5316,6 +5316,32 @@
         }
       }
     },
+    "postcss-custom-properties": {
+      "version": "6.2.0",
+      "dependencies": {
+        "ansi-styles": {
+          "version": "3.2.0"
+        },
+        "chalk": {
+          "version": "2.1.0"
+        },
+        "escape-string-regexp": {
+          "version": "1.0.5"
+        },
+        "has-flag": {
+          "version": "2.0.0"
+        },
+        "postcss": {
+          "version": "6.0.13"
+        },
+        "source-map": {
+          "version": "0.6.1"
+        },
+        "supports-color": {
+          "version": "4.4.0"
+        }
+      }
+    },
     "postcss-less": {
       "version": "1.1.1",
       "dev": true
