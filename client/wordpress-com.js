@@ -62,6 +62,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'concierge',
+		paths: [ '/me/concierge/' ],
+		module: 'me/concierge',
+		group: 'me',
+		secondary: true,
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
