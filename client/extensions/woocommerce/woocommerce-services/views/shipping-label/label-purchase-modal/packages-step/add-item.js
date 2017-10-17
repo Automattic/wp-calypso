@@ -119,7 +119,7 @@ AddItemDialog.propTypes = {
 const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		showAddItemDialog: shippingLabel.showAddItemDialog || false,
+		showAddItemDialog: Boolean( shippingLabel.showAddItemDialog ),
 		addedItems: shippingLabel.addedItems,
 		openedPackageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,

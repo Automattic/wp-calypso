@@ -4,7 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
+import { noop, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -196,6 +196,7 @@ describe( '<ShippingRates />', () => {
 	it( 'handles empty available rates', () => {
 		const wrapper = shallow(
 			<ShippingRates
+				translate={ identity }
 				{ ...singlePackageProps }
 				availableRates={ {} }
 			/>
@@ -207,6 +208,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Rates only, no errors', () => {
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...singlePackageProps }
 					availableRates={ {
 						weight_0_individual: package_1_rate,
@@ -235,6 +237,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Errors only, no rates', () => {
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...singlePackageProps }
 					availableRates={ {
 						weight_0_individual: package_1_error,
@@ -269,6 +272,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Both rates and errors', () => {
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...singlePackageProps }
 					availableRates={ {
 						weight_0_individual: Object.assign( {}, package_1_rate, package_1_error ),
@@ -303,6 +307,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Rates only for all packages', () => {
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...multiPackageProps }
 					availableRates={ {
 						weight_0_individual: package_1_rate,
@@ -326,6 +331,7 @@ describe( '<ShippingRates />', () => {
 		describe( 'Errors only for all packages', () => {
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...multiPackageProps }
 					availableRates={ {
 						weight_0_individual: package_1_error,
@@ -351,6 +357,7 @@ describe( '<ShippingRates />', () => {
 			// but the client should be able to handle it without error just in case
 			const wrapper = shallow(
 				<ShippingRates
+					translate={ identity }
 					{ ...multiPackageProps }
 				/>
 			);

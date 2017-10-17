@@ -14,7 +14,6 @@ import { find, get, isEmpty } from 'lodash';
 import ShippingRates from './list';
 import StepContainer from '../step-container';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-
 import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
