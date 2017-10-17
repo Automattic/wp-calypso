@@ -158,7 +158,7 @@ export class Theme extends Component {
 		let secondaryContent = null;
 
 		if ( hasPrice && upsellUrl ) {
-			const freePrice = price.replace( /\d+/, '0' );
+			const freePrice = price.replace( /[0-9,]+/, '0' );
 			secondaryContent = (
 				<div className="theme__info-upsell">
 					<span>or </span>
