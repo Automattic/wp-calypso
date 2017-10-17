@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -160,7 +161,7 @@ export class Login extends React.Component {
 
 	render() {
 		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
-		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
 
 		return (
 			<div>
