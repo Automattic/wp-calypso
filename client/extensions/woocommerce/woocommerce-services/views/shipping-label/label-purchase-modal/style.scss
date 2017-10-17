@@ -108,14 +108,6 @@
 	}
 }
 
-.label-purchase-modal__purchasing-label {
-	margin-left: 6px;
-	color: $blue-wordpress;
-	animation: pulsate 2s ease-out;
-	animation-iteration-count: infinite;
-	opacity: 0.5;
-}
-
 @keyframes pulsate {
 	0% {
 		opacity: 0.5;
@@ -135,9 +127,4 @@
 
 .label-purchase-modal__step-title {
 	margin: 0 0 0 8px;
-}
-
-.label-purchase-modal__button-spinner {
-	display: inline-block;
-	margin-bottom: -8px;
 }
