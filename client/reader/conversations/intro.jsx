@@ -69,8 +69,8 @@ class ConversationsIntro extends React.Component {
 									'{{strong}}Welcome to A8C Conversations{{/strong}}, where you can read ' +
 										'and reply to all your P2 conversations in one place. ' +
 										"Automattic P2 posts you've liked or commented on " +
-										'will appear when they have new comments.' +
-										'{{a}} More info. {{/a}}',
+										'will appear when they have new comments. ' +
+										'{{a}}More info. {{/a}}',
 									{
 										components: {
 											strong: <strong />,
