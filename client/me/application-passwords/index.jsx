@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords' );
 import { bindActionCreators } from 'redux';
@@ -36,8 +35,7 @@ import { errorNotice } from 'state/notices/actions';
 
 const ApplicationPasswords = React.createClass( {
 	displayName: 'ApplicationPasswords',
-
-	mixins: [ observe( 'appPasswordsData' ), LinkedStateMixin, eventRecorder ],
+	mixins: [ observe( 'appPasswordsData' ), eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
@@ -110,9 +108,10 @@ const ApplicationPasswords = React.createClass( {
 							className="application-passwords__add-new-field"
 							disabled={ this.state.submittingForm }
 							id="application-name"
-							name="application-name"
+							name="applicationName"
 							onFocus={ this.recordFocusEvent( 'Application Name Field' ) }
-							valueLink={ this.linkState( 'applicationName' ) }
+							value={ this.state.applicationName }
+							onChange={ this.handleChange }
 						/>
 					</FormFieldset>
 
@@ -237,6 +236,11 @@ const ApplicationPasswords = React.createClass( {
 				</Card>
 			</div>
 		);
+	},
+
+	handleChange( e ) {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 } );
 

@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import emailValidator from 'email-validator';
 
 /**
@@ -23,8 +22,6 @@ import Buttons from './buttons';
 export default localize(
 	React.createClass( {
 		displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
-
-		mixins: [ LinkedStateMixin ],
 
 		propTypes: {
 			storedEmail: PropTypes.string,
@@ -78,11 +75,12 @@ export default localize(
 				<div className={ this.props.className }>
 					<FormFieldset>
 						<FormTextInput
-							valueLink={ this.linkState( 'email' ) }
 							isError={ this.state.isInvalid }
 							onKeyUp={ this.onKeyUp }
-							name="recovery-email"
+							name="email"
 							ref="email"
+							value={ this.state.email }
+							onChange={ this.handleChange }
 						/>
 
 						{ this.renderValidation() }
@@ -156,6 +154,11 @@ export default localize(
 
 		onDelete: function() {
 			this.props.onDelete();
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
 		},
 	} )
 );

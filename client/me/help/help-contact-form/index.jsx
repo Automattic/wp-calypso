@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { debounce, isEqual, find } from 'lodash';
 import { connect } from 'react-redux';
@@ -51,7 +50,7 @@ const trackSupportAfterSibylClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_sibyl_support_after_question_click' ) );
 
 export const HelpContactForm = React.createClass( {
-	mixins: [ LinkedStateMixin, PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		formDescription: PropTypes.node,
@@ -337,14 +336,20 @@ export const HelpContactForm = React.createClass( {
 				{ showSubjectField && (
 					<div className="help-contact-form__subject">
 						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
-						<FormTextInput valueLink={ this.linkState( 'subject' ) } />
+						<FormTextInput
+							name="subject"
+							value={ this.state.subject }
+							onChange={ this.handleChange }
+						/>
 					</div>
 				) }
 
 				<FormLabel>{ translate( 'What are you trying to do?' ) }</FormLabel>
 				<FormTextarea
-					valueLink={ this.linkState( 'message' ) }
 					placeholder={ translate( 'Please be descriptive' ) }
+					name="message"
+					value={ this.state.message }
+					onChange={ this.handleChange }
 				/>
 
 				{ showHelpLanguagePrompt && (
@@ -365,6 +370,11 @@ export const HelpContactForm = React.createClass( {
 				</FormButton>
 			</div>
 		);
+	},
+
+	handleChange( e ) {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 } );
 

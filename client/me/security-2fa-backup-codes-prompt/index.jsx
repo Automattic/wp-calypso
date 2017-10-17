@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
 
@@ -26,8 +25,6 @@ import Notice from 'components/notice';
 export default localize(
 	React.createClass( {
 		displayName: 'Security2faBackupCodesPrompt',
-
-		mixins: [ LinkedStateMixin ],
 
 		propTypes: {
 			onPrintAgain: PropTypes.func,
@@ -144,17 +141,18 @@ export default localize(
 						</FormLabel>
 						<FormTelInput
 							disabled={ this.state.submittingCode }
-							name="backup-code-entry"
+							name="backupCodeEntry"
 							autoComplete="off"
 							maxLength="8"
 							placeholder={ constants.eightDigitBackupCodePlaceholder }
-							valueLink={ this.linkState( 'backupCodeEntry' ) }
 							onFocus={ function() {
 								analytics.ga.recordEvent(
 									'Me',
 									'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
 								);
 							} }
+							value={ this.state.backupCodeEntry }
+							onChange={ this.handleChange }
 						/>
 					</FormFieldset>
 
@@ -177,6 +175,11 @@ export default localize(
 					</FormButton>
 				</form>
 			);
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
 		},
 	} )
 );
