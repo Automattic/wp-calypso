@@ -36,23 +36,14 @@ const switchUserLocale = ( currentUser, reduxStore ) => {
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
-		const parsed = url.parse( location.href, true );
-
-		// Decode the pathname by default (now disabled in page.js)
-		context.pathname = decodeURIComponent( context.pathname );
-
-		context.store = reduxStore;
-
-		// Break routing and do full load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
-		}
-
-		context.query = parsed.query;
+		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
+		const parsed = url.parse( context.canonicalPath, true );
+		context.pathname = parsed.pathname;
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
+		context.path = parsed.path;
+		context.query = parsed.query;
 
-		context.hashstring = parsed.hash && parsed.hash.substring( 1 ) || '';
+		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
 		// set `context.hash` (we have to parse manually)
 		if ( context.hashstring ) {
 			try {
@@ -64,6 +55,15 @@ const setupContextMiddleware = reduxStore => {
 		} else {
 			context.hash = {};
 		}
+
+		context.store = reduxStore;
+
+		// Break routing and do full load for logout link in /me
+		if ( context.pathname === '/wp-login.php' ) {
+			window.location.href = context.path;
+			return;
+		}
+
 		next();
 	} );
 };
