@@ -15,7 +15,7 @@ import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/lab
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 
-class OrderNote extends Component {
+class OrderEvent extends Component {
 	static propTypes = {
 		customer_note: PropTypes.bool,
 		date_created_gmt: PropTypes.string,
@@ -119,20 +119,20 @@ class OrderNote extends Component {
 		const { icon, heading, content } = this.eventPropsByType[ event.type ]( event );
 
 		return (
-			<div className="order-notes__note">
-				<div className="order-notes__note-meta">
-					<span className="order-notes__note-time">
+			<div className="order-activity-log__note">
+				<div className="order-activity-log__note-meta">
+					<span className="order-activity-log__note-time">
 						{ moment( event.timestamp ).format( 'LT' ) }
 					</span>
 					{ icon && <Gridicon icon={ icon } size={ 24 } /> }
 				</div>
-				<div className="order-notes__note-body">
-					<div className="order-notes__note-type">{ heading }</div>
-					<div className="order-notes__note-content">{ content }</div>
+				<div className="order-activity-log__note-body">
+					<div className="order-activity-log__note-type">{ heading }</div>
+					<div className="order-activity-log__note-content">{ content }</div>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( OrderNote );
+export default localize( OrderEvent );

@@ -60,8 +60,8 @@ class CreateOrderNote extends Component {
 		const { isNoteSaving, translate } = this.props;
 
 		return (
-			<div className="order-notes__new-note">
-				<FormFieldSet className="order-notes__new-note-content">
+			<div className="order-activity-log__new-note">
+				<FormFieldSet className="order-activity-log__new-note-content">
 					<ScreenReaderText>
 						<FormLabel htmlFor="note">{ translate( 'Add a note' ) }</FormLabel>
 					</ScreenReaderText>
@@ -72,7 +72,7 @@ class CreateOrderNote extends Component {
 						placeholder={ translate( 'Add a note' ) }
 					/>
 				</FormFieldSet>
-				<div className="order-notes__new-note-type">
+				<div className="order-activity-log__new-note-type">
 					<FormSelect onChange={ this.setType } value={ this.state.type }>
 						<option value={ 'internal' }>{ translate( 'Private Note' ) }</option>
 						<option value={ 'email' }>{ translate( 'Send to Customer' ) }</option>
