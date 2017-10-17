@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
@@ -20,8 +19,7 @@ import Notice from 'components/notice';
 export default localize(
 	React.createClass( {
 		displayName: 'ProfileLinksAddOther',
-
-		mixins: [ LinkedStateMixin, eventRecorder ],
+		mixins: [ eventRecorder ],
 
 		getInitialState() {
 			return {
@@ -144,15 +142,19 @@ export default localize(
 					<FormFieldset>
 						<FormTextInput
 							className="profile-links-add-other__value"
-							valueLink={ this.linkState( 'value' ) }
 							placeholder={ this.props.translate( 'Enter a URL' ) }
 							onFocus={ this.recordFocusEvent( 'Add Other Site URL Field' ) }
+							name="value"
+							value={ this.state.value }
+							onChange={ this.handleChange }
 						/>
 						<FormTextInput
 							className="profile-links-add-other__title"
-							valueLink={ this.linkState( 'title' ) }
 							placeholder={ this.props.translate( 'Enter a description' ) }
 							onFocus={ this.recordFocusEvent( 'Add Other Site Description Field' ) }
+							name="title"
+							value={ this.state.title }
+							onChange={ this.handleChange }
 						/>
 						<FormButton
 							className="profile-links-add-other__add"
@@ -171,6 +173,11 @@ export default localize(
 					</FormFieldset>
 				</form>
 			);
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
 		},
 	} )
 );

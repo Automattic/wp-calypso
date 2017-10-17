@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
@@ -28,8 +27,6 @@ import Notice from 'components/notice';
 export default localize(
 	React.createClass( {
 		displayName: 'Security2faCodePrompt',
-
-		mixins: [ LinkedStateMixin ],
 
 		codeRequestTimer: false,
 
@@ -217,13 +214,14 @@ export default localize(
 							autoFocus
 							className="security-2fa-code-prompt__verification-code"
 							disabled={ this.state.submittingForm }
-							name="verification-code"
+							name="verificationCode"
 							placeholder={ codePlaceholder }
 							autoComplete="off"
-							valueLink={ this.linkState( 'verificationCode' ) }
 							onFocus={ function() {
 								analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 							} }
+							value={ this.state.verificationCode }
+							onChange={ this.handleChange }
 						/>
 						{ this.state.codeRequestPerformed ? (
 							<FormSettingExplanation>
@@ -282,6 +280,11 @@ export default localize(
 					</FormButtonsBar>
 				</form>
 			);
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
 		},
 	} )
 );

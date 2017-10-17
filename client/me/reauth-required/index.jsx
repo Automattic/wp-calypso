@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:reauth-required' );
 
@@ -32,8 +31,7 @@ import Notice from 'components/notice';
 export default localize(
 	React.createClass( {
 		displayName: 'ReauthRequired',
-
-		mixins: [ LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
+		mixins: [ observe( 'twoStepAuthorization' ), eventRecorder ],
 
 		getInitialState: function() {
 			return {
@@ -214,7 +212,8 @@ export default localize(
 								name="code"
 								placeholder={ codePlaceholder }
 								onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
-								valueLink={ this.linkState( 'code' ) }
+								value={ this.state.code }
+								onChange={ this.handleChange }
 							/>
 
 							{ this.renderFailedValidationMsg() }
@@ -223,10 +222,11 @@ export default localize(
 						<FormFieldset>
 							<FormLabel>
 								<FormCheckbox
-									checkedLink={ this.linkState( 'remember2fa' ) }
 									id="remember2fa"
 									name="remember2fa"
 									onClick={ this.recordCheckboxEvent( 'Remember 2fa' ) }
+									checked={ this.state.remember2fa }
+									onChange={ this.handleCheckedChange }
 								/>
 								<span>{ this.props.translate( 'Remember for 30 days.' ) }</span>
 							</FormLabel>
@@ -247,6 +247,16 @@ export default localize(
 					</form>
 				</Dialog>
 			);
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
+		},
+
+		handleCheckedChange( e ) {
+			const { name, checked } = e.currentTarget;
+			this.setState( { [ name ]: checked } );
 		},
 	} )
 );

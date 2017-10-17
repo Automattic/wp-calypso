@@ -5,7 +5,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -29,8 +28,7 @@ import LostPassword from './lost-password';
 
 export const Login = createReactClass( {
 	displayName: 'Auth',
-
-	mixins: [ LinkedStateMixin, eventRecorder ],
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		AuthStore.on( 'change', this.refreshData );
@@ -113,7 +111,8 @@ export const Login = createReactClass( {
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Username or email address' ) }
 									onFocus={ this.recordFocusEvent( 'Username or email address' ) }
-									valueLink={ this.linkState( 'login' ) }
+									value={ this.state.login }
+									onChange={ this.handleChange }
 								/>
 							</div>
 							<div className="auth__input-wrapper">
@@ -125,7 +124,8 @@ export const Login = createReactClass( {
 									onFocus={ this.recordFocusEvent( 'Password' ) }
 									hideToggle={ requires2fa }
 									submitting={ inProgress }
-									valueLink={ this.linkState( 'password' ) }
+									value={ this.state.password }
+									onChange={ this.handleChange }
 								/>
 							</div>
 							{ requires2fa && (
@@ -137,7 +137,8 @@ export const Login = createReactClass( {
 										disabled={ inProgress }
 										placeholder={ translate( 'Verification code' ) }
 										onFocus={ this.recordFocusEvent( 'Verification code' ) }
-										valueLink={ this.linkState( 'auth_code' ) }
+										value={ this.state.auth_code }
+										onChange={ this.handleChange }
 									/>
 								</FormFieldset>
 							) }
@@ -179,6 +180,11 @@ export const Login = createReactClass( {
 				</div>
 			</Main>
 		);
+	},
+
+	handleChange( e ) {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 } );
 

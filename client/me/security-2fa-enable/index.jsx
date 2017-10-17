@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-enable' );
 import QRCode from 'qrcode.react';
@@ -30,8 +29,6 @@ import Notice from 'components/notice';
 export default localize(
 	React.createClass( {
 		displayName: 'Security2faEnable',
-
-		mixins: [ LinkedStateMixin ],
 
 		codeRequestTimer: false,
 
@@ -344,7 +341,7 @@ export default localize(
 						autoComplete="off"
 						autoFocus
 						disabled={ this.state.submittingForm }
-						name="verification-code"
+						name="verificationCode"
 						placeholder={
 							'sms' === this.state.method ? (
 								constants.sevenDigit2faPlaceholder
@@ -352,10 +349,11 @@ export default localize(
 								constants.sixDigit2faPlaceholder
 							)
 						}
-						valueLink={ this.linkState( 'verificationCode' ) }
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
 						} }
+						value={ this.state.verificationCode }
+						onChange={ this.handleChange }
 					/>
 					{ 'sms' === this.state.method && this.state.smsRequestPerformed ? (
 						<FormSettingExplanation>
@@ -456,6 +454,11 @@ export default localize(
 					</form>
 				</div>
 			);
+		},
+
+		handleChange( e ) {
+			const { name, value } = e.currentTarget;
+			this.setState( { [ name ]: value } );
 		},
 	} )
 );
