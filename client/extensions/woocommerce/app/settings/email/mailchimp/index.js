@@ -16,7 +16,7 @@ import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingForSites } from 'state/plugins/installed/selectors';
 
-import { mailchimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
+import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
@@ -83,24 +83,22 @@ MailChimp.propTypes = {
 	settings: PropTypes.object,
 };
 
-const MailChimpConnected = connect(
-	( state ) => {
-		const mailChimpId = 'mailchimp-for-woocommerce/mailchimp-woocommerce';
-		const siteId = getSelectedSiteId( state );
-		const isRequestingPlugins = isRequestingForSites( state, [ siteId ] );
-		const isRequestingMailChimpSettings = isRequestingSettings( state, siteId );
-		const sitePlugins = getPlugins( state, [ siteId ] );
-		const mailChimp = filter( sitePlugins, matches( { id: mailChimpId } ) );
-		const hasMailChimp = !! mailChimp.length;
-		const settings = mailchimpSettings( state, siteId );
-		return {
-			siteId,
-			hasMailChimp,
-			isRequestingPlugins,
-			isRequestingMailChimpSettings,
-			settings: settings || {},
-		};
-	}
-)( MailChimp );
+function mapStateToProps( state ) {
+	const mailChimpId = 'mailchimp-for-woocommerce/mailchimp-woocommerce';
+	const siteId = getSelectedSiteId( state );
+	const isRequestingPlugins = isRequestingForSites( state, [ siteId ] );
+	const isRequestingMailChimpSettings = isRequestingSettings( state, siteId );
+	const sitePlugins = getPlugins( state, [ siteId ] );
+	const mailChimp = filter( sitePlugins, matches( { id: mailChimpId } ) );
+	const hasMailChimp = !! mailChimp.length;
+	const settings = mailChimpSettings( state, siteId );
+	return {
+		siteId,
+		hasMailChimp,
+		isRequestingPlugins,
+		isRequestingMailChimpSettings,
+		settings: settings || {},
+	};
+}
 
-export default localize( MailChimpConnected );
+export default connect( mapStateToProps )( localize( MailChimp ) );

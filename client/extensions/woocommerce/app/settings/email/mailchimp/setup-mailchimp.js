@@ -26,9 +26,9 @@ import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugi
 import StoreInfoStep from './setup-steps/store-info.js';
 import {
 	submitMailChimpApiKey,
-	submitMailchimpStoreInfo,
-	submitMailchimpCampaignDefaults,
-	submitMailchimpNewsletterSettings
+	submitMailChimpStoreInfo,
+	submitMailChimpCampaignDefaults,
+	submitMailChimpNewsletterSettings
 } from 'woocommerce/state/sites/settings/email/actions.js';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
@@ -90,7 +90,7 @@ class MailChimpSetup extends React.Component {
 	}
 
 	prepareDefaultValues( nextProps ) {
-		const { settings } = nextProps;
+		const { settings, translate } = nextProps;
 		const newSettings = Object.assign( {}, settings );
 		newSettings.campaign_from_name = settings.campaign_from_name || settings.store_name || '';
 		newSettings.campaign_from_email = settings.campaign_from_email || settings.admin_email || '';
@@ -98,7 +98,9 @@ class MailChimpSetup extends React.Component {
 		newSettings.store_locale = settings.store_locale || 'en';
 		newSettings.campaign_language = settings.campaign_language || settings.store_locale;
 		newSettings.campaign_permission_reminder = settings.campaign_permission_reminder ||
-			this.props.translate( 'You were subscribed to the newsletter from ' ) + settings.store_name;
+			translate( 'You were subscribed to the newsletter from %(store_name)s', {
+				args: { store_name: settings.store_name, }
+			} );
 		newSettings.admin_email = settings.admin_email || nextProps.currentUserEmail || '';
 		newSettings.store_timezone = settings.store_timezone || nextProps.timezone || 'America/New_York';
 		newSettings.mailchimp_lists = settings.mailchimp_lists;
@@ -159,7 +161,7 @@ class MailChimpSetup extends React.Component {
 		const { step } = this.state;
 		const { siteId } = this.props;
 
-		if ( step === LOG_INTO_MAILCHIMP_STEP ) {
+		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
 			this.setState( { step: steps[ this.state.step ].nextStep } );
 		} else if ( step === KEY_INPUT_STEP ) {
 			const validKey = !! this.state.api_key_input;
@@ -167,25 +169,25 @@ class MailChimpSetup extends React.Component {
 			if ( validKey ) {
 				this.props.submitMailChimpApiKey( siteId, this.state.api_key_input );
 			}
-		} else if ( step === STORE_INFO_STEP ) {
+		} else if ( STORE_INFO_STEP === step ) {
 			const settings = this.getStoreSettings();
 			const validSettings = this.areStoreSettingsValid( settings );
 			this.setState( { settings_values_missing: ! validSettings } );
 			if ( validSettings ) {
-				this.props.submitMailchimpStoreInfo( siteId, settings );
+				this.props.submitMailChimpStoreInfo( siteId, settings );
 			}
-		} else if ( step === CAMPAIGN_DEFAULTS_STEP ) {
+		} else if ( CAMPAIGN_DEFAULTS_STEP === step ) {
 			const settings = this.getCampaingDefaultsSettings();
 			const validSettings = this.areCampaignSettingsValid( settings );
 			this.setState( { settings_values_missing: ! validSettings } );
 			if ( validSettings ) {
-				this.props.submitMailchimpCampaignDefaults( siteId, settings );
+				this.props.submitMailChimpCampaignDefaults( siteId, settings );
 			}
-		} else if ( step === NEWSLETTER_SETTINGS_STEP ) {
+		} else if ( NEWSLETTER_SETTINGS_STEP === step ) {
 			const mailchimp_list = this.state.settings.mailchimp_list;
 			this.setState( { settings_values_missing: ! mailchimp_list } );
 			if ( mailchimp_list ) {
-				this.props.submitMailchimpNewsletterSettings( siteId, { mailchimp_list } );
+				this.props.submitMailChimpNewsletterSettings( siteId, { mailchimp_list } );
 			}
 		}
 	}
@@ -202,30 +204,30 @@ class MailChimpSetup extends React.Component {
 
 	renderStep = () => {
 		const { step, settings, settings_values_missing } = this.state;
-		if ( step === LOG_INTO_MAILCHIMP_STEP ) {
+		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
 			return <LogIntoMailchimp />;
 		}
-		if ( step === KEY_INPUT_STEP ) {
+		if ( KEY_INPUT_STEP === step ) {
 			return <KeyInputStep
 				onChange={ this.onKeyInputChange }
 				apiKey={ this.state.api_key_input }
 				isKeyCorrect={ this.props.isKeyCorrect && ! settings_values_missing } />;
 		}
-		if ( step === STORE_INFO_STEP ) {
+		if ( STORE_INFO_STEP === step ) {
 			return <StoreInfoStep
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
 				validateFields={ settings_values_missing }
 			/>;
 		}
-		if ( step === CAMPAIGN_DEFAULTS_STEP ) {
+		if ( CAMPAIGN_DEFAULTS_STEP === step ) {
 			return <CampaignDefaultsStep
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
 				validateFields={ settings_values_missing }
 			/>;
 		}
-		if ( step === NEWSLETTER_SETTINGS_STEP ) {
+		if ( NEWSLETTER_SETTINGS_STEP === step ) {
 			return <NewsletterSettings
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
@@ -259,7 +261,7 @@ class MailChimpSetup extends React.Component {
 			);
 		}
 
-		if ( this.state.step === STORE_SYNC ) {
+		if ( STORE_SYNC === this.state.step ) {
 			return null;
 		}
 
@@ -272,12 +274,12 @@ class MailChimpSetup extends React.Component {
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<ProgressBar
 						value={ stepNum + 1 }
-						total={ 5 }
+						total={ steps.length }
 						compact
 					/>
 					<ProgressIndicator
 						stepNumber={ stepNum }
-						totalSteps={ 5 }
+						totalSteps={ steps.length }
 					/>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
@@ -298,9 +300,9 @@ MailChimpSetup.propTypes = {
 	settings: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	submitMailChimpApiKey: PropTypes.func.isRequired,
-	submitMailchimpCampaignDefaults: PropTypes.func.isRequired,
-	submitMailchimpNewsletterSettings: PropTypes.func.isRequired,
-	submitMailchimpStoreInfo: PropTypes.func.isRequired,
+	submitMailChimpCampaignDefaults: PropTypes.func.isRequired,
+	submitMailChimpNewsletterSettings: PropTypes.func.isRequired,
+	submitMailChimpStoreInfo: PropTypes.func.isRequired,
 	timezone: PropTypes.string,
 };
 
@@ -322,8 +324,8 @@ export default localize( connect(
 	},
 	{
 		submitMailChimpApiKey,
-		submitMailchimpStoreInfo,
-		submitMailchimpCampaignDefaults,
-		submitMailchimpNewsletterSettings
+		submitMailChimpStoreInfo,
+		submitMailChimpCampaignDefaults,
+		submitMailChimpNewsletterSettings
 	}
 )( MailChimpSetup ) );

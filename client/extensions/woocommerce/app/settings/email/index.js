@@ -15,7 +15,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const Email = ( { site, siteId, translate, className } ) => {
+const SettingsEmail = ( { site, siteId, translate, className } ) => {
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
 		( <span>{ translate( 'Email' ) }</span> ),
@@ -30,10 +30,10 @@ const Email = ( { site, siteId, translate, className } ) => {
 	);
 };
 
-Email.propTypes = {
+SettingsEmail.propTypes = {
 	className: PropTypes.string,
 	siteId: PropTypes.number,
 	site: PropTypes.object,
 };
 
-export default localize( Email );
+export default localize( SettingsEmail );
