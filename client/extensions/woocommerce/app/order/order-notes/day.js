@@ -15,13 +15,12 @@ class OrderNotesByDay extends Component {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 		date: PropTypes.string.isRequired,
-		index: PropTypes.number.isRequired,
 		isOpen: PropTypes.bool.isRequired,
 		onClick: PropTypes.func.isRequired,
 	};
 
 	onClick = () => {
-		this.props.onClick( this.props.index );
+		this.props.onClick( this.props.date );
 	};
 
 	render() {

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy, keys } from 'lodash';
+import { keys, last, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,13 +47,22 @@ class OrderNotes extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = {
-			openIndex: 0,
-		};
 	}
 
-	toggleOpenDay = index => {
-		this.setState( () => ( { openIndex: index } ) );
+	componentWillMount() {
+		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
+	}
+
+	componentWillReceiveProps( props ) {
+		const newOpenDay = last( keys( props.eventsByDay ) );
+		//new day has been appended, open it
+		if ( ! this.props.eventsByDay[ newOpenDay ] ) {
+			this.setState( { openDay: newOpenDay } );
+		}
+	}
+
+	toggleOpenDay = date => {
+		this.setState( () => ( { openDay: date } ) );
 	};
 
 	renderNotes = () => {
@@ -62,15 +71,14 @@ class OrderNotes extends Component {
 			return <p>{ translate( 'No activity yet' ) }</p>;
 		}
 
-		return days.map( ( day, index ) => {
+		return days.map( day => {
 			const events = eventsByDay[ day ];
 			return (
 				<OrderNotesByDay
 					key={ day }
 					count={ events.length }
 					date={ day }
-					index={ index }
-					isOpen={ index === this.state.openIndex }
+					isOpen={ day === this.state.openDay }
 					onClick={ this.toggleOpenDay }
 				>
 					{ events.map( event => (
