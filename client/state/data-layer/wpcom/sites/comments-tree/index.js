@@ -27,7 +27,7 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 				path: `/sites/${ siteId }/comments-tree`,
 				apiVersion: '1.1',
 				query: {
-					status,
+					status: 'unapproved' === status ? 'pending' : status,
 				},
 			},
 			action
