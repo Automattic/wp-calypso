@@ -178,7 +178,7 @@ const getSidebarErrors = ( paperSize ) => {
 };
 
 export const getFormErrors = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => { //( shippingLabel, countriesData ) => {
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! isLoaded( state, orderId, siteId ) ) {
 			return {};
 		}
