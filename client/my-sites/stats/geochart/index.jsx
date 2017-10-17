@@ -20,6 +20,7 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 class StatsGeochart extends Component {
 	static propTypes = {
@@ -91,7 +92,7 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { data, translate } = this.props;
+		const { currentUserCountryCode, data, translate } = this.props;
 
 		if ( ! data || ! data.length ) {
 			return;
@@ -121,6 +122,7 @@ class StatsGeochart extends Component {
 			enableRegionInteractivity: true,
 			region: 'world',
 			colorAxis: { colors: [ '#FFF088', '#F34605' ] },
+			domain: currentUserCountryCode,
 		};
 
 		const regions = uniq( map( data, 'region' ) );
@@ -173,6 +175,7 @@ export default connect( ( state, ownProps ) => {
 	const { query } = ownProps;
 
 	return {
+		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
 		siteId,
 		statType,
