@@ -229,10 +229,16 @@ class MailChimpDashboard extends React.Component {
 	}
 
 	render() {
-		const { siteId, syncStatusData, translate } = this.props;
+		const { siteId, syncStatusData, translate, onNoticeExit, wizardCompleted } = this.props;
 		return (
 			<div>
 				<QueryMailChimpSyncStatus siteId={ siteId } />
+				{ wizardCompleted && <Notice className="mailchimp__dashboard-success-notice"
+					status="is-success"
+					showDismiss
+					onDismissClick={ onNoticeExit }
+					text={ translate( 'Nice! The last thing to do is to make sure the newsletter subscriptions are looking good.' ) }
+				/> }
 				<Card className="mailchimp__dashboard" >
 					<div className="mailchimp__dashboard-first-section" >
 						<span className="mailchimp__dashboard-title-and-slogan">
