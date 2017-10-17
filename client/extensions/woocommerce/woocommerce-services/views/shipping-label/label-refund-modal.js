@@ -51,6 +51,7 @@ const RefundDialog = ( props ) => {
 					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: refundDialog && refundDialog.isSubmitting,
+					isBusy: refundDialog && refundDialog.isSubmitting,
 					label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
 				},
 				{
