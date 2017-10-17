@@ -25,7 +25,8 @@ class MailChimp extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			setupWizardStarted: false
+			setupWizardStarted: false,
+			wizardCompleted: false
 		};
 	}
 
@@ -33,8 +34,12 @@ class MailChimp extends React.Component {
 		this.setState( { setupWizardStarted: true } );
 	}
 
-	closeWizard = () => {
-		this.setState( { setupWizardStarted: false } );
+	closeWizard = ( status ) => {
+		this.setState( { setupWizardStarted: false, wizardCompleted: 'wizard-completed' === status } );
+	}
+
+	closeSetupFinishNotice = () => {
+		this.setState( { wizardCompleted: false } );
 	}
 
 	render() {
@@ -56,7 +61,12 @@ class MailChimp extends React.Component {
 						onClick={ this.startWizard }
 					/>
 				}
-				{ mailChimpIsReady && <MailChimpDashboard siteId={ siteId } onClick={ this.startWizard } /> }
+				{ mailChimpIsReady &&
+					<MailChimpDashboard
+						siteId={ siteId }
+						onClick={ this.startWizard }
+						wizardCompleted={ this.state.wizardCompleted }
+						onNoticeExit={ this.closeSetupFinishNotice } /> }
 				{ setupWizardStarted &&
 					<MailChimpSetup
 							hasMailChimp={ hasMailChimp }

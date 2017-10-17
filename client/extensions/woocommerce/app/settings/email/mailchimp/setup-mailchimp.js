@@ -80,7 +80,7 @@ class MailChimpSetup extends React.Component {
 			const settings = this.prepareDefaultValues( nextProps );
 			this.setState( { step: active_tab, settings } );
 			if ( active_tab === STORE_SYNC ) {
-				nextProps.onClose();
+				nextProps.onClose( 'wizard-completed' );
 			}
 		}
 
@@ -331,11 +331,11 @@ MailChimpSetup.propTypes = {
 
 export default localize( connect(
 	( state, props ) => {
-		const subbmittingApiKey = isSubbmittingApiKey( state, props.siteId );
+		const isSaving = isSubbmittingApiKey( state, props.siteId );
 		const isKeyCorrect = isApiKeyCorrect( state, props.siteId );
 		const address = getStoreLocation( state );
 		const currency = getCurrencyWithEdits( state );
-		const isBusy = subbmittingApiKey;
+		const isBusy = isSaving;
 		return {
 			isBusy,
 			address,
