@@ -11,7 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import FormLegend from 'components/forms/form-legend';
 import FieldError from '../field-error';
-import FieldDescription from '../field-description';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const Dropdown = ( { id, valuesMap, title, description, value, updateValue, error, disabled, className } ) => {
 	const onChange = ( event ) => updateValue( event.target.value );
@@ -36,7 +36,8 @@ const Dropdown = ( { id, valuesMap, title, description, value, updateValue, erro
 					);
 				} ) }
 			</FormSelect>
-			{ error ? <FieldError text={ error } /> : <FieldDescription text={ description } /> }
+			{ error && <FieldError text={ error } /> }
+			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };

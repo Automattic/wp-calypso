@@ -11,7 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FieldError from '../field-error';
-import FieldDescription from '../field-description';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const TextField = ( { id, title, description, value, placeholder, updateValue, error, className } ) => {
 	const handleChangeEvent = event => updateValue( event.target.value );
@@ -27,7 +27,8 @@ const TextField = ( { id, title, description, value, placeholder, updateValue, e
 				onChange={ handleChangeEvent }
 				isError={ Boolean( error ) }
 			/>
-			{ error ? <FieldError text={ error } /> : <FieldDescription text={ description } /> }
+			{ error && <FieldError text={ error } /> }
+			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };
