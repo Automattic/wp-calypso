@@ -1,23 +1,85 @@
-Custom tree selection component. Renders checkboxes for each node in the tree.
+TreeSelector
+============
 
-Props:
+TreeSelector is a tree selection component that can render a tree several levels
+deep and allow for selection of items in that tree.
+
+## Usage
+
+```jsx
+class YourComponent extends React.Component {
+	onNodeSelect( node, selected ) {
+		// Dispatch actions here to update the model.
+	}
+
+	generateTree() {
+		// Use props/state to generate a tree node model here.
+		// If generating the tree is resource intensive, you can
+		// hold a reference to it and only update it on lifecycle events.
+	}
+
+	render() {
+		const treeNodes = generateTree();
+
+		return (
+			<Card>
+				<TreeSelector nodes={ treeNodes } onNodeSelect={ nodeSelect } />
+			</Card>
+		);
+	}
+}
 ```
-nodes: Array of nodes described below. If absent, placeholders are rendered.
-onNodeSelect: function( node, checked ), Default callback for checkbox clicks. Can be overridden by onSelect for a specific node.
-```
 
-CustomTreeSelector takes a `nodes` prop which is a JavaScript Object representation of the top-level tree nodes. While you may add whatever fields you like in each node in this object structure, there are a few fields which CustomTreeSelector cares about:
+## Props:
 
-* `key [ string ]` (required): This is a string for React `key` props and therefore must be unique to this node amongst its sibling nodes.
-* `label [ string ]` (required): This should be a translated string and is used for display purposes.
-* `onSelect [ function( node, selected ) ]: If present, will be used as a callback for this specific node. If `null`, the checkbox/radio for this node will be omitted.
-* `selected [boolean ]` (defaults to `false`): If present, will determine if the checkbox/radio is checked or selected.
-* `children [ array ]`: If present, this will be iterated and rendered indented under this node.
+### `nodes`
 
-Example tree object structure:
+An array of tree node model objects. Tree nodes described below.
+If `nodes` is falsy (undefined, null, etc), placeholders are rendered for this
+component instead.
+
+### `onNodeSelect`
+
+`function( node, selected )`
+Default callback for tree node selection.
+Can be overridden for individual nodes by setting `onSelect` on that node.
+
+## Tree Node
+
+Each tree node is a simple JavaScript object that represents either a branch or
+leaf node in the tree. While you may add whatever additional properties to each
+node object, the TreeSelector uses a few specific properties to render the tree:
+
+### `key`
+`string` (required)
+
+For React `key` props and therefore must be unique to this node amongst its sibling nodes.
+
+### `label`
+`string` (required)
+
+Should be a translated string and is used for display purposes.
+
+### `onSelect`
+`function( node, selected )`
+
+If present, will be used as a callback for this specific node.
+If `null`, the checkbox/radio for this node will be omitted.
+
+### `selected`
+`boolean` (defaults to `false`)
+
+Determines if the checkbox/radio is checked or selected.
+
+### `children`
+`Array`
+
+If present, will be iterated and rendered indented under this node.
+
+## Example tree object structure:
 
 ```js
-[
+const treeNodes = [
 	{
 		key: 'all',
 		label: 'All Nodes',
@@ -56,6 +118,6 @@ Example tree object structure:
 			},
 		],
 	},
-]
+];
 ```
 
