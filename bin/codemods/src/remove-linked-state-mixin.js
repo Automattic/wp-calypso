@@ -4,6 +4,7 @@
  */
 
 const config = require( './config' );
+const prettier = require( 'prettier' );
 
 /* eslint-disable no-console */
 export default function transformer( file, api ) {
@@ -42,13 +43,25 @@ export default function transformer( file, api ) {
 		changedSomething = true;
 	}
 
-	ReactUtils.findAllReactCreateClassCalls( root ).forEach( createClassCall => {
+	ReactUtils.findAllReactCreateClassCalls( root ).forEach( transformReactClass );
+	root.find( j.CallExpression, {
+		callee: {
+			type: 'Identifier',
+			name: 'createReactClass'
+		}
+	} ).forEach( transformReactClass );
+
+	if ( ! changedSomething ) {
+		return null;
+	}
+
+	return prettier.format( root.toSource( config.recastOptions ), {} );
+
+	function transformReactClass( createClassCall ) {
 		removeLinkedStateMixin( createClassCall );
 		const changeMethodsToAdd = transformLinkStateCalls( createClassCall );
 		addChangeMethods( createClassCall, changeMethodsToAdd );
-	} );
-
-	return changedSomething ? root.toSource( config.recastOptions ) : null;
+	}
 
 	// If a React component has property "mixins: [ LinkedStateMixin ]", remove it
 	function removeLinkedStateMixin( classPath ) {
@@ -95,8 +108,8 @@ export default function transformer( file, api ) {
 	// Return the right property and handler names for `valueLink` and `checkedLink`
 	function linkPropInfo( linkPropName ) {
 		return linkPropName === 'valueLink'
-			? { valuePropName: 'value', changeHandlerName: 'handleInputValueChange' }
-			: { valuePropName: 'checked', changeHandlerName: 'handleInputCheckedChange' };
+			? { valuePropName: 'value', changeHandlerName: 'handleChange' }
+			: { valuePropName: 'checked', changeHandlerName: 'handleCheckedChange' };
 	}
 
 	// Transform calls to `linkState` into `value` and `onChange` props
@@ -158,7 +171,7 @@ export default function transformer( file, api ) {
 		return changeMethodsToAdd;
 	}
 
-	// Add change handler methods (i.e., `handleInputValueChange`) to the class
+	// Add change handler methods (i.e., `handleChange`) to the class
 	function addChangeMethods( classPath, changeMethodsToAdd ) {
 		const objectExpr = classPath.value.arguments[ 0 ];
 
