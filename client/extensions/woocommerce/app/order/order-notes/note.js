@@ -61,37 +61,56 @@ class OrderNote extends Component {
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REQUESTED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'time',
 				content: (
 					<div>
-						<span>Label #{ event.labelIndex + 1 } refund requested</span>
-						{ event.amount != null ? (
-							<span> ({ formatCurrency( event.amount, event.currency ) })</span>
-						) : null }
+						{' '}
+						{ translate( 'Label #%(labelNum)d refund requested (%(amount)s)', {
+							args: {
+								labelNum: event.labelIndex + 1,
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }{' '}
 					</div>
 				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_COMPLETED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'refund',
 				content: (
 					<div>
-						Label #{ event.labelIndex + 1 } refunded ({ formatCurrency( event.amount, event.currency ) })
+						{' '}
+						{ translate( 'Label #%(labelNum)d refunded (%(amount)s)', {
+							args: {
+								labelNum: event.labelIndex + 1,
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }{' '}
 					</div>
 				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REJECTED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'cross-small',
-				content: <div>Label #{ event.labelIndex + 1 } refund rejected</div>,
+				content: (
+					<div>
+						{ translate( 'Label #%(labelNum)d refund rejected', {
+							args: { labelNum: event.labelIndex + 1 },
+						} ) }
+					</div>
+				),
 			};
 		},
 
+		//render the loading placeholder without props
 		[ undefined ]: () => ( {} ),
 	};
 
