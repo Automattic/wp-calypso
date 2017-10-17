@@ -21,7 +21,11 @@ import {
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import {
+	getOrderItemCost,
+	getOrderRefundTotal,
+	getOrderTotal,
+} from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -92,10 +96,11 @@ class OrderDetailsTable extends Component {
 			return;
 		}
 		const index = findIndex( order.line_items, { id } );
-		const quantity = parseInt( event.target.value );
-		const total = parseFloat( item.price ) * quantity;
-		// @todo Can we live-update the tax? Should we "hide" that somehow?
-		const newItem = { ...item, quantity, total };
+		// A zero quantity does strange things with the price, so we'll force 1
+		const quantity = parseInt( event.target.value ) || 1;
+		const subtotal = getOrderItemCost( order, id ) * quantity;
+		const total = subtotal;
+		const newItem = { ...item, quantity, subtotal, total };
 		this.props.onChange( { [ index ]: newItem } );
 	};
 
@@ -174,7 +179,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	render() {
-		const { order, translate } = this.props;
+		const { isEditing, order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -185,6 +190,8 @@ class OrderDetailsTable extends Component {
 			'has-taxes': showTax,
 		} );
 		const refundValue = getOrderRefundTotal( order );
+		const totalTaxValue = getOrderTotalTax( order );
+		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
 
 		return (
 			<div>
@@ -212,8 +219,8 @@ class OrderDetailsTable extends Component {
 						className="order-details__total-full"
 						currency={ order.currency }
 						label={ translate( 'Total' ) }
-						value={ order.total }
-						taxValue={ getOrderTotalTax( order ) }
+						value={ totalValue }
+						taxValue={ totalTaxValue }
 						showTax={ showTax }
 					/>
 					{ !! refundValue && (
