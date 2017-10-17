@@ -23,7 +23,10 @@ import {
 	getFinishedInstallOfRequiredPlugins,
 	getFinishedPageSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
+import {
+	areOrdersLoading,
+	getNewOrdersWithoutPayPalPending,
+} from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -168,10 +171,11 @@ function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const loading =
 		areOrdersLoading( state ) || areSetupChoicesLoading( state ) || areProductsLoading( state );
-	const hasOrders = getOrders( state ).length > 0;
+	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+
 	return {
 		finishedInitialSetup,
 		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),

@@ -20,6 +20,8 @@ import {
 	isOrderUpdating,
 	getNewOrders,
 	getNewOrdersRevenue,
+	getNewOrdersWithoutPayPalPendingRevenue,
+	getNewOrdersWithoutPayPalPending,
 } from '../selectors';
 import order from './fixtures/order';
 import orders from './fixtures/orders';
@@ -82,6 +84,75 @@ const loadedState = {
 							'{}': false,
 						},
 						items: keyBy( [ ...orders, ...additionalOrders ], 'id' ),
+					},
+				},
+			},
+		},
+	},
+};
+
+const paypalPendingOrder = [
+	{
+		id: 40,
+		status: 'pending',
+		currency: 'USD',
+		total: '50.87',
+		total_tax: '0.00',
+		prices_include_tax: false,
+		billing: {},
+		shipping: {},
+		payment_method: 'paypal',
+		payment_method_title: 'PayPal',
+		meta_data: [],
+		line_items: [
+			{
+				id: 12,
+				name: 'Coffee',
+				price: 15.29,
+			},
+		],
+		tax_lines: [],
+		shipping_lines: [
+			{
+				id: 13,
+				method_title: 'Flat rate',
+				method_id: 'flat_rate:2',
+				total: '5.00',
+				total_tax: '0.00',
+				taxes: [],
+			},
+		],
+	},
+];
+
+const loadedStatePayPal = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					orders: {
+						isLoading: {
+							35: false,
+						},
+						isQueryLoading: {
+							'{}': false,
+						},
+						isUpdating: {
+							20: false,
+						},
+						items: keyBy( orders, 'id' ),
+						queries: {
+							'{}': [ 35, 26 ],
+						},
+						total: { '{}': 54 },
+					},
+				},
+				321: {
+					orders: {
+						isQueryLoading: {
+							'{}': false,
+						},
+						items: keyBy( [ ...orders, ...paypalPendingOrder ], 'id' ),
 					},
 				},
 			},
@@ -307,6 +378,47 @@ describe( 'selectors', () => {
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.0 );
+		} );
+	} );
+
+	describe( '#getNewOrdersWithoutPayPalPending', () => {
+		it( 'should return an empty array when no data is available', () => {
+			expect( getNewOrdersWithoutPayPalPending( preInitializedState, 123 ) ).to.eql( [] );
+		} );
+
+		it( 'should return an array with proper new order data', () => {
+			expect( getNewOrdersWithoutPayPalPending( loadedState, 321 ) ).to.have.members( orders );
+		} );
+
+		it( 'should not return PayPal payment orders that are pending', () => {
+			expect( getNewOrdersWithoutPayPalPending( loadedStatePayPal, 321 ) ).to.have.members(
+				orders
+			);
+			expect( getNewOrdersWithoutPayPalPending( loadedStatePayPal, 321 ) ).to.not.have.members(
+				paypalPendingOrder
+			);
+		} );
+	} );
+
+	describe( '#getNewOrdersWithoutPayPalPendingRevenue', () => {
+		it( 'should be 0 when woocommerce state is not available.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 when orders are loading.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should return the total of new orders only', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
+		} );
+
+		it( 'should be 0 when orders are loaded only for a different site.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided and not include PayPal Pending Order.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
 		} );
 	} );
 } );
