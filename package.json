@@ -105,6 +105,7 @@
     "moment": "2.10.6",
     "morgan": "1.2.0",
     "ms": "0.7.1",
+    "mustache": "2.3.0",
     "name-all-modules-plugin": "1.0.1",
     "node-sass": "3.7.0",
     "notifications-panel": "1.2.4",
