@@ -537,15 +537,6 @@ export const updateRate = ( orderId, siteId, packageId, value ) => {
 	};
 };
 
-export const updatePaperSize = ( orderId, siteId, value ) => {
-	return {
-		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
-		siteId,
-		orderId,
-		value,
-	};
-};
-
 export const setEmailDetailsOption = ( orderId, siteId, value ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
@@ -849,4 +840,18 @@ export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
 		} )
 		.then( () => dispatch( closeReprintDialog( orderId, siteId ) ) );
+};
+
+export const updatePaperSize = ( orderId, siteId, value ) => ( dispatch, getState ) => {
+	dispatch( {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+		siteId,
+		orderId,
+		value,
+	} );
+
+	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	if ( shippingLabel.reprintDialog != null ) {
+		dispatch( openReprintDialog( orderId, siteId, shippingLabel.reprintDialog.labelId ) );
+	}
 };
