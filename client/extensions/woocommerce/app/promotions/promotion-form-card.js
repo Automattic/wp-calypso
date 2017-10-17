@@ -15,6 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import PriceInput from 'woocommerce/components/price-input';
 import promotionModels, { hasField, isRequiredField } from './promotion-models';
+import PromotionFormAppliesTo from './promotion-form-applies-to';
 
 function renderRequiredLabel( isRequired, translate ) {
 	if ( ! isRequired ) {
@@ -42,7 +43,7 @@ function renderCouponCode( siteId, model, promotion, editPromotion, translate ) 
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'Coupon code' ) }</FormLabel>
+			<FormLabel className="promotions__field-label">{ translate( 'Coupon code' ) }</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'couponCode' ), translate ) }
 			<FormTextInput
 				value={ couponCode }
@@ -64,6 +65,9 @@ function renderAmount( siteId, model, promotion, editPromotion, translate, curre
 	return (
 		<FormFieldset>
 			<FormLabel>{ translate( 'Discount', { context: 'noun' } ) }</FormLabel>
+			<FormLabel className="promotions__field-label">
+				{ translate( 'Discount', { context: 'noun' } ) }
+			</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'couponCode' ), translate ) }
 			{ renderAmountField( siteId, model, promotion, editPromotion, translate, currency ) }
 		</FormFieldset>
@@ -130,7 +134,7 @@ function renderSalePrice( siteId, model, promotion, editPromotion, translate, cu
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'Sale Price' ) }</FormLabel>
+			<FormLabel className="promotions__field-label">{ translate( 'Sale Price' ) }</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'salePrice' ), translate ) }
 			<PriceInput
 				currency={ currency }
@@ -155,6 +159,8 @@ const PromotionFormCard = ( {
 			{ renderCouponCode( siteId, model, promotion, editPromotion, translate ) }
 			{ renderAmount( siteId, model, promotion, editPromotion, translate, currency ) }
 			{ renderSalePrice( siteId, model, promotion, editPromotion, translate, currency ) }
+
+			<PromotionFormAppliesTo promotion={ promotion } />
 		</Card>
 	);
 };

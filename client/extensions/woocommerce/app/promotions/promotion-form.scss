@@ -30,11 +30,6 @@
 			height: 400px;
 		}
 	}
-
-	.form-label {
-		display: inline-block;
-		margin-bottom: 5px;
-	}
 }
 
 .promotions__promotion-form-type-header {
@@ -46,6 +41,11 @@
 	.section-header__label::before {
 		display: none; // TODO: Find a better way to make this not fade.
 	}
+}
+
+.promotions__field-label {
+	display: inline-block;
+	margin-bottom: 5px;
 }
 
 .promotions__promotion-form-label-required {
