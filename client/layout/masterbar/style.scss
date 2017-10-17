@@ -433,8 +433,8 @@ $autobar-height: 20px;
 	background: lighten( $gray, 26% );
 	border-left: 1px solid lighten( $gray, 10% );
 	color: $gray-text-min;
-	height: 36px;
-	margin: 5px 8px 5px -10px;
+	height: 24px;
+    margin: 4px 8px 5px -10px;
 	padding: 0 8px;
 	border-radius: 0 3px 3px 0;
 	position: relative;
@@ -447,7 +447,11 @@ $autobar-height: 20px;
 		font-weight: 400;
 		color: $gray-dark;
 		padding: 0 4px;
-		line-height: 30px;
+		line-height: 24px;
+
+		@include breakpoint( '<660px' ) {
+			line-height: 30px;
+		}
 	}
 
 	&:hover {
@@ -473,6 +477,11 @@ $autobar-height: 20px;
 		.count {
 			color: $white;
 		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		height: 34px;
+		margin: 6px 8px 5px -10px;
 	}
 
 }

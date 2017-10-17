@@ -175,7 +175,7 @@
 
 .layout__loader {
 	border-bottom: 1px solid darken( $blue-wordpress, 4% );
-	height: 46px;
+	height: 33px;
 	margin-left: -10%;
 	position: absolute;
 		left: 50%;
@@ -189,6 +189,10 @@
 	opacity: 0;
 	transition: opacity 0.1s linear;
 	transition-delay: 0.4s;
+
+	@include breakpoint( "<660px" ) {
+		height: 46px;
+	}
 
 	@include breakpoint( "<480px" ) {
 		background: $blue-wordpress;

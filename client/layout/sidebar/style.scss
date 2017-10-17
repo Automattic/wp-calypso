@@ -5,7 +5,7 @@
 	padding: 0;
 	background: $sidebar-bg-color;
 	position: fixed;
-		top: 47px;
+		top: 33px;
 		bottom: 0;
 		left: 0;
 
@@ -26,6 +26,7 @@
 		pointer-events: none;
 		transform: translateX( 0 );
 		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+		top: 47px;
 
 		.focus-sidebar & {
 			pointer-events: auto;
