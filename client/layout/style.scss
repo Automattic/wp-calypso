@@ -174,7 +174,7 @@
 }
 
 .layout__loader {
-	border-bottom: 1px solid darken( $blue-wordpress, 4% );
+	border-bottom: 1px solid var( --masterbar-border-color );
 	height: 46px;
 	margin-left: -10%;
 	position: absolute;
@@ -191,7 +191,7 @@
 	transition-delay: 0.4s;
 
 	@include breakpoint( "<480px" ) {
-		background: $blue-wordpress;
+		background: var( --masterbar-background-color );
 	}
 }
 
