@@ -96,6 +96,7 @@ export const newsletterSettingsSubmitError = ( state, siteId ) => {
 /**
  * Returns true if current api key is correct.
  * requires at lest one settings fetch to work
+ * We assume true until we verify correctnes - for UX purposes
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID

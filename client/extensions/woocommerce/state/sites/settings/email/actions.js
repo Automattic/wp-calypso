@@ -224,7 +224,7 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch ) => {
  * @param  {Object}        storeInfo     MailChimp store info settings object
  * @return {Function}                    Action thunk
  */
-export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) => {
+export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) => {
 	if ( null == siteId || null == storeInfo ) {
 		return;
 	}
@@ -248,7 +248,7 @@ export const submitMailchimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) =>
  * @param  {Object}        campaignDefaults MailChimp campaign defaults settings object
  * @return {Function}                       Action thunk
  */
-export const submitMailchimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch ) => {
+export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch ) => {
 	if ( null == siteId || null == campaignDefaults ) {
 		return;
 	}
