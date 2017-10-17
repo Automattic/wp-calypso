@@ -10,6 +10,11 @@
 	}
 }
 
+.tree-selector__unselectable-blank {
+	display: inline-block;
+	margin-left: 8px;
+}
+
 .tree-selector__indent {
 	margin-left: 30px;
 }
@@ -24,8 +29,9 @@
 }
 
 .tree-selector__label {
-	display: block;
-	margin-left: 24px;
+	display: inline-block;
+	font-weight: normal;
+	margin-left: 0px;
 	transition: all 200ms ease-out;
 	color: $gray-dark;
 
