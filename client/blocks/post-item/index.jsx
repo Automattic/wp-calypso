@@ -19,9 +19,14 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser } from 'state/selectors';
-import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
-import { hideSharePanel } from 'state/ui/post-type-list/actions';
+import {
+	isSharePanelOpen,
+	isMultiSelectEnabled,
+	isPostSelected,
+} from 'state/ui/post-type-list/selectors';
+import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import Card from 'components/card';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
@@ -33,6 +38,11 @@ import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 class PostItem extends React.Component {
 	hideCurrentSharePanel = () => {
 		this.props.hideSharePanel( this.props.globalId );
+	};
+
+	toggleCurrentPostSelection = event => {
+		this.props.togglePostSelection( this.props.globalId );
+		event.stopPropagation();
 	};
 
 	inAllSitesModeWithMultipleUsers() {
@@ -55,6 +65,23 @@ class PostItem extends React.Component {
 		return (
 			this.inAllSitesModeWithMultipleUsers() ||
 			this.inSingleSiteModeWithMultipleUsers()
+		);
+	}
+
+	renderSelectionCheckbox() {
+		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
+		return (
+			multiSelectEnabled && (
+				<div
+					className="post-item__select"
+					onClick={ this.toggleCurrentPostSelection }
+				>
+					<FormInputCheckbox
+						checked={ isCurrentPostSelected }
+						onClick={ this.toggleCurrentPostSelection }
+					/>
+				</div>
+			)
 		);
 	}
 
@@ -118,6 +145,7 @@ class PostItem extends React.Component {
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
 				<Card compact className={ cardClasses }>
+					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
 							{ isSiteInfoVisible && (
@@ -179,9 +207,12 @@ export default connect(
 			singleUserSite: isSingleUserSite( state, siteId ),
 			editUrl: getEditorPath( state, siteId, post.ID ),
 			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
+			isCurrentPostSelected: isPostSelected( state, globalId ),
+			multiSelectEnabled: isMultiSelectEnabled( state ),
 		};
 	},
 	{
 		hideSharePanel,
+		togglePostSelection,
 	}
 )( localize( PostItem ) );

@@ -28,6 +28,25 @@
 	}
 }
 
+.post-item__select {
+	align-self: stretch;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+
+	&:hover .form-checkbox {
+		border-color: lighten( $gray, 10% );
+	}
+
+	padding: 0 16px;
+	margin-left: -16px;
+
+	@include breakpoint( ">480px" ) {
+		padding-left: 24px;
+		margin-left: -24px;
+	}
+}
+
 .post-item__detail {
 	position: relative;
 	width: 100%;
