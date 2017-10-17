@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
@@ -136,14 +137,15 @@ export class Theme extends Component {
 
 	render() {
 		const { name, screenshot } = this.props.theme;
-		const { active, price, translate } = this.props;
+		const { active, price, translate, upsellUrl } = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick ),
 		} );
 
+		const hasPrice = /\d/g.test( price );
 		const priceClass = classNames( 'theme-badge__price', {
-			'theme-badge__price-upgrade': ! /\d/g.test( price ),
+			'theme-badge__price-upgrade': ! hasPrice,
 		} );
 
 		// for performance testing
@@ -151,6 +153,20 @@ export class Theme extends Component {
 
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
+		}
+
+		let secondaryContent = null;
+
+		if ( hasPrice && upsellUrl ) {
+			const freePrice = price.replace( /\d+/, '0' );
+			secondaryContent = (
+				<div className="theme__info-upsell">
+					<span>or </span>
+					<Button href={ this.props.upsellUrl } compact primary>
+						{ translate( '%(freePrice)s with the Premium Plan', { args: { freePrice } } ) }
+					</Button>
+				</div>
+			);
 		}
 
 		return (
@@ -181,15 +197,20 @@ export class Theme extends Component {
 					</a>
 
 					<div className="theme__info">
-						<h2 className="theme__info-title">{ name }</h2>
-						{ active && (
-							<span className="theme-badge__active">
-								{ translate( 'Active', {
-									context: 'singular noun, the currently active theme',
-								} ) }
-							</span>
-						) }
-						<span className={ priceClass }>{ price }</span>
+						<div className="theme__info-detail">
+							<div className="theme__info-primary">
+								<h2 className="theme__info-title">{ name }</h2>
+								{ active && (
+									<span className="theme__badge-active">
+										{ translate( 'Active', {
+											context: 'singular noun, the currently active theme',
+										} ) }
+									</span>
+								) }
+								<span className={ priceClass }>{ price }</span>
+							</div>
+							{ secondaryContent }
+						</div>
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }

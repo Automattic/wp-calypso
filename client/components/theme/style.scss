@@ -1,4 +1,4 @@
-$theme-info-height: 54px;
+$theme-info-height: 108px;
 
 .theme {
 	padding: 0;
@@ -62,6 +62,30 @@ $theme-info-height: 54px;
 	background: $white;
 }
 
+.theme__info-detail {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+}
+
+.theme__info-primary {
+	display: flex;
+	flex-direction: row;
+}
+
+.theme__info-upsell {
+	display: flex;
+	align-self: center;
+	span {
+		color: $gray;
+		padding: 16px 4px;
+	}
+	.button {
+		margin: 14px 2px;
+		padding: 8px 4px;
+	}
+}
+
 .theme__info-title {
 	flex: 1 1 auto;
 	position: relative;
@@ -92,7 +116,7 @@ $theme-info-height: 54px;
 	font-size: 80%;
 }
 
-.theme-badge__active {
+.theme__badge-active {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
 	color: lighten( $blue-light, 10% );
@@ -118,7 +142,7 @@ $theme-info-height: 54px;
 		z-index: z-index( 'root', '.is-actionable .theme__active-focus' );
 		top: 0;
 		right: 0;
-		bottom: 54px;
+		bottom: 108px;
 		width: 100%;
 		padding-top: 36%;
 		cursor: pointer;
