@@ -57,11 +57,20 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		page( '/settings/disconnect-site/:step(confirm)?', mySitesController.sites );
+
 		page(
 			'/settings/disconnect-site/:site_id',
 			mySitesController.siteSelection,
 			settingsController.setScroll,
 			controller.disconnectSite
+		);
+
+		page(
+			'/settings/disconnect-site/confirm/:site_id',
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSiteConfirm
 		);
 	}
 

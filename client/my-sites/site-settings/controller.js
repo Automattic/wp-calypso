@@ -14,6 +14,7 @@ import ReactDom from 'react-dom';
 import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
+import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -25,6 +26,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
+import { setSection } from 'state/ui/actions';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -110,7 +112,14 @@ const controller = {
 
 	disconnectSite( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		renderPage( context, <DisconnectSite /> );
+	},
+
+	disconnectSiteConfirm( context ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+		renderPage( context, <ConfirmDisconnection /> );
 	},
 
 	startOver( context ) {
