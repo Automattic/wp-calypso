@@ -1,4 +1,4 @@
-{
+const apiResponseSchema = {
 	"additionalProperties": false,
 	"type": "object",
 	"required": [ "itemsPerPage", "page", "totalItems", "totalPages" ],
@@ -86,3 +86,5 @@
 		}
 	}
 }
+
+export default apiResponseSchema;
