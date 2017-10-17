@@ -11,10 +11,23 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: $blue-medium;
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.post-edit-button__label {
+			color: $blue-medium;
+		}
+	}
+
+	.gridicon {
+		fill: $gray;
+		top: -1px;
 	}
 
 	.post-edit-button__label {
+		color: $gray;
 
 		@include breakpoint( "<480px" ) {
 			display: none;
