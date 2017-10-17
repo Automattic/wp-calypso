@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, matches } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -11,11 +10,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingForSites } from 'state/plugins/installed/selectors';
-
 import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
@@ -41,8 +38,7 @@ class MailChimp extends React.Component {
 	}
 
 	render() {
-		const { hasMailChimp, isRequestingMailChimpSettings, isRequestingPlugins, siteId, settings, translate } = this.props;
-		const className = classNames( 'mailchimp__main', { mailchimp__loading: isRequestingMailChimpSettings } );
+		const { hasMailChimp, isRequestingMailChimpSettings, isRequestingPlugins, siteId, settings } = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData &&
@@ -50,18 +46,17 @@ class MailChimp extends React.Component {
 		const gettingStarted = ! setupWizardStarted && ! isRequestingData &&
 			( settings && settings.active_tab !== 'sync' );
 		return (
-			<div className={ className }>
+			<div className="mailchimp">
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ isRequestingData && <Card>{ translate( 'MailChimp is Loading' ) }</Card> }
-				{ mailChimpIsReady && <MailChimpDashboard siteId={ siteId } onClick={ this.startWizard } /> }
-				{ gettingStarted &&
-						<MailChimpGettingStarted
-							siteId={ siteId }
-							isPlaceholder={ isRequestingMailChimpSettings }
-							onClick={ this.startWizard }
-						/>
+				{ ( isRequestingData || gettingStarted ) &&
+					<MailChimpGettingStarted
+						siteId={ siteId }
+						isPlaceholder={ isRequestingData }
+						onClick={ this.startWizard }
+					/>
 				}
+				{ mailChimpIsReady && <MailChimpDashboard siteId={ siteId } onClick={ this.startWizard } /> }
 				{ setupWizardStarted &&
 					<MailChimpSetup
 							hasMailChimp={ hasMailChimp }

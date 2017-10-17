@@ -12,6 +12,7 @@ import React from 'react';
  */
 import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
 import Dialog from 'components/dialog';
+import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
@@ -63,6 +64,7 @@ class MailChimpSetup extends React.Component {
 			step: LOG_INTO_MAILCHIMP_STEP,
 			settings: this.prepareDefaultValues( this.props ),
 			settings_values_missing: false,
+			input_field_has_changed: false,
 			api_key_input: this.props.settings.mailchimp_api_key || '',
 		};
 	}
@@ -103,6 +105,7 @@ class MailChimpSetup extends React.Component {
 			} );
 		newSettings.admin_email = settings.admin_email || nextProps.currentUserEmail || '';
 		newSettings.store_timezone = settings.store_timezone || nextProps.timezone || 'America/New_York';
+		newSettings.store_name = settings.store_name || nextProps.siteTitle || '';
 		newSettings.mailchimp_lists = settings.mailchimp_lists;
 		newSettings.mailchimp_list = settings.mailchimp_list;
 		return newSettings;
@@ -165,7 +168,10 @@ class MailChimpSetup extends React.Component {
 			this.setState( { step: steps[ this.state.step ].nextStep } );
 		} else if ( step === KEY_INPUT_STEP ) {
 			const validKey = !! this.state.api_key_input;
-			this.setState( { settings_values_missing: ! validKey } );
+			this.setState( {
+				settings_values_missing: ! validKey,
+				input_field_has_changed: false
+			} );
 			if ( validKey ) {
 				this.props.submitMailChimpApiKey( siteId, this.state.api_key_input );
 			}
@@ -193,7 +199,12 @@ class MailChimpSetup extends React.Component {
 	}
 
 	onKeyInputChange = ( e ) => {
-		this.setState( { api_key_input: e.target.value } );
+		const value = e.target.value;
+		this.setState( {
+			api_key_input: value,
+			settings_values_missing: false,
+			input_field_has_changed: true
+		} );
 	}
 
 	// Right now Store info is combination of values from SettingsPaymentsLocationCurrency
@@ -203,15 +214,18 @@ class MailChimpSetup extends React.Component {
 	}
 
 	renderStep = () => {
-		const { step, settings, settings_values_missing } = this.state;
+		const { step, settings, settings_values_missing, input_field_has_changed } = this.state;
+		const { isBusy } = this.props;
 		if ( LOG_INTO_MAILCHIMP_STEP === step ) {
 			return <LogIntoMailchimp />;
 		}
 		if ( KEY_INPUT_STEP === step ) {
+			const keyCorrect = ( this.props.isKeyCorrect || input_field_has_changed || isBusy ) &&
+				! settings_values_missing;
 			return <KeyInputStep
 				onChange={ this.onKeyInputChange }
 				apiKey={ this.state.api_key_input }
-				isKeyCorrect={ this.props.isKeyCorrect && ! settings_values_missing } />;
+				isKeyCorrect={ keyCorrect } />;
 		}
 		if ( STORE_INFO_STEP === step ) {
 			return <StoreInfoStep
@@ -238,15 +252,23 @@ class MailChimpSetup extends React.Component {
 	}
 
 	render() {
-		const { translate, hasMailChimp, siteId } = this.props;
-		const isButtonBusy = this.props.isBusy ? 'is-busy' : '';
+		const { translate, hasMailChimp, siteId, isBusy } = this.props;
+		const { step } = this.state;
+		const isButtonBusy = isBusy ? 'is-busy' : '';
+		const mainButton = {
+			action: 'next',
+			label: NEWSLETTER_SETTINGS_STEP === step ? translate( 'Sync' ) : translate( 'Next' ),
+			onClick: this.next,
+			isPrimary: true,
+			additionalClassNames: isButtonBusy
+		};
 		const buttons = [
 			{ action: 'cancel', label: translate( 'Cancel' ) },
-			{ action: 'next', label: translate( 'Next' ), onClick: this.next, isPrimary: true, additionalClassNames: isButtonBusy },
+			mainButton
 		];
 
 		const dialogClass = 'woocommerce mailchimp__setup';
-		const stepNum = steps[ this.state.step ].number;
+		const stepNum = steps[ step ].number;
 		if ( ! hasMailChimp ) {
 			return (
 				<Dialog
@@ -261,7 +283,7 @@ class MailChimpSetup extends React.Component {
 			);
 		}
 
-		if ( STORE_SYNC === this.state.step ) {
+		if ( STORE_SYNC === step ) {
 			return null;
 		}
 
@@ -274,12 +296,12 @@ class MailChimpSetup extends React.Component {
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<ProgressBar
 						value={ stepNum + 1 }
-						total={ steps.length }
+						total={ Object.keys( steps ).length }
 						compact
 					/>
 					<ProgressIndicator
 						stepNumber={ stepNum }
-						totalSteps={ steps.length }
+						totalSteps={ Object.keys( steps ).length }
 					/>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
@@ -304,6 +326,7 @@ MailChimpSetup.propTypes = {
 	submitMailChimpNewsletterSettings: PropTypes.func.isRequired,
 	submitMailChimpStoreInfo: PropTypes.func.isRequired,
 	timezone: PropTypes.string,
+	siteTitle: PropTypes.string,
 };
 
 export default localize( connect(
@@ -318,6 +341,7 @@ export default localize( connect(
 			address,
 			currency,
 			isKeyCorrect,
+			siteTitle: getSiteTitle( state, props.siteId ),
 			currentUserEmail: getCurrentUserEmail( state ),
 			timezone: getSiteTimezoneValue( state, props.siteId )
 		};
