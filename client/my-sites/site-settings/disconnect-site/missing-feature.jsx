@@ -10,14 +10,15 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
+import SectionHeader from 'components/section-header';
 
 const MissingFeature = ( { translate } ) => (
-	<Card className="disconnect-site__question">
-		<p>{ translate( 'Which feature where you looking for?' ) }</p>
-		<div>
+	<div>
+		<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
+		<Card>
 			<FormTextInput />
-		</div>
-	</Card>
+		</Card>
+	</div>
 );
 
 export default localize( MissingFeature );

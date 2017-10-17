@@ -13,6 +13,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import QuerySitePlans from 'components/data/query-site-plans';
+import SectionHeader from 'components/section-header';
 import { getCurrentPlanPurchaseId } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -27,18 +28,20 @@ const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translat
 		);
 	}
 	return (
-		<Card className="disconnect-site__question">
-			<QuerySitePlans siteId={ siteId } />
-			<p>{ translate( 'Would you like to downgrade your plan?' ) }</p>
-			<div>
-				<Button compact href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
-					Yes
-				</Button>
-				<Button compact href={ confirmHref }>
-					No
-				</Button>
-			</div>
-		</Card>
+		<div>
+			<SectionHeader label={ translate( 'Would you like to downgrade your plan?' ) } />
+			<Card>
+				<QuerySitePlans siteId={ siteId } />
+				<div>
+					<Button compact href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
+						Yes
+					</Button>
+					<Button compact href={ confirmHref }>
+						No
+					</Button>
+				</div>
+			</Card>
+		</div>
 	);
 };
 

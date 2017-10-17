@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import QuerySitePlans from 'components/data/query-site-plans';
+import SectionHeader from 'components/section-header';
 import { isSiteOnPaidPlan } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
@@ -37,14 +37,14 @@ class DisconnectSurvey extends Component {
 		return (
 			<div className="disconnect-site__survey main">
 				<QuerySitePlans siteId={ siteId } />
-				<Card className="disconnect-site__question">
-					{ translate(
+				<SectionHeader
+					label={ translate(
 						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
 						{
 							args: { siteName: siteSlug },
 						}
 					) }
-				</Card>
+				/>
 				{ reasons.map( ( { label, slug: reasonSlug } ) => (
 					<CompactCard
 						href={ `/settings/disconnect-site/${ reasonSlug }/${ siteSlug }` }

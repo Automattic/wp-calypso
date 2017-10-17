@@ -10,9 +10,9 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import QuerySitePlans from 'components/data/query-site-plans';
+import SectionHeader from 'components/section-header';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass } from 'lib/plans/constants';
@@ -20,9 +20,7 @@ import { getPlanClass } from 'lib/plans/constants';
 const TooDifficult = ( { confirmHref, features, siteId, translate } ) => (
 	<div>
 		<QuerySitePlans siteId={ siteId } />
-		<Card className="disconnect-site__question">
-			{ translate( 'Which feature or service caused you problems?' ) }
-		</Card>
+		<SectionHeader label={ translate( 'Which feature or service caused you problems?' ) } />
 		{ map( features, ( label, slug ) => (
 			<CompactCard key={ slug } href={ confirmHref }>
 				{ label }
