@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
