@@ -59,13 +59,11 @@ export class CommentDetailReply extends Component {
 	getTextareaPlaceholder = () => {
 		const { authorDisplayName, translate } = this.props;
 
-		if ( authorDisplayName ) {
-			return translate( 'Reply to %(commentAuthor)s…', {
-				args: { commentAuthor: authorDisplayName },
-			} );
-		}
-
-		return translate( 'Reply to comment…' );
+		return authorDisplayName
+			? translate( 'Reply to %(commentAuthor)s…', {
+					args: { commentAuthor: authorDisplayName },
+				} )
+			: translate( 'Reply to comment…' );
 	};
 
 	onChange = event => {
