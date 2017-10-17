@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
+import { fetchActivity, announceFailure, updateActivityLog } from '..';
 import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { activityLogRequest } from 'state/activity-log/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -62,7 +62,7 @@ const SUCCESS_RESPONSE = deepFreeze( {
 describe( 'receiveActivityLog', () => {
 	test( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
-		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
+		updateActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.called.once;
 		expect( dispatch.args[ 0 ][ 0 ] )
 			.to.be.an( 'object' )
@@ -77,7 +77,7 @@ describe( 'receiveActivityLog', () => {
 describe( 'receiveActivityLogError', () => {
 	test( 'should dispatch activity log error action', () => {
 		const dispatch = sinon.spy();
-		receiveActivityLogError( { dispatch } );
+		announceFailure( { dispatch } );
 		expect( dispatch ).to.have.been.called.once;
 		expect( dispatch ).to.have.been.calledWith(
 			errorNotice( translate( 'Error receiving activity for site.' ), { id: '1' } )
@@ -90,7 +90,7 @@ describe( 'handleActivityLogRequest', () => {
 		const action = activityLogRequest( SITE_ID );
 		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
+		fetchActivity( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
@@ -116,7 +116,7 @@ describe( 'handleActivityLogRequest', () => {
 		} );
 		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
+		fetchActivity( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(
@@ -145,7 +145,7 @@ describe( 'handleActivityLogRequest', () => {
 		} );
 		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
+		fetchActivity( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith(

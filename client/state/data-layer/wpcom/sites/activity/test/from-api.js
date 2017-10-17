@@ -55,6 +55,7 @@ describe( 'processItem', () => {
 				'activityGroup',
 				'activityIcon',
 				'activityId',
+				'activityIsDiscarded',
 				'activityName',
 				'activityStatus',
 				'activityTitle',

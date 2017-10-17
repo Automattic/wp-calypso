@@ -19,13 +19,24 @@ export const DEFAULT_GRIDICON = 'info-outline';
 /**
  * Transforms API response into array of activities
  *
- * @param  {object} apiResponse                      API response body
- * @param  {array}  apiResponse.current.orderedItems Array of item objects
- * @return {array}                                   Array of proccessed item objects
+ * @param  {Object} apiResponse                      API response body
+ * @param  {Array}  apiResponse.current.orderedItems Array of item objects
+ * @return {Array}                                   Array of proccessed item objects
  */
 export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
 	return map( orderedItems, processItem );
+}
+
+export function processItemActor( actor ) {
+	return {
+		actorAvatarUrl: get( actor, [ 'icon', 'url' ], DEFAULT_GRAVATAR_URL ),
+		actorName: get( actor, [ 'name' ], '' ),
+		actorRemoteId: get( actor, [ 'external_user_id' ], 0 ),
+		actorRole: get( actor, [ 'role' ], '' ),
+		actorType: get( actor, [ 'type' ], '' ),
+		actorWpcomId: get( actor, [ 'wpcom_user_id' ], 0 ),
+	};
 }
 
 /**
@@ -35,32 +46,17 @@ export function transformer( apiResponse ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	return {
-		...processItemBase( item ),
-	};
-}
+	const published = item.published;
 
-export function processItemActor( item ) {
 	return {
-		actorAvatarUrl: get( item, [ 'actor', 'icon', 'url' ], DEFAULT_GRAVATAR_URL ),
-		actorName: get( item, [ 'actor', 'name' ], '' ),
-		actorRemoteId: get( item, [ 'actor', 'external_user_id' ], 0 ),
-		actorRole: get( item, [ 'actor', 'role' ], '' ),
-		actorType: get( item, [ 'actor', 'type' ], '' ),
-		actorWpcomId: get( item, [ 'actor', 'wpcom_user_id' ], 0 ),
-	};
-}
-
-export function processItemBase( item ) {
-	const published = get( item, 'published' );
-	return {
-		...processItemActor( item ),
+		...processItemActor( item.actor ),
 		activityDate: published,
-		activityGroup: head( split( get( item, 'name' ), '__', 1 ) ),
+		activityGroup: head( split( item.name, '__', 1 ) ),
 		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
-		activityId: get( item, 'activity_id' ),
-		activityName: get( item, 'name' ),
-		activityStatus: get( item, 'status' ),
+		activityId: item.activity_id,
+		activityIsDiscarded: null,
+		activityName: item.name,
+		activityStatus: item.status,
 		activityTitle: get( item, 'summary', '' ),
 		activityTs: Date.parse( published ),
 	};
