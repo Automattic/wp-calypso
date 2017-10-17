@@ -38,12 +38,14 @@ function renderCouponCode( siteId, model, promotion, editPromotion, translate ) 
 		editPromotion( siteId, promotion, { couponCode, type: promotion.type } );
 	};
 
+	const couponCode = promotion.couponCode || '';
+
 	return (
 		<FormFieldset>
 			<FormLabel>{ translate( 'Coupon code' ) }</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'couponCode' ), translate ) }
 			<FormTextInput
-				value={ promotion.couponCode }
+				value={ couponCode }
 				onChange={ onCouponCodeChange }
 				placeholder={ translate( 'Enter coupon code' ) }
 			/>
@@ -61,7 +63,7 @@ function renderAmount( siteId, model, promotion, editPromotion, translate, curre
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'Discount' ) }</FormLabel>
+			<FormLabel>{ translate( 'Discount', { context: 'noun' } ) }</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'couponCode' ), translate ) }
 			{ renderAmountField( siteId, model, promotion, editPromotion, translate, currency ) }
 		</FormFieldset>
