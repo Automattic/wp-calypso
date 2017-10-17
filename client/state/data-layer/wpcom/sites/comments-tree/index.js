@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { map, flatMap } from 'lodash';
+import { map, flatMap, flatten } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,18 +37,12 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 
 const mapPosts = ( commentIds, postId ) => {
 	postId = parseInt( postId, 10 );
+	const [ topLevelIds, replyIds ] = commentIds;
 
-	const topLevelComments = map( commentIds[ 0 ], commentId => [ commentId, postId, 0 ] );
-
-	const commentReplies = commentIds[ 1 ]
-		? map( commentIds[ 1 ], ( [ commentId, commentParentId ] ) => [
-				commentId,
-				postId,
-				commentParentId,
-			] )
-		: [];
-
-	return topLevelComments.concat( commentReplies );
+	return flatten( [
+		topLevelIds.map( commentId => [ commentId, postId, 0 ] ),
+		replyIds.map( ( [ commentId, commentParentId ] ) => [ commentId, postId, commentParentId ] ),
+	] );
 };
 
 const mapTree = ( tree, status, type ) => {
