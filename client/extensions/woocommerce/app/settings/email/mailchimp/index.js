@@ -25,7 +25,7 @@ class MailChimp extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			setupWizardStarted: false,
+			setupWizardStarted: !! props.startWizard,
 			wizardCompleted: false
 		};
 	}
@@ -43,7 +43,8 @@ class MailChimp extends React.Component {
 	}
 
 	render() {
-		const { hasMailChimp, isRequestingMailChimpSettings, isRequestingPlugins, siteId, settings } = this.props;
+		const { hasMailChimp, isRequestingMailChimpSettings,
+			isRequestingPlugins, siteId, site, settings, redirectToSettings } = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData &&
@@ -57,8 +58,10 @@ class MailChimp extends React.Component {
 				{ ( isRequestingData || gettingStarted ) &&
 					<MailChimpGettingStarted
 						siteId={ siteId }
+						site={ site }
 						isPlaceholder={ isRequestingData }
 						onClick={ this.startWizard }
+						redirectToSettings={ redirectToSettings }
 					/>
 				}
 				{ mailChimpIsReady &&
@@ -86,6 +89,8 @@ MailChimp.propTypes = {
 	isRequestingPlugins: PropTypes.bool,
 	isRequestingMailChimpSettings: PropTypes.bool,
 	settings: PropTypes.object,
+	redirectToSettings: PropTypes.bool,
+	startWizard: PropTypes.bool,
 };
 
 function mapStateToProps( state ) {

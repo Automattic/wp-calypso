@@ -15,17 +15,20 @@ import ActionHeader from 'woocommerce/components/action-header';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const SettingsEmail = ( { site, siteId, translate, className } ) => {
+const SettingsEmail = ( { site, siteId, translate, className, params } ) => {
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
 		( <span>{ translate( 'Email' ) }</span> ),
 	];
 
+	const { setup } = params;
+	const startWizard = 'wizard' === setup;
+
 	return (
 		<Main className={ classNames( 'email', className ) }>
 			<ActionHeader breadcrumbs={ breadcrumbs } />
 			<SettingsNavigation activeSection="email" />
-			<MailChimp siteId={ siteId } />
+			<MailChimp siteId={ siteId } site={ site } startWizard={ startWizard } />
 		</Main>
 	);
 };
