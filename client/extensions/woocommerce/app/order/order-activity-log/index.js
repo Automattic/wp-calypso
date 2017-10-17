@@ -45,17 +45,13 @@ class OrderActivityLog extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-	}
-
 	componentWillMount() {
 		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
 	}
 
-	componentWillReceiveProps( props ) {
-		const newOpenDay = last( keys( props.eventsByDay ) );
-		//new day has been appended, open it
+	componentWillReceiveProps( nextProps ) {
+		const newOpenDay = last( keys( nextProps.eventsByDay ) );
+		//if a new latest day has been appended, open it
 		if ( ! this.props.eventsByDay[ newOpenDay ] ) {
 			this.setState( { openDay: newOpenDay } );
 		}
