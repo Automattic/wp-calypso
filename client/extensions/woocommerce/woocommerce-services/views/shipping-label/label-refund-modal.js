@@ -15,12 +15,13 @@ import ActionButtons from 'woocommerce/woocommerce-services/components/action-bu
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import formatCurrency from 'lib/format-currency';
 
 const RefundDialog = ( props ) => {
-	const { orderId, siteId, refundDialog, storeOptions, created, refundableAmount, labelId, translate, moment } = props;
+	const { orderId, siteId, refundDialog, created, refundableAmount, currency, labelId, translate, moment } = props;
 
 	const getRefundableAmount = () => {
-		return storeOptions.currency_symbol + Number( refundableAmount ).toFixed( 2 );
+		return formatCurrency( refundableAmount, currency );
 	};
 
 	const onClose = () => props.closeRefundDialog( orderId, siteId );
@@ -65,9 +66,9 @@ RefundDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 	refundDialog: PropTypes.object,
-	storeOptions: PropTypes.object.isRequired,
 	created: PropTypes.number,
 	refundableAmount: PropTypes.number,
+	currency: PropTypes.string,
 	labelId: PropTypes.number,
 	closeRefundDialog: PropTypes.func.isRequired,
 	confirmRefund: PropTypes.func.isRequired,
@@ -78,7 +79,6 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
 		refundDialog: loaded ? shippingLabel.refundDialog : {},
-		storeOptions: loaded ? shippingLabel.storeOptions : {},
 	};
 };
 
