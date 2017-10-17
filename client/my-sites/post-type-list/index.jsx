@@ -24,6 +24,13 @@ import {
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 
+/**
+ * Constants
+ */
+// When this many pixels or less are below the viewport, begin loading the next
+// page of items.
+const LOAD_NEXT_PAGE_THRESHOLD_PIXELS = 400;
+
 class PostTypeList extends Component {
 	static propTypes = {
 		// Props
@@ -138,7 +145,7 @@ class PostTypeList extends Component {
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
 		const { maxRequestedPage } = this.state;
 		if (
-			pixelsBelowViewport <= 200 &&
+			pixelsBelowViewport <= LOAD_NEXT_PAGE_THRESHOLD_PIXELS &&
 			maxRequestedPage < lastPage &&
 			! isRequestingPosts
 		) {
