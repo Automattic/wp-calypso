@@ -63,7 +63,7 @@ const sections = [
 	},
 	{
 		name: 'concierge',
-		paths: [ '/me/concierge/' ],
+		paths: [ '/me/concierge' ],
 		module: 'me/concierge',
 		group: 'me',
 		secondary: true,
