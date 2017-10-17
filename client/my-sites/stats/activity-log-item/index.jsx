@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import config from 'config';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
@@ -154,7 +155,9 @@ class ActivityLogItem extends Component {
 		const { className, log } = this.props;
 		const { activityIcon, activityStatus } = log;
 
-		const classes = classNames( 'activity-log-item', className );
+		const classes = classNames( 'activity-log-item', className, {
+			'is-discarded': config( 'env' ) === 'development' && Math.random() > 0.8,
+		} );
 
 		return (
 			<div className={ classes }>
