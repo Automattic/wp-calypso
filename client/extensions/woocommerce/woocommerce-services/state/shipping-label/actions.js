@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, flatten, isEmpty, isEqual, map, noop, pick, some } from 'lodash';
+import { every, fill, find, first, flatten, isEmpty, isEqual, map, noop, pick, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -616,14 +616,17 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 
 	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
 		const trackingNumbers = labels.map( ( label ) => label.tracking );
+		const carrierId = first( labels ).carrier_id;
+		const carrierName = 'usps' === carrierId ? translate( 'USPS' ) : translate( 'an unknown carrier' );
 
 		const note = {
 			note: translate(
-				'Your order consisting of %(packageNum)d package has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
-				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
+				'Your order consisting of %(packageNum)d package has been shipped with %(carrierName)s. ' +
+					'The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped with %(carrierName)s. ' +
 					'The tracking numbers are %(trackingNumbers)s.',
 				{
-					args: { packageNum: trackingNumbers.length, trackingNumbers: trackingNumbers.join( ', ' ) },
+					args: { packageNum: trackingNumbers.length, carrierName, trackingNumbers: trackingNumbers.join( ', ' ) },
 					count: trackingNumbers.length,
 				}
 			),
