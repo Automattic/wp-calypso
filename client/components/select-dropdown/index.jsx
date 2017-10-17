@@ -236,7 +236,6 @@ class SelectDropdown extends Component {
 				<div
 					ref="dropdownContainer"
 					className="select-dropdown__container"
-					valueLink={ this.props.valueLink }
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-haspopup="true"
