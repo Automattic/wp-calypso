@@ -113,7 +113,7 @@ const controller = {
 	disconnectSite( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		renderPage( context, <DisconnectSite /> );
+		renderPage( context, <DisconnectSite reason={ context.params.reason } /> );
 	},
 
 	disconnectSiteConfirm( context ) {

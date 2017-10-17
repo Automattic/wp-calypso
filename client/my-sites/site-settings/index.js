@@ -13,6 +13,7 @@ import config from 'config';
 import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
+import { reasonComponents as reasons } from './disconnect-site';
 
 export default function() {
 	page( '/settings', mySitesController.siteSelection, controller.redirectToGeneral );
@@ -60,7 +61,7 @@ export default function() {
 		page( '/settings/disconnect-site/:step(confirm)?', mySitesController.sites );
 
 		page(
-			'/settings/disconnect-site/:site_id',
+			`/settings/disconnect-site/:reason(${ Object.keys( reasons ).join( '|' ) })?/:site_id`,
 			mySitesController.siteSelection,
 			settingsController.setScroll,
 			controller.disconnectSite
