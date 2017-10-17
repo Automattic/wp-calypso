@@ -1,5 +1,5 @@
 /** @format */
-export const publicizeActionsSchema = {
+export const publicizeActionSchema = {
 	type: 'object',
 	patternProperties: {
 		'^\\d+$': {
