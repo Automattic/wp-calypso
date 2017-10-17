@@ -3,6 +3,11 @@
  */
 import { get } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import { getSelectedSiteId } from 'state/ui/selectors';
+
 // path to MailChimp setting state branch
 const basePath = ( siteId ) => (
 	[
@@ -145,6 +150,27 @@ export const isRequestingSyncStatus = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'syncStatusRequest' ];
 
 	return get( state, path, false );
+};
+
+/**
+ * Returns true if MailChimp plugin is configured correctly and has connection to server
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Wheter setup is compleate
+ */
+export const hasMailChimpConnection = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const path = [ ...basePath( siteId ), 'syncStatus', 'mailchimp_list_name' ];
+	const list = get( state, path, false );
+	if ( false === list ) {
+		return false;
+	}
+
+	if ( 'n\/a' !== list ) {
+		return true;
+	}
+
+	return false;
 };
 
 /**
