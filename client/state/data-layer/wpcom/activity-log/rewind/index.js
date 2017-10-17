@@ -4,7 +4,7 @@
  * @format
  */
 
-import { pick } from 'lodash';
+import { pick, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,6 +35,7 @@ const fromApi = response => ( {
 	firstBackupDate: response.first_backup_when,
 	isPressable: Boolean( response.is_pressable ),
 	plan: response.plan,
+	lastRestore: get( response, [ 'recent_restores', '0' ], {} ),
 } );
 
 export const receiveRewindStatus = ( { dispatch }, { siteId }, data ) => {

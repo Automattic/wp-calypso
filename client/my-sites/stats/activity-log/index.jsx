@@ -28,6 +28,7 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
+import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -374,6 +375,7 @@ class ActivityLog extends Component {
 			startDate,
 			timezone,
 			translate,
+			restoreProgress,
 		} = this.props;
 
 		if ( false === canViewActivityLog ) {
@@ -396,6 +398,7 @@ class ActivityLog extends Component {
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
+				{ ! restoreProgress && <QueryRewindRestoreStatus siteId={ siteId } /> }
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
