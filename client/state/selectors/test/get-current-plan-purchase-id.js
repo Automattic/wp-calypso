@@ -12,6 +12,9 @@ import { getCurrentPlanPurchaseId } from '..';
 describe( 'getCurrentPlanPurchaseId()', () => {
 	it( 'should return null if the site is unknown', () => {
 		const state = {
+			currentUser: {
+				capabilities: {},
+			},
 			sites: {
 				plans: {
 					456: {
@@ -36,6 +39,9 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 	it( 'should return null if the current purchase ID is unknown', () => {
 		const siteId = 123;
 		const state = {
+			currentUser: {
+				capabilities: {},
+			},
 			sites: {
 				plans: {
 					[ siteId ]: {
@@ -62,6 +68,9 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 	it( 'should return null if there is no plans data, but there is site plan data', () => {
 		const siteId = 123;
 		const state = {
+			currentUser: {
+				capabilities: {},
+			},
 			sites: {
 				plans: {
 					[ siteId ]: {
@@ -83,6 +92,9 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 		const siteId = 123;
 		const purchaseId = 123456;
 		const state = {
+			currentUser: {
+				capabilities: {},
+			},
 			sites: {
 				plans: {
 					[ siteId ]: {
