@@ -11,29 +11,29 @@ import warn from 'lib/warn';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 
-const CustomTreeNode = ( {
+const TreeNode = ( {
 	node,
 	onNodeSelect,
 } ) => {
 	const children = ( node.children ? renderChildren( node.children, onNodeSelect ) : null );
 
 	return (
-		<div className="custom-tree-selector__node">
+		<div className="tree-selector__node">
 			<FormLabel>
 				{ renderSelector( node, onNodeSelect ) }
-				<span className="custom-tree-selector__label">{ node.label }</span>
+				<span className="tree-selector__label">{ node.label }</span>
 				{ children }
 			</FormLabel>
 		</div>
 	);
 };
 
-CustomTreeNode.PropTypes = {
+TreeNode.PropTypes = {
 	node: PropTypes.object.isRequired,
 	onNodeSelect: PropTypes.func.isRequired,
 };
 
-export default CustomTreeNode;
+export default TreeNode;
 
 function renderSelector( node, onNodeSelect ) {
 	if ( null === node.onSelect ) {
@@ -49,12 +49,12 @@ function renderSelector( node, onNodeSelect ) {
 function renderChildren( children, onNodeSelect ) {
 	const childNodes = children.map(
 		( child ) => {
-			return <CustomTreeNode key={ child.key } node={ child } onNodeSelect={ onNodeSelect } />;
+			return <TreeNode key={ child.key } node={ child } onNodeSelect={ onNodeSelect } />;
 		}
 	);
 
 	return (
-		<div className="custom-tree-selector__indent">
+		<div className="tree-selector__indent">
 			{ childNodes }
 		</div>
 	);
@@ -66,7 +66,7 @@ function generateOnChange( node, onNodeSelect ) {
 		const callback = node.onSelect || onNodeSelect;
 
 		if ( ! callback ) {
-			warn( `CustomTreeNode: No onNodeSelect and node ${ node.key } has no onSelect.` );
+			warn( `TreeNode: No onNodeSelect and node ${ node.key } has no onSelect.` );
 			return;
 		}
 

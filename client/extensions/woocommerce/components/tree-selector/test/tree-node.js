@@ -11,29 +11,29 @@ import React from 'react';
  */
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import CustomTreeNode from '../custom-tree-node';
+import TreeNode from '../tree-node';
 import { node1, node2 } from './fixtures/nodes';
 
-describe( 'CustomTreeNode', () => {
-	test( 'should render a `.custom-tree-selector__node`', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node1 } /> );
-		expect( wrapper.find( '.custom-tree-selector__node' ) ).to.have.length( 1 );
+describe( 'TreeNode', () => {
+	test( 'should render a `.tree-selector__node`', () => {
+		const wrapper = shallow( <TreeNode node={ node1 } /> );
+		expect( wrapper.find( '.tree-selector__node' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render a label span', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node1 } /> );
+		const wrapper = shallow( <TreeNode node={ node1 } /> );
 
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		expect( wrapper.contains( <span className="custom-tree-selector__label">{ 'Node One' }</span> ) ).to.be.true;
+		expect( wrapper.contains( <span className="tree-selector__label">{ 'Node One' }</span> ) ).to.be.true;
 	} );
 
 	test( 'should render a FormLabel', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node1 } /> );
+		const wrapper = shallow( <TreeNode node={ node1 } /> );
 		expect( wrapper.find( FormLabel ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render a checkbox', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node1 } /> );
+		const wrapper = shallow( <TreeNode node={ node1 } /> );
 		const checkbox = wrapper.find( FormInputCheckbox );
 		expect( checkbox ).to.have.length( 1 );
 
@@ -43,7 +43,7 @@ describe( 'CustomTreeNode', () => {
 
 	test( 'should render a checked checkbox', () => {
 		const node = { ...node1, selected: true };
-		const wrapper = shallow( <CustomTreeNode node={ node } /> );
+		const wrapper = shallow( <TreeNode node={ node } /> );
 		const checkbox = wrapper.find( FormInputCheckbox );
 		expect( checkbox ).to.have.length( 1 );
 
@@ -54,24 +54,24 @@ describe( 'CustomTreeNode', () => {
 	test( 'should not render a checkbox if `onSelect` is null', () => {
 		const onNodeSelect = () => {};
 		const node = { ...node1, onSelect: null };
-		const wrapper = shallow( <CustomTreeNode node={ node } onNodeSelect={ onNodeSelect } /> );
+		const wrapper = shallow( <TreeNode node={ node } onNodeSelect={ onNodeSelect } /> );
 
 		expect( wrapper.find( FormInputCheckbox ) ).to.have.length( 0 );
 	} );
 
 	test( 'should render without children', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node1 } /> );
-		expect( wrapper.find( CustomTreeNode ) ).to.have.length( 0 );
+		const wrapper = shallow( <TreeNode node={ node1 } /> );
+		expect( wrapper.find( TreeNode ) ).to.have.length( 0 );
 	} );
 
 	test( 'should render children', () => {
-		const wrapper = shallow( <CustomTreeNode node={ node2 } /> );
-		expect( wrapper.find( CustomTreeNode ) ).to.have.length( 3 );
+		const wrapper = shallow( <TreeNode node={ node2 } /> );
+		expect( wrapper.find( TreeNode ) ).to.have.length( 3 );
 	} );
 
 	test( 'should call onNodeSelect', () => {
 		const onNodeSelect = spy();
-		const wrapper = shallow( <CustomTreeNode node={ node1 } onNodeSelect={ onNodeSelect } /> );
+		const wrapper = shallow( <TreeNode node={ node1 } onNodeSelect={ onNodeSelect } /> );
 		const checkbox = wrapper.find( FormInputCheckbox );
 
 		checkbox.props().onChange( { target: { checked: true } } );
@@ -83,7 +83,7 @@ describe( 'CustomTreeNode', () => {
 		const onNodeSelect = spy();
 		const onSelect = spy();
 		const node = { ...node1, onSelect };
-		const wrapper = shallow( <CustomTreeNode node={ node } onNodeSelect={ onNodeSelect } /> );
+		const wrapper = shallow( <TreeNode node={ node } onNodeSelect={ onNodeSelect } /> );
 		const checkbox = wrapper.find( FormInputCheckbox );
 
 		checkbox.props().onChange( { target: { checked: true } } );
