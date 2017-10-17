@@ -16,7 +16,8 @@ import { translate } from 'i18n-calypso';
 // Get reed of this, this should not be visible to the user - he does not need this.
 const CampaignDefaults = ( { storeData = {}, onChange, validateFields } ) => {
 	const fields = [
-		{ name: 'campaign_from_name', label: translate( 'From' ) },
+		{ name: 'campaign_from_name', label: translate( 'From',
+			{ comment: 'label for field that informs who sends the message' } ) },
 		{ name: 'campaign_from_email', label: translate( 'From Email' ) },
 		{ name: 'campaign_subject', label: translate( 'Subject' ) },
 		{ name: 'campaign_permission_reminder', label: translate( 'Permission reminder' ) },
