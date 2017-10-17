@@ -66,13 +66,12 @@ class OrderEvent extends Component {
 				icon: 'time',
 				content: (
 					<div>
-						{' '}
 						{ translate( 'Label #%(labelNum)d refund requested (%(amount)s)', {
 							args: {
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
-						} ) }{' '}
+						} ) }
 					</div>
 				),
 			};
@@ -84,13 +83,12 @@ class OrderEvent extends Component {
 				icon: 'refund',
 				content: (
 					<div>
-						{' '}
 						{ translate( 'Label #%(labelNum)d refunded (%(amount)s)', {
 							args: {
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
-						} ) }{' '}
+						} ) }
 					</div>
 				),
 			};
