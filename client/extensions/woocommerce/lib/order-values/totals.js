@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, reduce } from 'lodash';
+import { find, get, reduce } from 'lodash';
 
 /**
  * Get the total for the discount value
@@ -14,6 +14,20 @@ export function getOrderDiscountTotal( order ) {
 	const coupons = get( order, 'coupon_lines', [] );
 	const total = reduce( coupons, ( sum, value ) => sum + parseFloat( value.discount ), 0 );
 	return parseFloat( total ) || 0;
+}
+
+/**
+ * Get the individual price for a given item, pre-discounts.
+ *
+ * @param {Object} order An order as returned from API
+ * @param {Number} id The ID of the line_item
+ * @return {Float} Total amount as a decimal number
+ */
+export function getOrderItemCost( order, id ) {
+	const item = find( get( order, 'line_items', [] ), { id } );
+	const subtotal = parseFloat( get( item, 'subtotal', 0 ) ) || 0;
+	const qty = parseFloat( get( item, 'quantity', 1 ) ) || 1;
+	return subtotal / qty;
 }
 
 /**

@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getOrderDiscountTotal,
+	getOrderItemCost,
 	getOrderRefundTotal,
 	getOrderShippingTotal,
 	getOrderSubtotal,
@@ -35,6 +36,28 @@ describe( 'getOrderDiscountTotal', () => {
 
 	it( 'should get the correct discount amount with multiple coupons', () => {
 		expect( getOrderDiscountTotal( orderWithCoupons ) ).to.eql( 22.3 );
+	} );
+} );
+
+describe( 'getOrderItemCost', () => {
+	it( 'should be a function', () => {
+		expect( getOrderItemCost ).to.be.a( 'function' );
+	} );
+
+	it( 'should get the singular cost of an item', () => {
+		expect( getOrderItemCost( orderWithTax, 19 ) ).to.eql( 17.99 );
+	} );
+
+	it( 'should get the singular cost of an item, before discounts', () => {
+		expect( getOrderItemCost( orderWithTax, 15 ) ).to.eql( 49.99 );
+	} );
+
+	it( 'should get the singular cost of an item, even if quantity > 1', () => {
+		expect( getOrderItemCost( orderWithCoupons, 26 ) ).to.eql( 15.99 );
+	} );
+
+	it( 'should return 0 if this ID does not exist in line_items', () => {
+		expect( getOrderItemCost( orderWithoutTax, 2 ) ).to.eql( 0 );
 	} );
 } );
 
