@@ -10,6 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { switchCSS } from 'lib/i18n-utils/switch-locale';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
@@ -69,9 +70,7 @@ export function setUpLocale( context, next ) {
 		context.lang = currentUser.localeSlug;
 	}
 
-	if ( context.lang ) {
-		context.store.dispatch( setLocale( context.lang ) );
-	}
+	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
 
 	loadSectionCSS( context, next );
 }

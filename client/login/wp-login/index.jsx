@@ -17,6 +17,7 @@ import { localize } from 'i18n-calypso';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import Main from 'components/main';
@@ -197,6 +198,7 @@ export class Login extends React.Component {
 export default connect(
 	state => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{

@@ -19,13 +19,12 @@ import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
-	const { lang, path, params: { flow, twoFactorAuthType, socialService } } = context;
+	const { path, params: { flow, twoFactorAuthType, socialService } } = context;
 
 	context.cacheQueryKeys = [ 'client_id' ];
 
 	context.primary = (
 		<WPLogin
-			locale={ lang }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
