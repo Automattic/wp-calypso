@@ -1,5 +1,9 @@
 .is-reader-page .layout__content {
-	padding-top: 47px;
+	padding-top: 33px;
+
+	@include breakpoint( "<660px" ) {
+		padding-top: 47px;
+	}
 }
 
 .is-group-reader .async-load {

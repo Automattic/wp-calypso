@@ -5,13 +5,14 @@
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
 	position: fixed;
-	top: 47px;
+	top: 33px;
 	left: 0;
 	right: 0;
 	z-index: z-index( 'root', '.editor-ground-control' );
 
 	@include breakpoint( "<660px" ) {
 		padding-top: 0;
+		top: 47px;
 	}
 }
 

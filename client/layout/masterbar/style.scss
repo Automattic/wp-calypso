@@ -1,4 +1,5 @@
-$masterbar-height: 46px;
+$masterbar-height: 32px;
+$masterbar-mobile-height: 46px;
 $autobar-height: 20px;
 
 // The WordPress.com Masterbar
@@ -27,9 +28,13 @@ $autobar-height: 20px;
 	.is-section-themes.has-no-sidebar & {
 		border: none;
 	}
-
+	
 	@include breakpoint( ">660px" ) {
 		backface-visibility: hidden;
+	}
+
+	@include breakpoint( "<660px" ) {
+		height: $masterbar-mobile-height;
 	}
 }
 
@@ -69,10 +74,10 @@ $autobar-height: 20px;
 		align-items: center;
 	position: relative;
 	color: $white;
-	font-size: 14px;
+	font-size: 13px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
-	padding: 0 15px;
+	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 150ms ease-in;
@@ -90,7 +95,19 @@ $autobar-height: 20px;
 	}
 
 	.gridicon + .masterbar__item-content {
-		padding: 0 0 0 6px;
+		padding: 0 0 0 4px;
+	}
+
+	.gridicons-my-sites {
+		margin-right: 2px;
+		
+		@include breakpoint( "<660px" ) {
+			margin-right: 4px;
+		}
+	}
+
+	.gridicons-reader {
+		margin-right: 2px;
 	}
 
 	&:hover,
@@ -106,6 +123,13 @@ $autobar-height: 20px;
 
 	.is-support-user &.is-active {
 		background: darken( $orange-jazzy, 10% );
+	}
+
+	@include breakpoint( "<660px" ) {
+		// height: $masterbar-mobile-height;
+		padding: 7px 15px;
+		font-size: 14px;
+		line-height: $masterbar-mobile-height;
 	}
 
 	@include breakpoint( "<480px" ) {
@@ -169,10 +193,11 @@ $autobar-height: 20px;
 
 .masterbar__item-new {
 	background: $white;
-	border-radius: 3px;
+	border-radius: 5px;
 	color: $blue-wordpress;
-	height: 36px;
-	margin: 5px 8px;
+	height: 24px;
+    margin: 4px 5px;
+    padding: 0 11px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
@@ -225,17 +250,40 @@ $autobar-height: 20px;
 		background: darken( $masterbar-color, 13% );
 	}
 
+	@include breakpoint( "<660px" ) {
+		height: 34px;
+		margin: 6px 6px;
+		padding: 0 15px;
+	}
 }
 
 .masterbar__item-me {
+	margin-left: 2px;
+	
 	.gravatar {
 		position: absolute;
-		left: 16px;
-		top: 12px;
+		left: 9px;
+		top: 5px;
 		width: 18px;
 		height: 18px;
-
 		border: 2px solid $white;
+
+		@include breakpoint( "<660px" ) {
+			left: 17px;
+			top: 10px;
+			width: 22px;
+			height: 22px;
+		}
+	}
+
+	.gridicon {
+		height: 22px;
+		width: 22px;
+
+		@include breakpoint( "<660px" ) {
+			height: 30px;
+			width: 30px;
+		}
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -245,10 +293,22 @@ $autobar-height: 20px;
 	.masterbar__item-me-label {
 		display: none;
 	}
+
+	@include breakpoint( "<660px" ) {
+		margin-left: 3px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin-left: 0;
+	}
 }
 
 .masterbar__item-notifications {
-	margin-right: 12px;
+	margin-right: 9px;
+	
+	@include breakpoint( "<660px" ) {
+		margin-right: 12px;
+	}
 
 	@include breakpoint( "<480px" ) {
 		margin-right: 0;
@@ -259,6 +319,14 @@ $autobar-height: 20px;
 
 		@include breakpoint( "<480px" ) {
 			display: block;
+		}
+	}
+
+	.gridicons-bell {
+		margin-top: 2px;
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 0;
 		}
 	}
 
@@ -365,8 +433,8 @@ $autobar-height: 20px;
 	background: lighten( $gray, 26% );
 	border-left: 1px solid lighten( $gray, 10% );
 	color: $gray-text-min;
-	height: 36px;
-	margin: 5px 8px 5px -10px;
+	height: 24px;
+    margin: 4px 8px 5px -10px;
 	padding: 0 8px;
 	border-radius: 0 3px 3px 0;
 	position: relative;
@@ -379,7 +447,11 @@ $autobar-height: 20px;
 		font-weight: 400;
 		color: $gray-dark;
 		padding: 0 4px;
-		line-height: 30px;
+		line-height: 24px;
+
+		@include breakpoint( '<660px' ) {
+			line-height: 30px;
+		}
 	}
 
 	&:hover {
@@ -405,6 +477,11 @@ $autobar-height: 20px;
 		.count {
 			color: $white;
 		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		height: 34px;
+		margin: 6px 8px 5px -10px;
 	}
 
 }
