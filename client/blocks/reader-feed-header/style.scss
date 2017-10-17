@@ -3,13 +3,15 @@
 	flex-direction: column;
 	padding-top: 5px;
 }
+
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 20px;
 }
 
 .reader-feed-header__site-icon .site-icon.is-blank {
-	display: none;
+	height: 30px !important; // Prevents Settings from overlapping with Site Title
+	visibility: hidden;
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
