@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, noop, orderBy, size, slice, uniq } from 'lodash';
+import { each, find, get, map, orderBy, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -44,18 +44,17 @@ import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 export class CommentList extends Component {
 	static propTypes = {
 		changeCommentStatus: PropTypes.func,
+		changePage: PropTypes.func,
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
+		recordBulkAction: PropTypes.func,
 		recordChangePage: PropTypes.func,
-		changePage: PropTypes.func,
 		replyComment: PropTypes.func,
-		setBulkStatus: PropTypes.func,
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
-		undoBulkStatus: PropTypes.func,
 		unlikeComment: PropTypes.func,
 	};
 
@@ -188,7 +187,9 @@ export class CommentList extends Component {
 	};
 
 	setBulkStatus = status => () => {
-		const { status: listStatus } = this.props;
+		const { recordBulkAction, status: listStatus } = this.props;
+		const { selectedComments } = this.state;
+
 		this.props.removeNotice( 'comment-notice-bulk' );
 
 		// Only persist comments if they toggle between approved and unapproved
@@ -196,7 +197,7 @@ export class CommentList extends Component {
 			( 'approved' === listStatus && 'unapproved' === status ) ||
 			( 'unapproved' === listStatus && 'approved' === status );
 
-		each( this.state.selectedComments, comment => {
+		each( selectedComments, comment => {
 			if ( 'delete' === status ) {
 				this.props.deleteComment( comment.commentId, comment.postId, { showSuccessNotice: false } );
 				return;
@@ -208,6 +209,8 @@ export class CommentList extends Component {
 				showNotice: false,
 			} );
 		} );
+
+		recordBulkAction( status, selectedComments.length, listStatus );
 
 		this.showBulkNotice( status );
 
@@ -566,6 +569,18 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 
+	recordBulkAction: ( action, count, fromList ) =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_bulk_action', {
+					action,
+					count,
+					from_list: fromList,
+				} ),
+				bumpStat( 'calypso_comment_management', 'bulk_action' )
+			)
+		),
+
 	recordChangePage: ( page, total ) =>
 		dispatch(
 			composeAnalytics(
@@ -588,9 +603,6 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 				replyComment( commentText, siteId, postId, parentCommentId )
 			)
 		),
-
-	setBulkStatus: noop,
-	undoBulkStatus: noop,
 
 	unlikeComment: ( commentId, postId ) =>
 		dispatch(
