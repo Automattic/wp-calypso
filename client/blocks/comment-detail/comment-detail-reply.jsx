@@ -57,15 +57,7 @@ export class CommentDetailReply extends Component {
 	};
 
 	getTextareaPlaceholder = () => {
-		const { authorDisplayName, comment: { status }, translate } = this.props;
-
-		if ( 'approved' !== status ) {
-			return authorDisplayName
-				? translate( 'Approve and reply to %(commentAuthor)s…', {
-						args: { commentAuthor: authorDisplayName },
-					} )
-				: translate( 'Approve and reply to comment…' );
-		}
+		const { authorDisplayName, translate } = this.props;
 
 		return authorDisplayName
 			? translate( 'Reply to %(commentAuthor)s…', {
