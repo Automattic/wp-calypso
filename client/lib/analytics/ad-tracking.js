@@ -14,7 +14,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import config from 'config';
-import productsValues from 'lib/products-values';
+import { isJetpackPlan } from 'lib/products-values';
 import userModule from 'lib/user';
 import { loadScript } from 'lib/load-script';
 import { shouldSkipAds } from 'lib/analytics/utils';
@@ -612,9 +612,9 @@ function recordProduct( product, orderId ) {
 		return loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
 	}
 
-	const isJetpackPlan = productsValues.isJetpackPlan( product );
+	const isJetpack = isJetpackPlan( product );
 
-	if ( isJetpackPlan ) {
+	if ( isJetpack ) {
 		debug( 'Recording Jetpack purchase', product );
 	} else {
 		debug( 'Recording purchase', product );
@@ -636,10 +636,8 @@ function recordProduct( product, orderId ) {
 		if ( isAdwordsEnabled ) {
 			if ( window.google_trackConversion ) {
 				window.google_trackConversion( {
-					google_conversion_id: isJetpackPlan
-						? ADWORDS_CONVERSION_ID_JETPACK
-						: ADWORDS_CONVERSION_ID,
-					google_conversion_label: isJetpackPlan
+					google_conversion_id: isJetpack ? ADWORDS_CONVERSION_ID_JETPACK : ADWORDS_CONVERSION_ID,
+					google_conversion_label: isJetpack
 						? TRACKING_IDS.googleConversionLabelJetpack
 						: TRACKING_IDS.googleConversionLabel,
 					google_conversion_value: product.cost,
@@ -697,7 +695,7 @@ function recordProduct( product, orderId ) {
 					ec: 'purchase',
 					gv: costUSD,
 				};
-				if ( isJetpackPlan ) {
+				if ( isJetpack ) {
 					// `el` must be included only for jetpack plans
 					bingParams.el = 'jetpack';
 				}
