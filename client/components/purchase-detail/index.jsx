@@ -21,10 +21,7 @@ export default class PurchaseDetail extends PureComponent {
 		buttonText: PropTypes.string,
 		description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
 		href: PropTypes.string,
-		icon: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.element,
-		] ),
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		isPlaceholder: PropTypes.bool,
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
@@ -89,7 +86,7 @@ export default class PurchaseDetail extends PureComponent {
 	render() {
 		const { id, requiredText, title, description, icon } = this.props;
 		const classes = classNames( 'purchase-detail', {
-			'custom-icon': ( icon && typeof icon !== 'string' ),
+			'custom-icon': icon && typeof icon !== 'string',
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 

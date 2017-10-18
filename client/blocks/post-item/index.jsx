@@ -62,20 +62,14 @@ class PostItem extends React.Component {
 	}
 
 	hasMultipleUsers() {
-		return (
-			this.inAllSitesModeWithMultipleUsers() ||
-			this.inSingleSiteModeWithMultipleUsers()
-		);
+		return this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers();
 	}
 
 	renderSelectionCheckbox() {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
 			multiSelectEnabled && (
-				<div
-					className="post-item__select"
-					onClick={ this.toggleCurrentPostSelection }
-				>
+				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
 					<FormInputCheckbox
 						checked={ isCurrentPostSelected }
 						onClick={ this.toggleCurrentPostSelection }
@@ -125,8 +119,7 @@ class PostItem extends React.Component {
 			'has-wrapped-title': wrapTitle,
 		} );
 
-		const isSiteInfoVisible =
-			isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+		const isSiteInfoVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 
 		const isAuthorVisible =
 			isEnabled( 'posts/post-type-list' ) &&
@@ -148,12 +141,8 @@ class PostItem extends React.Component {
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
-							{ isSiteInfoVisible && (
-								<PostTypeSiteInfo globalId={ globalId } />
-							) }
-							{ isAuthorVisible && (
-								<PostTypePostAuthor globalId={ globalId } />
-							) }
+							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title">
 							<a href={ editUrl } className="post-item__title-link">

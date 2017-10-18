@@ -187,16 +187,10 @@ export default class PaginatedQueryManager extends QueryManager {
 		//
 		// Therefore, the only thing we need to do here is take the *maximum*
 		// of the previous "found" count and the next "found" count.
-		if (
-			modifiedNextQuery.hasOwnProperty( 'found' ) &&
-			items.length < perPage
-		) {
+		if ( modifiedNextQuery.hasOwnProperty( 'found' ) && items.length < perPage ) {
 			const previousQuery = this.data.queries[ queryKey ];
 			if ( previousQuery && previousQuery.hasOwnProperty( 'found' ) ) {
-				modifiedNextQuery.found = Math.max(
-					previousQuery.found,
-					modifiedNextQuery.found
-				);
+				modifiedNextQuery.found = Math.max( previousQuery.found, modifiedNextQuery.found );
 			}
 		}
 
@@ -225,10 +219,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		// If found is known from options, ensure that we fill the end of the
 		// array with undefined entries until found count
 		if ( modifiedNextQuery.hasOwnProperty( 'found' ) ) {
-			modifiedNextQuery.itemKeys = range(
-				0,
-				modifiedNextQuery.found
-			).map( index => {
+			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( index => {
 				return modifiedNextQuery.itemKeys[ index ];
 			} );
 		}

@@ -138,10 +138,7 @@ function set( attributes ) {
 	// This prevents an unsaved changes dialogue from appearing
 	// on a new post when only the featured image is added then removed.
 	// See #17701 for context.
-	if ( updatedPost.featured_image === '' &&
-		! _savedPost.featured_image &&
-		_post.featured_image
-	) {
+	if ( updatedPost.featured_image === '' && ! _savedPost.featured_image && _post.featured_image ) {
 		updatedPost = omit( updatedPost, 'featured_image' );
 	}
 

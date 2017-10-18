@@ -150,7 +150,8 @@ describe( 'reducer', () => {
 					isMultiSelectEnabled: true,
 					selectedPosts: [ postGlobalId ],
 					activeSharePanels: [],
-				}, {
+				},
+				{
 					type: ROUTE_SET,
 					path: '/',
 					query: {},

@@ -14,7 +14,10 @@ import { getData, getError, getProgress, dispatchRequest, makeParser } from '../
 describe( 'WPCOM HTTP Data Layer', () => {
 	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
 	const withError = error => ( { type: 'SLUGGER', meta: { dataLayer: { error } } } );
-	const withProgress = progress => ( { type: 'UPLOAD_PROGRESS', meta: { dataLayer: { progress } } } );
+	const withProgress = progress => ( {
+		type: 'UPLOAD_PROGRESS',
+		meta: { dataLayer: { progress } },
+	} );
 
 	describe( '#getData', () => {
 		test( 'should return successful response data if available', () => {
