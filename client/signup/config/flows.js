@@ -122,7 +122,7 @@ const flows = {
 	},
 
 	store: {
-		steps: [ 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type-with-store', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for creating an online store',
 		lastModified: '2016-06-27',
@@ -162,7 +162,7 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23',
@@ -217,7 +217,7 @@ const flows = {
 	},
 
 	developer: {
-		steps: [ 'themes', 'site', 'user' ],
+		steps: [ 'site', 'user' ],
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
 		lastModified: '2015-11-23',

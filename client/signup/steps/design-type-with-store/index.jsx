@@ -22,6 +22,8 @@ import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with
 import { abtest } from 'lib/abtest';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
+import { getThemeForDesignType } from 'signup/utils';
+
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
 		super( props );
@@ -106,7 +108,12 @@ class DesignTypeWithStoreStep extends Component {
 			return;
 		}
 
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		const themeSlugWithRepo = getThemeForDesignType( designType );
+
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+			designType,
+			themeSlugWithRepo,
+		} );
 
 		this.props.goToNextStep();
 	};
