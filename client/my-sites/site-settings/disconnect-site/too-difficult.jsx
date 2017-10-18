@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, map } from 'lodash';
+import { get, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,18 @@ import SectionHeader from 'components/section-header';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass } from 'lib/plans/constants';
+
+function getFeatures( translate ) {
+	return {
+		backups: translate( 'Backups' ),
+		security: translate( 'Security Scanning' ),
+		antispam: translate( 'Antispam' ),
+		stats: translate( 'Stats' ),
+		publicize: translate( 'Publicize' ),
+		subscriptions: translate( 'Subscriptions' ),
+		other: translate( 'Other' ),
+	};
+}
 
 const TooDifficult = ( { confirmHref, features, siteId, translate } ) => (
 	<div>
@@ -34,34 +46,19 @@ export default localize(
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 		const planClass = getPlanClass( planSlug );
+		const allFeatures = getFeatures( translate );
 
 		const features = {
-			'is-personal-plan': {
-				backups: translate( 'Backups' ),
-				antispam: translate( 'Antispam' ),
-				stats: translate( 'Stats' ),
-				publicize: translate( 'Publicize' ),
-				subscriptions: translate( 'Subscriptions' ),
-				other: translate( 'Other' ),
-			},
-			'is-premium-plan': {
-				backups: translate( 'Backups' ),
-				security: translate( 'Security Scanning' ),
-				antispam: translate( 'Antispam' ),
-				stats: translate( 'Stats' ),
-				publicize: translate( 'Publicize' ),
-				subscriptions: translate( 'Subscriptions' ),
-				other: translate( 'Other' ),
-			},
-			'is-business-plan': {
-				backups: translate( 'Backups' ),
-				security: translate( 'Security Scanning' ),
-				antispam: translate( 'Antispam' ),
-				stats: translate( 'Stats' ),
-				publicize: translate( 'Publicize' ),
-				subscriptions: translate( 'Subscriptions' ),
-				other: translate( 'Other' ),
-			},
+			'is-personal-plan': pick( allFeatures, [
+				'backups',
+				'antispam',
+				'stats',
+				'publicize',
+				'subscriptions',
+				'other',
+			] ),
+			'is-premium-plan': allFeatures,
+			'is-business-plan': allFeatures,
 		};
 
 		return {
