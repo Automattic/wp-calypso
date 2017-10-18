@@ -79,15 +79,19 @@ Like their name suggests, unit tests should be targeting only one clear unit at 
 ### [Shallow rendering](#shallow-rendering)
 Shallow rendering helps with inspecting whether our component renders correctly, without having to render subcomponents. Lets hear it from Facebook themselves:
 
->Shallow rendering is an experimental feature that lets you render a component "one level deep" and assert facts about what its render method returns, without worrying about the behavior of child components, which are not instantiated or rendered. This does not require a DOM.
-https://facebook.github.io/react/docs/test-utils.html#shallow-rendering
+> When writing unit tests for React, shallow rendering can be helpful. Shallow rendering lets you
+> render a component “one level deep” and assert facts about what its render method returns,
+> without worrying about the behavior of child components, which are not instantiated or rendered.
+> This does not require a DOM.
+>
+> https://reactjs.org/docs/shallow-renderer.html#overview
 
 For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
 The render function basically just draws a bunch of Theme subcomponents:
+
 ```javascript
 ...
-
 render: function() {
 	return (
 		<ul className="themes-list">
@@ -103,12 +107,12 @@ render: function() {
 }
 
 ...
-
 ```
 
 So we test it like this:
 
 ```javascript
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 this.props = {
 	themes: [
@@ -123,16 +127,15 @@ this.props = {
 	]
 };
 
-const shallowRenderer = createRenderer();
+const renderer = new ShallowRenderer();
 
-shallowRenderer.render(
+renderer.render(
 	React.createElement( ThemesList, this.props )
 );
 
-this.themesList = shallowRenderer.getRenderOutput();
+this.themesList = renderer.getRenderOutput();
 
 assert( this.themesList.props.children.length === this.props.themes.length, 'child count is different from themes count' );
-
 ```
 
 So here we avoid having to actually draw the `Theme` components when testing `ThemesList`.

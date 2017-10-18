@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-import { createRenderer } from 'react-test-renderer/shallow';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import React from 'react';
 import { expect } from 'chai';
 
@@ -29,7 +29,7 @@ describe( 'index', () => {
 	var renderer;
 
 	beforeEach( () => {
-		renderer = createRenderer();
+		renderer = new ShallowRenderer();
 	} );
 
 	test( 'should accept a single child and pass along props', () => {

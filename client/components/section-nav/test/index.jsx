@@ -11,7 +11,7 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 import sinon from 'sinon';
-import { createRenderer } from 'react-test-renderer/shallow';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
@@ -26,10 +26,10 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 function createComponent( component, props, children ) {
-	const shallowRenderer = createRenderer();
+	const renderer = new ShallowRenderer();
 
-	shallowRenderer.render( React.createElement( component, props, children ) );
-	return shallowRenderer.getRenderOutput();
+	renderer.render( React.createElement( component, props, children ) );
+	return renderer.getRenderOutput();
 }
 
 describe( 'section-nav', () => {
