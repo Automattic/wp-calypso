@@ -57,3 +57,8 @@ export const getSelectedPaymentMethodId = ( state, siteId = getSelectedSiteId( s
 	const data = getLabelSettingsFormData( state, siteId );
 	return data && data.selected_payment_method_id;
 };
+
+export const isPristine = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.pristine;
+};

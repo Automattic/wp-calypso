@@ -44,6 +44,7 @@ import {
 import {
 	areLabelsEnabled,
 	getSelectedPaymentMethodId,
+	isPristine as areLabelSettingsPristine,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
@@ -283,7 +284,10 @@ export default connect(
 	( state, { order, site } ) => {
 		const labelsLoaded = wcsEnabled && Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) );
 		const hasLabelsPaymentMethod =
-			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
+			wcsEnabled &&
+			labelsLoaded &&
+			areLabelSettingsPristine( state, site.ID ) &&
+			getSelectedPaymentMethodId( state, site.ID );
 
 		return {
 			labelsLoaded,
