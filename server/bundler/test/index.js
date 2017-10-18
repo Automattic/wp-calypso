@@ -4,35 +4,37 @@
  */
 import { expect } from 'chai';
 
-/**
- * Internal dependencies
- */
-import { getSectionsModule } from '../loader-utils';
-
 describe( 'Bundler', () => {
 	describe( 'loader', () => {
-		const sections = [
-			{ name: 'sites', paths: [ '/sites' ], module: 'my-sites', group: 'sites', secondary: true },
-			{ name: 'test', paths: [ '/test' ], module: 'my-test', group: 'test', secondary: true },
-		];
+		const sections = require( './fixtures' ).sections;
 
 		test( 'getSectionsModule needs to return a module string', () => {
-			const moduleString = getSectionsModule( sections );
+			const moduleString = require( '../loader-utils' ).getSectionsModule( sections );
 
 			expect( moduleString ).to.be.string;
 		} );
 
 		test( 'getSectionsModule needs to return a module string that has correct interface', () => {
 			jest.mock( 'store', () => {} );
-			const moduleString = getSectionsModule( sections );
-			const mockCommonJSmodule = 'const module = {}; ';
-			const finalModuleString =
-				mockCommonJSmodule + moduleString.replace( /import\(/gi, 'fakeImport(' );
-			const module = eval( finalModuleString );
+			jest.mock(
+				'sections-module',
+				() => {
+					const getSectionsModule = require( '../loader-utils' ).getSectionsModule;
+					const moduleStringWithoutImports = getSectionsModule(
+						require( './fixtures' ).sections
+					).replace( /import\(/gi, 'fakeImport(' );
 
-			expect( module.get ).to.be.a( 'function' );
-			expect( module.load ).to.be.a( 'function' );
-			expect( module.get() ).to.eql( sections );
+					return new Function( 'require', 'module', moduleStringWithoutImports );
+				},
+				{ virtual: true }
+			);
+
+			const sectionsModule = {};
+			require( 'sections-module' )( require, sectionsModule );
+
+			expect( sectionsModule.exports.get ).to.be.a( 'function' );
+			expect( sectionsModule.exports.load ).to.be.a( 'function' );
+			expect( sectionsModule.exports.get() ).to.eql( sections );
 		} );
 	} );
 } );
