@@ -47,3 +47,13 @@ export const areSettingsErrored = ( state, siteId = getSelectedSiteId( state ) )
 	const meta = getLabelSettingsFormMeta( state, siteId );
 	return meta && meta.isFetchError;
 };
+
+export const areLabelsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.enabled;
+};
+
+export const getSelectedPaymentMethodId = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.selected_payment_method_id;
+};

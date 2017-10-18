@@ -32,11 +32,19 @@ import QueryLabels from 'woocommerce/woocommerce-services/components/query-label
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
+<<<<<<< HEAD
 	getLabels,
 	getSelectedPaymentMethod,
 	isEnabled as areLabelsEnabled,
+=======
+	getLabelsCount,
+>>>>>>> Showing the labels button depending on the actual settings state
 	areLabelsFullyLoaded,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	areLabelsEnabled,
+	getSelectedPaymentMethodId,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
@@ -275,12 +283,17 @@ export default connect(
 	( state, { order, site } ) => {
 		const labelsLoaded = wcsEnabled && Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) );
 		const hasLabelsPaymentMethod =
-			wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID );
+			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
 
 		return {
 			labelsLoaded,
+<<<<<<< HEAD
 			labelsEnabled: areLabelsEnabled( state, order.id, site.ID ),
 			labels: getLabels( state, order.id, site.ID ),
+=======
+			labelsEnabled: labelsLoaded && areLabelsEnabled( state, site.ID ),
+			labelsCount: labelsLoaded ? getLabelsCount( state, order.id, site.ID ) : 0,
+>>>>>>> Showing the labels button depending on the actual settings state
 			hasLabelsPaymentMethod,
 		};
 	},
