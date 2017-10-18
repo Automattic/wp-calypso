@@ -1,0 +1,79 @@
+.contact-details-form-fields {
+
+	margin-bottom: 0;
+
+
+	.contact-details-form-fields__container.country-code,
+	.contact-details-form-fields__container.state {
+
+		label + select {
+			width: 100%;
+		}
+	}
+
+	@include breakpoint( '>660px' ) {
+		.hidden-input a,
+		.contact-details-form-fields__field {
+			float: left;
+			width: 100%;
+		}
+
+		.contact-details-form-fields__container.last-name,
+		.contact-details-form-fields__container.phone,
+		.contact-details-form-fields__container.postal-code {
+			float: right;
+		}
+
+		.contact-details-form-fields__container.email,
+		.contact-details-form-fields__container.first-name,
+		.contact-details-form-fields__container.last-name,
+		.contact-details-form-fields__container.phone {
+			width: calc( 50% - 7px );
+		}
+
+		.contact-details-form-fields__container.city,
+		.contact-details-form-fields__container.postal-code,
+		.contact-details-form-fields__container.state {
+			width: calc( 33% - 8px );
+		}
+
+		.contact-details-form-fields__container.state {
+			margin-left: 14px;
+		}
+
+		&.only-google-apps-details {
+			.contact-details-form-fields__container.country-code {
+				width: 66%;
+			}
+		}
+	}
+
+	.form__hidden-input a {
+		display: block;
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+}
+
+.contact-details-form-fields__container {
+	position: relative;
+	float: left;
+	width: 100%;
+	margin-top: 0;
+}
+.contact-details-form-fields__container > div {
+	margin-top: 15px;
+}
+
+.contact-details-form-fields__container.first-name > div,
+.contact-details-form-fields__container.last-name > div {
+	margin-top: 0;
+}
+
+.contact-details-form-fields__container > div.hidden-input {
+	margin-top: 0;
+}
+
+
+
