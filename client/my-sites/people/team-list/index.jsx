@@ -27,8 +27,7 @@ import ListEnd from 'components/list-end';
 /**
  * Module Variables
  */
-var Team = localize(
-	React.createClass( {
+const TeamBase = React.createClass( {
 		displayName: 'Team',
 
 		getInitialState: function() {
@@ -150,8 +149,9 @@ var Team = localize(
 		_renderLoadingPeople: function() {
 			return <PeopleListItem key="people-list-item-placeholder" />;
 		},
-	} )
-);
+	} );
+
+const Team = localize( TeamBase );
 
 const TeamList = React.createClass( {
 	displayName: 'TeamList',
