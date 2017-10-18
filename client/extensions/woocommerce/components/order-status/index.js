@@ -8,20 +8,27 @@ import { localize } from 'i18n-calypso';
 
 export class OrderStatus extends Component {
 	static propTypes = {
+		order: PropTypes.shape( {
+			payment_method: PropTypes.string,
+			status: PropTypes.string.isRequired,
+		} ),
 		showPayment: PropTypes.bool,
 		showShipping: PropTypes.bool,
-		status: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	getPaymentLabel = () => {
-		const { status, translate } = this.props;
+		const { order, translate } = this.props;
+		const { status, payment_method } = order;
 		switch ( status ) {
 			case 'pending':
-				return translate( 'Payment pending' );
 			case 'on-hold':
 				return translate( 'Payment pending' );
 			case 'processing':
+				if ( 'cod' === payment_method ) {
+					return translate( 'Payment pending' );
+				}
+				return translate( 'Paid in full' );
 			case 'completed':
 				return translate( 'Paid in full' );
 			case 'cancelled':
@@ -35,8 +42,8 @@ export class OrderStatus extends Component {
 	};
 
 	getShippingLabel = () => {
-		const { status, translate } = this.props;
-		switch ( status ) {
+		const { order, translate } = this.props;
+		switch ( order.status ) {
 			case 'pending':
 			case 'processing':
 				return translate( 'New order' );
