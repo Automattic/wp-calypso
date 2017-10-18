@@ -82,9 +82,10 @@ export function getOrderSubtotal( order ) {
  */
 export function getOrderTotal( order ) {
 	const discount = getOrderDiscountTotal( order );
+	const fees = getOrderFeeTotal( order );
 	const refunds = getOrderRefundTotal( order );
 	const shipping = getOrderShippingTotal( order );
 	const subtotal = getOrderSubtotal( order );
 	// Refunds are negative, but discounts are not
-	return subtotal - discount + shipping + refunds;
+	return subtotal - discount + fees + shipping + refunds;
 }

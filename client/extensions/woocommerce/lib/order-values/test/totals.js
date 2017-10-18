@@ -136,11 +136,11 @@ describe( 'getOrderTotal', () => {
 	} );
 
 	it( 'should get the sum of line_item totals', () => {
-		expect( getOrderTotal( orderWithTax ).toFixed( 2 ) ).to.eql( '62.98' );
+		expect( getOrderTotal( orderWithTax ).toFixed( 2 ) ).to.eql( '64.51' );
 	} );
 
 	it( 'should get the sum of line_item totals regardless of coupons', () => {
-		expect( getOrderTotal( orderWithCoupons ).toFixed( 2 ) ).to.eql( '59.67' );
+		expect( getOrderTotal( orderWithCoupons ).toFixed( 2 ) ).to.eql( '74.67' );
 	} );
 
 	it( 'should return 0 if there is nothing in the order', () => {
