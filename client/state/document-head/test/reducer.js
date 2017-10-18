@@ -9,13 +9,21 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { link, meta, title, unreadCount } from '../reducer';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
+	ROUTE_SET
 } from 'state/action-types';
+
+import {
+	DEFAULT_META_STATE,
+	link,
+	meta,
+	title,
+	unreadCount,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#title()', () => {
@@ -29,6 +37,13 @@ describe( 'reducer', () => {
 			const newState = title( undefined, { type: DOCUMENT_HEAD_TITLE_SET, title: 'new title' } );
 
 			expect( newState ).to.equal( 'new title' );
+		} );
+
+		it( 'should return initial state on route set action', () => {
+			const original = 'new title';
+			const state = title( original, { type: ROUTE_SET } );
+
+			expect( state ).to.equal( '' );
 		} );
 	} );
 
@@ -47,13 +62,20 @@ describe( 'reducer', () => {
 
 			expect( newState ).to.equal( 123 );
 		} );
+
+		it( 'should return initial state on route set action', () => {
+			const original = 123;
+			const state = unreadCount( original, { type: ROUTE_SET } );
+
+			expect( state ).to.equal( 0 );
+		} );
 	} );
 
 	describe( '#meta()', () => {
 		test( 'should default to "og:site_name" set to "WordPress.com" array', () => {
 			const state = meta( undefined, {} );
 
-			expect( state ).to.eql( [ { property: 'og:site_name', content: 'WordPress.com' } ] );
+			expect( state ).to.eql( DEFAULT_META_STATE );
 		} );
 
 		test( 'should set a new meta tag', () => {
@@ -71,6 +93,13 @@ describe( 'reducer', () => {
 			const expectedState = [ { content: 'another content', type: 'another type' } ];
 
 			expect( newState ).to.eql( expectedState );
+		} );
+
+		it( 'should return initial state on route set action', () => {
+			const original = deepFreeze( [ { content: 'some content', type: 'some type' } ] );
+			const state = meta( original, { type: ROUTE_SET } );
+
+			expect( state ).to.eql( DEFAULT_META_STATE );
 		} );
 	} );
 
@@ -96,6 +125,13 @@ describe( 'reducer', () => {
 			const expectedState = [ { rel: 'another-rel', href: 'https://automattic.com' } ];
 
 			expect( newState ).to.eql( expectedState );
+		} );
+
+		it( 'should return initial state on route set action', () => {
+			const original = deepFreeze( [ { rel: 'some-rel', href: 'https://wordpress.org' } ] );
+			const state = link( original, { type: ROUTE_SET } );
+
+			expect( state ).to.eql( [] );
 		} );
 	} );
 } );
