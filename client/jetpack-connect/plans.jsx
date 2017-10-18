@@ -52,8 +52,8 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 		this.redirecting = false;
 	}
 
