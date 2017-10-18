@@ -22,6 +22,7 @@ describe( 'OrderStatus', () => {
 		};
 		const wrapper = shallow( <OrderStatus order={ order } translate={ identity } /> );
 		expect( wrapper.find( '.order-status__item' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.order-status__item' ).hasClass( 'is-pending' ) ).to.equal( true );
 		expect( wrapper.find( '.order-status__shipping' ) ).to.have.length( 1 );
 		expect( wrapper.find( '.order-status__payment' ) ).to.have.length( 1 );
 	} );
@@ -42,6 +43,7 @@ describe( 'OrderStatus', () => {
 			<OrderStatus order={ order } showShipping={ false } translate={ identity } />
 		);
 		expect( wrapper.find( '.order-status__item' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.order-status__item' ).hasClass( 'is-refunded' ) ).to.equal( true );
 		expect( wrapper.find( '.order-status__shipping' ) ).to.have.length( 0 );
 		expect( wrapper.find( '.order-status__payment' ) ).to.have.length( 1 );
 	} );
@@ -52,6 +54,7 @@ describe( 'OrderStatus', () => {
 			<OrderStatus order={ order } showPayment={ false } translate={ identity } />
 		);
 		expect( wrapper.find( '.order-status__item' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.order-status__item' ).hasClass( 'is-completed' ) ).to.equal( true );
 		expect( wrapper.find( '.order-status__shipping' ) ).to.have.length( 1 );
 		expect( wrapper.find( '.order-status__payment' ) ).to.have.length( 0 );
 	} );
@@ -63,6 +66,7 @@ describe( 'OrderStatus', () => {
 		};
 		const wrapper = shallow( <OrderStatus order={ order } translate={ identity } /> );
 		expect( wrapper.find( '.order-status__item' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.order-status__item' ).hasClass( 'is-processing' ) ).to.equal( true );
 		expect( wrapper.find( '.order-status__shipping' ).text() ).to.eql( 'New order' );
 		expect( wrapper.find( '.order-status__payment' ).text() ).to.eql( 'Paid on delivery' );
 	} );
