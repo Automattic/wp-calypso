@@ -21,7 +21,6 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 	canUserSendMessages,
-	getLostFocusTimestamp,
 	hasUnreadMessages,
 	hasActiveHappychatSession,
 	wasHappychatRecentlyActive,
@@ -140,13 +139,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getLostFocusTimestamp', () => {
-		test( 'returns the current timestamp', () => {
-			const state = deepFreeze( { happychat: { lostFocusAt: NOW } } );
-			expect( getLostFocusTimestamp( state ) ).to.eql( NOW );
-		} );
-	} );
-
 	describe( '#hasUnreadMessages', () => {
 		const ONE_MINUTE = 1000 * 60;
 		const FIVE_MINUTES = ONE_MINUTE * 5;
@@ -163,7 +155,7 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: null,
+					ui: { lostFocusAt: null },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
@@ -173,7 +165,7 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW + ONE_MINUTE,
+					ui: { lostFocusAt: NOW + ONE_MINUTE },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
@@ -183,7 +175,7 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE,
+					ui: { lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.true;

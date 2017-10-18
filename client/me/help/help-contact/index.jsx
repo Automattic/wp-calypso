@@ -43,7 +43,7 @@ import {
 	sendChatMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'state/happychat/connection/actions';
-import { openChat as openHappychat } from 'state/ui/happychat/actions';
+import { openChat as openHappychat } from 'state/happychat/ui/actions';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
