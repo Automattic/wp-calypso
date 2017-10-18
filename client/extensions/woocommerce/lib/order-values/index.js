@@ -30,7 +30,7 @@ export function getOrderLineItemTax( order, id ) {
 }
 
 /**
- * Get the total tax for a given line item's value
+ * Get the total tax for a given fee
  *
  * @param {Object} order An order as returned from API
  * @param {Number} index The index of a fee line in this order
