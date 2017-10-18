@@ -20,84 +20,83 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
+const EditorMediaModalDetailBase = React.createClass( {
+	propTypes: {
+		site: PropTypes.object,
+		items: PropTypes.array,
+		selectedIndex: PropTypes.number,
+		onSelectedIndexChange: PropTypes.func,
+		onReturnToList: PropTypes.func,
+		onEdit: PropTypes.func,
+		onRestore: PropTypes.func,
+	},
+
+	getDefaultProps: function() {
+		return {
+			selectedIndex: 0,
+			onSelectedIndexChange: noop,
+		};
+	},
+
+	componentDidMount: function() {
+		this.preloadImages();
+	},
+
+	componentDidUpdate: function() {
+		this.preloadImages();
+	},
+
+	preloadImages: function() {
+		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+			var src = MediaUtils.url( image, {
+				photon: this.props.site && ! this.props.site.is_private,
+			} );
+
+			preloadImage( src );
+		}, this );
+	},
+
+	incrementIndex: function( increment ) {
+		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
+	},
+
+	render: function() {
+		const {
+			items,
+			selectedIndex,
+			site,
+			onEditImageItem,
+			onEditVideoItem,
+			onRestoreItem,
+			onReturnToList,
+		} = this.props;
+
+		const item = items[ selectedIndex ];
+		const mimePrefix = MediaUtils.getMimePrefix( item );
+
+		return (
+			<div className="editor-media-modal-detail">
+				<HeaderCake
+					onClick={ onReturnToList }
+					backText={ this.props.translate( 'Media Library' ) }
+				/>
+				<DetailItem
+					site={ site }
+					item={ item }
+					hasPreviousItem={ selectedIndex - 1 >= 0 }
+					hasNextItem={ selectedIndex + 1 < items.length }
+					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
+					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
+					onRestore={ onRestoreItem }
+					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+				/>
+			</div>
+		);
+	},
+} );
+
 // Don't move `localize()` to the default export (below)! See comment there.
-export const EditorMediaModalDetail = localize(
-	React.createClass( {
-		propTypes: {
-			site: PropTypes.object,
-			items: PropTypes.array,
-			selectedIndex: PropTypes.number,
-			onSelectedIndexChange: PropTypes.func,
-			onReturnToList: PropTypes.func,
-			onEdit: PropTypes.func,
-			onRestore: PropTypes.func,
-		},
-
-		getDefaultProps: function() {
-			return {
-				selectedIndex: 0,
-				onSelectedIndexChange: noop,
-			};
-		},
-
-		componentDidMount: function() {
-			this.preloadImages();
-		},
-
-		componentDidUpdate: function() {
-			this.preloadImages();
-		},
-
-		preloadImages: function() {
-			MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-				var src = MediaUtils.url( image, {
-					photon: this.props.site && ! this.props.site.is_private,
-				} );
-
-				preloadImage( src );
-			}, this );
-		},
-
-		incrementIndex: function( increment ) {
-			this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-		},
-
-		render: function() {
-			const {
-				items,
-				selectedIndex,
-				site,
-
-				onEditImageItem,
-				onEditVideoItem,
-				onRestoreItem,
-				onReturnToList,
-			} = this.props;
-
-			const item = items[ selectedIndex ];
-			const mimePrefix = MediaUtils.getMimePrefix( item );
-
-			return (
-				<div className="editor-media-modal-detail">
-					<HeaderCake
-						onClick={ onReturnToList }
-						backText={ this.props.translate( 'Media Library' ) }
-					/>
-					<DetailItem
-						site={ site }
-						item={ item }
-						hasPreviousItem={ selectedIndex - 1 >= 0 }
-						hasNextItem={ selectedIndex + 1 < items.length }
-						onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-						onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-						onRestore={ onRestoreItem }
-						onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
-					/>
-				</div>
-			);
-		},
-	} )
-);
+export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 
 // The default export is only used by the post editor, which displays the image or
 // video editor depending on Redux state, which is set by the actions below.
