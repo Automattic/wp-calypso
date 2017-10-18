@@ -21,8 +21,12 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
 			<QueryMailChimpLists siteId={ siteId } />
-			<div>{ translate( 'Pick a list, you will not able to change it for now so pick carefully.' ) }</div>
-			<div>{ translate( 'Create your list at mailchimp.com if you have not done it aready.' ) }</div>
+			<div className="setup-steps__login-title">{ translate( 'Now choose a list to sync!' ) }</div>
+			<p>{ translate(
+					'Choose your list carefully as you wont be able to change it later. ' +
+					'Create a list in MailChimp if you have not already done so.'
+				) }
+			</p>
 			<FormLabel>
 				{ translate( 'Newsletter' ) }
 			</FormLabel>
@@ -37,6 +41,12 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 					) )
 				}
 			</FormSelect>
+			<p className="setup-steps__sync-explanation">
+				{ translate(
+					'We will then sync your orders so you can segment based on purchase ' +
+						'history and products so you automatically add product information into customer emails.'
+				) }
+			</p>
 		</FormFieldset>
 	);
 };

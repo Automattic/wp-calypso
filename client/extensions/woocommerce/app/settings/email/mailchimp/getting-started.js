@@ -10,13 +10,16 @@ import React from 'react';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { localize } from 'i18n-calypso';
 
-const GettingStarted = localize( ( { translate, onClick } ) => {
+const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, redirectToSettings } ) => {
 	const allow = translate( 'Allow customers to subscribe to your Email list' );
 	const send = translate( 'Send abandon cart emails' );
 	const create = translate( 'Create purchase-based segments for targeted campaigns' );
+	const getStarted = translate( 'Get started with MailChimp' );
 	const list = [ allow, send, create ];
+	const wizardLink = getLink( 'settings/email/:site/wizard', site );
 
 	return (
 		<div>
@@ -26,7 +29,7 @@ const GettingStarted = localize( ( { translate, onClick } ) => {
 					{ translate( 'Allow your customers to subscribe to your MailChimp email list.' ) }
 				</div>
 			</Card>
-			<Card className="mailchimp__getting-started-content">
+			{ ! isPlaceholder && <Card>
 				<span>
 					<img
 						src={ '/calypso/images/illustrations/illustration-layout.svg' }
@@ -38,7 +41,7 @@ const GettingStarted = localize( ( { translate, onClick } ) => {
 					<h3 className="mailchimp__getting-started-list-header">
 						{ translate( 'Connect with your customers through MailChimp' ) }
 					</h3>
-					<ul className="mailchimp__getting-started-list">
+					<ul className="mailchimp__getting-started-list" >
 						{ list.map( ( item, key ) =>
 							<li key={ key }>
 								<Gridicon icon="checkmark" size={ 18 } />
@@ -46,17 +49,35 @@ const GettingStarted = localize( ( { translate, onClick } ) => {
 							</li>
 						) }
 					</ul>
-					<Button className="mailchimp__getting-started-button" onClick={ onClick }>
-						{ translate( 'Get started with MailChimp' ) }
-					</Button>
+					{ ! redirectToSettings && (
+						<Button className="mailchimp__getting-started-button" onClick={ onClick }>
+							{ getStarted }
+						</Button>
+					) }
+					{ redirectToSettings && (
+						<Button className="mailchimp__getting-started-button" href={ wizardLink }>
+							{ getStarted }
+						</Button>
+					) }
 				</span>
-			</Card>
+			</Card> }
+			{ isPlaceholder &&
+				<Card
+					className="mailchimp__getting-started-loading-placeholder"
+				>
+					<p />
+					<p />
+					<p />
+					<p />
+				</Card> }
 		</div>
 	);
 } );
 
 GettingStarted.propTypes = {
 	onClick: PropTypes.func.isRequired,
+	isPlaceholder: PropTypes.bool,
+	redirectToSettings: PropTypes.bool,
 };
 
 export default GettingStarted;
