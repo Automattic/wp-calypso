@@ -7,7 +7,8 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit } from 'lodash';
+import { omit, get } from 'lodash';
+import { recordTrack } from 'reader/stats';
 
 /**
  * Internal dependencies
@@ -76,6 +77,8 @@ class PeopleProfile extends React.PureComponent {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	};
+	
+	handleLinkToReaderSiteStream = () => recordTrack( 'calypso_reader_people_followers_link_click' );
 
 	renderName = () => {
 		const user = this.props.user;
@@ -90,10 +93,19 @@ class PeopleProfile extends React.PureComponent {
 			name = user.label;
 		}
 
-		if ( name ) {
+		const blogId = get( user, 'follow_data.params.blog_id', false );
+
+		if ( name && blogId ) {
+			name = (
+				<div className="people-profile__username">
+					<a href={ `/read/blogs/${ blogId }` } onClick={ this.handleLinkToReaderSiteStream }>
+						{ name }
+					</a>
+				</div>
+			);
+		} else if ( name ) {
 			name = <div className="people-profile__username">{ name }</div>;
 		}
-
 		return name;
 	};
 

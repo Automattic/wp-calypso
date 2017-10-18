@@ -246,7 +246,7 @@ class StatsListItem extends React.Component {
 						onClickHandler = event => {
 							event.preventDefault();
 							page( `/read/blogs/${ siteId }` );
-							recordTrack( 'calypso_stats_follower_clicked', { siteId } );
+							recordTrack( 'calypso_stats_follower_click', { siteId } );
 						};
 					}
 				}
