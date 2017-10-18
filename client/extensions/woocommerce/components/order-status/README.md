@@ -11,7 +11,7 @@ Some statuses don't have a shipping status: `cancelled`, `refunded`, and `failed
 render: function() {
     return (
         <SectionHeader label="Order Details">
-            <OrderStatus status={ 'pending' } />
+            <OrderStatus order={ { status: 'pending' } } />
         </SectionHeader>
     );
 }

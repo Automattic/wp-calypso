@@ -49,7 +49,7 @@ class OrderDetails extends Component {
 		return isEditing ? (
 			<OrderStatusSelect value={ order.status } onChange={ this.updateStatus } />
 		) : (
-			<OrderStatus status={ order.status } showShipping={ false } />
+			<OrderStatus order={ order } showShipping={ false } />
 		);
 	};
 
