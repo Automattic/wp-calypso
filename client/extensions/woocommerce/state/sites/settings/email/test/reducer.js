@@ -45,7 +45,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].settings.email.settings ).to.deep.equal( settings );
 	} );
 
-	test( 'should merge lists data into settigns and pick first as default if none is chosen', () => {
+	test( 'should merge lists data into settings and pick first as default if none is chosen', () => {
 		const siteId = 123;
 		const settings = { store_name: 'mystore' };
 		const lists = { a: 'list_a', b: 'list_b' };
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 		expect( updatedState[ siteId ].settings.email.settings ).to.deep.equal( finalState );
 	} );
 
-	test( 'should merge lists data into settigns and not update chosen list', () => {
+	test( 'should merge lists data into settings and not update the chosen list when a list has been selected', () => {
 		const siteId = 123;
 		const settings = { store_name: 'mystore', mailchimp_list: 'c' };
 		const lists = { a: 'list_a', b: 'list_b' };
