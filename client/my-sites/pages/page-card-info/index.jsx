@@ -49,6 +49,7 @@ function PageCardInfo( {
 					post={ page }
 					link={ contentLink.contentLinkURL }
 					target={ contentLink.contentLinkTarget }
+					gridiconSize={ iconSize }
 				/>
 			);
 		}

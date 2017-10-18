@@ -24,6 +24,7 @@ const PostRelativeTime = React.createClass( {
 		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
 		target: PropTypes.string,
+		gridiconSize: PropTypes.number,
 	},
 
 	getDefaultProps: function() {
@@ -55,7 +56,7 @@ const PostRelativeTime = React.createClass( {
 
 		return (
 			<span className="post-relative-time-status__time">
-				<Gridicon icon="time" size={ 18 } />
+				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 				<time className="post-relative-time-status__time-text" dateTime={ time }>
 					{ this.props.moment( time ).fromNow() }
 				</time>
@@ -97,7 +98,7 @@ const PostRelativeTime = React.createClass( {
 		if ( statusText ) {
 			return (
 				<span className={ statusClassName }>
-					<Gridicon icon={ statusIcon } size={ 18 } />
+					<Gridicon icon={ statusIcon } size={ this.props.gridiconSize || 18 } />
 					<span className="post-relative-time-status__status-text">{ statusText }</span>
 				</span>
 			);

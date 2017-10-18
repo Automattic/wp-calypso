@@ -41,4 +41,13 @@
 
 p.post-relative-time-status {
 	margin-bottom: 0px;
+
+	& .post-relative-time-status__time-text,
+	.post-relative-time-status__status-text {
+		vertical-align: middle;
+	}
+
+	& .gridicon {
+		margin: 0px 4px 0 0;
+	}
 }
