@@ -467,3 +467,151 @@
 		margin-left: 36px;
 	}
 }
+
+.site-settings__backups {
+	margin-bottom: 15px;
+
+	.site-settings__footer {
+		padding-top: 13px;
+
+		a {
+			cursor: pointer;
+		}
+
+		.gridicon {
+			position: relative;
+			top: 2px;
+			margin-right: 10px;
+		}
+	}
+
+	.site-settings__setup-start .gridicon,
+	.site-settings__setup-start div,
+	.site-settings__tos div,
+	.site-settings__foldable-header .gridicon,
+	.site-settings__foldable-header div,
+	.site-settings__pressable-configured .gridicon,
+	.site-settings__pressable-configured div {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.site-settings__setup-start {
+		cursor: pointer;
+
+		.gridicon {
+			color: $gray;
+		}
+
+		div {
+			margin-left: 15px;
+		}
+
+		h3 {
+			font-size: 1.6rem;
+		}
+
+		h4 {
+			font-size: 1.3rem;
+			color: $gray;
+			font-style: italic;
+		}
+	}
+
+	.site-settings__foldable-header .gridicon.site-settings__validated,
+	.site-settings__pressable-configured .gridicon {
+		color: $alert-green;
+		margin-right: 15px;
+	}
+
+	.site-settings__foldable-header {
+		h3 {
+			font-size: 1.6rem;
+		}
+
+		h4 {
+			font-size: 1.3rem;
+			color: $gray;
+		}
+	}
+
+	.site-settings__tos div:first-child {
+		width: 10%;
+	}
+
+	.site-settings__tos div:nth-child(2),
+	.site-settings__pressable-configured div {
+		width: 90%;
+	}
+
+	.site-settings__tos .gridicon {
+		color: $blue-wordpress;
+	}
+
+	.foldable-card.is-expanded {
+		margin: 0;
+	}
+
+	table {
+		margin-bottom: 0;
+	}
+
+	.site-settings__form-table {
+		td {
+			vertical-align: top;
+		}
+
+		select,
+		input {
+			margin-bottom: 15px;
+		}
+
+		.button {
+			display: block;
+		}
+
+		.site-settings__host-field {
+			display: inline-block;
+			margin-right: 5%;
+			width: 75%;
+		}
+
+		.site-settings__port-field {
+			display: inline-block;
+			width: 20%;
+
+			.form-input-validation {
+				padding: 0;
+
+				.gridicon {
+					display: none;
+				}
+			}
+		}
+
+		.form-label div {
+			margin-bottom: 5px;
+		}
+
+		.error-message {
+			text-align: right;
+			color: $alert-red;
+			margin-right: 80px;
+			margin-top: 7px;
+		}
+
+		.form-input-validation {
+			margin-top: -12px;
+		}
+	}
+
+	.site-settings__header .site-settings__connected {
+		display: inline-block;
+		float: right;
+		padding: 2px 6px;
+		margin: -2px;
+		background: $alert-green;
+		color: white;
+	}
+}
+

@@ -23,6 +23,7 @@ import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import Backups from '../backups';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
@@ -64,6 +65,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
+			<Backups />
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>

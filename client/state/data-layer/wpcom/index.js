@@ -10,6 +10,7 @@ import activityLog from './activity-log';
 import comments from './comments';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
+import jetpack from './jetpack';
 import me from './me';
 import meta from './meta';
 import plans from './plans';
@@ -28,6 +29,7 @@ export const handlers = mergeHandlers(
 	comments,
 	domains,
 	gravatarUpload,
+	jetpack,
 	me,
 	meta,
 	plans,
