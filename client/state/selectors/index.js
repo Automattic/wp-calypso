@@ -88,6 +88,7 @@ export getPostSharePublishedActions from './get-post-share-published-actions';
 export getPostShareScheduledActions from './get-post-share-scheduled-actions';
 export getPrimaryDomainBySiteId from './get-primary-domain-by-site-id';
 export getPrimarySiteId from './get-primary-site-id';
+export getPrivacyPolicyByEntity from './get-privacy-policy-by-entity';
 export getPublicizeConnection from './get-publicize-connection';
 export getPublicSites from './get-public-sites';
 export getRawOffsets from './get-raw-offsets';
