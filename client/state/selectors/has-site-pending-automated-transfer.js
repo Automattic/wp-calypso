@@ -5,12 +5,11 @@
  */
 
 import { get } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal Dependencies
  */
-import { isSiteAutomatedTransfer, isSiteSignupStore, getSiteOptions } from 'state/selectors';
+import { isSiteAutomatedTransfer, getSiteOptions } from 'state/selectors';
 
 /**
  * Indicates whether there might be an Automated Transfer process running on the backend for
@@ -26,24 +25,16 @@ import { isSiteAutomatedTransfer, isSiteSignupStore, getSiteOptions } from 'stat
  * @returns {Boolean}        Whether there might be a transfer process happening on the backend.
  */
 export default ( state, siteId ) => {
+	const siteOptions = getSiteOptions( state, siteId );
+
+	if ( ! siteOptions ) {
+		return null;
+	}
+
 	// If the site is an Atomic one, there is no Automated Transfer process happening on the backend.
 	if ( isSiteAutomatedTransfer( state, siteId ) ) {
 		return false;
 	}
 
-	const siteOptions = getSiteOptions( state, siteId );
-	const siteCreationDate = moment( get( siteOptions, 'created_at', null ) );
-
-	if ( ! siteCreationDate ) {
-		return false;
-	}
-
-	// Site is considered new if it was created less or equal than 10 minutes ago.
-	const isSiteNewlyCreated = moment().diff( siteCreationDate, 'minutes' ) <= 10;
-
-	if ( isSiteSignupStore( state, siteId ) && isSiteNewlyCreated ) {
-		return true;
-	}
-
-	return false;
+	return get( siteOptions, 'has_pending_automated_transfer', false );
 };

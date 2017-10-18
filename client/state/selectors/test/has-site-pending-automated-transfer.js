@@ -4,17 +4,23 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import { hasSitePendingAutomatedTransfer } from '../';
 
-const aMinuteAgo = moment().subtract( 1, 'minute' );
-const elevenMinutesAgo = moment().subtract( 11, 'minute' );
-
 describe( 'hasSitePendingAutomatedTransfer()', () => {
+	test( 'should return null if the specified site was not found in the state', () => {
+		const state = {
+			sites: {
+				items: {},
+			},
+		};
+
+		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.null;
+	} );
+
 	test( 'should return false if site is an Atomic one', () => {
 		const state = {
 			sites: {
@@ -22,8 +28,7 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 					12345: {
 						options: {
 							is_automated_transfer: true,
-							signup_is_store: true,
-							created_at: aMinuteAgo,
+							has_pending_automated_transfer: true,
 						},
 					},
 				},
@@ -33,14 +38,13 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
 	} );
 
-	test( 'should return true if site is a "store" one and is younger than 10 minutes', () => {
+	test( 'should return true if site has the has_pending_automated_transfer option set to true', () => {
 		const state = {
 			sites: {
 				items: {
 					12345: {
 						options: {
-							signup_is_store: true,
-							created_at: aMinuteAgo,
+							has_pending_automated_transfer: true,
 						},
 					},
 				},
@@ -50,20 +54,27 @@ describe( 'hasSitePendingAutomatedTransfer()', () => {
 		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.true;
 	} );
 
-	test( 'should return false if site is a "store" one and is older than 10 minutes', () => {
-		const state = {
-			sites: {
-				items: {
-					12345: {
-						options: {
-							signup_is_store: true,
-							created_at: elevenMinutesAgo,
+	test(
+		'should return false if site has the has_pending_automated_transfer set to false' +
+			' or the site is missing the option key',
+		() => {
+			const state = {
+				sites: {
+					items: {
+						12345: {
+							options: {
+								has_pending_automated_transfer: false,
+							},
+						},
+						12346: {
+							options: {},
 						},
 					},
 				},
-			},
-		};
+			};
 
-		expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
-	} );
+			expect( hasSitePendingAutomatedTransfer( state, 12345 ) ).to.be.false;
+			expect( hasSitePendingAutomatedTransfer( state, 12346 ) ).to.be.false;
+		}
+	);
 } );
