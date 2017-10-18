@@ -1075,16 +1075,14 @@
       "dev": true
     },
     "color-convert": {
-      "version": "1.9.0",
-      "dev": true
+      "version": "1.9.0"
     },
     "color-diff": {
       "version": "0.1.7",
       "dev": true
     },
     "color-name": {
-      "version": "1.1.3",
-      "dev": true
+      "version": "1.1.3"
     },
     "colorguard": {
       "version": "1.2.0",
@@ -1263,7 +1261,7 @@
       "version": "1.1.6"
     },
     "create-react-class": {
-      "version": "15.6.0"
+      "version": "15.6.2"
     },
     "creditcards": {
       "version": "2.1.2"
@@ -1724,7 +1722,7 @@
       "version": "4.0.2"
     },
     "es6-iterator": {
-      "version": "2.0.1"
+      "version": "2.0.3"
     },
     "es6-map": {
       "version": "0.1.5"
@@ -2905,7 +2903,7 @@
       "dev": true
     },
     "handlebars": {
-      "version": "4.0.10",
+      "version": "4.0.11",
       "dev": true,
       "dependencies": {
         "async": {
@@ -5697,17 +5695,17 @@
       }
     },
     "react": {
-      "version": "15.4.0"
+      "version": "15.6.2"
     },
     "react-addons-create-fragment": {
-      "version": "15.4.0"
+      "version": "15.6.2"
     },
     "react-addons-test-utils": {
-      "version": "15.4.0",
+      "version": "15.6.2",
       "dev": true
     },
     "react-click-outside": {
-      "version": "2.1.0"
+      "version": "2.3.1"
     },
     "react-codemod": {
       "version": "4.0.0",
@@ -5935,7 +5933,10 @@
       }
     },
     "react-dom": {
-      "version": "15.4.0"
+      "version": "15.6.2"
+    },
+    "react-dom-factories": {
+      "version": "1.0.2"
     },
     "react-element-to-jsx-string": {
       "version": "3.2.0",
@@ -5953,7 +5954,7 @@
       }
     },
     "react-modal": {
-      "version": "1.6.5",
+      "version": "1.9.7",
       "dependencies": {
         "lodash.assign": {
           "version": "4.2.0"
@@ -5964,7 +5965,12 @@
       "version": "1.0.2"
     },
     "react-redux": {
-      "version": "5.0.3"
+      "version": "5.0.6",
+      "dependencies": {
+        "hoist-non-react-statics": {
+          "version": "2.3.1"
+        }
+      }
     },
     "react-test-env": {
       "version": "0.2.0",
@@ -5995,6 +6001,10 @@
           "dev": true
         }
       }
+    },
+    "react-test-renderer": {
+      "version": "15.6.2",
+      "dev": true
     },
     "react-transition-group": {
       "version": "1.2.1",

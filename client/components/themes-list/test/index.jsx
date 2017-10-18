@@ -9,7 +9,7 @@
 import { assert } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
@@ -55,10 +55,10 @@ describe( 'ThemesList', () => {
 
 	describe( 'rendering', () => {
 		beforeEach( () => {
-			const shallowRenderer = TestUtils.createRenderer();
+			const renderer = new ShallowRenderer();
 
-			shallowRenderer.render( themesList );
-			themesListElement = shallowRenderer.getRenderOutput();
+			renderer.render( themesList );
+			themesListElement = renderer.getRenderOutput();
 		} );
 
 		test( 'should render a div with a className of "themes-list"', () => {
@@ -71,12 +71,12 @@ describe( 'ThemesList', () => {
 
 		describe( 'when no themes are found', () => {
 			beforeEach( () => {
-				const shallowRenderer = TestUtils.createRenderer();
+				const renderer = new ShallowRenderer();
 				props.themes = [];
 				themesList = React.createElement( ThemesList, props );
 
-				shallowRenderer.render( themesList );
-				themesListElement = shallowRenderer.getRenderOutput();
+				renderer.render( themesList );
+				themesListElement = renderer.getRenderOutput();
 			} );
 
 			test( 'displays the EmptyContent component', () => {
