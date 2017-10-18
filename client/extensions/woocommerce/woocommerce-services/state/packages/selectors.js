@@ -3,8 +3,8 @@
  *
  * @format
  */
-
 import { forEach, get, includes, orderBy, reject } from 'lodash';
+import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -66,6 +66,104 @@ export const getAllSelectedPackages = createSelector(
 		} ) );
 
 		return orderBy( packageList.concat( customPackages ), 'name' );
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.packages ) {
+			return [];
+		}
+
+		const serviceIds = getPredefinedPackageServices( form );
+		return [
+			...( form.packages.custom || [] ),
+			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+		];
+	}
+);
+
+/**
+ * Returns definitions of packages that can be used during the label purchase,
+ * including all flat rate boxes. Results are grouped
+ * @param {Object} state - state tree
+ * @param {Number} siteId - current site id
+ * @returns {Object} packages grouped by services
+ */
+export const getPackageGroupsForLabelPurchase = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
+			return null;
+		}
+
+		const result = {
+			custom: { title: translate( 'Custom Packages' ), definitions: form.packages.custom },
+		};
+
+		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
+			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
+
+			forEach( serviceGroups, ( group, groupId ) => {
+				const definitions = group.definitions;
+				const resultGroup = { title: group.title, definitions: [] };
+
+				forEach( definitions, pckg => {
+					if ( ! pckg.is_flat_rate && ! includes( serviceSelectedIds, pckg.id ) ) {
+						return;
+					}
+
+					resultGroup.definitions.push( pckg );
+				} );
+
+				if ( resultGroup.definitions.length ) {
+					result[ groupId ] = resultGroup;
+				}
+			} );
+		} );
+
+		return result;
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.packages ) {
+			return [];
+		}
+
+		const serviceIds = getPredefinedPackageServices( form );
+		return [
+			...( form.packages.custom || [] ),
+			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+		];
+	}
+);
+
+/**
+ * Returns all available package definitions, keyed by their ID
+ * @param {Object} state - state tree
+ * @param {Number} siteId - current site id
+ * @returns {Object} packages keyed by id
+ */
+export const getAllPackageDefinitions = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
+			return null;
+		}
+
+		const result = {};
+		forEach( form.packages.custom, pckg => {
+			result[ pckg.name ] = pckg;
+		} );
+
+		forEach( form.predefinedSchema, serviceGroups => {
+			forEach( serviceGroups, group => {
+				const definitions = group.definitions;
+				forEach( definitions, pckg => {
+					result[ pckg.id ] = pckg;
+				} );
+			} );
+		} );
+
+		return result;
 	},
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const form = getPackagesForm( state, siteId );

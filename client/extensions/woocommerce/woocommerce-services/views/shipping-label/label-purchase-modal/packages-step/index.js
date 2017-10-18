@@ -137,7 +137,6 @@ PackagesStep.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 	selected: PropTypes.object.isRequired,
-	all: PropTypes.object.isRequired,
 	weightUnit: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
 	expanded: PropTypes.bool,
@@ -152,7 +151,6 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		weightUnit: storeOptions.weight_unit,
 		expanded: shippingLabel.form.packages.expanded,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
 	};
 };
 
