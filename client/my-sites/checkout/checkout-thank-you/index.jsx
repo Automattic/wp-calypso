@@ -132,7 +132,8 @@ const CheckoutThankYou = React.createClass( {
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
 			nextProps.receipt.hasLoadedFromServer &&
-			this.hasPlanOrDomainProduct( nextProps )
+			this.hasPlanOrDomainProduct( nextProps ) &&
+			this.props.selectedSite
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite );
 		}
