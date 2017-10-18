@@ -43,6 +43,13 @@ class PrivacyPolicyBanner extends Component {
 		this.props.acceptPrivacyPolicy( privacyPolicyId, privacyPolicyState );
 	};
 
+	openPrivacyPolicyDialog = () => this.setState( { showDialog: true } );
+
+	closePrivacyPolicyDialog = () => {
+		this.setState( { showDialog: false } );
+		this.acceptUpdates();
+	};
+
 	getDescription( date ) {
 		const { moment, translate } = this.props;
 
