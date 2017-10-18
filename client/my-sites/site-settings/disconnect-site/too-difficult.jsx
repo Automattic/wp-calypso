@@ -17,8 +17,8 @@ import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass } from 'lib/plans/constants';
 
-function getFeatures( translate ) {
-	return {
+function getFeatures( planClass, translate ) {
+	const features = {
 		backups: translate( 'Backups' ),
 		security: translate( 'Security Scanning' ),
 		antispam: translate( 'Antispam' ),
@@ -27,6 +27,21 @@ function getFeatures( translate ) {
 		subscriptions: translate( 'Subscriptions' ),
 		other: translate( 'Other' ),
 	};
+	return get(
+		{
+			'is-personal-plan': pick( features, [
+				'backups',
+				'antispam',
+				'stats',
+				'publicize',
+				'subscriptions',
+				'other',
+			] ),
+			'is-premium-plan': features,
+			'is-business-plan': features,
+		},
+		planClass
+	);
 }
 
 const TooDifficult = ( { confirmHref, features, siteId, translate } ) => (
@@ -46,23 +61,9 @@ export default localize(
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 		const planClass = getPlanClass( planSlug );
-		const allFeatures = getFeatures( translate );
-
-		const features = {
-			'is-personal-plan': pick( allFeatures, [
-				'backups',
-				'antispam',
-				'stats',
-				'publicize',
-				'subscriptions',
-				'other',
-			] ),
-			'is-premium-plan': allFeatures,
-			'is-business-plan': allFeatures,
-		};
 
 		return {
-			features: get( features, planClass ),
+			features: getFeatures( planClass, translate ),
 			siteId,
 		};
 	} )( TooDifficult )
