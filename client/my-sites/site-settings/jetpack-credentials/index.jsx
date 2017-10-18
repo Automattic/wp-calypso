@@ -326,14 +326,6 @@ class Backups extends Component {
 		);
 	}
 
-	renderFormInCard() {
-		return (
-			<CompactCard>
-				{ this.renderForm() }
-			</CompactCard>
-		);
-	}
-
 	renderForm() {
 		const {
 			translate
@@ -553,21 +545,6 @@ class Backups extends Component {
 		return (
 			<CompactCard>
 				{ this.renderForm() }
-			</CompactCard>
-		);
-	}
-
-	renderSetupTest() {
-		const {
-			isPressable,
-			translate
-		} = this.props;
-
-		return (
-			<CompactCard>
-				<div>{ isPressable ? translate( 'Your credentials have been automatically provisioned from your host.' ) : null }</div>
-				<div>{ translate( 'We are currently testing your credentials. Please wait.' ) }</div>
-				<Button primary onClick={ this.goToNextSetupStep }>SKIP (dev only)</Button>
 			</CompactCard>
 		);
 	}
