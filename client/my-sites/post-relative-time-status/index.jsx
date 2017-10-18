@@ -138,4 +138,4 @@ const PostRelativeTime = React.createClass( {
 	},
 } );
 
-export default localize(PostRelativeTime);
+export default localize( PostRelativeTime );

@@ -215,4 +215,4 @@ const NextSteps = React.createClass( {
 	},
 } );
 
-export default localize(NextSteps);
+export default localize( NextSteps );

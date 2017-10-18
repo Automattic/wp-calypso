@@ -142,9 +142,7 @@ const Security2faBackupCodes = React.createClass( {
 
 				{ this.renderStatus() }
 
-				{ this.state.showPrompt && (
-					<Security2faBackupCodesPrompt onSuccess={ this.onVerified } />
-				) }
+				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
 			</div>
 		);
 	},
@@ -156,10 +154,7 @@ const Security2faBackupCodes = React.createClass( {
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
-						onClick={ this.recordClickEvent(
-							'Generate New Backup Codes Button',
-							this.onGenerate
-						) }
+						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
 					>
 						{ this.props.translate( 'Generate New Backup Codes' ) }
 					</Button>
@@ -176,4 +171,4 @@ const Security2faBackupCodes = React.createClass( {
 	},
 } );
 
-export default localize(Security2faBackupCodes);
+export default localize( Security2faBackupCodes );

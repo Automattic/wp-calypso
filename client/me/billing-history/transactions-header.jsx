@@ -277,4 +277,4 @@ const TransactionsHeader = React.createClass( {
 	},
 } );
 
-export default localize(TransactionsHeader);
+export default localize( TransactionsHeader );

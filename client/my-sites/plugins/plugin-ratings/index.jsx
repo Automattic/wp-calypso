@@ -137,4 +137,4 @@ const PluginRatings = React.createClass( {
 	},
 } );
 
-export default localize(PluginRatings);
+export default localize( PluginRatings );

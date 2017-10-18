@@ -93,4 +93,4 @@ const StatsActionFollow = React.createClass( {
 	},
 } );
 
-export default localize(StatsActionFollow);
+export default localize( StatsActionFollow );

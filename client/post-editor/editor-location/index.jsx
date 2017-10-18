@@ -159,4 +159,4 @@ const EditorLocation = React.createClass( {
 	},
 } );
 
-export default localize(EditorLocation);
+export default localize( EditorLocation );

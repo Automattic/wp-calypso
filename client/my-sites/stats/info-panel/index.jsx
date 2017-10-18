@@ -305,4 +305,4 @@ const StatsInfoPanel = React.createClass( {
 	},
 } );
 
-export default localize(StatsInfoPanel);
+export default localize( StatsInfoPanel );

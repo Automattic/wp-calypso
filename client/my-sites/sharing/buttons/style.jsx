@@ -90,4 +90,4 @@ const SharingButtonsStyle = React.createClass( {
 	},
 } );
 
-export default localize(SharingButtonsStyle);
+export default localize( SharingButtonsStyle );

@@ -21,4 +21,4 @@ const BackToLibrary = React.createClass( {
 	},
 } );
 
-export default localize(BackToLibrary);
+export default localize( BackToLibrary );

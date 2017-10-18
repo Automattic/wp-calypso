@@ -95,4 +95,4 @@ const SiteSettingsImporterError = React.createClass( {
 	},
 } );
 
-export default localize(SiteSettingsImporterError);
+export default localize( SiteSettingsImporterError );

@@ -121,4 +121,4 @@ const EditorMediaModalDetailFileInfo = React.createClass( {
 	},
 } );
 
-export default localize(EditorMediaModalDetailFileInfo);
+export default localize( EditorMediaModalDetailFileInfo );

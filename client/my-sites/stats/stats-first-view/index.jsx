@@ -139,4 +139,4 @@ const StatsFirstView = React.createClass( {
 	},
 } );
 
-export default localize(StatsFirstView);
+export default localize( StatsFirstView );

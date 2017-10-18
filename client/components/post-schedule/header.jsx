@@ -91,4 +91,4 @@ const PostScheduleHeader = React.createClass( {
 	},
 } );
 
-export default localize(PostScheduleHeader);
+export default localize( PostScheduleHeader );

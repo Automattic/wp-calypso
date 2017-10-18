@@ -210,4 +210,4 @@ const PluginSections = React.createClass( {
 	},
 } );
 
-export default localize(PluginSections);
+export default localize( PluginSections );

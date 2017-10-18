@@ -52,4 +52,4 @@ const SecurityAccountRecoveryManageContactButtons = React.createClass( {
 	},
 } );
 
-export default localize(SecurityAccountRecoveryManageContactButtons);
+export default localize( SecurityAccountRecoveryManageContactButtons );

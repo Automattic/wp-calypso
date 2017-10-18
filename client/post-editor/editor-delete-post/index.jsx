@@ -105,4 +105,4 @@ const EditorDeletePost = React.createClass( {
 	},
 } );
 
-export default localize(EditorDeletePost);
+export default localize( EditorDeletePost );

@@ -79,4 +79,4 @@ const PlanCompareCard = React.createClass( {
 	},
 } );
 
-export default localize(PlanCompareCard);
+export default localize( PlanCompareCard );

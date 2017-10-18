@@ -32,4 +32,4 @@ const TermTreeSelectorSearch = React.createClass( {
 	},
 } );
 
-export default localize(TermTreeSelectorSearch);
+export default localize( TermTreeSelectorSearch );

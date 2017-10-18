@@ -50,4 +50,4 @@ const ContactFormDialogNavigation = React.createClass( {
 	},
 } );
 
-export default localize(ContactFormDialogNavigation);
+export default localize( ContactFormDialogNavigation );

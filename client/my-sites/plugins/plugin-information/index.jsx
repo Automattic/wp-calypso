@@ -51,8 +51,7 @@ const PluginInformation = React.createClass( {
 
 		// Does the plugin_url point to .org page
 		if (
-			this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !==
-			-1
+			this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !== -1
 		) {
 			return;
 		}
@@ -315,4 +314,4 @@ const PluginInformation = React.createClass( {
 	},
 } );
 
-export default localize(PluginInformation);
+export default localize( PluginInformation );

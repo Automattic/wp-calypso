@@ -177,4 +177,4 @@ const StatusLabel = React.createClass( {
 	},
 } );
 
-export default localize(StatusLabel);
+export default localize( StatusLabel );

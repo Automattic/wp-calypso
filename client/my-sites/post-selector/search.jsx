@@ -32,4 +32,4 @@ const PostSelectorSearch = React.createClass( {
 	},
 } );
 
-export default localize(PostSelectorSearch);
+export default localize( PostSelectorSearch );

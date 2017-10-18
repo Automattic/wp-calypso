@@ -295,4 +295,4 @@ class Site extends React.Component {
 	}
 }
 
-export default localize(Site);
+export default localize( Site );

@@ -79,4 +79,4 @@ const StatsOverviewPlaceholder = React.createClass( {
 	},
 } );
 
-export default localize(StatsOverviewPlaceholder);
+export default localize( StatsOverviewPlaceholder );

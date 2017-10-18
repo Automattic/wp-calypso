@@ -65,4 +65,4 @@ const ImporterWordPress = React.createClass( {
 	},
 } );
 
-export default localize(ImporterWordPress);
+export default localize( ImporterWordPress );

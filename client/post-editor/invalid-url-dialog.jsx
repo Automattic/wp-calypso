@@ -90,4 +90,4 @@ const EditorTrashedDialog = React.createClass( {
 	},
 } );
 
-export default localize(EditorTrashedDialog);
+export default localize( EditorTrashedDialog );

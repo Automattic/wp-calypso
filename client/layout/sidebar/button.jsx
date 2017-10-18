@@ -54,4 +54,4 @@ const SidebarButton = React.createClass( {
 	},
 } );
 
-export default localize(SidebarButton);
+export default localize( SidebarButton );

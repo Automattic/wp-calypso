@@ -47,4 +47,4 @@ const NotificationSettingsFormActions = React.createClass( {
 	},
 } );
 
-export default localize(NotificationSettingsFormActions);
+export default localize( NotificationSettingsFormActions );

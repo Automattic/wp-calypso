@@ -117,4 +117,4 @@ const NuxWelcomeMessage = React.createClass( {
 	},
 } );
 
-export default localize(NuxWelcomeMessage);
+export default localize( NuxWelcomeMessage );

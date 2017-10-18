@@ -104,4 +104,4 @@ const CountrySelect = React.createClass( {
 	},
 } );
 
-export default localize(CountrySelect);
+export default localize( CountrySelect );

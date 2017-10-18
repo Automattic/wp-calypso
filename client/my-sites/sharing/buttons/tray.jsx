@@ -103,9 +103,7 @@ const SharingButtonsTray = React.createClass( {
 			return (
 				<span
 					key={ context }
-					className={
-						'sharing-buttons-preview__panel-instruction-text is-' + context + '-context'
-					}
+					className={ 'sharing-buttons-preview__panel-instruction-text is-' + context + '-context' }
 				>
 					{ label }
 				</span>
@@ -254,4 +252,4 @@ const SharingButtonsTray = React.createClass( {
 	},
 } );
 
-export default localize(SharingButtonsTray);
+export default localize( SharingButtonsTray );

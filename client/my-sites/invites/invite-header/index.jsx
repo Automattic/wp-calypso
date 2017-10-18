@@ -121,4 +121,4 @@ const InviteHeader = React.createClass( {
 	},
 } );
 
-export default localize(InviteHeader);
+export default localize( InviteHeader );

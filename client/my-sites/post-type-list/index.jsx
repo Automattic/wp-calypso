@@ -56,9 +56,7 @@ class PostTypeList extends Component {
 		this.scrollListener = throttle( this.maybeLoadNextPage, 100 );
 		window.addEventListener( 'scroll', this.scrollListener );
 
-		const maxRequestedPage = this.estimatePageCountFromPosts(
-			this.props.posts
-		);
+		const maxRequestedPage = this.estimatePageCountFromPosts( this.props.posts );
 		this.state = {
 			maxRequestedPage,
 		};
@@ -69,9 +67,7 @@ class PostTypeList extends Component {
 			! isEqual( this.props.query, nextProps.query ) ||
 			! isEqual( this.props.siteId, nextProps.siteId )
 		) {
-			const maxRequestedPage = this.estimatePageCountFromPosts(
-				nextProps.posts
-			);
+			const maxRequestedPage = this.estimatePageCountFromPosts( nextProps.posts );
 			this.setState( {
 				maxRequestedPage,
 			} );
@@ -121,9 +117,7 @@ class PostTypeList extends Component {
 			return null;
 		}
 		if ( scrollContainer === document.body ) {
-			return 'scrollY' in window
-				? window.scrollY
-				: document.documentElement.scrollTop;
+			return 'scrollY' in window ? window.scrollY : document.documentElement.scrollTop;
 		}
 		return scrollContainer.scrollTop;
 	}
@@ -177,8 +171,7 @@ class PostTypeList extends Component {
 	render() {
 		const { query, siteId, posts, isRequestingPosts, lastPage } = this.props;
 		const { maxRequestedPage } = this.state;
-		const isLoadedAndEmpty =
-			query && posts && ! posts.length && ! isRequestingPosts;
+		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
@@ -187,21 +180,13 @@ class PostTypeList extends Component {
 			<div className={ classes }>
 				{ query &&
 					range( 1, maxRequestedPage + 1 ).map( page => (
-						<QueryPosts
-							key={ `query-${ page }` }
-							siteId={ siteId }
-							query={ { ...query, page } }
-						/>
+						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
 				{ posts && posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
-					<PostTypeListEmptyContent
-						type={ query.type }
-						status={ query.status }
-					/>
+					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ ( maxRequestedPage < lastPage || isRequestingPosts ) &&
-					this.renderPlaceholder() }
+				{ ( maxRequestedPage < lastPage || isRequestingPosts ) && this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -209,20 +194,12 @@ class PostTypeList extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const lastPage = getSitePostsLastPageForQuery(
-		state,
-		siteId,
-		ownProps.query
-	);
+	const lastPage = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
 
 	return {
 		siteId,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage(
-			state,
-			siteId,
-			ownProps.query
-		),
+		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		lastPage,
 	};
 } )( PostTypeList );

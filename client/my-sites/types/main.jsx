@@ -28,10 +28,7 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			<PageViewTracker
-				path={ siteId ? '/types/:site' : '/types' }
-				title="Custom Post Type"
-			/>
+			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			{ false !== userCanEdit &&
 			false !== postTypeSupported && [
@@ -44,9 +41,7 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 					scrollContainer={ document.body }
 				/>,
 			] }
-			{ false === postTypeSupported && (
-				<PostTypeUnsupported type={ query.type } />
-			) }
+			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
 			{ false === userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
@@ -68,11 +63,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		postType,
-		postTypeSupported: isPostTypeSupported(
-			state,
-			siteId,
-			ownProps.query.type
-		),
+		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
 		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
 } )( Types );

@@ -43,4 +43,4 @@ const CustomizerLoadingPanel = React.createClass( {
 	},
 } );
 
-export default localize(CustomizerLoadingPanel);
+export default localize( CustomizerLoadingPanel );

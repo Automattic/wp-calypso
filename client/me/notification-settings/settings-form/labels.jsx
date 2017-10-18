@@ -35,4 +35,4 @@ const NotificationSettingsFormLabels = React.createClass( {
 	},
 } );
 
-export default localize(NotificationSettingsFormLabels);
+export default localize( NotificationSettingsFormLabels );

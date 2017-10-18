@@ -57,4 +57,4 @@ const NotificationSettingsNavigation = React.createClass( {
 	},
 } );
 
-export default localize(NotificationSettingsNavigation);
+export default localize( NotificationSettingsNavigation );

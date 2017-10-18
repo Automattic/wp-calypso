@@ -79,4 +79,4 @@ const PeopleListItem = React.createClass( {
 	},
 } );
 
-export default localize(PeopleListItem);
+export default localize( PeopleListItem );

@@ -83,4 +83,4 @@ const MediaLibraryListNoResults = React.createClass( {
 	},
 } );
 
-export default localize(MediaLibraryListNoResults);
+export default localize( MediaLibraryListNoResults );

@@ -57,4 +57,4 @@ const Security2faProgress = React.createClass( {
 	},
 } );
 
-export default localize(Security2faProgress);
+export default localize( Security2faProgress );

@@ -149,4 +149,4 @@ const ContactFormDialogField = React.createClass( {
 	},
 } );
 
-export default localize(ContactFormDialogField);
+export default localize( ContactFormDialogField );

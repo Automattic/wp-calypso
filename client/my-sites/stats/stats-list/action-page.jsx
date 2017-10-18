@@ -59,4 +59,4 @@ const StatsActionPage = React.createClass( {
 	},
 } );
 
-export default localize(StatsActionPage);
+export default localize( StatsActionPage );

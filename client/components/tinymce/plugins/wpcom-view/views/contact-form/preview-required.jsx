@@ -20,4 +20,4 @@ const ContactFormViewPreviewRequired = React.createClass( {
 	},
 } );
 
-export default localize(ContactFormViewPreviewRequired);
+export default localize( ContactFormViewPreviewRequired );

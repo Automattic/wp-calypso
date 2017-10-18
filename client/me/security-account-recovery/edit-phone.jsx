@@ -135,4 +135,4 @@ const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
 	},
 } );
 
-export default localize(SecurityAccountRecoveryRecoveryPhoneEdit);
+export default localize( SecurityAccountRecoveryRecoveryPhoneEdit );

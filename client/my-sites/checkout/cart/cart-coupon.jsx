@@ -118,4 +118,4 @@ const CartCoupon = React.createClass( {
 	},
 } );
 
-export default localize(CartCoupon);
+export default localize( CartCoupon );

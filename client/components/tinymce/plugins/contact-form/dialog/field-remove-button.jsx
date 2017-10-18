@@ -57,4 +57,4 @@ const ContactFormDialogFieldRemoveButton = React.createClass( {
 	},
 } );
 
-export default localize(ContactFormDialogFieldRemoveButton);
+export default localize( ContactFormDialogFieldRemoveButton );

@@ -175,4 +175,4 @@ const TeamList = React.createClass( {
 	},
 } );
 
-export default localize(TeamList);
+export default localize( TeamList );

@@ -73,4 +73,4 @@ const EditorMediaModalGalleryCaption = React.createClass( {
 	},
 } );
 
-export default localize(EditorMediaModalGalleryCaption);
+export default localize( EditorMediaModalGalleryCaption );

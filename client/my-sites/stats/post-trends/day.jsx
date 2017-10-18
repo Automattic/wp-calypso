@@ -91,4 +91,4 @@ const PostTrendsDay = React.createClass( {
 	},
 } );
 
-export default localize(PostTrendsDay);
+export default localize( PostTrendsDay );

@@ -30,9 +30,7 @@ const PostPlaceholder = React.createClass( {
 					</header>
 					<div className="post__content">
 						<h4 className="post__title post__title-link">
-							<span className="placeholder-text">
-								{ this.props.translate( 'Loading Posts…' ) }
-							</span>
+							<span className="placeholder-text">{ this.props.translate( 'Loading Posts…' ) }</span>
 						</h4>
 						<div className="post__excerpt">
 							<p>
@@ -71,4 +69,4 @@ const PostPlaceholder = React.createClass( {
 	},
 } );
 
-export default localize(PostPlaceholder);
+export default localize( PostPlaceholder );

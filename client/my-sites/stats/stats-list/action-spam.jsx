@@ -87,4 +87,4 @@ const StatsActionSpam = React.createClass( {
 	},
 } );
 
-export default localize(StatsActionSpam);
+export default localize( StatsActionSpam );

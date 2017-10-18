@@ -137,4 +137,4 @@ const KeyboardShortcutsMenu = React.createClass( {
 	},
 } );
 
-export default localize(KeyboardShortcutsMenu);
+export default localize( KeyboardShortcutsMenu );

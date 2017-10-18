@@ -72,4 +72,4 @@ const HostSelect = React.createClass( {
 	},
 } );
 
-export default localize(HostSelect);
+export default localize( HostSelect );

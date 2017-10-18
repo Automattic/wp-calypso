@@ -120,4 +120,4 @@ const Security2faSetupBackupCodes = React.createClass( {
 	},
 } );
 
-export default localize(Security2faSetupBackupCodes);
+export default localize( Security2faSetupBackupCodes );

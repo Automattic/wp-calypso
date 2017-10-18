@@ -106,7 +106,7 @@ const CommunityTranslatorInvitation = React.createClass( {
 	},
 } );
 
-export default localize(CommunityTranslatorInvitation);
+export default localize( CommunityTranslatorInvitation );
 
 function recordEvent( eventAction ) {
 	googleAnalytics.recordEvent( 'Translator Invitation', eventAction );

@@ -116,4 +116,4 @@ const TranslatorLauncher = React.createClass( {
 	},
 } );
 
-export default localize(TranslatorLauncher);
+export default localize( TranslatorLauncher );

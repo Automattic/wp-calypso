@@ -49,4 +49,4 @@ const Security2faStatus = React.createClass( {
 	},
 } );
 
-export default localize(Security2faStatus);
+export default localize( Security2faStatus );

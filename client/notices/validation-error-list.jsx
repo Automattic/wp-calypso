@@ -38,4 +38,4 @@ const ValidationErrorList = React.createClass( {
 	},
 } );
 
-export default localize(ValidationErrorList);
+export default localize( ValidationErrorList );

@@ -244,4 +244,4 @@ const ProfileLinks = React.createClass( {
 	},
 } );
 
-export default localize(ProfileLinks);
+export default localize( ProfileLinks );

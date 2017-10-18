@@ -333,9 +333,7 @@ const CharMap = React.createClass( {
 				additionalClassNames="wpcom-charmap__dialog"
 				onClose={ this.props.onClose }
 			>
-				<h2 className="wpcom-charmap__heading">
-					{ this.props.translate( 'Special characters' ) }
-				</h2>
+				<h2 className="wpcom-charmap__heading">{ this.props.translate( 'Special characters' ) }</h2>
 				<div className="wpcom-charmap__table">
 					{ this.defaultCharMap().map( this.renderCell, this ) }
 				</div>
@@ -344,4 +342,4 @@ const CharMap = React.createClass( {
 	},
 } );
 
-export default localize(CharMap);
+export default localize( CharMap );

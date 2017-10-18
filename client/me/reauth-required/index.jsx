@@ -259,4 +259,4 @@ const ReauthRequired = React.createClass( {
 	},
 } );
 
-export default localize(ReauthRequired);
+export default localize( ReauthRequired );

@@ -57,4 +57,4 @@ const Security2faInitialSetup = React.createClass( {
 	},
 } );
 
-export default localize(Security2faInitialSetup);
+export default localize( Security2faInitialSetup );

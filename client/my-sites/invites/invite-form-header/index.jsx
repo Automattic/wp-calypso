@@ -264,11 +264,7 @@ const InviteFormHeader = React.createClass( {
 		return (
 			<div className="invite-form-header">
 				<h3 className="invite-form-header__title">
-					{ this.props.user ? (
-						this.getLoggedInTitleForInvite()
-					) : (
-						this.getLoggedOutTitleForInvite()
-					) }
+					{ this.props.user ? this.getLoggedInTitleForInvite() : this.getLoggedOutTitleForInvite() }
 				</h3>
 				{ roleExplanation && (
 					<p className="invite-form-header__explanation">{ roleExplanation }</p>
@@ -278,4 +274,4 @@ const InviteFormHeader = React.createClass( {
 	},
 } );
 
-export default localize(InviteFormHeader);
+export default localize( InviteFormHeader );

@@ -232,4 +232,4 @@ const PaypalPaymentBox = React.createClass( {
 	},
 } );
 
-export default localize(PaypalPaymentBox);
+export default localize( PaypalPaymentBox );

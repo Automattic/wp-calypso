@@ -56,10 +56,7 @@ const AddProfileLinksButtons = React.createClass( {
 						{ this.props.translate( 'Add WordPress Site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
-						onClick={ this.recordClickEvent(
-							'Add Other Site Button',
-							this.props.onShowAddOther
-						) }
+						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
 					>
 						{ this.props.translate( 'Add URL' ) }
 					</PopoverMenuItem>
@@ -79,4 +76,4 @@ const AddProfileLinksButtons = React.createClass( {
 	},
 } );
 
-export default localize(AddProfileLinksButtons);
+export default localize( AddProfileLinksButtons );

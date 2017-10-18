@@ -193,9 +193,7 @@ const SharingButtonsPreview = React.createClass( {
 					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) }
 				/>
 
-				<h2 className="sharing-buttons-preview__heading">
-					{ this.props.translate( 'Preview' ) }
-				</h2>
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
 				<div className="sharing-buttons-preview__display">
 					<span className="sharing-buttons-preview__label">
 						{ decodeEntities( this.props.label ) }
@@ -229,4 +227,4 @@ const SharingButtonsPreview = React.createClass( {
 	},
 } );
 
-export default localize(SharingButtonsPreview);
+export default localize( SharingButtonsPreview );

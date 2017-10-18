@@ -138,4 +138,4 @@ const HelpSearch = React.createClass( {
 	},
 } );
 
-export default localize(HelpSearch);
+export default localize( HelpSearch );

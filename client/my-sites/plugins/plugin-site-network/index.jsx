@@ -168,11 +168,7 @@ const PluginSiteNetwork = React.createClass( {
 		}
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle
-					site={ site }
-					plugin={ site.plugin }
-					notices={ this.props.notices }
-				/>
+				<PluginActivateToggle site={ site } plugin={ site.plugin } notices={ this.props.notices } />
 			</div>
 		);
 	},
@@ -202,4 +198,4 @@ const PluginSiteNetwork = React.createClass( {
 	},
 } );
 
-export default localize(PluginSiteNetwork);
+export default localize( PluginSiteNetwork );

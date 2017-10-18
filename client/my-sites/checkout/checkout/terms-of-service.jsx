@@ -63,4 +63,4 @@ const TermsOfService = React.createClass( {
 	},
 } );
 
-export default localize(TermsOfService);
+export default localize( TermsOfService );

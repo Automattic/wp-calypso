@@ -308,4 +308,4 @@ const AuthorSelector = React.createClass( {
 	},
 } );
 
-export default localize(AuthorSelector);
+export default localize( AuthorSelector );

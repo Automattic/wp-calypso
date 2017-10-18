@@ -93,4 +93,4 @@ const StatsTabsTab = React.createClass( {
 	},
 } );
 
-export default localize(StatsTabsTab);
+export default localize( StatsTabsTab );

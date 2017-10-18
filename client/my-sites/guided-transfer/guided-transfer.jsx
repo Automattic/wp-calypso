@@ -114,4 +114,4 @@ const GuidedTransfer = React.createClass( {
 	},
 } );
 
-export default localize(GuidedTransfer);
+export default localize( GuidedTransfer );

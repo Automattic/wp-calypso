@@ -33,4 +33,4 @@ const StatsError = React.createClass( {
 	},
 } );
 
-export default localize(StatsError);
+export default localize( StatsError );

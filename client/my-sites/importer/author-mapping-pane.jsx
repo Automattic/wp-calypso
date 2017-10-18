@@ -168,4 +168,4 @@ const ImporterMappingPane = React.createClass( {
 	},
 } );
 
-export default localize(ImporterMappingPane);
+export default localize( ImporterMappingPane );

@@ -47,4 +47,4 @@ const PostSelectorNoResults = React.createClass( {
 	},
 } );
 
-export default localize(PostSelectorNoResults);
+export default localize( PostSelectorNoResults );

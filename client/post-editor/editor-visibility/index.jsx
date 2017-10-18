@@ -108,7 +108,10 @@ const EditorVisibility = React.createClass( {
 		if ( this.getVisibility() !== newVisibility ) {
 			recordStat( 'visibility-set-' + newVisibility );
 			recordEvent( 'Changed visibility', newVisibility );
-			tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
+			tracks.recordEvent( 'calypso_editor_visibility_set', {
+				context: this.props.context,
+				visibility: newVisibility,
+			} );
 		}
 	},
 

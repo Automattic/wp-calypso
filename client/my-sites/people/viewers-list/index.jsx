@@ -184,4 +184,4 @@ const ViewersList = React.createClass( {
 	},
 } );
 
-export default localize(ViewersList);
+export default localize( ViewersList );

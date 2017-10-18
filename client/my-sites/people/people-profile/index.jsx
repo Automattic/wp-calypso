@@ -194,4 +194,4 @@ const PeopleProfile = React.createClass( {
 	},
 } );
 
-export default localize(PeopleProfile);
+export default localize( PeopleProfile );

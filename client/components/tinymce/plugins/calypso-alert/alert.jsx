@@ -54,4 +54,4 @@ const Alert = React.createClass( {
 	},
 } );
 
-export default localize(Alert);
+export default localize( Alert );

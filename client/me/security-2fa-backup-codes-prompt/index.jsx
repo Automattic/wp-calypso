@@ -182,4 +182,4 @@ const Security2faBackupCodesPrompt = React.createClass( {
 	},
 } );
 
-export default localize(Security2faBackupCodesPrompt);
+export default localize( Security2faBackupCodesPrompt );

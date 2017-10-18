@@ -221,4 +221,4 @@ const ConnectedApplicationItem = React.createClass( {
 	},
 } );
 
-export default localize(ConnectedApplicationItem);
+export default localize( ConnectedApplicationItem );

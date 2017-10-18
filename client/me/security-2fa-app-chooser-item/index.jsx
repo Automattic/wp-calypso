@@ -132,4 +132,4 @@ const Security2faAppChooserItem = React.createClass( {
 	},
 } );
 
-export default localize(Security2faAppChooserItem);
+export default localize( Security2faAppChooserItem );

@@ -114,4 +114,4 @@ const PluginSiteUpdateIndicator = React.createClass( {
 	},
 } );
 
-export default localize(PluginSiteUpdateIndicator);
+export default localize( PluginSiteUpdateIndicator );

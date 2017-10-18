@@ -148,4 +148,4 @@ const StatsModuleHeader = React.createClass( {
 	},
 } );
 
-export default localize(StatsModuleHeader);
+export default localize( StatsModuleHeader );

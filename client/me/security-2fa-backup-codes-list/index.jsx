@@ -384,4 +384,4 @@ const Security2faBackupCodesList = React.createClass( {
 	},
 } );
 
-export default localize(Security2faBackupCodesList);
+export default localize( Security2faBackupCodesList );

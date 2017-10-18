@@ -33,4 +33,4 @@ const StoredCard = React.createClass( {
 	},
 } );
 
-export default localize(StoredCard);
+export default localize( StoredCard );

@@ -144,4 +144,4 @@ class FeedFeatured extends React.PureComponent {
 	}
 }
 
-export default localize(FeedFeatured);
+export default localize( FeedFeatured );

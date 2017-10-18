@@ -107,4 +107,4 @@ const MediaLibraryListPlanPromo = React.createClass( {
 	},
 } );
 
-export default localize(MediaLibraryListPlanPromo);
+export default localize( MediaLibraryListPlanPromo );

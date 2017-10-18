@@ -25,9 +25,7 @@ const SharingButtonsPreviewPlaceholder = React.createClass( {
 					} ) }
 				</ButtonsPreviewAction>
 
-				<h2 className="sharing-buttons-preview__heading">
-					{ this.props.translate( 'Preview' ) }
-				</h2>
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
 				<div className="sharing-buttons-preview__display">
 					<span className="sharing-buttons-preview__label" />
 					<div className="sharing-buttons-preview__buttons" />
@@ -63,4 +61,4 @@ const SharingButtonsPreviewPlaceholder = React.createClass( {
 	},
 } );
 
-export default localize(SharingButtonsPreviewPlaceholder);
+export default localize( SharingButtonsPreviewPlaceholder );

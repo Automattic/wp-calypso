@@ -102,4 +102,4 @@ const InputChrono = React.createClass( {
 	},
 } );
 
-export default localize(InputChrono);
+export default localize( InputChrono );

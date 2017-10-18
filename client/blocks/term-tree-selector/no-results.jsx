@@ -49,4 +49,4 @@ const TermTreeSelectorNoResults = React.createClass( {
 	},
 } );
 
-export default localize(TermTreeSelectorNoResults);
+export default localize( TermTreeSelectorNoResults );

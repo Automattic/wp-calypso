@@ -329,4 +329,4 @@ const StatsListItem = React.createClass( {
 	},
 } );
 
-export default localize(StatsListItem);
+export default localize( StatsListItem );

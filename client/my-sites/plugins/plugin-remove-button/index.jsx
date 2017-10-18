@@ -158,11 +158,9 @@ const PluginRemoveButton = React.createClass( {
 	},
 
 	renderButton() {
-		const inProgress = PluginsLog.isInProgressAction(
-			this.props.site.ID,
-			this.props.plugin.slug,
-			[ 'REMOVE_PLUGIN' ]
-		);
+		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
+			'REMOVE_PLUGIN',
+		] );
 		const getDisabledInfo = this.getDisabledInfo();
 		const label = getDisabledInfo
 			? this.props.translate( 'Removal Disabled', {
@@ -207,4 +205,4 @@ const PluginRemoveButton = React.createClass( {
 	},
 } );
 
-export default localize(PluginRemoveButton);
+export default localize( PluginRemoveButton );

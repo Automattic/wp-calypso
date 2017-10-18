@@ -32,8 +32,7 @@ const ImporterMedium = React.createClass( {
 		);
 
 		importerData.uploadDescription = this.props.translate(
-			'Upload a {{b}}Medium export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}.',
+			'Upload a {{b}}Medium export file{{/b}} to start ' + 'importing into {{b2}}%(title)s{{/b2}}.',
 			{
 				args: { title: this.props.site.title },
 				components: {
@@ -47,4 +46,4 @@ const ImporterMedium = React.createClass( {
 	},
 } );
 
-export default localize(ImporterMedium);
+export default localize( ImporterMedium );

@@ -154,4 +154,4 @@ const MediaLibraryHeader = React.createClass( {
 	},
 } );
 
-export default localize(MediaLibraryHeader);
+export default localize( MediaLibraryHeader );
