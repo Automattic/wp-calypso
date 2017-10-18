@@ -211,24 +211,4 @@ describe( 'selectors', () => {
 			expect( hasMailChimpConnection( mailChimpNoSync, 123 ) ).to.be.false;
 		} );
 	} );
-
-	// describe( '#getWeightUnitSetting', () => {
-	// 	test( 'should get the weight unit setting from the state.', () => {
-	// 		expect( getWeightUnitSetting( loadedState, 123 ) ).to.eql( weightUnitSetting );
-	// 	} );
-	//
-	// 	test( 'should get the siteId from the UI tree if not provided.', () => {
-	// 		expect( getWeightUnitSetting( loadedStateWithUi ) ).to.eql( weightUnitSetting );
-	// 	} );
-	// } );
-	//
-	// describe( '#getDimensionsUnitSetting', () => {
-	// 	test( 'should get the dimensions unit setting from the state.', () => {
-	// 		expect( getDimensionsUnitSetting( loadedState, 123 ) ).to.eql( dimensionsUnitSetting );
-	// 	} );
-	//
-	// 	test( 'should get the siteId from the UI tree if not provided.', () => {
-	// 		expect( getDimensionsUnitSetting( loadedStateWithUi ) ).to.eql( dimensionsUnitSetting );
-	// 	} );
-	// } );
 } );
