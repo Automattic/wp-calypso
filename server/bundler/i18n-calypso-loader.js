@@ -1,3 +1,8 @@
+/**
+ * Webpack loader used to inject Webpack code into `i18n-calypso` module to
+ * load asyncronously the current locale.
+ */
+
 module.exports = function( content ) {
 	this.cacheable && this.cacheable();
 

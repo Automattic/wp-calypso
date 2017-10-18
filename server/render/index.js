@@ -6,7 +6,6 @@ import superagent from 'superagent';
 import Lru from 'lru';
 import { pick } from 'lodash';
 import debugFactory from 'debug';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -87,11 +86,8 @@ export function serverRender( req, res ) {
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
-	}
-
-	if ( moment.locale() !== 'en' ) {
-		context.momentLocaleFile = `moment-locale-${ moment.locale() }`;
+		context.i18nLocaleScript = `//widgets.wp.com/languages/calypso/${ context.lang }.js`;
+		context.momentLocaleFile = `moment-locale-${ context.lang }`;
 	}
 
 	if (
