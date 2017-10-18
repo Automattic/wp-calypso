@@ -28,7 +28,7 @@ import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/select
 import Main from 'components/main';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
-import OrderNotes from './order-notes';
+import OrderActivityLog from './order-activity-log';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class Order extends Component {
@@ -135,7 +135,7 @@ class Order extends Component {
 
 				<div className="order__container">
 					<OrderDetails orderId={ orderId } />
-					<OrderNotes orderId={ orderId } siteId={ site.ID } />
+					<OrderActivityLog orderId={ orderId } siteId={ site.ID } />
 					<OrderCustomer orderId={ orderId } />
 				</div>
 			</Main>

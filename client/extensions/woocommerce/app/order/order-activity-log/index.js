@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy, keys } from 'lodash';
+import { keys, last, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,8 @@ import {
 } from 'woocommerce/state/sites/orders/activity-log/selectors';
 import Card from 'components/card';
 import CreateOrderNote from './new-note';
-import OrderNote from './note';
-import OrderNotesByDay from './day';
+import OrderEvent from './event';
+import OrderEventsByDay from './day';
 import SectionHeader from 'components/section-header';
 
 function getSortedEvents( events ) {
@@ -39,21 +39,26 @@ function getSortedEvents( events ) {
 	return eventsByDay;
 }
 
-class OrderNotes extends Component {
+class OrderActivityLog extends Component {
 	static propTypes = {
 		orderId: PropTypes.number.isRequired,
 		siteId: PropTypes.number.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			openIndex: 0,
-		};
+	componentWillMount() {
+		this.setState( { openDay: last( keys( this.props.eventsByDay ) ) } );
 	}
 
-	toggleOpenDay = index => {
-		this.setState( () => ( { openIndex: index } ) );
+	componentWillReceiveProps( nextProps ) {
+		const newOpenDay = last( keys( nextProps.eventsByDay ) );
+		//if a new latest day has been appended, open it
+		if ( ! this.props.eventsByDay[ newOpenDay ] ) {
+			this.setState( { openDay: newOpenDay } );
+		}
+	}
+
+	toggleOpenDay = date => {
+		this.setState( () => ( { openDay: date } ) );
 	};
 
 	renderNotes = () => {
@@ -62,26 +67,25 @@ class OrderNotes extends Component {
 			return <p>{ translate( 'No activity yet' ) }</p>;
 		}
 
-		return days.map( ( day, index ) => {
+		return days.map( day => {
 			const events = eventsByDay[ day ];
 			return (
-				<OrderNotesByDay
+				<OrderEventsByDay
 					key={ day }
 					count={ events.length }
 					date={ day }
-					index={ index }
-					isOpen={ index === this.state.openIndex }
+					isOpen={ day === this.state.openDay }
 					onClick={ this.toggleOpenDay }
 				>
 					{ events.map( event => (
-						<OrderNote
+						<OrderEvent
 							key={ `${ event.type }-${ event.key }` }
 							event={ event }
 							orderId={ this.props.orderId }
 							siteId={ this.props.siteId }
 						/>
 					) ) }
-				</OrderNotesByDay>
+				</OrderEventsByDay>
 			);
 		} );
 	};
@@ -89,9 +93,9 @@ class OrderNotes extends Component {
 	renderPlaceholder = () => {
 		const noop = () => {};
 		return (
-			<OrderNotesByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
-				<OrderNote />
-			</OrderNotesByDay>
+			<OrderEventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
+				<OrderEvent />
+			</OrderEventsByDay>
 		);
 	};
 
@@ -102,7 +106,7 @@ class OrderNotes extends Component {
 		} );
 
 		return (
-			<div className="order-notes">
+			<div className="order-activity-log">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
 				<Card className={ classes }>
 					{ isLoaded ? this.renderNotes() : this.renderPlaceholder() }
@@ -129,4 +133,4 @@ export default connect( ( state, props ) => {
 		events,
 		eventsByDay,
 	};
-} )( localize( OrderNotes ) );
+} )( localize( OrderActivityLog ) );

@@ -21,7 +21,7 @@ class LabelItem extends Component {
 
 		const today = new Date();
 		const thirtyDaysAgo = new Date().setDate( today.getDate() - 30 );
-		if ( ( label.usedDate && label.usedDate < today.getTime() ) || ( label.createdDate && label.createdDate < thirtyDaysAgo ) ) {
+		if ( label.usedDate || ( label.createdDate && label.createdDate < thirtyDaysAgo ) ) {
 			return null;
 		}
 
@@ -40,7 +40,7 @@ class LabelItem extends Component {
 
 	renderReprint = ( label ) => {
 		const todayTime = new Date().getTime();
-		if ( ( label.usedDate && label.usedDate < todayTime ) ||
+		if ( label.usedDate ||
 			( label.expiryDate && label.expiryDate < todayTime ) ) {
 			return null;
 		}

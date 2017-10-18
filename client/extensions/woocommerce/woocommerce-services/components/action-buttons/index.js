@@ -18,6 +18,7 @@ const ActionButtons = ( { buttons, className } ) => {
 					type="button"
 					key={ idx }
 					disabled={ button.isDisabled }
+					busy={ button.isBusy }
 					onClick={ button.onClick }
 					isPrimary={ Boolean( button.isPrimary ) }>
 					{ button.label }

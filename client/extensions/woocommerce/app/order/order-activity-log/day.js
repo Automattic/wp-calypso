@@ -11,17 +11,16 @@ import React, { Component } from 'react';
  */
 import FoldableCard from 'components/foldable-card';
 
-class OrderNotesByDay extends Component {
+class OrderEventsByDay extends Component {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 		date: PropTypes.string.isRequired,
-		index: PropTypes.number.isRequired,
 		isOpen: PropTypes.bool.isRequired,
 		onClick: PropTypes.func.isRequired,
 	};
 
 	onClick = () => {
-		this.props.onClick( this.props.index );
+		this.props.onClick( this.props.date );
 	};
 
 	render() {
@@ -38,10 +37,10 @@ class OrderNotesByDay extends Component {
 		);
 
 		return (
-			<div className="order-notes__day">
+			<div className="order-activity-log__day">
 				<FoldableCard
 					onClick={ this.onClick }
-					className="order-notes__day-header"
+					className="order-activity-log__day-header"
 					expanded={ isOpen }
 					header={ header }
 					screenReaderText={ translate( 'Show notes from %(date)s', {
@@ -55,4 +54,4 @@ class OrderNotesByDay extends Component {
 	}
 }
 
-export default localize( OrderNotesByDay );
+export default localize( OrderEventsByDay );

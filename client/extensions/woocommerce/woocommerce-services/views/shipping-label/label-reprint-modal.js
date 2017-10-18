@@ -51,6 +51,7 @@ const ReprintDialog = ( props ) => {
 					onClick: onConfirm,
 					isPrimary: true,
 					isDisabled: reprintDialog && reprintDialog.isFetching,
+					isBusy: reprintDialog && reprintDialog.isFetching,
 					label: translate( 'Print' ),
 				},
 				{

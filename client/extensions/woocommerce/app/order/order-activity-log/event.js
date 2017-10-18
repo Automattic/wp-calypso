@@ -15,7 +15,7 @@ import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/lab
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 
-class OrderNote extends Component {
+class OrderEvent extends Component {
 	static propTypes = {
 		customer_note: PropTypes.bool,
 		date_created_gmt: PropTypes.string,
@@ -61,37 +61,54 @@ class OrderNote extends Component {
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REQUESTED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'time',
 				content: (
 					<div>
-						<span>Label #{ event.labelIndex + 1 } refund requested</span>
-						{ event.amount != null ? (
-							<span> ({ formatCurrency( event.amount, event.currency ) })</span>
-						) : null }
+						{ translate( 'Label #%(labelNum)d refund requested (%(amount)s)', {
+							args: {
+								labelNum: event.labelIndex + 1,
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }
 					</div>
 				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_COMPLETED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'refund',
 				content: (
 					<div>
-						Label #{ event.labelIndex + 1 } refunded ({ formatCurrency( event.amount, event.currency ) })
+						{ translate( 'Label #%(labelNum)d refunded (%(amount)s)', {
+							args: {
+								labelNum: event.labelIndex + 1,
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }
 					</div>
 				),
 			};
 		},
 
 		[ EVENT_TYPES.LABEL_REFUND_REJECTED ]: event => {
+			const { translate } = this.props;
 			return {
 				icon: 'cross-small',
-				content: <div>Label #{ event.labelIndex + 1 } refund rejected</div>,
+				content: (
+					<div>
+						{ translate( 'Label #%(labelNum)d refund rejected', {
+							args: { labelNum: event.labelIndex + 1 },
+						} ) }
+					</div>
+				),
 			};
 		},
 
+		//render the loading placeholder without props
 		[ undefined ]: () => ( {} ),
 	};
 
@@ -100,20 +117,20 @@ class OrderNote extends Component {
 		const { icon, heading, content } = this.eventPropsByType[ event.type ]( event );
 
 		return (
-			<div className="order-notes__note">
-				<div className="order-notes__note-meta">
-					<span className="order-notes__note-time">
+			<div className="order-activity-log__note">
+				<div className="order-activity-log__note-meta">
+					<span className="order-activity-log__note-time">
 						{ moment( event.timestamp ).format( 'LT' ) }
 					</span>
 					{ icon && <Gridicon icon={ icon } size={ 24 } /> }
 				</div>
-				<div className="order-notes__note-body">
-					<div className="order-notes__note-type">{ heading }</div>
-					<div className="order-notes__note-content">{ content }</div>
+				<div className="order-activity-log__note-body">
+					<div className="order-activity-log__note-type">{ heading }</div>
+					<div className="order-activity-log__note-content">{ content }</div>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default localize( OrderNote );
+export default localize( OrderEvent );
