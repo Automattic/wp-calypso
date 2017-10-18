@@ -28,9 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getJetpackCredentials,
 	credentialsUpdating,
-	credentialsUpdateSuccess,
 	hasMainCredentials,
-	getAutoConfigStatus,
 	isSitePressable
 } from 'state/jetpack/credentials/selectors';
 import {
@@ -42,7 +40,6 @@ class Backups extends Component {
 	static propTypes = {
 		autoConfigStatus: PropTypes.string,
 		credentialsUpdating: PropTypes.bool,
-		credentialsUpdateSuccess: PropTypes.bool,
 		hasMainCredentials: PropTypes.bool,
 		mainCredentials: PropTypes.object,
 		isPressable: PropTypes.bool,
@@ -578,7 +575,8 @@ class Backups extends Component {
 	render() {
 		const {
 			isPressable,
-			autoConfigStatus
+			isRewindActive,
+			autoConfigStatus,
 		} = this.props;
 
 		const { setupStep } = this.state;
@@ -587,19 +585,19 @@ class Backups extends Component {
 
 		const pressableConfigureFlow = (
 			<div>
-				{ 1 === setupStep ? this.renderSetupStart() : null }
-				{ 2 === setupStep && autoConfigIdle ? this.renderSetupTos() : null }
-				{ 'success' === autoConfigStatus ? this.renderFormFoldable() : null }
-				{ this.props.hasMainCredentials ? this.renderFormFoldable() : null }
+				{ 1 === setupStep && this.renderSetupStart() }
+				{ 2 === setupStep && autoConfigIdle && this.renderSetupTos() }
+				{ 'success' === autoConfigStatus && this.renderFormFoldable() }
+				{ this.props.hasMainCredentials && this.renderFormFoldable() }
 			</div>
 		);
 
 		const selfHostedConfigureFlow = (
 			<div>
-				{ 1 === setupStep ? this.renderSetupStart() : null }
-				{ 2 === setupStep ? this.renderSetupTos() : null }
-				{ 3 === setupStep && ! this.props.credentialsUpdateSuccess ? this.renderSetupForm() : null }
-				{ 4 === setupStep ? this.renderFormFoldable() : null }
+				{ 1 === setupStep && this.renderSetupStart() }
+				{ 2 === setupStep && this.renderSetupTos() }
+				{ 3 === setupStep && this.renderSetupForm() }
+				{ 4 === setupStep && this.renderFormFoldable() }
 			</div>
 		);
 
@@ -608,9 +606,9 @@ class Backups extends Component {
 				<QueryRewindStatus siteId={ this.props.siteId } />
 				<QueryJetpackCredentials siteId={ this.props.siteId } />
 				{ isRewindActive && this.renderHeader() }
-				{ isRewindActive && ! this.props.hasMainCredentials && isPressable ? pressableConfigureFlow : null }
-				{ isRewindActive && ! this.props.hasMainCredentials && ! isPressable ? selfHostedConfigureFlow : null }
-				{ isRewindActive && this.props.hasMainCredentials ? this.renderFormFoldable() : null }
+				{ isRewindActive && ! this.props.hasMainCredentials && isPressable && pressableConfigureFlow }
+				{ isRewindActive && ! this.props.hasMainCredentials && ! isPressable && selfHostedConfigureFlow }
+				{ isRewindActive && this.props.hasMainCredentials && this.renderFormFoldable() }
 				{ isRewindActive && this.renderFooter() }
 			</div>
 		);
@@ -623,9 +621,8 @@ export default connect(
 		const credentials = getJetpackCredentials( state, 'main' );
 
 		return {
-			autoConfigStatus: getAutoConfigStatus( state ),
+			autoConfigStatus: state.jetpack.credentials.items.main === undefined ? 'requesting' : 'success',
 			credentialsUpdating: credentialsUpdating( state ),
-			credentialsUpdateSuccess: credentialsUpdateSuccess( state ),
 			hasMainCredentials: hasMainCredentials( state ),
 			mainCredentials: credentials,
 			isPressable: isSitePressable( state, siteId ),

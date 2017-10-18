@@ -8,14 +8,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingCredentials } from 'state/jetpack/credentials/selectors';
 import { requestCredentials } from 'state/jetpack/credentials/actions';
 
 class QueryJetpackCredentials extends Component {
 	componentWillMount() {
-		if ( ! this.props.requestingCredentials ) {
-			this.props.requestCredentials( this.props.siteId );
-		}
+		this.props.requestCredentials( this.props.siteId );
 	}
 
 	render() {
@@ -24,7 +21,6 @@ class QueryJetpackCredentials extends Component {
 }
 
 QueryJetpackCredentials.propTypes = {
-	requestingCredentials: PropTypes.bool,
 	requestCredentials: PropTypes.func,
 	siteId: PropTypes.number.isRequired
 };
@@ -33,11 +29,4 @@ QueryJetpackCredentials.defaultProps = {
 	requestCredentials: () => {},
 };
 
-export default connect(
-	state => {
-		return {
-			requestingCredentials: isRequestingCredentials( state ),
-		};
-	},
-	{ requestCredentials }
-)( QueryJetpackCredentials );
+export default connect( null, { requestCredentials } )( QueryJetpackCredentials );

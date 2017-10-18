@@ -23,7 +23,7 @@ import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Placeholder from 'my-sites/site-settings/placeholder';
-import Backups from '../backups';
+import Backups from '../jetpack-credentials';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
