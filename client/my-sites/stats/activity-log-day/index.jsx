@@ -19,6 +19,7 @@ import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { withAnalytics as withAnalyticsAction } from 'state/analytics/actions';
 import { getRequestedRewind } from 'state/selectors';
 import { rewindRequestDismiss as rewindRequestDismissAction } from 'state/activity-log/actions';
 
@@ -100,8 +101,8 @@ class ActivityLogDay extends Component {
 		} );
 
 	closeDayAndRewindDialog = () => {
-		const { recordTracksEvent, rewindRequestDismiss, siteId } = this.props;
-		recordTracksEvent( 'calypso_activitylog_restore_cancel' );
+		const { trackRewindCancel, rewindRequestDismiss, siteId } = this.props;
+		trackRewindCancel( siteId );
 		rewindRequestDismiss( siteId );
 		this.closeDayOnly();
 	};
@@ -251,5 +252,10 @@ export default connect(
 	{
 		recordTracksEvent: recordTracksEventAction,
 		rewindRequestDismiss: rewindRequestDismissAction,
+		trackRewindCancel: siteId =>
+			withAnalyticsAction(
+				recordTracksEventAction( 'calypso_activitylog_restore_cancel' ),
+				rewindRequestDismissAction( siteId )
+			),
 	}
 )( localize( ActivityLogDay ) );
