@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getOrderDiscountTotal,
+	getOrderFeeTotal,
 	getOrderItemCost,
 	getOrderRefundTotal,
 	getOrderShippingTotal,
@@ -36,6 +37,24 @@ describe( 'getOrderDiscountTotal', () => {
 
 	it( 'should get the correct discount amount with multiple coupons', () => {
 		expect( getOrderDiscountTotal( orderWithCoupons ) ).to.eql( 22.3 );
+	} );
+} );
+
+describe( 'getOrderFeeTotal', () => {
+	test( 'should be a function', () => {
+		expect( getOrderFeeTotal ).to.be.a( 'function' );
+	} );
+
+	test( 'should get the correct tax amount', () => {
+		expect( getOrderFeeTotal( orderWithTax ) ).to.eql( 1.53 );
+	} );
+
+	test( 'should get the correct tax amount with multiple fees', () => {
+		expect( getOrderFeeTotal( orderWithCoupons ) ).to.eql( 15 );
+	} );
+
+	test( 'should return 0 if there is no tax', () => {
+		expect( getOrderFeeTotal( orderWithoutTax ) ).to.eql( 20 );
 	} );
 } );
 

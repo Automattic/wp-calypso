@@ -17,6 +17,17 @@ export function getOrderDiscountTotal( order ) {
 }
 
 /**
+ * Get the fee total on a given order
+ *
+ * @param {Object} order An order as returned from API
+ * @return {Float} The total fee amount as a decimal number
+ */
+export function getOrderFeeTotal( order ) {
+	const fees = get( order, 'fee_lines', [] );
+	return reduce( fees, ( sum, value ) => sum + parseFloat( value.total ), 0 );
+}
+
+/**
  * Get the individual price for a given item, pre-discounts.
  *
  * @param {Object} order An order as returned from API
