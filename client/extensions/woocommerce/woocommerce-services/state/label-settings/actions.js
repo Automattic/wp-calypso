@@ -52,6 +52,7 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 			dispatch( initForm( siteId, storeOptions, formData, formMeta ) );
 		} )
 		.catch( error => {
+			setFormMetaProperty( siteId, 'isFetchError', true );
 			console.error( error ); // eslint-disable-line no-console
 		} )
 		.then( () => dispatch( setFormMetaProperty( siteId, 'isFetching', false ) ) );

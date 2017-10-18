@@ -1,9 +1,7 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import {
 	WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
@@ -16,6 +14,8 @@ export const initialState = {
 		fieldsStatus: false,
 		isSaving: false,
 		isFetching: false,
+		isLoaded: false,
+		isFetchError: false,
 		pristine: true,
 	},
 	data: null,
@@ -34,6 +34,7 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = (
 			...state.meta,
 			...formMeta,
 			pristine: true,
+			isLoaded: true,
 		},
 		data: {
 			...state.data,

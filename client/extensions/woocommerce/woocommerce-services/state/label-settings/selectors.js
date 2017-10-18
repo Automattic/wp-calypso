@@ -32,3 +32,18 @@ export const getLabelSettingsStoreOptions = ( state, siteId = getSelectedSiteId(
 	const form = getLabelSettingsForm( state, siteId );
 	return form && form.storeOptions;
 };
+
+export const areSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.isLoaded;
+};
+
+export const areSettingsFetching = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.isFetching;
+};
+
+export const areSettingsErrored = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.isFetchError;
+};
