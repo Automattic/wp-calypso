@@ -321,15 +321,19 @@ class Backups extends Component {
 				header={ header }
 				className="site-settings__foldable-header"
 			>
-				{ this.renderForm() }
+				{ this.renderForm( {
+					translate: this.props.translate,
+					credentialsUpdating: this.props.credentialsUpdatig,
+				} ) }
 			</FoldableCard>
 		);
 	}
 
-	renderForm() {
+	renderForm( props ) {
 		const {
+			credentialsUpdating, // eslint-disable-line no-shadow
 			translate
-		} = this.props;
+		} = props;
 
 		const { showPublicKeyField, formErrors } = this.state;
 
@@ -345,7 +349,7 @@ class Backups extends Component {
 										name="protocol"
 										value={ get( this.state.form, 'protocol', 'ssh' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 									>
 										<option value="ssh">{ translate( 'SSH' ) }</option>
 										<option value="sftp">{ translate( 'SFTP' ) }</option>
@@ -363,7 +367,7 @@ class Backups extends Component {
 										placeholder={ translate( 'yoursite.com' ) }
 										value={ get( this.state.form, 'host', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 										isError={ !! formErrors.host }
 									/>
 									{
@@ -381,14 +385,10 @@ class Backups extends Component {
 										placeholder={ translate( '22' ) }
 										value={ get( this.state.form, 'port', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 										isError={ !! formErrors.port }
 									/>
-									{
-										formErrors.port
-											? <FormInputValidation isError={ true } text={ formErrors.port } />
-											: null
-									}
+									{ formErrors.port && <FormInputValidation isError={ true } text={ formErrors.port } /> }
 								</FormLabel>
 							</td>
 						</tr>
@@ -401,14 +401,10 @@ class Backups extends Component {
 										placeholder={ translate( 'username' ) }
 										value={ get( this.state.form, 'user', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 										isError={ !! formErrors.user }
 									/>
-									{
-										formErrors.user
-											? <FormInputValidation isError={ true } text={ formErrors.user } />
-											: null
-									}
+									{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
 								</FormLabel>
 							</td>
 						</tr>
@@ -421,14 +417,10 @@ class Backups extends Component {
 										placeholder={ translate( 'password' ) }
 										value={ get( this.state.form, 'pass', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 										isError={ !! formErrors.pass }
 									/>
-									{
-										formErrors.pass
-											? <FormInputValidation isError={ true } text={ formErrors.pass } />
-											: null
-									}
+									{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
 								</FormLabel>
 							</td>
 						</tr>
@@ -437,7 +429,7 @@ class Backups extends Component {
 								<FormLabel>
 									<div>{ translate( 'Public Key' ) }</div>
 									<Button
-										disabled={ this.props.credentialsUpdating }
+										disabled={ credentialsUpdating }
 										onClick={ this.togglePublicKeyField }
 									>
 										{
@@ -447,33 +439,30 @@ class Backups extends Component {
 										}
 
 									</Button>
-									{
-										showPublicKeyField
-											? <FormTextArea
-												name="kpub"
-												value={ get( this.state.form, 'kpub', '' ) }
-												onChange={ this.handleFieldChange }
-												disabled={ this.props.credentialsUpdating }
-											/>
-											: null
-									}
+									{ showPublicKeyField && (
+										<FormTextArea
+											name="kpub"
+											value={ get( this.state.form, 'kpub', '' ) }
+											onChange={ this.handleFieldChange }
+											disabled={ credentialsUpdating }
+										/>
+									) }
 								</FormLabel>
 							</td>
 						</tr>
 						<tr>
 							<td colSpan="2">
-								{
-									! this.props.hasMainCredentials
-										? <Button
-											disabled={ this.props.credentialsUpdating }
-											onClick={ this.resetSetup }>
-												{ translate( 'Cancel' ) }
-											</Button>
-										: null
-								}
+								{ ! this.props.hasMainCredentials && (
+									<Button
+										disabled={ credentialsUpdating }
+										onClick={ this.resetSetup }
+									>
+										{ translate( 'Cancel' ) }
+									</Button>
+								) }
 								<Button
 									primary
-									disabled={ this.props.credentialsUpdating }
+									disabled={ credentialsUpdating }
 									onClick={ this.handleSubmit }
 								>
 									{ translate( 'Save' ) }
@@ -544,7 +533,10 @@ class Backups extends Component {
 	renderSetupForm() {
 		return (
 			<CompactCard>
-				{ this.renderForm() }
+				{ this.renderForm( {
+					translate: this.props.translate,
+					credentialsUpdating: this.props.credentialsUpdatig,
+				} ) }
 			</CompactCard>
 		);
 	}
