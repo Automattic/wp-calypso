@@ -15,84 +15,84 @@ import Page from 'page';
  */
 import Notice from 'components/notice';
 
-export default localize(
-	React.createClass( {
-		displayName: 'SiteSettingsImporterError',
+const SiteSettingsImporterError = React.createClass( {
+	displayName: 'SiteSettingsImporterError',
 
-		mixins: [ PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
-		propTypes: {
-			description: PropTypes.string.isRequired,
-			type: PropTypes.string.isRequired,
-		},
+	propTypes: {
+		description: PropTypes.string.isRequired,
+		type: PropTypes.string.isRequired,
+	},
 
-		contactSupport: function( event ) {
-			event.preventDefault();
-			event.stopPropagation();
-			Page( '/help' );
-		},
+	contactSupport: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+		Page( '/help' );
+	},
 
-		getImportError: function() {
-			return this.props.translate(
-				'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
-				{
-					args: {
-						errorDescription: this.props.description,
-					},
-					components: {
-						a: <a href="#" onClick={ this.retryImport } />,
-						br: <br />,
-						cs: <a href="#" onClick={ this.contactSupport } />,
-					},
-				}
-			);
-		},
-
-		getUploadError: function() {
-			const defaultError = this.props.translate( 'Unexpected error during the upload' );
-			const { description = '' } = this.props;
-
-			return this.props.translate(
-				'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.',
-				{
-					args: {
-						errorDescription: description.length ? description : defaultError,
-					},
-					components: {
-						br: <br />,
-						cs: <a href="#" onClick={ this.contactSupport } />,
-					},
-				}
-			);
-		},
-
-		getErrorMessage: function() {
-			var actionMessage;
-
-			switch ( this.props.type ) {
-				case 'uploadError':
-					actionMessage = this.getUploadError();
-					break;
-
-				case 'importError':
-					actionMessage = this.getImportError();
-					break;
+	getImportError: function() {
+		return this.props.translate(
+			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
+			{
+				args: {
+					errorDescription: this.props.description,
+				},
+				components: {
+					a: <a href="#" onClick={ this.retryImport } />,
+					br: <br />,
+					cs: <a href="#" onClick={ this.contactSupport } />,
+				},
 			}
+		);
+	},
 
-			return actionMessage;
-		},
+	getUploadError: function() {
+		const defaultError = this.props.translate( 'Unexpected error during the upload' );
+		const { description = '' } = this.props;
 
-		retryImport: function( event ) {
-			event.preventDefault();
-			event.stopPropagation();
-		},
+		return this.props.translate(
+			'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.',
+			{
+				args: {
+					errorDescription: description.length ? description : defaultError,
+				},
+				components: {
+					br: <br />,
+					cs: <a href="#" onClick={ this.contactSupport } />,
+				},
+			}
+		);
+	},
 
-		render: function() {
-			return (
-				<div>
-					<Notice status="is-error" text={ this.getErrorMessage() } showDismiss={ false } />
-				</div>
-			);
-		},
-	} )
-);
+	getErrorMessage: function() {
+		var actionMessage;
+
+		switch ( this.props.type ) {
+			case 'uploadError':
+				actionMessage = this.getUploadError();
+				break;
+
+			case 'importError':
+				actionMessage = this.getImportError();
+				break;
+		}
+
+		return actionMessage;
+	},
+
+	retryImport: function( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+	},
+
+	render: function() {
+		return (
+			<div>
+				<Notice status="is-error" text={ this.getErrorMessage() } showDismiss={ false } />
+			</div>
+		);
+	},
+} );
+
+export default localize(SiteSettingsImporterError);

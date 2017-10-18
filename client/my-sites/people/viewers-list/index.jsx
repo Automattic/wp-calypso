@@ -166,22 +166,22 @@ let Viewers = localize(
 	} )
 );
 
-export default localize(
-	React.createClass( {
-		displayName: 'ViewersList',
+const ViewersList = React.createClass( {
+	displayName: 'ViewersList',
 
-		mixins: [ PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
-		render() {
-			return (
-				<ViewersData
-					site={ this.props.site }
-					siteId={ this.props.site.ID }
-					label={ this.props.label }
-				>
-					<Viewers />
-				</ViewersData>
-			);
-		},
-	} )
-);
+	render() {
+		return (
+			<ViewersData
+				site={ this.props.site }
+				siteId={ this.props.site.ID }
+				label={ this.props.label }
+			>
+				<Viewers />
+			</ViewersData>
+		);
+	},
+} );
+
+export default localize(ViewersList);

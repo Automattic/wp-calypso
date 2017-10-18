@@ -14,25 +14,25 @@ import React from 'react';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default localize(
-	React.createClass( {
-		displayName: 'NotificationSettingsFormLabels',
+const NotificationSettingsFormLabels = React.createClass( {
+	displayName: 'NotificationSettingsFormLabels',
 
-		propTypes: {
-			settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		},
+	propTypes: {
+		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	},
 
-		shouldComponentUpdate() {
-			return false;
-		},
+	shouldComponentUpdate() {
+		return false;
+	},
 
-		render() {
-			return (
-				<div className="notification-settings-form-labels">
-					<StreamHeader title={ this.props.translate( 'notifications' ) } />
-					<LabelsList settingKeys={ this.props.settingKeys } />
-				</div>
-			);
-		},
-	} )
-);
+	render() {
+		return (
+			<div className="notification-settings-form-labels">
+				<StreamHeader title={ this.props.translate( 'notifications' ) } />
+				<LabelsList settingKeys={ this.props.settingKeys } />
+			</div>
+		);
+	},
+} );
+
+export default localize(NotificationSettingsFormLabels);

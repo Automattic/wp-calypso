@@ -246,66 +246,66 @@ const SwitcherShell = localize(
 	} )
 );
 
-export default localize(
-	React.createClass( {
-		displayName: 'AuthorSelector',
-		propTypes: {
-			siteId: PropTypes.number.isRequired,
-			onSelect: PropTypes.func,
-			exclude: PropTypes.arrayOf( PropTypes.number ),
-			allowSingleUser: PropTypes.bool,
-			popoverPosition: PropTypes.string,
-		},
+const AuthorSelector = React.createClass( {
+	displayName: 'AuthorSelector',
+	propTypes: {
+		siteId: PropTypes.number.isRequired,
+		onSelect: PropTypes.func,
+		exclude: PropTypes.arrayOf( PropTypes.number ),
+		allowSingleUser: PropTypes.bool,
+		popoverPosition: PropTypes.string,
+	},
 
-		getInitialState: function() {
-			return {
-				search: '',
-			};
-		},
+	getInitialState: function() {
+		return {
+			search: '',
+		};
+	},
 
-		getDefaultProps: function() {
-			return {
-				showAuthorMenu: false,
-				onClose: function() {},
-				allowSingleUser: false,
-				popoverPosition: 'bottom left',
-			};
-		},
+	getDefaultProps: function() {
+		return {
+			showAuthorMenu: false,
+			onClose: function() {},
+			allowSingleUser: false,
+			popoverPosition: 'bottom left',
+		};
+	},
 
-		componentDidMount: function() {
-			debug( 'AuthorSelector mounted' );
-		},
+	componentDidMount: function() {
+		debug( 'AuthorSelector mounted' );
+	},
 
-		render: function() {
-			let searchString = this.state.search || '';
-			searchString = trim( searchString );
+	render: function() {
+		let searchString = this.state.search || '';
+		searchString = trim( searchString );
 
-			const fetchOptions = {
-				siteId: this.props.siteId,
-				order: 'ASC',
-				order_by: 'display_name',
-				number: 50,
-			};
+		const fetchOptions = {
+			siteId: this.props.siteId,
+			order: 'ASC',
+			order_by: 'display_name',
+			number: 50,
+		};
 
-			if ( searchString ) {
-				fetchOptions.number = 20; // make search a little faster
-				fetchOptions.search = searchString;
-				fetchOptions.search_columns = [ 'user_login', 'display_name' ];
-			}
+		if ( searchString ) {
+			fetchOptions.number = 20; // make search a little faster
+			fetchOptions.search = searchString;
+			fetchOptions.search_columns = [ 'user_login', 'display_name' ];
+		}
 
-			Object.freeze( fetchOptions );
-			return (
-				<SiteUsersFetcher fetchOptions={ fetchOptions } exclude={ this.props.exclude }>
-					<SwitcherShell { ...this.props } updateSearch={ this._updateSearch } />
-				</SiteUsersFetcher>
-			);
-		},
+		Object.freeze( fetchOptions );
+		return (
+			<SiteUsersFetcher fetchOptions={ fetchOptions } exclude={ this.props.exclude }>
+				<SwitcherShell { ...this.props } updateSearch={ this._updateSearch } />
+			</SiteUsersFetcher>
+		);
+	},
 
-		_updateSearch: function( searchTerm ) {
-			searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
-			this.setState( {
-				search: searchTerm,
-			} );
-		},
-	} )
-);
+	_updateSearch: function( searchTerm ) {
+		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
+		this.setState( {
+			search: searchTerm,
+		} );
+	},
+} );
+
+export default localize(AuthorSelector);

@@ -17,94 +17,94 @@ import { preventWidows } from 'lib/formatting';
 import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
-export default localize(
-	React.createClass( {
-		displayName: 'MediaLibraryListPlanPromo',
+const MediaLibraryListPlanPromo = React.createClass( {
+	displayName: 'MediaLibraryListPlanPromo',
 
-		propTypes: {
-			site: PropTypes.object,
-			filter: PropTypes.string,
-		},
+	propTypes: {
+		site: PropTypes.object,
+		filter: PropTypes.string,
+	},
 
-		getTitle: function() {
-			switch ( this.props.filter ) {
-				case 'videos':
-					return this.props.translate( 'Upload Videos', {
+	getTitle: function() {
+		switch ( this.props.filter ) {
+			case 'videos':
+				return this.props.translate( 'Upload Videos', {
+					textOnly: true,
+					context: 'Media upload plan needed',
+				} );
+
+			case 'audio':
+				return this.props.translate( 'Upload Audio', {
+					textOnly: true,
+					context: 'Media upload plan needed',
+				} );
+
+			default:
+				return this.props.translate( 'Upload Media', {
+					textOnly: true,
+					context: 'Media upload plan needed',
+				} );
+		}
+	},
+
+	getSummary: function() {
+		switch ( this.props.filter ) {
+			case 'videos':
+				return preventWidows(
+					this.props.translate( 'To upload video files to your site, upgrade your plan.', {
 						textOnly: true,
-						context: 'Media upload plan needed',
-					} );
+						context: 'Media upgrade promo',
+					} ),
+					2
+				);
 
-				case 'audio':
-					return this.props.translate( 'Upload Audio', {
+			case 'audio':
+				return preventWidows(
+					this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
 						textOnly: true,
-						context: 'Media upload plan needed',
-					} );
+						context: 'Media upgrade promo',
+					} ),
+					2
+				);
 
-				default:
-					return this.props.translate( 'Upload Media', {
-						textOnly: true,
-						context: 'Media upload plan needed',
-					} );
-			}
-		},
-
-		getSummary: function() {
-			switch ( this.props.filter ) {
-				case 'videos':
-					return preventWidows(
-						this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+			default:
+				return preventWidows(
+					this.props.translate(
+						'To upload audio and video files to your site, upgrade your plan.',
+						{
 							textOnly: true,
 							context: 'Media upgrade promo',
-						} ),
-						2
-					);
+						}
+					),
+					2
+				);
+		}
+	},
 
-				case 'audio':
-					return preventWidows(
-						this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
-							textOnly: true,
-							context: 'Media upgrade promo',
-						} ),
-						2
-					);
+	viewPlansPage: function() {
+		const { slug = '' } = this.props.site;
 
-				default:
-					return preventWidows(
-						this.props.translate(
-							'To upload audio and video files to your site, upgrade your plan.',
-							{
-								textOnly: true,
-								context: 'Media upgrade promo',
-							}
-						),
-						2
-					);
-			}
-		},
+		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
 
-		viewPlansPage: function() {
-			const { slug = '' } = this.props.site;
+		page( `/plans/${ slug }` );
+	},
 
-			analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+	render: function() {
+		const action = (
+			<Button className="button is-primary" onClick={ this.viewPlansPage }>
+				{ this.props.translate( 'See Plans' ) }
+			</Button>
+		);
 
-			page( `/plans/${ slug }` );
-		},
+		return (
+			<EmptyContent
+				title={ this.getTitle() }
+				line={ this.getSummary() }
+				action={ this.props.children || action }
+				illustration={ '' }
+			/>
+		);
+	},
+} );
 
-		render: function() {
-			const action = (
-				<Button className="button is-primary" onClick={ this.viewPlansPage }>
-					{ this.props.translate( 'See Plans' ) }
-				</Button>
-			);
-
-			return (
-				<EmptyContent
-					title={ this.getTitle() }
-					line={ this.getSummary() }
-					action={ this.props.children || action }
-					illustration={ '' }
-				/>
-			);
-		},
-	} )
-);
+export default localize(MediaLibraryListPlanPromo);

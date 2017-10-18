@@ -22,117 +22,117 @@ import Buttons from './buttons';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-export default localize(
-	React.createClass( {
-		displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
+const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
+	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
-		propTypes: {
-			storedPhone: PropTypes.shape( {
-				countryCode: PropTypes.string,
-				countryNumericCode: PropTypes.string,
-				number: PropTypes.string,
-				numberFull: PropTypes.string,
-			} ),
-			onSave: PropTypes.func,
-			onCancel: PropTypes.func,
-			onDelete: PropTypes.func,
-		},
+	propTypes: {
+		storedPhone: PropTypes.shape( {
+			countryCode: PropTypes.string,
+			countryNumericCode: PropTypes.string,
+			number: PropTypes.string,
+			numberFull: PropTypes.string,
+		} ),
+		onSave: PropTypes.func,
+		onCancel: PropTypes.func,
+		onDelete: PropTypes.func,
+	},
 
-		getInitialState: function() {
-			return {
-				isInvalid: false,
-			};
-		},
+	getInitialState: function() {
+		return {
+			isInvalid: false,
+		};
+	},
 
-		render: function() {
-			var validation = null,
-				havePhone = ! isEmpty( this.props.storedPhone );
-			if ( this.state.validation ) {
-				validation = <FormInputValidation isError text={ this.state.validation } />;
-			}
+	render: function() {
+		var validation = null,
+			havePhone = ! isEmpty( this.props.storedPhone );
+		if ( this.state.validation ) {
+			validation = <FormInputValidation isError text={ this.state.validation } />;
+		}
 
-			return (
-				<div>
-					<FormFieldset>
-						<FormPhoneInput
-							countriesList={ countriesList }
-							initialCountryCode={ havePhone ? this.props.storedPhone.countryCode : null }
-							initialPhoneNumber={ havePhone ? this.props.storedPhone.number : null }
-							phoneInputProps={ {
-								onKeyUp: this.onKeyUp,
-							} }
-							onChange={ this.onChange }
-						/>
-						{ validation }
-					</FormFieldset>
-
-					<Buttons
-						isSavable={ this.isSavable() }
-						isDeletable={ havePhone }
-						saveText={ this.props.translate( 'Save Number' ) }
-						onSave={ this.onSave }
-						onDelete={ this.onDelete }
-						onCancel={ this.onCancel }
+		return (
+			<div>
+				<FormFieldset>
+					<FormPhoneInput
+						countriesList={ countriesList }
+						initialCountryCode={ havePhone ? this.props.storedPhone.countryCode : null }
+						initialPhoneNumber={ havePhone ? this.props.storedPhone.number : null }
+						phoneInputProps={ {
+							onKeyUp: this.onKeyUp,
+						} }
+						onChange={ this.onChange }
 					/>
-				</div>
-			);
-		},
+					{ validation }
+				</FormFieldset>
 
-		isSavable: function() {
-			if ( ! this.state.phoneNumber ) {
-				return false;
-			}
+				<Buttons
+					isSavable={ this.isSavable() }
+					isDeletable={ havePhone }
+					saveText={ this.props.translate( 'Save Number' ) }
+					onSave={ this.onSave }
+					onDelete={ this.onDelete }
+					onCancel={ this.onCancel }
+				/>
+			</div>
+		);
+	},
 
-			if ( ! this.state.phoneNumber.phoneNumberFull ) {
-				return false;
-			}
+	isSavable: function() {
+		if ( ! this.state.phoneNumber ) {
+			return false;
+		}
 
-			if (
-				this.props.storedPhone &&
-				this.props.storedPhone.countryCode === this.state.phoneNumber.countryData.code &&
-				this.props.storedPhone.number === this.state.phoneNumber.phoneNumber
-			) {
-				return false;
-			}
+		if ( ! this.state.phoneNumber.phoneNumberFull ) {
+			return false;
+		}
 
-			return true;
-		},
+		if (
+			this.props.storedPhone &&
+			this.props.storedPhone.countryCode === this.state.phoneNumber.countryData.code &&
+			this.props.storedPhone.number === this.state.phoneNumber.phoneNumber
+		) {
+			return false;
+		}
 
-		onChange: function( phoneNumber ) {
-			this.setState( { phoneNumber } );
-		},
+		return true;
+	},
 
-		onKeyUp: function( event ) {
-			if ( event.key === 'Enter' ) {
-				this.onSave();
-			}
-		},
+	onChange: function( phoneNumber ) {
+		this.setState( { phoneNumber } );
+	},
 
-		onSave: function() {
-			var phoneNumber = this.state.phoneNumber;
+	onKeyUp: function( event ) {
+		if ( event.key === 'Enter' ) {
+			this.onSave();
+		}
+	},
 
-			if ( ! phoneNumber.isValid ) {
-				this.setState( {
-					validation: this.props.translate( 'Please enter a valid phone number.' ),
-				} );
-				return;
-			}
+	onSave: function() {
+		var phoneNumber = this.state.phoneNumber;
 
-			this.setState( { isInvalid: null } );
-			this.props.onSave( {
-				countryCode: phoneNumber.countryData.code,
-				countryNumericCode: phoneNumber.countryData.numericCode,
-				number: phoneNumber.phoneNumber,
-				numberFull: phoneNumber.phoneNumberFull,
+		if ( ! phoneNumber.isValid ) {
+			this.setState( {
+				validation: this.props.translate( 'Please enter a valid phone number.' ),
 			} );
-		},
+			return;
+		}
 
-		onCancel: function() {
-			this.props.onCancel();
-		},
+		this.setState( { isInvalid: null } );
+		this.props.onSave( {
+			countryCode: phoneNumber.countryData.code,
+			countryNumericCode: phoneNumber.countryData.numericCode,
+			number: phoneNumber.phoneNumber,
+			numberFull: phoneNumber.phoneNumberFull,
+		} );
+	},
 
-		onDelete: function() {
-			this.props.onDelete();
-		},
-	} )
-);
+	onCancel: function() {
+		this.props.onCancel();
+	},
+
+	onDelete: function() {
+		this.props.onDelete();
+	},
+} );
+
+export default localize(SecurityAccountRecoveryRecoveryPhoneEdit);
