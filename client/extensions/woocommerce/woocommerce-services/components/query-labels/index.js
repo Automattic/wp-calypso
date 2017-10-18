@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
+import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
+import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
 import { fetchLabelsData } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, isFetching, isError } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,7 +36,12 @@ class QueryLabels extends Component {
 	}
 
 	render() {
-		return null;
+		return (
+			<div>
+				<QueryLabelSettings />
+				<QueryPackages />
+			</div>
+		);
 	}
 }
 

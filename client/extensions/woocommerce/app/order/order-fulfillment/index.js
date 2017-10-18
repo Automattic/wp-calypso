@@ -35,7 +35,7 @@ import {
 	getLabels,
 	getSelectedPaymentMethod,
 	isEnabled as areLabelsEnabled,
-	isLoaded as areLabelsLoaded,
+	areLabelsFullyLoaded,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
@@ -273,7 +273,7 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	( state, { order, site } ) => {
-		const labelsLoaded = wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) );
+		const labelsLoaded = wcsEnabled && Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) );
 		const hasLabelsPaymentMethod =
 			wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID );
 
