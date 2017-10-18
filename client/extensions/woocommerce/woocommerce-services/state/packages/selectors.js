@@ -217,3 +217,18 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 		];
 	}
 );
+
+export const isLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const form = getPackagesForm( state, siteId );
+	return form && form.isLoaded;
+};
+
+export const isFetching = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const form = getPackagesForm( state, siteId );
+	return form && form.isFetching;
+};
+
+export const isFetchError = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const form = getPackagesForm( state, siteId );
+	return form && form.isFetchError;
+};

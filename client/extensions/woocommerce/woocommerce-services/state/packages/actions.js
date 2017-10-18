@@ -1,9 +1,7 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import * as api from '../../api';
 import {
 	WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
@@ -20,6 +18,7 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCH_ERROR,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
 } from '../action-types';
@@ -109,6 +108,12 @@ export const setIsFetching = ( siteId, isFetching ) => ( {
 	siteId,
 } );
 
+export const setIsFetchError = ( siteId, isFetchError ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCH_ERROR,
+	isFetchError,
+	siteId,
+} );
+
 export const setAddMode = ( siteId, mode ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 	siteId,
@@ -139,6 +144,7 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 		.catch( error => {
 			//TODO: add better error handling
 			console.error( error ); // eslint-disable-line no-console
+			dispatch( setIsFetchError( siteId, true ) );
 		} )
 		.then( () => dispatch( setIsFetching( siteId, false ) ) );
 };
