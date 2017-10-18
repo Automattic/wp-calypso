@@ -141,7 +141,7 @@ describe( 'selectors', () => {
 			expect( isRequestingSettings( {}, 123 ) ).to.be.false;
 		} );
 
-		test( 'should be false when woocommerce state is loaded.', () => {
+		test( 'should be false when woocommerce state is loaded and there is no active request.', () => {
 			expect( isRequestingSettings( emailState, 123 ) ).to.be.false;
 		} );
 
@@ -155,7 +155,7 @@ describe( 'selectors', () => {
 			expect( mailChimpSettings( {}, 123 ) ).to.be.deep.equal( {} );
 		} );
 
-		test( 'should return settings if they are storred in state.', () => {
+		test( 'should return settings if they are stored in state.', () => {
 			expect( mailChimpSettings( emailState, 123 ) ).to.be.deep.equal( settings );
 		} );
 	} );
@@ -165,8 +165,8 @@ describe( 'selectors', () => {
 			expect( requestingSettingsError( {}, 123 ) ).to.be.null;
 		} );
 
-		test( 'should be false if settings are storred in the state.', () => {
-			expect( requestingSettingsError( emailState, 123 ) ).to.be.fales;
+		test( 'should be false if settings are stored in the state.', () => {
+			expect( requestingSettingsError( emailState, 123 ) ).to.be.false;
 		} );
 	} );
 
@@ -175,7 +175,7 @@ describe( 'selectors', () => {
 			expect( isSubbmittingApiKey( {}, 123 ) ).to.be.false;
 		} );
 
-		test( 'should be false when woocommerce state is loaded.', () => {
+		test( 'should be false when woocommerce state is loaded and there is no active request.', () => {
 			expect( isSubbmittingApiKey( emailState, 123 ) ).to.be.false;
 		} );
 
