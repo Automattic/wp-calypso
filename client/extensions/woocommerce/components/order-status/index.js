@@ -26,7 +26,7 @@ export class OrderStatus extends Component {
 				return translate( 'Payment pending' );
 			case 'processing':
 				if ( 'cod' === payment_method ) {
-					return translate( 'Payment pending' );
+					return translate( 'Paid on delivery' );
 				}
 				return translate( 'Paid in full' );
 			case 'completed':

@@ -56,7 +56,7 @@ describe( 'OrderStatus', () => {
 		expect( wrapper.find( '.order-status__payment' ) ).to.have.length( 0 );
 	} );
 
-	test( 'should render only payment as "Pending" when for a processing cash-on-delivery order', () => {
+	test( 'should render correct labels for a processing cash-on-delivery order', () => {
 		const order = {
 			status: 'processing',
 			payment_method: 'cod',
@@ -64,7 +64,7 @@ describe( 'OrderStatus', () => {
 		const wrapper = shallow( <OrderStatus order={ order } translate={ identity } /> );
 		expect( wrapper.find( '.order-status__item' ) ).to.have.length( 1 );
 		expect( wrapper.find( '.order-status__shipping' ).text() ).to.eql( 'New order' );
-		expect( wrapper.find( '.order-status__payment' ).text() ).to.eql( 'Payment pending' );
+		expect( wrapper.find( '.order-status__payment' ).text() ).to.eql( 'Paid on delivery' );
 	} );
 
 	test( 'should not render anything if the status is not recognized', () => {
