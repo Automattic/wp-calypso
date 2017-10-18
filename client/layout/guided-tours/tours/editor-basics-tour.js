@@ -64,7 +64,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="add-things"
 			arrow="top-left"
-			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
+			target=".editor-html-toolbar__button-insert-content-dropdown, .mce-wpcom-insert-menu button"
 			placement="below"
 			style={ { marginLeft: '-7px', zIndex: 'auto' } }
 		>
