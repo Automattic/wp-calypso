@@ -300,7 +300,7 @@ export class CommentDetail extends Component {
 			>
 				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
 
-				{ isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
