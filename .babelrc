@@ -14,6 +14,7 @@
 	],
 	"plugins": [
 		"add-module-exports",
+		"react-hot-loader/babel",
 		"syntax-jsx",
 		"transform-export-extensions",
 		"transform-react-display-name",
