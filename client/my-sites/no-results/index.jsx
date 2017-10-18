@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-var noResults = React.createClass( {
+const noResults = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			text: 'No results',

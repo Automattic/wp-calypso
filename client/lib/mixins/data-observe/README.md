@@ -10,7 +10,7 @@ A React mixin that makes it easy to trigger re-rendering of a component when a `
 ```js
 var observe = require( 'lib/mixins/data-observe' );
 
-var Component = React.createClass({
+const Component = React.createClass({
 	mixins: [ observe( 'sites', 'user' ) ]
 });
 ```

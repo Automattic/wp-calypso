@@ -16,7 +16,7 @@ import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
-var Buttons = React.createClass( {
+const Buttons = React.createClass( {
 	displayName: 'Buttons',
 
 	mixins: [ PureRenderMixin ],

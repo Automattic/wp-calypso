@@ -22,7 +22,7 @@ function getStateFromStores() {
 	};
 }
 
-var CheckoutData = React.createClass( {
+const CheckoutData = React.createClass( {
 	render: function() {
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>

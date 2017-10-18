@@ -35,7 +35,7 @@ If you need to track when user scrolls to another page, do it in `fetchNextPage`
 
 ```jsx
 
-var Listing = React.createClass( {
+const Listing = React.createClass( {
 	...
 	fetchNextPage: funciton ( options ) {
 		if ( options.triggeredByScroll ) {

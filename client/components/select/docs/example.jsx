@@ -7,7 +7,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-var Selects = React.createClass( {
+const Selects = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {

@@ -16,7 +16,7 @@ import ControlItem from 'components/segmented-control/item';
 /**
  * Segmented Control Demo
  */
-var SegmentedControlDemo = React.createClass( {
+const SegmentedControlDemo = React.createClass( {
 	displayName: 'SegmentedControl',
 
 	mixins: [ PureRenderMixin ],

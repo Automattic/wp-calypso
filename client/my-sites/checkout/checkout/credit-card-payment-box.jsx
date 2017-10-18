@@ -34,7 +34,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 
-var CreditCardPaymentBox = React.createClass( {
+const CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
 		return {
 			progress: 0,
