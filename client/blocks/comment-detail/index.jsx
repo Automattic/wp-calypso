@@ -17,6 +17,7 @@ import ReactDom from 'react-dom';
  */
 import Card from 'components/card';
 import QueryComment from 'components/data/query-comment';
+import QueryPosts from 'components/data/query-posts';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailEdit from './comment-detail-edit';
 import CommentDetailHeader from './comment-detail-header';
@@ -24,6 +25,7 @@ import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
+import { getSitePost } from 'state/posts/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { getSite, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
@@ -253,6 +255,7 @@ export class CommentDetail extends Component {
 			isBulkEdit,
 			isEditCommentSupported,
 			isLoading,
+			isPostTitleLoaded,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -296,6 +299,8 @@ export class CommentDetail extends Component {
 				tabIndex="0"
 			>
 				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
+
+				{ isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
@@ -378,7 +383,6 @@ export class CommentDetail extends Component {
 									authorDisplayName={ authorDisplayName }
 									comment={ getCommentStatusAction( this.props ) }
 									hasFocus={ this.state.isReplyMode }
-									postTitle={ postTitle }
 									replyComment={ replyComment }
 									enterReplyState={ this.enterReplyState }
 									exitReplyState={ this.exitReplyState }
@@ -400,8 +404,11 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const postId = get( comment, 'post.ID' );
 
-	// TODO: eventually it will be returned already decoded from the data layer.
-	const postTitle = decodeEntities( get( comment, 'post.title' ) );
+	const post = getSitePost( state, siteId, postId );
+
+	const postTitle =
+		decodeEntities( get( comment, 'post.title' ) ) ||
+		decodeEntities( stripHTML( get( post, 'excerpt' ) ) );
 
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
 	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
@@ -433,6 +440,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isEditCommentSupported: ! isJetpack || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		isJetpack,
 		isLoading,
+		isPostTitleLoaded: !! postTitle || !! post,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
