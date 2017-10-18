@@ -2,16 +2,10 @@
 /**
  * Internal dependencies
  */
-import { COMMENTS_SELECT, COMMENTS_DESELECT } from 'state/action-types';
+import { COMMENTS_TOGGLE_SELECT } from 'state/action-types';
 
-export const selectComment = ( siteId, commentId ) => ( {
-	type: COMMENTS_SELECT,
-	siteId,
-	commentId,
-} );
-
-export const deselectComment = ( siteId, commentId ) => ( {
-	type: COMMENTS_DESELECT,
+export const toggleSelectedComment = ( siteId, commentId ) => ( {
+	type: COMMENTS_TOGGLE_SELECT,
 	siteId,
 	commentId,
 } );

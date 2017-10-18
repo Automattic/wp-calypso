@@ -25,7 +25,7 @@ import { urlToDomainAndPath } from 'lib/url';
 import viewport from 'lib/viewport';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
-import { selectComment } from 'state/ui/comments/selected/actions';
+import { toggleSelectedComment } from 'state/ui/comments/selected/actions';
 
 const getRelativeTimePeriod = ( commentDate, site, moment ) => {
 	const localizedDate = convertDateToUserLocation(
@@ -207,7 +207,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => ( {
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId, commentId } ) => ( {
-	toggleSelected: () => dispatch( selectComment( siteId, commentId ) ),
+	toggleSelected: () => dispatch( toggleSelectedComment( siteId, commentId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentDetailHeader ) );

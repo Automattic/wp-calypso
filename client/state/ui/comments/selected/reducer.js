@@ -7,16 +7,16 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENTS_SELECT, COMMENTS_DESELECT } from 'state/action-types';
+import { COMMENTS_TOGGLE_SELECT } from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
 const selectedComments = ( state = [], { type, commentId } ) => {
-	switch ( type ) {
-		case COMMENTS_SELECT:
-			return [ ...state, commentId ];
-		case COMMENTS_DESELECT:
-			return filter( state, commentId );
+	if ( COMMENTS_TOGGLE_SELECT === type ) {
+		const isSelected = state.indexOf( commentId ) > -1;
+
+		return isSelected ? filter( state, commentId ) : [ ...state, commentId ];
 	}
+
 	return state;
 };
 

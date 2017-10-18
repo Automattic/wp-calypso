@@ -28,6 +28,7 @@ import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { bulkChangeStatus } from 'state/comments/actions';
 import { getSiteComment } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
@@ -106,7 +107,7 @@ export class CommentNavigation extends Component {
 			isSelectedAll,
 			query,
 			selectedCount,
-			setBulkStatus,
+			bulkChangeCommentsStatus,
 			setSortOrder,
 			sortOrder,
 			status: queryStatus,
@@ -129,7 +130,7 @@ export class CommentNavigation extends Component {
 								<Button
 									compact
 									disabled={ ! selectedCount }
-									onClick={ setBulkStatus( 'approved' ) }
+									onClick={ bulkChangeCommentsStatus( 'approved' ) }
 								>
 									{ translate( 'Approve' ) }
 								</Button>
@@ -138,7 +139,7 @@ export class CommentNavigation extends Component {
 								<Button
 									compact
 									disabled={ ! selectedCount }
-									onClick={ setBulkStatus( 'unapproved' ) }
+									onClick={ bulkChangeCommentsStatus( 'unapproved' ) }
 								>
 									{ translate( 'Unapprove' ) }
 								</Button>
@@ -150,7 +151,7 @@ export class CommentNavigation extends Component {
 									compact
 									scary
 									disabled={ ! selectedCount }
-									onClick={ setBulkStatus( 'spam' ) }
+									onClick={ bulkChangeCommentsStatus( 'spam' ) }
 								>
 									{ translate( 'Spam' ) }
 								</Button>
@@ -160,7 +161,7 @@ export class CommentNavigation extends Component {
 									compact
 									scary
 									disabled={ ! selectedCount }
-									onClick={ setBulkStatus( 'trash' ) }
+									onClick={ bulkChangeCommentsStatus( 'trash' ) }
 								>
 									{ translate( 'Trash' ) }
 								</Button>
@@ -255,6 +256,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 		selectedCount: ( get( state, [ 'ui', 'comments', 'selected', siteId ] ) || [] ).length,
+		selectedComments: get( state, [ 'ui', 'comments', 'selected', siteId ] ) || [],
 	};
 };
 
@@ -264,8 +266,17 @@ const mapDispatchToProps = {
 			recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
 			bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 		),
+	bulkChangeStatus,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => ( {
+	...ownProps,
+	...stateProps,
+	...dispatchProps,
+	bulkChangeCommentsStatus: status => () =>
+		dispatchProps.bulkChangeStatus( ownProps.siteId, stateProps.selectedComments, status ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
 	localize( UrlSearch( CommentNavigation ) )
 );
