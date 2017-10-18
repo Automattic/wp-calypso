@@ -27,40 +27,8 @@ class ActivityLogConfirmDialog extends Component {
 		moment: PropTypes.func.isRequired,
 	};
 
-	renderButtons() {
-		const { onClose, onConfirm, translate } = this.props;
-		return [
-			<div className="activity-log-confirm-dialog__primary-actions">
-				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-				<Button primary onClick={ onConfirm }>
-					{ translate( 'Confirm Rewind' ) }
-				</Button>
-			</div>,
-			<div className="activity-log-confirm-dialog__secondary-actions">
-				<a
-					className="activity-log-confirm-dialog__more-info-link"
-					href="https://help.vaultpress.com/one-click-restore/"
-				>
-					<Gridicon icon="notice" />
-					<span className="activity-log-confirm-dialog__more-info-link-text">
-						{ translate( 'More info' ) }
-					</span>
-				</a>
-				<HappychatButton
-					className="activity-log-confirm-dialog__more-info-link"
-					href="https://help.vaultpress.com/one-click-restore/"
-				>
-					<Gridicon icon="chat" />
-					<span className="activity-log-confirm-dialog__more-info-link-text">
-						{ translate( 'Any Questions?' ) }
-					</span>
-				</HappychatButton>
-			</div>,
-		];
-	}
-
 	render() {
-		const { applySiteOffset, moment, timestamp, translate } = this.props;
+		const { applySiteOffset, moment, timestamp, translate, onClose, onConfirm } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -93,7 +61,35 @@ class ActivityLogConfirmDialog extends Component {
 						</span>
 					</div>
 
-					<div className="activity-log-confirm-dialog__button-wrap">{ this.renderButtons() }</div>
+					<div className="activity-log-confirm-dialog__button-wrap">
+						<div className="activity-log-confirm-dialog__primary-actions">
+							<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
+							<Button primary onClick={ onConfirm }>
+								{ translate( 'Confirm Rewind' ) }
+							</Button>
+						</div>
+						<div className="activity-log-confirm-dialog__secondary-actions">
+							<Button
+								borderless={ true }
+								className="activity-log-confirm-dialog__more-info-link"
+								href="https://help.vaultpress.com/one-click-restore/"
+							>
+								<Gridicon icon="notice" />
+								<span className="activity-log-confirm-dialog__more-info-link-text">
+									{ translate( 'More info' ) }
+								</span>
+							</Button>
+							<HappychatButton
+								className="activity-log-confirm-dialog__more-info-link"
+								href="https://help.vaultpress.com/one-click-restore/"
+							>
+								<Gridicon icon="chat" />
+								<span className="activity-log-confirm-dialog__more-info-link-text">
+									{ translate( 'Any Questions?' ) }
+								</span>
+							</HappychatButton>
+						</div>
+					</div>
 				</Card>
 			</div>
 		);
