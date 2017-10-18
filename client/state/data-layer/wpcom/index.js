@@ -14,6 +14,7 @@ import me from './me';
 import meta from './meta';
 import plans from './plans';
 import posts from './posts';
+import privacyPolicy from './privacy-policy';
 import read from './read';
 import sites from './sites';
 import timezones from './timezones';
@@ -32,6 +33,7 @@ export const handlers = mergeHandlers(
 	meta,
 	plans,
 	posts,
+	privacyPolicy,
 	read,
 	sites,
 	timezones,
