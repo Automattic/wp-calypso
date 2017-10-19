@@ -146,7 +146,7 @@ const PaypalPaymentBox = React.createClass( {
 		} );
 	},
 
-	content: function() {
+	render: function() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
 		} );
@@ -217,17 +217,6 @@ const PaypalPaymentBox = React.createClass( {
 
 				<CartToggle />
 			</form>
-		);
-	},
-
-	render: function() {
-		return (
-			<PaymentBox
-				classSet="paypal-payment-box"
-				title={ this.props.translate( 'Secure Payment with PayPal' ) }
-			>
-				{ this.content() }
-			</PaymentBox>
 		);
 	},
 } );

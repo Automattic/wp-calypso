@@ -812,26 +812,71 @@
 	float: right;
 }
 .checkout__payment-box-container {
-	span.checkout__payment-box-title {
-		padding: 1em;
+
+	.checkout__payment-box-title {
+		padding: 20px 16px 14px 16px;
+		font-weight: bold;
+		display:none;
+	}
+
+	.select-dropdown__option:first-child {
+		display:none;
 	}
 
 	div.section-nav {
 		margin-bottom: 0;
 
-		& .section-nav-tabs__list > span {
+		.section-nav-tabs__list > span {
 			font-weight: bold;
+		}
+
+		.section-nav-tab__link {
+			color: $blue-wordpress;
+			font-weight: bold;
+		}
+
+		.section-nav-tab.is-selected {
+			border-bottom-color: $blue-wordpress;
+
+			.section-nav-tab__link {
+				color: white;
+			}
 		}
 	}
 
 	img {
 		&.checkout__paypal {
 			width: 80px;
+			margin-top: 4px;
 		}
 		&.checkout__credit-card {
-			width: 35px;
+			margin-right: 3px;
+			width: 28px;
+			margin-bottom: -2px;
 		}
+
 		padding-left: 1em;
-		vertical-align: middle;
+		vertical-align: bottom;
+	}
+}
+
+@media (min-width: 481px) {
+	.checkout__payment-box-container {
+
+		div.section-nav {
+			.section-nav-tabs__list {
+				.checkout__payment-box-title {
+					display:block;
+				}
+			}
+			.section-nav-tab {
+				&.is-selected {
+					.section-nav-tab__link {
+						color: $blue-wordpress;
+					}
+				}
+			}
+		}
+
 	}
 }
