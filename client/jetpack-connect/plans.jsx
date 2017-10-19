@@ -309,6 +309,8 @@ class Plans extends Component {
 	}
 }
 
+export { Plans as PlansTestComponent };
+
 export default connect(
 	state => {
 		const user = getCurrentUser( state );
