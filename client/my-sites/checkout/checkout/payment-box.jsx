@@ -58,10 +58,6 @@ class PaymentBox extends PureComponent {
 				);
 			case 'credit-card':
 				return 'Credit Card';
-			case 'ideal':
-				return (
-					<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
-				);
 		}
 
 		return <span>{ this.getPaymentProviderName( method ) }</span>;
@@ -101,7 +97,9 @@ class PaymentBox extends PureComponent {
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				<SectionNav>
 					<NavTabs>
-						<span>{ translate( 'Secure Payment with' ) }</span>
+						<span>
+							{ this.props.paymentMethods ? translate( 'Secure Payment with' ) : this.props.title }
+						</span>
 						{ this.getPaymentMethods() }
 					</NavTabs>
 				</SectionNav>
