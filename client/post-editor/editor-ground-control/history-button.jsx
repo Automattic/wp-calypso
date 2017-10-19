@@ -3,12 +3,15 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	NESTED_SIDEBAR_NONE,
 	NESTED_SIDEBAR_REVISIONS,
@@ -31,14 +34,22 @@ class HistoryButton extends PureComponent {
 			return;
 		}
 
+		// otherwise, show revisions...
+		this.trackPostRevisionsOpen();
 		selectRevision( null );
 		setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
 
-		// open the sidebar when closed
+		// and open the sidebar if it's not open already.
 		if ( ! isSidebarOpened ) {
 			toggleSidebar();
 		}
 	};
+
+	trackPostRevisionsOpen() {
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open', {
+			source: 'ground_control_history',
+		} );
+	}
 
 	render() {
 		return (
@@ -63,4 +74,4 @@ HistoryButton.PropTypes = {
 	translate: PropTypes.func,
 };
 
-export default localize( HistoryButton );
+export default flow( localize, connect( null, { recordTracksEvent } ) )( HistoryButton );
