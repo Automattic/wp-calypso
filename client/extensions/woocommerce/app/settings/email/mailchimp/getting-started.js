@@ -41,7 +41,7 @@ const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, re
 					<h3 className="mailchimp__getting-started-list-header">
 						{ translate( 'Connect with your customers through MailChimp' ) }
 					</h3>
-					<ul className="mailchimp__getting-started-list" >
+					<ul className="mailchimp__getting-started-list">
 						{ list.map( ( item, key ) =>
 							<li key={ key }>
 								<Gridicon icon="checkmark" size={ 18 } />
@@ -78,6 +78,7 @@ GettingStarted.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	isPlaceholder: PropTypes.bool,
 	redirectToSettings: PropTypes.bool,
+	site: PropTypes.object,
 };
 
 export default GettingStarted;

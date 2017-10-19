@@ -60,8 +60,10 @@ class Dashboard extends Component {
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
 		} ),
+		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
 		fetchSetupChoices: PropTypes.func,
+		requestSyncStatus: PropTypes.func,
 	};
 
 	componentDidMount = () => {
@@ -151,11 +153,9 @@ class Dashboard extends Component {
 			return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
 		}
 
-		let manageView = null;
+		let manageView = <ManageOrdersView site={ selectedSite } />;
 		if ( ! hasOrders ) {
 			manageView = <ManageNoOrdersView site={ selectedSite } />;
-		} else {
-			manageView = <ManageOrdersView site={ selectedSite } />;
 		}
 
 		return (
