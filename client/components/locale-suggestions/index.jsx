@@ -3,7 +3,7 @@
  *
  * @format
  */
-
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -17,8 +17,14 @@ import Notice from 'components/notice';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 
 class LocaleSuggestions extends Component {
+	static propTypes = {
+		locale: PropTypes.string.isRequired,
+		path: PropTypes.string.isRequired,
+	};
+
 	constructor( props ) {
 		super( props );
+
 		this.state = {
 			dismissed: false,
 			locales: LocaleSuggestionStore.get(),
