@@ -80,8 +80,11 @@ export const comment = ( { params, path, store } ) => {
 
 	// Likely, this is a leak from a site view route with invalid status
 	// e.g. '/comments/foobar/example.com'
-	if ( ! isFinite( commentId ) ) {
+	if ( ! siteFragment && ! isFinite( commentId ) ) {
 		return page.redirect( `/comments/all/${ params.comment }` );
+	}
+	if ( siteFragment && ! isFinite( commentId ) ) {
+		return page.redirect( `/comments/all/${ siteFragment }` );
 	}
 
 	renderWithReduxStore(
