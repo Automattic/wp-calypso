@@ -22,8 +22,7 @@ import Emojify from 'components/emojify';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
-import { find, get } from 'lodash';
-import url from 'url';
+import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
 
 class StatsListItem extends React.Component {
@@ -54,15 +53,7 @@ class StatsListItem extends React.Component {
 	};
 
 	getSiteIdForFollow = () => {
-		return (
-			this.isFollowersModule &&
-			get(
-				find( this.props.followList.data, {
-					blog_domain: url.parse( this.props.data.link ).host,
-				} ),
-				'site_id'
-			)
-		);
+		return get( this.props, 'data.actions[0].data.blog_id' );
 	};
 
 	closeMenu = () => {
@@ -246,7 +237,7 @@ class StatsListItem extends React.Component {
 						onClickHandler = event => {
 							event.preventDefault();
 							page( `/read/blogs/${ siteId }` );
-							recordTrack( 'calypso_stats_follower_click', { siteId } );
+							recordTrack( 'calypso_reader_stats_insights_followers_link_click', { siteId } );
 						};
 					}
 				}
