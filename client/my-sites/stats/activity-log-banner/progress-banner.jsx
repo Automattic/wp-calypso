@@ -15,7 +15,6 @@ import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-statu
 function ProgressBanner( {
 	applySiteOffset,
 	moment,
-	status,
 	siteId,
 	timestamp,
 	translate,
@@ -45,13 +44,7 @@ function ProgressBanner( {
 			</p>
 
 			<div>
-				<em>
-					{ 'queued' === status ? (
-						translate( 'Your restore will start in a moment.' )
-					) : (
-						translate( "We're on it! Your site is being restored." )
-					) }
-				</em>
+				<em>{ translate( "We're on it! Your site is being restored." ) }</em>
 			</div>
 		</ActivityLogBanner>
 	);
@@ -60,7 +53,6 @@ function ProgressBanner( {
 ProgressBanner.propTypes = {
 	applySiteOffset: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [ 'queued', 'running' ] ).isRequired,
 	timestamp: PropTypes.number.isRequired,
 };
 

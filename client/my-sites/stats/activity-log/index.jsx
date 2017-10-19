@@ -213,7 +213,6 @@ class ActivityLog extends Component {
 				freshness={ freshness }
 				restoreId={ restoreId }
 				siteId={ siteId }
-				status={ status }
 				timestamp={ timestamp }
 			/>
 		);
