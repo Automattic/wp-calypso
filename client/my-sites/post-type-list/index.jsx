@@ -19,10 +19,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQueryIgnoringPage,
 	getSitePostsForQueryIgnoringPage,
+	getSitePostsFoundForQuery,
 	getSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
+import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
+import PostTypeListMaxPagesNotice from './max-pages-notice';
 
 /**
  * Constants
@@ -30,6 +33,9 @@ import PostTypeListEmptyContent from './empty-content';
 // When this many pixels or less are below the viewport, begin loading the next
 // page of items.
 const LOAD_NEXT_PAGE_THRESHOLD_PIXELS = 400;
+
+// The number of pages of results that are displayed in "All My Sites"
+const MAX_ALL_SITES_PAGES = 10;
 
 class PostTypeList extends Component {
 	static propTypes = {
@@ -103,12 +109,16 @@ class PostTypeList extends Component {
 			return 1;
 		}
 
-		const query = this.props.query || {};
-		const postsPerPage = query.number || DEFAULT_POST_QUERY.number;
+		const postsPerPage = this.getPostsPerPageCount();
 		const pageCount = Math.ceil( posts.length / postsPerPage );
 
 		// Avoid making more than 5 concurrent requests on page load.
 		return Math.min( pageCount, 5 );
+	}
+
+	getPostsPerPageCount() {
+		const query = this.props.query || {};
+		return query.number || DEFAULT_POST_QUERY.number;
 	}
 
 	getScrollTop() {
@@ -120,6 +130,18 @@ class PostTypeList extends Component {
 			return 'scrollY' in window ? window.scrollY : document.documentElement.scrollTop;
 		}
 		return scrollContainer.scrollTop;
+	}
+
+	hasListFullyLoaded() {
+		const { lastPage, isRequestingPosts } = this.props;
+		const { maxRequestedPage } = this.state;
+
+		return ! isRequestingPosts && maxRequestedPage >= lastPage;
+	}
+
+	isTruncatedResults() {
+		const { siteId, lastPage } = this.props;
+		return null === siteId && this.hasListFullyLoaded() && lastPage > MAX_ALL_SITES_PAGES;
 	}
 
 	maybeLoadNextPage() {
@@ -149,6 +171,19 @@ class PostTypeList extends Component {
 		}
 	}
 
+	renderListEnd() {
+		return <ListEnd />;
+	}
+
+	renderMaxPagesNotice() {
+		const { totalPosts } = this.props;
+		const displayedPosts = this.getPostsPerPageCount() * MAX_ALL_SITES_PAGES;
+
+		return (
+			<PostTypeListMaxPagesNotice displayedPosts={ displayedPosts } totalPosts={ totalPosts } />
+		);
+	}
+
 	renderPlaceholder() {
 		return <PostItem key="placeholder" largeTitle={ this.props.largeTitles } />;
 	}
@@ -169,7 +204,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, posts, isRequestingPosts, lastPage } = this.props;
+		const { query, siteId, posts, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -186,7 +221,8 @@ class PostTypeList extends Component {
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ ( maxRequestedPage < lastPage || isRequestingPosts ) && this.renderPlaceholder() }
+				{ this.isTruncatedResults() && this.renderMaxPagesNotice() }
+				{ this.hasListFullyLoaded() ? this.renderListEnd() : this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -201,5 +237,6 @@ export default connect( ( state, ownProps ) => {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		lastPage,
+		totalPosts: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
 	};
 } )( PostTypeList );
