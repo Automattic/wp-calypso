@@ -64,13 +64,11 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 	);
 };
 
-export const receiveActivityLog = ( { dispatch }, action, data ) => {
+export const receiveActivityLog = ( { dispatch }, action, data ) =>
 	dispatch( activityLogUpdate( action.siteId, data, data.totalItems, action.params ) );
-};
 
-export const receiveActivityLogError = ( { dispatch } ) => {
+export const receiveActivityLogError = ( { dispatch } ) =>
 	dispatch( errorNotice( translate( 'Error receiving activity for site.' ) ) );
-};
 
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [
