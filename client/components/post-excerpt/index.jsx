@@ -1,11 +1,9 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
@@ -16,8 +14,8 @@ const PostExcerpt = React.createClass( {
 		maxLength: PropTypes.number,
 	},
 
-	defaultProps: {
-		maxLength: 80,
+	getDefaultProps() {
+		return { maxLength: 80 };
 	},
 
 	render() {

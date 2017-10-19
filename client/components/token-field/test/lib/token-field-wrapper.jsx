@@ -49,7 +49,7 @@ var suggestions = [
 	'sound',
 ];
 
-var TokenFieldWrapper = React.createClass( {
+const TokenFieldWrapper = React.createClass( {
 	getInitialState: function() {
 		return {
 			tokenSuggestions: suggestions,

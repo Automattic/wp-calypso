@@ -22,7 +22,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 
-var PayButton = React.createClass( {
+const PayButton = React.createClass( {
 	buttonState: function() {
 		var state;
 

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import EmailForwardingItem from './email-forwarding-item';
 
-var EmailForwardingList = React.createClass( {
+const EmailForwardingList = React.createClass( {
 	render: function() {
 		var emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;

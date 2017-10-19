@@ -12,7 +12,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 */
 import InfoPopover from 'components/info-popover';
 
-var InfoPopoverExample = React.createClass( {
+const InfoPopoverExample = React.createClass( {
 	displayName: 'InfoPopover',
 
 	mixins: [ PureRenderMixin ],

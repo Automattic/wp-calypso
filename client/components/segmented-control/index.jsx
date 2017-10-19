@@ -23,7 +23,7 @@ var _instance = 1;
 /**
  * SegmentedControl
  */
-var SegmentedControl = React.createClass( {
+const SegmentedControl = React.createClass( {
 	propTypes: {
 		initialSelected: PropTypes.string,
 		compact: PropTypes.bool,

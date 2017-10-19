@@ -19,7 +19,7 @@ import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
 
-var TokenField = React.createClass( {
+const TokenField = React.createClass( {
 	propTypes: {
 		suggestions: PropTypes.array,
 		maxSuggestions: PropTypes.number,

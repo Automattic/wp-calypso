@@ -12,7 +12,7 @@ import React from 'react';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 
-var Cards = React.createClass( {
+const Cards = React.createClass( {
 	displayName: 'Cards',
 
 	getInitialState: function() {
