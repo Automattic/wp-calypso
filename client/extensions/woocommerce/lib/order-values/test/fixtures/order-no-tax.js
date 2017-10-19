@@ -5,9 +5,11 @@ export default {
 		{
 			id: 1,
 			name: 'Scarf',
-			product_id: 49,
-			taxes: [],
 			price: 25,
+			quantity: 1,
+			subtotal: 25,
+			total: 25,
+			taxes: [],
 		},
 	],
 	tax_lines: [],

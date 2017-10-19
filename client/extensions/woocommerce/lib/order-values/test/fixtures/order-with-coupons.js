@@ -5,7 +5,10 @@ export default {
 		{
 			id: 26,
 			name: 'Mug',
-			product_id: 71,
+			price: 11.64,
+			quantity: 2,
+			subtotal: 31.98,
+			total: 23.28,
 			taxes: [
 				{
 					id: 4,
@@ -13,11 +16,14 @@ export default {
 					subtotal: '2.0307',
 				},
 			],
-			price: 11.6408,
 		},
 		{
 			id: 27,
 			name: 'Scarf - Blue',
+			price: 36.39,
+			quantity: 1,
+			subtotal: 49.99,
+			total: 36.39,
 			taxes: [
 				{
 					id: 4,
@@ -25,7 +31,6 @@ export default {
 					subtotal: '3.1744',
 				},
 			],
-			price: 36.3929,
 		},
 	],
 	tax_lines: [
