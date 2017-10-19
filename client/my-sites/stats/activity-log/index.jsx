@@ -351,33 +351,38 @@ class ActivityLog extends Component {
 					.add( 1, 'day' )
 					.valueOf();
 				activityDays.push(
-					<div className="activity-log-day">
-						{ thisEmptyDay !== thatEmptyDay ? (
-							`${ this.applySiteOffset( moment.utc( thisEmptyDay ) ).format( 'LL' ) }
+					<ActivityLogDay
+						applySiteOffset={ this.applySiteOffset }
+						key={ `empty-${ dayEnd }` }
+						tsEndOfSiteDay={ dayEnd }
+						emptyRangeDate={
+							thisEmptyDay !== thatEmptyDay ? (
+								`${ this.applySiteOffset( moment.utc( thisEmptyDay ) ).format( 'LL' ) }
 								 - ${ this.applySiteOffset( moment.utc( thatEmptyDay ) ).format( 'LL' ) }`
-						) : (
-							`${ this.applySiteOffset( moment.utc( thatEmptyDay ) ).format( 'LL' ) }`
-						) }
-					</div>
+							) : (
+								`${ this.applySiteOffset( moment.utc( thatEmptyDay ) ).format( 'LL' ) }`
+							)
+						}
+					/>
 				);
 				thatEmptyDay = '';
+			} else if ( ! isEmpty( dayLogs ) ) {
+				activityDays.push(
+					<ActivityLogDay
+						applySiteOffset={ this.applySiteOffset }
+						requestedRestoreActivityId={ requestedRestoreActivityId }
+						rewindConfirmDialog={ rewindConfirmDialog }
+						disableRestore={ disableRestore }
+						hideRestore={ ! rewindEnabledByConfig || ! isPressable }
+						isRewindActive={ isRewindActive }
+						key={ dayEnd }
+						logs={ dayLogs }
+						requestRestore={ this.handleRequestRestore }
+						siteId={ siteId }
+						tsEndOfSiteDay={ dayEnd }
+					/>
+				);
 			}
-
-			activityDays.push(
-				<ActivityLogDay
-					applySiteOffset={ this.applySiteOffset }
-					requestedRestoreActivityId={ requestedRestoreActivityId }
-					rewindConfirmDialog={ rewindConfirmDialog }
-					disableRestore={ disableRestore }
-					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
-					isRewindActive={ isRewindActive }
-					key={ dayEnd }
-					logs={ dayLogs }
-					requestRestore={ this.handleRequestRestore }
-					siteId={ siteId }
-					tsEndOfSiteDay={ dayEnd }
-				/>
-			);
 		}
 
 		return (
