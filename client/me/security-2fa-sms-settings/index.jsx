@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugFactory from 'debug';
-import { flow } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -244,6 +244,4 @@ const Security2faSMSSettings = React.createClass( {
 	},
 } );
 
-const enhance = flow( localize, protectForm );
-
-export default enhance( Security2faSMSSettings );
+export default flowRight( protectForm, localize )( Security2faSMSSettings );
