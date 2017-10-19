@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -353,4 +354,4 @@ const mapState = ( state, { query, siteId } ) => ( {
 	site: getSite( state, siteId ),
 } );
 
-const ConnectedPages = flow( localize, connect( mapState ) )( Pages );
+const ConnectedPages = flowRight( connect( mapState ), localize )( Pages );
