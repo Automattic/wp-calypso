@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { get, set } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -43,12 +44,15 @@ class OrderRefundTable extends Component {
 	constructor( props ) {
 		super( props );
 		const shippingTax = getOrderShippingTax( props.order );
+		const shippingTotal = parseFloat( shippingTax ) + parseFloat( props.order.shipping_total );
+
 		this.state = {
 			quantities: {},
 			fees: props.order.fee_lines.map( ( item, i ) => {
-				return parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, i ) );
+				const value = parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, i ) );
+				return getCurrencyFormatDecimal( value );
 			} ),
-			shippingTotal: parseFloat( shippingTax ) + parseFloat( props.order.shipping_total ),
+			shippingTotal: getCurrencyFormatDecimal( shippingTotal ),
 		};
 	}
 
@@ -63,6 +67,18 @@ class OrderRefundTable extends Component {
 
 	triggerRecalculate = () => {
 		this.props.onChange( this.state );
+	};
+
+	formatInput = name => {
+		return () => {
+			this.setState( prevState => {
+				const newState = Object.assign(
+					{},
+					set( prevState, name, getCurrencyFormatDecimal( get( prevState, name ) ) )
+				);
+				return newState;
+			} );
+		};
 	};
 
 	onChange = event => {
@@ -82,7 +98,7 @@ class OrderRefundTable extends Component {
 			} else {
 				this.setState( prevState => {
 					const newFees = prevState.fees;
-					newFees[ i ] = parseFloat( value );
+					newFees[ i ] = isNaN( parseFloat( value ) ) ? 0 : value;
 					return { fees: newFees };
 				}, this.triggerRecalculate );
 			}
@@ -146,7 +162,7 @@ class OrderRefundTable extends Component {
 
 	renderOrderFees = ( item, i ) => {
 		const { order } = this.props;
-		const value = getCurrencyFormatDecimal( this.state.fees[ i ] );
+		const value = this.state.fees[ i ];
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
 				<TableItem
@@ -160,6 +176,7 @@ class OrderRefundTable extends Component {
 					<PriceInput
 						name={ `fee_line-${ i }` }
 						onChange={ this.onChange }
+						onBlur={ this.formatInput( `fees[${ i }]` ) }
 						currency={ order.currency }
 						value={ value }
 					/>
@@ -208,6 +225,7 @@ class OrderRefundTable extends Component {
 						value={ this.state.shippingTotal }
 						name="shipping_total"
 						onChange={ this.onChange }
+						onBlur={ this.formatInput( 'shippingTotal' ) }
 					/>
 					<OrderTotalRow
 						className="order-payment__total-full order-details__total-full"

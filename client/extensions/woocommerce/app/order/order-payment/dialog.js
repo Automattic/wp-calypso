@@ -113,7 +113,7 @@ class RefundDialog extends Component {
 			return 0;
 		}
 		const subtotal = sum( [
-			...data.fees,
+			...map( data.fees, parseFloat ),
 			...map( data.quantities, ( q, id ) => {
 				id = parseInt( id );
 				const line_item = find( order.line_items, { id } );
