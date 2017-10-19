@@ -33,7 +33,7 @@
 	"definitions": {
 		"item": {
 			"type": "object",
-			"required": [ "activity_id", "name", "published", "summary" ],
+			"required": [ "activity_id", "is_rewindable", "name", "published", "summary" ],
 			"properties": {
 				"activity_id": { "type": "string" },
 				"actor": {
@@ -59,6 +59,7 @@
 				},
 				"generator": { "type": "object" },
 				"gridicon": { "type": "string" },
+				"is_rewindable": { "type": "boolean" },
 				"items": {
 					"type": "array",
 					"items": { "type": "object" }

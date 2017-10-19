@@ -52,6 +52,7 @@ const SUCCESS_RESPONSE = deepFreeze( {
 			},
 			gridicon: 'posts',
 			activity_id: 'foobarbaz',
+			is_rewindable: false,
 		},
 	],
 	summary: 'Activity log',
