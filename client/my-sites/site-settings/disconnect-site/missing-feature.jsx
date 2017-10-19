@@ -49,7 +49,7 @@ class MissingFeature extends PureComponent {
 		const suggestions = values( this.getSuggestions() );
 
 		return (
-			<div>
+			<div className="disconnect-site__missing-feature">
 				<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
 				<Card>
 					<TokenField
