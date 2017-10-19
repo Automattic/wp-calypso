@@ -8,18 +8,28 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 
 class EditorRevisions extends Component {
 	showRevisionsNestedSidebar = () => {
+		this.trackPostRevisionsOpen();
 		this.props.selectRevision( null );
 		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
 	};
+
+	trackPostRevisionsOpen() {
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open', {
+			source: 'settings_status_sidebar',
+		} );
+	}
 
 	render() {
 		const { adminUrl, revisions, translate } = this.props;
@@ -72,4 +82,4 @@ EditorRevisions.propTypes = {
 	selectRevision: PropTypes.func.isRequired,
 };
 
-export default localize( EditorRevisions );
+export default flow( localize, connect( null, { recordTracksEvent } ) )( EditorRevisions );
