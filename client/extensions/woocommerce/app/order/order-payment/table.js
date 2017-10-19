@@ -161,7 +161,7 @@ class OrderRefundTable extends Component {
 	};
 
 	renderOrderFees = ( item, i ) => {
-		const { order } = this.props;
+		const { order, translate } = this.props;
 		const value = this.state.fees[ i ];
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
@@ -171,6 +171,9 @@ class OrderRefundTable extends Component {
 					className="order-payment__item-product order-details__item-product"
 				>
 					{ item.name }
+					<span className="order-payment__item-sku order-details__item-sku">
+						{ translate( 'Fee' ) }
+					</span>
 				</TableItem>
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
 					<PriceInput

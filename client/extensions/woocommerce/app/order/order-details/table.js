@@ -103,12 +103,13 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderOrderFees = ( item, i ) => {
-		const { order } = this.props;
+		const { order, translate } = this.props;
 		const tax = getOrderFeeTax( order, i );
 		return (
 			<TableRow key={ i } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
 					{ item.name }
+					<span className="order-details__item-sku">{ translate( 'Fee' ) }</span>
 				</TableItem>
 				<TableItem className="order-details__item-cost" />
 				<TableItem className="order-details__item-quantity" />
