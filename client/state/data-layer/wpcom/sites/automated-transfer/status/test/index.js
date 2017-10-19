@@ -12,7 +12,7 @@ import sinon from 'sinon';
 import { requestStatus, receiveStatus } from '../';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
-	getAutomatedTransferStatus,
+	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
@@ -75,6 +75,6 @@ describe( 'receiveStatus', () => {
 		clock.tick( 4000 );
 
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith( getAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).to.have.been.calledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 } );

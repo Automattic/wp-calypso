@@ -14,7 +14,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { requestSite } from 'state/sites/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	getAutomatedTransferStatus,
+	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
 import { transferStates } from 'state/automated-transfer/constants';
@@ -43,7 +43,7 @@ export const receiveStatus = (
 
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 	if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
-		delay( dispatch, 3000, getAutomatedTransferStatus( siteId ) );
+		delay( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
 	}
 
 	if ( status === transferStates.COMPLETE ) {

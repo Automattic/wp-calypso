@@ -16,7 +16,7 @@ import {
 	updateUploadProgress,
 } from '../';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
 
 const siteId = 1916284;
@@ -64,7 +64,7 @@ describe( 'receiveResponse', () => {
 	test( 'should dispatch a status request', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith( getAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).to.have.been.calledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should dispatch a tracks call', () => {

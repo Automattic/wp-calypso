@@ -28,7 +28,7 @@ import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import QuerySites from 'components/data/query-sites';
 import { getSiteOptions } from 'state/selectors';
-import { getAutomatedTransferStatus as fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { isSiteAutomatedTransfer as isSiteAutomatedTransferSelector } from 'state/selectors';

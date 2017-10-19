@@ -34,7 +34,7 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * @param {number} siteId The id of the site to query.
  * @returns {Object} An action object
  */
-export const getAutomatedTransferStatus = siteId => ( {
+export const fetchAutomatedTransferStatus = siteId => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
 } );
