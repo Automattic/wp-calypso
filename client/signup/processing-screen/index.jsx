@@ -146,7 +146,7 @@ export class SignupProcessingScreen extends Component {
 						}
 					)
 				: this.props.translate(
-						'{{strong}}Awesome!{{/strong}} Give us one minute while we set up %(domain)s for you.',
+						'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
 						{
 							components: { strong: <strong /> },
 							args: { domain },
