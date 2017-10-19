@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 				resyncRequest: false,
 				resyncRequestError: false,
 				apiKeySubmit: false,
-				apiKeySubbmitError: false,
+				apiKeySubmitError: false,
 				storeInfoSubmit: false,
 				storeInfoSubmitError: false,
 				listsRequest: false,

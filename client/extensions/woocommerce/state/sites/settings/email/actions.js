@@ -80,7 +80,7 @@ const mailchimpStoreInfoSubmitSuccess = ( siteId, settings ) => ( {
 	settings
 } );
 
-const mailchimpStoreInfoSubbmitFailure = ( siteId, { error } ) => ( {
+const mailchimpStoreInfoSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
 	siteId,
 	error
@@ -236,7 +236,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) =>
 			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
 		} )
 		.catch( error => {
-			dispatch( mailchimpStoreInfoSubbmitFailure( siteId, error ) );
+			dispatch( mailchimpStoreInfoSubmitFailure( siteId, error ) );
 		} );
 };
 

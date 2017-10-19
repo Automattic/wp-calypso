@@ -17,7 +17,7 @@ import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selec
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { getSiteTimezoneValue } from 'state/selectors';
-import { isSubbmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
+import { isSubmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
@@ -331,7 +331,7 @@ MailChimpSetup.propTypes = {
 
 export default localize( connect(
 	( state, props ) => {
-		const isSaving = isSubbmittingApiKey( state, props.siteId );
+		const isSaving = isSubmittingApiKey( state, props.siteId );
 		const isKeyCorrect = isApiKeyCorrect( state, props.siteId );
 		const address = getStoreLocation( state );
 		const currency = getCurrencyWithEdits( state );

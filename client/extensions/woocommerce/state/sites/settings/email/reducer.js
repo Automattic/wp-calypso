@@ -221,7 +221,7 @@ function apiKeySubmit( state = false, { type } ) {
  * @param  {Object} action Action
  * @return {Object}        Updated state
  */
-function apiKeySubbmitError( state = false, action ) {
+function apiKeySubmitError( state = false, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS:
 		case WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE:
@@ -357,7 +357,7 @@ export default combineReducers( {
 	resyncRequest,
 	resyncRequestError,
 	apiKeySubmit,
-	apiKeySubbmitError,
+	apiKeySubmitError,
 	storeInfoSubmit,
 	storeInfoSubmitError,
 	listsRequest,

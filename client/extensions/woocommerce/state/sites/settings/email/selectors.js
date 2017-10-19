@@ -60,24 +60,24 @@ export const mailChimpSettings = ( state, siteId ) => {
 };
 
 /**
- * Returns true if currently subbmitting MailChimp API key or false otherwise.
+ * Returns true if currently submitting MailChimp API key or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether api key is being subbmitted
+ * @return {Boolean}        Whether api key is being submitted
  */
-export const isSubbmittingApiKey = ( state, siteId ) => {
+export const isSubmittingApiKey = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'apiKeySubmit' ];
 
 	return get( state, path, false );
 };
 
 /**
- * Returns true if currently subbmitting MailChimp newsletter settings or false otherwise.
+ * Returns true if currently submitting MailChimp newsletter settings or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether newsletter settings are being subbmitted
+ * @return {Boolean}        Whether newsletter settings are being submitted
  */
 export const isSubmittingNewsletterSetting = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'newsletterSettingsSubmit' ];
