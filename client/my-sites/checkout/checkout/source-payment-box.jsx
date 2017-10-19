@@ -61,6 +61,13 @@ class SourcePaymentBox extends PureComponent {
 		} );
 	}
 
+	paymentMethodByType( paymentType ) {
+		if ( paymentType === 'ideal' ) {
+			return 'WPCOM_Billing_Stripe_Source_Ideal';
+		}
+		return 'WPCOM_Billing_Stripe_Source';
+	}
+
 	redirectToPayment( event ) {
 		const origin = this.getLocationOrigin( location );
 		event.preventDefault();
@@ -79,16 +86,18 @@ class SourcePaymentBox extends PureComponent {
 			cancelUrl += 'no-site';
 		}
 
-		const dataForApi = assign( {}, this.state, {
-			successUrl: origin + this.props.redirectTo(),
-			type: this.props.paymentType,
-			cancelUrl,
+		const dataForApi = {
+			payment: assign( {}, this.state, {
+				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
+				successUrl: origin + this.props.redirectTo(),
+				cancelUrl,
+			} ),
 			cart: this.props.cart,
 			domainDetails: this.props.transaction.domainDetails
-		} );
+		};
 
-		// get thre redirect URL from rest endpoint
-		wpcom.undocumented().sourcePaymentUrl( dataForApi, function( error, sourcePaymentUrl ) {
+		// get the redirect URL from rest endpoint
+		wpcom.undocumented().transactions( 'POST', dataForApi, function( error, result ) {
 			let errorMessage;
 			if ( error ) {
 				if ( error.message ) {
@@ -103,14 +112,14 @@ class SourcePaymentBox extends PureComponent {
 				} );
 			}
 
-			if ( sourcePaymentUrl ) {
+			if ( result.redirect_url ) {
 				this.setSubmitState( {
 					info: translate( 'Redirecting you to our payment provider' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
-				location.href = sourcePaymentUrl;
+				location.href = result.redirect_url;
 			}
 		}.bind( this ) );
 	}
