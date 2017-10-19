@@ -33,7 +33,7 @@ const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translat
 			<Card>
 				<QuerySitePlans siteId={ siteId } />
 				<div>
-					<Button compact href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
+					<Button compact primary href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
 						{ translate( 'Yes' ) }
 					</Button>
 					<Button compact href={ confirmHref }>
