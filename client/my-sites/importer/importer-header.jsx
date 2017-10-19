@@ -33,7 +33,7 @@ const cancelStates = [
 const stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ];
 const doneStates = [ appStates.IMPORT_SUCCESS ];
 
-const ImporterHeaderBase = React.createClass( {
+const ImporterHeader = React.createClass( {
 	displayName: 'ImporterHeader',
 
 	mixins: [ PureRenderMixin ],
@@ -119,10 +119,8 @@ const ImporterHeaderBase = React.createClass( {
 	},
 } );
 
-export const ImporterHeader = localize( ImporterHeaderBase );
-
 const mapDispatchToProps = dispatch => ( {
 	startImport: flowRight( dispatch, startImport ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( ImporterHeader );
+export default connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) );

@@ -81,7 +81,7 @@ const hasProgressInfo = progress => {
 	return true;
 };
 
-const ImportingPaneBase = React.createClass( {
+const ImportingPane = React.createClass( {
 	displayName: 'SiteSettingsImportingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -257,11 +257,9 @@ const ImportingPaneBase = React.createClass( {
 	},
 } );
 
-export const ImportingPane = localize( ImportingPaneBase );
-
 const mapDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>
 		dispatch( mapAuthor( importerId, source, target ) ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( ImportingPane );
+export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );

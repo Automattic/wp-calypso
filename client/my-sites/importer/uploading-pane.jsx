@@ -22,7 +22,7 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
 
-const UploadingPaneBase = React.createClass( {
+const UploadingPane = React.createClass( {
 	displayName: 'SiteSettingsUploadingPane',
 
 	mixins: [ PureRenderMixin ],
@@ -148,10 +148,8 @@ const UploadingPaneBase = React.createClass( {
 	},
 } );
 
-export const UploadingPane = localize( UploadingPaneBase );
-
 const mapDispatchToProps = dispatch => ( {
 	startUpload: flowRight( dispatch, startUpload ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( UploadingPane );
+export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );
