@@ -27,6 +27,7 @@ import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
+import PaymentBox from './payment-box';
 
 /**
  * Module variables
@@ -181,32 +182,44 @@ const SecurePaymentForm = React.createClass( {
 
 	renderCreditCardPaymentBox() {
 		return (
-			<CreditCardPaymentBox
-				cards={ this.props.cards }
-				transaction={ this.props.transaction }
+			<PaymentBox
+				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
-				countriesList={ countriesListForPayments }
-				initialCard={ this.getInitialCard() }
 				paymentMethods={ this.props.paymentMethods }
-				selectedSite={ this.props.selectedSite }
+				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step }
-			/>
+			>
+				<CreditCardPaymentBox
+					cards={ this.props.cards }
+					transaction={ this.props.transaction }
+					cart={ this.props.cart }
+					countriesList={ countriesListForPayments }
+					initialCard={ this.getInitialCard() }
+					selectedSite={ this.props.selectedSite }
+					onSubmit={ this.handlePaymentBoxSubmit }
+					transactionStep={ this.props.transaction.step }
+				/>
+			</PaymentBox>
 		);
 	},
 
 	renderPayPalPaymentBox() {
 		return (
-			<PayPalPaymentBox
+			<PaymentBox
+				classSet="paypal-payment-box"
 				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				countriesList={ countriesListForPayments }
-				selectedSite={ this.props.selectedSite }
 				paymentMethods={ this.props.paymentMethods }
+				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
-				redirectTo={ this.props.redirectTo }
-			/>
+			>
+				<PayPalPaymentBox
+					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					countriesList={ countriesListForPayments }
+					selectedSite={ this.props.selectedSite }
+					redirectTo={ this.props.redirectTo }
+				/>
+			</PaymentBox>
 		);
 	},
 
