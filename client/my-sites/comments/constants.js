@@ -7,3 +7,5 @@ export const COMMENTS_PER_PAGE = 20;
 // and relying on the fact that more recent comments have higher ID values.
 export const NEWEST_FIRST = 'desc';
 export const OLDEST_FIRST = 'asc';
+
+export const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];

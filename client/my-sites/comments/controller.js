@@ -5,7 +5,7 @@
 import { renderWithReduxStore } from 'lib/react-helpers';
 import React from 'react';
 import page from 'page';
-import { each, includes, startsWith } from 'lodash';
+import { each, isFinite, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,65 +15,88 @@ import route, { addQueryArgs } from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
-const VALID_STATUSES = [ 'all', 'pending', 'approved', 'spam', 'trash' ];
+const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
 
-export const isValidStatus = status => includes( VALID_STATUSES, status );
-
-export const getRedirectUrl = ( status, siteFragment ) => {
-	const statusValidity = isValidStatus( status );
-	if ( status === siteFragment ) {
-		return `/comments/all/${ siteFragment }`;
-	}
-	if ( ! statusValidity && ! siteFragment ) {
-		return '/comments/all';
-	}
-	if ( ! statusValidity && siteFragment ) {
-		return `/comments/all/${ siteFragment }`;
-	}
-	if ( statusValidity && ! siteFragment ) {
-		return `/comments/${ status }`;
-	}
-	return null;
-};
-
-export const redirect = function( context, next ) {
-	const { status, site } = context.params;
-	const siteFragment = route.getSiteFragment( context.path );
-	const redirectUrl = getRedirectUrl( status, siteFragment );
-	if ( redirectUrl && ( site || '/comments/' + status !== redirectUrl ) ) {
-		return page.redirect( redirectUrl );
-	}
-	next();
-};
-
-const changePage = ( status, siteFragment ) => pageNumber => {
+const changePage = path => pageNumber => {
 	if ( window ) {
 		window.scrollTo( 0, 0 );
 	}
-
-	return page( addQueryArgs( { page: pageNumber }, `/comments/${ status }/${ siteFragment }` ) );
+	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-export const comments = function( context ) {
-	const status = 'pending' === context.params.status ? 'unapproved' : context.params.status;
-	const siteFragment = route.getSiteFragment( context.path );
+export const siteComments = ( { params, path, query, store } ) => {
+	const siteFragment = route.getSiteFragment( path );
+	const status = mapPendingStatusToUnapproved( params.status );
 
-	const pageNumber = parseInt( context.query.page, 10 );
-	if ( isNaN( pageNumber ) || pageNumber === 0 ) {
-		return changePage( context.params.status, siteFragment )( 1 );
+	const pageNumber = parseInt( query.page, 10 );
+	if ( isNaN( pageNumber ) || pageNumber < 1 ) {
+		return changePage( path )( 1 );
 	}
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ context.path }
+			basePath={ path }
+			changePage={ changePage( path ) }
 			page={ pageNumber }
-			changePage={ changePage( status, siteFragment ) }
 			siteFragment={ siteFragment }
 			status={ status }
 		/>,
 		'primary',
-		context.store
+		store
 	);
+};
+
+export const postComments = ( { params, path, query, store } ) => {
+	const siteFragment = route.getSiteFragment( path );
+	const status = mapPendingStatusToUnapproved( params.status );
+	const postId = parseInt( params.post, 10 );
+
+	if ( ! isFinite( postId ) ) {
+		return page.redirect( `/comments/${ status }/${ siteFragment }` );
+	}
+
+	const pageNumber = parseInt( query.page, 10 );
+	if ( isNaN( pageNumber ) || pageNumber < 1 ) {
+		return changePage( path )( 1 );
+	}
+
+	renderWithReduxStore(
+		<CommentsManagement
+			basePath={ path }
+			changePage={ changePage( path ) }
+			page={ pageNumber }
+			postId={ postId }
+			siteFragment={ siteFragment }
+			status={ status }
+		/>,
+		'primary',
+		store
+	);
+};
+
+export const comment = ( { params, path, store } ) => {
+	const siteFragment = route.getSiteFragment( path );
+	const commentId = parseInt( params.comment, 10 );
+
+	// Likely, this is a leak from a site view route with invalid status
+	// e.g. '/comments/foobar/example.com'
+	if ( ! isFinite( commentId ) ) {
+		return page.redirect( `/comments/all/${ params.comment }` );
+	}
+
+	renderWithReduxStore(
+		<CommentsManagement basePath={ path } commentId={ commentId } siteFragment={ siteFragment } />,
+		'primary',
+		store
+	);
+};
+
+export const redirect = ( { path } ) => {
+	const siteFragment = route.getSiteFragment( path );
+	if ( siteFragment ) {
+		return page.redirect( `/comments/all/${ siteFragment }` );
+	}
+	return page.redirect( '/comments/all' );
 };
 
 export const clearCommentNotices = ( { store }, next ) => {
