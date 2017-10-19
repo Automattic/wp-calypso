@@ -24,10 +24,11 @@ import {
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
-import { isNotificationsOpen } from 'state/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { isNotificationsOpen, hasSitePendingAutomatedTransfer } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 // KILL IT WITH FIRE
 import sitesFactory from 'lib/sites-list';
@@ -198,6 +199,8 @@ const fireChangeListeners = () => {
 	sitesListeners = [];
 };
 
+let fetchingATStatus = false;
+
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ANALYTICS_SUPER_PROPS_UPDATE:
@@ -226,6 +229,15 @@ const handler = ( dispatch, action, getState ) => {
 				}
 				if ( desktopEnabled ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
+				}
+
+				const state = getState();
+				const siteId = getSelectedSiteId( state );
+
+				if ( ! fetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
+					fetchingATStatus = true;
+
+					dispatch( fetchAutomatedTransferStatus( siteId ) );
 				}
 			}, 0 );
 			return;
