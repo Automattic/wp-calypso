@@ -78,7 +78,9 @@ export default class Typography extends React.PureComponent {
 						<a href="/devdocs/typography">Typography</a>
 					</h2>
 					<h3>Interface Typography</h3>
-					<p>We use system fonts (<code>-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif</code>) which improve the page rendering speed.</p>
+					<p>We use system fonts which improve the page rendering speed.<br />
+					<code>-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans",
+						"Ubuntu", "Cantarell", "Helvetica Neue", sans-serif</code></p>
 					<Card>
 						<p style={ interfaceTitle }>Quick foxes jump nightly above wizards.</p>
 						<p style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</p>
