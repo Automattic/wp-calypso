@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
@@ -63,18 +61,6 @@ class QueryPosts extends Component {
 		return null;
 	}
 }
-
-QueryPosts.propTypes = {
-	siteId: PropTypes.number,
-	postId: PropTypes.number,
-	query: PropTypes.object,
-	requestingPosts: PropTypes.bool,
-	requestSitePosts: PropTypes.func,
-};
-
-QueryPosts.defaultProps = {
-	requestSitePosts: () => {},
-};
 
 export default connect(
 	( state, ownProps ) => {
