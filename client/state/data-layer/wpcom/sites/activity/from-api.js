@@ -59,6 +59,7 @@ export function processItemBase( item ) {
 		activityGroup: head( split( get( item, 'name' ), '__', 1 ) ),
 		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
 		activityId: get( item, 'activity_id' ),
+		activityIsRewindable: item.is_rewindable,
 		activityName: get( item, 'name' ),
 		activityStatus: get( item, 'status' ),
 		activityTitle: get( item, 'summary', '' ),
