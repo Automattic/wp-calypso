@@ -1,56 +1,63 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import { omit, noop } from 'lodash';
 
 const TokenInput = React.createClass( {
 	propTypes: {
+		disabled: PropTypes.bool,
+		hasFocus: PropTypes.bool,
 		onChange: PropTypes.func,
 		onBlur: PropTypes.func,
-		value: PropTypes.string,
 		placeholder: PropTypes.string,
-		disabled: PropTypes.bool,
+		value: PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
-			onChange: function() {},
-			onBlur: function() {},
-			value: '',
 			disabled: false,
+			hasFocus: false,
+			onChange: noop,
+			onBlur: noop,
 			placeholder: '',
+			value: '',
 		};
 	},
 
 	mixins: [ PureRenderMixin ],
 
+	componentDidUpdate: function() {
+		if ( this.props.hasFocus ) {
+			this.textInput.focus();
+		}
+	},
+
 	render: function() {
-		const props = { ...this.props, onChange: this._onChange };
-		const { value, placeholder } = props;
+		const { placeholder, value } = this.props;
 		const size =
 			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
 
 		return (
-			<input ref="input" type="text" { ...props } size={ size } className="token-field__input" />
+			<input
+				className="token-field__input"
+				onChange={ this.onChange }
+				ref={ this.setTextInput }
+				size={ size }
+				type="text"
+				{ ...omit( this.props, 'hasFocus' ) }
+			/>
 		);
 	},
 
-	focus: function() {
-		if ( this.isMounted() ) {
-			this.refs.input.focus();
-		}
+	setTextInput: function( input ) {
+		this.textInput = input;
 	},
 
-	hasFocus: function() {
-		return this.isMounted() && this.refs.input === document.activeElement;
-	},
-
-	_onChange: function( event ) {
+	onChange: function( event ) {
 		this.props.onChange( {
 			value: event.target.value,
 		} );
