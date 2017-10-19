@@ -30,16 +30,14 @@ const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translat
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Would you like to downgrade your plan?' ) } />
+			<QuerySitePlans siteId={ siteId } />
 			<Card>
-				<QuerySitePlans siteId={ siteId } />
-				<div>
-					<Button compact primary href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
-						{ translate( 'Yes' ) }
-					</Button>
-					<Button compact href={ confirmHref }>
-						{ translate( 'No' ) }
-					</Button>
-				</div>
+				<Button compact primary href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
+					{ translate( 'Yes' ) }
+				</Button>
+				<Button compact href={ confirmHref }>
+					{ translate( 'No' ) }
+				</Button>
 			</Card>
 		</div>
 	);
