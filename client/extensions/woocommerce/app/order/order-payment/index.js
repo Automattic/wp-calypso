@@ -63,6 +63,12 @@ class OrderPaymentCard extends Component {
 					refund: formatCurrency( refund, order.currency ),
 				},
 			} );
+		} else if ( 'cod' === order.payment_method && 'processing' === order.status ) {
+			paymentStatus = translate( 'Payment of %(total)s on delivery', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+				},
+			} );
 		} else {
 			paymentStatus = translate( 'Payment of %(total)s received via %(method)s', {
 				args: {
@@ -76,7 +82,8 @@ class OrderPaymentCard extends Component {
 
 	getPaymentAction = () => {
 		const { order, translate } = this.props;
-		if ( 'refunded' === order.status ) {
+		const codProcessing = 'cod' === order.payment_method && 'processing' === order.status;
+		if ( 'refunded' === order.status || codProcessing ) {
 			return null;
 		} else if ( isOrderWaitingPayment( order.status ) ) {
 			return <Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>;
