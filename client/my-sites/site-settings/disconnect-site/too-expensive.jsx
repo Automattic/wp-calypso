@@ -29,7 +29,7 @@ const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translat
 		<div>
 			<QuerySitePlans siteId={ siteId } />
 			<CompactCard href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
-				{ translate( 'Manage your upgrade' ) }
+				{ translate( 'Manage your purchases' ) }
 			</CompactCard>
 			<CompactCard href={ confirmHref }>{ translate( 'Proceed to disconnect' ) }</CompactCard>
 		</div>
