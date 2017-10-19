@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { flow } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -229,6 +229,4 @@ const NotificationSubscriptions = React.createClass( {
 	},
 } );
 
-const enhance = flow( protectForm, localize );
-
-export default enhance( NotificationSubscriptions );
+export default flowRight( localize, protectForm )( NotificationSubscriptions );
