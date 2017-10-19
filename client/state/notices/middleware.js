@@ -44,8 +44,6 @@ import {
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
-	PUBLICIZE_CONNECTION_REFRESH,
-	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_DELETE,
@@ -165,27 +163,6 @@ export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) =>
 				context: 'Sharing: Publicize connection confirmation',
 			} ),
 			{ id: 'publicize' }
-		)
-	);
-
-export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) =>
-	dispatch(
-		successNotice(
-			translate( 'The %(service)s account was successfully reconnected.', {
-				args: { service: connection.label },
-				context: 'Sharing: Publicize connection confirmation',
-			} ),
-			{ id: 'publicize' }
-		)
-	);
-
-export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) =>
-	dispatch(
-		errorNotice(
-			translate( 'The %(service)s account was unable to be reconnected.', {
-				args: { service: error.label },
-				context: 'Sharing: Publicize reconnection confirmation',
-			} )
 		)
 	);
 
@@ -335,8 +312,6 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: onPublicizeConnectionCreateFailure,
 	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
-	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
-	[ PUBLICIZE_CONNECTION_REFRESH_FAILURE ]: onPublicizeConnectionRefreshFailure,
 	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess(
