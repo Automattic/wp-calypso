@@ -20,6 +20,7 @@ const ACTIVITY_ITEM = deepFreeze( {
 	activityGroup: 'plugin',
 	activityIcon: 'plugins',
 	activityId: 'foobarbas',
+	activityIsRewindable: false,
 	activityName: 'plugin__updated',
 	activityStatus: 'warning',
 	activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
