@@ -55,6 +55,9 @@ const SecurePaymentForm = React.createClass( {
 
 	getVisiblePaymentBox( cart, paymentMethods ) {
 		let i;
+		const primary = 0,
+			secondary = 1;
+		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -66,12 +69,17 @@ const SecurePaymentForm = React.createClass( {
 			return this.state.userSelectedPaymentBox;
 		}
 
-		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
-				return paymentMethods[ i ];
+		if ( tabsEnabled ) {
+			for ( i = 0; i < paymentMethods.length; i++ ) {
+				if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+					return paymentMethods[ i ];
+				}
 			}
+		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ primary ] ) ) ) {
+			return paymentMethods[ primary ];
+		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ secondary ] ) ) ) {
+			return paymentMethods[ secondary ];
 		}
-
 		return null;
 	},
 
@@ -181,11 +189,12 @@ const SecurePaymentForm = React.createClass( {
 	},
 
 	renderCreditCardPaymentBox() {
+		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
@@ -198,17 +207,20 @@ const SecurePaymentForm = React.createClass( {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
+					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
 				/>
 			</PaymentBox>
 		);
 	},
 
 	renderPayPalPaymentBox() {
+		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
 				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
+				title={ this.props.translate( 'Secure Payment' ) }
+				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
@@ -218,6 +230,7 @@ const SecurePaymentForm = React.createClass( {
 					countriesList={ countriesListForPayments }
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
+					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
 				/>
 			</PaymentBox>
 		);

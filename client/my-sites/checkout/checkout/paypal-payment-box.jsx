@@ -11,6 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import classnames from 'classnames';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
@@ -197,12 +198,15 @@ const PaypalPaymentBox = React.createClass( {
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
 
-					<AlternativePaymentMethods
-						cart={ this.props.cart }
-						paymentMethods={ this.props.paymentMethods }
-						selectedPaymentMethod="paypal"
-						onSelectPaymentMethod={ this.props.onSelectPaymentMethod }
-					/>
+					{ this.props.onToggle &&
+					cartValues.isCreditCardPaymentsEnabled( this.props.cart ) && (
+						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
+							{ this.props.translate( 'or use a credit card', {
+								context: 'Upgrades: PayPal checkout screen',
+								comment: 'Checkout with PayPal -- or use a credit card',
+							} ) }
+						</a>
+					) }
 
 					{ showPaymentChatButton && (
 						<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
