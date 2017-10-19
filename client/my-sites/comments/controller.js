@@ -26,6 +26,11 @@ const changePage = path => pageNumber => {
 
 export const siteComments = ( { params, path, query, store } ) => {
 	const siteFragment = route.getSiteFragment( path );
+
+	if ( ! siteFragment ) {
+		return page.redirect( '/comments/all' );
+	}
+
 	const status = mapPendingStatusToUnapproved( params.status );
 
 	const pageNumber = parseInt( query.page, 10 );
@@ -48,6 +53,11 @@ export const siteComments = ( { params, path, query, store } ) => {
 
 export const postComments = ( { params, path, query, store } ) => {
 	const siteFragment = route.getSiteFragment( path );
+
+	if ( ! siteFragment ) {
+		return page.redirect( '/comments/all' );
+	}
+
 	const status = mapPendingStatusToUnapproved( params.status );
 	const postId = parseInt( params.post, 10 );
 
