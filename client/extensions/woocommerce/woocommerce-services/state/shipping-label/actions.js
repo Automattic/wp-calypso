@@ -822,7 +822,10 @@ export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, get
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {
-			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY, labelId, orderId, siteId, fileData } );
+			const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
+			if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY, labelId, orderId, siteId, fileData } );
+			}
 		} );
 };
 
