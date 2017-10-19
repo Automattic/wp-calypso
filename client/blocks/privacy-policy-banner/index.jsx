@@ -15,6 +15,7 @@ import { getPreference, isFetchingPreferences } from 'state/preferences/selector
 import { savePreference } from 'state/preferences/actions';
 import { identity } from 'lodash';
 import Banner from 'components/banner';
+import PrivacyPolicyDialog from './privacy-policy-dialog';
 import QueryPrivacyPolicy from 'components/data/query-privacy-policy';
 import { getPrivacyPolicyByEntity } from 'state/selectors';
 import { AUTOMATTIC_ENTITY, PRIVACY_POLICY_PREFERENCE } from './constants';
@@ -32,6 +33,10 @@ class PrivacyPolicyBanner extends Component {
 		privacyPolicy: {},
 		text: '',
 		translate: identity,
+	};
+
+	state = {
+		showDialog: false,
 	};
 
 	acceptUpdates = () => {
@@ -60,6 +65,13 @@ class PrivacyPolicyBanner extends Component {
 		} );
 	}
 
+	openPrivacyPolicyDialog = () => this.setState( { showDialog: true } );
+
+	closePrivacyPolicyDialog = () => {
+		this.setState( { showDialog: false } );
+		this.acceptUpdates();
+	};
+
 	render() {
 		const { fetchingPreferences, isPolicyAlreadyAccepted, translate } = this.props;
 
@@ -74,15 +86,24 @@ class PrivacyPolicyBanner extends Component {
 		return (
 			<div className="privacy-policy-banner">
 				<QueryPrivacyPolicy />
+
 				<Banner
 					callToAction={ translate( 'Learn More' ) }
 					description={ this.getDescription( this.props.privacyPolicy.modified ) }
 					disableHref={ true }
 					icon="pages"
-					href="https://automattic.com/privacy/"
-					target="_blank"
-					onClick={ this.acceptUpdates }
+					onClick={ this.openPrivacyPolicyDialog }
 					title={ translate( 'Privacy Policy Updates.' ) }
+				/>
+
+				<PrivacyPolicyDialog
+					isVisible={ this.state.showDialog }
+					content={ this.props.privacyPolicy.content }
+					title={ this.props.privacyPolicy.title }
+					version={ this.props.privacyPolicy.id }
+
+					onClose={ this.closePrivacyPolicyDialog }
+					onDismiss={ this.closePrivacyPolicyDialog }
 				/>
 			</div>
 		);
