@@ -31,6 +31,8 @@ describe( 'Region Address Fieldsets', () => {
 	test( 'should render `<UsAddressFieldset />` with default props', () => {
 		const wrapper = shallow( <RegionAddressFieldsets { ...defaultProps } /> );
 		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
+		expect( wrapper.find( '[name="address-1"]' ) ).to.have.length( 1 );
+		expect( wrapper.find( '[name="address-2"]' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render `<UkAddressFieldset />` with a UK region countryCode', () => {
