@@ -7,7 +7,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { flow } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -158,4 +158,4 @@ const Profile = React.createClass( {
 	},
 } );
 
-export default flow( localize, protectForm )( Profile );
+export default flowRight( protectForm, localize )( Profile );
