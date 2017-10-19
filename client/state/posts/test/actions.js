@@ -13,7 +13,7 @@ import {
 	receivePosts,
 	requestSitePosts,
 	requestSitePost,
-	requestPosts,
+	requestAllSitesPosts,
 	editPost,
 	savePost,
 	savePostSuccess,
@@ -168,7 +168,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#requestPosts()', () => {
+	describe( '#requestAllSitesPosts()', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -180,7 +180,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch posts receive action when request completes', () => {
-			return requestPosts()( spy ).then( () => {
+			return requestAllSitesPosts()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],

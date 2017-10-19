@@ -12,8 +12,15 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { isRequestingSitePostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
-import { requestSitePosts, requestSitePost } from 'state/posts/actions';
+import {
+	isRequestingSitePostsForQuery,
+	isRequestingSitePost,
+} from 'state/posts/selectors';
+import {
+	requestSitePosts,
+	requestSitePost,
+	requestAllSitesPosts,
+} from 'state/posts/actions';
 
 /**
  * Module variables
@@ -53,7 +60,7 @@ class QueryPosts extends Component {
 			}
 		} else if ( ! props.requestingPosts ) {
 			log( 'Request post list for all sites using query %o', props.query );
-			props.requestSitePosts( null, props.query );
+			props.requestAllSitesPosts( props.query );
 		}
 	}
 
@@ -74,6 +81,7 @@ export default connect(
 		return bindActionCreators(
 			{
 				requestSitePosts,
+				requestAllSitesPosts,
 				requestSitePost,
 			},
 			dispatch

@@ -60,11 +60,37 @@ export function receivePosts( posts ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {?Number}  siteId Site ID
+ * @param  {Number}   siteId Site ID
  * @param  {String}   query  Post query
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
+	if ( ! siteId ) {
+		return null;
+	}
+
+	return requestPosts( siteId, query );
+}
+
+/**
+ * Returns a function which, when invoked, triggers a network request to fetch
+ * posts across all of the current user's sites for the specified query.
+ *
+ * @param  {String}   query Post query
+ * @return {Function}       Action thunk
+ */
+export function requestAllSitesPosts( query = {} ) {
+	return requestPosts( null, query );
+}
+
+/**
+ * Triggers a network request to fetch posts for the specified site and query.
+ *
+ * @param  {?Number}  siteId Site ID
+ * @param  {String}   query  Post query
+ * @return {Function}        Action thunk
+ */
+function requestPosts( siteId, query = {} ) {
 	return dispatch => {
 		dispatch( {
 			type: POSTS_REQUEST,
@@ -142,17 +168,6 @@ export function requestSitePost( siteId, postId ) {
 				} );
 			} );
 	};
-}
-
-/**
- * Returns a function which, when invoked, triggers a network request to fetch
- * posts across all of the current user's sites for the specified query.
- *
- * @param  {String}   query Post query
- * @return {Function}       Action thunk
- */
-export function requestPosts( query = {} ) {
-	return requestSitePosts( null, query );
 }
 
 /**
