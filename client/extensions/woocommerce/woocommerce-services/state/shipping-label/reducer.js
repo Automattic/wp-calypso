@@ -398,13 +398,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPac
 	return { ...state, showAddItemDialog: false };
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state, { allBoxes } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const packageKeys = Object.keys( newPackages );
-	const boxesKeys = Object.keys( allBoxes );
-	if ( ! boxesKeys.length ) {
-		return state;
-	}
 
 	const addedPackageId = generateUniqueBoxId( 'client_custom_', packageKeys );
 	const openedPackageId = addedPackageId;

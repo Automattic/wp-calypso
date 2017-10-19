@@ -470,13 +470,12 @@ export const addItems = ( orderId, siteId, targetPackageId ) => {
 	};
 };
 
-export const addPackage = ( orderId, siteId ) => ( dispatch, getState ) => {
-	dispatch( {
+export const addPackage = ( orderId, siteId ) => {
+	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE,
 		siteId,
 		orderId,
-		allBoxes: getAllPackageDefinitions( getState(), siteId ),
-	} );
+	};
 };
 
 export const removePackage = ( orderId, siteId, packageId ) => {
