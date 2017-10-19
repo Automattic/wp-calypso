@@ -9,6 +9,7 @@ export const transferStates = {
 	UPLOADING: 'uploading',
 	BACKFILLING: 'backfilling',
 	COMPLETE: 'complete',
+	ERROR: 'error',
 };
 
 export const eligibilityHolds = {

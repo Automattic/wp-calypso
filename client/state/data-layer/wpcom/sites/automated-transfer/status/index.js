@@ -17,6 +17,7 @@ import {
 	getAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
+import { transferStates } from 'state/automated-transfer/constants';
 
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;
@@ -34,18 +35,18 @@ export const requestStatus = ( { dispatch }, action ) => {
 };
 
 export const receiveStatus = (
-	{ dispatch, getState },
+	{ dispatch },
 	{ siteId },
 	{ status, uploaded_plugin_slug, transfer_id }
 ) => {
 	const pluginId = uploaded_plugin_slug;
 
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
-	if ( status !== 'complete' ) {
+	if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
 		delay( dispatch, 3000, getAutomatedTransferStatus( siteId ) );
 	}
 
-	if ( status === 'complete' ) {
+	if ( status === transferStates.COMPLETE ) {
 		dispatch(
 			recordTracksEvent( 'calypso_automated_transfer_complete', {
 				context: 'plugin_upload',
