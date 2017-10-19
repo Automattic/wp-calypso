@@ -52,7 +52,7 @@ export const postComments = ( { params, path, query, store } ) => {
 	const postId = parseInt( params.post, 10 );
 
 	if ( ! isFinite( postId ) ) {
-		return page.redirect( `/comments/${ status }/${ siteFragment }` );
+		return page.redirect( `/comments/${ params.status }/${ siteFragment }` );
 	}
 
 	const pageNumber = parseInt( query.page, 10 );
