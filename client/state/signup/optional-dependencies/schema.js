@@ -1,4 +1,4 @@
 /** @format */
-export const suggestedUsername = {
+export const suggestedUsernameSchema = {
 	type: [ 'string', 'null' ],
 };
