@@ -27,7 +27,7 @@ class AtomicStoreThankYouCard extends Component {
 					className={ classNames( 'button', 'thank-you-card__button' ) }
 					href={ `/store/${ site.slug }` }
 				>
-					{ translate( 'Set up my store!' ) }
+					{ translate( 'Create your store!' ) }
 				</a>
 			</div>
 		);
