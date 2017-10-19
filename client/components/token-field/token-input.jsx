@@ -48,7 +48,7 @@ const TokenInput = React.createClass( {
 				ref={ this.setTextInput }
 				size={ size }
 				type="text"
-				{ ...omit( this.props, 'hasFocus' ) }
+				{ ...omit( this.props, [ 'hasFocus', 'onChange' ] ) }
 			/>
 		);
 	},
