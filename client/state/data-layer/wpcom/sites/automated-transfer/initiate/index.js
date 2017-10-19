@@ -15,7 +15,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 /*
  * Currently this module is only used for initiating transfers
@@ -91,7 +91,7 @@ export const receiveResponse = ( { dispatch }, { siteId }, { success } ) => {
 			context: 'plugin_upload',
 		} )
 	);
-	dispatch( getAutomatedTransferStatus( siteId ) );
+	dispatch( fetchAutomatedTransferStatus( siteId ) );
 };
 
 export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
