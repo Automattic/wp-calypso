@@ -2,8 +2,6 @@
 @import 'assets/stylesheets/shared/utils';      // utilities that are used by all CSS but don't produce any code
 
 .woocommerce {
-	flex-grow: 1;
-
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
 	@import 'app/order/order-create/style';
