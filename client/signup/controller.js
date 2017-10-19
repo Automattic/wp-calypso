@@ -20,6 +20,8 @@ import utils from './utils';
 import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import store from 'store';
+import SignupProgressStore from 'lib/signup/progress-store';
 
 const user = userModule();
 
@@ -69,12 +71,37 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
+		const flowName = utils.getFlowName( context.params );
+		const localeFromParams = utils.getLocale( context.params );
+		const localeFromStore = store.get( 'signup-locale' );
+
+		// if flow can be resumed, use saved locale
+		if (
+			! user.get() &&
+			! localeFromParams &&
+			localeFromStore &&
+			utils.canResumeFlow( flowName, SignupProgressStore.getFromCache() )
+		) {
+			window.location =
+				utils.getStepUrl(
+					flowName,
+					utils.getStepName( context.params ),
+					utils.getStepSectionName( context.params ),
+					localeFromStore
+				) +
+				( context.querystring ? '?' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+			return;
+		}
+
 		if ( context.pathname !== utils.getValidPath( context.params ) ) {
 			return page.redirect(
 				utils.getValidPath( context.params ) +
 					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
+
+		store.set( 'signup-locale', localeFromParams );
 
 		next();
 	},

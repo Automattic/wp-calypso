@@ -178,13 +178,7 @@ class Signup extends React.Component {
 
 		this.loadProgressFromStore();
 
-		const flowSteps = flow.steps;
-		const flowStepsInProgressStore = filter(
-			SignupProgressStore.get(),
-			step => -1 !== flowSteps.indexOf( step.stepName )
-		);
-
-		if ( flowStepsInProgressStore.length > 0 && ! flow.disallowResume ) {
+		if ( utils.canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
