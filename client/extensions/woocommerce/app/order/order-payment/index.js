@@ -67,7 +67,6 @@ class OrderPaymentCard extends Component {
 			paymentStatus = translate( 'Payment of %(total)s on delivery', {
 				args: {
 					total: formatCurrency( order.total, order.currency ),
-					method: order.payment_method_title,
 				},
 			} );
 		} else {
