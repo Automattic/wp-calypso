@@ -17,7 +17,7 @@ import userFactory from 'lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
 import store from 'store';
-import oAuthToken from 'lib/oauth-token';
+import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import location from 'lib/route/page-notifier';
 import { getStatsPathForTab } from 'lib/route/path';
