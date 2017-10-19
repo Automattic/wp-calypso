@@ -5,7 +5,7 @@
  */
 
 import {
-	EXPORT_ADVANCED_SETTINGS_FAIL,
+	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_SET,
@@ -101,7 +101,7 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: true,
 			} );
-		case EXPORT_ADVANCED_SETTINGS_FAIL:
+		case EXPORT_ADVANCED_SETTINGS_FETCH_FAIL:
 		case EXPORT_ADVANCED_SETTINGS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: false,
