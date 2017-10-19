@@ -197,19 +197,25 @@ export class DomainDetailsForm extends PureComponent {
 	};
 
 	handleChangeEvent = event => {
-		// Resets the state field every time the user selects a different country
+		// Every time the user selects a different country
 		if ( event.target.name === 'country-code' ) {
+			// Reset the state field
 			this.formStateController.handleFieldChange( {
 				name: 'state',
 				value: '',
 				hideError: true,
 			} );
 
+			// If the phone field is empty, set the prefix to the countryCode
 			if ( ! formState.getFieldValue( this.state.form, 'phone' ) ) {
 				this.setState( {
 					phoneCountryCode: event.target.value,
 				} );
 			}
+
+			// focus to the first address field
+			const inputRef = this.inputRefs[ 'address-1' ] || null;
+			inputRef && inputRef.focus();
 		}
 
 		this.formStateController.handleFieldChange( {
@@ -253,6 +259,7 @@ export class DomainDetailsForm extends PureComponent {
 		// if we're referencing a DOM object in a child component we need to add the `inputRef` prop
 		const ref = needsChildRef ? { inputRef: this.getInputRefCallback( name ) } : { ref: name },
 			{ form } = this.state;
+
 		return {
 			name,
 			...ref,

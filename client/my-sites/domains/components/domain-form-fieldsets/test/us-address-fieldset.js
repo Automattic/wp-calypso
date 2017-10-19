@@ -32,8 +32,6 @@ describe( 'US Address Fieldset', () => {
 
 	test( 'should render expected input components', () => {
 		const wrapper = shallow( <UsAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="address-1"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="address-2"]' ) ).to.have.length( 1 );
 		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
 		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 1 );
 		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
