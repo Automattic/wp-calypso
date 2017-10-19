@@ -20,8 +20,8 @@ describe( 'HiddenInput', () => {
 	test( 'it should return expected elements with defaultProps and no props value', () => {
 		const wrapper = shallow( <HiddenInput { ...defaultProps } /> );
 		expect( wrapper.state( 'toggled' ) ).to.be.false;
-		expect( wrapper.find( '.hidden-input' ) ).to.have.length( 1 );
-		expect( wrapper.find( '.hidden-input a' ).text() ).to.equal( defaultProps.text );
+		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 1 );
+		expect( wrapper.find( '.form__hidden-input a' ).text() ).to.equal( defaultProps.text );
 		const inputComponent = wrapper.find( 'Input' );
 		expect( inputComponent ).to.have.length( 0 );
 	} );
@@ -30,7 +30,7 @@ describe( 'HiddenInput', () => {
 		const fieldValue = 'Not empty';
 		const wrapper = shallow( <HiddenInput { ...defaultProps } value={ fieldValue } /> );
 		expect( wrapper.state( 'toggled' ) ).to.be.true;
-		expect( wrapper.find( '.hidden-input' ) ).to.have.length( 0 );
+		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 0 );
 		const inputComponent = wrapper.find( 'Input' );
 		expect( inputComponent ).to.have.length( 1 );
 		expect( inputComponent.get( 0 ).props.value ).to.equal( fieldValue );
@@ -39,10 +39,10 @@ describe( 'HiddenInput', () => {
 	test( 'it should toggle input field when the toggle link is clicked', () => {
 		const wrapper = shallow( <HiddenInput { ...defaultProps } /> );
 		expect( wrapper.state( 'toggled' ) ).to.be.false;
-		expect( wrapper.find( '.hidden-input' ) ).to.have.length( 1 );
-		wrapper.find( '.hidden-input a' ).simulate( 'click', { preventDefault() {} } );
+		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 1 );
+		wrapper.find( '.form__hidden-input a' ).simulate( 'click', { preventDefault() {} } );
 		expect( wrapper.state( 'toggled' ) ).to.be.true;
-		expect( wrapper.find( '.hidden-input' ) ).to.have.length( 0 );
+		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 0 );
 		const inputComponent = wrapper.find( 'Input' );
 		expect( inputComponent ).to.have.length( 1 );
 	} );

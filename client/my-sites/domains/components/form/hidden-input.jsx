@@ -43,7 +43,7 @@ export class HiddenInput extends PureComponent {
 		}
 
 		return (
-			<div className="form__hidden-input hidden-input">
+			<div className="form__hidden-input">
 				<a href="" onClick={ this.handleClick }>
 					{ this.props.text }
 				</a>
