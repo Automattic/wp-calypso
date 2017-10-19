@@ -28,51 +28,49 @@ console.log(
 // Make quick pass over config files on every change
 require( '../server/config/validate-config-keys' );
 
-const dirtyFiles = new Set(
-	execSync( 'git diff --name-only --diff-filter=ACM' )
+/**
+ * Parses the output of a git diff command into javascript file paths.
+ *
+ * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
+ * @returns {Array}          Paths output from git command
+ */
+function parseGitDiffToPathArray( command ) {
+	return execSync( command )
 		.toString()
 		.split( '\n' )
 		.map( name => name.trim() )
 		.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) )
-		.map( file => path.join( __dirname, '../', file ) )
-);
+		.map( file => path.join( __dirname, '../', file ) );
+}
 
-const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
-	.toString()
-	.split( '\n' )
-	.map( name => name.trim() )
-	.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
+const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
+
+const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
 // run prettier for any files in the commit that have @format within their first docblock
-files
-	.map( file => [ file, path.join( __dirname, '../', file ) ] )
-	.forEach( ( [ file, fullPath ] ) => {
-		const text = fs.readFileSync( fullPath, 'utf8' );
-		if ( shouldFormat( text ) ) {
-			const formattedText = prettier.format( text, {} );
-
-			// No change required.
-			if ( text === formattedText ) {
-				return;
-			}
-
-			// File has unstaged changes. It's a bad idea to modify and add it before commit.
-			if ( dirtyFiles.has( fullPath ) ) {
-				console.log(
-					chalk.red(
-						`Prettier will not be attempted for file: ${ chalk.white(
-							file
-						) } because it has unstaged changes.`
-					)
-				);
-				return;
-			}
-
-			fs.writeFileSync( fullPath, formattedText );
-			console.log( `Prettier formatting file: ${ fullPath } because it contains the @format flag` );
-			execSync( `git add ${ fullPath }` );
+files.forEach( file => {
+	const text = fs.readFileSync( file, 'utf8' );
+	if ( shouldFormat( text ) ) {
+		// File has unstaged changes. It's a bad idea to modify and add it before commit.
+		if ( dirtyFiles.has( file ) ) {
+			console.log(
+				chalk.red( `${ file } will not be auto-formatted because it has unstaged changes.` )
+			);
+			return;
 		}
-	} );
+
+		const formattedText = prettier.format( text, {} );
+
+		// No change required.
+		if ( text === formattedText ) {
+			return;
+		}
+
+		fs.writeFileSync( file, formattedText );
+		console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
+		execSync( `git add ${ file }` );
+	}
+} );
 
 // linting should happen after formatting
 const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
