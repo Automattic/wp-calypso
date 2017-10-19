@@ -7,6 +7,7 @@ const activityItemSchema = {
 		'activityGroup',
 		'activityIcon',
 		'activityId',
+		'activityIsDiscarded',
 		'activityName',
 		'activityTitle',
 		'activityTs',
@@ -20,6 +21,7 @@ const activityItemSchema = {
 		activityGroup: { type: 'string' },
 		activityIcon: { type: 'string' },
 		activityId: { type: 'string' },
+		activityIsDiscarded: { type: 'boolean' },
 		activityName: { type: 'string' },
 		activityStatus: {
 			oneOf: [ { type: 'string' }, { type: 'null' } ],

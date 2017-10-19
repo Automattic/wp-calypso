@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-import { get, includes, reduce } from 'lodash';
+import { omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -19,34 +18,9 @@ import { errorNotice } from 'state/notices/actions';
 /**
  * Module constants
  */
-const debug = debugFactory( 'calypso:data-layer:activity' );
-const CALYPSO_TO_API_PARAMS = {
-	dateEnd: 'date_end',
-	dateStart: 'date_start',
-};
-const KNOWN_API_PARAMS = [ 'action', 'date_end', 'date_start', 'group', 'name', 'number' ];
 
-export const handleActivityLogRequest = ( { dispatch }, action ) => {
-	const { siteId } = action;
-
-	const query = reduce(
-		action.params,
-		( acc, value, param ) => {
-			const paramToStore = get( CALYPSO_TO_API_PARAMS, param, param );
-
-			if ( includes( KNOWN_API_PARAMS, paramToStore ) ) {
-				return {
-					...acc,
-					[ paramToStore ]: value,
-				};
-			}
-
-			return acc;
-		},
-		{}
-	);
-
-	debug( 'Handling activity request', query );
+export const fetchActivity = ( { dispatch }, action ) => {
+	const { params = {}, siteId } = action;
 
 	// Clear current logs, this will allow loading placeholders to appear
 	dispatch( activityLogUpdate( siteId, undefined ) );
@@ -57,24 +31,34 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity`,
-				query,
+				query: omitBy(
+					{
+						action: params.action,
+						date_end: params.date_end || params.dateEnd,
+						date_start: params.date_start || params.dateStart,
+						group: params.group,
+						name: params.name,
+						number: params.number,
+					},
+					a => a === undefined
+				),
 			},
 			action
 		)
 	);
 };
 
-export const receiveActivityLog = ( { dispatch }, action, data ) => {
+export const updateActivityLog = ( { dispatch }, action, data ) => {
 	dispatch( activityLogUpdate( action.siteId, data, data.totalItems, action.params ) );
 };
 
-export const receiveActivityLogError = ( { dispatch } ) => {
+export const announceFailure = ( { dispatch } ) => {
 	dispatch( errorNotice( translate( 'Error receiving activity for site.' ) ) );
 };
 
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [
-		dispatchRequest( handleActivityLogRequest, receiveActivityLog, receiveActivityLogError, {
+		dispatchRequest( fetchActivity, updateActivityLog, announceFailure, {
 			fromApi,
 		} ),
 	],
