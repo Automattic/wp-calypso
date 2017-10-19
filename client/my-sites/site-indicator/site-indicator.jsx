@@ -30,6 +30,7 @@ import {
 	isSiteAutomatedTransfer,
 	isWordpressUpdateSuccessful,
 } from 'state/selectors';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 
 class SiteIndicator extends Component {
 	static propTypes = {
@@ -67,8 +68,16 @@ class SiteIndicator extends Component {
 		return false;
 	}
 
+	hasTransferStatus() {
+		return !! this.props.automatedTransferStatus;
+	}
+
 	showIndicator() {
 		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
+
+		if ( this.hasTransferStatus() ) {
+			return true;
+		}
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
 		return (
@@ -262,6 +271,10 @@ class SiteIndicator extends Component {
 		return accessFailedMessage;
 	}
 
+	transferStatusText() {
+		return <span>Transfer status: { `${ this.props.automatedTransferStatus }` }</span>;
+	}
+
 	errorUpdating() {
 		const { translate } = this.props;
 
@@ -298,6 +311,10 @@ class SiteIndicator extends Component {
 			return this.errorAccessing();
 		}
 
+		if ( this.hasTransferStatus() ) {
+			return this.transferStatusText();
+		}
+
 		return null;
 	}
 
@@ -312,6 +329,25 @@ class SiteIndicator extends Component {
 
 		if ( this.hasError() ) {
 			return 'notice';
+		}
+
+		if ( this.hasTransferStatus() ) {
+			switch ( this.props.automatedTransferStatus ) {
+				case 'pending':
+					return 'ellipsis-circle';
+				case 'active':
+					return 'play';
+				case 'uploading':
+					return 'cloud-upload';
+				case 'backfilling':
+					return 'cloud';
+				case 'error':
+					return 'notice';
+				case 'complete':
+					return 'checkmark-circle';
+				default:
+					return 'help';
+			}
 		}
 	}
 
@@ -346,6 +382,7 @@ class SiteIndicator extends Component {
 			'is-update': this.hasUpdate(),
 			'is-warning': this.hasWarning(),
 			'is-error': this.hasError(),
+			'is-transfer': this.hasTransferStatus(),
 			'is-action': true,
 			'site-indicator__main': true,
 		} );
@@ -404,6 +441,7 @@ export default connect(
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
+			automatedTransferStatus: site && getAutomatedTransferStatus( state, site.ID ),
 		};
 	},
 	{

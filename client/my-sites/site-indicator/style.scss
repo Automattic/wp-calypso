@@ -61,6 +61,11 @@
 		color: $white;
 	}
 
+	.is-transfer & {
+		background: $alert-purple;
+		color: $white;
+	}
+
 	.is-expanded & {
 		.accessible-focus &:focus {
 			border: 1px dotted $white;
@@ -102,6 +107,9 @@
 	}
 	.is-error & {
 		background: $alert-red;
+	}
+	.is-transfer & {
+		background: $alert-purple;
 	}
 }
 .site-indicator__action {
