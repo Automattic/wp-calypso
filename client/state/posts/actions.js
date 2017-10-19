@@ -66,6 +66,10 @@ export function receivePosts( posts ) {
  */
 export function requestSitePosts( siteId, query = {} ) {
 	if ( ! siteId ) {
+		console.warn( // eslint-disable-line no-console
+			'requestSitePosts called with invalid siteId',
+			{ siteId, query }
+		);
 		return null;
 	}
 
