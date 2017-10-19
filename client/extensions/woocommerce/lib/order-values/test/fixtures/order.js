@@ -5,7 +5,10 @@ export default {
 		{
 			id: 15,
 			name: 'Scarf - Striped',
-			product_id: 49,
+			price: 42.49,
+			quantity: 1,
+			subtotal: 49.99,
+			total: 42.49,
 			taxes: [
 				{
 					id: 4,
@@ -13,12 +16,14 @@ export default {
 					subtotal: '6.3487',
 				},
 			],
-			price: 42.4915,
 		},
 		{
 			id: 19,
 			name: 'T-Shirt',
-			product_id: 62,
+			price: 17.99,
+			quantity: 1,
+			subtotal: 17.99,
+			total: 17.99,
 			taxes: [
 				{
 					id: 4,
@@ -26,7 +31,6 @@ export default {
 					subtotal: '1.1424',
 				},
 			],
-			price: 17.99,
 		},
 	],
 	tax_lines: [
@@ -56,7 +60,22 @@ export default {
 			],
 		},
 	],
-	fee_lines: [],
+	fee_lines: [
+		{
+			id: 48,
+			name: 'fee',
+			amount: '1.53',
+			total: '1.53',
+			total_tax: '0.13',
+			taxes: [
+				{
+					id: 1,
+					total: '0.1262',
+					subtotal: '',
+				},
+			],
+		},
+	],
 	coupon_lines: [
 		{
 			id: 18,

@@ -3,18 +3,6 @@
 	box-shadow: none;
 	border-bottom: 1px solid lighten( $gray, 30% );
 
-	.order-details__item-cost,
-	.order-details__item-quantity,
-	.order-details__item-tax,
-	.order-details__item-total {
-		text-align: right;
-		width: 70px;
-
-		input {
-			width: 70px;
-		}
-	}
-
 	.order-details__item-sku {
 		display: block;
 		margin-top: 6px;
@@ -32,6 +20,10 @@
 			background: transparent;
 		}
 	}
+}
+
+.order-details__item-total {
+	text-align: right;
 }
 
 .order-details__totals {
@@ -54,11 +46,16 @@
 		}
 	}
 
+	.form-text-input-with-affixes,
+	.form-text-input-with-suffixes {
+		text-align: left;
+	}
+
 	&.is-refund-modal,
 	&.has-taxes {
 		.order-details__total {
 			.order-details__totals-label {
-				flex: 1 0 calc(100% - 204px);
+				flex: 1 0 calc(100% - 250px);
 			}
 		}
 	}
@@ -66,12 +63,6 @@
 	&.has-taxes {
 		.order-details__total-edit .order-details__totals-value {
 			flex: 1 0 192px;
-		}
-	}
-
-	.order-details__total-edit {
-		.form-text-input-with-affixes {
-			width: 130px;
 		}
 	}
 

@@ -23,11 +23,13 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
+	getOrderFeeTax,
 	getOrderLineItemTax,
-	getOrderRefundTotal,
 	getOrderShippingTax,
 } from 'woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
@@ -94,7 +96,15 @@ class RefundDialog extends Component {
 
 	getInitialRefund = () => {
 		const { order } = this.props;
-		return parseFloat( getOrderShippingTax( order ) ) + parseFloat( order.shipping_total );
+		return (
+			sum(
+				order.fee_lines.map( ( item, i ) => {
+					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, i ) );
+				} )
+			) +
+			parseFloat( getOrderShippingTax( order ) ) +
+			parseFloat( order.shipping_total )
+		);
 	};
 
 	recalculateRefund = data => {
@@ -102,8 +112,9 @@ class RefundDialog extends Component {
 		if ( ! order ) {
 			return 0;
 		}
-		const subtotal = sum(
-			map( data.quantities, ( q, id ) => {
+		const subtotal = sum( [
+			...map( data.fees, parseFloat ),
+			...map( data.quantities, ( q, id ) => {
 				id = parseInt( id );
 				const line_item = find( order.line_items, { id } );
 				if ( ! line_item ) {
@@ -117,8 +128,8 @@ class RefundDialog extends Component {
 
 				const tax = getOrderLineItemTax( order, id ) / line_item.quantity;
 				return ( price + tax ) * q;
-			} )
-		);
+			} ),
+		] );
 		const total = subtotal + ( parseFloat( data.shippingTotal ) || 0 );
 		return total;
 	};
@@ -137,7 +148,8 @@ class RefundDialog extends Component {
 		const { order, paymentMethod, siteId, translate } = this.props;
 		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
-		if ( this.state.refundTotal > maxRefund ) {
+		const thisRefund = getCurrencyFormatDecimal( this.state.refundTotal );
+		if ( thisRefund > maxRefund ) {
 			this.setState( {
 				errorMessage: translate(
 					'Refund must be less than or equal to the order balance, %(total)s',
@@ -149,13 +161,13 @@ class RefundDialog extends Component {
 				),
 			} );
 			return;
-		} else if ( this.state.refundTotal <= 0 ) {
+		} else if ( thisRefund <= 0 ) {
 			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
 			return;
 		}
 		this.toggleDialog();
 		const refundObj = {
-			amount: this.state.refundTotal.toPrecision(),
+			amount: thisRefund.toPrecision(),
 			reason: this.state.refundNote,
 			api_refund: paymentMethod && -1 !== paymentMethod.method_supports.indexOf( 'refunds' ),
 		};

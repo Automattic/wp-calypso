@@ -14,11 +14,12 @@ import formatCurrency from 'lib/format-currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
+	getOrderFeeTax,
 	getOrderLineItemTax,
-	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -101,6 +102,27 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderOrderFees = ( item, i ) => {
+		const { order, translate } = this.props;
+		const tax = getOrderFeeTax( order, i );
+		return (
+			<TableRow key={ i } className="order-details__items">
+				<TableItem isRowHeader className="order-details__item-product">
+					{ item.name }
+					<span className="order-details__item-sku">{ translate( 'Fee' ) }</span>
+				</TableItem>
+				<TableItem className="order-details__item-cost" />
+				<TableItem className="order-details__item-quantity" />
+				<TableItem className="order-details__item-tax">
+					{ formatCurrency( tax, order.currency ) }
+				</TableItem>
+				<TableItem className="order-details__item-total">
+					{ formatCurrency( item.total, order.currency ) }
+				</TableItem>
+			</TableRow>
+		);
+	};
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {
@@ -118,6 +140,7 @@ class OrderDetailsTable extends Component {
 			<div>
 				<Table className="order-details__table" header={ this.renderTableHeader() }>
 					{ order.line_items.map( this.renderOrderItems ) }
+					{ order.fee_lines.map( this.renderOrderFees ) }
 				</Table>
 
 				<div className={ totalsClasses }>
