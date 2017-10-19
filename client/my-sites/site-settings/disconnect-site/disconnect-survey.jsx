@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,49 +15,39 @@ import SectionHeader from 'components/section-header';
 import { isSiteOnPaidPlan } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-class DisconnectSurvey extends Component {
-	getReasons() {
-		const { isPaidPlan, translate } = this.props;
-
-		const reasons = [
-			{ slug: 'too-difficult', label: translate( 'It was too hard to configure Jetpack' ) },
-			{ slug: 'missing-feature', label: translate( 'This plan didn’t include what I needed' ) },
-		];
-
-		if ( isPaidPlan ) {
-			reasons.push( { slug: 'too-expensive', label: translate( 'This plan is too expensive' ) } );
-		}
-		return reasons;
-	}
-
-	render() {
-		const { translate, siteId, siteSlug } = this.props;
-		const reasons = this.getReasons();
-
-		return (
-			<div className="disconnect-site__survey main">
-				<QuerySitePlans siteId={ siteId } />
-				<SectionHeader
-					label={ translate(
-						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
-						{
-							args: { siteName: siteSlug },
-						}
-					) }
-				/>
-				{ reasons.map( ( { label, slug: reasonSlug } ) => (
-					<CompactCard
-						href={ `/settings/disconnect-site/${ reasonSlug }/${ siteSlug }` }
-						key={ reasonSlug }
-						className="disconnect-site__survey-one"
-					>
-						{ label }
-					</CompactCard>
-				) ) }
-			</div>
-		);
-	}
-}
+const DisconnectSurvey = ( { isPaidPlan, siteId, siteSlug, translate } ) => (
+	<div className="disconnect-site__survey main">
+		<QuerySitePlans siteId={ siteId } />
+		<SectionHeader
+			label={ translate(
+				'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
+				{
+					args: { siteName: siteSlug },
+				}
+			) }
+		/>
+		<CompactCard
+			href={ `/settings/disconnect-site/too-difficult/${ siteSlug }` }
+			className="disconnect-site__survey-one"
+		>
+			{ translate( 'It was too hard to configure Jetpack' ) }
+		</CompactCard>
+		<CompactCard
+			href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }
+			className="disconnect-site__survey-one"
+		>
+			{ translate( 'This plan didn’t include what I needed' ) }
+		</CompactCard>
+		{ isPaidPlan && (
+			<CompactCard
+				href={ `/settings/disconnect-site/too-expensive/${ siteSlug }` }
+				className="disconnect-site__survey-one"
+			>
+				{ translate( 'This plan is too expensive' ) }
+			</CompactCard>
+		) }
+	</div>
+);
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
