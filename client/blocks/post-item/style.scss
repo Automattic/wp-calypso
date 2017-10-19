@@ -85,7 +85,8 @@
 	}
 }
 
-a.post-item__title-link {
+a.post-item__title-link,
+a.post-item__title-link:visited {
 	color: $gray-dark;
 
 	&:hover {
