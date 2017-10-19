@@ -2,23 +2,75 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
+import { findKey, isEmpty, toLower, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
-import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
+import TokenField from 'components/token-field';
+import { addQueryArgs } from 'lib/url';
 
-const MissingFeature = ( { translate } ) => (
-	<div>
-		<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
-		<Card>
-			<FormTextInput />
-		</Card>
-	</div>
-);
+class MissingFeature extends PureComponent {
+	state = {
+		tokens: [],
+	};
+
+	getSuggestions() {
+		const { translate } = this.props;
+		return {
+			themes: translate( 'Themes' ),
+			plugins: translate( 'Plugins' ),
+			support: translate( 'Support' ),
+			seo: translate( 'SEO' ),
+			ads: translate( 'Ads' ),
+			ecommerce: translate( 'Ecommerce' ),
+		};
+	}
+
+	normalizeToken = translatedToken => {
+		const tokenKey = findKey( this.getSuggestions(), token => token === translatedToken );
+		if ( tokenKey ) {
+			return tokenKey;
+		}
+		return toLower( translatedToken );
+	};
+
+	onChange = tokens => {
+		this.setState( { tokens } );
+	};
+
+	render() {
+		const { confirmHref, translate } = this.props;
+		const suggestions = values( this.getSuggestions() );
+
+		return (
+			<div>
+				<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
+				<Card>
+					<TokenField
+						onChange={ this.onChange }
+						suggestions={ suggestions }
+						value={ this.state.tokens }
+					/>
+					<Button
+						disabled={ isEmpty( this.state.tokens ) }
+						href={ addQueryArgs(
+							{ 'missing-features': this.state.tokens.map( this.normalizeToken ).join( '+' ) },
+							confirmHref
+						) }
+						primary
+					>
+						{ translate( 'Submit' ) }
+					</Button>
+				</Card>
+			</div>
+		);
+	}
+}
 
 export default localize( MissingFeature );
