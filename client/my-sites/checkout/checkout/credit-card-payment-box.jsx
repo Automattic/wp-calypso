@@ -14,8 +14,6 @@ import { localize } from 'i18n-calypso';
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
-import PaymentBox from './payment-box';
-import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import {
 	BEFORE_SUBMIT,
@@ -32,7 +30,6 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
-import AlternativePaymentMethods from './alternative-payment-methods';
 
 class CreditCardPaymentBox extends React.Component {
 	state = {
@@ -116,13 +113,6 @@ class CreditCardPaymentBox extends React.Component {
 			<div className="payment-box__payment-buttons">
 				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 
-				<AlternativePaymentMethods
-					cart={ this.props.cart }
-					paymentMethods={ this.props.paymentMethods }
-					selectedPaymentMethod="credit-card"
-					onSelectPaymentMethod={ this.props.onSelectPaymentMethod }
-					/>
-
 				<CartCoupon cart={ cart } />
 
 				<CartToggle />
@@ -155,7 +145,7 @@ class CreditCardPaymentBox extends React.Component {
 		this.props.onSubmit( event );
 	};
 
-	content = () => {
+	render = () => {
 		var cart = this.props.cart;
 
 		return (
@@ -175,18 +165,6 @@ class CreditCardPaymentBox extends React.Component {
 			</form>
 		);
 	};
-
-	render() {
-
-		return (
-			<PaymentBox
-				classSet="credit-card-payment-box"
-				title={ this.props.translate( 'Secure Payment' ) }
-			>
-				{ this.content() }
-			</PaymentBox>
-		);
-	}
 }
 
 export default localize( CreditCardPaymentBox );

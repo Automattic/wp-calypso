@@ -16,7 +16,6 @@ import cartValues from 'lib/cart-values';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
-import PaymentBox from './payment-box';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import { abtest } from 'lib/abtest';
@@ -26,7 +25,6 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
-import AlternativePaymentMethods from './alternative-payment-methods';
 
 const wpcom = wp.undocumented();
 
