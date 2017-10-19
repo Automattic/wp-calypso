@@ -144,7 +144,7 @@ class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	content = () => {
+	render = () => {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
 		} );
@@ -215,17 +215,6 @@ class PaypalPaymentBox extends React.Component {
 
 				<CartToggle />
 			</form>
-		);
-	};
-
-	render() {
-		return (
-			<PaymentBox
-				classSet="paypal-payment-box"
-				title={ this.props.translate( 'Secure Payment with PayPal' ) }
-			>
-				{ this.content() }
-			</PaymentBox>
 		);
 	}
 }

@@ -35,10 +35,8 @@ class PaymentBox extends PureComponent {
 
 	getPaymentProviderName( method ) {
 		switch ( method ) {
-			case 'ideal':
-				return 'iDEAL';
 			case 'credit-card':
-				return translate( 'Credit Card' );
+				return translate( 'Credit or debit card' );
 			case 'paypal':
 				return 'PayPal';
 		}
@@ -50,14 +48,25 @@ class PaymentBox extends PureComponent {
 		switch ( method ) {
 			case 'paypal':
 				return (
-					<img
-						src="/calypso/images/upgrades/paypal.svg"
-						alt="PayPal"
-						className="checkout__paypal"
-					/>
+					<div>
+						<img
+							src="/calypso/images/upgrades/paypal.svg"
+							alt="PayPal"
+							className="checkout__paypal"
+						/>
+					</div>
 				);
 			case 'credit-card':
-				return 'Credit Card';
+				return (
+					<div>
+						<img
+							src="/calypso/images/upgrades/credit-card.svg"
+							alt="PayPal"
+							className="checkout__credit-card"
+						/>
+						<span>{ this.getPaymentProviderName( method ) }</span>
+					</div>
+				);
 		}
 
 		return <span>{ this.getPaymentProviderName( method ) }</span>;
@@ -67,6 +76,7 @@ class PaymentBox extends PureComponent {
 		if ( ! cartValues.isPaymentMethodEnabled( this.props.cart, method ) ) {
 			return null;
 		}
+
 		return (
 			<NavItem
 				key={ method }
@@ -92,14 +102,28 @@ class PaymentBox extends PureComponent {
 
 	render() {
 		const cardClass = classNames( 'payment-box', this.props.classSet ),
-			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
+			contentClass = classNames( 'payment-box__content', this.props.contentClassSet ),
+			titleText = this.props.currentPaymentMethod
+				? translate( 'Pay with %(paymentMethod)s', {
+						args: {
+							paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
+						},
+					} )
+				: translate( 'Loading…' );
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
-				<SectionNav>
+				<SectionNav selectedText={ titleText }>
 					<NavTabs>
-						<span className="checkout__payment-box-title">
-							{ this.props.paymentMethods ? translate( 'Secure Payment with' ) : this.props.title }
-						</span>
+						<li className="checkout__payment-box-title">
+							{ this.props.paymentMethods ? (
+								translate( 'Secure Payment with', {
+									comment: 'followed by a graphical list of payment methods.',
+								} )
+							) : (
+								this.props.title
+							) }
+						</li>
 						{ this.getPaymentMethods() }
 					</NavTabs>
 				</SectionNav>
