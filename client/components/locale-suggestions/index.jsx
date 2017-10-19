@@ -11,7 +11,7 @@ import { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addLocaleToPath } from 'lib/i18n-utils';
-import LocaleSuggestionListItem from './list-item';
+import LocaleSuggestionsListItem from './list-item';
 import LocaleSuggestionStore from 'lib/locale-suggestions';
 import Notice from 'components/notice';
 import switchLocale from 'lib/i18n-utils/switch-locale';
@@ -78,7 +78,7 @@ class LocaleSuggestions extends Component {
 
 		const localeMarkup = usersOtherLocales.map( locale => {
 			return (
-				<LocaleSuggestionListItem
+				<LocaleSuggestionsListItem
 					key={ 'locale-' + locale.locale }
 					locale={ locale }
 					path={ this.getPathWithLocale( locale.locale ) }
