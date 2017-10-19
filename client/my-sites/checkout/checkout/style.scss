@@ -814,13 +814,19 @@
 .checkout__payment-box-container {
 
 	.checkout__payment-box-title {
-		padding: 20px 16px 14px 16px;
+		padding: 20px 16px 14px 20px;
 		font-weight: bold;
 		display:none;
 	}
 
-	.select-dropdown__option:first-child {
-		display:none;
+	.select-dropdown__option {
+		&:first-child {
+			display: none;
+		}
+		.is-selected {
+			background-color: $gray-light;
+			color: $gray-dark;
+		}
 	}
 
 	div.section-nav {
@@ -839,12 +845,26 @@
 			border-bottom-color: $blue-wordpress;
 
 			.section-nav-tab__link {
-				color: white;
+				color: $blue-wordpress;
+				background-color: $gray-light;
+			}
+		}
+
+		.select-dropdown__container {
+			max-width: 500px;
+
+			.select-dropdown__option {
+				height: 50px;
+
+				.select-dropdown__item {
+					height: 50px;
+				}
 			}
 		}
 	}
 
-	img {
+
+	 img {
 		&.checkout__paypal {
 			width: 80px;
 			margin-top: 4px;
@@ -854,15 +874,24 @@
 			width: 28px;
 			margin-bottom: -2px;
 		}
-
-		padding-left: 1em;
-		vertical-align: bottom;
 	}
-}
 
-@media (min-width: 481px) {
-	.checkout__payment-box-container {
+	.section-nav-tab__link {
+		img {
+			vertical-align: bottom;
+		}
+	}
 
+	.select-dropdown__item-text {
+		top: 4px;
+		font-weight: bold;
+
+		img {
+			vertical-align: middle;
+		}
+	}
+
+	@media (min-width: 481px) {
 		div.section-nav {
 			.section-nav-tabs__list {
 				.checkout__payment-box-title {
@@ -873,10 +902,19 @@
 				&.is-selected {
 					.section-nav-tab__link {
 						color: $blue-wordpress;
+						background-color: transparent;
 					}
 				}
 			}
 		}
+	}
 
+	@media (max-width: 480px) {
+		.is-open .section-nav__panel {
+			padding-bottom: 0;
+		}
+		.section-nav-group {
+			margin-top: 0;
+		}
 	}
 }
