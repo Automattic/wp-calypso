@@ -29,6 +29,7 @@ function getFeatures( planClass, translate ) {
 	};
 	return get(
 		{
+			'is-free-plan': pick( features, [ 'stats', 'publicize', 'subscriptions', 'other' ] ),
 			'is-personal-plan': pick( features, [
 				'backups',
 				'antispam',
