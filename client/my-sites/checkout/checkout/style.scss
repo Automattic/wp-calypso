@@ -698,6 +698,10 @@
 		margin-left:8px;
 	}
 
+	&.ideal {
+		margin-left: 1em;
+	}
+
 	@include breakpoint( "<660px" ) {
 		border-bottom: 1px solid lighten( $gray, 30% );
 		margin: 10px 0 0 0;
@@ -899,6 +903,12 @@
 	.checkout__paypal {
 		width: 80px;
 	}
+
+  	.checkout__ideal {
+    	width: 26px;
+    	margin-bottom: 2px;
+    	margin-right: 4px;
+  	}
 
 	.checkout__credit-card {
 		margin-right: 5px;
