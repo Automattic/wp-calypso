@@ -21,7 +21,6 @@ class OrderTotalRow extends Component {
 		isEditable: PropTypes.bool,
 		label: PropTypes.string.isRequired,
 		name: PropTypes.string,
-		numberFormat: PropTypes.func,
 		onChange: PropTypes.func,
 		showTax: PropTypes.bool,
 		taxValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
