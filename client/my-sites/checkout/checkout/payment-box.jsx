@@ -35,6 +35,8 @@ class PaymentBox extends PureComponent {
 
 	getPaymentProviderName( method ) {
 		switch ( method ) {
+			case 'ideal':
+				return 'iDEAL';
 			case 'credit-card':
 				return translate( 'Credit or debit card' );
 			case 'paypal':
@@ -65,6 +67,13 @@ class PaymentBox extends PureComponent {
 							className="checkout__credit-card"
 						/>
 						<span>{ this.getPaymentProviderName( method ) }</span>
+					</div>
+				);
+			case 'ideal':
+				return (
+					<div>
+						<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
+						<span>iDEAL</span>
 					</div>
 				);
 		}

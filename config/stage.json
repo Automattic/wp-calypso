@@ -122,6 +122,7 @@
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/netherlands-ideal": true,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,

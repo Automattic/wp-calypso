@@ -1193,10 +1193,32 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
 };
 
 /**
+ * GET source payment url
+ *
+ * @param {object} [data] The GET data
+ * @param {Function} fn The callback function
+ * @api public
+ * @returns {Promise} promise
+ *
+ * The data format is: {
+ *		type: {string} The source type,
+ *		cart: {array} An JSON serialization of the cart,
+ * }
+ */
+Undocumented.prototype.sourcePaymentUrl = function( data, fn ) {
+	debug( '/me/source-payment-url query' );
+
+	data = mapKeysRecursively( data, snakeCase );
+
+	return this.wpcom.req.post( '/me/source-payment-url', data, fn );
+};
+
+/**
  * GET example domain suggestions
  *
  * @param {Function} fn - The callback funtion
  * @api public
+ * @returns {Promise} promise
  */
 Undocumented.prototype.exampleDomainSuggestions = function( fn ) {
 	return this.wpcom.req.get( { path: '/domains/suggestions/examples' }, function(

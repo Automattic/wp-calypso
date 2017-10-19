@@ -29,6 +29,7 @@ const paymentMethods = {
 
 	byCountry: {
 		US: DEFAULT_PAYMENT_METHODS,
+		NL: [ 'ideal', 'credit-card', 'paypal' ],
 	},
 
 	byWpcomLang: {},
