@@ -19,7 +19,7 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import config from 'config';
+import config, { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import productsValues from 'lib/products-values';
 import ManageMenu from './manage-menu';
@@ -44,6 +44,7 @@ import {
 	hasJetpackSites,
 	isDomainOnlySite,
 	isSiteAutomatedTransfer,
+	hasSitePendingAutomatedTransfer,
 } from 'state/selectors';
 import {
 	getCustomizerUrl,
@@ -55,6 +56,8 @@ import {
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
 import { abtest } from 'lib/abtest';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { transferStates } from 'state/automated-transfer/constants';
 
 /**
  * Module variables
@@ -384,17 +387,28 @@ export class MySitesSidebar extends Component {
 			site,
 			siteSuffix,
 			translate,
+			transferStatus,
+			hasSitePendingAT,
 		} = this.props;
+
+		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+			return null;
+		}
+
 		const storeLink = '/store' + siteSuffix;
-		const showStoreLink =
-			config.isEnabled( 'woocommerce/extension-dashboard' ) &&
-			site &&
+
+		const isJetpackOrAtomicSite =
 			isJetpack &&
 			canUserManageOptions &&
 			( config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ||
 				this.props.isSiteAutomatedTransfer );
 
-		if ( ! showStoreLink ) {
+		const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
+
+		if (
+			! isJetpackOrAtomicSite &&
+			! ( isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
+		) {
 			return null;
 		}
 
@@ -711,6 +725,8 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
+		transferStatus: getAutomatedTransferStatus( state, siteId ),
+		hasSitePendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
 	};
 }
 
