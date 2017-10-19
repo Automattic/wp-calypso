@@ -84,7 +84,7 @@ export default ( { b64Content, mimeType }, fileName ) => {
 			// If browser doesn't support PDFs at all, this will trigger the "Download" pop-up.
 			// No need to wait for the iframe to load, it will never finish.
 			loadDocumentInFrame( blobUrl );
-			URL.revokeObjectURL( blobUrl );
+			setTimeout( () => URL.revokeObjectURL( blobUrl ), 0 );
 			return Promise.resolve();
 	}
 };
