@@ -28,6 +28,7 @@ import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -57,7 +58,7 @@ const SecurePaymentForm = React.createClass( {
 		let i;
 		const primary = 0,
 			secondary = 1;
-		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -189,12 +190,13 @@ const SecurePaymentForm = React.createClass( {
 	},
 
 	renderCreditCardPaymentBox() {
-		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				title={ this.props.translate( 'Secure Payment' ) }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
@@ -214,12 +216,12 @@ const SecurePaymentForm = React.createClass( {
 	},
 
 	renderPayPalPaymentBox() {
-		const tabsEnabled = true; //abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
 				cart={ this.props.cart }
-				title={ this.props.translate( 'Secure Payment' ) }
+				title={ this.props.translate( 'Secure Payment with PayPal' ) }
 				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
