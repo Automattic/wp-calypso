@@ -66,6 +66,7 @@ class ActivityLog extends Component {
 			errorCode: PropTypes.string.isRequired,
 			failureReason: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
+			percent: PropTypes.number.isRequired,
 			restoreId: PropTypes.number,
 			status: PropTypes.oneOf( [
 				'finished',
@@ -178,6 +179,7 @@ class ActivityLog extends Component {
 			errorCode,
 			failureReason,
 			freshness,
+			percent,
 			restoreId,
 			siteTitle,
 			status,
@@ -211,8 +213,10 @@ class ActivityLog extends Component {
 			<ProgressBanner
 				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
+				percent={ percent }
 				restoreId={ restoreId }
 				siteId={ siteId }
+				status={ status }
 				timestamp={ timestamp }
 			/>
 		);
