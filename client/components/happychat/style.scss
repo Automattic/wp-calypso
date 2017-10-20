@@ -373,34 +373,6 @@
 	}
 }
 
-.support-browser {
-	position: relative;
-	flex: 1 1 100%;
-	display: flex;
-	flex-direction: column;
-
-	&.disabled {
-		display: none;
-	}
-
-	.browser-bar {
-		height: 46px;
-		background: $blue-medium;
-		color: $white;
-		text-align: center;
-		border-bottom: 1px solid darken( $blue-medium, 5% );
-		display: flex;
-	}
-
-	iframe {
-		flex: 1 1 100%;
-		width: 100%;
-		height: 100%;
-		background: hsla( 0, 0%, 0%, 0.1 );
-	}
-}
-
-
 /**
  * Panel mode
  */
