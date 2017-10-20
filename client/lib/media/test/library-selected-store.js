@@ -34,7 +34,7 @@ describe( 'MediaLibrarySelectedStore', () => {
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 
-		MediaStore = require( '../store' );
+		MediaStore = require( '../store' ).default;
 		sandbox.stub( MediaStore, 'get', function( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
