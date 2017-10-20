@@ -126,14 +126,6 @@ export function isPreviewShowing( state ) {
 	return get( state.ui, 'isPreviewShowing', false );
 }
 
-export function getInitialQueryArguments( state ) {
-	return state.ui.queryArguments.initial;
-}
-
-export function getCurrentQueryArguments( state ) {
-	return state.ui.queryArguments.current;
-}
-
 export function hasSidebar( state ) {
 	// this one is weird. defaults to true, so if true, fall through to the secondary prop on the section
 	const val = state.ui.hasSidebar;
