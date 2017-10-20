@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, identity, isEmpty, mapValues } from 'lodash';
+import { get, isEmpty, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,10 +92,6 @@ export const ShippingRates = ( {
 			{ Object.values( mapValues( selectedPackages, renderSinglePackage ) ) }
 		</div>
 	);
-};
-
-ShippingRates.defaultProps = {
-	translate: identity,
 };
 
 ShippingRates.propTypes = {

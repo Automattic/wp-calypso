@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ import QueryLabels from 'woocommerce/woocommerce-services/components/query-label
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
-	getLabelsCount,
+	getLabels,
 	getSelectedPaymentMethod,
 	isEnabled as areLabelsEnabled,
 	isLoaded as areLabelsLoaded,
@@ -110,15 +111,26 @@ class OrderFulfillment extends Component {
 		}
 	};
 
+	getOrderFulfilledMessage = () => {
+		const { labelsLoaded, labels, translate } = this.props;
+		const unknownCarrierMessage = translate( 'Order has been fulfilled' );
+		if ( ! labelsLoaded || ! labels.length ) {
+			return unknownCarrierMessage;
+		}
+
+		const label = first( this.props.labels );
+		if ( ! label || 'usps' !== label.carrier_id ) {
+			return unknownCarrierMessage;
+		}
+
+		return translate( 'Order has been fulfilled and will be shipped via USPS' );
+	};
+
 	getFulfillmentStatus = () => {
-		const { order, labelsLoaded, labelsCount, translate } = this.props;
+		const { order, translate } = this.props;
 		switch ( order.status ) {
 			case 'completed':
-				if ( labelsLoaded && labelsCount ) {
-					return translate( 'Order has been fulfilled and will be shipped via USPS' );
-				}
-
-				return translate( 'Order has been fulfilled' );
+				return this.getOrderFulfilledMessage();
 			case 'cancelled':
 				return translate( 'Order has been cancelled' );
 			case 'refunded':
@@ -267,8 +279,8 @@ export default connect(
 
 		return {
 			labelsLoaded,
-			labelsEnabled: labelsLoaded && areLabelsEnabled( state, order.id, site.ID ),
-			labelsCount: labelsLoaded ? getLabelsCount( state, order.id, site.ID ) : 0,
+			labelsEnabled: areLabelsEnabled( state, order.id, site.ID ),
+			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,
 		};
 	},

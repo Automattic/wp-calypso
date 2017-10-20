@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Dialog from 'components/dialog';
-import Spinner from 'components/spinner';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
@@ -40,12 +40,7 @@ const PurchaseDialog = ( props ) => {
 		}
 
 		if ( props.form.isSubmitting ) {
-			return (
-				<div>
-					<Spinner size={ 24 } className="label-purchase-modal__button-spinner" />
-					<span className="label-purchase-modal__purchasing-label">{ translate( 'Purchasing…' ) }</span>
-				</div>
-			);
+			return translate( 'Purchasing…' );
 		}
 
 		const noNativePDFSupport = ( 'addon' === getPDFSupport() );
@@ -76,13 +71,14 @@ const PurchaseDialog = ( props ) => {
 	};
 
 	const buttons = [
-		{
-			disabled: ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ),
-			onClick: getPurchaseButtonAction(),
-			isPrimary: true,
-			label: getPurchaseButtonLabel(),
-			action: 'purchase',
-		},
+		( <Button
+			key="purchase"
+			disabled={ ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ) }
+			onClick={ getPurchaseButtonAction() }
+			primary
+			busy={ props.form.isSubmitting }>
+			{ getPurchaseButtonLabel() }
+		</Button> )
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );

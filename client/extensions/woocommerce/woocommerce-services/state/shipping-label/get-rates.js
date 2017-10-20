@@ -3,9 +3,6 @@
  */
 import * as api from 'woocommerce/woocommerce-services/api';
 import {
-	exitPrintingFlow,
-} from './actions';
-import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
@@ -31,9 +28,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 					siteId,
 					orderId,
 				} );
-				if ( 'rest_cookie_invalid_nonce' === error ) {
-					dispatch( exitPrintingFlow( orderId, siteId, true ) );
-				} else if ( error ) {
+				if ( error ) {
 					setTimeout( () => reject( error ), 0 );
 				} else {
 					setTimeout( resolve, 0 );

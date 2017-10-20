@@ -3,9 +3,6 @@
  */
 import * as api from 'woocommerce/woocommerce-services/api';
 import {
-	exitPrintingFlow,
-} from './actions';
-import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
@@ -36,10 +33,6 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 					error,
 				} );
 				if ( error ) {
-					if ( 'rest_cookie_invalid_nonce' === error ) {
-						dispatch( exitPrintingFlow( orderId, siteId, true ) );
-					}
-
 					console.error( error ); // eslint-disable-line no-console
 				}
 				setTimeout( () => resolve( ! error ), 0 );
