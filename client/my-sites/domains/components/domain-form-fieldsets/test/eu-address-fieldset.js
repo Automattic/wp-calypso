@@ -34,4 +34,9 @@ describe( 'EU Address Fieldset', () => {
 		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
 		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
 	} );
+
+	test( 'should not render a state select components', () => {
+		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
+		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 0 );
+	} );
 } );
