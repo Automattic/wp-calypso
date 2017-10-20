@@ -185,10 +185,16 @@ class OrderDetailsTable extends Component {
 			return null;
 		}
 
+		const tableClasses = classnames( {
+			'order-details__table': true,
+			'is-editing': isEditing,
+		} );
+
 		const showTax = this.shouldShowTax();
 		const totalsClasses = classnames( {
 			'order-details__totals': true,
 			'has-taxes': showTax,
+			'is-editing': isEditing,
 		} );
 		const refundValue = getOrderRefundTotal( order );
 		const totalTaxValue = getOrderTotalTax( order );
@@ -196,7 +202,7 @@ class OrderDetailsTable extends Component {
 
 		return (
 			<div>
-				<Table className="order-details__table" header={ this.renderTableHeader() }>
+				<Table className={ tableClasses } header={ this.renderTableHeader() }>
 					{ order.line_items.map( this.renderOrderItems ) }
 					{ order.fee_lines.map( this.renderOrderFees ) }
 				</Table>

@@ -11,6 +11,11 @@
 		text-transform: uppercase;
 	}
 
+	&.is-editing .order-details__item-tax {
+		color: $gray-text-min;
+		font-style: italic;
+	}
+
 	thead .table-heading {
 		border-bottom: 1px solid lighten( $gray, 30% );
 	}
@@ -53,6 +58,11 @@
 	.form-text-input-with-affixes,
 	.form-text-input-with-suffixes {
 		text-align: left;
+	}
+
+	&.is-editing .order-details__totals-tax {
+		color: $gray-text-min;
+		font-style: italic;
 	}
 
 	&.is-refund-modal,
