@@ -24,7 +24,11 @@ import {
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
-import { isNotificationsOpen, hasSitePendingAutomatedTransfer } from 'state/selectors';
+import {
+	isNotificationsOpen,
+	hasSitePendingAutomatedTransfer,
+	isFetchingAutomatedTransferStatus,
+} from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
@@ -190,6 +194,16 @@ const receiveSitesChangeListener = ( dispatch, action ) => {
 	sitesListeners.push( action.listener );
 };
 
+const fetchAutomatedTransferStatusForSite = ( dispatch, getState ) => {
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
+
+	if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
+		dispatch( fetchAutomatedTransferStatus( siteId ) );
+	}
+};
+
 /**
  * Calls all functions registered as listeners of site-state changes.
  */
@@ -198,8 +212,6 @@ const fireChangeListeners = () => {
 	sitesListeners.forEach( listener => listener() );
 	sitesListeners = [];
 };
-
-let fetchingATStatus = false;
 
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
@@ -231,14 +243,7 @@ const handler = ( dispatch, action, getState ) => {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 
-				const state = getState();
-				const siteId = getSelectedSiteId( state );
-
-				if ( ! fetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
-					fetchingATStatus = true;
-
-					dispatch( fetchAutomatedTransferStatus( siteId ) );
-				}
+				fetchAutomatedTransferStatusForSite( dispatch, getState );
 			}, 0 );
 			return;
 
