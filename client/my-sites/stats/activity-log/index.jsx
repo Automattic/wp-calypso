@@ -155,12 +155,11 @@ const daysInMonth = ( moment, startMoment, today ) => {
 		.endOf( 'month' )
 		.startOf( 'day' );
 	const startOfMonth = startMoment.clone().startOf( 'month' );
-	const startOfToday = today.startOf( 'day' );
+	const startOfToday = today.clone().startOf( 'day' );
 	const endOfStream = moment.min( endOfMonth, startOfToday );
 
-	return range( endOfStream.date() ).map( dayNumber =>
-		startOfMonth.clone().add( dayNumber, 'day' )
-	);
+	const asDayInMonth = n => startOfMonth.clone().add( n, 'day' );
+	return range( endOfStream.date() ).map( asDayInMonth );
 };
 
 const logsByDay = ( moment, logs, startMoment, applyOffset ) => {
