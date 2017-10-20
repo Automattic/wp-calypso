@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { map } from 'lodash';
+import { map, flatMap, flatten } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 			{
 				method: 'GET',
 				path: `/sites/${ siteId }/comments-tree`,
-				apiVersion: '1',
+				apiVersion: '1.1',
 				query: {
 					status: 'unapproved' === status ? 'pending' : status,
 				},
@@ -35,14 +35,25 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const mapTree = ( tree, status, type ) =>
-	map( tree, ( [ commentId, postId, commentParentId ] ) => ( {
+const mapPosts = ( commentIds, apiPostId ) => {
+	const postId = parseInt( apiPostId, 10 );
+	const [ topLevelIds, replyIds ] = commentIds;
+
+	return flatten( [
+		topLevelIds.map( commentId => [ commentId, postId, 0 ] ),
+		replyIds.map( ( [ commentId, commentParentId ] ) => [ commentId, postId, commentParentId ] ),
+	] );
+};
+
+const mapTree = ( tree, status, type ) => {
+	return map( flatMap( tree, mapPosts ), ( [ commentId, postId, commentParentId ] ) => ( {
 		commentId,
 		commentParentId,
 		postId,
 		status,
 		type,
 	} ) );
+};
 
 export const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
