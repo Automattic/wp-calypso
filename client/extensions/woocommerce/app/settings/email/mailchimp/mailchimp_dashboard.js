@@ -263,9 +263,6 @@ class MailChimpDashboard extends React.Component {
 							isSaving={ this.props.isSaving }
 							oldCheckbox={ this.props.settings.mailchimp_checkbox_defaults } />
 					</div>
-					<Button className="mailchimp__getting-started-button" onClick={ this.props.onClick }>
-						{ translate( 'Start setup wizard.' ) }
-					</Button>
 				</Card>
 			</div>
 		);

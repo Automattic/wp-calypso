@@ -67,7 +67,6 @@ class MailChimp extends React.Component {
 				{ mailChimpIsReady &&
 					<MailChimpDashboard
 						siteId={ siteId }
-						onClick={ this.startWizard }
 						wizardCompleted={ this.state.wizardCompleted }
 						onNoticeExit={ this.closeSetupFinishNotice } /> }
 				{ setupWizardStarted &&
