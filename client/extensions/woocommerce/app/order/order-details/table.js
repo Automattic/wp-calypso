@@ -147,12 +147,10 @@ class OrderDetailsTable extends Component {
 		const tax = getOrderFeeTax( order, i );
 		return (
 			<TableRow key={ i } className="order-details__items">
-				<TableItem isRowHeader className="order-details__item-product">
+				<TableItem isRowHeader className="order-details__item-product" colSpan="3">
 					{ item.name }
 					<span className="order-details__item-sku">{ translate( 'Fee' ) }</span>
 				</TableItem>
-				<TableItem className="order-details__item-cost" />
-				<TableItem className="order-details__item-quantity" />
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
