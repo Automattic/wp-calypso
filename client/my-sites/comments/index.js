@@ -35,12 +35,14 @@ export default function() {
 		);
 
 		// Comment View
-		page( '/comments/:site/:comment', siteSelection, navigation, comment );
+		page( '/comment/:site/:comment', siteSelection, navigation, comment );
 
 		// Redirect
 		page( `/comments/:status(${ VALID_STATUSES.join( '|' ) })`, siteSelection, sites );
 		page( '/comments/*', siteSelection, redirect );
 		page( '/comments', siteSelection, redirect );
+		page( '/comment/*', siteSelection, redirect );
+		page( '/comment', siteSelection, redirect );
 
 		// Leaving Comment Management
 		page.exit( '/comments/*', clearCommentNotices );

@@ -381,7 +381,7 @@ sections.push( {
 
 sections.push( {
 	name: 'comments',
-	paths: [ '/comments' ],
+	paths: [ '/comments', '/comment' ],
 	module: 'my-sites/comments',
 	group: 'sites',
 	secondary: true,

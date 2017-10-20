@@ -88,13 +88,10 @@ export const comment = ( { params, path, store } ) => {
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = parseInt( params.comment, 10 );
 
-	// Likely, this is a leak from a site view route with invalid status
-	// e.g. '/comments/foobar/example.com'
-	if ( ! siteFragment && ! isFinite( commentId ) ) {
-		return page.redirect( `/comments/all/${ params.comment }` );
-	}
-	if ( siteFragment && ! isFinite( commentId ) ) {
-		return page.redirect( `/comments/all/${ siteFragment }` );
+	if ( ! isFinite( commentId ) ) {
+		return siteFragment
+			? page.redirect( `/comments/all/${ siteFragment }` )
+			: page.redirect( '/comments/all' );
 	}
 
 	renderWithReduxStore(
