@@ -94,6 +94,12 @@ export class DomainDetailsForm extends PureComponent {
 
 		this.inputRefs = {};
 		this.inputRefCallbacks = {};
+
+		// The preference is to fire an inputRef callback
+		// when the previous and next countryCodes don't match.
+		// Multiple renders triggered by formState via `this.setFormState`
+		// prevent it.
+		this.shouldFocusAddress = false;
 	}
 
 	componentWillMount() {
@@ -197,25 +203,29 @@ export class DomainDetailsForm extends PureComponent {
 	};
 
 	handleChangeEvent = event => {
-		// Every time the user selects a different country
+		this.shouldFocusAddress = false;
+
 		if ( event.target.name === 'country-code' ) {
-			// Reset the state field
+			// Remove previous country-specific state value
 			this.formStateController.handleFieldChange( {
 				name: 'state',
 				value: '',
 				hideError: true,
 			} );
 
-			// If the phone field is empty, set the prefix to the countryCode
 			if ( ! formState.getFieldValue( this.state.form, 'phone' ) ) {
 				this.setState( {
 					phoneCountryCode: event.target.value,
 				} );
 			}
 
-			// focus to the first address field
+			// If RegionAddressFieldsets is mounted we just need to find the stored inputRef
 			const inputRef = this.inputRefs[ 'address-1' ] || null;
 			inputRef && inputRef.focus();
+
+			// but if RegionAddressFieldsets isn't mounted (because there's no valid countryCode)
+			// we tell it to focus when it next mounts
+			this.shouldFocusAddress = true;
 		}
 
 		this.formStateController.handleFieldChange( {
@@ -401,6 +411,7 @@ export class DomainDetailsForm extends PureComponent {
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
+						shouldFocusAddress={ this.shouldFocusAddress }
 					/>
 				) }
 				{ this.renderCountryField() }
