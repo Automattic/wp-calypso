@@ -83,18 +83,6 @@
 
 }
 
-.happychat__loading {
-	flex: 1 auto;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-
-	.spinner {
-		margin: 16px 0;
-	}
-
-}
-
 .happychat__notice {
 	padding: 12px;
 	border-top: 1px solid lighten( $gray, 20% );
@@ -152,7 +140,6 @@
 	background: lighten( $gray, 30% );
 	animation: happychat-minimize .5s 1 forwards;
 
-	> .happychat__loading,
 	> .happychat__composer,
 	> .happychat__welcome,
 	> .happychat__conversation,
@@ -508,7 +495,6 @@
 		box-sizing: border-box;
 		box-shadow: none;
 
-		.happychat__loading,
 		.happychat__conversation,
 		.happychat__composer,
 		.happychat__welcome {
