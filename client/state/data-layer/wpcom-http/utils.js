@@ -8,6 +8,11 @@ import schemaValidator from 'is-my-json-valid';
 import { get, identity, noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+
+/**
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
@@ -127,11 +132,11 @@ const defaultOptions = {
  *   fromApi    :: ResponseData -> [ Boolean, Data ]
  *
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
- * @param {Function} onSuccess called if the action meta includes response data
- * @param {Function} onError called if the action meta includes error data
+ * @param {Function|Object} onSuccess called if the action meta includes response data
+ * @param {Function|Object} onError called if the action meta includes error data
  * @param {Object} options configures additional dispatching behaviors
  + @param {Function} [options.fromApi] maps between API data and Calypso data
- + @param {Function} [options.onProgress] called on progress events when uploading
+ + @param {Function|Object} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) => (
@@ -140,24 +145,48 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) =
 ) => {
 	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
+	const callOrDispatch = ( handler, data ) =>
+		'function' === typeof handler ? handler( store, action, data ) : store.dispatch( action );
+
 	const error = getError( action );
 	if ( undefined !== error ) {
-		return onError( store, action, error );
+		return callOrDispatch( onError, error );
 	}
 
 	const data = getData( action );
 	if ( undefined !== data ) {
 		try {
-			return onSuccess( store, action, fromApi( data ) );
+			return callOrDispatch( onSuccess, fromApi( data ) );
 		} catch ( err ) {
-			return onError( store, action, err );
+			return callOrDispatch( onError, err );
 		}
 	}
 
 	const progress = getProgress( action );
 	if ( undefined !== progress ) {
-		return onProgress( store, action, progress );
+		return callOrDispatch( onProgress, progress );
 	}
 
-	return initiator( store, action );
+	// If we have an HTTP object dispatched here
+	// and it's missing a responder reference,
+	// then default with the original calling action
+	//
+	// Note: this should be a rare occurrence because
+	//       most HTTP requests will depend on _some_
+	//       data from the calling action.
+	if (
+		WPCOM_HTTP_REQUEST === initiator.type &&
+		! (
+			initiator.hasOwnProperty( 'onSuccess' ) &&
+			initiator.hasOwnProperty( 'onFailure' ) &&
+			initiator.hasOwnProperty( 'onProgress' )
+		)
+	) {
+		return initiator( store, {
+			...{ onSuccess: action, onFailure: action, onProgress: action },
+			...action,
+		} );
+	}
+
+	return callOrDispatch( initiator );
 };
