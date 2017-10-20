@@ -76,7 +76,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { getSiteOptions } from 'state/selectors';
+import { getSiteOptions, isSiteAutomatedTransfer } from 'state/selectors';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -267,9 +267,9 @@ const CheckoutThankYou = React.createClass( {
 			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
 		}
 
-		const { signupIsStore } = this.props;
+		const { signupIsStore, isAtomicSite } = this.props;
 
-		if ( wasDotcomPlanPurchased && signupIsStore ) {
+		if ( wasDotcomPlanPurchased && ( signupIsStore || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
@@ -453,6 +453,7 @@ export default connect(
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
 			signupIsStore: get( siteOptions, 'signup_is_store', false ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	dispatch => {
