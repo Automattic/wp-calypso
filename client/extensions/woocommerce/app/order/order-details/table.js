@@ -110,6 +110,7 @@ class OrderDetailsTable extends Component {
 			return (
 				<FormTextInput
 					type="number"
+					min={ 1 }
 					name={ `quantity-${ item.id }` }
 					onChange={ this.onChange }
 					value={ item.quantity }
