@@ -4,7 +4,8 @@
 @import './rates-step/style';
 
 &.label-purchase-modal {
-	min-height: 90%;
+	height: 90%;
+	width: 90%;
 
 	.dialog__content {
 		flex-grow: 1;
