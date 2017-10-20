@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty, noop } from 'lodash';
+import { flatMap, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,13 +43,12 @@ class ActivityLogDay extends Component {
 		disableRestore: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
-		logs: PropTypes.array,
+		logs: PropTypes.array.isRequired,
 		requestedRestoreActivityId: PropTypes.string,
-		requestRestore: PropTypes.func,
+		requestRestore: PropTypes.func.isRequired,
 		rewindConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
-		emptyRangeDate: PropTypes.string,
 
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
@@ -61,9 +60,6 @@ class ActivityLogDay extends Component {
 	static defaultProps = {
 		disableRestore: false,
 		isRewindActive: true,
-		emptyRangeDate: '',
-		requestRestore: noop,
-		logs: [],
 	};
 
 	state = {
@@ -158,15 +154,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Heading to display with date and number of events
 	 */
 	renderEventsHeading() {
-		const {
-			applySiteOffset,
-			isToday,
-			logs,
-			moment,
-			translate,
-			tsEndOfSiteDay,
-			emptyRangeDate,
-		} = this.props;
+		const { applySiteOffset, isToday, logs, moment, translate, tsEndOfSiteDay } = this.props;
 
 		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
 		const noActivityText = isToday ? translate( 'No activity yet!' ) : translate( 'No activity' );
