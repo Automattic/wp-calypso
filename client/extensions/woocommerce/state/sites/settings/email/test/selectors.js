@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import {
 	isRequestingSettings,
 	mailChimpSettings,
-	isSubbmittingApiKey,
+	isSubmittingApiKey,
 	isApiKeyCorrect,
 	requestingSettingsError,
 	hasMailChimpConnection,
@@ -80,7 +80,7 @@ const emailState = {
 							resyncRequest: false,
 							resyncRequestError: false,
 							apiKeySubmit: false,
-							apiKeySubbmitError: false,
+							apiKeySubmitError: false,
 							storeInfoSubmit: false,
 							storeInfoSubmitError: false,
 							listsRequest: false,
@@ -170,17 +170,17 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isSubbmittingApiKey', () => {
+	describe( '#isSubmittingApiKey', () => {
 		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isSubbmittingApiKey( {}, 123 ) ).to.be.false;
+			expect( isSubmittingApiKey( {}, 123 ) ).to.be.false;
 		} );
 
 		test( 'should be false when woocommerce state is loaded and there is no active request.', () => {
-			expect( isSubbmittingApiKey( emailState, 123 ) ).to.be.false;
+			expect( isSubmittingApiKey( emailState, 123 ) ).to.be.false;
 		} );
 
-		test( 'should be true when key is being subbmited.', () => {
-			expect( isSubbmittingApiKey( submittingApiKey, 123 ) ).to.be.true;
+		test( 'should be true when key is being submited.', () => {
+			expect( isSubmittingApiKey( submittingApiKey, 123 ) ).to.be.true;
 		} );
 	} );
 

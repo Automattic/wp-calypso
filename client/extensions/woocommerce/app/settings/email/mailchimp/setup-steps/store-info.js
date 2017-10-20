@@ -49,7 +49,12 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
-			<div>{ translate( 'Make sure that store informatin is correct. Every field is required.' ) }</div>
+			<p>
+				{ translate(
+					'MailChimp needs to know a few basic information about your store ' +
+						'to provide you the best experience. Note that every field is required.'
+				) }
+			</p>
 			<SettingsPaymentsLocationCurrency />
 			{ fields.map( ( item, index ) => {
 				const error = isError( item.name );
