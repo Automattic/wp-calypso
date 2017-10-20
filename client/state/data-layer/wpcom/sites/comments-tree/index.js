@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { map, flatMap, flatten, isArray } from 'lodash';
+import { flatMap, flatten, isArray, map } from 'lodash';
 
 /**
  * Internal dependencies
