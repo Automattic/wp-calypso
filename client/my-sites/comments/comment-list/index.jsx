@@ -27,7 +27,6 @@ import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
-import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -479,17 +478,6 @@ export class CommentList extends Component {
 						/>
 					) }
 				</ReactCSSTransitionGroup>
-
-				{ ! showPlaceholder &&
-				! showEmptyContent && (
-					<Pagination
-						key="comment-list-pagination"
-						page={ validPage }
-						pageClick={ this.changePage }
-						perPage={ COMMENTS_PER_PAGE }
-						total={ commentsCount }
-					/>
-				) }
 			</div>
 		);
 	}
