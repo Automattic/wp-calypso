@@ -81,6 +81,22 @@ corners.` );
 		context: 'context after new plural syntax',
 		count: 5
 	} );
+	i18n.translate( 'This is how the test performed\u2026' );
+
+	i18n.translate(
+		"It's been %(timeLapsed)s since {{href}}{{postTitle/}}{{/href}} was published. Here's how the post has performed so far\u2026",
+		{
+			args: {
+				timeLapsed: postTime.fromNow( true ),
+			},
+			components: {
+				href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
+				postTitle: <Emojify>{ postTitle }</Emojify>,
+			},
+			context:
+				'Stats: Sentence showing how much time has passed since the last post, and how the stats are',
+		}
+	);
 }
 
 module.exports = test;

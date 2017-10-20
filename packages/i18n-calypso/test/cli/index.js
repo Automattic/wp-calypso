@@ -235,6 +235,11 @@ describe( 'index', function() {
 			expect( output ).to.have.string( 'msgid "My hat has six corners."' );
 			expect( output ).to.have.string( 'msgid "My hat\\nhas seventeen\\ncorners."' );
 		} );
+
+		it( 'should properly handle unicode escapes', function() {
+			expect( output ).to.have.string( "This is how the test performed\\\\u2026" );
+			expect( output ).to.have.string( "Here's how the post has performed so far\\\\u2026" );
+		} );
 	} );
 
 	describe( 'PHP', function() {
