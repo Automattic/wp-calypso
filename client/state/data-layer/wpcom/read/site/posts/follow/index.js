@@ -5,6 +5,7 @@
 /**
  * External Dependencies
  */
+import { merge } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -14,18 +15,25 @@ import { READER_CONVERSATION_FOLLOW } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import { unfollowConversation } from 'state/reader/conversations/actions';
+import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestConversationFollow( { dispatch }, action ) {
+	const actionWithRevert = merge( {}, action, {
+		meta: {
+			// @todo once we've added convo follow to Redux state, use selector to get previous state
+			// hardcoded for the moment to support tests
+			previousState: 'M',
+		},
+	} );
 	dispatch(
 		http( {
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
 			path: `/read/sites/${ action.payload.blogId }/posts/${ action.payload.postId }/follow`,
 			body: {}, // have to have an empty body to make wpcom-http happy
-			onSuccess: action,
-			onFailure: action,
+			onSuccess: actionWithRevert,
+			onFailure: actionWithRevert,
 		} )
 	);
 }
@@ -45,7 +53,10 @@ export function receiveConversationFollow( store, action, response ) {
 	);
 }
 
-export function receiveConversationFollowError( { dispatch }, action ) {
+export function receiveConversationFollowError(
+	{ dispatch },
+	{ payload: { blogId, postId }, meta: { previousState } }
+) {
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, we had a problem following that conversation. Please try again.' )
@@ -53,7 +64,13 @@ export function receiveConversationFollowError( { dispatch }, action ) {
 	);
 
 	dispatch(
-		bypassDataLayer( unfollowConversation( action.payload.blogId, action.payload.postId ) )
+		bypassDataLayer(
+			updateConversationFollowStatus( {
+				blogId: blogId,
+				postId: postId,
+				followStatus: previousState,
+			} )
+		)
 	);
 }
 
