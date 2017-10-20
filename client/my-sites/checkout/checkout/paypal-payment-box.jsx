@@ -29,32 +29,30 @@ import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-const PaypalPaymentBox = React.createClass( {
-	displayName: 'PaypalPaymentBox',
+class PaypalPaymentBox extends React.Component {
+	static displayName = 'PaypalPaymentBox';
 
-	getInitialState: function() {
-		return {
-			country: null,
-			formDisabled: false,
-		};
-	},
+	state = {
+		country: null,
+		formDisabled: false,
+	};
 
-	handleToggle: function( event ) {
+	handleToggle = event => {
 		event.preventDefault();
 
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Or Use Credit Card Link' );
 		analytics.tracks.recordEvent( 'calypso_checkout_switch_to_card' );
 		this.props.onToggle( 'credit-card' );
-	},
+	};
 
-	handleChange: function( event ) {
+	handleChange = event => {
 		var data = {};
 		data[ event.target.name ] = event.target.value;
 
 		this.setState( data );
-	},
+	};
 
-	setSubmitState: function( submitState ) {
+	setSubmitState = submitState => {
 		if ( submitState.error ) {
 			notices.error( submitState.error );
 		}
@@ -65,13 +63,13 @@ const PaypalPaymentBox = React.createClass( {
 		this.setState( {
 			formDisabled: submitState.disabled,
 		} );
-	},
+	};
 
-	getLocationOrigin: function( l ) {
+	getLocationOrigin = l => {
 		return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
-	},
+	};
 
-	redirectToPayPal: function( event ) {
+	redirectToPayPal = event => {
 		var cart,
 			transaction,
 			dataForApi,
@@ -130,9 +128,9 @@ const PaypalPaymentBox = React.createClass( {
 				}
 			}.bind( this )
 		);
-	},
+	};
 
-	renderButtonText: function() {
+	renderButtonText = () => {
 		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return this.props.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
@@ -144,9 +142,9 @@ const PaypalPaymentBox = React.createClass( {
 			args: { price: this.props.cart.total_cost_display },
 			context: 'Pay button on /checkout',
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
 		} );
@@ -218,7 +216,7 @@ const PaypalPaymentBox = React.createClass( {
 				<CartToggle />
 			</form>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PaypalPaymentBox );
