@@ -35,8 +35,8 @@ export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const mapPosts = ( commentIds, postId ) => {
-	postId = parseInt( postId, 10 );
+const mapPosts = ( commentIds, apiPostId ) => {
+	const postId = parseInt( apiPostId, 10 );
 	const [ topLevelIds, replyIds ] = commentIds;
 
 	return flatten( [
