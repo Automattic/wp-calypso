@@ -1,13 +1,12 @@
-const config = require( 'config' ),
-	fs = require( 'fs' ),
+const fs = require( 'fs' ),
 	utils = require( './utils' );
 
-export function getSectionsModule( sections ) {
+function getSectionsModule( sections, codeSplitting ) {
 	let templateName,
 		stringSections,
 		sectionLoaders;
 
-	if ( config.isEnabled( 'code-splitting' ) ) {
+	if ( codeSplitting ) {
 		templateName = 'loader-code-splitting.js.template';
 		sectionLoaders = getSectionLoadersCodeSplitting( sections );
 	} else {

@@ -1,5 +1,5 @@
+const config = require( 'config' );
 const { sectionsWithCSSUrls, getSectionsModule } = require( './loader-utils' );
-
 
 module.exports = function( content ) {
 	const sections = require( this.resourcePath );
@@ -11,5 +11,5 @@ module.exports = function( content ) {
 
 	this.addDependency( 'page' );
 
-	return getSectionsModule( sectionsWithCSSUrls( sections ) );
+	return getSectionsModule( sectionsWithCSSUrls( sections ), config.isEnabled( 'code-splitting' ) );
 };
