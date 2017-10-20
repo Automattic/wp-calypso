@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty } from 'lodash';
+import { findKey, flatMap, get, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -203,10 +203,10 @@ class ActivityLogDay extends Component {
 		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
 		const hasConfirmDialog = logs.some(
-				( { activityId, activityTs } ) =>
-					activityId === requestedRestoreActivityId &&
-					( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
-			);
+			( { activityId, activityTs } ) =>
+				activityId === requestedRestoreActivityId &&
+				( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
+		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
 		const elementsInDay = rewriteStream( logs );
@@ -235,7 +235,7 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
-					{ flatMap( rewriteStream( logs ), log => [
+					{ flatMap(
 						map(
 							elementsInDay,
 							( elem, index, list ) =>
@@ -259,7 +259,8 @@ class ActivityLogDay extends Component {
 										siteId={ siteId }
 									/>
 								)
-						) }
+						)
+					) }
 				</FoldableCard>
 			</div>
 		);

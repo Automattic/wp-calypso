@@ -496,23 +496,27 @@ class ActivityLog extends Component {
 								switch ( type ) {
 									case 'empty-day':
 										return (
-											<div key={ start.format() } className="activity-log-day is-empty">
-												<div>
+											<div key={ start.format() } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
 													{ start.format( 'LL' ) }
 													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
 												</div>
-												<div>{ translate( 'No activity' ) }</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
 											</div>
 										);
 
 									case 'empty-range':
 										return (
-											<div key={ start.format( 'LL' ) } className="activity-log-day is-empty">
-												<div>
+											<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
 													{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
 													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
 												</div>
-												<div>{ translate( 'No activity' ) }</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
 											</div>
 										);
 
