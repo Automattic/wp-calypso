@@ -1,3 +1,11 @@
+1.8.1
+-----
+Fix a control sequence escaping error in POT files, see [#41](https://github.com/Automattic/i18n-calypso/pull/41).
+
+1.8.0
+-----
+Merge locale data with existing one when we're not switching locale, see [#40](https://github.com/Automattic/i18n-calypso/pull/40).
+
 1.7.4
 -----
 Handle options with new plural syntax, see [#37](https://github.com/Automattic/i18n-calypso/pull/37).
