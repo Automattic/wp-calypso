@@ -342,16 +342,6 @@
 	}
 }
 
-.happychat__message-meta {
-	align-self: flex-end;
-	margin: 0 8px 0 0;
-
-	.is-user-message & {
-		align-self: flex-end;
-		margin: 0 0 0 8px;
-	}
-}
-
 .happychat__message-avatar {
 	width: 48px;
 	height: 48px;
