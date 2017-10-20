@@ -16,6 +16,7 @@ import { automatedTransfer as schema } from './schema';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
+	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
@@ -34,9 +35,13 @@ export const status = ( state = null, action ) =>
 		state
 	);
 
+export const fetchingStatus = ( state = [], action ) =>
+	REQUEST_STATUS === action.type ? true : state;
+
 export const siteReducer = combineReducers( {
 	eligibility,
 	status,
+	fetchingStatus,
 } );
 
 // state is a map of transfer sub-states
