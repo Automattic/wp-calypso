@@ -8,9 +8,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
+/** * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -25,6 +25,7 @@ import ThemeShowcase from './theme-showcase';
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const { siteId, currentPlanSlug, translate } = props;
 
+	const upsellUrl = abtest( 'unlimitedThemeNudge' ) === 'show' && `/plans/${ props.siteSlug }`;
 	return (
 		<div>
 			<SidebarNavigation />
@@ -42,7 +43,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				/>
 			) }
 
-			<ThemeShowcase { ...props } siteId={ siteId }>
+			<ThemeShowcase { ...props } upsellUrl={ upsellUrl } siteId={ siteId }>
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />

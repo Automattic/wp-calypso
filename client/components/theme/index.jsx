@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
@@ -144,8 +143,8 @@ export class Theme extends Component {
 		} );
 
 		const hasPrice = /\d/g.test( price );
-		const priceClass = classNames( 'theme-badge__price', {
-			'theme-badge__price-upgrade': ! hasPrice,
+		const priceClass = classNames( 'theme__badge-price', {
+			'theme__badge-price-upgrade': ! hasPrice,
 		} );
 
 		// for performance testing
@@ -155,19 +154,12 @@ export class Theme extends Component {
 			return this.renderPlaceholder();
 		}
 
-		let secondaryContent = null;
-
-		if ( hasPrice && upsellUrl ) {
-			const freePrice = price.replace( /[0-9,]+/, '0' );
-			secondaryContent = (
-				<div className="theme__info-upsell">
-					<span>or </span>
-					<Button href={ this.props.upsellUrl } compact primary>
-						{ translate( '%(freePrice)s with the Premium Plan', { args: { freePrice } } ) }
-					</Button>
-				</div>
-			);
-		}
+		const upsell = hasPrice &&
+		upsellUrl && (
+			<span className="theme__upsell">
+				<Gridicon icon="info-outline" />
+			</span>
+		);
 
 		return (
 			<Card className={ themeClass }>
@@ -197,20 +189,16 @@ export class Theme extends Component {
 					</a>
 
 					<div className="theme__info">
-						<div className="theme__info-detail">
-							<div className="theme__info-primary">
-								<h2 className="theme__info-title">{ name }</h2>
-								{ active && (
-									<span className="theme__badge-active">
-										{ translate( 'Active', {
-											context: 'singular noun, the currently active theme',
-										} ) }
-									</span>
-								) }
-								<span className={ priceClass }>{ price }</span>
-							</div>
-							{ secondaryContent }
-						</div>
+						<h2 className="theme__info-title">{ name }</h2>
+						{ active && (
+							<span className="theme__badge-active">
+								{ translate( 'Active', {
+									context: 'singular noun, the currently active theme',
+								} ) }
+							</span>
+						) }
+						<span className={ priceClass }>{ price }</span>
+						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }

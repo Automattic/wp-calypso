@@ -1,4 +1,4 @@
-$theme-info-height: 108px;
+$theme-info-height: 54px;
 
 .theme {
 	padding: 0;
@@ -62,30 +62,6 @@ $theme-info-height: 108px;
 	background: $white;
 }
 
-.theme__info-detail {
-	display: flex;
-	flex: 1 1 auto;
-	flex-direction: column;
-}
-
-.theme__info-primary {
-	display: flex;
-	flex-direction: row;
-}
-
-.theme__info-upsell {
-	display: flex;
-	align-self: center;
-	span {
-		color: $gray;
-		padding: 16px 4px;
-	}
-	.button {
-		margin: 14px 2px;
-		padding: 8px 4px;
-	}
-}
-
 .theme__info-title {
 	flex: 1 1 auto;
 	position: relative;
@@ -103,7 +79,7 @@ $theme-info-height: 108px;
 	}
 }
 
-.theme-badge__price {
+.theme__badge-price {
 	flex: 0 0 auto;
 	padding: 18px 10px 0;
 	color: $alert-green;
@@ -111,7 +87,13 @@ $theme-info-height: 108px;
 	font-weight: 600;
 }
 
-.theme-badge__price-upgrade {
+.theme__upsell {
+	flex: 0 0 auto;
+	padding: 16px 10px 0 0;
+	color: $gray;
+}
+
+.theme__badge-price-upgrade {
 	text-transform: uppercase;
 	font-size: 80%;
 }
@@ -142,7 +124,7 @@ $theme-info-height: 108px;
 		z-index: z-index( 'root', '.is-actionable .theme__active-focus' );
 		top: 0;
 		right: 0;
-		bottom: 108px;
+		bottom: 54px;
 		width: 100%;
 		padding-top: 36%;
 		cursor: pointer;
