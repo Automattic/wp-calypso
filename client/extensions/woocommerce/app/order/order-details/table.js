@@ -12,6 +12,7 @@ import { find, findIndex, noop } from 'lodash';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -238,6 +239,13 @@ class OrderDetailsTable extends Component {
 							value={ refundValue }
 							showTax={ showTax }
 						/>
+					) }
+					{ isEditing && (
+						<FormSettingExplanation>
+							{ translate(
+								'The total might not reflect updated tax values, tax will update when saved.'
+							) }
+						</FormSettingExplanation>
 					) }
 				</div>
 			</div>
