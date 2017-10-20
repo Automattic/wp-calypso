@@ -37,18 +37,10 @@ class RebrandCitiesThankYou extends Component {
 										'a digital footprint and reaching more customers.'
 								) }
 							</p>
-							<p>
-								{ translate(
-									'Please complete our business survey so we can learn more about you ' +
-										'and your business.'
-								) }
-							</p>
 						</div>
 					}
-					buttonUrl={ 'https://rebrandcities.typeform.com/to/cesv1j?typeform-welcome=0' }
-					buttonText={ translate( 'Start our business survey' ) }
 					icon={ this.renderLogo() }
-					action={ null }
+					action=" "
 				/>
 			</div>
 		);
