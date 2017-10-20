@@ -387,8 +387,7 @@ export class MySitesSidebar extends Component {
 			site,
 			siteSuffix,
 			translate,
-			transferStatus,
-			hasSitePendingAT,
+			siteHasBackgroundTransfer,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
@@ -402,8 +401,6 @@ export class MySitesSidebar extends Component {
 			canUserManageOptions &&
 			( config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ||
 				this.props.isSiteAutomatedTransfer );
-
-		const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
 
 		if (
 			! isJetpackOrAtomicSite &&
@@ -706,6 +703,9 @@ function mapStateToProps( state ) {
 
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
+	const transferStatus = getAutomatedTransferStatus( state, siteId );
+	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
+
 	return {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -725,8 +725,7 @@ function mapStateToProps( state ) {
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
-		transferStatus: getAutomatedTransferStatus( state, siteId ),
-		hasSitePendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
+		siteHasBackgroundTransfer: hasSitePendingAT && transferStatus !== transferStates.ERROR,
 	};
 }
 
