@@ -485,8 +485,7 @@ class ActivityLog extends Component {
 						{ visualGroups
 							.slice()
 							.reverse() // show with newest event on top
-							.map( ( [ type, time, events ] ) => {
-								const [ start, end ] = time;
+							.map( ( [ type, [ start, end ], events ] ) => {
 								const isToday = today.isSame(
 									end
 										.clone()
