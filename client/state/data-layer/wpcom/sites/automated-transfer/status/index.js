@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { delay, noop } from 'lodash';
+import { delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -59,6 +59,12 @@ export const receiveStatus = ( { dispatch }, { siteId }, data ) => {
 	}
 };
 
+export const errorStatus = ( store, { siteId }, error ) => {
+	console.log( 'Failed to fetch transfer status:', siteId, error );
+};
+
 export default {
-	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest( requestStatus, receiveStatus, noop ) ],
+	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
+		dispatchRequest( requestStatus, receiveStatus, errorStatus ),
+	],
 };
