@@ -68,4 +68,23 @@ describe( 'ProgressBar', () => {
 			'100%'
 		);
 	} );
+
+	test( 'should never jump back', () => {
+		const progressBar = shallow( <ProgressBar value={ 10 } /> );
+		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
+			'10%'
+		);
+		progressBar.setProps( { value: 20 } );
+		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
+			'20%'
+		);
+		progressBar.setProps( { value: 15 } );
+		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
+			'20%'
+		);
+		progressBar.setProps( { value: 30 } );
+		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
+			'30%'
+		);
+	} );
 } );
