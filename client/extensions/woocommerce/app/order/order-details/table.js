@@ -109,15 +109,21 @@ class OrderDetailsTable extends Component {
 		const subtotal = getOrderItemCost( order, id ) * quantity;
 		const total = subtotal;
 		const newItem = { ...item, quantity, subtotal, total };
-		this.props.onChange( { [ index ]: newItem } );
+		this.props.onChange( { line_items: { [ index ]: newItem } } );
 	};
 
-	onDelete = id => {
+	onDelete = ( id, type = 'line_items' ) => {
 		const { order } = this.props;
 		return () => {
-			const index = findIndex( order.line_items, { id } );
+			const index = findIndex( order[ type ], { id } );
 			if ( index >= 0 ) {
-				this.props.onChange( { [ index ]: { id, quantity: 0 } } );
+				let newItem;
+				if ( 'line_items' === type ) {
+					newItem = { id, quantity: 0, subtotal: 0 };
+				} else {
+					newItem = { id, total: 0 };
+				}
+				this.props.onChange( { [ type ]: { [ index ]: newItem } } );
 			}
 		};
 	};
@@ -153,7 +159,7 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderDeleteButton = item => {
+	renderDeleteButton = ( item, type ) => {
 		const { isEditing, translate } = this.props;
 		if ( ! isEditing ) {
 			return null;
@@ -167,7 +173,7 @@ class OrderDetailsTable extends Component {
 					aria-label={ translate( 'Remove %(product)s from this order', {
 						args: { product: item.name },
 					} ) }
-					onClick={ this.onDelete( item.id ) }
+					onClick={ this.onDelete( item.id, type ) }
 				>
 					<Gridicon icon="trash" />
 				</Button>
@@ -199,7 +205,7 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-total">
 					{ formatCurrency( item.total, order.currency ) }
 				</TableItem>
-				{ this.renderDeleteButton( item ) }
+				{ this.renderDeleteButton( item, 'line_items' ) }
 			</TableRow>
 		);
 	};
@@ -207,6 +213,9 @@ class OrderDetailsTable extends Component {
 	renderOrderFees = item => {
 		const { order, translate } = this.props;
 		const tax = getOrderFeeTax( order, item.id );
+		if ( item.total <= 0 ) {
+			return null;
+		}
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product" colSpan="3">
@@ -219,6 +228,7 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-total">
 					{ formatCurrency( item.total, order.currency ) }
 				</TableItem>
+				{ this.renderDeleteButton( item, 'fee_lines' ) }
 			</TableRow>
 		);
 	};
