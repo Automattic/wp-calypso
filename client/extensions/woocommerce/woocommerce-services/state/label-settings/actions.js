@@ -65,7 +65,7 @@ export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, ge
 		.then( onSaveSuccess )
 		.catch( onSaveFailure )
 		.then( () => {
-			dispatch( setFormMetaProperty( 'isSaving', false ) );
-			dispatch( setFormMetaProperty( 'pristine', true ) );
+			dispatch( setFormMetaProperty( siteId, 'isSaving', false ) );
+			dispatch( setFormMetaProperty( siteId, 'pristine', true ) );
 		} );
 };
