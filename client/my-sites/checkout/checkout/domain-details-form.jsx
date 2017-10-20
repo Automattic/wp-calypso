@@ -94,12 +94,7 @@ export class DomainDetailsForm extends PureComponent {
 
 		this.inputRefs = {};
 		this.inputRefCallbacks = {};
-
-		// The preference is to fire an inputRef callback
-		// when the previous and next countryCodes don't match.
-		// Multiple renders triggered by formState via `this.setFormState`
-		// prevent it.
-		this.shouldFocusAddress = false;
+		this.canAutoFocusAddressField = false;
 	}
 
 	componentWillMount() {
@@ -203,8 +198,6 @@ export class DomainDetailsForm extends PureComponent {
 	};
 
 	handleChangeEvent = event => {
-		this.shouldFocusAddress = false;
-
 		if ( event.target.name === 'country-code' ) {
 			// Remove previous country-specific state value
 			this.formStateController.handleFieldChange( {
@@ -219,13 +212,7 @@ export class DomainDetailsForm extends PureComponent {
 				} );
 			}
 
-			// If RegionAddressFieldsets is mounted we just need to find the stored inputRef
-			const inputRef = this.inputRefs[ 'address-1' ] || null;
-			inputRef && inputRef.focus();
-
-			// but if RegionAddressFieldsets isn't mounted (because there's no valid countryCode)
-			// we tell it to focus when it next mounts
-			this.shouldFocusAddress = true;
+			this.focusAddressField();
 		}
 
 		this.formStateController.handleFieldChange( {
@@ -411,7 +398,7 @@ export class DomainDetailsForm extends PureComponent {
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
-						shouldFocusAddress={ this.shouldFocusAddress }
+						canAutoFocusAddressField={ this.canAutoFocusAddressField }
 					/>
 				) }
 				{ this.renderCountryField() }
@@ -445,6 +432,21 @@ export class DomainDetailsForm extends PureComponent {
 		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
 		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
 		firstErrorRef.focus();
+	}
+
+	focusAddressField() {
+		const inputRef = this.inputRefs[ 'address-1' ] || null;
+
+		if ( inputRef ) {
+			inputRef.focus();
+		} else {
+			// The preference is to fire an inputRef callback
+			// when the previous and next countryCodes don't match,
+			// rather than set a flag.
+			// Multiple renders triggered by formState via `this.setFormState`
+			// prevent it.
+			this.canAutoFocusAddressField = true;
+		}
 	}
 
 	handleSubmitButtonClick = event => {

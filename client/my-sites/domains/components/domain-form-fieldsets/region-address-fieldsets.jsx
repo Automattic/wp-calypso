@@ -28,18 +28,20 @@ export class RegionAddressFieldsets extends Component {
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
 		countryCode: PropTypes.string,
+		canAutoFocusAddressField: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		getFieldProps: noop,
 		translate: identity,
 		countryCode: 'US',
+		canAutoFocusAddressField: false,
 	};
 
 	getAddressInputRefCallback = input => {
-		const { shouldFocusAddress } = this.props;
+		const { canAutoFocusAddressField } = this.props;
 
-		if ( shouldFocusAddress && input ) {
+		if ( canAutoFocusAddressField && input ) {
 			input.focus();
 		}
 	};
