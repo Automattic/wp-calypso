@@ -279,9 +279,13 @@ class ActivityLog extends Component {
 			return [
 				<EmptyContent
 					title={ translate( 'Your site is being synced' ) }
-					line={ translate(
-						"Come back in a little while to see your site activity. You will receive a notification once it's complete!"
-					) }
+					line={
+						<span>
+							{ translate( 'Come back in a little while to see your site activity.' ) }
+							<br />
+							{ translate( "You will receive a notification once it's complete!" ) }
+						</span>
+					}
 					illustration="/calypso/images/illustrations/al-syncing-site.svg"
 					className="activity-log__first-sync"
 				/>,
