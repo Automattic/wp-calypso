@@ -40,7 +40,7 @@ class MissingFeature extends PureComponent {
 		return toLower( translatedToken );
 	};
 
-	onChange = tokens => {
+	handleTokenChange = tokens => {
 		this.setState( { tokens } );
 	};
 
@@ -53,7 +53,7 @@ class MissingFeature extends PureComponent {
 				<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
 				<Card>
 					<TokenField
-						onChange={ this.onChange }
+						onChange={ this.handleTokenChange }
 						suggestions={ suggestions }
 						value={ this.state.tokens }
 					/>
