@@ -5,12 +5,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { find, findIndex, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
@@ -66,7 +68,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderTableHeader = () => {
-		const { translate } = this.props;
+		const { isEditing, translate } = this.props;
 		return (
 			<TableRow className="order-details__header">
 				<TableItem isHeader className="order-details__item-product">
@@ -84,6 +86,11 @@ class OrderDetailsTable extends Component {
 				<TableItem isHeader className="order-details__item-total">
 					{ translate( 'Total' ) }
 				</TableItem>
+				{ isEditing && (
+					<TableItem isHeader className="order-details__item-delete">
+						{ translate( 'Delete' ) }
+					</TableItem>
+				) }
 			</TableRow>
 		);
 	};
@@ -103,6 +110,16 @@ class OrderDetailsTable extends Component {
 		const total = subtotal;
 		const newItem = { ...item, quantity, subtotal, total };
 		this.props.onChange( { [ index ]: newItem } );
+	};
+
+	onDelete = id => {
+		const { order } = this.props;
+		return () => {
+			const index = findIndex( order.line_items, { id } );
+			if ( index >= 0 ) {
+				this.props.onChange( { [ index ]: { id, quantity: 0 } } );
+			}
+		};
 	};
 
 	renderQuantity = item => {
@@ -136,9 +153,34 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderDeleteButton = item => {
+		const { isEditing, translate } = this.props;
+		if ( ! isEditing ) {
+			return null;
+		}
+		return (
+			<TableItem className="order-details__item-delete">
+				<Button
+					compact
+					borderless
+					icon
+					aria-label={ translate( 'Remove %(product)s from this order', {
+						args: { product: item.name },
+					} ) }
+					onClick={ this.onDelete( item.id ) }
+				>
+					<Gridicon icon="trash" />
+				</Button>
+			</TableItem>
+		);
+	};
+
 	renderOrderItems = ( item, i ) => {
 		const { order } = this.props;
 		const tax = getOrderLineItemTax( order, item.id );
+		if ( item.quantity <= 0 ) {
+			return null;
+		}
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
@@ -157,6 +199,7 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-total">
 					{ formatCurrency( item.total, order.currency ) }
 				</TableItem>
+				{ this.renderDeleteButton( item ) }
 			</TableRow>
 		);
 	};
