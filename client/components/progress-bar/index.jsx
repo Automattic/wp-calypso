@@ -59,9 +59,7 @@ export default class ProgressBar extends PureComponent {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.state.allTimeMax < nextProps.value ) {
-			this.setState( { allTimeMax: nextProps.value } );
-		}
+		this.setState( { allTimeMax: Math.max( this.state.allTimeMax, nextProps.value ) } );
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
