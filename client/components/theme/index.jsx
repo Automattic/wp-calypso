@@ -18,6 +18,8 @@ import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
 import Ribbon from 'components/ribbon';
+import InfoPopover from 'components/info-popover';
+import Button from 'components/button';
 
 /**
  * Component
@@ -157,7 +159,14 @@ export class Theme extends Component {
 		const upsell = hasPrice &&
 		upsellUrl && (
 			<span className="theme__upsell">
-				<Gridicon icon="info-outline" />
+				<InfoPopover position="top left">
+					<h2 className="theme__upsell-heading">
+						Access all our premium themes with our Premium and Business Plans
+					</h2>
+					<Button className="theme__upsell-cta" primary href={ upsellUrl }>
+						Upgrade Now
+					</Button>
+				</InfoPopover>
 			</span>
 		);
 

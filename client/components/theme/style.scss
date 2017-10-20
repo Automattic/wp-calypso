@@ -93,6 +93,17 @@ $theme-info-height: 54px;
 	color: $gray;
 }
 
+.theme__upsell-heading {
+	text-align: center
+}
+
+.theme__upsell-cta {
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	display: table;
+}
+
 .theme__badge-price-upgrade {
 	text-transform: uppercase;
 	font-size: 80%;
