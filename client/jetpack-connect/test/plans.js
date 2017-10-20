@@ -5,8 +5,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render } from 'enzyme';
 import React from 'react';
 import { identity, noop } from 'lodash';
 import { spy } from 'sinon';
@@ -15,7 +14,6 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { PlansTestComponent as Plans } from '../plans';
-import PlansGrid from '../plans-grid';
 
 /**
  * Test fixtures
@@ -383,10 +381,15 @@ const redirectingToWpAdmin = false;
 const isRtlLayout = false;
 const siteSlug = '*';
 
+jest.mock( 'components/data/query-plans', () => require( 'components/empty-component' ) );
+jest.mock( 'components/data/query-site-plans', () => require( 'components/empty-component' ) );
+jest.mock( 'jetpack-connect/happychat-button', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/plan-features', () => require( 'components/empty-component' ) );
+
 describe( 'Plans', () => {
-	test( 'should render a <PlansGrid /> instance', () => {
+	test( 'should render with no plan', () => {
 		const goBackToWpAdmin = spy();
-		const wrapper = shallow(
+		const wrapper = render(
 			<Plans
 				basePlansPath={ basePlansPath }
 				calypsoStartedConnection={ calypsoStartedConnection }
@@ -414,6 +417,39 @@ describe( 'Plans', () => {
 			/>
 		);
 
-		expect( wrapper.find( PlansGrid ) ).to.have.length( 1 );
+		expect( wrapper ).toMatchSnapshot();
 	} );
+
+	// test( 'should do something else with a paid plan', () => {
+	// 	const goBackToWpAdmin = spy();
+	// 	const wrapper = render(
+	// 		<Plans
+	// 			basePlansPath={ basePlansPath }
+	// 			calypsoStartedConnection={ calypsoStartedConnection }
+	// 			canPurchasePlans={ canPurchasePlans }
+	// 			cart={ cart }
+	// 			completeFlow={ noop }
+	// 			context={ context }
+	// 			flowType={ flowType }
+	// 			getPlanBySlug={ noop }
+	// 			goBackToWpAdmin={ goBackToWpAdmin }
+	// 			isAutomatedTransfer={ isAutomatedTransfer }
+	// 			isRequestingPlans={ isRequestingPlans }
+	// 			isRtlLayout={ isRtlLayout }
+	// 			jetpackConnectAuthorize={ jetpackConnectAuthorize }
+	// 			recordTracksEvent={ noop }
+	// 			redirectingToWpAdmin={ redirectingToWpAdmin }
+	// 			selectedSite={ selectedSite }
+	// 			selectedSiteSlug={ selectedSiteSlug }
+	// 			selectPlanInAdvance={ noop }
+	// 			sitePlans={ sitePlans }
+	// 			siteSlug={ siteSlug }
+	// 			transaction={ transaction }
+	// 			translate={ identity }
+	// 			userId={ userId }
+	// 		/>
+	// 	);
+
+	// 	expect( wrapper ).toMatchSnapshot();
+	// } );
 } );
