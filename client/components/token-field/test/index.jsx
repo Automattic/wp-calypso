@@ -7,7 +7,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { render, mount } from 'enzyme';
 import { filter, map } from 'lodash';
 import React from 'react';
 import sinon from 'sinon';
@@ -17,6 +17,11 @@ import sinon from 'sinon';
  */
 import fixtures from './lib/fixtures';
 import TokenFieldWrapper from './lib/token-field-wrapper';
+
+/**
+ * Module constants
+ */
+const jestExpect = global.expect;
 
 jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
@@ -108,6 +113,13 @@ describe( 'TokenField', () => {
 		tokenFieldNode = wrapper.ref( 'tokenField' );
 		textInputNode = tokenFieldNode.find( '.token-field__input' );
 		textInputNode.simulate( 'focus' );
+	} );
+
+	describe( 'render', () => {
+		test( 'should render tokens', () => {
+			const tree = render( <TokenFieldWrapper /> );
+			jestExpect( tree ).toMatchSnapshot();
+		} );
 	} );
 
 	describe( 'displaying tokens', () => {
