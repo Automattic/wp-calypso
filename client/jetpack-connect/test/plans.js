@@ -5,10 +5,9 @@
 /**
  * External dependencies
  */
-import { render } from 'enzyme';
+import { mount, render } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
-import { spy } from 'sinon';
+import { cloneDeep, identity, noop, setWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +19,25 @@ import { PlansTestComponent as Plans } from '../plans';
  */
 const SITE_ID = 1234567;
 const SITE_SLUG = 'an.example.site';
+const SITE_PLAN_FREE = {
+	product_id: 2002,
+	product_slug: 'jetpack_free',
+	product_name_short: 'Free',
+	free_trial: false,
+	expired: false,
+	user_is_owner: false,
+	is_free: true,
+};
+
+const SITE_PLAN_PREMIUM = {
+	product_id: 2000,
+	product_slug: 'jetpack_premium',
+	product_name_short: 'Free',
+	free_trial: false,
+	expired: false,
+	user_is_owner: false,
+	is_free: true,
+};
 const context = {
 	canonicalPath: `/jetpack/connect/plans/${ SITE_SLUG }`,
 	path: `/jetpack/connect/plans/${ SITE_SLUG }`,
@@ -68,134 +86,7 @@ const cart = {
 	hasLoadedFromServer: true,
 	hasPendingServerUpdates: false,
 };
-const selectedSite = {
-	ID: SITE_ID,
-	name: 'Test Site',
-	URL: `http://${ SITE_SLUG }`,
-	jetpack: true,
-	visible: true,
-	is_private: false,
-	is_vip: false,
-	options: {
-		gmt_offset: 0,
-		videopress_enabled: false,
-		upgraded_filetypes_enabled: true,
-		admin_url: `http://${ SITE_SLUG }/wp-admin/`,
-		is_mapped_domain: true,
-		is_redirect: false,
-		unmapped_url: `http://${ SITE_SLUG }`,
-		permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
-		default_post_format: 'standard',
-		allowed_file_types: [
-			'jpg',
-			'jpeg',
-			'png',
-			'gif',
-			'pdf',
-			'doc',
-			'ppt',
-			'odt',
-			'pptx',
-			'docx',
-			'pps',
-			'ppsx',
-			'xls',
-			'xlsx',
-			'key',
-		],
-		show_on_front: 'posts',
-		default_likes_enabled: true,
-		default_sharing_status: false,
-		software_version: '4.8.2',
-		created_at: '2017-10-19T11:20:01+00:00',
-		wordads: false,
-		publicize_permanently_disabled: false,
-		frame_nonce: 'foobarbaz',
-		advanced_seo_front_page_description: '',
-		advanced_seo_title_formats: [],
-		verification_services_codes: null,
-		podcasting_archive: null,
-		is_domain_only: false,
-		is_automated_transfer: false,
-		jetpack_version: '5.4',
-		main_network_site: `http://${ SITE_SLUG }`,
-		active_modules: [
-			'after-the-deadline',
-			'contact-form',
-			'custom-content-types',
-			'custom-css',
-			'enhanced-distribution',
-			'gravatar-hovercards',
-			'json-api',
-			'latex',
-			'manage',
-			'notes',
-			'post-by-email',
-			'protect',
-			'publicize',
-			'sharedaddy',
-			'shortcodes',
-			'shortlinks',
-			'sitemaps',
-			'stats',
-			'subscriptions',
-			'verification-tools',
-			'widget-visibility',
-			'widgets',
-		],
-		max_upload_size: false,
-		is_multi_network: false,
-		is_multi_site: false,
-		file_mod_disabled: false,
-	},
-	is_multisite: false,
-	capabilities: {
-		edit_pages: true,
-		edit_posts: true,
-		edit_others_posts: true,
-		edit_others_pages: true,
-		delete_posts: true,
-		delete_others_posts: true,
-		edit_theme_options: true,
-		edit_users: true,
-		list_users: true,
-		manage_categories: true,
-		manage_options: true,
-		moderate_comments: true,
-		activate_wordads: true,
-		promote_users: true,
-		publish_posts: true,
-		upload_files: true,
-		delete_users: false,
-		remove_users: true,
-		view_stats: true,
-	},
-	plan: {
-		product_id: 2002,
-		product_slug: 'jetpack_free',
-		product_name_short: 'Free',
-		free_trial: false,
-		expired: false,
-		user_is_owner: false,
-		is_free: true,
-	},
-	single_user_site: false,
-	domain: SITE_SLUG,
-	hasConflict: false,
-	is_customizable: true,
-	is_previewable: false,
-	slug: SITE_SLUG,
-	title: 'Test Site',
-	hasMinimumJetpackVersion: true,
-	canAutoupdateFiles: true,
-	canUpdateFiles: true,
-	canManage: true,
-	isMainNetworkSite: true,
-	isSecondaryNetworkSite: false,
-	isSiteUpgradeable: true,
-};
 const selectedSiteSlug = SITE_SLUG;
-const isAutomatedTransfer = false;
 const sitePlans = {
 	data: [
 		{
@@ -250,7 +141,7 @@ const sitePlans = {
 			autoRenew: false,
 			autoRenewDateMoment: null,
 			canStartTrial: false,
-			currentPlan: true,
+			currentPlan: false,
 			currencyCode: 'EUR',
 			discountReason: null,
 			expiryMoment: null,
@@ -388,7 +279,125 @@ jest.mock( 'my-sites/plan-features', () => require( 'components/empty-component'
 
 describe( 'Plans', () => {
 	test( 'should render with no plan', () => {
-		const goBackToWpAdmin = spy();
+		const selectedSite = {
+			ID: SITE_ID,
+			name: 'Test Site',
+			URL: `http://${ SITE_SLUG }`,
+			jetpack: true,
+			visible: true,
+			is_private: false,
+			is_vip: false,
+			options: {
+				gmt_offset: 0,
+				videopress_enabled: false,
+				upgraded_filetypes_enabled: true,
+				admin_url: `http://${ SITE_SLUG }/wp-admin/`,
+				is_mapped_domain: true,
+				is_redirect: false,
+				unmapped_url: `http://${ SITE_SLUG }`,
+				permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
+				default_post_format: 'standard',
+				allowed_file_types: [
+					'jpg',
+					'jpeg',
+					'png',
+					'gif',
+					'pdf',
+					'doc',
+					'ppt',
+					'odt',
+					'pptx',
+					'docx',
+					'pps',
+					'ppsx',
+					'xls',
+					'xlsx',
+					'key',
+				],
+				show_on_front: 'posts',
+				default_likes_enabled: true,
+				default_sharing_status: false,
+				software_version: '4.8.2',
+				created_at: '2017-10-19T11:20:01+00:00',
+				wordads: false,
+				publicize_permanently_disabled: false,
+				frame_nonce: 'foobarbaz',
+				advanced_seo_front_page_description: '',
+				advanced_seo_title_formats: [],
+				verification_services_codes: null,
+				podcasting_archive: null,
+				is_domain_only: false,
+				is_automated_transfer: false,
+				jetpack_version: '5.4',
+				main_network_site: `http://${ SITE_SLUG }`,
+				active_modules: [
+					'after-the-deadline',
+					'contact-form',
+					'custom-content-types',
+					'custom-css',
+					'enhanced-distribution',
+					'gravatar-hovercards',
+					'json-api',
+					'latex',
+					'manage',
+					'notes',
+					'post-by-email',
+					'protect',
+					'publicize',
+					'sharedaddy',
+					'shortcodes',
+					'shortlinks',
+					'sitemaps',
+					'stats',
+					'subscriptions',
+					'verification-tools',
+					'widget-visibility',
+					'widgets',
+				],
+				max_upload_size: false,
+				is_multi_network: false,
+				is_multi_site: false,
+				file_mod_disabled: false,
+			},
+			is_multisite: false,
+			capabilities: {
+				edit_pages: true,
+				edit_posts: true,
+				edit_others_posts: true,
+				edit_others_pages: true,
+				delete_posts: true,
+				delete_others_posts: true,
+				edit_theme_options: true,
+				edit_users: true,
+				list_users: true,
+				manage_categories: true,
+				manage_options: true,
+				moderate_comments: true,
+				activate_wordads: true,
+				promote_users: true,
+				publish_posts: true,
+				upload_files: true,
+				delete_users: false,
+				remove_users: true,
+				view_stats: true,
+			},
+			plan: SITE_PLAN_FREE,
+			single_user_site: false,
+			domain: SITE_SLUG,
+			hasConflict: false,
+			is_customizable: true,
+			is_previewable: false,
+			slug: SITE_SLUG,
+			title: 'Test Site',
+			hasMinimumJetpackVersion: true,
+			canAutoupdateFiles: true,
+			canUpdateFiles: true,
+			canManage: true,
+			isMainNetworkSite: true,
+			isSecondaryNetworkSite: false,
+			isSiteUpgradeable: true,
+		};
+
 		const wrapper = render(
 			<Plans
 				basePlansPath={ basePlansPath }
@@ -399,8 +408,8 @@ describe( 'Plans', () => {
 				context={ context }
 				flowType={ flowType }
 				getPlanBySlug={ noop }
-				goBackToWpAdmin={ goBackToWpAdmin }
-				isAutomatedTransfer={ isAutomatedTransfer }
+				goBackToWpAdmin={ noop }
+				isAutomatedTransfer={ false }
 				isRequestingPlans={ isRequestingPlans }
 				isRtlLayout={ isRtlLayout }
 				jetpackConnectAuthorize={ jetpackConnectAuthorize }
@@ -409,7 +418,11 @@ describe( 'Plans', () => {
 				selectedSite={ selectedSite }
 				selectedSiteSlug={ selectedSiteSlug }
 				selectPlanInAdvance={ noop }
-				sitePlans={ sitePlans }
+				sitePlans={ setWith( cloneDeep( sitePlans ), 'data', plans =>
+					plans.map(
+						plan => ( plan.productSlug === 'jetpack_free' ? { ...plan, currentPlan: true } : plan )
+					)
+				) }
 				siteSlug={ siteSlug }
 				transaction={ transaction }
 				translate={ identity }
@@ -420,36 +433,317 @@ describe( 'Plans', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	// test( 'should do something else with a paid plan', () => {
-	// 	const goBackToWpAdmin = spy();
-	// 	const wrapper = render(
-	// 		<Plans
-	// 			basePlansPath={ basePlansPath }
-	// 			calypsoStartedConnection={ calypsoStartedConnection }
-	// 			canPurchasePlans={ canPurchasePlans }
-	// 			cart={ cart }
-	// 			completeFlow={ noop }
-	// 			context={ context }
-	// 			flowType={ flowType }
-	// 			getPlanBySlug={ noop }
-	// 			goBackToWpAdmin={ goBackToWpAdmin }
-	// 			isAutomatedTransfer={ isAutomatedTransfer }
-	// 			isRequestingPlans={ isRequestingPlans }
-	// 			isRtlLayout={ isRtlLayout }
-	// 			jetpackConnectAuthorize={ jetpackConnectAuthorize }
-	// 			recordTracksEvent={ noop }
-	// 			redirectingToWpAdmin={ redirectingToWpAdmin }
-	// 			selectedSite={ selectedSite }
-	// 			selectedSiteSlug={ selectedSiteSlug }
-	// 			selectPlanInAdvance={ noop }
-	// 			sitePlans={ sitePlans }
-	// 			siteSlug={ siteSlug }
-	// 			transaction={ transaction }
-	// 			translate={ identity }
-	// 			userId={ userId }
-	// 		/>
-	// 	);
+	test( 'should render with a paid plan', () => {
+		const selectedSite = {
+			ID: SITE_ID,
+			name: 'Test Site',
+			URL: `http://${ SITE_SLUG }`,
+			jetpack: true,
+			visible: true,
+			is_private: false,
+			is_vip: false,
+			options: {
+				gmt_offset: 0,
+				videopress_enabled: false,
+				upgraded_filetypes_enabled: true,
+				admin_url: `http://${ SITE_SLUG }/wp-admin/`,
+				is_mapped_domain: true,
+				is_redirect: false,
+				unmapped_url: `http://${ SITE_SLUG }`,
+				permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
+				default_post_format: 'standard',
+				allowed_file_types: [
+					'jpg',
+					'jpeg',
+					'png',
+					'gif',
+					'pdf',
+					'doc',
+					'ppt',
+					'odt',
+					'pptx',
+					'docx',
+					'pps',
+					'ppsx',
+					'xls',
+					'xlsx',
+					'key',
+				],
+				show_on_front: 'posts',
+				default_likes_enabled: true,
+				default_sharing_status: false,
+				software_version: '4.8.2',
+				created_at: '2017-10-19T11:20:01+00:00',
+				wordads: false,
+				publicize_permanently_disabled: false,
+				frame_nonce: 'foobarbaz',
+				advanced_seo_front_page_description: '',
+				advanced_seo_title_formats: [],
+				verification_services_codes: null,
+				podcasting_archive: null,
+				is_domain_only: false,
+				is_automated_transfer: false,
+				jetpack_version: '5.4',
+				main_network_site: `http://${ SITE_SLUG }`,
+				active_modules: [
+					'after-the-deadline',
+					'contact-form',
+					'custom-content-types',
+					'custom-css',
+					'enhanced-distribution',
+					'gravatar-hovercards',
+					'json-api',
+					'latex',
+					'manage',
+					'notes',
+					'post-by-email',
+					'protect',
+					'publicize',
+					'sharedaddy',
+					'shortcodes',
+					'shortlinks',
+					'sitemaps',
+					'stats',
+					'subscriptions',
+					'verification-tools',
+					'widget-visibility',
+					'widgets',
+				],
+				max_upload_size: false,
+				is_multi_network: false,
+				is_multi_site: false,
+				file_mod_disabled: false,
+			},
+			is_multisite: false,
+			capabilities: {
+				edit_pages: true,
+				edit_posts: true,
+				edit_others_posts: true,
+				edit_others_pages: true,
+				delete_posts: true,
+				delete_others_posts: true,
+				edit_theme_options: true,
+				edit_users: true,
+				list_users: true,
+				manage_categories: true,
+				manage_options: true,
+				moderate_comments: true,
+				activate_wordads: true,
+				promote_users: true,
+				publish_posts: true,
+				upload_files: true,
+				delete_users: false,
+				remove_users: true,
+				view_stats: true,
+			},
+			plan: SITE_PLAN_PREMIUM,
+			single_user_site: false,
+			domain: SITE_SLUG,
+			hasConflict: false,
+			is_customizable: true,
+			is_previewable: false,
+			slug: SITE_SLUG,
+			title: 'Test Site',
+			hasMinimumJetpackVersion: true,
+			canAutoupdateFiles: true,
+			canUpdateFiles: true,
+			canManage: true,
+			isMainNetworkSite: true,
+			isSecondaryNetworkSite: false,
+			isSiteUpgradeable: true,
+		};
 
-	// 	expect( wrapper ).toMatchSnapshot();
-	// } );
+		const wrapper = render(
+			<Plans
+				basePlansPath={ basePlansPath }
+				calypsoStartedConnection={ calypsoStartedConnection }
+				canPurchasePlans={ canPurchasePlans }
+				cart={ cart }
+				completeFlow={ noop }
+				context={ context }
+				flowType={ flowType }
+				getPlanBySlug={ noop }
+				goBackToWpAdmin={ noop }
+				isAutomatedTransfer={ false }
+				isRequestingPlans={ isRequestingPlans }
+				isRtlLayout={ isRtlLayout }
+				jetpackConnectAuthorize={ jetpackConnectAuthorize }
+				recordTracksEvent={ noop }
+				redirectingToWpAdmin={ redirectingToWpAdmin }
+				selectedSite={ selectedSite }
+				selectedSiteSlug={ selectedSiteSlug }
+				selectPlanInAdvance={ noop }
+				sitePlans={ setWith( cloneDeep( sitePlans ), 'data', plans =>
+					plans.map(
+						plan =>
+							plan.productSlug === 'jetpack_premium' ? { ...plan, currentPlan: true } : plan
+					)
+				) }
+				siteSlug={ siteSlug }
+				transaction={ transaction }
+				translate={ identity }
+				userId={ userId }
+			/>
+		);
+
+		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	test( 'should redirect if Atomic', () => {
+		const selectedSite = {
+			ID: SITE_ID,
+			name: 'Test Site',
+			URL: `http://${ SITE_SLUG }`,
+			jetpack: true,
+			visible: true,
+			is_private: false,
+			is_vip: false,
+			options: {
+				gmt_offset: 0,
+				videopress_enabled: false,
+				upgraded_filetypes_enabled: true,
+				admin_url: `http://${ SITE_SLUG }/wp-admin/`,
+				is_mapped_domain: true,
+				is_redirect: false,
+				unmapped_url: `http://${ SITE_SLUG }`,
+				permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
+				default_post_format: 'standard',
+				allowed_file_types: [
+					'jpg',
+					'jpeg',
+					'png',
+					'gif',
+					'pdf',
+					'doc',
+					'ppt',
+					'odt',
+					'pptx',
+					'docx',
+					'pps',
+					'ppsx',
+					'xls',
+					'xlsx',
+					'key',
+				],
+				show_on_front: 'posts',
+				default_likes_enabled: true,
+				default_sharing_status: false,
+				software_version: '4.8.2',
+				created_at: '2017-10-19T11:20:01+00:00',
+				wordads: false,
+				publicize_permanently_disabled: false,
+				frame_nonce: 'foobarbaz',
+				advanced_seo_front_page_description: '',
+				advanced_seo_title_formats: [],
+				verification_services_codes: null,
+				podcasting_archive: null,
+				is_domain_only: false,
+				is_automated_transfer: true,
+				jetpack_version: '5.4',
+				main_network_site: `http://${ SITE_SLUG }`,
+				active_modules: [
+					'after-the-deadline',
+					'contact-form',
+					'custom-content-types',
+					'custom-css',
+					'enhanced-distribution',
+					'gravatar-hovercards',
+					'json-api',
+					'latex',
+					'manage',
+					'notes',
+					'post-by-email',
+					'protect',
+					'publicize',
+					'sharedaddy',
+					'shortcodes',
+					'shortlinks',
+					'sitemaps',
+					'stats',
+					'subscriptions',
+					'verification-tools',
+					'widget-visibility',
+					'widgets',
+				],
+				max_upload_size: false,
+				is_multi_network: false,
+				is_multi_site: false,
+				file_mod_disabled: false,
+			},
+			is_multisite: false,
+			capabilities: {
+				edit_pages: true,
+				edit_posts: true,
+				edit_others_posts: true,
+				edit_others_pages: true,
+				delete_posts: true,
+				delete_others_posts: true,
+				edit_theme_options: true,
+				edit_users: true,
+				list_users: true,
+				manage_categories: true,
+				manage_options: true,
+				moderate_comments: true,
+				activate_wordads: true,
+				promote_users: true,
+				publish_posts: true,
+				upload_files: true,
+				delete_users: false,
+				remove_users: true,
+				view_stats: true,
+			},
+			plan: SITE_PLAN_PREMIUM,
+			single_user_site: false,
+			domain: SITE_SLUG,
+			hasConflict: false,
+			is_customizable: true,
+			is_previewable: false,
+			slug: SITE_SLUG,
+			title: 'Test Site',
+			hasMinimumJetpackVersion: true,
+			canAutoupdateFiles: true,
+			canUpdateFiles: true,
+			canManage: true,
+			isMainNetworkSite: true,
+			isSecondaryNetworkSite: false,
+			isSiteUpgradeable: true,
+		};
+
+		const goBackToWpAdmin = jest.fn();
+
+		mount(
+			<Plans
+				basePlansPath={ basePlansPath }
+				calypsoStartedConnection={ calypsoStartedConnection }
+				canPurchasePlans={ canPurchasePlans }
+				cart={ cart }
+				completeFlow={ noop }
+				context={ context }
+				flowType={ flowType }
+				getPlanBySlug={ noop }
+				goBackToWpAdmin={ goBackToWpAdmin }
+				isAutomatedTransfer={ true }
+				isRequestingPlans={ isRequestingPlans }
+				isRtlLayout={ isRtlLayout }
+				jetpackConnectAuthorize={ jetpackConnectAuthorize }
+				recordTracksEvent={ noop }
+				redirectingToWpAdmin={ redirectingToWpAdmin }
+				selectedSite={ selectedSite }
+				selectedSiteSlug={ selectedSiteSlug }
+				selectPlanInAdvance={ noop }
+				sitePlans={ setWith( cloneDeep( sitePlans ), 'data', plans =>
+					plans.map(
+						plan =>
+							plan.productSlug === 'jetpack_premium' ? { ...plan, currentPlan: true } : plan
+					)
+				) }
+				siteSlug={ siteSlug }
+				transaction={ transaction }
+				translate={ identity }
+				userId={ userId }
+			/>
+		);
+
+		expect( goBackToWpAdmin.mock.calls.length ).toBe( 1 );
+	} );
 } );
