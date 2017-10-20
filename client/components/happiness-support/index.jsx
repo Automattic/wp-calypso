@@ -109,7 +109,7 @@ export class HappinessSupport extends Component {
 
 				<p className="happiness-support__text">
 					{ translate(
-						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.', // eslint-disable-line max-len
+						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account, or how to do just about anything.', // eslint-disable-line max-len
 						{
 							components: {
 								strong: <strong />,
