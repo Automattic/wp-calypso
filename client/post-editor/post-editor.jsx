@@ -365,6 +365,7 @@ export const PostEditor = React.createClass( {
 						nestedSidebar={ this.state.nestedSidebar }
 						setNestedSidebar={ this.setNestedSidebar }
 						selectRevision={ this.selectRevision }
+						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
