@@ -63,8 +63,10 @@ import {
 const debug = debugFactory( 'calypso:activity-log' );
 const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
-const flushEmptyDays = days =>
-	days.length === 1 ? [ 'empty-day', days ] : [ 'empty-range', [ last( days ), first( days ) ] ];
+const flushEmptyDays = days => [
+	days.length === 1 ? 'empty-day' : 'empty-range',
+	[ first( days ), last( days ) ],
+];
 
 /**
  * Takes a list of [ day, eventList ] pairs and produces
