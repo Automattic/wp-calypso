@@ -41,6 +41,7 @@ export const request = ( { dispatch }, action ) => {
 export const success = ( { dispatch }, action ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
+		siteId: action.siteId,
 	} );
 
 	dispatch( {
@@ -48,6 +49,7 @@ export const success = ( { dispatch }, action ) => {
 		credentials: {
 			main: action.credentials,
 		},
+		siteId: action.siteId,
 	} );
 
 	dispatch(
@@ -62,6 +64,7 @@ export const failure = ( { dispatch }, action, error ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
 		error,
+		siteId: action.siteId,
 	} );
 
 	dispatch(

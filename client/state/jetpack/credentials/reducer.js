@@ -8,19 +8,19 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 
-export const items = ( state = {}, { type, credentials } ) => {
+export const items = keyedReducer( 'siteId', ( state, { type, credentials } ) => {
 	if ( JETPACK_CREDENTIALS_STORE === type ) {
 		return 'object' === typeof credentials ? credentials : {};
 	}
 
 	return state;
-};
+} );
 items.schema = itemsSchema;
 
-export const updateRequesting = ( state = false, { type } ) => {
+export const updateRequesting = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case JETPACK_CREDENTIALS_UPDATE:
 			return true;
@@ -31,7 +31,7 @@ export const updateRequesting = ( state = false, { type } ) => {
 	}
 
 	return state;
-};
+} );
 
 export const reducer = combineReducers( {
 	items,

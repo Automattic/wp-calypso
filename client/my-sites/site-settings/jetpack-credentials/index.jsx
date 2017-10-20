@@ -24,7 +24,8 @@ import {
 	getJetpackCredentials,
 	credentialsUpdating,
 	hasMainCredentials,
-	isSitePressable
+	isSitePressable,
+	getAutoConfigStatus
 } from 'state/jetpack/credentials/selectors';
 import {
 	updateCredentials as updateCredentialsAction,
@@ -294,12 +295,12 @@ class Backups extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const credentials = getJetpackCredentials( state, 'main' );
+		const credentials = getJetpackCredentials( state, siteId, 'main' );
 
 		return {
-			autoConfigStatus: state.jetpack.credentials.items.main === undefined ? 'requesting' : 'success',
-			credentialsUpdating: credentialsUpdating( state ),
-			hasMainCredentials: hasMainCredentials( state ),
+			autoConfigStatus: getAutoConfigStatus( state, siteId ),
+			credentialsUpdating: credentialsUpdating( state, siteId ),
+			hasMainCredentials: hasMainCredentials( state, siteId ),
 			mainCredentials: credentials,
 			isPressable: isSitePressable( state, siteId ),
 			isRewindActive: isRewindActive( state, siteId ),

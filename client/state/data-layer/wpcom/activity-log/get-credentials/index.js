@@ -28,6 +28,7 @@ export const store = ( { dispatch }, action, credentials ) =>
 	dispatch( {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials,
+		siteId: action.siteId,
 	} );
 
 export const announceFailure = ( { dispatch } ) =>
