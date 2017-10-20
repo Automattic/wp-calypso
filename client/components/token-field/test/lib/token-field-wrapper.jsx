@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 
 /**
@@ -12,7 +10,7 @@ import React from 'react';
 import TokenField from 'components/token-field';
 import { unescapeAndFormatSpaces } from 'lib/formatting';
 
-var suggestions = [
+const suggestions = [
 	'the',
 	'of',
 	'and',

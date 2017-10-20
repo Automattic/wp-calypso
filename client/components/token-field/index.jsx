@@ -1,16 +1,13 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
 import React from 'react';
+import PropTypes from 'prop-types';
 import PureRenderMixin from 'react-pure-render/mixin';
+import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:token-field' );
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -18,6 +15,8 @@ import PropTypes from 'prop-types';
 import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
+
+const debug = debugFactory( 'calypso:token-field' );
 
 const TokenField = React.createClass( {
 	propTypes: {
@@ -77,14 +76,8 @@ const TokenField = React.createClass( {
 			isActive: false,
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false,
+			tokenInputHasFocus: false,
 		};
-	},
-
-	componentDidUpdate: function() {
-		if ( this.state.isActive && ! this.refs.input.hasFocus() ) {
-			debug( 'componentDidUpdate focusing input' );
-			this.refs.input.focus(); // make sure focus is on input
-		}
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -119,7 +112,7 @@ const TokenField = React.createClass( {
 		return (
 			<div { ...tokenFieldProps }>
 				<div
-					ref="tokensAndInput"
+					ref={ this.setTokensAndInput }
 					className="token-field__input-container"
 					tabIndex="-1"
 					onMouseDown={ this._onContainerTouched }
@@ -175,12 +168,12 @@ const TokenField = React.createClass( {
 		let props = {
 			autoCapitalize,
 			autoComplete,
-			ref: 'input',
-			key: 'input',
 			disabled: this.props.disabled,
-			value: this.state.incompleteTokenValue,
-			onBlur: this._onBlur,
+			hasFocus: this.state.tokenInputHasFocus,
 			id,
+			key: 'input',
+			onBlur: this._onBlur,
+			value: this.state.incompleteTokenValue,
 		};
 
 		if ( value.length === 0 && placeholder ) {
@@ -194,8 +187,12 @@ const TokenField = React.createClass( {
 		return <TokenInput { ...props } />;
 	},
 
+	setTokensAndInput: function( input ) {
+		this.tokensAndInput = input;
+	},
+
 	_onFocus: function( event ) {
-		this.setState( { isActive: true } );
+		this.setState( { isActive: true, tokenInputHasFocus: true } );
 		if ( 'function' === typeof this.props.onFocus ) {
 			this.props.onFocus( event );
 		}
@@ -250,7 +247,7 @@ const TokenField = React.createClass( {
 	_onContainerTouched: function( event ) {
 		// Prevent clicking/touching the tokensAndInput container from blurring
 		// the input and adding the current token.
-		if ( event.target === this.refs.tokensAndInput && this.state.isActive ) {
+		if ( event.target === this.tokensAndInput && this.state.isActive ) {
 			event.preventDefault();
 		}
 	},
@@ -316,7 +313,7 @@ const TokenField = React.createClass( {
 	_handleDeleteKey: function( deleteToken ) {
 		var preventDefault = false;
 
-		if ( this.refs.input.hasFocus() && this._isInputEmpty() ) {
+		if ( this.state.tokenInputHasFocus && this._isInputEmpty() ) {
 			deleteToken();
 			preventDefault = true;
 		}
@@ -508,7 +505,7 @@ const TokenField = React.createClass( {
 
 		if ( this.state.isActive ) {
 			debug( '_addNewToken focusing input' );
-			this.refs.input.focus();
+			this.setState( { tokenInputHasFocus: true } );
 		}
 	},
 
