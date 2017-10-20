@@ -541,7 +541,7 @@ class JetpackThankYouCard extends Component {
 
 	renderAction( progress = 0 ) {
 		const { selectedSite: site, translate } = this.props;
-		const buttonUrl = site && site.URL;
+		const buttonUrl = site ? site.URL + '/wp-admin' : false;
 		// We return instructions for setting up manually
 		// when we finish if something errored
 		if ( this.isErrored() && ! this.props.isInstalling ) {
