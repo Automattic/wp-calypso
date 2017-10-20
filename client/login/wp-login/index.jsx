@@ -14,8 +14,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import Main from 'components/main';
@@ -160,7 +162,7 @@ export class Login extends React.Component {
 
 	render() {
 		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
-		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
 
 		return (
 			<div>
@@ -196,6 +198,7 @@ export class Login extends React.Component {
 export default connect(
 	state => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
