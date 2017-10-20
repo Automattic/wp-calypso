@@ -27,7 +27,7 @@ describe( 'comments-tree', () => {
 						method: 'GET',
 						path: '/sites/77203074/comments-tree',
 						query: { status: 'approved' },
-						apiVersion: '1.1',
+						apiVersion: '1',
 					},
 					action
 				)
@@ -39,9 +39,9 @@ describe( 'comments-tree', () => {
 		test( 'should dispatch comment tree updates', () => {
 			const dispatch = spy();
 			addCommentsTree( { dispatch }, action, {
-				comments_tree: { 1: [ [ 2 ], [] ] },
-				pingbacks_tree: { 1: [ [ 3 ], [] ] },
-				trackbacks_tree: { 1: [ [ 4 ], [] ] },
+				comments_tree: [ [ 2, 1, 0 ] ],
+				pingbacks_tree: [ [ 3, 1, 0 ] ],
+				trackbacks_tree: [ [ 4, 1, 0 ] ],
 			} );
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( {
