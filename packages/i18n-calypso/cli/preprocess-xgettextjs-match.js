@@ -101,7 +101,7 @@ function makeDoubleQuoted( literal ) {
 
 	// double-quoted string
 	if ( literal.charAt( 0 ) === '"' ) {
-		return literal;
+		return literal.replace( /(\\)/g, '\\$1' );
 	}
 
 	// single-quoted string
