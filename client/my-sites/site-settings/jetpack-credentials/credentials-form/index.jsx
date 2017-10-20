@@ -123,11 +123,11 @@ export class CredentialsForm extends Component {
 		const { showPublicKeyField, formErrors } = this.state;
 
 		return (
-			<FormFieldset>
-				<table className="site-settings__form-table">
+			<FormFieldset className="credentials-form">
+				<table>
 					<tbody>
 						<tr>
-							<td colSpan="2">
+							<td colSpan="2" className="credentials-form__protocol-field">
 								<FormLabel>
 									<div>{ translate( 'Credential Type' ) }</div>
 									<FormSelect
@@ -144,7 +144,7 @@ export class CredentialsForm extends Component {
 							</td>
 						</tr>
 						<tr>
-							<td className="site-settings__host-field">
+							<td className="credentials-form__host-field">
 								<FormLabel>
 									<div>{ translate( 'Server Address' ) }</div>
 									<FormTextInput
@@ -156,11 +156,14 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.host }
 									/>
 									{ formErrors.host ? (
-										<FormInputValidation isError={ true } text={ formErrors.host } />
+										<FormInputValidation
+											isError={ true }
+											text={ formErrors.host }
+										/>
 									) : null }
 								</FormLabel>
 							</td>
-							<td className="site-settings__port-field">
+							<td className="credentials-form__port-field">
 								<FormLabel>
 									<div>{ translate( 'Port Number' ) }</div>
 									<FormTextInput
@@ -172,13 +175,16 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.port }
 									/>
 									{ formErrors.port && (
-										<FormInputValidation isError={ true } text={ formErrors.port } />
+										<FormInputValidation
+											isError={ true }
+											text={ formErrors.port }
+										/>
 									) }
 								</FormLabel>
 							</td>
 						</tr>
 						<tr>
-							<td colSpan="2">
+							<td colSpan="2" className="credentials-form__user-field">
 								<FormLabel>
 									<div>{ translate( 'Username' ) }</div>
 									<FormTextInput
@@ -190,13 +196,16 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.user }
 									/>
 									{ formErrors.user && (
-										<FormInputValidation isError={ true } text={ formErrors.user } />
+										<FormInputValidation
+											isError={ true }
+											text={ formErrors.user }
+										/>
 									) }
 								</FormLabel>
 							</td>
 						</tr>
 						<tr>
-							<td colSpan="2">
+							<td colSpan="2" className="credentials-form__pass-field">
 								<FormLabel>
 									<div>{ translate( 'Password' ) }</div>
 									<FormTextInput
@@ -208,16 +217,22 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.pass }
 									/>
 									{ formErrors.pass && (
-										<FormInputValidation isError={ true } text={ formErrors.pass } />
+										<FormInputValidation
+											isError={ true }
+											text={ formErrors.pass }
+										/>
 									) }
 								</FormLabel>
 							</td>
 						</tr>
 						<tr>
-							<td colSpan="2">
+							<td colSpan="2" className="credentials-form__kpub-field">
 								<FormLabel>
 									<div>{ translate( 'Public Key' ) }</div>
-									<Button disabled={ credentialsUpdating } onClick={ this.togglePublicKeyField }>
+									<Button
+										disabled={ credentialsUpdating }
+										onClick={ this.togglePublicKeyField }
+									>
 										{ showPublicKeyField ? (
 											translate( 'Hide Public Key' )
 										) : (
@@ -237,14 +252,22 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td colSpan="2">
+								<Button
+									primary
+									disabled={ credentialsUpdating }
+									onClick={ this.handleSubmit }
+								>
+									{ translate( 'Save' ) }
+								</Button>
 								{ ! this.props.hasMainCredentials && (
-									<Button disabled={ credentialsUpdating } onClick={ onCancel }>
+									<Button
+										disabled={ credentialsUpdating }
+										onClick={ onCancel }
+										className="credentials-form__cancel-button"
+									>
 										{ translate( 'Cancel' ) }
 									</Button>
 								) }
-								<Button primary disabled={ credentialsUpdating } onClick={ this.handleSubmit }>
-									{ translate( 'Save' ) }
-								</Button>
 							</td>
 						</tr>
 					</tbody>

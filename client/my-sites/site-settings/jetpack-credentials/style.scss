@@ -1,0 +1,88 @@
+.jetpack-credentials {
+	margin-bottom: 15px;
+}
+
+.jetpack-credentials .foldable-card.card.is-expanded {
+	margin: 0;
+}
+
+.jetpack-credentials__connected {
+	float: right;
+	background: $alert-green;
+	padding: 0 8px;
+	margin: -4px;
+	font-size: 1.3rem;
+	color: $white;
+}
+
+.jetpack-credentials__connected-checkmark {
+	position: relative;
+	top: 3px;
+	margin-right: 3px;
+}
+
+.jetpack-credentials__tos-gridicon,
+.jetpack-credentials__header-gridicon {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.jetpack-credentials__tos-text,
+.jetpack-credentials__header-text,
+.jetpack-credentials__header-configured-text {
+	display: inline-block;
+	vertical-align: middle;
+	width: 85%;
+}
+
+.jetpack-credentials__footer-popover-link {
+	cursor: pointer;
+}
+
+.jetpack-credentials__footer-popover-icon {
+	position: relative;
+	top: 3px;
+	left: -6px;
+}
+
+.jetpack-credentials__setup-start .jetpack-credentials__header-gridicon {
+	color: $gray;
+}
+
+.jetpack-credentials__foldable-header .jetpack-credentials__header-gridicon,
+.jetpack-credentials__pressable-configured .jetpack-credentials__header-gridicon {
+	color: $alert-green;
+}
+
+.jetpack-credentials__tos .jetpack-credentials__tos-gridicon {
+	color: $blue-wordpress;
+}
+
+.jetpack-credentials__self-hosted-config-flow .jetpack-credentials__tos-gridicon {
+	vertical-align: top;
+}
+
+.jetpack-credentials__setup-start {
+	cursor: pointer;
+}
+
+.jetpack-credentials__setup-start .jetpack-credentials__header-text-title {
+	font-size: 1.6rem;
+}
+
+.jetpack-credentials__setup-start .jetpack-credentials__header-text-description {
+	font-size: 1.3rem;
+	font-style: italic;
+}
+
+.jetpack-credentials__header-protocol {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.jetpack-credentials__header-description {
+	width: 500px;
+	color: $gray;
+	font-size: 1.3rem;
+}

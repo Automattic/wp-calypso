@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
-import CredentialsForm from './credentials-form';
+import CredentialsForm from './credentials-form/index';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import Gridicon from 'gridicons';
@@ -93,20 +93,20 @@ class Backups extends Component {
 		const description = this.getProtocolDescription( protocol );
 
 		const header = (
-			<div>
-				<Gridicon icon="checkmark-circle" size={ 48 } className="site-settings__validated" />
-				<div>
-					<h3>{ protocol }</h3>
-					<h4>{ description }</h4>
+			<div className="jetpack-credentials__header">
+				<Gridicon icon="checkmark-circle" size={ 48 } className="jetpack-credentials__header-gridicon" />
+				<div className="jetpack-credentials__header-text">
+					<h3 className="jetpack-credentials__header-protocol">{ protocol }</h3>
+					<h4 className="jetpack-credentials__header-description">{ description }</h4>
 				</div>
 			</div>
 		);
 
 		if ( isPressable ) {
 			return (
-				<CompactCard className="site-settings__pressable-configured">
-					<Gridicon icon="checkmark-circle" size={ 48 } />
-					<div>
+				<CompactCard className="jetpack-credentials__pressable-configured">
+					<Gridicon icon="checkmark-circle" size={ 48 } className="jetpack-credentials__header-gridicon" />
+					<div className="jetpack-credentials__header-configured-text">
 						{ translate( 'You\'re all set! Your credentials have been ' +
 							'automatically configured and your site is connected. ' +
 							'Backups and restores should run seamlessly.'
@@ -119,7 +119,7 @@ class Backups extends Component {
 		return (
 			<FoldableCard
 				header={ header }
-				className="site-settings__foldable-header"
+				className="jetpack-credentials__foldable-header"
 			>
 				{ this.renderForm() }
 			</FoldableCard>
@@ -157,13 +157,15 @@ class Backups extends Component {
 
 		return (
 			<CompactCard
-				className="site-settings__setup-start"
+				className="jetpack-credentials__setup-start"
 				onClick={ this.goToNextSetupStep }
 			>
-				<Gridicon icon="add-outline" size={ 48 } />
-				<div>
-					<h3>{ translate( 'Add site credentials' ) }</h3>
-					<h4>{ translate( 'Used to perform automatic actions on your server including backing up and restoring.' ) }</h4>
+				<Gridicon icon="add-outline" size={ 48 } className="jetpack-credentials__header-gridicon" />
+				<div className="jetpack-credentials__header-text">
+					<h3 className="jetpack-credentials__header-text-title">{ translate( 'Add site credentials' ) }</h3>
+					<h4 className="jetpack-credentials__header-text-description">
+						{ translate( 'Used to perform automatic actions on your server including backing up and restoring.' ) }
+					</h4>
 				</div>
 			</CompactCard>
 		);
@@ -177,13 +179,11 @@ class Backups extends Component {
 
 		return (
 			<CompactCard
-				className="site-settings__tos"
+				className="jetpack-credentials__tos"
 				highlight="info"
 			>
-				<div>
-					<Gridicon icon="info" size={ 48 } />
-				</div>
-				<div>
+				<Gridicon icon="info" size={ 48 } className="jetpack-credentials__tos-gridicon" />
+				<div className="jetpack-credentials__tos-text">
 					{
 						isPressable
 							? translate( 'WordPress.com can obtain the credentials from your ' +
@@ -219,7 +219,7 @@ class Backups extends Component {
 		const autoConfigIdle = ( 'requesting' === autoConfigStatus || 'waiting' === autoConfigStatus );
 
 		const pressableConfigureFlow = (
-			<div>
+			<div className="jetpack-credentials__pressable-config-flow">
 				{ 1 === setupStep && this.renderSetupStart() }
 				{ 2 === setupStep && autoConfigIdle && this.renderSetupTos() }
 				{ 'success' === autoConfigStatus && this.renderFormFoldable() }
@@ -228,28 +228,28 @@ class Backups extends Component {
 		);
 
 		const selfHostedConfigureFlow = (
-			<div>
+			<div className="jetpack-credentials__self-hosted-config-flow">
 				{ 1 === setupStep && this.renderSetupStart() }
 				{ 2 === setupStep && this.renderSetupTos() }
-				{3 === setupStep && (
+				{ 3 === setupStep && (
 					<CompactCard>
 						{ this.renderForm() }
 					</CompactCard>
-				)}
+				) }
 				{ 4 === setupStep && this.renderFormFoldable() }
 			</div>
 		);
 
 		return (
-			<div className="site-settings__backups">
+			<div className="jetpack-credentials">
 				<QueryRewindStatus siteId={ this.props.siteId } />
 				<QueryJetpackCredentials siteId={ this.props.siteId } />
 				{ isRewindActive && (
-					<CompactCard className="site-settings__header">
+					<CompactCard className="jetpack-credentials__header">
 						<span>{ translate( 'Backups and restores' ) }</span>
 							{ hasMainCredentials && (
-								<span className="site-settings__connected">
-									<Gridicon icon="checkmark" size={ 18 } />
+								<span className="jetpack-credentials__connected">
+									<Gridicon icon="checkmark" size={ 18 } className="jetpack-credentials__connected-checkmark" />
 									{ translate( 'Connected' ) }
 								</span>
 							) }
@@ -259,12 +259,13 @@ class Backups extends Component {
 				{ isRewindActive && ! hasMainCredentials && ! isPressable && selfHostedConfigureFlow }
 				{ isRewindActive && hasMainCredentials && this.renderFormFoldable() }
 				{ isRewindActive && 4 !== setupStep && ! hasMainCredentials && (
-					<CompactCard className="site-settings__footer">
+					<CompactCard className="jetpack-credentials__footer">
 						<a
 							onClick={ this.togglePopover }
 							ref="popoverLink"
+							className="jetpack-credentials__footer-popover-link"
 						>
-							<Gridicon icon="help" size={ 18 } />
+							<Gridicon icon="help" size={ 18 } className="jetpack-credentials__footer-popover-icon" />
 							{
 								3 === setupStep
 									? translate( 'Need help finding your site\'s server credentials?' )
@@ -275,7 +276,7 @@ class Backups extends Component {
 							context={ this.refs && this.refs.popoverLink }
 							isVisible={ get( this.state, 'showPopover', false ) }
 							onClose={ this.togglePopover }
-							className="site-settings__footer-popover"
+							className="jetpack-credentials__footer-popover"
 							position="top"
 						>
 							{ translate(
