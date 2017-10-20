@@ -342,18 +342,6 @@
 	}
 }
 
-.happychat__message-avatar {
-	width: 48px;
-	height: 48px;
-
-	> img {
-		background: darken( $gray-light, 10% );
-		border-radius: 50%;
-		width: 100%;
-		height: auto;
-	}
-}
-
 .happychat__timeline-message {
 	flex: 0 0 auto;
 	display: flex;
