@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,34 +12,33 @@ import { localize } from 'i18n-calypso';
 import {
 	NESTED_SIDEBAR_NONE,
 	NESTED_SIDEBAR_REVISIONS,
+	NestedSidebarPropType,
 } from 'post-editor/editor-sidebar/constants';
 
 class HistoryButton extends PureComponent {
-	state = {
-		showingHistory: false,
-	};
-
 	toggleShowing = () => {
-		this.setState( {
-			showingHistory: ! this.state.showingHistory,
-		} );
-	};
+		const {
+			isSidebarOpened,
+			nestedSidebar,
+			selectRevision,
+			setNestedSidebar,
+			toggleSidebar,
+		} = this.props;
 
-	componentWillUpdate( nextProps, nextState ) {
-		if ( nextState.showingHistory === this.state.showingHistory ) {
+		// hide revisions if visible
+		if ( nestedSidebar === NESTED_SIDEBAR_REVISIONS ) {
+			setNestedSidebar( NESTED_SIDEBAR_NONE );
 			return;
 		}
-
-		const { selectRevision, setNestedSidebar } = this.props;
 
 		selectRevision( null );
+		setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
 
-		if ( nextState.showingHistory ) {
-			setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
-			return;
+		// open the sidebar when closed
+		if ( ! isSidebarOpened ) {
+			toggleSidebar();
 		}
-		setNestedSidebar( NESTED_SIDEBAR_NONE );
-	}
+	};
 
 	render() {
 		return (
@@ -53,5 +53,14 @@ class HistoryButton extends PureComponent {
 		);
 	}
 }
+
+HistoryButton.PropTypes = {
+	isSidebarOpened: PropTypes.bool,
+	nestedSidebar: NestedSidebarPropType,
+	selectRevision: PropTypes.func,
+	setNestedSidebar: PropTypes.func,
+	toggleSidebar: PropTypes.func,
+	translate: PropTypes.func,
+};
 
 export default localize( HistoryButton );

@@ -37,6 +37,7 @@ export class EditorGroundControl extends PureComponent {
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		isSidebarOpened: PropTypes.bool,
 		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
@@ -324,6 +325,9 @@ export class EditorGroundControl extends PureComponent {
 					<HistoryButton
 						selectRevision={ this.props.selectRevision }
 						setNestedSidebar={ this.props.setNestedSidebar }
+						toggleSidebar={ this.props.toggleSidebar }
+						isSidebarOpened={ this.props.isSidebarOpened }
+						nestedSidebar={ this.props.nestedSidebar }
 					/>
 				) }
 				{ this.renderGroundControlActionButtons() }
