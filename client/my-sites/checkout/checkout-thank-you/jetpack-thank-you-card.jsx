@@ -32,6 +32,7 @@ import HappyChatButton from 'components/happychat/button';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getRawSite,
+	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteMultiSite,
@@ -540,8 +541,8 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderAction( progress = 0 ) {
-		const { selectedSite: site, translate } = this.props;
-		const buttonUrl = site && site.URL;
+		const { jetpackAdminPageUrl, selectedSite: site, translate } = this.props;
+		const buttonUrl = site && jetpackAdminPageUrl;
 		// We return instructions for setting up manually
 		// when we finish if something errored
 		if ( this.isErrored() && ! this.props.isInstalling ) {
@@ -661,6 +662,7 @@ export default connect(
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
+			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack' ),
 			planFeatures,
 			planClass,
 			planSlug,
