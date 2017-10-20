@@ -278,18 +278,13 @@ class ActivityLog extends Component {
 		if ( isEmpty( rewindStartDate ) ) {
 			return [
 				<EmptyContent
-					title=""
+					title={ translate( 'Your site is being synced' ) }
+					line={ translate(
+						"Come back in a little while to see your site activity. You will receive a notification once it's complete!"
+					) }
 					illustration="/calypso/images/illustrations/al-syncing-site.svg"
-					className="activity-log__first-sync-illustration"
+					className="activity-log__first-sync"
 				/>,
-				<h2 className="activity-log__first-sync-title">
-					{ translate( 'Your site is being synced' ) }
-				</h2>,
-				<p className="activity-log__first-sync">
-					{ translate( 'Come back in a little while to see your site activity.' ) }
-					<br />
-					{ translate( "You will receive a notification once it's complete!" ) }
-				</p>,
 			];
 		}
 

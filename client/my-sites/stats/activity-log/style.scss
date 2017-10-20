@@ -22,18 +22,9 @@
 	margin-bottom: 18px;
 }
 
-.activity-log__first-sync-title {
-	font-size: 24px;
-	color: darken( $gray, 30% );
-	margin: 36px 0 18px;
-	text-align: center;
-}
-
 .activity-log__first-sync {
-	text-align: center;
-	color: $gray-text-min;
-}
-
-.main .activity-log__first-sync-illustration {
-	margin-top: 32px;
+	.empty-content__illustration {
+		margin: 32px 0;
+		max-width: 200px;
+	}
 }
