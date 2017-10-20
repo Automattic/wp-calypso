@@ -121,7 +121,7 @@ class OrderDetailsTable extends Component {
 				if ( 'line_items' === type ) {
 					newItem = { id, quantity: 0, subtotal: 0 };
 				} else {
-					newItem = { id, total: 0 };
+					newItem = { id, name: null, total: 0 };
 				}
 				this.props.onChange( { [ type ]: { [ index ]: newItem } } );
 			}
