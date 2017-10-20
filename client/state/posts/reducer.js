@@ -36,14 +36,10 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
-	POSTS_ALL_SITES_RECEIVE,
-	POSTS_ALL_SITES_REQUEST,
-	POSTS_ALL_SITES_REQUEST_FAILURE,
-	POSTS_ALL_SITES_REQUEST_SUCCESS,
-	POSTS_SINGLE_SITE_RECEIVE,
-	POSTS_SINGLE_SITE_REQUEST,
-	POSTS_SINGLE_SITE_REQUEST_FAILURE,
-	POSTS_SINGLE_SITE_REQUEST_SUCCESS,
+	POSTS_RECEIVE,
+	POSTS_REQUEST,
+	POSTS_REQUEST_SUCCESS,
+	POSTS_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -65,49 +61,44 @@ import { itemsSchema, queriesSchema } from './schema';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = ( () => {
-	function updatePostsGlobalIdMapping( state, action ) {
-		return reduce(
-			action.posts,
-			( memo, post ) => {
-				const { site_ID: siteId, ID: postId, global_ID: globalId } = post;
-				if ( memo[ globalId ] ) {
-					// We're making an assumption here that the site ID and post ID
-					// corresponding with a global ID will never change
+export const items = createReducer(
+	{},
+	{
+		[ POSTS_RECEIVE ]: ( state, action ) => {
+			return reduce(
+				action.posts,
+				( memo, post ) => {
+					const { site_ID: siteId, ID: postId, global_ID: globalId } = post;
+					if ( memo[ globalId ] ) {
+						// We're making an assumption here that the site ID and post ID
+						// corresponding with a global ID will never change
+						return memo;
+					}
+
+					if ( memo === state ) {
+						memo = { ...memo };
+					}
+
+					memo[ globalId ] = [ siteId, postId ];
 					return memo;
-				}
-
-				if ( memo === state ) {
-					memo = { ...memo };
-				}
-
-				memo[ globalId ] = [ siteId, postId ];
-				return memo;
-			},
-			state
-		);
-	}
-
-	return createReducer(
-		{},
-		{
-			[ POSTS_ALL_SITES_RECEIVE ]: updatePostsGlobalIdMapping,
-			[ POSTS_SINGLE_SITE_RECEIVE ]: updatePostsGlobalIdMapping,
-			[ POST_DELETE_SUCCESS ]: ( state, action ) => {
-				const globalId = findKey( state, ( [ siteId, postId ] ) => {
-					return siteId === action.siteId && postId === action.postId;
-				} );
-
-				if ( ! globalId ) {
-					return state;
-				}
-
-				return omit( state, globalId );
-			},
+				},
+				state
+			);
 		},
-		itemsSchema
-	);
-} )();
+		[ POST_DELETE_SUCCESS ]: ( state, action ) => {
+			const globalId = findKey( state, ( [ siteId, postId ] ) => {
+				return siteId === action.siteId && postId === action.postId;
+			} );
+
+			if ( ! globalId ) {
+				return state;
+			}
+
+			return omit( state, globalId );
+		},
+	},
+	itemsSchema
+);
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -144,18 +135,12 @@ export function siteRequests( state = {}, action ) {
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case POSTS_ALL_SITES_REQUEST:
-		case POSTS_ALL_SITES_REQUEST_FAILURE:
-		case POSTS_ALL_SITES_REQUEST_SUCCESS:
-		case POSTS_SINGLE_SITE_REQUEST:
-		case POSTS_SINGLE_SITE_REQUEST_FAILURE:
-		case POSTS_SINGLE_SITE_REQUEST_SUCCESS:
+		case POSTS_REQUEST:
+		case POSTS_REQUEST_SUCCESS:
+		case POSTS_REQUEST_FAILURE:
 			const serializedQuery = getSerializedPostsQuery( action.query, action.siteId );
 			return Object.assign( {}, state, {
-				[ serializedQuery ]: (
-					action.type === POSTS_ALL_SITES_REQUEST ||
-					action.type === POSTS_SINGLE_SITE_REQUEST
-				),
+				[ serializedQuery ]: POSTS_REQUEST === action.type,
 			} );
 	}
 
