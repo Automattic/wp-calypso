@@ -31,7 +31,7 @@ export const lostFocusAt = ( state = null, action ) => {
 			}
 			return state;
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, { type: 'number' } ) ) {
+			if ( isValidStateWithSchema( state, { type: [ 'null', 'number' ] } ) ) {
 				return state;
 			}
 			return null;
