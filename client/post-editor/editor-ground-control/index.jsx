@@ -205,6 +205,64 @@ export class EditorGroundControl extends PureComponent {
 		}
 	};
 
+	renderGroundControlQuickSaveButtons() {
+		const {
+			isSaving,
+			isSidebarOpened,
+			nestedSidebar,
+			post,
+			selectRevision,
+			setNestedSidebar,
+			toggleSidebar,
+			translate,
+		} = this.props;
+
+		const isSaveAvailable = this.isSaveAvailable();
+		const showingStatusLabel = this.shouldShowStatusLabel();
+		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
+		const hasRevisions = isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
+
+		if ( ! ( showingSaveStatus || hasRevisions ) ) {
+			return;
+		}
+
+		return (
+			<div className="editor-ground-control__quick-save">
+				{ showingSaveStatus && (
+					<div className="editor-ground-control__status">
+						{ isSaveAvailable && (
+							<button
+								className="editor-ground-control__save button is-link"
+								onClick={ this.onSaveButtonClick }
+								tabIndex={ 3 }
+							>
+								{ translate( 'Save' ) }
+							</button>
+						) }
+						{ ! isSaveAvailable &&
+						showingStatusLabel && (
+							<span
+								className="editor-ground-control__save-status"
+								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+							>
+								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+							</span>
+						) }
+					</div>
+				) }
+				{ hasRevisions && (
+					<HistoryButton
+						selectRevision={ selectRevision }
+						setNestedSidebar={ setNestedSidebar }
+						toggleSidebar={ toggleSidebar }
+						isSidebarOpened={ isSidebarOpened }
+						nestedSidebar={ nestedSidebar }
+					/>
+				) }
+			</div>
+		);
+	}
+
 	renderGroundControlActionButtons() {
 		if ( this.props.confirmationSidebarStatus === 'open' ) {
 			return;
@@ -259,11 +317,7 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	render() {
-		const { isSaving, translate } = this.props;
-		const isSaveAvailable = this.isSaveAvailable();
-		const shouldShowStatusLabel = this.shouldShowStatusLabel();
-		const hasRevisions =
-			isEnabled( 'post-editor/revisions' ) && get( this.props.post, 'revisions.length' );
+		const { translate } = this.props;
 
 		return (
 			<Card className="editor-ground-control">
@@ -299,37 +353,7 @@ export class EditorGroundControl extends PureComponent {
 						</span>
 					</div>
 				) }
-				{ ( isSaveAvailable || shouldShowStatusLabel ) && (
-					<div className="editor-ground-control__status">
-						{ isSaveAvailable && (
-							<button
-								className="editor-ground-control__save button is-link"
-								onClick={ this.onSaveButtonClick }
-								tabIndex={ 3 }
-							>
-								{ translate( 'Save' ) }
-							</button>
-						) }
-						{ ! isSaveAvailable &&
-						shouldShowStatusLabel && (
-							<span
-								className="editor-ground-control__save-status"
-								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
-							>
-								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
-							</span>
-						) }
-					</div>
-				) }
-				{ hasRevisions && (
-					<HistoryButton
-						selectRevision={ this.props.selectRevision }
-						setNestedSidebar={ this.props.setNestedSidebar }
-						toggleSidebar={ this.props.toggleSidebar }
-						isSidebarOpened={ this.props.isSidebarOpened }
-						nestedSidebar={ this.props.nestedSidebar }
-					/>
-				) }
+				{ this.renderGroundControlQuickSaveButtons() }
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);

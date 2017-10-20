@@ -51,8 +51,12 @@
 	min-height: 20px;
 	justify-content: space-between;
 	position: relative;
-	border-left: 1px solid lighten( $gray, 25% );
 	padding-left: 16px;
+}
+
+.editor-ground-control__quick-save {
+	border-left: 1px solid lighten( $gray, 25% );
+	display: flex;
 
 	@include breakpoint( "<660px" ) {
 		border-left: none;
