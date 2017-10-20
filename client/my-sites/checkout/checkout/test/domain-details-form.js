@@ -151,7 +151,8 @@ describe( 'Domain Details Form', () => {
 				'needsOnlyGoogleAppsDetails'
 			);
 		} );
-		test( 'should not render GAppsFieldset component when the cart does not contain a Google App ', () => {
+
+		test( 'should not render GAppsFieldset component when the cart does not contain a Google App', () => {
 			needsOnlyGoogleAppsDetailsStub.returns( false );
 			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
 
@@ -159,7 +160,7 @@ describe( 'Domain Details Form', () => {
 			expect( wrapper.find( '.checkout__domain-contact-details-fields' ) ).to.have.length( 1 );
 		} );
 
-		test( 'should render GAppsFieldset component when the cart contains only a Google App ', () => {
+		test( 'should render GAppsFieldset component when the cart contains only a Google App', () => {
 			needsOnlyGoogleAppsDetailsStub.returns( true );
 
 			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
