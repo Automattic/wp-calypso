@@ -62,9 +62,9 @@ export function getPromotionEdits(
 	const edits = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'edits', siteId ], {} );
 
 	if ( isObject( promotionId ) ) {
-		return ( edits.creates && find( edits.creates, ( p ) => promotionId === p.id ) || null );
+		return find( edits.creates, ( p ) => promotionId === p.id ) || null;
 	}
-	return ( edits.updates && find( edits.updates, ( p ) => promotionId === p.id ) || null );
+	return find( edits.updates, ( p ) => promotionId === p.id ) || null;
 }
 
 export function getPromotionWithLocalEdits(

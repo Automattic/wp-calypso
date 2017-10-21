@@ -118,14 +118,14 @@ describe( 'promotions', () => {
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
 					creates: [
-						{ id: 'id4', type: 'empty4' },
+						{ id: 'coupon:4', type: 'empty4' },
 					],
-					currentlyEditingId: 'id4',
+					currentlyEditingId: 'coupon:4',
 				}
 			};
 
 			const id = getCurrentlyEditingPromotionId( editedState, 123 );
-			expect( id ).to.equal( 'id4' );
+			expect( id ).to.equal( 'coupon:4' );
 		} );
 	} );
 
