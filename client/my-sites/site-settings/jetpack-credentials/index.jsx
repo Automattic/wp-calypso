@@ -22,11 +22,11 @@ import { isRewindActive } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getJetpackCredentials,
-	credentialsUpdating,
+	isUpdatingJetpackCredentials,
 	hasMainCredentials,
 	isSitePressable,
-	getAutoConfigStatus
-} from 'state/jetpack/credentials/selectors';
+	getCredentialsAutoConfigStatus
+} from 'state/selectors';
 import {
 	updateCredentials as updateCredentialsAction,
 	autoConfigCredentials as autoConfigCredentialsAction
@@ -298,8 +298,8 @@ export default connect(
 		const credentials = getJetpackCredentials( state, siteId, 'main' );
 
 		return {
-			autoConfigStatus: getAutoConfigStatus( state, siteId ),
-			credentialsUpdating: credentialsUpdating( state, siteId ),
+			autoConfigStatus: getCredentialsAutoConfigStatus( state, siteId ),
+			credentialsUpdating: isUpdatingJetpackCredentials( state, siteId ),
 			hasMainCredentials: hasMainCredentials( state, siteId ),
 			mainCredentials: credentials,
 			isPressable: isSitePressable( state, siteId ),
