@@ -22,6 +22,7 @@ export class CommentsList extends Component {
 		changeCommentStatus: PropTypes.func,
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
+		editComment: PropTypes.func,
 		emptyMessageLine: PropTypes.string,
 		emptyMessageTitle: PropTypes.string,
 		isCommentSelected: PropTypes.func,
@@ -44,12 +45,18 @@ export class CommentsList extends Component {
 	render() {
 		const {
 			comments,
+			deleteCommentPermanently,
+			editComment,
 			emptyMessageLine,
 			emptyMessageTitle,
+			replyComment,
+			setCommentStatus,
 			showEmptyContent,
 			showPlaceholder,
 			siteId,
 			siteBlacklist,
+			toggleCommentLike,
+			toggleCommentSelected,
 			isCommentSelected,
 			isJetpack,
 			isBulkEdit,
@@ -67,19 +74,19 @@ export class CommentsList extends Component {
 						<CommentDetail
 							commentId={ commentId }
 							commentIsSelected={ isCommentSelected( commentId ) }
-							deleteCommentPermanently={ this.deleteCommentPermanently }
-							editComment={ this.editComment }
+							deleteCommentPermanently={ deleteCommentPermanently }
+							editComment={ editComment }
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={
 								! isJetpack && ! hasCommentJustMovedBackToCurrentStatus( commentId )
 							}
-							replyComment={ this.replyComment }
-							setCommentStatus={ this.setCommentStatus }
+							replyComment={ replyComment }
+							setCommentStatus={ setCommentStatus }
 							siteBlacklist={ siteBlacklist }
 							siteId={ siteId }
-							toggleCommentLike={ this.toggleCommentLike }
-							toggleCommentSelected={ this.toggleCommentSelected }
+							toggleCommentLike={ toggleCommentLike }
+							toggleCommentSelected={ toggleCommentSelected }
 						/>
 					) ) }
 
