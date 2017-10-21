@@ -42,8 +42,6 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
-		recordChangePage: PropTypes.func,
-		changePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		siteBlacklist: PropTypes.string,
@@ -54,41 +52,37 @@ export class CommentList extends Component {
 		unlikeComment: PropTypes.func,
 	};
 
-	state = {
-		isBulkEdit: false,
-		// TODO: replace with [] when adding back Bulk Actions
-		lastUndo: null,
-		persistedComments: [],
-		selectedComments: [],
-		sortOrder: NEWEST_FIRST,
-	};
+	// state = {
+	// 	isBulkEdit: false,
+	// 	// TODO: replace with [] when adding back Bulk Actions
+	// 	lastUndo: null,
+	// 	persistedComments: [],
+	// 	selectedComments: [],
+	// 	sortOrder: NEWEST_FIRST,
+	// };
 
-	componentWillReceiveProps( nextProps ) {
-		const { siteId, status, changePage } = this.props;
-		const totalPages = this.getTotalPages();
-		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
-			return changePage( totalPages );
-		}
+	// componentWillReceiveProps( nextProps ) {
+	// 	const { siteId, status } = this.props;
 
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
-			this.setState( {
-				isBulkEdit: false,
-				lastUndo: null,
-				persistedComments: [],
-				selectedComments: [],
-			} );
-		}
-	}
+	// 	if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
+	// 		this.setState( {
+	// 			isBulkEdit: false,
+	// 			lastUndo: null,
+	// 			persistedComments: [],
+	// 			selectedComments: [],
+	// 		} );
+	// 	}
+	// }
 
-	changePage = page => {
-		const { recordChangePage, changePage } = this.props;
+	// changePage = page => {
+	// 	const { recordChangePage, changePage } = this.props;
 
-		recordChangePage( page, this.getTotalPages() );
+	// 	recordChangePage( page, this.getTotalPages() );
 
-		this.setState( { selectedComments: [] } );
+	// 	this.setState( { selectedComments: [] } );
 
-		changePage( page );
-	};
+	// 	changePage( page );
+	// };
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );

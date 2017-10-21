@@ -15,12 +15,12 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import DocumentHead from 'components/data/document-head';
-import CommentList from './comment-list';
+import CommentsList from './comments-list';
 import CommentsNavigation from './comments-navigation';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { map, noop, orderBy, slice, size, uniq } from 'lodash';
+import { get, map, noop, orderBy, slice, size, uniq } from 'lodash';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSiteCommentsTree, canCurrentUser, isCommentsTreeInitialized } from 'state/selectors';
 import { preventWidows } from 'lib/formatting';
@@ -34,7 +34,6 @@ export class Comments extends Component {
 		isLoading: PropTypes.bool,
 		page: PropTypes.number,
 		recordChangePage: PropTypes.func,
-		changePage: PropTypes.func,
 		showPermissionError: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteFragment: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -94,10 +93,34 @@ export class Comments extends Component {
 		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	};
 
+	getEmptyMessage = () => {
+		const { status, translate } = this.props;
+
+		const defaultLine = translate( 'Your queue is clear.' );
+
+		return get(
+			{
+				unapproved: [ translate( 'No pending comments.' ), defaultLine ],
+				approved: [ translate( 'No approved comments.' ), defaultLine ],
+				spam: [ translate( 'No spam comments.' ), defaultLine ],
+				trash: [ translate( 'No deleted comments.' ), defaultLine ],
+				all: [ translate( 'No comments yet.' ), defaultLine ],
+			},
+			status,
+			[ '', '' ]
+		);
+	};
+
 	getTotalPages = () =>
 		Math.ceil(
 			( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE
 		);
+
+	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
+
+	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
+
+	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
@@ -121,7 +144,6 @@ export class Comments extends Component {
 			isJetpack,
 			showPermissionError,
 			page,
-			changePage,
 			siteId,
 			siteFragment,
 			status,
@@ -135,8 +157,8 @@ export class Comments extends Component {
 		const commentsPage = this.getCommentsPage( comments, validPage );
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
+		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
-		/** @format */
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comments/:status/:site" title="Comments" />
@@ -182,13 +204,20 @@ export class Comments extends Component {
 					/>
 				) }
 				{ ! showPermissionError && (
-					<CommentList
-						page={ page }
-						changePage={ changePage }
+					<CommentsList
+						comments={ comments }
 						siteId={ siteId }
 						siteFragment={ siteFragment }
 						status={ status }
 						order={ 'desc' }
+						showEmptyContent={ showEmptyContent }
+						showPlaceholder={ showPlaceholder }
+						emptyMessageLine={ emptyMessageLine }
+						emptyMessageTitle={ emptyMessageTitle }
+						isJetpack={ isJetpack }
+						isBulkEdit={ isBulkEdit }
+						isCommentSelected={ this.isCommentSelected }
+						hasCommentJustMovedBackToCurrentStatus={ this.hasCommentJustMovedBackToCurrentStatus }
 					/>
 				) }
 
