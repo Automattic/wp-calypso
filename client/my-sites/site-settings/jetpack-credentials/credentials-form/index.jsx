@@ -22,13 +22,13 @@ export class CredentialsForm extends Component {
 	state = {
 		showPublicKeyField: false,
 		form: {
-			protocol: 'ssh',
-			host: '',
-			port: '',
-			user: '',
-			pass: '',
-			abspath: '',
-			kpub: '',
+			protocol: this.props.protocol,
+			host: this.props.host,
+			port: this.props.port,
+			user: this.props.user,
+			pass: this.props.pass,
+			abspath: this.props.abspath,
+			kpub: this.props.kpub,
 		},
 		formErrors: {
 			host: false,
@@ -156,10 +156,7 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.host }
 									/>
 									{ formErrors.host ? (
-										<FormInputValidation
-											isError={ true }
-											text={ formErrors.host }
-										/>
+										<FormInputValidation isError={ true } text={ formErrors.host } />
 									) : null }
 								</FormLabel>
 							</td>
@@ -175,10 +172,7 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.port }
 									/>
 									{ formErrors.port && (
-										<FormInputValidation
-											isError={ true }
-											text={ formErrors.port }
-										/>
+										<FormInputValidation isError={ true } text={ formErrors.port } />
 									) }
 								</FormLabel>
 							</td>
@@ -196,10 +190,7 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.user }
 									/>
 									{ formErrors.user && (
-										<FormInputValidation
-											isError={ true }
-											text={ formErrors.user }
-										/>
+										<FormInputValidation isError={ true } text={ formErrors.user } />
 									) }
 								</FormLabel>
 							</td>
@@ -217,10 +208,7 @@ export class CredentialsForm extends Component {
 										isError={ !! formErrors.pass }
 									/>
 									{ formErrors.pass && (
-										<FormInputValidation
-											isError={ true }
-											text={ formErrors.pass }
-										/>
+										<FormInputValidation isError={ true } text={ formErrors.pass } />
 									) }
 								</FormLabel>
 							</td>
@@ -229,10 +217,7 @@ export class CredentialsForm extends Component {
 							<td colSpan="2" className="credentials-form__kpub-field">
 								<FormLabel>
 									<div>{ translate( 'Public Key' ) }</div>
-									<Button
-										disabled={ credentialsUpdating }
-										onClick={ this.togglePublicKeyField }
-									>
+									<Button disabled={ credentialsUpdating } onClick={ this.togglePublicKeyField }>
 										{ showPublicKeyField ? (
 											translate( 'Hide Public Key' )
 										) : (
@@ -252,11 +237,7 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td colSpan="2">
-								<Button
-									primary
-									disabled={ credentialsUpdating }
-									onClick={ this.handleSubmit }
-								>
+								<Button primary disabled={ credentialsUpdating } onClick={ this.handleSubmit }>
 									{ translate( 'Save' ) }
 								</Button>
 								{ ! this.props.hasMainCredentials && (
