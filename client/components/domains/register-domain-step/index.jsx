@@ -35,6 +35,7 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
@@ -47,6 +48,8 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { TRANSFER_IN } from 'state/current-user/constants';
 
 const domains = wpcom.domains();
 
@@ -609,7 +612,7 @@ class RegisterDomainStep extends React.Component {
 
 	initialSuggestions() {
 		let domainRegistrationSuggestions;
-		let domainTransferSuggestion;
+		let domainUnavailableSuggestion;
 		let suggestions;
 
 		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
@@ -634,9 +637,22 @@ class RegisterDomainStep extends React.Component {
 				);
 			}, this );
 
-			domainTransferSuggestion = (
-				<DomainTransferSuggestion onButtonClick={ this.goToTransferDomainStep } />
+			domainUnavailableSuggestion = (
+				<DomainMappingSuggestion
+					isSignupStep={ this.props.isSignupStep }
+					onButtonClick={ this.goToMapDomainStep }
+					selectedSite={ this.props.selectedSite }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					cart={ this.props.cart }
+					products={ this.props.products }
+				/>
 			);
+
+			if ( this.props.transferInAllowed ) {
+				domainUnavailableSuggestion = (
+					<DomainTransferSuggestion onButtonClick={ this.goToTransferDomainStep } />
+				);
+			}
 		}
 
 		return (
@@ -645,7 +661,7 @@ class RegisterDomainStep extends React.Component {
 				className="register-domain-step__domain-suggestions"
 			>
 				{ domainRegistrationSuggestions }
-				{ domainTransferSuggestion }
+				{ domainUnavailableSuggestion }
 			</div>
 		);
 	}
@@ -844,6 +860,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
+			transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
 		};
 	},
 	{
