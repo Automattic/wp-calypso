@@ -16,7 +16,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
-import { map, orderBy, uniq } from 'lodash';
+import CommentsNavigation from './comments-navigation';
+import QuerySiteCommentsList from 'components/data/query-site-comments-list';
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import { map, noop, orderBy, slice, size, uniq } from 'lodash';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSiteCommentsTree, canCurrentUser, isCommentsTreeInitialized } from 'state/selectors';
 import { preventWidows } from 'lib/formatting';
@@ -85,6 +89,11 @@ export class Comments extends Component {
 		return orderBy( comments, null, this.state.sortOrder );
 	};
 
+	getCommentsPage = ( comments, page ) => {
+		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
+		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+	};
+
 	getTotalPages = () =>
 		Math.ceil(
 			( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE
@@ -92,9 +101,24 @@ export class Comments extends Component {
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
+	isSelectedAll = () => {
+		const { page } = this.props;
+		const { selectedComments } = this.state;
+		const visibleComments = this.getCommentsPage( this.getComments(), page );
+		return selectedComments.length && selectedComments.length === visibleComments.length;
+	};
+
+	setSortOrder = order => () => {
+		this.setState( {
+			sortOrder: order,
+			page: 1,
+		} );
+	};
+
 	render() {
 		const {
 			isLoading,
+			isJetpack,
 			showPermissionError,
 			page,
 			changePage,
@@ -103,18 +127,49 @@ export class Comments extends Component {
 			status,
 			translate,
 		} = this.props;
+		const { isBulkEdit, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 		const comments = this.getComments();
 		const commentsCount = comments.length;
+		const commentsPage = this.getCommentsPage( comments, validPage );
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
+		/** @format */
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comments/:status/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />
+				<QuerySiteSettings siteId={ siteId } />
+
+				{ isJetpack && (
+					<QuerySiteCommentsList
+						number={ 100 }
+						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
+						siteId={ siteId }
+						status={ status }
+					/>
+				) }
+
+				{ ! isJetpack && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+
+				<CommentsNavigation
+					commentsPage={ commentsPage }
+					isBulkEdit={ isBulkEdit }
+					isSelectedAll={ this.isSelectedAll() }
+					selectedCount={ size( selectedComments ) }
+					setBulkStatus={ this.setBulkStatus }
+					setSortOrder={ this.setSortOrder }
+					sortOrder={ this.state.sortOrder }
+					siteId={ siteId }
+					siteFragment={ siteFragment }
+					status={ status }
+					toggleBulkEdit={ this.toggleBulkEdit }
+					toggleSelectAll={ this.toggleSelectAll }
+				/>
+
 				{ showPermissionError && (
 					<EmptyContent
 						title={ preventWidows(
@@ -247,8 +302,8 @@ const mapDispatchToProps = dispatch => ( {
 	// 		)
 	// 	),
 
-	// setBulkStatus: noop,
-	// undoBulkStatus: noop,
+	setBulkStatus: noop,
+	undoBulkStatus: noop,
 
 	// unlikeComment: ( commentId, postId ) =>
 	// 	dispatch(

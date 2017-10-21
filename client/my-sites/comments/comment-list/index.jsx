@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, noop, orderBy, size, slice, uniq } from 'lodash';
+import { each, find, get, map, noop, orderBy, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -25,11 +25,7 @@ import {
 import { removeNotice, successNotice } from 'state/notices/actions';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
-import QuerySiteCommentsList from 'components/data/query-site-comments-list';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSiteCommentsTree, getSiteSetting, isCommentsTreeInitialized } from 'state/selectors';
 import {
 	bumpStat,
@@ -149,12 +145,12 @@ export class CommentList extends Component {
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
-	isSelectedAll = () => {
-		const { page } = this.props;
-		const { selectedComments } = this.state;
-		const visibleComments = this.getCommentsPage( this.getComments(), page );
-		return selectedComments.length && selectedComments.length === visibleComments.length;
-	};
+	// isSelectedAll = () => {
+	// 	const { page } = this.props;
+	// 	const { selectedComments } = this.state;
+	// 	const visibleComments = this.getCommentsPage( this.getComments(), page );
+	// 	return selectedComments.length && selectedComments.length === visibleComments.length;
+	// };
 
 	removeFromPersistedComments = commentId =>
 		this.setState( ( { persistedComments } ) => ( {
@@ -252,12 +248,12 @@ export class CommentList extends Component {
 		}
 	};
 
-	setSortOrder = order => () => {
-		this.setState( {
-			sortOrder: order,
-			page: 1,
-		} );
-	};
+	// setSortOrder = order => () => {
+	// 	this.setState( {
+	// 		sortOrder: order,
+	// 		page: 1,
+	// 	} );
+	// };
 
 	showEditNotice = ( commentId, postId, undoCommentData ) => {
 		const { translate } = this.props;
@@ -398,8 +394,8 @@ export class CommentList extends Component {
 	};
 
 	render() {
-		const { isJetpack, isLoading, page, siteBlacklist, siteId, siteFragment, status } = this.props;
-		const { isBulkEdit, selectedComments } = this.state;
+		const { isJetpack, isLoading, page, siteBlacklist, siteId } = this.props;
+		const { isBulkEdit } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
@@ -414,32 +410,6 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteSettings siteId={ siteId } />
-
-				{ isJetpack && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
-				{ ! isJetpack && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
-
-				<CommentNavigation
-					commentsPage={ commentsPage }
-					isBulkEdit={ isBulkEdit }
-					isSelectedAll={ this.isSelectedAll() }
-					selectedCount={ size( selectedComments ) }
-					setBulkStatus={ this.setBulkStatus }
-					setSortOrder={ this.setSortOrder }
-					sortOrder={ this.state.sortOrder }
-					siteId={ siteId }
-					siteFragment={ siteFragment }
-					status={ status }
-					toggleBulkEdit={ this.toggleBulkEdit }
-					toggleSelectAll={ this.toggleSelectAll }
-				/>
 				<ReactCSSTransitionGroup
 					className="comment-list__transition-wrapper"
 					transitionEnterTimeout={ 150 }

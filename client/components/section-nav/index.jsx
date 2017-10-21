@@ -12,7 +12,7 @@ import { isEqual, includes } from 'lodash';
 /**
  * Internal Dependencies
  */
-import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
+import CommentNavigationTab from 'my-sites/comments/comments-navigation/comments-navigation-tab';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
