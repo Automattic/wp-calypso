@@ -15,6 +15,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { getCurrentPlanPurchaseId } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { addQueryArgs } from 'lib/url';
 
 const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translate } ) => {
 	if ( ! siteSlug || ! planPurchaseId ) {
@@ -31,7 +32,9 @@ const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translat
 			<CompactCard href={ `/me/purchases/${ siteSlug }/${ planPurchaseId }` }>
 				{ translate( 'Manage your purchases' ) }
 			</CompactCard>
-			<CompactCard href={ confirmHref }>{ translate( 'Proceed to disconnect' ) }</CompactCard>
+			<CompactCard href={ addQueryArgs( { reason: 'too-expensive' }, confirmHref ) }>
+				{ translate( 'Proceed to disconnect' ) }
+			</CompactCard>
 		</div>
 	);
 };

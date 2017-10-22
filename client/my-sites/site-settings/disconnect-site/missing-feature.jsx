@@ -60,7 +60,10 @@ class MissingFeature extends PureComponent {
 					<Button
 						disabled={ isEmpty( this.state.tokens ) }
 						href={ addQueryArgs(
-							{ 'missing-features': this.state.tokens.map( this.normalizeToken ) },
+							{
+								reason: 'missing-feature',
+								text: this.state.tokens.map( this.normalizeToken ),
+							},
 							confirmHref
 						) }
 						primary
