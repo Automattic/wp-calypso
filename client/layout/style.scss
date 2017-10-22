@@ -50,7 +50,7 @@
 		}
 
 		.is-section-preview & {
-			padding: 47px 0px 0px 228px;
+			padding: 47px 0 0 228px;
 		}
 	}
 }
@@ -59,15 +59,14 @@
 @include breakpoint( "<660px" ) {
 	.layout__content {
 		margin-left: 0;
-		padding: 0;
-		padding-top: 47px;
+		padding: 47px 0 0;
 
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
 
 		.is-section-preview & {
-			padding: 47px 0 0 0;
+			padding: 47px 0 0;
 		}
 	}
 }
