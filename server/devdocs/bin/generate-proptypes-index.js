@@ -9,13 +9,13 @@ const startTime = process.hrtime();
 /**
  * External Dependencies
  */
-require( 'babel-register' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const reactDocgen = require( 'react-docgen' );
 const { getPropertyName, getMemberValuePath, resolveToValue } = require( 'react-docgen/dist/utils' );
-const util = require( 'client/devdocs/docs-example/util' );
+const _ = require( 'lodash' );
 const globby = require( 'globby' );
+const async = require( 'async' );
 
 const root = path.dirname( path.join( __dirname, '..', '..' ) );
 const handlers = [ ...reactDocgen.defaultHandlers, commentHandler ];
@@ -97,75 +97,41 @@ function commentHandler(documentation, path) {
 }
 
 /**
- * Wraps fs.readFile in a Promise
- * @param {string} filePath The path to of the file to read
- * @return {string} The file contents
- */
-const readFile = ( filePath ) => {
-	return fs.readFileSync( filePath, { encoding: 'utf8' } );
-};
-
-/**
  * Calculates a filepath's include path and begins reading the file for parsing
  * Calls back with null, if an error occurs or an object if it succeeds
  * @param {string} filePath The path to read
  */
-const processFile = ( filePath ) => {
+const processFile = ( filePath, callback ) => {
 	const filename = path.basename( filePath );
 	const includePathRegEx = new RegExp(`^client/(.*?)/${ filename }$`);
 	const includePathSuffix = ( filename === 'index.jsx' ? '' : '/' + path.basename( filename, '.jsx' ) );
 	const includePath = includePathRegEx.exec( filePath )[1] + includePathSuffix;
-	try {
-		const usePath = path.isAbsolute( filePath ) ? filePath : path.join( process.cwd(), filePath );
-		const document = readFile( usePath );
-		return {
-			document,
-			includePath
-		};
-	} catch ( error ) {
-		console.log(`Skipping ${ filePath } due to fs error: ${ error }`);
-	}
-	return null;
-};
+	const usePath = path.join( process.cwd(), filePath );
 
-/**
- * Given a processed file object, parses the file for proptypes and calls the callback
- * Calls back with null on any error, or a parsed object if it succeeds
- * @param {Object} docObj The processed document object
- */
-const parseDocument = ( docObj ) => {
-	try {
-		const parsed = reactDocgen.parse( docObj.document, undefined, handlers );
-		parsed.includePath = docObj.includePath;
-		if ( parsed.displayName ) {
-			parsed.slug = util.camelCaseToSlug( parsed.displayName );
+	fs.readFile( usePath, { encoding: 'utf8' }, ( err, document ) => {
+		if ( err ) {
+			console.log(`Skipping ${ filePath } due to fs error: ${ err }`);
+			return callback( null, null );
 		}
-		else {
-			// we have to figure it out -- use the directory name to get the slug
-			parsed.slug = path.basename( docObj.includePath );
-			parsed.displayName = util.slugToCamelCase( parsed.slug );
-		}
-		return parsed;
-	} catch ( error ) {
-		// skipping, probably because the file couldn't be parsed for many reasons (there are lots of them!)
-		return null;
-	}
-};
-
-/**
- * Creates an index of the files
- * @param {Array} parsed
- * @return {{data: Array, index: {displayName: {}, slug: {}, includePath: {}}}}
- */
-const createIndex = ( parsed ) => {
-	return parsed.filter( ( component ) => {
-		if ( ! component ) {
-			return false;
+		if ( ! document.includes( "from 'react';" ) ) {
+			return callback( null, null ); // Not a React component, skip
 		}
 
-		const displayName = component.displayName;
-
-		return ! ( displayName === undefined || displayName === '' );
+		try {
+			const parsed = reactDocgen.parse( document, undefined, handlers );
+			parsed.includePath = includePath;
+			if ( parsed.displayName ) {
+				parsed.slug = _.kebabCase( parsed.displayName );
+			} else {
+				// we have to figure it out -- use the directory name to get the slug
+				parsed.slug = path.basename( includePath );
+				parsed.displayName = _.capitalize( _.camelCase( parsed.slug ) );
+			}
+			return callback( null, parsed );
+		} catch ( error ) {
+			// skipping, probably because the file couldn't be parsed for many reasons (there are lots of them!)
+			return callback( null, null );
+		}
 	} );
 };
 
@@ -186,13 +152,10 @@ const main = ( () => {
 		process.exit( 1 );
 	}
 
-	const documents = createIndex(
-		fileList
-			.map( processFile )
-			.map( parseDocument )
-	);
-	writeFile( documents );
+	async.map( fileList, processFile, ( err, results ) => {
+		writeFile( results.filter( Boolean ) );
 
-	const elapsed = process.hrtime( startTime )[ 1 ] / 1000000;
-	console.log( `Time: ${ process.hrtime( startTime )[0] }s ${ elapsed.toFixed( 3 ) }ms` );
+		const elapsed = process.hrtime( startTime )[ 1 ] / 1000000;
+		console.log( `Time: ${ process.hrtime( startTime )[0] }s ${ elapsed.toFixed( 3 ) }ms` );
+	} );
 } )();
