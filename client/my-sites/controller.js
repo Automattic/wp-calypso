@@ -60,6 +60,7 @@ import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
 import { getPrimaryDomainBySiteId } from 'state/selectors';
+import { getAutomatedTransferStatus as fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -243,6 +244,8 @@ function onSelectedSiteAvailable( context ) {
 			);
 		}
 	}
+
+	context.store.dispatch( fetchAutomatedTransferStatus( selectedSite.ID ) );
 
 	return true;
 }

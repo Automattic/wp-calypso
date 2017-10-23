@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { delay, noop } from 'lodash';
+import { delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;
+	console.log( 'Fetching transfer status for:', siteId );
 
 	dispatch(
 		http(
@@ -34,13 +35,11 @@ export const requestStatus = ( { dispatch }, action ) => {
 	);
 };
 
-export const receiveStatus = (
-	{ dispatch },
-	{ siteId },
-	{ status, uploaded_plugin_slug, transfer_id }
-) => {
+export const receiveStatus = ( { dispatch }, { siteId }, data ) => {
+	const { status, uploaded_plugin_slug, transfer_id } = data;
 	const pluginId = uploaded_plugin_slug;
 
+	console.log( 'Received transfer status:', siteId, data );
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 	if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
 		delay( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
@@ -60,6 +59,12 @@ export const receiveStatus = (
 	}
 };
 
+export const errorStatus = ( store, { siteId }, error ) => {
+	console.log( 'Failed to fetch transfer status:', siteId, error );
+};
+
 export default {
-	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest( requestStatus, receiveStatus, noop ) ],
+	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
+		dispatchRequest( requestStatus, receiveStatus, errorStatus ),
+	],
 };
