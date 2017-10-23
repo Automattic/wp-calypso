@@ -51,6 +51,7 @@ import {
 	getRewindStatusError,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	getRewindStartDate,
 	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
@@ -260,6 +261,7 @@ class ActivityLog extends Component {
 			requestedRestoreActivityId,
 			siteId,
 			translate,
+			rewindStartDate,
 		} = this.props;
 		const startMoment = this.getStartMoment();
 
@@ -271,6 +273,23 @@ class ActivityLog extends Component {
 					<ActivityLogDayPlaceholder />
 				</section>
 			);
+		}
+
+		if ( isEmpty( rewindStartDate ) ) {
+			return [
+				<EmptyContent
+					title={ translate( 'Your site is being synced' ) }
+					line={
+						<span>
+							{ translate( 'Come back in a little while to see your site activity.' ) }
+							<br />
+							{ translate( "You will receive a notification once it's complete!" ) }
+						</span>
+					}
+					illustration="/calypso/images/illustrations/al-syncing-site.svg"
+					className="activity-log__first-sync"
+				/>,
+			];
 		}
 
 		if ( isEmpty( logs ) ) {
@@ -374,7 +393,9 @@ class ActivityLog extends Component {
 			startDate,
 			timezone,
 			translate,
+			rewindStartDate,
 		} = this.props;
+		const hasFirstBackup = ! isEmpty( rewindStartDate );
 
 		if ( false === canViewActivityLog ) {
 			return (
@@ -400,11 +421,11 @@ class ActivityLog extends Component {
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ this.renderErrorMessage() }
-				{ this.renderMonthNavigation() }
+				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ this.renderLogs() }
-				{ this.renderMonthNavigation( 'bottom' ) }
+				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }
 				<JetpackColophon />
 			</Main>
 		);
@@ -431,6 +452,7 @@ export default connect(
 			requestedRestoreActivityId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			rewindStartDate: getRewindStartDate( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
