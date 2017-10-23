@@ -52,7 +52,7 @@ import {
 	mergeIgnoringArrays,
 	normalizePostForState,
 } from './utils';
-import { itemsSchema, queriesSchema } from './schema';
+import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -149,8 +149,8 @@ export function queryRequests( state = {}, action ) {
 
 /**
  * Returns the updated post query state after an action has been dispatched.
- * The state reflects a mapping of serialized query key to an array of post
- * global IDs for the query, if a query response was successfully received.
+ * The state reflects a mapping by site ID of serialized query key to an array
+ * of post IDs for the query, if a query response was successfully received.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -158,6 +158,13 @@ export function queryRequests( state = {}, action ) {
  */
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
+		if ( ! siteId ) {
+			// TODO remove me after testing and before merge
+			// eslint-disable-next-line no-console
+			console.warn( 'applyToManager called without siteId' );
+			return state;
+		}
+
 		if ( ! state[ siteId ] ) {
 			if ( ! createDefault ) {
 				return state;
@@ -210,6 +217,9 @@ export const queries = ( () => {
 				);
 			},
 			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
+				if ( ! siteId ) { // Handle site-specific queries only
+					return state;
+				}
 				const normalizedPosts = posts.map( normalizePostForState );
 				return applyToManager( state, siteId, 'receive', true, normalizedPosts, { query, found } );
 			},
@@ -292,6 +302,43 @@ export const queries = ( () => {
 		}
 	);
 } )();
+
+/**
+ * Returns the updated post query state for queries of all sites at once after
+ * an action has been dispatched.  The state reflects a mapping of serialized
+ * query key to an array of post global IDs for the query, if a query response
+ * was successfully received.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const allSitesQueries = createReducer(
+	new PostQueryManager( {}, { itemKey: 'global_ID' } ),
+	{
+		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
+			if ( siteId ) { // Handle all-sites queries only.
+				return state;
+			}
+			return state.receive(
+				posts.map( normalizePostForState ),
+				{ query, found }
+			);
+		},
+		[ SERIALIZE ]: state => {
+			return {
+				data: state.data,
+				options: state.options,
+			};
+		},
+		[ DESERIALIZE ]: state => {
+			if ( ! isValidStateWithSchema( state, allSitesQueriesSchema ) ) {
+				return new PostQueryManager( {}, { itemKey: 'global_ID' } );
+			}
+			return new PostQueryManager( state.data, state.options );
+		},
+	}
+);
 
 /**
  * Returns the updated editor posts state after an action has been dispatched.
@@ -378,6 +425,7 @@ export default combineReducers( {
 	siteRequests,
 	queryRequests,
 	queries,
+	allSitesQueries,
 	edits,
 	likes,
 	revisions,

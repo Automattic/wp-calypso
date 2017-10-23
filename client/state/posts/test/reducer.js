@@ -46,6 +46,7 @@ describe( 'reducer', () => {
 			'siteRequests',
 			'queryRequests',
 			'queries',
+			'allSitesQueries',
 			'edits',
 			'likes',
 			'revisions',
