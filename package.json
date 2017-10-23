@@ -194,7 +194,6 @@
     "build-docker": "docker build -t wp-calypso .",
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
-    "bundle": "npm run -s env -- cross-env node $NODE_ARGS server/bundler/bin/bundler.js",
     "build-client": "npm run -s env -- webpack --display-error-details --config webpack.config.js",
     "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || ( npm run build-client && npm run minify )",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || ( npm run build-client && npm run minify )",
