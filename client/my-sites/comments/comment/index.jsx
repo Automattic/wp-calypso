@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
 
@@ -10,10 +11,21 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CommentHeader from './comment-header';
 
 export class Comment extends Component {
+	static propTypes = {
+		commentId: PropTypes.number,
+		isBulkMode: PropTypes.bool,
+		isLoading: PropTypes.bool,
+		isSelected: PropTypes.bool,
+		siteId: PropTypes.number,
+	};
+
 	static defaultProps = {
+		isBulkMode: false,
 		isLoading: false,
+		isSelected: false,
 	};
 
 	state = {
@@ -49,7 +61,14 @@ export class Comment extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'comment' );
+		const { commentId, isBulkMode, isSelected, siteId } = this.props;
+		const { isEditMode, isExpanded } = this.state;
+
+		const classes = classNames( 'comment', {
+			'is-bulk-mode': isBulkMode,
+			'is-collapsed': ! isExpanded && ! isBulkMode,
+			'is-expanded': isExpanded,
+		} );
 
 		return (
 			<Card
@@ -58,7 +77,14 @@ export class Comment extends Component {
 				ref={ this.storeCardRef }
 				tabIndex="0"
 			>
-				<div>Comment Card</div>
+				{ ! isEditMode && (
+					<div className="comment__detail">
+						<CommentHeader
+							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected, siteId } }
+							toggleExpanded={ this.toggleExpanded }
+						/>
+					</div>
+				) }
 			</Card>
 		);
 	}

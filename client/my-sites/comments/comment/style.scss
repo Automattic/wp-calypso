@@ -1,5 +1,6 @@
 /** @format */
-.comment-detail.card {
+// Comment Base Style
+.card.comment {
 	font-size: 14px;
 	margin: 0 auto;
 	padding: 0;
@@ -9,13 +10,128 @@
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
 		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
 	}
+}
 
-	&.is-expanded {
-		margin: 16px auto;
+// Comment Header Block
+.comment__header {
+	cursor: pointer;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+
+	.comment__author {
+		box-sizing: border-box;
+		padding: 8px;
+		width: calc(100% - 56px);
+	}
+}
+
+.comment__bulk-select {
+	align-self: center;
+	padding-left: 16px;
+
+	.form-checkbox {
+		margin: 0;
+	}
+}
+
+.comment__toggle-expanded {
+	padding-left: 16px;
+	padding-right: 16px;
+
+	.gridicon {
+		fill: $gray;
+		transform: rotate(0deg);
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	&.is-collapsed:hover {
+	&:hover .gridicon {
+		fill: $blue-medium;
+	}
+}
+
+// Comment Author Block
+.comment__author {
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+}
+.comment__author-avatar {
+	align-self: center;
+	height: 32px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 0 8px;
+	width: 32px;
+}
+.comment__author-info {
+	display: flex;
+	flex-flow: column;
+	width: calc(100% - 48px);
+}
+.comment__author-info-element {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	> div {
+		display: inline-block;
+	}
+
+	a,
+	span {
+		color: $gray-text-min;
+	}
+	a:hover {
+		color: $blue-wordpress;
+	}
+
+	.comment__post .gridicon {
+		color: $gray;
+		vertical-align: text-bottom;
+	}
+
+	.comment__author-url-separator {
+		color: $gray;
+		margin: 0 4px;
+	}
+}
+
+// Collapsed View
+.card.comment.is-collapsed {
+	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 		z-index: z-index('root', '.comment-detail.card.is-collapsed:hover');
+
+		.comment__header .comment__toggle-expanded .gridicon {
+			fill: $blue-medium;
+		}
+	}
+}
+
+// Expanded View
+.card.comment.is-expanded {
+	margin: 16px auto;
+
+	.comment__header {
+		border-bottom: 1px solid lighten($gray, 30%);
+		cursor: default;
+
+		.comment__author {
+			border-right: 1px solid lighten($gray, 30%);
+		}
+
+		.comment__toggle-expanded .gridicon {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+// Bulk Select Mode
+.card.comment.is-bulk-mode {
+	.comment__header .comment__author {
+		box-sizing: border-box;
+		padding: 8px;
+		width: calc(100% - 32px);
 	}
 }
