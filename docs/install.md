@@ -31,6 +31,8 @@ The `npm start` command will install any `npm` dependencies and start the develo
 
 To run Calypso locally, you'll need to add `127.0.0.1 calypso.localhost` to [your hosts file](http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/), and load the app at [http://calypso.localhost:3000](http://calypso.localhost:3000) instead of just `localhost`. This is necessary, because when running locally Calypso is using the remote version of the WordPress.com REST API, which allows only certain origins via our current authentication methods.
 
+If your browser is set to block 3rd-party cookies, you should set an exception on `https://public-api.wordpress.com` in order for Calypso to work correctly on the said origin.
+
 See [Development Workflow](../docs/development-workflow.md) for more.
 
 ### Starting the node debugger
