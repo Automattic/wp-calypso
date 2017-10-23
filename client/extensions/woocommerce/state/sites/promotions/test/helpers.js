@@ -50,9 +50,26 @@ describe( 'helpers', () => {
 			expect( promotion.name ).to.equal( coupon1.code );
 			expect( promotion.type ).to.equal( 'percent' );
 			expect( promotion.couponCode ).to.equal( coupon1.code );
-			expect( promotion.amount ).to.equal( coupon1.amount );
 			expect( promotion.startDate ).to.equal( coupon1.date_created_gmt );
 			expect( promotion.endDate ).to.equal( coupon1.date_expires_gmt );
+		} );
+
+		test( 'should set cart percent discount', () => {
+			const promotion = createPromotionFromCoupon( coupon1 );
+
+			expect( promotion.percentDiscount ).to.equal( coupon1.amount );
+		} );
+
+		test( 'should set cart fixed discount', () => {
+			const promotion = createPromotionFromCoupon( coupon3 );
+
+			expect( promotion.fixedDiscount ).to.equal( coupon3.amount );
+		} );
+
+		test( 'should set product fixed discount', () => {
+			const promotion = createPromotionFromCoupon( coupon2 );
+
+			expect( promotion.fixedDiscount ).to.equal( coupon2.amount );
 		} );
 
 		test( 'should set constraints from coupon', () => {
