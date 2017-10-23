@@ -11,18 +11,18 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
-	displayName: 'NextStepsBox',
+export default class extends React.Component {
+    static displayName = 'NextStepsBox';
 
-	recordEvent: function() {
+	recordEvent = () => {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
 		analytics.tracks.recordEvent( 'calypso_me_next_click', {
 			module: this.props.stepName,
 			is_welcome: this.props.isWelcome,
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		var boxClassNames = 'next-steps-box',
 			bodyClassNames = 'next-steps-box__step-body',
 			buttonClassNames = 'button';
@@ -53,5 +53,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}

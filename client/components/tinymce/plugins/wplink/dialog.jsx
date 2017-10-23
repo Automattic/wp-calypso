@@ -37,40 +37,34 @@ var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
-const LinkDialog = React.createClass( {
-	propTypes: {
+class LinkDialog extends React.Component {
+    static propTypes = {
 		visible: PropTypes.bool,
 		editor: PropTypes.object,
 		onClose: PropTypes.func,
 		site: PropTypes.object,
 		sitePosts: PropTypes.array,
 		firstLoad: PropTypes.bool,
-	},
+	};
 
-	getInitialState: function() {
-		return this.getState();
-	},
+	static defaultProps = {
+		onClose: () => {},
+		firstLoad: false,
+	};
 
-	getDefaultProps() {
-		return {
-			onClose: () => {},
-			firstLoad: false,
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}
-	},
+	}
 
-	getLink: function() {
+	getLink = () => {
 		var editor = this.props.editor;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
-	},
+	};
 
-	getCorrectedUrl() {
+	getCorrectedUrl = () => {
 		const url = this.state.url.trim();
 
 		if ( REGEXP_EMAIL.test( url ) ) {
@@ -82,9 +76,9 @@ const LinkDialog = React.createClass( {
 		}
 
 		return url;
-	},
+	};
 
-	updateEditor: function() {
+	updateEditor = () => {
 		var editor = this.props.editor,
 			attrs,
 			link,
@@ -126,9 +120,9 @@ const LinkDialog = React.createClass( {
 		}
 
 		this.closeDialog();
-	},
+	};
 
-	hasSelectedText: function( linkNode ) {
+	hasSelectedText = linkNode => {
 		var editor = this.props.editor,
 			html = editor.selection.getContent(),
 			nodes,
@@ -157,9 +151,9 @@ const LinkDialog = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	getInferredUrl: function() {
+	getInferredUrl = () => {
 		var selectedText = this.props.editor.selection.getContent(),
 			selectedNode,
 			parsedImage,
@@ -184,9 +178,9 @@ const LinkDialog = React.createClass( {
 				return parsedImage.media.URL;
 			}
 		}
-	},
+	};
 
-	getState: function() {
+	getState = () => {
 		var editor = this.props.editor,
 			selectedNode = editor.selection.getNode(),
 			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
@@ -218,40 +212,40 @@ const LinkDialog = React.createClass( {
 		}
 
 		return nextState;
-	},
+	};
 
-	closeDialog: function() {
+	closeDialog = () => {
 		this.props.onClose();
-	},
+	};
 
-	setUrl: function( event ) {
+	setUrl = event => {
 		this.setState( { url: event.target.value } );
-	},
+	};
 
-	setLinkText: function( event ) {
+	setLinkText = event => {
 		this.setState( {
 			linkText: event.target.value,
 			isUserDefinedLinkText: true,
 		} );
-	},
+	};
 
-	setNewWindow: function( event ) {
+	setNewWindow = event => {
 		this.setState( { newWindow: event.target.checked } );
-	},
+	};
 
-	onInputKeyDown: function( event ) {
+	onInputKeyDown = event => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			this.updateEditor();
 		}
-	},
+	};
 
-	removeLink: function() {
+	removeLink = () => {
 		this.props.editor.execCommand( 'unlink' );
 		this.closeDialog();
-	},
+	};
 
-	getButtons: function() {
+	getButtons = () => {
 		var buttonText, buttons;
 
 		if ( this.state.isNew ) {
@@ -279,9 +273,9 @@ const LinkDialog = React.createClass( {
 		}
 
 		return buttons;
-	},
+	};
 
-	setExistingContent( post ) {
+	setExistingContent = post => {
 		let state = { url: post.URL };
 		const shouldSetLinkText =
 			! this.state.isUserDefinedLinkText &&
@@ -298,9 +292,9 @@ const LinkDialog = React.createClass( {
 		recordEvent( 'Set link to existing content' );
 
 		this.setState( state );
-	},
+	};
 
-	getSelectedPostId() {
+	getSelectedPostId = () => {
 		if ( ! this.state.url || ! this.props.sitePosts ) {
 			return;
 		}
@@ -309,9 +303,11 @@ const LinkDialog = React.createClass( {
 		if ( selectedPost ) {
 			return selectedPost.ID;
 		}
-	},
+	};
 
-	render: function() {
+	state = this.getState();
+
+	render() {
 		return (
 			<Dialog
 				isVisible={ this.props.visible }
@@ -369,8 +365,8 @@ const LinkDialog = React.createClass( {
 				</FormFieldset>
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const selectedSite = getSelectedSite( state );

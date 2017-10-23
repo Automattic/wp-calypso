@@ -16,22 +16,22 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 import FormButton from 'components/forms/form-button';
 import analytics from 'lib/analytics';
 
-const Security2faInitialSetup = React.createClass( {
-	displayName: 'Security2faInitialSetup',
+class Security2faInitialSetup extends React.Component {
+    static displayName = 'Security2faInitialSetup';
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	propTypes: {
+	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
-	},
+	};
 
-	render: function() {
+	componentDidMount() {
+		debug( this.constructor.displayName + ' React component is mounted.' );
+	}
+
+	componentWillUnmount() {
+		debug( this.constructor.displayName + ' React component will unmount.' );
+	}
+
+	render() {
 		return (
 			<div>
 				<p>
@@ -54,7 +54,7 @@ const Security2faInitialSetup = React.createClass( {
 				</FormButton>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( Security2faInitialSetup );

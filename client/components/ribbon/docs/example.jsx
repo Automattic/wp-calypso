@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -13,10 +12,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Ribbon from '../index';
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'Ribbon',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+    static displayName = 'Ribbon';
 
 	render() {
 		return (
@@ -47,5 +44,5 @@ export default React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}

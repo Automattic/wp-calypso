@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 
-const PostPlaceholder = React.createClass( {
-	displayName: 'PostPlaceholder',
+class PostPlaceholder extends React.Component {
+    static displayName = 'PostPlaceholder';
 
-	render: function() {
+	render() {
 		return (
 			<Card tagName="article" className="post is-placeholder">
 				<div className="post__body">
@@ -66,7 +66,7 @@ const PostPlaceholder = React.createClass( {
 				</div>
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PostPlaceholder );

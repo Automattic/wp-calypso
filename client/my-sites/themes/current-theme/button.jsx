@@ -15,16 +15,16 @@ import Gridicon from 'gridicons';
 
 import { isOutsideCalypso } from 'lib/url';
 
-export default React.createClass( {
-	displayName: 'CurrentThemeButton',
+export default class extends React.Component {
+    static displayName = 'CurrentThemeButton';
 
-	propTypes: {
+	static propTypes = {
 		name: PropTypes.string.isRequired,
 		label: PropTypes.string.isRequired,
 		icon: PropTypes.string.isRequired,
 		href: PropTypes.string,
 		onClick: PropTypes.func,
-	},
+	};
 
 	render() {
 		return (
@@ -41,5 +41,5 @@ export default React.createClass( {
 				<span className="current-theme__button-label">{ this.props.label }</span>
 			</a>
 		);
-	},
-} );
+	}
+}

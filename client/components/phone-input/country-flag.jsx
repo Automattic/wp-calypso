@@ -11,40 +11,39 @@ import Gridicon from 'gridicons';
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
-	displayName: 'PhoneInputCountryFlag',
+export default class extends React.Component {
+    static displayName = 'PhoneInputCountryFlag';
 
-	propTypes: {
+	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
-	},
-	getInitialState() {
-		return {
-			ready: false,
-			error: false,
-		};
-	},
+	};
 
-	componentDidUpdate( oldProps ) {
+	state = {
+		ready: false,
+		error: false,
+	};
+
+	componentDidUpdate(oldProps) {
 		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
 			this.setState( { ready: false, error: false } );
 		}
-	},
+	}
 
-	renderSpinner() {
+	renderSpinner = () => {
 		if ( ( ! this.props.countryCode || ! this.state.ready ) && ! this.state.error ) {
 			return <Spinner size={ 16 } className="phone-input__flag-spinner" />;
 		}
-	},
+	};
 
-	handleImageLoad() {
+	handleImageLoad = () => {
 		this.setState( { ready: true, error: false } );
-	},
+	};
 
-	handleImageError() {
+	handleImageError = () => {
 		this.setState( { ready: false, error: true } );
-	},
+	};
 
-	renderFlag() {
+	renderFlag = () => {
 		const style = this.state.ready ? {} : { visibility: 'hidden' };
 
 		if ( this.props.countryCode ) {
@@ -62,7 +61,8 @@ export default React.createClass( {
 				return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
 			}
 		}
-	},
+	};
+
 	render() {
 		return (
 			<div className="phone-input__flag-container">
@@ -71,5 +71,5 @@ export default React.createClass( {
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
-	},
-} );
+	}
+}

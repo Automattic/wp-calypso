@@ -14,29 +14,27 @@ const debug = debugFactory( 'calypso:me:security:2fa-app-chooser-item' );
  */
 import analytics from 'lib/analytics';
 
-const Security2faAppChooserItem = React.createClass( {
-	displayName: 'Security2faAppChooserItem',
+class Security2faAppChooserItem extends React.Component {
+    static displayName = 'Security2faAppChooserItem';
 
-	getInitialState: function() {
-		return {
-			downloadCodeDisplayed: false,
-		};
-	},
+	state = {
+		downloadCodeDisplayed: false,
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	onCodeToggle: function( event ) {
+	onCodeToggle = event => {
 		event.preventDefault();
 		this.setState( { downloadCodeDisplayed: ! this.state.downloadCodeDisplayed } );
-	},
+	};
 
-	possiblyRenderDownloadQRCode: function( appURL ) {
+	possiblyRenderDownloadQRCode = appURL => {
 		var imgURL =
 			'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=H|0&chl=' +
 			encodeURIComponent( appURL );
@@ -46,9 +44,9 @@ const Security2faAppChooserItem = React.createClass( {
 		}
 
 		return <img className="security-2fa-app-chooser-item__qrcode" src={ imgURL } />;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>
@@ -129,7 +127,7 @@ const Security2faAppChooserItem = React.createClass( {
 				</ul>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( Security2faAppChooserItem );

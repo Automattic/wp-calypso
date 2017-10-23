@@ -92,15 +92,15 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-const CheckoutThankYou = React.createClass( {
-	propTypes: {
+class CheckoutThankYou extends React.Component {
+    static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
 		receiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-	},
+	};
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
@@ -124,9 +124,9 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.isNewUser() ) {
 			this.props.loadTrackingTool( 'HotJar' );
 		}
-	},
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		this.redirectIfThemePurchased();
 
 		if (
@@ -137,15 +137,15 @@ const CheckoutThankYou = React.createClass( {
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite );
 		}
-	},
+	}
 
-	hasPlanOrDomainProduct( props = this.props ) {
+	hasPlanOrDomainProduct = (props = this.props) => {
 		return getPurchases( props ).some(
 			purchase => isPlan( purchase ) || isDomainProduct( purchase )
 		);
-	},
+	};
 
-	renderConfirmationNotice: function() {
+	renderConfirmationNotice = () => {
 		if ( ! this.props.user || ! this.props.user.email || this.props.user.email_verified ) {
 			return null;
 		}
@@ -168,9 +168,9 @@ const CheckoutThankYou = React.createClass( {
 				) }
 			</Notice>
 		);
-	},
+	};
 
-	isDataLoaded() {
+	isDataLoaded = () => {
 		if ( this.isGenericReceipt() ) {
 			return true;
 		}
@@ -179,13 +179,13 @@ const CheckoutThankYou = React.createClass( {
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
 			this.props.receipt.hasLoadedFromServer
 		);
-	},
+	};
 
-	isGenericReceipt() {
+	isGenericReceipt = () => {
 		return ! this.props.receiptId;
-	},
+	};
 
-	redirectIfThemePurchased() {
+	redirectIfThemePurchased = () => {
 		const purchases = getPurchases( this.props );
 
 		if (
@@ -198,9 +198,9 @@ const CheckoutThankYou = React.createClass( {
 
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
 		}
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const site = this.props.selectedSite.slug;
@@ -226,16 +226,16 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
-	},
+	};
 
-	isEligibleForLiveChat() {
+	isEligibleForLiveChat = () => {
 		const { planSlug } = this.props;
 		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
-	},
+	};
 
-	isNewUser() {
+	isNewUser = () => {
 		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
-	},
+	};
 
 	render() {
 		let purchases = [],
@@ -334,7 +334,7 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
+	}
 
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
@@ -343,7 +343,7 @@ const CheckoutThankYou = React.createClass( {
 	 * @returns {*[]} an array of varying size with the component instance,
 	 * then an optional purchase object possibly followed by a domain name
 	 */
-	getComponentAndPrimaryPurchaseAndDomain() {
+	getComponentAndPrimaryPurchaseAndDomain = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props ),
 				failedPurchases = getFailedPurchases( this.props );
@@ -377,9 +377,9 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return [];
-	},
+	};
 
-	productRelatedMessages() {
+	productRelatedMessages = () => {
 		const { selectedSite, sitePlans } = this.props,
 			purchases = getPurchases( this.props ),
 			failedPurchases = getFailedPurchases( this.props ),
@@ -437,8 +437,8 @@ const CheckoutThankYou = React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	};
+}
 
 export default connect(
 	( state, props ) => {

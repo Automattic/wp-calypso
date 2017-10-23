@@ -22,10 +22,10 @@ import Buttons from './buttons';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
-	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
+class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
+    static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
-	propTypes: {
+	static propTypes = {
 		storedPhone: PropTypes.shape( {
 			countryCode: PropTypes.string,
 			countryNumericCode: PropTypes.string,
@@ -35,15 +35,13 @@ const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
 		onDelete: PropTypes.func,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isInvalid: false,
-		};
-	},
+	state = {
+		isInvalid: false,
+	};
 
-	render: function() {
+	render() {
 		var validation = null,
 			havePhone = ! isEmpty( this.props.storedPhone );
 		if ( this.state.validation ) {
@@ -75,9 +73,9 @@ const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	}
 
-	isSavable: function() {
+	isSavable = () => {
 		if ( ! this.state.phoneNumber ) {
 			return false;
 		}
@@ -95,19 +93,19 @@ const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	onChange: function( phoneNumber ) {
+	onChange = phoneNumber => {
 		this.setState( { phoneNumber } );
-	},
+	};
 
-	onKeyUp: function( event ) {
+	onKeyUp = event => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
-	},
+	};
 
-	onSave: function() {
+	onSave = () => {
 		var phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
@@ -124,15 +122,15 @@ const SecurityAccountRecoveryRecoveryPhoneEdit = React.createClass( {
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull,
 		} );
-	},
+	};
 
-	onCancel: function() {
+	onCancel = () => {
 		this.props.onCancel();
-	},
+	};
 
-	onDelete: function() {
+	onDelete = () => {
 		this.props.onDelete();
-	},
-} );
+	};
+}
 
 export default localize( SecurityAccountRecoveryRecoveryPhoneEdit );

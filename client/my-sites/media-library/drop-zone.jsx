@@ -16,25 +16,23 @@ import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryDropZone',
+export default class extends React.Component {
+    static displayName = 'MediaLibraryDropZone';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		fullScreen: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		trackStats: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			fullScreen: true,
-			onAddMedia: noop,
-			trackStats: true,
-		};
-	},
+	static defaultProps = {
+		fullScreen: true,
+		onAddMedia: noop,
+		trackStats: true,
+	};
 
-	uploadFiles: function( files ) {
+	uploadFiles = files => {
 		if ( ! this.props.site ) {
 			return;
 		}
@@ -46,9 +44,9 @@ export default React.createClass( {
 		if ( this.props.trackStats ) {
 			analytics.mc.bumpStat( 'editor_upload_via', 'drop' );
 		}
-	},
+	};
 
-	isValidTransfer: function( transfer ) {
+	isValidTransfer = transfer => {
 		if ( ! transfer ) {
 			return false;
 		}
@@ -69,9 +67,9 @@ export default React.createClass( {
 		//
 		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! userCan( 'upload_files', this.props.site ) ) {
 			return null;
 		}
@@ -83,5 +81,5 @@ export default React.createClass( {
 				onFilesDrop={ this.uploadFiles }
 			/>
 		);
-	},
-} );
+	}
+}

@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 import { decodeEntities } from 'lib/formatting';
 
@@ -14,20 +13,18 @@ import { decodeEntities } from 'lib/formatting';
  */
 import CompactCard from 'components/card/compact';
 
-export default React.createClass( {
-	displayName: 'HelpResult',
+export default class extends React.PureComponent {
+    static displayName = 'HelpResult';
 
-	mixins: [ PureRenderMixin ],
-
-	onClick: function( event ) {
+	onClick = event => {
 		if ( this.props.helpLink.disabled ) {
 			return event.preventDefault();
 		}
 
 		this.props.onClick && this.props.onClick( event, this.props.helpLink );
-	},
+	};
 
-	getResultIcon: function() {
+	getResultIcon = () => {
 		const { iconTypeDescription = 'book' } = this.props;
 		const iconClass = 'help-result__icon';
 		const iconSize = 24;
@@ -47,9 +44,9 @@ export default React.createClass( {
 		} else {
 			return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<a
 				className="help-result"
@@ -66,5 +63,5 @@ export default React.createClass( {
 				</CompactCard>
 			</a>
 		);
-	},
-} );
+	}
+}

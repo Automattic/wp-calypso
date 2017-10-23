@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -14,17 +13,15 @@ import Gridicon from 'gridicons';
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 
-export default React.createClass( {
-	displayName: 'HelpContactConfirmation',
+export default class extends React.PureComponent {
+    static displayName = 'HelpContactConfirmation';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		title: PropTypes.string.isRequired,
 		message: PropTypes.node.isRequired,
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="help-contact-confirmation">
 				<div className="help-contact-confirmation__contents">
@@ -39,5 +36,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}

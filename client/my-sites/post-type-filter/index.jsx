@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -32,10 +33,11 @@ import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PostTypeFilter = React.createClass( {
-	mixins: [ UrlSearch ],
+const PostTypeFilter = createReactClass({
+    displayName: 'PostTypeFilter',
+    mixins: [ UrlSearch ],
 
-	propTypes: {
+    propTypes: {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
 		query: PropTypes.shape( {
@@ -48,7 +50,7 @@ const PostTypeFilter = React.createClass( {
 		counts: PropTypes.object,
 	},
 
-	getNavItems() {
+    getNavItems() {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce(
@@ -115,7 +117,7 @@ const PostTypeFilter = React.createClass( {
 		);
 	},
 
-	renderMultiSelectButton() {
+    renderMultiSelectButton() {
 		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
 			return null;
 		}
@@ -140,7 +142,7 @@ const PostTypeFilter = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
@@ -185,8 +187,8 @@ const PostTypeFilter = React.createClass( {
 				</SectionNav>
 			</div>
 		);
-	},
-} );
+	}
+});
 
 export default connect(
 	( state, { query } ) => {

@@ -11,10 +11,10 @@ import React from 'react';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import Team from './team';
 
-const TeamList = React.createClass( {
-	displayName: 'TeamList',
+class TeamList extends React.Component {
+    static displayName = 'TeamList';
 
-	render: function() {
+	render() {
 		const fetchOptions = {
 			siteId: this.props.site && this.props.site.ID,
 			order: 'ASC',
@@ -30,7 +30,7 @@ const TeamList = React.createClass( {
 				<Team { ...this.props } />
 			</SiteUsersFetcher>
 		);
-	},
-} );
+	}
+}
 
 export default localize( TeamList );

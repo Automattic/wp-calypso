@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -16,35 +15,29 @@ import ControlItem from 'components/segmented-control/item';
 /**
  * Segmented Control Demo
  */
-const SegmentedControlDemo = React.createClass( {
-	displayName: 'SegmentedControl',
+class SegmentedControlDemo extends React.PureComponent {
+    static displayName = 'SegmentedControl';
 
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		options: [
+			{ value: 'all', label: 'All' },
+			{ value: 'unread', label: 'Unread' },
+			{ value: 'comments', label: 'Comments' },
+			{ value: 'follows', label: 'Follows' },
+			{ value: 'likes', label: 'Likes' },
+		],
+	};
 
-	getInitialState: function() {
-		return {
-			childSelected: 'all',
-			compact: false,
-		};
-	},
+	state = {
+		childSelected: 'all',
+		compact: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			options: [
-				{ value: 'all', label: 'All' },
-				{ value: 'unread', label: 'Unread' },
-				{ value: 'comments', label: 'Comments' },
-				{ value: 'follows', label: 'Follows' },
-				{ value: 'likes', label: 'Likes' },
-			],
-		};
-	},
-
-	toggleCompact: function() {
+	toggleCompact = () => {
 		this.setState( { compact: ! this.state.compact } );
-	},
+	};
 
-	render: function() {
+	render() {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
@@ -133,19 +126,19 @@ const SegmentedControlDemo = React.createClass( {
 				</SegmentedControl>
 			</div>
 		);
-	},
+	}
 
-	selectChildSegment: function( childSelected, event ) {
+	selectChildSegment = (childSelected, event) => {
 		event.preventDefault();
 		this.setState( {
 			childSelected: childSelected,
 		} );
 		console.log( 'Segmented Control (selected):', childSelected );
-	},
+	};
 
-	selectSegment: function( option ) {
+	selectSegment = option => {
 		console.log( 'Segmented Control (selected):', option );
-	},
-} );
+	};
+}
 
 export default SegmentedControlDemo;

@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 
-const CartEmpty = React.createClass( {
-	render: function() {
+class CartEmpty extends React.Component {
+    render() {
 		return (
 			<div>
 				<div className="cart-empty">
@@ -27,22 +27,22 @@ const CartEmpty = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	shouldShowPlanButton: function() {
+	shouldShowPlanButton = () => {
 		if ( this.props.selectedSite.jetpack ) {
 			return true; // always show the plan button for jetpack sites (not the domain button)
 		}
 		return startsWith( this.props.path, '/domains' );
-	},
+	};
 
-	handleClick: function( event ) {
+	handleClick = event => {
 		event.preventDefault();
 
 		page(
 			( this.shouldShowPlanButton() ? '/plans/' : '/domains/add/' ) + this.props.selectedSite.slug
 		);
-	},
-} );
+	};
+}
 
 export default localize( CartEmpty );

@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,10 +11,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import ViewersData from 'components/data/viewers-data';
 import Viewers from './viewers';
 
-const ViewersList = React.createClass( {
-	displayName: 'ViewersList',
-
-	mixins: [ PureRenderMixin ],
+class ViewersList extends React.PureComponent {
+    static displayName = 'ViewersList';
 
 	render() {
 		return (
@@ -27,7 +24,7 @@ const ViewersList = React.createClass( {
 				<Viewers />
 			</ViewersData>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ViewersList );

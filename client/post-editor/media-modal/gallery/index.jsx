@@ -23,26 +23,22 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { isModuleActive } from 'lib/site/utils';
 
-const EditorMediaModalGallery = React.createClass( {
-	propTypes: {
+class EditorMediaModalGallery extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		settings: PropTypes.object,
 		onUpdateSettings: PropTypes.func,
 		onReturnToList: PropTypes.func,
-	},
+	};
 
-	getInitialState() {
-		return {
-			invalidItemDropped: false,
-		};
-	},
+	static defaultProps = {
+		onUpdateSettings: noop,
+	};
 
-	getDefaultProps() {
-		return {
-			onUpdateSettings: noop,
-		};
-	},
+	state = {
+		invalidItemDropped: false,
+	};
 
 	componentWillMount() {
 		if ( this.props.settings ) {
@@ -51,9 +47,9 @@ const EditorMediaModalGallery = React.createClass( {
 		} else {
 			this.setDefaultSettings();
 		}
-	},
+	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate(prevProps) {
 		if ( ! this.props.settings ) {
 			return;
 		}
@@ -63,9 +59,9 @@ const EditorMediaModalGallery = React.createClass( {
 		if ( ! isEqual( prevProps.items, this.props.items ) ) {
 			this.reconcileSettingsItems( this.props.settings, this.props.items );
 		}
-	},
+	}
 
-	reconcileSettingsItems( settings, items ) {
+	reconcileSettingsItems = (settings, items) => {
 		// Reconcile by ensuring that all items saved to settings still exist
 		// in the original set, and that any items since added to the original
 		// set are similarly appended to the settings set.
@@ -86,18 +82,18 @@ const EditorMediaModalGallery = React.createClass( {
 		if ( ! isEqual( newItems, settings.items ) ) {
 			this.updateSetting( 'items', newItems );
 		}
-	},
+	};
 
-	maybeUpdateColumnsSetting() {
+	maybeUpdateColumnsSetting = () => {
 		// if the number of columns currently set is higher
 		// than the number of available items
 		// then revert the setting to the number of items
 		if ( this.props.items.length < this.props.settings.columns ) {
 			this.updateSetting( 'columns', this.props.items.length );
 		}
-	},
+	};
 
-	setDefaultSettings() {
+	setDefaultSettings = () => {
 		const { site, settings, items, onUpdateSettings } = this.props;
 
 		if ( settings ) {
@@ -111,9 +107,9 @@ const EditorMediaModalGallery = React.createClass( {
 		}
 
 		onUpdateSettings( defaultSettings );
-	},
+	};
 
-	updateSetting( setting, value ) {
+	updateSetting = (setting, value) => {
 		if ( 'string' === typeof setting ) {
 			// Normalize singular value
 			setting = { [ setting ]: value };
@@ -123,7 +119,7 @@ const EditorMediaModalGallery = React.createClass( {
 		let updatedSettings = assign( {}, this.props.settings, setting );
 		updatedSettings = omitBy( updatedSettings, updatedValue => null === updatedValue );
 		this.props.onUpdateSettings( updatedSettings );
-	},
+	};
 
 	render() {
 		const { site, items, settings } = this.props;
@@ -158,8 +154,8 @@ const EditorMediaModalGallery = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),

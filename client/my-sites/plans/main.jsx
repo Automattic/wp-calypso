@@ -25,21 +25,19 @@ import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-t
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
-const Plans = React.createClass( {
-	propTypes: {
+class Plans extends React.Component {
+    static propTypes = {
 		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
 		intervalType: PropTypes.string,
 		selectedSite: PropTypes.object,
 		displayJetpackPlans: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			intervalType: 'yearly',
-			displayJetpackPlans: false,
-		};
-	},
+	static defaultProps = {
+		intervalType: 'yearly',
+		displayJetpackPlans: false,
+	};
 
 	componentDidMount() {
 		this.redirectIfNonJetpackMonthly();
@@ -48,21 +46,21 @@ const Plans = React.createClass( {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
 		}
-	},
+	}
 
 	componentDidUpdate() {
 		this.redirectIfNonJetpackMonthly();
-	},
+	}
 
-	redirectIfNonJetpackMonthly() {
+	redirectIfNonJetpackMonthly = () => {
 		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
 
 		if ( selectedSite && ! displayJetpackPlans && intervalType === 'monthly' ) {
 			page.redirect( '/plans/' + selectedSite.slug );
 		}
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return (
 			<div>
 				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
@@ -73,7 +71,7 @@ const Plans = React.createClass( {
 				</Main>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { selectedSite, translate, displayJetpackPlans } = this.props;
@@ -109,8 +107,8 @@ const Plans = React.createClass( {
 				</Main>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );

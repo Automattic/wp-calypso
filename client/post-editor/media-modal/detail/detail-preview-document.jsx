@@ -9,12 +9,12 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewDocument',
+export default class extends React.Component {
+    static displayName = 'EditorMediaModalDetailPreviewDocument';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'is-document' );
@@ -24,5 +24,5 @@ export default React.createClass( {
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);
-	},
-} );
+	}
+}

@@ -12,22 +12,20 @@ import React from 'react';
  */
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryListItemFileDetails',
+export default class extends React.Component {
+    static displayName = 'MediaLibraryListItemFileDetails';
 
-	propTypes: {
+	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,
 		icon: PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			icon: 'pages',
-		};
-	},
+	static defaultProps = {
+		icon: 'pages',
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="media-library__list-item-file-details media-library__list-item-centered">
 				<div className="media-library__list-item-icon">
@@ -48,5 +46,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}

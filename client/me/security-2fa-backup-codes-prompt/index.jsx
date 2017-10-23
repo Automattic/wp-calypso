@@ -22,31 +22,29 @@ import analytics from 'lib/analytics';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 
-const Security2faBackupCodesPrompt = React.createClass( {
-	displayName: 'Security2faBackupCodesPrompt',
+class Security2faBackupCodesPrompt extends React.Component {
+    static displayName = 'Security2faBackupCodesPrompt';
 
-	propTypes: {
+	static propTypes = {
 		onPrintAgain: PropTypes.func,
 		onSuccess: PropTypes.func.isRequired,
-	},
+	};
 
-	componentDidMount: function() {
+	state = {
+		backupCodeEntry: '',
+		lastError: false,
+		submittingCode: false,
+	};
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			backupCodeEntry: '',
-			lastError: false,
-			submittingCode: false,
-		};
-	},
-
-	getSubmitDisabled: function() {
+	getSubmitDisabled = () => {
 		if ( this.state.submittingCode ) {
 			return true;
 		}
@@ -56,15 +54,15 @@ const Security2faBackupCodesPrompt = React.createClass( {
 		}
 
 		return false;
-	},
+	};
 
-	onVerify: function( event ) {
+	onVerify = event => {
 		event.preventDefault();
 		this.setState( { submittingCode: true } );
 		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
-	},
+	};
 
-	onRequestComplete: function( error, data ) {
+	onRequestComplete = (error, data) => {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
 			this.setState( {
@@ -83,23 +81,23 @@ const Security2faBackupCodesPrompt = React.createClass( {
 		}
 
 		this.props.onSuccess();
-	},
+	};
 
-	onPrintAgain: function( event ) {
+	onPrintAgain = event => {
 		event.preventDefault();
 		this.props.onPrintAgain();
-	},
+	};
 
-	clearLastError: function() {
+	clearLastError = () => {
 		this.setState( { lastError: false } );
-	},
+	};
 
-	onClickPrintButton: function( event ) {
+	onClickPrintButton = event => {
 		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
 		this.onPrintAgain( event );
-	},
+	};
 
-	possiblyRenderPrintAgainButton: function() {
+	possiblyRenderPrintAgainButton = () => {
 		if ( ! this.props.onPrintAgain ) {
 			return null;
 		}
@@ -115,9 +113,9 @@ const Security2faBackupCodesPrompt = React.createClass( {
 				{ this.props.translate( "Didn't Print The Codes?" ) }
 			</FormButton>
 		);
-	},
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError = () => {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -129,9 +127,9 @@ const Security2faBackupCodesPrompt = React.createClass( {
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
@@ -174,12 +172,12 @@ const Security2faBackupCodesPrompt = React.createClass( {
 				</FormButton>
 			</form>
 		);
-	},
+	}
 
-	handleChange( e ) {
+	handleChange = e => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
-	},
-} );
+	};
+}
 
 export default localize( Security2faBackupCodesPrompt );

@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
@@ -35,8 +36,10 @@ function getStateFromStores( props ) {
 	};
 }
 
-const DomainManagementData = React.createClass( {
-	propTypes: {
+const DomainManagementData = createReactClass({
+    displayName: 'DomainManagementData',
+
+    propTypes: {
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -44,9 +47,9 @@ const DomainManagementData = React.createClass( {
 		sitePlans: PropTypes.object.isRequired,
 	},
 
-	mixins: [ observe( 'productsList' ) ],
+    mixins: [ observe( 'productsList' ) ],
 
-	componentWillMount: function() {
+    componentWillMount: function() {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
@@ -54,7 +57,7 @@ const DomainManagementData = React.createClass( {
 		}
 	},
 
-	componentWillUpdate: function( nextProps ) {
+    componentWillUpdate: function( nextProps ) {
 		const { selectedSite: prevSite } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 
@@ -63,7 +66,7 @@ const DomainManagementData = React.createClass( {
 		}
 	},
 
-	render: function() {
+    render: function() {
 		return (
 			<div>
 				<StoreConnection
@@ -81,8 +84,8 @@ const DomainManagementData = React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+});
 
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );

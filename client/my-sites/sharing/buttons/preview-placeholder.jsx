@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsPreviewAction from './preview-action';
 
-const SharingButtonsPreviewPlaceholder = React.createClass( {
-	displayName: 'SharingButtonsPreviewPlaceholder',
+class SharingButtonsPreviewPlaceholder extends React.Component {
+    static displayName = 'SharingButtonsPreviewPlaceholder';
 
-	render: function() {
+	render() {
 		return (
 			<div className="sharing-buttons-preview is-placeholder">
 				<ButtonsPreviewAction icon="pencil" position="top-left" disabled={ true }>
@@ -58,7 +58,7 @@ const SharingButtonsPreviewPlaceholder = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SharingButtonsPreviewPlaceholder );

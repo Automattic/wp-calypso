@@ -28,10 +28,10 @@ import { getPreference } from 'state/preferences/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
 
-export const MediaLibraryList = React.createClass( {
-	displayName: 'MediaLibraryList',
+export class MediaLibraryList extends React.Component {
+    static displayName = 'MediaLibraryList';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		media: PropTypes.arrayOf( PropTypes.object ),
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
@@ -48,27 +48,23 @@ export const MediaLibraryList = React.createClass( {
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
 		onEditItem: PropTypes.func,
-	},
+	};
 
-	getInitialState: function() {
-		return {};
-	},
+	static defaultProps = {
+		mediaLibrarySelectedItems: Object.freeze( [] ),
+		containerWidth: 0,
+		rowPadding: 10,
+		mediaHasNextPage: false,
+		mediaFetchingNextPage: false,
+		mediaOnFetchNextPage: noop,
+		single: false,
+		scrollable: false,
+		onEditItem: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			mediaLibrarySelectedItems: Object.freeze( [] ),
-			containerWidth: 0,
-			rowPadding: 10,
-			mediaHasNextPage: false,
-			mediaFetchingNextPage: false,
-			mediaOnFetchNextPage: noop,
-			single: false,
-			scrollable: false,
-			onEditItem: noop,
-		};
-	},
+	state = {};
 
-	setListContext( component ) {
+	setListContext = component => {
 		if ( ! component ) {
 			return;
 		}
@@ -76,17 +72,17 @@ export const MediaLibraryList = React.createClass( {
 		this.setState( {
 			listContext: ReactDom.findDOMNode( component ),
 		} );
-	},
+	};
 
-	getMediaItemHeight: function() {
+	getMediaItemHeight = () => {
 		return Math.round( this.props.containerWidth * this.props.mediaScale ) + this.props.rowPadding;
-	},
+	};
 
-	getItemsPerRow: function() {
+	getItemsPerRow = () => {
 		return Math.floor( 1 / this.props.mediaScale );
-	},
+	};
 
-	getMediaItemStyle: function( index ) {
+	getMediaItemStyle = index => {
 		var itemsPerRow = this.getItemsPerRow(),
 			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
 			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
@@ -109,9 +105,9 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		return style;
-	},
+	};
 
-	toggleItem: function( item, shiftKeyPressed ) {
+	toggleItem = (item, shiftKeyPressed) => {
 		// We don't care to preserve the existing selected items if we're only
 		// seeking to select a single item
 		let selectedItems;
@@ -152,13 +148,13 @@ export const MediaLibraryList = React.createClass( {
 		if ( this.props.site ) {
 			MediaActions.setLibrarySelectedItems( this.props.site.ID, selectedItems );
 		}
-	},
+	};
 
-	getItemRef: function( item ) {
+	getItemRef = item => {
 		return 'item-' + item.ID;
-	},
+	};
 
-	getGroupLabel: function( date ) {
+	getGroupLabel = date => {
 		const itemDate = new Date( date );
 		const currentDate = new Date();
 
@@ -167,13 +163,13 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		return moment( date ).format( 'MMM DD, YYYY' );
-	},
+	};
 
-	getItemGroup: function( item ) {
+	getItemGroup = item => {
 		return item.date.slice( 0, 10 );
-	},
+	};
 
-	renderItem: function( item ) {
+	renderItem = item => {
 		var index = findIndex( this.props.media, { ID: item.ID } ),
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
@@ -200,9 +196,9 @@ export const MediaLibraryList = React.createClass( {
 				onEditItem={ this.props.onEditItem }
 			/>
 		);
-	},
+	};
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders = () => {
 		var itemsPerRow = this.getItemsPerRow(),
 			itemsVisible = ( this.props.media || [] ).length,
 			placeholders = itemsPerRow - itemsVisible % itemsPerRow;
@@ -217,9 +213,9 @@ export const MediaLibraryList = React.createClass( {
 				/>
 			);
 		}, this );
-	},
+	};
 
-	renderTrailingItems() {
+	renderTrailingItems = () => {
 		const { media, source } = this.props;
 
 		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
@@ -236,9 +232,9 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		return null;
-	},
+	};
 
-	render: function() {
+	render() {
 		var onFetchNextPage;
 
 		if ( this.props.filterRequiresUpgrade ) {
@@ -279,8 +275,8 @@ export const MediaLibraryList = React.createClass( {
 				className="media-library__list"
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => ( {

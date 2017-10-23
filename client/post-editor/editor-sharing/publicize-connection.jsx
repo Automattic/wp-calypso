@@ -20,44 +20,42 @@ import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-export const EditorSharingPublicizeConnection = React.createClass( {
-	propTypes: {
+export class EditorSharingPublicizeConnection extends React.Component {
+    static propTypes = {
 		post: PropTypes.object,
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func,
 		label: PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onRefresh: () => {},
-		};
-	},
+	static defaultProps = {
+		onRefresh: () => {},
+	};
 
-	isConnectionSkipped() {
+	isConnectionSkipped = () => {
 		const { post, connection } = this.props;
 		return (
 			post &&
 			connection &&
 			includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID )
 		);
-	},
+	};
 
-	isConnectionDone() {
+	isConnectionDone = () => {
 		const { post, connection } = this.props;
 		return (
 			post &&
 			connection &&
 			includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID )
 		);
-	},
+	};
 
-	isDisabled() {
+	isDisabled = () => {
 		const { connection } = this.props;
 		return ! connection || connection.read_only;
-	},
+	};
 
-	onChange( event ) {
+	onChange = event => {
 		const { connection } = this.props;
 		if ( ! connection ) {
 			return;
@@ -74,9 +72,9 @@ export const EditorSharingPublicizeConnection = React.createClass( {
 			PostStats.recordStat( 'sharing_disabled_' + connection.service );
 			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
 		}
-	},
+	};
 
-	renderBrokenConnection() {
+	renderBrokenConnection = () => {
 		const { connection } = this.props;
 		if ( ! connection || connection.status !== 'broken' ) {
 			return;
@@ -97,7 +95,7 @@ export const EditorSharingPublicizeConnection = React.createClass( {
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
 	render() {
 		const { connection, label } = this.props;
@@ -115,7 +113,7 @@ export const EditorSharingPublicizeConnection = React.createClass( {
 				{ this.renderBrokenConnection() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EditorSharingPublicizeConnection );

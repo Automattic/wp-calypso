@@ -13,14 +13,14 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 
-const InviteFormHeader = React.createClass( {
-	displayName: 'InviteFormHeader',
+class InviteFormHeader extends React.Component {
+    static displayName = 'InviteFormHeader';
 
-	clickedSiteLink() {
+	clickedSiteLink = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );
-	},
+	};
 
-	getSiteLink() {
+	getSiteLink = () => {
 		const { site } = this.props;
 
 		if ( ! site ) {
@@ -32,15 +32,15 @@ const InviteFormHeader = React.createClass( {
 				{ site.title }
 			</a>
 		);
-	},
+	};
 
-	getSiteName() {
+	getSiteName = () => {
 		const { site } = this.props;
 
 		return site.title || '';
-	},
+	};
 
-	getLoggedOutTitleForInvite() {
+	getLoggedOutTitleForInvite = () => {
 		let title = '';
 		const { role, forceMatchingEmail, knownUser } = this.props;
 
@@ -117,9 +117,9 @@ const InviteFormHeader = React.createClass( {
 		}
 
 		return title;
-	},
+	};
 
-	getLoggedInTitleForInvite() {
+	getLoggedInTitleForInvite = () => {
 		let title = '';
 
 		const { role } = this.props;
@@ -193,9 +193,9 @@ const InviteFormHeader = React.createClass( {
 		}
 
 		return title;
-	},
+	};
 
-	getExplanationForInvite() {
+	getExplanationForInvite = () => {
 		let explanation = '';
 
 		switch ( this.props.role ) {
@@ -257,7 +257,7 @@ const InviteFormHeader = React.createClass( {
 		}
 
 		return explanation;
-	},
+	};
 
 	render() {
 		let roleExplanation = this.getExplanationForInvite();
@@ -271,7 +271,7 @@ const InviteFormHeader = React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( InviteFormHeader );

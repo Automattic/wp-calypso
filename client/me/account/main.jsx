@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -54,7 +55,7 @@ const user = _user();
  */
 const debug = debugFactory( 'calypso:me:account' );
 
-const Account = React.createClass( {
+const Account = createReactClass({
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
@@ -742,7 +743,7 @@ const Account = React.createClass( {
 			</Main>
 		);
 	},
-} );
+});
 
 export default compose(
 	connect(

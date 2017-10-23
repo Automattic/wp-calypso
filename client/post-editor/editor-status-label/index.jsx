@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -17,51 +16,45 @@ import Gridicon from 'gridicons';
 import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
-const StatusLabel = React.createClass( {
-	displayName: 'StatusLabel',
+class StatusLabel extends React.PureComponent {
+    static displayName = 'StatusLabel';
 
-	propTypes: {
+	static propTypes = {
 		onClick: PropTypes.func,
 		post: PropTypes.object,
 		type: PropTypes.string,
 		advancedStatus: PropTypes.bool,
-	},
+	};
 
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		onClick: null,
+		post: null,
+		advancedStatus: false,
+		type: 'post',
+	};
 
-	getDefaultProps: function() {
-		return {
-			onClick: null,
-			post: null,
-			advancedStatus: false,
-			type: 'post',
-		};
-	},
+	state = {
+		currentTime: Date.now(),
+	};
 
-	getInitialState: function() {
-		return {
-			currentTime: Date.now(),
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		// update the `currentTime` every minute
 		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( nextProps.post !== this.props.post ) {
 			// the post has been updated, so update the current time so that
 			// it will be the most up-to-date when re-rendering
 			this.updateCurrentTime();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		clearInterval( this.currentTimeTimer );
-	},
+	}
 
-	render: function() {
+	render() {
 		let statusClass = 'editor-status-label';
 
 		if ( ! this.props.post ) {
@@ -90,9 +83,9 @@ const StatusLabel = React.createClass( {
 				{ this.renderLabel() }
 			</button>
 		);
-	},
+	}
 
-	renderLabel: function() {
+	renderLabel = () => {
 		var post = this.props.post,
 			editedTime = this.props.moment( postUtils.getEditedTime( post ) ),
 			label;
@@ -168,13 +161,13 @@ const StatusLabel = React.createClass( {
 		}
 
 		return label;
-	},
+	};
 
-	updateCurrentTime: function() {
+	updateCurrentTime = () => {
 		this.setState( {
 			currentTime: Date.now(),
 		} );
-	},
-} );
+	};
+}
 
 export default localize( StatusLabel );

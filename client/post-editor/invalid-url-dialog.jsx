@@ -17,32 +17,24 @@ import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 import { getSiteFragment } from 'lib/route/path';
 
-const EditorTrashedDialog = React.createClass( {
-	displayName: 'EditorTrashedDialog',
+class EditorTrashedDialog extends React.Component {
+    static displayName = 'EditorTrashedDialog';
 
-	getInitialState() {
-		return {
-			isPage: this.isPage(),
-		};
-	},
+	static defaultProps = {
+		onClose: noop,
+		onSave: noop,
+	};
 
-	isPage() {
-		return startsWith( page.current, '/page/' );
-	},
-
-	getDefaultProps() {
-		return {
-			onClose: noop,
-			onSave: noop,
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		onClose: PropTypes.func,
 		onSave: PropTypes.func,
-	},
+	};
 
-	getDialogButtons() {
+	isPage = () => {
+		return startsWith( page.current, '/page/' );
+	};
+
+	getDialogButtons = () => {
 		const newText = this.state.isPage
 			? this.props.translate( 'New Page' )
 			: this.props.translate( 'New Post' );
@@ -54,15 +46,15 @@ const EditorTrashedDialog = React.createClass( {
 				{ this.props.translate( 'Close' ) }
 			</FormButton>,
 		];
-	},
+	};
 
-	startNewPage() {
+	startNewPage = () => {
 		const siteFragment = getSiteFragment( page.current );
 		const postSegment = this.state.isPage ? '/page/' : '/post/';
 		page( postSegment + siteFragment );
-	},
+	};
 
-	getStrings( isPage ) {
+	getStrings = isPage => {
 		if ( isPage ) {
 			return {
 				dialogTitle: this.props.translate( 'Invalid Page Address' ),
@@ -77,7 +69,11 @@ const EditorTrashedDialog = React.createClass( {
 				'This post cannot be found. Check the web address or start a new post.'
 			),
 		};
-	},
+	};
+
+	state = {
+		isPage: this.isPage(),
+	};
 
 	render() {
 		const strings = this.getStrings( this.state.isPage );
@@ -87,7 +83,7 @@ const EditorTrashedDialog = React.createClass( {
 				<p>{ strings.dialogContent }</p>
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EditorTrashedDialog );

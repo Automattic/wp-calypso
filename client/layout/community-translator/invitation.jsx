@@ -15,14 +15,14 @@ import Gridicon from 'gridicons';
 import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
-const CommunityTranslatorInvitation = React.createClass( {
-	displayName: 'CommunityTranslatorInvitation',
+class CommunityTranslatorInvitation extends React.Component {
+    static displayName = 'CommunityTranslatorInvitation';
 
-	propTypes: {
+	static propTypes = {
 		isVisible: PropTypes.bool,
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.isVisible ) {
 			return null;
 		}
@@ -88,23 +88,23 @@ const CommunityTranslatorInvitation = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	}
 
-	acceptButton: function() {
+	acceptButton = () => {
 		recordEvent( 'Clicked Accept Button' );
 		invitationUtils.activate();
-	},
+	};
 
-	dismissButton: function() {
+	dismissButton = () => {
 		recordEvent( 'Clicked Dismiss Button' );
 		invitationUtils.dismiss();
-	},
+	};
 
-	docsLink: function() {
+	docsLink = () => {
 		recordEvent( 'More Info' );
 		invitationUtils.recordDocsEvent();
-	},
-} );
+	};
+}
 
 export default localize( CommunityTranslatorInvitation );
 

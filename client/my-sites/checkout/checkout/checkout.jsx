@@ -11,6 +11,8 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -51,25 +53,26 @@ import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 
-const Checkout = React.createClass( {
-	mixins: [ observe( 'sites', 'productsList' ) ],
+const Checkout = createReactClass({
+    displayName: 'Checkout',
+    mixins: [ observe( 'sites', 'productsList' ) ],
 
-	propTypes: {
+    propTypes: {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
 		selectedFeature: PropTypes.string,
 	},
 
-	getInitialState: function() {
+    getInitialState: function() {
 		return { previousCart: null };
 	},
 
-	componentWillMount: function() {
+    componentWillMount: function() {
 		upgradesActions.resetTransaction();
 		this.props.recordApplePayStatus();
 	},
 
-	componentDidMount: function() {
+    componentDidMount: function() {
 		if ( this.redirectIfEmptyCart() ) {
 			return;
 		}
@@ -86,7 +89,7 @@ const Checkout = React.createClass( {
 		this.props.loadTrackingTool( 'HotJar' );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+    componentWillReceiveProps: function( nextProps ) {
 		if (
 			! this.props.cart.hasLoadedFromServer &&
 			nextProps.cart.hasLoadedFromServer &&
@@ -96,7 +99,7 @@ const Checkout = React.createClass( {
 		}
 	},
 
-	componentDidUpdate: function() {
+    componentDidUpdate: function() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return false;
 		}
@@ -110,7 +113,7 @@ const Checkout = React.createClass( {
 		}
 	},
 
-	trackPageView: function( props ) {
+    trackPageView: function( props ) {
 		props = props || this.props;
 
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
@@ -121,14 +124,14 @@ const Checkout = React.createClass( {
 		recordViewCheckout( props.cart );
 	},
 
-	getProductSlugFromSynonym( slug ) {
+    getProductSlugFromSynonym( slug ) {
 		if ( 'no-ads' === slug ) {
 			return 'no-adverts/no-adverts.php';
 		}
 		return slug;
 	},
 
-	addProductToCart() {
+    addProductToCart() {
 		if ( this.props.purchaseId ) {
 			this.addRenewItemToCart();
 		} else {
@@ -139,7 +142,7 @@ const Checkout = React.createClass( {
 		}
 	},
 
-	addRenewItemToCart() {
+    addRenewItemToCart() {
 		const { product, purchaseId, selectedSiteSlug } = this.props;
 		const [ slug, meta ] = product.split( ':' );
 		const productSlug = this.getProductSlugFromSynonym( slug );
@@ -162,7 +165,7 @@ const Checkout = React.createClass( {
 		upgradesActions.addItem( cartItem );
 	},
 
-	addNewItemToCart() {
+    addNewItemToCart() {
 		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
 
 		let cartItem, cartMeta;
@@ -186,7 +189,7 @@ const Checkout = React.createClass( {
 		}
 	},
 
-	redirectIfEmptyCart: function() {
+    redirectIfEmptyCart: function() {
 		const { selectedSiteSlug, transaction } = this.props;
 		let redirectTo = '/plans/';
 
@@ -222,7 +225,7 @@ const Checkout = React.createClass( {
 		return true;
 	},
 
-	/**
+    /**
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
 	 *
@@ -233,7 +236,7 @@ const Checkout = React.createClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
-	getCheckoutCompleteRedirectPath: function() {
+    getCheckoutCompleteRedirectPath: function() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
 
@@ -265,7 +268,7 @@ const Checkout = React.createClass( {
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 
-	handleCheckoutCompleteRedirect: function() {
+    handleCheckoutCompleteRedirect: function() {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -374,7 +377,7 @@ const Checkout = React.createClass( {
 		page( redirectPath );
 	},
 
-	content: function() {
+    content: function() {
 		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
@@ -401,14 +404,14 @@ const Checkout = React.createClass( {
 		);
 	},
 
-	isLoading: function() {
+    isLoading: function() {
 		const isLoadingCart = ! this.props.cart.hasLoadedFromServer,
 			isLoadingProducts = ! this.props.productsList.hasLoadedFromServer();
 
 		return isLoadingCart || isLoadingProducts;
 	},
 
-	needsDomainDetails: function() {
+    needsDomainDetails: function() {
 		const cart = this.props.cart,
 			transaction = this.props.transaction;
 
@@ -423,7 +426,7 @@ const Checkout = React.createClass( {
 		);
 	},
 
-	render: function() {
+    render: function() {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -434,8 +437,8 @@ const Checkout = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+});
 
 export default connect(
 	state => {

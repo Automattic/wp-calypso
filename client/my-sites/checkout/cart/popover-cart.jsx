@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -25,8 +26,10 @@ import CartPlanAd from './cart-plan-ad';
 import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const PopoverCart = React.createClass( {
-	propTypes: {
+const PopoverCart = createReactClass({
+    displayName: 'PopoverCart',
+
+    propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
@@ -37,7 +40,7 @@ const PopoverCart = React.createClass( {
 		onKeepSearchingClick: PropTypes.func.isRequired,
 	},
 
-	itemCount: function() {
+    itemCount: function() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return;
 		}
@@ -45,7 +48,7 @@ const PopoverCart = React.createClass( {
 		return reject( this.props.cart.products, isCredits ).length;
 	},
 
-	render: function() {
+    render: function() {
 		const { cart, selectedSite } = this.props;
 		let countBadge;
 		const classes = classNames( {
@@ -78,7 +81,7 @@ const PopoverCart = React.createClass( {
 		);
 	},
 
-	cartContent: function() {
+    cartContent: function() {
 		if ( ! this.props.pinned ) {
 			return (
 				<Popover
@@ -110,12 +113,12 @@ const PopoverCart = React.createClass( {
 		}
 	},
 
-	onToggle: function( event ) {
+    onToggle: function( event ) {
 		this.props.closeSectionNavMobilePanel();
 		this.props.onToggle( event );
 	},
 
-	cartBody: function() {
+    cartBody: function() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return <CartBodyLoadingPlaceholder />;
 		}
@@ -143,7 +146,7 @@ const PopoverCart = React.createClass( {
 		);
 	},
 
-	onClose: function() {
+    onClose: function() {
 		// Since this callback can fire after the user navigates off the page, we
 		// we need to check if it's mounted to prevent errors.
 		if ( ! this.isMounted() ) {
@@ -156,7 +159,7 @@ const PopoverCart = React.createClass( {
 		}
 
 		this.onToggle();
-	},
-} );
+	}
+});
 
 export default localize( PopoverCart );

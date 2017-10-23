@@ -21,8 +21,8 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
-const PluginSiteJetpack = React.createClass( {
-	propTypes: {
+class PluginSiteJetpack extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
 		notices: PropTypes.object,
@@ -32,20 +32,18 @@ const PluginSiteJetpack = React.createClass( {
 			remove: PropTypes.bool,
 		} ),
 		isAutoManaged: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			allowedActions: {
-				activation: true,
-				autoupdate: true,
-				remove: true,
-			},
-			isAutoManaged: false,
-		};
-	},
+	static defaultProps = {
+		allowedActions: {
+			activation: true,
+			autoupdate: true,
+			remove: true,
+		},
+		isAutoManaged: false,
+	};
 
-	renderInstallButton: function() {
+	renderInstallButton = () => {
 		var installInProgress = PluginsLog.isInProgressAction(
 			this.props.site.ID,
 			this.props.plugin.slug,
@@ -61,9 +59,9 @@ const PluginSiteJetpack = React.createClass( {
 				isInstalling={ installInProgress }
 			/>
 		);
-	},
+	};
 
-	renderInstallPlugin: function() {
+	renderInstallPlugin = () => {
 		return (
 			<FoldableCard
 				compact
@@ -72,9 +70,9 @@ const PluginSiteJetpack = React.createClass( {
 				actionButton={ this.renderInstallButton() }
 			/>
 		);
-	},
+	};
 
-	renderPluginSite: function() {
+	renderPluginSite = () => {
 		const {
 			activation: canToggleActivation,
 			autoupdate: canToggleAutoupdate,
@@ -137,9 +135,9 @@ const PluginSiteJetpack = React.createClass( {
 				</div>
 			</FoldableCard>
 		);
-	},
+	};
 
-	renderManageWarning: function() {
+	renderManageWarning = () => {
 		return (
 			<FoldableCard
 				compact
@@ -150,9 +148,9 @@ const PluginSiteJetpack = React.createClass( {
 				}
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
 		}
@@ -170,7 +168,7 @@ const PluginSiteJetpack = React.createClass( {
 		}
 
 		return this.renderPluginSite();
-	},
-} );
+	}
+}
 
 export default localize( PluginSiteJetpack );

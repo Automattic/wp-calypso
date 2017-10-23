@@ -24,29 +24,36 @@ import constants from 'me/constants';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
-const Security2faCodePrompt = React.createClass( {
-	displayName: 'Security2faCodePrompt',
+class Security2faCodePrompt extends React.Component {
+    static displayName = 'Security2faCodePrompt';
 
-	codeRequestTimer: false,
+	static defaultProps = {
+		action: false,
+		requestSMSOnMount: false,
+		showCancelButton: true,
+		showSMSButton: true,
+	};
 
-	getDefaultProps: function() {
-		return {
-			action: false,
-			requestSMSOnMount: false,
-			showCancelButton: true,
-			showSMSButton: true,
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		action: PropTypes.string,
 		onCancel: PropTypes.func,
 		onSuccess: PropTypes.func.isRequired,
 		requestSMSOnMount: PropTypes.bool,
 		showCancelButton: PropTypes.bool,
-	},
+	};
 
-	componentDidMount: function() {
+	state = {
+		codeRequestPerformed: false,
+		codeRequestsAllowed: false,
+		lastError: false,
+		lastErrorType: false,
+		submittingCode: false,
+		verificationCode: '',
+	};
+
+	codeRequestTimer = false;
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 
 		if ( this.props.requestSMSOnMount ) {
@@ -54,47 +61,36 @@ const Security2faCodePrompt = React.createClass( {
 		} else {
 			this.allowCodeRequests();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 		this.cancelCodeRequestTimer();
-	},
+	}
 
-	cancelCodeRequestTimer: function() {
+	cancelCodeRequestTimer = () => {
 		if ( this.codeRequestTimer ) {
 			clearTimeout( this.codeRequestTimer );
 		}
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			codeRequestPerformed: false,
-			codeRequestsAllowed: false,
-			lastError: false,
-			lastErrorType: false,
-			submittingCode: false,
-			verificationCode: '',
-		};
-	},
-
-	allowCodeRequests: function() {
+	allowCodeRequests = () => {
 		this.setState( { codeRequestsAllowed: true } );
-	},
+	};
 
-	onRequestCode: function( event ) {
+	onRequestCode = event => {
 		event.preventDefault();
 		this.requestCode();
-	},
+	};
 
-	onCancel: function( event ) {
+	onCancel = event => {
 		event.preventDefault();
 		if ( this.props.onCancel ) {
 			this.props.onCancel();
 		}
-	},
+	};
 
-	requestCode: function() {
+	requestCode = () => {
 		this.setState( {
 			codeRequestsAllowed: false,
 			codeRequestPerformed: true,
@@ -102,9 +98,9 @@ const Security2faCodePrompt = React.createClass( {
 		} );
 		twoStepAuthorization.sendSMSCode( this.onCodeRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
-	},
+	};
 
-	onCodeRequestResponse: function( error ) {
+	onCodeRequestResponse = error => {
 		if ( error ) {
 			this.setState( {
 				codeRequestPerformed: false,
@@ -114,14 +110,14 @@ const Security2faCodePrompt = React.createClass( {
 				lastErrorType: 'is-info',
 			} );
 		}
-	},
+	};
 
-	onSubmit: function( event ) {
+	onSubmit = event => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
-	},
+	};
 
-	onBeginCodeValidation: function() {
+	onBeginCodeValidation = () => {
 		var args = {
 			code: this.state.verificationCode,
 		};
@@ -131,9 +127,9 @@ const Security2faCodePrompt = React.createClass( {
 		}
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
-	},
+	};
 
-	onValidationResponseReceived: function( error, data ) {
+	onValidationResponseReceived = (error, data) => {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
@@ -149,9 +145,9 @@ const Security2faCodePrompt = React.createClass( {
 		} else {
 			this.props.onSuccess();
 		}
-	},
+	};
 
-	getSubmitButtonLabel: function() {
+	getSubmitButtonLabel = () => {
 		var label;
 
 		switch ( this.props.action ) {
@@ -172,17 +168,17 @@ const Security2faCodePrompt = React.createClass( {
 		}
 
 		return label;
-	},
+	};
 
-	clearLastError: function() {
+	clearLastError = () => {
 		this.setState( { lastError: false, lastErrorType: false } );
-	},
+	};
 
-	getFormDisabled: function() {
+	getFormDisabled = () => {
 		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
-	},
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError = () => {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -194,9 +190,9 @@ const Security2faCodePrompt = React.createClass( {
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		var codePlaceholder = twoStepAuthorization.isTwoStepSMSEnabled()
 			? constants.sevenDigit2faPlaceholder
 			: constants.sixDigit2faPlaceholder;
@@ -277,12 +273,12 @@ const Security2faCodePrompt = React.createClass( {
 				</FormButtonsBar>
 			</form>
 		);
-	},
+	}
 
-	handleChange( e ) {
+	handleChange = e => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
-	},
-} );
+	};
+}
 
 export default localize( Security2faCodePrompt );

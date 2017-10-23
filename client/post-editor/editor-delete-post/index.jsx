@@ -18,22 +18,20 @@ import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
-const EditorDeletePost = React.createClass( {
-	displayName: 'EditorDeletePost',
+class EditorDeletePost extends React.Component {
+    static displayName = 'EditorDeletePost';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		onTrashingPost: PropTypes.func,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isTrashing: false,
-		};
-	},
+	state = {
+		isTrashing: false,
+	};
 
-	sendToTrash() {
+	sendToTrash = () => {
 		this.setState( { isTrashing: true } );
 
 		const handleTrashingPost = function( error ) {
@@ -50,9 +48,9 @@ const EditorDeletePost = React.createClass( {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.trash( this.props.post, handleTrashingPost );
 		}
-	},
+	};
 
-	onSendToTrash() {
+	onSendToTrash = () => {
 		let message;
 		if ( this.state.isTrashing ) {
 			return;
@@ -74,7 +72,7 @@ const EditorDeletePost = React.createClass( {
 			this.props.translate( 'Move to trash' ),
 			this.props.translate( 'Back' )
 		);
-	},
+	};
 
 	render() {
 		const { post } = this.props;
@@ -102,7 +100,7 @@ const EditorDeletePost = React.createClass( {
 				</Button>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EditorDeletePost );

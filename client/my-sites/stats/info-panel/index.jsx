@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,22 +15,20 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
-const StatsInfoPanel = React.createClass( {
-	displayName: 'StatsInfoPanel',
+class StatsInfoPanel extends React.PureComponent {
+    static displayName = 'StatsInfoPanel';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		module: PropTypes.string,
-	},
+	};
 
-	recordEvent() {
+	recordEvent = () => {
 		analytics.ga.recordEvent(
 			'Stats',
 			'Clicked More Panel Information Help Link',
 			titlecase( this.props.module )
 		);
-	},
+	};
 
 	render() {
 		const infoPanelClass = 'module-content-text module-content-text-info';
@@ -302,7 +299,7 @@ const StatsInfoPanel = React.createClass( {
 				break;
 		}
 		return infoView;
-	},
-} );
+	}
+}
 
 export default localize( StatsInfoPanel );

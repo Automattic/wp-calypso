@@ -18,38 +18,37 @@ import tableRows from './table-rows';
 
 import SearchCard from 'components/search-card';
 
-const TransactionsTable = React.createClass( {
-	displayName: 'TransactionsTable',
+class TransactionsTable extends React.Component {
+    static displayName = 'TransactionsTable';
 
-	getInitialState: function() {
+	static defaultProps = {
+		header: false,
+	};
+
+	constructor(props) {
+	    super(props);
 		var initialTransactions;
 
-		if ( this.props.transactions ) {
-			initialTransactions = tableRows.filter( this.props.transactions, this.props.initialFilter );
+		if ( props.transactions ) {
+			initialTransactions = tableRows.filter( props.transactions, props.initialFilter );
 		}
 
-		return {
+		this.state = {
 			transactions: initialTransactions,
-			filter: this.props.initialFilter,
+			filter: props.initialFilter,
 		};
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			header: false,
-		};
-	},
-
-	componentWillUpdate: function() {
+	componentWillUpdate() {
 		if ( ! this.state.transactions ) {
 			// `defer` is necessary to prevent a React.js rendering error. It is
 			// not possible to call `this.setState` during `componentWillUpdate`, so
 			// we use `defer` to run the update on the next event loop.
 			defer( this.filterTransactions.bind( this, this.state.filter ) );
 		}
-	},
+	}
 
-	filterTransactions: function( filter ) {
+	filterTransactions = filter => {
 		var newFilter, newTransactions;
 
 		if ( ! this.props.transactions ) {
@@ -72,13 +71,13 @@ const TransactionsTable = React.createClass( {
 			transactions: newTransactions,
 			filter: newFilter,
 		} );
-	},
+	};
 
-	onSearch: function( terms ) {
+	onSearch = terms => {
 		this.filterTransactions( { search: terms } );
-	},
+	};
 
-	render: function() {
+	render() {
 		var header;
 
 		if ( false !== this.props.header ) {
@@ -103,9 +102,9 @@ const TransactionsTable = React.createClass( {
 				</table>
 			</div>
 		);
-	},
+	}
 
-	serviceName: function( transaction ) {
+	serviceName = transaction => {
 		var item, name;
 
 		if ( ! transaction.items ) {
@@ -119,9 +118,9 @@ const TransactionsTable = React.createClass( {
 		}
 
 		return name;
-	},
+	};
 
-	serviceNameDescription: function( transaction ) {
+	serviceNameDescription = transaction => {
 		var description;
 		if ( transaction.domain ) {
 			description = (
@@ -139,9 +138,9 @@ const TransactionsTable = React.createClass( {
 		}
 
 		return description;
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return (
 			<tr className="billing-history__transaction is-placeholder">
 				<td className="date">
@@ -155,9 +154,9 @@ const TransactionsTable = React.createClass( {
 				</td>
 			</tr>
 		);
-	},
+	};
 
-	renderRows: function() {
+	renderRows = () => {
 		if ( ! this.state.transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -198,7 +197,7 @@ const TransactionsTable = React.createClass( {
 				</tr>
 			);
 		}, this );
-	},
-} );
+	};
+}
 
 export default localize( TransactionsTable );

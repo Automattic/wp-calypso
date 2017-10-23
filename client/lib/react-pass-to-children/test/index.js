@@ -19,11 +19,11 @@ import passToChildren from '../';
 var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 	PassThrough;
 
-PassThrough = React.createClass( {
-	render: function() {
+PassThrough = class extends React.Component {
+    render() {
 		return passToChildren( this, DUMMY_PROPS );
-	},
-} );
+	}
+};
 
 describe( 'index', () => {
 	var renderer;

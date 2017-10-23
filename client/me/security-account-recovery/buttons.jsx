@@ -15,19 +15,19 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 
-const SecurityAccountRecoveryManageContactButtons = React.createClass( {
-	displayName: 'SecurityAccountRecoveryManageContactButtons',
+class SecurityAccountRecoveryManageContactButtons extends React.Component {
+    static displayName = 'SecurityAccountRecoveryManageContactButtons';
 
-	propTypes: {
+	static propTypes = {
 		isSavable: PropTypes.bool,
 		isDeletable: PropTypes.bool,
 		saveText: PropTypes.string,
 		onSave: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onDelete: PropTypes.func.isRequired,
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<FormButtonsBar>
 				<FormButton disabled={ ! this.props.isSavable } onClick={ this.props.onSave }>
@@ -49,7 +49,7 @@ const SecurityAccountRecoveryManageContactButtons = React.createClass( {
 				) : null }
 			</FormButtonsBar>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SecurityAccountRecoveryManageContactButtons );

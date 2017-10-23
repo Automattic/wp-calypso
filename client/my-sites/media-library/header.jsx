@@ -24,34 +24,30 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-const MediaLibraryHeader = React.createClass( {
-	displayName: 'MediaLibraryHeader',
+class MediaLibraryHeader extends React.Component {
+    static displayName = 'MediaLibraryHeader';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: PropTypes.func,
 		onAddMedia: PropTypes.func,
 		sticky: PropTypes.bool,
-	},
+	};
 
-	getInitialState() {
-		return {
-			addingViaUrl: false,
-			isMoreOptionsVisible: false,
-		};
-	},
+	static defaultProps = {
+		onAddMedia: () => {},
+		sliderPositionCount: 100,
+		sticky: false,
+	};
 
-	getDefaultProps() {
-		return {
-			onAddMedia: () => {},
-			sliderPositionCount: 100,
-			sticky: false,
-		};
-	},
+	state = {
+		addingViaUrl: false,
+		isMoreOptionsVisible: false,
+	};
 
-	setMoreOptionsContext( component ) {
+	setMoreOptionsContext = component => {
 		if ( ! component ) {
 			return;
 		}
@@ -59,22 +55,22 @@ const MediaLibraryHeader = React.createClass( {
 		this.setState( {
 			moreOptionsContext: component,
 		} );
-	},
+	};
 
-	toggleAddViaUrl( state ) {
+	toggleAddViaUrl = state => {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
 		} );
-	},
+	};
 
-	toggleMoreOptions( state ) {
+	toggleMoreOptions = state => {
 		this.setState( {
 			isMoreOptionsVisible: state,
 		} );
-	},
+	};
 
-	renderUploadButtons() {
+	renderUploadButtons = () => {
 		const { site, filter, onAddMedia } = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
@@ -116,7 +112,7 @@ const MediaLibraryHeader = React.createClass( {
 				</Button>
 			</ButtonGroup>
 		);
-	},
+	};
 
 	render() {
 		const { site, onAddMedia } = this.props;
@@ -151,7 +147,7 @@ const MediaLibraryHeader = React.createClass( {
 		} else {
 			return card;
 		}
-	},
-} );
+	}
+}
 
 export default localize( MediaLibraryHeader );

@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -14,10 +13,8 @@ import FeatureComparison from '../index';
 import PlanCompareCard from 'my-sites/plan-compare-card/index';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 
-export default React.createClass( {
-	displayName: 'FeatureComparison',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+    static displayName = 'FeatureComparison';
 
 	render() {
 		return (
@@ -49,5 +46,5 @@ export default React.createClass( {
 				</PlanCompareCard>
 			</FeatureComparison>
 		);
-	},
-} );
+	}
+}

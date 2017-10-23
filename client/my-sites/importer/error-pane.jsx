@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Page from 'page';
 
 /**
@@ -15,23 +14,21 @@ import Page from 'page';
  */
 import Notice from 'components/notice';
 
-const SiteSettingsImporterError = React.createClass( {
-	displayName: 'SiteSettingsImporterError',
+class SiteSettingsImporterError extends React.PureComponent {
+    static displayName = 'SiteSettingsImporterError';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
-	},
+	};
 
-	contactSupport: function( event ) {
+	contactSupport = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
-	},
+	};
 
-	getImportError: function() {
+	getImportError = () => {
 		return this.props.translate(
 			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.',
 			{
@@ -45,9 +42,9 @@ const SiteSettingsImporterError = React.createClass( {
 				},
 			}
 		);
-	},
+	};
 
-	getUploadError: function() {
+	getUploadError = () => {
 		const defaultError = this.props.translate( 'Unexpected error during the upload' );
 		const { description = '' } = this.props;
 
@@ -63,9 +60,9 @@ const SiteSettingsImporterError = React.createClass( {
 				},
 			}
 		);
-	},
+	};
 
-	getErrorMessage: function() {
+	getErrorMessage = () => {
 		var actionMessage;
 
 		switch ( this.props.type ) {
@@ -79,20 +76,20 @@ const SiteSettingsImporterError = React.createClass( {
 		}
 
 		return actionMessage;
-	},
+	};
 
-	retryImport: function( event ) {
+	retryImport = event => {
 		event.preventDefault();
 		event.stopPropagation();
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<Notice status="is-error" text={ this.getErrorMessage() } showDismiss={ false } />
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SiteSettingsImporterError );

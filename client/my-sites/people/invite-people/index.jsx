@@ -50,28 +50,24 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
-const InvitePeople = React.createClass( {
-	displayName: 'InvitePeople',
+class InvitePeople extends React.Component {
+    static displayName = 'InvitePeople';
 
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
 		InvitesSentStore.on( 'change', this.refreshFormState );
-	},
+	}
 
 	componentWillUnmount() {
 		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
 		InvitesSentStore.off( 'change', this.refreshFormState );
-	},
+	}
 
 	componentWillReceiveProps() {
 		this.setState( this.resetState() );
-	},
+	}
 
-	getInitialState() {
-		return this.resetState();
-	},
-
-	resetState() {
+	resetState = () => {
 		return {
 			usernamesOrEmails: [],
 			role: 'follower',
@@ -82,9 +78,9 @@ const InvitePeople = React.createClass( {
 			errors: {},
 			success: [],
 		};
-	},
+	};
 
-	refreshFormState() {
+	refreshFormState = () => {
 		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
 
 		if ( sendInvitesSuccess ) {
@@ -109,9 +105,9 @@ const InvitePeople = React.createClass( {
 			this.setState( updatedState );
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_retry' );
 		}
-	},
+	};
 
-	onTokensChange( tokens ) {
+	onTokensChange = tokens => {
 		const { role, errorToDisplay, usernamesOrEmails, errors, success } = this.state;
 		const filteredTokens = tokens.map( value => {
 			if ( 'object' === typeof value ) {
@@ -141,39 +137,39 @@ const InvitePeople = React.createClass( {
 		} else {
 			analytics.tracks.recordEvent( 'calypso_invite_people_token_removed' );
 		}
-	},
+	};
 
-	onMessageChange( event ) {
+	onMessageChange = event => {
 		this.setState( { message: event.target.value } );
-	},
+	};
 
-	onRoleChange( event ) {
+	onRoleChange = event => {
 		const role = event.target.value;
 		this.setState( { role } );
 		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
-	},
+	};
 
-	onFocusTokenField() {
+	onFocusTokenField = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_people_token_field_focus' );
-	},
+	};
 
-	onFocusRoleSelect() {
+	onFocusRoleSelect = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_people_role_select_focus' );
-	},
+	};
 
-	onFocusCustomMessage() {
+	onFocusCustomMessage = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_people_custom_message_focus' );
-	},
+	};
 
-	onClickSendInvites() {
+	onClickSendInvites = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_people_send_invite_button_click' );
-	},
+	};
 
-	onClickRoleExplanation() {
+	onClickRoleExplanation = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_people_role_explanation_link_click' );
-	},
+	};
 
-	refreshValidation() {
+	refreshValidation = () => {
 		const errors =
 				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
 			success = InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [],
@@ -189,17 +185,17 @@ const InvitePeople = React.createClass( {
 		if ( errorsKeys.length ) {
 			analytics.tracks.recordEvent( 'calypso_invite_people_validation_refreshed_with_error' );
 		}
-	},
+	};
 
-	getTooltip( value ) {
+	getTooltip = value => {
 		const { errors, errorToDisplay } = this.state;
 		if ( errorToDisplay && value !== errorToDisplay ) {
 			return null;
 		}
 		return get( errors, [ value, 'message' ] );
-	},
+	};
 
-	getTokensWithStatus() {
+	getTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
 		const tokens = this.state.usernamesOrEmails.map( value => {
@@ -222,9 +218,9 @@ const InvitePeople = React.createClass( {
 
 		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
 		return tokens;
-	},
+	};
 
-	submitForm( event ) {
+	submitForm = event => {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
@@ -249,9 +245,9 @@ const InvitePeople = React.createClass( {
 			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
-	},
+	};
 
-	isSubmitDisabled() {
+	isSubmitDisabled = () => {
 		const { success, usernamesOrEmails } = this.state;
 		const invitees = Array.isArray( usernamesOrEmails ) ? usernamesOrEmails : [];
 
@@ -269,24 +265,24 @@ const InvitePeople = React.createClass( {
 		return some( usernamesOrEmails, value => {
 			return ! includes( success, value );
 		} );
-	},
+	};
 
-	hasValidationErrors() {
+	hasValidationErrors = () => {
 		const { errors } = this.state;
 		const errorKeys = errors && Object.keys( errors );
 
 		return !! errorKeys.length;
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
 		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );
-	},
+	};
 
-	renderRoleExplanation() {
+	renderRoleExplanation = () => {
 		const { translate } = this.props;
 		return (
 			<a
@@ -298,13 +294,13 @@ const InvitePeople = React.createClass( {
 				{ translate( 'Learn more about roles' ) }
 			</a>
 		);
-	},
+	};
 
-	enableSSO() {
+	enableSSO = () => {
 		this.props.activateModule( this.props.siteId, 'sso' );
-	},
+	};
 
-	renderInviteForm() {
+	renderInviteForm = () => {
 		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
 
 		const inviteForm = (
@@ -416,7 +412,9 @@ const InvitePeople = React.createClass( {
 		}
 
 		return inviteForm;
-	},
+	};
+
+	state = this.resetState();
 
 	render() {
 		const { site, translate } = this.props;
@@ -441,8 +439,8 @@ const InvitePeople = React.createClass( {
 				{ this.renderInviteForm() }
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

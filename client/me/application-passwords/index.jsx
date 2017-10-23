@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords' );
@@ -33,7 +34,7 @@ import Card from 'components/card';
 import classNames from 'classnames';
 import { errorNotice } from 'state/notices/actions';
 
-const ApplicationPasswords = React.createClass( {
+const ApplicationPasswords = createReactClass({
 	displayName: 'ApplicationPasswords',
 	mixins: [ observe( 'appPasswordsData' ), eventRecorder ],
 
@@ -242,7 +243,7 @@ const ApplicationPasswords = React.createClass( {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	},
-} );
+});
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
 	localize( ApplicationPasswords )

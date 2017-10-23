@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 
 // Internal dependencies
@@ -16,7 +17,7 @@ import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
-const AddProfileLinksButtons = React.createClass( {
+const AddProfileLinksButtons = createReactClass({
 	displayName: 'AddProfileLinksButtons',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -74,6 +75,6 @@ const AddProfileLinksButtons = React.createClass( {
 			</div>
 		);
 	},
-} );
+});
 
 export default localize( AddProfileLinksButtons );

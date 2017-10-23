@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-const PostSelectorSearch = React.createClass( {
-	displayName: 'PostSelectorSearch',
+class PostSelectorSearch extends React.Component {
+    static displayName = 'PostSelectorSearch';
 
-	propTypes: {
+	static propTypes = {
 		searchTerm: PropTypes.string,
 		onSearch: PropTypes.func.isRequired,
-	},
+	};
 
 	render() {
 		return (
@@ -29,7 +29,7 @@ const PostSelectorSearch = React.createClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PostSelectorSearch );

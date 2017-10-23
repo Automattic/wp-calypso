@@ -19,41 +19,37 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
-const SecurityAccountRecoveryRecoveryEmailEdit = React.createClass( {
-	displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
+class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
+    static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
-	propTypes: {
+	static propTypes = {
 		storedEmail: PropTypes.string,
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
 		onDelete: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			storedEmail: null,
-		};
-	},
+	static defaultProps = {
+		storedEmail: null,
+	};
 
-	getInitialState: function() {
-		return {
-			email: this.props.storedEmail || null,
-		};
-	},
+	state = {
+		email: this.props.storedEmail || null,
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.focusInput();
-	},
+	}
 
-	renderValidation: function() {
+	renderValidation = () => {
 		var validation = null;
 		if ( this.state.validation ) {
 			validation = <FormInputValidation isError text={ this.state.validation } />;
 		}
 		return validation;
-	},
+	};
 
-	renderExplanation: function() {
+	renderExplanation = () => {
 		var explanation = null,
 			text;
 
@@ -67,9 +63,9 @@ const SecurityAccountRecoveryRecoveryEmailEdit = React.createClass( {
 			explanation = <FormSettingExplanation>{ text }</FormSettingExplanation>;
 		}
 		return explanation;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className={ this.props.className }>
 				<FormFieldset>
@@ -96,13 +92,13 @@ const SecurityAccountRecoveryRecoveryEmailEdit = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	}
 
-	focusInput: function() {
+	focusInput = () => {
 		ReactDom.findDOMNode( this.refs.email ).focus();
-	},
+	};
 
-	isSavable: function() {
+	isSavable = () => {
 		if ( ! this.state.email ) {
 			return false;
 		}
@@ -112,15 +108,15 @@ const SecurityAccountRecoveryRecoveryEmailEdit = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	onKeyUp: function( event ) {
+	onKeyUp = event => {
 		if ( event.key === 'Enter' ) {
 			this.onSave();
 		}
-	},
+	};
 
-	onSave: function() {
+	onSave = () => {
 		var email = this.state.email;
 
 		if ( ! this.isSavable() ) {
@@ -145,20 +141,20 @@ const SecurityAccountRecoveryRecoveryEmailEdit = React.createClass( {
 
 		this.setState( { validation: null } );
 		this.props.onSave( email );
-	},
+	};
 
-	onCancel: function() {
+	onCancel = () => {
 		this.props.onCancel();
-	},
+	};
 
-	onDelete: function() {
+	onDelete = () => {
 		this.props.onDelete();
-	},
+	};
 
-	handleChange( e ) {
+	handleChange = e => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
-	},
-} );
+	};
+}
 
 export default localize( SecurityAccountRecoveryRecoveryEmailEdit );

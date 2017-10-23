@@ -42,21 +42,21 @@ import {
 	siteHasMinimumJetpackVersion,
 } from 'state/sites/selectors';
 
-const PostsMain = React.createClass( {
-	componentWillMount() {
+class PostsMain extends React.Component {
+    componentWillMount() {
 		this.setWarning( this.props );
-	},
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if (
 			nextProps.siteId !== this.props.siteId ||
 			nextProps.hasMinimumJetpackVersion !== this.props.hasMinimumJetpackVersion
 		) {
 			this.setWarning( nextProps );
 		}
-	},
+	}
 
-	showDrafts() {
+	showDrafts = () => {
 		const { isJetpack } = this.props;
 
 		// Jetpack sites can have malformed counts
@@ -78,9 +78,9 @@ const PostsMain = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	mostRecentDrafts() {
+	mostRecentDrafts = () => {
 		const { siteId, siteSlug } = this.props;
 
 		if ( ! siteId || ! this.showDrafts() ) {
@@ -120,7 +120,7 @@ const PostsMain = React.createClass( {
 				) }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { author, category, context, search, siteId, statusSlug, tag } = this.props;
@@ -150,9 +150,9 @@ const PostsMain = React.createClass( {
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
 			</Main>
 		);
-	},
+	}
 
-	setWarning( { adminUrl, hasMinimumJetpackVersion, isJetpack, siteId } ) {
+	setWarning = ({ adminUrl, hasMinimumJetpackVersion, isJetpack, siteId }) => {
 		if ( siteId && isJetpack && false === hasMinimumJetpackVersion ) {
 			this.props.warningNotice(
 				this.props.translate(
@@ -167,8 +167,8 @@ const PostsMain = React.createClass( {
 				}
 			);
 		}
-	},
-} );
+	};
+}
 
 function mapStateToProps( state, { author } ) {
 	const siteId = getSelectedSiteId( state );

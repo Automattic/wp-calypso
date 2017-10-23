@@ -54,32 +54,31 @@ const helpLinks = {
 	akismet: support.JETPACK_SERVICE_AKISMET,
 };
 
-const PlansSetup = React.createClass( {
-	displayName: 'PlanSetup',
+class PlansSetup extends React.Component {
+    static displayName = 'PlanSetup';
+	sentTracks = false;
 
-	sentTracks: false,
-
-	trackConfigFinished( eventName, options = null ) {
+	trackConfigFinished = (eventName, options = null) => {
 		if ( ! this.sentTracks ) {
 			analytics.tracks.recordEvent( eventName, options );
 		}
 		this.sentTracks = true;
-	},
+	};
 
-	trackManualInstall() {
+	trackManualInstall = () => {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
-	},
+	};
 
-	trackManagePlans() {
+	trackManagePlans = () => {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
-	},
+	};
 
-	trackContactSupport() {
+	trackContactSupport = () => {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
-	},
+	};
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
+	addWporgDataToPlugins = plugins => {
 		return plugins.map( plugin => {
 			const pluginData = getPlugin( this.props.wporg, plugin.slug );
 			if ( ! pluginData ) {
@@ -87,12 +86,12 @@ const PlansSetup = React.createClass( {
 			}
 			return Object.assign( {}, plugin, pluginData );
 		} );
-	},
+	};
 
-	allPluginsHaveWporgData() {
+	allPluginsHaveWporgData = () => {
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 		return plugins.length === filter( plugins, { wporg: true } ).length;
-	},
+	};
 
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
@@ -114,11 +113,11 @@ const PlansSetup = React.createClass( {
 				}, 0 );
 			}
 		} );
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
-	},
+	}
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
@@ -133,9 +132,9 @@ const PlansSetup = React.createClass( {
 		) {
 			this.startNextPlugin( this.props.nextPlugin );
 		}
-	},
+	}
 
-	warnIfNotFinished( event ) {
+	warnIfNotFinished = event => {
 		const site = this.props.selectedSite;
 		if (
 			! site ||
@@ -150,9 +149,9 @@ const PlansSetup = React.createClass( {
 		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
-	},
+	};
 
-	startNextPlugin( plugin ) {
+	startNextPlugin = plugin => {
 		// We're already installing.
 		if ( this.props.isInstalling ) {
 			return;
@@ -177,9 +176,9 @@ const PlansSetup = React.createClass( {
 			install( plugin, site );
 		};
 		getPluginFromStore();
-	},
+	};
 
-	renderNoJetpackSiteSelected() {
+	renderNoJetpackSiteSelected = () => {
 		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
 			referrer: document.referrer,
 		} );
@@ -192,9 +191,9 @@ const PlansSetup = React.createClass( {
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
 			/>
 		);
-	},
+	};
 
-	renderCantInstallPlugins() {
+	renderCantInstallPlugins = () => {
 		const { translate } = this.props;
 		const site = this.props.selectedSite;
 		const reasons = utils.getSiteFileModDisableReason( site, 'modifyFiles' );
@@ -226,9 +225,9 @@ const PlansSetup = React.createClass( {
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
 			/>
 		);
-	},
+	};
 
-	renderNoJetpackPlan() {
+	renderNoJetpackPlan = () => {
 		return (
 			<div>
 				<h1 className="jetpack-plugins-setup__header">
@@ -236,14 +235,14 @@ const PlansSetup = React.createClass( {
 				</h1>
 			</div>
 		);
-	},
+	};
 
-	renderPluginsPlaceholders() {
+	renderPluginsPlaceholders = () => {
 		const placeholderCount = !! this.props.whitelist ? 1 : 2;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
-	},
+	};
 
-	renderPlugins( hidden = false ) {
+	renderPlugins = (hidden = false) => {
 		const site = this.props.selectedSite;
 		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
 			return this.renderPluginsPlaceholders();
@@ -279,9 +278,9 @@ const PlansSetup = React.createClass( {
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		} );
-	},
+	};
 
-	renderStatus( plugin ) {
+	renderStatus = plugin => {
 		if ( plugin.error ) {
 			return this.renderStatusError( plugin );
 		}
@@ -298,9 +297,9 @@ const PlansSetup = React.createClass( {
 		};
 
 		return <Notice { ...statusProps } text={ this.getStatusText( plugin ) } />;
-	},
+	};
 
-	getStatusText( plugin ) {
+	getStatusText = plugin => {
 		const { translate } = this.props;
 		switch ( plugin.status ) {
 			case 'done':
@@ -314,9 +313,9 @@ const PlansSetup = React.createClass( {
 			default:
 				return translate( 'Waiting to install' );
 		}
-	},
+	};
 
-	renderStatusError( plugin ) {
+	renderStatusError = plugin => {
 		const { translate } = this.props;
 
 		// This state isn't quite an error
@@ -384,9 +383,9 @@ const PlansSetup = React.createClass( {
 					<Notice { ...statusProps } text={ errorMessage || translate( 'An error occured.' ) } />
 				);
 		}
-	},
+	};
 
-	renderActions( plugin ) {
+	renderActions = plugin => {
 		if ( plugin.status === 'wait' ) {
 			return null;
 		} else if ( plugin.error !== null ) {
@@ -400,9 +399,9 @@ const PlansSetup = React.createClass( {
 		}
 
 		return null;
-	},
+	};
 
-	renderErrorMessage( plugins ) {
+	renderErrorMessage = plugins => {
 		let noticeText;
 		const { translate } = this.props;
 		const pluginsWithErrors = this.addWporgDataToPlugins( plugins );
@@ -445,9 +444,9 @@ const PlansSetup = React.createClass( {
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
-	renderSuccess() {
+	renderSuccess = () => {
 		const { translate } = this.props;
 		const site = this.props.selectedSite;
 		if ( ! this.props.hasRequested || ! this.props.isFinished ) {
@@ -477,9 +476,9 @@ const PlansSetup = React.createClass( {
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		const { translate } = this.props;
 		return (
 			<div className="jetpack-plugins-setup">
@@ -492,7 +491,7 @@ const PlansSetup = React.createClass( {
 				{ this.renderPluginsPlaceholders() }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { sitesInitialized, translate } = this.props;
@@ -562,8 +561,8 @@ const PlansSetup = React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, ownProps ) => {

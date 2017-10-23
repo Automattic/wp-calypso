@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +17,7 @@ import FormButton from 'components/forms/form-button';
 import eventRecorder from 'me/event-recorder';
 import Notice from 'components/notice';
 
-const ProfileLinksAddOther = React.createClass( {
+const ProfileLinksAddOther = createReactClass({
 	displayName: 'ProfileLinksAddOther',
 	mixins: [ eventRecorder ],
 
@@ -174,6 +175,6 @@ const ProfileLinksAddOther = React.createClass( {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	},
-} );
+});
 
 export default localize( ProfileLinksAddOther );

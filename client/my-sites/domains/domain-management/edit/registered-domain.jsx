@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,10 +23,11 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
-const RegisteredDomain = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const RegisteredDomain = createReactClass({
+    displayName: 'RegisteredDomain',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	getAutoRenewalOrExpirationDate() {
+    getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
@@ -55,7 +57,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	getLabel( { status, icon, message, href } ) {
+    getLabel( { status, icon, message, href } ) {
 		return (
 			<a href={ href }>
 				<Notice isCompact status={ status } icon={ icon }>
@@ -65,7 +67,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	getPrivacyProtection() {
+    getPrivacyProtection() {
 		const {
 				hasPrivacyProtection,
 				privateDomain,
@@ -125,11 +127,11 @@ const RegisteredDomain = React.createClass( {
 		return <Property label={ translate( 'Privacy Protection' ) }>{ label }</Property>;
 	},
 
-	handlePaymentSettingsClick() {
+    handlePaymentSettingsClick() {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
-	domainWarnings() {
+    domainWarnings() {
 		return (
 			<DomainWarnings
 				domain={ this.props.domain }
@@ -149,7 +151,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	getVerticalNav() {
+    getVerticalNav() {
 		const { expirationMoment, expired, pendingTransfer } = this.props.domain;
 		const inNormalState = ! pendingTransfer && ! expired;
 		const inGracePeriod = this.props.moment().subtract( 18, 'days' ) <= expirationMoment;
@@ -164,7 +166,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	emailNavItem() {
+    emailNavItem() {
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -173,7 +175,7 @@ const RegisteredDomain = React.createClass( {
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
 
-	nameServersNavItem() {
+    nameServersNavItem() {
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -186,7 +188,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	contactsPrivacyNavItem() {
+    contactsPrivacyNavItem() {
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -199,7 +201,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	transferNavItem() {
+    transferNavItem() {
 		const path = paths.domainManagementTransfer(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -210,7 +212,7 @@ const RegisteredDomain = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		const { domain, translate } = this.props;
 
 		return (
@@ -258,7 +260,7 @@ const RegisteredDomain = React.createClass( {
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-} );
+	}
+});
 
 export default localize( RegisteredDomain );

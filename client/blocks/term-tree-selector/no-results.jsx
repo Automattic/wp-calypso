@@ -7,16 +7,13 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
-const TermTreeSelectorNoResults = React.createClass( {
-	displayName: 'TermTreeSelectorNoResults',
+class TermTreeSelectorNoResults extends React.PureComponent {
+    static displayName = 'TermTreeSelectorNoResults';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		createLink: PropTypes.string,
-	},
+	};
 
 	render() {
 		const { createLink } = this.props;
@@ -46,7 +43,7 @@ const TermTreeSelectorNoResults = React.createClass( {
 				&nbsp;{ createMessage }
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default localize( TermTreeSelectorNoResults );

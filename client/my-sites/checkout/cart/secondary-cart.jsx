@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
@@ -25,21 +26,23 @@ import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-const SecondaryCart = React.createClass( {
-	propTypes: {
+const SecondaryCart = createReactClass({
+    displayName: 'SecondaryCart',
+
+    propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
-	mixins: [ observe( 'sites' ) ],
+    mixins: [ observe( 'sites' ) ],
 
-	getInitialState() {
+    getInitialState() {
 		return {
 			cartVisible: false,
 		};
 	},
 
-	componentWillMount() {
+    componentWillMount() {
 		this.dispatchToken = Dispatcher.register(
 			function( payload ) {
 				if ( payload.action.type === upgradesActionTypes.CART_ON_MOBILE_SHOW ) {
@@ -49,18 +52,18 @@ const SecondaryCart = React.createClass( {
 		);
 	},
 
-	componentWillUnmount() {
+    componentWillUnmount() {
 		Dispatcher.unregister( this.dispatchToken );
 	},
 
-	componentDidUpdate( prevProps, prevState ) {
+    componentDidUpdate( prevProps, prevState ) {
 		if ( ! prevState.cartVisible && this.state.cartVisible ) {
 			const node = ReactDom.findDOMNode( this.refs.cartBody );
 			scrollIntoViewport( node );
 		}
 	},
 
-	render() {
+    render() {
 		const { cart, selectedSite } = this.props;
 		const cartClasses = classNames( {
 			'secondary-cart': true,
@@ -86,7 +89,7 @@ const SecondaryCart = React.createClass( {
 				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 			</Sidebar>
 		);
-	},
-} );
+	}
+});
 
 export default localize( SecondaryCart );

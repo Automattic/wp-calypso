@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import SiteIcon from 'blocks/site-icon';
 
-const PagePlaceholder = React.createClass( {
-	displayName: 'PagePlaceholder',
+class PagePlaceholder extends React.Component {
+    static displayName = 'PagePlaceholder';
 
-	render: function() {
+	render() {
 		return (
 			<CompactCard className="page is-placeholder">
 				{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
@@ -33,20 +33,20 @@ const PagePlaceholder = React.createClass( {
 				) : null }
 			</CompactCard>
 		);
-	},
-} );
+	}
+}
 
-const MarkerPlaceholder = React.createClass( {
-	displayName: 'MarkerPlaceholder',
+class MarkerPlaceholder extends React.Component {
+    static displayName = 'MarkerPlaceholder';
 
-	render: function() {
+	render() {
 		return (
 			<div className="pages__page-list-header is-placeholder">
 				<span>&nbsp;</span>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default {
 	Page: localize( PagePlaceholder ),

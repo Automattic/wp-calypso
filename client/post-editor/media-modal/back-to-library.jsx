@@ -8,8 +8,8 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-const BackToLibrary = React.createClass( {
-	displayName: 'BackToLibrary',
+class BackToLibrary extends React.Component {
+    static displayName = 'BackToLibrary';
 
 	render() {
 		return (
@@ -18,7 +18,7 @@ const BackToLibrary = React.createClass( {
 				<span className="is-desktop">{ this.props.translate( 'Media Library' ) }</span>
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default localize( BackToLibrary );

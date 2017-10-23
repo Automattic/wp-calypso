@@ -8,6 +8,7 @@ import { last, map, range, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import closest from 'component-closest';
 import classNames from 'classnames';
 
@@ -17,7 +18,7 @@ import classNames from 'classnames';
 import tableRows from './table-rows';
 import eventRecorder from 'me/event-recorder';
 
-const TransactionsHeader = React.createClass( {
+const TransactionsHeader = createReactClass({
 	displayName: 'TransactionsHeader',
 
 	mixins: [ eventRecorder ],
@@ -275,6 +276,6 @@ const TransactionsHeader = React.createClass( {
 			</tr>
 		);
 	},
-} );
+});
 
 export default localize( TransactionsHeader );

@@ -5,19 +5,16 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
-	displayName: 'Spinner',
+export default class extends React.PureComponent {
+    static displayName = 'Spinner';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>
@@ -33,5 +30,5 @@ export default React.createClass( {
 				<Spinner />
 			</div>
 		);
-	},
-} );
+	}
+}

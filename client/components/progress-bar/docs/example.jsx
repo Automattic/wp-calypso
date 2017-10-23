@@ -5,27 +5,22 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
 
-export default React.createClass( {
-	displayName: 'ProgressBar',
+export default class extends React.PureComponent {
+    static displayName = 'ProgressBar';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		compact: false,
+	};
 
-	getInitialState() {
-		return {
-			compact: false,
-		};
-	},
-
-	toggleCompact() {
+	toggleCompact = () => {
 		this.setState( { compact: ! this.state.compact } );
-	},
+	};
 
 	render() {
 		const toggleText = this.state.compact ? 'Normal Bar' : 'Compact Bar';
@@ -42,5 +37,5 @@ export default React.createClass( {
 				<ProgressBar value={ 75 } compact={ this.state.compact } isPulsing />
 			</div>
 		);
-	},
-} );
+	}
+}

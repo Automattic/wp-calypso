@@ -13,28 +13,26 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 
-const SharingButtonsStyle = React.createClass( {
-	displayName: 'SharingButtonsStyle',
+class SharingButtonsStyle extends React.Component {
+    static displayName = 'SharingButtonsStyle';
 
-	propTypes: {
+	static propTypes = {
 		onChange: PropTypes.func,
 		value: PropTypes.string,
 		disabled: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			onChange: function() {},
-			disabled: false,
-		};
-	},
+	static defaultProps = {
+		onChange: function() {},
+		disabled: false,
+	};
 
-	onChange: function( value ) {
+	onChange = value => {
 		this.props.onChange( value );
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
-	},
+	};
 
-	getOptions: function() {
+	getOptions = () => {
 		return [
 			{
 				value: 'icon-text',
@@ -74,9 +72,9 @@ const SharingButtonsStyle = React.createClass( {
 				</label>
 			);
 		}, this );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
@@ -87,7 +85,7 @@ const SharingButtonsStyle = React.createClass( {
 				{ this.getOptions() }
 			</fieldset>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SharingButtonsStyle );

@@ -11,10 +11,10 @@ import React from 'react';
  */
 import SitesDropdown from 'components/sites-dropdown';
 
-export default React.createClass( {
-	displayName: 'SitesDropdown',
+export default class extends React.Component {
+ static displayName = 'SitesDropdown';
 
-	render: function() {
-		return <SitesDropdown />;
-	},
-} );
+ render() {
+	 return <SitesDropdown />;
+ }
+}

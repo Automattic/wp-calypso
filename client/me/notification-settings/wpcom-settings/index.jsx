@@ -41,25 +41,23 @@ const options = {
 	digest: 'digest',
 };
 
-const WPCOMNotifications = React.createClass( {
-	displayName: 'WPCOMNotifications',
+class WPCOMNotifications extends React.Component {
+    static displayName = 'WPCOMNotifications';
 
-	getInitialState() {
-		return {
-			settings: null,
-		};
-	},
+	state = {
+		settings: null,
+	};
 
 	componentDidMount() {
 		store.on( 'change', this.onChange );
 		fetchSettings();
-	},
+	}
 
 	componentWillUnmount() {
 		store.off( 'change', this.onChange );
-	},
+	}
 
-	onChange() {
+	onChange = () => {
 		const state = store.getStateFor( 'wpcom' );
 
 		if ( state.error ) {
@@ -73,17 +71,17 @@ const WPCOMNotifications = React.createClass( {
 		}
 
 		this.setState( state );
-	},
+	};
 
-	toggleSetting( setting ) {
+	toggleSetting = setting => {
 		toggleWPcomEmailSetting( setting );
-	},
+	};
 
-	saveSettings() {
+	saveSettings = () => {
 		saveSettings( 'wpcom', this.state.settings );
-	},
+	};
 
-	renderWpcomPreferences() {
+	renderWpcomPreferences = () => {
 		return (
 			<div>
 				<p>
@@ -145,11 +143,11 @@ const WPCOMNotifications = React.createClass( {
 				<ActionButtons onSave={ this.saveSettings } disabled={ ! this.state.hasUnsavedChanges } />
 			</div>
 		);
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return <p className="notification-settings-wpcom-settings__placeholder">&nbsp;</p>;
-	},
+	};
 
 	render() {
 		return (
@@ -167,8 +165,8 @@ const WPCOMNotifications = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, dispatch =>
 	bindActionCreators( { successNotice, errorNotice }, dispatch )

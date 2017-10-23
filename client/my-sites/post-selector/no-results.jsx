@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
-const PostSelectorNoResults = React.createClass( {
-	displayName: 'PostSelectorNoResults',
+class PostSelectorNoResults extends React.Component {
+    static displayName = 'PostSelectorNoResults';
 
-	propTypes: {
+	static propTypes = {
 		createLink: PropTypes.string,
-	},
+	};
 
 	render() {
 		let createMessage;
@@ -44,7 +44,7 @@ const PostSelectorNoResults = React.createClass( {
 				&nbsp;{ createMessage }
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PostSelectorNoResults );

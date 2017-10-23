@@ -14,10 +14,10 @@ import { find } from 'lodash';
  */
 import StatTab from './tab';
 
-export default React.createClass( {
-	displayName: 'StatsTabs',
+export default class extends React.Component {
+    static displayName = 'StatsTabs';
 
-	propTypes: {
+	static propTypes = {
 		activeKey: PropTypes.string,
 		activeIndex: PropTypes.string,
 		dataList: PropTypes.object,
@@ -25,7 +25,7 @@ export default React.createClass( {
 		switchTab: PropTypes.func,
 		tabs: PropTypes.array,
 		borderless: PropTypes.bool,
-	},
+	};
 
 	render() {
 		const {
@@ -73,5 +73,5 @@ export default React.createClass( {
 				{ statsTabs || children }
 			</ul>
 		);
-	},
-} );
+	}
+}

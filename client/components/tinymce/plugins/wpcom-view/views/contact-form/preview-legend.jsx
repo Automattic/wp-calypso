@@ -11,8 +11,8 @@ import React from 'react';
  */
 import PreviewRequired from './preview-required';
 
-export default React.createClass( {
-	displayName: 'PreviewLegend',
+export default class extends React.Component {
+    static displayName = 'PreviewLegend';
 
 	render() {
 		return (
@@ -21,5 +21,5 @@ export default React.createClass( {
 				<PreviewRequired { ...this.props } />
 			</legend>
 		);
-	},
-} );
+	}
+}

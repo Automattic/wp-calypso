@@ -2,12 +2,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export default React.createClass( {
-	displayName: 'Test',
+export default class extends React.Component {
+    static displayName = 'Test';
 
-	changeVariant( variation ) {
+	changeVariant = variation => {
 		this.props.onChangeVariant( this.props.test, variation );
-	},
+	};
 
 	render() {
 		const currentVariation = this.props.test.getVariation();
@@ -30,5 +30,5 @@ export default React.createClass( {
 				</ul>
 			</div>
 		);
-	},
-} );
+	}
+}

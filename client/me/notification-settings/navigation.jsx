@@ -15,8 +15,8 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-const NotificationSettingsNavigation = React.createClass( {
-	displayName: 'NotificationSettingsNavigation',
+class NotificationSettingsNavigation extends React.Component {
+    static displayName = 'NotificationSettingsNavigation';
 
 	render() {
 		var navItems = [
@@ -33,28 +33,28 @@ const NotificationSettingsNavigation = React.createClass( {
 				</NavTabs>
 			</SectionNav>
 		);
-	},
+	}
 
-	itemLabels() {
+	itemLabels = () => {
 		return {
 			'/me/notifications': this.props.translate( 'Notifications' ),
 			'/me/notifications/comments': this.props.translate( 'Comments' ),
 			'/me/notifications/updates': this.props.translate( 'Updates' ),
 			'/me/notifications/subscriptions': this.props.translate( 'Reader Subscriptions' ),
 		};
-	},
+	};
 
-	navItem( path ) {
+	navItem = path => {
 		return (
 			<NavItem path={ path } key={ path } selected={ this.props.path === path }>
 				{ this.itemLabels()[ path ] }
 			</NavItem>
 		);
-	},
+	};
 
-	getSelectedText() {
+	getSelectedText = () => {
 		return this.itemLabels()[ this.props.path ];
-	},
-} );
+	};
+}
 
 export default localize( NotificationSettingsNavigation );

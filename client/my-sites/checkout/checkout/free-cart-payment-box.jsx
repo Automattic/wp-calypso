@@ -16,12 +16,12 @@ import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 
-const FreeCartPaymentBox = React.createClass( {
-	propTypes: {
+class FreeCartPaymentBox extends React.Component {
+    static propTypes = {
 		products: PropTypes.object.isRequired,
-	},
+	};
 
-	content: function() {
+	content = () => {
 		var cart = this.props.cart;
 
 		return (
@@ -60,9 +60,9 @@ const FreeCartPaymentBox = React.createClass( {
 				</div>
 			</form>
 		);
-	},
+	};
 
-	getProductName: function() {
+	getProductName = () => {
 		var cart = this.props.cart,
 			product;
 
@@ -75,15 +75,15 @@ const FreeCartPaymentBox = React.createClass( {
 		} else {
 			return '';
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
-	},
-} );
+	}
+}
 
 export default localize( FreeCartPaymentBox );

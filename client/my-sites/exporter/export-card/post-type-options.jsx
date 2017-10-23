@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 
 /**
@@ -48,14 +47,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  * legend.
  */
 
-const PostTypeOptions = React.createClass( {
-	displayName: 'PostTypeOptions',
+class PostTypeOptions extends React.PureComponent {
+    static displayName = 'PostTypeOptions';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		legend: PropTypes.string.isRequired,
-	},
+	};
 
 	render() {
 		const { description, legend, isDateValid, isEnabled, onSelect, postType, siteId } = this.props;
@@ -104,7 +101,7 @@ const PostTypeOptions = React.createClass( {
 				</Tooltip>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

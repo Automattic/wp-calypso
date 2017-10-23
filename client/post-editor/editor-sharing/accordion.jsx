@@ -31,8 +31,8 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const EditorSharingAccordion = React.createClass( {
-	propTypes: {
+class EditorSharingAccordion extends React.Component {
+    static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
@@ -41,9 +41,9 @@ const EditorSharingAccordion = React.createClass( {
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
 		isLikesActive: PropTypes.bool,
-	},
+	};
 
-	getSubtitle: function() {
+	getSubtitle = () => {
 		const { isPublicizeEnabled, post, connections } = this.props;
 		if ( ! isPublicizeEnabled || ! post || ! connections ) {
 			return;
@@ -63,9 +63,9 @@ const EditorSharingAccordion = React.createClass( {
 			},
 			[]
 		).join( ', ' );
-	},
+	};
 
-	renderShortUrl: function() {
+	renderShortUrl = () => {
 		const classes = classNames( 'editor-sharing__shortlink', {
 			'is-standalone': this.hideSharing(),
 		} );
@@ -89,14 +89,14 @@ const EditorSharingAccordion = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	};
 
-	hideSharing: function() {
+	hideSharing = () => {
 		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
 		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
-	},
+	};
 
-	render: function() {
+	render() {
 		const hideSharing = this.hideSharing();
 		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
 			'is-loading': ! this.props.post || ! this.props.connections,
@@ -136,8 +136,8 @@ const EditorSharingAccordion = React.createClass( {
 				</AccordionSection>
 			</Accordion>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

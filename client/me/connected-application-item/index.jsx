@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:connected-application-item' );
@@ -20,7 +21,7 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
-const ConnectedApplicationItem = React.createClass( {
+const ConnectedApplicationItem = createReactClass({
 	displayName: 'ConnectedApplicationItem',
 
 	mixins: [ eventRecorder ],
@@ -219,6 +220,6 @@ const ConnectedApplicationItem = React.createClass( {
 			</FoldableCard>
 		);
 	},
-} );
+});
 
 export default localize( ConnectedApplicationItem );

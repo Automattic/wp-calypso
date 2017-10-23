@@ -26,19 +26,19 @@ import {
 } from 'state/push-notifications/selectors';
 import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
 
-const PushNotificationSettings = React.createClass( {
-	displayName: 'PushNotificationSettings',
+class PushNotificationSettings extends React.Component {
+    static displayName = 'PushNotificationSettings';
 
-	propTypes: {
+	static propTypes = {
 		toggleEnabled: PropTypes.func.isRequired,
 		toggleUnblockInstructions: PropTypes.func.isRequired,
-	},
+	};
 
-	clickHandler: function() {
+	clickHandler = () => {
 		this.props.toggleEnabled();
-	},
+	};
 
-	getBlockedInstruction: function() {
+	getBlockedInstruction = () => {
 		const SvgAddressBar = () => (
 			<svg
 				width="206px"
@@ -663,9 +663,9 @@ const PushNotificationSettings = React.createClass( {
 				</span>
 			</Dialog>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		let blockedInstruction,
 			buttonClass,
 			buttonDisabled,
@@ -791,8 +791,8 @@ const PushNotificationSettings = React.createClass( {
 				{ deniedText }
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

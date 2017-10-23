@@ -12,16 +12,16 @@ import React from 'react';
  */
 import { getLabelForSetting } from './locales';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormLabelList',
+export default class extends React.Component {
+    static displayName = 'NotificationSettingsFormLabelList';
 
-	propTypes: {
+	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-	},
+	};
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
@@ -35,5 +35,5 @@ export default React.createClass( {
 				} ) }
 			</ul>
 		);
-	},
-} );
+	}
+}

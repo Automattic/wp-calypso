@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
@@ -21,7 +22,7 @@ import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-const ProfileLinks = React.createClass( {
+const ProfileLinks = createReactClass({
 	displayName: 'ProfileLinks',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -242,6 +243,6 @@ const ProfileLinks = React.createClass( {
 			</div>
 		);
 	},
-} );
+});
 
 export default localize( ProfileLinks );

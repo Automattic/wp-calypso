@@ -9,18 +9,18 @@ import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
-const Security2faStatus = React.createClass( {
-	displayName: 'Security2faStatus',
+class Security2faStatus extends React.Component {
+    static displayName = 'Security2faStatus';
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<p>
 				{ this.props.twoStepEnabled ? (
@@ -46,7 +46,7 @@ const Security2faStatus = React.createClass( {
 				) }
 			</p>
 		);
-	},
-} );
+	}
+}
 
 export default localize( Security2faStatus );

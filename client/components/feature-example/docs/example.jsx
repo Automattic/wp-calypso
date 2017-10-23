@@ -12,10 +12,10 @@ import React from 'react';
 import FeatureExample from '../index';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
-export default React.createClass( {
-	displayName: 'FeatureExample',
+export default class extends React.Component {
+    static displayName = 'FeatureExample';
 
-	getContent: function() {
+	getContent = () => {
 		const plugins = [
 			{
 				slug: 'akismet',
@@ -54,9 +54,9 @@ export default React.createClass( {
 				/>
 			);
 		} );
-	},
+	};
 
 	render() {
 		return <FeatureExample>{ this.getContent() }</FeatureExample>;
-	},
-} );
+	}
+}

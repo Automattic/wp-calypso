@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 import { flowRight } from 'lodash';
 
@@ -27,7 +28,7 @@ import { forSms } from 'lib/countries-list';
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
 
-const Security2faSMSSettings = React.createClass( {
+const Security2faSMSSettings = createReactClass({
 	displayName: 'Security2faSMSSettings',
 
 	componentDidMount: function() {
@@ -242,6 +243,6 @@ const Security2faSMSSettings = React.createClass( {
 			</div>
 		);
 	},
-} );
+});
 
 export default flowRight( protectForm, localize )( Security2faSMSSettings );

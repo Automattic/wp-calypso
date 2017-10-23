@@ -5,25 +5,20 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
 */
 import InfoPopover from 'components/info-popover';
 
-const InfoPopoverExample = React.createClass( {
-	displayName: 'InfoPopover',
+class InfoPopoverExample extends React.PureComponent {
+    static displayName = 'InfoPopover';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		popoverPosition: 'bottom left',
+	};
 
-	getInitialState: function() {
-		return {
-			popoverPosition: 'bottom left',
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
 			<div>
 				<label>
@@ -47,11 +42,11 @@ const InfoPopoverExample = React.createClass( {
 				</InfoPopover>
 			</div>
 		);
-	},
+	}
 
-	_changePopoverPosition: function( event ) {
+	_changePopoverPosition = event => {
 		this.setState( { popoverPosition: event.target.value } );
-	},
-} );
+	};
+}
 
 export default InfoPopoverExample;

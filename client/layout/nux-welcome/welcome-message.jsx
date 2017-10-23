@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +21,7 @@ function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
-const NuxWelcomeMessage = React.createClass( {
+const NuxWelcomeMessage = createReactClass({
 	displayName: 'NuxWelcomeMessage',
 
 	analyticsEvents: {
@@ -115,6 +117,6 @@ const NuxWelcomeMessage = React.createClass( {
 			</div>
 		);
 	},
-} );
+});
 
 export default localize( NuxWelcomeMessage );

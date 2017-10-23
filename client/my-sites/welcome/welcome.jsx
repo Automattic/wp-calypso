@@ -10,25 +10,23 @@ import React from 'react';
  * Internal dependencies
  */
 
-export default React.createClass( {
-	displayName: 'Welcome',
+export default class extends React.Component {
+    static displayName = 'Welcome';
 
-	getInitialState: function() {
-		return {
-			visible: !! this.props.isVisible,
-		};
-	},
+	state = {
+		visible: !! this.props.isVisible,
+	};
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		var nextVisible = !! nextProps.isVisible;
 		if ( nextVisible !== this.state.visible ) {
 			this.setState( {
 				visible: nextVisible,
 			} );
 		}
-	},
+	}
 
-	close: function( event ) {
+	close = event => {
 		event.preventDefault();
 
 		this.setState( {
@@ -38,9 +36,9 @@ export default React.createClass( {
 		if ( 'function' === typeof this.props.closeAction ) {
 			this.props.closeAction();
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var welcomeClassName = this.props.additionalClassName
 			? this.props.additionalClassName + ' welcome-message'
 			: 'welcome-message';
@@ -57,5 +55,5 @@ export default React.createClass( {
 		} else {
 			return null;
 		}
-	},
-} );
+	}
+}

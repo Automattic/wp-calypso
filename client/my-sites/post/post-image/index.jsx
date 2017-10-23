@@ -6,16 +6,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 
 /**
  * Main
  */
-const PostImage = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class PostImage extends React.PureComponent {
+    static propTypes = {
 		postImages: PropTypes.shape( {
 			featured_image: PropTypes.string,
 			canonical_image: PropTypes.shape( {
@@ -38,15 +35,13 @@ const PostImage = React.createClass( {
 				} )
 			),
 		} ),
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			collapsed: true,
-		};
-	},
+	state = {
+		collapsed: true,
+	};
 
-	render: function() {
+	render() {
 		var imageURL = this._getImageURL(),
 			containerClasses,
 			containerStyles;
@@ -71,9 +66,9 @@ const PostImage = React.createClass( {
 				{ ! this.state.collapsed ? <img src={ imageURL } className="post-image__image" /> : null }
 			</div>
 		);
-	},
+	}
 
-	_getImageURL: function() {
+	_getImageURL = () => {
 		var postImages = this.props.postImages;
 
 		if ( postImages.featured_image !== '' ) {
@@ -95,13 +90,13 @@ const PostImage = React.createClass( {
 		if ( postImages.images && postImages.images.length ) {
 			return postImages.images[ 0 ].src;
 		}
-	},
+	};
 
-	_handleClick: function() {
+	_handleClick = () => {
 		this.setState( {
 			collapsed: ! this.state.collapsed,
 		} );
-	},
-} );
+	};
+}
 
 export default PostImage;

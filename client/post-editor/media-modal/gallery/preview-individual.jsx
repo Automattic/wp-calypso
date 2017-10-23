@@ -14,11 +14,11 @@ import { connect } from 'react-redux';
 import markup from '../markup';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const EditorMediaModalGalleryPreviewIndividual = React.createClass( {
-	propTypes: {
+class EditorMediaModalGalleryPreviewIndividual extends React.Component {
+    static propTypes = {
 		items: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
-	},
+	};
 
 	render() {
 		const items = this.props.items.map( item => {
@@ -41,8 +41,8 @@ const EditorMediaModalGalleryPreviewIndividual = React.createClass( {
 				<div className="editor-media-modal-gallery__preview-individual-content">{ items }</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	return {

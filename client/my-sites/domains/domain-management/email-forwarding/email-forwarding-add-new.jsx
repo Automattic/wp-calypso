@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -27,14 +29,16 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields } from 'lib/domains/email-forwarding';
 import support from 'lib/url/support';
 
-const EmailForwardingAddNew = React.createClass( {
-	propTypes: {
+const EmailForwardingAddNew = createReactClass({
+    displayName: 'EmailForwardingAddNew',
+
+    propTypes: {
 		initialShowForm: PropTypes.bool,
 	},
 
-	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+    mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
-	getInitialState() {
+    getInitialState() {
 		return {
 			fields: { destination: '', mailbox: '' },
 			formSubmitting: false,
@@ -42,7 +46,7 @@ const EmailForwardingAddNew = React.createClass( {
 		};
 	},
 
-	componentWillMount() {
+    componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialState().fields,
 			onNewState: this.setFormState,
@@ -54,18 +58,18 @@ const EmailForwardingAddNew = React.createClass( {
 		this.setFormState( this.formStateController.getInitialState() );
 	},
 
-	hasForwards() {
+    hasForwards() {
 		return this.props.emailForwarding.list.length > 0;
 	},
 
-	hasReachedLimit() {
+    hasReachedLimit() {
 		return (
 			this.props.emailForwarding.list.length >=
 			emailForwardingPlanLimit( this.props.selectedSite.plan )
 		);
 	},
 
-	onAddEmailForward( event ) {
+    onAddEmailForward( event ) {
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -131,16 +135,16 @@ const EmailForwardingAddNew = React.createClass( {
 		} );
 	},
 
-	setFormState( fields ) {
+    setFormState( fields ) {
 		this.setState( { fields } );
 	},
 
-	onShowForm( event ) {
+    onShowForm( event ) {
 		event.preventDefault();
 		this.setState( { showForm: true } );
 	},
 
-	addButton() {
+    addButton() {
 		const handler = this.shouldShowForm() ? this.onAddEmailForward : this.onShowForm;
 
 		return (
@@ -153,7 +157,7 @@ const EmailForwardingAddNew = React.createClass( {
 		);
 	},
 
-	cancelButton() {
+    cancelButton() {
 		if ( ! this.shouldShowForm() || ! this.hasForwards() ) {
 			return null;
 		}
@@ -170,7 +174,7 @@ const EmailForwardingAddNew = React.createClass( {
 		);
 	},
 
-	formFooter() {
+    formFooter() {
 		return (
 			<FormFooter>
 				{ this.addButton() }
@@ -179,7 +183,7 @@ const EmailForwardingAddNew = React.createClass( {
 		);
 	},
 
-	formFields() {
+    formFields() {
 		if ( ! this.shouldShowForm() ) {
 			return null;
 		}
@@ -243,11 +247,11 @@ const EmailForwardingAddNew = React.createClass( {
 		);
 	},
 
-	shouldShowForm() {
+    shouldShowForm() {
 		return ! this.hasReachedLimit() && ( ! this.hasForwards() || this.state.showForm );
 	},
 
-	render() {
+    render() {
 		return (
 			<form className="email-forwarding__add-new">
 				<EmailForwardingLimit
@@ -262,13 +266,13 @@ const EmailForwardingAddNew = React.createClass( {
 		);
 	},
 
-	onCancel() {
+    onCancel() {
 		this.setState( { showForm: false } );
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 	},
 
-	onChange( event ) {
+    onChange( event ) {
 		let { name, value } = event.target;
 
 		value = value.replace( /\s/g, '' );
@@ -283,13 +287,13 @@ const EmailForwardingAddNew = React.createClass( {
 		} );
 	},
 
-	isValid( fieldName ) {
+    isValid( fieldName ) {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
 	},
 
-	handleFieldFocus( fieldName ) {
+    handleFieldFocus( fieldName ) {
 		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName );
-	},
-} );
+	}
+});
 
 export default localize( EmailForwardingAddNew );

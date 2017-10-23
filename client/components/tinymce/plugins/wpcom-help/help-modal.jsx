@@ -18,14 +18,14 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-const HelpModal = React.createClass( {
-	propTypes: {
+class HelpModal extends React.Component {
+    static propTypes = {
 		onClose: PropTypes.func,
 		macosx: PropTypes.bool,
 		showDialog: PropTypes.bool,
-	},
+	};
 
-	defaultShortcuts() {
+	defaultShortcuts = () => {
 		return [
 			{ c: this.props.translate( 'Copy' ), x: this.props.translate( 'Cut' ) },
 			{ v: this.props.translate( 'Paste' ), a: this.props.translate( 'Select all' ) },
@@ -33,9 +33,9 @@ const HelpModal = React.createClass( {
 			{ b: this.props.translate( 'Bold' ), i: this.props.translate( 'Italic' ) },
 			{ u: this.props.translate( 'Underline' ), k: this.props.translate( 'Insert/edit link' ) },
 		];
-	},
+	};
 
-	additionalShortcuts() {
+	additionalShortcuts = () => {
 		return [
 			{ 1: this.props.translate( 'Heading 1' ), 2: this.props.translate( 'Heading 2' ) },
 			{ 3: this.props.translate( 'Heading 3' ), 4: this.props.translate( 'Heading 4' ) },
@@ -52,9 +52,9 @@ const HelpModal = React.createClass( {
 			{ h: this.props.translate( 'Keyboard Shortcuts' ), x: this.props.translate( 'Code' ) },
 			{ p: this.props.translate( 'Insert Page Break tag' ) },
 		];
-	},
+	};
 
-	renderRow( row, index ) {
+	renderRow = (row, index) => {
 		let columns = [];
 
 		forEach( row, ( text, key ) => {
@@ -71,27 +71,27 @@ const HelpModal = React.createClass( {
 		} );
 
 		return <tr key={ index }>{ columns }</tr>;
-	},
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
 			<FormButton key="close" isPrimary={ false } onClick={ this.props.onClose }>
 				{ this.props.translate( 'Close' ) }
 			</FormButton>,
 		];
-	},
+	};
 
-	getKeyLabel() {
+	getKeyLabel = () => {
 		return this.props.translate( 'Key', { context: 'Computer key used in keyboard shortcut' } );
-	},
+	};
 
-	getActionLabel() {
+	getActionLabel = () => {
 		return this.props.translate( 'Action', {
 			context: 'Action taken when pressing keyboard shortcut',
 		} );
-	},
+	};
 
-	getTableHead() {
+	getTableHead = () => {
 		return (
 			<thead>
 				<tr>
@@ -102,7 +102,7 @@ const HelpModal = React.createClass( {
 				</tr>
 			</thead>
 		);
-	},
+	};
 
 	render() {
 		const defaultText = this.props.macosx
@@ -137,7 +137,7 @@ const HelpModal = React.createClass( {
 				</table>
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default localize( HelpModal );

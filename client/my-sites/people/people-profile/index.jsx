@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -15,12 +14,10 @@ import { omit } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 
-const PeopleProfile = React.createClass( {
-	displayName: 'PeopleProfile',
+class PeopleProfile extends React.PureComponent {
+    static displayName = 'PeopleProfile';
 
-	mixins: [ PureRenderMixin ],
-
-	getRole() {
+	getRole = () => {
 		const user = this.props.user;
 		if ( ! user ) {
 			return 'subscriber';
@@ -31,9 +28,9 @@ const PeopleProfile = React.createClass( {
 		}
 
 		return;
-	},
+	};
 
-	getRoleBadgeText( role ) {
+	getRoleBadgeText = role => {
 		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
@@ -73,14 +70,14 @@ const PeopleProfile = React.createClass( {
 		}
 
 		return text;
-	},
+	};
 
-	getRoleBadgeClass( role ) {
+	getRoleBadgeClass = role => {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
-	},
+	};
 
-	renderName() {
+	renderName = () => {
 		const user = this.props.user;
 		let name;
 		if ( ! user ) {
@@ -98,9 +95,9 @@ const PeopleProfile = React.createClass( {
 		}
 
 		return name;
-	},
+	};
 
-	renderLogin() {
+	renderLogin = () => {
 		let login;
 		if ( ! this.props.user ) {
 			login = this.props.translate( 'Loading Users', {
@@ -119,9 +116,9 @@ const PeopleProfile = React.createClass( {
 		}
 
 		return login;
-	},
+	};
 
-	renderRole() {
+	renderRole = () => {
 		let superAdminBadge, roleBadge;
 
 		if ( this.props.user && this.props.user.is_super_admin ) {
@@ -150,9 +147,9 @@ const PeopleProfile = React.createClass( {
 				{ roleBadge }
 			</div>
 		);
-	},
+	};
 
-	renderSubscribedDate() {
+	renderSubscribedDate = () => {
 		if ( ! this.props.user || ! this.props.user.date_subscribed ) {
 			return;
 		}
@@ -167,13 +164,13 @@ const PeopleProfile = React.createClass( {
 				} ) }
 			</div>
 		);
-	},
+	};
 
-	isFollowerType() {
+	isFollowerType = () => {
 		return this.props.user && ! this.props.user.roles && this.props.user.date_subscribed;
-	},
+	};
 
-	render: function() {
+	render() {
 		const user = this.props.user,
 			classes = classNames( 'people-profile', {
 				'is-placeholder': ! user,
@@ -191,7 +188,7 @@ const PeopleProfile = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PeopleProfile );
