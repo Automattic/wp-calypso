@@ -36,10 +36,10 @@ function getStateFromStores( props ) {
 	};
 }
 
-const DomainManagementData = createReactClass({
-    displayName: 'DomainManagementData',
+const DomainManagementData = createReactClass( {
+	displayName: 'DomainManagementData',
 
-    propTypes: {
+	propTypes: {
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -47,9 +47,9 @@ const DomainManagementData = createReactClass({
 		sitePlans: PropTypes.object.isRequired,
 	},
 
-    mixins: [ observe( 'productsList' ) ],
+	mixins: [ observe( 'productsList' ) ],
 
-    componentWillMount: function() {
+	componentWillMount: function() {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
@@ -57,7 +57,7 @@ const DomainManagementData = createReactClass({
 		}
 	},
 
-    componentWillUpdate: function( nextProps ) {
+	componentWillUpdate: function( nextProps ) {
 		const { selectedSite: prevSite } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 
@@ -66,7 +66,7 @@ const DomainManagementData = createReactClass({
 		}
 	},
 
-    render: function() {
+	render: function() {
 		return (
 			<div>
 				<StoreConnection
@@ -84,8 +84,8 @@ const DomainManagementData = createReactClass({
 				) }
 			</div>
 		);
-	}
-});
+	},
+} );
 
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );

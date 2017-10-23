@@ -21,7 +21,7 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
-const ConnectedApplicationItem = createReactClass({
+const ConnectedApplicationItem = createReactClass( {
 	displayName: 'ConnectedApplicationItem',
 
 	mixins: [ eventRecorder ],
@@ -220,6 +220,6 @@ const ConnectedApplicationItem = createReactClass({
 			</FoldableCard>
 		);
 	},
-});
+} );
 
 export default localize( ConnectedApplicationItem );

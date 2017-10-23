@@ -17,7 +17,7 @@ import FormButton from 'components/forms/form-button';
 import analytics from 'lib/analytics';
 
 class Security2faInitialSetup extends React.Component {
-    static displayName = 'Security2faInitialSetup';
+	static displayName = 'Security2faInitialSetup';
 
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
 
 class EmailForwardingLimit extends React.Component {
-    render() {
+	render() {
 		const used = this.props.emailForwarding.list.length;
 
 		if ( used < 1 ) {

@@ -25,7 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * and Date.
  */
 class AdvancedSettings extends React.Component {
-    static displayName = 'AdvancedSettings';
+	static displayName = 'AdvancedSettings';
 
 	static propTypes = {
 		// Event handlers

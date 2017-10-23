@@ -14,7 +14,7 @@ import CompactToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 
 class PluginAction extends React.Component {
-    handleAction = event => {
+	handleAction = event => {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {

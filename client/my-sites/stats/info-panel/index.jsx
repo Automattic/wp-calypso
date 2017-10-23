@@ -16,7 +16,7 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
 class StatsInfoPanel extends React.PureComponent {
-    static displayName = 'StatsInfoPanel';
+	static displayName = 'StatsInfoPanel';
 
 	static propTypes = {
 		module: PropTypes.string,

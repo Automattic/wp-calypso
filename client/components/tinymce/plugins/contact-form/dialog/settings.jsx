@@ -21,7 +21,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { validateSettingsToEmail } from './validations';
 
 class ContactFormDialogFormSettings extends React.Component {
-    static displayName = 'ContactFormDialogFormSettings';
+	static displayName = 'ContactFormDialogFormSettings';
 
 	static propTypes = {
 		to: PropTypes.string,

@@ -12,7 +12,7 @@ import React from 'react';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 
 class DomainManagementFormFooter extends React.Component {
-    render() {
+	render() {
 		return (
 			<FormButtonsBar className="domain-management-form-footer">
 				{ this.props.children }

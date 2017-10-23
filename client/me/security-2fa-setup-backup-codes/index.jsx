@@ -21,7 +21,7 @@ import eventRecorder from 'me/event-recorder';
 import support from 'lib/url/support';
 import Notice from 'components/notice';
 
-const Security2faSetupBackupCodes = createReactClass({
+const Security2faSetupBackupCodes = createReactClass( {
 	displayName: 'Security2faSetupBackupCodes',
 
 	mixins: [ eventRecorder ],
@@ -119,6 +119,6 @@ const Security2faSetupBackupCodes = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( Security2faSetupBackupCodes );

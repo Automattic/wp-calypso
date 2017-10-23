@@ -10,7 +10,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
 export default class extends React.Component {
-    static displayName = 'RootChild';
+	static displayName = 'RootChild';
 
 	static propTypes = {
 		children: PropTypes.node,

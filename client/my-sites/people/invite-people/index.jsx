@@ -51,7 +51,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
 class InvitePeople extends React.Component {
-    static displayName = 'InvitePeople';
+	static displayName = 'InvitePeople';
 
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );

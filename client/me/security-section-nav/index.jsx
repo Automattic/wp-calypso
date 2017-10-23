@@ -18,7 +18,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 
 export default class extends React.Component {
-    static displayName = 'SecuritySectionNav';
+	static displayName = 'SecuritySectionNav';
 
 	static propTypes = {
 		path: PropTypes.string.isRequired,

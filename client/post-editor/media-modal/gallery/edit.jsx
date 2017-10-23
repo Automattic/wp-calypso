@@ -18,7 +18,7 @@ import SortableList from 'components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
 class EditorMediaModalGalleryEdit extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,

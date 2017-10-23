@@ -26,7 +26,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
 class Plans extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
 		intervalType: PropTypes.string,

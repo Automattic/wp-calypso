@@ -16,7 +16,7 @@ import SocialLogo from 'social-logos';
  */
 import analytics from 'lib/analytics';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'SharingButtonsPreviewButton',
 
 	propsTypes: {
@@ -85,4 +85,4 @@ export default createReactClass({
 			</div>
 		);
 	},
-});
+} );

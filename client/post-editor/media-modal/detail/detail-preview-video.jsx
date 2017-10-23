@@ -15,7 +15,7 @@ import MediaUtils from 'lib/media/utils';
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalDetailPreviewVideo';
+	static displayName = 'EditorMediaModalDetailPreviewVideo';
 
 	static propTypes = {
 		className: PropTypes.string,

@@ -24,7 +24,7 @@ import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class CharMap extends React.Component {
-    static displayName = 'CharMap';
+	static displayName = 'CharMap';
 
 	static propTypes = {
 		onClose: PropTypes.func,

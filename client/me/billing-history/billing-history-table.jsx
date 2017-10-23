@@ -18,16 +18,16 @@ import purchasesPaths from 'me/purchases/paths';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
 
-const BillingHistoryTable = createReactClass({
-    displayName: 'BillingHistoryTable',
-    mixins: [ eventRecorder ],
+const BillingHistoryTable = createReactClass( {
+	displayName: 'BillingHistoryTable',
+	mixins: [ eventRecorder ],
 
-    emailReceipt( receiptId, event ) {
+	emailReceipt( receiptId, event ) {
 		event.preventDefault();
 		this.props.sendBillingReceiptEmail( receiptId );
 	},
 
-    renderEmailAction( receiptId ) {
+	renderEmailAction( receiptId ) {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
@@ -47,7 +47,7 @@ const BillingHistoryTable = createReactClass({
 		);
 	},
 
-    renderTransaction( transaction ) {
+	renderTransaction( transaction ) {
 		const { translate } = this.props;
 
 		return (
@@ -64,7 +64,7 @@ const BillingHistoryTable = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const { translate } = this.props;
 		const emptyTableText = translate(
 			'You do not currently have any upgrades. ' +
@@ -85,8 +85,8 @@ const BillingHistoryTable = createReactClass({
 				transactionRenderer={ this.renderTransaction }
 			/>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	state => {

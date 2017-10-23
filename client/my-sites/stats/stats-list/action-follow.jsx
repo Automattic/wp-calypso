@@ -20,7 +20,7 @@ import observe from 'lib/mixins/data-observe';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-const StatsActionFollow = createReactClass({
+const StatsActionFollow = createReactClass( {
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],
@@ -92,6 +92,6 @@ const StatsActionFollow = createReactClass({
 			</li>
 		);
 	},
-});
+} );
 
 export default localize( StatsActionFollow );

@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import tableRows from './table-rows';
 import eventRecorder from 'me/event-recorder';
 
-const TransactionsHeader = createReactClass({
+const TransactionsHeader = createReactClass( {
 	displayName: 'TransactionsHeader',
 
 	mixins: [ eventRecorder ],
@@ -276,6 +276,6 @@ const TransactionsHeader = createReactClass({
 			</tr>
 		);
 	},
-});
+} );
 
 export default localize( TransactionsHeader );

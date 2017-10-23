@@ -17,7 +17,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
 
 class KeyboardShortcutsMenu extends React.Component {
-    static displayName = 'KeyboardShortcutsMenu';
+	static displayName = 'KeyboardShortcutsMenu';
 
 	state = {
 		showDialog: false,

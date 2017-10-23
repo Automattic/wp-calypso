@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import MediaUtils from 'lib/media/utils';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalDetailPreviewAudio';
+	static displayName = 'EditorMediaModalDetailPreviewAudio';
 
 	static propTypes = {
 		className: PropTypes.string,

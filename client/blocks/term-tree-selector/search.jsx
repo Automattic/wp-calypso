@@ -10,7 +10,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 class TermTreeSelectorSearch extends React.Component {
-    static displayName = 'TermTreeSelectorSearch';
+	static displayName = 'TermTreeSelectorSearch';
 
 	static propTypes = {
 		searchTerm: PropTypes.string,

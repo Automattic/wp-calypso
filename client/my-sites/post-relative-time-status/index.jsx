@@ -14,7 +14,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 class PostRelativeTime extends React.PureComponent {
-    static displayName = 'PostRelativeTime';
+	static displayName = 'PostRelativeTime';
 
 	static propTypes = {
 		post: PropTypes.object.isRequired,

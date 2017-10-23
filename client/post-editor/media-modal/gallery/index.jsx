@@ -24,7 +24,7 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { isModuleActive } from 'lib/site/utils';
 
 class EditorMediaModalGallery extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		settings: PropTypes.object,
@@ -49,7 +49,7 @@ class EditorMediaModalGallery extends React.Component {
 		}
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		if ( ! this.props.settings ) {
 			return;
 		}
@@ -61,7 +61,7 @@ class EditorMediaModalGallery extends React.Component {
 		}
 	}
 
-	reconcileSettingsItems = (settings, items) => {
+	reconcileSettingsItems = ( settings, items ) => {
 		// Reconcile by ensuring that all items saved to settings still exist
 		// in the original set, and that any items since added to the original
 		// set are similarly appended to the settings set.
@@ -109,7 +109,7 @@ class EditorMediaModalGallery extends React.Component {
 		onUpdateSettings( defaultSettings );
 	};
 
-	updateSetting = (setting, value) => {
+	updateSetting = ( setting, value ) => {
 		if ( 'string' === typeof setting ) {
 			// Normalize singular value
 			setting = { [ setting ]: value };

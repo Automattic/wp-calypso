@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 class FollowButton extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		following: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
 		iconSize: PropTypes.number,

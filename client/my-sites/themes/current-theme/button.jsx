@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
 import { isOutsideCalypso } from 'lib/url';
 
 export default class extends React.Component {
-    static displayName = 'CurrentThemeButton';
+	static displayName = 'CurrentThemeButton';
 
 	static propTypes = {
 		name: PropTypes.string.isRequired,

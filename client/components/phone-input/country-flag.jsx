@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 import Spinner from 'components/spinner';
 
 export default class extends React.Component {
-    static displayName = 'PhoneInputCountryFlag';
+	static displayName = 'PhoneInputCountryFlag';
 
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
@@ -23,7 +23,7 @@ export default class extends React.Component {
 		error: false,
 	};
 
-	componentDidUpdate(oldProps) {
+	componentDidUpdate( oldProps ) {
 		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
 			this.setState( { ready: false, error: false } );
 		}

@@ -14,7 +14,7 @@ import React from 'react';
 import NoResults from 'my-sites/no-results';
 
 class MediaLibraryListNoResults extends React.Component {
-    static displayName = 'MediaLibraryListNoResults';
+	static displayName = 'MediaLibraryListNoResults';
 
 	static propTypes = {
 		filter: PropTypes.string,

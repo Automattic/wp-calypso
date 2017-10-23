@@ -28,7 +28,7 @@ import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 
 class CancelPurchaseForm extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		productName: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 		surveyStep: PropTypes.string.isRequired,
@@ -39,8 +39,8 @@ class CancelPurchaseForm extends React.Component {
 		chatInitiated: PropTypes.func.isRequired,
 	};
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		// shuffle reason order, but keep anotherReasonOne last
 		let questionOneOrder = shuffle( [
 			'couldNotInstall',

@@ -12,7 +12,7 @@ import classNames from 'classnames';
  * SegmentedControlItem
  */
 class SegmentedControlItem extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
 		selected: PropTypes.bool,

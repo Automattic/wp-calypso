@@ -16,7 +16,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
 class NotificationSettingsNavigation extends React.Component {
-    static displayName = 'NotificationSettingsNavigation';
+	static displayName = 'NotificationSettingsNavigation';
 
 	render() {
 		var navItems = [

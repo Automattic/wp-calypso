@@ -24,7 +24,7 @@ import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
 
 class PluginInformation extends React.Component {
-    static displayName = 'PluginInformation';
+	static displayName = 'PluginInformation';
 
 	static propTypes = {
 		plugin: PropTypes.object.isRequired,

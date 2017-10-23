@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import analytics from 'lib/analytics';
 
 class PulsingDot extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		active: false,
 	};
 
@@ -26,7 +26,7 @@ class PulsingDot extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.active === this.props.active || ! this.props.chunkName ) {
 			return;
 		}

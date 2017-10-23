@@ -55,10 +55,10 @@ const helpLinks = {
 };
 
 class PlansSetup extends React.Component {
-    static displayName = 'PlanSetup';
+	static displayName = 'PlanSetup';
 	sentTracks = false;
 
-	trackConfigFinished = (eventName, options = null) => {
+	trackConfigFinished = ( eventName, options = null ) => {
 		if ( ! this.sentTracks ) {
 			analytics.tracks.recordEvent( eventName, options );
 		}
@@ -242,7 +242,7 @@ class PlansSetup extends React.Component {
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
-	renderPlugins = (hidden = false) => {
+	renderPlugins = ( hidden = false ) => {
 		const site = this.props.selectedSite;
 		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
 			return this.renderPluginsPlaceholders();

@@ -17,17 +17,17 @@ import analyticsMixin from 'lib/mixins/analytics';
 import paths from 'my-sites/domains/paths';
 import Button from 'components/button';
 
-const PrimaryDomainButton = createReactClass({
-    displayName: 'PrimaryDomainButton',
-    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const PrimaryDomainButton = createReactClass( {
+	displayName: 'PrimaryDomainButton',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-    propTypes: {
+	propTypes: {
 		domain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		settingPrimaryDomain: PropTypes.bool.isRequired,
 	},
 
-    handleClick() {
+	handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
 		page(
@@ -35,7 +35,7 @@ const PrimaryDomainButton = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const domain = this.props.domain;
 		var label;
 
@@ -58,7 +58,7 @@ const PrimaryDomainButton = createReactClass({
 		}
 
 		return null;
-	}
-});
+	},
+} );
 
 export default localize( PrimaryDomainButton );

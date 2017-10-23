@@ -15,7 +15,7 @@ import classnames from 'classnames';
 import Spinner from 'components/spinner';
 
 class CustomizerLoadingPanel extends React.Component {
-    static displayName = 'CustomizerLoadingPanel';
+	static displayName = 'CustomizerLoadingPanel';
 
 	static propTypes = {
 		isLoaded: PropTypes.bool,

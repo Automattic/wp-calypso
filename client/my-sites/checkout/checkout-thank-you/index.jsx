@@ -93,7 +93,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 }
 
 class CheckoutThankYou extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
@@ -126,7 +126,7 @@ class CheckoutThankYou extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 
 		if (
@@ -139,7 +139,7 @@ class CheckoutThankYou extends React.Component {
 		}
 	}
 
-	hasPlanOrDomainProduct = (props = this.props) => {
+	hasPlanOrDomainProduct = ( props = this.props ) => {
 		return getPurchases( props ).some(
 			purchase => isPlan( purchase ) || isDomainProduct( purchase )
 		);

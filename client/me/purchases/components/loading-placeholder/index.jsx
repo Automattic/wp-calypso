@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 
 class LoadingPlaceholder extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,
 	};

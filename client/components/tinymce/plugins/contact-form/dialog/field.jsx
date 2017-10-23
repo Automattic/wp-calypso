@@ -33,7 +33,7 @@ import getLabel from './locales';
 const fieldTypes = [ 'checkbox', 'select', 'email', 'name', 'radio', 'text', 'textarea', 'url' ];
 
 class ContactFormDialogField extends React.PureComponent {
-    static displayName = 'ContactFormDialogField';
+	static displayName = 'ContactFormDialogField';
 
 	static propTypes = {
 		label: PropTypes.string.isRequired,

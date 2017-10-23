@@ -33,7 +33,7 @@ import { canCurrentUser, isPrivateSite } from 'state/selectors';
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
 // TODO: port to es6 once we remove the last observe
-export const People = createReactClass({
+export const People = createReactClass( {
 	// eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
@@ -119,7 +119,7 @@ export const People = createReactClass({
 			</Main>
 		);
 	},
-});
+} );
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );

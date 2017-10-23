@@ -52,7 +52,7 @@ const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 
 class PostSelectorPosts extends React.Component {
-    static displayName = 'PostSelectorPosts';
+	static displayName = 'PostSelectorPosts';
 
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
@@ -97,7 +97,7 @@ class PostSelectorPosts extends React.Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
 			this.props.siteId !== nextProps.siteId
@@ -113,7 +113,7 @@ class PostSelectorPosts extends React.Component {
 		}
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		const forceUpdate =
 			prevProps.selected !== this.props.selected || ( prevProps.loading && ! this.props.loading );
 
@@ -146,7 +146,7 @@ class PostSelectorPosts extends React.Component {
 		this.list = ref;
 	};
 
-	setItemRef = (item, itemRef) => {
+	setItemRef = ( item, itemRef ) => {
 		if ( ! itemRef || ! item ) {
 			return;
 		}
@@ -210,7 +210,7 @@ class PostSelectorPosts extends React.Component {
 		return filter( posts, ( { parent } ) => parent && parent.ID === postId );
 	};
 
-	getItemHeight = (item, _recurse = false) => {
+	getItemHeight = ( item, _recurse = false ) => {
 		if ( ! item ) {
 			return ITEM_HEIGHT;
 		}
@@ -232,7 +232,7 @@ class PostSelectorPosts extends React.Component {
 		);
 	};
 
-	getRowHeight = ({ index }) => {
+	getRowHeight = ( { index } ) => {
 		return this.getItemHeight( this.getItem( index ) );
 	};
 
@@ -264,7 +264,7 @@ class PostSelectorPosts extends React.Component {
 		return count;
 	};
 
-	setRequestedPages = ({ startIndex, stopIndex }) => {
+	setRequestedPages = ( { startIndex, stopIndex } ) => {
 		const { requestedPages } = this.state;
 		const pagesToRequest = difference(
 			range(
@@ -302,7 +302,7 @@ class PostSelectorPosts extends React.Component {
 		this.debouncedSearch();
 	};
 
-	renderItem = (item, _recurse = false) => {
+	renderItem = ( item, _recurse = false ) => {
 		if ( item.parent && ! _recurse && includes( this.postIds, item.parent.ID ) ) {
 			return;
 		}
@@ -371,7 +371,7 @@ class PostSelectorPosts extends React.Component {
 		);
 	};
 
-	renderRow = ({ index }) => {
+	renderRow = ( { index } ) => {
 		const item = this.getItem( index );
 		if ( item ) {
 			return this.renderItem( item );
@@ -391,7 +391,7 @@ class PostSelectorPosts extends React.Component {
 		);
 	};
 
-	cellRendererWrapper = ({ key, style, ...rest }) => {
+	cellRendererWrapper = ( { key, style, ...rest } ) => {
 		return (
 			<div key={ key } style={ style }>
 				{ this.renderRow( rest ) }

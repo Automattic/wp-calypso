@@ -20,7 +20,7 @@ import RootChild from 'components/root-child';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
 
 export class DropZone extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		className: PropTypes.string,
 		fullScreen: PropTypes.bool,
 		icon: PropTypes.node,
@@ -60,7 +60,7 @@ export class DropZone extends React.Component {
 		window.addEventListener( 'mouseup', this.resetDragState );
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.isDraggingOverDocument !== this.state.isDraggingOverDocument ) {
 			this.toggleMutationObserver();
 		}
@@ -174,7 +174,7 @@ export class DropZone extends React.Component {
 		event.preventDefault();
 	};
 
-	isWithinZoneBounds = (x, y) => {
+	isWithinZoneBounds = ( x, y ) => {
 		if ( ! this.refs.zone ) {
 			return false;
 		}

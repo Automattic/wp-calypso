@@ -23,7 +23,7 @@ import { getSites } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
-export const Sites = createReactClass({
+export const Sites = createReactClass( {
 	displayName: 'Sites',
 
 	mixins: [ observe( 'user' ) ],
@@ -125,7 +125,7 @@ export const Sites = createReactClass({
 			</Main>
 		);
 	},
-});
+} );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
 	const path = rawPath === '/sites' ? '/stats/insights' : rawPath;

@@ -16,7 +16,7 @@ import classNames from 'classnames';
 import MediaUtils from 'lib/media/utils';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
-    static displayName = 'EditorMediaModalDetailFileInfo';
+	static displayName = 'EditorMediaModalDetailFileInfo';
 
 	static propTypes = {
 		item: PropTypes.object,

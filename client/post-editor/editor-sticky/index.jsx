@@ -23,7 +23,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorSticky extends React.Component {
-    static displayName = 'EditorSticky';
+	static displayName = 'EditorSticky';
 
 	static propTypes = {
 		postId: PropTypes.number,

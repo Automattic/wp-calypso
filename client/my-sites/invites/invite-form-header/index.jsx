@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 
 class InviteFormHeader extends React.Component {
-    static displayName = 'InviteFormHeader';
+	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );

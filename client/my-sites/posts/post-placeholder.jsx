@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 
 class PostPlaceholder extends React.Component {
-    static displayName = 'PostPlaceholder';
+	static displayName = 'PostPlaceholder';
 
 	render() {
 		return (

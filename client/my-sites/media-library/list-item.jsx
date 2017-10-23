@@ -23,7 +23,7 @@ import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryListItem';
+	static displayName = 'MediaLibraryListItem';
 
 	static propTypes = {
 		media: PropTypes.object,
@@ -45,7 +45,7 @@ export default class extends React.Component {
 		onEditItem: noop,
 	};
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate( nextProps ) {
 		return ! (
 			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&

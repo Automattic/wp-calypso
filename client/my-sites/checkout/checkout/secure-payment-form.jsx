@@ -36,17 +36,17 @@ const { hasFreeTrial } = cartItems;
 const countriesListForPayments = countriesList.forPayments();
 const debug = debugFactory( 'calypso:checkout:payment' );
 
-const SecurePaymentForm = createReactClass({
-    displayName: 'SecurePaymentForm',
-    mixins: [ TransactionStepsMixin ],
+const SecurePaymentForm = createReactClass( {
+	displayName: 'SecurePaymentForm',
+	mixins: [ TransactionStepsMixin ],
 
-    propTypes: {
+	propTypes: {
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
 			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
@@ -54,7 +54,7 @@ const SecurePaymentForm = createReactClass({
 		};
 	},
 
-    getVisiblePaymentBox( cart, paymentMethods ) {
+	getVisiblePaymentBox( cart, paymentMethods ) {
 		const primary = 0,
 			secondary = 1;
 
@@ -75,7 +75,7 @@ const SecurePaymentForm = createReactClass({
 		return null;
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.transaction.step.name !== 'before-submit' ) {
 			return;
 		}
@@ -85,28 +85,28 @@ const SecurePaymentForm = createReactClass({
 		} );
 	},
 
-    handlePaymentBoxSubmit( event ) {
+	handlePaymentBoxSubmit( event ) {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
 		this.submitTransaction( event );
 	},
 
-    getInitialCard() {
+	getInitialCard() {
 		return this.props.cards[ 0 ];
 	},
 
-    componentWillMount() {
+	componentWillMount() {
 		this.setInitialPaymentDetails();
 	},
 
-    componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.visiblePaymentBox !== prevState.visiblePaymentBox ) {
 			this.setInitialPaymentDetails();
 		}
 	},
 
-    setInitialPaymentDetails() {
+	setInitialPaymentDetails() {
 		let newPayment;
 
 		switch ( this.state.visiblePaymentBox ) {
@@ -141,14 +141,14 @@ const SecurePaymentForm = createReactClass({
 		}
 	},
 
-    selectPaymentBox( paymentBox ) {
+	selectPaymentBox( paymentBox ) {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 			visiblePaymentBox: paymentBox,
 		} );
 	},
 
-    renderCreditsPayentBox() {
+	renderCreditsPayentBox() {
 		return (
 			<CreditsPaymentBox
 				cart={ this.props.cart }
@@ -158,7 +158,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderFreeTrialConfirmationBox() {
+	renderFreeTrialConfirmationBox() {
 		return (
 			<FreeTrialConfirmationBox
 				cart={ this.props.cart }
@@ -168,7 +168,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderFreeCartPaymentBox() {
+	renderFreeCartPaymentBox() {
 		return (
 			<FreeCartPaymentBox
 				cart={ this.props.cart }
@@ -180,7 +180,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderCreditCardPaymentBox() {
+	renderCreditCardPaymentBox() {
 		return (
 			<CreditCardPaymentBox
 				cards={ this.props.cards }
@@ -196,7 +196,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderPayPalPaymentBox() {
+	renderPayPalPaymentBox() {
 		return (
 			<PayPalPaymentBox
 				cart={ this.props.cart }
@@ -209,7 +209,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderGetDotBlogNotice() {
+	renderGetDotBlogNotice() {
 		const hasProductFromGetDotBlogSignup = find(
 			this.props.cart.products,
 			product => product.extra && product.extra.source === 'get-dot-blog-signup'
@@ -232,7 +232,7 @@ const SecurePaymentForm = createReactClass({
 		);
 	},
 
-    renderPaymentBox() {
+	renderPaymentBox() {
 		const { visiblePaymentBox } = this.state;
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -257,7 +257,7 @@ const SecurePaymentForm = createReactClass({
 		}
 	},
 
-    render() {
+	render() {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
 				<EmptyContent
@@ -278,7 +278,7 @@ const SecurePaymentForm = createReactClass({
 				{ this.renderPaymentBox() }
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default localize( SecurePaymentForm );

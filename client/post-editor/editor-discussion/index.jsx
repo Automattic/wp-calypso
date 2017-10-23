@@ -27,7 +27,7 @@ function statusToBoolean( status ) {
 }
 
 export class EditorDiscussion extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		isNew: PropTypes.bool,
 		post: PropTypes.object,
 		site: PropTypes.object,

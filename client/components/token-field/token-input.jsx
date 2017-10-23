@@ -7,7 +7,7 @@ import React from 'react';
 import { omit, noop } from 'lodash';
 
 class TokenInput extends React.PureComponent {
-    static propTypes = {
+	static propTypes = {
 		disabled: PropTypes.bool,
 		hasFocus: PropTypes.bool,
 		onChange: PropTypes.func,

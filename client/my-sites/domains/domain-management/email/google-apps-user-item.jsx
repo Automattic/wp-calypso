@@ -14,12 +14,12 @@ import React from 'react';
 import ExternalLink from 'components/external-link';
 
 class GoogleAppsUserItem extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		user: PropTypes.object.isRequired,
 		onClick: PropTypes.func,
 	};
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate( nextProps ) {
 		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
 	}
 

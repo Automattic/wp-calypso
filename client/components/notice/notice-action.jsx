@@ -9,7 +9,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 export default class extends React.Component {
-    static displayName = 'NoticeAction';
+	static displayName = 'NoticeAction';
 
 	static propTypes = {
 		href: PropTypes.string,

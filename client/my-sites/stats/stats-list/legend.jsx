@@ -12,7 +12,7 @@ import React from 'react';
  */
 
 export default class extends React.PureComponent {
-    static displayName = 'StatsListLegend';
+	static displayName = 'StatsListLegend';
 
 	static propTypes = {
 		value: PropTypes.string,

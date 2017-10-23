@@ -49,7 +49,7 @@ const trackSupportAfterSibylClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_sibyl_support_after_question_click' ) );
 
 export class HelpContactForm extends React.PureComponent {
-    static propTypes = {
+	static propTypes = {
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -99,7 +99,7 @@ export class HelpContactForm extends React.PureComponent {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -107,14 +107,14 @@ export class HelpContactForm extends React.PureComponent {
 		this.setState( nextProps.valueLink.value );
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.subject !== this.state.subject || prevState.message !== this.state.message ) {
 			this.debouncedQandA();
 		}
 		this.props.valueLink.requestChange( this.state );
 	}
 
-	trackClickStats = (selectionName, selectedOption) => {
+	trackClickStats = ( selectionName, selectedOption ) => {
 		const tracksEvent = {
 			howCanWeHelp: 'calypso_help_how_can_we_help_click',
 			howYouFeel: 'calypso_help_how_you_feel_click',
@@ -148,7 +148,7 @@ export class HelpContactForm extends React.PureComponent {
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};
 
-	trackSibylClick = (event, helpLink) => {
+	trackSibylClick = ( event, helpLink ) => {
 		this.props.trackSibylClick( event, helpLink );
 		this.setState( { sibylClicked: true } );
 	};
@@ -165,7 +165,7 @@ export class HelpContactForm extends React.PureComponent {
 	 *                                   is used for the second line of text displayed in the SegmentedControl
 	 * @return {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
 	 */
-	renderFormSelection = (selectionName, selectionOptions) => {
+	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
 		const options = selectionOptions.map( option => ( {
 			label: option.label,

@@ -18,7 +18,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
 class StatsActionSpam extends React.Component {
-    static displayName = 'StatsActionSpam';
+	static displayName = 'StatsActionSpam';
 
 	state = {
 		spammed: false,

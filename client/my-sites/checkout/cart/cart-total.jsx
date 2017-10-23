@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 
 class CartTotal extends React.Component {
-    render() {
+	render() {
 		var cart = this.props.cart;
 
 		if ( cart.hasPendingServerUpdates ) {

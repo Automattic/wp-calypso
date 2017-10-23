@@ -23,7 +23,7 @@ import {
 } from 'lib/store-transactions/step-types';
 
 class PayButton extends React.Component {
-    buttonState = () => {
+	buttonState = () => {
 		var state;
 
 		switch ( this.props.transactionStep.name ) {

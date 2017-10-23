@@ -29,7 +29,7 @@ import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 
-const ReauthRequired = createReactClass({
+const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
 	mixins: [ observe( 'twoStepAuthorization' ), eventRecorder ],
 
@@ -258,6 +258,6 @@ const ReauthRequired = createReactClass({
 		const { name, checked } = e.currentTarget;
 		this.setState( { [ name ]: checked } );
 	},
-});
+} );
 
 export default localize( ReauthRequired );

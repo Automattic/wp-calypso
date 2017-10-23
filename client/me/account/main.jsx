@@ -55,7 +55,7 @@ const user = _user();
  */
 const debug = debugFactory( 'calypso:me:account' );
 
-const Account = createReactClass({
+const Account = createReactClass( {
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
@@ -743,7 +743,7 @@ const Account = createReactClass({
 			</Main>
 		);
 	},
-});
+} );
 
 export default compose(
 	connect(

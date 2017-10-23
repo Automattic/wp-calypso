@@ -42,7 +42,7 @@ const options = {
 };
 
 class WPCOMNotifications extends React.Component {
-    static displayName = 'WPCOMNotifications';
+	static displayName = 'WPCOMNotifications';
 
 	state = {
 		settings: null,

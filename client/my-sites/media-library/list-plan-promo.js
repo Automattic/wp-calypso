@@ -18,7 +18,7 @@ import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
 class MediaLibraryListPlanPromo extends React.Component {
-    static displayName = 'MediaLibraryListPlanPromo';
+	static displayName = 'MediaLibraryListPlanPromo';
 
 	static propTypes = {
 		site: PropTypes.object,

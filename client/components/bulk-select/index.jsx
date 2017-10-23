@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import Count from 'components/count';
 
 export default class extends React.Component {
-    static displayName = 'BulkSelect';
+	static displayName = 'BulkSelect';
 
 	static propTypes = {
 		totalElements: PropTypes.number.isRequired,

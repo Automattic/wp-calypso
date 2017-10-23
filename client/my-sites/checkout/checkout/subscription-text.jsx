@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 
 class SubscriptionText extends React.Component {
-    render() {
+	render() {
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			return (
 				<span className="subscription-text">

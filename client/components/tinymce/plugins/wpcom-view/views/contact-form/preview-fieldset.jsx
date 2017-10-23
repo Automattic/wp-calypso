@@ -8,7 +8,7 @@ import React from 'react';
 import { omit } from 'lodash';
 
 export default class extends React.Component {
-    static displayName = 'ContactFormViewPreviewFieldset';
+	static displayName = 'ContactFormViewPreviewFieldset';
 
 	render() {
 		return (

@@ -27,7 +27,7 @@ import QueryPlans from 'components/data/query-plans';
 let exclusiveViewLock = null;
 
 class PremiumPopover extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		className: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] ),
 		onClose: PropTypes.func,
 		isVisible: PropTypes.bool,

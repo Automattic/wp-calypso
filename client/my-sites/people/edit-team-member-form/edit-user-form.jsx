@@ -28,7 +28,7 @@ import RoleSelect from 'my-sites/people/role-select';
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 const user = userModule();
 
-const EditUserForm = createReactClass({
+const EditUserForm = createReactClass( {
 	displayName: 'EditUserForm',
 
 	mixins: [ PureRenderMixin ],
@@ -232,6 +232,6 @@ const EditUserForm = createReactClass({
 			</form>
 		);
 	},
-});
+} );
 
 export default localize( EditUserForm );

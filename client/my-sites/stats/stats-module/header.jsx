@@ -16,7 +16,7 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 
 class StatsModuleHeader extends React.Component {
-    static displayName = 'StatsModuleHeader';
+	static displayName = 'StatsModuleHeader';
 
 	static propTypes = {
 		siteId: PropTypes.number,

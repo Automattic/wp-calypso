@@ -31,7 +31,7 @@ import Button from 'components/button';
 import Tooltip from 'components/tooltip';
 
 class Security2faBackupCodesList extends React.Component {
-    static displayName = 'Security2faBackupCodesList';
+	static displayName = 'Security2faBackupCodesList';
 
 	static defaultProps = {
 		backupCodes: [],

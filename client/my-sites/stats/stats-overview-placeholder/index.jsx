@@ -17,7 +17,7 @@ import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
 class StatsOverviewPlaceholder extends React.Component {
-    static displayName = 'StatsOverviewPlaceholder';
+	static displayName = 'StatsOverviewPlaceholder';
 
 	static propTypes = {
 		insights: PropTypes.bool,

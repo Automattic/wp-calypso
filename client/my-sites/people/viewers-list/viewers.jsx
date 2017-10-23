@@ -20,7 +20,7 @@ import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
 class Viewers extends React.PureComponent {
-    static displayName = 'Viewers';
+	static displayName = 'Viewers';
 
 	state = {
 		bulkEditing: false,

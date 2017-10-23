@@ -15,10 +15,10 @@ import analytics from 'lib/analytics';
 import upgradesActions from 'lib/upgrades/actions';
 
 class CartCoupon extends React.Component {
-    static displayName = 'CartCoupon';
+	static displayName = 'CartCoupon';
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		var coupon = props.cart.coupon,
 			cartHadCouponBeforeMount = Boolean( props.cart.coupon );
 
@@ -30,7 +30,7 @@ class CartCoupon extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}

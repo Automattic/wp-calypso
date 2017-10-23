@@ -18,7 +18,7 @@ import userModule from 'lib/user';
 const user = userModule();
 
 export default class extends React.Component {
-    static displayName = 'ModuleChartLabel';
+	static displayName = 'ModuleChartLabel';
 
 	static propTypes = {
 		width: PropTypes.number.isRequired,

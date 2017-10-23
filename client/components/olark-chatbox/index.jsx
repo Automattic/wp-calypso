@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:olark:chatbox' );
  */
 import OlarkEvents from 'lib/olark-events';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'OlarkChatBox',
 
 	/**
@@ -132,4 +132,4 @@ export default createReactClass({
 	render: function() {
 		return <div className="olark-chatbox__container" />;
 	},
-});
+} );

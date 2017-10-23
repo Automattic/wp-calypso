@@ -40,27 +40,27 @@ import {
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 
-const SinglePlugin = createReactClass({
-    displayName: 'SinglePlugin',
-    _DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
-    mixins: [ PluginNotices ],
+const SinglePlugin = createReactClass( {
+	displayName: 'SinglePlugin',
+	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
+	mixins: [ PluginNotices ],
 
-    componentWillMount() {
+	componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
 	},
 
-    componentDidMount() {
+	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return this.getSitesPlugin();
 	},
 
-    componentWillUnmount() {
+	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
 		if ( this.pluginRefreshTimeout ) {
@@ -68,11 +68,11 @@ const SinglePlugin = createReactClass({
 		}
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.refreshSitesAndPlugins( nextProps );
 	},
 
-    getSitesPlugin( nextProps ) {
+	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props;
 
 		const sites = uniq( props.sites ),
@@ -93,11 +93,11 @@ const SinglePlugin = createReactClass({
 		};
 	},
 
-    refreshSitesAndPlugins( nextProps ) {
+	refreshSitesAndPlugins( nextProps ) {
 		this.setState( this.getSitesPlugin( nextProps ) );
 	},
 
-    getPageTitle() {
+	getPageTitle() {
 		const plugin = this.getPlugin();
 		return this.props.translate( '%(pluginName)s Plugin', {
 			args: { pluginName: plugin.name },
@@ -106,15 +106,15 @@ const SinglePlugin = createReactClass({
 		} );
 	},
 
-    removeNotice( error ) {
+	removeNotice( error ) {
 		PluginsActions.removePluginsNotices( error );
 	},
 
-    recordEvent( eventAction ) {
+	recordEvent( eventAction ) {
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', this.props.pluginSlug );
 	},
 
-    getPreviousListUrl() {
+	getPreviousListUrl() {
 		const splitPluginUrl = this.props.prevPath.split( '/' + this.props.pluginSlug + '/' );
 		let previousPath = this.props.prevPath;
 
@@ -130,14 +130,14 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    backHref() {
+	backHref() {
 		if ( this.props.prevPath ) {
 			return this.getPreviousListUrl();
 		}
 		return '/plugins/manage/' + ( this.props.siteUrl || '' );
 	},
 
-    displayHeader() {
+	displayHeader() {
 		const recordEvent = this.recordEvent.bind( this, 'Clicked Header Plugin Back Arrow' );
 		return (
 			<HeaderCake
@@ -148,7 +148,7 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    pluginExists( plugin ) {
+	pluginExists( plugin ) {
 		if ( this.isFetching() ) {
 			return 'unknown';
 		}
@@ -170,19 +170,19 @@ const SinglePlugin = createReactClass({
 		return false;
 	},
 
-    isFetching() {
+	isFetching() {
 		return this.props.wporgFetching;
 	},
 
-    isFetched() {
+	isFetched() {
 		return WporgPluginsSelectors.isFetched( this.props.wporgPlugins, this.props.pluginSlug );
 	},
 
-    isFetchingSites() {
+	isFetchingSites() {
 		return this.props.sites.every( PluginsStore.isFetchingSite );
 	},
 
-    getPlugin() {
+	getPlugin() {
 		let plugin = Object.assign( {}, this.state.plugin );
 		// assign it .org details
 		plugin = Object.assign(
@@ -193,7 +193,7 @@ const SinglePlugin = createReactClass({
 		return plugin;
 	},
 
-    getPluginDoesNotExistView( selectedSite ) {
+	getPluginDoesNotExistView( selectedSite ) {
 		const { translate } = this.props;
 		const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
 		const action = translate( 'Browse all plugins' );
@@ -211,7 +211,7 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    getAllowedPluginActions( plugin ) {
+	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
 		const hiddenForAutomatedTransfer =
 			this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
@@ -223,11 +223,11 @@ const SinglePlugin = createReactClass({
 		};
 	},
 
-    renderDocumentHead() {
+	renderDocumentHead() {
 		return <DocumentHead title={ this.getPageTitle() } />;
 	},
 
-    renderSitesList( plugin ) {
+	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
 		}
@@ -260,7 +260,7 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    renderPluginPlaceholder() {
+	renderPluginPlaceholder() {
 		const { selectedSite } = this.props;
 		return (
 			<MainComponent>
@@ -285,7 +285,7 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    getMockPlugin() {
+	getMockPlugin() {
 		const selectedSite = {
 			slug: 'no-slug',
 			canUpdateFiles: true,
@@ -323,7 +323,7 @@ const SinglePlugin = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const { selectedSite } = this.props;
 
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
@@ -398,8 +398,8 @@ const SinglePlugin = createReactClass({
 				</div>
 			</MainComponent>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	( state, props ) => {

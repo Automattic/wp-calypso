@@ -14,7 +14,7 @@ import React from 'react';
 import getLabel from './locales';
 
 class ContactFormDialogFieldHeader extends React.Component {
-    static displayName = 'ContactFormDialogFieldHeader';
+	static displayName = 'ContactFormDialogFieldHeader';
 
 	static propTypes = {
 		label: PropTypes.string.isRequired,

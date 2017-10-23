@@ -20,7 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 const THEME_THUMBNAIL_WIDTH = 660;
 
 class ThemesRelatedCard extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		currentTheme: PropTypes.string.isRequired,
 	};
 

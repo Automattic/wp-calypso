@@ -31,7 +31,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
 class EditorVisibility extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		isPrivateSite: false,
 	};
 
@@ -54,7 +54,7 @@ class EditorVisibility extends React.Component {
 
 	showingAcceptDialog = false;
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
 			return;
 		}

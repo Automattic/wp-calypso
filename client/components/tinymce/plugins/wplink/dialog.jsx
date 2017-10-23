@@ -38,7 +38,7 @@ var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 class LinkDialog extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		visible: PropTypes.bool,
 		editor: PropTypes.object,
 		onClose: PropTypes.func,
@@ -52,7 +52,7 @@ class LinkDialog extends React.Component {
 		firstLoad: false,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.props.visible ) {
 			this.setState( this.getState() );
 		}

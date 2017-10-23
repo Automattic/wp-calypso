@@ -20,8 +20,8 @@ import { requestSitePosts } from 'state/posts/actions';
 const debug = debugFactory( 'calypso:design-tool-data' );
 
 export default function designTool( Component ) {
-    class DesignToolData extends React.Component {
-	    static propTypes = {
+	class DesignToolData extends React.Component {
+		static propTypes = {
 			// This is the key for the customizations in the Redux store (under preview)
 			previewDataKey: PropTypes.string.isRequired,
 			// These are provided by the connect method
@@ -37,7 +37,7 @@ export default function designTool( Component ) {
 			customizations: {},
 		};
 
-		getUpdatedCustomizationsForKey = (id, customizations) => {
+		getUpdatedCustomizationsForKey = ( id, customizations ) => {
 			const updatedCustomizations = {
 				[ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ),
 			};

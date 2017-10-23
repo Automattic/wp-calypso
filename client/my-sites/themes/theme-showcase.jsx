@@ -59,7 +59,7 @@ const optionShape = PropTypes.shape( {
 } );
 
 class ThemeShowcase extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
@@ -129,7 +129,7 @@ class ThemeShowcase extends React.Component {
 		return buildUrl( url, searchString );
 	};
 
-	onTierSelect = ({ value: tier }) => {
+	onTierSelect = ( { value: tier } ) => {
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );

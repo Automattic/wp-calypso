@@ -23,7 +23,7 @@ function getStateFromStores() {
 }
 
 class CheckoutData extends React.Component {
-    render() {
+	render() {
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>
 				{ this.props.children }

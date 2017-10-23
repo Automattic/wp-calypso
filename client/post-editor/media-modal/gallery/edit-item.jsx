@@ -16,7 +16,7 @@ import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalGalleryEditItem';
+	static displayName = 'EditorMediaModalGalleryEditItem';
 
 	static propTypes = {
 		site: PropTypes.object,

@@ -16,7 +16,7 @@ import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 
 export default class extends React.Component {
-    static displayName = 'EditorLocationSearch';
+	static displayName = 'EditorLocationSearch';
 
 	static propTypes = {
 		onError: PropTypes.func,

@@ -16,11 +16,11 @@ import { localize } from 'i18n-calypso';
 import support from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 
-const EmailForwardingDetails = createReactClass({
-    displayName: 'EmailForwardingDetails',
-    mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+const EmailForwardingDetails = createReactClass( {
+	displayName: 'EmailForwardingDetails',
+	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
-    render: function() {
+	render: function() {
 		return (
 			<p className="email-forwarding__explanation">
 				{ this.props.translate(
@@ -38,9 +38,9 @@ const EmailForwardingDetails = createReactClass({
 		);
 	},
 
-    handleLearnMoreClick() {
+	handleLearnMoreClick() {
 		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName );
-	}
-});
+	},
+} );
 
 export default localize( EmailForwardingDetails );

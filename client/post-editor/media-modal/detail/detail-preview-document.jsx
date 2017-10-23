@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalDetailPreviewDocument';
+	static displayName = 'EditorMediaModalDetailPreviewDocument';
 
 	static propTypes = {
 		className: PropTypes.string,

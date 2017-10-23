@@ -15,7 +15,7 @@ import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
 
 class EditorMediaModalGalleryCaption extends React.Component {
-    static displayName = 'EditorMediaModalGalleryCaption';
+	static displayName = 'EditorMediaModalGalleryCaption';
 
 	static propTypes = {
 		siteId: PropTypes.number,

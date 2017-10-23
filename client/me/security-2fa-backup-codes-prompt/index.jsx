@@ -23,7 +23,7 @@ import constants from 'me/constants';
 import Notice from 'components/notice';
 
 class Security2faBackupCodesPrompt extends React.Component {
-    static displayName = 'Security2faBackupCodesPrompt';
+	static displayName = 'Security2faBackupCodesPrompt';
 
 	static propTypes = {
 		onPrintAgain: PropTypes.func,
@@ -62,7 +62,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
 	};
 
-	onRequestComplete = (error, data) => {
+	onRequestComplete = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 		if ( error ) {
 			this.setState( {

@@ -15,7 +15,7 @@ import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 import FormCheckbox from 'components/forms/form-checkbox';
 
 export default class extends React.PureComponent {
-    static displayName = 'NotificationSettingsFormStreamOptions';
+	static displayName = 'NotificationSettingsFormStreamOptions';
 
 	static propTypes = {
 		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,

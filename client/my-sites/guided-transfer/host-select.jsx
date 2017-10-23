@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
 class HostSelect extends React.Component {
-    static displayName = 'HostSelect';
+	static displayName = 'HostSelect';
 
 	static propTypes = {
 		hosts: PropTypes.arrayOf(

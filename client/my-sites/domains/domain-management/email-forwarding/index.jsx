@@ -23,7 +23,7 @@ import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
 class EmailForwarding extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		emailForwarding: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,

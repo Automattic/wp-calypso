@@ -48,7 +48,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  */
 
 class PostTypeOptions extends React.PureComponent {
-    static displayName = 'PostTypeOptions';
+	static displayName = 'PostTypeOptions';
 
 	static propTypes = {
 		legend: PropTypes.string.isRequired,

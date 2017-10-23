@@ -15,7 +15,7 @@ import Button from 'components/forms/form-button';
 import Spinner from 'components/spinner';
 
 export default class extends React.Component {
-    static displayName = 'SpinnerButton';
+	static displayName = 'SpinnerButton';
 
 	static propTypes = {
 		disabled: PropTypes.bool,

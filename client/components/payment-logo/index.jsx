@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 class PaymentLogo extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		type: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
 	};

@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryListItemVideo';
+	static displayName = 'MediaLibraryListItemVideo';
 
 	static propTypes = {
 		media: PropTypes.object,

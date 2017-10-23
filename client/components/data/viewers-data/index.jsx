@@ -14,7 +14,7 @@ import ViewersStore from 'lib/viewers/store';
 import ViewersActions from 'lib/viewers/actions';
 import passToChildren from 'lib/react-pass-to-children';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'ViewersData',
 
 	propTypes: {
@@ -101,4 +101,4 @@ export default createReactClass({
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
 	},
-});
+} );

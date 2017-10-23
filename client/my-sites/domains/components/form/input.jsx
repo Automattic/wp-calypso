@@ -19,7 +19,7 @@ import analytics from 'lib/analytics';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default class extends React.Component {
-    static displayName = 'Input';
+	static displayName = 'Input';
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
 	componentDidMount() {
@@ -45,7 +45,7 @@ export default class extends React.Component {
 		}
 	};
 
-	componentDidUpdate(oldProps) {
+	componentDidUpdate( oldProps ) {
 		if ( oldProps.disabled && ! this.props.disabled ) {
 			// We focus when the state goes from disabled to enabled. This is needed because we show a disabled input
 			// until we receive data from the server.

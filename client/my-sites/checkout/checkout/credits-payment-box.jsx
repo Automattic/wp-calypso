@@ -22,7 +22,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
 class CreditsPaymentBox extends React.Component {
-    content = () => {
+	content = () => {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =

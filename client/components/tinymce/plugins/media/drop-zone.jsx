@@ -22,7 +22,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'TinyMCEDropZone',
 
 	mixins: [ observe( 'sites' ) ],
@@ -146,4 +146,4 @@ export default createReactClass({
 			/>
 		);
 	},
-});
+} );

@@ -22,7 +22,7 @@ import ProgressBar from 'components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
 
 class UploadingPane extends React.PureComponent {
-    static displayName = 'SiteSettingsUploadingPane';
+	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),

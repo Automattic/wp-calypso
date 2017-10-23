@@ -16,7 +16,7 @@ import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 import ResizableIframe from 'components/resizable-iframe';
 
 export default class extends React.Component {
-    static displayName = 'ShortcodeFrame';
+	static displayName = 'ShortcodeFrame';
 
 	static propTypes = {
 		body: PropTypes.string,
@@ -38,13 +38,13 @@ export default class extends React.Component {
 		this.updateHtmlState( this.props );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props, nextProps ) ) {
 			this.updateHtmlState( nextProps );
 		}
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate( nextProps, nextState ) {
 		return nextState.html !== this.state.html;
 	}
 

@@ -16,7 +16,7 @@ import UserItem from 'components/user';
 import user from 'lib/user';
 
 export default class extends React.PureComponent {
-    static displayName = 'ImporterAuthorMapping';
+	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,

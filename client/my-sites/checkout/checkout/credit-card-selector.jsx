@@ -18,13 +18,13 @@ import storeTransactions from 'lib/store-transactions';
 import upgradesActions from 'lib/upgrades/actions';
 
 class CreditCardSelector extends React.Component {
-    constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		if ( props.initialCard ) {
-		    this.state = { section: props.initialCard.stored_details_id };
+			this.state = { section: props.initialCard.stored_details_id };
 			return;
 		} else {
-		    this.state = { section: 'new-card' };
+			this.state = { section: 'new-card' };
 			return;
 		}
 	}
@@ -57,7 +57,7 @@ class CreditCardSelector extends React.Component {
 		return this.section( 'new-card', cardForm );
 	};
 
-	section = (name, content) => {
+	section = ( name, content ) => {
 		var classes = classNames( 'payment-box-section', {
 			selected: this.state.section === name,
 			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0,

@@ -24,7 +24,7 @@ import Notice from 'components/notice';
 const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
 class EditorLocation extends React.Component {
-    static displayName = 'EditorLocation';
+	static displayName = 'EditorLocation';
 
 	static propTypes = {
 		label: PropTypes.string,

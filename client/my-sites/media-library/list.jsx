@@ -29,7 +29,7 @@ import { getPreference } from 'state/preferences/selectors';
 const GOOGLE_MAX_RESULTS = 1000;
 
 export class MediaLibraryList extends React.Component {
-    static displayName = 'MediaLibraryList';
+	static displayName = 'MediaLibraryList';
 
 	static propTypes = {
 		site: PropTypes.object,
@@ -107,7 +107,7 @@ export class MediaLibraryList extends React.Component {
 		return style;
 	};
 
-	toggleItem = (item, shiftKeyPressed) => {
+	toggleItem = ( item, shiftKeyPressed ) => {
 		// We don't care to preserve the existing selected items if we're only
 		// seeking to select a single item
 		let selectedItems;

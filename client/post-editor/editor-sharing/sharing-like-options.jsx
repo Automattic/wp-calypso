@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/sites/selectors';
 
 class SharingLikeOptions extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isSharingButtonsEnabled: PropTypes.bool,

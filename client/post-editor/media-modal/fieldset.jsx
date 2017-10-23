@@ -9,7 +9,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalFieldset';
+	static displayName = 'EditorMediaModalFieldset';
 
 	static propTypes = {
 		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,

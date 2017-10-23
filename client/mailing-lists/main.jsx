@@ -22,7 +22,7 @@ import { preventWidows } from 'lib/formatting';
  */
 
 class MainComponent extends React.Component {
-    static displayName = 'MainComponent';
+	static displayName = 'MainComponent';
 
 	state = {
 		isError: false,
@@ -36,7 +36,7 @@ class MainComponent extends React.Component {
 		this.onUnsubscribeClick();
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isSubscribed !== prevState.isSubscribed ) {
 			notices.success(
 				this.state.isSubscribed ? this.getSubscribedMessage() : this.getUnsubscribedMessage(),

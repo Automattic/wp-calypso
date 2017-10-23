@@ -27,11 +27,11 @@ const preventDefault = call( 'preventDefault' );
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-export const Composer = createReactClass({
-    displayName: 'Composer',
-    mixins: [ scrollbleed ],
+export const Composer = createReactClass( {
+	displayName: 'Composer',
+	mixins: [ scrollbleed ],
 
-    render() {
+	render() {
 		const { disabled, message, onUpdateChatMessage, onSendChatMessage, onFocus } = this.props;
 		const sendMessage = when( () => ! isEmpty( message ), () => onSendChatMessage( message ) );
 		const onChange = compose( prop( 'target.value' ), onUpdateChatMessage );
@@ -65,8 +65,8 @@ export const Composer = createReactClass({
 				</button>
 			</div>
 		);
-	}
-});
+	},
+} );
 
 const mapState = state => ( {
 	disabled: ! canUserSendMessages( state ),

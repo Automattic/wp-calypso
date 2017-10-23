@@ -17,7 +17,7 @@ import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 
 class FreeCartPaymentBox extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		products: PropTypes.object.isRequired,
 	};
 

@@ -35,12 +35,12 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 
 class CreditCardPaymentBox extends React.Component {
-    state = {
+	state = {
 		progress: 0,
 		previousCart: null,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			! this.submitting( this.props.transactionStep ) &&
 			this.submitting( nextProps.transactionStep )

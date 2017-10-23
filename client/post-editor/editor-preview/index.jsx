@@ -19,7 +19,7 @@ import WebPreviewContent from 'components/web-preview/content';
 import { isEnabled } from 'config';
 
 class EditorPreview extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		showPreview: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isLoading: PropTypes.bool,
@@ -37,7 +37,7 @@ class EditorPreview extends React.Component {
 
 	_hasTouch = false;
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		if ( this.didStartSaving( prevProps, this.props ) ) {
 			this.setState( { iframeUrl: 'about:blank' } );
 		}
@@ -57,7 +57,7 @@ class EditorPreview extends React.Component {
 		window.removeEventListener( 'keydown', this.keyDown );
 	}
 
-	didStartSaving = (props, nextProps) => {
+	didStartSaving = ( props, nextProps ) => {
 		if ( ! props || ! nextProps ) {
 			return false;
 		}

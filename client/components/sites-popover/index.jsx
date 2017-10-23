@@ -17,7 +17,7 @@ import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
 
 export default class extends React.Component {
-    static displayName = 'SitesPopover';
+	static displayName = 'SitesPopover';
 
 	static propTypes = {
 		showDelay: PropTypes.number,
@@ -47,7 +47,7 @@ export default class extends React.Component {
 		this.updatePopoverVisibilityState();
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.visible !== prevProps.visible ) {
 			this.updatePopoverVisibilityState();
 		}

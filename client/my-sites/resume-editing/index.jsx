@@ -31,7 +31,7 @@ import SiteIcon from 'blocks/site-icon';
 import Dispatcher from 'dispatcher';
 
 class ResumeEditing extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		requesting: PropTypes.bool,
@@ -41,7 +41,7 @@ class ResumeEditing extends React.Component {
 		translate: PropTypes.func,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed
 		// [TODO]: This becomes obsolete when we no longer rely on Flux for

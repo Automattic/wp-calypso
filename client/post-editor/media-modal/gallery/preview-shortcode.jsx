@@ -16,7 +16,7 @@ import classNames from 'classnames';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import GalleryShortcode from 'components/gallery-shortcode';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'EditorMediaModalGalleryPreviewShortcode',
 
 	propTypes: {
@@ -68,4 +68,4 @@ export default createReactClass({
 			</div>
 		);
 	},
-});
+} );

@@ -16,7 +16,7 @@ import FormButton from 'components/forms/form-button';
 import Gridicon from 'gridicons';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {
-    static displayName = 'SecurityAccountRecoveryManageContactButtons';
+	static displayName = 'SecurityAccountRecoveryManageContactButtons';
 
 	static propTypes = {
 		isSavable: PropTypes.bool,

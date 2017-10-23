@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import ProgressItem from './progress-item';
 
 class Security2faProgress extends React.Component {
-    static displayName = 'Security2faProgress';
+	static displayName = 'Security2faProgress';
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );

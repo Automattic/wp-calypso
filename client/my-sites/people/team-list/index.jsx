@@ -12,7 +12,7 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
 import Team from './team';
 
 class TeamList extends React.Component {
-    static displayName = 'TeamList';
+	static displayName = 'TeamList';
 
 	render() {
 		const fetchOptions = {

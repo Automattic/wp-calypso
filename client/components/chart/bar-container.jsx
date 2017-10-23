@@ -20,7 +20,7 @@ import userModule from 'lib/user';
 const user = userModule();
 
 export default class extends React.Component {
-    static displayName = 'ModuleChartBarContainer';
+	static displayName = 'ModuleChartBarContainer';
 
 	static propTypes = {
 		isTouch: PropTypes.bool,

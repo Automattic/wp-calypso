@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import { omit } from 'lodash';
 
 export default class extends React.Component {
-    static displayName = 'LoggedOutFormLinkItem';
+	static displayName = 'LoggedOutFormLinkItem';
 
 	static propTypes = {
 		className: PropTypes.string,

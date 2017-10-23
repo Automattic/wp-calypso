@@ -17,7 +17,7 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
 class ImporterMappingPane extends React.PureComponent {
-    static displayName = 'ImporterMappingPane';
+	static displayName = 'ImporterMappingPane';
 
 	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
@@ -34,7 +34,7 @@ class ImporterMappingPane extends React.PureComponent {
 		targetTitle: PropTypes.string.isRequired,
 	};
 
-	getFetchOptions = (options = {}) => {
+	getFetchOptions = ( options = {} ) => {
 		return Object.assign(
 			{
 				number: 50,
@@ -46,7 +46,7 @@ class ImporterMappingPane extends React.PureComponent {
 		);
 	};
 
-	getMappingDescription = (numSourceUsers, numTargetUsers, targetTitle) => {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +

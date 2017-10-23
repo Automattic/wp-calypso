@@ -34,7 +34,7 @@ import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
-const Profile = createReactClass({
+const Profile = createReactClass( {
 	displayName: 'Profile',
 
 	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],
@@ -157,6 +157,6 @@ const Profile = createReactClass({
 			</Main>
 		);
 	},
-});
+} );
 
 export default flowRight( protectForm, localize )( Profile );

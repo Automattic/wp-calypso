@@ -15,7 +15,7 @@ import { omit } from 'lodash';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'LoggedOutForm';
+	static displayName = 'LoggedOutForm';
 
 	static propTypes = {
 		children: PropTypes.node.isRequired,

@@ -16,7 +16,7 @@ import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 
 class TermsOfService extends React.Component {
-    static displayName = 'TermsOfService';
+	static displayName = 'TermsOfService';
 
 	recordTermsAndConditionsClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );

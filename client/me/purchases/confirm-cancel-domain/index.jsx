@@ -47,7 +47,7 @@ import userFactory from 'lib/user';
 const user = userFactory();
 
 class ConfirmCancelDomain extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
@@ -72,7 +72,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( this.props );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 

@@ -10,7 +10,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 export default class extends React.Component {
-    static displayName = 'PlanCompareCardItem';
+	static displayName = 'PlanCompareCardItem';
 
 	static propTypes = {
 		highlight: PropTypes.bool,

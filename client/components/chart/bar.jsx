@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import Tooltip from 'components/tooltip';
 
 export default class extends React.Component {
-    static displayName = 'ModuleChartBar';
+	static displayName = 'ModuleChartBar';
 
 	static propTypes = {
 		isTouch: PropTypes.bool,

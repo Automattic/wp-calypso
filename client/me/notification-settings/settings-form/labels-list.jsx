@@ -13,7 +13,7 @@ import React from 'react';
 import { getLabelForSetting } from './locales';
 
 export default class extends React.Component {
-    static displayName = 'NotificationSettingsFormLabelList';
+	static displayName = 'NotificationSettingsFormLabelList';
 
 	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,

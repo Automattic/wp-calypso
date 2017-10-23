@@ -24,7 +24,7 @@ import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-mana
 import Site from 'blocks/site';
 
 class PluginSiteNetwork extends React.Component {
-    static displayName = 'PluginSiteNetwork';
+	static displayName = 'PluginSiteNetwork';
 
 	static propTypes = {
 		site: PropTypes.object,

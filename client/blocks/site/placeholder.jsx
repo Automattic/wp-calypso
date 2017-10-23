@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:site' );
 
 export default class extends React.Component {
-    static displayName = 'SitePlaceholder';
+	static displayName = 'SitePlaceholder';
 
 	componentDidMount() {
 		debug( 'The Site component is mounted.' );

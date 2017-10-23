@@ -19,7 +19,7 @@ import NoticeAction from 'components/notice/notice-action';
 import WordPressLogo from 'components/wordpress-logo';
 
 class Connect extends React.Component {
-    getCreateAccountUrl = () => {
+	getCreateAccountUrl = () => {
 		return config.isEnabled( 'devdocs' )
 			? 'https://wordpress.com/start/developer'
 			: 'https://wordpress.com/start';

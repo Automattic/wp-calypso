@@ -14,7 +14,7 @@ import HelpResult from './item';
 import SectionHeader from 'components/section-header';
 
 export default class extends React.PureComponent {
-    static displayName = 'HelpResults';
+	static displayName = 'HelpResults';
 
 	render() {
 		if ( ! this.props.helpLinks.length ) {

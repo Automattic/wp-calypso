@@ -18,7 +18,7 @@ import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
 class SharingButtonsTray extends React.Component {
-    static displayName = 'SharingButtonsTray';
+	static displayName = 'SharingButtonsTray';
 
 	static propTypes = {
 		buttons: PropTypes.array,
@@ -46,7 +46,7 @@ class SharingButtonsTray extends React.Component {
 		isReordering: false,
 	};
 
-	componentWillUpdate(nextProps) {
+	componentWillUpdate( nextProps ) {
 		if ( this.props.visibility !== nextProps.visibility ) {
 			this.setState( { isReordering: false } );
 		}

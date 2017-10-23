@@ -14,7 +14,7 @@ import React from 'react';
 import FormButton from 'components/forms/form-button';
 
 class NotificationSettingsFormActions extends React.PureComponent {
-    static displayName = 'NotificationSettingsFormActions';
+	static displayName = 'NotificationSettingsFormActions';
 
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,

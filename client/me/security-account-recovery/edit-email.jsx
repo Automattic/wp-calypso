@@ -20,7 +20,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
 class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
-    static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
+	static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
 	static propTypes = {
 		storedEmail: PropTypes.string,

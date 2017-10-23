@@ -21,7 +21,7 @@ function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );
 }
 
-const NuxWelcomeMessage = createReactClass({
+const NuxWelcomeMessage = createReactClass( {
 	displayName: 'NuxWelcomeMessage',
 
 	analyticsEvents: {
@@ -117,6 +117,6 @@ const NuxWelcomeMessage = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( NuxWelcomeMessage );

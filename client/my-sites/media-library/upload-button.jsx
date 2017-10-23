@@ -20,7 +20,7 @@ import MediaUtils from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryUploadButton';
+	static displayName = 'MediaLibraryUploadButton';
 
 	static propTypes = {
 		site: PropTypes.object,

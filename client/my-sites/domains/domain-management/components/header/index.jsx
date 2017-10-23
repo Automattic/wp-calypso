@@ -13,7 +13,7 @@ import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
 
 class DomainManagementHeader extends React.Component {
-    render() {
+	render() {
 		return (
 			<HeaderCake
 				className="domain-management-header"

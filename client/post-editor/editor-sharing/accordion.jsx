@@ -32,7 +32,7 @@ import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isNew: PropTypes.bool,

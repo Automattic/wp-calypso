@@ -15,7 +15,7 @@ import chrono from 'chrono-node';
 const supportedLanguages = [ 'en', 'jp' ];
 
 class InputChrono extends React.Component {
-    static displayName = 'InputChrono';
+	static displayName = 'InputChrono';
 
 	static propTypes = {
 		value: PropTypes.string,
@@ -37,7 +37,7 @@ class InputChrono extends React.Component {
 
 	focused = false;
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}

@@ -17,7 +17,7 @@ import FormButton from 'components/forms/form-button';
 import eventRecorder from 'me/event-recorder';
 import Notice from 'components/notice';
 
-const ProfileLinksAddOther = createReactClass({
+const ProfileLinksAddOther = createReactClass( {
 	displayName: 'ProfileLinksAddOther',
 	mixins: [ eventRecorder ],
 
@@ -175,6 +175,6 @@ const ProfileLinksAddOther = createReactClass({
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	},
-});
+} );
 
 export default localize( ProfileLinksAddOther );

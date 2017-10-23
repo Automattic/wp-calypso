@@ -13,7 +13,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryListItemFileDetails';
+	static displayName = 'MediaLibraryListItemFileDetails';
 
 	static propTypes = {
 		media: PropTypes.object,

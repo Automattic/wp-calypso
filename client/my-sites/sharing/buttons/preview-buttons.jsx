@@ -20,7 +20,7 @@ import previewWidget from './preview-widget';
 import touchDetect from 'lib/touch-detect';
 
 class SharingButtonsPreviewButtons extends React.Component {
-    static displayName = 'SharingButtonsPreviewButtons';
+	static displayName = 'SharingButtonsPreviewButtons';
 
 	static propTypes = {
 		buttons: PropTypes.array,
@@ -50,7 +50,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 		document.addEventListener( 'click', this.hideMorePreview );
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		this.maybeListenForWidgetMorePreview();
 
 		if (

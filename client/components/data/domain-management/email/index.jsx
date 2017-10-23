@@ -46,7 +46,7 @@ function getStateFromStores( props ) {
 }
 
 class EmailData extends React.Component {
-    static displayName = 'EmailData';
+	static displayName = 'EmailData';
 
 	static propTypes = {
 		component: PropTypes.func.isRequired,
@@ -66,7 +66,7 @@ class EmailData extends React.Component {
 		this.props.fetchGoogleAppsUsers( selectedSite.ID );
 	}
 
-	componentWillUpdate(nextProps) {
+	componentWillUpdate( nextProps ) {
 		const { selectedSite: nextSite } = nextProps;
 		const { selectedSite: prevSite } = this.props;
 

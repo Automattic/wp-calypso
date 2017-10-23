@@ -24,7 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
 class EditorPostFormats extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		siteId: PropTypes.number,
 		value: PropTypes.string,
 		postFormats: PropTypes.object,

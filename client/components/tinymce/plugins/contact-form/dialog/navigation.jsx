@@ -16,7 +16,7 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 
 class ContactFormDialogNavigation extends React.Component {
-    static displayName = 'ContactFormDialogNavigation';
+	static displayName = 'ContactFormDialogNavigation';
 
 	static propTypes = {
 		fieldCount: PropTypes.number.isRequired,

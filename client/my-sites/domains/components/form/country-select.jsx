@@ -21,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import FormSelect from 'components/forms/form-select';
 
-const CountrySelect = createReactClass({
+const CountrySelect = createReactClass( {
 	displayName: 'CountrySelect',
 
 	mixins: [ observe( 'countriesList' ) ],
@@ -103,6 +103,6 @@ const CountrySelect = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( CountrySelect );

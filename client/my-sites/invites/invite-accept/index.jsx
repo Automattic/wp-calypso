@@ -38,7 +38,7 @@ const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
 class InviteAccept extends React.Component {
-    state = {
+	state = {
 		invite: false,
 		error: false,
 		user: userModule.get(),

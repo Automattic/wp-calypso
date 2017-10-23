@@ -28,7 +28,7 @@ import { forSms } from 'lib/countries-list';
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 const countriesList = forSms();
 
-const Security2faSMSSettings = createReactClass({
+const Security2faSMSSettings = createReactClass( {
 	displayName: 'Security2faSMSSettings',
 
 	componentDidMount: function() {
@@ -243,6 +243,6 @@ const Security2faSMSSettings = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default flowRight( protectForm, localize )( Security2faSMSSettings );

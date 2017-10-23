@@ -22,7 +22,7 @@ const importerData = {
 };
 
 class ImporterWordPress extends React.PureComponent {
-    static displayName = 'ImporterWordPress';
+	static displayName = 'ImporterWordPress';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {

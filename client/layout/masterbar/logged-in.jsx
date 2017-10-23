@@ -32,7 +32,7 @@ import { getSite } from 'state/sites/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 
 class MasterbarLoggedIn extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		domainOnlySite: PropTypes.bool,
 		user: PropTypes.object,
 		sites: PropTypes.object,

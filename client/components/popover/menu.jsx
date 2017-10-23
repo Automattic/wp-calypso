@@ -13,7 +13,7 @@ import { over } from 'lodash';
 import Popover from 'components/popover';
 
 class PopoverMenu extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		autoPosition: PropTypes.bool,
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
@@ -100,7 +100,7 @@ class PopoverMenu extends React.Component {
 	 * This doesn't cover crazy things like a separator at the very top or
 	 * bottom.
 	 */
-	_getClosestSibling = (target, isDownwardMotion = true) => {
+	_getClosestSibling = ( target, isDownwardMotion = true ) => {
 		const menu = ReactDom.findDOMNode( this.refs.menu );
 
 		let first = menu.firstChild,

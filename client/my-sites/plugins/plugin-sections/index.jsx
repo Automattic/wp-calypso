@@ -20,7 +20,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
 class PluginSections extends React.Component {
-    static displayName = 'PluginSections';
+	static displayName = 'PluginSections';
 
 	state = {
 		selectedSection: false,
@@ -126,7 +126,7 @@ class PluginSections extends React.Component {
 		return titleSection && titleSection.title ? titleSection.title : titleCase( sectionKey );
 	};
 
-	setSelectedSection = (section, event) => {
+	setSelectedSection = ( section, event ) => {
 		this.setState( {
 			readMore: false !== this.state.readMore || this.getSelected() !== section,
 			selectedSection: section,

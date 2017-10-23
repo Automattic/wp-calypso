@@ -7,7 +7,7 @@
 import React from 'react';
 
 class Property extends React.Component {
-    render() {
+	render() {
 		return (
 			<div className="domain-details-card__property">
 				<strong>{ this.props.label }:</strong>

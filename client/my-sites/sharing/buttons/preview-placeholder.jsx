@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreviewAction from './preview-action';
 
 class SharingButtonsPreviewPlaceholder extends React.Component {
-    static displayName = 'SharingButtonsPreviewPlaceholder';
+	static displayName = 'SharingButtonsPreviewPlaceholder';
 
 	render() {
 		return (

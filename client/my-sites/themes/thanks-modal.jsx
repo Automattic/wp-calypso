@@ -32,11 +32,11 @@ import { clearActivated } from 'state/themes/actions';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const ThanksModal = createReactClass({
-    displayName: 'ThanksModal',
-    trackClick: trackClick.bind( null, 'current theme' ),
+const ThanksModal = createReactClass( {
+	displayName: 'ThanksModal',
+	trackClick: trackClick.bind( null, 'current theme' ),
 
-    propTypes: {
+	propTypes: {
 		// Where is the modal being used?
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
@@ -57,29 +57,29 @@ const ThanksModal = createReactClass({
 		visitSiteUrl: PropTypes.string,
 	},
 
-    onCloseModal() {
+	onCloseModal() {
 		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
 	},
 
-    visitSite() {
+	visitSite() {
 		this.trackClick( 'visit site' );
 		page( this.props.visitSiteUrl );
 	},
 
-    goBack() {
+	goBack() {
 		this.trackClick( 'go back' );
 		this.onCloseModal();
 	},
 
-    onLinkClick( link ) {
+	onLinkClick( link ) {
 		return () => {
 			this.onCloseModal();
 			this.trackClick( link, 'click' );
 		};
 	},
 
-    renderBody() {
+	renderBody() {
 		return (
 			<ul>
 				<li>
@@ -90,7 +90,7 @@ const ThanksModal = createReactClass({
 		);
 	},
 
-    renderThemeInfo() {
+	renderThemeInfo() {
 		return translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
 				a: <a href={ this.props.detailsUrl } onClick={ this.onLinkClick( 'theme info' ) } />,
@@ -98,7 +98,7 @@ const ThanksModal = createReactClass({
 		} );
 	},
 
-    renderCustomizeInfo() {
+	renderCustomizeInfo() {
 		return translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ this.props.customizeUrl } onClick={ this.onLinkClick( 'customize' ) } />,
@@ -106,7 +106,7 @@ const ThanksModal = createReactClass({
 		} );
 	},
 
-    renderSupportInfo() {
+	renderSupportInfo() {
 		const { author_uri: authorUri } = this.props.currentTheme;
 
 		if ( this.props.forumUrl ) {
@@ -128,7 +128,7 @@ const ThanksModal = createReactClass({
 		return null;
 	},
 
-    renderContent() {
+	renderContent() {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
 
 		return (
@@ -146,7 +146,7 @@ const ThanksModal = createReactClass({
 		);
 	},
 
-    renderLoading() {
+	renderLoading() {
 		return (
 			<div className="themes__thanks-modal-loading">
 				<PulsingDot active={ true } />
@@ -154,7 +154,7 @@ const ThanksModal = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
 		const visitSiteText = hasActivated
 			? translate( 'Visit site' )
@@ -180,8 +180,8 @@ const ThanksModal = createReactClass({
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	state => {

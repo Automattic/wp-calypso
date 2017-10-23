@@ -17,7 +17,7 @@ import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 
-const PluginRatings = createReactClass({
+const PluginRatings = createReactClass( {
 	displayName: 'PluginRatings',
 
 	propTypes: {
@@ -137,6 +137,6 @@ const PluginRatings = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( PluginRatings );

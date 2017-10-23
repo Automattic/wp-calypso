@@ -40,42 +40,42 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const user = userFactory();
 
-const CancelPrivacyProtection = createReactClass({
-    displayName: 'CancelPrivacyProtection',
+const CancelPrivacyProtection = createReactClass( {
+	displayName: 'CancelPrivacyProtection',
 
-    propTypes: {
+	propTypes: {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			disabled: false,
 			cancelling: false,
 		};
 	},
 
-    componentWillMount() {
+	componentWillMount() {
 		this.redirectIfDataIsInvalid();
 
 		recordPageView( 'cancel_private_registration', this.props );
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	},
 
-    redirectIfDataIsInvalid( props = this.props ) {
+	redirectIfDataIsInvalid( props = this.props ) {
 		if ( ! this.isDataValid( props ) ) {
 			page.redirect( paths.purchasesRoot() );
 		}
 	},
 
-    isDataValid( props = this.props ) {
+	isDataValid( props = this.props ) {
 		if ( isDataLoading( props ) ) {
 			return true;
 		}
@@ -86,7 +86,7 @@ const CancelPrivacyProtection = createReactClass({
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	},
 
-    cancel( event ) {
+	cancel( event ) {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
@@ -119,11 +119,11 @@ const CancelPrivacyProtection = createReactClass({
 			} );
 	},
 
-    resetState() {
+	resetState() {
 		this.setState( this.getInitialState() );
 	},
 
-    renderDescriptionText() {
+	renderDescriptionText() {
 		const purchase = getPurchase( this.props );
 
 		return (
@@ -141,7 +141,7 @@ const CancelPrivacyProtection = createReactClass({
 		);
 	},
 
-    renderWarningText() {
+	renderWarningText() {
 		const purchase = getPurchase( this.props );
 
 		return (
@@ -155,7 +155,7 @@ const CancelPrivacyProtection = createReactClass({
 		);
 	},
 
-    renderButton() {
+	renderButton() {
 		return (
 			<Button
 				onClick={ this.cancel }
@@ -171,7 +171,7 @@ const CancelPrivacyProtection = createReactClass({
 		);
 	},
 
-    renderNotice() {
+	renderNotice() {
 		const { error, translate } = this.props;
 
 		if ( error ) {
@@ -188,7 +188,7 @@ const CancelPrivacyProtection = createReactClass({
 		return null;
 	},
 
-    render() {
+	render() {
 		const classes = classNames( 'cancel-privacy-protection__card', {
 			'is-placeholder': isDataLoading( this.props ),
 		} );
@@ -233,8 +233,8 @@ const CancelPrivacyProtection = createReactClass({
 				</Card>
 			</Main>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	( state, props ) => ( {

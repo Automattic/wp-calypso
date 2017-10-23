@@ -18,7 +18,7 @@ import eventRecorder from 'me/event-recorder';
 import { withoutHttp } from 'lib/url';
 import Button from 'components/button';
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'ProfileLink',
 
 	mixins: [ eventRecorder ],
@@ -95,4 +95,4 @@ export default createReactClass({
 			</li>
 		);
 	},
-});
+} );

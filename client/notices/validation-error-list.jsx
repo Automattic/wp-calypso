@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 class ValidationErrorList extends React.Component {
-    static displayName = 'ValidationErrorList';
+	static displayName = 'ValidationErrorList';
 
 	static propTypes = {
 		messages: PropTypes.array.isRequired,

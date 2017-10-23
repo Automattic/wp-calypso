@@ -26,7 +26,7 @@ var defaultOptions = {
 };
 
 export default class extends React.Component {
-    static displayName = 'SiteUsersFetcher';
+	static displayName = 'SiteUsersFetcher';
 
 	static propTypes = {
 		fetchOptions: PropTypes.object.isRequired,
@@ -49,7 +49,7 @@ export default class extends React.Component {
 		pollers.remove( this._poller );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}

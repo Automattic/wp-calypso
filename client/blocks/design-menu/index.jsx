@@ -34,7 +34,7 @@ import { getSiteFragment } from 'lib/route/path';
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 
 class DesignMenu extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		isVisible: PropTypes.bool,
 		// These are provided by the connect method
 		isUnsaved: PropTypes.bool,

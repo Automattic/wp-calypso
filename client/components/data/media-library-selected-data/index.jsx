@@ -20,7 +20,7 @@ function getStateData( siteId ) {
 }
 
 export default class extends React.Component {
-    static displayName = 'MediaLibrarySelectedData';
+	static displayName = 'MediaLibrarySelectedData';
 
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
@@ -36,7 +36,7 @@ export default class extends React.Component {
 		MediaLibrarySelectedStore.off( 'change', this.updateState );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}

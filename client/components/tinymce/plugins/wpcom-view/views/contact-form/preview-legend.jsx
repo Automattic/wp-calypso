@@ -12,7 +12,7 @@ import React from 'react';
 import PreviewRequired from './preview-required';
 
 export default class extends React.Component {
-    static displayName = 'PreviewLegend';
+	static displayName = 'PreviewLegend';
 
 	render() {
 		return (

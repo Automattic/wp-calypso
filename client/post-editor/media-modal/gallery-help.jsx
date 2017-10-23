@@ -24,7 +24,7 @@ import { getSectionName } from 'state/ui/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 
 class EditorMediaModalGalleryHelp extends React.PureComponent {
-    static displayName = 'EditorMediaModalGalleryHelp';
+	static displayName = 'EditorMediaModalGalleryHelp';
 
 	static propTypes = {
 		onDismiss: PropTypes.func,
@@ -62,7 +62,7 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 		}, 0 );
 	};
 
-	dismiss = ({ remember } = {}) => {
+	dismiss = ( { remember } = {} ) => {
 		this.setState( { isDismissed: true } );
 		this.props.onDismiss( { remember } );
 	};

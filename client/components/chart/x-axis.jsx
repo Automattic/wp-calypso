@@ -14,7 +14,7 @@ import { throttle } from 'lodash';
 import Label from './label';
 
 export default class extends React.Component {
-    static displayName = 'ModuleChartXAxis';
+	static displayName = 'ModuleChartXAxis';
 
 	static propTypes = {
 		labelWidth: PropTypes.number.isRequired,
@@ -41,7 +41,7 @@ export default class extends React.Component {
 		window.removeEventListener( 'resize', this.resizeThrottled );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		this.resize( nextProps );
 	}
 

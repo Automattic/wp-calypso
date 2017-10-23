@@ -21,11 +21,11 @@ import { successNotice } from 'state/notices/actions';
 import support from 'lib/url/support';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-const EmailForwardingItem = createReactClass({
-    displayName: 'EmailForwardingItem',
-    mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
+const EmailForwardingItem = createReactClass( {
+	displayName: 'EmailForwardingItem',
+	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
-    deleteItem: function() {
+	deleteItem: function() {
 		const { temporary, domain, mailbox, forward_address, email } = this.props.emailData;
 
 		if ( temporary ) {
@@ -65,7 +65,7 @@ const EmailForwardingItem = createReactClass({
 		} );
 	},
 
-    resendVerificationEmail: function() {
+	resendVerificationEmail: function() {
 		const { temporary, domain, mailbox, forward_address } = this.props.emailData;
 
 		if ( temporary ) {
@@ -101,7 +101,7 @@ const EmailForwardingItem = createReactClass({
 		} );
 	},
 
-    render: function() {
+	render: function() {
 		return (
 			<li>
 				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
@@ -139,8 +139,8 @@ const EmailForwardingItem = createReactClass({
 				</span>
 			</li>
 		);
-	}
-});
+	},
+} );
 
 export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
 	localize( EmailForwardingItem )

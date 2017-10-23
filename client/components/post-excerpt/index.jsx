@@ -9,7 +9,7 @@ import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
 class PostExcerpt extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		content: PropTypes.string.isRequired,
 		maxLength: PropTypes.number,
 	};

@@ -18,7 +18,7 @@ import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 
 class TranslatorLauncher extends React.PureComponent {
-    static displayName = 'TranslatorLauncher';
+	static displayName = 'TranslatorLauncher';
 
 	static propTypes = {
 		isActive: PropTypes.bool.isRequired,
@@ -30,7 +30,7 @@ class TranslatorLauncher extends React.PureComponent {
 		firstActivation: true,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.isActive && nextProps.isActive ) {
 			// Activating
 			if ( ! localStorageHelper.get( 'translator_hide_infodialog' ) ) {

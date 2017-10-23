@@ -14,7 +14,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 
 class SharingButtonsStyle extends React.Component {
-    static displayName = 'SharingButtonsStyle';
+	static displayName = 'SharingButtonsStyle';
 
 	static propTypes = {
 		onChange: PropTypes.func,

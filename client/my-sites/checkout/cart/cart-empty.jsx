@@ -10,7 +10,7 @@ import React from 'react';
 import page from 'page';
 
 class CartEmpty extends React.Component {
-    render() {
+	render() {
 		return (
 			<div>
 				<div className="cart-empty">

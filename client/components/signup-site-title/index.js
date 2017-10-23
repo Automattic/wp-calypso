@@ -21,7 +21,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { translate } from 'i18n-calypso';
 
 class SignupSiteTitle extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onSubmit: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string.isRequired,
 	};

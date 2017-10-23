@@ -21,7 +21,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 
 class MasterbarItemNew extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		user: PropTypes.object,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
@@ -40,7 +40,7 @@ class MasterbarItemNew extends React.Component {
 		} );
 	};
 
-	toggleSitesPopover = (isShowingPopover = ! this.state.isShowingPopover) => {
+	toggleSitesPopover = ( isShowingPopover = ! this.state.isShowingPopover ) => {
 		this.setState( { isShowingPopover } );
 	};
 

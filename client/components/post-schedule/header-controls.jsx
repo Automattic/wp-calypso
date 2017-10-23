@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 var noop = () => {};
 
 export default class extends React.Component {
-    static displayName = 'PostScheduleHeaderControls';
+	static displayName = 'PostScheduleHeaderControls';
 
 	static propTypes = {
 		onYearChange: PropTypes.func,

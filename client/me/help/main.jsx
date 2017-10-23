@@ -35,7 +35,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 const debug = debugModule( 'calypso:help-search' );
 
 class Help extends React.PureComponent {
-    static displayName = 'Help';
+	static displayName = 'Help';
 
 	getHelpfulArticles = () => {
 		const helpfulResults = [

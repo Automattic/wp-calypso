@@ -24,7 +24,7 @@ var _instance = 1;
  * SegmentedControl
  */
 class SegmentedControl extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		initialSelected: PropTypes.string,
 		compact: PropTypes.bool,
 		className: PropTypes.string,
@@ -43,8 +43,8 @@ class SegmentedControl extends React.Component {
 		compact: false,
 	};
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		var initialSelected;
 
 		if ( props.options ) {

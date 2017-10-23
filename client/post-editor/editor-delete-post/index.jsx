@@ -19,7 +19,7 @@ import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
 class EditorDeletePost extends React.Component {
-    static displayName = 'EditorDeletePost';
+	static displayName = 'EditorDeletePost';
 
 	static propTypes = {
 		site: PropTypes.object,

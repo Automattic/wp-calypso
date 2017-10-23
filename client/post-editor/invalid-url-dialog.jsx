@@ -18,7 +18,7 @@ import FormButton from 'components/forms/form-button';
 import { getSiteFragment } from 'lib/route/path';
 
 class EditorTrashedDialog extends React.Component {
-    static displayName = 'EditorTrashedDialog';
+	static displayName = 'EditorTrashedDialog';
 
 	static defaultProps = {
 		onClose: noop,

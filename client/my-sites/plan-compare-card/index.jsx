@@ -20,7 +20,7 @@ import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
 class PlanCompareCard extends React.Component {
-    static displayName = 'PlanCompareCard';
+	static displayName = 'PlanCompareCard';
 
 	static propTypes = {
 		className: PropTypes.string,

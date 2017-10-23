@@ -20,7 +20,7 @@ import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
 
-const ApplicationPasswordsItem = createReactClass({
+const ApplicationPasswordsItem = createReactClass( {
 	displayName: 'ApplicationPasswordsItem',
 
 	mixins: [ eventRecorder ],
@@ -82,7 +82,7 @@ const ApplicationPasswordsItem = createReactClass({
 			</li>
 		);
 	},
-});
+} );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
 	localize( ApplicationPasswordsItem )

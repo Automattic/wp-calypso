@@ -9,7 +9,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default class extends React.Component {
-    static displayName = 'EditorFieldset';
+	static displayName = 'EditorFieldset';
 
 	static propTypes = {
 		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,

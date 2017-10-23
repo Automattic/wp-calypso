@@ -20,7 +20,7 @@ import RootChild from '../';
  * Module variables
  */
 class Greeting extends React.Component {
-    static defaultProps = { toWhom: 'World' };
+	static defaultProps = { toWhom: 'World' };
 
 	render() {
 		return (

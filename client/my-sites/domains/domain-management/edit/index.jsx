@@ -25,7 +25,7 @@ import { type as domainTypes } from 'lib/domains/constants';
 import WpcomDomain from './wpcom-domain';
 
 class Edit extends React.Component {
-    render() {
+	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props ),
 			Details = this.getDetailsForType( domain && domain.type );
 
@@ -65,7 +65,7 @@ class Edit extends React.Component {
 		}
 	};
 
-	renderDetails = (domain, Details) => {
+	renderDetails = ( domain, Details ) => {
 		const { MAINTENANCE } = registrarNames;
 
 		if ( domain.type === domainTypes.REGISTERED && domain.registrar === MAINTENANCE ) {

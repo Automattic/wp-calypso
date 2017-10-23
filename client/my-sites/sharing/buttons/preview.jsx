@@ -20,7 +20,7 @@ import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
 
 class SharingButtonsPreview extends React.Component {
-    static displayName = 'SharingButtonsPreview';
+	static displayName = 'SharingButtonsPreview';
 
 	static propTypes = {
 		isPrivateSite: PropTypes.bool,
@@ -79,7 +79,7 @@ class SharingButtonsPreview extends React.Component {
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
 	};
 
-	getButtonsTrayToggleButtonLabel = (visibility, enabledButtonsExist) => {
+	getButtonsTrayToggleButtonLabel = ( visibility, enabledButtonsExist ) => {
 		if ( 'visible' === visibility ) {
 			if ( enabledButtonsExist ) {
 				return this.props.translate( 'Edit sharing buttons', {

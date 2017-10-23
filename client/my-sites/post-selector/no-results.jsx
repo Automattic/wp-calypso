@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 
 class PostSelectorNoResults extends React.Component {
-    static displayName = 'PostSelectorNoResults';
+	static displayName = 'PostSelectorNoResults';
 
 	static propTypes = {
 		createLink: PropTypes.string,

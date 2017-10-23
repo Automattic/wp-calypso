@@ -13,7 +13,7 @@ import SitePicker from 'my-sites/picker';
 import Sidebar from 'my-sites/sidebar';
 
 class MySitesNavigation extends React.Component {
-    static displayName = 'MySitesNavigation';
+	static displayName = 'MySitesNavigation';
 
 	preventPickerDefault = event => {
 		event.preventDefault();

@@ -25,7 +25,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 
 class InviteAcceptLoggedIn extends React.Component {
-    state = { submitting: false };
+	state = { submitting: false };
 
 	accept = () => {
 		this.setState( { submitting: true } );

@@ -16,7 +16,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
 class DomainMainPlaceholder extends React.Component {
-    render() {
+	render() {
 		return (
 			<Main className="domain-main-placeholder">
 				<Header onClick={ this.props.goBack } />

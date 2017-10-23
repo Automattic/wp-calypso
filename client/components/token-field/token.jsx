@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import Tooltip from 'components/tooltip';
 
 export default class extends React.PureComponent {
-    static displayName = 'Token';
+	static displayName = 'Token';
 
 	static propTypes = {
 		value: PropTypes.string.isRequired,

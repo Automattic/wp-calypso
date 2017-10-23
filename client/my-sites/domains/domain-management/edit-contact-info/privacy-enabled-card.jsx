@@ -15,7 +15,7 @@ import Card from 'components/card';
 import support from 'lib/url/support';
 
 class EditContactInfoPrivacyEnabledCard extends React.Component {
-    render() {
+	render() {
 		return (
 			<Card className="edit-contact-info-privacy-enabled-card">
 				<p className="edit-contact-info-privacy-enabled-card__settings-explanation">

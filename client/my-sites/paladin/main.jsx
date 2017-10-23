@@ -15,7 +15,7 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setPreviewType } from 'state/ui/preview/actions';
 
 class NativeCustomizer extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		setPreviewType: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 	};

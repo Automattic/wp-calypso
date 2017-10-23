@@ -10,7 +10,7 @@ import React from 'react';
 import Gridicon from 'gridicons';
 
 class PostSelectorSearch extends React.Component {
-    static displayName = 'PostSelectorSearch';
+	static displayName = 'PostSelectorSearch';
 
 	static propTypes = {
 		searchTerm: PropTypes.string,

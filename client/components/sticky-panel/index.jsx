@@ -16,7 +16,7 @@ import classNames from 'classnames';
 import viewport from 'lib/viewport';
 
 export default class extends React.Component {
-    static displayName = 'StickyPanel';
+	static displayName = 'StickyPanel';
 
 	static propTypes = {
 		minLimit: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.number ] ),

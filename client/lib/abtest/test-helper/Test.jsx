@@ -3,7 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default class extends React.Component {
-    static displayName = 'Test';
+	static displayName = 'Test';
 
 	changeVariant = variation => {
 		this.props.onChangeVariant( this.props.test, variation );

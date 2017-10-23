@@ -21,7 +21,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
 export class EditorSharingPublicizeConnection extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		post: PropTypes.object,
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func,

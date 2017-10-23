@@ -22,7 +22,7 @@ import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-mana
 import Site from 'blocks/site';
 
 class PluginSiteJetpack extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
 		notices: PropTypes.object,

@@ -27,7 +27,7 @@ import {
 import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
 
 class PushNotificationSettings extends React.Component {
-    static displayName = 'PushNotificationSettings';
+	static displayName = 'PushNotificationSettings';
 
 	static propTypes = {
 		toggleEnabled: PropTypes.func.isRequired,

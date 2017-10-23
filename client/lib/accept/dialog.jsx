@@ -15,10 +15,10 @@ import classnames from 'classnames';
  */
 import Dialog from 'components/dialog';
 
-const AcceptDialog = createReactClass({
-    displayName: 'AcceptDialog',
+const AcceptDialog = createReactClass( {
+	displayName: 'AcceptDialog',
 
-    propTypes: {
+	propTypes: {
 		translate: PropTypes.func,
 		message: PropTypes.node,
 		onClose: PropTypes.func.isRequired,
@@ -27,11 +27,11 @@ const AcceptDialog = createReactClass({
 		options: PropTypes.object,
 	},
 
-    getInitialState: function() {
+	getInitialState: function() {
 		return { isVisible: true };
 	},
 
-    onClose: function( action ) {
+	onClose: function( action ) {
 		this.props.onClose( 'accept' === action );
 
 		if ( this.isMounted() ) {
@@ -39,7 +39,7 @@ const AcceptDialog = createReactClass({
 		}
 	},
 
-    getActionButtons: function() {
+	getActionButtons: function() {
 		const { options } = this.props;
 		const isScary = options && options.isScary;
 		const additionalClassNames = classnames( { 'is-scary': isScary } );
@@ -61,7 +61,7 @@ const AcceptDialog = createReactClass({
 		];
 	},
 
-    render: function() {
+	render: function() {
 		if ( ! this.state.isVisible ) {
 			return null;
 		}
@@ -76,7 +76,7 @@ const AcceptDialog = createReactClass({
 				{ this.props.message }
 			</Dialog>
 		);
-	}
-});
+	},
+} );
 
 export default localize( AcceptDialog );

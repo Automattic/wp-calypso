@@ -33,7 +33,7 @@ const stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ];
 const doneStates = [ appStates.IMPORT_SUCCESS ];
 
 class ImporterHeader extends React.PureComponent {
-    static displayName = 'ImporterHeader';
+	static displayName = 'ImporterHeader';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {

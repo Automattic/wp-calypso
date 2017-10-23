@@ -9,7 +9,7 @@ import React from 'react';
 import { isEqual } from 'lodash';
 
 class StoreConnection extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		component: PropTypes.func,
 		getStateFromStores: PropTypes.func.isRequired,
 		isDataLoading: PropTypes.func,
@@ -23,7 +23,7 @@ class StoreConnection extends React.Component {
 		this.addStoreListeners( this.props.stores );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props, nextProps ) ) {
 			this.removeStoreListeners( this.props.stores );
 			this.addStoreListeners( nextProps.stores );

@@ -17,7 +17,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
 class StatsActionPage extends React.Component {
-    static displayName = 'StatsActionPage';
+	static displayName = 'StatsActionPage';
 
 	clickHandler = event => {
 		event.stopPropagation();

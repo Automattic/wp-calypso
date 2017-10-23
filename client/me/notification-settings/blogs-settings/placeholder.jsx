@@ -12,7 +12,7 @@ import React from 'react';
 import CompactCard from 'components/card/compact';
 
 export default class extends React.Component {
-    static displayName = 'NotificationsBlogSettingsPlaceholder';
+	static displayName = 'NotificationsBlogSettingsPlaceholder';
 
 	shouldComponentUpdate() {
 		return false;

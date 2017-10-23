@@ -17,7 +17,7 @@ import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
 class StatusLabel extends React.PureComponent {
-    static displayName = 'StatusLabel';
+	static displayName = 'StatusLabel';
 
 	static propTypes = {
 		onClick: PropTypes.func,
@@ -42,7 +42,7 @@ class StatusLabel extends React.PureComponent {
 		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.post !== this.props.post ) {
 			// the post has been updated, so update the current time so that
 			// it will be the most up-to-date when re-rendering

@@ -15,7 +15,7 @@ import { isJetpackMonthlyPlan } from 'lib/products-values';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
 class PlanPrice extends React.Component {
-    getFormattedPrice = plan => {
+	getFormattedPrice = plan => {
 		let rawPrice, formattedPrice, months;
 
 		if ( plan ) {

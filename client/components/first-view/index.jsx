@@ -29,7 +29,7 @@ const TransitionGroupComponent = props => {
 };
 
 class FirstView extends React.PureComponent {
-    state = {
+	state = {
 		isEnabled: false,
 	};
 

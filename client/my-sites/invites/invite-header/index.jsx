@@ -18,7 +18,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Gravatar from 'components/gravatar';
 
 class InviteHeader extends React.Component {
-    static displayName = 'InviteHeader';
+	static displayName = 'InviteHeader';
 
 	getInviterName = () => {
 		return get(

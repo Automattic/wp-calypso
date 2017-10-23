@@ -19,7 +19,7 @@ import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class HelpModal extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onClose: PropTypes.func,
 		macosx: PropTypes.bool,
 		showDialog: PropTypes.bool,
@@ -54,7 +54,7 @@ class HelpModal extends React.Component {
 		];
 	};
 
-	renderRow = (row, index) => {
+	renderRow = ( row, index ) => {
 		let columns = [];
 
 		forEach( row, ( text, key ) => {

@@ -27,7 +27,7 @@ import SectionHeader from 'components/section-header';
 import { registrar as registrarNames } from 'lib/domains/constants';
 
 class EditContactInfo extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		domains: PropTypes.object.isRequired,
 		whois: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

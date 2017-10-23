@@ -33,11 +33,11 @@ import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PostTypeFilter = createReactClass({
-    displayName: 'PostTypeFilter',
-    mixins: [ UrlSearch ],
+const PostTypeFilter = createReactClass( {
+	displayName: 'PostTypeFilter',
+	mixins: [ UrlSearch ],
 
-    propTypes: {
+	propTypes: {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
 		query: PropTypes.shape( {
@@ -50,7 +50,7 @@ const PostTypeFilter = createReactClass({
 		counts: PropTypes.object,
 	},
 
-    getNavItems() {
+	getNavItems() {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
 
 		return reduce(
@@ -117,7 +117,7 @@ const PostTypeFilter = createReactClass({
 		);
 	},
 
-    renderMultiSelectButton() {
+	renderMultiSelectButton() {
 		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
 			return null;
 		}
@@ -142,7 +142,7 @@ const PostTypeFilter = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
@@ -187,8 +187,8 @@ const PostTypeFilter = createReactClass({
 				</SectionNav>
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	( state, { query } ) => {

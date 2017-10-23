@@ -34,7 +34,7 @@ import Card from 'components/card';
 import classNames from 'classnames';
 import { errorNotice } from 'state/notices/actions';
 
-const ApplicationPasswords = createReactClass({
+const ApplicationPasswords = createReactClass( {
 	displayName: 'ApplicationPasswords',
 	mixins: [ observe( 'appPasswordsData' ), eventRecorder ],
 
@@ -243,7 +243,7 @@ const ApplicationPasswords = createReactClass({
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	},
-});
+} );
 
 export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
 	localize( ApplicationPasswords )

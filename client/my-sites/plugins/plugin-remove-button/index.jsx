@@ -20,7 +20,7 @@ import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
 class PluginRemoveButton extends React.Component {
-    static displayName = 'PluginRemoveButton';
+	static displayName = 'PluginRemoveButton';
 
 	removeAction = () => {
 		accept(

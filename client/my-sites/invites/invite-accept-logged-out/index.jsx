@@ -32,7 +32,7 @@ import FormButton from 'components/forms/form-button';
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
 class InviteAcceptLoggedOut extends React.Component {
-    state = { error: false, bearerToken: false, userData: false, submitting: false };
+	state = { error: false, bearerToken: false, userData: false, submitting: false };
 
 	submitButtonText = () => {
 		let text = '';
@@ -52,7 +52,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = (form, userData) => {
+	submitForm = ( form, userData ) => {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );

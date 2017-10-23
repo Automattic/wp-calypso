@@ -17,7 +17,7 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 
 export default class extends React.Component {
-    static displayName = 'EditorMediaModalGalleryDropZone';
+	static displayName = 'EditorMediaModalGalleryDropZone';
 
 	static propTypes = {
 		site: PropTypes.object,

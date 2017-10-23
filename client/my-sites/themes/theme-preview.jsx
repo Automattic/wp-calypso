@@ -30,7 +30,7 @@ import { hideThemePreview } from 'state/themes/actions';
 import WebPreview from 'components/web-preview';
 
 class ThemePreview extends React.Component {
-    static displayName = 'ThemePreview';
+	static displayName = 'ThemePreview';
 
 	static propTypes = {
 		// connected props
@@ -47,7 +47,7 @@ class ThemePreview extends React.Component {
 		showActionIndicator: false,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isActivating && ! nextProps.isActivating ) {
 			this.setState( { showActionIndicator: false } );
 			this.props.hideThemePreview();

@@ -22,7 +22,7 @@ import pollers from 'lib/data-poller';
  */
 const debug = debugModule( 'calypso:followers-data' );
 
-export default createReactClass({
+export default createReactClass( {
 	displayName: 'FollowersData',
 
 	propTypes: {
@@ -123,4 +123,4 @@ export default createReactClass({
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
 	},
-});
+} );

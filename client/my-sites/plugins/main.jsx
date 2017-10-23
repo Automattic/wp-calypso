@@ -44,27 +44,27 @@ import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import HeaderButton from 'components/header-button';
 import { isEnabled } from 'config';
 
-const PluginsMain = createReactClass({
-    displayName: 'PluginsMain',
-    mixins: [ URLSearch ],
+const PluginsMain = createReactClass( {
+	displayName: 'PluginsMain',
+	mixins: [ URLSearch ],
 
-    getInitialState() {
+	getInitialState() {
 		return this.getPluginsState( this.props );
 	},
 
-    componentDidMount() {
+	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshPlugins );
 	},
 
-    componentWillUnmount() {
+	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.refreshPlugins( nextProps );
 	},
 
-    getPluginsFromStore( nextProps, sites ) {
+	getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
 		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
@@ -84,7 +84,7 @@ const PluginsMain = createReactClass({
 		return this.addWporgDataToPlugins( plugins );
 	},
 
-    // plugins for Jetpack sites require additional data from the wporg-data store
+	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
 			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
@@ -95,7 +95,7 @@ const PluginsMain = createReactClass({
 		} );
 	},
 
-    getPluginsState( nextProps ) {
+	getPluginsState( nextProps ) {
 		const sites = this.props.sites,
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
@@ -105,18 +105,18 @@ const PluginsMain = createReactClass({
 		};
 	},
 
-    refreshPlugins( nextProps ) {
+	refreshPlugins( nextProps ) {
 		this.setState( this.getPluginsState( nextProps ) );
 	},
 
-    matchSearchTerms( search, plugin ) {
+	matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
 		return [ 'name', 'description', 'author' ].some(
 			attribute => plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
 		);
 	},
 
-    getFilters() {
+	getFilters() {
 		const { translate } = this.props;
 		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
@@ -144,11 +144,11 @@ const PluginsMain = createReactClass({
 		];
 	},
 
-    isFetchingPlugins() {
+	isFetchingPlugins() {
 		return this.props.sites.some( PluginsStore.isFetchingSite );
 	},
 
-    getSelectedText() {
+	getSelectedText() {
 		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
 		if ( 'undefined' !== typeof found ) {
 			return found.title;
@@ -156,7 +156,7 @@ const PluginsMain = createReactClass({
 		return '';
 	},
 
-    getSearchPlaceholder() {
+	getSearchPlaceholder() {
 		const { translate } = this.props;
 
 		switch ( this.props.filter ) {
@@ -174,7 +174,7 @@ const PluginsMain = createReactClass({
 		}
 	},
 
-    getEmptyContentUpdateData() {
+	getEmptyContentUpdateData() {
 		const { translate } = this.props;
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
@@ -224,7 +224,7 @@ const PluginsMain = createReactClass({
 		return emptyContentData;
 	},
 
-    getEmptyContentData() {
+	getEmptyContentData() {
 		const { translate } = this.props;
 		let emptyContentData = {
 			illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
@@ -246,7 +246,7 @@ const PluginsMain = createReactClass({
 		return emptyContentData;
 	},
 
-    getUpdatesTabVisibility() {
+	getUpdatesTabVisibility() {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
@@ -262,17 +262,17 @@ const PluginsMain = createReactClass({
 		);
 	},
 
-    shouldShowPluginListPlaceholders() {
+	shouldShowPluginListPlaceholders() {
 		const { plugins } = this.state;
 
 		return isEmpty( plugins ) && this.isFetchingPlugins();
 	},
 
-    renderDocumentHead() {
+	renderDocumentHead() {
 		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	},
 
-    renderPluginsContent() {
+	renderPluginsContent() {
 		const { plugins = [] } = this.state;
 		const { filter, search } = this.props;
 
@@ -333,7 +333,7 @@ const PluginsMain = createReactClass({
 		);
 	},
 
-    getMockPluginItems() {
+	getMockPluginItems() {
 		const plugins = [
 			{
 				slug: 'akismet',
@@ -374,11 +374,11 @@ const PluginsMain = createReactClass({
 		} );
 	},
 
-    handleAddPluginButtonClick() {
+	handleAddPluginButtonClick() {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Add New Plugins' );
 	},
 
-    renderAddPluginButton() {
+	renderAddPluginButton() {
 		const { selectedSiteSlug, translate } = this.props;
 		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
@@ -393,11 +393,11 @@ const PluginsMain = createReactClass({
 		);
 	},
 
-    handleUploadPluginButtonClick() {
+	handleUploadPluginButtonClick() {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	},
 
-    renderUploadPluginButton() {
+	renderUploadPluginButton() {
 		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
 			return null;
 		}
@@ -416,7 +416,7 @@ const PluginsMain = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		const { selectedSiteId } = this.props;
 
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
@@ -482,8 +482,8 @@ const PluginsMain = createReactClass({
 				{ this.renderPluginsContent() }
 			</Main>
 		);
-	}
-});
+	},
+} );
 
 export default connect(
 	state => {

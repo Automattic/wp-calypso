@@ -31,7 +31,7 @@ import wp from 'lib/wp';
 const wpcom = wp.undocumented();
 
 class PaypalPaymentBox extends React.Component {
-    static displayName = 'PaypalPaymentBox';
+	static displayName = 'PaypalPaymentBox';
 
 	state = {
 		country: null,

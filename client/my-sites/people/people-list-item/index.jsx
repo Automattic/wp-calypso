@@ -18,7 +18,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 
 class PeopleListItem extends React.PureComponent {
-    static displayName = 'PeopleListItem';
+	static displayName = 'PeopleListItem';
 
 	navigateToUser = () => {
 		window.scrollTo( 0, 0 );

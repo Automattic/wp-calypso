@@ -15,7 +15,7 @@ import { find } from 'lodash';
 import StatTab from './tab';
 
 export default class extends React.Component {
-    static displayName = 'StatsTabs';
+	static displayName = 'StatsTabs';
 
 	static propTypes = {
 		activeKey: PropTypes.string,

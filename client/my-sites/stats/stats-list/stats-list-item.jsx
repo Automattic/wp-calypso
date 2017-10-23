@@ -24,7 +24,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
 class StatsListItem extends React.Component {
-    static displayName = 'StatsListItem';
+	static displayName = 'StatsListItem';
 
 	state = {
 		active: this.props.active,

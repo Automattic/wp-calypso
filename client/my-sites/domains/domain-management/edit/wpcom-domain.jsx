@@ -20,15 +20,15 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const WpcomDomain = createReactClass({
-    displayName: 'WpcomDomain',
-    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const WpcomDomain = createReactClass( {
+	displayName: 'WpcomDomain',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-    handleEditSiteAddressClick() {
+	handleEditSiteAddressClick() {
 		this.recordEvent( 'navigationClick', 'Edit Site Address', this.props.domain );
 	},
 
-    getEditSiteAddressBlock() {
+	getEditSiteAddressBlock() {
 		/**
 		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
 		 */
@@ -50,7 +50,7 @@ const WpcomDomain = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		return (
 			<div>
 				<div className="domain-details-card">
@@ -74,7 +74,7 @@ const WpcomDomain = createReactClass({
 				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default localize( WpcomDomain );

@@ -15,7 +15,7 @@ import { omit } from 'lodash';
 import Gravatar from 'components/gravatar';
 
 class PeopleProfile extends React.PureComponent {
-    static displayName = 'PeopleProfile';
+	static displayName = 'PeopleProfile';
 
 	getRole = () => {
 		const user = this.props.user;

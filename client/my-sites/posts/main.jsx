@@ -43,11 +43,11 @@ import {
 } from 'state/sites/selectors';
 
 class PostsMain extends React.Component {
-    componentWillMount() {
+	componentWillMount() {
 		this.setWarning( this.props );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.siteId !== this.props.siteId ||
 			nextProps.hasMinimumJetpackVersion !== this.props.hasMinimumJetpackVersion
@@ -152,7 +152,7 @@ class PostsMain extends React.Component {
 		);
 	}
 
-	setWarning = ({ adminUrl, hasMinimumJetpackVersion, isJetpack, siteId }) => {
+	setWarning = ( { adminUrl, hasMinimumJetpackVersion, isJetpack, siteId } ) => {
 		if ( siteId && isJetpack && false === hasMinimumJetpackVersion ) {
 			this.props.warningNotice(
 				this.props.translate(

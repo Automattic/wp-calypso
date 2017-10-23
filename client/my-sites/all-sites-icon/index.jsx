@@ -16,7 +16,7 @@ import SiteIcon from 'blocks/site-icon';
 const MAX_ICONS = 10;
 
 export default class extends React.Component {
-    static displayName = 'AllSitesIcon';
+	static displayName = 'AllSitesIcon';
 
 	static propTypes = {
 		sites: PropTypes.array.isRequired,

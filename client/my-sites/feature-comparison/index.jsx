@@ -14,7 +14,7 @@ import React from 'react';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'FeatureComparison';
+	static displayName = 'FeatureComparison';
 
 	static propTypes = {
 		className: PropTypes.string,

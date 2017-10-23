@@ -43,7 +43,7 @@ const isMultisite = site => {
 };
 
 class PeopleNotices extends React.Component {
-    static displayName = 'PeopleNotices';
+	static displayName = 'PeopleNotices';
 
 	componentDidMount() {
 		PeopleLog.on( 'change', this.refreshNotices );

@@ -48,7 +48,7 @@ const suggestions = [
 ];
 
 class TokenFieldWrapper extends React.Component {
-    state = {
+	state = {
 		tokenSuggestions: suggestions,
 		tokens: Object.freeze( [ 'foo', 'bar' ] ),
 	};

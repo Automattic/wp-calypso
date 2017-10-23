@@ -23,7 +23,7 @@ import Buttons from './buttons';
 var countriesList = require( 'lib/countries-list' ).forSms();
 
 class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
-    static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
+	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
 
 	static propTypes = {
 		storedPhone: PropTypes.shape( {

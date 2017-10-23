@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 
 class TermTreeSelectorNoResults extends React.PureComponent {
-    static displayName = 'TermTreeSelectorNoResults';
+	static displayName = 'TermTreeSelectorNoResults';
 
 	static propTypes = {
 		createLink: PropTypes.string,

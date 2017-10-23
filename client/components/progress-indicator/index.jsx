@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
 export default class extends React.Component {
-    static displayName = 'ProgressIndicator';
+	static displayName = 'ProgressIndicator';
 
 	static defaultProps = {
 		status: 'inactive',

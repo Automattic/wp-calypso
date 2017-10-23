@@ -20,7 +20,7 @@ import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 
 class HelpSearch extends React.PureComponent {
-    static displayName = 'HelpSearch';
+	static displayName = 'HelpSearch';
 
 	state = {
 		helpLinks: [],

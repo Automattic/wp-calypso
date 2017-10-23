@@ -12,7 +12,7 @@ import React from 'react';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
 export default class extends React.Component {
-    static displayName = 'ConnectedApplicationIcon';
+	static displayName = 'ConnectedApplicationIcon';
 
 	static defaultProps = {
 		size: 40,

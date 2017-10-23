@@ -19,7 +19,7 @@ const LoadStatus = {
 };
 
 export default class extends React.Component {
-    static displayName = 'ImagePreloader';
+	static displayName = 'ImagePreloader';
 
 	static propTypes = {
 		src: PropTypes.string,
@@ -37,7 +37,7 @@ export default class extends React.Component {
 		this.createLoader();
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}

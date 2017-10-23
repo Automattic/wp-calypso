@@ -12,26 +12,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-const StatUpdateIndicator = createReactClass({
-    displayName: 'StatUpdateIndicator',
+const StatUpdateIndicator = createReactClass( {
+	displayName: 'StatUpdateIndicator',
 
-    propTypes: {
+	propTypes: {
 		children: PropTypes.node.isRequired,
 		updateOn: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number, PropTypes.bool ] )
 			.isRequired,
 	},
 
-    getInitialState: function() {
+	getInitialState: function() {
 		return {
 			updating: ! this.props.updateOn,
 		};
 	},
 
-    componentDidMount: function() {
+	componentDidMount: function() {
 		this.clearTheUpdate();
 	},
 
-    componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps: function( nextProps ) {
 		if ( this.props.updateOn !== nextProps.updateOn ) {
 			clearTimeout( this.clearingUpdateTimeout );
 
@@ -42,7 +42,7 @@ const StatUpdateIndicator = createReactClass({
 		}
 	},
 
-    clearTheUpdate: function() {
+	clearTheUpdate: function() {
 		clearTimeout( this.clearingUpdateTimeout );
 
 		this.clearingUpdateTimeout = setTimeout(
@@ -59,14 +59,14 @@ const StatUpdateIndicator = createReactClass({
 		);
 	},
 
-    render: function() {
+	render: function() {
 		var className = classNames( {
 			'stat-update-indicator': true,
 			'is-updating': this.state.updating,
 		} );
 
 		return <span className={ className }>{ this.props.children }</span>;
-	}
-});
+	},
+} );
 
 export default StatUpdateIndicator;

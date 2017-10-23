@@ -15,7 +15,7 @@ import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
 class NotificationSettingsFormLabels extends React.Component {
-    static displayName = 'NotificationSettingsFormLabels';
+	static displayName = 'NotificationSettingsFormLabels';
 
 	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,

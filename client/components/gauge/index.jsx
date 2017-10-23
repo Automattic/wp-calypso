@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export default class extends React.PureComponent {
-    static displayName = 'Gauge';
+	static displayName = 'Gauge';
 
 	static propTypes = {
 		percentage: PropTypes.number.isRequired,

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import FirstView from 'components/first-view';
 
 class StatsFirstView extends React.PureComponent {
-    static displayName = 'StatsFirstView';
+	static displayName = 'StatsFirstView';
 
 	render() {
 		return (

@@ -23,7 +23,7 @@ import ListEnd from 'components/list-end';
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 class Team extends React.Component {
-    static displayName = 'Team';
+	static displayName = 'Team';
 
 	state = {
 		bulkEditing: false,

@@ -15,7 +15,7 @@ import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
 class Alert extends React.Component {
-    static displayName = 'Alert';
+	static displayName = 'Alert';
 
 	static propTypes = {
 		isVisible: PropTypes.bool.isRequired,

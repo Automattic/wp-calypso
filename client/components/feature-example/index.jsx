@@ -7,7 +7,7 @@
 import React from 'react';
 
 export default class extends React.Component {
-    static displayName = 'FeatureExample';
+	static displayName = 'FeatureExample';
 
 	render() {
 		return (

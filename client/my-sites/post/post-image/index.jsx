@@ -12,7 +12,7 @@ import classnames from 'classnames';
  * Main
  */
 class PostImage extends React.PureComponent {
-    static propTypes = {
+	static propTypes = {
 		postImages: PropTypes.shape( {
 			featured_image: PropTypes.string,
 			canonical_image: PropTypes.shape( {

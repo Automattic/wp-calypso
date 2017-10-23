@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import TermTreeSelectorTerms from './terms';
 
 export default class extends React.Component {
-    static displayName = 'TermTreeSelector';
+	static displayName = 'TermTreeSelector';
 
 	static propTypes = {
 		multiple: PropTypes.bool,
@@ -48,7 +48,7 @@ export default class extends React.Component {
 		}
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( { search: '' } );
 		}

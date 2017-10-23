@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import SidebarRegion from './region';
 
 export default class extends React.Component {
-    static displayName = 'Sidebar';
+	static displayName = 'Sidebar';
 
 	static propTypes = {
 		className: PropTypes.string,

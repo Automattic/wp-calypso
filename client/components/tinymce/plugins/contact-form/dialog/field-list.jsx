@@ -15,7 +15,7 @@ import EmptyContent from 'components/empty-content';
 import Field from './field';
 
 class ContactFormDialogFieldList extends React.Component {
-    static displayName = 'ContactFormDialogFieldList';
+	static displayName = 'ContactFormDialogFieldList';
 
 	static propTypes = {
 		fields: PropTypes.array.isRequired,

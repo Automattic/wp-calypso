@@ -31,7 +31,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
-const NotificationSubscriptions = createReactClass({
+const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
 	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],
@@ -228,6 +228,6 @@ const NotificationSubscriptions = createReactClass({
 			</Main>
 		);
 	},
-});
+} );
 
 export default flowRight( localize, protectForm )( NotificationSubscriptions );

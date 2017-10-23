@@ -22,7 +22,7 @@ import { getNotices } from 'state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 
-const NoticesList = createReactClass({
+const NoticesList = createReactClass( {
 	displayName: 'NoticesList',
 
 	mixins: [ observe( 'notices' ) ],
@@ -105,7 +105,7 @@ const NoticesList = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default connect(
 	state => {

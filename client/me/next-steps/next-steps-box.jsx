@@ -12,7 +12,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 
 export default class extends React.Component {
-    static displayName = 'NextStepsBox';
+	static displayName = 'NextStepsBox';
 
 	recordEvent = () => {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );

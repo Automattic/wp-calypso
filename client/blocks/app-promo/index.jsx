@@ -56,14 +56,14 @@ export const getPromoLink = ( location, promoDetails ) => {
 };
 
 export class AppPromo extends React.Component {
-    static displayName = 'AppPromo';
+	static displayName = 'AppPromo';
 
 	static propTypes = {
 		location: PropTypes.string.isRequired,
 	};
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		const promoItem = props.promoItem || getRandomPromo();
 
 		this.state = {

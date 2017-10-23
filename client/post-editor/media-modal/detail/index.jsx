@@ -21,7 +21,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
 class EditorMediaModalDetailBase extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		selectedIndex: PropTypes.number,

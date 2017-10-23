@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 import { getLabelForStream } from './locales';
 
 export default class extends React.PureComponent {
-    static displayName = 'NotificationSettingsFormHeader';
+	static displayName = 'NotificationSettingsFormHeader';
 
 	static propTypes = {
 		stream: PropTypes.string,

@@ -23,7 +23,7 @@ import observe from 'lib/mixins/data-observe';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
-const NextSteps = createReactClass({
+const NextSteps = createReactClass( {
 	displayName: 'NextSteps',
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
@@ -215,6 +215,6 @@ const NextSteps = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( NextSteps );

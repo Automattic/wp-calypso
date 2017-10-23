@@ -21,10 +21,10 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const StatsSiteOverview = createReactClass({
-    displayName: 'StatsSiteOverview',
+const StatsSiteOverview = createReactClass( {
+	displayName: 'StatsSiteOverview',
 
-    proptypes: {
+	proptypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		period: PropTypes.string,
@@ -36,11 +36,11 @@ const StatsSiteOverview = createReactClass({
 		title: PropTypes.string,
 	},
 
-    isValueLow( value ) {
+	isValueLow( value ) {
 		return ! value || 0 === value;
 	},
 
-    render() {
+	render() {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
@@ -84,8 +84,8 @@ const StatsSiteOverview = createReactClass({
 				</Card>
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, date, period, siteSlug } = ownProps;

@@ -14,7 +14,7 @@ import React from 'react';
 import { getGoogleAppsSupportedDomains } from 'lib/domains';
 
 class DomainsSelect extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		domains: PropTypes.object.isRequired,
 	};
 

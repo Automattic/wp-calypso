@@ -17,7 +17,7 @@ import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 
 class FreeTrialConfirmationBox extends React.Component {
-    content = () => {
+	content = () => {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">

@@ -20,7 +20,7 @@ import classNames from 'classnames';
 var noop = () => {};
 
 class PostScheduleHeader extends React.Component {
-    static displayName = 'PostScheduleHeader';
+	static displayName = 'PostScheduleHeader';
 
 	static propTypes = {
 		date: PropTypes.object,

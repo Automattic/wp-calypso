@@ -20,7 +20,7 @@ var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 	PassThrough;
 
 PassThrough = class extends React.Component {
-    render() {
+	render() {
 		return passToChildren( this, DUMMY_PROPS );
 	}
 };

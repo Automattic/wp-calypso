@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import EmailForwardingItem from './email-forwarding-item';
 
 class EmailForwardingList extends React.Component {
-    render() {
+	render() {
 		var emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 

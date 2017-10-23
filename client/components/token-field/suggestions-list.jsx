@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import scrollIntoView from 'dom-scroll-into-view';
 
 class SuggestionsList extends React.PureComponent {
-    static propTypes = {
+	static propTypes = {
 		isExpanded: PropTypes.bool,
 		match: PropTypes.string,
 		displayTransform: PropTypes.func.isRequired,
@@ -28,7 +28,7 @@ class SuggestionsList extends React.PureComponent {
 		suggestions: Object.freeze( [] ),
 	};
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		var node;
 
 		// only have to worry about scrolling selected suggestion into view

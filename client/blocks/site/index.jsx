@@ -18,7 +18,7 @@ import SiteIndicator from 'my-sites/site-indicator';
 import { getSite } from 'state/sites/selectors';
 
 class Site extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		// onSelect callback
 		onSelect: noop,
 		// mouse event callbacks

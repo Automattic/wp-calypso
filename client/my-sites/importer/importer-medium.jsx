@@ -21,7 +21,7 @@ const importerData = {
 };
 
 class ImporterMedium extends React.PureComponent {
-    static displayName = 'ImporterMedium';
+	static displayName = 'ImporterMedium';
 
 	render() {
 		importerData.description = this.props.translate(

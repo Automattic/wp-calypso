@@ -17,7 +17,7 @@ import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
-const AddProfileLinksButtons = createReactClass({
+const AddProfileLinksButtons = createReactClass( {
 	displayName: 'AddProfileLinksButtons',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -75,6 +75,6 @@ const AddProfileLinksButtons = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( AddProfileLinksButtons );

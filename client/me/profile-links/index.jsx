@@ -22,7 +22,7 @@ import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-const ProfileLinks = createReactClass({
+const ProfileLinks = createReactClass( {
 	displayName: 'ProfileLinks',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -243,6 +243,6 @@ const ProfileLinks = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( ProfileLinks );

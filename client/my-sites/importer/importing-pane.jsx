@@ -81,7 +81,7 @@ const hasProgressInfo = progress => {
 };
 
 class ImportingPane extends React.PureComponent {
-    static displayName = 'SiteSettingsImportingPane';
+	static displayName = 'SiteSettingsImportingPane';
 
 	static propTypes = {
 		importerStatus: PropTypes.shape( {
@@ -107,7 +107,7 @@ class ImportingPane extends React.PureComponent {
 		} ).isRequired,
 	};
 
-	getErrorMessage = ({ description }) => {
+	getErrorMessage = ( { description } ) => {
 		if ( ! description ) {
 			return translate( 'An unspecified error occured during the import.' );
 		}

@@ -5,7 +5,7 @@
 import React from 'react';
 
 class NoResults extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		text: 'No results',
 		image: false,
 	};

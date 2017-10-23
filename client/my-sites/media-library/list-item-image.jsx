@@ -16,7 +16,7 @@ import MediaLibraryListItemFileDetails from './list-item-file-details';
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryListItemImage';
+	static displayName = 'MediaLibraryListItemImage';
 
 	static propTypes = {
 		media: PropTypes.object,

@@ -4,7 +4,7 @@ import Test from './Test';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'TestList';
+	static displayName = 'TestList';
 
 	render() {
 		return (

@@ -15,7 +15,7 @@ import Page from 'page';
 import Notice from 'components/notice';
 
 class SiteSettingsImporterError extends React.PureComponent {
-    static displayName = 'SiteSettingsImporterError';
+	static displayName = 'SiteSettingsImporterError';
 
 	static propTypes = {
 		description: PropTypes.string.isRequired,

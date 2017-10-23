@@ -17,7 +17,7 @@ const debug = debugFactory( 'calypso:resizable-iframe' ),
 	noop = () => {};
 
 export default class extends React.Component {
-    static displayName = 'ResizableIframe';
+	static displayName = 'ResizableIframe';
 
 	static propTypes = {
 		src: PropTypes.string,

@@ -11,13 +11,13 @@ import React from 'react';
  */
 
 export default class extends React.Component {
-    static displayName = 'Welcome';
+	static displayName = 'Welcome';
 
 	state = {
 		visible: !! this.props.isVisible,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		var nextVisible = !! nextProps.isVisible;
 		if ( nextVisible !== this.state.visible ) {
 			this.setState( {

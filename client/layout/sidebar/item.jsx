@@ -16,7 +16,7 @@ import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
 export default class extends React.Component {
-    static displayName = 'SidebarItem';
+	static displayName = 'SidebarItem';
 
 	static propTypes = {
 		label: PropTypes.string.isRequired,

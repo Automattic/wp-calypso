@@ -27,7 +27,7 @@ import {
 } from 'state/stats/lists/selectors';
 
 class PostTrends extends React.Component {
-    static displayName = 'PostTrends';
+	static displayName = 'PostTrends';
 
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -61,7 +61,7 @@ class PostTrends extends React.Component {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate( nextProps ) {
 		// only update if the total number of posts, or query.endDate has changed
 		return (
 			nextProps.totalPosts !== this.props.totalPosts ||

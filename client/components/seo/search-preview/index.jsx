@@ -27,7 +27,7 @@ const googleSnippet = firstValid(
 const googleUrl = hardTruncation( 79 );
 
 export class SearchPreview extends React.PureComponent {
-    render() {
+	render() {
 		const { snippet, title, url } = this.props;
 
 		return (

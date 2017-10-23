@@ -20,7 +20,7 @@ import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants'
 import { isModuleActive } from 'lib/site/utils';
 
 export class EditorMediaModalGalleryFields extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
@@ -93,7 +93,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	};
 
-	renderDropdown = (legend, options, settingName) => {
+	renderDropdown = ( legend, options, settingName ) => {
 		const { settings, onUpdateSetting } = this.props;
 
 		if ( ! Object.keys( options ).length ) {

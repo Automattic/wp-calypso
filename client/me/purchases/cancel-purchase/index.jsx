@@ -47,7 +47,7 @@ import userFactory from 'lib/user';
 const user = userFactory();
 
 class CancelPurchase extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
@@ -63,7 +63,7 @@ class CancelPurchase extends React.Component {
 		recordPageView( 'cancel_purchase', this.props );
 	}
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
 			return;
@@ -72,7 +72,7 @@ class CancelPurchase extends React.Component {
 		recordPageView( 'cancel_purchase', this.props, nextProps );
 	}
 
-	isDataValid = (props = this.props) => {
+	isDataValid = ( props = this.props ) => {
 		if ( isDataLoading( props ) ) {
 			return true;
 		}

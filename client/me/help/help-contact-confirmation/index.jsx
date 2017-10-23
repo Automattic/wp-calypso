@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
 export default class extends React.PureComponent {
-    static displayName = 'HelpContactConfirmation';
+	static displayName = 'HelpContactConfirmation';
 
 	static propTypes = {
 		title: PropTypes.string.isRequired,

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
 class StatsTabsTab extends React.Component {
-    static displayName = 'StatsTabsTab';
+	static displayName = 'StatsTabsTab';
 
 	static propTypes = {
 		className: PropTypes.string,

@@ -60,7 +60,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
 /* eslint-disable react/no-deprecated */
-const Layout = createReactClass({
+const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 
@@ -200,7 +200,7 @@ const Layout = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default connect( state => {
 	const { isLoading, section } = state.ui;

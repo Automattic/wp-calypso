@@ -15,7 +15,7 @@ import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
 class SidebarButton extends React.Component {
-    static displayName = 'SidebarButton';
+	static displayName = 'SidebarButton';
 
 	static propTypes = {
 		href: PropTypes.string,

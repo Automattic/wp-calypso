@@ -20,7 +20,7 @@ import SwitcherShell from './switcher-shell';
 const debug = debugModule( 'calypso:author-selector' );
 
 class AuthorSelector extends React.Component {
-    static displayName = 'AuthorSelector';
+	static displayName = 'AuthorSelector';
 
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,

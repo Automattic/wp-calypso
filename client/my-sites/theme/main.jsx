@@ -64,7 +64,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 
 class ThemeSheet extends React.Component {
-    static displayName = 'ThemeSheet';
+	static displayName = 'ThemeSheet';
 
 	static propTypes = {
 		id: PropTypes.string,
@@ -116,7 +116,7 @@ class ThemeSheet extends React.Component {
 		this.scrollToTop();
 	}
 
-	componentWillUpdate(nextProps) {
+	componentWillUpdate( nextProps ) {
 		if ( nextProps.id !== this.props.id ) {
 			this.scrollToTop();
 		}

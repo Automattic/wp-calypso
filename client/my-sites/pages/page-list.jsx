@@ -82,7 +82,7 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = createReactClass({
+const Pages = createReactClass( {
 	displayName: 'Pages',
 
 	mixins: [ infiniteScroll( 'fetchPages' ) ],
@@ -345,7 +345,7 @@ const Pages = createReactClass({
 
 		return this.renderLoading();
 	},
-});
+} );
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),

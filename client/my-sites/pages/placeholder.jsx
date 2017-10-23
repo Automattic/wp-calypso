@@ -13,7 +13,7 @@ import CompactCard from 'components/card/compact';
 import SiteIcon from 'blocks/site-icon';
 
 class PagePlaceholder extends React.Component {
-    static displayName = 'PagePlaceholder';
+	static displayName = 'PagePlaceholder';
 
 	render() {
 		return (
@@ -37,7 +37,7 @@ class PagePlaceholder extends React.Component {
 }
 
 class MarkerPlaceholder extends React.Component {
-    static displayName = 'MarkerPlaceholder';
+	static displayName = 'MarkerPlaceholder';
 
 	render() {
 		return (

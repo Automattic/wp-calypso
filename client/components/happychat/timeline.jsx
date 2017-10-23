@@ -188,17 +188,17 @@ const renderTimeline = ( {
 
 const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-export const Timeline = createReactClass({
-    displayName: 'Timeline',
-    mixins: [ autoscroll, scrollbleed ],
+export const Timeline = createReactClass( {
+	displayName: 'Timeline',
+	mixins: [ autoscroll, scrollbleed ],
 
-    getDefaultProps() {
+	getDefaultProps() {
 		return {
 			onScrollContainer: () => {},
 		};
 	},
 
-    render() {
+	render() {
 		const { onScrollContainer } = this.props;
 		return chatTimeline(
 			assign( {}, this.props, {
@@ -211,8 +211,8 @@ export const Timeline = createReactClass({
 				scrollbleedUnlock: this.scrollbleedUnlock,
 			} )
 		);
-	}
-});
+	},
+} );
 
 const mapProps = state => {
 	const current_user = getCurrentUser( state );

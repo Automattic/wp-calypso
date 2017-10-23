@@ -18,7 +18,7 @@ import sinon from 'sinon';
 import { DropZone } from '../';
 
 class Wrapper extends React.Component {
-    render() {
+	render() {
 		return <div>{ this.props.children }</div>;
 	}
 }

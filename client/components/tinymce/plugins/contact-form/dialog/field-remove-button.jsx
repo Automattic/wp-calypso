@@ -16,7 +16,7 @@ import Button from 'components/button';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldRemoveButton extends React.PureComponent {
-    static displayName = 'ContactFormDialogFieldRemoveButton';
+	static displayName = 'ContactFormDialogFieldRemoveButton';
 
 	static propTypes = {
 		onRemove: PropTypes.func.isRequired,

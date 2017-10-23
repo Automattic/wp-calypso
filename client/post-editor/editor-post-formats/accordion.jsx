@@ -22,7 +22,7 @@ import { getPostFormats } from 'state/post-formats/selectors';
 import { getSiteDefaultPostFormat } from 'state/selectors';
 
 class EditorPostFormatsAccordion extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		post: PropTypes.object,

@@ -17,7 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import { toggleWPcomEmailSetting } from 'lib/notification-settings-store/actions';
 
 class EmailCategory extends React.Component {
-    static propTypes() {
+	static propTypes() {
 		return {
 			name: PropTypes.string,
 			isEnabled: PropTypes.bool,

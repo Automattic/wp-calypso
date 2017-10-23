@@ -22,7 +22,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
 
-const Security2faBackupCodes = createReactClass({
+const Security2faBackupCodes = createReactClass( {
 	displayName: 'Security2faBackupCodes',
 
 	mixins: [ eventRecorder ],
@@ -170,6 +170,6 @@ const Security2faBackupCodes = createReactClass({
 			</div>
 		);
 	},
-});
+} );
 
 export default localize( Security2faBackupCodes );

@@ -80,7 +80,7 @@ const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +
 const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
 class HelpContact extends React.Component {
-    state = {
+	state = {
 		olark: olarkStore.get(),
 		isSubmitting: false,
 		confirmation: null,

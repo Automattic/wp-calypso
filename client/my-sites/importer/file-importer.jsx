@@ -37,7 +37,7 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 	];
 
 export default class extends React.PureComponent {
-    static displayName = 'FileImporter';
+	static displayName = 'FileImporter';
 
 	static propTypes = {
 		importerData: PropTypes.shape( {

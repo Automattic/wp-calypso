@@ -27,7 +27,7 @@ import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
 
 class DeleteUser extends React.PureComponent {
-    static displayName = 'DeleteUser';
+	static displayName = 'DeleteUser';
 
 	static propTypes = {
 		isMultisite: PropTypes.bool,

@@ -19,14 +19,14 @@ import tableRows from './table-rows';
 import SearchCard from 'components/search-card';
 
 class TransactionsTable extends React.Component {
-    static displayName = 'TransactionsTable';
+	static displayName = 'TransactionsTable';
 
 	static defaultProps = {
 		header: false,
 	};
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		var initialTransactions;
 
 		if ( props.transactions ) {

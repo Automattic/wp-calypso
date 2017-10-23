@@ -17,7 +17,7 @@ import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
 export default class extends React.Component {
-    static displayName = 'EditorFeaturedImagePreviewContainer';
+	static displayName = 'EditorFeaturedImagePreviewContainer';
 
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
@@ -34,7 +34,7 @@ export default class extends React.Component {
 		MediaStore.on( 'change', this.updateImageState );
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		const { siteId, itemId } = this.props;
 		if ( siteId !== prevProps.siteId || itemId !== prevProps.itemId ) {
 			this.fetchImage();

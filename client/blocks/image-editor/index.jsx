@@ -39,7 +39,7 @@ import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/c
 import { getDefaultAspectRatio } from './utils';
 
 class ImageEditor extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
@@ -75,7 +75,7 @@ class ImageEditor extends React.Component {
 		noticeStatus: 'is-info',
 	};
 
-	componentWillReceiveProps(newProps) {
+	componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -198,7 +198,7 @@ class ImageEditor extends React.Component {
 		return imageProperties;
 	};
 
-	showNotice = (noticeText, noticeStatus = 'is-info') => {
+	showNotice = ( noticeText, noticeStatus = 'is-info' ) => {
 		this.setState( {
 			noticeText,
 			noticeStatus,

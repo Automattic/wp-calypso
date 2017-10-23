@@ -20,7 +20,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class SitePicker extends React.Component {
-    static displayName = 'SitePicker';
+	static displayName = 'SitePicker';
 
 	static propTypes = {
 		onClose: PropTypes.func,
@@ -38,7 +38,7 @@ class SitePicker extends React.Component {
 		isOpened: false,
 	};
 
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.currentLayoutFocus || hasTouch() ) {
 			return;
 		}

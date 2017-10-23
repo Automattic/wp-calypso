@@ -41,7 +41,7 @@ const guidedTransferHosts = {
 };
 
 class GuidedTransfer extends React.Component {
-    static displayName = 'GuidedTransfer';
+	static displayName = 'GuidedTransfer';
 
 	static propTypes = {
 		hostSlug: PropTypes.string,

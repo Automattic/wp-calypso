@@ -39,12 +39,12 @@ describe( 'promotions', () => {
 								{ id: 'coupon:1', type: 'empty1' },
 								{ id: 'product:2', type: 'empty2' },
 								{ id: 'coupon:3', type: 'empty3' },
-							]
-						}
-					}
-				}
-			}
-		}
+							],
+						},
+					},
+				},
+			},
+		},
 	};
 
 	describe( '#getPromotions', () => {
@@ -117,11 +117,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					creates: [
-						{ id: 'coupon:4', type: 'empty4' },
-					],
+					creates: [ { id: 'coupon:4', type: 'empty4' } ],
 					currentlyEditingId: 'coupon:4',
-				}
+				},
 			};
 
 			const id = getCurrentlyEditingPromotionId( editedState, 123 );
@@ -140,11 +138,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [
-						{ id: 'coupon:3', type: 'empty33' },
-					],
+					updates: [ { id: 'coupon:3', type: 'empty33' } ],
 					currentlyEditingId: 'coupon:3',
-				}
+				},
 			};
 
 			const edits = getPromotionEdits( editedState, 'coupon:3', 123 );
@@ -159,11 +155,9 @@ describe( 'promotions', () => {
 			const placeholderId = { placeholder: 'promotion_5' };
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					creates: [
-						{ id: placeholderId, type: 'empty33' },
-					],
+					creates: [ { id: placeholderId, type: 'empty33' } ],
 					currentlyEditingId: placeholderId,
-				}
+				},
 			};
 
 			const edits = getPromotionEdits( editedState, placeholderId, 123 );
@@ -193,11 +187,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [
-						{ id: 'coupon:3', type: 'empty33' },
-					],
+					updates: [ { id: 'coupon:3', type: 'empty33' } ],
 					currentlyEditingId: 'coupon:3',
-				}
+				},
 			};
 
 			const editedPromotion = getPromotionWithLocalEdits( editedState, 'coupon:3', 123 );

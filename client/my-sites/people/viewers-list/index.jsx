@@ -12,7 +12,7 @@ import ViewersData from 'components/data/viewers-data';
 import Viewers from './viewers';
 
 class ViewersList extends React.PureComponent {
-    static displayName = 'ViewersList';
+	static displayName = 'ViewersList';
 
 	render() {
 		return (

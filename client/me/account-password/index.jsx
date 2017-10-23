@@ -31,7 +31,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 
-const AccountPassword = createReactClass({
+const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
 	mixins: [ observe( 'accountPasswordData' ), eventRecorder ],
@@ -189,7 +189,7 @@ const AccountPassword = createReactClass({
 			</form>
 		);
 	},
-});
+} );
 
 export default compose(
 	connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) ),

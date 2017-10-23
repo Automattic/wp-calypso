@@ -22,7 +22,7 @@ import PostEditStore from 'lib/posts/post-edit-store';
 import { validateFormFields, validateSettingsToEmail } from './validations';
 
 class ContactFormDialog extends React.Component {
-    static displayName = 'ContactFormDialog';
+	static displayName = 'ContactFormDialog';
 
 	static propTypes = {
 		activeTab: PropTypes.oneOf( [ 'fields', 'settings' ] ).isRequired,

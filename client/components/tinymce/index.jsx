@@ -166,7 +166,7 @@ const CONTENT_CSS = [
 ];
 
 export default class extends React.Component {
-    static displayName = 'TinyMCE';
+	static displayName = 'TinyMCE';
 
 	static propTypes = {
 		isNew: PropTypes.bool,
@@ -213,7 +213,7 @@ export default class extends React.Component {
 		_instance++;
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate( prevProps ) {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -381,7 +381,7 @@ export default class extends React.Component {
 		);
 	};
 
-	toggleEditor = (options = { autofocus: true }) => {
+	toggleEditor = ( options = { autofocus: true } ) => {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -458,7 +458,7 @@ export default class extends React.Component {
 		);
 	};
 
-	setEditorContent = (content, args = {}) => {
+	setEditorContent = ( content, args = {} ) => {
 		if ( this._editor ) {
 			const { mode } = this.props;
 			this._editor.setContent( wpautop( content ), { ...args, mode } );

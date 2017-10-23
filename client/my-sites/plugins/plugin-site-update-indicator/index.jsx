@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
 class PluginSiteUpdateIndicator extends React.Component {
-    static displayName = 'PluginSiteUpdateIndicator';
+	static displayName = 'PluginSiteUpdateIndicator';
 
 	static propTypes = {
 		site: PropTypes.shape( {

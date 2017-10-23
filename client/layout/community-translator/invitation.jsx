@@ -16,7 +16,7 @@ import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
 class CommunityTranslatorInvitation extends React.Component {
-    static displayName = 'CommunityTranslatorInvitation';
+	static displayName = 'CommunityTranslatorInvitation';
 
 	static propTypes = {
 		isVisible: PropTypes.bool,

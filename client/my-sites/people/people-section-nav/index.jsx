@@ -19,7 +19,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-let PeopleSearch = createReactClass({
+let PeopleSearch = createReactClass( {
 	displayName: 'PeopleSearch',
 	mixins: [ UrlSearch ],
 
@@ -36,10 +36,10 @@ let PeopleSearch = createReactClass({
 			/>
 		);
 	},
-});
+} );
 
 class PeopleNavTabs extends React.Component {
-    static displayName = 'PeopleNavTabs';
+	static displayName = 'PeopleNavTabs';
 
 	render() {
 		return (

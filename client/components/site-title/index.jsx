@@ -16,7 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
 class SiteTitleControl extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
 		onChange: PropTypes.func.isRequired,

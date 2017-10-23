@@ -17,7 +17,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 
 class DesignToolList extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		onChange: PropTypes.func.isRequired,
 	};
 

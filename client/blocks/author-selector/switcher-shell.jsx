@@ -27,7 +27,7 @@ import { hasTouch } from 'lib/touch-detect';
 const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
-const SwitcherShell = createReactClass({
+const SwitcherShell = createReactClass( {
 	displayName: 'AuthorSwitcherShell',
 
 	propTypes: {
@@ -240,6 +240,6 @@ const SwitcherShell = createReactClass({
 	_onSearch: function( searchTerm ) {
 		this.props.updateSearch( searchTerm );
 	},
-});
+} );
 
 export default localize( SwitcherShell );

@@ -27,7 +27,7 @@ const OPTION_SHAPE = PropTypes.shape( {
 } );
 
 class ThemesSiteSelectorModal extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		children: PropTypes.element,
 		options: PropTypes.objectOf( OPTION_SHAPE ),
 		defaultOption: OPTION_SHAPE,
@@ -69,7 +69,7 @@ class ThemesSiteSelectorModal extends React.Component {
 		}
 	};
 
-	showSiteSelectorModal = (option, themeId) => {
+	showSiteSelectorModal = ( option, themeId ) => {
 		this.setState( { selectedThemeId: themeId, selectedOption: option } );
 	};
 

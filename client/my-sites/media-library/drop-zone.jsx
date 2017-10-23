@@ -17,7 +17,7 @@ import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 
 export default class extends React.Component {
-    static displayName = 'MediaLibraryDropZone';
+	static displayName = 'MediaLibraryDropZone';
 
 	static propTypes = {
 		site: PropTypes.object,

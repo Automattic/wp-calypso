@@ -21,11 +21,11 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import paths from 'my-sites/domains/paths';
 
-const MappedDomain = createReactClass({
-    displayName: 'MappedDomain',
-    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const MappedDomain = createReactClass( {
+	displayName: 'MappedDomain',
+	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-    getAutoRenewalOrExpirationDate() {
+	getAutoRenewalOrExpirationDate() {
 		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
@@ -60,11 +60,11 @@ const MappedDomain = createReactClass({
 		);
 	},
 
-    handlePaymentSettingsClick() {
+	handlePaymentSettingsClick() {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
-    domainWarnings() {
+	domainWarnings() {
 		return (
 			<DomainWarnings
 				domain={ this.props.domain }
@@ -75,7 +75,7 @@ const MappedDomain = createReactClass({
 		);
 	},
 
-    render() {
+	render() {
 		return (
 			<div>
 				{ this.domainWarnings() }
@@ -85,7 +85,7 @@ const MappedDomain = createReactClass({
 		);
 	},
 
-    getDomainDetailsCard() {
+	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
@@ -110,7 +110,7 @@ const MappedDomain = createReactClass({
 		);
 	},
 
-    getVerticalNav() {
+	getVerticalNav() {
 		return (
 			<VerticalNav>
 				{ this.emailNavItem() }
@@ -119,7 +119,7 @@ const MappedDomain = createReactClass({
 		);
 	},
 
-    emailNavItem() {
+	emailNavItem() {
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -128,14 +128,14 @@ const MappedDomain = createReactClass({
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
 
-    dnsRecordsNavItem() {
+	dnsRecordsNavItem() {
 		const path = paths.domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
 		);
-	}
-});
+	},
+} );
 
 export { MappedDomain };
 export default localize( MappedDomain );

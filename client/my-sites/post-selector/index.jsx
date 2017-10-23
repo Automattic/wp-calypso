@@ -14,7 +14,7 @@ import { reduce, snakeCase } from 'lodash';
 import PostSelectorPosts from './selector';
 
 export default class extends React.PureComponent {
-    static displayName = 'PostSelector';
+	static displayName = 'PostSelector';
 
 	static propTypes = {
 		type: PropTypes.string,

@@ -24,7 +24,7 @@ import { GalleryDefaultAttrs } from 'lib/media/constants';
 const debug = debugModule( 'calypso:gallery-shortcode' );
 
 export default class extends React.Component {
-    static displayName = 'GalleryShortcode';
+	static displayName = 'GalleryShortcode';
 
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,

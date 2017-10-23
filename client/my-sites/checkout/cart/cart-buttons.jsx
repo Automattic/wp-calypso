@@ -16,23 +16,23 @@ import { localize } from 'i18n-calypso';
  */
 import AnalyticsMixin from 'lib/mixins/analytics';
 
-export const CartButtons = createReactClass({
-    displayName: 'CartButtons',
-    mixins: [ AnalyticsMixin( 'popupCart' ) ],
+export const CartButtons = createReactClass( {
+	displayName: 'CartButtons',
+	mixins: [ AnalyticsMixin( 'popupCart' ) ],
 
-    propTypes: {
+	propTypes: {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,
 	},
 
-    getDefaultProps() {
+	getDefaultProps() {
 		return {
 			showKeepSearching: false,
 			translate: identity,
 		};
 	},
 
-    render() {
+	render() {
 		return (
 			<div className="cart-buttons">
 				<button className="cart-checkout-button button is-primary" onClick={ this.goToCheckout }>
@@ -44,7 +44,7 @@ export const CartButtons = createReactClass({
 		);
 	},
 
-    optionalKeepSearching() {
+	optionalKeepSearching() {
 		if ( ! this.props.showKeepSearching ) {
 			return;
 		}
@@ -56,7 +56,7 @@ export const CartButtons = createReactClass({
 		);
 	},
 
-    onKeepSearchingClick( event ) {
+	onKeepSearchingClick( event ) {
 		event.preventDefault();
 		this.recordEvent( 'keepSearchButtonClick' );
 		if ( isFunction( this.props.onKeepSearchingClick ) ) {
@@ -64,13 +64,13 @@ export const CartButtons = createReactClass({
 		}
 	},
 
-    goToCheckout( event ) {
+	goToCheckout( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'checkoutButtonClick' );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
-	}
-});
+	},
+} );
 
 export default localize( CartButtons );

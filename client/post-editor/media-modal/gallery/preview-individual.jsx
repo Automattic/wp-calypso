@@ -15,7 +15,7 @@ import markup from '../markup';
 import { getSelectedSite } from 'state/ui/selectors';
 
 class EditorMediaModalGalleryPreviewIndividual extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		items: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
 	};

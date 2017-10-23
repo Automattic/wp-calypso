@@ -10,7 +10,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 class StatsError extends React.PureComponent {
-    static displayName = 'StatsError';
+	static displayName = 'StatsError';
 
 	static propTypes = {
 		message: PropTypes.string,

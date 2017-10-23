@@ -33,20 +33,20 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 
-const MeSidebar = createReactClass({
-    displayName: 'MeSidebar',
-    mixins: [ eventRecorder ],
+const MeSidebar = createReactClass( {
+	displayName: 'MeSidebar',
+	mixins: [ eventRecorder ],
 
-    componentDidMount: function() {
+	componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
 	},
 
-    onNavigate: function() {
+	onNavigate: function() {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	},
 
-    onSignOut: function() {
+	onSignOut: function() {
 		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
@@ -70,7 +70,7 @@ const MeSidebar = createReactClass({
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
-    render: function() {
+	render: function() {
 		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
@@ -191,7 +191,7 @@ const MeSidebar = createReactClass({
 		);
 	},
 
-    renderNextStepsItem: function( selected ) {
+	renderNextStepsItem: function( selected ) {
 		const { currentUser, translate } = this.props;
 
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
@@ -205,8 +205,8 @@ const MeSidebar = createReactClass({
 				/>
 			);
 		}
-	}
-});
+	},
+} );
 
 const enhance = flow(
 	localize,

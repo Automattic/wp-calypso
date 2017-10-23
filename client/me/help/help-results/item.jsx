@@ -14,7 +14,7 @@ import { decodeEntities } from 'lib/formatting';
 import CompactCard from 'components/card/compact';
 
 export default class extends React.PureComponent {
-    static displayName = 'HelpResult';
+	static displayName = 'HelpResult';
 
 	onClick = event => {
 		if ( this.props.helpLink.disabled ) {

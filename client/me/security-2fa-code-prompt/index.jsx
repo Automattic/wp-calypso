@@ -25,7 +25,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
 class Security2faCodePrompt extends React.Component {
-    static displayName = 'Security2faCodePrompt';
+	static displayName = 'Security2faCodePrompt';
 
 	static defaultProps = {
 		action: false,
@@ -129,7 +129,7 @@ class Security2faCodePrompt extends React.Component {
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
 	};
 
-	onValidationResponseReceived = (error, data) => {
+	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {

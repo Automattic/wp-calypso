@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import Tooltip from 'components/tooltip';
 
 class PostTrendsDay extends React.PureComponent {
-    static displayName = 'PostTrendsDay';
+	static displayName = 'PostTrendsDay';
 
 	static propTypes = {
 		label: PropTypes.string,

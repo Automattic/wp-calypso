@@ -25,7 +25,7 @@ import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {
-    static displayName = 'MediaLibraryHeader';
+	static displayName = 'MediaLibraryHeader';
 
 	static propTypes = {
 		site: PropTypes.object,

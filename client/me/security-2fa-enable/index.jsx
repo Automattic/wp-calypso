@@ -27,7 +27,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
 class Security2faEnable extends React.Component {
-    static displayName = 'Security2faEnable';
+	static displayName = 'Security2faEnable';
 
 	static defaultProps = {
 		doSMSFlow: false,
@@ -119,7 +119,7 @@ class Security2faEnable extends React.Component {
 		this.setState( { method: 'sms' } );
 	};
 
-	onAppAuthCodesRequestResponse = (error, data) => {
+	onAppAuthCodesRequestResponse = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(
@@ -154,7 +154,7 @@ class Security2faEnable extends React.Component {
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
 	};
 
-	onValidationResponseReceived = (error, data) => {
+	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {

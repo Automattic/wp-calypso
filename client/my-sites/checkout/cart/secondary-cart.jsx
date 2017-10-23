@@ -26,23 +26,23 @@ import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-const SecondaryCart = createReactClass({
-    displayName: 'SecondaryCart',
+const SecondaryCart = createReactClass( {
+	displayName: 'SecondaryCart',
 
-    propTypes: {
+	propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
 
-    mixins: [ observe( 'sites' ) ],
+	mixins: [ observe( 'sites' ) ],
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			cartVisible: false,
 		};
 	},
 
-    componentWillMount() {
+	componentWillMount() {
 		this.dispatchToken = Dispatcher.register(
 			function( payload ) {
 				if ( payload.action.type === upgradesActionTypes.CART_ON_MOBILE_SHOW ) {
@@ -52,18 +52,18 @@ const SecondaryCart = createReactClass({
 		);
 	},
 
-    componentWillUnmount() {
+	componentWillUnmount() {
 		Dispatcher.unregister( this.dispatchToken );
 	},
 
-    componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( ! prevState.cartVisible && this.state.cartVisible ) {
 			const node = ReactDom.findDOMNode( this.refs.cartBody );
 			scrollIntoViewport( node );
 		}
 	},
 
-    render() {
+	render() {
 		const { cart, selectedSite } = this.props;
 		const cartClasses = classNames( {
 			'secondary-cart': true,
@@ -89,7 +89,7 @@ const SecondaryCart = createReactClass({
 				<CartPlanDiscountAd cart={ cart } selectedSite={ selectedSite } />
 			</Sidebar>
 		);
-	}
-});
+	},
+} );
 
 export default localize( SecondaryCart );

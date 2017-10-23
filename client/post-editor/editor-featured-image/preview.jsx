@@ -21,23 +21,23 @@ import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const EditorFeaturedImagePreview = createReactClass({
-    displayName: 'EditorFeaturedImagePreview',
+const EditorFeaturedImagePreview = createReactClass( {
+	displayName: 'EditorFeaturedImagePreview',
 
-    propTypes: {
+	propTypes: {
 		siteId: PropTypes.number,
 		image: PropTypes.object,
 		maxWidth: PropTypes.number,
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			height: null,
 			transientSrc: null,
 		};
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
 			return;
@@ -59,7 +59,7 @@ const EditorFeaturedImagePreview = createReactClass({
 		this.setState( nextState );
 	},
 
-    isReceivingPersistedImage( props, nextProps ) {
+	isReceivingPersistedImage( props, nextProps ) {
 		const { siteId } = this.props;
 		if ( siteId !== nextProps.siteId ) {
 			return false;
@@ -77,7 +77,7 @@ const EditorFeaturedImagePreview = createReactClass({
 		return media && media.ID === nextProps.image.ID;
 	},
 
-    src( props = this.props ) {
+	src( props = this.props ) {
 		if ( ! props.image ) {
 			return;
 		}
@@ -88,7 +88,7 @@ const EditorFeaturedImagePreview = createReactClass({
 		} );
 	},
 
-    clearState() {
+	clearState() {
 		if ( ! some( this.state ) ) {
 			return;
 		}
@@ -96,7 +96,7 @@ const EditorFeaturedImagePreview = createReactClass({
 		this.setState( this.getInitialState() );
 	},
 
-    render() {
+	render() {
 		const { height } = this.state;
 		const classes = classNames( 'editor-featured-image__preview', {
 			'is-transient': get( this.props.image, 'transient' ),
@@ -121,8 +121,8 @@ const EditorFeaturedImagePreview = createReactClass({
 				/>
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default connect( state => {
 	return {

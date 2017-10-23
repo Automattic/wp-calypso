@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
 class Security2faStatus extends React.Component {
-    static displayName = 'Security2faStatus';
+	static displayName = 'Security2faStatus';
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
