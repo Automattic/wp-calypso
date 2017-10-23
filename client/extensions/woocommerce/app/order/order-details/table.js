@@ -113,9 +113,8 @@ class OrderDetailsTable extends Component {
 	};
 
 	onDelete = ( id, type = 'line_items' ) => {
-		const { order } = this.props;
 		return () => {
-			const index = findIndex( order[ type ], { id } );
+			const index = findIndex( this.props.order[ type ], { id } );
 			if ( index >= 0 ) {
 				let newItem;
 				if ( 'line_items' === type ) {
@@ -170,8 +169,8 @@ class OrderDetailsTable extends Component {
 					compact
 					borderless
 					icon
-					aria-label={ translate( 'Remove %(product)s from this order', {
-						args: { product: item.name },
+					aria-label={ translate( 'Remove %(itemName)s from this order', {
+						args: { itemName: item.name },
 					} ) }
 					onClick={ this.onDelete( item.id, type ) }
 				>
@@ -181,7 +180,7 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItems = ( item, i ) => {
+	renderOrderItem = ( item, i ) => {
 		const { order } = this.props;
 		const tax = getOrderLineItemTax( order, item.id );
 		if ( item.quantity <= 0 ) {
@@ -210,7 +209,7 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderFees = item => {
+	renderOrderFee = item => {
 		const { order, translate } = this.props;
 		const tax = getOrderFeeTax( order, item.id );
 		if ( item.total <= 0 ) {
@@ -258,8 +257,8 @@ class OrderDetailsTable extends Component {
 		return (
 			<div>
 				<Table className={ tableClasses } header={ this.renderTableHeader() }>
-					{ order.line_items.map( this.renderOrderItems ) }
-					{ order.fee_lines.map( this.renderOrderFees ) }
+					{ order.line_items.map( this.renderOrderItem ) }
+					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
 
 				<div className={ totalsClasses }>
