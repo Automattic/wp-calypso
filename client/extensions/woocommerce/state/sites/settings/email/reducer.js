@@ -21,6 +21,7 @@ import {
 	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
@@ -347,6 +348,27 @@ function newsletterSettingsSubmitError( state = false, action ) {
 	return state;
 }
 
+/**
+ * Updates state with save settings request status
+ * The name ( saveSettings ) is generic because in future this should repond
+ * also to other events than newsletter settings
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action
+ * @return {Object}        Updated state
+ */
+function saveSettings( state = false, { type } ) {
+	switch ( type ) {
+		case WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS:
+			return true;
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS:
+		case WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE:
+			return false;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	settings,
 	settingsRequest,
@@ -363,5 +385,6 @@ export default combineReducers( {
 	listsRequest,
 	listsRequestError,
 	newsletterSettingsSubmit,
-	newsletterSettingsSubmitError
+	newsletterSettingsSubmitError,
+	saveSettings,
 } );

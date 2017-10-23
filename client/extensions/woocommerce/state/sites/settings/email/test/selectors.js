@@ -9,12 +9,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingSettings,
-	mailChimpSettings,
-	isSubmittingApiKey,
-	isApiKeyCorrect,
-	requestingSettingsError,
 	hasMailChimpConnection,
+	isApiKeyCorrect,
+	isRequestingSettings,
+	isSavingSettings,
+	isSubmittingApiKey,
+	mailChimpSettings,
+	requestingSettingsError,
 } from '../selectors';
 
 const settings = {
@@ -87,6 +88,7 @@ const emailState = {
 							listsRequestError: false,
 							newsletterSettingsSubmit: false,
 							newsletterSettingsSubmitError: false,
+							saveSettings: false,
 						},
 					},
 				},
@@ -130,6 +132,16 @@ const mailChimpNoSync = Object.assign( {}, emailState, {
 		woocommerce: {
 			sites: {
 				123: { settings: { email: { syncStatus: { mailchimp_list_name: 'n/a' } } } },
+			},
+		},
+	},
+} );
+
+const mailChimpSaveSettings = Object.assign( {}, emailState, {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: { settings: { email: { saveSettings: true } } },
 			},
 		},
 	},
@@ -209,6 +221,20 @@ describe( 'selectors', () => {
 
 		test( 'should be false after invalid key submit', () => {
 			expect( hasMailChimpConnection( mailChimpNoSync, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isSavingSettings', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( isSavingSettings( {}, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when user reqested Save action.', () => {
+			expect( isSavingSettings( mailChimpSaveSettings, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when user has not requested Save action', () => {
+			expect( isSavingSettings( emailState, 123 ) ).to.be.false;
 		} );
 	} );
 } );
