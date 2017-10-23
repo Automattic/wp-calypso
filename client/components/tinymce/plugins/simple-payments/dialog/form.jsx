@@ -82,7 +82,7 @@ const validate = ( values, props ) => {
 	const errors = {};
 
 	if ( ! values.title ) {
-		errors.title = translate( 'Product name can not be empty.' );
+		errors.title = translate( 'This can not be empty.' );
 	}
 
 	if ( ! values.price ) {
@@ -182,9 +182,11 @@ class ProductForm extends Component {
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"
-						label={ translate( 'What are you selling?' ) }
-						placeholder={ translate( 'Product name' ) }
+						label={ translate( 'What is this payment for?' ) }
 						component={ FormTextInput }
+						explanation={ translate(
+							'For example: event tickets, charitable donations, training courses, coaching fees, etc.'
+						) }
 					/>
 					<ReduxFormFieldset
 						name="description"

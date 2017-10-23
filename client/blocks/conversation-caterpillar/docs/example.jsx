@@ -10,18 +10,21 @@ import React from 'react';
 import { ConversationCaterpillar } from 'blocks/conversation-caterpillar';
 import { posts } from 'blocks/reader-post-card/docs/fixtures';
 import { comments, commentsTree } from 'blocks/conversation-caterpillar/docs/fixtures';
+import Card from 'components/card';
 
 const ConversationCaterpillarExample = () => {
 	return (
 		<div className="design-assets__group">
-			<ConversationCaterpillar
-				comments={ comments }
-				blogId={ 123 }
-				postId={ 12 }
-				commentsTree={ commentsTree }
-				hiddenComments={ commentsTree }
-				expandComments={ () => {} }
-			/>
+			<Card>
+				<ConversationCaterpillar
+					comments={ comments }
+					blogId={ 123 }
+					postId={ 12 }
+					commentsTree={ commentsTree }
+					commentsToShow={ {} }
+					expandComments={ () => {} }
+				/>
+			</Card>
 		</div>
 	);
 };

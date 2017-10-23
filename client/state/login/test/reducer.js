@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,6 +8,18 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import reducer, {
+	isRequesting,
+	isFormDisabled,
+	isRequestingTwoFactorAuth,
+	requestError,
+	requestNotice,
+	requestSuccess,
+	twoFactorAuth,
+	twoFactorAuthRequestError,
+	socialAccount,
+	socialAccountLink,
+} from '../reducer';
 import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -30,21 +44,9 @@ import {
 	ROUTE_SET,
 	USER_RECEIVE,
 } from 'state/action-types';
-import reducer, {
-	isRequesting,
-	isFormDisabled,
-	isRequestingTwoFactorAuth,
-	requestError,
-	requestNotice,
-	requestSuccess,
-	twoFactorAuth,
-	twoFactorAuthRequestError,
-	socialAccount,
-	socialAccountLink,
-} from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isFormDisabled',
 			'isRequesting',
@@ -64,13 +66,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'isRequesting', () => {
-		it( 'should default to a false', () => {
+		test( 'should default to a false', () => {
 			const state = isRequesting( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isRequesting to true value if a request is initiated', () => {
+		test( 'should set isRequesting to true value if a request is initiated', () => {
 			let state = isRequesting( undefined, {
 				type: LOGIN_REQUEST,
 			} );
@@ -84,7 +86,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should set isRequesting to false value if a request was unsuccessful', () => {
+		test( 'should set isRequesting to false value if a request was unsuccessful', () => {
 			let state = isRequesting( undefined, {
 				type: LOGIN_REQUEST_FAILURE,
 			} );
@@ -98,7 +100,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isRequesting to false value if a request was successful', () => {
+		test( 'should set isRequesting to false value if a request was successful', () => {
 			let state = isRequesting( undefined, {
 				type: LOGIN_REQUEST_SUCCESS,
 			} );
@@ -112,23 +114,23 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = isRequesting( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isFormDisabled to true value if a request is initiated', () => {
+		test( 'should set isFormDisabled to true value if a request is initiated', () => {
 			let state = isFormDisabled( undefined, {
 				type: LOGIN_REQUEST,
 			} );
@@ -142,7 +144,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should set isFormDisabled to false value if a request was unsuccessful', () => {
+		test( 'should set isFormDisabled to false value if a request was unsuccessful', () => {
 			let state = isFormDisabled( undefined, {
 				type: LOGIN_REQUEST_FAILURE,
 			} );
@@ -156,7 +158,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isFormDisabled to true value if a request was successful', () => {
+		test( 'should set isFormDisabled to true value if a request was successful', () => {
 			let state = isFormDisabled( undefined, {
 				type: LOGIN_REQUEST_SUCCESS,
 			} );
@@ -170,17 +172,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = isRequesting( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -188,13 +190,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'isRequestingTwoFactorAuth', () => {
-		it( 'should default to a false', () => {
+		test( 'should default to a false', () => {
 			const state = isRequestingTwoFactorAuth( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isRequesting to true value if a request is initiated', () => {
+		test( 'should set isRequesting to true value if a request is initiated', () => {
 			const state = isRequestingTwoFactorAuth( undefined, {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 			} );
@@ -202,7 +204,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should set isRequesting to false value if a request was unsuccessful', () => {
+		test( 'should set isRequesting to false value if a request was unsuccessful', () => {
 			const state = isRequestingTwoFactorAuth( undefined, {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 			} );
@@ -210,7 +212,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should set isRequesting to false value if a request was successful', () => {
+		test( 'should set isRequesting to false value if a request was successful', () => {
 			const state = isRequestingTwoFactorAuth( undefined, {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 			} );
@@ -218,17 +220,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = isRequestingTwoFactorAuth( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = isRequestingTwoFactorAuth( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -236,13 +238,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requestError', () => {
-		it( 'should default to a null', () => {
+		test( 'should default to a null', () => {
 			const state = requestError( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestError to null value if a request is initiated', () => {
+		test( 'should set requestError to null value if a request is initiated', () => {
 			let state = requestError( 'some error', {
 				type: LOGIN_REQUEST,
 			} );
@@ -256,7 +258,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestError to null value if a request was successful', () => {
+		test( 'should set requestError to null value if a request was successful', () => {
 			let state = requestError( 'some error', {
 				type: LOGIN_REQUEST_SUCCESS,
 			} );
@@ -270,41 +272,41 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should store the error in requestError if a request is unsuccessful', () => {
+		test( 'should store the error in requestError if a request is unsuccessful', () => {
 			let state = requestError( 'some error', {
 				type: LOGIN_REQUEST_FAILURE,
-				error: 'another error'
+				error: 'another error',
 			} );
 
 			expect( state ).to.eql( 'another error' );
 
 			state = requestError( 'some error', {
 				type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-				error: 'yet another error'
+				error: 'yet another error',
 			} );
 
 			expect( state ).to.eql( 'yet another error' );
 		} );
 
-		it( 'should reset the error to null when switching routes', () => {
+		test( 'should reset the error to null when switching routes', () => {
 			const state = requestError( 'some error', {
-				type: ROUTE_SET
+				type: ROUTE_SET,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requestError( 'some error', {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requestError( 'some error', {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -312,13 +314,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'twoFactorAuthRequestError', () => {
-		it( 'should default to a null', () => {
+		test( 'should default to a null', () => {
 			const state = twoFactorAuthRequestError( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestError to null value if a request is initiated', () => {
+		test( 'should set requestError to null value if a request is initiated', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 			} );
@@ -326,7 +328,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestError to null value if a request was successful', () => {
+		test( 'should set requestError to null value if a request was successful', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 			} );
@@ -334,34 +336,34 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should store the error in requestError if a request is unsuccessful', () => {
+		test( 'should store the error in requestError if a request is unsuccessful', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error: 'another error'
+				error: 'another error',
 			} );
 
 			expect( state ).to.eql( 'another error' );
 		} );
 
-		it( 'should reset the error to null when switching routes', () => {
+		test( 'should reset the error to null when switching routes', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: ROUTE_SET
+				type: ROUTE_SET,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -369,39 +371,39 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requestNotice', () => {
-		it( 'should default to a null', () => {
+		test( 'should default to a null', () => {
 			const state = requestNotice( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set `notice` object if a request was initiated', () => {
+		test( 'should set `notice` object if a request was initiated', () => {
 			const state = requestNotice( null, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 				notice: {
-					message: 'foo'
-				}
+					message: 'foo',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				message: 'foo'
+				message: 'foo',
 			} );
 		} );
 
-		it( 'should set `notice` object if a request was successful', () => {
+		test( 'should set `notice` object if a request was successful', () => {
 			const state = requestNotice( null, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {
-					message: 'foo'
-				}
+					message: 'foo',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				message: 'foo'
+				message: 'foo',
 			} );
 		} );
 
-		it( 'should set requestNotice to null value if a request is unsuccessful', () => {
+		test( 'should set requestNotice to null value if a request is unsuccessful', () => {
 			const state = requestNotice( null, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 			} );
@@ -409,17 +411,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requestNotice( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requestNotice( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -427,13 +429,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requestSuccess', () => {
-		it( 'should default to a null', () => {
+		test( 'should default to a null', () => {
 			const state = requestSuccess( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestSuccess to null value if a request is initiated', () => {
+		test( 'should set requestSuccess to null value if a request is initiated', () => {
 			const state = requestSuccess( undefined, {
 				type: LOGIN_REQUEST,
 			} );
@@ -441,7 +443,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set requestSuccess to true value if a request was successful', () => {
+		test( 'should set requestSuccess to true value if a request was successful', () => {
 			const state = requestSuccess( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 			} );
@@ -449,7 +451,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should set requestSuccess to false value if a request is unsuccessful', () => {
+		test( 'should set requestSuccess to false value if a request is unsuccessful', () => {
 			const state = requestSuccess( null, {
 				type: LOGIN_REQUEST_FAILURE,
 			} );
@@ -457,17 +459,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requestSuccess( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requestSuccess( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -475,13 +477,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'twoFactorAuth', () => {
-		it( 'should default to a null', () => {
+		test( 'should default to a null', () => {
 			const state = twoFactorAuth( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set twoFactorAuth to null value if a request is initiated', () => {
+		test( 'should set twoFactorAuth to null value if a request is initiated', () => {
 			const state = twoFactorAuth( undefined, {
 				type: LOGIN_REQUEST,
 			} );
@@ -489,7 +491,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set twoFactorAuth to null value if a social request is initiated', () => {
+		test( 'should set twoFactorAuth to null value if a social request is initiated', () => {
 			const state = twoFactorAuth( undefined, {
 				type: SOCIAL_LOGIN_REQUEST,
 			} );
@@ -497,7 +499,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set twoFactorAuth to the response value if a request was successful', () => {
+		test( 'should set twoFactorAuth to the response value if a request was successful', () => {
 			const data = {
 				result: true,
 				two_step_id: 12345678,
@@ -506,13 +508,13 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true
+				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
 		} );
 
-		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
+		test( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_FAILURE,
 			} );
@@ -520,7 +522,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set twoFactorAuth to the response value if a social request was successful', () => {
+		test( 'should set twoFactorAuth to the response value if a social request was successful', () => {
 			const data = {
 				result: true,
 				two_step_id: 12345678,
@@ -529,13 +531,13 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true
+				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
 		} );
 
-		it( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
+		test( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
 			const state = twoFactorAuth( null, {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 			} );
@@ -543,7 +545,7 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should update the "two_step_nonce" value when requested', () => {
+		test( 'should update the "two_step_nonce" value when requested', () => {
 			const data = {
 				two_step_id: 12345678,
 				two_step_nonce_authenticator: 'abcdefgh1234',
@@ -552,40 +554,40 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 				twoStepNonce: 'foo',
-				nonceType: 'authenticator'
+				nonceType: 'authenticator',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_authenticator: 'foo'
+				two_step_nonce_authenticator: 'foo',
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = twoFactorAuth( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = twoFactorAuth( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should reset the "notice" value when an SMS code request is made', () => {
+		test( 'should reset the "notice" value when an SMS code request is made', () => {
 			const state = requestSuccess( null, {
-				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 			} );
 
 			expect( state ).to.eql( null );
 		} );
 
-		it( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {
+		test( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {
 			const data = {
 				two_step_id: 12345678,
 				two_step_nonce_sms: 'abcdefgh1234',
@@ -593,16 +595,16 @@ describe( 'reducer', () => {
 
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-				twoStepNonce: 'foo'
+				twoStepNonce: 'foo',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_sms: 'foo'
+				two_step_nonce_sms: 'foo',
 			} );
 		} );
 
-		it( 'should reset the "two_step_nonce" value when a failed two factor authentication SMS code request returns new nonce', () => {
+		test( 'should reset the "two_step_nonce" value when a failed two factor authentication SMS code request returns new nonce', () => {
 			const data = {
 				two_step_id: 12345678,
 				two_step_nonce_sms: 'abcdefgh1234',
@@ -610,117 +612,111 @@ describe( 'reducer', () => {
 
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-				twoStepNonce: 'foo'
+				twoStepNonce: 'foo',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_sms: 'foo'
+				two_step_nonce_sms: 'foo',
 			} );
 		} );
 	} );
 
 	describe( 'socialAccount', () => {
-		it( 'should store error from create account failure', () => {
+		test( 'should store error from create account failure', () => {
 			const error = { message: 'Bad', code: 'this_is_a_test' };
 			const service = 'google';
 			const token = '123';
 
-			const state = socialAccount( {}, {
-				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-				error,
-				service,
-				token,
-			} );
+			const state = socialAccount(
+				{},
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+					error,
+					service,
+					token,
+				}
+			);
 
 			expect( state.createError ).to.eql( error );
 		} );
 
-		it( 'default value for create error should be null', () => {
+		test( 'default value for create error should be null', () => {
 			expect( socialAccount( undefined, { type: 'does not matter' } ).createError ).to.be.null;
 		} );
 
-		it( 'should reset create error on create success', () => {
+		test( 'should reset create error on create success', () => {
 			const state = {
-				createError: { message: 'error' }
+				createError: { message: 'error' },
 			};
 
-			const newState = socialAccount(
-				state,
-				{
-					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
-					data: { username: 'test', bearerToken: '123' }
-				}
-			);
+			const newState = socialAccount( state, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+				data: { username: 'test', bearerToken: '123' },
+			} );
 
 			expect( newState.createError ).to.be.null;
 		} );
 
-		it( 'should reset create error when user is received', () => {
+		test( 'should reset create error when user is received', () => {
 			const state = { createError: {} };
 
-			const newState = socialAccount(
-				state,
-				{
-					type: USER_RECEIVE,
-				}
-			);
+			const newState = socialAccount( state, {
+				type: USER_RECEIVE,
+			} );
 
 			expect( newState.createError ).to.be.null;
 		} );
 
-		it( 'should reset create error when login is performed', () => {
+		test( 'should reset create error when login is performed', () => {
 			const state = { createError: {} };
 
-			const newState = socialAccount(	state, { type: LOGIN_REQUEST, } );
+			const newState = socialAccount( state, { type: LOGIN_REQUEST } );
 
 			expect( newState.createError ).to.be.null;
 		} );
 	} );
 
 	describe( 'socialAccountLink', () => {
-		it( 'should set linking mode on user_exists create error', () => {
+		test( 'should set linking mode on user_exists create error', () => {
 			const error = { message: 'Bad', code: 'user_exists', email: 'hello@test.com' };
 			const authInfo = { id_token: '123', access_token: '123', service: 'google' };
 
-			const state = socialAccountLink( {}, {
-				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-				error,
-				authInfo
-			} );
+			const state = socialAccountLink(
+				{},
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+					error,
+					authInfo,
+				}
+			);
 
 			expect( state ).to.eql( {
 				isLinking: true,
 				authInfo,
-				email: error.email
+				email: error.email,
 			} );
 		} );
 
-		it( 'should reset linking mode on create success', () => {
+		test( 'should reset linking mode on create success', () => {
 			const state = {
-				createError: { message: 'error' }
+				createError: { message: 'error' },
 			};
 
-			const newState = socialAccountLink(
-				state,
-				{
-					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
-					data: { username: 'test', bearerToken: '123' }
-				}
-			);
+			const newState = socialAccountLink( state, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+				data: { username: 'test', bearerToken: '123' },
+			} );
 
 			expect( newState ).to.to.eql( { isLinking: false } );
 		} );
 
-		it( 'should reset linking mode when user is received', () => {
+		test( 'should reset linking mode when user is received', () => {
 			const state = { createError: {} };
 
-			const newState = socialAccountLink(
-				state,
-				{
-					type: USER_RECEIVE,
-				}
-			);
+			const newState = socialAccountLink( state, {
+				type: USER_RECEIVE,
+			} );
 
 			expect( newState ).to.to.eql( { isLinking: false } );
 		} );

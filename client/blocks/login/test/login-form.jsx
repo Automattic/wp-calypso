@@ -1,30 +1,32 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import React from 'react';
-import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
 import FormsButton from 'components/forms/form-button';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
 
-describe( 'LoginForm', function() {
+describe( 'LoginForm', () => {
 	let LoginForm;
 
-	useFakeDom();
-
-	before( () => {
+	beforeAll( () => {
 		LoginForm = require( 'blocks/login/login-form' ).LoginForm;
 	} );
 
-	context( 'component rendering', () => {
-		it( 'displays a login form', () => {
+	describe( 'component rendering', () => {
+		test( 'displays a login form', () => {
 			const wrapper = shallow(
 				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
 			);

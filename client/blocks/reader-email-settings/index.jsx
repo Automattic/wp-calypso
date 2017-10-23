@@ -112,7 +112,7 @@ class ReaderEmailSettings extends Component {
 						{ translate( 'New posts' ) }
 						<FormToggle onChange={ this.toggleNewPostEmail } checked={ notifyOnNewPosts } />
 					</div>
-					{ notifyOnNewPosts &&
+					{ notifyOnNewPosts && (
 						<SegmentedControl>
 							<ControlItem
 								selected={ this.state.selected === 'instantly' }
@@ -132,7 +132,8 @@ class ReaderEmailSettings extends Component {
 							>
 								{ translate( 'Weekly' ) }
 							</ControlItem>
-						</SegmentedControl> }
+						</SegmentedControl>
+					) }
 					<div className="reader-email-settings__popout-toggle">
 						{ translate( 'New comments' ) }
 						<FormToggle onChange={ this.toggleNewCommentEmail } checked={ notifyOnNewComments } />

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -19,25 +22,21 @@ import Tooltip from 'components/tooltip';
 const STATUS_GRIDICON = {
 	info: 'info',
 	warning: 'notice',
-	error: 'notice'
+	error: 'notice',
 };
 
 export default class AccordionStatus extends PureComponent {
 	static propTypes = {
-		type: PropTypes.oneOf( [
-			'info',
-			'warning',
-			'error'
-		] ),
+		type: PropTypes.oneOf( [ 'info', 'warning', 'error' ] ),
 		text: PropTypes.node,
 		url: PropTypes.string,
 		position: PropTypes.string,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		type: 'info',
-		onClick: () => {}
+		onClick: () => {},
 	};
 
 	state = {};
@@ -49,7 +48,7 @@ export default class AccordionStatus extends PureComponent {
 		this.hideTooltip = this.toggleTooltip.bind( this, false );
 	}
 
-	setTooltipContext = ( tooltipContext ) => {
+	setTooltipContext = tooltipContext => {
 		if ( tooltipContext ) {
 			this.setState( { tooltipContext } );
 		}
@@ -69,13 +68,15 @@ export default class AccordionStatus extends PureComponent {
 				ref={ this.setTooltipContext }
 				onMouseEnter={ this.showTooltip }
 				onMouseLeave={ this.hideTooltip }
-				className={ classNames( 'accordion__status', `is-${ type }` ) }>
+				className={ classNames( 'accordion__status', `is-${ type }` ) }
+			>
 				<Gridicon icon={ STATUS_GRIDICON[ type ] } />
 				{ text && (
 					<Tooltip
 						position={ position }
 						isVisible={ this.state.isTooltipVisible }
-						context={ this.state.tooltipContext }>
+						context={ this.state.tooltipContext }
+					>
 						{ text }
 					</Tooltip>
 				) }

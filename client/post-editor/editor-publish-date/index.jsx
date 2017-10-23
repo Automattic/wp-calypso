@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
@@ -18,11 +22,10 @@ import utils from 'lib/posts/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export class EditorPublishDate extends React.Component {
-
 	static propTypes = {
-		post: React.PropTypes.object,
-		postDate: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
+		post: PropTypes.object,
+		postDate: PropTypes.string,
+		setPostDate: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -46,23 +49,33 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	handleOutsideClick = event => {
-		const targetClasses = event.target.className.split( /\s/ );
-		const hasDatePickerDayClass = intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
-		const isChildOfPublishDate = ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target );
+		// The `className` of a `svg` element is a `SVGAnimatedString`, which
+		// does not have a `split` method.  Since an `svg` element will not
+		// have any of the classes we're interested in, don't bother trying to
+		// handle this situation.
+		const targetClasses =
+			typeof event.target.className === 'string' ? event.target.className.split( /\s/ ) : [];
+
+		const hasDatePickerDayClass =
+			intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
+
+		const isChildOfPublishDate = ReactDom.findDOMNode(
+			this.refs.editorPublishDateWrapper
+		).contains( event.target );
 
 		if ( ! hasDatePickerDayClass && ! isChildOfPublishDate ) {
 			this.setState( { isOpen: false } );
 		}
-	}
+	};
 
 	setImmediate = () => {
 		this.props.setPostDate( null );
 		this.setState( { isOpen: false } );
-	}
+	};
 
 	toggleOpenState = () => {
 		this.setState( { isOpen: ! this.state.isOpen } );
-	}
+	};
 
 	getHeaderDescription() {
 		const isScheduled = utils.isFutureDated( this.props.post );
@@ -106,7 +119,11 @@ export class EditorPublishDate extends React.Component {
 		}
 
 		return (
-			<Button borderless={ true } className="editor-publish-date__immediate" onClick={ this.setImmediate }>
+			<Button
+				borderless={ true }
+				className="editor-publish-date__immediate"
+				onClick={ this.setImmediate }
+			>
 				{ this.props.translate( 'Publish Immediately' ) }
 			</Button>
 		);
@@ -121,13 +138,11 @@ export class EditorPublishDate extends React.Component {
 			'is-back-dated': isBackDated,
 			'is-published': isPublished,
 		} );
-		const selectedDay = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
+		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
-				<Gridicon icon="calendar" size={ 18 } />
+				<Gridicon className="editor-publish-date__header-icon" icon="calendar" size={ 18 } />
 				<div className="editor-publish-date__header-wrapper">
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
@@ -143,12 +158,15 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	renderSchedule() {
-		const selectedDay = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
+		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
+
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const className = classNames( 'editor-publish-date__schedule', {
+			'is-scheduled': isScheduled,
+		} );
 
 		return (
-			<div className="editor-publish-date__schedule">
+			<div className={ className }>
 				{ this.renderCalendarHeader() }
 				<PostScheduler
 					post={ this.props.post }
@@ -175,13 +193,10 @@ export class EditorPublishDate extends React.Component {
 			</div>
 		);
 	}
-
 }
 
-export default connect(
-	state => {
-		return {
-			site: getSelectedSite( state ),
-		};
-	}
-)( localize( EditorPublishDate ) );
+export default connect( state => {
+	return {
+		site: getSelectedSite( state ),
+	};
+} )( localize( EditorPublishDate ) );

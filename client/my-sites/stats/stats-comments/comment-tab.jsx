@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 
 /**
@@ -10,16 +14,12 @@ import classNames from 'classnames';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 
-const StatsCommentTab = ( props ) => {
+const StatsCommentTab = props => {
 	const { data, followList, isActive, name, value, label } = props;
 	let statsList;
 
 	if ( data ) {
-		statsList = <StatsList
-			moduleName={ name }
-			data={ data }
-			followList={ followList }
-		/>;
+		statsList = <StatsList moduleName={ name } data={ data } followList={ followList } />;
 	}
 
 	const classes = classNames( 'stats-comments__tab-content', { 'is-active': isActive } );
@@ -38,7 +38,7 @@ StatsCommentTab.propTypes = {
 	name: PropTypes.string,
 	value: PropTypes.string,
 	label: PropTypes.string,
-	isActive: PropTypes.bool
+	isActive: PropTypes.bool,
 };
 
 export default StatsCommentTab;

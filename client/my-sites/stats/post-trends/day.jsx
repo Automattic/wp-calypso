@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -10,8 +15,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
-
+const PostTrendsDay = React.createClass( {
 	displayName: 'PostTrendsDay',
 
 	mixins: [ PureRenderMixin ],
@@ -19,12 +23,12 @@ export default React.createClass( {
 	propTypes: {
 		label: PropTypes.string,
 		className: PropTypes.string,
-		postCount: PropTypes.number
+		postCount: PropTypes.number,
 	},
 
 	getDefaultProps() {
 		return {
-			postCount: 0
+			postCount: 0,
 		};
 	},
 
@@ -42,45 +46,49 @@ export default React.createClass( {
 
 	buildTooltipData() {
 		const { label, postCount } = this.props;
-		const content = this.translate(
-			'%(posts)d post',
-			'%(posts)d posts', {
-				count: postCount,
-				args: {
-					posts: postCount
-				},
-				comment: 'How many posts published on a certain date.'
-			}
-		);
+		const content = this.props.translate( '%(posts)d post', '%(posts)d posts', {
+			count: postCount,
+			args: {
+				posts: postCount,
+			},
+			comment: 'How many posts published on a certain date.',
+		} );
 
-		return ( <span>
+		return (
+			<span>
 				<span className="post-count">{ content } </span>
 				<span className="date">{ label }</span>
-		</span> );
+			</span>
+		);
 	},
 
 	render: function() {
 		const { postCount, className } = this.props;
 		const hoveredClass = {
-			'is-hovered': this.state.showPopover
+			'is-hovered': this.state.showPopover,
 		};
 
 		return (
-			<div className={ classNames( 'post-trends__day', hoveredClass, className ) }
+			<div
+				className={ classNames( 'post-trends__day', hoveredClass, className ) }
 				onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
 				onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
-				ref="day">
-				{ ( postCount > 0 ) &&
+				ref="day"
+			>
+				{ postCount > 0 && (
 					<Tooltip
 						className="chart__tooltip is-streak"
 						id="popover__chart-bar"
 						context={ this.refs && this.refs.day }
 						isVisible={ this.state.showPopover }
-						position="top">
+						position="top"
+					>
 						{ this.buildTooltipData() }
 					</Tooltip>
-				}
+				) }
 			</div>
 		);
-	}
+	},
 } );
+
+export default localize( PostTrendsDay );

@@ -1,17 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-
-import {
-	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_ERROR_CLEAR,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_ERROR_SET, WOOCOMMERCE_ERROR_CLEAR } from 'woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:errors:wc-api' );
 
@@ -31,4 +30,3 @@ function setApiError( error, { data, originalAction, time } ) {
 function clearApiError() {
 	return null;
 }
-

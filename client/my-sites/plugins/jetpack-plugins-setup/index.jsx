@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
@@ -33,9 +36,7 @@ import { hasInitializedSites } from 'state/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
-import {
-	installPlugin,
-} from 'state/plugins/premium/actions';
+import { installPlugin } from 'state/plugins/premium/actions';
 import {
 	getPluginsForSite,
 	getActivePlugin,
@@ -43,14 +44,14 @@ import {
 	isFinished,
 	isInstalling,
 	isRequesting,
-	hasRequested
+	hasRequested,
 } from 'state/plugins/premium/selectors';
 // Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
 	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,
-	akismet: support.JETPACK_SERVICE_AKISMET
+	akismet: support.JETPACK_SERVICE_AKISMET,
 };
 
 const PlansSetup = React.createClass( {
@@ -90,7 +91,7 @@ const PlansSetup = React.createClass( {
 
 	allPluginsHaveWporgData() {
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		return ( plugins.length === filter( plugins, { wporg: true } ).length );
+		return plugins.length === filter( plugins, { wporg: true } ).length;
 	},
 
 	componentDidMount() {
@@ -102,7 +103,8 @@ const PlansSetup = React.createClass( {
 			if ( ! confirmText ) {
 				return next();
 			}
-			if ( window.confirm( confirmText ) ) { // eslint-disable-line no-aler
+			if ( window.confirm( confirmText ) ) {
+				// eslint-disable-line no-aler
 				next();
 			} else {
 				// save off the current path just in case context changes after this call
@@ -120,7 +122,8 @@ const PlansSetup = React.createClass( {
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
-		if ( site &&
+		if (
+			site &&
 			site.jetpack &&
 			site.canUpdateFiles &&
 			site.canManage &&
@@ -134,7 +137,8 @@ const PlansSetup = React.createClass( {
 
 	warnIfNotFinished( event ) {
 		const site = this.props.selectedSite;
-		if ( ! site ||
+		if (
+			! site ||
 			! site.jetpack ||
 			! site.canUpdateFiles ||
 			! site.canManage ||
@@ -143,7 +147,7 @@ const PlansSetup = React.createClass( {
 			return;
 		}
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
-		const beforeUnloadText = this.props.translate( 'We haven\'t finished installing your plugins.' );
+		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
 	},
@@ -177,13 +181,16 @@ const PlansSetup = React.createClass( {
 
 	renderNoJetpackSiteSelected() {
 		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
-			referrer: document.referrer
+			referrer: document.referrer,
 		} );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
-				title={ this.props.translate( 'Oh no! You need to select a jetpack site to be able to setup your plan' ) }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
+				title={ this.props.translate(
+					'Oh no! You need to select a jetpack site to be able to setup your plan'
+				) }
+				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+			/>
 		);
 	},
 
@@ -198,12 +205,14 @@ const PlansSetup = React.createClass( {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( ! site.hasMinimumJetpackVersion ) {
 			reason = translate( 'You need to update your version of Jetpack.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', { jetpack_version: site.options.jetpack_version } );
+			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
+				jetpack_version: site.options.jetpack_version,
+			} );
 		} else if ( ! site.isMainNetworkSite ) {
-			reason = translate( 'We can\'t install plugins on multisite sites.' );
+			reason = translate( "We can't install plugins on multisite sites." );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
 		} else if ( site.options.is_multi_network ) {
-			reason = translate( 'We can\'t install plugins on multi-network sites.' );
+			reason = translate( "We can't install plugins on multi-network sites." );
 			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
 		}
 
@@ -212,16 +221,19 @@ const PlansSetup = React.createClass( {
 				siteId={ this.props.siteId }
 				action={ translate( 'Contact Support' ) }
 				actionURL={ support.JETPACK_CONTACT_SUPPORT }
-				title={ translate( 'Oh no! We can\'t install plugins on this site.' ) }
+				title={ translate( "Oh no! We can't install plugins on this site." ) }
 				line={ reason }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
+				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+			/>
 		);
 	},
 
 	renderNoJetpackPlan() {
 		return (
 			<div>
-				<h1 className="jetpack-plugins-setup__header">{ this.props.translate( 'Nothing to do here…' ) }</h1>
+				<h1 className="jetpack-plugins-setup__header">
+					{ this.props.translate( 'Nothing to do here…' ) }
+				</h1>
 			</div>
 		);
 	},
@@ -248,18 +260,18 @@ const PlansSetup = React.createClass( {
 					<span className="plugin-item__link">
 						<PluginIcon image={ plugin.icon } />
 						<div className="plugin-item__info">
-							<div className="plugin-item__title">
-								{ plugin.name }
-							</div>
-							{ hidden
-								? <Notice
+							<div className="plugin-item__title">{ plugin.name }</div>
+							{ hidden ? (
+								<Notice
 									key={ 0 }
 									isCompact={ true }
 									showDismiss={ false }
 									icon="plugins"
-									text={ this.props.translate( 'Waiting to install' ) } />
-								: this.renderStatus( plugin )
-							}
+									text={ this.props.translate( 'Waiting to install' ) }
+								/>
+							) : (
+								this.renderStatus( plugin )
+							) }
 						</div>
 					</span>
 					{ this.renderActions( plugin ) }
@@ -275,11 +287,7 @@ const PlansSetup = React.createClass( {
 		}
 
 		if ( 'done' === plugin.status ) {
-			return (
-				<div className="plugin-item__finished">
-					{ this.getStatusText( plugin ) }
-				</div>
-			);
+			return <div className="plugin-item__finished">{ this.getStatusText( plugin ) }</div>;
 		}
 
 		const statusProps = {
@@ -333,7 +341,11 @@ const PlansSetup = React.createClass( {
 			showDismiss: false,
 		};
 		statusProps.children = (
-			<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] } onClick={ this.trackManualInstall }>
+			<NoticeAction
+				key="notice_action"
+				href={ helpLinks[ plugin.slug ] }
+				onClick={ this.trackManualInstall }
+			>
 				{ translate( 'Manual Installation' ) }
 			</NoticeAction>
 		);
@@ -341,24 +353,30 @@ const PlansSetup = React.createClass( {
 		switch ( plugin.status ) {
 			case 'install':
 				return (
-					<Notice { ...statusProps } text={ translate(
-						'An error occurred when installing %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					) } />
+					<Notice
+						{ ...statusProps }
+						text={ translate( 'An error occurred when installing %(plugin)s.', {
+							args: { plugin: plugin.name },
+						} ) }
+					/>
 				);
 			case 'activate':
 				return (
-					<Notice { ...statusProps } text={ translate(
-						'An error occurred when activating %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					) } />
+					<Notice
+						{ ...statusProps }
+						text={ translate( 'An error occurred when activating %(plugin)s.', {
+							args: { plugin: plugin.name },
+						} ) }
+					/>
 				);
 			case 'configure':
 				return (
-					<Notice { ...statusProps } text={ translate(
-						'An error occurred when configuring %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					) } />
+					<Notice
+						{ ...statusProps }
+						text={ translate( 'An error occurred when configuring %(plugin)s.', {
+							args: { plugin: plugin.name },
+						} ) }
+					/>
 				);
 			default:
 				const errorMessage = get( plugin, 'error.message', '' ).replace( /<.[^<>]*?>/g, '' );
@@ -390,7 +408,7 @@ const PlansSetup = React.createClass( {
 		const pluginsWithErrors = this.addWporgDataToPlugins( plugins );
 
 		const tracksData = {};
-		pluginsWithErrors.map( ( item ) => {
+		pluginsWithErrors.map( item => {
 			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
 		} );
 
@@ -399,24 +417,24 @@ const PlansSetup = React.createClass( {
 		if ( pluginsWithErrors.length === 1 ) {
 			noticeText = translate(
 				'There was an issue installing %(plugin)s. ' +
-				'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
+					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugin.',
 				{
 					args: {
 						plugin: pluginsWithErrors[ 0 ].name,
 					},
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />
-					}
+						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+					},
 				}
 			);
 		} else {
 			noticeText = translate(
 				'There were some issues installing your plugins. ' +
-				'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
+					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />
-					}
+						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+					},
 				}
 			);
 		}
@@ -436,7 +454,7 @@ const PlansSetup = React.createClass( {
 			return null;
 		}
 
-		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
+		const pluginsWithErrors = filter( this.props.plugins, item => {
 			const errorCode = get( item, 'error.code', null );
 			return errorCode && errorCode !== 'already_registered';
 		} );
@@ -448,8 +466,8 @@ const PlansSetup = React.createClass( {
 		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
 
 		const noticeText = translate(
-			'We\'ve set up your plugin, your site is powered up!',
-			'We\'ve set up your plugins, your site is powered up!',
+			"We've set up your plugin, your site is powered up!",
+			"We've set up your plugins, your site is powered up!",
 			{ count: this.props.plugins.length }
 		);
 		return (
@@ -469,7 +487,7 @@ const PlansSetup = React.createClass( {
 					{ translate( 'Setting up your plan' ) }
 				</h1>
 				<p className="jetpack-plugins-setup__description is-placeholder">
-					{ translate( 'We need to install a few plugins for you. It won\'t take long!' ) }
+					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
 				</p>
 				{ this.renderPluginsPlaceholders() }
 			</div>
@@ -477,10 +495,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	render() {
-		const {
-			sitesInitialized,
-			translate
-		} = this.props;
+		const { sitesInitialized, translate } = this.props;
 		const site = this.props.selectedSite;
 
 		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
@@ -495,11 +510,13 @@ const PlansSetup = React.createClass( {
 			return this.renderCantInstallPlugins();
 		}
 
-		if ( site &&
+		if (
+			site &&
 			! this.props.isRequestingSites &&
 			! this.props.isRequesting &&
 			! PluginsStore.isFetchingSite( site ) &&
-			! this.props.plugins.length ) {
+			! this.props.plugins.length
+		) {
 			return this.renderNoJetpackPlan();
 		}
 
@@ -508,19 +525,19 @@ const PlansSetup = React.createClass( {
 			const manageUrl = this.props.remoteManagementUrl + '&section=plugins-setup';
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
-					<p>{
-						translate(
+					<p>
+						{ translate(
 							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', // eslint-disable-line max-len
 							{
 								args: { plan: site.plan.product_name_short },
-								components: { strong: <strong /> }
+								components: { strong: <strong /> },
 							}
-						)
-					}</p>
-					<Button primary href={ manageUrl }>{ translate( 'Enable Manage' ) }</Button>
-					<Button href={ support.JETPACK_SUPPORT }>
-						{ translate( 'Manual Installation' ) }
+						) }
+					</p>
+					<Button primary href={ manageUrl }>
+						{ translate( 'Enable Manage' ) }
 					</Button>
+					<Button href={ support.JETPACK_SUPPORT }>{ translate( 'Manual Installation' ) }</Button>
 				</Card>
 			);
 		}
@@ -529,20 +546,23 @@ const PlansSetup = React.createClass( {
 			<div className="jetpack-plugins-setup">
 				<QueryPluginKeys siteId={ site.ID } />
 				<h1 className="jetpack-plugins-setup__header">
-					{ translate( 'Setting up your %(plan)s Plan', { args: { plan: site.plan.product_name_short } } ) }
+					{ translate( 'Setting up your %(plan)s Plan', {
+						args: { plan: site.plan.product_name_short },
+					} ) }
 				</h1>
 				<p className="jetpack-plugins-setup__description">
-					{ translate( 'We need to install a few plugins for you. It won\'t take long!' ) }
+					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
 				</p>
 				{ turnOnManage }
 				{ ! turnOnManage && this.renderSuccess() }
-				{ turnOnManage
-					? <FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>
-					: this.renderPlugins( false )
-				}
+				{ turnOnManage ? (
+					<FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>
+				) : (
+					this.renderPlugins( false )
+				) }
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -564,7 +584,7 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			sitesInitialized: hasInitializedSites( state ),
-			siteId
+			siteId,
 		};
 	},
 	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isFunction, reduce } from 'lodash';
 
 /**
@@ -13,14 +16,18 @@ import asyncInitialize from './async-initialize';
 
 const AVAILABLE_MODULES = {
 	syncInitialize,
-	asyncInitialize
+	asyncInitialize,
 };
 
 function combineModules( storeOptions ) {
-	const modules = reduce( storeOptions, ( array, moduleOptions, moduleName ) => {
-		const module = AVAILABLE_MODULES[ moduleName ]( moduleOptions );
-		return array.concat( [ module ] );
-	}, [] );
+	const modules = reduce(
+		storeOptions,
+		( array, moduleOptions, moduleName ) => {
+			const module = AVAILABLE_MODULES[ moduleName ]( moduleOptions );
+			return array.concat( [ module ] );
+		},
+		[]
+	);
 
 	return [ core(), ...modules ];
 }
@@ -50,7 +57,7 @@ class Store {
 	}
 
 	_runActionCreators( name, ...rest ) {
-		this._modules.forEach( ( module ) => {
+		this._modules.forEach( module => {
 			if ( ! module[ name ] ) {
 				return;
 			}

@@ -1,80 +1,72 @@
+/** @format */
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import mockedWporg from './lib/mock-wporg';
+import WPorgActions from '../actions';
+import wporg from 'lib/wporg';
+jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
+jest.mock( 'lib/impure-lodash', () => ( {
+	debounce: cb => cb,
+} ) );
 
 const testDispatch = ( test, testCallNumber ) => {
 	let calls = 0;
-	return ( action ) => {
+	return action => {
 		calls++;
 		if ( ! testCallNumber || testCallNumber === calls ) {
 			test( action );
 		}
-	}
+	};
 };
 
-describe( 'WPorg Data Actions', function() {
-	let WPorgActions;
-	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerMock( 'lib/wporg', mockedWporg );
-		mockery.registerMock( 'lib/impureLodash', {
-			debounce: cb => cb,
-		} );
-
-		WPorgActions = require( '../actions' );
+describe( 'WPorg Data Actions', () => {
+	beforeEach( () => {
+		wporg.reset();
 	} );
 
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
-	beforeEach( function() {
-		mockedWporg.reset();
-	} );
-
-	it( 'Actions should be an object', function() {
+	test( 'Actions should be an object', () => {
 		assert.isObject( WPorgActions );
 	} );
 
-	it( 'Actions should have method fetchPluginData', function() {
+	test( 'Actions should have method fetchPluginData', () => {
 		assert.isFunction( WPorgActions.fetchPluginData );
 	} );
 
-	it( 'FetchPluginData action should make a request', function( done ) {
-		WPorgActions.fetchPluginData( 'test' )( testDispatch( function() {
-			assert.equal( mockedWporg.getActivity().fetchPluginInformation, 1 );
-			done();
-		}, 2 ) );
+	test( 'FetchPluginData action should make a request', done => {
+		WPorgActions.fetchPluginData( 'test' )(
+			testDispatch( function() {
+				assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
+				done();
+			}, 2 )
+		);
 	} );
 
-	it( 'FetchPluginData action shouldn\'t return an error', function( done ) {
-		WPorgActions.fetchPluginData( 'test' )( testDispatch( function( action ) {
-			done( action.error );
-		}, 2 ) );
+	test( "FetchPluginData action shouldn't return an error", done => {
+		WPorgActions.fetchPluginData( 'test' )(
+			testDispatch( function( action ) {
+				done( action.error );
+			}, 2 )
+		);
 	} );
 
-	it( 'FetchPluginData action should return a plugin ', function( done ) {
-		WPorgActions.fetchPluginData( 'test' )( testDispatch( function( action ) {
-			assert.equal( action.data.slug, 'test' );
-			done();
-		}, 2 ) );
+	test( 'FetchPluginData action should return a plugin ', done => {
+		WPorgActions.fetchPluginData( 'test' )(
+			testDispatch( function( action ) {
+				assert.equal( action.data.slug, 'test' );
+				done();
+			}, 2 )
+		);
 	} );
 
-	it( 'FetchPluginData action should not make another request if there\'s already one in progress', function() {
-		mockedWporg.deactivatedCallbacks = true;
-		WPorgActions.fetchPluginData( 'test' )( function() { } );
-		WPorgActions.fetchPluginData( 'test' )( function() { } );
-		assert.equal( mockedWporg.getActivity().fetchPluginInformation, 1 );
+	test( "FetchPluginData action should not make another request if there's already one in progress", () => {
+		wporg.deactivatedCallbacks = true;
+		WPorgActions.fetchPluginData( 'test' )( function() {} );
+		WPorgActions.fetchPluginData( 'test' )( function() {} );
+		assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
 	} );
 } );

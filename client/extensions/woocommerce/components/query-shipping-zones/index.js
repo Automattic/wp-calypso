@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -47,22 +50,26 @@ QueryShippingZones.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export const areShippingZonesFullyLoaded = ( state ) => {
-	return areShippingMethodsLoaded( state ) &&
+export const areShippingZonesFullyLoaded = state => {
+	return (
+		areShippingMethodsLoaded( state ) &&
 		areShippingZonesLoaded( state ) &&
-		areLocationsLoaded( state );
+		areLocationsLoaded( state )
+	);
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		loaded: areShippingZonesFullyLoaded( state ),
 	} ),
-	( dispatch ) => ( {
+	dispatch => ( {
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,
 				fetchLocations,
 				fetchShippingMethods,
-			}, dispatch
-		)
-	} ) )( QueryShippingZones );
+			},
+			dispatch
+		),
+	} )
+)( QueryShippingZones );

@@ -1,16 +1,23 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
 import { map } from 'lodash';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
+import MediaUtils from '../utils';
 import JetpackSite from 'lib/site/jetpack';
-import useMockery from 'test/helpers/use-mockery';
+
+jest.mock( 'lib/impure-lodash', () => ( {
+	uniqueId: () => 'media-13',
+} ) );
 
 const UNIQUEID = 'media-13';
 const DUMMY_FILENAME = 'test.jpg';
@@ -28,7 +35,7 @@ const DUMMY_FILE_OBJECT = {
 	mime_type: 'image/jpeg',
 };
 const EXPECTED = {
-	'transient': true,
+	transient: true,
 	ID: UNIQUEID,
 	file: DUMMY_FILENAME,
 	title: 'test.jpg',
@@ -36,7 +43,7 @@ const EXPECTED = {
 	mime_type: 'image/jpeg',
 };
 const EXPECTED_FILE_OBJECT = {
-	'transient': true,
+	transient: true,
 	ID: UNIQUEID,
 	file: DUMMY_FILENAME,
 	title: 'test.jpg',
@@ -47,240 +54,236 @@ const EXPECTED_FILE_OBJECT = {
 	external: true,
 };
 
-describe( 'MediaUtils', function() {
-	let MediaUtils;
-
-	useFakeDom();
-	useMockery();
-
-	before( () => {
-		mockery.registerMock( 'lib/impure-lodash', {
-			uniqueId: () => UNIQUEID,
-		} );
-
-		MediaUtils = require( '../utils' );
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
-	describe( '#url()', function() {
+describe( 'MediaUtils', () => {
+	describe( '#url()', () => {
 		var media;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			media = {
 				URL: 'https://secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6',
 				thumbnails: {
-					thumbnail: 'https://secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?s=150'
-				}
+					thumbnail: 'https://secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?s=150',
+				},
 			};
 		} );
 
-		it( 'should simply return the URL if media is transient', function() {
+		test( 'should simply return the URL if media is transient', () => {
 			var url;
 
 			media.transient = true;
 
 			url = MediaUtils.url( media, {
-				maxWidth: 450
+				maxWidth: 450,
 			} );
 
 			expect( url ).to.equal( media.URL );
 		} );
 
-		it( 'should accept a media object without options, returning the URL', function() {
+		test( 'should accept a media object without options, returning the URL', () => {
 			var url = MediaUtils.url( media );
 
 			expect( url ).to.equal( media.URL );
 		} );
 
-		it( 'should accept a photon option to use the photon service', function() {
-			var url = MediaUtils.url( media, {
-				photon: true
-			} );
-
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1' );
-		} );
-
-		it( 'should generate the correct width-constrained photon URL', function() {
+		test( 'should accept a photon option to use the photon service', () => {
 			var url = MediaUtils.url( media, {
 				photon: true,
-				maxWidth: 450
 			} );
 
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1&w=450' );
+			expect( url ).to.equal(
+				'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1'
+			);
 		} );
 
-		it( 'should generate the correct width-constrained URL', function() {
+		test( 'should generate the correct width-constrained photon URL', () => {
 			var url = MediaUtils.url( media, {
-				maxWidth: 450
+				photon: true,
+				maxWidth: 450,
 			} );
 
-			expect( url ).to.equal( 'https://secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?w=450' );
+			expect( url ).to.equal(
+				'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1&w=450'
+			);
 		} );
 
-		it( 'should attempt to find and return a desired thumbnail size', function() {
+		test( 'should generate the correct width-constrained URL', () => {
 			var url = MediaUtils.url( media, {
-				size: 'thumbnail'
+				maxWidth: 450,
+			} );
+
+			expect( url ).to.equal(
+				'https://secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?w=450'
+			);
+		} );
+
+		test( 'should attempt to find and return a desired thumbnail size', () => {
+			var url = MediaUtils.url( media, {
+				size: 'thumbnail',
 			} );
 
 			expect( url ).to.equal( media.thumbnails.thumbnail );
 		} );
 
-		it( 'should gracefully handle empty media objects', function() {
-			var url = MediaUtils.url( {}, {
-				size: 'thumbnail',
-				maxWidth: 450
-			} );
+		test( 'should gracefully handle empty media objects', () => {
+			var url = MediaUtils.url(
+				{},
+				{
+					size: 'thumbnail',
+					maxWidth: 450,
+				}
+			);
 
 			expect( url ).to.be.undefined;
 		} );
 	} );
 
-	describe( '#getFileExtension()', function() {
-		it( 'should return undefined for a falsey media value', function() {
+	describe( '#getFileExtension()', () => {
+		test( 'should return undefined for a falsey media value', () => {
 			expect( MediaUtils.getFileExtension() ).to.be.undefined;
 		} );
 
-		it( 'should detect extension from file name', function() {
+		test( 'should detect extension from file name', () => {
 			expect( MediaUtils.getFileExtension( 'example.gif' ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should handle reserved url characters in filename', function() {
+		test( 'should handle reserved url characters in filename', () => {
 			expect( MediaUtils.getFileExtension( 'example#?#?.gif' ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from HTML5 File object', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example.gif' ) ) ).to.equal( 'gif' );
+		test( 'should detect extension from HTML5 File object', () => {
+			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example.gif' ) ) ).to.equal(
+				'gif'
+			);
 		} );
 
-		it( 'should detect extension from HTML5 File object with reserved url chars', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
+		test( 'should detect extension from HTML5 File object with reserved url chars', () => {
+			expect(
+				MediaUtils.getFileExtension( new window.File( [ '' ], 'example#?#?.gif' ) )
+			).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from object file property', function() {
+		test( 'should detect extension from object file property', () => {
 			expect( MediaUtils.getFileExtension( { file: 'example.gif' } ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from already computed extension property', function() {
+		test( 'should detect extension from already computed extension property', () => {
 			expect( MediaUtils.getFileExtension( { extension: 'gif' } ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from object URL property', function() {
+		test( 'should detect extension from object URL property', () => {
 			expect( MediaUtils.getFileExtension( { URL: 'example.gif' } ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from object guid property', function() {
+		test( 'should detect extension from object guid property', () => {
 			expect( MediaUtils.getFileExtension( { guid: 'example.gif' } ) ).to.equal( 'gif' );
 		} );
 
-		it( 'should detect extension from URL string with query parameters', function() {
-			expect( MediaUtils.getFileExtension( 'https://example.com/example.gif?w=110' ) ).to.equal( 'gif' );
+		test( 'should detect extension from URL string with query parameters', () => {
+			expect( MediaUtils.getFileExtension( 'https://example.com/example.gif?w=110' ) ).to.equal(
+				'gif'
+			);
 		} );
 	} );
 
-	describe( '#getMimePrefix()', function() {
-		it( 'should return undefined if a mime type can\'t be determined', function() {
+	describe( '#getMimePrefix()', () => {
+		test( "should return undefined if a mime type can't be determined", () => {
 			expect( MediaUtils.getMimePrefix() ).to.be.undefined;
 		} );
 
-		it( 'should return the mime prefix if a mime type can be determined', function() {
+		test( 'should return the mime prefix if a mime type can be determined', () => {
 			expect( MediaUtils.getMimePrefix( 'example.png' ) ).to.be.equal( 'image' );
 		} );
 	} );
 
-	describe( '#getMimeType()', function() {
-		it( 'should return undefined for a falsey media value', function() {
+	describe( '#getMimeType()', () => {
+		test( 'should return undefined for a falsey media value', () => {
 			expect( MediaUtils.getMimeType() ).to.be.undefined;
 		} );
 
-		it( 'should return undefined if detected extension doesn\'t exist in mime_types', function() {
+		test( "should return undefined if detected extension doesn't exist in mime_types", () => {
 			expect( MediaUtils.getMimeType( 'file.badextension' ) ).to.be.undefined;
 		} );
 
-		it( 'should return an object mime type', function() {
-			expect( MediaUtils.getMimeType( { mime_type: 'application/fake' } ) ).to.equal( 'application/fake' );
+		test( 'should return an object mime type', () => {
+			expect( MediaUtils.getMimeType( { mime_type: 'application/fake' } ) ).to.equal(
+				'application/fake'
+			);
 		} );
 
-		it( 'should detect mime type from string extension', function() {
+		test( 'should detect mime type from string extension', () => {
 			expect( MediaUtils.getMimeType( 'example.gif' ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should detect mime type with reserved url characters in filename', function() {
+		test( 'should detect mime type with reserved url characters in filename', () => {
 			expect( MediaUtils.getMimeType( 'example#?#?.gif' ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should ignore invalid filenames', function() {
+		test( 'should ignore invalid filenames', () => {
 			expect( MediaUtils.getMimeType( 'example#?#?.gif?w=100' ) ).to.be.undefined;
 		} );
 
-		it( 'should detect mime type from HTML5 File object', function() {
-			expect( MediaUtils.getMimeType( new window.File( [ '' ], 'example.gif', { type: 'image/gif' } ) ) ).to.equal( 'image/gif' );
+		test( 'should detect mime type from HTML5 File object', () => {
+			expect(
+				MediaUtils.getMimeType( new window.File( [ '' ], 'example.gif', { type: 'image/gif' } ) )
+			).to.equal( 'image/gif' );
 		} );
 
-		it( 'should detect mime type from object file property', function() {
+		test( 'should detect mime type from object file property', () => {
 			expect( MediaUtils.getMimeType( { file: 'example.gif' } ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should detect mime type from object URL property', function() {
+		test( 'should detect mime type from object URL property', () => {
 			expect( MediaUtils.getMimeType( { URL: 'example.gif' } ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should ignore query string parameters', function() {
+		test( 'should ignore query string parameters', () => {
 			expect( MediaUtils.getMimeType( { URL: 'example.gif?w=110' } ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should ignore query string parameters in URL strings', function() {
-			expect( MediaUtils.getMimeType( 'https://example.com/example.gif?w=110' ) ).to.equal( 'image/gif' );
+		test( 'should ignore query string parameters in URL strings', () => {
+			expect( MediaUtils.getMimeType( 'https://example.com/example.gif?w=110' ) ).to.equal(
+				'image/gif'
+			);
 		} );
 
-		it( 'should detect mime type from object guid property', function() {
+		test( 'should detect mime type from object guid property', () => {
 			expect( MediaUtils.getMimeType( { guid: 'example.gif' } ) ).to.equal( 'image/gif' );
 		} );
 
-		it( 'should detect mime type regardless of extension case', function() {
+		test( 'should detect mime type regardless of extension case', () => {
 			expect( MediaUtils.getMimeType( 'example.GIF' ) ).to.equal( 'image/gif' );
 		} );
 	} );
 
-	describe( '#filterItemsByMimePrefix()', function() {
-		it( 'should return an array filtered to the matching mime prefix', function() {
-			var items = [
-				{ ID: 100, mime_type: 'image/jpg' },
-				{ ID: 200, mime_type: 'video/mp4' }
-			];
+	describe( '#filterItemsByMimePrefix()', () => {
+		test( 'should return an array filtered to the matching mime prefix', () => {
+			var items = [ { ID: 100, mime_type: 'image/jpg' }, { ID: 200, mime_type: 'video/mp4' } ];
 
 			expect( MediaUtils.filterItemsByMimePrefix( items, 'image' ) ).to.eql( [ items[ 0 ] ] );
 		} );
 
-		it( 'should gracefully omit items where a mime type could not be determined', function() {
-			var items = [
-				{ ID: 100, mime_type: 'image/jpg' },
-				{ ID: 200 },
-				undefined
-			];
+		test( 'should gracefully omit items where a mime type could not be determined', () => {
+			var items = [ { ID: 100, mime_type: 'image/jpg' }, { ID: 200 }, undefined ];
 
 			expect( MediaUtils.filterItemsByMimePrefix( items, 'image' ) ).to.eql( [ items[ 0 ] ] );
 		} );
 	} );
 
-	describe( '#sortItemsByDate()', function() {
+	describe( '#sortItemsByDate()', () => {
 		var items;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			items = [
 				{ ID: 1, date: '2015-06-19T09:36:09-04:00' },
-				{ ID: 2, date: '2015-06-19T11:36:09-04:00' }
+				{ ID: 2, date: '2015-06-19T11:36:09-04:00' },
 			];
 		} );
 
-		it( 'should return a new array array, sorted descending by date', function() {
+		test( 'should return a new array array, sorted descending by date', () => {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are not set', function() {
+		test( 'should return the item with the greater ID if the dates are not set', () => {
 			items = items.map( function( item ) {
 				item.date = null;
 				return item;
@@ -289,7 +292,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should return the item with the the greater ID if the dates are equal', function() {
+		test( 'should return the item with the greater ID if the dates are equal', () => {
 			items = items.map( function( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;
@@ -298,7 +301,7 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should parse dates in string format', function() {
+		test( 'should parse dates in string format', () => {
 			items = items.map( function( item ) {
 				item.date = item.date.toString();
 				return item;
@@ -307,25 +310,25 @@ describe( 'MediaUtils', function() {
 			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
-		it( 'should not mutate the original array', function() {
+		test( 'should not mutate the original array', () => {
 			MediaUtils.sortItemsByDate( items );
 			expect( map( items, 'ID' ) ).to.eql( [ 1, 2 ] );
 		} );
 	} );
 
-	describe( '#getAllowedFileTypesForSite()', function() {
-		it( 'should return an empty array for a falsey site', function() {
+	describe( '#getAllowedFileTypesForSite()', () => {
+		test( 'should return an empty array for a falsey site', () => {
 			var extensions = MediaUtils.getAllowedFileTypesForSite();
 
 			expect( extensions ).to.be.an.instanceof( Array );
 			expect( extensions ).to.be.empty;
 		} );
 
-		it( 'should return an array of supported file type extensions', function() {
+		test( 'should return an array of supported file type extensions', () => {
 			var extensions = MediaUtils.getAllowedFileTypesForSite( {
 				options: {
-					allowed_file_types: [ 'pdf', 'gif' ]
-				}
+					allowed_file_types: [ 'pdf', 'gif' ],
+				},
 			} );
 
 			expect( extensions ).to.be.contain( 'pdf' );
@@ -333,47 +336,50 @@ describe( 'MediaUtils', function() {
 		} );
 	} );
 
-	describe( '#isSupportedFileTypeForSite()', function() {
+	describe( '#isSupportedFileTypeForSite()', () => {
 		var site = {
 			options: {
-				allowed_file_types: [ 'pdf', 'gif' ]
-			}
+				allowed_file_types: [ 'pdf', 'gif' ],
+			},
 		};
 
-		it( 'should return false for a falsey item', function() {
+		test( 'should return false for a falsey item', () => {
 			expect( MediaUtils.isSupportedFileTypeForSite( null, {} ) ).to.be.false;
 		} );
 
-		it( 'should return false for a falsey site', function() {
+		test( 'should return false for a falsey site', () => {
 			expect( MediaUtils.isSupportedFileTypeForSite( {}, null ) ).to.be.false;
 		} );
 
-		it( 'should return false if the site doesn\'t support the item\'s extension', function() {
+		test( "should return false if the site doesn't support the item's extension", () => {
 			var item = { extension: 'avi' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.false;
 		} );
 
-		it( 'should return true for versions of Jetpack where option is not synced', function() {
-			var isSupported = MediaUtils.isSupportedFileTypeForSite( { extension: 'exe' }, new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '3.8.0'
-				}
-			} ) );
+		test( 'should return true for versions of Jetpack where option is not synced', () => {
+			var isSupported = MediaUtils.isSupportedFileTypeForSite(
+				{ extension: 'exe' },
+				new JetpackSite( {
+					jetpack: true,
+					options: {
+						jetpack_version: '3.8.0',
+					},
+				} )
+			);
 
 			expect( isSupported ).to.be.true;
 		} );
 
-		it( 'should return true if the site supports the item\'s extension', function() {
+		test( "should return true if the site supports the item's extension", () => {
 			var item = { extension: 'pdf' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
 
-		it( 'should return true despite even if different case', function() {
+		test( 'should return true despite even if different case', () => {
 			var item = { extension: 'PdF' },
 				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
@@ -381,12 +387,12 @@ describe( 'MediaUtils', function() {
 		} );
 	} );
 
-	describe( '#isExceedingSiteMaxUploadSize()', function() {
+	describe( '#isExceedingSiteMaxUploadSize()', () => {
 		const site = {
 			jetpack: false,
 			options: {
-				max_upload_size: 1024
-			}
+				max_upload_size: 1024,
+			},
 		};
 		const jetpackSite = new JetpackSite( {
 			jetpack: true,
@@ -394,186 +400,205 @@ describe( 'MediaUtils', function() {
 			options: {
 				jetpack_version: '4.5',
 				max_upload_size: 1024,
-			}
+			},
 		} );
 
-		it( 'should return null if the provided `bytes` are not numeric', function() {
+		test( 'should return null if the provided `bytes` are not numeric', () => {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( {}, site ) ).to.be.null;
 		} );
 
-		it( 'should return null if the site `options` are `undefined`', function() {
+		test( 'should return null if the site `options` are `undefined`', () => {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, {} ) ).to.be.null;
 		} );
 
-		it( 'should return null if the site `max_upload_size` is `false`', function() {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, {
-				options: {
-					max_upload_size: false
+		test( 'should return null if the site `max_upload_size` is `false`', () => {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
+				{ size: 1024 },
+				{
+					options: {
+						max_upload_size: false,
+					},
 				}
-			} );
+			);
 
 			expect( isAcceptableSize ).to.be.null;
 		} );
 
-		it( 'should return null if a video is being uploaded for a Jetpack site with VideoPress enabled', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, jetpackSite ) ).to.be.null;
+		test( 'should return null if a video is being uploaded for a Jetpack site with VideoPress enabled', () => {
+			expect(
+				MediaUtils.isExceedingSiteMaxUploadSize(
+					{ size: 1024, mime_type: 'video/mp4' },
+					jetpackSite
+				)
+			).to.be.null;
 		} );
 
-		it( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', function() {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
-				jetpack: true,
-				modules: [ 'videopress' ],
-				options: {
-					jetpack_version: '3.8.1',
-					max_upload_size: 1024,
-				}
-			} ) );
+		test( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', () => {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
+				{ size: 1024, mime_type: 'video/mp4' },
+				new JetpackSite( {
+					jetpack: true,
+					modules: [ 'videopress' ],
+					options: {
+						jetpack_version: '3.8.1',
+						max_upload_size: 1024,
+					},
+				} )
+			);
 
 			expect( isAcceptableSize ).to.not.be.null;
 		} );
 
-		it( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'image/jpeg' }, jetpackSite ) ).to.not.be.null;
+		test( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', () => {
+			expect(
+				MediaUtils.isExceedingSiteMaxUploadSize(
+					{ size: 1024, mime_type: 'image/jpeg' },
+					jetpackSite
+				)
+			).to.not.be.null;
 		} );
 
-		it( 'should not return null if a video is being uploaded for a Jetpack site with VideoPress disabled', function() {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
-				jetpack: true,
-				options: {
-					jetpack_version: '4.5',
-					max_upload_size: 1024,
-				}
-			} ) );
+		test( 'should not return null if a video is being uploaded for a Jetpack site with VideoPress disabled', () => {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
+				{ size: 1024, mime_type: 'video/mp4' },
+				new JetpackSite( {
+					jetpack: true,
+					options: {
+						jetpack_version: '4.5',
+						max_upload_size: 1024,
+					},
+				} )
+			);
 
 			expect( isAcceptableSize ).to.not.be.null;
 		} );
 
-		it( 'should return false if the provided `bytes` are less than or equal to `max_upload_size`', function() {
+		test( 'should return false if the provided `bytes` are less than or equal to `max_upload_size`', () => {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 512 }, site ) ).to.be.false;
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, site ) ).to.be.false;
 		} );
 
-		it( 'should return true if the provided `bytes` are greater than `max_upload_size`', function() {
+		test( 'should return true if the provided `bytes` are greater than `max_upload_size`', () => {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1025 }, site ) ).to.be.true;
 		} );
 	} );
 
-	describe( '#isVideoPressItem()', function() {
-		it( 'should return false if passed a falsey item', function() {
+	describe( '#isVideoPressItem()', () => {
+		test( 'should return false if passed a falsey item', () => {
 			expect( MediaUtils.isVideoPressItem() ).to.be.false;
 		} );
 
-		it( 'should return false if no `videopress_guid` property exists', function() {
+		test( 'should return false if no `videopress_guid` property exists', () => {
 			expect( MediaUtils.isVideoPressItem( {} ) ).to.be.false;
 		} );
 
-		it( 'should return false if the `videopress_guid` property is not a valid guid', function() {
+		test( 'should return false if the `videopress_guid` property is not a valid guid', () => {
 			expect( MediaUtils.isVideoPressItem( { videopress_guid: 'bad!' } ) ).to.be.false;
 		} );
 
-		it( 'should return true if the `videopress_guid` property is a valid guid', function() {
+		test( 'should return true if the `videopress_guid` property is a valid guid', () => {
 			expect( MediaUtils.isVideoPressItem( { videopress_guid: 'h15soamj9k9' } ) ).to.be.true;
 		} );
 	} );
 
-	describe( '#playtime()', function() {
-		it( 'should return undefined if not passed number', function() {
+	describe( '#playtime()', () => {
+		test( 'should return undefined if not passed number', () => {
 			expect( MediaUtils.playtime() ).to.be.undefined;
 		} );
 
-		it( 'should handle specifying seconds as float value', function() {
+		test( 'should handle specifying seconds as float value', () => {
 			expect( MediaUtils.playtime( 5.8 ) ).to.equal( '0:05' );
 		} );
 
-		it( 'should handle zero seconds', function() {
+		test( 'should handle zero seconds', () => {
 			expect( MediaUtils.playtime( 0 ) ).to.equal( '0:00' );
 		} );
 
-		it( 'should handle single-digit seconds', function() {
+		test( 'should handle single-digit seconds', () => {
 			expect( MediaUtils.playtime( 5 ) ).to.equal( '0:05' );
 		} );
 
-		it( 'should handle double-digit seconds', function() {
+		test( 'should handle double-digit seconds', () => {
 			expect( MediaUtils.playtime( 55 ) ).to.equal( '0:55' );
 		} );
 
-		it( 'should handle single-digit minutes', function() {
+		test( 'should handle single-digit minutes', () => {
 			expect( MediaUtils.playtime( 300 ) ).to.equal( '5:00' );
 		} );
 
-		it( 'should handle double-digit minutes', function() {
+		test( 'should handle double-digit minutes', () => {
 			expect( MediaUtils.playtime( 3300 ) ).to.equal( '55:00' );
 		} );
 
-		it( 'should handle single-digit hours', function() {
+		test( 'should handle single-digit hours', () => {
 			expect( MediaUtils.playtime( 18000 ) ).to.equal( '5:00:00' );
 		} );
 
-		it( 'should handle double-digit hours', function() {
+		test( 'should handle double-digit hours', () => {
 			expect( MediaUtils.playtime( 198000 ) ).to.equal( '55:00:00' );
 		} );
 
-		it( 'should continue to increment hours for long lengths', function() {
+		test( 'should continue to increment hours for long lengths', () => {
 			expect( MediaUtils.playtime( 1998000 ) ).to.equal( '555:00:00' );
 		} );
 	} );
 
-	describe( '#getThumbnailSizeDimensions()', function() {
-		it( 'should return the site dimensions if exists', function() {
+	describe( '#getThumbnailSizeDimensions()', () => {
+		test( 'should return the site dimensions if exists', () => {
 			var dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail', {
 				options: {
 					image_thumbnail_width: 200,
-					image_thumbnail_height: 200
-				}
+					image_thumbnail_height: 200,
+				},
 			} );
 
 			expect( dimensions ).to.eql( {
 				width: 200,
-				height: 200
+				height: 200,
 			} );
 		} );
 
-		it( 'should return default values if site doesn\'t exist', function() {
+		test( "should return default values if site doesn't exist", () => {
 			var dimensions = MediaUtils.getThumbnailSizeDimensions( 'thumbnail' );
 
 			expect( dimensions ).to.eql( {
 				width: 150,
-				height: 150
+				height: 150,
 			} );
 		} );
 
-		it( 'should return undefined values for unknown size', function() {
+		test( 'should return undefined values for unknown size', () => {
 			var dimensions = MediaUtils.getThumbnailSizeDimensions( null, null );
 
 			expect( dimensions ).to.eql( {
 				width: undefined,
-				height: undefined
+				height: undefined,
 			} );
 		} );
 	} );
 
-	describe( '#generateGalleryShortcode()', function() {
-		it( 'should generate a gallery shortcode', function() {
+	describe( '#generateGalleryShortcode()', () => {
+		test( 'should generate a gallery shortcode', () => {
 			var value = MediaUtils.generateGalleryShortcode( { items: [ { ID: 100 }, { ID: 200 } ] } );
 
 			expect( value ).to.equal( '[gallery ids="100,200"]' );
 		} );
 
-		it( 'should accept an optional set of parameters', function() {
+		test( 'should accept an optional set of parameters', () => {
 			var value = MediaUtils.generateGalleryShortcode( {
 				items: [ { ID: 100 }, { ID: 200 } ],
 				type: 'square',
-				columns: 2
+				columns: 2,
 			} );
 
 			expect( value ).to.equal( '[gallery ids="100,200" type="square" columns="2"]' );
 		} );
 
-		it( 'should omit size and columns attributes if not used', function() {
+		test( 'should omit size and columns attributes if not used', () => {
 			var value = MediaUtils.generateGalleryShortcode( {
 				items: [ { ID: 100 }, { ID: 200 } ],
 				type: 'rectangular',
-				columns: 2
+				columns: 2,
 			} );
 
 			expect( value ).to.equal( '[gallery ids="100,200" type="rectangular"]' );
@@ -583,45 +608,45 @@ describe( 'MediaUtils', function() {
 	describe( '#canUserDeleteItem()', () => {
 		const item = { author_ID: 73705554 };
 
-		it( 'should return false if the user ID matches the item author but user cannot delete posts', () => {
+		test( 'should return false if the user ID matches the item author but user cannot delete posts', () => {
 			const user = { ID: 73705554 };
 			const site = {
 				capabilities: {
-					delete_posts: false
-				}
+					delete_posts: false,
+				},
 			};
 
 			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.false;
 		} );
 
-		it( 'should return true if the user ID matches the item author and user can delete posts', () => {
+		test( 'should return true if the user ID matches the item author and user can delete posts', () => {
 			const user = { ID: 73705554 };
 			const site = {
 				capabilities: {
-					delete_posts: true
-				}
+					delete_posts: true,
+				},
 			};
 
 			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.true;
 		} );
 
-		it( 'should return false if the user ID does not match the item author and user cannot delete others posts', () => {
+		test( 'should return false if the user ID does not match the item author and user cannot delete others posts', () => {
 			const user = { ID: 73705672 };
 			const site = {
 				capabilities: {
-					delete_others_posts: false
-				}
+					delete_others_posts: false,
+				},
 			};
 
 			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.false;
 		} );
 
-		it( 'should return true if the user ID does not match the item author but user can delete others posts', () => {
+		test( 'should return true if the user ID does not match the item author but user can delete others posts', () => {
 			const user = { ID: 73705672 };
 			const site = {
 				capabilities: {
-					delete_others_posts: true
-				}
+					delete_others_posts: true,
+				},
 			};
 
 			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.true;
@@ -629,17 +654,17 @@ describe( 'MediaUtils', function() {
 	} );
 
 	describe( '#isItemBeingUploaded()', () => {
-		it( 'should return null if item was not specified', () => {
+		test( 'should return null if item was not specified', () => {
 			expect( MediaUtils.isItemBeingUploaded() ).to.be.null;
 		} );
 
-		it( 'should return true if the item is currently being uploaded', () => {
-			const item = { 'transient': true };
+		test( 'should return true if the item is currently being uploaded', () => {
+			const item = { transient: true };
 
 			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.true;
 		} );
 
-		it( 'should return false if the item is not being uploaded', () => {
+		test( 'should return false if the item is not being uploaded', () => {
 			const item = {};
 
 			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.false;
@@ -650,12 +675,14 @@ describe( 'MediaUtils', function() {
 		const GUID = 'URL';
 
 		beforeEach( () => {
-			window.URL = { createObjectURL: () => {
-				return GUID;
-			} };
+			window.URL = {
+				createObjectURL: () => {
+					return GUID;
+				},
+			};
 		} );
 
-		it( 'should return a transient for a file blob', () => {
+		test( 'should return a transient for a file blob', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_BLOB );
 			const expected = Object.assign( {}, EXPECTED, {
 				URL: GUID,
@@ -666,13 +693,13 @@ describe( 'MediaUtils', function() {
 			expect( actual ).to.eql( expected );
 		} );
 
-		it( 'should return a transient for a filename', () => {
+		test( 'should return a transient for a filename', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILENAME );
 
 			expect( actual ).to.eql( EXPECTED );
 		} );
 
-		it( 'should return a transient for a file object', () => {
+		test( 'should return a transient for a file object', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
 
 			expect( actual ).to.eql( EXPECTED_FILE_OBJECT );

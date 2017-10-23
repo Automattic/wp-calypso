@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -23,21 +26,17 @@ const placeholderCount = 5;
 
 const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 	<div>
-		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>
-			Zoninator Settings
-		</HeaderCake>
+		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>Zoninator Settings</HeaderCake>
 
 		<SectionHeader label={ translate( 'Zones' ) }>
 			<Button compact href={ `${ settingsPath }/new/${ siteSlug }` }>
 				{ translate( 'Add a zone' ) }
 			</Button>
 		</SectionHeader>
-		{ isRequesting && zones.length === 0 && times( placeholderCount, i => (
-			<ZonePlaceholder key={ i } />
-		) ) }
-		{ zones.map( ( zone ) => (
-			<ZoneItem key={ zone.slug } zone={ zone } />
-		) ) }
+		{ isRequesting &&
+			zones.length === 0 &&
+			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
+		{ zones.map( zone => <ZoneItem key={ zone.slug } zone={ zone } /> ) }
 	</div>
 );
 
@@ -56,7 +55,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( ZonesDashboard );
+export default flowRight( connectComponent, localize )( ZonesDashboard );

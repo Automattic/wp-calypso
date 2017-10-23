@@ -8,25 +8,25 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { items, requesting } from '../reducer';
 import {
 	READER_THUMBNAIL_REQUEST,
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
-import { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	const embedUrl = 'embedUrl';
 	const thumbnailUrl = 'thumbnailUrl';
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should insert a new thumbnailUrl for a new embedUrl', () => {
+		test( 'should insert a new thumbnailUrl for a new embedUrl', () => {
 			const state = items(
 				{},
 				{
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 			expect( state[ embedUrl ] ).to.eql( thumbnailUrl );
 		} );
 
-		it( 'should not insert anything for an error', () => {
+		test( 'should not insert anything for an error', () => {
 			const state = items(
 				{},
 				{
@@ -53,12 +53,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by embedUrl', () => {
+		test( 'should index requesting state by embedUrl', () => {
 			const state = requesting(
 				{},
 				{
@@ -72,7 +72,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting state for thumbnails', () => {
+		test( 'should accumulate requesting state for thumbnails', () => {
 			const original = deepFreeze( {
 				[ embedUrl ]: true,
 			} );
@@ -86,7 +86,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false when done requesting', () => {
+		test( 'should set requesting to false when done requesting', () => {
 			const original = deepFreeze( {
 				[ embedUrl ]: true,
 			} );

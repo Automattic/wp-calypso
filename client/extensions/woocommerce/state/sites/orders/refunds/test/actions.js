@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,15 +9,14 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
+import order from '../../test/fixtures/order';
 import { sendRefund } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 } from 'woocommerce/state/action-types';
-import order from '../../test/fixtures/order';
 
 describe( 'actions', () => {
 	describe( '#sendRefund()', () => {
@@ -25,8 +26,7 @@ describe( 'actions', () => {
 			reason: 'Testing reason.',
 		};
 
-		useSandbox();
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
@@ -40,11 +40,11 @@ describe( 'actions', () => {
 					data: {
 						message: 'No route was found matching the URL and request method',
 						error: 'rest_no_route',
-					}
+					},
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			sendRefund( siteId, 40, refundObj )( dispatch, getState );
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the order when the refund request completes', () => {
+		test( 'should dispatch a success action with the order when the refund request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = sendRefund( siteId, 40, refundObj )( dispatch, getState );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a error action with the order when the refund request fails', () => {
+		test( 'should dispatch a error action with the order when the refund request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = sendRefund( 234, 'invalid', refundObj )( dispatch, getState );

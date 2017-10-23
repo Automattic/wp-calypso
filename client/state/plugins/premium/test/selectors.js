@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import selectors from '../selectors';
-// Example state data
 import { initSite, installingSite, finishedSite, configuringSite } from './examples';
 
 const state = deepFreeze( {
@@ -22,111 +23,111 @@ const state = deepFreeze( {
 				'start.site': initSite,
 				'installing.site': installingSite,
 				'finished.site': finishedSite,
-				'config.site': configuringSite
-			}
-		}
-	}
+				'config.site': configuringSite,
+			},
+		},
+	},
 } );
 
-describe( 'Premium Plugin Selectors', function() {
-	it( 'should contain isRequesting method', function() {
+describe( 'Premium Plugin Selectors', () => {
+	test( 'should contain isRequesting method', () => {
 		assert.equal( typeof selectors.isRequesting, 'function' );
 	} );
 
-	it( 'should contain isStarted method', function() {
+	test( 'should contain isStarted method', () => {
 		assert.equal( typeof selectors.isStarted, 'function' );
 	} );
 
-	it( 'should contain isFinished method', function() {
+	test( 'should contain isFinished method', () => {
 		assert.equal( typeof selectors.isFinished, 'function' );
 	} );
 
-	it( 'should contain getPluginsForSite method', function() {
+	test( 'should contain getPluginsForSite method', () => {
 		assert.equal( typeof selectors.getPluginsForSite, 'function' );
 	} );
 
-	it( 'should contain getActivePlugin method', function() {
+	test( 'should contain getActivePlugin method', () => {
 		assert.equal( typeof selectors.getActivePlugin, 'function' );
 	} );
 
-	it( 'should contain getNextPlugin method', function() {
+	test( 'should contain getNextPlugin method', () => {
 		assert.equal( typeof selectors.getNextPlugin, 'function' );
 	} );
 
-	describe( 'isRequesting', function() {
-		it( 'Should get `true` if the requested site is not in the current state', function() {
+	describe( 'isRequesting', () => {
+		test( 'Should get `true` if the requested site is not in the current state', () => {
 			assert.equal( selectors.isRequesting( state, 'no.site' ), true );
 		} );
 
-		it( 'Should get `false` if the requested site is not being fetched', function() {
+		test( 'Should get `false` if the requested site is not being fetched', () => {
 			assert.equal( selectors.isRequesting( state, 'finished.site' ), false );
 		} );
 
-		it( 'Should get `true` if the requested site is being fetched', function() {
+		test( 'Should get `true` if the requested site is being fetched', () => {
 			assert.equal( selectors.isRequesting( state, 'wait.site' ), true );
 		} );
 	} );
 
-	describe( 'isStarted', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+	describe( 'isStarted', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
 			assert.equal( selectors.isStarted( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get `false` if there are no plugins installing on the requested site', function() {
+		test( 'Should get `false` if there are no plugins installing on the requested site', () => {
 			assert.equal( selectors.isStarted( state, 'start.site' ), false );
 		} );
 
-		it( 'Should get `true` if there is a plugin installing on the requested site', function() {
+		test( 'Should get `true` if there is a plugin installing on the requested site', () => {
 			assert.equal( selectors.isStarted( state, 'installing.site' ), true );
 		} );
 
-		it( 'Should get `true` if all plugins on the requested site are either done or have errors', function() {
+		test( 'Should get `true` if all plugins on the requested site are either done or have errors', () => {
 			assert.equal( selectors.isStarted( state, 'finished.site' ), true );
 		} );
 	} );
 
-	describe( 'isFinished', function() {
-		it( 'Should get `true` if the requested site is not in the current state', function() {
+	describe( 'isFinished', () => {
+		test( 'Should get `true` if the requested site is not in the current state', () => {
 			assert.equal( selectors.isFinished( state, 'no.site' ), true );
 		} );
 
-		it( 'Should get `false` if there is a plugin installing on the requested site', function() {
+		test( 'Should get `false` if there is a plugin installing on the requested site', () => {
 			assert.equal( selectors.isFinished( state, 'installing.site' ), false );
 		} );
 
-		it( 'Should get `true` if all plugins on the requested site are either done or have errors', function() {
+		test( 'Should get `true` if all plugins on the requested site are either done or have errors', () => {
 			assert.equal( selectors.isFinished( state, 'finished.site' ), true );
 		} );
 	} );
 
-	describe( 'isInstalling', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+	describe( 'isInstalling', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
 			assert.equal( selectors.isInstalling( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get `true` if there is a plugin installing on the requested site', function() {
+		test( 'Should get `true` if there is a plugin installing on the requested site', () => {
 			assert.equal( selectors.isInstalling( state, 'installing.site' ), true );
 		} );
 
-		it( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', function() {
+		test( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', () => {
 			assert.equal( selectors.isInstalling( state, 'installing.site', 'akismet' ), true );
 		} );
 
-		it( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', function() {
+		test( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', () => {
 			assert.equal( selectors.isInstalling( state, 'config.site', 'akismet' ), true );
 		} );
 
-		it( 'Should get `false` if all plugins on the requested site are either done or have errors', function() {
+		test( 'Should get `false` if all plugins on the requested site are either done or have errors', () => {
 			assert.equal( selectors.isInstalling( state, 'finished.site' ), false );
 		} );
 	} );
 
-	describe( 'getPluginsForSite', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+	describe( 'getPluginsForSite', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
 			assert.equal( selectors.getPluginsForSite( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get the list of plugins if the site exists in the current state', function() {
+		test( 'Should get the list of plugins if the site exists in the current state', () => {
 			assert.equal( selectors.getPluginsForSite( state, 'start.site' ).length, 3 );
 			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 0 ].slug, 'vaultpress' );
 			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 1 ].slug, 'akismet' );
@@ -134,38 +135,38 @@ describe( 'Premium Plugin Selectors', function() {
 		} );
 	} );
 
-	describe( 'getActivePlugin', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+	describe( 'getActivePlugin', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
 			assert.equal( selectors.getActivePlugin( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get `false` if no plugins on the requested site are currently being installed', function() {
+		test( 'Should get `false` if no plugins on the requested site are currently being installed', () => {
 			assert.equal( selectors.getActivePlugin( state, 'start.site' ), false );
 		} );
 
-		it( 'Should get `false` if all plugins on the requested site are finished installing', function() {
+		test( 'Should get `false` if all plugins on the requested site are finished installing', () => {
 			assert.equal( selectors.getActivePlugin( state, 'finished.site' ), false );
 		} );
 
-		it( 'Should get `akismet` if akismet is the currently being installed on the requested site', function() {
+		test( 'Should get `akismet` if akismet is the currently being installed on the requested site', () => {
 			assert.equal( selectors.getActivePlugin( state, 'installing.site' ).slug, 'akismet' );
 		} );
 	} );
 
-	describe( 'getNextPlugin', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+	describe( 'getNextPlugin', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
 			assert.equal( selectors.getNextPlugin( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get the first plugin in the list if the requested site hasn\'t started yet', function() {
+		test( "Should get the first plugin in the list if the requested site hasn't started yet", () => {
 			assert.equal( selectors.getNextPlugin( state, 'start.site' ).slug, 'vaultpress' );
 		} );
 
-		it( 'Should get `polldaddy`, next in the list, if the requested site is installing akismet', function() {
+		test( 'Should get `polldaddy`, next in the list, if the requested site is installing akismet', () => {
 			assert.equal( selectors.getNextPlugin( state, 'installing.site' ).slug, 'polldaddy' );
 		} );
 
-		it( 'Should get `false`, if the requested site is finished installing all plugins', function() {
+		test( 'Should get `false`, if the requested site is finished installing all plugins', () => {
 			assert.equal( selectors.getNextPlugin( state, 'finished.site' ), false );
 		} );
 	} );

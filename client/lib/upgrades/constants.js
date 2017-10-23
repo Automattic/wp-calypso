@@ -1,9 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import keyMirror from 'key-mirror';
 
-module.exports.action = keyMirror( {
+export const action = keyMirror( {
 	CART_COUPON_APPLY: null,
 	CART_DISABLE: null,
 	CART_ITEMS_ADD: null,
@@ -77,5 +80,5 @@ module.exports.action = keyMirror( {
 	WHOIS_FETCH: null,
 	WHOIS_FETCH_COMPLETED: null,
 	WHOIS_FETCH_FAILED: null,
-	WHOIS_UPDATE_COMPLETED: null
+	WHOIS_UPDATE_COMPLETED: null,
 } );

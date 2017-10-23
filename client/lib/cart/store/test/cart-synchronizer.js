@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -8,28 +10,25 @@ import assert from 'assert';
  */
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 var TEST_CART_KEY = 91234567890;
 
 var poller = {
-	add: function() {}
+	add: function() {},
 };
 
-describe( 'cart-synchronizer', function() {
+describe( 'cart-synchronizer', () => {
 	let applyCoupon, emptyCart;
 
-	useFilesystemMocks( __dirname );
-
-	before( () => {
+	beforeAll( () => {
 		const cartValues = require( 'lib/cart-values' );
 
 		applyCoupon = cartValues.applyCoupon;
 		emptyCart = cartValues.emptyCart;
 	} );
 
-	describe( '*before* the first fetch from the server', function() {
-		it( 'should *not* allow the value to be read', function() {
+	describe( '*before* the first fetch from the server', () => {
+		test( 'should *not* allow the value to be read', () => {
 			var wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
 
@@ -38,7 +37,7 @@ describe( 'cart-synchronizer', function() {
 			}, Error );
 		} );
 
-		it( 'should enqueue local changes and POST them after fetching', function() {
+		test( 'should enqueue local changes and POST them after fetching', () => {
 			var wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 				serverCart = emptyCart( TEST_CART_KEY );
@@ -60,8 +59,8 @@ describe( 'cart-synchronizer', function() {
 		} );
 	} );
 
-	describe( '*after* the first fetch from the server', function() {
-		it( 'should allow the value to be read', function() {
+	describe( '*after* the first fetch from the server', () => {
+		test( 'should allow the value to be read', () => {
 			var wpcom = FakeWPCOM(),
 				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 				serverCart = emptyCart( TEST_CART_KEY );
@@ -73,7 +72,7 @@ describe( 'cart-synchronizer', function() {
 		} );
 	} );
 
-	it( 'should make local changes visible immediately', function() {
+	test( 'should make local changes visible immediately', () => {
 		var wpcom = FakeWPCOM(),
 			synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
 			serverCart = emptyCart( TEST_CART_KEY );

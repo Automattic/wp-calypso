@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	SITES_BLOG_STICKER_ADD,
 	SITES_BLOG_STICKER_REMOVE,

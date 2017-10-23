@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { get, pick } from 'lodash';
@@ -64,7 +67,7 @@ CommentLikeButtonContainer.propTypes = {
 	tagName: PropTypes.string,
 
 	// connected props:
-	commentLike: PropTypes.object.isRequired,
+	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
 };
@@ -79,6 +82,6 @@ export default connect(
 				likeComment,
 				unlikeComment,
 			},
-			dispatch,
-		),
+			dispatch
+		)
 )( CommentLikeButtonContainer );

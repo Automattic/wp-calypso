@@ -57,9 +57,7 @@ class ErrorBanner extends PureComponent {
 						restore_to: timestamp,
 					} }
 				/>
-				<p>
-					{ translate( 'We came across a problem while trying to restore your site.' ) }
-				</p>
+				<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>
 				<Button primary onClick={ this.handleClickRestore }>
 					{ translate( 'Try again' ) }
 				</Button>

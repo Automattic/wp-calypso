@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -21,7 +24,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
 class EditorActionBar extends Component {
-
 	static propTypes = {
 		isNew: PropTypes.bool,
 		onPrivatePublish: PropTypes.func,
@@ -35,7 +37,7 @@ class EditorActionBar extends Component {
 	};
 
 	state = {
-		viewLinkTooltip: false
+		viewLinkTooltip: false,
 	};
 
 	render() {
@@ -49,29 +51,29 @@ class EditorActionBar extends Component {
 		return (
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__cell is-left">
-					{ ! this.props.hasEditorNestedSidebar &&
+					{ ! this.props.hasEditorNestedSidebar && (
 						<EditorStatusLabel
 							post={ this.props.savedPost }
 							advancedStatus
 							type={ this.props.type }
 						/>
-					}
+					) }
 				</div>
 				<div className="editor-action-bar__cell is-center">
-					{ multiUserSite &&
+					{ multiUserSite && (
 						<AsyncLoad
 							require="post-editor/editor-author"
 							post={ this.props.post }
 							isNew={ this.props.isNew }
 							postAuthor={ postAuthor }
 						/>
-					}
+					) }
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ this.props.post && this.props.type === 'post' &&
-						! isPasswordProtected && ! isPostPrivate &&
-						<EditorSticky />
-					}
+					{ this.props.post &&
+					this.props.type === 'post' &&
+					! isPasswordProtected &&
+					! isPostPrivate && <EditorSticky /> }
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
@@ -99,16 +101,14 @@ class EditorActionBar extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
 
-		return {
-			siteId,
-			postId,
-			post
-		};
-	},
-)( EditorActionBar );
+	return {
+		siteId,
+		postId,
+		post,
+	};
+} )( EditorActionBar );

@@ -1,12 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
-import Gridicon from 'gridicons';
+import { overEvery as and } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,12 +19,7 @@ import {
 	Quit,
 	Continue,
 } from 'layout/guided-tours/config-elements';
-import {
-	isNewUser,
-	isEnabled,
-	isSelectedSitePreviewable,
-} from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
+import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour
@@ -33,54 +28,41 @@ export const TutorialSitePreviewTour = makeTour(
 		path="/stats"
 		when={ and(
 			isEnabled( 'guided-tours/tutorial-site-preview' ),
-			isNewUser,
+			isSelectedSitePreviewable,
+			isNewUser
 		) }
 	>
-		<Step name="init"
-			target="site-card-preview"
+		<Step
+			name="init"
+			target="sitePreview"
 			arrow="top-left"
 			placement="below"
-			when={ isSelectedSitePreviewable }
 			scrollContainer=".sidebar__region"
 		>
 			<p>
-				{
-					translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
-						components: {
-							strong: <strong />,
-						}
-					} )
-				}
-			</p>
-			<Continue click step="close-preview" target="site-card-preview">
-				{
-					translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
+				{ translate(
+					'{{strong}}View Site{{/strong}} shows you what your site looks like to visitors. Click it to continue.',
+					{
 						components: {
 							strong: <strong />,
 						},
-					} )
-				}
-			</Continue>
+					}
+				) }
+			</p>
+			<Continue hidden click step="finish" target="sitePreview" />
 			<ButtonRow>
 				<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step name="close-preview"
-			placement="center"
-			when={ and( isSelectedSitePreviewable, isPreviewShowing ) }
-		>
+		<Step name="finish" placement="center">
 			<p>
-				{ translate( "Take a look around — and when you're done, close the site preview using the {{icon/}}. " +
-					'You can come back here anytime.', {
-						components: { icon: <Gridicon icon="cross" /> }
-					}
+				{ translate(
+					"Take a look around — and when you're done, explore the rest of WordPress.com."
 				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>
-					{ translate( 'Got it.' ) }
-				</Quit>
+				<Quit primary>{ translate( 'Got it.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 	</Tour>

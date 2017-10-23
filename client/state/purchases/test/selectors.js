@@ -1,7 +1,12 @@
-// External dependencies
+/** @format */
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import {
 	getPurchases,
 	getByPurchaseId,
@@ -11,15 +16,14 @@ import {
 	getSitePurchases,
 	isUserPaid,
 } from '../selectors';
-
 import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
-		it( 'should return different purchases when the purchase data changes', () => {
+		test( 'should return different purchases when the purchase data changes', () => {
 			const initialPurchases = Object.freeze( [
 				{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-				{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
+				{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
 			] );
 
 			const state = {
@@ -29,38 +33,44 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true
-				}
+					hasLoadedUserPurchasesFromServer: true,
+				},
 			};
 
-			expect( getPurchases( state ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( initialPurchases ) );
+			expect( getPurchases( state ) ).to.deep.equal(
+				purchasesAssembler.createPurchasesArray( initialPurchases )
+			);
 
 			const newPurchases = Object.freeze( [
-				{ ID: 3, product_name: 'business plan', blog_id: 3117 }
+				{ ID: 3, product_name: 'business plan', blog_id: 3117 },
 			] );
 
-			expect( getPurchases( Object.assign( state, {
-				purchases: {
-					data: newPurchases
-				}
-			} ) ) ).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
+			expect(
+				getPurchases(
+					Object.assign( state, {
+						purchases: {
+							data: newPurchases,
+						},
+					} )
+				)
+			).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
 		} );
 	} );
 
 	describe( 'getByPurchaseId', () => {
-		it( 'should return a purchase by its ID', () => {
+		test( 'should return a purchase by its ID', () => {
 			const state = {
 				purchases: {
 					data: [
 						{ ID: 1, product_name: 'domain registration', blog_id: 1337 },
-						{ ID: 2, product_name: 'premium plan', blog_id: 1337 }
+						{ ID: 2, product_name: 'premium plan', blog_id: 1337 },
 					],
 					error: null,
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true
-				}
+					hasLoadedUserPurchasesFromServer: true,
+				},
 			};
 
 			expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
@@ -92,7 +102,7 @@ describe( 'selectors', () => {
 					countryCode: undefined,
 					countryName: undefined,
 					name: undefined,
-					type: undefined
+					type: undefined,
 				},
 				priceText: 'undefinedundefined',
 				productId: NaN,
@@ -106,13 +116,13 @@ describe( 'selectors', () => {
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,
 				tagLine: undefined,
-				userId: NaN
+				userId: NaN,
 			} );
 		} );
 	} );
 
 	describe( 'isFetchingUserPurchases', () => {
-		it( 'should return the current state of the user purchases request', () => {
+		test( 'should return the current state of the user purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -120,8 +130,8 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: false,
 					isFetchingUserPurchases: true,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			expect( isFetchingUserPurchases( state ) ).to.be.true;
@@ -129,7 +139,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isFetchingSitePurchases', () => {
-		it( 'should return the current state of the site purchases request', () => {
+		test( 'should return the current state of the site purchases request', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -137,8 +147,8 @@ describe( 'selectors', () => {
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			expect( isFetchingSitePurchases( state ) ).to.be.true;
@@ -146,29 +156,29 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSitePurchases', () => {
-		it( 'should return purchases of specific site', () => {
+		test( 'should return purchases of specific site', () => {
 			const state = {
 				purchases: {
 					data: [
 						{
 							ID: '81414',
-							blog_id: '1234'
+							blog_id: '1234',
 						},
 						{
 							ID: '82867',
-							blog_id: '1234'
+							blog_id: '1234',
 						},
 						{
 							ID: '105103',
-							blog_id: '123'
-						}
+							blog_id: '123',
+						},
 					],
 					error: null,
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
 			const result = getSitePurchases( state, 1234 );
@@ -180,7 +190,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getIncludedDomainPurchase', () => {
-		it( 'should return included domain with subscription', () => {
+		test( 'should return included domain with subscription', () => {
 			const state = {
 				purchases: {
 					data: [
@@ -189,43 +199,47 @@ describe( 'selectors', () => {
 							meta: 'dev.live',
 							blog_id: '123',
 							is_domain_registration: 'true',
-							product_slug: 'dotlive_domain'
+							product_slug: 'dotlive_domain',
 						},
 						{
 							ID: '82867',
 							blog_id: '123',
 							product_slug: 'value_bundle',
-							included_domain: 'dev.live'
+							included_domain: 'dev.live',
 						},
 						{
 							ID: '105103',
 							blog_id: '123',
 							meta: 'wordpress.com',
-							product_slug: 'domain_map'
-						}
+							product_slug: 'domain_map',
+						},
 					],
 					error: null,
 					isFetchingSitePurchases: true,
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: false
-				}
+					hasLoadedUserPurchasesFromServer: false,
+				},
 			};
 
-			const subscriptionPurchase = getPurchases( state ).find( purchase => purchase.productSlug === 'value_bundle' );
+			const subscriptionPurchase = getPurchases( state ).find(
+				purchase => purchase.productSlug === 'value_bundle'
+			);
 
-			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal( 'dev.live' );
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal(
+				'dev.live'
+			);
 		} );
 	} );
 
 	describe( 'isUserPaid', () => {
 		const targetUserId = 123;
 		const examplePurchases = Object.freeze( [
-			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId, },
-			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId, },
+			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
+			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
 		] );
 
-		it( 'should return false because there is no purchases', () => {
+		test( 'should return false because there is no purchases', () => {
 			const state = {
 				purchases: {
 					data: [],
@@ -234,13 +248,13 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.false;
 		} );
 
-		it( 'should return true because there are purchases from the target user', () => {
+		test( 'should return true because there are purchases from the target user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -249,13 +263,13 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.true;
 		} );
 
-		it( 'should return false because there are no purchases from this user', () => {
+		test( 'should return false because there are no purchases from this user', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -264,13 +278,13 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: true,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, 65535 ) ).to.be.false;
 		} );
 
-		it( 'should return false because the data is not ready.', () => {
+		test( 'should return false because the data is not ready.', () => {
 			const state = {
 				purchases: {
 					data: examplePurchases,
@@ -279,7 +293,7 @@ describe( 'selectors', () => {
 					isFetchingUserPurchases: false,
 					hasLoadedSitePurchasesFromServer: false,
 					hasLoadedUserPurchasesFromServer: false,
-				}
+				},
 			};
 
 			expect( isUserPaid( state, targetUserId ) ).to.be.false;

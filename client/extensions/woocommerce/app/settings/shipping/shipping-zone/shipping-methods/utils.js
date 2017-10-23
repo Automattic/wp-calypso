@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 
 /**
@@ -16,7 +19,7 @@ export const getMethodSummary = ( method, currency ) => {
 			}
 
 			return translate( 'Minimum order amount: %s', {
-				args: [ formatCurrency( method.min_amount, currency ) || method.min_amount ]
+				args: [ formatCurrency( method.min_amount, currency ) || method.min_amount ],
 			} );
 		case 'flat_rate':
 		case 'local_pickup':

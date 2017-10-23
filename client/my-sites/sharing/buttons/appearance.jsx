@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -29,7 +33,7 @@ class SharingButtonsAppearance extends Component {
 		recordGoogleEvent: PropTypes.func,
 		saving: PropTypes.bool,
 		values: PropTypes.object,
-	}
+	};
 
 	static defaultProps = {
 		buttons: Object.freeze( [] ),
@@ -37,7 +41,7 @@ class SharingButtonsAppearance extends Component {
 		onChange: () => {},
 		onButtonsChange: () => {},
 		initialized: false,
-		saving: false
+		saving: false,
 	};
 
 	isLikeButtonEnabled() {
@@ -45,15 +49,27 @@ class SharingButtonsAppearance extends Component {
 	}
 
 	isReblogButtonEnabled() {
-		return '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs;
+		return (
+			'' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs
+		);
 	}
 
 	onReblogsLikesCheckboxClicked = event => {
 		this.props.onChange( event.target.name, ! event.target.checked );
 		if ( 'disabled_reblogs' === event.target.name ) {
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Show Reblog Button Checkbox', 'checked', event.target.checked ? 1 : 0 );
+			this.props.recordGoogleEvent(
+				'Sharing',
+				'Clicked Show Reblog Button Checkbox',
+				'checked',
+				event.target.checked ? 1 : 0
+			);
 		} else if ( 'disabled_likes' === event.target.name ) {
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Show Like Button Checkbox', 'checked', event.target.checked ? 1 : 0 );
+			this.props.recordGoogleEvent(
+				'Sharing',
+				'Clicked Show Like Button Checkbox',
+				'checked',
+				event.target.checked ? 1 : 0
+			);
 		}
 	};
 
@@ -70,7 +86,8 @@ class SharingButtonsAppearance extends Component {
 					showLike={ this.isLikeButtonEnabled() }
 					showReblog={ ! this.props.isJetpack && this.isReblogButtonEnabled() }
 					onLabelChange={ changeLabel }
-					onButtonsChange={ this.props.onButtonsChange } />
+					onButtonsChange={ this.props.onButtonsChange }
+				/>
 			);
 		}
 
@@ -88,26 +105,27 @@ class SharingButtonsAppearance extends Component {
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
 					/>
-					<span>{ this.props.translate( 'Show reblog button', { context: 'Sharing options: Checkbox label' } ) }</span>
+					<span>
+						{ this.props.translate( 'Show reblog button', {
+							context: 'Sharing options: Checkbox label',
+						} ) }
+					</span>
 				</label>
 			);
 		}
 	}
 
 	getReblogLikeOptionsElement() {
-		const {
-			isJetpack,
-			translate
-		} = this.props;
+		const { isJetpack, translate } = this.props;
 
 		return (
 			<fieldset className="buttons__fieldset sharing-buttons__fieldset">
 				<legend className="buttons__fieldset-heading sharing-buttons__fieldset-heading">
-					{
-						isJetpack
-							? translate( 'Like', { context: 'Sharing options: Header' } )
-							: translate( 'Reblog & Like', { context: 'Sharing options: Header' } )
-					}
+					{ isJetpack ? (
+						translate( 'Like', { context: 'Sharing options: Header' } )
+					) : (
+						translate( 'Reblog & Like', { context: 'Sharing options: Header' } )
+					) }
 				</legend>
 				{ this.getReblogOptionElement() }
 				<label>
@@ -118,7 +136,9 @@ class SharingButtonsAppearance extends Component {
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
 					/>
-					<span>{ translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }</span>
+					<span>
+						{ translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }
+					</span>
 				</label>
 			</fieldset>
 		);
@@ -150,7 +170,11 @@ class SharingButtonsAppearance extends Component {
 					className="button is-primary sharing-buttons__submit"
 					disabled={ this.props.saving || ! this.props.initialized }
 				>
-					{ this.props.saving ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Changes' ) }
+					{ this.props.saving ? (
+						this.props.translate( 'Saving…' )
+					) : (
+						this.props.translate( 'Save Changes' )
+					) }
 				</button>
 			</div>
 		);
@@ -171,7 +195,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( SharingButtonsAppearance );
+export default flowRight( connectComponent, localize )( SharingButtonsAppearance );

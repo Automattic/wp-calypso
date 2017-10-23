@@ -1,11 +1,13 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
+import refer from './refer';
 import directly from './directly';
 
-export const handlers = mergeHandlers(
-	directly,
-);
+export const handlers = mergeHandlers( directly, refer );
 
 export default handlers;

@@ -1,8 +1,11 @@
 /**
  * Feed post display types
+ *
+ * @format
  * @type {Object} Types of post for display
  */
-module.exports = {
+
+export default {
 	UNCLASSIFIED: 0,
 	PHOTO_ONLY: 1,
 	LARGE_BANNER: 2,
@@ -13,5 +16,5 @@ module.exports = {
 	VIDEO: 64,
 	THUMBNAIL: 128,
 	FEATURED_VIDEO: 512,
-	X_POST: 1024
+	X_POST: 1024,
 };

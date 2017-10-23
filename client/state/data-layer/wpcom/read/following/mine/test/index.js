@@ -1,26 +1,15 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import freeze from 'deep-freeze';
 import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-
-import {
-	receiveFollows as receiveFollowsAction,
-	follow,
-	syncComplete,
-} from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { NOTICE_CREATE } from 'state/action-types';
-import { subscriptionsFromApi } from '../utils';
-
 import {
 	isSyncingFollows,
 	requestPage,
@@ -31,6 +20,15 @@ import {
 	resetSyncingFollows,
 	updateSeenOnFollow,
 } from '../';
+import { subscriptionsFromApi } from '../utils';
+import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
+import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import {
+	receiveFollows as receiveFollowsAction,
+	follow,
+	syncComplete,
+} from 'state/reader/follows/actions';
 
 const successfulApiResponse = freeze( {
 	number: 2,
@@ -58,7 +56,7 @@ describe( 'get follow subscriptions', () => {
 	} );
 
 	describe( '#syncReaderFollows', () => {
-		it( 'should request first page + set syncing to true', () => {
+		test( 'should request first page + set syncing to true', () => {
 			const action = { type: READER_FOLLOWS_SYNC_START };
 			const dispatch = sinon.spy();
 
@@ -70,7 +68,7 @@ describe( 'get follow subscriptions', () => {
 	} );
 
 	describe( '#requestPage', () => {
-		it( 'should dispatch HTTP request to following/mine endpoint', () => {
+		test( 'should dispatch HTTP request to following/mine endpoint', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
 
@@ -91,7 +89,7 @@ describe( 'get follow subscriptions', () => {
 	} );
 
 	describe( '#receivePageSuccess', () => {
-		it( 'if non-empty subs then should dispatch subs-receive and request next page', () => {
+		test( 'if non-empty subs then should dispatch subs-receive and request next page', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const dispatch = sinon.spy();
@@ -110,7 +108,7 @@ describe( 'get follow subscriptions', () => {
 			);
 		} );
 
-		it( 'should stop the sync process if it hits an empty page', () => {
+		test( 'should stop the sync process if it hits an empty page', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
@@ -151,7 +149,7 @@ describe( 'get follow subscriptions', () => {
 			);
 		} );
 
-		it( 'should catch a feed followed during the sync', () => {
+		test( 'should catch a feed followed during the sync', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = requestPageAction(); // no feeds
 			const ignoredDispatch = noop;
@@ -202,7 +200,7 @@ describe( 'get follow subscriptions', () => {
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const action = requestPageAction();
 			const dispatch = sinon.spy();
 

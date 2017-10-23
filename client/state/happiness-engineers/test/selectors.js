@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,39 +11,36 @@ import assert from 'assert';
 import {
 	isRequestingHappinessEngineers,
 	getHappinessEngineers,
-	hasReceivedHappinessEngineers
+	hasReceivedHappinessEngineers,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingHappinessEngineers()', () => {
-		it( 'should return the value', () => {
-			assert( isRequestingHappinessEngineers( { happinessEngineers: { requesting: false } } ) === false );
-		} );
-	} );
-
-	const getState = () => (
-		{
-			happinessEngineers: {
-				items: [ 'test 1', 'test 2' ]
-			}
-		}
-	);
-
-	describe( 'getHappinessEngineers()', () => {
-		it( 'should return happiness engineers', () => {
-			assert.deepEqual(
-				getHappinessEngineers( getState() ),
-				[ 'test 1', 'test 2' ]
+		test( 'should return the value', () => {
+			assert(
+				isRequestingHappinessEngineers( { happinessEngineers: { requesting: false } } ) === false
 			);
 		} );
 	} );
 
+	const getState = () => ( {
+		happinessEngineers: {
+			items: [ 'test 1', 'test 2' ],
+		},
+	} );
+
+	describe( 'getHappinessEngineers()', () => {
+		test( 'should return happiness engineers', () => {
+			assert.deepEqual( getHappinessEngineers( getState() ), [ 'test 1', 'test 2' ] );
+		} );
+	} );
+
 	describe( 'hasReceivedHappinessEngineers()', () => {
-		it( 'should return true if some state', () => {
+		test( 'should return true if some state', () => {
 			assert( hasReceivedHappinessEngineers( getState() ) === true );
 		} );
 
-		it( 'should return false if null', () => {
+		test( 'should return false if null', () => {
 			assert( hasReceivedHappinessEngineers( { happinessEngineers: { items: null } } ) === false );
 		} );
 	} );

@@ -1,25 +1,26 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import { last } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { last } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
-		list: React.PropTypes.object.isRequired,
-		path: React.PropTypes.string.isRequired,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string,
+		list: PropTypes.object.isRequired,
+		path: PropTypes.string.isRequired,
+		currentListOwner: PropTypes.string,
+		currentListSlug: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -77,9 +78,7 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-listname">
-						{ list.title }
-					</div>
+					<div className="sidebar__menu-item-listname">{ list.title }</div>
 				</a>
 			</li>
 		);

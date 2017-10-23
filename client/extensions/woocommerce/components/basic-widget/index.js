@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,15 +18,10 @@ const BasicWidget = ( { buttonLabel, buttonLink, onButtonClick, children, classN
 	const classes = classNames( { 'basic-widget__container': true }, className );
 	const target = buttonLink && '/' !== buttonLink.substring( 0, 1 ) ? '_blank' : '_self';
 	return (
-		<div className={ classes } >
+		<div className={ classes }>
 			<h2>{ title }</h2>
-			<div className="basic-widget__inner">
-				{ children }
-			</div>
-			<Button
-				onClick={ onButtonClick }
-				href={ buttonLink }
-				target={ target }>
+			<div className="basic-widget__inner">{ children }</div>
+			<Button onClick={ onButtonClick } href={ buttonLink } target={ target }>
 				{ buttonLabel }
 			</Button>
 		</div>
@@ -34,10 +32,7 @@ BasicWidget.propTypes = {
 	buttonLabel: PropTypes.string,
 	buttonLink: PropTypes.string,
 	onButtonClick: PropTypes.func,
-	children: PropTypes.oneOfType( [
-		PropTypes.arrayOf( PropTypes.node ),
-		PropTypes.node
-	] ),
+	children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
 	className: PropTypes.string,
 	title: PropTypes.string,
 };

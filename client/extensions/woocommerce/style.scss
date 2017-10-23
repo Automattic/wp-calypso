@@ -1,25 +1,29 @@
-.woocommerce {
-	flex-grow: 1;
+// Core CSS Dependencies
+@import 'assets/stylesheets/shared/utils';      // utilities that are used by all CSS but don't produce any code
 
+.woocommerce {
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-create/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
 	@import 'app/order/order-details/style';
 	@import 'app/order/order-fulfillment/style';
-	@import 'app/order/order-notes/style';
+	@import 'app/order/order-activity-log/style';
 	@import 'app/order/order-payment/style';
 	@import 'app/orders/style';
 	@import 'app/settings/payments/style';
 	@import 'app/settings/payments/stripe/style';
+	@import 'app/settings/email/mailchimp/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
+	@import 'app/promotions/promotion-form';
+	@import 'app/promotions/promotions-list';
 	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
-	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -38,6 +42,8 @@
 	@import 'components/order-status/style';
 	@import 'components/process-orders-widget/style';
 	@import 'components/product-image-uploader/style';
+	@import 'components/product-reviews-widget/style';
+	@import 'components/product-search/style';
 	@import 'components/reading-widget/style';
 	@import 'components/share-widget/style';
 	@import 'components/sparkline/style';
@@ -82,11 +88,20 @@
 		border: 1px solid lighten( $gray, 20% );
 	}
 
+	@include breakpoint( ">660px" ) {
+		&.store-stats {
+			.stats-navigation .section-nav {
+				margin-top: 0;
+			}
+		}
+	}
 }
 
 .is-section-woocommerce {
 	// overwrite notice styles due to sticky bar
 	.global-notices {
+		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
+
 		@include breakpoint( ">660px" ) {
 			top: 115px;
 		}
@@ -185,36 +200,17 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 4px;
+				margin-top: 0;
 				background: transparent;
 				border: none;
+				padding-top: 11px;
+				padding-bottom: 11px;
+			}
+
+			.gridicons-chevron-left {
+				margin-left: 11px;
+				margin-right: 11px;
 			}
 		}
 	}
-
-	li {
-
-		&.has-selected-child a {
-			font-weight: bold;
-		}
-
-		&.has-selected-child svg {
-			fill: $gray-text-min;
-		}
-
-		&.is-child-item {
-			a {
-				font-size: 12px;
-				padding: 8px 16px 8px 55px;
-			}
-
-			svg {
-				display: none;
-			}
-		}
-	}
-}
-
-.settings-tax.is-child-item {
-	border-bottom: 1px solid lighten( $gray, 20% );
 }

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -10,20 +13,18 @@ import { noop } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate, onClick = noop } ) => {
+export default localize( ( { translate, link, onClick = noop } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="help"
 				title={ translate( 'Get personalized help' ) }
-				description={
-					translate(
-						'Schedule a one-on-one orientation with a Happiness Engineer ' +
+				description={ translate(
+					'Schedule a one-on-one orientation with a Happiness Engineer ' +
 						'to set up your site and learn more about WordPress.com.'
-					)
-				}
+				) }
 				buttonText={ translate( 'Schedule a session' ) }
-				href={ 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' }
+				href={ link }
 				onClick={ onClick }
 			/>
 		</div>

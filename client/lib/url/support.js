@@ -1,3 +1,4 @@
+/** @format */
 const root = 'https://support.wordpress.com';
 
 export default {
@@ -76,5 +77,5 @@ export default {
 	USERS: `${ root }/category/users`,
 	USER_ROLES: `${ root }/user-roles`,
 	VIDEOS: `${ root }/videos`,
-	WPCC: `${ root }/wpcc-faq`
+	WPCC: `${ root }/wpcc-faq`,
 };

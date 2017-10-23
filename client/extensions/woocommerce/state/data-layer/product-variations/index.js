@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isNumber } from 'lodash';
 
 /**
@@ -28,10 +31,8 @@ export function handleProductVariationsRequest( store, action ) {
 	const { siteId, productId, successAction, failureAction } = action;
 
 	const updatedAction = ( dispatch, getState, { data } ) => {
-		data.map( ( variation ) => {
-			return dispatch( productVariationUpdated(
-				siteId, productId, variation, action
-			) );
+		data.map( variation => {
+			return dispatch( productVariationUpdated( siteId, productId, variation, action ) );
 		} );
 
 		const props = { productId, receivedData: data };
@@ -49,10 +50,12 @@ export function handleProductVariationCreate( store, action ) {
 	const { id, ...variationData } = variation;
 
 	if ( isNumber( id ) ) {
-		store.dispatch( setError( siteId, action, {
-			message: 'Attempting to create a variation which already has a valid id.',
-			variation,
-		} ) );
+		store.dispatch(
+			setError( siteId, action, {
+				message: 'Attempting to create a variation which already has a valid id.',
+				variation,
+			} )
+		);
 		return;
 	}
 
@@ -72,10 +75,12 @@ export function handleProductVariationUpdate( store, action ) {
 
 	// Ensure we have a valid id.
 	if ( ! isNumber( variation.id ) ) {
-		store.dispatch( setError( siteId, action, {
-			message: 'Attempting to update a variation without a valid id.',
-			variation,
-		} ) );
+		store.dispatch(
+			setError( siteId, action, {
+				message: 'Attempting to update a variation without a valid id.',
+				variation,
+			} )
+		);
 		return;
 	}
 
@@ -95,10 +100,12 @@ export function handleProductVariationDelete( store, action ) {
 
 	// Ensure we have a valid id.
 	if ( ! isNumber( variationId ) ) {
-		store.dispatch( setError( siteId, action, {
-			message: 'Attempting to delete a variation without a valid id.',
-			variationId,
-		} ) );
+		store.dispatch(
+			setError( siteId, action, {
+				message: 'Attempting to delete a variation without a valid id.',
+				variationId,
+			} )
+		);
 		return;
 	}
 

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,70 +9,57 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-
 import {
 	accountRecoverySettingsFetch,
 	accountRecoverySettingsFetchSuccess,
 	accountRecoverySettingsFetchFailed,
-
 	updateAccountRecoveryPhone,
 	updateAccountRecoveryPhoneSuccess,
 	updateAccountRecoveryPhoneFailed,
-
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryPhoneSuccess,
 	deleteAccountRecoveryPhoneFailed,
-
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryEmailSuccess,
 	updateAccountRecoveryEmailFailed,
-
 	deleteAccountRecoveryEmail,
 	deleteAccountRecoveryEmailSuccess,
 	deleteAccountRecoveryEmailFailed,
-
 	resendAccountRecoveryEmailValidation,
 	resendAccountRecoveryEmailValidationSuccess,
 	resendAccountRecoveryEmailValidationFailed,
-
 	resendAccountRecoveryPhoneValidation,
 	resendAccountRecoveryPhoneValidationSuccess,
 	resendAccountRecoveryPhoneValidationFailed,
-
 	validateAccountRecoveryPhone,
 	validateAccountRecoveryPhoneSuccess,
 	validateAccountRecoveryPhoneFailed,
 } from '../actions';
-
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
+import { generateSuccessAndFailedTestsForThunk } from './utils';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
-import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
-import { generateSuccessAndFailedTestsForThunk } from './utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'account-recovery actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	const errorResponse = { status: 400, message: 'Something wrong!' };
 
@@ -85,21 +74,27 @@ describe( 'account-recovery actions', () => {
 		thunk: () => accountRecoverySettingsFetch()( spy ),
 		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } ) ),
 		postConditionSuccess: () => {
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-				settings: dummyData,
-			} ) );
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+					settings: dummyData,
+				} )
+			);
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-				error: errorResponse,
-			} ) ) );
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
+						error: errorResponse,
+					} )
+				)
+			);
 		},
 	} );
 
 	describe( '#accountRecoverySettingsFetchSuccess()', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
 			const action = accountRecoverySettingsFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -109,7 +104,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#accountRecoverySettingsFetchFailed()', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
 			const action = accountRecoverySettingsFetchFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -136,26 +131,34 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => updateAccountRecoveryPhone( newPhoneValue )( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
-				target: 'phone',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
+					target: 'phone',
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-				target: 'phone',
-				value: newPhoneValue,
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+					target: 'phone',
+					value: newPhoneValue,
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-				target: 'phone',
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+						target: 'phone',
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with the new phone data', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with the new phone data', () => {
 			const phone = dummyData.phone;
 			const action = updateAccountRecoveryPhoneSuccess( phone );
 
@@ -168,7 +171,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED with target: phone', () => {
 			const action = updateAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -189,25 +192,33 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => deleteAccountRecoveryPhone()( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
-				target: 'phone',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
+					target: 'phone',
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-				target: 'phone',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+					target: 'phone',
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-				target: 'phone',
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+						target: 'phone',
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneSuccess();
 
 			assert.deepEqual( action, {
@@ -218,7 +229,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -239,28 +250,36 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => updateAccountRecoveryEmail( dummyNewEmail )( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
-				target: 'email',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
+					target: 'email',
+				} )
+			),
 		postConditionSuccess: () => {
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-				target: 'email',
-				value: dummyNewEmail,
-			} ) );
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+					target: 'email',
+					value: dummyNewEmail,
+				} )
+			);
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-				target: 'email',
-				error: errorResponse,
-			} ) ) );
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+						target: 'email',
+						error: errorResponse,
+					} )
+				)
+			);
 		},
 	} );
 
 	describe( '#updateAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS with target: email', () => {
 			const action = updateAccountRecoveryEmailSuccess( dummyData.email );
 
 			assert.deepEqual( action, {
@@ -272,7 +291,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#updateAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_FAILED with target: email', () => {
 			const action = updateAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -293,25 +312,33 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => deleteAccountRecoveryEmail()( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
-				target: 'email',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
+					target: 'email',
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-				target: 'email',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+					target: 'email',
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-				target: 'email',
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+						target: 'email',
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 
 	describe( '#deleteAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS with target: email', () => {
 			const action = deleteAccountRecoveryEmailSuccess();
 
 			assert.deepEqual( action, {
@@ -322,7 +349,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#deleteAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED with target: email', () => {
 			const action = deleteAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
@@ -334,7 +361,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryEmailValidationSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: email', () => {
 			const action = resendAccountRecoveryEmailValidationSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
@@ -344,7 +371,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryEmailValidationFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: email', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: email', () => {
 			const action = resendAccountRecoveryEmailValidationFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
@@ -364,25 +391,33 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => resendAccountRecoveryEmailValidation()( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-				target: 'email',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+					target: 'email',
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'email',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+					target: 'email',
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-				target: 'email',
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+						target: 'email',
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 
 	describe( '#resendAccountRecoveryPhoneValidationSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: phone', () => {
 			const action = resendAccountRecoveryPhoneValidationSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
@@ -392,7 +427,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#resendAccountRecoveryPhoneValidationFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: phone', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: phone', () => {
 			const action = resendAccountRecoveryPhoneValidationFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
@@ -412,25 +447,33 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => resendAccountRecoveryPhoneValidation()( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-				target: 'phone',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+					target: 'phone',
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'phone',
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+					target: 'phone',
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-				target: 'phone',
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+						target: 'phone',
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 
 	describe( '#validateAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS', () => {
 			const action = validateAccountRecoveryPhoneSuccess();
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
@@ -439,7 +482,7 @@ describe( 'account-recovery actions', () => {
 	} );
 
 	describe( '#validateAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED', () => {
+		test( 'should return ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED', () => {
 			const action = validateAccountRecoveryPhoneFailed( errorResponse );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
@@ -458,17 +501,25 @@ describe( 'account-recovery actions', () => {
 		},
 		thunk: () => validateAccountRecoveryPhone()( spy ),
 		preCondition: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
+				} )
+			),
 		postConditionSuccess: () =>
-			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
-			} ) ),
+			assert(
+				spy.calledWith( {
+					type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+				} )
+			),
 		postConditionFailed: () =>
-			assert( spy.calledWith( sinon.match( {
-				type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
-				error: errorResponse,
-			} ) ) ),
+			assert(
+				spy.calledWith(
+					sinon.match( {
+						type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
+						error: errorResponse,
+					} )
+				)
+			),
 	} );
 } );

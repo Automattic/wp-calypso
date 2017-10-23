@@ -1,19 +1,19 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { requestRecommendedSites, receiveRecommendedSitesResponse, fromApi } from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	requestRecommendedSites as requestRecommendedSitesAction,
 	receiveRecommendedSites,
 } from 'state/reader/recommended-sites/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
 
 const algorithm = 'chicken-recs/es1';
 const seed = 42;
@@ -46,7 +46,7 @@ const response = {
 
 describe( 'recommended sites', () => {
 	describe( '#requestRecommendedSites', () => {
-		it( 'should dispatch an http request and call through next', () => {
+		test( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
 			requestRecommendedSites( { dispatch }, action );
@@ -64,7 +64,7 @@ describe( 'recommended sites', () => {
 	} );
 
 	describe( '#receiveRecommendedSites', () => {
-		it( 'should dispatch action with sites if successful', () => {
+		test( 'should dispatch action with sites if successful', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
 
@@ -80,13 +80,13 @@ describe( 'recommended sites', () => {
 	} );
 
 	describe( '#fromApi', () => {
-		it( 'should convert to empty sites if given bad input', () => {
+		test( 'should convert to empty sites if given bad input', () => {
 			expect( fromApi( null ) ).eql( [] );
 			expect( fromApi( undefined ) ).eql( [] );
 			expect( fromApi( new Error( 'this is an error' ) ) ).eql( [] );
 		} );
 
-		it( 'should extract only what we care about from the api response. and decode entities', () => {
+		test( 'should extract only what we care about from the api response. and decode entities', () => {
 			const expected = [
 				{
 					algorithm,

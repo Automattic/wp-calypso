@@ -1,14 +1,16 @@
 /**
  * Adapted from the WordPress wp-editimage TinyMCE plugin.
+ * 
  *
+ * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
-*/
+ */
 
 /**
  * External dependencies
  */
-const tinymce = require( 'tinymce/tinymce' );
+import tinymce from 'tinymce/tinymce';
 
 function wpEditImage( editor ) {
 	let toolbar, serializer, pasteInCaption;
@@ -16,7 +18,10 @@ function wpEditImage( editor ) {
 		iOS = tinymce.Env.iOS;
 
 	function isPlaceholder( node ) {
-		return !! ( editor.dom.getAttrib( node, 'data-mce-placeholder' ) || editor.dom.getAttrib( node, 'data-mce-object' ) );
+		return !! (
+			editor.dom.getAttrib( node, 'data-mce-placeholder' ) ||
+			editor.dom.getAttrib( node, 'data-mce-object' )
+		);
 	}
 
 	editor.addButton( 'wp_img_remove', {
@@ -24,41 +29,47 @@ function wpEditImage( editor ) {
 		icon: 'dashicon dashicons-trash',
 		onclick: function() {
 			removeImage( editor.selection.getNode() );
+		},
+	} );
+
+	each(
+		{
+			alignleft: 'Align left',
+			aligncenter: 'Align center',
+			alignright: 'Align right',
+			alignnone: 'No alignment',
+		},
+		function( tooltip, name ) {
+			const direction = name.slice( 5 );
+
+			editor.addButton( 'wp_img_' + name, {
+				tooltip: tooltip,
+				icon: 'dashicon dashicons-align-' + direction,
+				cmd:
+					'alignnone' === name
+						? 'wpAlignNone'
+						: 'Justify' + direction.slice( 0, 1 ).toUpperCase() + direction.slice( 1 ),
+				onPostRender: function() {
+					const self = this;
+
+					editor.on( 'NodeChange', function( event ) {
+						// Don't bother.
+						if ( event.element.nodeName !== 'IMG' ) {
+							return;
+						}
+
+						const node = editor.dom.getParent( event.element, '.wp-caption' ) || event.element;
+
+						if ( 'alignnone' === name ) {
+							self.active( ! /\balign(left|center|right)\b/.test( node.className ) );
+						} else {
+							self.active( editor.dom.hasClass( node, name ) );
+						}
+					} );
+				},
+			} );
 		}
-	} );
-
-	each( {
-		alignleft: 'Align left',
-		aligncenter: 'Align center',
-		alignright: 'Align right',
-		alignnone: 'No alignment'
-	}, function( tooltip, name ) {
-		const direction = name.slice( 5 );
-
-		editor.addButton( 'wp_img_' + name, {
-			tooltip: tooltip,
-			icon: 'dashicon dashicons-align-' + direction,
-			cmd: 'alignnone' === name ? 'wpAlignNone' : 'Justify' + direction.slice( 0, 1 ).toUpperCase() + direction.slice( 1 ),
-			onPostRender: function() {
-				const self = this;
-
-				editor.on( 'NodeChange', function( event ) {
-					// Don't bother.
-					if ( event.element.nodeName !== 'IMG' ) {
-						return;
-					}
-
-					const node = editor.dom.getParent( event.element, '.wp-caption' ) || event.element;
-
-					if ( 'alignnone' === name ) {
-						self.active( ! /\balign(left|center|right)\b/.test( node.className ) );
-					} else {
-						self.active( editor.dom.hasClass( node, name ) );
-					}
-				} );
-			}
-		} );
-	} );
+	);
 
 	editor.once( 'preinit', function() {
 		toolbar = editor.wp._createToolbar( [
@@ -71,7 +82,7 @@ function wpEditImage( editor ) {
 			'wp_img_caption', // See plugins/media
 			'wp_img_advanced', // See plugins/media/advanced
 			'wp_img_edit', // See plugins/media
-			'wp_img_remove'
+			'wp_img_remove',
 		] );
 	} );
 
@@ -99,70 +110,89 @@ function wpEditImage( editor ) {
 	}
 
 	function parseShortcode( content ) {
-		return content.replace( /(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g, function( a, b, c ) {
-			let id, align, classes, caption, img, width;
-			const trim = tinymce.trim;
+		return content.replace(
+			/(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g,
+			function( a, b, c ) {
+				let id, align, classes, caption, img, width;
+				const trim = tinymce.trim;
 
-			id = b.match( /id=['"]([^'"]*)['"] ?/ );
-			if ( id ) {
-				b = b.replace( id[ 0 ], '' );
+				id = b.match( /id=['"]([^'"]*)['"] ?/ );
+				if ( id ) {
+					b = b.replace( id[ 0 ], '' );
+				}
+
+				align = b.match( /align=['"]([^'"]*)['"] ?/ );
+				if ( align ) {
+					b = b.replace( align[ 0 ], '' );
+				}
+
+				classes = b.match( /class=['"]([^'"]*)['"] ?/ );
+				if ( classes ) {
+					b = b.replace( classes[ 0 ], '' );
+				}
+
+				width = b.match( /width=['"]([0-9]*)['"] ?/ );
+				if ( width ) {
+					b = b.replace( width[ 0 ], '' );
+				}
+
+				c = trim( c );
+				img = c.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+
+				if ( img && img[ 2 ] ) {
+					caption = trim( img[ 2 ] );
+					img = trim( img[ 1 ] );
+				} else {
+					// old captions shortcode style
+					caption = trim( b )
+						.replace( /caption=['"]/, '' )
+						.replace( /['"]$/, '' );
+					img = c;
+				}
+
+				id = id && id[ 1 ] ? id[ 1 ].replace( /[<>&]+/g, '' ) : '';
+				align = align && align[ 1 ] ? align[ 1 ] : 'alignnone';
+				classes = classes && classes[ 1 ] ? ' ' + classes[ 1 ].replace( /[<>&]+/g, '' ) : '';
+
+				if ( ! width && img ) {
+					width = img.match( /width=['"]([0-9]*)['"]/ );
+				}
+
+				if ( width && width[ 1 ] ) {
+					width = width[ 1 ];
+				}
+
+				if ( ! width || ! caption ) {
+					return c;
+				}
+
+				width = parseInt( width, 10 );
+				if ( ! editor.getParam( 'wpeditimage_html5_captions' ) ) {
+					width += 10;
+				}
+
+				return (
+					'<div class="mceTemp"><dl id="' +
+					id +
+					'" class="wp-caption ' +
+					align +
+					classes +
+					'" style="width: ' +
+					width +
+					'px">' +
+					'<dt class="wp-caption-dt">' +
+					img +
+					'</dt><dd class="wp-caption-dd">' +
+					caption +
+					'</dd></dl></div>'
+				);
 			}
-
-			align = b.match( /align=['"]([^'"]*)['"] ?/ );
-			if ( align ) {
-				b = b.replace( align[ 0 ], '' );
-			}
-
-			classes = b.match( /class=['"]([^'"]*)['"] ?/ );
-			if ( classes ) {
-				b = b.replace( classes[ 0 ], '' );
-			}
-
-			width = b.match( /width=['"]([0-9]*)['"] ?/ );
-			if ( width ) {
-				b = b.replace( width[ 0 ], '' );
-			}
-
-			c = trim( c );
-			img = c.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
-
-			if ( img && img[ 2 ] ) {
-				caption = trim( img[ 2 ] );
-				img = trim( img[ 1 ] );
-			} else {
-				// old captions shortcode style
-				caption = trim( b ).replace( /caption=['"]/, '' ).replace( /['"]$/, '' );
-				img = c;
-			}
-
-			id = ( id && id[ 1 ] ) ? id[ 1 ].replace( /[<>&]+/g, '' ) : '';
-			align = ( align && align[ 1 ] ) ? align[ 1 ] : 'alignnone';
-			classes = ( classes && classes[ 1 ] ) ? ' ' + classes[ 1 ].replace( /[<>&]+/g, '' ) : '';
-
-			if ( ! width && img ) {
-				width = img.match( /width=['"]([0-9]*)['"]/ );
-			}
-
-			if ( width && width[ 1 ] ) {
-				width = width[ 1 ];
-			}
-
-			if ( ! width || ! caption ) {
-				return c;
-			}
-
-			width = parseInt( width, 10 );
-			if ( ! editor.getParam( 'wpeditimage_html5_captions' ) ) {
-				width += 10;
-			}
-
-			return '<div class="mceTemp"><dl id="' + id + '" class="wp-caption ' + align + classes + '" style="width: ' + width + 'px">' +
-				'<dt class="wp-caption-dt">' + img + '</dt><dd class="wp-caption-dd">' + caption + '</dd></dl></div>';
-		} );
+		);
 	}
 
 	function getShortcode( content ) {
-		return content.replace( /<div (?:id="attachment_|class="mceTemp)[^>]*>([\s\S]+?)<\/div>/g,
+		return content.replace(
+			/<div (?:id="attachment_|class="mceTemp)[^>]*>([\s\S]+?)<\/div>/g,
 			function( attachmentWrapperDiv, attachmentContent ) {
 				let out = '';
 
@@ -178,26 +208,30 @@ function wpEditImage( editor ) {
 					return '';
 				}
 
-				out = attachmentContent.replace( /\s*<dl ([^>]+)>\s*<dt [^>]+>([\s\S]+?)<\/dt>\s*<dd [^>]+>([\s\S]*?)<\/dd>\s*<\/dl>\s*/gi,
+				out = attachmentContent.replace(
+					/\s*<dl ([^>]+)>\s*<dt [^>]+>([\s\S]+?)<\/dt>\s*<dd [^>]+>([\s\S]*?)<\/dd>\s*<\/dl>\s*/gi,
 					function( attachmentDl, attachmentDlAttributes, attachmentImageHtml, attachmentCaption ) {
 						let id, classes, width;
 
 						width = attachmentImageHtml.match( /width="([0-9]*)"/ );
-						width = ( width && width[ 1 ] ) ? width[ 1 ] : '';
+						width = width && width[ 1 ] ? width[ 1 ] : '';
 
 						classes = attachmentDlAttributes.match( /class="([^"]*)"/ );
-						classes = ( classes && classes[ 1 ] ) ? classes[ 1 ] : '';
+						classes = classes && classes[ 1 ] ? classes[ 1 ] : '';
 						const align = classes.match( /align[a-z]+/i ) || 'alignnone';
 
 						if ( ! width || ! attachmentCaption ) {
 							if ( 'alignnone' !== align[ 0 ] ) {
-								attachmentImageHtml = attachmentImageHtml.replace( /><img/, ' class="' + align[ 0 ] + '"><img' );
+								attachmentImageHtml = attachmentImageHtml.replace(
+									/><img/,
+									' class="' + align[ 0 ] + '"><img'
+								);
 							}
 							return attachmentImageHtml;
 						}
 
 						id = attachmentDlAttributes.match( /id="([^"]*)"/ );
-						id = ( id && id[ 1 ] ) ? id[ 1 ] : '';
+						id = id && id[ 1 ] ? id[ 1 ] : '';
 
 						classes = classes.replace( /wp-caption ?|align[a-z]+ ?/gi, '' );
 
@@ -205,26 +239,41 @@ function wpEditImage( editor ) {
 							classes = ' class="' + classes + '"';
 						}
 
-						attachmentCaption = attachmentCaption.replace( /\r\n|\r/g, '\n' ).replace( /<[a-zA-Z0-9]+( [^<>]+)?>/g,
-							function( attachmentCaptionWithBreaks ) {
+						attachmentCaption = attachmentCaption
+							.replace( /\r\n|\r/g, '\n' )
+							.replace( /<[a-zA-Z0-9]+( [^<>]+)?>/g, function( attachmentCaptionWithBreaks ) {
 								// no line breaks inside HTML tags
 								return attachmentCaptionWithBreaks.replace( /[\r\n\t]+/, ' ' );
-							}
-						);
+							} );
 
 						// convert remaining line breaks to <br>
 						attachmentCaption = attachmentCaption.replace( /\s*\n\s*/g, '<br />' );
 
-						return '[caption id="' + id + '" align="' + align + '" width="' + width + '"' + classes + ']' +
-								attachmentImageHtml + ' ' + attachmentCaption + '[/caption]';
+						return (
+							'[caption id="' +
+							id +
+							'" align="' +
+							align +
+							'" width="' +
+							width +
+							'"' +
+							classes +
+							']' +
+							attachmentImageHtml +
+							' ' +
+							attachmentCaption +
+							'[/caption]'
+						);
 					}
 				);
 
 				if ( out.indexOf( '[caption' ) === -1 ) {
 					// the caption html seems broken, try to find the image that may be wrapped in a link
 					// and may be followed by <p> with the caption text.
-					out = attachmentContent.replace( /[\s\S]*?((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)(<p>[\s\S]*<\/p>)?[\s\S]*/gi,
-						'<p>$1</p>$2' );
+					out = attachmentContent.replace(
+						/[\s\S]*?((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)(<p>[\s\S]*<\/p>)?[\s\S]*/gi,
+						'<p>$1</p>$2'
+					);
 				}
 
 				return out;
@@ -275,7 +324,9 @@ function wpEditImage( editor ) {
 
 	editor.on( 'init', function() {
 		const dom = editor.dom,
-			captionClass = editor.getParam( 'wpeditimage_html5_captions' ) ? 'html5-captions' : 'html4-captions';
+			captionClass = editor.getParam( 'wpeditimage_html5_captions' )
+				? 'html5-captions'
+				: 'html4-captions';
 
 		dom.addClass( editor.getBody(), captionClass );
 
@@ -292,7 +343,7 @@ function wpEditImage( editor ) {
 				minHeight: 60,
 				multiline: true,
 				scroll: true,
-				label: 'Image caption'
+				label: 'Image caption',
 			};
 
 			event.data.splice( event.data.length - 1, 0, captionField );
@@ -302,7 +353,8 @@ function wpEditImage( editor ) {
 		editor.on( 'wpNewImageRefresh', function( event ) {
 			let parent, captionWidth;
 
-			if ( parent = dom.getParent( event.node, 'dl.wp-caption' ) ) { //eslint-disable-line no-cond-assign
+			if ( ( parent = dom.getParent( event.node, 'dl.wp-caption' ) ) ) {
+				//eslint-disable-line no-cond-assign
 				if ( ! parent.style.width ) {
 					captionWidth = parseInt( event.node.clientWidth, 10 ) + 10;
 					captionWidth = captionWidth ? captionWidth + 'px' : '50%';
@@ -313,7 +365,11 @@ function wpEditImage( editor ) {
 
 		editor.on( 'wpImageFormSubmit', function( event ) {
 			const data = event.imgData.data;
-			let wrap, parent, node, html, imgId,
+			let wrap,
+				parent,
+				node,
+				html,
+				imgId,
 				imgNode = event.imgData.node,
 				caption = event.imgData.caption,
 				captionId = '',
@@ -332,7 +388,8 @@ function wpEditImage( editor ) {
 			if ( ! data.src ) {
 				// Delete the image and the caption
 				if ( imgNode ) {
-					if ( wrap = dom.getParent( imgNode, 'div.mceTemp' ) ) { //eslint-disable-line no-cond-assign
+					if ( ( wrap = dom.getParent( imgNode, 'div.mceTemp' ) ) ) {
+						//eslint-disable-line no-cond-assign
 						dom.remove( wrap );
 					} else if ( imgNode.parentNode.nodeName === 'A' ) {
 						dom.remove( imgNode.parentNode );
@@ -346,10 +403,12 @@ function wpEditImage( editor ) {
 			}
 
 			if ( caption ) {
-				caption = caption.replace( /\r\n|\r/g, '\n' ).replace( /<\/?[a-zA-Z0-9]+( [^<>]+)?>/g, function( a ) {
-					// No line breaks inside HTML tags
-					return a.replace( /[\r\n\t]+/, ' ' );
-				} );
+				caption = caption
+					.replace( /\r\n|\r/g, '\n' )
+					.replace( /<\/?[a-zA-Z0-9]+( [^<>]+)?>/g, function( a ) {
+						// No line breaks inside HTML tags
+						return a.replace( /[\r\n\t]+/, ' ' );
+					} );
 
 				// Convert remaining line breaks to <br>
 				caption = caption.replace( /(<br[^>]*>)\s*\n\s*/g, '$1' ).replace( /\s*\n\s*/g, '<br />' );
@@ -373,8 +432,15 @@ function wpEditImage( editor ) {
 						captionWidth = ' style="width: ' + captionWidth + 'px"';
 					}
 
-					html = '<dl class="wp-caption alignnone"' + captionWidth + '>' +
-						'<dt class="wp-caption-dt">' + html + '</dt><dd class="wp-caption-dd">' + caption + '</dd></dl>';
+					html =
+						'<dl class="wp-caption alignnone"' +
+						captionWidth +
+						'>' +
+						'<dt class="wp-caption-dt">' +
+						html +
+						'</dt><dd class="wp-caption-dd">' +
+						caption +
+						'</dd></dl>';
 
 					if ( node.nodeName === 'P' ) {
 						parent = node;
@@ -383,7 +449,7 @@ function wpEditImage( editor ) {
 					}
 
 					if ( parent && parent.nodeName === 'P' ) {
-						wrap = dom.create( 'div', { 'class': 'mceTemp' }, html );
+						wrap = dom.create( 'div', { class: 'mceTemp' }, html );
 						parent.parentNode.insertBefore( wrap, parent );
 						editor.selection.select( wrap );
 						editor.nodeChanged();
@@ -408,7 +474,8 @@ function wpEditImage( editor ) {
 
 				if ( caption ) {
 					if ( wrap ) {
-						if ( parent = dom.select( 'dd.wp-caption-dd', wrap )[ 0 ] ) { //eslint-disable-line no-cond-assign
+						if ( ( parent = dom.select( 'dd.wp-caption-dd', wrap )[ 0 ] ) ) {
+							//eslint-disable-line no-cond-assign
 							parent.innerHTML = caption;
 						}
 					} else {
@@ -448,18 +515,29 @@ function wpEditImage( editor ) {
 							node = imgNode;
 						}
 
-						html = '<dl ' + captionId + captionAlign + captionWidth + '>' +
-							'<dt class="wp-caption-dt"></dt><dd class="wp-caption-dd">' + caption + '</dd></dl>';
+						html =
+							'<dl ' +
+							captionId +
+							captionAlign +
+							captionWidth +
+							'>' +
+							'<dt class="wp-caption-dt"></dt><dd class="wp-caption-dd">' +
+							caption +
+							'</dd></dl>';
 
-						wrap = dom.create( 'div', { 'class': 'mceTemp' }, html );
+						wrap = dom.create( 'div', { class: 'mceTemp' }, html );
 
-						if ( parent = dom.getParent( node, 'p' ) ) { //eslint-disable-line no-cond-assign
+						if ( ( parent = dom.getParent( node, 'p' ) ) ) {
+							//eslint-disable-line no-cond-assign
 							parent.parentNode.insertBefore( wrap, parent );
 						} else {
 							node.parentNode.insertBefore( wrap, node );
 						}
 
-						editor.$( wrap ).find( 'dt.wp-caption-dt' ).append( node );
+						editor
+							.$( wrap )
+							.find( 'dt.wp-caption-dt' )
+							.append( node );
 
 						if ( parent && dom.isEmpty( parent ) ) {
 							dom.remove( parent );
@@ -491,12 +569,16 @@ function wpEditImage( editor ) {
 			const data = event.imgData.data,
 				imgNode = event.imgData.node;
 
-			if ( parent = dom.getParent( imgNode, 'dl.wp-caption' ) ) { //eslint-disable-line no-cond-assign
+			if ( ( parent = dom.getParent( imgNode, 'dl.wp-caption' ) ) ) {
+				//eslint-disable-line no-cond-assign
 				parent = dom.select( 'dd.wp-caption-dd', parent )[ 0 ];
 
 				if ( parent ) {
-					data.caption = editor.serializer.serialize( parent )
-						.replace( /<br[^>]*>/g, '$&\n' ).replace( /^<p>/, '' ).replace( /<\/p>$/, '' );
+					data.caption = editor.serializer
+						.serialize( parent )
+						.replace( /<br[^>]*>/g, '$&\n' )
+						.replace( /^<p>/, '' )
+						.replace( /<\/p>$/, '' );
 				}
 			}
 		} );
@@ -536,7 +618,8 @@ function wpEditImage( editor ) {
 
 				node.className = node.className.replace( /\bsize-[^ ]+/, '' );
 
-				if ( parent = dom.getParent( node, '.wp-caption' ) ) { //eslint-disable-line no-cond-assign
+				if ( ( parent = dom.getParent( node, '.wp-caption' ) ) ) {
+					//eslint-disable-line no-cond-assign
 					width = event.width || dom.getAttrib( node, 'width' );
 
 					if ( width ) {
@@ -571,8 +654,12 @@ function wpEditImage( editor ) {
 			} );
 			// Trim <br> tags.
 			editor.$( 'br', event.node ).each( function( i, node ) {
-				if ( ! node.nextSibling || node.nextSibling.nodeName === 'BR' ||
-						! node.previousSibling || node.previousSibling.nodeName === 'BR' ) {
+				if (
+					! node.nextSibling ||
+					node.nextSibling.nodeName === 'BR' ||
+					! node.previousSibling ||
+					node.previousSibling.nodeName === 'BR'
+				) {
 					editor.dom.remove( node );
 				}
 			} );
@@ -612,7 +699,12 @@ function wpEditImage( editor ) {
 
 				editor.nodeChanged();
 			}
-		} else if ( cmd === 'JustifyLeft' || cmd === 'JustifyRight' || cmd === 'JustifyCenter' || cmd === 'wpAlignNone' ) {
+		} else if (
+			cmd === 'JustifyLeft' ||
+			cmd === 'JustifyRight' ||
+			cmd === 'JustifyCenter' ||
+			cmd === 'wpAlignNone'
+		) {
 			node = editor.selection.getNode();
 			align = 'align' + cmd.slice( 7 ).toLowerCase();
 			DL = editor.dom.getParent( node, '.wp-caption' );
@@ -629,7 +721,8 @@ function wpEditImage( editor ) {
 				replacement = ' ' + align;
 			}
 
-			node.className = node.className.replace( / ?align(left|center|right|none)/g, '' ) + replacement;
+			node.className =
+				node.className.replace( / ?align(left|center|right|none)/g, '' ) + replacement;
 
 			editor.nodeChanged();
 			event.preventDefault();
@@ -641,7 +734,7 @@ function wpEditImage( editor ) {
 			editor.fire( 'ExecCommand', {
 				command: cmd,
 				ui: event.ui,
-				value: event.value
+				value: event.value,
 			} );
 		}
 	} );
@@ -733,6 +826,6 @@ function wpEditImage( editor ) {
 	editor.wp.isPlaceholder = isPlaceholder;
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpeditimage', wpEditImage );
-};
+}

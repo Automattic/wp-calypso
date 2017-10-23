@@ -1,13 +1,17 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import autosize from 'autosize';
 
 export default class TextareaAutosize extends Component {
 	static propTypes = {
-		className: PropTypes.string
+		className: PropTypes.string,
 	};
 
 	componentDidMount() {
@@ -31,11 +35,6 @@ export default class TextareaAutosize extends Component {
 	render() {
 		const classes = classnames( 'textarea-autosize', this.props.className );
 
-		return (
-			<textarea
-				ref="textarea"
-				{ ...this.props }
-				className={ classes } />
-		);
+		return <textarea ref="textarea" { ...this.props } className={ classes } />;
 	}
 }

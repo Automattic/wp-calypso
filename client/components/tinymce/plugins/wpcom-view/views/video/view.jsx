@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { merge } from 'lodash';
 
@@ -18,27 +22,28 @@ function VideoView( { siteId, content, width } ) {
 		return null;
 	}
 
-	const shortcode = stringify( merge( {
-		attrs: {
-			named: {
-				w: width
-			}
-		}
-	}, parse( content ) ) );
-
-	return (
-		<Shortcode { ...{ siteId, width } }>
-			{ shortcode }
-		</Shortcode>
+	const shortcode = stringify(
+		merge(
+			{
+				attrs: {
+					named: {
+						w: width,
+					},
+				},
+			},
+			parse( content )
+		)
 	);
+
+	return <Shortcode { ...{ siteId, width } }>{ shortcode }</Shortcode>;
 }
 
 VideoView.propTypes = {
 	siteId: PropTypes.number,
 	content: PropTypes.string,
-	width: PropTypes.number
+	width: PropTypes.number,
 };
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state )
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
 } ) )( resizableView( VideoView ) );

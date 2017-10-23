@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  */
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { isDiscoverEnabled } from 'reader/discover/helper';
 
 class FollowingEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -24,27 +23,27 @@ class FollowingEmptyContent extends React.Component {
 	};
 
 	render() {
-		const action = isDiscoverEnabled()
-				? <a
-						className="empty-content__action button is-primary"
-						onClick={ this.recordAction }
-						href="/read/search"
-					>
-						{ this.props.translate( 'Find Sites to Follow' ) }
-					</a>
-				: null,
+		const action = (
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/read/search"
+				>
+					{ this.props.translate( 'Find Sites to Follow' ) }
+				</a>
+			),
 			secondaryAction = null;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<EmptyContent
-				className="is-drake"
+				className="stream__empty"
 				title={ this.props.translate( 'Welcome to Reader' ) }
 				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/drake/drake-all-done.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/reader/reader-welcome-illustration.svg' }
+				illustrationWidth={ 380 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -33,10 +36,7 @@ export class GlobalNotice extends Component {
 	}
 }
 
-export const InfoNotice = connect(
-	null,
-	{
-		displayNotice: infoNotice,
-		removeNotice,
-	}
-)( GlobalNotice );
+export const InfoNotice = connect( null, {
+	displayNotice: infoNotice,
+	removeNotice,
+} )( GlobalNotice );

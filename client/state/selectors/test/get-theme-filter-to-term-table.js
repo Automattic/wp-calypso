@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,11 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterToTermTable } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeFilterToTermTable } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterToTermTable()', () => {
-	it( 'should return a dictionary mapping taxomomy-prefixed terms to unprefixed terms (except for ambiguous terms)', () => {
+	test( 'should return a dictionary mapping taxomomy-prefixed terms to unprefixed terms (except for ambiguous terms)', () => {
 		const table = getThemeFilterToTermTable( state );
 		expect( table ).to.deep.equal( {
 			'subject:artwork': 'artwork',
@@ -23,7 +25,7 @@ describe( 'getThemeFilterToTermTable()', () => {
 			'style:clean': 'clean',
 			'style:minimal': 'minimal',
 			'feature:video': 'feature:video',
-			'feature:wordads': 'wordads'
+			'feature:wordads': 'wordads',
 		} );
 	} );
 } );

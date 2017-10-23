@@ -1,0 +1,75 @@
+.address-step__city-state-postal-code,
+.address-step__company-phone {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+}
+
+.address-step__address-1.form-fieldset {
+	margin-bottom: 8px;
+}
+
+.address-step__city,
+.address-step__state,
+.address-step__postal-code,
+.address-step__company,
+.address-step__phone {
+	width: 100%;
+
+	@include breakpoint( ">960px" ) {
+		margin-left: 24px;
+	}
+}
+
+.address-step__city,
+.address-step__company {
+	margin-left: 0;
+}
+
+.address-step__suggestion-container {
+	display: flex;
+	align-items: flex-start;
+	margin-top: 24px;
+}
+
+.address-step__suggestion-title {
+	font-weight: bold;
+}
+
+.address-step__suggestion {
+	border: 1px solid transparent;
+	border-radius: 4px;
+	padding: 16px;
+	flex-grow: 1;
+	width: 50%;
+	cursor: pointer;
+
+	&:first-child {
+		margin-right: 16px;
+		margin-bottom: 24px;
+	}
+
+	&.is-selected {
+		border-color: $blue-medium;
+	}
+}
+
+.address-step__suggestion-edit {
+	margin-left: 24px;
+}
+
+.address-step__suggestion-summary {
+	margin: 8px 0 8px 24px;
+	font-weight: normal;
+
+	p {
+		margin-bottom: 2px;
+	}
+
+	.highlight {
+		background-color: lighten( $blue-light, 15 );
+	}
+}

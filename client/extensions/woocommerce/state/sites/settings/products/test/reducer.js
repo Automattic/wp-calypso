@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,16 +8,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from 'woocommerce/state/sites/reducer';
-import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
+import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
-	it( 'should mark the settings products tree as "loading"', () => {
+	test( 'should mark the settings products tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
@@ -26,12 +28,9 @@ describe( 'reducer', () => {
 		expect( newSiteData[ siteId ].settings.products ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
-		const settings = [
-			{},
-			{},
-		];
+		const settings = [ {}, {} ];
 		const action = {
 			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 			siteId,
@@ -43,14 +42,14 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].settings.products ).to.deep.equal( settings );
 	} );
 
-	it( 'should store only product data from the action on batch', () => {
+	test( 'should store only product data from the action on batch', () => {
 		const siteId = 123;
 		const emptyState = {
 			123: {
 				settings: {
-					products: []
-				}
-			}
+					products: [],
+				},
+			},
 		};
 		const dimensionsSetting = {
 			group_id: 'products',
@@ -77,10 +76,7 @@ describe( 'reducer', () => {
 			siteId,
 			data: { update: [ dimensionsSetting, weightSetting, citySetting ] },
 		};
-		const updatedSettings = [
-			updatedDimensionsSetting,
-			weightSetting,
-		];
+		const updatedSettings = [ updatedDimensionsSetting, weightSetting ];
 		const updateAction = {
 			type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 			siteId,

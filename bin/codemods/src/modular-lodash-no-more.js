@@ -18,6 +18,9 @@
  * @param api
  * @returns {string}
  */
+
+const config = require( './config' );
+
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 
@@ -40,5 +43,5 @@ export default function transformer( file, api ) {
 				}
 			);
 		} )
-		.toSource( { quote: 'single' } );
+		.toSource( config.recastOptions );
 }

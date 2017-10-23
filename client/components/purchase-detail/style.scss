@@ -1,7 +1,8 @@
 .purchase-detail {
-	border-top: 1px solid lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
 	box-sizing: border-box;
-	color: $gray;
+	color: $gray-text-min;
 	position: relative;
 
 	&:last-child {
@@ -9,15 +10,10 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		border: 1px solid lighten( $gray, 30% );
 		border-radius: 3px;
 		max-width: 700px;
 		margin: 16px auto;
 		text-align: left;
-
-		&:last-child {
-			border: 1px solid lighten( $gray, 30% );
-		}
 
 		.button:not(.clipboard-button) {
 			width: auto;
@@ -85,8 +81,8 @@
 		fill: $alert-yellow;
 		height: 24px;
 		position: relative;
-			right: -26px;
-			top: -3px;
+		right: -26px;
+		top: -3px;
 		width: 24px;
 
 		@include breakpoint( ">660px" ) {
@@ -105,6 +101,27 @@
 	@include breakpoint( "<660px" ) {
 		height: 36px;
 		width: 36px;
+	}
+}
+
+.purchase-detail.custom-icon {
+	.purchase-detail__content {
+		@include breakpoint( ">660px" ) {
+			padding-right: 210px;
+		}
+	}
+
+	.purchase-detail__icon {
+		background: transparent;
+		width: 128px;
+		height: auto;
+		margin-top: 0;
+		padding: 0;
+
+		@include breakpoint( ">660px" ) {
+			width: 150px;
+			transform: translate( 0, -50% );
+		}
 	}
 }
 

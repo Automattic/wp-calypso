@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	SELECTED_SITE_SET,
 	SECTION_SET,
@@ -20,9 +23,9 @@ import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
 import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
-import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
 import themeSetup from './theme-setup/reducers';
+import language from './language/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
 
@@ -50,7 +53,7 @@ export const siteSelectionInitialized = createReducer( false, {
 export function section( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.section !== undefined ) ? action.section : state;
+			return action.section !== undefined ? action.section : state;
 	}
 	return state;
 }
@@ -58,7 +61,7 @@ export function section( state = false, action ) {
 export function hasSidebar( state = true, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.hasSidebar !== undefined ) ? action.hasSidebar : state;
+			return action.hasSidebar !== undefined ? action.hasSidebar : state;
 	}
 	return state;
 }
@@ -66,7 +69,7 @@ export function hasSidebar( state = true, action ) {
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
-			return ( action.isLoading !== undefined ) ? action.isLoading : state;
+			return action.isLoading !== undefined ? action.isLoading : state;
 	}
 	return state;
 }
@@ -106,7 +109,7 @@ const reducer = combineReducers( {
 	olark,
 	preview,
 	actionLog,
-	happychat,
+	language,
 	mediaModal,
 	themeSetup,
 	npsSurveyNotice,

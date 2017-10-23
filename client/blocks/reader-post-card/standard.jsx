@@ -31,9 +31,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>
-								{ post.title }
-							</Emojify>
+							<Emojify>{ post.title }</Emojify>
 						</a>
 					</h1>
 				</AutoDirection>

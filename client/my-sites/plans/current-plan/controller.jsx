@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import page from 'page';
 
@@ -35,5 +38,5 @@ export default {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };

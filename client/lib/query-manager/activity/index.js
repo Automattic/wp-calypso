@@ -29,7 +29,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	compare( query, { activityTs: tsA }, { activityTs: tsB } ) {
+	static compare( query, { activityTs: tsA }, { activityTs: tsB } ) {
 		return Date.parse( tsB ) - Date.parse( tsA );
 	}
 

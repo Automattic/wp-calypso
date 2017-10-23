@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -23,5 +27,5 @@ export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 EditorDrawerLabel.propTypes = {
 	children: PropTypes.node,
 	helpText: PropTypes.string,
-	labelText: PropTypes.string
+	labelText: PropTypes.string,
 };

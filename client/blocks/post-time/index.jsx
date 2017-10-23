@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -20,11 +23,7 @@ function getDisplayedTimeFromPost( moment, post ) {
 	}
 
 	const { status, modified, date } = post;
-	const time = moment(
-		includes( [ 'draft', 'pending' ], status )
-			? modified
-			: date
-	);
+	const time = moment( includes( [ 'draft', 'pending' ], status ) ? modified : date );
 	if ( time.isBefore( moment().subtract( 7, 'days' ) ) ) {
 		// Like "August 30, 2017 4:46 PM" in English locale
 		return time.format( 'LLL' );
@@ -36,24 +35,20 @@ function getDisplayedTimeFromPost( moment, post ) {
 
 export function PostTime( { moment, post } ) {
 	const classes = classNames( 'post-time', {
-		'is-placeholder': ! post
+		'is-placeholder': ! post,
 	} );
 
-	return (
-		<span className={ classes }>
-			{ getDisplayedTimeFromPost( moment, post ) }
-		</span>
-	);
+	return <span className={ classes }>{ getDisplayedTimeFromPost( moment, post ) }</span>;
 }
 
 PostTime.propTypes = {
 	globalId: PropTypes.string,
 	moment: PropTypes.func,
-	post: PropTypes.object
+	post: PropTypes.object,
 };
 
 export default connect( ( state, { globalId } ) => {
 	return {
-		post: getNormalizedPost( state, globalId )
+		post: getNormalizedPost( state, globalId ),
 	};
 } )( localize( PostTime ) );

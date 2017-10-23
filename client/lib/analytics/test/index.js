@@ -1,4 +1,9 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,14 +12,19 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import analytics from '../';
+
+jest.mock( 'config', () => require( './mocks/config' ) );
+jest.mock( 'lib/analytics/ad-tracking', () => ( {
+	retarget: () => {},
+} ) );
+jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
 
 function logImageLoads() {
 	const imagesLoaded = [];
 	let originalImage;
 
-	before( function spyOnImage() {
+	beforeAll( function spyOnImage() {
 		imagesLoaded.length = 0;
 		originalImage = global.Image;
 
@@ -29,45 +39,37 @@ function logImageLoads() {
 			set: function( value ) {
 				this._src = value;
 				imagesLoaded.push( url.parse( value, true, true ) );
-			}
+			},
 		} );
 	} );
 
-	after( function tearDownSpy() {
+	afterAll( function tearDownSpy() {
 		global.Image = originalImage;
 	} );
 
 	return imagesLoaded;
 }
 
-describe( 'Analytics', function() {
-	useFakeDom();
-	useFilesystemMocks( __dirname );
+describe( 'Analytics', () => {
 	const imagesLoaded = logImageLoads();
 
-	// can't require this until the fake DOM is present
-	let analytics;
-	before( () => {
-		analytics = require( '../' );
-	} );
-
-	beforeEach( function() {
+	beforeEach( () => {
 		// this seems really weird. but we need to keep the same array reference, but trim the array
 		imagesLoaded.length = 0;
 	} );
 
-	describe( 'mc', function() {
-		it( 'bumpStat with group and stat', function() {
+	describe( 'mc', () => {
+		test( 'bumpStat with group and stat', () => {
 			analytics.mc.bumpStat( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStat with value object', function() {
+		test( 'bumpStat with value object', () => {
 			analytics.mc.bumpStat( {
 				go: 'time',
-				another: 'one'
+				another: 'one',
 			} );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).to.eql( 'time' );
@@ -75,17 +77,17 @@ describe( 'Analytics', function() {
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStatWithPageView with group and stat', function() {
+		test( 'bumpStatWithPageView with group and stat', () => {
 			analytics.mc.bumpStatWithPageView( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).to.be.ok;
 		} );
 
-		it( 'bumpStatWithPageView with value object', function() {
+		test( 'bumpStatWithPageView with value object', () => {
 			analytics.mc.bumpStatWithPageView( {
 				go: 'time',
-				another: 'one'
+				another: 'one',
 			} );
 			expect( imagesLoaded[ 0 ].query.v ).to.eql( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).to.eql( 'time' );

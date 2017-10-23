@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,17 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer from '../error-reducer';
 import { setError, clearError } from '../actions';
+import reducer from '../error-reducer';
 
 describe( 'reducer', () => {
-	it( 'should start with a null state', () => {
+	test( 'should start with a null state', () => {
 		const state = reducer( undefined, { type: 'DUMMY_ACTION' } );
 
 		expect( state ).to.equal( null );
 	} );
 
-	it( 'should replace a site error state with the last error for that site.', () => {
+	test( 'should replace a site error state with the last error for that site.', () => {
 		const siteId = 123;
 		const dummyAction1 = { type: 'WOOCOMMERCE_DUMMY_ACTION', value: 1 };
 		const dummyAction2 = { type: 'WOOCOMMERCE_DUMMY_ACTION', value: 2 };
@@ -38,7 +40,7 @@ describe( 'reducer', () => {
 		expect( error2.time ).to.equal( time2 );
 	} );
 
-	it( 'should clear a previous error', () => {
+	test( 'should clear a previous error', () => {
 		const siteId = 123;
 		const dummyAction = { type: 'WOOCOMMERCE_DUMMY_ACTION', value: 1 };
 		const httpError = { code: 404, message: 'not found' };

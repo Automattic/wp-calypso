@@ -1,68 +1,60 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import React from 'react';
 import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Emojify from '..';
 
-describe( 'Emojify', function() {
-	useFakeDom();
+describe( 'Emojify', () => {
+	describe( 'component rendering', () => {
+		test( 'wraps a string in a div', () => {
+			const wrapper = shallow( <Emojify>Foo</Emojify> );
+			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
+		} );
 
-	context( 'component rendering', () => {
-		it( 'wraps a string in a div', () => {
+		test( 'wraps a block in a div', () => {
 			const wrapper = shallow(
-				<Emojify>Foo</Emojify>
+				<Emojify>
+					<p>Bar</p>
+				</Emojify>
 			);
 			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
 		} );
 
-		it( 'wraps a block in a div', () => {
-			const wrapper = shallow(
-				<Emojify><p>Bar</p></Emojify>
-			);
-			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
-		} );
-
-		it( 'replaces emoji in a string', () => {
-			global.Image = window.Image;
-
-			const wrapper = mount(
-				<Emojify>🙂</Emojify>
-			);
-
-			delete global.Image;
+		test( 'replaces emoji in a string', () => {
+			const wrapper = mount( <Emojify>🙂</Emojify> );
 
 			expect( wrapper.html() ).to.equal(
 				'<div class="emojify"><img draggable="false" class="emojify__emoji" alt="🙂" ' +
-				'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f642.png"></div>'
+					'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f642.png"></div>'
 			);
 		} );
 
-		it( 'replaces emoji in a block', () => {
-			global.Image = window.Image;
-
+		test( 'replaces emoji in a block', () => {
 			const wrapper = mount(
-				<Emojify><p>🧔🏻</p></Emojify>
+				<Emojify>
+					<p>🧔🏻</p>
+				</Emojify>
 			);
-
-			delete global.Image;
 
 			expect( wrapper.html() ).to.equal(
 				'<div class="emojify"><p><img draggable="false" class="emojify__emoji" alt="🧔🏻" ' +
-				'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f9d4-1f3fb.png"></p></div>'
+					'src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f9d4-1f3fb.png"></p></div>'
 			);
 		} );
 
-		it( 'maintains custom props', () => {
-			const wrapper = shallow(
-				<Emojify alt="bar">השנה היא 2017.</Emojify>
-			);
+		test( 'maintains custom props', () => {
+			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify> );
 			expect( wrapper.node.props.alt ).to.equal( 'bar' );
 		} );
 	} );

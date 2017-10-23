@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
 import { escapeRegExp, findIndex, get, head, includes, last, pick } from 'lodash';
@@ -61,8 +65,8 @@ export class Mentions extends Component {
 		// Update position of popover if cursor has moved to a new line.
 		if ( nextState.showPopover ) {
 			const { top, left } = this.getPosition();
-			const isLineBefore = ( this.top > top ) && ( this.left < left );
-			const isLineAfter = ( this.top < top ) && ( this.left > left );
+			const isLineBefore = this.top > top && this.left < left;
+			const isLineAfter = this.top < top && this.left > left;
 
 			if ( isLineBefore || isLineAfter ) {
 				this.updatePosition( nextState, { top, left } );
@@ -83,7 +87,9 @@ export class Mentions extends Component {
 			query = escapeRegExp( query );
 			const matcher = new RegExp( `^${ query }|\\s${ query }`, 'ig' ); // Start of string or preceded by a space.
 
-			suggestions = suggestions.filter( ( { user_login: login, display_name: name } ) => matcher.test( `${ login } ${ name }` ) );
+			suggestions = suggestions.filter( ( { user_login: login, display_name: name } ) =>
+				matcher.test( `${ login } ${ name }` )
+			);
 		}
 
 		return suggestions.slice( 0, 10 );
@@ -99,14 +105,19 @@ export class Mentions extends Component {
 		mentionRange.setEnd( range.endContainer, range.endOffset );
 
 		const rectList = mentionRange.getClientRects();
-		const position = rectList.length > 0 ? last( rectList ) : tinymce.$( editor.selection.getNode() ).offset();
+		const position =
+			rectList.length > 0 ? last( rectList ) : tinymce.$( editor.selection.getNode() ).offset();
 
 		return pick( position, [ 'left', 'top' ] );
 	}
 
 	updatePosition( state, { left, top } = this.getPosition( state ) ) {
 		const { editor, node } = this.props;
-		const mceToolbarOffsetHeight = get( tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ], 'offsetHeight', 0 );
+		const mceToolbarOffsetHeight = get(
+			tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ],
+			'offsetHeight',
+			0
+		);
 		const range = editor.selection.getRng();
 		const rectList = range.getClientRects();
 		let height;
@@ -128,7 +139,7 @@ export class Mentions extends Component {
 	getQueryText() {
 		// (?:^|\\s) means start of input or whitespace
 		// ([A-Za-z0-9_\+\-]*) means 0 or more instances of: A-Z a-z 0-9 _ + -
-		const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_\+\-]*)$', 'gi' );
+		const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_+-]*)$', 'gi' );
 		const range = this.props.editor.selection.getRng();
 		const textBeforeCaret = range.startContainer.textContent.slice( 0, range.startOffset );
 		const match = matcher.exec( textBeforeCaret );
@@ -141,7 +152,10 @@ export class Mentions extends Component {
 			return 0;
 		}
 
-		return findIndex( this.matchingSuggestions, ( { ID: id } ) => id === this.state.selectedSuggestionId );
+		return findIndex(
+			this.matchingSuggestions,
+			( { ID: id } ) => id === this.state.selectedSuggestionId
+		);
 	}
 
 	getSuggestion() {
@@ -161,12 +175,17 @@ export class Mentions extends Component {
 		const mentionRange = document.createRange();
 
 		// Set a range for the user-entered mention.
-		mentionRange.setStart( range.startContainer, Math.max( range.startOffset - ( this.state.query.length + 1 ), 0 ) );
+		mentionRange.setStart(
+			range.startContainer,
+			Math.max( range.startOffset - ( this.state.query.length + 1 ), 0 )
+		);
 		mentionRange.setEnd( range.endContainer, range.endOffset );
 		selection.setRng( mentionRange );
 
 		// Replace user-entered mention with full username.
-		selection.setContent( selection.getContent().replace( /@\S*/, ReactDomServer.renderToStaticMarkup( markup ) ) );
+		selection.setContent(
+			selection.getContent().replace( /@\S*/, ReactDomServer.renderToStaticMarkup( markup ) )
+		);
 
 		this.props.editor.getBody().focus();
 	};
@@ -228,7 +247,7 @@ export class Mentions extends Component {
 		} );
 	};
 
-	setPopoverContext = ( popoverContext ) => popoverContext && this.setState( { popoverContext } );
+	setPopoverContext = popoverContext => popoverContext && this.setState( { popoverContext } );
 
 	hidePopover = () => this.setState( { showPopover: false } );
 
@@ -237,20 +256,23 @@ export class Mentions extends Component {
 		const { query, showPopover, popoverContext } = this.state;
 
 		this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
-		const selectedSuggestionId = this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
+		const selectedSuggestionId =
+			this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
 
 		return (
 			<div ref={ this.setPopoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
-				{ this.matchingSuggestions.length > 0 && showPopover &&
+				{ this.matchingSuggestions.length > 0 &&
+				showPopover && (
 					<SuggestionList
 						query={ query }
 						suggestions={ this.matchingSuggestions }
 						selectedSuggestionId={ selectedSuggestionId }
 						popoverContext={ popoverContext }
 						onClick={ this.insertSuggestion }
-						onClose={ this.hidePopover } />
-				}
+						onClose={ this.hidePopover }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -267,13 +289,11 @@ Mentions.defaultProps = {
 	suggestions: [],
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			suggestions: getUserSuggestions( state, siteId ),
-		};
-	},
-)( Mentions );
+	return {
+		siteId,
+		suggestions: getUserSuggestions( state, siteId ),
+	};
+} )( Mentions );

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -28,28 +30,19 @@ class JetpackPlansGrid extends Component {
 	};
 
 	renderConnectHeader() {
-		const {
-			isLanding,
-			showFirst,
-			translate,
-		} = this.props;
+		const { isLanding, showFirst, translate } = this.props;
 
 		let headerText = translate( 'Your site is now connected!' );
-		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
+		let subheaderText = translate( "Now pick a plan that's right for you." );
 
 		if ( showFirst ) {
 			headerText = translate( 'You are moments away from connecting your site' );
 		}
 		if ( isLanding ) {
-			headerText = translate( 'Pick a plan that\'s right for you.' );
+			headerText = translate( "Pick a plan that's right for you." );
 			subheaderText = '';
 		}
-		return (
-			<FormattedHeader
-				headerText={ headerText }
-				subHeaderText={ subheaderText }
-			/>
-		);
+		return <FormattedHeader headerText={ headerText } subHeaderText={ subheaderText } />;
 	}
 
 	render() {

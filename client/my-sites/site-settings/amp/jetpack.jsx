@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -12,7 +15,7 @@ import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { addQueryArgs } from 'lib/url';
-import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
+import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
 
@@ -22,7 +25,7 @@ const AmpJetpack = ( {
 	requestingPlugins,
 	siteId,
 	siteSlug,
-	translate
+	translate,
 } ) => {
 	let linkUrl, linkText;
 	if ( ampPluginInstalled && ampPluginInstalled.active ) {
@@ -47,36 +50,32 @@ const AmpJetpack = ( {
 				<p>
 					{ translate(
 						'AMP enables the creation of websites and ads that load near instantly, ' +
-						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
+							'giving site visitors a smooth, more engaging experience on mobile and desktop.'
 					) }
 				</p>
 			</CompactCard>
 
-			{
-				! requestingPlugins &&
-				<CompactCard href={ linkUrl }>
-					{ linkText }
-				</CompactCard>
-			}
+			{ ! requestingPlugins && <CompactCard href={ linkUrl }>{ linkText }</CompactCard> }
 		</div>
 	);
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const customizerUrl = getCustomizerUrl( state, siteId );
-		const customizerAmpPanelUrl = addQueryArgs( {
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const customizerUrl = getCustomizerUrl( state, siteId );
+	const customizerAmpPanelUrl = addQueryArgs(
+		{
 			'autofocus[panel]': 'amp_panel',
 			customize_amp: 1,
-		}, customizerUrl );
+		},
+		customizerUrl
+	);
 
-		return {
-			siteId,
-			ampPluginInstalled: getPluginOnSite( state, siteId, 'amp' ),
-			customizerAmpPanelUrl,
-			requestingPlugins: isRequesting( state, siteId ),
-			siteSlug: getSiteSlug( state, siteId ),
-		};
-	}
-)( localize( AmpJetpack ) );
+	return {
+		siteId,
+		ampPluginInstalled: getPluginOnSite( state, siteId, 'amp' ),
+		customizerAmpPanelUrl,
+		requestingPlugins: isRequesting( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} )( localize( AmpJetpack ) );

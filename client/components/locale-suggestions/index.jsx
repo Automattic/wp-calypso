@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -8,14 +11,20 @@ import { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addLocaleToPath } from 'lib/i18n-utils';
-import LocaleSuggestionListItem from './list-item';
+import LocaleSuggestionsListItem from './list-item';
 import LocaleSuggestionStore from 'lib/locale-suggestions';
 import Notice from 'components/notice';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 
 class LocaleSuggestions extends Component {
+	static propTypes = {
+		locale: PropTypes.string.isRequired,
+		path: PropTypes.string.isRequired,
+	};
+
 	constructor( props ) {
 		super( props );
+
 		this.state = {
 			dismissed: false,
 			locales: LocaleSuggestionStore.get(),
@@ -69,9 +78,10 @@ class LocaleSuggestions extends Component {
 
 		const localeMarkup = usersOtherLocales.map( locale => {
 			return (
-				<LocaleSuggestionListItem
+				<LocaleSuggestionsListItem
 					key={ 'locale-' + locale.locale }
 					locale={ locale }
+					onLocaleSuggestionClick={ this.dismiss }
 					path={ this.getPathWithLocale( locale.locale ) }
 				/>
 			);
@@ -80,7 +90,9 @@ class LocaleSuggestions extends Component {
 		return (
 			<div className="locale-suggestions">
 				<Notice icon="globe" showDismiss={ true } onDismissClick={ this.dismiss }>
-					<div className="locale-suggestions__list">{ localeMarkup }</div>
+					<div className="locale-suggestions__list">
+						{ localeMarkup }
+					</div>
 				</Notice>
 			</div>
 		);

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,16 +9,14 @@ import { get, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
+import reducer, { items } from '../reducer';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 } from 'state/action-types';
-import reducer, {
-	items,
-} from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
 			'isRequestingContactDetailsCache',
@@ -26,24 +26,24 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state._contactDetailsCache ).to.be.empty;
 		} );
 
-		describe( 'Receive extra', function() {
-			it( 'should overwrite previous data', function() {
+		describe( 'Receive extra', () => {
+			test( 'should overwrite previous data', () => {
 				const preexistingData = {
 					firstName: 'Cronus',
-					organization: 'titans'
+					organization: 'titans',
 				};
 
 				const newData = {
 					firstName: 'Zeus',
 					extra: {
-						registrantType: 'individual'
-					}
+						registrantType: 'individual',
+					},
 				};
 
 				const state = items( preexistingData, {
@@ -54,64 +54,71 @@ describe( 'reducer', () => {
 				expect( state ).to.have.property( '_contactDetailsCache', newData );
 			} );
 
-			it( "should ignore an extra if it's an array", function() {
-				const state = items( {}, {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-					data: { firstName: 'New', extra: [ '' ] }
-				} );
+			test( "should ignore an extra if it's an array", () => {
+				const state = items(
+					{},
+					{
+						type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
+						data: { firstName: 'New', extra: [ '' ] },
+					}
+				);
 
-				expect( get( state, [ '_contactDetailsCache', 'extra' ] ) )
-					.to.not.be.an( 'array' );
+				expect( get( state, [ '_contactDetailsCache', 'extra' ] ) ).to.not.be.an( 'array' );
 			} );
 
-			it( 'should take other fields if extra is corrupt', function() {
+			test( 'should take other fields if extra is corrupt', () => {
 				const preexistingData = { firstName: 'Hera' };
 				const state = items( preexistingData, {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-					data: { firstName: 'New', extra: [ '' ] }
+					data: { firstName: 'New', extra: [ '' ] },
 				} );
 
-				expect( state._contactDetailsCache )
-					.to.have.property( 'firstName', 'New' );
+				expect( state._contactDetailsCache ).to.have.property( 'firstName', 'New' );
 			} );
 		} );
 
-		describe( 'Update extra', function() {
-			it( 'should add new values', () => {
+		describe( 'Update extra', () => {
+			test( 'should add new values', () => {
 				const newData = {
 					extra: {
-						testAdd: 'testAddValue'
-					}
+						testAdd: 'testAddValue',
+					},
 				};
 
-				const state = items( {}, {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-					data: newData
-				} );
+				const state = items(
+					{},
+					{
+						type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+						data: newData,
+					}
+				);
 
 				expect( state._contactDetailsCache ).to.eql( newData );
 			} );
 
-			it( 'should preserve existing values', () => {
+			test( 'should preserve existing values', () => {
 				const firstData = {
 					extra: {
 						testPreserve: "I'm still here",
-					}
+					},
 				};
 				const secondData = {
 					extra: {
 						additionalField: 'second',
-					}
+					},
 				};
 
-				const intermediateState = items( {}, {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-					data: firstData
-				} );
+				const intermediateState = items(
+					{},
+					{
+						type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+						data: firstData,
+					}
+				);
 
 				const finalState = items( intermediateState, {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-					data: secondData
+					data: secondData,
 				} );
 
 				expect( finalState._contactDetailsCache ).to.have.deep.property(
@@ -120,7 +127,7 @@ describe( 'reducer', () => {
 				);
 			} );
 
-			it( 'should update existing values', () => {
+			test( 'should update existing values', () => {
 				const firstData = {
 					extra: {
 						testUpdate: 'old',
@@ -132,23 +139,26 @@ describe( 'reducer', () => {
 					},
 				};
 
-				const intermediateState = items( {}, {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-					data: firstData
-				} );
+				const intermediateState = items(
+					{},
+					{
+						type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+						data: firstData,
+					}
+				);
 
 				const finalState = items( intermediateState, {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-					data: secondData
+					data: secondData,
 				} );
 
 				expect( finalState._contactDetailsCache ).to.have.deep.property(
 					'extra.testUpdate',
-					'new',
+					'new'
 				);
 			} );
 
-			it( 'should handle corrupt values', () => {
+			test( 'should handle corrupt values', () => {
 				const initialState = {};
 
 				const dataSequence = [
@@ -162,30 +172,31 @@ describe( 'reducer', () => {
 					( intermediateState, data ) =>
 						items( intermediateState, {
 							type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-							data: { extra: data }
+							data: { extra: data },
 						} ),
 					initialState
 				);
 
-				expect( state._contactDetailsCache ).to.have.property( 'extra' )
+				expect( state._contactDetailsCache )
+					.to.have.property( 'extra' )
 					.that.is.an( 'object' )
 					.with.all.keys( {
 						before: "I'm still standing",
-						after: 'better than I ever did'
+						after: 'better than I ever did',
 					} );
 			} );
 
-			it( 'should replace an existing corrupt value', () => {
+			test( 'should replace an existing corrupt value', () => {
 				const corruptExistingData = {
 					_contactDetailsCache: {
 						extra: [ '' ],
-					}
+					},
 				};
 
 				const newData = {
 					extra: {
 						newData: 'exists',
-					}
+					},
 				};
 
 				const result = items( corruptExistingData, {
@@ -197,10 +208,7 @@ describe( 'reducer', () => {
 					.to.have.property( 'extra' )
 					.that.is.not.an( 'array' );
 
-				expect( result._contactDetailsCache ).to.have.deep.property(
-					'extra.newData',
-					'exists'
-				);
+				expect( result._contactDetailsCache ).to.have.deep.property( 'extra.newData', 'exists' );
 			} );
 		} );
 	} );

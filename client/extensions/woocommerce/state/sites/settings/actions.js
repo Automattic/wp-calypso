@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
@@ -110,11 +113,12 @@ export const doInitialSetup = (
 			group_id: 'general',
 			id: 'woocommerce_calc_taxes',
 			value: 'yes',
-		}
+		},
 	];
 
-	return request( siteId ).post( 'settings/batch', { update } )
-		.then( ( data ) => {
+	return request( siteId )
+		.post( 'settings/batch', { update } )
+		.then( data => {
 			dispatch( doInitialSetupSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
@@ -189,8 +193,9 @@ export const setAddress = (
 		},
 	];
 
-	return request( siteId ).post( 'settings/batch', { update } )
-		.then( ( data ) => {
+	return request( siteId )
+		.post( 'settings/batch', { update } )
+		.then( data => {
 			dispatch( setAddressSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );

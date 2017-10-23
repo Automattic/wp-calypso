@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,8 +14,8 @@ import FormSelect from 'components/forms/form-select';
 
 class FollowingManageSortControls extends React.Component {
 	static propTypes = {
-		onSortChange: React.PropTypes.func,
-		sortOrder: React.PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		onSortChange: PropTypes.func,
+		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 	};
 
 	static defaultProps = {
@@ -35,12 +36,8 @@ class FollowingManageSortControls extends React.Component {
 				onChange={ this.handleSelectChange }
 				value={ sortOrder }
 			>
-				<option value="date-followed">
-					{ this.props.translate( 'Sort by date followed' ) }
-				</option>
-				<option value="alpha">
-					{ this.props.translate( 'Sort by site name' ) }
-				</option>
+				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
+				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
 			</FormSelect>
 		);
 	}

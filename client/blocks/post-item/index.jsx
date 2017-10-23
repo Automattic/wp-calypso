@@ -1,12 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,10 +18,15 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
-import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
-import { hideSharePanel } from 'state/ui/post-type-list/actions';
+import { areAllSitesSingleUser } from 'state/selectors';
+import {
+	isSharePanelOpen,
+	isMultiSelectEnabled,
+	isPostSelected,
+} from 'state/ui/post-type-list/selectors';
+import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import Card from 'components/card';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
@@ -29,96 +36,14 @@ import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
-	static defaultProps = {
-		onHeightChange: noop,
-	};
-
-	constructor() {
-		super( ...arguments );
-
-		this.node = null;
-		this.nodeHeight = 0;
-		this.hasVariableHeightContent = false;
-	}
-
-	componentDidMount() {
-		this.manageMutationObserver();
-		if ( this.props.wrapTitle ) {
-			// Wait for repaint, which may include wrapping the title onto
-			// multiple lines, then update height if needed
-			// `requestAnimationFrame` is not enough here...
-			window.setTimeout( this.handleHeightChange );
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		this.manageMutationObserver();
-		if ( this.props.windowWidth !== prevProps.windowWidth ) {
-			this.handleHeightChange();
-		}
-	}
-
-	componentWillUnmount() {
-		this.disconnectMutationObserver();
-	}
-
-	setDomNode = node => {
-		this.node = node;
-	}
-
-	manageMutationObserver() {
-		if ( this.hasVariableHeightContent && ! this.observer ) {
-			// Post item has expanded content but didn't previously (or is
-			// newly mounted with expanded content).  Watch for further height
-			// changes and update current height.
-			this.connectMutationObserver();
-			this.handleHeightChange();
-		} else if ( ! this.hasVariableHeightContent && this.observer ) {
-			// Post item had expanded content previously but not any more.
-			// Stop watching for height changes and update current height.
-			this.disconnectMutationObserver();
-			this.handleHeightChange();
-		}
-	}
-
-	connectMutationObserver() {
-		if ( this.observer || ! this.node ) {
-			return;
-		}
-		this.observer = new window.MutationObserver( this.handleHeightChange );
-		this.observer.observe( this.node, {
-			childList: true,
-			subtree: true,
-		} );
-	}
-
-	disconnectMutationObserver() {
-		if ( ! this.observer ) {
-			return;
-		}
-		this.observer.disconnect();
-		delete this.observer;
-	}
-
-	handleHeightChange = () => {
-		if ( ! this.node ) {
-			return;
-		}
-
-		const style = window.getComputedStyle( this.node );
-		const nodeHeight = this.node.clientHeight +
-			parseInt( style.marginTop, 10 ) +
-			parseInt( style.marginBottom, 10 );
-
-		if ( nodeHeight && nodeHeight !== this.nodeHeight ) {
-			this.nodeHeight = nodeHeight;
-			this.props.onHeightChange( { nodeHeight, globalId: this.props.globalId } );
-		}
-	}
-
 	hideCurrentSharePanel = () => {
 		this.props.hideSharePanel( this.props.globalId );
-	}
+	};
+
+	toggleCurrentPostSelection = event => {
+		this.props.togglePostSelection( this.props.globalId );
+		event.stopPropagation();
+	};
 
 	inAllSitesModeWithMultipleUsers() {
 		return (
@@ -137,17 +62,25 @@ class PostItem extends React.Component {
 	}
 
 	hasMultipleUsers() {
+		return this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers();
+	}
+
+	renderSelectionCheckbox() {
+		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
-			this.inAllSitesModeWithMultipleUsers() ||
-			this.inSingleSiteModeWithMultipleUsers()
+			multiSelectEnabled && (
+				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
+					<FormInputCheckbox
+						checked={ isCurrentPostSelected }
+						onClick={ this.toggleCurrentPostSelection }
+					/>
+				</div>
+			)
 		);
 	}
 
 	renderVariableHeightContent() {
-		const {
-			post,
-			isCurrentSharePanelOpen,
-		} = this.props;
+		const { post, isCurrentSharePanelOpen } = this.props;
 
 		if ( ! post || ! isCurrentSharePanelOpen ) {
 			return null;
@@ -186,17 +119,14 @@ class PostItem extends React.Component {
 			'has-wrapped-title': wrapTitle,
 		} );
 
-		const isSiteInfoVisible = (
-			isEnabled( 'posts/post-type-list' ) &&
-			isAllSitesModeSelected
-		);
+		const isSiteInfoVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 
-		const isAuthorVisible = (
+		const isAuthorVisible =
 			isEnabled( 'posts/post-type-list' ) &&
 			this.hasMultipleUsers() &&
 			! compact &&
-			post && post.author
-		);
+			post &&
+			post.author;
 
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
@@ -206,11 +136,9 @@ class PostItem extends React.Component {
 		} );
 
 		return (
-			<div
-				className={ rootClasses }
-				ref={ this.setDomNode }
-			>
+			<div className={ rootClasses } ref={ this.setDomNode }>
 				<Card compact className={ cardClasses }>
+					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
 							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
@@ -246,30 +174,34 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	onHeightChange: PropTypes.func,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
 	largeTitle: PropTypes.bool,
 	wrapTitle: PropTypes.bool,
-	windowWidth: PropTypes.number,
 };
 
-export default connect( ( state, { globalId } ) => {
-	const post = getNormalizedPost( state, globalId );
-	if ( ! post ) {
-		return {};
+export default connect(
+	( state, { globalId } ) => {
+		const post = getNormalizedPost( state, globalId );
+		if ( ! post ) {
+			return {};
+		}
+
+		const siteId = post.site_ID;
+
+		return {
+			post,
+			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
+			allSitesSingleUser: areAllSitesSingleUser( state ),
+			singleUserSite: isSingleUserSite( state, siteId ),
+			editUrl: getEditorPath( state, siteId, post.ID ),
+			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
+			isCurrentPostSelected: isPostSelected( state, globalId ),
+			multiSelectEnabled: isMultiSelectEnabled( state ),
+		};
+	},
+	{
+		hideSharePanel,
+		togglePostSelection,
 	}
-
-	const siteId = post.site_ID;
-
-	return {
-		post,
-		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
-		allSitesSingleUser: areAllSitesSingleUser( state ),
-		singleUserSite: isSingleUserSite( state, siteId ),
-		editUrl: getEditorPath( state, siteId, post.ID ),
-		isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
-	};
-}, {
-	hideSharePanel,
-} )( localize( PostItem ) );
+)( localize( PostItem ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,25 +8,22 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import * as analytics from 'state/analytics/actions';
+import { askQuestion, initialize } from '..';
 import * as directly from 'lib/directly';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
-import {
-	askQuestion,
-	initialize,
-} from '..';
+import * as analytics from 'state/analytics/actions';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'Directly data layer', () => {
 	let store;
 	let simulateInitializationSuccess;
 	let simulateInitializationError;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		store = {
 			dispatch: sandbox.spy(),
 		};
@@ -56,58 +55,77 @@ describe( 'Directly data layer', () => {
 			directly.askQuestion.returns( Promise.resolve() );
 		} );
 
-		it( 'should invoke the corresponding Directly function', () => {
+		test( 'should invoke the corresponding Directly function', () => {
 			askQuestion( store, action );
 			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
 		} );
 
-		it( 'should dispatch an analytics event', () => (
-			askQuestion( store, action )
-				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_ask_question' ) )
-		) );
+		test( 'should dispatch an analytics event', () =>
+			askQuestion( store, action ).then( () =>
+				expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+					'calypso_directly_ask_question'
+				)
+			) );
 	} );
 
 	describe( '#initialize', () => {
-		it( 'should invoke the corresponding Directly function', () => {
+		test( 'should invoke the corresponding Directly function', () => {
 			initialize( store );
 			expect( directly.initialize ).to.have.been.calledOnce;
 		} );
 
-		it( 'should dispatch an analytics event once initialization starts', () => {
+		test( 'should dispatch an analytics event once initialization starts', () => {
 			initialize( store );
-			expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_initialization_start' );
+			expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+				'calypso_directly_initialization_start'
+			);
 		} );
 
-		it( 'should dispatch a success action if initialization completes', ( done ) => {
+		test( 'should dispatch a success action if initialization completes', done => {
 			initialize( store )
-				.then( () => expect( store.dispatch ).to.have.been.calledWithMatch( { type: DIRECTLY_INITIALIZATION_SUCCESS } ) )
+				.then( () =>
+					expect( store.dispatch ).to.have.been.calledWithMatch( {
+						type: DIRECTLY_INITIALIZATION_SUCCESS,
+					} )
+				)
 				.then( () => done() );
 
 			simulateInitializationSuccess();
 		} );
 
-		it( 'should dispatch an analytics event if initialization completes', ( done ) => {
+		test( 'should dispatch an analytics event if initialization completes', done => {
 			initialize( store )
-				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_initialization_success' ) )
+				.then( () =>
+					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+						'calypso_directly_initialization_success'
+					)
+				)
 				.then( () => done() );
 
 			simulateInitializationSuccess();
 		} );
 
-		it( 'should dispatch an error action if initialization fails', ( done ) => {
+		test( 'should dispatch an error action if initialization fails', done => {
 			initialize( store )
-				.then( () => expect( store.dispatch ).to.have.been.calledWithMatch( { type: DIRECTLY_INITIALIZATION_ERROR } ) )
+				.then( () =>
+					expect( store.dispatch ).to.have.been.calledWithMatch( {
+						type: DIRECTLY_INITIALIZATION_ERROR,
+					} )
+				)
 				.then( () => done() );
 
 			simulateInitializationError();
 		} );
 
-		it( 'should dispatch an analytics event if initialization fails', ( done ) => {
+		test( 'should dispatch an analytics event if initialization fails', done => {
 			initialize( store )
-				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith(
-					'calypso_directly_initialization_error',
-					{ error: 'Error: Something went wrong' }
-				) )
+				.then( () =>
+					expect(
+						analytics.recordTracksEvent
+					).to.have.been.calledWith( 'calypso_directly_initialization_error', {
+						error: 'Error: Something went wrong',
+					} )
+				)
 				.then( () => done() );
 
 			simulateInitializationError( new Error( 'Something went wrong' ) );

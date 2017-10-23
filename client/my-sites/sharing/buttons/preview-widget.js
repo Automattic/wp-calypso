@@ -1,12 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var qs = require( 'querystring' ),
-	i18n = require( 'i18n-calypso' );
+
+import qs from 'querystring';
+import i18n from 'i18n-calypso';
 
 var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
-module.exports = {
+export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
 		var numberOfCustomButtons = 0,
 			query = {};
@@ -33,5 +36,5 @@ module.exports = {
 		}
 
 		return baseUrl + '?' + qs.stringify( query );
-	}
+	},
 };

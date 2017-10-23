@@ -1,38 +1,36 @@
+/** @format */
 /**
  * External dependencies
  */
-import { match } from 'sinon';
 import { expect } from 'chai';
+import { match } from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveGeo, requestGeo } from '../actions';
 import {
 	GEO_RECEIVE,
 	GEO_REQUEST,
 	GEO_REQUEST_SUCCESS,
-	GEO_REQUEST_FAILURE
+	GEO_REQUEST_FAILURE,
 } from 'state/action-types';
-import {
-	receiveGeo,
-	requestGeo
-} from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveGeo()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveGeo( {
 				latitude: '39.36006',
 				longitude: '-84.30994',
 				country_short: 'US',
 				country_long: 'United States',
 				region: 'Ohio',
-				city: 'Mason'
+				city: 'Mason',
 			} );
 
 			expect( action ).to.eql( {
@@ -43,23 +41,23 @@ describe( 'actions', () => {
 					country_short: 'US',
 					country_long: 'United States',
 					region: 'Ohio',
-					city: 'Mason'
-				}
+					city: 'Mason',
+				},
 			} );
 		} );
 	} );
 
 	describe( 'requestGeo()', () => {
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestGeo()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: GEO_REQUEST
+				type: GEO_REQUEST,
 			} );
 		} );
 
-		context( 'success', () => {
-			useNock( ( nock ) => {
+		describe( 'success', () => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/geo/' )
@@ -69,11 +67,11 @@ describe( 'actions', () => {
 						country_short: 'US',
 						country_long: 'United States',
 						region: 'Ohio',
-						city: 'Mason'
+						city: 'Mason',
 					} );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith(
 						receiveGeo( {
@@ -82,13 +80,13 @@ describe( 'actions', () => {
 							country_short: 'US',
 							country_long: 'United States',
 							region: 'Ohio',
-							city: 'Mason'
+							city: 'Mason',
 						} )
 					);
 				} );
 			} );
 
-			it( 'should dispatch request success action when request completes', () => {
+			test( 'should dispatch request success action when request completes', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: GEO_REQUEST_SUCCESS,
@@ -97,19 +95,19 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'failure', () => {
-			useNock( ( nock ) => {
+		describe( 'failure', () => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/geo/' )
 					.reply( 500 );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestGeo()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: GEO_REQUEST_FAILURE,
-						error: match( { message: 'Internal Server Error' } )
+						error: match( { message: 'Internal Server Error' } ),
 					} );
 				} );
 			} );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,28 +8,21 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-
+import reducer from '../reducer';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
-
-import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
-
-import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
 	const expectedState = {
@@ -43,7 +38,7 @@ describe( '#account-recovery reducer fetch:', () => {
 		phoneValidated: dummyData.phone_validated,
 	};
 
-	it( 'should return an initial object with the settings data.', () => {
+	test( 'should return an initial object with the settings data.', () => {
 		const initState = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			settings: dummyData,
@@ -63,7 +58,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		} );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with phone target should update the phone field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with phone target should update the phone field', () => {
 		const newPhoneValue = {
 			countryCode: dummyNewPhone.country_code,
 			countryNumericCode: dummyNewPhone.country_numeric_code,
@@ -83,7 +78,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		} );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with phone target should wipe the phone field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with phone target should wipe the phone field', () => {
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 			target: 'phone',
@@ -92,7 +87,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isNull( state.data.phone );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: 'email',
@@ -102,7 +97,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.equal( state.data.email, dummyNewEmail );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with email target should wipe the email field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with email target should wipe the email field', () => {
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 			target: 'email',
@@ -113,7 +108,7 @@ describe( '#account-recovery/settings reducer:', () => {
 
 	const arbitraryTargetName = 'whatever';
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set the isUpdating sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set the isUpdating sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 			target: arbitraryTargetName,
@@ -122,7 +117,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.isUpdating[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should unset the isUpdating sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should unset the isUpdating sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: arbitraryTargetName,
@@ -131,7 +126,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should set the hasSentValidation sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should set the hasSentValidation sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: arbitraryTargetName,
@@ -140,7 +135,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should unset the isUpdating sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should unset the isUpdating sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 			target: arbitraryTargetName,
@@ -149,7 +144,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINS_DELETE action should set the isDeleting sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINS_DELETE action should set the isDeleting sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
 			target: arbitraryTargetName,
@@ -158,7 +153,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.isDeleting[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action should unset the isDeleting sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action should unset the isDeleting sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 			target: arbitraryTargetName,
@@ -167,7 +162,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED action should unset the isDeleting sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED action should unset the isDeleting sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 			target: arbitraryTargetName,
@@ -176,7 +171,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set hasSentValidation sub field', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set hasSentValidation sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 			target: arbitraryTargetName,
@@ -185,7 +180,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set phoneValidated as true', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set phoneValidated as true', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 		} );
@@ -193,7 +188,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.data.phoneValidated );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as true', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as true', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 		} );
@@ -201,7 +196,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isTrue( state.isValidatingPhone );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set isValidatingPhone as false', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set isValidatingPhone as false', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 		} );
@@ -209,7 +204,7 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isValidatingPhone );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as false', () => {
+	test( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as false', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 		} );

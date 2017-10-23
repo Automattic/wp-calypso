@@ -1,30 +1,31 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'lib/analytics' ),
-	constants = require( 'me/constants' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
-
+import FormButton from 'components/forms/form-button';
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTelInput from 'components/forms/form-tel-input';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import analytics from 'lib/analytics';
+import constants from 'me/constants';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
-
+const Security2faCodePrompt = React.createClass( {
 	displayName: 'Security2faCodePrompt',
-
-	mixins: [ LinkedStateMixin ],
 
 	codeRequestTimer: false,
 
@@ -33,16 +34,16 @@ module.exports = React.createClass( {
 			action: false,
 			requestSMSOnMount: false,
 			showCancelButton: true,
-			showSMSButton: true
+			showSMSButton: true,
 		};
 	},
 
 	propTypes: {
-		action: React.PropTypes.string,
-		onCancel: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired,
-		requestSMSOnMount: React.PropTypes.bool,
-		showCancelButton: React.PropTypes.bool
+		action: PropTypes.string,
+		onCancel: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
+		requestSMSOnMount: PropTypes.bool,
+		showCancelButton: PropTypes.bool,
 	},
 
 	componentDidMount: function() {
@@ -73,7 +74,7 @@ module.exports = React.createClass( {
 			lastError: false,
 			lastErrorType: false,
 			submittingCode: false,
-			verificationCode: ''
+			verificationCode: '',
 		};
 	},
 
@@ -94,26 +95,24 @@ module.exports = React.createClass( {
 	},
 
 	requestCode: function() {
-		this.setState(
-			{
-				codeRequestsAllowed: false,
-				codeRequestPerformed: true,
-				lastError: false
-			}
-		);
+		this.setState( {
+			codeRequestsAllowed: false,
+			codeRequestPerformed: true,
+			lastError: false,
+		} );
 		twoStepAuthorization.sendSMSCode( this.onCodeRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
 	},
 
 	onCodeRequestResponse: function( error ) {
 		if ( error ) {
-			this.setState(
-				{
-					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
-					lastErrorType: 'is-info'
-				}
-			);
+			this.setState( {
+				codeRequestPerformed: false,
+				lastError: this.props.translate(
+					'Unable to request a code via SMS right now. Please try again after one minute.'
+				),
+				lastErrorType: 'is-info',
+			} );
 		}
 	},
 
@@ -124,7 +123,7 @@ module.exports = React.createClass( {
 
 	onBeginCodeValidation: function() {
 		var args = {
-			code: this.state.verificationCode
+			code: this.state.verificationCode,
 		};
 
 		if ( this.props.action ) {
@@ -138,19 +137,15 @@ module.exports = React.createClass( {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else if ( ! data.success ) {
-			this.setState(
-				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else {
 			this.props.onSuccess();
 		}
@@ -161,13 +156,19 @@ module.exports = React.createClass( {
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
+				label = this.state.submittingCode
+					? this.props.translate( 'Disabling Two-Step…' )
+					: this.props.translate( 'Disable Two-Step' );
 				break;
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
+				label = this.state.submittingCode
+					? this.props.translate( 'Enabling Two-Step…' )
+					: this.props.translate( 'Enable Two-Step' );
 				break;
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				label = this.state.submittingCode
+					? this.props.translate( 'Submitting…' )
+					: this.props.translate( 'Submit' );
 		}
 
 		return label;
@@ -178,7 +179,7 @@ module.exports = React.createClass( {
 	},
 
 	getFormDisabled: function() {
-		return ( this.state.submittingCode || 6 > this.state.verificationCode.trim().length );
+		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
 	},
 
 	possiblyRenderError: function() {
@@ -203,33 +204,30 @@ module.exports = React.createClass( {
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
+					<FormLabel htmlFor="verification-code">
+						{ this.props.translate( 'Verification Code' ) }
+					</FormLabel>
 					<FormTelInput
 						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
-						name="verification-code"
+						name="verificationCode"
 						placeholder={ codePlaceholder }
 						autoComplete="off"
-						valueLink={ this.linkState( 'verificationCode' ) }
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
+						value={ this.state.verificationCode }
+						onChange={ this.handleChange }
 					/>
-					{
-						this.state.codeRequestPerformed
-						? (
-							<FormSettingExplanation>
-								{
-									this.translate(
-										'A code has been sent to your device via SMS.  ' +
-										'You may request another code after one minute.'
-									)
-								}
-							</FormSettingExplanation>
-						)
-						: null
-					}
+					{ this.state.codeRequestPerformed ? (
+						<FormSettingExplanation>
+							{ this.props.translate(
+								'A code has been sent to your device via SMS.  ' +
+									'You may request another code after one minute.'
+							) }
+						</FormSettingExplanation>
+					) : null }
 					{ this.possiblyRenderError() }
 				</FormFieldset>
 				<FormButtonsBar className="security-2fa-code-prompt__buttons-bar">
@@ -243,42 +241,48 @@ module.exports = React.createClass( {
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{
-						this.props.showSMSButton
-						? (
-							<FormButton
-								className="security-2fa-code-prompt__send-code"
-								disabled={ ! this.state.codeRequestsAllowed }
-								isPrimary={ false }
-								onClick={ function( event ) {
-									analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
-									this.onRequestCode( event );
-								}.bind( this ) }
-							>
-								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
-							</FormButton>
-						)
-						: null
-					}
+					{ this.props.showSMSButton ? (
+						<FormButton
+							className="security-2fa-code-prompt__send-code"
+							disabled={ ! this.state.codeRequestsAllowed }
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent(
+									'Me',
+									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
+								);
+								this.onRequestCode( event );
+							}.bind( this ) }
+						>
+							{ this.state.codeRequestPerformed ? (
+								this.props.translate( 'Resend Code' )
+							) : (
+								this.props.translate( 'Send Code via SMS' )
+							) }
+						</FormButton>
+					) : null }
 
-					{
-						this.props.showCancelButton
-						? (
-							<FormButton
-								className="security-2fa-code-prompt__cancel"
-								isPrimary={ false }
-								onClick={ function( event ) {
-									analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
-									this.onCancel( event );
-								}.bind( this ) }
-							>
-								{ this.translate( 'Cancel' ) }
-							</FormButton>
-						)
-						: null
-					}
+					{ this.props.showCancelButton ? (
+						<FormButton
+							className="security-2fa-code-prompt__cancel"
+							isPrimary={ false }
+							onClick={ function( event ) {
+								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+								this.onCancel( event );
+							}.bind( this ) }
+						>
+							{ this.props.translate( 'Cancel' ) }
+						</FormButton>
+					) : null }
 				</FormButtonsBar>
 			</form>
 		);
-	}
+	},
+
+	handleChange( e ) {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	},
 } );
+
+export default localize( Security2faCodePrompt );

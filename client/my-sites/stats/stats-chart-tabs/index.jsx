@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +22,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
@@ -32,7 +35,7 @@ class StatModuleChartTabs extends Component {
 		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
 		this.state = {
 			activeLegendCharts: activeCharts,
-			activeTab: activeTab
+			activeTab: activeTab,
 		};
 	}
 
@@ -42,7 +45,7 @@ class StatModuleChartTabs extends Component {
 		if ( activeTab !== this.state.activeTab ) {
 			this.setState( {
 				activeLegendCharts: activeCharts,
-				activeTab: activeTab
+				activeTab: activeTab,
 			} );
 		}
 	}
@@ -70,7 +73,7 @@ class StatModuleChartTabs extends Component {
 		tooltipData.push( {
 			label: dateLabel,
 			className: 'is-date-label',
-			value: null
+			value: null,
 		} );
 
 		switch ( this.props.chartTab ) {
@@ -79,7 +82,7 @@ class StatModuleChartTabs extends Component {
 					label: this.props.translate( 'Comments' ),
 					value: this.props.numberFormat( item.value ),
 					className: 'is-comments',
-					icon: 'comment'
+					icon: 'comment',
 				} );
 				break;
 
@@ -88,7 +91,7 @@ class StatModuleChartTabs extends Component {
 					label: this.props.translate( 'Likes' ),
 					value: this.props.numberFormat( item.value ),
 					className: 'is-likes',
-					icon: 'star'
+					icon: 'star',
 				} );
 				break;
 
@@ -97,19 +100,19 @@ class StatModuleChartTabs extends Component {
 					label: this.props.translate( 'Views' ),
 					value: this.props.numberFormat( item.data.views ),
 					className: 'is-views',
-					icon: 'visible'
+					icon: 'visible',
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Visitors' ),
 					value: this.props.numberFormat( item.data.visitors ),
 					className: 'is-visitors',
-					icon: 'user'
+					icon: 'user',
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Views Per Visitor' ),
-					value: this.props.numberFormat( ( item.data.views / item.data.visitors ), { decimals: 2 } ),
+					value: this.props.numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
 					className: 'is-views-per-visitor',
-					icon: 'chevron-right'
+					icon: 'chevron-right',
 				} );
 
 				if ( item.data.post_titles && item.data.post_titles.length ) {
@@ -119,21 +122,23 @@ class StatModuleChartTabs extends Component {
 							label: this.props.translate( 'Posts Published' ),
 							value: this.props.numberFormat( item.data.post_titles.length ),
 							className: 'is-published-nolist',
-							icon: 'posts'
+							icon: 'posts',
 						} );
 					} else {
 						tooltipData.push( {
-							label: this.props.translate( 'Post Published', 'Posts Published', {
-								textOnly: true, count: item.data.post_titles.length
-							} ) + ':',
+							label:
+								this.props.translate( 'Post Published', 'Posts Published', {
+									textOnly: true,
+									count: item.data.post_titles.length,
+								} ) + ':',
 							className: 'is-published',
 							icon: 'posts',
-							value: ''
+							value: '',
 						} );
-						item.data.post_titles.forEach( ( post_title ) => {
+						item.data.post_titles.forEach( post_title => {
 							tooltipData.push( {
 								className: 'is-published-item',
-								label: post_title
+								label: post_title,
 							} );
 						} );
 					}
@@ -144,7 +149,7 @@ class StatModuleChartTabs extends Component {
 		return tooltipData;
 	}
 
-	onLegendClick = ( chartItem ) => {
+	onLegendClick = chartItem => {
 		const activeLegendCharts = this.state.activeLegendCharts;
 		const chartIndex = activeLegendCharts.indexOf( chartItem );
 		let gaEventAction;
@@ -155,9 +160,12 @@ class StatModuleChartTabs extends Component {
 			activeLegendCharts.splice( chartIndex );
 			gaEventAction = ' off';
 		}
-		this.props.recordGoogleEvent( 'Stats', `Toggled Nested Chart ${ chartItem } ${ gaEventAction }` );
+		this.props.recordGoogleEvent(
+			'Stats',
+			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
+		);
 		this.setState( {
-			activeLegendCharts
+			activeLegendCharts,
 		} );
 	};
 
@@ -178,8 +186,11 @@ class StatModuleChartTabs extends Component {
 		}
 
 		const activeTab = this.props.chartTab;
-		const labelKey = 'label' + this.props.period.period.charAt( 0 ).toUpperCase() + this.props.period.period.slice( 1 );
-		return data.map( ( record ) => {
+		const labelKey =
+			'label' +
+			this.props.period.period.charAt( 0 ).toUpperCase() +
+			this.props.period.period.slice( 1 );
+		return data.map( record => {
 			let recordClassName;
 			if ( record.classNames && record.classNames.length ) {
 				recordClassName = record.classNames.join( ' ' );
@@ -191,7 +202,7 @@ class StatModuleChartTabs extends Component {
 			}
 
 			const className = classNames( recordClassName, {
-				'is-selected': record.period === this.props.queryDate
+				'is-selected': record.period === this.props.queryDate,
 			} );
 
 			const item = {
@@ -213,13 +224,14 @@ class StatModuleChartTabs extends Component {
 		const activeTab = this.getActiveTab();
 		let availableCharts = [];
 		const data = this.getLoadedData();
-		const activeTabLoading = quickQueryRequesting && fullQueryRequesting && ! ( data && data.length );
+		const activeTabLoading =
+			quickQueryRequesting && fullQueryRequesting && ! ( data && data.length );
 		const classes = [
 			'stats-module',
 			'is-chart-tabs',
 			{
-				'is-loading': activeTabLoading
-			}
+				'is-loading': activeTabLoading,
+			},
 		];
 		if ( activeTab.legendOptions ) {
 			availableCharts = activeTab.legendOptions;
@@ -227,8 +239,12 @@ class StatModuleChartTabs extends Component {
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } /> }
-				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } /> }
+				{ siteId && (
+					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
+				) }
+				{ siteId && (
+					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
+				) }
 				<Card className={ classNames( ...classes ) }>
 					<Legend
 						tabs={ this.props.charts }
@@ -238,7 +254,11 @@ class StatModuleChartTabs extends Component {
 						clickHandler={ this.onLegendClick }
 					/>
 					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-					<ElementChart loading={ activeTabLoading } data={ chartData } barClick={ this.props.barClick } />
+					<ElementChart
+						loading={ activeTabLoading }
+						data={ chartData }
+						barClick={ this.props.barClick }
+					/>
 					<StatTabs
 						data={ data }
 						tabs={ this.props.charts }
@@ -269,7 +289,9 @@ const connectComponent = connect(
 		}
 		const periodDifference = moment( date ).diff( moment( queryDate ), period );
 		if ( periodDifference >= quantity ) {
-			date = moment( date ).subtract( Math.floor( periodDifference / quantity ) * quantity, period ).format( 'YYYY-MM-DD' );
+			date = moment( date )
+				.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
+				.format( 'YYYY-MM-DD' );
 		}
 
 		let quickQueryFields = chartTab;
@@ -281,31 +303,33 @@ const connectComponent = connect(
 		const query = {
 			unit: period,
 			date,
-			quantity
+			quantity,
 		};
 		const quickQuery = {
 			...query,
-			stat_fields: quickQueryFields
+			stat_fields: quickQueryFields,
 		};
 		const fullQuery = {
 			...query,
-			stat_fields: 'views,visitors,likes,comments,post_titles'
+			stat_fields: 'views,visitors,likes,comments,post_titles',
 		};
 
 		return {
-			quickQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', quickQuery ),
+			quickQueryRequesting: isRequestingSiteStatsForQuery(
+				state,
+				siteId,
+				'statsVisits',
+				quickQuery
+			),
 			quickQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery ),
 			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', fullQuery ),
 			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery ),
 			quickQuery,
 			fullQuery,
-			siteId
+			siteId,
 		};
 	},
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	localize,
-	connectComponent,
-)( StatModuleChartTabs );
+export default flowRight( localize, connectComponent )( StatModuleChartTabs );

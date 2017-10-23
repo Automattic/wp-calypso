@@ -9,7 +9,7 @@ This _pipeline_ however intercepts that stream of requests in order to augment i
 Requests come into the HTTP layer on Redux actions and leave when the network requests return with either a success or failure.
 Each request is run through the pipeline at these points.
 The initial entry into the HTTP system is through the outbound pipeline.
-The final exit from the the HTTP system is through the inbound pipeline.
+The final exit from the HTTP system is through the inbound pipeline.
 
  - _**Outbound**_ denotes requests on their way _out_ of Calypso.
  - _**Inbound**_ denotes requests returning from remote servers back _into_ Calypso.

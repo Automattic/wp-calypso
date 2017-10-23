@@ -1,68 +1,62 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import { identity, noop } from 'lodash';
 import React from 'react';
+import TestUtils from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils' ;
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import { UserStep as User } from '../';
+
+jest.mock( 'components/signup-form', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/abtest', () => () => {} );
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
+jest.mock( 'signup/utils', () => ( {
+	getFlowSteps: flow => {
+		let flowSteps = null;
+
+		if ( 'userAsFirstStepInFlow' === flow ) {
+			flowSteps = [ 'user' ];
+		} else {
+			flowSteps = [ 'theme', 'domains', 'user' ];
+		}
+
+		return flowSteps;
+	},
+	getNextStepName: x => x,
+	getStepUrl: x => x,
+	getPreviousStepName: x => x,
+} ) );
 
 describe( '#signupStep User', () => {
-	let User, testElement, rendered, EMPTY_COMPONENT;
+	let testElement, rendered;
 
-	useFakeDom();
-
-	useMockery( ( mockery ) => {
-		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
-
-		mockery.registerMock( 'lib/abtest', noop );
-		mockery.registerMock( 'lib/analytics', {} );
-		mockery.registerMock( 'components/signup-form', EMPTY_COMPONENT );
-		mockery.registerMock( 'signup/step-wrapper', EMPTY_COMPONENT );
-
-		mockery.registerMock( 'signup/utils', {
-			getFlowSteps: function( flow ) {
-				let flowSteps = null;
-
-				if ( 'userAsFirstStepInFlow' === flow ) {
-					flowSteps = [ 'user' ];
-				} else {
-					flowSteps = [ 'theme', 'domains', 'user' ];
-				}
-
-				return flowSteps;
-			},
-			getNextStepName: identity,
-			getStepUrl: identity,
-			getPreviousStepName: identity
-		} );
-	} );
-
-	before( () => {
-		User = require( '../' ).UserStep;
-	} );
-
-	it( 'should show community subheader text if User step is first in the flow', () => {
+	test( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
-			flowName: 'userAsFirstStepInFlow'
+			flowName: 'userAsFirstStepInFlow',
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( rendered.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
+		expect( rendered.state.subHeaderText ).to.equal(
+			'Welcome to the wonderful WordPress.com community'
+		);
 	} );
 
-	it( 'should show provided subheader text if User step is not first in the flow', () => {
+	test( 'should show provided subheader text if User step is not first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
-			flowName: 'someOtherFlow'
+			flowName: 'someOtherFlow',
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -79,7 +73,7 @@ describe( '#signupStep User', () => {
 
 			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
-				flowName: 'someOtherFlow'
+				flowName: 'someOtherFlow',
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -88,10 +82,10 @@ describe( '#signupStep User', () => {
 			User.prototype.componentWillReceiveProps.restore();
 		} );
 
-		it( 'should show community subheader text when new flow has user as first step', () => {
+		test( 'should show community subheader text when new flow has user as first step', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
-				flowName: 'userAsFirstStepInFlow'
+				flowName: 'userAsFirstStepInFlow',
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -99,13 +93,15 @@ describe( '#signupStep User', () => {
 			ReactDOM.render( React.createElement( User, testProps ), node );
 
 			expect( spyComponentProps.calledOnce ).to.equal( true );
-			expect( component.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
+			expect( component.state.subHeaderText ).to.equal(
+				'Welcome to the wonderful WordPress.com community'
+			);
 		} );
 
-		it( 'should show provided subheader text when new flow doesn\'t have user as first step', () => {
+		test( "should show provided subheader text when new flow doesn't have user as first step", () => {
 			const testProps = {
 				subHeaderText: 'My test message',
-				flowName: 'another test message test'
+				flowName: 'another test message test',
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

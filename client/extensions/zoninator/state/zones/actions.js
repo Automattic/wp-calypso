@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	ZONINATOR_ADD_ZONE,
 	ZONINATOR_DELETE_ZONE,
@@ -44,7 +47,12 @@ export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES,
  * @param  {Object} data   Zone details
  * @return {Object}        Action object
  */
-export const updateZone = ( siteId, zoneId, data ) => ( { type: ZONINATOR_UPDATE_ZONE, siteId, zoneId, data } );
+export const updateZone = ( siteId, zoneId, data ) => ( {
+	type: ZONINATOR_UPDATE_ZONE,
+	siteId,
+	zoneId,
+	data,
+} );
 
 /**
  * Returns an action object to indicate that a new zone should be created.
@@ -54,7 +62,12 @@ export const updateZone = ( siteId, zoneId, data ) => ( { type: ZONINATOR_UPDATE
  * @param  {Object} data   Zone details
  * @return {Object}        Action object
  */
-export const addZone = ( siteId, form, data ) => ( { type: ZONINATOR_ADD_ZONE, siteId, form, data } );
+export const addZone = ( siteId, form, data ) => ( {
+	type: ZONINATOR_ADD_ZONE,
+	siteId,
+	form,
+	data,
+} );
 
 /**
  * Returns an action object to indicate that a zone should be saved.

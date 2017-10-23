@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -14,23 +16,25 @@ import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
 
 class SignupThemesList extends Component {
-
 	static propTypes = {
 		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
 		handleScreenshotClick: PropTypes.func,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
 		surveyQuestion: null,
 		designType: null,
 		handleScreenshotClick: noop,
-		translate: identity
+		translate: identity,
 	};
 
 	shouldComponentUpdate( nextProps ) {
-		return ( nextProps.surveyQuestion !== this.props.surveyQuestion || nextProps.designType !== this.props.designType );
+		return (
+			nextProps.surveyQuestion !== this.props.surveyQuestion ||
+			nextProps.designType !== this.props.designType
+		);
 	}
 
 	getComputedThemes() {
@@ -55,11 +59,11 @@ class SignupThemesList extends Component {
 
 		return (
 			<ThemesList
-				getButtonOptions= { noop }
-				onScreenshotClick= { this.props.handleScreenshotClick }
-				onMoreButtonClick= { noop }
+				getButtonOptions={ noop }
+				onScreenshotClick={ this.props.handleScreenshotClick }
+				onMoreButtonClick={ noop }
 				getActionLabel={ getActionLabel }
-				themes= { themes }
+				themes={ themes }
 			/>
 		);
 	}

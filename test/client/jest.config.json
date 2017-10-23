@@ -1,0 +1,19 @@
+{
+	"moduleNameMapper": {
+		"^config$": "<rootDir>/server/config/index.js"
+	},
+	"modulePaths": [
+		"<rootDir>/test/",
+		"<rootDir>/client/",
+		"<rootDir>/client/extensions/"
+	],
+	"rootDir": "./../../",
+	"roots": [
+		"<rootDir>/client/"
+	],
+	"testEnvironment": "node",
+	"testMatch": [ "<rootDir>/client/**/test/*.js?(x)" ],
+	"testURL": "https://example.com",
+	"setupTestFrameworkScriptFile": "<rootDir>/test/client/setup-test-framework.js",
+	"verbose": false
+}

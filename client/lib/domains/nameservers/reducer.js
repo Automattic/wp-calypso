@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import update from 'react-addons-update';
+
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
@@ -11,7 +14,7 @@ import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 const initialDomainState = {
 	isFetching: false,
 	hasLoadedFromServer: false,
-	list: null
+	list: null,
 };
 
 /**
@@ -25,8 +28,8 @@ const initialDomainState = {
 function updateState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
 	return update( state, command );
@@ -38,26 +41,26 @@ function reducer( state, payload ) {
 	switch ( action.type ) {
 		case UpgradesActionTypes.NAMESERVERS_FETCH:
 			state = updateState( state, action.domainName, {
-				isFetching: true
+				isFetching: true,
 			} );
 			break;
 		case UpgradesActionTypes.NAMESERVERS_FETCH_FAILED:
 			state = updateState( state, action.domainName, {
-				isFetching: false
+				isFetching: false,
 			} );
 			break;
 		case UpgradesActionTypes.NAMESERVERS_FETCH_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
-				list: action.nameservers
+				list: action.nameservers,
 			} );
 			break;
 		case UpgradesActionTypes.NAMESERVERS_UPDATE_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
-				list: action.nameservers
+				list: action.nameservers,
 			} );
 			break;
 	}
@@ -65,7 +68,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

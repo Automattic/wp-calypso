@@ -1,17 +1,21 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
-import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
+import React, { Component } from 'react';
+import TestUtils from 'react-dom/test-utils';
+import ReactDom from 'react-dom';
 import sinon from 'sinon';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
  */
-var TrackInputChanges = require( '../' );
+import TrackInputChanges from '../';
 
 /**
  * Module variables
@@ -19,46 +23,41 @@ var TrackInputChanges = require( '../' );
 const spies = {
 	onNewValue: null,
 	onChange: null,
-	onBlur: null
+	onBlur: null,
 };
 
-const DummyInput = React.createClass( {
-	triggerChange( value ) {
+class DummyInput extends Component {
+	triggerChange = value => {
 		this.props.onChange( { target: this, value } );
-	},
+	};
 
-	triggerBlur() {
+	triggerBlur = () => {
 		this.props.onBlur( { target: this } );
-	},
+	};
 
 	render() {
 		return <div />;
 	}
-} );
+}
 
-describe( 'TrackInputChanges#onNewValue', function() {
+describe( 'TrackInputChanges#onNewValue', () => {
 	let tree, dummyInput, container;
 
-	useFakeDom.withContainer();
-
-	before( () => {
-		container = useFakeDom.getContainer();
+	beforeAll( () => {
+		container = document.createElement( 'div' );
 	} );
 
 	afterEach( () => {
 		ReactDom.unmountComponentAtNode( container );
 	} );
 
-	beforeEach( function() {
-		for ( let spy in spies ) {
+	beforeEach( () => {
+		for ( const spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
 		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
+				<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
 			</TrackInputChanges>,
 			container
 		);
@@ -67,7 +66,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		TestUtils.findRenderedComponentWithType( tree, TrackInputChanges ).inputEdited = false;
 	} );
 
-	it( 'should pass through callbacks but not trigger on a change event', function() {
+	test( 'should pass through callbacks but not trigger on a change event', () => {
 		dummyInput.triggerChange( 'abc' );
 
 		expect( spies.onNewValue ).to.have.callCount( 0 );
@@ -75,7 +74,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 0 );
 	} );
 
-	it( 'should pass through callbacks but not trigger on a blur event', function() {
+	test( 'should pass through callbacks but not trigger on a blur event', () => {
 		dummyInput.triggerBlur();
 
 		expect( spies.onNewValue ).to.have.callCount( 0 );
@@ -83,7 +82,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 1 );
 	} );
 
-	it( 'should pass through callbacks and trigger on a change then a blur', function() {
+	test( 'should pass through callbacks and trigger on a change then a blur', () => {
 		dummyInput.triggerChange( 'abc' );
 		dummyInput.triggerBlur();
 
@@ -92,7 +91,7 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 1 );
 	} );
 
-	it( 'should trigger once on each blur event only if value changed', function() {
+	test( 'should trigger once on each blur event only if value changed', () => {
 		dummyInput.triggerBlur();
 		dummyInput.triggerChange( 'abc' );
 		dummyInput.triggerChange( 'abcd' );
@@ -107,19 +106,15 @@ describe( 'TrackInputChanges#onNewValue', function() {
 		expect( spies.onBlur ).to.have.callCount( 3 );
 	} );
 
-	it( 'should throw if multiple child elements', function() {
-		expect( () => ReactDom.render(
-			<TrackInputChanges onNewValue={ spies.onNewValue }>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-				<DummyInput
-					onChange={ spies.onChange }
-					onBlur={ spies.onBlur }
-				/>
-			</TrackInputChanges>,
-			container
-		) ).to.throw;
+	test( 'should throw if multiple child elements', () => {
+		expect( () =>
+			ReactDom.render(
+				<TrackInputChanges onNewValue={ spies.onNewValue }>
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+					<DummyInput onChange={ spies.onChange } onBlur={ spies.onBlur } />
+				</TrackInputChanges>,
+				container
+			)
+		).to.throw;
 	} );
 } );

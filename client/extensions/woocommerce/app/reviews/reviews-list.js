@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -18,9 +21,12 @@ import {
 	areReviewsLoading,
 	areReviewsLoaded,
 	getReviews,
-	getTotalReviews
+	getTotalReviews,
 } from 'woocommerce/state/sites/reviews/selectors';
-import { getReviewsCurrentPage, getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
+import {
+	getReviewsCurrentPage,
+	getReviewsCurrentSearch,
+} from 'woocommerce/state/ui/reviews/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Pagination from 'components/pagination';
 import ReviewCard from './review-card';
@@ -30,6 +36,7 @@ import { updateCurrentReviewsQuery } from 'woocommerce/state/ui/reviews/actions'
 class ReviewsList extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
+		productId: PropTypes.number,
 		currentStatus: PropTypes.string,
 		currentSearch: PropTypes.string,
 		currentPage: PropTypes.number,
@@ -40,27 +47,34 @@ class ReviewsList extends Component {
 	};
 
 	componentDidMount() {
-		const { siteId, currentStatus } = this.props;
+		const { siteId, currentStatus, productId } = this.props;
 		const query = {
 			page: 1,
 			search: '',
 			status: currentStatus,
 		};
-		this.props.updateCurrentReviewsQuery( this.props.siteId, { page: 1, search: '' } );
+
+		const updatedStateQuery = { page: 1, search: '' };
+		if ( productId ) {
+			query.product = productId;
+			updatedStateQuery.product = productId;
+		}
+
+		this.props.updateCurrentReviewsQuery( this.props.siteId, updatedStateQuery );
 		if ( siteId ) {
 			this.props.fetchReviews( siteId, query );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const { currentPage, currentSearch, currentStatus, siteId } = this.props;
+		const { currentPage, currentSearch, currentStatus, siteId, productId } = this.props;
 
-		const hasAnythingChanged = (
+		const hasAnythingChanged =
 			newProps.currentPage !== currentPage ||
 			newProps.currentSearch !== currentSearch ||
 			newProps.currentStatus !== currentStatus ||
-			newProps.siteId !== siteId
-		);
+			newProps.productId !== productId ||
+			newProps.siteId !== siteId;
 		if ( ! newProps.siteId || ! hasAnythingChanged ) {
 			return;
 		}
@@ -70,12 +84,21 @@ class ReviewsList extends Component {
 			search: newProps.currentSearch,
 			status: newProps.currentStatus,
 		};
+
 		if ( newProps.currentSearch !== currentSearch ) {
-			this.props.updateCurrentReviewsQuery( siteId, { page: 1, status: 'any' } );
+			const updatedStateQuery = { page: 1, status: 'any' };
+			if ( productId ) {
+				updatedStateQuery.product = productId;
+			}
+			this.props.updateCurrentReviewsQuery( siteId, updatedStateQuery );
 			query.page = 1;
 			query.status = 'any';
 		} else if ( newProps.currentStatus !== currentStatus ) {
-			this.props.updateCurrentReviewsQuery( siteId, { page: 1, search: '' } );
+			const updatedStateQuery = { page: 1, search: '' };
+			if ( productId ) {
+				updatedStateQuery.product = productId;
+			}
+			this.props.updateCurrentReviewsQuery( siteId, updatedStateQuery );
 			query.page = 1;
 			query.search = '';
 		}
@@ -84,19 +107,22 @@ class ReviewsList extends Component {
 			query.status = 'any';
 		}
 
+		if ( productId ) {
+			query.product = productId;
+		}
+
 		this.props.fetchReviews( newProps.siteId, query );
 	}
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( ( i ) => {
+		return range( 5 ).map( i => {
 			return (
 				<Card key={ i } className="reviews__card">
-					<div className="reviews__placeholder">
-					</div>
+					<div className="reviews__placeholder" />
 				</Card>
 			);
 		} );
-	}
+	};
 
 	renderNoContent = () => {
 		const { currentSearch, currentStatus, translate } = this.props;
@@ -121,7 +147,7 @@ class ReviewsList extends Component {
 				line={ lineMessage }
 			/>
 		);
-	}
+	};
 
 	renderReview = ( review, i ) => {
 		const { siteId } = this.props;
@@ -133,44 +159,43 @@ class ReviewsList extends Component {
 				currentStatus={ this.props.currentStatus }
 			/>
 		);
-	}
+	};
 
 	renderReviews = () => {
 		const { reviews, reviewsLoaded } = this.props;
 		return (
 			<div className="reviews__list">
-				{ ! reviewsLoaded
-					? this.renderPlaceholders()
-					: reviews.map( this.renderReview )
-				}
+				{ ! reviewsLoaded ? this.renderPlaceholders() : reviews.map( this.renderReview ) }
 			</div>
 		);
-	}
+	};
 
 	onPageClick = nextPage => {
-		this.props.updateCurrentReviewsQuery( this.props.siteId, {
+		const { productId } = this.props;
+		const updatedStateQuery = {
 			page: nextPage,
 			status: this.props.currentStatus,
-		} );
-	}
+		};
+
+		if ( productId ) {
+			updatedStateQuery.product = productId;
+		}
+
+		this.props.updateCurrentReviewsQuery( this.props.siteId, updatedStateQuery );
+	};
 
 	render() {
-		const {
-			currentPage,
-			currentStatus,
-			reviews,
-			reviewsLoaded,
-			total,
-		} = this.props;
+		const { productId, currentPage, currentStatus, reviews, reviewsLoaded, total } = this.props;
 
 		return (
 			<div className="reviews__container">
-				<ReviewsFilterNav status={ currentStatus } />
+				<ReviewsFilterNav productId={ productId } status={ currentStatus } />
 
-				{ ( ! reviewsLoaded || ( reviews && reviews.length ) )
-					? this.renderReviews()
-					: this.renderNoContent()
-				}
+				{ ! reviewsLoaded || ( reviews && reviews.length ) ? (
+					this.renderReviews()
+				) : (
+					this.renderNoContent()
+				) }
 
 				<Pagination
 					page={ currentPage }
@@ -199,6 +224,10 @@ export default connect(
 
 		if ( '' !== currentSearch ) {
 			query.status = 'any';
+		}
+
+		if ( props.productId ) {
+			query.product = props.productId;
 		}
 
 		const reviews = getReviews( state, query, siteId ) || [];

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,37 +8,31 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from 'state/action-types';
-import {
-	receiveComponentsUsageStats,
-	requestComponentsUsageStats
-} from '../actions';
+import { receiveComponentsUsageStats, requestComponentsUsageStats } from '../actions';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
 
-describe( 'actions', function() {
-	describe( 'receiveComponentsUsageStats()', function() {
-		it( 'should return an action object', function() {
+describe( 'actions', () => {
+	describe( 'receiveComponentsUsageStats()', () => {
+		test( 'should return an action object', () => {
 			const action = receiveComponentsUsageStats( {
-				foo: { count: 1 }
+				foo: { count: 1 },
 			} );
 
 			expect( action ).to.eql( {
 				type: COMPONENTS_USAGE_STATS_RECEIVE,
 				componentsUsageStats: {
-					foo: { count: 1 }
-				}
+					foo: { count: 1 },
+				},
 			} );
 		} );
 	} );
 
-	describe( 'requestComponentsUsageStats()', function() {
-		it( 'should return an action object', function() {
+	describe( 'requestComponentsUsageStats()', () => {
+		test( 'should return an action object', () => {
 			const action = requestComponentsUsageStats();
 
 			expect( action ).to.eql( {
-				type: COMPONENTS_USAGE_STATS_REQUEST
+				type: COMPONENTS_USAGE_STATS_REQUEST,
 			} );
 		} );
 	} );

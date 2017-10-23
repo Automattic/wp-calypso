@@ -1,6 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -13,13 +18,13 @@ import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
-export default React.createClass( {
+const EditorDeletePost = React.createClass( {
 	displayName: 'EditorDeletePost',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		onTrashingPost: React.PropTypes.func
+		site: PropTypes.object,
+		post: PropTypes.object,
+		onTrashingPost: PropTypes.func,
 	},
 
 	getInitialState: function() {
@@ -54,16 +59,21 @@ export default React.createClass( {
 		}
 
 		if ( this.props.post.type === 'page' ) {
-			message = this.translate( 'Are you sure you want to trash this page?' );
+			message = this.props.translate( 'Are you sure you want to trash this page?' );
 		} else {
-			message = this.translate( 'Are you sure you want to trash this post?' );
+			message = this.props.translate( 'Are you sure you want to trash this post?' );
 		}
 
-		accept( message, ( accepted ) => {
-			if ( accepted ) {
-				this.sendToTrash();
-			}
-		}, this.translate( 'Move to trash' ), this.translate( 'Back' ) );
+		accept(
+			message,
+			accepted => {
+				if ( accepted ) {
+					this.sendToTrash();
+				}
+			},
+			this.props.translate( 'Move to trash' ),
+			this.props.translate( 'Back' )
+		);
 	},
 
 	render() {
@@ -72,8 +82,12 @@ export default React.createClass( {
 			return null;
 		}
 
-		const classes = classnames( 'editor-delete-post__button', { 'is-trashing': this.state.isTrashing } );
-		const label = this.state.isTrashing ? this.translate( 'Trashing...' ) : this.translate( 'Move to trash' );
+		const classes = classnames( 'editor-delete-post__button', {
+			'is-trashing': this.state.isTrashing,
+		} );
+		const label = this.state.isTrashing
+			? this.props.translate( 'Trashing...' )
+			: this.props.translate( 'Move to trash' );
 
 		return (
 			<div className="editor-delete-post">
@@ -88,5 +102,7 @@ export default React.createClass( {
 				</Button>
 			</div>
 		);
-	}
+	},
 } );
+
+export default localize( EditorDeletePost );

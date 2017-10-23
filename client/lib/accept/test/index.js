@@ -1,34 +1,24 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import accept from '../';
 
-describe( '#accept()', function() {
-	let accept;
-
-	useFakeDom();
-	useMockery();
-
-	before( function() {
-		mockery.registerSubstitute( 'event', 'component-event' );
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-		mockery.registerSubstitute( 'query', 'component-query' );
-
-		accept = require( '../' );
-	} );
-
-	beforeEach( function() {
+describe( '#accept()', () => {
+	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
 
-	it( 'should render a dialog to the document body', function() {
+	test( 'should render a dialog to the document body', () => {
 		var message = 'Are you sure?',
 			dialog;
 
@@ -39,7 +29,7 @@ describe( '#accept()', function() {
 		expect( dialog.textContent ).to.equal( message );
 	} );
 
-	it( 'should trigger the callback with an accepted prompt', function( done ) {
+	test( 'should trigger the callback with an accepted prompt', done => {
 		accept( 'Are you sure?', function( accepted ) {
 			expect( accepted ).to.be.be.true;
 			done();
@@ -48,7 +38,7 @@ describe( '#accept()', function() {
 		document.querySelector( '.button.is-primary' ).click();
 	} );
 
-	it( 'should trigger the callback with a denied prompt', function( done ) {
+	test( 'should trigger the callback with a denied prompt', done => {
 		accept( 'Are you sure?', function( accepted ) {
 			expect( accepted ).to.be.be.false;
 			done();
@@ -57,13 +47,14 @@ describe( '#accept()', function() {
 		document.querySelector( '.button:not( .is-primary )' ).click();
 	} );
 
-	it( 'should clean up after itself once the prompt is closed', function( done ) {
+	test( 'should clean up after itself once the prompt is closed', () => {
 		accept( 'Are you sure?', function() {
+			jest.useFakeTimers();
 			process.nextTick( function() {
 				expect( document.querySelector( '.accept-dialog' ) ).to.be.null;
-
-				done();
 			} );
+			jest.runAllTimers();
+			jest.useRealTimers();
 		} );
 
 		document.querySelector( '.button.is-primary' ).click();

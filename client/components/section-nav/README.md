@@ -36,12 +36,12 @@ module.exports = React.createClass( {
 					<NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
 					<NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
 				</NavTabs>
-				
+
 				<NavSegmented label="Author">
 					<NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
 					<NavItem path="/posts" selected={ true }>Everyone</NavItem>
 				</NavSegmented>
-				
+
 				<Search
 					pinned
 					fitsContainer
@@ -57,7 +57,7 @@ module.exports = React.createClass( {
 } );
 ```
 
-Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [posts]((/client/my-sites/posts/posts-navigation.jsx)) for more working examples.
+Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types]((/client/my-sites/post-type-filter/index.jsx)) for more working examples.
 
 ---
 

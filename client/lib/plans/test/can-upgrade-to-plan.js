@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { canUpgradeToPlan } from '..';
 import {
@@ -27,7 +27,7 @@ describe( 'canUpgradeToPlan', () => {
 		plan: { product_slug: productSlug },
 	} );
 
-	it( 'should return true from lower-tier plans to higher-tier plans', () => {
+	test( 'should return true from lower-tier plans to higher-tier plans', () => {
 		[
 			[ PLAN_FREE, PLAN_BUSINESS ],
 			[ PLAN_FREE, PLAN_PERSONAL ],
@@ -59,7 +59,7 @@ describe( 'canUpgradeToPlan', () => {
 		);
 	} );
 
-	it( 'should return true from monthly plans to yearly plans', () => {
+	test( 'should return true from monthly plans to yearly plans', () => {
 		[
 			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
 			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
@@ -70,7 +70,7 @@ describe( 'canUpgradeToPlan', () => {
 		);
 	} );
 
-	it( 'should return false from yearly plans to monthly plans', () => {
+	test( 'should return false from yearly plans to monthly plans', () => {
 		[
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
@@ -81,7 +81,7 @@ describe( 'canUpgradeToPlan', () => {
 		);
 	} );
 
-	it( 'should return false from high-tier plans to lower-tier plans', () => {
+	test( 'should return false from high-tier plans to lower-tier plans', () => {
 		[
 			[ PLAN_BUSINESS, PLAN_FREE ],
 			[ PLAN_BUSINESS, PLAN_PERSONAL ],
@@ -113,7 +113,7 @@ describe( 'canUpgradeToPlan', () => {
 		);
 	} );
 
-	it( 'should return true from high-tier expired plans to lower-tier plans', () => {
+	test( 'should return true from high-tier expired plans to lower-tier plans', () => {
 		const makeComplexSite = ( productSlug, isJetpack, isAtomic ) => ( {
 			jetpack: isJetpack || isAtomic,
 			options: {

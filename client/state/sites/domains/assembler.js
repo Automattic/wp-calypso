@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getDomainType } from 'lib/domains/utils';
+import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
 
 export const createSiteDomainObject = domain => {
 	return {
@@ -15,7 +19,7 @@ export const createSiteDomainObject = domain => {
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
-		googleAppsSubscription: Object( domain.google_apps_subscription ),
+		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		privacyAvailable: Boolean( domain.privacy_available ),
 		hasRegistration: Boolean( domain.has_registration ),

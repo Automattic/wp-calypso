@@ -98,9 +98,7 @@ class ReaderImportButton extends React.Component {
 			<div className="reader-import-button">
 				<FilePicker accept=".xml,.opml" onClick={ this.onClick } onPick={ this.onPick }>
 					<Gridicon icon="cloud-upload" className="reader-import-button__icon" />
-					<span className="reader-import-button__label">
-						{ this.props.translate( 'Import' ) }
-					</span>
+					<span className="reader-import-button__label">{ this.props.translate( 'Import' ) }</span>
 				</FilePicker>
 			</div>
 		);

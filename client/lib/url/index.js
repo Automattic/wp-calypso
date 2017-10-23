@@ -1,11 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	format as formatUrl,
-	parse as parseUrl,
-} from 'url';
-import { omit, startsWith } from 'lodash';
+
+import { format as formatUrl, parse as parseUrl } from 'url';
+import { has, isString, omit, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,11 @@ function isExternal( url ) {
 	// the url passed in might be of form `en.support.wordpress.com`
 	// so for this function we'll append double-slashes to fake it
 	// if it is a relative URL the hostname will still be empty from parseURL
-	if ( ! startsWith( url, 'http://' ) && ! startsWith( url, 'https://' ) && ! startsWith( url, '//' ) ) {
+	if (
+		! startsWith( url, 'http://' ) &&
+		! startsWith( url, 'https://' ) &&
+		! startsWith( url, '//' )
+	) {
 		url = '//' + url;
 	}
 
@@ -148,7 +152,7 @@ function resemblesUrl( query ) {
 	}
 
 	// Check for a valid-looking TLD
-	if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+	if ( parsedUrl.hostname.lastIndexOf( '.' ) > parsedUrl.hostname.length - 3 ) {
 		return false;
 	}
 
@@ -180,7 +184,43 @@ function omitUrlParams( url, paramsToOmit ) {
 	return formatUrl( parsed );
 }
 
+/**
+ * Wrap decodeURI in a try / catch block to prevent `URIError` on invalid input
+ * Passing a non-string value will return an empty string.
+ * @param  {String} encodedURI URI to attempt to decode
+ * @return {String}            Decoded URI (or passed in value on error)
+ */
+function decodeURIIfValid( encodedURI ) {
+	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
+		return '';
+	}
+	try {
+		return decodeURI( encodedURI );
+	} catch ( e ) {
+		return encodedURI;
+	}
+}
+
+/**
+ * Wrap decodeURIComponent in a try / catch block to prevent `URIError` on invalid input
+ * Passing a non-string value will return an empty string.
+ * @param  {String} encodedURIComponent URI component to attempt to decode
+ * @return {String}            Decoded URI component (or passed in value on error)
+ */
+function decodeURIComponentIfValid( encodedURIComponent ) {
+	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
+		return '';
+	}
+	try {
+		return decodeURIComponent( encodedURIComponent );
+	} catch ( e ) {
+		return encodedURIComponent;
+	}
+}
+
 export default {
+	decodeURIIfValid,
+	decodeURIComponentIfValid,
 	isOutsideCalypso,
 	isExternal,
 	isHttps,

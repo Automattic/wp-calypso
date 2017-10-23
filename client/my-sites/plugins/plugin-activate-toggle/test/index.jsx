@@ -1,8 +1,12 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { mount } from 'enzyme';
 import React from 'react';
 import { spy } from 'sinon';
@@ -10,44 +14,37 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
-import mockedPluginAction from './mocks/plugin-action';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import { PluginActivateToggle } from 'my-sites/plugins/plugin-activate-toggle';
 
-describe( 'PluginActivateToggle', function() {
+jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+	require( './mocks/plugin-action' )
+);
+jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
+jest.mock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', () =>
+	require( 'components/empty-component' )
+);
+
+describe( 'PluginActivateToggle', () => {
 	const analyticsMock = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
-		translate: spy()
+		translate: spy(),
 	};
-	let PluginActivateToggle;
 
-	useFakeDom();
-	useMockery();
-
-	before( function() {
-		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
-		mockery.registerMock( 'lib/plugins/actions', mockedActions );
-		mockery.registerMock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', EmptyComponent );
-
-		PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ).PluginActivateToggle;
-	} );
-
-	afterEach( function() {
+	afterEach( () => {
 		mockedActions.togglePluginActivation.reset();
 		analyticsMock.recordGoogleEvent.reset();
 	} );
 
-	it( 'should render the component', function() {
+	test( 'should render the component', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 	} );
 
-	it( 'should register an event when the subcomponent action is executed', function() {
+	test( 'should register an event when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );
@@ -56,7 +53,7 @@ describe( 'PluginActivateToggle', function() {
 		expect( analyticsMock.recordTracksEvent.called ).to.equal( true );
 	} );
 
-	it( 'should call an action when the subcomponent action is executed', function() {
+	test( 'should call an action when the subcomponent action is executed', () => {
 		const wrapper = mount( <PluginActivateToggle { ...analyticsMock } { ...fixtures } /> );
 
 		wrapper.simulate( 'click' );

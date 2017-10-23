@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 export class FacebookSharePreview extends PureComponent {
-
 	static PropTypes = {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
@@ -23,7 +26,7 @@ export class FacebookSharePreview extends PureComponent {
 			externalDisplay,
 			imageUrl,
 			message,
-			translate
+			translate,
 		} = this.props;
 		return (
 			<div className="facebook-share-preview">
@@ -42,40 +45,30 @@ export class FacebookSharePreview extends PureComponent {
 									{ externalDisplay }
 								</a>
 								<span>
-									{
-										translate( 'published an article on {{a}}WordPress{{/a}}', {
-											components: {
-												a: <a href="#" />
-											}
-										} )
-									}
+									{ translate( 'published an article on {{a}}WordPress{{/a}}', {
+										components: {
+											a: <a href="#" />,
+										},
+									} ) }
 								</span>
 							</div>
 							<div className="facebook-share-preview__meta-line">
-								<a href="https://wordpress.com">
-									{ translate( 'WordPress' ) }
-								</a>
+								<a href="https://wordpress.com">{ translate( 'WordPress' ) }</a>
 							</div>
 						</div>
 					</div>
 					<div className="facebook-share-preview__body">
-						<div className="facebook-share-preview__message">
-							{ message }
-						</div>
+						<div className="facebook-share-preview__message">{ message }</div>
 						<div className="facebook-share-preview__article-url-line">
-							<a className="facebook-share-preview__article-url"
-								href={ articleUrl }>
+							<a className="facebook-share-preview__article-url" href={ articleUrl }>
 								{ articleUrl }
 							</a>
 						</div>
-						{ imageUrl &&
+						{ imageUrl && (
 							<div className="facebook-share-preview__image-wrapper">
-								<img
-									className="facebook-share-preview__image"
-									src={ imageUrl }
-								/>
+								<img className="facebook-share-preview__image" src={ imageUrl } />
 							</div>
-						}
+						) }
 					</div>
 				</div>
 			</div>

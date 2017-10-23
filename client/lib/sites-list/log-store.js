@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { reject, filter, clone } from 'lodash';
 import debugModule from 'debug';
 
@@ -23,7 +26,7 @@ function addLog( status, action, site, error ) {
 	const log = {
 		status: status,
 		action: action,
-		site: site
+		site: site,
 	};
 
 	switch ( status ) {
@@ -66,7 +69,6 @@ function removeLog( log ) {
 }
 
 const LogStore = {
-
 	getErrors: function( filterBy ) {
 		if ( filterBy ) {
 			return filter( _errors, filterBy );
@@ -90,7 +92,7 @@ const LogStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -114,4 +116,4 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 // Add the Store to the emitter so we can emit change events.
 Emitter( LogStore );
 
-module.exports = LogStore;
+export default LogStore;

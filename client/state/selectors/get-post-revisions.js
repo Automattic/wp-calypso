@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, map, orderBy } from 'lodash';
 
 /**
@@ -10,15 +13,15 @@ import createSelector from 'lib/create-selector';
 import { hydrateRevision, normalizeRevision } from 'state/selectors/utils/revisions';
 
 const getPostRevisions = createSelector(
-	( state, siteId, postId, normalizerName = null ) => orderBy(
-		map(
-			get( state.posts.revisions.revisions, [ siteId, postId ], {} ),
-			revision => normalizeRevision( normalizerName, hydrateRevision( state, revision ) )
+	( state, siteId, postId, normalizerName = null ) =>
+		orderBy(
+			map( get( state.posts.revisions.revisions, [ siteId, postId ], {} ), revision =>
+				normalizeRevision( normalizerName, hydrateRevision( state, revision ) )
+			),
+			'date',
+			'desc'
 		),
-		'date',
-		'desc'
-	),
-	( state ) => [ state.posts.revisions.revisions, state.users.items ]
+	state => [ state.posts.revisions.revisions, state.users.items ]
 );
 
 export default getPostRevisions;

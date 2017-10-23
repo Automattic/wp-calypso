@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -8,10 +11,7 @@ import Gridicon from 'gridicons';
 
 const FieldError = ( { text, type = 'input-validation' } ) => {
 	return (
-		<div className={ classNames(
-			'field-error',
-			`field-error__${ type }`
-		) }>
+		<div className={ classNames( 'field-error', `field-error__${ type }` ) }>
 			<Gridicon size={ 24 } icon="notice-outline" /> <span>{ text }</span>
 		</div>
 	);

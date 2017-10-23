@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -13,10 +14,10 @@ import PurchaseDetail from '..';
 import PurchaseButton from '../purchase-button';
 import TipInfo from '../tip-info';
 
-describe( 'PurchaseDetail', function() {
+describe( 'PurchaseDetail', () => {
 	let wrapper;
 
-	it( 'should be a placeholder if in need', function() {
+	test( 'should be a placeholder if in need', () => {
 		wrapper = shallow( <PurchaseDetail /> );
 		expect( wrapper.hasClass( 'is-placeholder' ) ).to.be.false;
 
@@ -24,13 +25,15 @@ describe( 'PurchaseDetail', function() {
 		expect( wrapper.hasClass( 'is-placeholder' ) ).to.be.true;
 	} );
 
-	it( 'should render given title and description', function() {
+	test( 'should render given title and description', () => {
 		wrapper = shallow( <PurchaseDetail title="test:title" description="test:description" /> );
 		expect( wrapper.find( '.purchase-detail__title' ).props().children ).to.equal( 'test:title' );
-		expect( wrapper.find( '.purchase-detail__description' ).props().children ).to.equal( 'test:description' );
+		expect( wrapper.find( '.purchase-detail__description' ).props().children ).to.equal(
+			'test:description'
+		);
 	} );
 
-	it( 'should render given notice text', function() {
+	test( 'should render given notice text', () => {
 		wrapper = shallow( <PurchaseDetail requiredText="test:notice" /> );
 
 		const notice = wrapper.find( '.purchase-detail__required-notice > em' );
@@ -38,7 +41,7 @@ describe( 'PurchaseDetail', function() {
 		expect( notice.props().children ).to.equal( 'test:notice' );
 	} );
 
-	it( 'should render given body text', function() {
+	test( 'should render given body text', () => {
 		wrapper = shallow( <PurchaseDetail body="test:body" /> );
 
 		const body = wrapper.find( '.purchase-detail__body' );
@@ -46,7 +49,7 @@ describe( 'PurchaseDetail', function() {
 		expect( body.props().children ).to.equal( 'test:body' );
 	} );
 
-	it( 'should render a <TipInfo /> with given tip info unless the body text is passed', function() {
+	test( 'should render a <TipInfo /> with given tip info unless the body text is passed', () => {
 		wrapper = shallow( <PurchaseDetail info="test:tip-info" /> );
 
 		const tipInfo = wrapper.find( TipInfo );
@@ -57,7 +60,7 @@ describe( 'PurchaseDetail', function() {
 		expect( wrapper.find( TipInfo ) ).to.have.length( 0 );
 	} );
 
-	it( 'should render a <PurchaseButton> with given info unless the body text is passed', function() {
+	test( 'should render a <PurchaseButton> with given info unless the body text is passed', () => {
 		const buttonProps = {
 			isSubmitting: false,
 			href: 'https://wordpress.com/test/url',

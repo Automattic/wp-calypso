@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
@@ -20,5 +23,5 @@ export default React.createClass( {
 				<ClipboardButtonInput value="https://example.wordpress.com/" />
 			</div>
 		);
-	}
+	},
 } );

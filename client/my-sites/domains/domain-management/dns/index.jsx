@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -23,17 +27,14 @@ import VerticalNav from 'components/vertical-nav';
 
 class Dns extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		dns: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		domains: PropTypes.object.isRequired,
+		dns: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	state = {
-		addNew: true
+		addNew: true,
 	};
 
 	renderDnsTemplates() {
@@ -59,10 +60,7 @@ class Dns extends React.Component {
 
 		return (
 			<Main className="dns">
-				<Header
-					onClick={ this.goBack }
-					selectedDomainName={ selectedDomainName }
-				>
+				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
 					{ translate( 'DNS Records' ) }
 				</Header>
 
@@ -95,12 +93,7 @@ class Dns extends React.Component {
 			path = paths.domainManagementEdit;
 		}
 
-		page(
-			path(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			)
-		);
+		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

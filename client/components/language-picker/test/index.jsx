@@ -1,14 +1,17 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
 import { render } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import LanguagePicker from '../';
+
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 const languages = [
 	{
@@ -16,34 +19,20 @@ const languages = [
 		langSlug: 'en',
 		name: 'English',
 		wpLocale: 'en_US',
-		popular: 1
+		popular: 1,
 	},
 	{
 		value: 11,
 		langSlug: 'cs',
 		name: 'Čeština',
-		wpLocale: 'cs_CZ'
-	}
+		wpLocale: 'cs_CZ',
+	},
 ];
 
 describe( 'LanguagePicker', () => {
-	let LanguagePicker;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
-	} );
-
-	before( () => {
-		LanguagePicker = require( '../' );
-	} );
-
-	it( 'should render the right icon and label', () => {
+	test( 'should render the right icon and label', () => {
 		const wrapper = render(
-			<LanguagePicker
-				languages={ languages }
-				valueKey="langSlug"
-				value="en"
-			/>
+			<LanguagePicker languages={ languages } valueKey="langSlug" value="en" />
 		);
 		expect( wrapper.find( '.language-picker__icon' ) ).to.have.text( 'en' );
 		expect( wrapper.find( '.language-picker__name-label' ) ).to.have.text( 'English' );

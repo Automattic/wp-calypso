@@ -1,11 +1,11 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { items, queuedRequests } from '../reducer';
 import {
@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 
 describe( 'items', () => {
-	it( 'should store the posts by global_ID', () => {
+	test( 'should store the posts by global_ID', () => {
 		expect(
 			items(
 				{},
@@ -34,7 +34,7 @@ describe( 'items', () => {
 		} );
 	} );
 
-	it( 'should overwrite existing posts', () => {
+	test( 'should overwrite existing posts', () => {
 		expect(
 			items(
 				{
@@ -56,7 +56,7 @@ describe( 'items', () => {
 } );
 
 describe( 'queuedRequests', () => {
-	it( 'request should set the flag', () => {
+	test( 'request should set the flag', () => {
 		expect(
 			queuedRequests(
 				{},
@@ -73,7 +73,7 @@ describe( 'queuedRequests', () => {
 		} );
 	} );
 
-	it( 'request success should unset the flag', () => {
+	test( 'request success should unset the flag', () => {
 		expect(
 			queuedRequests(
 				{
@@ -92,7 +92,7 @@ describe( 'queuedRequests', () => {
 		} );
 	} );
 
-	it( 'request should set the flag', () => {
+	test( 'request should set the flag', () => {
 		expect(
 			queuedRequests(
 				{},

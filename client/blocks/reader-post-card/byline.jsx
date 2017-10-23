@@ -96,7 +96,7 @@ class PostByline extends React.Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
-				{ showAvatar &&
+				{ showAvatar && (
 					<ReaderAvatar
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
@@ -104,11 +104,12 @@ class PostByline extends React.Component {
 						preferGravatar={ true }
 						siteUrl={ streamUrl }
 						isCompact={ true }
-					/> }
+					/>
+				) }
 				<div className="reader-post-card__byline-details">
-					{ ( shouldDisplayAuthor || showSiteName ) &&
+					{ ( shouldDisplayAuthor || showSiteName ) && (
 						<div className="reader-post-card__byline-author-site">
-							{ shouldDisplayAuthor &&
+							{ shouldDisplayAuthor && (
 								<ReaderAuthorLink
 									className="reader-post-card__link"
 									author={ post.author }
@@ -116,9 +117,10 @@ class PostByline extends React.Component {
 									post={ post }
 								>
 									{ post.author.name }
-								</ReaderAuthorLink> }
+								</ReaderAuthorLink>
+							) }
 							{ shouldDisplayAuthor && showSiteName ? ', ' : '' }
-							{ showSiteName &&
+							{ showSiteName && (
 								<ReaderSiteStreamLink
 									className="reader-post-card__site reader-post-card__link"
 									feedId={ feedId }
@@ -126,11 +128,13 @@ class PostByline extends React.Component {
 									post={ post }
 								>
 									{ siteName }
-								</ReaderSiteStreamLink> }
-						</div> }
+								</ReaderSiteStreamLink>
+							) }
+						</div>
+					) }
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date &&
-							post.URL &&
+						post.URL && (
 							<span className="reader-post-card__timestamp">
 								<a
 									className="reader-post-card__timestamp-link"
@@ -141,12 +145,14 @@ class PostByline extends React.Component {
 								>
 									<PostTime date={ post.date } />
 								</a>
-							</span> }
-						{ tags.length > 0 &&
+							</span>
+						) }
+						{ tags.length > 0 && (
 							<span className="reader-post-card__tags">
 								<Gridicon icon="tag" />
 								{ tags }
-							</span> }
+							</span>
+						) }
 					</div>
 				</div>
 			</div>

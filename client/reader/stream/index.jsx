@@ -3,7 +3,8 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
 import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
@@ -91,6 +92,7 @@ class ReaderStream extends React.Component {
 		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
+		intro: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -107,6 +109,7 @@ class ReaderStream extends React.Component {
 		transformStreamItems: identity,
 		isMain: true,
 		useCompactCards: false,
+		intro: null,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -475,15 +478,15 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ this.props.isMain &&
-					this.props.showMobileBackToSidebar &&
+				this.props.showMobileBackToSidebar && (
 					<MobileBackToSidebar>
-						<h1>
-							{ this.props.translate( 'Streams' ) }
-						</h1>
-					</MobileBackToSidebar> }
+						<h1>{ this.props.translate( 'Streams' ) }</h1>
+					</MobileBackToSidebar>
+				) }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
+				{ showingStream && this.state.posts.length ? this.props.intro : null }
 				{ body }
 				{ showingStream && store.isLastPage() && this.state.posts.length ? <ListEnd /> : null }
 			</TopLevel>

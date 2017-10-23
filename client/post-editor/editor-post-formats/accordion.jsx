@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -50,15 +55,15 @@ const EditorPostFormatsAccordion = React.createClass( {
 			return postFormats[ formatValue ];
 		}
 
-		return this.translate( 'Standard', {
-			context: 'Post format'
+		return this.props.translate( 'Standard', {
+			context: 'Post format',
 		} );
 	},
 
 	render() {
 		const { className, post, postFormats } = this.props;
 		const classes = classNames( 'editor-post-formats__accordion', className, {
-			'is-loading': ! post || ! postFormats
+			'is-loading': ! post || ! postFormats,
 		} );
 
 		return (
@@ -66,26 +71,26 @@ const EditorPostFormatsAccordion = React.createClass( {
 				<QueryPostFormats siteId={ this.props.siteId } />
 				{ ! isEmpty( postFormats ) && (
 					<Accordion
-						title={ this.translate( 'Post Format' ) }
+						title={ this.props.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						className={ classes }>
+						className={ classes }
+						e2eTitle="post-format"
+					>
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>
 				) }
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			site: getSelectedSite( state ),
-			postFormats: getPostFormats( state, siteId ),
-			defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
-		};
-	}
-)( EditorPostFormatsAccordion );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		postFormats: getPostFormats( state, siteId ),
+		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
+	};
+} )( localize( EditorPostFormatsAccordion ) );

@@ -1,9 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 
-/* Internal dependecies */
+/* Internal dependencies */
 import { localize } from 'i18n-calypso';
 import { truncateArticleContent } from '../helpers';
 
@@ -26,48 +29,33 @@ export class TumblrSharePreview extends PureComponent {
 			<div className="tumblr-share-preview">
 				<div className="tumblr-share-preview__content">
 					<div className="tumblr-share-preview__profile-picture-part">
-						<img
-							className="tumblr-share-preview__profile-picture"
-							src={ externalProfilePicture }
-						/>
+						<img className="tumblr-share-preview__profile-picture" src={ externalProfilePicture } />
 					</div>
 					<div className="tumblr-share-preview__content-part">
 						<div className="tumblr-share-preview__profile-line">
-							<a
-								className="tumblr-share-preview__profile-name"
-								href={ externalProfileUrl }
-							>
+							<a className="tumblr-share-preview__profile-name" href={ externalProfileUrl }>
 								{ externalName }
 							</a>
-							<span className="tumblr-share-preview__profile-wp">
-								{ translate( 'WordPress' ) }
-							</span>
+							<span className="tumblr-share-preview__profile-wp">{ translate( 'WordPress' ) }</span>
 						</div>
 						<div className="tumblr-share-preview__post-title-part">
 							<div className="tumblr-share-preview__post-title">{ articleTitle }</div>
 						</div>
 						<div className="tumblr-share-preview__message">
-							<a className="tumblr-share-preview__message-link"
-								href={ articleUrl }>
+							<a className="tumblr-share-preview__message-link" href={ articleUrl }>
 								{ message }
 							</a>
 						</div>
-						{ imageUrl &&
+						{ imageUrl && (
 							<div className="tumblr-share-preview__image-wrapper">
-								<img
-									className="tumblr-share-preview__image"
-									src={ imageUrl }
-								/>
+								<img className="tumblr-share-preview__image" src={ imageUrl } />
 							</div>
-						}
+						) }
 						<div className="tumblr-share-preview__summery-part">
-							<blockquote className="tumblr-share-preview__summery">
-								{ summary }
-							</blockquote>
+							<blockquote className="tumblr-share-preview__summery">{ summary }</blockquote>
 						</div>
 						<div className="tumblr-share-preview__article-link-line">
-							<a className="tumblr-share-preview__article-link"
-								href={ articleUrl }>
+							<a className="tumblr-share-preview__article-link" href={ articleUrl }>
 								{ translate( 'View On WordPress' ) }
 							</a>
 						</div>
@@ -79,4 +67,3 @@ export class TumblrSharePreview extends PureComponent {
 }
 
 export default localize( TumblrSharePreview );
-

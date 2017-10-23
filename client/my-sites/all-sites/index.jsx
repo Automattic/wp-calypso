@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,25 +28,25 @@ class AllSites extends Component {
 		isSelected: false,
 		isHighlighted: false,
 		showCount: true,
-		domain: ''
+		domain: '',
 	};
 
 	static propTypes = {
-		onSelect: React.PropTypes.func,
-		href: React.PropTypes.string,
-		isSelected: React.PropTypes.bool,
-		isHighlighted: React.PropTypes.bool,
-		showCount: React.PropTypes.bool,
-		count: React.PropTypes.number,
-		title: React.PropTypes.string,
-		domain: React.PropTypes.string,
-		onMouseEnter: React.PropTypes.func,
-		onMouseLeave: React.PropTypes.func
+		onSelect: PropTypes.func,
+		href: PropTypes.string,
+		isSelected: PropTypes.bool,
+		isHighlighted: PropTypes.bool,
+		showCount: PropTypes.bool,
+		count: PropTypes.number,
+		title: PropTypes.string,
+		domain: PropTypes.string,
+		onMouseEnter: PropTypes.func,
+		onMouseLeave: PropTypes.func,
 	};
 
-	onSelect = ( event ) => {
+	onSelect = event => {
 		this.props.onSelect( event );
-	}
+	};
 
 	renderSiteCount() {
 		const count = this.props.count || user.get().visible_site_count;
@@ -50,11 +54,20 @@ class AllSites extends Component {
 	}
 
 	render() {
-		const { title, href, domain, sites, translate, isHighlighted, isSelected, showCount } = this.props;
+		const {
+			title,
+			href,
+			domain,
+			sites,
+			translate,
+			isHighlighted,
+			isSelected,
+			showCount,
+		} = this.props;
 		const allSitesClass = classNames( {
 			'all-sites': true,
 			'is-selected': isSelected,
-			'is-highlighted': isHighlighted
+			'is-highlighted': isHighlighted,
 		} );
 
 		return (
@@ -64,7 +77,8 @@ class AllSites extends Component {
 					href={ href }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
-					onClick={ this.onSelect }>
+					onClick={ this.onSelect }
+				>
 					{ showCount && this.renderSiteCount() }
 					<div className="site__info">
 						<span className="site__title">{ title || translate( 'All My Sites' ) }</span>
@@ -77,8 +91,6 @@ class AllSites extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		sites: getSites( state )
-	} )
-)( localize( AllSites ) );
+export default connect( state => ( {
+	sites: getSites( state ),
+} ) )( localize( AllSites ) );

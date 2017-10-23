@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { userCan } from 'lib/site/utils';
 import { isBusiness, isPremium } from 'lib/products-values';
 
@@ -16,9 +19,11 @@ export function canAccessWordads( site ) {
 		}
 
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
-		return site.options &&
+		return (
+			site.options &&
 			( site.options.wordads || jetpackPremium ) &&
-			userCan( 'manage_options', site );
+			userCan( 'manage_options', site )
+		);
 	}
 
 	return false;

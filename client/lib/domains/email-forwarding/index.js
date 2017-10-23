@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
 
@@ -10,14 +13,14 @@ import emailValidator from 'email-validator';
 import { isBusiness } from 'lib/products-values';
 
 function emailForwardingPlanLimit( plan ) {
-	return ( isBusiness( plan ) ? 100 : 5 );
+	return isBusiness( plan ) ? 100 : 5;
 }
 
 function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,
-			name: fieldName
+			name: fieldName,
 		} );
 
 		return isValid ? [] : [ 'Invalid' ];
@@ -35,7 +38,7 @@ function validateField( { name, value } ) {
 	}
 }
 
-module.exports = {
+export default {
 	emailForwardingPlanLimit,
-	validateAllFields
+	validateAllFields,
 };

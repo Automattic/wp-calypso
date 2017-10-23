@@ -1,3 +1,4 @@
+/** @format */
 // Strong directionality characters
 // http://www.unicode.org/reports/tr9/#Bidirectional_Character_Types
 const RIGHT_TO_LEFT = [
@@ -123,7 +124,7 @@ const RIGHT_TO_LEFT = [
 	[ 0x1ee8b, 0x1ee9b ],
 	[ 0x1eea1, 0x1eea3 ],
 	[ 0x1eea5, 0x1eea9 ],
-	[ 0x1eeab, 0x1eebb ]
+	[ 0x1eeab, 0x1eebb ],
 ];
 
 const LEFT_TO_RIGHT = [
@@ -787,10 +788,10 @@ const LEFT_TO_RIGHT = [
 	[ 0xf0000, 0xf0000 ],
 	[ 0xffffd, 0xffffd ],
 	[ 0x100000, 0x100000 ],
-	[ 0x10fffd, 0x10fffd ]
+	[ 0x10fffd, 0x10fffd ],
 ];
 
-const createLookUpMap = ( charactersRangeArray ) => {
+const createLookUpMap = charactersRangeArray => {
 	const set = new Set();
 
 	charactersRangeArray.forEach( range => {

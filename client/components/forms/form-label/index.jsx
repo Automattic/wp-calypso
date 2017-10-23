@@ -1,16 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isObject, omit } from 'lodash';
 
-const renderRequiredBadge = translate =>
-	<small className="form-label__required">
-		{ translate( 'Required' ) }
-	</small>;
+const renderRequiredBadge = translate => (
+	<small className="form-label__required">{ translate( 'Required' ) }</small>
+);
 
 const addKeys = elements =>
 	elements.map( ( elem, idx ) => ( isObject( elem ) ? { ...elem, key: idx } : elem ) );

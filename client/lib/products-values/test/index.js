@@ -1,10 +1,12 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isJetpackPlan } from '..';
 import {
@@ -21,22 +23,17 @@ import {
  * @param  {String} product_slug Product slug
  * @return {Object}              Object containing product_slug
  */
-const makeProductFromSlug = ( product_slug ) => ( { product_slug } );
+const makeProductFromSlug = product_slug => ( { product_slug } );
 
 describe( 'isJetpackPlan', () => {
-	it( 'should return true for Jetpack products', () => {
-		JETPACK_PLANS
-			.map( makeProductFromSlug )
-			.forEach( product => expect( isJetpackPlan( product ) ).to.be.true );
+	test( 'should return true for Jetpack products', () => {
+		JETPACK_PLANS.map( makeProductFromSlug ).forEach(
+			product => expect( isJetpackPlan( product ) ).to.be.true
+		);
 	} );
 
-	it( 'should return false for non-Jetpack products', () => {
-		const nonJetpackPlans = [
-			PLAN_BUSINESS,
-			PLAN_FREE,
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
-		];
+	test( 'should return false for non-Jetpack products', () => {
+		const nonJetpackPlans = [ PLAN_BUSINESS, PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ];
 
 		nonJetpackPlans
 			.map( makeProductFromSlug )

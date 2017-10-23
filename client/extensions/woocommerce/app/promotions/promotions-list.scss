@@ -1,0 +1,108 @@
+.promotions__list {
+
+	.empty-content.has-title-only {
+		margin-top: 42px;
+	}
+
+	.empty-content.has-title-only .empty-content__title {
+		margin-bottom: 24px;
+	}
+
+	.table {
+		margin-bottom: 16px;
+		margin-top: 16px;
+	}
+
+	.search {
+		@include breakpoint( ">660px" ) {
+			margin-top: 58px;
+		}
+	}
+
+	.promotions__list-placeholder {
+		@include placeholder();
+		background: $white;
+		height: 525px;
+		margin-bottom: 16px;
+		margin-top: -15px;
+
+		&.is-header {
+			height: 50px;
+			width: 100%;
+		}
+
+		.table-heading {
+			border-bottom: 0;
+		}
+
+		&.pagination {
+			height: 44px;
+			margin-top: 16px;
+		}
+
+	}
+
+	.is-requesting td div {
+		@include placeholder();
+		background: transparent;
+	}
+
+	.promotions__list-product .table-item__cell-title {
+		display: flex;
+		align-items: center;
+	}
+
+	.promotions__list-image {
+		height: 40px;
+		width: 40px;
+		overflow: hidden;
+		position: relative;
+		margin-right: 16px;
+
+		&.is-thumb-placeholder {
+			background: $gray-light;
+		}
+
+		img {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			height: 100%;
+			width: auto;
+			-webkit-transform: translate( -50%, -50% );
+			transform: translate( -50%, -50% );
+		}
+	}
+
+	.is-header th {
+		&:first-child {
+			width: 50%;
+		}
+
+		&:nth-child( 2 ) {
+			width: 20%;
+		}
+
+		&:last-child {
+			width: 30%;
+		}
+	}
+
+	.table-row:not(.is-header) {
+		cursor: pointer;
+	}
+
+	.table-row:hover {
+		background: lighten( $gray, 35% );
+	}
+
+	.promotions__list-name {
+		color: $blue-wordpress;
+	}
+
+	.search, .search .search__open-icon {
+		z-index: initial;
+	}
+
+}
+

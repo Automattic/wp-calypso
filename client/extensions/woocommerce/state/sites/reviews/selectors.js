@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, omit, isArray } from 'lodash';
 
 /**
@@ -17,8 +20,12 @@ import { getSerializedReviewsQuery } from './utils';
  */
 export const areReviewsLoaded = ( state, query, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedReviewsQuery( query );
-	const reviews = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ], false );
-	return ( isArray( reviews ) );
+	const reviews = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ],
+		false
+	);
+	return isArray( reviews );
 };
 
 /**
@@ -29,9 +36,17 @@ export const areReviewsLoaded = ( state, query, siteId = getSelectedSiteId( stat
  */
 export const areReviewsLoading = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedReviewsQuery( query );
-	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'isQueryLoading', serializedQuery ] );
+	const isLoading = get( state, [
+		'extensions',
+		'woocommerce',
+		'sites',
+		siteId,
+		'reviews',
+		'isQueryLoading',
+		serializedQuery,
+	] );
 	// Strict check because it could also be undefined.
-	return ( true === isLoading );
+	return true === isLoading;
 };
 
 /**
@@ -45,8 +60,16 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
 		return [];
 	}
 	const serializedQuery = getSerializedReviewsQuery( query );
-	const reviews = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'items' ], {} );
-	const reviewIdsOnPage = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ], [] );
+	const reviews = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'items' ],
+		{}
+	);
+	const reviewIdsOnPage = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ],
+		[]
+	);
 	if ( reviewIdsOnPage.length ) {
 		return reviewIdsOnPage.map( id => reviews[ id ] );
 	}
@@ -60,7 +83,11 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
  * @return {Object|Null} The requested review object, or null if not available
  */
 export const getReview = ( state, reviewId, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'items', reviewId ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'items', reviewId ],
+		null
+	);
 };
 
 /**
@@ -71,5 +98,9 @@ export const getReview = ( state, reviewId, siteId = getSelectedSiteId( state ) 
  */
 export const getTotalReviews = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	const serializedQuery = getSerializedReviewsQuery( omit( query, 'page' ) );
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'total', serializedQuery ], 0 );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'total', serializedQuery ],
+		0
+	);
 };

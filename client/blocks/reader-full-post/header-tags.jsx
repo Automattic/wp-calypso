@@ -19,11 +19,7 @@ const ReaderFullPostHeaderTags = ( { tags } ) => {
 		);
 	} );
 
-	return (
-		<ul className="reader-full-post__header-tag-list">
-			{ listItems }
-		</ul>
-	);
+	return <ul className="reader-full-post__header-tag-list">{ listItems }</ul>;
 };
 
 ReaderFullPostHeaderTags.propTypes = {

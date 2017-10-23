@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +9,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
+import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
+import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
@@ -15,12 +19,10 @@ import {
 	PREFERENCES_SET,
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
+	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
-import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
-import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -30,38 +32,38 @@ describe( 'actions', () => {
 		spy = sandbox.spy();
 	} );
 	const responseShape = {
-		[ USER_SETTING_KEY ]: DEFAULT_PREFERENCES
+		[ USER_SETTING_KEY ]: DEFAULT_PREFERENCES,
 	};
 
 	describe( 'receivePreferences()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receivePreferences( { foo: 'bar' } );
 
 			expect( action ).to.eql( {
 				type: PREFERENCES_RECEIVE,
 				values: {
-					foo: 'bar'
-				}
+					foo: 'bar',
+				},
 			} );
 		} );
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
 				.reply( 200, responseShape );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			fetchPreferences()( spy );
 			expect( spy ).to.have.been.calledWith( {
-				type: PREFERENCES_FETCH
+				type: PREFERENCES_FETCH,
 			} );
 		} );
 
-		it( 'should dispatch success action when request completes', () => {
+		test( 'should dispatch success action when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_FETCH_SUCCESS,
@@ -72,96 +74,98 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
 				.reply( 404 );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return fetchPreferences()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_FETCH_FAILURE
+					type: PREFERENCES_FETCH_FAILURE,
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'setPreference()', () => {
-		it( 'should return PREFERENCES_SET with correct payload', () => {
+		test( 'should return PREFERENCES_SET with correct payload', () => {
 			expect( setPreference( 'preferenceKey', 'preferenceValue' ) ).to.deep.equal( {
 				type: PREFERENCES_SET,
 				key: 'preferenceKey',
-				value: 'preferenceValue'
+				value: 'preferenceValue',
 			} );
 		} );
 	} );
 
 	describe( 'savePreference()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/me/preferences', {
-					[ USER_SETTING_KEY ]: { preferenceKey: 'preferenceValue' }
+					[ USER_SETTING_KEY ]: { preferenceKey: 'preferenceValue' },
 				} )
 				.reply( 200, responseShape );
 
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/me/preferences', {
-					[ USER_SETTING_KEY ]: { loggedOut: true }
+					[ USER_SETTING_KEY ]: { loggedOut: true },
 				} )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'An active access token must be used to query information about the current user.'
+					message:
+						'An active access token must be used to query information about the current user.',
 				} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
+		test( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: PREFERENCES_SET,
 				key: 'preferenceKey',
-				value: 'preferenceValue'
+				value: 'preferenceValue',
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE action when thunk triggered', () => {
+		test( 'should dispatch PREFERENCES_SAVE action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: PREFERENCES_SAVE,
 				key: 'preferenceKey',
-				value: 'preferenceValue'
+				value: 'preferenceValue',
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
+		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
 			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
-					values: responseShape[ USER_SETTING_KEY ]
+					values: responseShape[ USER_SETTING_KEY ],
 				} );
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
+		test( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
 			return savePreference( 'loggedOut', true )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_FAILURE,
 					error: sinon.match( {
-						message: 'An active access token must be used to query information about the current user.'
-					} )
+						message:
+							'An active access token must be used to query information about the current user.',
+					} ),
 				} );
 			} );
 		} );
 
-		it( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
+		test( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
 			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_SUCCESS,
 					key: 'preferenceKey',
-					value: 'preferenceValue'
+					value: 'preferenceValue',
 				} );
 			} );
 		} );

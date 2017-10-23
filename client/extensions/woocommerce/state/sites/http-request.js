@@ -1,11 +1,15 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 /**
  * Returns a proper WPCOM_HTTP_REQUEST action (http data layer) for dispatching requests
  * in data-layer handlers.
+ * The resulting data will be in the form of `{ data: { API data } }`
  * @param {String} method HTTP Request Method
  * @param {String} path The WC API path to make a request to (after /wc/v#)
  * @param {Number} siteId Site ID to make the request to
@@ -18,16 +22,66 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
 	path = `${ namespace }/${ path }&_method=${ method }`;
-	return http( {
-		apiVersion: '1.1',
-		method: 'GET' === method ? 'GET' : 'POST',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			path,
-			json: true,
+
+	let requestMethod;
+	let requestQuery;
+	let requestBody;
+
+	// DELETE, PUT, and POST all get passed to the Jetpack API as a POST request
+	switch ( method ) {
+		case 'GET':
+			requestMethod = 'GET';
+			requestQuery = {
+				path,
+				json: true,
+			};
+			requestBody = null;
+			break;
+		case 'DELETE':
+			requestMethod = 'POST';
+			requestQuery = {
+				json: true,
+			};
+			requestBody = {
+				path,
+			};
+			break;
+		default:
+			requestMethod = 'POST';
+			requestQuery = {
+				json: true,
+			};
+			requestBody = {
+				path,
+				body: body && JSON.stringify( body ),
+			};
+	}
+
+	return http(
+		{
+			apiVersion: '1.1',
+			method: requestMethod,
+			path: `/jetpack-blogs/${ siteId }/rest-api/`,
+			query: requestQuery,
+			body: requestBody,
 		},
-		body: body && JSON.stringify( body ),
-	}, action );
+		action
+	);
+};
+
+/**
+ * Prepares a request action that will return the body and headers.
+ * The resulting data will be in the form of `{ data: { status: <code>, body: { API data }, headers: { API response headers } } }`
+ * @param {String} method HTTP Request Method
+ * @param {String} path The WC API path to make a request to (after /wc/v#)
+ * @param {Number} siteId Site ID to make the request to
+ * @param {Object} body HTTP Body for POST and PUT Requests
+ * @param {Object} action The original requesting action
+ * @param {String} namespace Namespace to be pre-pended to path (e.g. /wc/v3)
+ * @return {Object} WPCOM_HTTP_REQUEST Action
+ */
+const _requestWithHeaders = ( method, path, siteId, body, action, namespace ) => {
+	return _request( method, path + '&_envelope', siteId, body, action, namespace );
 };
 
 /**
@@ -40,13 +94,19 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
 export default ( siteId, action, namespace = '/wc/v3' ) => ( {
-
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
-	 * @return {Object} WPCOM_HTTP_REQUEST Action
+	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { API data }`
 	 */
-	get: ( path ) => _request( 'GET', path, siteId, null, action, namespace ),
+	get: path => _request( 'GET', path, siteId, null, action, namespace ),
+
+	/**
+	 * Sends a GET request to the API that will return with headers
+	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json-/wc/v#/" prefix
+	 * @return {Object} WPCOM_HTTP_REQUEST Action with `data = { status: <code>, body: { API data }, headers: { API response headers } }`
+	 */
+	getWithHeaders: path => _requestWithHeaders( 'GET', path, siteId, null, action, namespace ),
 
 	/**
 	 * Sends a POST request to the API
@@ -73,5 +133,5 @@ export default ( siteId, action, namespace = '/wc/v3' ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	del: ( path ) => _request( 'DELETE', path, siteId, null, action, namespace ),
+	del: path => _request( 'DELETE', path, siteId, null, action, namespace ),
 } );

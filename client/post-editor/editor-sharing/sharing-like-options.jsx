@@ -1,6 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -17,11 +22,11 @@ import { isJetpackModuleActive } from 'state/sites/selectors';
 
 const SharingLikeOptions = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		isSharingButtonsEnabled: React.PropTypes.bool,
-		isLikesEnabled: React.PropTypes.bool,
-		isNew: React.PropTypes.bool
+		site: PropTypes.object,
+		post: PropTypes.object,
+		isSharingButtonsEnabled: PropTypes.bool,
+		isLikesEnabled: PropTypes.bool,
+		isNew: PropTypes.bool,
 	},
 
 	isShowingSharingButtons: function() {
@@ -56,10 +61,11 @@ const SharingLikeOptions = React.createClass( {
 		return (
 			<label>
 				<FormCheckbox
-					name='sharing_enabled'
+					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
-					onChange={ this.onChange } />
-				<span>{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
+					onChange={ this.onChange }
+				/>
+				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
 			</label>
 		);
 	},
@@ -70,20 +76,21 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-				<label>
-					<FormCheckbox
-						name='likes_enabled'
-						checked={ this.isShowingLikeButton() }
-						onChange={ this.onChange } />
-					<span>{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
-				</label>
+			<label>
+				<FormCheckbox
+					name="likes_enabled"
+					checked={ this.isShowingLikeButton() }
+					onChange={ this.onChange }
+				/>
+				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
+			</label>
 		);
 	},
 
 	onChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			[ event.target.name ]: event.target.checked
+			[ event.target.name ]: event.target.checked,
 		} );
 
 		this.recordStats( event );
@@ -108,21 +115,21 @@ const SharingLikeOptions = React.createClass( {
 		return (
 			<EditorFieldset
 				className="editor-sharing__sharing-like-options"
-				legend={ this.translate( 'Sharing Buttons & Likes' ) }
+				legend={ this.props.translate( 'Sharing Buttons & Likes' ) }
 			>
 				{ this.renderSharingButtonField() }
 				{ this.renderLikesButtonField() }
 			</EditorFieldset>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
 		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
-		isNew: isEditorNewPost( state )
+		isNew: isEditorNewPost( state ),
 	};
-} )( SharingLikeOptions );
+} )( localize( SharingLikeOptions ) );

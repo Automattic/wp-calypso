@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -10,7 +13,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import loadScript from 'lib/load-script';
+import { loadjQueryDependentScript } from 'lib/load-script';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
@@ -28,15 +31,16 @@ const user = new User(),
 		contentChangedCallback() {},
 		glotPress: {
 			url: 'https://translate.wordpress.com',
-			project: 'test'
-		}
+			project: 'test',
+		},
 	};
 
 /**
  * Local variables
  */
 
-var	injectUrl, initialized,
+var injectUrl,
+	initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
 
@@ -88,7 +92,7 @@ const communityTranslatorJumpstart = {
 
 		const props = {
 			className: 'translatable',
-			'data-singular': originalFromPage
+			'data-singular': originalFromPage,
 		};
 
 		// Has Context
@@ -156,7 +160,8 @@ const communityTranslatorJumpstart = {
 
 		debug( 'Translator Jumpstart: loading locale file for ' + localeCode );
 		translationDataFromPage.localeCode = localeCode;
-		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms ||
+		translationDataFromPage.pluralForms =
+			languageJson[ '' ].plural_forms ||
 			languageJson[ '' ][ 'Plural-Forms' ] ||
 			languageJson[ '' ][ 'plural-forms' ] ||
 			translationDataFromPage.pluralForms;
@@ -164,7 +169,10 @@ const communityTranslatorJumpstart = {
 
 		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
 		if ( currentLocale ) {
-			translationDataFromPage.languageName = currentLocale.name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
+			translationDataFromPage.languageName = currentLocale.name.replace(
+				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
+				''
+			);
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
@@ -217,7 +225,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadScript.loadjQueryDependentScript( injectUrl, function( error ) {
+			loadjQueryDependentScript( injectUrl, function( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;
@@ -226,7 +234,8 @@ const communityTranslatorJumpstart = {
 				debug( 'Script loaded!' );
 
 				window.communityTranslator.registerTranslatedCallback(
-					communityTranslatorJumpstart.updateTranslation );
+					communityTranslatorJumpstart.updateTranslation
+				);
 				activate();
 			} );
 			return false;
@@ -249,8 +258,14 @@ const communityTranslatorJumpstart = {
 			translations = newTranslation.translations;
 		// jed expects:
 		// 'context\004singular': [plural, translatedSingular, translatedPlural...]
-		debug( 'Updating ', newTranslation.singular, 'from', locale[ key ],
-			'to', [ plural ].concat( translations ) );
+		debug(
+			'Updating ',
+			newTranslation.singular,
+			'from',
+			locale[ key ],
+			'to',
+			[ plural ].concat( translations )
+		);
 		locale[ key ] = [ plural ].concat( translations );
 
 		i18n.setLocale( locale );
@@ -262,7 +277,7 @@ const communityTranslatorJumpstart = {
 		}
 
 		return true;
-	}
+	},
 };
 
 // wrap translations from i18n
@@ -271,7 +286,7 @@ i18n.registerTranslateHook( ( translation, options ) => {
 } );
 
 // callback when translated component changes.
-// the callback is overwritten by the the translator on load/unload, so we're returning it within an anonymous function.
+// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 i18n.registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
 		return translationDataFromPage.contentChangedCallback();

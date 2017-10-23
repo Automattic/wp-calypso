@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -15,30 +19,29 @@ import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
 import { abtest } from 'lib/abtest';
-import { validate as validateGappsUsers, filter as filterUsers } from 'lib/domains/google-apps-users';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'state/analytics/actions';
+	validate as validateGappsUsers,
+	filter as filterUsers,
+} from 'lib/domains/google-apps-users';
+import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
+import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
-		domain: React.PropTypes.string.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		onAddGoogleApps: React.PropTypes.func.isRequired,
-		onClickSkip: React.PropTypes.func.isRequired,
-		onGoBack: React.PropTypes.func,
-		analyticsSection: React.PropTypes.string,
-		initialGoogleAppsCartItem: React.PropTypes.object
+		domain: PropTypes.string.isRequired,
+		productsList: PropTypes.object.isRequired,
+		onAddGoogleApps: PropTypes.func.isRequired,
+		onClickSkip: PropTypes.func.isRequired,
+		onGoBack: PropTypes.func,
+		analyticsSection: PropTypes.string,
+		initialGoogleAppsCartItem: PropTypes.object,
 	};
 
 	state = {
 		isAddingEmail: false,
 		users: null,
-		validationErrors: null
+		validationErrors: null,
 	};
 
 	componentWillMount() {
@@ -60,24 +63,18 @@ class GoogleAppsDialog extends React.Component {
 
 		return (
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
+				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
-					{ this.header() }
-				</CompactCard>
-				<CompactCard>
-					<GoogleAppsProductDetails
-						monthlyPrice={ monthlyPrice }
-						annualPrice={ annualPrice }
-					/>
+					<GoogleAppsProductDetails monthlyPrice={ monthlyPrice } annualPrice={ annualPrice } />
 					<ReactCSSTransitionGroup
 						transitionName="google-apps-dialog__users"
 						transitionEnterTimeout={ 200 }
-						transitionLeaveTimeout={ 200 }>
+						transitionLeaveTimeout={ 200 }
+					>
 						{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
 					</ReactCSSTransitionGroup>
 				</CompactCard>
-				<CompactCard>
-					{ this.footer() }
-				</CompactCard>
+				<CompactCard>{ this.footer() }</CompactCard>
 			</form>
 		);
 	}
@@ -89,11 +86,12 @@ class GoogleAppsDialog extends React.Component {
 				fields={ this.state.users }
 				domain={ this.props.domain }
 				onChange={ this.setUsers }
-				onBlur={ this.save } />
+				onBlur={ this.save }
+			/>
 		);
 	}
 
-	setUsers = ( users ) => this.setState( { users: users } );
+	setUsers = users => this.setState( { users: users } );
 
 	save = () => {
 		if ( this.props.onSave ) {
@@ -107,16 +105,11 @@ class GoogleAppsDialog extends React.Component {
 		return (
 			<header className="google-apps-dialog__header">
 				<h2 className="google-apps-dialog__title">
-					{
-						translate(
-							'Add Professional email from Google to %(domain)s',
-							{
-								args: {
-									domain: this.props.domain
-								}
-							}
-						)
-					}
+					{ translate( 'Add Professional email from Google to %(domain)s', {
+						args: {
+							domain: this.props.domain,
+						},
+					} ) }
 				</h2>
 				<h5 className="google-apps-dialog__no-setup-required">
 					{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }
@@ -135,7 +128,8 @@ class GoogleAppsDialog extends React.Component {
 			<button
 				className="google-apps-dialog__keepsearching-button button"
 				href="#"
-				onClick={ this.handleFormKeepSearching }>
+				onClick={ this.handleFormKeepSearching }
+			>
 				{ translate( 'Keep Searching' ) }
 			</button>
 		);
@@ -146,19 +140,18 @@ class GoogleAppsDialog extends React.Component {
 
 		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
 			return (
-				<a
-					className="google-apps-dialog__cancel-link"
-					href="#"
-					onClick={ this.handleFormCheckout }>
+				<a className="google-apps-dialog__cancel-link" href="#" onClick={ this.handleFormCheckout }>
 					{ translate( "No thanks, I don't need email or will use another provider." ) }
 				</a>
 			);
 		}
 
 		return (
-			<button className="google-apps-dialog__checkout-button button"
-							href="#"
-							onClick={ this.handleFormCheckout }>
+			<button
+				className="google-apps-dialog__checkout-button button"
+				href="#"
+				onClick={ this.handleFormCheckout }
+			>
 				{ translate( 'Checkout' ) }
 			</button>
 		);
@@ -166,7 +159,9 @@ class GoogleAppsDialog extends React.Component {
 
 	footer() {
 		const { translate } = this.props;
-		const continueButtonHandler = this.state.isAddingEmail ? this.handleFormSubmit : this.handleAddEmail;
+		const continueButtonHandler = this.state.isAddingEmail
+			? this.handleFormSubmit
+			: this.handleAddEmail;
 		const continueButtonText = this.state.isAddingEmail
 			? translate( 'Continue \u00BB' )
 			: translate( 'Yes, Add Email \u00BB' );
@@ -175,16 +170,18 @@ class GoogleAppsDialog extends React.Component {
 			<footer className="google-apps-dialog__footer">
 				{ this.maybeShowKeepSearching() }
 				{ this.checkoutButtonOrLink() }
-				<button className="google-apps-dialog__continue-button button is-primary"
-								type="submit"
-								onClick={ continueButtonHandler }>
+				<button
+					className="google-apps-dialog__continue-button button is-primary"
+					type="submit"
+					onClick={ continueButtonHandler }
+				>
 					{ continueButtonText }
 				</button>
 			</footer>
 		);
 	}
 
-	handleAddEmail = ( event ) => {
+	handleAddEmail = event => {
 		event.preventDefault();
 
 		this.props.recordAddEmailButtonClick( this.props.analyticsSection );
@@ -192,7 +189,7 @@ class GoogleAppsDialog extends React.Component {
 		this.setState( { isAddingEmail: true } );
 	};
 
-	handleFormSubmit = ( event ) => {
+	handleFormSubmit = event => {
 		event.preventDefault();
 
 		this.props.recordFormSubmit( this.props.analyticsSection );
@@ -204,7 +201,7 @@ class GoogleAppsDialog extends React.Component {
 		this.props.onAddGoogleApps( this.getGoogleAppsCartItem() );
 	};
 
-	handleFormCheckout = ( event ) => {
+	handleFormCheckout = event => {
 		event.preventDefault();
 
 		this.props.recordCancelButtonClick( this.props.analyticsSection );
@@ -212,7 +209,7 @@ class GoogleAppsDialog extends React.Component {
 		this.props.onClickSkip();
 	};
 
-	handleFormKeepSearching = ( event ) => {
+	handleFormKeepSearching = event => {
 		event.preventDefault();
 
 		this.props.recordKeepSearching();
@@ -226,14 +223,14 @@ class GoogleAppsDialog extends React.Component {
 		return {
 			firstName: translate( 'First Name' ),
 			lastName: translate( 'Last Name' ),
-			email: translate( 'Email Address' )
+			email: translate( 'Email Address' ),
 		};
 	}
 
 	validateForm() {
 		const validation = validateGappsUsers( {
 			users: this.state.users,
-			fields: this.getFields()
+			fields: this.getFields(),
 		} );
 
 		if ( validation.errors.length > 0 ) {
@@ -247,64 +244,47 @@ class GoogleAppsDialog extends React.Component {
 	getGoogleAppsCartItem() {
 		let users = filterUsers( {
 			users: this.state.users,
-			fields: this.getFields()
+			fields: this.getFields(),
 		} );
 
-		users = users.map( ( user ) => {
+		users = users.map( user => {
 			return {
 				email: `${ user.email.value }@${ this.props.domain }`.toLowerCase(),
 				firstname: user.firstName.value.trim(),
-				lastname: user.lastName.value.trim()
+				lastname: user.lastName.value.trim(),
 			};
 		} );
 
 		return cartItems.googleApps( {
 			domain: this.props.domain,
-			users
+			users,
 		} );
 	}
 }
 
-const recordKeepSearching = () => recordGoogleEvent(
-	'Domain Search',
-	'Click "Keep Searching" Button in Google Apps Dialog'
-);
+const recordKeepSearching = () =>
+	recordGoogleEvent( 'Domain Search', 'Click "Keep Searching" Button in Google Apps Dialog' );
 
-const recordCancelButtonClick = ( section ) => composeAnalytics(
-	recordTracksEvent(
-		'calypso_google_apps_cancel_button_click',
-		{ section }
-	),
-	recordGoogleEvent(
-		'Domain Search',
-		'Clicked "Cancel" Button in Google Apps Dialog'
-	)
-);
+const recordCancelButtonClick = section =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_google_apps_cancel_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Cancel" Button in Google Apps Dialog' )
+	);
 
-const recordAddEmailButtonClick = ( section ) => composeAnalytics(
-	recordTracksEvent(
-		'calypso_google_apps_add_email_button_click',
-		{ section }
-	),
-	recordGoogleEvent(
-		'Domain Search',
-		'Clicked "Add Email" Button in Google Apps Dialog'
-	)
-);
+const recordAddEmailButtonClick = section =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_google_apps_add_email_button_click', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Clicked "Add Email" Button in Google Apps Dialog' )
+	);
 
-const recordFormSubmit = ( section ) => composeAnalytics(
-	recordTracksEvent(
-		'calypso_google_apps_form_submit',
-		{ section }
-	),
-	recordGoogleEvent(
-		'Domain Search',
-		'Submitted Form in Google Apps Dialog'
-	)
-);
+const recordFormSubmit = section =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_google_apps_form_submit', { section } ),
+		recordGoogleEvent( 'Domain Search', 'Submitted Form in Google Apps Dialog' )
+	);
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 	} ),
 	{

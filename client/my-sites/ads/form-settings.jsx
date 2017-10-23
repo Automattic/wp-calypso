@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import notices from 'notices';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -87,45 +91,45 @@ class AdsFormSettings extends Component {
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	}
+	};
 
-	handleChange = ( event ) => {
+	handleChange = event => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
 		this.setState( {
 			[ name ]: value,
 		} );
-	}
+	};
 
-	handleToggle = ( event ) => {
+	handleToggle = event => {
 		const name = event.currentTarget.name;
 
 		this.setState( {
 			[ name ]: ! this.state[ name ],
 		} );
-	}
+	};
 
 	handleResidentCheckbox = () => {
 		const isResident = ! this.state.us_checked;
 
 		this.setState( {
 			us_checked: isResident,
-			us_resident: isResident ? 'yes' : 'no'
+			us_resident: isResident ? 'yes' : 'no',
 		} );
-	}
+	};
 
-	handleSubmit = ( event ) => {
+	handleSubmit = event => {
 		const { site } = this.props;
 		event.preventDefault();
 
 		WordadsActions.updateSettings( site, this.packageState() );
 		this.setState( {
 			notice: null,
-			error: null
+			error: null,
 		} );
 		this.props.markSaved();
-	}
+	};
 
 	getSettingsFromStore( siteInstance ) {
 		const site = siteInstance || this.props.site,
@@ -159,7 +163,7 @@ class AdsFormSettings extends Component {
 			isLoading: false,
 			isSubmitting: false,
 			error: {},
-			notice: null
+			notice: null,
 		};
 	}
 
@@ -177,7 +181,7 @@ class AdsFormSettings extends Component {
 			tos: this.state.tos ? 'signed' : '',
 			us_resident: this.state.us_resident,
 			who_owns: this.state.who_owns,
-			zip: this.state.zip
+			zip: this.state.zip,
 		};
 	}
 
@@ -317,11 +321,19 @@ class AdsFormSettings extends Component {
 			<div>
 				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="taxid">{ translate( 'Social Security Number or US Tax ID' ) }</FormLabel>
+					<FormLabel htmlFor="taxid">
+						{ translate( 'Social Security Number or US Tax ID' ) }
+					</FormLabel>
 					<FormTextInput
 						name="taxid"
 						id="taxid"
-						placeholder={ this.state.taxid_last4 ? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 ) : '' }
+						placeholder={
+							this.state.taxid_last4 ? (
+								'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
+							) : (
+								''
+							)
+						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
@@ -329,7 +341,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="name">{ translate( 'Full Name or Business / Non-profit Name' ) }</FormLabel>
+					<FormLabel htmlFor="name">
+						{ translate( 'Full Name or Business / Non-profit Name' ) }
+					</FormLabel>
 					<FormTextInput
 						name="name"
 						id="name"
@@ -412,13 +426,20 @@ class AdsFormSettings extends Component {
 						disabled={ this.state.isLoading || 'signed' === this.state.tos }
 					/>
 					<span>
-						{
-							translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+						{ translate(
+							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.',
+							{
 								components: {
-									a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" />
-								}
-							} )
-						}
+									a: (
+										<a
+											href="https://wordpress.com/automattic-ads-tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</span>
 				</FormLabel>
 			</FormFieldset>
@@ -430,7 +451,11 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Card>
-				<form id="wordads-settings" onSubmit={ this.handleSubmit } onChange={ this.props.markChanged }>
+				<form
+					id="wordads-settings"
+					onSubmit={ this.handleSubmit }
+					onChange={ this.props.markChanged }
+				>
 					<FormButtonsBar>
 						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
 							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
@@ -459,12 +484,12 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		( state ) => ( {
+		state => ( {
 			site: getSelectedSite( state ),
 			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 		} ),
-		{ dismissWordAdsSuccess },
+		{ dismissWordAdsSuccess }
 	),
 	localize,
-	protectForm,
+	protectForm
 )( AdsFormSettings );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { map, pickBy } from 'lodash';
 import createSelector from 'lib/create-selector';
 
@@ -12,5 +15,5 @@ import createSelector from 'lib/create-selector';
  */
 export default createSelector(
 	state => map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number ),
-	state => [ state.reader.siteBlocks.items ],
+	state => [ state.reader.siteBlocks.items ]
 );

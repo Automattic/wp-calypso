@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-
+/** @format */
 /**
  * External dependencies
  */
@@ -16,42 +15,57 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'index', () => {
 	let selector, getSitePosts;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 		selector = sandbox.spy( ( state, siteId ) => {
 			return filter( state.posts, { site_ID: siteId } );
 		} );
 	} );
 
-	before( () => {
-		getSitePosts = createSelector( selector, ( state ) => state.posts );
+	beforeAll( () => {
+		getSitePosts = createSelector( selector, state => state.posts );
 	} );
 
 	beforeEach( () => {
 		getSitePosts.memoizedSelector.cache.clear();
 	} );
 
-	it( 'should expose its memoized function', () => {
+	test( 'should expose its memoized function', () => {
 		expect( getSitePosts.memoizedSelector ).to.be.a( 'function' );
 	} );
 
-	it( 'should create a function which returns the expected value when called', () => {
+	test( 'should create a function which returns the expected value when called', () => {
 		const state = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		expect( getSitePosts( state, 2916284 ) ).to.eql( [
-			{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			{
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+			},
 		] );
 	} );
 
-	it( 'should cache the result of a selector function', () => {
+	test( 'should cache the result of a selector function', () => {
 		const state = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		getSitePosts( state, 2916284 );
@@ -60,7 +74,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should warn against complex arguments in development mode', () => {
+	test( 'should warn against complex arguments in development mode', () => {
 		const state = { posts: {} };
 
 		getSitePosts( state, 1 );
@@ -76,12 +90,22 @@ describe( 'index', () => {
 		expect( console.warn ).to.have.been.calledThrice;
 	} );
 
-	it( 'should return the expected value of differing arguments', () => {
+	test( 'should return the expected value of differing arguments', () => {
 		const state = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-				'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 38303081, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+				'6c831c187ffef321eb43a67761a525a3': {
+					ID: 413,
+					site_ID: 38303081,
+					global_ID: '6c831c187ffef321eb43a67761a525a3',
+					title: 'Ribs & Chicken',
+				},
+			},
 		};
 
 		getSitePosts( state, 2916284 );
@@ -89,39 +113,69 @@ describe( 'index', () => {
 		getSitePosts( state, 2916284 );
 
 		expect( sitePosts ).to.eql( [
-			{ ID: 413, site_ID: 38303081, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
+			{
+				ID: 413,
+				site_ID: 38303081,
+				global_ID: '6c831c187ffef321eb43a67761a525a3',
+				title: 'Ribs & Chicken',
+			},
 		] );
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should bust the cache when watched state changes', () => {
+	test( 'should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		getSitePosts( currentState, 2916284 );
 
 		const nextState = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-				'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 38303081, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+				'6c831c187ffef321eb43a67761a525a3': {
+					ID: 413,
+					site_ID: 38303081,
+					global_ID: '6c831c187ffef321eb43a67761a525a3',
+					title: 'Ribs & Chicken',
+				},
+			},
 		};
 
 		expect( getSitePosts( nextState, 2916284 ) ).to.eql( [
-			{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+			{
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+			},
 		] );
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should accept an array of dependent state values', () => {
-		const getSitePostsWithArrayDependants = createSelector( selector, ( state ) => [ state.posts ] );
+	test( 'should accept an array of dependent state values', () => {
+		const getSitePostsWithArrayDependants = createSelector( selector, state => [ state.posts ] );
 		const state = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		getSitePostsWithArrayDependants( state, 2916284 );
@@ -130,8 +184,8 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should accept an array of dependent selectors', () => {
-		const getPosts = ( state ) => state.posts;
+	test( 'should accept an array of dependent selectors', () => {
+		const getPosts = state => state.posts;
 		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
 		const state = {
 			posts: {
@@ -139,9 +193,9 @@ describe( 'index', () => {
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-					title: 'Hello World'
-				}
-			}
+					title: 'Hello World',
+				},
+			},
 		};
 
 		const nextState = { posts: {} };
@@ -154,12 +208,17 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should default to watching entire state, returning cached result if no changes', () => {
+	test( 'should default to watching entire state, returning cached result if no changes', () => {
 		const getSitePostsWithDefaultGetDependants = createSelector( selector );
 		const state = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		getSitePostsWithDefaultGetDependants( state, 2916284 );
@@ -168,21 +227,36 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should default to watching entire state, busting if state has changed', () => {
+	test( 'should default to watching entire state, busting if state has changed', () => {
 		const getSitePostsWithDefaultGetDependants = createSelector( selector );
 		const currentState = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			},
 		};
 
 		getSitePostsWithDefaultGetDependants( currentState, 2916284 );
 
 		const nextState = {
 			posts: {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-				'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 38303081, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-			}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+				'6c831c187ffef321eb43a67761a525a3': {
+					ID: 413,
+					site_ID: 38303081,
+					global_ID: '6c831c187ffef321eb43a67761a525a3',
+					title: 'Ribs & Chicken',
+				},
+			},
 		};
 
 		getSitePostsWithDefaultGetDependants( nextState, 2916284 );
@@ -190,19 +264,20 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should accept an optional custom cache key generating function', () => {
+	test( 'should accept an optional custom cache key generating function', () => {
 		const getSitePostsWithCustomGetCacheKey = createSelector(
 			selector,
-			( state ) => state.posts,
+			state => state.posts,
 			( state, siteId ) => `CUSTOM${ siteId }`
 		);
 
 		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
 
-		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be.true;
+		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be
+			.true;
 	} );
 
-	it( 'should call dependant state getter with arguments', () => {
+	test( 'should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
 		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
@@ -212,7 +287,7 @@ describe( 'index', () => {
 		expect( getDeps ).to.have.been.calledWithExactly( state, 1, 2, 3 );
 	} );
 
-	it( 'should handle an array of selectors instead of a dependant state getter', () => {
+	test( 'should handle an array of selectors instead of a dependant state getter', () => {
 		const getPosts = sinon.spy();
 		const getQuuxs = sinon.spy();
 		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );

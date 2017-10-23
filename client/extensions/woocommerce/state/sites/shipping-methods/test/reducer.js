@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,14 +9,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../../reducer';
-import { LOADING } from 'woocommerce/state/constants';
-import {
-	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
-} from 'woocommerce/state/action-types';
 import { fetchShippingMethodsSuccess } from '../actions';
+import { WOOCOMMERCE_SHIPPING_METHODS_REQUEST } from 'woocommerce/state/action-types';
+import { LOADING } from 'woocommerce/state/constants';
 
 describe( 'fetch shipping methods', () => {
-	it( 'should mark the shipping methods tree as "loading"', () => {
+	test( 'should mark the shipping methods tree as "loading"', () => {
 		const siteId = 123;
 		const state = {};
 
@@ -24,7 +24,7 @@ describe( 'fetch shipping methods', () => {
 } );
 
 describe( 'fetch shipping methods - success', () => {
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {};
 
@@ -37,4 +37,3 @@ describe( 'fetch shipping methods - success', () => {
 		expect( newState[ siteId ].shippingMethods ).to.deep.equal( methods );
 	} );
 } );
-

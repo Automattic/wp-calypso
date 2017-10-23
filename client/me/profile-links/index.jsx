@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
 /**
@@ -17,8 +21,7 @@ import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-export default React.createClass( {
-
+const ProfileLinks = React.createClass( {
 	displayName: 'ProfileLinks',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
@@ -48,8 +51,8 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			userProfileLinks: {
-				initialized: false
-			}
+				initialized: false,
+			},
 		};
 	},
 
@@ -57,62 +60,65 @@ export default React.createClass( {
 		return {
 			showingForm: false,
 			lastError: false,
-			showPopoverMenu: false
+			showPopoverMenu: false,
 		};
 	},
 
 	showAddWordPress() {
 		this.setState( {
 			showingForm: 'wordpress',
-			showPopoverMenu: false
+			showPopoverMenu: false,
 		} );
 	},
 
 	showAddOther() {
 		this.setState( {
 			showingForm: 'other',
-			showPopoverMenu: false
+			showPopoverMenu: false,
 		} );
 	},
 
 	showPopoverMenu() {
 		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu
+			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
 	},
 
 	closePopoverMenu() {
 		this.setState( {
-			showPopoverMenu: false
+			showPopoverMenu: false,
 		} );
 	},
 
 	hideForms() {
 		this.setState( {
-			showingForm: false
+			showingForm: false,
 		} );
 	},
 
 	onRemoveLinkResponse( error ) {
 		if ( error ) {
 			this.setState( {
-				lastError: error
+				lastError: error,
 			} );
 		} else {
 			this.setState( {
-				lastError: false
+				lastError: false,
 			} );
 		}
 	},
 
 	clearLastError() {
 		this.setState( {
-			lastError: false
+			lastError: false,
 		} );
 	},
 
 	onRemoveLink( profileLink ) {
-		this.props.userProfileLinks.deleteProfileLinkBySlug( profileLink.link_slug, this.onRemoveLinkResponse );
+		this.props.userProfileLinks.deleteProfileLinkBySlug(
+			profileLink.link_slug,
+			this.onRemoveLinkResponse
+		);
 	},
 
 	possiblyRenderError() {
@@ -121,10 +127,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice className="profile-links__error"
+			<Notice
+				className="profile-links__error"
 				status="is-error"
-				onDismissClick={ this.clearLastError }>
-				{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
+				onDismissClick={ this.clearLastError }
+			>
+				{ this.props.translate(
+					'An error occurred while attempting to remove the link. Please try again later.'
+				) }
 			</Notice>
 		);
 	},
@@ -132,18 +142,17 @@ export default React.createClass( {
 	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{
-					this.props.userProfileLinks.getProfileLinks().map( ( profileLink ) =>
-						(
-							<ProfileLink
-								key={ profileLink.link_slug }
-								title={ profileLink.title }
-								url={ profileLink.value }
-								slug={ profileLink.link_slug }
-								onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) } />
-						)
-					)
-				}
+				{ this.props.userProfileLinks
+					.getProfileLinks()
+					.map( profileLink => (
+						<ProfileLink
+							key={ profileLink.link_slug }
+							title={ profileLink.title }
+							url={ profileLink.value }
+							slug={ profileLink.link_slug }
+							onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) }
+						/>
+					) ) }
 			</ul>
 		);
 	},
@@ -151,9 +160,9 @@ export default React.createClass( {
 	renderNoProfileLinks() {
 		return (
 			<p className="profile-links__no-links">
-				{
-					this.translate( 'You have no sites in your profile links. You may add sites if you\'d like.' )
-				}
+				{ this.props.translate(
+					"You have no sites in your profile links. You may add sites if you'd like."
+				) }
 			</p>
 		);
 	},
@@ -161,17 +170,15 @@ export default React.createClass( {
 	renderPlaceholders() {
 		return (
 			<ul className="profile-links__list">
-				{ times( 2, ( index ) =>
-					(
-						<ProfileLink
-							title="Loading Profile Links"
-							url="http://wordpress.com"
-							slug="A placeholder profile link"
-							isPlaceholder
-							key={ index }
-						/>
-					)
-				) }
+				{ times( 2, index => (
+					<ProfileLink
+						title="Loading Profile Links"
+						url="http://wordpress.com"
+						slug="A placeholder profile link"
+						isPlaceholder
+						key={ index }
+					/>
+				) ) }
 			</ul>
 		);
 	},
@@ -189,9 +196,7 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<p>
-					{ this.translate( 'Manage which sites appear in your profile.' ) }
-				</p>
+				<p>{ this.props.translate( 'Manage which sites appear in your profile.' ) }</p>
 
 				{ this.possiblyRenderError() }
 				{ links }
@@ -222,7 +227,7 @@ export default React.createClass( {
 	render() {
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Profile Links' ) }>
+				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
 						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ !! this.state.showingForm }
@@ -233,10 +238,10 @@ export default React.createClass( {
 						onClosePopoverMenu={ this.closePopoverMenu }
 					/>
 				</SectionHeader>
-				<Card>
-					{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }
-				</Card>
+				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 			</div>
 		);
-	}
+	},
 } );
+
+export default localize( ProfileLinks );

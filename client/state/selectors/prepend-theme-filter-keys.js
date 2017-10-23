@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getThemeFilterStringFromTerm } from 'state/selectors';
 
 /**
@@ -13,9 +16,11 @@ import { getThemeFilterStringFromTerm } from 'state/selectors';
  * @return {string} Complete taxonomy:term filter string, or empty string if term is not valid
  */
 export default function prependThemeFilterKeys( state, terms = '' ) {
-	const result = terms.split( /[+\s]/ ).map(
-		( term ) => getThemeFilterStringFromTerm( state, term )
-	).join( ' ' ).trim();
+	const result = terms
+		.split( /[+\s]/ )
+		.map( term => getThemeFilterStringFromTerm( state, term ) )
+		.join( ' ' )
+		.trim();
 
 	if ( result ) {
 		return result + ' ';

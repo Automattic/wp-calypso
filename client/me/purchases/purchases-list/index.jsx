@@ -1,8 +1,12 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -42,18 +46,16 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
-			content = getPurchasesBySite( this.props.purchases, this.props.sites ).map(
-				site => (
-					<PurchasesSite
-						key={ site.id }
-						siteId={ site.id }
-						name={ site.name }
-						domain={ site.domain }
-						slug={ site.slug }
-						purchases={ site.purchases }
-					/>
-				)
-			);
+			content = getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+				<PurchasesSite
+					key={ site.id }
+					siteId={ site.id }
+					name={ site.name }
+					domain={ site.domain }
+					slug={ site.slug }
+					purchases={ site.purchases }
+				/>
+			) );
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
@@ -62,8 +64,7 @@ class PurchasesList extends Component {
 					<EmptyContent
 						title={ this.props.translate( 'Looking to upgrade?' ) }
 						line={ this.props.translate(
-							'Our plans give your site the power to thrive. ' +
-								'Find the plan that works for you.'
+							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
 						) }
 						action={ this.props.translate( 'Upgrade Now' ) }
 						actionURL={ '/plans' }
@@ -85,9 +86,9 @@ class PurchasesList extends Component {
 }
 
 PurchasesList.propTypes = {
-	noticeType: React.PropTypes.string,
-	purchases: React.PropTypes.oneOfType( [ React.PropTypes.array, React.PropTypes.bool ] ),
-	sites: React.PropTypes.array.isRequired,
+	noticeType: PropTypes.string,
+	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	sites: PropTypes.array.isRequired,
 };
 
 export default connect(

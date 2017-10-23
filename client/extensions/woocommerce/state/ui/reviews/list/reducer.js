@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { combineReducers } from 'state/utils';
 import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types';
 
@@ -44,7 +47,7 @@ export function currentProduct( state = null, action ) {
 export function currentSearch( state = '', action ) {
 	const { type, query } = action;
 	if ( WOOCOMMERCE_UI_REVIEWS_SET_QUERY === type ) {
-		return query && ( 'undefined' !== typeof query.search ) ? query.search : state;
+		return query && 'undefined' !== typeof query.search ? query.search : state;
 	}
 	return state;
 }
@@ -52,5 +55,5 @@ export function currentSearch( state = '', action ) {
 export default combineReducers( {
 	currentPage,
 	currentProduct,
-	currentSearch
+	currentSearch,
 } );

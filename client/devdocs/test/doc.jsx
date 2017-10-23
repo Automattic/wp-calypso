@@ -1,49 +1,38 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
+import React from 'react';
+import TestUtils from 'react-dom/test-utils';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
+import SingleDocClass from '../doc';
 
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+jest.mock( 'devdocs/service', () => ( {
+	fetch: () => {},
+} ) );
 
 describe( 'SingleDoc', () => {
-	let React, ReactDom, TestUtils, SingleDocClass;
-	let fetchResponse = '';
-
-	useFakeDom();
-	useMockery( mockery => {
-		mockery.registerMock( './service', {
-			fetch( path, cb ) {
-				cb( fetchResponse );
-			}
-		}	);
-	} );
-
-	before( () => {
-		React = require( 'react' );
-		ReactDom = require( 'react-dom' );
-		TestUtils = require( 'react-addons-test-utils' );
-
-		SingleDocClass = require( '../doc.jsx' );
-	} );
-
 	describe( 'makeSnip', () => {
-		context( 'render test', () => {
+		describe( 'render test', () => {
 			let renderedSingleDoc;
 
 			beforeEach( () => {
-				fetchResponse = '<div><p>something hello</p></div>';
 				renderedSingleDoc = TestUtils.renderIntoDocument(
 					<SingleDocClass path={ '/example' } term={ 'hello' } />
 				);
 			} );
 
-			it( 'should render html with marked text', () => {
-				renderedSingleDoc.setState( { body: fetchResponse } );
+			test( 'should render html with marked text', () => {
+				renderedSingleDoc.setState( { body: '<div><p>something hello</p></div>' } );
 				const html = ReactDom.findDOMNode( renderedSingleDoc.refs.body ).innerHTML;
 				expect( html ).to.equal( '<div><p>something <mark>hello</mark></p></div>' );
 			} );

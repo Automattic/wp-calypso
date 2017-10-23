@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import {
-	NPS_SURVEY_DIALOG_IS_SHOWING,
-} from 'state/action-types';
+
+import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
 export const isNpsSurveyDialogShowing = createReducer( false, {

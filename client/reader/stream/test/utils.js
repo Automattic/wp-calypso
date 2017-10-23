@@ -4,26 +4,15 @@
  */
 import { expect, assert } from 'chai';
 import moment from 'moment';
-import mockery from 'mockery';
-let utils, sameDay, sameSite, combine, combineCards, injectRecommendations;
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
+
+jest.mock( 'lib/user/utils', () => ( {} ) );
 
 describe( 'reader stream', () => {
-	useMockery();
-	before( () => {
-		mockery.registerMock( 'lib/user/utils', {} );
-		utils = require( '../utils' );
-		sameDay = utils.sameDay;
-		sameSite = utils.sameSite;
-		combine = utils.combine;
-		combineCards = utils.combineCards;
-		injectRecommendations = utils.injectRecommendations;
-	} );
-
 	const today = moment().toDate();
 	const postKey1 = { feedId: 'feed1', postId: 'postId1', date: today };
 	const postKey2 = { feedId: 'feed1', postId: 'postId2', date: today };
@@ -46,15 +35,27 @@ describe( 'reader stream', () => {
 		const datePostKey = date => ( { date } );
 		const todayPostKey = datePostKey( today );
 		const todayPostKey2 = datePostKey( new Date() );
-		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );
-		const oneYearInTheFuturePostKey = datePostKey( moment( today ).add( 1, 'year' ).toDate() );
-		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
+		const oneYearAgoPostKey = datePostKey(
+			moment( today )
+				.subtract( 1, 'year' )
+				.toDate()
+		);
+		const oneYearInTheFuturePostKey = datePostKey(
+			moment( today )
+				.add( 1, 'year' )
+				.toDate()
+		);
+		const oneMonthAgoPostKey = datePostKey(
+			moment( today )
+				.subtract( 1, 'month' )
+				.toDate()
+		);
 
-		it( 'should return true when two days are the same day', () => {
+		test( 'should return true when two days are the same day', () => {
 			assert( sameDay( todayPostKey, todayPostKey2 ) );
 		} );
 
-		it( 'should return false when two days are not the same day', () => {
+		test( 'should return false when two days are not the same day', () => {
 			assert( ! sameDay( todayPostKey, oneYearAgoPostKey ) );
 			assert( ! sameDay( todayPostKey, oneYearInTheFuturePostKey ) );
 			assert( ! sameDay( todayPostKey, oneMonthAgoPostKey ) );
@@ -62,33 +63,33 @@ describe( 'reader stream', () => {
 	} );
 
 	describe( '#sameSite', () => {
-		it( 'should return true when two postKeys represent the same site', () => {
+		test( 'should return true when two postKeys represent the same site', () => {
 			const postId = 'postId';
 			const isSame = sameSite( { blogId: 'site1', postId }, { blogId: 'site1', postId } );
 			assert( isSame );
 		} );
 
-		it( 'should return true when two postKeys represent the same feed', () => {
+		test( 'should return true when two postKeys represent the same feed', () => {
 			const isSame = sameSite( postKey1, postKey2 );
 			assert( isSame );
 		} );
 
-		it( 'should return true when samesite and one item is a combinedCard', () => {
+		test( 'should return true when samesite and one item is a combinedCard', () => {
 			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
 			assert( isSame );
 		} );
 
-		it( 'should return false when different site and one item is a combinedCard', () => {
+		test( 'should return false when different site and one item is a combinedCard', () => {
 			const isSame = sameSite( { ...combinedCardPostKey1, feedId: 'feed3' }, combinedCardPostKey2 );
 			assert( ! isSame );
 		} );
 
-		it( 'should work when both postKeys represent combinedCards', () => {
+		test( 'should work when both postKeys represent combinedCards', () => {
 			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
 			assert( isSame );
 		} );
 
-		it( 'recs should never be marked as sameSite', () => {
+		test( 'recs should never be marked as sameSite', () => {
 			const isSame = sameSite(
 				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock' },
 				postKey1
@@ -98,7 +99,7 @@ describe( 'reader stream', () => {
 	} );
 
 	describe( '#combine', () => {
-		it( 'should combine two regular postkeys', () => {
+		test( 'should combine two regular postkeys', () => {
 			const combined = combine( postKey1, postKey2 );
 			expect( combined ).to.eql( {
 				feedId: postKey1.feedId,
@@ -108,12 +109,12 @@ describe( 'reader stream', () => {
 			} );
 		} );
 
-		it( 'should return null if either postKey is null', () => {
+		test( 'should return null if either postKey is null', () => {
 			const combined = combine( postKey1, null );
 			assert.equal( combined, null );
 		} );
 
-		it( 'should combine a combined card with a regular postKey', () => {
+		test( 'should combine a combined card with a regular postKey', () => {
 			const combined = combine( combinedCardPostKey1, postKey1 );
 			expect( combined ).to.eql( {
 				...combinedCardPostKey1,
@@ -121,7 +122,7 @@ describe( 'reader stream', () => {
 			} );
 		} );
 
-		it( 'should combine two combined cards correctly', () => {
+		test( 'should combine two combined cards correctly', () => {
 			const combined = combine( combinedCardPostKey1, combinedCardPostKey2 );
 			expect( combined ).to.eql( {
 				...combinedCardPostKey1,
@@ -139,7 +140,7 @@ describe( 'reader stream', () => {
 		const site3Key1 = { blogId: '3', postId: '31', date };
 		const site4Key1 = { blogId: '4', postId: '41', date };
 
-		it( 'should combine series with 2 in a rows', () => {
+		test( 'should combine series with 2 in a rows', () => {
 			const postKeysSet1 = [ site1Key1, site1Key2 ];
 			const combinedItems1 = combineCards( postKeysSet1 );
 			expect( combinedItems1 ).eql( [ combine( site1Key1, site1Key2 ) ] );
@@ -149,7 +150,7 @@ describe( 'reader stream', () => {
 			expect( combinedItems2 ).eql( [ site4Key1, combine( site1Key1, site1Key2 ), site3Key1 ] );
 		} );
 
-		it( 'should combine cards with series of 3 in a row', () => {
+		test( 'should combine cards with series of 3 in a row', () => {
 			const combinedCard = combine( combine( site1Key1, site1Key2 ), site1Key3 );
 
 			const postKeys1 = [ site1Key1, site1Key2, site1Key3 ];
@@ -161,13 +162,13 @@ describe( 'reader stream', () => {
 			expect( combinedItems2 ).eql( [ site4Key1, combinedCard, site3Key1 ] );
 		} );
 
-		it( 'should not combine any cards when no series exist', () => {
+		test( 'should not combine any cards when no series exist', () => {
 			const postKeys = [ site1Key1, site2Key2, site3Key1, site4Key1 ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );
 		} );
 
-		it( 'should not combine discover cards', () => {
+		test( 'should not combine discover cards', () => {
 			const discoverFeedId = 41325786;
 			const discoverSiteId = 53424024;
 			const discoverFeedPostKeys = [
@@ -185,8 +186,10 @@ describe( 'reader stream', () => {
 			expect( combinedSiteItems ).eql( discoverSitePostKeys );
 		} );
 
-		it( 'should not combine cards that are greater than a day apart', () => {
-			const theDistantPast = moment().year( -1 ).toDate();
+		test( 'should not combine cards that are greater than a day apart', () => {
+			const theDistantPast = moment()
+				.year( -1 )
+				.toDate();
 			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );
@@ -203,14 +206,14 @@ describe( 'reader stream', () => {
 			recommendations: recs,
 		} );
 
-		it( 'should not modify items if empty recs', () => {
+		test( 'should not modify items if empty recs', () => {
 			const items = [ {} ];
 			const injectedItems = injectRecommendations( items, [], 1 );
 
 			expect( injectedItems ).eql( items );
 		} );
 
-		it( 'should not modify items if cards per rec is greater than length of items', () => {
+		test( 'should not modify items if cards per rec is greater than length of items', () => {
 			const recs = [ postKey1, postKey1, postKey1, postKey1 ];
 			const items = [ {} ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
@@ -218,7 +221,7 @@ describe( 'reader stream', () => {
 			expect( injectedItems ).eql( items );
 		} );
 
-		it( 'should inject 2 recs for each regular post when cards per rec = 1', () => {
+		test( 'should inject 2 recs for each regular post when cards per rec = 1', () => {
 			const recs = [ rec(), rec(), rec(), rec(), rec(), rec(), rec(), rec() ];
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
@@ -236,7 +239,7 @@ describe( 'reader stream', () => {
 			] );
 		} );
 
-		it( 'should gracefully run out of recs by inserting until it runs out', () => {
+		test( 'should gracefully run out of recs by inserting until it runs out', () => {
 			const recs = [ rec(), rec() ];
 			const items = [ post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
@@ -249,7 +252,7 @@ describe( 'reader stream', () => {
 			] );
 		} );
 
-		it( 'should inject 2 recs for each 4 regular posts when cards per rec = 4', () => {
+		test( 'should inject 2 recs for each 4 regular posts when cards per rec = 4', () => {
 			const recs = [ rec(), rec() ];
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 4 );

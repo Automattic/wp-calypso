@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,7 +23,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY
+	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
@@ -46,87 +49,56 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
-		plan: PropTypes
-			.oneOf( [ PLAN_FREE,
-				PLAN_PERSONAL,
-				PLAN_PREMIUM,
-				PLAN_BUSINESS,
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_BUSINESS,
-				PLAN_JETPACK_BUSINESS_MONTHLY,
-				PLAN_JETPACK_PREMIUM,
-				PLAN_JETPACK_PREMIUM_MONTHLY,
-				PLAN_JETPACK_PERSONAL,
-				PLAN_JETPACK_PERSONAL_MONTHLY,
-				] )
-			.isRequired,
-		isPlaceholder: PropTypes.bool
+		plan: PropTypes.oneOf( [
+			PLAN_FREE,
+			PLAN_PERSONAL,
+			PLAN_PREMIUM,
+			PLAN_BUSINESS,
+			PLAN_JETPACK_FREE,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+		] ).isRequired,
+		isPlaceholder: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		isPlaceholder: false
+		isPlaceholder: false,
 	};
 
 	getBusinessFeatures() {
-		const {
-			selectedSite,
-			planHasDomainCredit,
-		} = this.props;
-
+		const { selectedSite, planHasDomainCredit } = this.props;
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemoved
-				isBusinessPlan
-				key="advertisingRemovedFeature"
-			/>,
-			<GoogleVouchers
-				selectedSite={ selectedSite }
-				key="googleVouchersFeature"
-			/>,
-			<CustomizeTheme
-				selectedSite={ selectedSite }
-				key="customizeThemeFeature"
-			/>,
+			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
+			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
+			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
+				link="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
 			/>,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-			/>,
-			<GoogleAnalyticsStats
-				selectedSite={ selectedSite }
-				key="googleAnalyticsStatsFeature"
-			/>,
-			<FindNewTheme
-				selectedSite={ selectedSite }
-				key="findNewThemeFeature"
-			/>,
-			isEnabled( 'manage/plugins/upload' )
-				? <UploadPlugins
-					selectedSite={ selectedSite }
-					key="uploadPluginsFeature"
-				/>
-				: null,
-			isWordadsInstantActivationEligible( selectedSite )
-				? <MonetizeSite
-					selectedSite={ selectedSite }
-					key="monetizeSiteFeature"
-				/>
-				: null
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
+			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
+			isEnabled( 'manage/plugins/upload' ) ? (
+				<UploadPlugins selectedSite={ selectedSite } key="uploadPluginsFeature" />
+			) : null,
+			isWordadsInstantActivationEligible( selectedSite ) ? (
+				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
+			) : null,
 		];
 	}
 
 	getPremiumFeatures() {
-		const {
-			selectedSite,
-			planHasDomainCredit
-		} = this.props;
+		const { selectedSite, planHasDomainCredit } = this.props;
 
 		return [
 			<CustomDomain
@@ -134,36 +106,18 @@ class ProductPurchaseFeaturesList extends Component {
 				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemoved
-				isBusinessPlan={ false }
-				key="advertisingRemovedFeature"
-			/>,
-			<GoogleVouchers
-				selectedSite={ selectedSite }
-				key="googleVouchersFeature"
-			/>,
-			<CustomizeTheme
-				selectedSite={ selectedSite }
-				key="customizeThemeFeature"
-			/>,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-			/>,
-			isWordadsInstantActivationEligible( selectedSite )
-				? <MonetizeSite
-					selectedSite={ selectedSite }
-					key="monetizeSiteFeature"
-				/>
-				: null
+			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
+			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
+			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
+			isWordadsInstantActivationEligible( selectedSite ) ? (
+				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
+			) : null,
 		];
 	}
 
 	getPersonalFeatures() {
-		const {
-			selectedSite,
-			planHasDomainCredit
-		} = this.props;
+		const { selectedSite, planHasDomainCredit } = this.props;
 
 		return [
 			<CustomDomain
@@ -171,120 +125,62 @@ class ProductPurchaseFeaturesList extends Component {
 				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemoved
-				isBusinessPlan={ false }
-				key="advertisingRemovedFeature"
-			/>
+			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
 		];
 	}
 
 	getJetpackFreeFeatures() {
-		const {	selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		return [
-			<JetpackWordPressCom
-				selectedSite={ selectedSite }
-				key="jetpackWordPressCom"
-			/>,
-			<JetpackReturnToDashboard
-				selectedSite={ selectedSite }
-				key="jetpackReturnToDashboard"
-			/>
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
 
 	getJetpackPremiumFeatures() {
-		const {	selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		return [
-			<MonetizeSite
-				selectedSite={ selectedSite }
-				key="monetizeSiteFeature"
-			/>,
-			<JetpackBackupSecurity
-				key="jetpackBackupSecurity"
-			/>,
-			<JetpackAntiSpam
-				key="jetpackAntiSpam"
-			/>,
-			<JetpackPublicize
-				key="jetpackPublicize"
-			/>,
-			<JetpackVideo
-				key="jetpackVideo"
-			/>,
-			<JetpackWordPressCom
-				selectedSite={ selectedSite }
-				key="jetpackWordPressCom"
-			/>,
-			<JetpackReturnToDashboard
-				selectedSite={ selectedSite }
-				key="jetpackReturnToDashboard"
-			/>
+			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackPublicize key="jetpackPublicize" />,
+			<JetpackVideo key="jetpackVideo" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
 
 	getJetpackPersonalFeatures() {
-		const {	selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		return [
-			<JetpackBackupSecurity
-				key="jetpackBackupSecurity"
-			/>,
-			<JetpackAntiSpam
-				key="jetpackAntiSpam"
-			/>,
-			<JetpackWordPressCom
-				selectedSite={ selectedSite }
-				key="jetpackWordPressCom"
-			/>,
-			<JetpackReturnToDashboard
-				selectedSite={ selectedSite }
-				key="jetpackReturnToDashboard"
-			/>
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
 
 	getJetpackBusinessFeatures() {
-		const {	selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		return [
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
+				link="https://calendly.com/jetpack/concierge"
 			/>,
-			<FindNewTheme
-				selectedSite={ selectedSite }
-				key="findNewThemeFeature"
-			/>,
-			<JetpackBackupSecurity
-				key="jetpackBackupSecurity"
-			/>,
-			<MonetizeSite
-				selectedSite={ selectedSite }
-				key="monetizeSiteFeature"
-			/>,
-			<GoogleAnalyticsStats
-				selectedSite={ selectedSite }
-				key="googleAnalyticsStatsFeature"
-			/>,
-			<JetpackAntiSpam
-				key="jetpackAntiSpam"
-			/>,
-			<JetpackPublicize
-				key="jetpackPublicize"
-			/>,
-			<JetpackVideo
-				key="jetpackVideo"
-			/>,
-			<JetpackWordPressCom
-				selectedSite={ selectedSite }
-				key="jetpackWordPressCom"
-			/>,
-			<JetpackReturnToDashboard
-				selectedSite={ selectedSite }
-				key="jetpackReturnToDashboard"
-			/>
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
+			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackPublicize key="jetpackPublicize" />,
+			<JetpackVideo key="jetpackVideo" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
 
@@ -319,25 +215,24 @@ class ProductPurchaseFeaturesList extends Component {
 	}
 
 	render() {
-		return (
-			<div className="product-purchase-features-list">
-				{ this.getFeatures() }
-			</div>
-		);
+		return <div className="product-purchase-features-list">{ this.getFeatures() }</div>;
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const selectedSite = getSelectedSite( state ),
 			selectedSiteId = getSelectedSiteId( state );
 
 		return {
 			selectedSite,
-			planHasDomainCredit: hasDomainCredit( state, selectedSiteId )
+			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 		};
 	},
 	{
-		recordBusinessOnboardingClick: partial( recordTracksEvent, 'calypso_plan_features_onboarding_click' )
+		recordBusinessOnboardingClick: partial(
+			recordTracksEvent,
+			'calypso_plan_features_onboarding_click'
+		),
 	}
 )( ProductPurchaseFeaturesList );

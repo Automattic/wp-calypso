@@ -1,6 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -12,9 +17,9 @@ import FormTextInput from 'components/forms/form-text-input';
 
 const SiteTitleControl = React.createClass( {
 	propTypes: {
-		blogname: React.PropTypes.string,
-		blogdescription: React.PropTypes.string,
-		onChange: React.PropTypes.func.isRequired,
+		blogname: PropTypes.string,
+		blogdescription: PropTypes.string,
+		onChange: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {
@@ -40,19 +45,24 @@ const SiteTitleControl = React.createClass( {
 		return (
 			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
-					<FormTextInput name="blogname" value={ this.props.blogname } onChange={ this.onChangeSiteTitle } />
+					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
+					<FormTextInput
+						name="blogname"
+						value={ this.props.blogname }
+						onChange={ this.onChangeSiteTitle }
+					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.translate( 'Tagline' ) }</FormLabel>
-					<FormTextInput name="blogdescription"
+					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
+					<FormTextInput
+						name="blogdescription"
 						value={ this.props.blogdescription }
 						onChange={ this.onChangeDescription }
 					/>
 				</FormFieldset>
 			</div>
 		);
-	}
+	},
 } );
 
-export default SiteTitleControl;
+export default localize( SiteTitleControl );

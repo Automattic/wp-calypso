@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,

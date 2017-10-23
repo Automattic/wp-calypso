@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
@@ -17,7 +21,7 @@ import { warningNotice } from 'state/notices/actions';
 
 class AccountDialog extends Component {
 	static propTypes = {
-		accounts: PropTypes.arrayOf( React.PropTypes.object ),
+		accounts: PropTypes.arrayOf( PropTypes.object ),
 		isVisible: PropTypes.bool,
 		onAccountSelected: PropTypes.func,
 		service: PropTypes.object,
@@ -34,23 +38,27 @@ class AccountDialog extends Component {
 		warningNotice: () => {},
 	};
 
-	onClose = ( action ) => {
+	onClose = action => {
 		const accountToConnect = this.getAccountToConnect();
 
 		if ( 'connect' === action && accountToConnect ) {
-			this.props.onAccountSelected( this.props.service, accountToConnect.keyringConnectionId, accountToConnect.ID );
+			this.props.onAccountSelected(
+				this.props.service,
+				accountToConnect.keyringConnectionId,
+				accountToConnect.ID
+			);
 		} else {
 			this.props.onAccountSelected();
 		}
 	};
 
-	onSelectedAccountChanged = ( account ) => this.setState( { selectedAccount: account } );
+	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			selectedAccount: null
+			selectedAccount: null,
 		};
 	}
 
@@ -85,28 +93,41 @@ class AccountDialog extends Component {
 	}
 
 	areAccountsConflicting( account, otherAccount ) {
-		return account.keyringConnectionId === otherAccount.keyringConnectionId && account.ID !== otherAccount.ID;
+		return (
+			account.keyringConnectionId === otherAccount.keyringConnectionId &&
+			account.ID !== otherAccount.ID
+		);
 	}
 
 	isSelectedAccountConflicting() {
 		const selectedAccount = this.getSelectedAccount();
 
-		return selectedAccount && this.props.accounts.some( ( maybeConnectedAccount ) =>
-			maybeConnectedAccount.isConnected && this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
+		return (
+			selectedAccount &&
+			this.props.accounts.some(
+				maybeConnectedAccount =>
+					maybeConnectedAccount.isConnected &&
+					this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
+			)
 		);
 	}
 
 	getAccountElements( accounts ) {
 		const selectedAccount = this.getSelectedAccount();
 
-		return accounts.map( ( account ) =>
+		return accounts.map( account => (
 			<AccountDialogAccount
 				key={ [ account.keyringConnectionId, account.ID ].join() }
 				account={ account }
 				selected={ isEqual( selectedAccount, account ) }
-				conflicting={ account.isConnected && selectedAccount && this.areAccountsConflicting( account, selectedAccount ) }
-				onChange={ this.onSelectedAccountChanged.bind( null, account ) } />
-		);
+				conflicting={
+					account.isConnected &&
+					selectedAccount &&
+					this.areAccountsConflicting( account, selectedAccount )
+				}
+				onChange={ this.onSelectedAccountChanged.bind( null, account ) }
+			/>
+		) );
 	}
 
 	getConnectedAccountsContent() {
@@ -117,17 +138,22 @@ class AccountDialog extends Component {
 
 			return (
 				<div className="account-dialog__connected-accounts">
-					<h3 className="account-dialog__connected-accounts-heading">{ this.props.translate( 'Connected' ) }</h3>
+					<h3 className="account-dialog__connected-accounts-heading">
+						{ this.props.translate( 'Connected' ) }
+					</h3>
 					<ul className="account-dialog__accounts">
 						{ this.getAccountElements( connectedAccounts ) }
 					</ul>
-					{ hasConflictingAccounts &&
-					<Notice
-						status="is-warning"
-						icon="notice"
-						text={ this.props.translate( 'The marked connection will be replaced with your selection.' ) }
-						isCompact />
-					}
+					{ hasConflictingAccounts && (
+						<Notice
+							status="is-warning"
+							icon="notice"
+							text={ this.props.translate(
+								'The marked connection will be replaced with your selection.'
+							) }
+							isCompact
+						/>
+					) }
 				</div>
 			);
 		}
@@ -138,31 +164,40 @@ class AccountDialog extends Component {
 			// If a single account is available, show a simple confirmation
 			// prompt to ask the user to confirm their connection.
 			return this.props.translate(
-				'Confirm this is the account you would like to authorize. Note that your posts will be automatically shared to this account.', {
-					context: 'Sharing: Publicize connection confirmation'
-				} );
+				'Confirm this is the account you would like to authorize. Note that your posts will be automatically shared to this account.',
+				{
+					context: 'Sharing: Publicize connection confirmation',
+				}
+			);
 		}
 
 		// Otherwise, we assume that multiple connections exist for a
 		// single Keyring connection, and the user must choose which
 		// account to connect.
 		return this.props.translate(
-			'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.', {
-				context: 'Sharing: Publicize connection confirmation'
-			} );
+			'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.',
+			{
+				context: 'Sharing: Publicize connection confirmation',
+			}
+		);
 	}
 
 	render() {
 		const classes = classNames( 'account-dialog', {
-				'single-account': 1 === this.props.accounts.length
+				'single-account': 1 === this.props.accounts.length,
 			} ),
 			buttons = [
 				{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
-				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true }
+				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
 			];
 
 		return (
-			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } additionalClassNames={ classes } onClose={ this.onClose }>
+			<Dialog
+				isVisible={ this.props.isVisible }
+				buttons={ buttons }
+				additionalClassNames={ classes }
+				onClose={ this.onClose }
+			>
 				<h2 className="account-dialog__authorizing-service">
 					{ this.props.translate( 'Connecting %(service)s', {
 						args: { service: this.props.service ? this.props.service.label : '' },
@@ -170,15 +205,13 @@ class AccountDialog extends Component {
 					} ) }
 				</h2>
 				<p className="account-dialog__authorizing-disclaimer">{ this.getDisclaimerText() }</p>
-				<ul className="account-dialog__accounts">{ this.getAccountElements( this.getAccountsByConnectedStatus( false ) ) }</ul>
+				<ul className="account-dialog__accounts">
+					{ this.getAccountElements( this.getAccountsByConnectedStatus( false ) ) }
+				</ul>
 				{ this.getConnectedAccountsContent() }
-
 			</Dialog>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ warningNotice },
-)( localize( AccountDialog ) );
+export default connect( null, { warningNotice } )( localize( AccountDialog ) );

@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -11,24 +14,16 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import DatePicker from 'my-sites/stats/stats-date-picker';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getUnitPeriod } from './utils';
 import HeaderCake from 'components/header-cake';
 import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
 import Module from './store-stats-module';
-import SectionNav from 'components/section-nav';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import StoreStatsNavigationTabs from './store-stats-navigation/navtabs';
-import {
-	topProducts,
-	topCategories,
-	topCoupons,
-	UNITS
-} from 'woocommerce/app/store-stats/constants';
-import { getJetpackSites } from 'state/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import Intervals from 'blocks/stats-navigation/intervals';
+import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
 import QuerySiteStats from 'components/data/query-site-stats';
 
 const listType = {
@@ -39,19 +34,21 @@ const listType = {
 
 class StoreStatsListView extends Component {
 	static propTypes = {
-		jetPackSites: PropTypes.array,
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		querystring: PropTypes.string,
 		type: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
+		slug: PropTypes.string.isRequired,
 	};
 
 	goBack = () => {
 		const pathParts = this.props.path.split( '/' );
 		const queryString = this.props.querystring ? '?' + this.props.querystring : '';
-		const pathExtra = `${ pathParts[ pathParts.length - 2 ] }/${ pathParts[ pathParts.length - 1 ] }${ queryString }`;
+		const pathExtra = `${ pathParts[ pathParts.length - 2 ] }/${ pathParts[
+			pathParts.length - 1
+		] }${ queryString }`;
 		const defaultBack = `/store/stats/orders/${ pathExtra }`;
 
 		setTimeout( () => {
@@ -60,7 +57,7 @@ class StoreStatsListView extends Component {
 	};
 
 	render() {
-		const { jetPackSites, siteId, slug, selectedDate, type, unit } = this.props;
+		const { siteId, slug, selectedDate, type, unit } = this.props;
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const listviewQuery = {
 			unit,
@@ -70,8 +67,9 @@ class StoreStatsListView extends Component {
 		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout={ true }>
-				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } /> }
+				{ siteId && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } />
+				) }
 				<HeaderCake onClick={ this.goBack }>{ listType[ type ].title }</HeaderCake>
 				<StatsPeriodNavigation
 					date={ selectedDate }
@@ -81,24 +79,24 @@ class StoreStatsListView extends Component {
 					<DatePicker
 						period={ unit }
 						date={
-							( unit === 'week' )
-								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
-								: selectedDate
+							unit === 'week' ? (
+								moment( selectedDate, 'YYYY-MM-DD' )
+									.subtract( 1, 'days' )
+									.format( 'YYYY-MM-DD' )
+							) : (
+								selectedDate
+							)
 						}
 						query={ listviewQuery }
 						statsType={ statType }
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				<SectionNav className="store-stats__list-view-navigation" selectedText={ UNITS[ unit ].title }>
-					<StoreStatsNavigationTabs
-						label={ 'Stats' }
-						slug={ slug }
-						type={ type }
-						unit={ unit }
-						units={ UNITS }
-					/>
-				</SectionNav>
+				<Intervals
+					selected={ unit }
+					pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }` }
+					standalone
+				/>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
@@ -118,10 +116,7 @@ class StoreStatsListView extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		slug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-		jetPackSites: getJetpackSites( state ),
-	} )
-)( StoreStatsListView );
+export default connect( state => ( {
+	slug: getSelectedSiteSlug( state ),
+	siteId: getSelectedSiteId( state ),
+} ) )( StoreStatsListView );

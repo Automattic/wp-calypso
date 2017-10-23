@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { middleware } from './wpcom-api-middleware';
 
@@ -72,4 +75,3 @@ export default store => next => {
 		return configuration.handleAction( action );
 	};
 };
-

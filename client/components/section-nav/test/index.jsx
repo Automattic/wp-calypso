@@ -1,71 +1,72 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
-import { noop } from 'lodash';
+import React from 'react';
+import TestUtils from 'react-dom/test-utils';
+import ReactDom from 'react-dom';
 import sinon from 'sinon';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import SectionNav from '../';
 
-let ReactDom, React, TestUtils, SectionNav;
+jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {},
+	},
+} ) );
 
 function createComponent( component, props, children ) {
-	const shallowRenderer = TestUtils.createRenderer();
+	const renderer = new ShallowRenderer();
 
-	shallowRenderer.render(
-		React.createElement( component, props, children )
-	);
-	return shallowRenderer.getRenderOutput();
+	renderer.render( React.createElement( component, props, children ) );
+	return renderer.getRenderOutput();
 }
 
-describe( 'section-nav', function() {
-	useFakeDom( '<html><body><script></script><div id="container"></div></body></html>' );
+describe( 'section-nav', () => {
+	describe( 'rendering', () => {
+		let headerElem, headerTextElem, panelElem, sectionNav, text;
 
-	useMockery( mockery => {
-		ReactDom = require( 'react-dom' );
-		React = require( 'react' );
-		TestUtils = require( 'react-addons-test-utils' );
-
-		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
-
-		mockery.registerMock( 'gridicons', EMPTY_COMPONENT );
-		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
-
-		SectionNav = require( '../' );
-	} );
-
-	describe( 'rendering', function() {
-		before( function() {
+		beforeAll( function() {
 			const selectedText = 'test';
-			const children = ( <p>mmyellow</p> );
+			const children = <p>mmyellow</p>;
 
-			this.sectionNav = createComponent( SectionNav, {
-				selectedText: selectedText
-			}, children );
+			sectionNav = createComponent(
+				SectionNav,
+				{
+					selectedText: selectedText,
+				},
+				children
+			);
 
-			this.panelElem = this.sectionNav.props.children[ 1 ];
-			this.headerElem = this.sectionNav.props.children[ 0 ];
-			this.headerTextElem = this.headerElem.props.children;
-			this.text = this.headerTextElem.props.children;
+			panelElem = sectionNav.props.children[ 1 ];
+			headerElem = sectionNav.props.children[ 0 ];
+			headerTextElem = headerElem.props.children;
+			text = headerTextElem.props.children;
 		} );
 
-		it( 'should render a header and a panel', function() {
-			assert.equal( this.headerElem.props.className, 'section-nav__mobile-header' );
-			assert.equal( this.panelElem.props.className, 'section-nav__panel' );
-			assert.equal( this.headerTextElem.props.className, 'section-nav__mobile-header-text' );
+		test( 'should render a header and a panel', () => {
+			assert.equal( headerElem.props.className, 'section-nav__mobile-header' );
+			assert.equal( panelElem.props.className, 'section-nav__panel' );
+			assert.equal( headerTextElem.props.className, 'section-nav__mobile-header-text' );
 		} );
 
-		it( 'should render selectedText within mobile header', function() {
-			assert.equal( this.text, 'test' );
+		test( 'should render selectedText within mobile header', () => {
+			assert.equal( text, 'test' );
 		} );
 
-		it( 'should render children', function( done ) {
+		test( 'should render children', done => {
 			//React.Children.only should work here but gives an error about not being the only child
-			React.Children.map( this.panelElem.props.children, function( obj ) {
+			React.Children.map( panelElem.props.children, function( obj ) {
 				if ( obj.type === 'p' ) {
 					assert.equal( obj.props.children, 'mmyellow' );
 					done();
@@ -73,52 +74,72 @@ describe( 'section-nav', function() {
 			} );
 		} );
 
-		it( 'should not render a header if dropdown disabled', () => {
-			const component = createComponent( SectionNav, {
-				selectedText: 'test',
-				allowDropdown: false,
-			}, ( <p>mmyellow</p> ) );
+		test( 'should not render a header if dropdown disabled', () => {
+			const component = createComponent(
+				SectionNav,
+				{
+					selectedText: 'test',
+					allowDropdown: false,
+				},
+				<p>mmyellow</p>
+			);
 
 			assert.notEqual( component.props.children[ 0 ].className, 'section-nav__mobile-header' );
 		} );
 	} );
 
-	describe( 'interaction', function() {
-		it( 'should call onMobileNavPanelOpen function passed as a prop when tapped', function( done ) {
-			const elem = React.createElement( SectionNav, {
-				selectedText: 'placeholder',
-				onMobileNavPanelOpen: function() {
-					done();
-				}
-			}, ( <p>placeholder</p> ) );
+	describe( 'interaction', () => {
+		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', done => {
+			const elem = React.createElement(
+				SectionNav,
+				{
+					selectedText: 'placeholder',
+					onMobileNavPanelOpen: function() {
+						done();
+					},
+				},
+				<p>placeholder</p>
+			);
 			const tree = TestUtils.renderIntoDocument( elem );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click( ReactDom.findDOMNode(
-				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-			) );
+			TestUtils.Simulate.click(
+				ReactDom.findDOMNode(
+					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+				)
+			);
 			assert( tree.state.mobileOpen );
 		} );
 
-		it( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', function( done ) {
+		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', done => {
 			const spy = sinon.spy();
-			const elem = React.createElement( SectionNav, {
-				selectedText: 'placeholder',
-				onMobileNavPanelOpen: spy
-			}, ( <p>placeholder</p> ) );
+			const elem = React.createElement(
+				SectionNav,
+				{
+					selectedText: 'placeholder',
+					onMobileNavPanelOpen: spy,
+				},
+				<p>placeholder</p>
+			);
 			const tree = TestUtils.renderIntoDocument( elem );
 
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click( ReactDom.findDOMNode(
-				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-			) );
+			TestUtils.Simulate.click(
+				ReactDom.findDOMNode(
+					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+				)
+			);
 			assert( tree.state.mobileOpen );
-			TestUtils.Simulate.click( ReactDom.findDOMNode(
-				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-			) );
+			TestUtils.Simulate.click(
+				ReactDom.findDOMNode(
+					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+				)
+			);
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click( ReactDom.findDOMNode(
-				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-			) );
+			TestUtils.Simulate.click(
+				ReactDom.findDOMNode(
+					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+				)
+			);
 			assert( tree.state.mobileOpen );
 
 			assert( spy.calledTwice );

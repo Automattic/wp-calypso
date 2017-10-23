@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,53 +9,50 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import reducer, { requesting, items } from '../reducer';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
-import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
-	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items'
-		] );
+	test( 'should include expected keys in return value', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			const isRequestingHappinessEngineers = requesting( undefined, {} );
 
 			expect( isRequestingHappinessEngineers ).to.be.false;
 		} );
 
-		it( 'should return true if request is in progress', () => {
+		test( 'should return true if request is in progress', () => {
 			const isRequestingHappinessEngineers = requesting( undefined, {
-				type: HAPPINESS_ENGINEERS_FETCH
+				type: HAPPINESS_ENGINEERS_FETCH,
 			} );
 
 			expect( isRequestingHappinessEngineers ).to.be.true;
 		} );
 
-		it( 'should return false if request was successful', () => {
+		test( 'should return false if request was successful', () => {
 			const isRequestingHappinessEngineers = requesting( undefined, {
-				type: HAPPINESS_ENGINEERS_FETCH_SUCCESS
+				type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 			} );
 
 			expect( isRequestingHappinessEngineers ).to.be.false;
 		} );
 
-		it( 'should return false if request failed', () => {
+		test( 'should return false if request failed', () => {
 			const isRequestingHappinessEngineers = requesting( undefined, {
-				type: HAPPINESS_ENGINEERS_FETCH_FAILURE
+				type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
 			} );
 
 			expect( isRequestingHappinessEngineers ).to.be.false;
@@ -61,57 +60,52 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( null );
 		} );
 
-		it( 'should save the received happiness engineers', () => {
+		test( 'should save the received happiness engineers', () => {
 			const state = items( null, {
 				type: HAPPINESS_ENGINEERS_RECEIVE,
-				happinessEngineers: [
-					{ avatar_URL: 'test 1' },
-					{ avatar_URL: 'test 2' }
-				]
+				happinessEngineers: [ { avatar_URL: 'test 1' }, { avatar_URL: 'test 2' } ],
 			} );
 
 			expect( state ).to.eql( [ 'test 1', 'test 2' ] );
 		} );
 
-		it( 'should rewrite old state with received', () => {
+		test( 'should rewrite old state with received', () => {
 			const original = deepFreeze( {
 				'test 1': { avatar_URL: 'test 1' },
-				'test 2': { avatar_URL: 'test 2' }
+				'test 2': { avatar_URL: 'test 2' },
 			} );
 
 			const state = items( original, {
 				type: HAPPINESS_ENGINEERS_RECEIVE,
-				happinessEngineers: [
-					{ avatar_URL: 'test 3' }
-				]
+				happinessEngineers: [ { avatar_URL: 'test 3' } ],
 			} );
 
 			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( [ 'test 3' ] );
 			const state = items( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( [ 'test 3' ] );
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				'test 3': { URL: 'test 3' }
+				'test 3': { URL: 'test 3' },
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 

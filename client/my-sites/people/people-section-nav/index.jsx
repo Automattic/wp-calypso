@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import config from 'config';
 import { find, get, includes } from 'lodash';
@@ -9,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	UrlSearch = require( 'lib/mixins/url-search' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import Search from 'components/search';
+import UrlSearch from 'lib/mixins/url-search';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 let PeopleSearch = React.createClass( {
 	displayName: 'PeopleSearch',
@@ -28,9 +31,10 @@ let PeopleSearch = React.createClass( {
 				initialValue={ this.props.search }
 				ref="url-search"
 				delaySearch={ true }
-				analyticsGroup="People" />
+				analyticsGroup="People"
+			/>
 		);
-	}
+	},
 } );
 
 let PeopleNavTabs = React.createClass( {
@@ -43,18 +47,18 @@ let PeopleNavTabs = React.createClass( {
 						<NavItem
 							key={ filterItem.id }
 							path={ filterItem.path }
-							selected={ filterItem.id === this.props.filter } >
+							selected={ filterItem.id === this.props.filter }
+						>
 							{ filterItem.title }
 						</NavItem>
 					);
 				}, this ) }
 			</NavTabs>
 		);
-	}
+	},
 } );
 
 class PeopleSectionNav extends Component {
-
 	canSearch() {
 		const { isJetpack, jetpackPeopleSupported, filter } = this.props;
 		if ( ! this.props.site ) {
@@ -88,23 +92,23 @@ class PeopleSectionNav extends Component {
 			{
 				title: translate( 'Team', { context: 'Filter label for people list' } ),
 				path: '/people/team/' + siteFilter,
-				id: 'team'
+				id: 'team',
 			},
 			{
 				title: translate( 'Followers', { context: 'Filter label for people list' } ),
 				path: '/people/followers/' + siteFilter,
-				id: 'followers'
+				id: 'followers',
 			},
 			{
 				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
 				path: '/people/email-followers/' + siteFilter,
-				id: 'email-followers'
+				id: 'email-followers',
 			},
 			{
 				title: translate( 'Viewers', { context: 'Filter label for people list' } ),
 				path: '/people/viewers/' + siteFilter,
-				id: 'viewers'
-			}
+				id: 'viewers',
+			},
 		];
 
 		return filters;
@@ -121,7 +125,9 @@ class PeopleSectionNav extends Component {
 			}
 		}
 
-		return this.getFilters().filter( filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id ) );
+		return this.getFilters().filter(
+			filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
+		);
 	}
 
 	shouldDisplayViewers() {
@@ -148,7 +154,11 @@ class PeopleSectionNav extends Component {
 		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
-				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />
+				<PeopleNavTabs
+					{ ...this.props }
+					selectedText={ selectedText }
+					filters={ this.getNavigableFilters() }
+				/>
 				{ search }
 			</SectionNav>
 		);

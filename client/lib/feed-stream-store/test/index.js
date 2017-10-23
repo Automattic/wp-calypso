@@ -1,34 +1,28 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { set } from 'lodash';
+import sinon from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useMockery from 'test/helpers/use-mockery';
+import PostListFactory from '../';
+import PostListStore from '../feed-stream';
+import FeedStreamCache from '../feed-stream-cache';
+import FeedPostStore from 'lib/feed-post-store';
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/data-poller', () => require( './mocks/lib/data-poller' ) );
+jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+jest.mock( 'reader/stats', () => ( {
+	recordTrack: require( 'sinon' ).spy(),
+} ) );
 
-let PostListStore, FeedPostStore, PostListFactory, FeedStreamCache;
-
-describe( 'FeedPostList', function() {
-	useFilesystemMocks( __dirname );
-
-	useMockery( mockery => {
-		mockery.registerMock( 'reader/stats', { recordTrack: sinon.spy() } );
-	} );
-
-	before( function() {
-		PostListFactory = require( '../' );
-		PostListStore = require( '../feed-stream' );
-		FeedPostStore = require( 'lib/feed-post-store' );
-		FeedStreamCache = require( '../feed-stream-cache' );
-	} );
-
-	it( 'should require an id, a fetcher, a keyMaker', function() {
+describe( 'FeedPostList', () => {
+	test( 'should require an id, a fetcher, a keyMaker', () => {
 		expect( function() {
 			return new PostListStore();
 		} ).to.throw( Error, /supply a feed stream spec/ );
@@ -57,10 +51,10 @@ describe( 'FeedPostList', function() {
 		} ).to.be.ok;
 	} );
 
-	describe( 'A valid instance', function() {
+	describe( 'A valid instance', () => {
 		let fetcherStub, store;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			fetcherStub = sinon.stub();
 			store = new PostListStore( {
 				id: 'test',
@@ -71,7 +65,7 @@ describe( 'FeedPostList', function() {
 			} );
 		} );
 
-		it( 'should receive a page', function() {
+		test( 'should receive a page', () => {
 			store.receivePage( 'test', null, {
 				posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 1, ID: 2 } ],
 			} );
@@ -79,8 +73,8 @@ describe( 'FeedPostList', function() {
 			expect( store.get() ).to.have.lengthOf( 2 );
 		} );
 
-		describe( 'updates', function() {
-			beforeEach( function() {
+		describe( 'updates', () => {
+			beforeEach( () => {
 				const feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
 				feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 				store.receiveUpdates( 'test', null, {
@@ -92,15 +86,15 @@ describe( 'FeedPostList', function() {
 				} );
 			} );
 
-			afterEach( function() {
+			afterEach( () => {
 				FeedPostStore.get.restore();
 			} );
 
-			it( 'should receive updates', function() {
+			test( 'should receive updates', () => {
 				expect( store.getUpdateCount() ).to.equal( 2 );
 			} );
 
-			it( 'should treat each set of updates as definitive', function() {
+			test( 'should treat each set of updates as definitive', () => {
 				const secondSet = {
 					date_range: {
 						before: '1999-12-31T23:59:59',
@@ -137,9 +131,9 @@ describe( 'FeedPostList', function() {
 		} );
 	} );
 
-	describe( 'Selected index', function() {
+	describe( 'Selected index', () => {
 		let fetcherStub, store, feedPostStoreStub, fakePosts;
-		beforeEach( function() {
+		beforeEach( () => {
 			fetcherStub = sinon.stub();
 			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
 			store = new PostListStore( {
@@ -157,22 +151,22 @@ describe( 'FeedPostList', function() {
 			];
 			store.receivePage( 'test', null, { posts: fakePosts } );
 		} );
-		afterEach( function() {
+		afterEach( () => {
 			FeedPostStore.get.restore();
 		} );
 
-		it( 'should initially have nothing selected', function() {
+		test( 'should initially have nothing selected', () => {
 			expect( store.getSelectedPostKey() ).to.equal( null );
 		} );
 
-		it( 'should select the next item', function() {
+		test( 'should select the next item', () => {
 			feedPostStoreStub.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 1 } );
 			store.selectNextItem();
 			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 
-		it( 'should select the next valid post', function() {
+		test( 'should select the next valid post', () => {
 			feedPostStoreStub
 				.onCall( 0 )
 				.returns( {} )
@@ -189,7 +183,7 @@ describe( 'FeedPostList', function() {
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 4 } );
 		} );
 
-		it( 'should select the prev item', function() {
+		test( 'should select the prev item', () => {
 			feedPostStoreStub.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 3 } );
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
@@ -197,7 +191,7 @@ describe( 'FeedPostList', function() {
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
 		} );
 
-		it( 'should select the prev valid post', function() {
+		test( 'should select the prev valid post', () => {
 			feedPostStoreStub
 				.onCall( 0 )
 				.returns( {} )
@@ -212,9 +206,9 @@ describe( 'FeedPostList', function() {
 		} );
 	} );
 
-	describe( 'Filter followed x-posts', function() {
+	describe( 'Filter followed x-posts', () => {
 		let fetcherStub, store, posts, filteredPosts, xPostedTo;
-		beforeEach( function() {
+		beforeEach( () => {
 			fetcherStub = sinon.stub();
 			sinon.stub( FeedPostStore, 'get' );
 			store = new PostListStore( {
@@ -291,11 +285,11 @@ describe( 'FeedPostList', function() {
 				} ),
 			];
 		} );
-		afterEach( function() {
+		afterEach( () => {
 			FeedPostStore.get.restore();
 		} );
 
-		it.skip( 'rolls up x-posts and matching x-comments', function() {
+		test.skip( 'rolls up x-posts and matching x-comments', function() {
 			filteredPosts = store.filterFollowedXPosts( posts );
 			// in other words any +mentions get rolled up from the original post
 			// the two +mentions from comment https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234
@@ -303,7 +297,7 @@ describe( 'FeedPostList', function() {
 			expect( filteredPosts.length ).to.equal( 3 );
 		} );
 
-		it.skip(
+		test.skip(
 			'when following origin site, filters followed x-posts, but leaves comment notices',
 			function() {
 				filteredPosts = store.filterFollowedXPosts( posts );
@@ -315,7 +309,7 @@ describe( 'FeedPostList', function() {
 			}
 		);
 
-		it.skip( 'updates sites x-posted to', function() {
+		test.skip( 'updates sites x-posted to', function() {
 			filteredPosts = store.filterFollowedXPosts( posts );
 			xPostedTo = store.getSitesCrossPostedTo(
 				'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts'
@@ -325,7 +319,7 @@ describe( 'FeedPostList', function() {
 			expect( xPostedTo[ 0 ].siteURL ).to.equal( 'http://officetoday.wordpress.com' );
 		} );
 
-		it.skip( 'filters xposts with no metadata', function() {
+		test.skip( 'filters xposts with no metadata', function() {
 			posts = [
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
@@ -338,7 +332,7 @@ describe( 'FeedPostList', function() {
 			expect( filteredPosts.length ).to.equal( 0 );
 		} );
 
-		it.skip( 'filters xposts with missing xpost metadata', function() {
+		test.skip( 'filters xposts with missing xpost metadata', function() {
 			posts = [
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
@@ -364,11 +358,11 @@ describe( 'FeedPostList', function() {
 			conversations = PostListFactory( 'conversations' );
 		} );
 
-		it( 'should build an instance', () => {
+		test( 'should build an instance', () => {
 			expect( conversations ).to.be.ok;
 		} );
 
-		context( 'when holding some posts', () => {
+		describe( 'when holding some posts', () => {
 			beforeEach( () => {
 				conversations.receivePage( conversations.id, null, {
 					posts: [
@@ -385,7 +379,7 @@ describe( 'FeedPostList', function() {
 				expect( conversations.postKeys[ 0 ].comments ).to.eql( [ 3, 2, 1 ] );
 			} );
 
-			it( 'should filter out posts that it already has which have the same comments', () => {
+			test( 'should filter out posts that it already has which have the same comments', () => {
 				const filteredPosts = conversations.filterNewPosts( [
 					{
 						site_ID: 1,
@@ -397,7 +391,7 @@ describe( 'FeedPostList', function() {
 				expect( filteredPosts ).to.have.lengthOf( 0 );
 			} );
 
-			it( 'should retain posts that it already has with new comments', () => {
+			test( 'should retain posts that it already has with new comments', () => {
 				const filteredPosts = conversations.filterNewPosts( [
 					{
 						site_ID: 1,
@@ -419,7 +413,7 @@ describe( 'FeedPostList', function() {
 				] );
 			} );
 
-			it( 'should retain new posts', () => {
+			test( 'should retain new posts', () => {
 				const filteredPosts = conversations.filterNewPosts( [
 					{
 						site_ID: 1,

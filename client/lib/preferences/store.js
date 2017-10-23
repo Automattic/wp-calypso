@@ -1,20 +1,23 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { forOwn } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	PreferencesConstants = require( './constants' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import PreferencesConstants from './constants';
 
 /**
  * Module variables
  */
 var PreferencesStore = {
-	_preferences: undefined
+	_preferences: undefined,
 };
 
 emitter( PreferencesStore );
@@ -78,4 +81,4 @@ PreferencesStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = PreferencesStore;
+export default PreferencesStore;

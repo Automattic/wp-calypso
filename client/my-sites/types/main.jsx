@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
@@ -24,29 +28,21 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			<PageViewTracker
-				path={ siteId ? '/types/:site' : '/types' }
-				title="Custom Post Type"
-			/>
+			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
-			{ false !== userCanEdit && false !== postTypeSupported && [
-				<PostTypeFilter
-					key="filter"
-					query={ userCanEdit ? query : null }
-				/>,
+			{ false !== userCanEdit &&
+			false !== postTypeSupported && [
+				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
 				<PostTypeList
 					key="list"
 					query={ userCanEdit ? query : null }
 					largeTitles={ true }
 					wrapTitles={ true }
+					scrollContainer={ document.body }
 				/>,
 			] }
-			{ false === postTypeSupported && (
-				<PostTypeUnsupported type={ query.type } />
-			) }
-			{ false === userCanEdit && (
-				<PostTypeForbidden />
-			) }
+			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ false === userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
 }
@@ -56,7 +52,7 @@ Types.propTypes = {
 	query: PropTypes.object,
 	postType: PropTypes.object,
 	postTypeSupported: PropTypes.bool,
-	userCanEdit: PropTypes.bool
+	userCanEdit: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -68,6 +64,6 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		postType,
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		userCanEdit: canCurrentUser( state, siteId, capability )
+		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
 } )( Types );

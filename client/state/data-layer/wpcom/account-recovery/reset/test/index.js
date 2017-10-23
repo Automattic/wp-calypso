@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,22 +9,17 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-
-import {
-	resetPassword,
-	handleError,
-	handleSuccess,
-} from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-
+import { resetPassword, handleError, handleSuccess } from '../';
 import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
 } from 'state/action-types';
 
+import { http } from 'state/data-layer/wpcom-http/actions';
+
 describe( 'account-recovery/reset', () => {
 	describe( '#handleResetPasswordRequest', () => {
-		it( 'should dispatch HTTP request to account recovery reset endpoint', () => {
+		test( 'should dispatch HTTP request to account recovery reset endpoint', () => {
 			const dispatchSpy = spy();
 			const dummyAction = {
 				userData: {
@@ -35,29 +32,29 @@ describe( 'account-recovery/reset', () => {
 
 			resetPassword( { dispatch: dispatchSpy }, dummyAction );
 
-			const {
-				userData,
-				method,
-				key,
-				password
-			} = dummyAction;
+			const { userData, method, key, password } = dummyAction;
 			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( http( {
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: '/account-recovery/reset',
-				body: {
-					...userData,
-					method,
-					key,
-					password,
-				},
-			}, dummyAction ) );
+			expect( dispatchSpy ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						apiNamespace: 'wpcom/v2',
+						path: '/account-recovery/reset',
+						body: {
+							...userData,
+							method,
+							key,
+							password,
+						},
+					},
+					dummyAction
+				)
+			);
 		} );
 	} );
 
 	describe( '#requestResetPasswordError', () => {
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			const dispatchSpy = spy();
 			const message = 'This is an error message.';
 			const rawError = Error( message );
@@ -72,7 +69,7 @@ describe( 'account-recovery/reset', () => {
 	} );
 
 	describe( '#requestResetPasswordSuccess', () => {
-		it( 'should dispatch success action', () => {
+		test( 'should dispatch success action', () => {
 			const dispatchSpy = spy();
 
 			handleSuccess( { dispatch: dispatchSpy } );

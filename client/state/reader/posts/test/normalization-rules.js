@@ -1,16 +1,16 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-import { forEach, repeat } from 'lodash';
 import { expect } from 'chai';
+import { forEach, repeat } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import * as DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
 import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
-import * as DISPLAY_TYPES from '../display-types';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
 function verifyClassification( post, displayTypes ) {
@@ -22,11 +22,11 @@ function verifyClassification( post, displayTypes ) {
 
 describe( 'normalization-rules', () => {
 	describe( 'classifyPost', () => {
-		it( 'should mark an empty post UNCLASSIFIED', () => {
+		test( 'should mark an empty post UNCLASSIFIED', () => {
 			verifyClassification( {}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
 
-		it( 'should classify a PHOTO_ONLY post', () => {
+		test( 'should classify a PHOTO_ONLY post', () => {
 			verifyClassification(
 				{
 					canonical_media: {
@@ -39,7 +39,7 @@ describe( 'normalization-rules', () => {
 			);
 		} );
 
-		it( 'should not classify a PHOTO_ONLY post if the content is too long', () => {
+		test( 'should not classify a PHOTO_ONLY post if the content is too long', () => {
 			verifyClassification(
 				{
 					canonical_media: {
@@ -52,7 +52,7 @@ describe( 'normalization-rules', () => {
 			);
 		} );
 
-		it( 'should classify a PHOTO_ONLY post if it has enough images for a gallery, but not all of them are big enough', () => {
+		test( 'should classify a PHOTO_ONLY post if it has enough images for a gallery, but not all of them are big enough', () => {
 			verifyClassification(
 				{
 					canonical_media: {
@@ -81,7 +81,7 @@ describe( 'normalization-rules', () => {
 	} );
 
 	describe( 'isFeaturedImageInContent', () => {
-		it( 'should say that a post has featured image in content if the featured image is in the content', () => {
+		test( 'should say that a post has featured image in content if the featured image is in the content', () => {
 			// post.images has the same src twice because that how our posts actually are.
 			// featured_image is always first and then content_images follow
 			const post = {
@@ -100,7 +100,7 @@ describe( 'normalization-rules', () => {
 			expect( isFeaturedImageInContent( post ) ).to.be.equal( 1 );
 		} );
 
-		it( 'should say that featured image is not in content if featured image is not in content', () => {
+		test( 'should say that featured image is not in content if featured image is not in content', () => {
 			const post = {
 				post_thumbnail: {
 					URL: 'http://example.com/foo/baz/ping.jpg?w=2',
@@ -117,29 +117,29 @@ describe( 'normalization-rules', () => {
 
 	describe( 'addDiscoverProperties', () => {
 		const discoverSiteId = 53424024;
-		context( 'is_discover', () => {
-			it( 'should always add is_discover properity to the post', () => {
+		describe( 'is_discover', () => {
+			test( 'should always add is_discover properity to the post', () => {
 				expect( addDiscoverProperties( {} ) ).to.have.ownProperty( 'is_discover' );
 			} );
 
-			it( 'should set is_discover to false if the post is not from discover', () => {
+			test( 'should set is_discover to false if the post is not from discover', () => {
 				const nonDiscoverPost = addDiscoverProperties( { site_ID: 1 } );
 				expect( nonDiscoverPost.is_discover ).to.be.false;
 			} );
 
-			it( 'should set is_discover to true if the post has discover_metadata', () => {
+			test( 'should set is_discover to true if the post has discover_metadata', () => {
 				const discoverPost = addDiscoverProperties( { site_ID: 1, discover_metadata: {} } );
 				expect( discoverPost.is_discover ).to.be.true;
 			} );
 
-			it( 'should set is_discover to true if the post is from discover', () => {
+			test( 'should set is_discover to true if the post is from discover', () => {
 				const discoverPost = addDiscoverProperties( { site_ID: discoverSiteId } );
 				expect( discoverPost.is_discover ).to.be.true;
 			} );
 		} );
 
-		context( 'discover_format', () => {
-			it( 'should set the discover_format from the discover_metadata if present', () => {
+		describe( 'discover_format', () => {
+			test( 'should set the discover_format from the discover_metadata if present', () => {
 				const discoverPost = {
 					discover_metadata: {
 						discover_fp_post_formats: [
@@ -161,7 +161,7 @@ describe( 'normalization-rules', () => {
 				expect( discoverPost.discover_format ).to.equal( 'standard-pick' );
 			} );
 
-			it( 'should set the discover_format to "feature" if its from discover but discover_metadata is not present', () => {
+			test( 'should set the discover_format to "feature" if its from discover but discover_metadata is not present', () => {
 				const discoverFeature = addDiscoverProperties( { site_ID: discoverSiteId } );
 				expect( discoverFeature.discover_format ).to.equal( 'feature' );
 			} );

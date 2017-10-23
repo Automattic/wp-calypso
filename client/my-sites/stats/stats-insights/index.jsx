@@ -1,6 +1,9 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ *
+ * @format
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StatsNavigation from '../stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
@@ -30,7 +33,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const StatsInsights = ( props ) => {
+const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
@@ -40,7 +43,8 @@ const StatsInsights = ( props ) => {
 			<StatsModule
 				path="tags-categories"
 				moduleStrings={ moduleStrings.tags }
-				statType="statsTags" />
+				statType="statsTags"
+			/>
 		);
 	}
 
@@ -50,11 +54,7 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<StatsFirstView />
 			<SidebarNavigation />
-			<StatsNavigation
-				siteId={ siteId }
-				section="insights"
-				slug={ siteSlug }
-			/>
+			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
@@ -69,20 +69,16 @@ const StatsInsights = ( props ) => {
 						</div>
 						<div className="stats__module-column">
 							<Reach />
-							<Followers
-								path={ 'followers' }
-								followList={ followList } />
+							<Followers path={ 'followers' } followList={ followList } />
 						</div>
 						<div className="stats__module-column">
 							<AllTime />
-							<Comments
-								path={ 'comments' }
-								followList={ followList }
-							/>
+							<Comments path={ 'comments' } followList={ followList } />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
-								statType="statsPublicize" />
+								statType="statsPublicize"
+							/>
 						</div>
 					</div>
 				</div>
@@ -99,18 +95,13 @@ StatsInsights.propTypes = {
 	translate: PropTypes.func,
 };
 
-const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			isJetpack: isJetpackSite( state, siteId ),
-			siteId,
-			siteSlug: getSelectedSiteSlug( state, siteId ),
-		};
-	}
-);
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isJetpack: isJetpackSite( state, siteId ),
+		siteId,
+		siteSlug: getSelectedSiteSlug( state, siteId ),
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsInsights );
+export default flowRight( connectComponent, localize )( StatsInsights );

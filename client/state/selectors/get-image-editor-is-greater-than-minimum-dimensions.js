@@ -1,14 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { isInteger } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	MinimumImageDimensions
-} from 'state/ui/editor/image-editor/constants';
+import { MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
 import { getImageEditorOriginalAspectRatio } from 'state/selectors';
 
 /**
@@ -22,16 +23,19 @@ import { getImageEditorOriginalAspectRatio } from 'state/selectors';
 export default function getImageEditorIsGreaterThanMinimumDimensions(
 	state,
 	minimumWidth = MinimumImageDimensions.WIDTH,
-	minimumHeight = MinimumImageDimensions.HEIGHT ) {
+	minimumHeight = MinimumImageDimensions.HEIGHT
+) {
 	const originalAspectRatio = getImageEditorOriginalAspectRatio( state );
 
 	if ( originalAspectRatio ) {
 		const { width, height } = originalAspectRatio;
 
-		if ( isInteger( width ) &&
+		if (
+			isInteger( width ) &&
 			isInteger( height ) &&
 			width > minimumWidth &&
-			height > minimumHeight ) {
+			height > minimumHeight
+		) {
 			return true;
 		}
 	}

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,26 +13,26 @@ import { isPluginUploadInProgress } from 'state/selectors';
 const siteId = 77203074;
 
 describe( 'isPluginUploadInProgress', () => {
-	it( 'should return false by default', () => {
+	test( 'should return false by default', () => {
 		const state = {
 			plugins: {
 				upload: {
-					inProgress: {}
-				}
-			}
+					inProgress: {},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
 	} );
 
-	it( 'should return current value for site', () => {
+	test( 'should return current value for site', () => {
 		const stateFalse = {
 			plugins: {
 				upload: {
 					inProgress: {
 						[ siteId ]: false,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( stateFalse, siteId ) ).to.be.false;
 
@@ -39,9 +41,9 @@ describe( 'isPluginUploadInProgress', () => {
 				upload: {
 					inProgress: {
 						[ siteId ]: true,
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( isPluginUploadInProgress( stateTrue, siteId ) ).to.be.true;
 	} );

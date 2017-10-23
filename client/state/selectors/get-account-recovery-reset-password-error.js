@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
-export default ( state ) => get( state, 'accountRecovery.reset.resetPassword.error', null );
+export default state => get( state, 'accountRecovery.reset.resetPassword.error', null );

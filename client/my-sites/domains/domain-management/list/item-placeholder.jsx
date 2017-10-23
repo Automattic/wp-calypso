@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -13,9 +16,9 @@ class ListItemPlaceholder extends React.PureComponent {
 		return (
 			<CompactCard className="domain-management-list-item is-placeholder">
 				<div className="domain-management-list-item__link">
-					<div className="domain-management-list-item__title"></div>
+					<div className="domain-management-list-item__title" />
 					<div className="domain-management-list-item__meta">
-						<span className="domain-management-list-item__type"></span>
+						<span className="domain-management-list-item__type" />
 					</div>
 				</div>
 			</CompactCard>

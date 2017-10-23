@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -11,18 +15,17 @@ import Gridicon from 'gridicons';
 import Count from 'components/count';
 
 export default React.createClass( {
-
 	displayName: 'BulkSelect',
 
 	propTypes: {
-		totalElements: React.PropTypes.number.isRequired,
-		selectedElements: React.PropTypes.number.isRequired,
-		onToggle: React.PropTypes.func.isRequired
+		totalElements: PropTypes.number.isRequired,
+		selectedElements: PropTypes.number.isRequired,
+		onToggle: PropTypes.func.isRequired,
 	},
 
 	getStateIcon() {
 		if ( this.hasSomeElementsSelected() ) {
-			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 }/>;
+			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 } />;
 		}
 	},
 
@@ -55,5 +58,5 @@ export default React.createClass( {
 				</span>
 			</span>
 		);
-	}
+	},
 } );

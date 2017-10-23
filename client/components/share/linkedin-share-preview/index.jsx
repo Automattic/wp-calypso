@@ -1,11 +1,14 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 export class LinkedinSharePreview extends PureComponent {
-
 	static PropTypes = {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
@@ -45,24 +48,17 @@ export class LinkedinSharePreview extends PureComponent {
 						</div>
 					</div>
 					<div className="linkedin-share-preview__body">
-						{ imageUrl &&
+						{ imageUrl && (
 							<div className="linkedin-share-preview__image-wrapper">
 								<a href={ articleUrl }>
-									<img
-										className="linkedin-share-preview__image"
-										src={ imageUrl }
-									/>
+									<img className="linkedin-share-preview__image" src={ imageUrl } />
 								</a>
 							</div>
-						}
+						) }
 						<div className="linkedin-share-preview__message-part">
 							<a className="linkedin-share-preview__message-link" href={ articleUrl }>
-								<div className="linkedin-share-preview__message">
-									{ message }
-								</div>
-								<div className="linkedin-share-preview__site-url">
-									{ siteDomain }
-								</div>
+								<div className="linkedin-share-preview__message">{ message }</div>
+								<div className="linkedin-share-preview__site-url">{ siteDomain }</div>
 							</a>
 						</div>
 					</div>

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PureComponent, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -17,12 +21,12 @@ export default class Emojify extends PureComponent {
 			PropTypes.object.isRequired,
 			PropTypes.string.isRequired,
 		] ),
-		imgClassName: PropTypes.string
-	}
+		imgClassName: PropTypes.string,
+	};
 
 	static defaultProps = {
-		imgClassName: 'emojify__emoji'
-	}
+		imgClassName: 'emojify__emoji',
+	};
 
 	componentDidMount() {
 		this.parseEmoji();
@@ -47,9 +51,9 @@ export default class Emojify extends PureComponent {
 				}
 
 				return ''.concat( options.base, options.size, '/', icon, options.ext );
-			}
+			},
 		} );
-	}
+	};
 
 	render() {
 		const {
@@ -62,7 +66,9 @@ export default class Emojify extends PureComponent {
 		const classes = classNames( className, 'emojify' );
 
 		return (
-			<div className={ classes } ref="emojified" { ...other }>{ children }</div>
+			<div className={ classes } ref="emojified" { ...other }>
+				{ children }
+			</div>
 		);
 	}
 }

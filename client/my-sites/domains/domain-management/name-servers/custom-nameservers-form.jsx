@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { dropRightWhile, negate, identity } from 'lodash';
@@ -16,40 +20,31 @@ import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import Notice from 'components/notice';
 import support from 'lib/url/support';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
 
 class CustomNameserversForm extends React.PureComponent {
 	static propTypes = {
-		nameservers: React.PropTypes.array,
-		onChange: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		submitDisabled: React.PropTypes.bool.isRequired
+		nameservers: PropTypes.array,
+		onChange: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		submitDisabled: PropTypes.bool.isRequired,
 	};
 
 	warning() {
 		const { translate } = this.props;
 
 		return (
-			<Notice
-				status="is-warning"
-				showDismiss={ false }>
+			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
 					'Your domain must use WordPress.com name servers for your ' +
-					'WordPress.com site to load & other features to be available.'
-				) }
-				{ ' ' }
-				<a href={ support.CHANGE_NAME_SERVERS }
+						'WordPress.com site to load & other features to be available.'
+				) }{' '}
+				<a
+					href={ support.CHANGE_NAME_SERVERS }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLearnMoreClick }
@@ -69,9 +64,9 @@ class CustomNameserversForm extends React.PureComponent {
 
 		return (
 			<div className="custom-nameservers-form__explanation">
-				{ translate( 'Not sure what name servers to use?' ) }
-				{ ' ' }
-				<a href={ support.CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+				{ translate( 'Not sure what name servers to use?' ) }{' '}
+				<a
+					href={ support.CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLookUpClick }
@@ -122,7 +117,7 @@ class CustomNameserversForm extends React.PureComponent {
 		} );
 	}
 
-	handleRemove = ( index ) => {
+	handleRemove = index => {
 		this.props.onChange( remove( this.props.nameservers, index ) );
 	};
 
@@ -132,10 +127,9 @@ class CustomNameserversForm extends React.PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		const classes = classnames(
-			'button is-primary is-full-width',
-			{ disabled: this.props.submitDisabled }
-		);
+		const classes = classnames( 'button is-primary is-full-width', {
+			disabled: this.props.submitDisabled,
+		} );
 
 		if ( ! this.props.nameservers ) {
 			return null;
@@ -155,14 +149,12 @@ class CustomNameserversForm extends React.PureComponent {
 						<FormButton
 							onClick={ this.handleSubmit }
 							className={ classes }
-							disabled={ this.props.submitDisabled }>
+							disabled={ this.props.submitDisabled }
+						>
 							{ translate( 'Save Custom Name Servers' ) }
 						</FormButton>
 
-						<FormButton
-							type="button"
-							isPrimary={ false }
-							onClick={ this.handleReset }>
+						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
 							{ translate( 'Reset to Defaults' ) }
 						</FormButton>
 					</FormFooter>
@@ -171,7 +163,7 @@ class CustomNameserversForm extends React.PureComponent {
 		);
 	}
 
-	handleSubmit = ( event ) => {
+	handleSubmit = event => {
 		event.preventDefault();
 
 		this.props.saveCustomNameServersClick( this.props.selectedDomainName );
@@ -179,7 +171,7 @@ class CustomNameserversForm extends React.PureComponent {
 		this.props.onSubmit();
 	};
 
-	handleReset = ( event ) => {
+	handleReset = event => {
 		event.preventDefault();
 
 		this.props.resetToDefaultsClick( this.props.selectedDomainName );
@@ -188,64 +180,62 @@ class CustomNameserversForm extends React.PureComponent {
 	};
 }
 
-const customNameServersLearnMoreClick = ( domainName ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
-		{ domain_name: domainName }
-	),
-);
+const customNameServersLearnMoreClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent(
+			'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
+			{ domain_name: domainName }
+		)
+	);
 
-const customNameServersLookUpClick = ( domainName ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Look up..." link in "Custom Name Servers" Form in Name Servers and DNS',
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_name_servers_wpcom_name_servers_look_up_click',
-		{ domain_name: domainName }
-	),
-);
+const customNameServersLookUpClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Look up..." link in "Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_name_servers_wpcom_name_servers_look_up_click', {
+			domain_name: domainName,
+		} )
+	);
 
-const saveCustomNameServersClick = ( domainName ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Save Custom Name Servers" in "Use Custom Name Servers" Form in Name Servers and DNS',
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_name_servers_save_custom_name_servers_click',
-		{ domain_name: domainName }
-	),
-);
+const saveCustomNameServersClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Save Custom Name Servers" in "Use Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_name_servers_save_custom_name_servers_click', {
+			domain_name: domainName,
+		} )
+	);
 
-const resetToDefaultsClick = ( domainName ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Reset to Defaults" Button in "Use Custom Name Servers" Form in Name Servers and DNS',
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_name_servers_reset_to_defaults_click',
-		{ domain_name: domainName }
-	),
-);
+const resetToDefaultsClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Reset to Defaults" Button in "Use Custom Name Servers" Form in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_domain_management_name_servers_reset_to_defaults_click', {
+			domain_name: domainName,
+		} )
+	);
 
-export default connect(
-	null,
-	{
-		customNameServersLearnMoreClick,
-		customNameServersLookUpClick,
-		resetToDefaultsClick,
-		saveCustomNameServersClick,
-	}
-)( localize( CustomNameserversForm ) );
+export default connect( null, {
+	customNameServersLearnMoreClick,
+	customNameServersLookUpClick,
+	resetToDefaultsClick,
+	saveCustomNameServersClick,
+} )( localize( CustomNameserversForm ) );

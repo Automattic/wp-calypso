@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { omit } from 'lodash';
 
@@ -28,7 +33,7 @@ import getLabel from './locales';
  */
 const fieldTypes = [ 'checkbox', 'select', 'email', 'name', 'radio', 'text', 'textarea', 'url' ];
 
-export default React.createClass( {
+const ContactFormDialogField = React.createClass( {
 	displayName: 'ContactFormDialogField',
 
 	mixins: [ PureRenderMixin ],
@@ -40,7 +45,7 @@ export default React.createClass( {
 		required: PropTypes.bool,
 		onUpdate: PropTypes.func.isRequired,
 		onRemove: PropTypes.func.isRequired,
-		isExpanded: PropTypes.bool
+		isExpanded: PropTypes.bool,
 	},
 
 	renderOptions() {
@@ -49,24 +54,23 @@ export default React.createClass( {
 		}
 
 		let { options } = this.props;
-		options = !!options ? options.split( ',' ) : [];
+		options = !! options ? options.split( ',' ) : [];
 
 		const optionsValidationError = ! options || options.length === 0;
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ this.translate( 'Options' ) }</FormLabel>
+				<FormLabel>{ this.props.translate( 'Options' ) }</FormLabel>
 				<TokenField
 					value={ options }
 					onChange={ tokens => this.props.onUpdate( { options: tokens.join() } ) }
 				/>
-				{
-					optionsValidationError &&
-						<FormTextValidation
-							isError={ true }
-							text={ this.translate( 'Options can not be empty.' ) }
-						/>
-				}
+				{ optionsValidationError && (
+					<FormTextValidation
+						isError={ true }
+						text={ this.props.translate( 'Options can not be empty.' ) }
+					/>
+				) }
 				<FormSettingExplanation>Insert an option and press enter.</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -97,21 +101,32 @@ export default React.createClass( {
 				onClose={ this.handleCardClose }
 				onOpen={ this.handleCardOpen }
 				actionButton={ <FieldEditButton expanded={ false } /> }
-				actionButtonExpanded={ <FieldEditButton expanded={ true } /> }>
+				actionButtonExpanded={ <FieldEditButton expanded={ true } /> }
+			>
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Field Label' ) }</FormLabel>
-					<FormTextInput value={ this.props.label } onChange={ this.onLabelChange } isError={ fielLabelValidationError } />
-					{ fielLabelValidationError && <FormTextValidation isError={ true } text={ this.translate( 'Field Label can not be empty.' ) } /> }
+					<FormLabel>{ this.props.translate( 'Field Label' ) }</FormLabel>
+					<FormTextInput
+						value={ this.props.label }
+						onChange={ this.onLabelChange }
+						isError={ fielLabelValidationError }
+					/>
+					{ fielLabelValidationError && (
+						<FormTextValidation
+							isError={ true }
+							text={ this.props.translate( 'Field Label can not be empty.' ) }
+						/>
+					) }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Field Type' ) }</FormLabel>
+					<FormLabel>{ this.props.translate( 'Field Type' ) }</FormLabel>
 					<SelectDropdown selectedText={ getLabel( this.props.type ) }>
 						{ fieldTypes.map( fieldType => (
 							<DropdownItem
 								key={ 'field-type-' + fieldType }
 								selected={ this.props.type === fieldType }
-								onClick={ () => this.props.onUpdate( { type: fieldType } ) }>
+								onClick={ () => this.props.onUpdate( { type: fieldType } ) }
+							>
 								{ getLabel( fieldType ) }
 							</DropdownItem>
 						) ) }
@@ -122,14 +137,16 @@ export default React.createClass( {
 					<FormLabel>
 						<FormCheckbox
 							checked={ this.props.required }
-							onChange={ () => this.props.onUpdate( { required: ! this.props.required } ) } />
-						<span>{ this.translate( 'Required' ) }</span>
+							onChange={ () => this.props.onUpdate( { required: ! this.props.required } ) }
+						/>
+						<span>{ this.props.translate( 'Required' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
 				{ this.renderOptions() }
-
 			</FoldableCard>
 		);
-	}
+	},
 } );
+
+export default localize( ContactFormDialogField );

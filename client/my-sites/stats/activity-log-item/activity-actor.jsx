@@ -44,13 +44,8 @@ export default class ActivityActor extends PureComponent {
 			<div className="activity-log-item__actor">
 				<Gravatar user={ { avatar_URL: actorAvatarUrl } } size={ 40 } />
 				<div className="activity-log-item__actor-info">
-					<div className="activity-log-item__actor-name">
-						{ actorName }
-					</div>
-					{ actorRole &&
-						<div className="activity-log-item__actor-role">
-							{ actorRole }
-						</div> }
+					<div className="activity-log-item__actor-name">{ actorName }</div>
+					{ actorRole && <div className="activity-log-item__actor-role">{ actorRole }</div> }
 				</div>
 			</div>
 		);

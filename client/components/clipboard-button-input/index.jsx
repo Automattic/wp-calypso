@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -19,7 +22,7 @@ class ClipboardButtonInputExport extends React.Component {
 		super( props );
 		this.state = {
 			isCopied: false,
-			disabled: false
+			disabled: false,
 		};
 	}
 	static propTypes = {
@@ -33,7 +36,7 @@ class ClipboardButtonInputExport extends React.Component {
 	};
 
 	static defaultProps = {
-		value: ''
+		value: '',
 	};
 
 	componentWillUnmount() {
@@ -43,24 +46,18 @@ class ClipboardButtonInputExport extends React.Component {
 
 	showConfirmation = () => {
 		this.setState( {
-			isCopied: true
+			isCopied: true,
 		} );
 
 		this.confirmationTimeout = setTimeout( () => {
 			this.setState( {
-				isCopied: false
+				isCopied: false,
 			} );
 		}, 4000 );
-	}
+	};
 
 	render() {
-		const {
-			value,
-			className,
-			disabled,
-			hideHttp,
-			translate
-		} = this.props;
+		const { value, className, disabled, hideHttp, translate } = this.props;
 		const classes = classnames( 'clipboard-button-input', className );
 
 		return (
@@ -70,15 +67,19 @@ class ClipboardButtonInputExport extends React.Component {
 					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
-					readOnly />
+					readOnly
+				/>
 				<ClipboardButton
 					text={ value }
 					onCopy={ this.showConfirmation }
 					disabled={ disabled }
-					compact>
-					{ this.state.isCopied
-						? translate( 'Copied!' )
-						: translate( 'Copy', { context: 'verb' } ) }
+					compact
+				>
+					{ this.state.isCopied ? (
+						translate( 'Copied!' )
+					) : (
+						translate( 'Copy', { context: 'verb' } )
+					) }
 				</ClipboardButton>
 			</span>
 		);

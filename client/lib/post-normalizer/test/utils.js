@@ -1,15 +1,17 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isFeaturedImageInContent } from '../utils';
 
 describe( 'isFeaturedImageInContent', () => {
-	it( 'should detect identical urls', () => {
+	test( 'should detect identical urls', () => {
 		const post = {
 			post_thumbnail: {
 				URL: 'http://example.com/image.jpg',
@@ -19,7 +21,7 @@ describe( 'isFeaturedImageInContent', () => {
 		expect( isFeaturedImageInContent( post ) ).to.equal( 1 );
 	} );
 
-	it( 'should return false when no images', () => {
+	test( 'should return false when no images', () => {
 		const post = {
 			post_thumbnail: {
 				URL: 'http://example.com/image.jpg',
@@ -29,7 +31,7 @@ describe( 'isFeaturedImageInContent', () => {
 		expect( isFeaturedImageInContent( post ) ).to.be.false;
 	} );
 
-	it( 'should return false when image is not in content', () => {
+	test( 'should return false when image is not in content', () => {
 		const post = {
 			post_thumbnail: {
 				URL: 'http://example.com/image.jpg',
@@ -39,7 +41,7 @@ describe( 'isFeaturedImageInContent', () => {
 		expect( isFeaturedImageInContent( post ) ).to.be.false;
 	} );
 
-	it( 'should ignore hostname when comparing', () => {
+	test( 'should ignore hostname when comparing', () => {
 		const post = {
 			post_thumbnail: {
 				URL: 'http://example2.com/image.jpg',
@@ -49,7 +51,7 @@ describe( 'isFeaturedImageInContent', () => {
 		expect( isFeaturedImageInContent( post ) ).to.equal( 1 );
 	} );
 
-	it( 'should understand photon urls embed the hostname when comparing', () => {
+	test( 'should understand photon urls embed the hostname when comparing', () => {
 		const post = {
 			post_thumbnail: {
 				URL: 'http://i2.wp.com/example2.com/image.jpg',

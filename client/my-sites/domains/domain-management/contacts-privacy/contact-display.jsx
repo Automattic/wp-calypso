@@ -1,12 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
-		contactInformation: React.PropTypes.object.isRequired
+		contactInformation: PropTypes.object.isRequired,
 	};
 
 	render() {
@@ -17,7 +21,9 @@ class ContactDisplay extends React.PureComponent {
 				<h2>{ translate( 'Public Record Preview' ) }</h2>
 
 				<div className="contact-display-content">
-					<p>{ contactInformation.firstName } { contactInformation.lastName }</p>
+					<p>
+						{ contactInformation.firstName } { contactInformation.lastName }
+					</p>
 					{ contactInformation.organization && <p>{ contactInformation.organization }</p> }
 					<p>{ contactInformation.email }</p>
 					<p>{ contactInformation.address1 }</p>

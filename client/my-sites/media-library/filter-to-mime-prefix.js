@@ -1,16 +1,19 @@
 /**
  * Given a media filter, returns the associated mime type prefix, or undefined
  * if media filter isn't supported.
- *
+ * 
  * This nearly duplicates existing behavior in <MediaListData /> utility
  * library, but does not include the `/` suffix required for REST API
  * filtering, but not utilized in MediaLibrary mime prefix detection.
+ * 
+ * 
  *
+ * @format
  * @see /client/components/data/media-list-data/utils.js
- *
- * @param  {string} filter Media filter path segment
+ * @param {string} filter Media filter path segment
  * @return {string}        Media mime type prefix
  */
+
 export default function( filter ) {
 	var mimePrefix;
 

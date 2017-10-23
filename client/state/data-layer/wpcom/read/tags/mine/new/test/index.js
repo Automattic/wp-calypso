@@ -1,23 +1,23 @@
 /** @format */
-/*
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { find } from 'lodash';
 import freeze from 'deep-freeze';
+import { find } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { requestFollowTag, receiveFollowTag, receiveError } from '../';
+import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import {
 	requestFollowTag as requestFollowAction,
 	receiveTags as receiveTagsAction,
 } from 'state/reader/tags/items/actions';
-import { requestFollowTag, receiveFollowTag, receiveError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { NOTICE_CREATE } from 'state/action-types';
 
 export const successfulFollowResponse = freeze( {
 	subscribed: true,
@@ -49,7 +49,7 @@ const slug = 'chicken';
 
 describe( 'follow tag request', () => {
 	describe( '#requestFollow', () => {
-		it( 'should dispatch HTTP request to tag endpoint', () => {
+		test( 'should dispatch HTTP request to tag endpoint', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -69,7 +69,7 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveFollowSuccess', () => {
-		it( 'should dispatch the followed tag with isFollowing=true', () => {
+		test( 'should dispatch the followed tag with isFollowing=true', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -90,7 +90,7 @@ describe( 'follow tag request', () => {
 			);
 		} );
 
-		it( 'if api reports error then create an error notice', () => {
+		test( 'if api reports error then create an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
@@ -102,7 +102,7 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const error = 'could not find tag';

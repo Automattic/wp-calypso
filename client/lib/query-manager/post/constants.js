@@ -1,3 +1,4 @@
+/** @format */
 export const DEFAULT_POST_QUERY = {
 	context: 'display',
 	http_envelope: false,
@@ -10,5 +11,5 @@ export const DEFAULT_POST_QUERY = {
 	type: 'post',
 	status: 'publish',
 	sticky: 'include',
-	search: ''
+	search: '',
 };

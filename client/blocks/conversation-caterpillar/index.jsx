@@ -7,20 +7,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import {
-	getPostCommentsTree,
-	getDateSortedPostComments,
-	getHiddenCommentsForPost,
-} from 'state/comments/selectors';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
 import { isAncestor } from 'blocks/comments/utils';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
@@ -32,11 +27,12 @@ class ConversationCaterpillarComponent extends React.Component {
 		postId: PropTypes.number.isRequired,
 		commentsTree: PropTypes.object.isRequired,
 		comments: PropTypes.array.isRequired,
+		commentsToShow: PropTypes.object,
 		parentCommentId: PropTypes.number,
 	};
 
 	getExpandableComments = () => {
-		const { comments, hiddenComments, parentCommentId, commentsTree } = this.props;
+		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
 		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
 
@@ -44,20 +40,9 @@ class ConversationCaterpillarComponent extends React.Component {
 			? comments
 			: filter( comments, child => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, comment => hiddenComments[ comment.ID ] );
+		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
-	};
-
-	handleShowAll = () => {
-		const { blogId, postId } = this.props;
-		const commentsToExpand = this.getExpandableComments();
-		this.props.expandComments( {
-			siteId: blogId,
-			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.full,
-		} );
 	};
 
 	handleTickle = () => {
@@ -76,15 +61,25 @@ class ConversationCaterpillarComponent extends React.Component {
 			siteId: blogId,
 			postId,
 			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.singleLine,
+			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
+		} );
+		recordAction( 'comment_caterpillar_click' );
+		recordGaEvent( 'Clicked Caterpillar' );
+		recordTrack( 'calypso_reader_comment_caterpillar_click', {
+			blog_id: blogId,
+			post_id: postId,
 		} );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, parentCommentId, comments } = this.props;
 		const allExpandableComments = this.getExpandableComments();
 		const expandableComments = takeRight( allExpandableComments, NUMBER_TO_EXPAND );
-		const commentCount = size( allExpandableComments );
+		const isRoot = ! parentCommentId;
+		const numberUnfetchedComments = this.props.commentCount - size( comments );
+		const commentCount = isRoot
+			? numberUnfetchedComments + size( allExpandableComments )
+			: size( allExpandableComments );
 
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'ID' );
@@ -97,8 +92,8 @@ class ConversationCaterpillarComponent extends React.Component {
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		return (
-			<Card className="conversation-caterpillar" onClick={ this.handleTickle }>
-				<div className="conversation-caterpillar__gravatars">
+			<div className="conversation-caterpillar">
+				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -123,43 +118,40 @@ class ConversationCaterpillarComponent extends React.Component {
 				</div>
 				<button
 					className="conversation-caterpillar__count"
+					onClick={ this.handleTickle }
 					title={
-						commentCount > 1
-							? translate( 'View comments from %(commenterName)s and %(count)d more', {
-									args: {
-										commenterName: lastAuthorName,
-										count: commentCount - 1,
-									},
-								} )
-							: translate( 'View comment from %(commenterName)s', {
-									args: {
-										commenterName: lastAuthorName,
-									},
-								} )
-					}
-				>
-					{ commentCount > 1
-						? translate( '%(commenterName)s and %(count)d more', {
+						commentCount > 1 ? (
+							translate( 'View comments from %(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastAuthorName,
 									count: commentCount - 1,
 								},
 							} )
-						: translate( '%(commenterName)s commented', {
+						) : (
+							translate( 'View comment from %(commenterName)s', {
 								args: {
 									commenterName: lastAuthorName,
 								},
-							} ) }
+							} )
+						)
+					}
+				>
+					{ commentCount > 1 ? (
+						translate( '%(commenterName)s and %(count)d more', {
+							args: {
+								commenterName: lastAuthorName,
+								count: commentCount - 1,
+							},
+						} )
+					) : (
+						translate( '%(commenterName)s commented', {
+							args: {
+								commenterName: lastAuthorName,
+							},
+						} )
+					) }
 				</button>
-				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
-					<Gridicon
-						icon="chevron-down"
-						size={ 12 }
-						className="conversation-caterpillar__show-all-chevron"
-					/>
-					{ translate( 'Show all' ) }
-				</button>
-			</Card>
+			</div>
 		);
 	}
 }
@@ -171,7 +163,6 @@ const ConnectedConversationCaterpillar = connect(
 		const { blogId, postId } = ownProps;
 		return {
 			comments: getDateSortedPostComments( state, blogId, postId ),
-			hiddenComments: getHiddenCommentsForPost( state, blogId, postId ),
 			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},

@@ -1,17 +1,20 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
-import StatsNavigation from './stats-navigation';
+import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
@@ -32,7 +35,7 @@ class StatsSite extends Component {
 		super( props );
 		this.state = {
 			chartTab: this.props.chartTab,
-			tabSwitched: false
+			tabSwitched: false,
 		};
 	}
 
@@ -40,22 +43,22 @@ class StatsSite extends Component {
 		if ( ! this.state.tabSwitched && this.state.chartTab !== nextProps.chartTab ) {
 			this.setState( {
 				tabSwitched: true,
-				chartTab: nextProps.chartTab
+				chartTab: nextProps.chartTab,
 			} );
 		}
 	}
 
-	barClick = ( bar ) => {
+	barClick = bar => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		page.redirect( this.props.path + '?startDate=' + bar.data.period );
 	};
 
-	switchChart = ( tab ) => {
+	switchChart = tab => {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			this.setState( {
 				chartTab: tab.attr,
-				tabSwitched: true
+				tabSwitched: true,
 			} );
 		}
 	};
@@ -63,11 +66,19 @@ class StatsSite extends Component {
 	render() {
 		const { date, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
 		const charts = [
-			{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible',
-				label: translate( 'Views', { context: 'noun' } ) },
+			{
+				attr: 'views',
+				legendOptions: [ 'visitors' ],
+				gridicon: 'visible',
+				label: translate( 'Views', { context: 'noun' } ),
+			},
 			{ attr: 'visitors', gridicon: 'user', label: translate( 'Visitors', { context: 'noun' } ) },
 			{ attr: 'likes', gridicon: 'star', label: translate( 'Likes', { context: 'noun' } ) },
-			{ attr: 'comments', gridicon: 'comment', label: translate( 'Comments', { context: 'noun' } ) }
+			{
+				attr: 'comments',
+				gridicon: 'comment',
+				label: translate( 'Comments', { context: 'noun' } ),
+			},
 		];
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -77,7 +88,7 @@ class StatsSite extends Component {
 
 		const query = {
 			period: period,
-			date: endOf.format( 'YYYY-MM-DD' )
+			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
 		// Video plays, and tags and categories are not supported in JetPack Stats
@@ -111,7 +122,8 @@ class StatsSite extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					section={ period }
+					selectedItem={ 'traffic' }
+					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
@@ -122,7 +134,8 @@ class StatsSite extends Component {
 						charts={ charts }
 						queryDate={ queryDate }
 						period={ this.props.period }
-						chartTab={ this.state.chartTab } />
+						chartTab={ this.state.chartTab }
+					/>
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -146,14 +159,16 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopPosts"
-								showSummaryLink />
+								showSummaryLink
+							/>
 							<StatsModule
 								path="searchterms"
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
 								statType="statsSearchTerms"
-								showSummaryLink />
+								showSummaryLink
+							/>
 							{ videoList }
 						</div>
 						<div className="stats__module-column">
@@ -161,14 +176,16 @@ class StatsSite extends Component {
 								path="countries"
 								period={ this.props.period }
 								query={ query }
-								summary={ false } />
+								summary={ false }
+							/>
 							<StatsModule
 								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
 								query={ query }
 								statType="statsClicks"
-								showSummaryLink />
+								showSummaryLink
+							/>
 						</div>
 						<div className="stats__module-column">
 							<StatsModule
@@ -177,7 +194,8 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsReferrers"
-								showSummaryLink />
+								showSummaryLink
+							/>
 							<StatsModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
@@ -185,7 +203,8 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsTopAuthors"
 								className="stats__author-views"
-								showSummaryLink />
+								showSummaryLink
+							/>
 							{ podcastList }
 						</div>
 					</div>
@@ -204,7 +223,7 @@ export default connect(
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
 			siteId,
-			slug: getSelectedSiteSlug( state )
+			slug: getSelectedSiteSlug( state ),
 		};
 	},
 	{ recordGoogleEvent }

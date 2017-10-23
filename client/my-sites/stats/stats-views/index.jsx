@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -28,20 +32,20 @@ class StatsViews extends Component {
 	};
 
 	state = {
-		chartOption: 'total'
+		chartOption: 'total',
 	};
 
-	toggleViews = ( option ) => {
+	toggleViews = option => {
 		this.setState( {
-			chartOption: option.value
+			chartOption: option.value,
 		} );
-	}
+	};
 
 	render() {
 		const { query, siteId, statType, viewData, translate, siteSlug } = this.props;
 		const monthViewOptions = [
 			{ value: 'total', label: translate( 'Months and Years' ) },
-			{ value: 'average', label: translate( 'Average per Day' ) }
+			{ value: 'average', label: translate( 'Average per Day' ) },
 		];
 
 		return (
@@ -49,36 +53,32 @@ class StatsViews extends Component {
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Card className={ classNames( 'stats-views', { 'is-loading': ! viewData } ) }>
 					<StatsModulePlaceholder isLoading={ ! viewData } />
-					{ viewData &&
+					{ viewData && (
 						<SegmentedControl
 							className="stats-views__month-control"
 							options={ monthViewOptions }
 							onSelect={ this.toggleViews }
 							compact
 						/>
-					}
+					) }
 					<Months dataKey={ this.state.chartOption } data={ viewData } siteSlug={ siteSlug } />
 					<div className="stats-views__key-container">
 						<span className="stats-views__key-label">
-							{
-								translate( 'Fewer Views', {
-									context: 'Legend label in stats all time views table'
-								} )
-							}
+							{ translate( 'Fewer Views', {
+								context: 'Legend label in stats all time views table',
+							} ) }
 						</span>
 						<ul className="stats-views__key">
-							<li className="stats-views__key-item level-1"></li>
-							<li className="stats-views__key-item level-2"></li>
-							<li className="stats-views__key-item level-3"></li>
-							<li className="stats-views__key-item level-4"></li>
-							<li className="stats-views__key-item level-5"></li>
+							<li className="stats-views__key-item level-1" />
+							<li className="stats-views__key-item level-2" />
+							<li className="stats-views__key-item level-3" />
+							<li className="stats-views__key-item level-4" />
+							<li className="stats-views__key-item level-5" />
 						</ul>
 						<span className="stats-views__key-label">
-							{
-								translate( 'More Views', {
-									context: 'Legend label in stats all time views table'
-								} )
-							}
+							{ translate( 'More Views', {
+								context: 'Legend label in stats all time views table',
+							} ) }
 						</span>
 					</div>
 				</Card>
@@ -87,7 +87,7 @@ class StatsViews extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const query = { quantity: -1, stat_fields: 'views' };
 	const statType = 'statsVisits';
 	const siteId = getSelectedSiteId( state );

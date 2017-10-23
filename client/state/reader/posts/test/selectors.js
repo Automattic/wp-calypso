@@ -11,7 +11,7 @@ import { getPost, getPostBySiteAndId } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getPost()', () => {
-		it( 'should return undefined if there is no match', () => {
+		test( 'should return undefined if there is no match', () => {
 			const post = getPost(
 				{
 					reader: {
@@ -26,7 +26,7 @@ describe( 'selectors', () => {
 			expect( post ).to.eql( undefined );
 		} );
 
-		it( 'should return a post object if found', () => {
+		test( 'should return a post object if found', () => {
 			expect(
 				getPost(
 					{
@@ -51,7 +51,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostBySiteAndId', () => {
-		it( 'should return undefined if no matches are found', () => {
+		test( 'should return undefined if no matches are found', () => {
 			expect(
 				getPostBySiteAndId(
 					{
@@ -77,7 +77,7 @@ describe( 'selectors', () => {
 			).to.be.undefined;
 		} );
 
-		it( 'should return a post if a match is found', () => {
+		test( 'should return a post if a match is found', () => {
 			const stateTree = {
 				reader: {
 					posts: {

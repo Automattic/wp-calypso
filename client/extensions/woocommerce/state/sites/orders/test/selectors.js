@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -18,9 +20,11 @@ import {
 	isOrderUpdating,
 	getNewOrders,
 	getNewOrdersRevenue,
+	getNewOrdersWithoutPayPalPendingRevenue,
+	getNewOrdersWithoutPayPalPending,
 } from '../selectors';
-import orders from './fixtures/orders';
 import order from './fixtures/order';
+import orders from './fixtures/orders';
 const additionalOrders = [ order ];
 
 const preInitializedState = {
@@ -35,7 +39,7 @@ const loadingState = {
 				123: {
 					orders: {
 						isLoading: {
-							35: true
+							35: true,
 						},
 						isQueryLoading: {
 							'{}': true,
@@ -59,7 +63,7 @@ const loadedState = {
 				123: {
 					orders: {
 						isLoading: {
-							35: false
+							35: false,
 						},
 						isQueryLoading: {
 							'{}': false,
@@ -69,10 +73,10 @@ const loadedState = {
 						},
 						items: keyBy( orders, 'id' ),
 						queries: {
-							'{}': [ 35, 26 ]
+							'{}': [ 35, 26 ],
 						},
 						total: { '{}': 54 },
-					}
+					},
 				},
 				321: {
 					orders: {
@@ -80,7 +84,76 @@ const loadedState = {
 							'{}': false,
 						},
 						items: keyBy( [ ...orders, ...additionalOrders ], 'id' ),
-					}
+					},
+				},
+			},
+		},
+	},
+};
+
+const paypalPendingOrder = [
+	{
+		id: 40,
+		status: 'pending',
+		currency: 'USD',
+		total: '50.87',
+		total_tax: '0.00',
+		prices_include_tax: false,
+		billing: {},
+		shipping: {},
+		payment_method: 'paypal',
+		payment_method_title: 'PayPal',
+		meta_data: [],
+		line_items: [
+			{
+				id: 12,
+				name: 'Coffee',
+				price: 15.29,
+			},
+		],
+		tax_lines: [],
+		shipping_lines: [
+			{
+				id: 13,
+				method_title: 'Flat rate',
+				method_id: 'flat_rate:2',
+				total: '5.00',
+				total_tax: '0.00',
+				taxes: [],
+			},
+		],
+	},
+];
+
+const loadedStatePayPal = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					orders: {
+						isLoading: {
+							35: false,
+						},
+						isQueryLoading: {
+							'{}': false,
+						},
+						isUpdating: {
+							20: false,
+						},
+						items: keyBy( orders, 'id' ),
+						queries: {
+							'{}': [ 35, 26 ],
+						},
+						total: { '{}': 54 },
+					},
+				},
+				321: {
+					orders: {
+						isQueryLoading: {
+							'{}': false,
+						},
+						items: keyBy( [ ...orders, ...paypalPendingOrder ], 'id' ),
+					},
 				},
 			},
 		},
@@ -91,220 +164,261 @@ const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
 	describe( '#areOrdersLoaded', () => {
-		it( 'should be false when woocommerce state is not available.', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
 			expect( areOrdersLoaded( preInitializedState, 1, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be false when orders are currently being fetched.', () => {
+		test( 'should be false when orders are currently being fetched.', () => {
 			expect( areOrdersLoaded( loadingState, 1, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true when orders are loaded.', () => {
+		test( 'should be true when orders are loaded.', () => {
 			expect( areOrdersLoaded( loadedState, 1, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when orders are loaded only for a different site.', () => {
+		test( 'should be false when orders are loaded only for a different site.', () => {
 			expect( areOrdersLoaded( loadedState, 1, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areOrdersLoaded( loadedStateWithUi, 1 ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#areOrdersLoading', () => {
-		it( 'should be false when woocommerce state is not available.', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
 			expect( areOrdersLoading( preInitializedState, 1, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true when orders are currently being fetched.', () => {
+		test( 'should be true when orders are currently being fetched.', () => {
 			expect( areOrdersLoading( loadingState, 1, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when orders are loaded.', () => {
+		test( 'should be false when orders are loaded.', () => {
 			expect( areOrdersLoading( loadedState, 1, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be false when orders are loaded only for a different site.', () => {
+		test( 'should be false when orders are loaded only for a different site.', () => {
 			expect( areOrdersLoading( loadedState, 1, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areOrdersLoading( loadedStateWithUi, 1 ) ).to.be.false;
 		} );
 	} );
 
 	describe( '#isOrderLoaded', () => {
-		it( 'should be false when woocommerce state is not available.', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
 			expect( isOrderLoaded( preInitializedState, 35, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be false when this order is currently being fetched.', () => {
+		test( 'should be false when this order is currently being fetched.', () => {
 			expect( isOrderLoaded( loadingState, 35, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true when this order is loaded.', () => {
+		test( 'should be true when this order is loaded.', () => {
 			expect( isOrderLoaded( loadedState, 35, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when orders are loaded only for a different site.', () => {
+		test( 'should be false when orders are loaded only for a different site.', () => {
 			expect( isOrderLoaded( loadedState, 39, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isOrderLoaded( loadedStateWithUi, 35 ) ).to.be.true;
 		} );
 	} );
 
 	describe( '#isOrderLoading', () => {
-		it( 'should be false when woocommerce state is not available.', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
 			expect( isOrderLoading( preInitializedState, 35, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true when this order is currently being fetched.', () => {
+		test( 'should be true when this order is currently being fetched.', () => {
 			expect( isOrderLoading( loadingState, 35, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when this order is loaded.', () => {
+		test( 'should be false when this order is loaded.', () => {
 			expect( isOrderLoading( loadedState, 35, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be false when orders are loaded only for a different site.', () => {
+		test( 'should be false when orders are loaded only for a different site.', () => {
 			expect( isOrderLoading( loadedState, 29, 456 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isOrderLoading( loadedStateWithUi, 35 ) ).to.be.false;
 		} );
 	} );
 
 	describe( '#isOrderUpdating', () => {
-		it( 'should be false when woocommerce state is not available.', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
 			expect( isOrderUpdating( preInitializedState, 20, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true when this order is currently being updated.', () => {
+		test( 'should be true when this order is currently being updated.', () => {
 			expect( isOrderUpdating( loadingState, 20, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when this order is done updating.', () => {
+		test( 'should be false when this order is done updating.', () => {
 			expect( isOrderUpdating( loadedState, 20, 123 ) ).to.be.false;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isOrderUpdating( loadedStateWithUi, 20 ) ).to.be.false;
 		} );
 	} );
 
 	describe( '#getOrders', () => {
-		it( 'should be an empty array when woocommerce state is not available.', () => {
+		test( 'should be an empty array when woocommerce state is not available.', () => {
 			expect( getOrders( preInitializedState, 1, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should be an empty array when orders are loading.', () => {
+		test( 'should be an empty array when orders are loading.', () => {
 			expect( getOrders( loadingState, 1, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should be the list of orders if they are loaded.', () => {
+		test( 'should be the list of orders if they are loaded.', () => {
 			expect( getOrders( loadedState, 1, 123 ) ).to.eql( orders );
 		} );
 
-		it( 'should be an empty array when orders are loaded only for a different site.', () => {
+		test( 'should be an empty array when orders are loaded only for a different site.', () => {
 			expect( getOrders( loadedState, 1, 456 ) ).to.be.empty;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getOrders( loadedStateWithUi, 1 ) ).to.eql( orders );
 		} );
 	} );
 
 	describe( '#getTotalOrders', () => {
-		it( 'should be 0 (default) when woocommerce state is not available.', () => {
+		test( 'should be 0 (default) when woocommerce state is not available.', () => {
 			expect( getTotalOrders( preInitializedState, {}, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 0 (default) when orders are loading.', () => {
+		test( 'should be 0 (default) when orders are loading.', () => {
 			expect( getTotalOrders( loadingState, {}, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 54, the set total, if the orders are loaded.', () => {
+		test( 'should be 54, the set total, if the orders are loaded.', () => {
 			expect( getTotalOrders( loadedState, {}, 123 ) ).to.eql( 54 );
 		} );
 
-		it( 'should be 0 (default) when orders are loaded only for a different site.', () => {
+		test( 'should be 0 (default) when orders are loaded only for a different site.', () => {
 			expect( getTotalOrders( loadedState, {}, 456 ) ).to.eql( 0 );
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTotalOrders( loadedStateWithUi ) ).to.eql( 54 );
 		} );
 	} );
 
 	describe( '#getOrder', () => {
-		it( 'should be null when woocommerce state is not available.', () => {
+		test( 'should be null when woocommerce state is not available.', () => {
 			expect( getOrder( preInitializedState, 35, 123 ) ).to.be.null;
 		} );
 
-		it( 'should be null when orders are loading.', () => {
+		test( 'should be null when orders are loading.', () => {
 			expect( getOrder( loadingState, 35, 123 ) ).to.be.null;
 		} );
 
-		it( 'should be the order object if it is loaded.', () => {
+		test( 'should be the order object if it is loaded.', () => {
 			expect( getOrder( loadedState, 35, 123 ) ).to.eql( orders[ 0 ] );
 		} );
 
-		it( 'should be null when orders are loaded only for a different site.', () => {
+		test( 'should be null when orders are loaded only for a different site.', () => {
 			expect( getOrder( loadedState, 23, 456 ) ).to.be.null;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getOrder( loadedStateWithUi, 26 ) ).to.eql( orders[ 1 ] );
 		} );
 	} );
 
 	describe( '#getNewOrders', () => {
-		it( 'should be an empty array when woocommerce state is not available.', () => {
+		test( 'should be an empty array when woocommerce state is not available.', () => {
 			expect( getNewOrders( preInitializedState, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should be an empty array when orders are loading.', () => {
+		test( 'should be an empty array when orders are loading.', () => {
 			expect( getNewOrders( loadingState, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should return the list of new orders only', () => {
+		test( 'should return the list of new orders only', () => {
 			expect( getNewOrders( loadedState, 321 ) ).to.have.members( orders );
 			expect( getNewOrders( loadedState, 321 ) ).to.not.have.members( additionalOrders );
 		} );
 
-		it( 'should be an empty array when orders are loaded only for a different site.', () => {
+		test( 'should be an empty array when orders are loaded only for a different site.', () => {
 			expect( getNewOrders( loadedState, 456 ) ).to.be.empty;
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
+		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getNewOrders( loadedState, 321 ) ).to.have.members( orders );
 			expect( getNewOrders( loadedState, 321 ) ).to.not.have.members( additionalOrders );
 		} );
 	} );
 
 	describe( '#getNewOrdersRevenue', () => {
-		it( 'should be 0 when woocommerce state is not available.', () => {
+		test( 'should be 0 when woocommerce state is not available.', () => {
 			expect( getNewOrdersRevenue( preInitializedState, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 0 when orders are loading.', () => {
+		test( 'should be 0 when orders are loading.', () => {
 			expect( getNewOrdersRevenue( loadingState, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should return the total of new orders only', () => {
-			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.00 );
+		test( 'should return the total of new orders only', () => {
+			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.0 );
 		} );
 
-		it( 'should be 0 when orders are loaded only for a different site.', () => {
+		test( 'should be 0 when orders are loaded only for a different site.', () => {
 			expect( getNewOrdersRevenue( loadedState, 456 ) ).to.eql( 0 );
 		} );
 
-		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.00 );
+		test( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getNewOrdersRevenue( loadedState, 321 ) ).to.eql( 30.0 );
+		} );
+	} );
+
+	describe( '#getNewOrdersWithoutPayPalPending', () => {
+		it( 'should return an empty array when no data is available', () => {
+			expect( getNewOrdersWithoutPayPalPending( preInitializedState, 123 ) ).to.eql( [] );
+		} );
+
+		it( 'should return an array with proper new order data', () => {
+			expect( getNewOrdersWithoutPayPalPending( loadedState, 321 ) ).to.have.members( orders );
+		} );
+
+		it( 'should not return PayPal payment orders that are pending', () => {
+			expect( getNewOrdersWithoutPayPalPending( loadedStatePayPal, 321 ) ).to.have.members(
+				orders
+			);
+			expect( getNewOrdersWithoutPayPalPending( loadedStatePayPal, 321 ) ).to.not.have.members(
+				paypalPendingOrder
+			);
+		} );
+	} );
+
+	describe( '#getNewOrdersWithoutPayPalPendingRevenue', () => {
+		it( 'should be 0 when woocommerce state is not available.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( preInitializedState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should be 0 when orders are loading.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadingState, 123 ) ).to.eql( 0 );
+		} );
+
+		it( 'should return the total of new orders only', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
+		} );
+
+		it( 'should be 0 when orders are loaded only for a different site.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedState, 456 ) ).to.eql( 0 );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided and not include PayPal Pending Order.', () => {
+			expect( getNewOrdersWithoutPayPalPendingRevenue( loadedStatePayPal, 321 ) ).to.eql( 30.0 );
 		} );
 	} );
 } );

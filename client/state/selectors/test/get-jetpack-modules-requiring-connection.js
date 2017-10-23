@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,20 +11,20 @@ import { expect } from 'chai';
 import { getJetpackModulesRequiringConnection } from '../';
 
 describe( 'getJetpackModulesRequiringConnection()', () => {
-	it( 'should return null if the site has never been fetched', () => {
+	test( 'should return null if the site has never been fetched', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
-					items: {}
-				}
-			}
+					items: {},
+				},
+			},
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );
 		expect( modules ).to.be.null;
 	} );
 
-	it( 'should return the modules that require connection for a known site', () => {
+	test( 'should return the modules that require connection for a known site', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -38,11 +40,11 @@ describe( 'getJetpackModulesRequiringConnection()', () => {
 							},
 							'module-c': {
 								module: 'module-c',
-							}
-						}
-					}
-				}
-			}
+							},
+						},
+					},
+				},
+			},
 		};
 
 		const modules = getJetpackModulesRequiringConnection( stateTree, 12345678 );

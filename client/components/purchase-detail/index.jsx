@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -16,13 +19,9 @@ import TipInfo from './tip-info';
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {
 		buttonText: PropTypes.string,
-		description: PropTypes.oneOfType( [
-			PropTypes.array,
-			PropTypes.string,
-			PropTypes.object
-		] ),
+		description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
 		href: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		isPlaceholder: PropTypes.bool,
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
@@ -58,9 +57,7 @@ export default class PurchaseDetail extends PureComponent {
 
 	renderBody() {
 		if ( this.props.body ) {
-			return (
-				<div className="purchase-detail__body">{ this.props.body }</div>
-			);
+			return <div className="purchase-detail__body">{ this.props.body }</div>;
 		}
 
 		return (
@@ -80,15 +77,16 @@ export default class PurchaseDetail extends PureComponent {
 
 		return (
 			<div className="purchase-detail__icon">
-				<Gridicon icon={ icon } />
+				{ typeof icon === 'string' ? <Gridicon icon={ icon } /> : icon }
 				{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
 			</div>
 		);
 	}
 
 	render() {
-		const { id, requiredText, title, description } = this.props;
+		const { id, requiredText, title, description, icon } = this.props;
 		const classes = classNames( 'purchase-detail', {
+			'custom-icon': icon && typeof icon !== 'string',
 			'is-placeholder': this.props.isPlaceholder,
 		} );
 

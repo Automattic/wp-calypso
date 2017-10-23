@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,18 +15,15 @@ import {
 	ZONINATOR_UPDATE_ZONE,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 234567;
 
-	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-		] );
+	test( 'should export expected reducer keys', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -32,13 +31,13 @@ describe( 'reducer', () => {
 			[ primarySiteId ]: true,
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set state to true if zones are being fetched', () => {
+		test( 'should set state to true if zones are being fetched', () => {
 			const state = requesting( undefined, {
 				type: ZONINATOR_REQUEST_ZONES,
 				siteId: primarySiteId,
@@ -49,7 +48,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values', () => {
+		test( 'should accumulate requesting values', () => {
 			const state = requesting( previousState, {
 				type: ZONINATOR_REQUEST_ZONES,
 				siteId: secondarySiteId,
@@ -61,7 +60,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if updating zones', () => {
+		test( 'should set state to false if updating zones', () => {
 			const state = requesting( previousState, {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
@@ -72,7 +71,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if zones could not be fetched', () => {
+		test( 'should set state to false if zones could not be fetched', () => {
 			const state = requesting( previousState, {
 				type: ZONINATOR_REQUEST_ERROR,
 				siteId: primarySiteId,
@@ -83,7 +82,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requesting( previousState, {
 				type: SERIALIZE,
 			} );
@@ -91,7 +90,7 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requesting( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -119,13 +118,13 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should index zones by site ID and zone ID', () => {
+		test( 'should index zones by site ID and zone ID', () => {
 			const state = items( undefined, {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
@@ -141,7 +140,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate zones of different site ID', () => {
+		test( 'should accumulate zones of different site ID', () => {
 			const state = items( previousState, {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: secondarySiteId,
@@ -160,7 +159,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous zones of the same site ID', () => {
+		test( 'should override previous zones of the same site ID', () => {
 			const state = items( previousState, {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
@@ -176,7 +175,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should initialize zones array for a site ID after the first zone is added', () => {
+		test( 'should initialize zones array for a site ID after the first zone is added', () => {
 			const state = items( undefined, {
 				type: ZONINATOR_UPDATE_ZONE,
 				siteId: primarySiteId,
@@ -191,7 +190,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate zones of the same site ID', () => {
+		test( 'should accumulate zones of the same site ID', () => {
 			const state = items( previousState, {
 				type: ZONINATOR_UPDATE_ZONE,
 				siteId: primarySiteId,
@@ -207,7 +206,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update zones of the same site and zone ID', () => {
+		test( 'should update zones of the same site and zone ID', () => {
 			const updatedZone = {
 				id: primaryZone.id,
 				name: 'Updated zone',
@@ -229,7 +228,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = items( previousState, {
 				type: SERIALIZE,
 			} );
@@ -241,7 +240,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = items( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -249,11 +248,11 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
 					[ primaryZone.id ]: primaryZone,
-				}
+				},
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
 				[ primarySiteId ]: 2,
 			} );

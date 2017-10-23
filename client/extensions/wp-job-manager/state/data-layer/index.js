@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import settings from './settings';
@@ -9,10 +12,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'wp-job-manager:errors' );
 
-const handlers = mergeHandlers(
-	settings,
-	setup,
-);
+const handlers = mergeHandlers( settings, setup );
 
 export default function installActionHandlers() {
 	const added = addHandlers( 'wp-job-manager', handlers );

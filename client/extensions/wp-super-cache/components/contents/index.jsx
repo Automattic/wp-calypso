@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,14 +20,8 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { generateStats } from '../../state/stats/actions';
-import {
-	getSiteTitle,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
-import {
-	getStats,
-	isGeneratingStats,
-} from '../../state/stats/selectors';
+import { getSiteTitle, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getStats, isGeneratingStats } from '../../state/stats/selectors';
 
 class ContentsTab extends Component {
 	static propTypes = {
@@ -49,7 +46,7 @@ class ContentsTab extends Component {
 		isDeleting: false,
 		isDeletingAll: false,
 		isDeletingExpired: false,
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
@@ -64,25 +61,23 @@ class ContentsTab extends Component {
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
 		this.props.handleDeleteCache( false, false );
-	}
+	};
 
 	deleteExpiredCache = () => {
 		this.setState( { isDeletingExpired: true } );
 		this.props.handleDeleteCache( false, true );
-	}
+	};
 
 	deleteAllCaches = () => {
 		this.setState( { isDeletingAll: true } );
 		this.props.handleDeleteCache( true, false );
-	}
+	};
 
 	generateStats = () => this.props.generateStats( this.props.siteId );
 
 	render() {
 		const {
-			fields: {
-				cache_max_time,
-			},
+			fields: { cache_max_time },
 			isDeleting,
 			isGenerating,
 			isMultisite,
@@ -92,134 +87,136 @@ class ContentsTab extends Component {
 			translate,
 		} = this.props;
 		const isDisabled = isDeleting || isReadOnly;
-		const supercache = ( get( stats, 'supercache', {} ) );
-		const wpcache = ( get( stats, 'wpcache', {} ) );
+		const supercache = get( stats, 'supercache', {} );
+		const wpcache = get( stats, 'wpcache', {} );
 
 		return (
 			<div>
-				<QueryStats siteId={ siteId } />
+				<QueryStats siteId={ siteId } />
 				<SectionHeader label={ translate( 'Cache Contents' ) } />
 				<Card compact>
 					<div>
-					{ wpcache &&
-						<div className="wp-super-cache__cache-stat">
-							<span className="wp-super-cache__cache-stat-label">
-								{ translate(
-									'WP-Cache (%(size)s)',
-									{
-										args: { size: wpcache && wpcache.fsize || '0KB' },
-									}
-								) }
-							</span>
-							<span className="wp-super-cache__cache-stat-item">
-								{ `${ wpcache && wpcache.cached || 0 } Cached Pages` }
-							</span>
-							<span className="wp-super-cache__cache-stat-item">
-								{ `${ wpcache && wpcache.expired || 0 } Expired Pages` }
-							</span>
-						</div>
-					}
+						{ wpcache && (
+							<div className="wp-super-cache__cache-stat">
+								<span className="wp-super-cache__cache-stat-label">
+									{ translate( 'WP-Cache (%(size)s)', {
+										args: { size: ( wpcache && wpcache.fsize ) || '0KB' },
+									} ) }
+								</span>
+								<span className="wp-super-cache__cache-stat-item">
+									{ `${ ( wpcache && wpcache.cached ) || 0 } Cached Pages` }
+								</span>
+								<span className="wp-super-cache__cache-stat-item">
+									{ `${ ( wpcache && wpcache.expired ) || 0 } Expired Pages` }
+								</span>
+							</div>
+						) }
 
-					{ supercache &&
-						<div className="wp-super-cache__cache-stat">
-							<span className="wp-super-cache__cache-stat-label">
-								{ translate(
-									'WP-Super-Cache (%(size)s)',
-									{
-										args: { size: supercache && supercache.fsize || '0KB' },
-									}
-								) }
-							</span>
-							<span className="wp-super-cache__cache-stat-item">
-								{ `${ supercache && supercache.cached || 0 } Cached Pages` }
-							</span>
-							<span className="wp-super-cache__cache-stat-item">
-								{ `${ supercache && supercache.expired || 0 } Expired Pages` }
-							</span>
-						</div>
-					}
+						{ supercache && (
+							<div className="wp-super-cache__cache-stat">
+								<span className="wp-super-cache__cache-stat-label">
+									{ translate( 'WP-Super-Cache (%(size)s)', {
+										args: { size: ( supercache && supercache.fsize ) || '0KB' },
+									} ) }
+								</span>
+								<span className="wp-super-cache__cache-stat-item">
+									{ `${ ( supercache && supercache.cached ) || 0 } Cached Pages` }
+								</span>
+								<span className="wp-super-cache__cache-stat-item">
+									{ `${ ( supercache && supercache.expired ) || 0 } Expired Pages` }
+								</span>
+							</div>
+						) }
 
 						<Button
 							compact
 							busy={ isGenerating }
 							disabled={ isGenerating }
-							onClick={ this.generateStats }>
+							onClick={ this.generateStats }
+						>
 							{ translate( 'Regenerate Cache Stats' ) }
 						</Button>
 					</div>
 				</Card>
 
 				<div>
-				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
-					<CacheStats
-						files={ wpcache.cached_list }
-						header={ translate( 'Fresh Full Cache Files' ) }
-						isCached={ true }
-						isSupercache={ false } />
-				}
+					{ ! isEmpty( get( wpcache, 'cached_list' ) ) && (
+						<CacheStats
+							files={ wpcache.cached_list }
+							header={ translate( 'Fresh Full Cache Files' ) }
+							isCached={ true }
+							isSupercache={ false }
+						/>
+					) }
 
-				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
-					<CacheStats
-						files={ wpcache.expired_list }
-						header={ translate( 'Stale Full Cache Files' ) }
-						isCached={ false }
-						isSupercache={ false } />
-				}
+					{ ! isEmpty( get( wpcache, 'expired_list' ) ) && (
+						<CacheStats
+							files={ wpcache.expired_list }
+							header={ translate( 'Stale Full Cache Files' ) }
+							isCached={ false }
+							isSupercache={ false }
+						/>
+					) }
 
-				{ ! isEmpty( get( supercache, 'cached_list' ) ) &&
-					<CacheStats
-						files={ supercache.cached_list }
-						header={ translate( 'Fresh Super Cached Files' ) }
-						isCached={ true }
-						isSupercache={ true } />
-				}
+					{ ! isEmpty( get( supercache, 'cached_list' ) ) && (
+						<CacheStats
+							files={ supercache.cached_list }
+							header={ translate( 'Fresh Super Cached Files' ) }
+							isCached={ true }
+							isSupercache={ true }
+						/>
+					) }
 
-				{ ! isEmpty( get( supercache, 'expired_list' ) ) &&
-					<CacheStats
-						files={ supercache.expired_list }
-						header={ translate( 'Stale Super Cached Files' ) }
-						isCached={ false }
-						isSupercache={ true } />
-				}
+					{ ! isEmpty( get( supercache, 'expired_list' ) ) && (
+						<CacheStats
+							files={ supercache.expired_list }
+							header={ translate( 'Stale Super Cached Files' ) }
+							isCached={ false }
+							isSupercache={ true }
+						/>
+					) }
 				</div>
 
 				<Card>
-					{ cache_max_time > 0 &&
+					{ cache_max_time > 0 && (
 						<p>
 							{ translate(
 								'Expired files are files older than %(cache_max_time)d seconds. They are still used by ' +
-								'the plugin and are deleted periodically.',
+									'the plugin and are deleted periodically.',
 								{
-									args: { cache_max_time: cache_max_time || 0 }
+									args: { cache_max_time: cache_max_time || 0 },
 								}
 							) }
 						</p>
-					}
+					) }
 					<div>
 						<Button
 							compact
 							primary
 							busy={ this.state.isDeletingExpired }
 							disabled={ isDisabled }
-							onClick={ this.deleteExpiredCache }>
+							onClick={ this.deleteExpiredCache }
+						>
 							{ translate( 'Delete Expired' ) }
 						</Button>
 						<Button
 							compact
 							busy={ this.state.isDeleting }
 							disabled={ isDisabled }
-							onClick={ this.deleteCache }>
+							onClick={ this.deleteCache }
+						>
 							{ translate( 'Delete Cache' ) }
 						</Button>
-						{ isMultisite &&
+						{ isMultisite && (
 							<Button
 								compact
 								busy={ this.state.isDeletingAll }
 								disabled={ isDisabled }
-								onClick={ this.deleteAllCaches }>
+								onClick={ this.deleteAllCaches }
+							>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
-						}
+						) }
 					</div>
 				</Card>
 			</div>
@@ -228,7 +225,7 @@ class ContentsTab extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
@@ -242,16 +239,11 @@ const connectComponent = connect(
 			stats,
 		};
 	},
-	{ generateStats },
+	{ generateStats }
 );
 
 const getFormSettings = settings => {
-	return pick( settings, [
-		'cache_max_time',
-	] );
+	return pick( settings, [ 'cache_max_time' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( ContentsTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( ContentsTab );

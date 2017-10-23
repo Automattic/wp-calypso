@@ -1,0 +1,30 @@
+//default color scheme
+:root {
+	--masterbar-color: $white;
+	--masterbar-background-color: $blue-wordpress;
+	--masterbar-border-color: darken( $blue-wordpress, 4% );
+	--masterbar-item-hover-background: lighten( $blue-wordpress, 5% );
+	--masterbar-item-active-background: darken( $blue-wordpress, 17% );
+	--masterbar-item-new-color: $blue-wordpress;
+}
+
+//additional color schemes
+.color-scheme {
+	&.is-light {
+		--masterbar-color: $gray-text;
+		--masterbar-background-color: lighten( $gray, 20% );
+		--masterbar-border-color: lighten( $gray, 10% );
+		--masterbar-item-hover-background: lighten( $gray, 30% );
+		--masterbar-item-active-background: lighten( $gray, 10% );
+		--masterbar-item-new-color: $gray-text;
+	}
+
+	&.is-dark {
+		--masterbar-color: $white;
+		--masterbar-background-color: $gray-dark;
+		--masterbar-border-color: darken( $gray, 10% );
+		--masterbar-item-hover-background: darken( $gray, 10% );
+		--masterbar-item-active-background: $gray-text-min;
+		--masterbar-item-new-color: $gray-dark;
+	}
+}

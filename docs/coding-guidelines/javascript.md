@@ -231,7 +231,7 @@ Globals should almost never be used. If they are used or you need to reference a
 ```js
 let userId;
 if ( typeof window !== 'undefined' ) {
-	userId = window.currentUser.ID;
+	userId = get( window, 'currentUser.ID' );
 }
 ```
 
@@ -243,11 +243,13 @@ Variable and function names should be full words, using camel case with a lowerc
 
 ```js
 // Bad
-let userIDToDelete, siteURL;
+let userIDToDelete;
+let siteURL;
 ```
 ```js
 // Good
-let userIdToDelete, siteUrl;
+let userIdToDelete;
+let siteUrl;
 ```
 
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
@@ -287,7 +289,7 @@ When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
  * @param {string} title - The title of the book.
  * @param {string} author - The author of the book.
  */
-function Book(title, author) {
+function Book( title, author ) {
 
 }
 
@@ -302,32 +304,42 @@ Multi-line comments that are not a jsdoc comment should use `//`:
 
 ## Equality
 
-Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null.
+Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null, though it is preferable to use Lodash's [`isNil`](https://lodash.com/docs#isNil) for this purpose.
 
 ```js
-// Check for both undefined and null values, for some important reason.
-if ( undefOrNull == null ) {
-	// Expressions
+// Check that 'someValue' is either undefined or null, for some important reason.
+
+// Good
+if ( someValue == null ) {
+	...
+}
+
+// better
+if ( isNil( someValue ) ) {
+	...
 }
 ```
 
 ## Type Checks
 
-These are the preferred ways of checking the type of an object:
+When checking the type of a value, use one of the following utilities from [Lodash](https://lodash.com/):
+These are the preferred ways of checking the type of a value:
 
-- String: `typeof object === 'string'`
-- Number: `typeof object === 'number'`
-- Boolean: `typeof object === 'boolean'`
-- Object: `typeof object === 'object'`
-- null: `object === null`
-- undefined: `object === undefined` or for globals `typeof window.someGlobal === 'undefined'`
+- String: [`isString( value )`](https://lodash.com/docs#isString)
+- Number: [`isNumber( value )`](https://lodash.com/docs#isNumber)
+- Boolean: [`isBoolean( value )`](https://lodash.com/docs#isBoolean)
+- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject)
+- null: [`isNull( value )`](https://lodash.com/docs#isNull)
+- undefined: [`isUndefined( value )`](https://lodash.com/docs#isUndefined)
+- undefined or null (either): [`isNil( value )`](https://lodash.com/docs#isNil)
 
-However, you don't generally have to know the type of an object. Prefer testing
-the object's existence and shape over its type.
+As mentioned earlier, you should avoid referencing global values without first validating their presence.
+Calling `isUndefined( someGlobalValue )` would throw a `ReferenceError` if that value doesn't exist.
+Instead, fall back to checking with `typeof window !== 'undefined'` for global values.
 
-`typeof object === 'object'` can be misleading, as non-plain-object types test
-as true for this check (e.g. Arrays). If you need to test whether a variable is
-a plain object, consider using [Lodash's `_.isPlainObject`](https://lodash.com/docs/#isPlainObject)
+Note that we don't recommend using [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types (arrays, regexes and others) test as true for this check.
+
+Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
 
 ## Existence and Shape Checks
 
@@ -355,9 +367,13 @@ To test the existence of an object (including arrays):
 if ( object ) { ... }
 ```
 
-To test if a property exists on an object, regardless of value, including `undefined`:
+To test if a property exists on an object, regardless of value, including `undefined` or other falsey values:
 ```js
+// Good:
 if ( 'desired' in object ) { ... }
+
+// Better, using Lodash's `has` function:
+if ( has( object, 'desired' ) ) { ... }
 ```
 
 To test if a property is present and has a truthy value:
@@ -367,21 +383,42 @@ if ( object.desired ) { ... }
 
 To test if an object exists and has a property:
 ```js
+// Good:
 if ( object && 'desired' in object ) { ... }
 if ( object && object.desired ) { ... }
+
+// Better, using Lodash's `has` function:
+if ( has( object, 'desired' ) ) { ... }
+
+// Note: 'has' will safely return `false` if a value is missing at any point in the nesting.
+// Even if the chain breaks at 'b' 'has' will return false, rather than throwing an error.
+if ( has( object, 'a.b.c.desired' ) ) { ... }
 ```
 
-Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios:
+Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios, so should be avoided:
 
 ```js
 'valueOf' in {}; // true
 ```
 
-If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) instead.
+Instead, use [`has`](https://lodash.com/docs#has) or [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
 
 ```js
-const key = 'valueOf';
-{}.hasOwnProperty( key ); // false
+{}.hasOwnProperty( 'valueOf' ); // false
+has( {}, 'valueOf' ); // false
+```
+
+[`has`](https://lodash.com/docs#has) and [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) are also recommended for testing the presence of an object key using variable input:
+
+
+```js
+const key = 'someParam';
+const object = {
+	someParam: 'someValue'
+};
+
+object.hasOwnProperty( key ); // true
+has( object, key ); // true
 ```
 
 ## Strings
@@ -522,6 +559,25 @@ prop = object[ 'default' ];
 prop = object[ 'key-with-hyphens' ];
 ```
 
+That said, avoid accessing nested properties through a chain of dot notation as this can lead cause access errors.
+Instead, use Lodash's [`get`](https://lodash.com/docs#get) function. It will safely handle cases where a property or object is missing at any point in the nesting chain.
+
+```js
+const object = {
+	nestedObject: {
+		property: 'value'
+	}
+};
+
+// Bad
+nestedProp = object.nestedObject.property;
+anotherNestedProp = object.nestedObject.anotherProperty; // This will throw an error
+
+// Good
+nestedProp = get( object, 'nestedObject.property' );
+anotherNestedProp = get( object, 'nestedObject.anotherProperty' ); // safely returns undefined
+```
+
 ## “Yoda” Conditions #
 
 Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
@@ -605,7 +661,8 @@ These important statements are part of the abstraction. As for the side effects:
 - If you find that your render logic becomes complex, it might be a sign that you should split the component into separate individual components.
 
 ```jsx
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class Link extends Component {
 	static propTypes = {

@@ -1,14 +1,18 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'StatsModuleContentText',
 
 	propTypes: {
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 	render() {
 		return (
@@ -16,5 +20,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</div>
 		);
-	}
+	},
 } );

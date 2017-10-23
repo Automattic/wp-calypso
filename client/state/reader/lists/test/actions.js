@@ -2,12 +2,23 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import {
+	receiveLists,
+	requestList,
+	requestSubscribedLists,
+	followList,
+	unfollowList,
+	updateListDetails,
+	dismissListNotice,
+	updateTitle,
+	updateDescription,
+} from '../actions';
 import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
@@ -20,17 +31,6 @@ import {
 	READER_LIST_UPDATE_DESCRIPTION,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import {
-	receiveLists,
-	requestList,
-	requestSubscribedLists,
-	followList,
-	unfollowList,
-	updateListDetails,
-	dismissListNotice,
-	updateTitle,
-	updateDescription,
-} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -40,7 +40,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveLists()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const lists = [ { ID: 841, title: 'Hello World', slug: 'hello-world' } ];
 			const action = receiveLists( lists );
 
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestList()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSubscribedLists()( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch lists receive action when request completes', () => {
+		test( 'should dispatch lists receive action when request completes', () => {
 			return requestSubscribedLists()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: READER_LISTS_RECEIVE,
@@ -110,7 +110,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			followList( 'restapitests', 'testlist' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			unfollowList( 'restapitests', 'testlist' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -150,7 +150,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			const list = { owner: 'restapitests', slug: 'testlist', title: 'Banana' };
 			updateListDetails( list )( spy );
 
@@ -162,7 +162,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#dismissListNotice()', () => {
-		it( 'should dispatch the dismiss action', () => {
+		test( 'should dispatch the dismiss action', () => {
 			const listId = 123;
 			dismissListNotice( listId )( spy );
 
@@ -174,7 +174,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateTitle()', () => {
-		it( 'should dispatch the right action', () => {
+		test( 'should dispatch the right action', () => {
 			const listId = 123;
 			const newTitle = 'Banana';
 			updateTitle( listId, newTitle )( spy );
@@ -188,7 +188,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateDescription()', () => {
-		it( 'should dispatch the right action', () => {
+		test( 'should dispatch the right action', () => {
 			const listId = 123;
 			const newDescription = 'Yellow is a excellent fruit colour';
 			updateDescription( listId, newDescription )( spy );

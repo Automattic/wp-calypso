@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-import { withSchemaValidation } from 'state/utils';
+import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
 import {
 	CURRENT_USER_ID_SET,
 	DESERIALIZE,
@@ -17,17 +18,18 @@ import {
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-	SITES_UPDATE
+	SITES_UPDATE,
 } from 'state/action-types';
-import reducer, { id, capabilities as unwrappedCapabilities, currencyCode } from '../reducer';
+import { withSchemaValidation } from 'state/utils';
+import { useSandbox } from 'test/helpers/use-sinon';
 const capabilities = withSchemaValidation( unwrappedCapabilities.schema, unwrappedCapabilities );
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
 			'currencyCode',
@@ -39,48 +41,48 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#id()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = id( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
-		it( 'should set the current user ID', () => {
+		test( 'should set the current user ID', () => {
 			const state = id( null, {
 				type: CURRENT_USER_ID_SET,
-				userId: 73705554
+				userId: 73705554,
 			} );
 
 			expect( state ).to.equal( 73705554 );
 		} );
 
-		it( 'should validate ID is positive', () => {
+		test( 'should validate ID is positive', () => {
 			const state = id( -1, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.equal( null );
 		} );
 
-		it( 'should validate ID is a number', () => {
+		test( 'should validate ID is a number', () => {
 			const state = id( 'foobar', {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.equal( null );
 		} );
 
-		it( 'returns valid ID', () => {
+		test( 'returns valid ID', () => {
 			const state = id( 73705554, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.equal( 73705554 );
 		} );
 
-		it( 'will SERIALIZE current user', () => {
+		test( 'will SERIALIZE current user', () => {
 			const state = id( 73705554, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.equal( 73705554 );
@@ -88,276 +90,286 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#currencyCode()', () => {
-		it( 'should default to null', () => {
+		test( 'should default to null', () => {
 			const state = currencyCode( undefined, {} );
 			expect( state ).to.equal( null );
 		} );
-		it( 'should set currency code when plans are received', () => {
+		test( 'should set currency code when plans are received', () => {
 			const state = currencyCode( undefined, {
 				type: PLANS_RECEIVE,
 				plans: [
 					{
 						product_id: 1001,
-						currency_code: 'USD'
-					}
-				]
+						currency_code: 'USD',
+					},
+				],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should return current state when we have empty plans', () => {
+		test( 'should return current state when we have empty plans', () => {
 			const state = currencyCode( 'USD', {
 				type: PLANS_RECEIVE,
-				plans: []
+				plans: [],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should update current state when we receive new plans', () => {
+		test( 'should update current state when we receive new plans', () => {
 			const state = currencyCode( 'USD', {
 				type: PLANS_RECEIVE,
 				plans: [
 					{
 						product_id: 1001,
-						currency_code: 'EUR'
-					}
-				]
+						currency_code: 'EUR',
+					},
+				],
 			} );
 			expect( state ).to.equal( 'EUR' );
 		} );
-		it( 'should return current state when we have empty site plans', () => {
+		test( 'should return current state when we have empty site plans', () => {
 			const state = currencyCode( 'USD', {
 				type: SITE_PLANS_FETCH_COMPLETED,
-				plans: []
+				plans: [],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should set currency code when site plans are received', () => {
+		test( 'should set currency code when site plans are received', () => {
 			const state = currencyCode( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				plans: [
 					{
 						productName: 'Free',
-						currencyCode: 'USD'
-					}
-				]
+						currencyCode: 'USD',
+					},
+				],
 			} );
 			expect( state ).to.equal( 'USD' );
 		} );
-		it( 'should update currency code when site plans are received', () => {
+		test( 'should update currency code when site plans are received', () => {
 			const state = currencyCode( 'USD', {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				plans: [
 					{
 						productName: 'Free',
-						currencyCode: 'CAD'
-					}
-				]
+						currencyCode: 'CAD',
+					},
+				],
 			} );
 			expect( state ).to.equal( 'CAD' );
 		} );
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = 'JPY';
 			const state = currencyCode( original, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 			expect( state ).to.equal( original );
 		} );
-		it( 'should restore valid persisted state', () => {
+		test( 'should restore valid persisted state', () => {
 			const original = 'JPY';
 			const state = currencyCode( original, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 			expect( state ).to.equal( original );
 		} );
-		it( 'should ignore invalid persisted state', () => {
+		test( 'should ignore invalid persisted state', () => {
 			const original = 1234;
 			const state = currencyCode( original, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 			expect( state ).to.equal( null );
 		} );
 	} );
 
 	describe( 'capabilities()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = capabilities( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track capabilities by single received site', () => {
+		test( 'should track capabilities by single received site', () => {
 			const state = capabilities( undefined, {
 				type: SITE_RECEIVE,
 				site: {
 					ID: 2916284,
 					capabilities: {
-						manage_options: false
-					}
-				}
+						manage_options: false,
+					},
+				},
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 		} );
 
-		it( 'should accumulate capabilities by received site', () => {
+		test( 'should accumulate capabilities by received site', () => {
 			const original = deepFreeze( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
 				type: SITE_RECEIVE,
 				site: {
 					ID: 77203074,
 					capabilities: {
-						manage_options: true
-					}
-				}
+						manage_options: true,
+					},
+				},
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					manage_options: false
+					manage_options: false,
 				},
 				77203074: {
-					manage_options: true
-				}
+					manage_options: true,
+				},
 			} );
 		} );
 
-		it( 'should ignore received site if missing capabilities', () => {
+		test( 'should ignore received site if missing capabilities', () => {
 			const state = capabilities( undefined, {
 				type: SITE_RECEIVE,
 				site: {
-					ID: 2916284
-				}
+					ID: 2916284,
+				},
 			} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track capabilities by multiple received sites', () => {
+		test( 'should track capabilities by multiple received sites', () => {
 			const state = capabilities( undefined, {
 				type: SITES_RECEIVE,
-				sites: [ {
-					ID: 2916284,
-					capabilities: {
-						manage_options: false
-					}
-				} ]
+				sites: [
+					{
+						ID: 2916284,
+						capabilities: {
+							manage_options: false,
+						},
+					},
+				],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 		} );
 
-		it( 'should ignore received sites if missing capabilities', () => {
+		test( 'should ignore received sites if missing capabilities', () => {
 			const state = capabilities( undefined, {
 				type: SITES_RECEIVE,
-				sites: [ {
-					ID: 2916284
-				} ]
+				sites: [
+					{
+						ID: 2916284,
+					},
+				],
 			} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return same state if received sites result in same capabilities', () => {
+		test( 'should return same state if received sites result in same capabilities', () => {
 			const original = deepFreeze( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
 				type: SITES_RECEIVE,
-				sites: [ {
-					ID: 2916284,
-					capabilities: {
-						manage_options: false
-					}
-				} ]
+				sites: [
+					{
+						ID: 2916284,
+						capabilities: {
+							manage_options: false,
+						},
+					},
+				],
 			} );
 
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should not return same state on sites updated if site not tracked', () => {
+		test( 'should not return same state on sites updated if site not tracked', () => {
 			const original = deepFreeze( {} );
 			const state = capabilities( original, {
 				type: SITES_UPDATE,
-				sites: [ {
-					ID: 2916284,
-					capabilities: {
-						manage_options: true
-					}
-				} ]
+				sites: [
+					{
+						ID: 2916284,
+						capabilities: {
+							manage_options: true,
+						},
+					},
+				],
 			} );
 
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should update capabilities when sites updated if site tracked', () => {
+		test( 'should update capabilities when sites updated if site tracked', () => {
 			const original = deepFreeze( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
 				type: SITES_UPDATE,
-				sites: [ {
-					ID: 2916284,
-					capabilities: {
-						manage_options: true
-					}
-				} ]
+				sites: [
+					{
+						ID: 2916284,
+						capabilities: {
+							manage_options: true,
+						},
+					},
+				],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					manage_options: true
-				}
+					manage_options: true,
+				},
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should restore valid persisted state', () => {
+		test( 'should restore valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should not restore invalid persisted state', () => {
+		test( 'should not restore invalid persisted state', () => {
 			const original = deepFreeze( {
 				BAD2916284: {
-					manage_options: false
-				}
+					manage_options: false,
+				},
 			} );
 			const state = capabilities( original, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );

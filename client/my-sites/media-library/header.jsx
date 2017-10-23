@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import Gridicon from 'gridicons';
 
 /**
@@ -19,22 +24,22 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-export default React.createClass( {
+const MediaLibraryHeader = React.createClass( {
 	displayName: 'MediaLibraryHeader',
 
 	propTypes: {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
-		onMediaScaleChange: React.PropTypes.func,
+		onMediaScaleChange: PropTypes.func,
 		onAddMedia: PropTypes.func,
-		sticky: React.PropTypes.bool,
+		sticky: PropTypes.bool,
 	},
 
 	getInitialState() {
 		return {
 			addingViaUrl: false,
-			isMoreOptionsVisible: false
+			isMoreOptionsVisible: false,
 		};
 	},
 
@@ -52,20 +57,20 @@ export default React.createClass( {
 		}
 
 		this.setState( {
-			moreOptionsContext: component
+			moreOptionsContext: component,
 		} );
 	},
 
 	toggleAddViaUrl( state ) {
 		this.setState( {
 			addingViaUrl: state,
-			isMoreOptionsVisible: false
+			isMoreOptionsVisible: false,
 		} );
 	},
 
 	toggleMoreOptions( state ) {
 		this.setState( {
-			isMoreOptionsVisible: state
+			isMoreOptionsVisible: state,
 		} );
 	},
 
@@ -82,27 +87,30 @@ export default React.createClass( {
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button is-compact">
+					className="button is-compact"
+				>
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
+					<span className="is-desktop">
+						{ this.props.translate( 'Add New', { context: 'Media upload' } ) }
+					</span>
 				</UploadButton>
 				<Button
 					compact
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button media-library__upload-more">
-					<span className="screen-reader-text">
-						{ this.translate( 'More Options' ) }
-					</span>
-					<Gridicon icon="chevron-down" size={ 20 }/>
+					className="button media-library__upload-more"
+				>
+					<span className="screen-reader-text">{ this.props.translate( 'More Options' ) }</span>
+					<Gridicon icon="chevron-down" size={ 20 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
-						className="is-dialog-visible media-library__header-popover">
+						className="is-dialog-visible media-library__header-popover"
+					>
 						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
+							{ this.props.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
 				</Button>
@@ -119,7 +127,8 @@ export default React.createClass( {
 					site={ site }
 					onAddMedia={ onAddMedia }
 					onClose={ this.toggleAddViaUrl.bind( this, false ) }
-					className="media-library__header" />
+					className="media-library__header"
+				/>
 			);
 		}
 
@@ -133,19 +142,16 @@ export default React.createClass( {
 					site={ this.props.site }
 					view={ 'LIST' }
 				/>
-				<MediaLibraryScale
-					onChange={ this.props.onMediaScaleChange } />
+				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
 			</Card>
 		);
 
 		if ( this.props.sticky ) {
-			return (
-				<StickyPanel minLimit ={ 660 }>
-					{ card }
-				</StickyPanel>
-			);
+			return <StickyPanel minLimit={ 660 }>{ card }</StickyPanel>;
 		} else {
 			return card;
 		}
-	}
+	},
 } );
+
+export default localize( MediaLibraryHeader );

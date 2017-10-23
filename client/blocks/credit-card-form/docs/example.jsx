@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { noop } from 'lodash';
 import React from 'react';
 
@@ -14,7 +17,7 @@ const saveStoredCard = () => Promise.reject( { message: 'This is an example erro
 
 const CreditCardFormExample = () => {
 	const initialValues = {
-		name: 'John Doe'
+		name: 'John Doe',
 	};
 
 	return (
@@ -23,7 +26,8 @@ const CreditCardFormExample = () => {
 			initialValues={ initialValues }
 			recordFormSubmitEvent={ noop }
 			saveStoredCard={ saveStoredCard }
-			successCallback={ noop } />
+			successCallback={ noop }
+		/>
 	);
 };
 

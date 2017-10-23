@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -37,9 +40,11 @@ export function getCurrentStepIndex( actionList ) {
 export function getTotalStepCount( actionList ) {
 	const { prevSteps, currentStep, nextSteps } = actionList;
 
-	return ( prevSteps ? prevSteps.length : 0 ) +
+	return (
+		( prevSteps ? prevSteps.length : 0 ) +
 		( currentStep ? 1 : 0 ) +
-		( nextSteps ? nextSteps.length : 0 );
+		( nextSteps ? nextSteps.length : 0 )
+	);
 }
 
 /**
@@ -53,4 +58,3 @@ export function getStepCountRemaining( actionList ) {
 
 	return ( currentStep ? 1 : 0 ) + ( nextSteps ? nextSteps.length : 0 );
 }
-

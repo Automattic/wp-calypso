@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -20,7 +24,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import PostSelector from 'my-sites/post-selector';
 
 class EditorMoreOptionsCopyPost extends Component {
-
 	static propTypes = {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -40,20 +43,20 @@ class EditorMoreOptionsCopyPost extends Component {
 		this.setState( {
 			showDialog: true,
 		} );
-	}
+	};
 
 	closeDialog = () => {
 		this.setState( {
 			selectedPostId: null,
 			showDialog: false,
 		} );
-	}
+	};
 
 	setPostToCopy = post => {
 		this.setState( {
 			selectedPostId: post.ID,
 		} );
-	}
+	};
 
 	goToNewDraft = () => {
 		const { siteSlug, type } = this.props;
@@ -62,34 +65,44 @@ class EditorMoreOptionsCopyPost extends Component {
 			page.redirect( `/${ type }/${ siteSlug }?copy=${ selectedPostId }` );
 			this.closeDialog();
 		}
-	}
+	};
 
 	render() {
 		const { siteId, translate, type } = this.props;
 		const { selectedPostId, showDialog } = this.state;
-		const buttons = [ {
-			action: 'cancel',
-			label: translate( 'Cancel' ),
-		}, {
-			action: 'copy',
-			label: translate( 'Overwrite' ),
-			isPrimary: true,
-			disabled: ! selectedPostId,
-			onClick: this.goToNewDraft,
-		} ];
+		const buttons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' ),
+			},
+			{
+				action: 'copy',
+				label: translate( 'Overwrite' ),
+				isPrimary: true,
+				disabled: ! selectedPostId,
+				onClick: this.goToNewDraft,
+			},
+		];
 
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
 				<EditorDrawerLabel
 					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
-					helpText={ this.isPost()
-						? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						: translate( "Pick a page and we'll copy the title and content." )
+					helpText={
+						this.isPost() ? (
+							translate( "Pick a post and we'll copy the title, content, tags and categories." )
+						) : (
+							translate( "Pick a page and we'll copy the title and content." )
+						)
 					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
 						<Gridicon icon="clipboard" />
-						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a page to copy' ) }
+						{ this.isPost() ? (
+							translate( 'Select a post to copy' )
+						) : (
+							translate( 'Select a page to copy' )
+						) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
@@ -100,18 +113,24 @@ class EditorMoreOptionsCopyPost extends Component {
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a page to copy' )
-						}
+						{ this.isPost() ? (
+							translate( 'Select a post to copy' )
+						) : (
+							translate( 'Select a page to copy' )
+						) }
 					</FormSectionHeading>
 					<p>
-						{ this.isPost()
-							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-							: translate( "Pick a page and we'll copy the title and content." )
-						}
+						{ this.isPost() ? (
+							translate( "Pick a post and we'll copy the title, content, tags and categories." )
+						) : (
+							translate( "Pick a page and we'll copy the title and content." )
+						) }
 					</p>
-					{ siteId &&
+					{ siteId && (
 						<PostSelector
-							emptyMessage={ this.isPost() ? translate( 'No posts found' ) : translate( 'No pages found' ) }
+							emptyMessage={
+								this.isPost() ? translate( 'No posts found' ) : translate( 'No pages found' )
+							}
 							onChange={ this.setPostToCopy }
 							order="DESC"
 							orderBy="date"
@@ -120,12 +139,11 @@ class EditorMoreOptionsCopyPost extends Component {
 							status="draft,future,pending,private,publish"
 							type={ type }
 						/>
-					}
+					) }
 				</Dialog>
 			</AccordionSection>
 		);
 	}
-
 }
 
 export default connect( state => {

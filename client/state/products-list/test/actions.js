@@ -1,21 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { receiveProductsList, requestProductsList } from '../actions';
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
-import {
-	receiveProductsList,
-	requestProductsList,
-} from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -37,7 +35,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#receiveProductsList()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveProductsList( { guided_transfer } );
 
 			expect( action ).to.eql( {
@@ -48,10 +46,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestProductsList()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/products' )
-				.twice().reply( 200, { guided_transfer } )
+				.twice()
+				.reply( 200, { guided_transfer } )
 				.get( '/rest/v1.1/products' )
 				.reply( 500, {
 					error: 'server_error',
@@ -59,26 +58,26 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestProductsList()( spy );
 
 			expect( spy ).to.have.been.calledWith( { type: PRODUCTS_LIST_REQUEST } );
 		} );
 
-		it( 'should dispatch product list receive action when request completes', () => {
+		test( 'should dispatch product list receive action when request completes', () => {
 			return requestProductsList()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
-					productsList: { guided_transfer }
+					productsList: { guided_transfer },
 				} );
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestProductsList()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,
-					error: sinon.match( { message: 'A server error occurred' } )
+					error: sinon.match( { message: 'A server error occurred' } ),
 				} );
 			} );
 		} );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,22 +9,21 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-
 import {
 	handleValidateRequest,
 	handleValidateRequestSuccess,
-	handleValidateRequestFailure
+	handleValidateRequestFailure,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	validateRequestSuccess,
 	validateRequestError,
 	setValidationKey,
 } from 'state/account-recovery/reset/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {
-		it( 'should dispatch SUCCESS action on success', () => {
+		test( 'should dispatch SUCCESS action on success', () => {
 			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
@@ -44,15 +45,15 @@ describe( 'handleValidateRequest()', () => {
 						body: {
 							...userData,
 							method,
-							key
-						}
+							key,
+						},
 					},
 					action
 				)
 			);
 		} );
 
-		it( 'should dispatch SET_VALIDATION_KEY action on success', () => {
+		test( 'should dispatch SET_VALIDATION_KEY action on success', () => {
 			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
@@ -67,7 +68,7 @@ describe( 'handleValidateRequest()', () => {
 			expect( dispatch ).to.have.been.calledWith( setValidationKey( action.key ) );
 		} );
 
-		it( 'should dispatch ERROR action on failure', () => {
+		test( 'should dispatch ERROR action on failure', () => {
 			const dispatch = spy();
 			const error = 'something bad happened';
 			handleValidateRequestFailure( { dispatch }, {}, error );

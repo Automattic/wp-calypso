@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -17,11 +20,7 @@ export { setSection, setUpLocale } from './shared.js';
 
 const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
-		<LayoutLoggedOut
-			primary={ primary }
-			secondary={ secondary }
-			redirectUri={ redirectUri }
-		/>
+		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 	</ReduxProvider>
 );
 

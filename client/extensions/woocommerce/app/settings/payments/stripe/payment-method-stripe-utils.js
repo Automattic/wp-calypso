@@ -1,3 +1,4 @@
+/** @format */
 export function hasStripeKeyPairForMode( method ) {
 	const { settings } = method;
 	const isLiveMode = method.settings.testmode.value !== 'yes';
@@ -8,5 +9,8 @@ export function hasStripeKeyPairForMode( method ) {
 }
 
 export function getStripeSampleStatementDescriptor( domain ) {
-	return domain.substr( 0, 22 ).trim().toUpperCase();
+	return domain
+		.substr( 0, 22 )
+		.trim()
+		.toUpperCase();
 }

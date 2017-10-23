@@ -93,8 +93,9 @@ class ReaderPostCardAdapter extends React.Component {
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ discoverPickSiteId &&
-					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
+				{ discoverPickSiteId && (
+					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } />
+				) }
 			</ReaderPostCard>
 		);
 	}

@@ -1,29 +1,29 @@
+/** @format */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+
 /**
  * External Dependencies
  */
-const expect = require( 'chai' ).expect,
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
+import { expect } from 'chai';
 
-describe( 'index', function() {
+describe( 'index', () => {
 	var Dispatcher, LikeStore, FeedPostStoreActionType;
 
-	useFilesystemMocks( __dirname );
-
-	before( () => {
+	beforeAll( () => {
 		LikeStore = require( '../like-store' );
 		FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action;
 		Dispatcher = require( 'dispatcher' );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		LikeStore._reset();
 	} );
 
-	it( 'should have a dispatch token', function() {
+	test( 'should have a dispatch token', () => {
 		expect( LikeStore ).to.have.property( 'dispatchToken' );
 	} );
 
-	it( 'should return the full list of likes for a post', function() {
+	test( 'should return the full list of likes for a post', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			siteId: 444,
@@ -31,9 +31,9 @@ describe( 'index', function() {
 			data: {
 				post_ID: 123,
 				site_ID: 444,
-				likes: [ { ID: 555, login: 'bluefuton' } ]
+				likes: [ { ID: 555, login: 'bluefuton' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		// getLikesForPost( site_ID, post_ID )
@@ -43,7 +43,7 @@ describe( 'index', function() {
 		expect( likes ).to.have.lengthOf( 1 );
 	} );
 
-	it( 'should return a count of likes for a post', function() {
+	test( 'should return a count of likes for a post', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			postId: 123,
@@ -52,9 +52,9 @@ describe( 'index', function() {
 				post_ID: 123,
 				site_ID: 444,
 				found: 9000,
-				likes: [ { ID: 555, login: 'bluefuton' }, { ID: 556, login: 'blowery' } ]
+				likes: [ { ID: 555, login: 'bluefuton' }, { ID: 556, login: 'blowery' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		const likeCount = LikeStore.getLikeCountForPost( 444, 123 );
@@ -62,7 +62,7 @@ describe( 'index', function() {
 		expect( likeCount ).to.eq( 9000 );
 	} );
 
-	it( 'should tell me if the current user has liked a post', function() {
+	test( 'should tell me if the current user has liked a post', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			postId: 123,
@@ -72,43 +72,43 @@ describe( 'index', function() {
 				site_ID: 444,
 				i_like: true,
 				found: 100,
-				likes: [ { ID: 555, login: 'bluefuton' } ]
+				likes: [ { ID: 555, login: 'bluefuton' } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 444, 123 ) ).to.be.true;
 	} );
 
-	it( 'should ignore a response without a post ID', function() {
+	test( 'should ignore a response without a post ID', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			data: {
 				post_ID: null,
 				site_ID: 444,
-				likes: [ { ID: 555 } ]
+				likes: [ { ID: 555 } ],
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore._all() ).to.be.empty;
 	} );
 
-	it( 'should ignore a response with an error', function() {
+	test( 'should ignore a response with an error', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			data: {
 				post_ID: 1,
 				site_ID: 444,
-				likes: [ { ID: 123, login: 'bluefuton' } ]
+				likes: [ { ID: 123, login: 'bluefuton' } ],
 			},
-			error: new Error()
+			error: new Error(),
 		} );
 
 		expect( LikeStore._all() ).to.be.empty;
 	} );
 
-	it( 'should add a new like and unlike for the current user', function() {
+	test( 'should add a new like and unlike for the current user', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POST_LIKES',
 			siteId: 555,
@@ -117,9 +117,9 @@ describe( 'index', function() {
 				site_ID: 555,
 				post_ID: 123,
 				likes: [],
-				found: 0
+				found: 0,
 			},
-			error: null
+			error: null,
 		} );
 
 		Dispatcher.handleServerAction( {
@@ -131,9 +131,9 @@ describe( 'index', function() {
 				i_like: true,
 				like_count: 1,
 				site_ID: 555,
-				post_ID: 123
+				post_ID: 123,
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 555, 123 ) ).to.be.true;
@@ -147,15 +147,15 @@ describe( 'index', function() {
 				i_like: false,
 				like_count: 0,
 				site_ID: 555,
-				post_ID: 123
+				post_ID: 123,
 			},
-			error: null
+			error: null,
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 555, 123 ) ).to.be.false;
 	} );
 
-	it( 'should pick up feed post items', function() {
+	test( 'should pick up feed post items', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedPostStoreActionType.RECEIVE_FEED_POST,
 			id: '1234',
@@ -165,16 +165,15 @@ describe( 'index', function() {
 				is_external: false,
 				site_ID: 1234,
 				ID: 1,
-				like_count: 100
-			}
-
+				like_count: 100,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.eq( 100 );
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
 	} );
 
-	it( 'should ignore external feed post items', function() {
+	test( 'should ignore external feed post items', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_FEED_POST',
 			id: '1234',
@@ -183,29 +182,27 @@ describe( 'index', function() {
 				is_external: true,
 				site_ID: 1234,
 				ID: 1,
-				like_count: 100
-			}
-
+				like_count: 100,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
 	} );
 
-	it( 'should ignore error feed post items', function() {
+	test( 'should ignore error feed post items', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_FEED_POST',
 			id: '1234',
 			error: null,
-			data: { errors: [] }
-
+			data: { errors: [] },
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;
 		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
 	} );
 
-	it( 'should ignore feed post items with no count', function() {
+	test( 'should ignore feed post items with no count', () => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_FEED_POST',
 			id: '1234',
@@ -214,9 +211,8 @@ describe( 'index', function() {
 				likes_enabled: true,
 				is_external: false,
 				site_ID: 1234,
-				ID: 1
-			}
-
+				ID: 1,
+			},
 		} );
 
 		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.be.null;

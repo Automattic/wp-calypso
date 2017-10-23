@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import tinymce from 'tinymce/tinymce';
 import { createElement } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
@@ -39,11 +42,7 @@ const simplePayments = editor => {
 					showDialog: visibility === 'show',
 					editPaymentId,
 					onInsert( productData ) {
-						editor.execCommand(
-							'mceInsertContent',
-							false,
-							serialize( productData )
-						);
+						editor.execCommand( 'mceInsertContent', false, serialize( productData ) );
 						renderModal( 'hide' );
 					},
 					onClose() {
@@ -52,7 +51,7 @@ const simplePayments = editor => {
 					},
 				} ),
 				node,
-				store,
+				store
 			);
 		}
 

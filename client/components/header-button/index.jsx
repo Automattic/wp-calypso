@@ -11,13 +11,12 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 
-const HeaderButton = ( { icon, label, ...rest } ) =>
+const HeaderButton = ( { icon, label, ...rest } ) => (
 	<Button className="header-button" { ...rest }>
 		{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-		<span className="header-button__text">
-			{ label }
-		</span>
-	</Button>;
+		<span className="header-button__text">{ label }</span>
+	</Button>
+);
 
 HeaderButton.propTypes = {
 	icon: PropTypes.string,

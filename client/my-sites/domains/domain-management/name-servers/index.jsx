@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -27,18 +31,15 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 
 class NameServers extends React.Component {
 	static propTypes = {
-		domains: React.PropTypes.object.isRequired,
-		nameservers: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		domains: PropTypes.object.isRequired,
+		nameservers: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	state = {
 		formSubmitting: false,
-		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null
+		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null,
 	};
 
 	componentWillReceiveProps( props ) {
@@ -56,10 +57,8 @@ class NameServers extends React.Component {
 	setStateWhenLoadedFromServer( props ) {
 		const prevNameservers = this.props.nameservers;
 		const nextNameservers = props.nameservers;
-		const finishedLoading = (
-			! prevNameservers.hasLoadedFromServer &&
-			nextNameservers.hasLoadedFromServer
-		);
+		const finishedLoading =
+			! prevNameservers.hasLoadedFromServer && nextNameservers.hasLoadedFromServer;
 
 		if ( ! finishedLoading ) {
 			return;
@@ -74,7 +73,7 @@ class NameServers extends React.Component {
 
 	render() {
 		const classes = classNames( 'name-servers', {
-			'is-placeholder': this.isLoading()
+			'is-placeholder': this.isLoading(),
 		} );
 
 		return (
@@ -88,10 +87,9 @@ class NameServers extends React.Component {
 				</VerticalNav>
 
 				<VerticalNav>
-					{
-						this.hasWpcomNameservers() &&
+					{ this.hasWpcomNameservers() && (
 						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
-					}
+					) }
 				</VerticalNav>
 			</Main>
 		);
@@ -131,7 +129,7 @@ class NameServers extends React.Component {
 
 		this.setState( { formSubmitting: true } );
 
-		upgradesActions.updateNameservers( selectedDomainName, nameservers, ( error ) => {
+		upgradesActions.updateNameservers( selectedDomainName, nameservers, error => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
@@ -149,16 +147,16 @@ class NameServers extends React.Component {
 
 	header() {
 		return (
-			<Header
-				onClick={ this.back }
-				selectedDomainName={ this.props.selectedDomainName }>
+			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
 				{ this.props.translate( 'Name Servers and DNS' ) }
 			</Header>
 		);
 	}
 
 	back = () => {
-		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
 	};
 
 	customNameservers() {
@@ -167,11 +165,13 @@ class NameServers extends React.Component {
 		}
 
 		if ( this.needsVerification() ) {
-			return <IcannVerificationCard
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSiteSlug={ this.props.selectedSite.slug }
-				explanationContext="name-servers"
-			/>;
+			return (
+				<IcannVerificationCard
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSiteSlug={ this.props.selectedSite.slug }
+					explanationContext="name-servers"
+				/>
+			);
 		}
 
 		return (
@@ -195,7 +195,7 @@ class NameServers extends React.Component {
 		return getSelectedDomain( this.props ).isPendingIcannVerification;
 	}
 
-	handleChange = ( nameservers ) => {
+	handleChange = nameservers => {
 		this.setState( { nameservers } );
 	};
 
@@ -215,7 +215,10 @@ class NameServers extends React.Component {
 		return (
 			<VerticalNavItem
 				isPlaceholder={ this.isLoading() }
-				path={ paths.domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
+				path={ paths.domainManagementDns(
+					this.props.selectedSite.slug,
+					this.props.selectedDomainName
+				) }
 			>
 				{ this.props.translate( 'DNS Records' ) }
 			</VerticalNavItem>
@@ -223,10 +226,7 @@ class NameServers extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		successNotice,
-	}
-)( localize( NameServers ) );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( NameServers ) );

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from '../action-types';
+
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '../action-types';
 
 /**
  * Tracks usage stats fetching state
@@ -12,19 +12,22 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export default function componentsUsageStats( state = {
-	isFetching: false,
-	componentsUsageStats: {}
-}, action ) {
+export default function componentsUsageStats(
+	state = {
+		isFetching: false,
+		componentsUsageStats: {},
+	},
+	action
+) {
 	switch ( action.type ) {
 		case COMPONENTS_USAGE_STATS_REQUEST:
 			return Object.assign( {}, state, {
-				isFetching: true
+				isFetching: true,
 			} );
 		case COMPONENTS_USAGE_STATS_RECEIVE:
 			return Object.assign( {}, state, {
 				isFetching: false,
-				componentsUsageStats: action.componentsUsageStats
+				componentsUsageStats: action.componentsUsageStats,
 			} );
 		default:
 			return state;

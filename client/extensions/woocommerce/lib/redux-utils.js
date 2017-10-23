@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { bindActionCreators } from 'redux';
 import { isFunction, reduce } from 'lodash';
 
@@ -18,10 +21,14 @@ export const bindActionCreatorsWithSiteId = ( actionCreators, dispatch, siteId )
 	}
 
 	return bindActionCreators(
-		reduce( actionCreators, ( accumulator, action, key ) => {
-			accumulator[ key ] = action.bind( null, siteId );
-			return accumulator;
-		}, {} ),
+		reduce(
+			actionCreators,
+			( accumulator, action, key ) => {
+				accumulator[ key ] = action.bind( null, siteId );
+				return accumulator;
+			},
+			{}
+		),
 		dispatch
 	);
 };

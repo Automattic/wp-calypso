@@ -14,7 +14,7 @@ describe( 'selectors', () => {
 	const thumbnailUrl = 'thumbnailUrl';
 
 	describe( '#getThumbnailForIframe()', () => {
-		it( 'should return undefined if there is no thumbnail available', () => {
+		test( 'should return undefined if there is no thumbnail available', () => {
 			const state = {
 				reader: {
 					thumbnails: {
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 			expect( getThumbnailForIframe( state, embedUrl ) ).to.equal( undefined );
 		} );
 
-		it( 'should return the thumbnail if it exists for an iframe src', () => {
+		test( 'should return the thumbnail if it exists for an iframe src', () => {
 			const state = {
 				reader: {
 					thumbnails: {
@@ -40,7 +40,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingThumbnailUrl()', () => {
-		it( 'should return true if requesting thumbnail for the embed', () => {
+		test( 'should return true if requesting thumbnail for the embed', () => {
 			const state = {
 				reader: {
 					thumbnails: {

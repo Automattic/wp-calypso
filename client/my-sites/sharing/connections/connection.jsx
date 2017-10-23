@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity } from 'lodash';
@@ -18,19 +22,19 @@ import UsersStore from 'lib/users/store';
 
 class SharingConnection extends Component {
 	static propTypes = {
-		connection: PropTypes.object.isRequired,    // The single connection object
-		isDisconnecting: PropTypes.bool,            // Is a service disconnection request pending?
-		isRefreshing: PropTypes.bool,               // Is a service refresh request pending?
-		onDisconnect: PropTypes.func,               // Handler to invoke when disconnecting
-		onRefresh: PropTypes.func,                  // Handler to invoke when refreshing
+		connection: PropTypes.object.isRequired, // The single connection object
+		isDisconnecting: PropTypes.bool, // Is a service disconnection request pending?
+		isRefreshing: PropTypes.bool, // Is a service refresh request pending?
+		onDisconnect: PropTypes.func, // Handler to invoke when disconnecting
+		onRefresh: PropTypes.func, // Handler to invoke when refreshing
 		onToggleSitewideConnection: PropTypes.func, // Handler to invoke when toggling sitewide connection
 		recordGoogleEvent: PropTypes.func,
-		service: PropTypes.object.isRequired,       // The service to which the connection is made
-		showDisconnect: PropTypes.bool,             // Display an inline disconnect button
-		siteId: PropTypes.number,                   // The Id of the current site.
+		service: PropTypes.object.isRequired, // The service to which the connection is made
+		showDisconnect: PropTypes.bool, // Display an inline disconnect button
+		siteId: PropTypes.number, // The Id of the current site.
 		translate: PropTypes.func,
-		userHasCaps: PropTypes.bool,                // Whether the current users has the caps to delete a connection.
-		userId: PropTypes.number,                   // The Id of the current user.
+		userHasCaps: PropTypes.bool, // Whether the current users has the caps to delete a connection.
+		userId: PropTypes.number, // The Id of the current user.
 	};
 
 	static defaultProps = {
@@ -59,14 +63,18 @@ class SharingConnection extends Component {
 		}
 	};
 
-	toggleSitewideConnection = ( event ) => {
+	toggleSitewideConnection = event => {
 		if ( ! this.state.isSavingSitewide ) {
 			const isNowSitewide = event.target.checked;
 
 			this.setState( { isSavingSitewide: true } );
 			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connection Available to All Users Checkbox',
-				this.props.service.ID, isNowSitewide ? 1 : 0 );
+			this.props.recordGoogleEvent(
+				'Sharing',
+				'Clicked Connection Available to All Users Checkbox',
+				this.props.service.ID,
+				isNowSitewide ? 1 : 0
+			);
 		}
 	};
 
@@ -79,28 +87,41 @@ class SharingConnection extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.state.isSavingSitewide && this.props.connection.shared !== prevProps.connection.shared ) {
+		if (
+			this.state.isSavingSitewide &&
+			this.props.connection.shared !== prevProps.connection.shared
+		) {
 			this.setState( { isSavingSitewide: false } );
 		}
 	}
 
 	getProfileImage() {
 		if ( this.props.connection.external_profile_picture ) {
-			return <img
-				src={ this.props.connection.external_profile_picture }
-				alt={ this.props.connection.label }
-				className="sharing-connection__account-avatar" />;
+			return (
+				<img
+					src={ this.props.connection.external_profile_picture }
+					alt={ this.props.connection.label }
+					className="sharing-connection__account-avatar"
+				/>
+			);
 		}
 
 		return (
-			<span className={ 'sharing-connection__account-avatar is-fallback ' + this.props.connection.service }>
+			<span
+				className={
+					'sharing-connection__account-avatar is-fallback ' + this.props.connection.service
+				}
+			>
 				<span className="screen-reader-text">{ this.props.connection.label }</span>
 			</span>
 		);
 	}
 
 	getReconnectButton() {
-		if ( 'broken' === this.props.connection.status && this.props.userId === this.props.connection.keyring_connection_user_ID ) {
+		if (
+			'broken' === this.props.connection.status &&
+			this.props.userId === this.props.connection.keyring_connection_user_ID
+		) {
 			return (
 				<a onClick={ this.refresh } className="sharing-connection__account-action reconnect">
 					{ this.props.translate( 'Reconnect' ) }
@@ -110,7 +131,8 @@ class SharingConnection extends Component {
 	}
 
 	getDisconnectButton() {
-		const userCanDelete = this.props.userHasCaps || this.props.connection.user_ID === this.props.userId;
+		const userCanDelete =
+			this.props.userHasCaps || this.props.connection.user_ID === this.props.userId;
 
 		if ( this.props.showDisconnect && userCanDelete ) {
 			return (
@@ -122,7 +144,9 @@ class SharingConnection extends Component {
 	}
 
 	isConnectionShared() {
-		return this.state.isSavingSitewide ? ! this.props.connection.shared : this.props.connection.shared;
+		return this.state.isSavingSitewide
+			? ! this.props.connection.shared
+			: this.props.connection.shared;
 	}
 
 	getConnectionKeyringUserLabel() {
@@ -133,7 +157,7 @@ class SharingConnection extends Component {
 				<aside className="sharing-connection__keyring-user">
 					{ translate( 'Connected by %(username)s', {
 						args: { username: keyringUser.nice_name },
-						context: 'Sharing: connections'
+						context: 'Sharing: connections',
 					} ) }
 				</aside>
 			);
@@ -148,20 +172,28 @@ class SharingConnection extends Component {
 		const content = [];
 
 		if ( this.props.userHasCaps ) {
-			content.push( <input
-				key="checkbox"
-				type="checkbox"
-				checked={ this.isConnectionShared() }
-				onChange={ this.toggleSitewideConnection }
-				readOnly={ this.state.isSavingSitewide } /> );
+			content.push(
+				<input
+					key="checkbox"
+					type="checkbox"
+					checked={ this.isConnectionShared() }
+					onChange={ this.toggleSitewideConnection }
+					readOnly={ this.state.isSavingSitewide }
+				/>
+			);
 		}
 
 		if ( this.props.userHasCaps || this.props.connection.shared ) {
-			content.push( <span key="label">
-				{ this.props.translate( 'Connection available to all administrators, editors, and authors', {
-					context: 'Sharing: Publicize'
-				} ) }
-			</span> );
+			content.push(
+				<span key="label">
+					{ this.props.translate(
+						'Connection available to all administrators, editors, and authors',
+						{
+							context: 'Sharing: Publicize',
+						}
+					) }
+				</span>
+			);
 		}
 
 		if ( content.length ) {
@@ -172,17 +204,19 @@ class SharingConnection extends Component {
 	render() {
 		const connectionSitewideElement = this.getConnectionSitewideElement(),
 			connectionClasses = classNames( 'sharing-connection', {
-				disabled: this.props.isDisconnecting || this.props.isRefreshing
+				disabled: this.props.isDisconnecting || this.props.isRefreshing,
 			} ),
 			statusClasses = classNames( 'sharing-connection__account-status', {
-				'is-shareable': undefined !== connectionSitewideElement
+				'is-shareable': undefined !== connectionSitewideElement,
 			} );
 
 		return (
 			<li className={ connectionClasses }>
 				{ this.getProfileImage() }
 				<div className={ statusClasses }>
-					<span className="sharing-connection__account-name">{ this.props.connection.external_display }</span>
+					<span className="sharing-connection__account-name">
+						{ this.props.connection.external_display }
+					</span>
 					{ this.getConnectionKeyringUserLabel() }
 					{ connectionSitewideElement }
 				</div>
@@ -208,5 +242,5 @@ export default connect(
 			userId: getCurrentUserId( state ),
 		};
 	},
-	{ recordGoogleEvent },
+	{ recordGoogleEvent }
 )( localize( SharingConnection ) );

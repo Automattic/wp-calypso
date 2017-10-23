@@ -4,23 +4,22 @@ Loading Placeholder
 ## Usage
 
 ```js
+import React from 'react';
+import { localize } from i18n-calypso;
+
 import Card from 'components/card';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
-import React from 'react';
 
-const MyComponentLoadingPlaceholder = React.createClass( {
-	render() {
-		return (
-			<LoadingPlaceholder
-				title={ this.translate( 'Header title' ) }>
-				<Card>
-					{ this.translate( 'Loading…' ) }
-				</Card>
-			</LoadingPlaceholder
-		)
-	}
-} );
+const MyComponentLoadingPlaceholder = ( { translate } ) => (
+	<LoadingPlaceholder
+		title={ translate( 'Header title' ) }>
+		<Card>
+			{ translate( 'Loading…' ) }
+		</Card>
+	</LoadingPlaceholder
+);
 
+export default localize( MyComponentLoadingPlaceholder );
 ```
 
 ## Props

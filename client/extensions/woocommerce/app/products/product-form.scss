@@ -334,6 +334,10 @@
 
 	.products__variation-types-form-fieldset {
 		margin-bottom: 16px;
+
+		&.is-error {
+			margin-bottom: 0;
+		}
 	}
 
 	.products__variation-types-form-field {

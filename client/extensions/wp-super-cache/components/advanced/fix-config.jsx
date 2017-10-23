@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -29,11 +32,7 @@ class FixConfig extends Component {
 	restoreSettings = () => this.props.restoreSettings( this.props.siteId );
 
 	render() {
-		const {
-			isReadOnly,
-			isRestoring,
-			translate,
-		} = this.props;
+		const { isReadOnly, isRestoring, translate } = this.props;
 
 		return (
 			<div>
@@ -43,7 +42,8 @@ class FixConfig extends Component {
 						compact
 						busy={ isRestoring }
 						disabled={ isRestoring || isReadOnly }
-						onClick={ this.restoreSettings }>
+						onClick={ this.restoreSettings }
+					>
 						{ translate( 'Restore Default Configuration' ) }
 					</Button>
 				</Card>
@@ -53,7 +53,7 @@ class FixConfig extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const isRestoring = isRestoringSettings( state, siteId );
 
@@ -65,7 +65,4 @@ const connectComponent = connect(
 	{ restoreSettings }
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( FixConfig );
+export default flowRight( connectComponent, localize )( FixConfig );

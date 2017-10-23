@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -11,28 +15,27 @@ import Card from 'components/card';
 import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 
 const ThemesRelatedCard = React.createClass( {
-
 	propTypes: {
-		currentTheme: React.PropTypes.string.isRequired
+		currentTheme: PropTypes.string.isRequired,
 	},
 
 	getRelatedThemes() {
 		let themes = new Set( [
-			'twentysixteen',
-			'rowling',
+			'independent-publisher-2',
 			'hemingway-rewritten',
-			'gazette',
-			'intergalactic-2',
-			'isola',
-			'edin',
-			'sela',
-			'pique',
-			'harmonic'
+			'penscratch-2',
+			'cols',
+			'twentyfifteen',
+			'bushwick',
+			'radcliffe-2',
+			'karuna',
+			'dara',
+			'lodestar',
 		] );
 
 		//Remove current theme so we will not show it as related
@@ -50,7 +53,7 @@ const ThemesRelatedCard = React.createClass( {
 	render() {
 		const themes = this.getRelatedThemes().map( slug => ( {
 			id: slug,
-			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`
+			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`,
 		} ) );
 
 		return (
@@ -69,11 +72,9 @@ const ThemesRelatedCard = React.createClass( {
 				</ul>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	state => ( {
-		getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) )
-	} )
-)( ThemesRelatedCard );
+export default connect( state => ( {
+	getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) ),
+} ) )( ThemesRelatedCard );

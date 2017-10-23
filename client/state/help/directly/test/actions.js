@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,12 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	askQuestion,
-	initialize,
-	initializationCompleted,
-	initializationFailed,
-} from '../actions';
+import { askQuestion, initialize, initializationCompleted, initializationFailed } from '../actions';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_START,
@@ -25,7 +22,7 @@ describe( 'actions', () => {
 		const name = 'Hamlet';
 		const email = 'hammie@royalfamily.dk';
 
-		it( 'returns an action with appropriate type and question parameters', () => {
+		test( 'returns an action with appropriate type and question parameters', () => {
 			const action = askQuestion( questionText, name, email );
 			expect( action ).to.eql( {
 				type: DIRECTLY_ASK_QUESTION,
@@ -37,21 +34,21 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#initialize()', () => {
-		it( 'returns an action with appropriate type', () => {
+		test( 'returns an action with appropriate type', () => {
 			const action = initialize();
 			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_START } );
 		} );
 	} );
 
 	describe( '#initializationCompleted()', () => {
-		it( 'returns an action with appropriate type', () => {
+		test( 'returns an action with appropriate type', () => {
 			const action = initializationCompleted();
 			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_SUCCESS } );
 		} );
 	} );
 
 	describe( '#initializationFailed()', () => {
-		it( 'returns an action with appropriate type', () => {
+		test( 'returns an action with appropriate type', () => {
 			const action = initializationFailed();
 			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_ERROR } );
 		} );

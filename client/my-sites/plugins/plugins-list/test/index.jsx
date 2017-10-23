@@ -1,61 +1,59 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
+import React from 'react';
+import {
+	renderIntoDocument as testRenderer,
+	scryRenderedComponentsWithType,
+} from 'react-addons-test-utils';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { PluginsList } from '../';
+import { sites } from './fixtures';
 import { createReduxStore } from 'state';
 
-import { sites } from './fixtures';
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {},
+	},
+} ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/wp', () => ( {
+	undocumented: () => ( {
+		getProducts: () => {},
+	} ),
+} ) );
+jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
+	require( 'components/empty-component' )
+);
+jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
+jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginsList', () => {
-	let React, testRenderer, PluginsList, TestUtils;
-
-	useFakeDom();
-
-	useMockery( mockery => {
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-		mockery.registerSubstitute( 'query', 'component-query' );
-
-		const emptyComponent = require( 'test/helpers/react/empty-component' );
-		mockery.registerMock( 'my-sites/plugins/plugin-item/plugin-item', emptyComponent );
-		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
-
-		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
-	} );
-
-	before( () => {
-		React = require( 'react' );
-		TestUtils = require( 'react-addons-test-utils' );
-		const ReactClass = require( 'react/lib/ReactClass' );
-
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-
-		testRenderer = TestUtils.renderIntoDocument;
-
-		PluginsList = require( '../' ).PluginsList;
-	} );
-
-	describe( 'rendering bulk actions', function() {
+	describe( 'rendering bulk actions', () => {
 		let renderedPluginsList, plugins, props;
 
-		before( () => {
+		beforeAll( () => {
 			plugins = [
 				{ sites, slug: 'hello', name: 'Hello Dolly' },
-				{ sites, slug: 'jetpack', name: 'Jetpack' } ];
+				{ sites, slug: 'jetpack', name: 'Jetpack' },
+			];
 
 			props = {
 				plugins,
 				header: 'Plugins',
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
-				pluginUpdateCount: plugins.length
+				pluginUpdateCount: plugins.length,
 			};
 		} );
 
@@ -65,20 +63,20 @@ describe( 'PluginsList', () => {
 					<PluginsList { ...props } />
 				</ReduxProvider>
 			);
-			renderedPluginsList = TestUtils.scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ];
+			renderedPluginsList = scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ];
 		} );
 
-		it( 'should be intialized with no selectedPlugins', () => {
+		test( 'should be intialized with no selectedPlugins', () => {
 			expect( renderedPluginsList.state.selectedPlugins ).to.be.empty;
 		} );
 
-		it( 'should select all plugins when toggled on', () => {
+		test( 'should select all plugins when toggled on', () => {
 			renderedPluginsList.toggleBulkManagement();
 			expect( renderedPluginsList.state.selectedPlugins ).to.contain.all.keys( 'hello', 'jetpack' );
 			expect( Object.keys( renderedPluginsList.state.selectedPlugins ) ).to.have.lengthOf( 2 );
 		} );
 
-		it( 'should always reset to all selected when toggled on', () => {
+		test( 'should always reset to all selected when toggled on', () => {
 			renderedPluginsList.togglePlugin( plugins[ 0 ] );
 			expect( Object.keys( renderedPluginsList.state.selectedPlugins ) ).to.have.lengthOf( 1 );
 

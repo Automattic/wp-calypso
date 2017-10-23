@@ -1,17 +1,15 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { assign, pick } from 'lodash';
-const urls = require( 'url' );
 
-module.exports = function( url ) {
+import { assign, pick } from 'lodash';
+import urls from 'url';
+
+export default function( url ) {
 	var bits,
-		formatKeys = [
-			'host',
-			'hash',
-			'search',
-			'path'
-		];
+		formatKeys = [ 'host', 'hash', 'search', 'path' ];
 
 	// If it's empty, return null
 	if ( null === url || '' === url || 'undefined' === typeof url ) {
@@ -29,10 +27,5 @@ module.exports = function( url ) {
 		return url;
 	}
 
-	return urls.format(
-		assign(
-			pick( bits, formatKeys ),
-			{ protocol: 'http' }
-		)
-	);
-};
+	return urls.format( assign( pick( bits, formatKeys ), { protocol: 'http' } ) );
+}

@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -24,7 +28,7 @@ export const Sites = React.createClass( {
 	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
-		path: React.PropTypes.string.isRequired
+		path: PropTypes.string.isRequired,
 	},
 
 	filterSites( site ) {
@@ -96,20 +100,18 @@ export const Sites = React.createClass( {
 
 		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
-				path: path
+				path: path,
 			},
 			components: {
-				strong: <strong />
-			}
+				strong: <strong />,
+			},
 		} );
 	},
 
 	render: function() {
 		return (
 			<Main className="sites">
-				<h2 className="sites__select-heading">
-					{ this.getHeaderText() }
-				</h2>
+				<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
 				<Card className="sites__selector-wrapper">
 					<SiteSelector
 						autoFocus={ true }
@@ -121,18 +123,16 @@ export const Sites = React.createClass( {
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
-	const path = ( rawPath === '/sites' )
-		? '/stats/insights'
-		: rawPath;
+	const path = rawPath === '/sites' ? '/stats/insights' : rawPath;
 	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),

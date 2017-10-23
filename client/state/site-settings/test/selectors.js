@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,39 +19,39 @@ import {
 
 describe( 'selectors', () => {
 	describe( 'isRequestingSiteSettings()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: true
-					}
-				}
+						2916284: true,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916285 );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site settings are not fetching', () => {
+		test( 'should return false if the site settings are not fetching', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: false
-					}
-				}
+						2916284: false,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site settings are fetching', () => {
+		test( 'should return true if the site settings are fetching', () => {
 			const state = {
 				siteSettings: {
 					requesting: {
-						2916284: true
-					}
-				}
+						2916284: true,
+					},
+				},
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
@@ -58,39 +60,39 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSavingSiteSettings()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916285 );
 
 			expect( isSaving ).to.be.false;
 		} );
 
-		it( 'should return false if the site settings are not saving', () => {
+		test( 'should return false if the site settings are not saving', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
 			expect( isSaving ).to.be.false;
 		} );
 
-		it( 'should return true if the site settings are saving', () => {
+		test( 'should return true if the site settings are saving', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
@@ -99,52 +101,52 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteSettingsSaveRequestStatus()', () => {
-		it( 'should return undefined if the site is not attached', () => {
+		test( 'should return undefined if the site is not attached', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916285 );
 
 			expect( status ).to.be.undefined;
 		} );
 
-		it( 'should return success if the save request status is success', () => {
+		test( 'should return success if the save request status is success', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
 			expect( status ).to.eql( 'success' );
 		} );
 
-		it( 'should return error if the save request status is error', () => {
+		test( 'should return error if the save request status is error', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error' }
-					}
-				}
+						2916284: { saving: false, status: 'error' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
 			expect( status ).to.eql( 'error' );
 		} );
 
-		it( 'should return pending if the save request status is pending', () => {
+		test( 'should return pending if the save request status is pending', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
@@ -153,39 +155,39 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSiteSettingsSaveSuccessful()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending' }
-					}
-				}
+						2916284: { saving: true, status: 'pending' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916285 );
 
 			expect( isSuccessful ).to.be.false;
 		} );
 
-		it( 'should return true if the save request status is success', () => {
+		test( 'should return true if the save request status is success', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success' }
-					}
-				}
+						2916284: { saving: false, status: 'success' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
 			expect( isSuccessful ).to.be.true;
 		} );
 
-		it( 'should return false if the save request status is error', () => {
+		test( 'should return false if the save request status is error', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error' }
-					}
-				}
+						2916284: { saving: false, status: 'error' },
+					},
+				},
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
@@ -194,39 +196,39 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteSettingsSaveError()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: true, status: 'pending', error: false }
-					}
-				}
+						2916284: { saving: true, status: 'pending', error: false },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916285 );
 
 			expect( error ).to.be.false;
 		} );
 
-		it( 'should return false if the save the last request has no error', () => {
+		test( 'should return false if the save the last request has no error', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'success', error: false }
-					}
-				}
+						2916284: { saving: false, status: 'success', error: false },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
 			expect( error ).to.be.false;
 		} );
 
-		it( 'should return the error if the save request status has an error', () => {
+		test( 'should return the error if the save request status has an error', () => {
 			const state = {
 				siteSettings: {
 					saveRequests: {
-						2916284: { saving: false, status: 'error', error: 'my Error' }
-					}
-				}
+						2916284: { saving: false, status: 'error', error: 'my Error' },
+					},
+				},
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
@@ -235,26 +237,26 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteSettings()', () => {
-		it( 'should return null if the site is not tracked', () => {
+		test( 'should return null if the site is not tracked', () => {
 			const state = {
 				siteSettings: {
 					items: {
-						2916284: { default_category: 'chicken' }
-					}
-				}
+						2916284: { default_category: 'chicken' },
+					},
+				},
 			};
 			const settings = getSiteSettings( state, 2916285 );
 
 			expect( settings ).to.be.null;
 		} );
 
-		it( 'should return the settings for a siteId', () => {
+		test( 'should return the settings for a siteId', () => {
 			const state = {
 				siteSettings: {
 					items: {
-						2916284: { default_category: 'chicken' }
-					}
-				}
+						2916284: { default_category: 'chicken' },
+					},
+				},
 			};
 			const settings = getSiteSettings( state, 2916284 );
 

@@ -1,6 +1,9 @@
 /**
  * Externel dependencies
+ *
+ * @format
  */
+
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -32,16 +35,20 @@ const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch =
 	debug( 'setPrimaryDomain', siteId, domainName );
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PRIMARY_DOMAIN_SET,
-		siteId
+		siteId,
 	} );
 	wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
-				error: error && error.message || i18n.translate( 'There was a problem setting the primary domain. Please try' +
-					' again later or contact support.' ),
+				error:
+					( error && error.message ) ||
+					i18n.translate(
+						'There was a problem setting the primary domain. Please try' +
+							' again later or contact support.'
+					),
 				siteId,
-				domainName
+				domainName,
 			} );
 
 			return onComplete( error, data );
@@ -51,7 +58,7 @@ const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch =
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
 				siteId,
-				domainName
+				domainName,
 			} );
 
 			onComplete( null, data );
@@ -69,33 +76,33 @@ function fetchEmailForwarding( domainName ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.EMAIL_FORWARDING_FETCH,
-		domainName
+		domainName,
 	} );
 
 	wpcom.emailForwards( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_FETCH_FAILED,
-				domainName
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED,
 				domainName,
-				forwards: data.forwards
+				forwards: data.forwards,
 			} );
 		}
 	} );
 }
 
 function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
-	wpcom.addEmailForward( domainName, mailbox, destination, ( error ) => {
+	wpcom.addEmailForward( domainName, mailbox, destination, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_ADD_COMPLETED,
 				domainName,
 				mailbox,
-				destination
+				destination,
 			} );
 			fetchEmailForwarding( domainName );
 		}
@@ -105,12 +112,12 @@ function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
 }
 
 function deleteEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.deleteEmailForward( domainName, mailbox, ( error ) => {
+	wpcom.deleteEmailForward( domainName, mailbox, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
 				domainName,
-				mailbox
+				mailbox,
 			} );
 			fetchEmailForwarding( domainName );
 		}
@@ -127,7 +134,7 @@ function fetchDomains( siteId ) {
 	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.DOMAINS_INITIALIZE,
-			siteId
+			siteId,
 		} );
 	}
 
@@ -138,7 +145,7 @@ function fetchDomains( siteId ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DOMAINS_FETCH,
-		siteId
+		siteId,
 	} );
 
 	wpcom.site( siteId ).domains( function( error, data ) {
@@ -146,13 +153,13 @@ function fetchDomains( siteId ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_FAILED,
 				siteId,
-				error
+				error,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
 				siteId,
-				domains: domainsAssembler.createDomainObjects( data.domains )
+				domains: domainsAssembler.createDomainObjects( data.domains ),
 			} );
 		}
 	} );
@@ -167,20 +174,20 @@ function fetchWhois( domainName ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.WHOIS_FETCH,
-		domainName
+		domainName,
 	} );
 
 	wpcom.fetchWhois( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_FETCH_FAILED,
-				domainName
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_FETCH_COMPLETED,
 				domainName,
-				data: whoisAssembler.createDomainWhois( data )
+				data: whoisAssembler.createDomainWhois( data ),
 			} );
 		}
 	} );
@@ -191,7 +198,7 @@ function updateWhois( domainName, contactInformation, transferLock, onComplete )
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-				domainName
+				domainName,
 			} );
 
 			// For WWD the update may take longer
@@ -199,7 +206,7 @@ function updateWhois( domainName, contactInformation, transferLock, onComplete )
 			setTimeout( () => {
 				Dispatcher.handleServerAction( {
 					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-					domainName
+					domainName,
 				} );
 			}, 60000 );
 		}
@@ -217,7 +224,7 @@ function fetchDns( domainName ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DNS_FETCH,
-		domainName
+		domainName,
 	} );
 
 	wpcom.fetchDns( domainName, ( error, data ) => {
@@ -225,12 +232,12 @@ function fetchDns( domainName ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_FETCH_COMPLETED,
 				records: data && data.records,
-				domainName
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_FETCH_FAILED,
-				domainName
+				domainName,
 			} );
 		}
 	} );
@@ -240,17 +247,17 @@ function addDns( domainName, record, onComplete ) {
 	Dispatcher.handleServerAction( {
 		type: ActionTypes.DNS_ADD,
 		domainName,
-		record
+		record,
 	} );
 
 	const dns = DnsStore.getByDomainName( domainName );
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
+	wpcom.updateDns( domainName, dns.records, error => {
 		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
 		Dispatcher.handleServerAction( {
 			type,
 			domainName,
-			record
+			record,
 		} );
 
 		onComplete( error );
@@ -265,12 +272,12 @@ function deleteDns( domainName, record, onComplete ) {
 	Dispatcher.handleServerAction( {
 		type: ActionTypes.DNS_DELETE,
 		domainName,
-		record
+		record,
 	} );
 
 	const dns = DnsStore.getByDomainName( domainName );
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
+	wpcom.updateDns( domainName, dns.records, error => {
 		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
 
 		Dispatcher.handleServerAction( {
@@ -289,7 +296,7 @@ function applyDnsTemplate( domainName, provider, service, variables, onComplete 
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED,
 				records: data && data.records,
-				domainName
+				domainName,
 			} );
 		}
 		onComplete( error );
@@ -305,38 +312,38 @@ function fetchNameservers( domainName ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.NAMESERVERS_FETCH,
-		domainName
+		domainName,
 	} );
 
 	wpcom.nameservers( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.NAMESERVERS_FETCH_FAILED,
-				domainName
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
 				domainName,
-				nameservers: data
+				nameservers: data,
 			} );
 		}
 	} );
 }
 
 function updateNameservers( domainName, nameservers, onComplete ) {
-	const postData = nameservers.map( ( nameserver ) => {
+	const postData = nameservers.map( nameserver => {
 		return {
-			nameserver
+			nameserver,
 		};
 	} );
 
-	wpcom.updateNameservers( domainName, { nameservers: postData }, ( error ) => {
+	wpcom.updateNameservers( domainName, { nameservers: postData }, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
 				domainName,
-				nameservers
+				nameservers,
 			} );
 		}
 
@@ -345,11 +352,11 @@ function updateNameservers( domainName, nameservers, onComplete ) {
 }
 
 function resendIcannVerification( domainName, onComplete ) {
-	wpcom.resendIcannVerification( domainName, ( error ) => {
+	wpcom.resendIcannVerification( domainName, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
-				domainName
+				domainName,
 			} );
 		}
 
@@ -360,14 +367,14 @@ function resendIcannVerification( domainName, onComplete ) {
 function closeSiteRedirectNotice( siteId ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.SITE_REDIRECT_NOTICE_CLOSE,
-		siteId
+		siteId,
 	} );
 }
 
 function fetchSiteRedirect( siteId ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.SITE_REDIRECT_FETCH,
-		siteId
+		siteId,
 	} );
 
 	wpcom.getSiteRedirect( siteId, ( error, data ) => {
@@ -375,19 +382,21 @@ function fetchSiteRedirect( siteId ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_FETCH_COMPLETED,
 				location: data.location,
-				siteId
+				siteId,
 			} );
 		} else if ( error && error.message ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
 				error: error.message,
-				siteId
+				siteId,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
-				error: i18n.translate( 'There was a problem retrieving the redirect settings. Please try again later or contact support.' ),
-				siteId
+				error: i18n.translate(
+					'There was a problem retrieving the redirect settings. Please try again later or contact support.'
+				),
+				siteId,
 			} );
 		}
 	} );
@@ -396,7 +405,7 @@ function fetchSiteRedirect( siteId ) {
 function updateSiteRedirect( siteId, location, onComplete ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.SITE_REDIRECT_UPDATE,
-		siteId
+		siteId,
 	} );
 
 	wpcom.setSiteRedirect( siteId, location, ( error, data ) => {
@@ -407,7 +416,7 @@ function updateSiteRedirect( siteId, location, onComplete ) {
 				type: ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED,
 				location,
 				siteId,
-				success: i18n.translate( 'The redirect settings were updated successfully.' )
+				success: i18n.translate( 'The redirect settings were updated successfully.' ),
 			} );
 
 			success = true;
@@ -415,13 +424,15 @@ function updateSiteRedirect( siteId, location, onComplete ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
 				error: error.message,
-				siteId
+				siteId,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
-				error: i18n.translate( 'There was a problem updating the redirect settings. Please try again later or contact support.' ),
-				siteId
+				error: i18n.translate(
+					'There was a problem updating the redirect settings. Please try again later or contact support.'
+				),
+				siteId,
 			} );
 		}
 
@@ -438,7 +449,7 @@ function fetchWapiDomainInfo( domainName ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.WAPI_DOMAIN_INFO_FETCH,
-		domainName
+		domainName,
 	} );
 
 	wpcom.fetchWapiDomainInfo( domainName, ( error, status ) => {
@@ -446,7 +457,7 @@ function fetchWapiDomainInfo( domainName ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED,
 				error,
-				domainName
+				domainName,
 			} );
 
 			return;
@@ -455,7 +466,7 @@ function fetchWapiDomainInfo( domainName ) {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED,
 			status: wapiDomainInfoAssembler.createDomainObject( status ),
-			domainName
+			domainName,
 		} );
 	} );
 }
@@ -463,7 +474,7 @@ function fetchWapiDomainInfo( domainName ) {
 function requestTransferCode( options, onComplete ) {
 	const { siteId, domainName, unlock, disablePrivacy } = options;
 
-	wpcom.requestTransferCode( options, ( error ) => {
+	wpcom.requestTransferCode( options, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -474,7 +485,7 @@ function requestTransferCode( options, onComplete ) {
 			siteId,
 			domainName,
 			unlock,
-			disablePrivacy
+			disablePrivacy,
 		} );
 
 		onComplete( null );
@@ -482,7 +493,7 @@ function requestTransferCode( options, onComplete ) {
 }
 
 function cancelTransferRequest( options, onComplete ) {
-	wpcom.cancelTransferRequest( options, ( error ) => {
+	wpcom.cancelTransferRequest( options, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -498,7 +509,7 @@ function cancelTransferRequest( options, onComplete ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
 				siteId: options.siteId,
-				domainName: options.domainName
+				domainName: options.domainName,
 			} );
 		}
 
@@ -507,7 +518,7 @@ function cancelTransferRequest( options, onComplete ) {
 }
 
 function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
-	wpcom.enablePrivacyProtection( domainName, ( error ) => {
+	wpcom.enablePrivacyProtection( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -516,7 +527,7 @@ function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
 			siteId,
-			domainName
+			domainName,
 		} );
 
 		onComplete( null );
@@ -524,7 +535,7 @@ function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
 }
 
 function acceptTransfer( domainName, onComplete ) {
-	wpcom.acceptTransfer( domainName, ( error ) => {
+	wpcom.acceptTransfer( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -532,7 +543,7 @@ function acceptTransfer( domainName, onComplete ) {
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED,
-			domainName
+			domainName,
 		} );
 
 		onComplete( null );
@@ -540,7 +551,7 @@ function acceptTransfer( domainName, onComplete ) {
 }
 
 function declineTransfer( domainName, onComplete ) {
-	wpcom.declineTransfer( domainName, ( error ) => {
+	wpcom.declineTransfer( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
@@ -548,7 +559,7 @@ function declineTransfer( domainName, onComplete ) {
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED,
-			domainName
+			domainName,
 		} );
 
 		onComplete( null );
@@ -579,5 +590,5 @@ export {
 	setPrimaryDomain,
 	updateNameservers,
 	updateSiteRedirect,
-	updateWhois
+	updateWhois,
 };

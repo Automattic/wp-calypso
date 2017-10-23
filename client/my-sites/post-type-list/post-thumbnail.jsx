@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -14,7 +18,7 @@ import { getNormalizedPost } from 'state/posts/selectors';
 
 function PostTypeListPostThumbnail( { thumbnail } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
-		'has-image': !! thumbnail
+		'has-image': !! thumbnail,
 	} );
 
 	return (
@@ -22,7 +26,8 @@ function PostTypeListPostThumbnail( { thumbnail } ) {
 			{ thumbnail && (
 				<img
 					src={ resizeImageUrl( thumbnail, { h: 80 } ) }
-					className="post-type-list__post-thumbnail" />
+					className="post-type-list__post-thumbnail"
+				/>
 			) }
 		</div>
 	);
@@ -30,7 +35,7 @@ function PostTypeListPostThumbnail( { thumbnail } ) {
 
 PostTypeListPostThumbnail.propTypes = {
 	globalId: PropTypes.string,
-	thumbnail: PropTypes.string
+	thumbnail: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {

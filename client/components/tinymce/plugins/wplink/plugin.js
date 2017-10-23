@@ -1,9 +1,11 @@
 /**
  * Adapted from the WordPress wplink TinyMCE plugin.
+ * 
  *
+ * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
-*/
+ */
 
 /**
  * External dependencies
@@ -28,7 +30,7 @@ function wpLink( editor ) {
 				visible: visible,
 				editor: editor,
 				firstLoad: ! firstLoadComplete,
-				onClose: () => render( false )
+				onClose: () => render( false ),
 			} ),
 			node,
 			editor.getParam( 'redux_store' )
@@ -43,9 +45,7 @@ function wpLink( editor ) {
 	}
 
 	editor.on( 'init', function() {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', function() {
@@ -67,13 +67,13 @@ function wpLink( editor ) {
 		icon: 'link',
 		tooltip: translate( 'Insert/edit link' ),
 		cmd: 'WP_Link',
-		stateSelector: 'a[href]'
+		stateSelector: 'a[href]',
 	} );
 
 	editor.addButton( 'unlink', {
 		icon: 'unlink',
 		tooltip: 'Remove link',
-		cmd: 'unlink'
+		cmd: 'unlink',
 	} );
 
 	editor.addMenuItem( 'link', {
@@ -82,7 +82,7 @@ function wpLink( editor ) {
 		cmd: 'WP_Link',
 		stateSelector: 'a[href]',
 		context: 'insert',
-		prependToContext: true
+		prependToContext: true,
 	} );
 
 	editor.on( 'pastepreprocess', function( event ) {
@@ -94,7 +94,7 @@ function wpLink( editor ) {
 
 			if ( /^(?:https?:)?\/\/\S+$/i.test( pastedStr ) ) {
 				editor.execCommand( 'mceInsertLink', false, {
-					href: editor.dom.decode( pastedStr )
+					href: editor.dom.decode( pastedStr ),
 				} );
 
 				event.preventDefault();
@@ -106,56 +106,70 @@ function wpLink( editor ) {
 	 * Link Preview
 	 */
 
-	tinymce.ui.Factory.add( 'WPLinkPreview', tinymce.ui.Control.extend( {
-		url: '#',
-		renderHtml: function() {
-			return (
-				'<div id="' + this._id + '" class="wp-link-preview">' +
-					'<a href="' + this.url + '" target="_blank" rel="noopener noreferrer" tabindex="-1">' + this.url + '</a>' +
-				'</div>'
-			);
-		},
-		setURL: function( url ) {
-			let index, lastIndex;
+	tinymce.ui.Factory.add(
+		'WPLinkPreview',
+		tinymce.ui.Control.extend( {
+			url: '#',
+			renderHtml: function() {
+				return (
+					'<div id="' +
+					this._id +
+					'" class="wp-link-preview">' +
+					'<a href="' +
+					this.url +
+					'" target="_blank" rel="noopener noreferrer" tabindex="-1">' +
+					this.url +
+					'</a>' +
+					'</div>'
+				);
+			},
+			setURL: function( url ) {
+				let index, lastIndex;
 
-			if ( this.url !== url ) {
-				this.url = url;
+				if ( this.url !== url ) {
+					this.url = url;
 
-				url = window.decodeURIComponent( url );
+					url = window.decodeURIComponent( url );
 
-				url = url.replace( /^(?:https?:)?\/\/(?:www\.)?/, '' );
+					url = url.replace( /^(?:https?:)?\/\/(?:www\.)?/, '' );
 
-				if ( ( index = url.indexOf( '?' ) ) !== -1 ) {
-					url = url.slice( 0, index );
-				}
-
-				if ( ( index = url.indexOf( '#' ) ) !== -1 ) {
-					url = url.slice( 0, index );
-				}
-
-				url = url.replace( /(?:index)?\.html$/, '' );
-
-				if ( url.charAt( url.length - 1 ) === '/' ) {
-					url = url.slice( 0, -1 );
-				}
-
-				// If the URL is longer that 40 chars, concatenate the beginning (after the domain) and ending with ...
-				if ( url.length > 40 &&
-					( index = url.indexOf( '/' ) ) !== -1 &&
-					( lastIndex = url.lastIndexOf( '/' ) ) !== -1 &&
-					lastIndex !== index ) {
-					// If the beginning + ending are shorter that 40 chars, show more of the ending
-					if ( index + url.length - lastIndex < 40 ) {
-						lastIndex = -( 40 - ( index + 1 ) );
+					if ( ( index = url.indexOf( '?' ) ) !== -1 ) {
+						url = url.slice( 0, index );
 					}
 
-					url = url.slice( 0, index + 1 ) + '\u2026' + url.slice( lastIndex );
-				}
+					if ( ( index = url.indexOf( '#' ) ) !== -1 ) {
+						url = url.slice( 0, index );
+					}
 
-				tinymce.$( this.getEl().firstChild ).attr( 'href', this.url ).text( url );
-			}
-		}
-	} ) );
+					url = url.replace( /(?:index)?\.html$/, '' );
+
+					if ( url.charAt( url.length - 1 ) === '/' ) {
+						url = url.slice( 0, -1 );
+					}
+
+					// If the URL is longer that 40 chars, concatenate the beginning (after the domain) and ending with ...
+					if (
+						url.length > 40 &&
+						( index = url.indexOf( '/' ) ) !== -1 &&
+						( lastIndex = url.lastIndexOf( '/' ) ) !== -1 &&
+						lastIndex !== index
+					) {
+						// If the beginning + ending are shorter that 40 chars, show more of the ending
+						if ( index + url.length - lastIndex < 40 ) {
+							lastIndex = -( 40 - ( index + 1 ) );
+						}
+
+						url = url.slice( 0, index + 1 ) + '\u2026' + url.slice( lastIndex );
+					}
+
+					tinymce
+						.$( this.getEl().firstChild )
+						.attr( 'href', this.url )
+						.text( url );
+				}
+			},
+		} )
+	);
 
 	editor.addButton( 'wp_link_preview', {
 		type: 'WPLinkPreview',
@@ -178,32 +192,31 @@ function wpLink( editor ) {
 					}
 				}
 			} );
-		}
+		},
 	} );
 
 	editor.addButton( 'wp_link_edit', {
 		tooltip: 'Edit ', // trailing space is needed, used for context
 		icon: 'dashicon dashicons-edit',
-		cmd: 'WP_Link'
+		cmd: 'WP_Link',
 	} );
 
 	editor.addButton( 'wp_link_remove', {
 		tooltip: 'Remove',
 		icon: 'dashicon dashicons-no',
-		cmd: 'unlink'
+		cmd: 'unlink',
 	} );
 
 	editor.on( 'preinit', function() {
 		if ( editor.wp && editor.wp._createToolbar ) {
-			toolbar = editor.wp._createToolbar( [
-				'wp_link_preview',
-				'wp_link_edit',
-				'wp_link_remove'
-			], true );
+			toolbar = editor.wp._createToolbar(
+				[ 'wp_link_preview', 'wp_link_edit', 'wp_link_remove' ],
+				true
+			);
 		}
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wplink', wpLink );
-};
+}

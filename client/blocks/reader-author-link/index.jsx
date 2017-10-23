@@ -41,18 +41,14 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 	if ( ! siteUrl ) {
 		return (
 			<span className={ classes }>
-				<Emojify>
-					{ children }
-				</Emojify>
+				<Emojify>{ children }</Emojify>
 			</span>
 		);
 	}
 
 	return (
 		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
-			<Emojify>
-				{ children }
-			</Emojify>
+			<Emojify>{ children }</Emojify>
 		</a>
 	);
 };

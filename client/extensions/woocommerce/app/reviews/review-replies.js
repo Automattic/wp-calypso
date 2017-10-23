@@ -1,6 +1,9 @@
 /**
  * External depedencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -14,6 +17,7 @@ import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actio
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getReviewReplies } from 'woocommerce/state/sites/review-replies/selectors';
 import ReviewReply from './review-reply';
+import ReviewReplyCreate from './review-reply-create';
 
 class ReviewReplies extends Component {
 	static propTypes = {
@@ -42,32 +46,18 @@ class ReviewReplies extends Component {
 	}
 
 	renderReply = ( replyId, i ) => {
-		const { review } = this.props;
-		return <ReviewReply
-			key={ i }
-			reviewId={ review.id }
-			replyId={ replyId }
-		/>;
-	}
+		const { siteId, review } = this.props;
+		return <ReviewReply siteId={ siteId } key={ i } reviewId={ review.id } replyId={ replyId } />;
+	};
 
 	render() {
-		const { replyIds, review, translate } = this.props;
-		const repliesOutput = replyIds.length && replyIds.map( this.renderReply ) || null;
-
-		const textAreaPlaceholder = 'approved' === review.status
-			? translate( 'Reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } )
-			: translate( 'Approve and reply to %(reviewAuthor)s…', { args: { reviewAuthor: review.name } } );
-
+		const { siteId, replyIds, review } = this.props;
+		const repliesOutput = ( replyIds.length && replyIds.map( this.renderReply ) ) || null;
 		return (
 			<div className="reviews__replies">
 				{ repliesOutput }
 
-				<form className="reviews__reply-textarea">
-					<textarea placeholder={ textAreaPlaceholder } />
-					<button className="reviews__reply-submit">
-						{ translate( 'Send' ) }
-					</button>
-				</form>
+				<ReviewReplyCreate siteId={ siteId } review={ review } />
 			</div>
 		);
 	}
@@ -78,7 +68,7 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const replies = getReviewReplies( state, props.review.id );
-		const replyIds = replies && replies.map( reply => reply.id ) || [];
+		const replyIds = ( replies && replies.map( reply => reply.id ) ) || [];
 		return {
 			siteId,
 			replyIds,

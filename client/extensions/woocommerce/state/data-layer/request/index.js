@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import debugFactory from 'debug';
 
 /**
@@ -9,7 +12,6 @@ import debugFactory from 'debug';
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,
@@ -21,7 +23,8 @@ const debug = debugFactory( 'woocommerce:request' );
 export function handleRequest( { dispatch, getState }, action ) {
 	const { method, siteId, path, body, onSuccessAction, onFailureAction } = action;
 
-	return request( siteId )[ method ]( path, body )
+	return request( siteId )
+		[ method ]( path, body )
 		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
@@ -49,4 +52,3 @@ export function handleRequest( { dispatch, getState }, action ) {
 export default {
 	[ WOOCOMMERCE_API_REQUEST ]: [ handleRequest ],
 };
-

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 
 /**
@@ -15,30 +17,27 @@ const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 		<div className="example-components__main" onClick={ onClick }>
 			<div className="example-components__browser-chrome example-components__site-url-input-container">
 				<div className="example-components__browser-chrome-dots">
-					<div className="example-components__browser-chrome-dot"></div>
-					<div className="example-components__browser-chrome-dot"></div>
-					<div className="example-components__browser-chrome-dot"></div>
+					<div className="example-components__browser-chrome-dot" />
+					<div className="example-components__browser-chrome-dot" />
+					<div className="example-components__browser-chrome-dot" />
 				</div>
 				<div className="example-components__site-address-container">
-					<Gridicon
-						size={ 24 }
-						icon="globe" />
+					<Gridicon size={ 24 } icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
 						disabled="true"
-						placeholder={ url } />
+						placeholder={ url }
+					/>
 				</div>
 			</div>
 			<div className="example-components__content example-components__install-jetpack">
-				<div className="example-components__install-plugin-header"></div>
-				<div className="example-components__install-plugin-body"></div>
+				<div className="example-components__install-plugin-header" />
+				<div className="example-components__install-plugin-body" />
 				<div className="example-components__install-plugin-footer">
 					<div className="example-components__install-plugin-footer-button" aria-hidden="true">
-						{ translate( 'Install Now',
-							{
-								context: 'Jetpack Connect install plugin instructions, install button'
-							}
-						) }
+						{ translate( 'Install Now', {
+							context: 'Jetpack Connect install plugin instructions, install button',
+						} ) }
 					</div>
 				</div>
 			</div>
@@ -47,11 +46,11 @@ const JetpackConnectExampleInstall = ( { url, translate, onClick } ) => {
 };
 
 JetpackConnectExampleInstall.propTypes = {
-	onClick: React.PropTypes.func
+	onClick: PropTypes.func,
 };
 
 JetpackConnectExampleInstall.defaultProps = {
-	onClick: () => {}
+	onClick: () => {},
 };
 
 export default localize( JetpackConnectExampleInstall );

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -26,7 +30,7 @@ class QueryWhois extends Component {
 QueryWhois.propTypes = {
 	domain: PropTypes.string.isRequired,
 	isRequesting: PropTypes.bool.isRequired,
-	requestWhois: PropTypes.func.isRequired
+	requestWhois: PropTypes.func.isRequired,
 };
 
 export default connect(

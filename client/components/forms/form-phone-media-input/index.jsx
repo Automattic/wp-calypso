@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
@@ -19,7 +22,7 @@ export default class extends React.Component {
 
 	focus = () => this.phoneInput.numberInput.focus();
 
-	setPhoneInput = ( ref ) => this.phoneInput = ref;
+	setPhoneInput = ref => ( this.phoneInput = ref );
 
 	render() {
 		const classes = classnames( this.props.className, {
@@ -29,9 +32,7 @@ export default class extends React.Component {
 		return (
 			<div className={ classnames( this.props.additionalClasses, 'phone' ) }>
 				<div>
-					<FormLabel htmlFor={ this.props.name }>
-						{ this.props.label }
-					</FormLabel>
+					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 					<PhoneInput
 						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
 						ref="input"
@@ -40,8 +41,9 @@ export default class extends React.Component {
 						className={ classes }
 					/>
 				</div>
-				{ this.props.errorMessage &&
-					<FormInputValidation text={ this.props.errorMessage } isError /> }
+				{ this.props.errorMessage && (
+					<FormInputValidation text={ this.props.errorMessage } isError />
+				) }
 			</div>
 		);
 	}

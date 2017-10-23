@@ -1,7 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { find } from 'lodash';
+
+import { find, filter, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,13 +21,10 @@ import US from './US';
 // to ../../my-sites/sidebar/sidebar.jsx in the allowedCountryCodes
 
 export const getCountries = () => {
-	return [
-		US(),
-		CA(),
-	];
+	return [ US(), CA() ];
 };
 
-export const getCountryData = ( country ) => {
+export const getCountryData = country => {
 	const countryData = find( getCountries(), { code: country } );
 	if ( ! countryData ) {
 		return null;
@@ -44,3 +44,21 @@ export const getStateData = ( country, state ) => {
 
 	return stateData;
 };
+
+/**
+ * Return a "sorted" list of countries, with a subset pulled to the top,
+ * and the rest sorted alphabetically.
+ * @param {array} list  List of countries to sort
+ * @return {array} sorted list of countries
+ */
+export function sortPopularCountriesToTop( list ) {
+	const popularCodes = [ 'AU', 'BR', 'CA', 'FR', 'DE', 'IT', 'ES', 'SE', 'GB', 'US' ];
+	const popularCountries = filter( list, item => -1 !== popularCodes.indexOf( item.code ) );
+	const otherCountries = filter( list, item => -1 === popularCodes.indexOf( item.code ) );
+
+	return [
+		...sortBy( popularCountries, 'name' ),
+		{ code: '', continent: '', name: '' }, // Spacer option
+		...sortBy( otherCountries, 'name' ),
+	];
+}

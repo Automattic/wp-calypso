@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -15,7 +18,7 @@ import touchDetect from 'lib/touch-detect';
 class ModuleChartExport extends React.Component {
 	state = {
 		maxBars: 100, // arbitrarily high number. This will be calculated by resize method
-		width: 650
+		width: 650,
 	};
 
 	static propTypes = {
@@ -31,7 +34,7 @@ class ModuleChartExport extends React.Component {
 	static defaultProps = {
 		minTouchBarWidth: 42,
 		minBarWidth: 15,
-		barClick: noop
+		barClick: noop,
 	};
 
 	// Add listener for window resize
@@ -52,13 +55,13 @@ class ModuleChartExport extends React.Component {
 		}
 	}
 
-	resize() {
+	resize = () => {
 		const node = this.refs.chart;
 		let width = node.clientWidth - 82,
 			maxBars;
 
 		if ( touchDetect.hasTouch() ) {
-			width = ( width <= 0 ) ? 350 : width; // mobile safari bug with zero width
+			width = width <= 0 ? 350 : width; // mobile safari bug with zero width
 			maxBars = Math.floor( width / this.props.minTouchBarWidth );
 		} else {
 			maxBars = Math.floor( width / this.props.minBarWidth );
@@ -66,31 +69,31 @@ class ModuleChartExport extends React.Component {
 
 		this.setState( {
 			maxBars: maxBars,
-			width: width
+			width: width,
 		} );
-	}
+	};
 
-	getYAxisMax( values ) {
+	getYAxisMax = values => {
 		const max = Math.max.apply( null, values ),
-			operand = Math.pow( 10, ( Math.floor( max ).toString().length - 1 ) );
-		let rounded = ( Math.ceil( ( max + 1 ) / operand ) * operand );
+			operand = Math.pow( 10, Math.floor( max ).toString().length - 1 );
+		let rounded = Math.ceil( ( max + 1 ) / operand ) * operand;
 
 		if ( rounded < 10 ) {
 			rounded = 10;
 		}
 
 		return rounded;
-	}
+	};
 
-	getData() {
+	getData = () => {
 		let data = this.props.data;
 
 		data = data.slice( 0 - this.state.maxBars );
 
 		return data;
-	}
+	};
 
-	getValues() {
+	getValues = () => {
 		let data = this.getData();
 
 		data = data.map( function( item ) {
@@ -98,22 +101,19 @@ class ModuleChartExport extends React.Component {
 		}, this );
 
 		return data;
-	}
+	};
 
-	isEmptyChart( values ) {
-		return ! some( values, ( value ) => value > 0 );
-	}
+	isEmptyChart = values => {
+		return ! some( values, value => value > 0 );
+	};
 
 	render() {
 		const values = this.getValues(),
 			yAxisMax = this.getYAxisMax( values ),
 			data = this.getData();
-		let	emptyChart;
+		let emptyChart;
 
-		const {
-			translate,
-			numberFormat
-		} = this.props;
+		const { translate, numberFormat } = this.props;
 
 		// If we have an empty chart, show a message
 		// @todo this message needs to either use a <Notice> or make a custom "chart__notice" class
@@ -123,7 +123,7 @@ class ModuleChartExport extends React.Component {
 					<span className="chart__empty-notice">
 						{ translate( 'No activity this period', {
 							context: 'Message on empty bar chart in Stats',
-							comment: 'Should be limited to 32 characters to prevent wrapping'
+							comment: 'Should be limited to 32 characters to prevent wrapping',
 						} ) }
 					</span>
 				</div>
@@ -133,9 +133,9 @@ class ModuleChartExport extends React.Component {
 		return (
 			<div ref="chart" className="chart">
 				<div className="chart__y-axis-markers">
-					<div className="chart__y-axis-marker is-hundred"></div>
-					<div className="chart__y-axis-marker is-fifty"></div>
-					<div className="chart__y-axis-marker is-zero"></div>
+					<div className="chart__y-axis-marker is-hundred" />
+					<div className="chart__y-axis-marker is-fifty" />
+					<div className="chart__y-axis-marker is-zero" />
 				</div>
 				<div className="chart__y-axis">
 					<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
@@ -156,4 +156,4 @@ class ModuleChartExport extends React.Component {
 	}
 }
 
-module.exports = localize( ModuleChartExport );
+export default localize( ModuleChartExport );

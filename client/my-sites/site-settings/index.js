@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 
 /**
@@ -10,20 +13,17 @@ import config from 'config';
 import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
+import { reasonComponents as reasons } from './disconnect-site';
 
-module.exports = function() {
-	page(
-		'/settings',
-		mySitesController.siteSelection,
-		controller.redirectToGeneral
-	);
+export default function() {
+	page( '/settings', mySitesController.siteSelection, controller.redirectToGeneral );
 	page(
 		'/settings/general/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
 		settingsController.setScroll,
 		settingsController.siteSettings,
-		controller.general,
+		controller.general
 	);
 
 	page(
@@ -56,6 +56,29 @@ module.exports = function() {
 		settingsController.setScroll,
 		controller.deleteSite
 	);
+
+	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		const reasonSlugs = Object.keys( reasons );
+		page(
+			`/settings/disconnect-site/:step(${ [ ...reasonSlugs, 'confirm' ].join( '|' ) })?`,
+			mySitesController.sites
+		);
+
+		page(
+			`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSite
+		);
+
+		page(
+			'/settings/disconnect-site/confirm/:site_id',
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSiteConfirm
+		);
+	}
+
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
@@ -85,4 +108,4 @@ module.exports = function() {
 		mySitesController.siteSelection,
 		mySitesController.sites
 	);
-};
+}

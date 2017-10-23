@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
@@ -23,23 +27,23 @@ const getRandomPromo = () => {
 		{
 			promoCode: 'a0002',
 			message: 'Get WordPress.com app for your desktop.',
-			type: 'desktop'
+			type: 'desktop',
 		},
 		{
 			promoCode: 'a0003',
 			message: 'WordPress.com app now available for desktop.',
-			type: 'desktop'
+			type: 'desktop',
 		},
 		{
 			promoCode: 'a0005',
 			message: 'WordPress.com at your fingertips — download app for desktop.',
-			type: 'desktop'
+			type: 'desktop',
 		},
 		{
 			promoCode: 'a0006',
 			message: 'WordPress.com in the palm of your hands — download app for mobile.',
-			type: 'mobile'
-		}
+			type: 'mobile',
+		},
 	];
 
 	return sample( promoOptions );
@@ -52,18 +56,17 @@ export const getPromoLink = ( location, promoDetails ) => {
 };
 
 export const AppPromo = React.createClass( {
-
 	displayName: 'AppPromo',
 
 	propTypes: {
-		location: React.PropTypes.string.isRequired
+		location: PropTypes.string.isRequired,
 	},
 
 	getInitialState: function() {
 		const promoItem = this.props.promoItem || getRandomPromo();
 		return {
 			promoItem,
-			showPromo: true
+			showPromo: true,
 		};
 	},
 
@@ -77,7 +80,7 @@ export const AppPromo = React.createClass( {
 	recordClickEvent: function() {
 		this.props.recordTracksEvent( 'calypso_desktop_promo_click', {
 			promo_location: this.props.location,
-			promo_code: this.state.promoItem.promoCode
+			promo_code: this.state.promoItem.promoCode,
 		} );
 	},
 
@@ -100,11 +103,9 @@ export const AppPromo = React.createClass( {
 
 		return (
 			<div className="app-promo">
-				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
+				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss }>
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="app-promo__screen-reader-text">
-						{ translate( 'Dismiss' ) }
-					</span>
+					<span className="app-promo__screen-reader-text">{ translate( 'Dismiss' ) }</span>
 				</span>
 				<a
 					onClick={ this.recordClickEvent }
@@ -132,7 +133,7 @@ AppPromo.defaultProps = {
 	translate: identity,
 	recordTracksEvent: noop,
 	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
-	getPromoLink
+	getPromoLink,
 };
 
-export default connect( null, { recordTracksEvent } )( localize( AppPromo ) ) ;
+export default connect( null, { recordTracksEvent } )( localize( AppPromo ) );

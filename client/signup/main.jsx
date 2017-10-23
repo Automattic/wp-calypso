@@ -1,13 +1,28 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
+import url from 'url';
 import debugModule from 'debug';
 import page from 'page';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import {
+	assign,
+	defer,
+	delay,
+	filter,
+	find,
+	indexOf,
+	last,
+	matchesProperty,
+	pick,
+	some,
+	startsWith,
+} from 'lodash';
 import { connect } from 'react-redux';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
@@ -38,6 +53,7 @@ import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { affiliateReferral } from 'state/refer/actions';
 
 /**
  * Constants
@@ -49,7 +65,7 @@ class Signup extends React.Component {
 	static displayName = 'Signup';
 
 	static contextTypes = {
-		store: PropTypes.object
+		store: PropTypes.object,
 	};
 
 	constructor( props, context ) {
@@ -104,16 +120,17 @@ class Signup extends React.Component {
 				vertical,
 				otherText: '',
 			} );
-			SignupActions.submitSignupStep(
-				{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
-			);
+			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+				surveySiteType: 'blog',
+				surveyQuestion: vertical,
+			} );
 		}
 	};
 
 	componentWillMount() {
 		analytics.tracks.recordEvent( 'calypso_signup_start', {
 			flow: this.props.flowName,
-			ref: this.props.refParameter
+			ref: this.props.refParameter,
 		} );
 		recordSignupStart();
 
@@ -140,7 +157,11 @@ class Signup extends React.Component {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
-				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
+				const filteredDestination = utils.getDestination(
+					destination,
+					dependencies,
+					this.props.flowName
+				);
 
 				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
 					return delay(
@@ -149,7 +170,7 @@ class Signup extends React.Component {
 					);
 				}
 				return this.handleFlowComplete( dependencies, filteredDestination );
-			}.bind( this )
+			}.bind( this ),
 		} );
 
 		this.loadProgressFromStore();
@@ -157,7 +178,7 @@ class Signup extends React.Component {
 		const flowSteps = flow.steps;
 		const flowStepsInProgressStore = filter(
 			SignupProgressStore.get(),
-			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
+			step => -1 !== flowSteps.indexOf( step.stepName )
 		);
 
 		if ( flowStepsInProgressStore.length > 0 && ! flow.disallowResume ) {
@@ -195,8 +216,11 @@ class Signup extends React.Component {
 	}
 
 	checkForCartItems = signupDependencies => {
-		const dependenciesContainCartItem = ( dependencies ) => {
-			return dependencies && ( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem );
+		const dependenciesContainCartItem = dependencies => {
+			return (
+				dependencies &&
+				( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+			);
 		};
 
 		if ( dependenciesContainCartItem( signupDependencies ) ) {
@@ -205,7 +229,10 @@ class Signup extends React.Component {
 	};
 
 	recordStep = ( stepName = this.props.stepName ) => {
-		analytics.tracks.recordEvent( 'calypso_signup_step_start', { flow: this.props.flowName, step: stepName } );
+		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
+			flow: this.props.flowName,
+			step: stepName,
+		} );
 	};
 
 	handleFlowComplete = ( dependencies, destination ) => {
@@ -215,11 +242,15 @@ class Signup extends React.Component {
 		recordSignupCompletion();
 
 		this.signupFlowController.reset();
-		if ( dependencies.cartItem || dependencies.domainItem || this.signupFlowController.shouldAutoContinue() ) {
+		if (
+			dependencies.cartItem ||
+			dependencies.domainItem ||
+			this.signupFlowController.shouldAutoContinue()
+		) {
 			this.handleLogin( dependencies, destination );
 		} else {
 			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination )
+				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
 			} );
 		}
 	};
@@ -233,9 +264,11 @@ class Signup extends React.Component {
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( function() {
-				page( destination );
-			}.bind( this ) );
+			defer(
+				function() {
+					page( destination );
+				}.bind( this )
+			);
 		}
 
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
@@ -248,7 +281,7 @@ class Signup extends React.Component {
 			this.setState( {
 				bearerToken: dependencies.bearer_token,
 				username: dependencies.username,
-				redirectTo: this.loginRedirectTo( destination )
+				redirectTo: this.loginRedirectTo( destination ),
 			} );
 		}
 	};
@@ -257,6 +290,12 @@ class Signup extends React.Component {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
+		const urlPath = location.href;
+		const query = url.parse( urlPath, true ).query;
+		const affiliateId = query.aff;
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.affiliateReferral( { urlPath, affiliateId } );
+		}
 	}
 
 	componentWillUnmount() {
@@ -283,7 +322,7 @@ class Signup extends React.Component {
 		const currentSteps = flows.getFlow( this.props.flowName ).steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
-				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+				step => -1 !== currentSteps.indexOf( step.stepName )
 			),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
@@ -302,12 +341,14 @@ class Signup extends React.Component {
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
 
-		return page.redirect( utils.getStepUrl(
-			this.props.flowName,
-			firstUnsubmittedStep,
-			stepSectionName,
-			this.props.locale
-		) );
+		return page.redirect(
+			utils.getStepUrl(
+				this.props.flowName,
+				firstUnsubmittedStep,
+				stepSectionName,
+				this.props.locale
+			)
+		);
 	};
 
 	goToStep = ( stepName, stepSectionName ) => {
@@ -332,7 +373,9 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+				page(
+					utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale )
+				);
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -344,7 +387,7 @@ class Signup extends React.Component {
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
-			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		this.goToStep( nextStepName, nextStepSection );
 	};
@@ -355,7 +398,7 @@ class Signup extends React.Component {
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
-				flow: this.props.flowName
+				flow: this.props.flowName,
 			} );
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
@@ -370,12 +413,9 @@ class Signup extends React.Component {
 	isEveryStepSubmitted = () => {
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 		const signupProgress = filter(
-				SignupProgressStore.get(),
-				step => (
-					-1 !== flowSteps.indexOf( step.stepName ) &&
-					'in-progress' !== step.status
-				),
-			);
+			SignupProgressStore.get(),
+			step => -1 !== flowSteps.indexOf( step.stepName ) && 'in-progress' !== step.status
+		);
 
 		return flowSteps.length === signupProgress.length;
 	};
@@ -385,23 +425,26 @@ class Signup extends React.Component {
 	};
 
 	localeSuggestions = () => {
-		return 0 === this.positionInFlow() && ! user.get()
-			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-			: null;
+		return 0 === this.positionInFlow() && ! user.get() ? (
+			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+		) : null;
 	};
 
 	loginForm = () => {
-		return this.state.bearerToken
-			? <WpcomLoginForm
+		return this.state.bearerToken ? (
+			<WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } />
-			: null;
+				redirectTo={ this.state.redirectTo }
+			/>
+		) : null;
 	};
 
 	pageTitle = () => {
 		const accountFlowName = 'account';
-		return this.props.flowName === accountFlowName ? translate( 'Create an account' ) : translate( 'Create a site' );
+		return this.props.flowName === accountFlowName
+			? translate( 'Create an account' )
+			: translate( 'Create a site' );
 	};
 
 	currentStep = () => {
@@ -410,7 +453,7 @@ class Signup extends React.Component {
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
 			flow = flows.getFlow( this.props.flowName ),
-			hideFreePlan = ! ! (
+			hideFreePlan = !! (
 				this.props.signupDependencies &&
 				this.props.signupDependencies.domainItem &&
 				this.props.signupDependencies.domainItem.is_domain_registration &&
@@ -420,17 +463,17 @@ class Signup extends React.Component {
 		return (
 			<div className="signup__step" key={ stepKey }>
 				{ this.localeSuggestions() }
-				{
-					this.state.loadingScreenStartTime
-					? <SignupProcessingScreen
+				{ this.state.loadingScreenStartTime ? (
+					<SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
-						flowSteps = { flow.steps }
+						flowSteps={ flow.steps }
 					/>
-					: <CurrentComponent
+				) : (
+					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
 						steps={ flow.steps }
@@ -444,16 +487,19 @@ class Signup extends React.Component {
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }
 						hideFreePlan={ hideFreePlan }
-						{ ...propsFromConfig } />
-				}
+						{ ...propsFromConfig }
+					/>
+				) }
 			</div>
 		);
 	};
 
 	render() {
-		if ( ! this.props.stepName ||
+		if (
+			! this.props.stepName ||
 			( this.positionInFlow() > 0 && this.state.progress.length === 0 ) ||
-			this.state.resumingStep ) {
+			this.state.resumingStep
+		) {
 			return null;
 		}
 
@@ -462,18 +508,19 @@ class Signup extends React.Component {
 		return (
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
-				{
-					! this.state.loadingScreenStartTime &&
+				{ ! this.state.loadingScreenStartTime && (
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
 						flowLength={ flow.steps.length }
-						flowName={ this.props.flowName } />
-				}
+						flowName={ this.props.flowName }
+					/>
+				) }
 				<ReactCSSTransitionGroup
 					className="signup__steps"
 					transitionName="signup__step"
 					transitionEnterTimeout={ 500 }
-					transitionLeaveTimeout={ 300 }>
+					transitionLeaveTimeout={ 300 }
+				>
 					{ this.currentStep() }
 				</ReactCSSTransitionGroup>
 				{ this.loginForm() }
@@ -484,9 +531,12 @@ class Signup extends React.Component {
 
 export default connect(
 	state => ( {
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey, loadTrackingTool },
+	{ setSurvey, loadTrackingTool, affiliateReferral },
 	undefined,
-	{ pure: false } )( Signup );
+	{ pure: false }
+)( Signup );

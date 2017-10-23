@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get } from 'lodash';
 
 /**
@@ -39,7 +42,7 @@ export function getCurrentUser( state ) {
  * @param {?Any} otherwise A default value that is returned if no user or property is found
  * @returns {function} A selector which takes the state as a parameter
  */
-export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
+export const createCurrentUserSelector = ( path, otherwise = null ) => state => {
 	const user = getCurrentUser( state );
 	return get( user, path, otherwise );
 };
@@ -51,6 +54,14 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => ( state )
  * @return {?String}        Current user locale
  */
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
+
+/**
+ * Returns the country code for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current user country code
+ */
+export const getCurrentUserCountryCode = createCurrentUserSelector( 'user_ip_country_code' );
 
 /**
  * Returns the number of sites for the current user.

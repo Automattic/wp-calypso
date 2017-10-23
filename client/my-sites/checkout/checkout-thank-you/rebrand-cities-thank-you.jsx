@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -28,20 +31,16 @@ class RebrandCitiesThankYou extends Component {
 					descriptionWithHTML={
 						<div>
 							<p>
-								{ translate( 'Congratulations on taking steps to introduce or reintroduce your ' +
-									'brand to the world. We commend you on starting this journey of establishing ' +
-									'a digital footprint and reaching more customers.' ) }
-							</p>
-							<p>
-								{ translate( 'Please complete our business survey so we can learn more about you ' +
-									'and your business.' ) }
+								{ translate(
+									'Congratulations on taking steps to introduce or reintroduce your ' +
+										'brand to the world. We commend you on starting this journey of establishing ' +
+										'a digital footprint and reaching more customers.'
+								) }
 							</p>
 						</div>
 					}
-					buttonUrl={ 'https://rebrandcities.typeform.com/to/cesv1j?typeform-welcome=0' }
-					buttonText={ translate( 'Start our business survey' ) }
 					icon={ this.renderLogo() }
-					action={ null }
+					action=" "
 				/>
 			</div>
 		);

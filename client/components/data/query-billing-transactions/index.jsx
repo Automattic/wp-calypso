@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -13,7 +17,7 @@ import { requestBillingTransactions } from 'state/billing-transactions/actions';
 class QueryBillingTransactions extends Component {
 	static propTypes = {
 		requestingBillingTransactions: PropTypes.bool,
-		requestBillingTransactions: PropTypes.func
+		requestBillingTransactions: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -30,8 +34,8 @@ class QueryBillingTransactions extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		requestingBillingTransactions: isRequestingBillingTransactions( state )
+	state => ( {
+		requestingBillingTransactions: isRequestingBillingTransactions( state ),
 	} ),
 	{ requestBillingTransactions }
 )( QueryBillingTransactions );

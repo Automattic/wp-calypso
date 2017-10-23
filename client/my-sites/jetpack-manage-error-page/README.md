@@ -52,10 +52,10 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 // create the component using properties accepted by EmptyContent
 <JetpackManageErrorPage
-    action={ this.translate( 'Manage general settings' ) }
+    action={ this.props.translate( 'Manage general settings' ) }
     actionURL="../../settings/general/"
-    title={ this.translate( 'No security configuration is required.' ) }
-    line={ this.translate( 'Security management is automatic for WordPress.com sites.' ) }
+    title={ this.props.translate( 'No security configuration is required.' ) }
+    line={ this.props.translate( 'Security management is automatic for WordPress.com sites.' ) }
     illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 />
 ```

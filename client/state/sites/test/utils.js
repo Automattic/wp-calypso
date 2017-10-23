@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,18 +12,18 @@ import { getSiteComputedAttributes } from '../utils';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 describe( 'utils', () => {
 	describe( 'getSiteComputedAttributes()', () => {
-		it( 'should return null if site is not found', () => {
+		test( 'should return null if site is not found', () => {
 			const state = {
 				...userState,
 				sites: {
-					items: {}
-				}
+					items: {},
+				},
 			};
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).to.be.null;
 		} );
 
-		it( 'should return the "mandatory" attributes', () => {
+		test( 'should return the "mandatory" attributes', () => {
 			const state = {
 				...userState,
 				sites: {
@@ -30,10 +32,10 @@ describe( 'utils', () => {
 							ID: 2916288,
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
-							jetpack: false
-						}
-					}
-				}
+							jetpack: false,
+						},
+					},
+				},
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
@@ -45,17 +47,17 @@ describe( 'utils', () => {
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
 				options: {
-					default_post_format: 'standard'
-				}
+					default_post_format: 'standard',
+				},
 			} );
 		} );
 
-		it( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
+		test( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
 			const options = {
 				default_post_format: 'test',
 				is_mapped_domain: true,
 				unmapped_url: 'https://unmapped-url.wordpress.com',
-				is_redirect: true
+				is_redirect: true,
 			};
 			const state = {
 				...userState,
@@ -66,16 +68,16 @@ describe( 'utils', () => {
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
 							jetpack: false,
-							options
+							options,
 						},
 						2916289: {
 							ID: 2916289,
 							name: 'WordPress.com Example Blog',
 							URL: 'https://example.wordpress.com',
 							jetpack: true,
-						}
-					}
-				}
+						},
+					},
+				},
 			};
 
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );

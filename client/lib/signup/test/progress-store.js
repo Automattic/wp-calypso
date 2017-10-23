@@ -1,84 +1,80 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
-import sinon from 'sinon';
-
 import assert from 'assert';
 import { defer, find, last, omit } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import Dispatcher from 'dispatcher';
 
-describe( 'progress-store', function() {
-	let SignupProgressStore, SignupActions, Dispatcher;
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
-	useFakeDom();
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+describe( 'progress-store', () => {
+	let SignupProgressStore, SignupActions;
 
-	before( () => {
-		Dispatcher = require( 'dispatcher' );
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'dispatcher', Dispatcher );
-			mockery.registerMock( './dependency-store', {
-				dispatchToken: Dispatcher.register( ()=> {} )
-			} );
-		} );
-
+	beforeAll( () => {
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
 	} );
 
-	it( 'should return an empty at first', function() {
+	test( 'should return an empty at first', () => {
 		assert.equal( SignupProgressStore.get().length, 0 );
 	} );
 
-	it( 'should store a new step', function() {
+	test( 'should store a new step', () => {
 		SignupActions.submitSignupStep( {
 			stepName: 'site-selection',
-			formData: { url: 'my-site.wordpress.com' }
+			formData: { url: 'my-site.wordpress.com' },
 		} );
 
 		assert.equal( SignupProgressStore.get().length, 1 );
 		assert.equal( SignupProgressStore.get()[ 0 ].stepName, 'site-selection' );
 	} );
 
-	describe( 'timestamps', function() {
+	describe( 'timestamps', () => {
+		let clock;
+
 		beforeEach( () => {
-			this.clock = sinon.useFakeTimers( 12345 );
+			clock = sinon.useFakeTimers( 12345 );
 		} );
 
 		afterEach( () => {
-			this.clock.restore();
+			clock.restore();
 		} );
 
-		it( 'should be updated at each step', function() {
+		test( 'should be updated at each step', () => {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
 				data: {
-					stepName: 'site-selection'
-				}
+					stepName: 'site-selection',
+				},
 			} );
 
 			assert.equal( SignupProgressStore.get()[ 0 ].lastUpdated, 12345 );
 		} );
 	} );
 
-	it( 'should not store the same step twice', function() {
+	test( 'should not store the same step twice', () => {
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 
 		assert.equal( SignupProgressStore.get().length, 1 );
 		assert.deepEqual( omit( SignupProgressStore.get()[ 0 ], 'lastUpdated' ), {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
-			status: 'completed'
+			status: 'completed',
 		} );
 	} );
 
-	it( 'should not be possible to mutate', function() {
+	test( 'should not be possible to mutate', () => {
 		assert.equal( SignupProgressStore.get().length, 1 );
 
 		// attempt to mutate
@@ -87,7 +83,7 @@ describe( 'progress-store', function() {
 		assert.equal( SignupProgressStore.get().length, 1 );
 	} );
 
-	it( 'should store multiple steps in order', function() {
+	test( 'should store multiple steps in order', () => {
 		SignupActions.submitSignupStep( { stepName: 'theme-selection' } );
 
 		assert.equal( SignupProgressStore.get().length, 2 );
@@ -95,21 +91,24 @@ describe( 'progress-store', function() {
 		assert.equal( SignupProgressStore.get()[ 1 ].stepName, 'theme-selection' );
 	} );
 
-	it( 'should mark submitted steps without an API request method as completed', function() {
+	test( 'should mark submitted steps without an API request method as completed', () => {
 		SignupActions.submitSignupStep( { stepName: 'step-without-api' } );
 
-		assert.equal( find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status, 'completed' );
+		assert.equal(
+			find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status,
+			'completed'
+		);
 	} );
 
-	it( 'should mark submitted steps with an API request method as pending', function() {
+	test( 'should mark submitted steps with an API request method as pending', () => {
 		SignupActions.submitSignupStep( {
-			stepName: 'asyncStep'
+			stepName: 'asyncStep',
 		} );
 
 		assert.equal( find( SignupProgressStore.get(), { stepName: 'asyncStep' } ).status, 'pending' );
 	} );
 
-	it( 'should mark only new saved steps as in-progress', function() {
+	test( 'should mark only new saved steps as in-progress', () => {
 		SignupActions.saveSignupStep( { stepName: 'site-selection' } );
 		defer( () => {
 			assert.notEqual( SignupProgressStore.get()[ 0 ].status, 'in-progress' );
@@ -121,7 +120,7 @@ describe( 'progress-store', function() {
 		} );
 	} );
 
-	it( 'should set the status of a signup step', function() {
+	test( 'should set the status of a signup step', () => {
 		SignupActions.submitSignupStep( { stepName: 'site-selection' } );
 		assert.equal( SignupProgressStore.get()[ 0 ].status, 'completed' );
 

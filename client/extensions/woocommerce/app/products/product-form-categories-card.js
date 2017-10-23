@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -18,22 +21,29 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
-const ProductFormCategoriesCard = (
-	{ siteId, product, productCategories, editProduct, editProductCategory, translate }
-) => {
-	const handleChange = ( categoryNames ) => {
-		const newCategories = compact( categoryNames.map( ( name ) => {
-			const category = find( productCategories, { name: escape( name ) } );
+const ProductFormCategoriesCard = ( {
+	siteId,
+	product,
+	productCategories,
+	editProduct,
+	editProductCategory,
+	translate,
+} ) => {
+	const handleChange = categoryNames => {
+		const newCategories = compact(
+			categoryNames.map( name => {
+				const category = find( productCategories, { name: escape( name ) } );
 
-			if ( ! category ) {
-				// Add a new product category to the creates list.
-				const newCategoryId = generateProductCategoryId();
-				editProductCategory( siteId, { id: newCategoryId }, { name } );
-				return { id: newCategoryId };
-			}
+				if ( ! category ) {
+					// Add a new product category to the creates list.
+					const newCategoryId = generateProductCategoryId();
+					editProductCategory( siteId, { id: newCategoryId }, { name } );
+					return { id: newCategoryId };
+				}
 
-			return pick( category, 'id' );
-		} ) );
+				return pick( category, 'id' );
+			} )
+		);
 
 		// Update the categories list.
 		const data = { id: product.id, categories: newCategories };
@@ -45,10 +55,12 @@ const ProductFormCategoriesCard = (
 	};
 
 	const selectedCategories = product.categories || [];
-	const selectedCategoryNames = compact( selectedCategories.map( ( c ) => {
-		const category = find( productCategories, { id: c.id } );
-		return category && unescape( category.name ) || undefined;
-	} ) );
+	const selectedCategoryNames = compact(
+		selectedCategories.map( c => {
+			const category = find( productCategories, { id: c.id } );
+			return ( category && unescape( category.name ) ) || undefined;
+		} )
+	);
 	const productCategoryNames = productCategories.map( c => unescape( c.name ) );
 
 	return (
@@ -63,17 +75,17 @@ const ProductFormCategoriesCard = (
 					onChange={ handleChange }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Categories let you group similar products so customers can find them more easily.' ) }
+					{ translate(
+						'Categories let you group similar products so customers can find them more easily.'
+					) }
 				</FormSettingExplanation>
 			</FormFieldSet>
 			<div className="products__product-form-featured">
-				<FormLabel htmlFor="featured">{ translate( 'Featured' ) }
-					<CompactFormToggle
-						onChange={ toggleFeatured }
-						checked={ product.featured }
-					>
-					{ translate( 'Promote this product across the store' ) }
-				</CompactFormToggle>
+				<FormLabel htmlFor="featured">
+					{ translate( 'Featured' ) }
+					<CompactFormToggle onChange={ toggleFeatured } checked={ product.featured }>
+						{ translate( 'Promote this product across the store' ) }
+					</CompactFormToggle>
 				</FormLabel>
 			</div>
 		</Card>

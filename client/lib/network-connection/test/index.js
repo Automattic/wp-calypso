@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,61 +12,65 @@ import sinon from 'sinon';
 import config from 'config';
 import NetworkConnectionApp from 'lib/network-connection';
 
-describe( 'index', function() {
-	beforeEach( function() {
-		this.configStub = sinon.stub( config, 'isEnabled' ).returns( true );
+describe( 'index', () => {
+	let configStub;
+
+	beforeEach( () => {
+		configStub = sinon.stub( config, 'isEnabled' ).returns( true );
 	} );
 
-	afterEach( function() {
-		this.configStub.restore();
+	afterEach( () => {
+		configStub.restore();
 	} );
 
-	it( 'has to be enabled when config flag is enabled', function() {
+	test( 'has to be enabled when config flag is enabled', () => {
 		expect( NetworkConnectionApp.isEnabled() ).to.be.true;
 	} );
 
-	it( 'has initial state connected', function() {
+	test( 'has initial state connected', () => {
 		expect( NetworkConnectionApp.isConnected() ).to.be.true;
 	} );
 
-	describe( 'Events', function() {
-		beforeEach( function() {
-			this.changeSpy = sinon.spy();
-			NetworkConnectionApp.on( 'change', this.changeSpy );
+	describe( 'Events', () => {
+		let changeSpy;
+
+		beforeEach( () => {
+			changeSpy = sinon.spy();
+			NetworkConnectionApp.on( 'change', changeSpy );
 		} );
 
-		afterEach( function() {
-			NetworkConnectionApp.off( 'change', this.changeSpy );
+		afterEach( () => {
+			NetworkConnectionApp.off( 'change', changeSpy );
 		} );
 
-		it( 'has to persist connected state when connected event sent', function() {
+		test( 'has to persist connected state when connected event sent', () => {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.neverCalled;
+			expect( changeSpy ).to.have.been.neverCalled;
 		} );
 
-		it( 'has to change state to disconnected when disconnected event sent', function() {
+		test( 'has to change state to disconnected when disconnected event sent', () => {
 			NetworkConnectionApp.emitDisconnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.false;
-			expect( this.changeSpy ).to.have.been.calledOnce;
+			expect( changeSpy ).to.have.been.calledOnce;
 		} );
 
-		it( 'has to change state to connected only once when connected event sent twice', function() {
+		test( 'has to change state to connected only once when connected event sent twice', () => {
 			NetworkConnectionApp.emitConnected();
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.calledOnce;
+			expect( changeSpy ).to.have.been.calledOnce;
 		} );
 
-		it( 'has to change state to disconnected and then back to connected when disconnected and then connected events sent', function() {
+		test( 'has to change state to disconnected and then back to connected when disconnected and then connected events sent', () => {
 			NetworkConnectionApp.emitDisconnected();
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( this.changeSpy ).to.have.been.calledTwice;
+			expect( changeSpy ).to.have.been.calledTwice;
 		} );
 	} );
 } );

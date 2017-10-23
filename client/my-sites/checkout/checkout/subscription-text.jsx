@@ -1,7 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,15 +18,15 @@ const SubscriptionText = React.createClass( {
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			return (
 				<span className="subscription-text">
-					{ this.translate( 'renews annually', {
-						context: 'Informative text for renewals in /checkout'
+					{ this.props.translate( 'renews annually', {
+						context: 'Informative text for renewals in /checkout',
 					} ) }
 				</span>
 			);
 		}
 
 		return null;
-	}
+	},
 } );
 
-export default SubscriptionText;
+export default localize( SubscriptionText );

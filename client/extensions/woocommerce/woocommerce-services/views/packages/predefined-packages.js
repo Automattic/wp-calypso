@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,22 +19,30 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import PackagesListItem from './packages-list-item';
 import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
 
-const PredefinedPackages = ( { siteId, form, toggleAll, togglePackage, currentlyEditingPredefinedPackages, translate } ) => {
+const PredefinedPackages = ( {
+	siteId,
+	form,
+	toggleAll,
+	togglePackage,
+	currentlyEditingPredefinedPackages,
+	translate,
+} ) => {
 	const { dimensionUnit } = form;
 
-	const renderGroupHeader = ( group ) => {
+	const renderGroupHeader = group => {
 		const onToggle = ( state, event ) => {
 			event.stopPropagation();
 			toggleAll( siteId, group.serviceId, group.groupId, event.target.checked );
 		};
 
 		return (
-			<div className="packages__group-header" >
+			<div className="packages__group-header">
 				<BulkSelect
 					totalElements={ group.total }
 					selectedElements={ group.selected }
 					onToggle={ onToggle }
-					className="packages__group-header-checkbox" />
+					className="packages__group-header-checkbox"
+				/>
 				{ group.title }
 			</div>
 		);
@@ -48,18 +59,21 @@ const PredefinedPackages = ( { siteId, form, toggleAll, togglePackage, currently
 		} );
 	};
 
-	const renderServicePackages = ( group ) => {
+	const renderServicePackages = group => {
 		return group.packages.map( ( pckg, index ) => {
 			const onToggle = () => togglePackage( siteId, pckg.serviceId, pckg.id );
 
-			return ( <PackagesListItem
-				key={ index }
-				siteId={ siteId }
-				data={ pckg }
-				dimensionUnit={ dimensionUnit }
-				prefixActions >
-				<FormCheckbox checked={ pckg.selected } onChange={ onToggle } />
-			</PackagesListItem> );
+			return (
+				<PackagesListItem
+					key={ index }
+					siteId={ siteId }
+					data={ pckg }
+					dimensionUnit={ dimensionUnit }
+					prefixActions
+				>
+					<FormCheckbox checked={ pckg.selected } onChange={ onToggle } />
+				</PackagesListItem>
+			);
 		} );
 	};
 
@@ -69,28 +83,27 @@ const PredefinedPackages = ( { siteId, form, toggleAll, togglePackage, currently
 		forEach( currentlyEditingPredefinedPackages, ( group, groupId ) => {
 			const summary = getSelectionSummary( group.selected, group.total );
 
-			elements.push( <FoldableCard
-				className="packages__predefined-packages"
-				key={ groupId }
-				header={ renderGroupHeader( group ) }
-				summary={ summary }
-				expandedSummary={ summary }
-				clickableHeader={ true }
-				expanded={ false }
-				screenReaderText={ translate( 'Expand Services' ) }
-				icon="chevron-down" >
-				{ renderServicePackages( group ) }
-			</FoldableCard> );
+			elements.push(
+				<FoldableCard
+					className="packages__predefined-packages"
+					key={ groupId }
+					header={ renderGroupHeader( group ) }
+					summary={ summary }
+					expandedSummary={ summary }
+					clickableHeader={ true }
+					expanded={ false }
+					screenReaderText={ translate( 'Expand Services' ) }
+					icon="chevron-down"
+				>
+					{ renderServicePackages( group ) }
+				</FoldableCard>
+			);
 		} );
 
 		return elements;
 	};
 
-	return (
-		<div>
-			{ renderContent() }
-		</div>
-	);
+	return <div>{ renderContent() }</div>;
 };
 
 PredefinedPackages.PropTypes = {
@@ -102,6 +115,6 @@ PredefinedPackages.PropTypes = {
 	} ).isRequired,
 };
 
-export default connect( ( state ) => ( {
+export default connect( state => ( {
 	currentlyEditingPredefinedPackages: getCurrentlyEditingPredefinedPackages( state ),
 } ) )( localize( PredefinedPackages ) );

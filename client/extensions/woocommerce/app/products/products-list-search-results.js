@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,7 +22,7 @@ import {
 	getProductSearchCurrentPage,
 	getProductSearchResults,
 	getProductSearchRequestedPage,
- } from 'woocommerce/state/ui/products/selectors';
+} from 'woocommerce/state/ui/products/selectors';
 import ProductsListPagination from './products-list-pagination';
 import ProductsListTable from './products-list-table';
 
@@ -41,9 +44,9 @@ const ProductsListSearchResults = ( {
 				<p>
 					{ translate( 'No products match your search for {{searchTerm/}}.', {
 						components: {
-							searchTerm: <em>{ query }</em>
-						}
-					} )}
+							searchTerm: <em>{ query }</em>,
+						},
+					} ) }
 				</p>
 			</div>
 		);
@@ -52,11 +55,7 @@ const ProductsListSearchResults = ( {
 	const isRequesting = ( requestedPage && ! requestedPageLoaded ) || ! products ? true : false;
 	return (
 		<div className="products__list-wrapper">
-			<ProductsListTable
-				site={ site }
-				products={ products }
-				isRequesting={ isRequesting }
-			/>
+			<ProductsListTable site={ site } products={ products } isRequesting={ isRequesting } />
 			<ProductsListPagination
 				site={ site }
 				totalProducts={ totalProducts }
@@ -71,10 +70,7 @@ const ProductsListSearchResults = ( {
 
 ProductsListSearchResults.propTypes = {
 	site: PropTypes.object,
-	products: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.bool,
-	] ),
+	products: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 	currentPage: PropTypes.number,
 	currentPageLoaded: PropTypes.bool,
 	requestedPage: PropTypes.number,
@@ -86,13 +82,27 @@ ProductsListSearchResults.propTypes = {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const query = site && getProductSearchQuery( state, site.ID );
 	const currentPage = site && getProductSearchCurrentPage( state, site.ID );
-	const currentPageLoaded = site && currentPage && areProductSearchResultsLoaded( state, currentPage, site.ID );
+	const currentPageLoaded =
+		site &&
+		currentPage &&
+		areProductSearchResultsLoaded(
+			state,
+			{ page: currentPage, per_page: 10, search: query },
+			site.ID
+		);
 	const requestedPage = site && getProductSearchRequestedPage( state, site.ID );
-	const requestedPageLoaded = site && requestedPage && areProductSearchResultsLoaded( state, requestedPage, site.ID );
+	const requestedPageLoaded =
+		site &&
+		requestedPage &&
+		areProductSearchResultsLoaded(
+			state,
+			{ page: requestedPage, per_page: 10, search: query },
+			site.ID
+		);
 	const totalProducts = site && getTotalProductSearchResults( state, site.ID );
 	const products = site && getProductSearchResults( state, site.ID );
-	const query = site && getProductSearchQuery( state, site.ID );
 
 	return {
 		site,

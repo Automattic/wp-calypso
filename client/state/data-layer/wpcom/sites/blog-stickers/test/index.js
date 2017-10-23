@@ -1,19 +1,21 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { requestBlogStickerList, receiveBlogStickerListError } from '../';
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-list', () => {
 	describe( 'requestBlogStickerList', () => {
-		it( 'should dispatch an http request and call through next', () => {
+		test( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
 			const action = listBlogStickers( 123 );
 			requestBlogStickerList( { dispatch }, action );
@@ -25,13 +27,13 @@ describe( 'blog-sticker-list', () => {
 					apiVersion: '1.1',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
 
 	describe( 'receiveBlogStickerListError', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
 			receiveBlogStickerListError( { dispatch }, { payload: { blogId: 123 } } );
 			expect( dispatch ).to.have.been.calledWithMatch( {

@@ -1,11 +1,16 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+const StatsTabsTab = React.createClass( {
 	displayName: 'StatsTabsTab',
 
 	propTypes: {
@@ -17,10 +22,7 @@ export default React.createClass( {
 		selected: PropTypes.bool,
 		tabClick: PropTypes.func,
 		compact: PropTypes.bool,
-		value: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string
-		] )
+		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 	},
 
 	clickHandler( event ) {
@@ -36,25 +38,33 @@ export default React.createClass( {
 			return null;
 		}
 
-		if ( ( ! loading ) && ( value || value === 0 ) ) {
-			return this.numberFormat( value );
+		if ( ! loading && ( value || value === 0 ) ) {
+			return this.props.numberFormat( value );
 		}
 
 		return String.fromCharCode( 8211 );
 	},
 
 	render() {
-		const { className, compact, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
-
-		const tabClass = classNames(
-			'stats-tab',
+		const {
 			className,
-			{
-				'is-selected': selected,
-				'is-loading': loading,
-				'is-low': ! value,
-				'is-compact': compact
-			} );
+			compact,
+			children,
+			gridicon,
+			href,
+			label,
+			loading,
+			selected,
+			tabClick,
+			value,
+		} = this.props;
+
+		const tabClass = classNames( 'stats-tab', className, {
+			'is-selected': selected,
+			'is-loading': loading,
+			'is-low': ! value,
+			'is-compact': compact,
+		} );
 
 		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
 		const tabLabel = <span className="label">{ label }</span>;
@@ -62,17 +72,25 @@ export default React.createClass( {
 		const hasClickAction = href || tabClick;
 
 		return (
-			<li className={ tabClass } onClick={ this.clickHandler } >
-				{
-					hasClickAction
-					?	<a href={ href }>
-							{ tabIcon }{ tabLabel }{ tabValue }{ children }
-						</a>
-					: 	<span className="no-link">
-							{ tabIcon }{ tabLabel }{ tabValue }{ children }
-						</span>
-				}
+			<li className={ tabClass } onClick={ this.clickHandler }>
+				{ hasClickAction ? (
+					<a href={ href }>
+						{ tabIcon }
+						{ tabLabel }
+						{ tabValue }
+						{ children }
+					</a>
+				) : (
+					<span className="no-link">
+						{ tabIcon }
+						{ tabLabel }
+						{ tabValue }
+						{ children }
+					</span>
+				) }
 			</li>
 		);
-	}
+	},
 } );
+
+export default localize( StatsTabsTab );

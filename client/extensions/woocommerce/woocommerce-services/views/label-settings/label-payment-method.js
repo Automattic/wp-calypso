@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -29,17 +32,27 @@ export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 		return supportedTypes[ paymentType ];
 	}
 
-	return translate( '%(card)s ****%(digits)s', { args: {
-		card: supportedTypes[ paymentType ],
-		digits
-	} } );
+	return translate( '%(card)s ****%(digits)s', {
+		args: {
+			card: supportedTypes[ paymentType ],
+			digits,
+		},
+	} );
 };
 
-const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, expiry, onSelect } ) => {
+const PaymentMethod = ( {
+	translate,
+	selected,
+	isLoading,
+	type,
+	digits,
+	name,
+	expiry,
+	onSelect,
+} ) => {
 	const renderPlaceholder = () => (
 		<CompactCard className="label-settings__card">
-			<FormCheckbox
-				className="label-settings__card-checkbox" />
+			<FormCheckbox className="label-settings__card-checkbox" />
 			<PaymentLogo className="label-settings__card-logo" type="placeholder" />
 			<div className="label-settings__card-details">
 				<p className="label-settings__card-number" />

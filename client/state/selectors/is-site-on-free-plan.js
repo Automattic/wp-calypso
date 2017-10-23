@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { PLAN_FREE } from 'lib/plans/constants';
 

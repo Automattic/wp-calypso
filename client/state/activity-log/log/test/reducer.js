@@ -8,12 +8,33 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { logItems } from '../reducer';
+import ActivityQueryManager from 'lib/query-manager/activity';
+import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
-import { withSchemaValidation } from 'state/utils';
 
-const logItemsReducer = withSchemaValidation( logItems.schema, logItems );
+const SITE_ID = 123456789;
+const ACTIVITY_ID = 'foobarbaz';
+const ACTIVITY_ITEM = deepFreeze( {
+	activityDate: '2017-08-27T00:00:59+00:00',
+	activityGroup: 'plugin',
+	activityIcon: 'plugins',
+	activityId: 'foobarbas',
+	activityIsRewindable: false,
+	activityName: 'plugin__updated',
+	activityStatus: 'warning',
+	activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
+	activityTs: 1503792059000,
+	actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+	actorName: 'User display name',
+	actorRemoteId: 1,
+	actorRole: 'administrator',
+	actorType: 'Person',
+	actorWpcomId: 123456,
+} );
+
+const populateQueryManager = ( data = [], query = {} ) =>
+	new ActivityQueryManager().receive( data, { found: data.length, query } );
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {
@@ -21,102 +42,74 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#logItems()', () => {
-		it( 'should default to an empty object', () => {
-			const state = logItemsReducer( undefined, {} );
+		test( 'should default to an empty object', () => {
+			const state = logItems( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should populate state with activity', () => {
-			const siteId = 12345;
-			const data = deepFreeze( [
-				{
-					activityDate: '2017-08-27T00:00:59+00:00',
-					activityGroup: 'plugin',
-					activityIcon: 'plugins',
-					activityId: 'foobarbas',
-					activityName: 'plugin__updated',
-					activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
-					activityTs: 1503792059000,
-					actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
-					actorName: 'User display name',
-					actorRemoteId: 1,
-					actorRole: 'administrator',
-					actorType: 'Person',
-					actorWpcomId: 123456,
-				},
-			] );
-			const state = logItemsReducer( undefined, {
+		test( 'should populate state with activity', () => {
+			const data = deepFreeze( [ ACTIVITY_ITEM ] );
+			const state = logItems( undefined, {
 				type: ACTIVITY_LOG_UPDATE,
-				siteId,
+				siteId: SITE_ID,
 				data,
+				found: data.length,
+				query: {},
 			} );
 
 			expect( state ).to.eql( {
-				[ 12345 ]: data,
+				[ SITE_ID ]: populateQueryManager( data, {} ),
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
-				12345: [
-					{
-						activityDate: '2017-08-27T00:00:59+00:00',
-						activityGroup: 'plugin',
-						activityIcon: 'plugins',
-						activityId: 'foobarbas',
-						activityName: 'plugin__updated',
-						activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
-						activityTs: 1503792059000,
-						actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
-						actorName: 'User display name',
-						actorRemoteId: 1,
-						actorRole: 'administrator',
-						actorType: 'Person',
-						actorWpcomId: 123456,
-					},
-				],
+				[ SITE_ID ]: populateQueryManager( [ ACTIVITY_ITEM ], {} ),
 			} );
-			const state = logItemsReducer( original, { type: SERIALIZE } );
+			const state = logItems( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				12345: [
-					{
-						activityDate: '2017-08-27T00:00:59+00:00',
-						activityGroup: 'plugin',
-						activityIcon: 'plugins',
-						activityId: 'foobarbas',
-						activityName: 'plugin__updated',
-						activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
-						activityTs: 1503792059000,
-						actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
-						actorName: 'User display name',
-						actorRemoteId: 1,
-						actorRole: 'administrator',
-						actorType: 'Person',
-						actorWpcomId: 123456,
+				[ SITE_ID ]: {
+					data: {
+						items: {
+							[ ACTIVITY_ID ]: ACTIVITY_ITEM,
+						},
+						queries: {},
 					},
-				],
+					options: {
+						itemKey: 'activityId',
+					},
+				},
 			} );
 
-			const state = logItemsReducer( original, { type: DESERIALIZE } );
+			const state = logItems( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				12345: [
-					{
-						activityName: 'Not a known Activity name.',
+				[ SITE_ID ]: {
+					data: {
+						items: {
+							[ ACTIVITY_ID ]: {
+								...ACTIVITY_ITEM,
+								activityId: null,
+							},
+						},
+						queries: {},
 					},
-				],
+					options: {
+						itemKey: 'activityId',
+					},
+				},
 			} );
-			const state = logItemsReducer( original, { type: DESERIALIZE } );
+			const state = logItems( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );

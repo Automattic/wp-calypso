@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -15,10 +19,10 @@ import { toggleWPcomEmailSetting } from 'lib/notification-settings-store/actions
 const EmailCategory = React.createClass( {
 	propTypes() {
 		return {
-			name: React.PropTypes.string,
-			isEnabled: React.PropTypes.bool,
-			title: React.PropTypes.string,
-			description: React.PropTypes.string
+			name: PropTypes.string,
+			isEnabled: PropTypes.bool,
+			title: PropTypes.string,
+			description: PropTypes.string,
 		};
 	},
 
@@ -36,7 +40,7 @@ const EmailCategory = React.createClass( {
 				</FormLabel>
 			</FormFieldset>
 		);
-	}
+	},
 } );
 
 export default EmailCategory;

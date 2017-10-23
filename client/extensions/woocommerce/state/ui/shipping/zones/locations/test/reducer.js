@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -6,7 +8,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer, { initialState, JOURNAL_ACTIONS } from '../reducer';
 import {
 	openEditLocations,
 	closeEditLocations,
@@ -19,6 +20,7 @@ import {
 	filterByState,
 	filterByPostcode,
 } from '../actions';
+import reducer, { initialState, JOURNAL_ACTIONS } from '../reducer';
 
 const initialStateWithTempChanges = {
 	...initialState,
@@ -29,18 +31,16 @@ const siteId = 123;
 
 describe( 'reducer', () => {
 	describe( 'openEditLocations', () => {
-		it( 'should add an empty set of "temporal changes" to the state', () => {
+		test( 'should add an empty set of "temporal changes" to the state', () => {
 			const newState = reducer( initialState, openEditLocations( siteId ) );
 			expect( newState ).to.deep.equal( initialStateWithTempChanges );
 		} );
 	} );
 
 	describe( 'closeEditLocations', () => {
-		it( 'should commit the temporal changes to the main state', () => {
+		test( 'should commit the temporal changes to the main state', () => {
 			const state = {
-				journal: [
-					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-				],
+				journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 				states: null,
 				postcode: null,
 				pristine: false,
@@ -69,11 +69,9 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'cancelEditLocations', () => {
-		it( 'should discard the temporal changes', () => {
+		test( 'should discard the temporal changes', () => {
 			const state = {
-				journal: [
-					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-				],
+				journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 				states: null,
 				postcode: null,
 				pristine: false,
@@ -89,9 +87,7 @@ describe( 'reducer', () => {
 			};
 			const newState = reducer( state, cancelEditLocations( siteId ) );
 			expect( newState ).to.deep.equal( {
-				journal: [
-					{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-				],
+				journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 				states: null,
 				postcode: null,
 				pristine: false,
@@ -101,24 +97,31 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'toggleContinentSelected', () => {
-		it( 'should add an ADD_CONTINENT entry to the journal', () => {
-			const newState = reducer( initialStateWithTempChanges, toggleContinentSelected( siteId, 'NA', true ) );
+		test( 'should add an ADD_CONTINENT entry to the journal', () => {
+			const newState = reducer(
+				initialStateWithTempChanges,
+				toggleContinentSelected( siteId, 'NA', true )
+			);
 			expect( newState.temporaryChanges.journal ).to.deep.equal( [
 				{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'NA' },
 			] );
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should add an REMOVE_CONTINENT entry to the journal', () => {
-			const newState = reducer( initialStateWithTempChanges, toggleContinentSelected( siteId, 'NA', false ) );
+		test( 'should add an REMOVE_CONTINENT entry to the journal', () => {
+			const newState = reducer(
+				initialStateWithTempChanges,
+				toggleContinentSelected( siteId, 'NA', false )
+			);
 			expect( newState.temporaryChanges.journal ).to.deep.equal( [
 				{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'NA' },
 			] );
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should NOT remove previous entries of the journal, only add entries instead', () => {
-			const state = { ...initialState,
+		test( 'should NOT remove previous entries of the journal, only add entries instead', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [
 						{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'NA' },
@@ -138,8 +141,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should always reset the postcode filter', () => {
-			const state = { ...initialState,
+		test( 'should always reset the postcode filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: null,
@@ -152,8 +156,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should always reset the states filter', () => {
-			const state = { ...initialState,
+		test( 'should always reset the states filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: { add: [ 'UT' ], remove: [ 'CA' ] },
@@ -168,24 +173,31 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'toggleCountrySelected', () => {
-		it( 'should add an ADD_COUNTRY entry to the journal', () => {
-			const newState = reducer( initialStateWithTempChanges, toggleCountrySelected( siteId, 'US', true ) );
+		test( 'should add an ADD_COUNTRY entry to the journal', () => {
+			const newState = reducer(
+				initialStateWithTempChanges,
+				toggleCountrySelected( siteId, 'US', true )
+			);
 			expect( newState.temporaryChanges.journal ).to.deep.equal( [
 				{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
 			] );
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should add an REMOVE_COUNTRY entry to the journal', () => {
-			const newState = reducer( initialStateWithTempChanges, toggleCountrySelected( siteId, 'US', false ) );
+		test( 'should add an REMOVE_COUNTRY entry to the journal', () => {
+			const newState = reducer(
+				initialStateWithTempChanges,
+				toggleCountrySelected( siteId, 'US', false )
+			);
 			expect( newState.temporaryChanges.journal ).to.deep.equal( [
 				{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
 			] );
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should NOT remove previous entries of the journal, only add entries instead', () => {
-			const state = { ...initialState,
+		test( 'should NOT remove previous entries of the journal, only add entries instead', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [
 						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
@@ -205,8 +217,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should always reset the postcode filter', () => {
-			const state = { ...initialState,
+		test( 'should always reset the postcode filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: null,
@@ -219,8 +232,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should always reset the states filter', () => {
-			const state = { ...initialState,
+		test( 'should always reset the states filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: { add: [ 'UT' ], remove: [ 'CA' ] },
@@ -235,8 +249,9 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'toggleStateSelected', () => {
-		it( 'should add a state to the list even if the states filter was uninitialized', () => {
-			const state = { ...initialState,
+		test( 'should add a state to the list even if the states filter was uninitialized', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: null,
@@ -253,8 +268,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should add a previously removed state to the list', () => {
-			const state = { ...initialState,
+		test( 'should add a previously removed state to the list', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -275,8 +291,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should add a state to the list', () => {
-			const state = { ...initialState,
+		test( 'should add a state to the list', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -297,8 +314,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should remove a previously added state from the list', () => {
-			const state = { ...initialState,
+		test( 'should remove a previously added state from the list', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -319,8 +337,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should remove a state from the list', () => {
-			const state = { ...initialState,
+		test( 'should remove a state from the list', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -341,8 +360,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should preserve the removeAll flag', () => {
-			const state = { ...initialState,
+		test( 'should preserve the removeAll flag', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -365,7 +385,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'editPostcode', () => {
-		it( 'should store the given "postcode" value', () => {
+		test( 'should store the given "postcode" value', () => {
 			const newState = reducer( initialStateWithTempChanges, editPostcode( siteId, '12345' ) );
 			expect( newState.temporaryChanges.postcode ).to.equal( '12345' );
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
@@ -373,8 +393,9 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'filterByWholeCountry', () => {
-		it( 'should remove the postcode filter', () => {
-			const state = { ...initialState,
+		test( 'should remove the postcode filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: null,
@@ -387,8 +408,9 @@ describe( 'reducer', () => {
 			expect( newState.temporaryChanges.pristine ).to.equal( false );
 		} );
 
-		it( 'should remove the states filter', () => {
-			const state = { ...initialState,
+		test( 'should remove the states filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {
@@ -407,8 +429,9 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'filterByState', () => {
-		it( 'should remove the postcode filter', () => {
-			const state = { ...initialState,
+		test( 'should remove the postcode filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: null,
@@ -428,8 +451,9 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'filterByPostcode', () => {
-		it( 'should remove the states filter', () => {
-			const state = { ...initialState,
+		test( 'should remove the states filter', () => {
+			const state = {
+				...initialState,
 				temporaryChanges: {
 					journal: [],
 					states: {

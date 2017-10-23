@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -10,19 +14,18 @@ import React, { PropTypes } from 'react';
 import Card from 'components/card';
 
 export default React.createClass( {
-
 	displayName: 'FeatureComparison',
 
 	propTypes: {
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	render() {
 		const classes = classNames( this.props.className, 'feature-comparison' );
 		return (
-			<Card compact className={ classes } >
+			<Card compact className={ classes }>
 				{ this.props.children }
 			</Card>
 		);
-	}
+	},
 } );

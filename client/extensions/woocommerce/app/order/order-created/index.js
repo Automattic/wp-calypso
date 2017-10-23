@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +12,7 @@ class OrderCreated extends Component {
 		order: PropTypes.shape( {
 			date_created_gmt: PropTypes.string.isRequired,
 		} ),
-	}
+	};
 
 	render() {
 		const { moment, order, translate } = this.props;
@@ -20,15 +21,12 @@ class OrderCreated extends Component {
 		}
 
 		const createdMoment = moment( order.date_created_gmt + 'Z' );
-		const createdLabel = translate(
-			'Order created on %(createdDate)s at %(createdTime)s',
-			{
-				args: {
-					createdDate: createdMoment.format( 'll' ),
-					createdTime: createdMoment.format( 'LT' ),
-				}
-			}
-		);
+		const createdLabel = translate( 'Order created on %(createdDate)s at %(createdTime)s', {
+			args: {
+				createdDate: createdMoment.format( 'll' ),
+				createdTime: createdMoment.format( 'LT' ),
+			},
+		} );
 
 		return (
 			<div className="order-created">

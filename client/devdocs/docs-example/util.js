@@ -1,4 +1,8 @@
-/* eslint-disable no-console */
+/**
+ * /* eslint-disable no-console
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -15,15 +19,11 @@ const getComponentName = docsExample => {
 		return '';
 	}
 
-	if (
-		! docsExample.type ||
-		( ! docsExample.type.displayName && ! docsExample.type.name )
-	) {
+	if ( ! docsExample.type || ( ! docsExample.type.displayName && ! docsExample.type.name ) ) {
 		return console.trace( 'Component must be defined' );
 	}
 
-	return ( docsExample.type.displayName || docsExample.type.name )
-		.replace( /Example$/, '' );
+	return ( docsExample.type.displayName || docsExample.type.name ).replace( /Example$/, '' );
 };
 
 const slugToCamelCase = name => {
@@ -43,13 +43,7 @@ const camelCaseToSlug = name => {
 		return console.trace();
 	}
 
-	return name
-		.replace( /\.?([A-Z])/g, ( x, y ) => '-' + y.toLowerCase() )
-		.replace( /^-/, '' );
+	return name.replace( /\.?([A-Z])/g, ( x, y ) => '-' + y.toLowerCase() ).replace( /^-/, '' );
 };
 
-export {
-	getComponentName,
-	slugToCamelCase,
-	camelCaseToSlug
-};
+export { getComponentName, slugToCamelCase, camelCaseToSlug };

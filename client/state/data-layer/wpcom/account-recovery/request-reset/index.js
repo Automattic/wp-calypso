@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
@@ -11,20 +14,22 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 export const requestReset = ( { dispatch }, action ) => {
-	const {
-		userData,
-		method,
-	} = action;
+	const { userData, method } = action;
 
-	dispatch( http( {
-		method: 'POST',
-		apiNamespace: 'wpcom/v2',
-		path: '/account-recovery/request-reset',
-		body: {
-			...userData,
-			method,
-		},
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				apiNamespace: 'wpcom/v2',
+				path: '/account-recovery/request-reset',
+				body: {
+					...userData,
+					method,
+				},
+			},
+			action
+		)
+	);
 };
 
 export const handleError = ( { dispatch }, action, rawError ) => {
@@ -43,9 +48,7 @@ export const handleSuccess = ( { dispatch }, action ) => {
 };
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: [ dispatchRequest(
-		requestReset,
-		handleSuccess,
-		handleError
-	) ],
+	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: [
+		dispatchRequest( requestReset, handleSuccess, handleError ),
+	],
 };

@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 class EmptyContent extends Component {
@@ -31,7 +35,7 @@ class EmptyContent extends Component {
 	static displayName = 'EmptyContent';
 
 	primaryAction() {
-		if ( 'string' !== typeof this.props.action ) {
+		if ( typeof this.props.action !== 'string' ) {
 			return this.props.action;
 		}
 
@@ -73,7 +77,7 @@ class EmptyContent extends Component {
 	}
 
 	secondaryAction() {
-		if ( 'string' !== typeof this.props.secondaryAction ) {
+		if ( typeof this.props.secondaryAction !== 'string' ) {
 			return this.props.secondaryAction;
 		}
 
@@ -114,13 +118,13 @@ class EmptyContent extends Component {
 	render() {
 		const action = this.props.action && this.primaryAction();
 		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
-		const illustration =
-			this.props.illustration &&
+		const illustration = this.props.illustration && (
 			<img
 				src={ this.props.illustration }
 				width={ this.props.illustrationWidth }
 				className="empty-content__illustration"
-			/>;
+			/>
+		);
 
 		return (
 			<div

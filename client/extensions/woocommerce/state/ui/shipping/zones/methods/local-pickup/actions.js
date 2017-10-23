@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,

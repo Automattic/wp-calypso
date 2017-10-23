@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**

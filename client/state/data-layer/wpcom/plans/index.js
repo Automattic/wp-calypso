@@ -1,6 +1,9 @@
 /**
  * Internal dependencies
+ *
+ * @format
  */
+
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
@@ -21,13 +24,16 @@ import {
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
-export const requestPlans = ( { dispatch }, action ) => dispatch( http( {
-	apiVersion: '1.4',
-	method: 'GET',
-	path: '/plans',
-	onSuccess: action,
-	onFailure: action,
-} ) );
+export const requestPlans = ( { dispatch }, action ) =>
+	dispatch(
+		http( {
+			apiVersion: '1.4',
+			method: 'GET',
+			path: '/plans',
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
 
 /**
  * Dispatches returned WordPress.com plan data
@@ -49,9 +55,7 @@ export const receivePlans = ( { dispatch }, action, plans ) => {
  * @param {Object} rawError raw error from HTTP request
  */
 export const receiveError = ( { dispatch }, action, rawError ) => {
-	const error = rawError instanceof Error
-		? rawError.message
-		: rawError;
+	const error = rawError instanceof Error ? rawError.message : rawError;
 
 	dispatch( plansRequestFailureAction( error ) );
 };

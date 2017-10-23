@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -31,8 +33,10 @@ class PrivateSite extends Component {
 				</h2>
 
 				<p>
-					{ translate( "Request an invitation to view it and we'll " +
-						'send your username to the site owner for their approval.' ) }
+					{ translate(
+						"Request an invitation to view it and we'll " +
+							'send your username to the site owner for their approval.'
+					) }
 				</p>
 
 				<Button primary className="wp-login__private-site-button">

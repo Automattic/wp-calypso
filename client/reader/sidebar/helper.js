@@ -11,7 +11,9 @@ const exported = {
 				.split( '?' )[ 0 ]
 				.replace( /\/manage$/, '' )
 				.toLowerCase(),
-			pathLowerCase = decodeURIComponent( path ).replace( /\/manage$/, '' ).toLowerCase();
+			pathLowerCase = decodeURIComponent( path )
+				.replace( /\/manage$/, '' )
+				.toLowerCase();
 
 		let selected = basePathLowerCase === pathLowerCase,
 			isActionButtonSelected = false;

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,16 +11,16 @@ import { expect } from 'chai';
 import { getPosterUploadProgress } from '../';
 
 describe( 'getPosterUploadProgress()', () => {
-	it( 'should return the upload progress', () => {
+	test( 'should return the upload progress', () => {
 		const percentage = 50;
 		const uploadProgress = getPosterUploadProgress( {
 			ui: {
 				editor: {
 					videoEditor: {
-						uploadProgress: percentage
-					}
-				}
-			}
+						uploadProgress: percentage,
+					},
+				},
+			},
 		} );
 
 		expect( uploadProgress ).to.eql( percentage );

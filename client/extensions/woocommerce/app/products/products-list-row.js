@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,33 +18,30 @@ import TableItem from 'woocommerce/components/table/table-item';
 const ProductsListRow = ( { site, product } ) => {
 	// The first returned image from the API is the featured image.
 	const featuredImage = product.images && product.images[ 0 ];
-	const imageClasses = classNames( 'products__list-image', { 'is-thumb-placeholder': ! featuredImage } );
+	const imageClasses = classNames( 'products__list-image', {
+		'is-thumb-placeholder': ! featuredImage,
+	} );
 
 	const renderImage = () => (
-		<div className={ imageClasses }>
-			{ featuredImage && ( <img src={ featuredImage.src } /> ) }
-		</div>
+		<div className={ imageClasses }>{ featuredImage && <img src={ featuredImage.src } /> }</div>
 	);
 
-	const categoryNames = product.categories && product.categories.map( function( category ) {
-		return category.name;
-	} );
+	const categoryNames =
+		product.categories &&
+		product.categories.map( function( category ) {
+			return category.name;
+		} );
 
 	const renderCategories = () => (
 		<div className="products__list-categories">
-			{ categoryNames &&
-				( categoryNames.join( ', ' ) ) ||
-				( <span>-</span> )
-			}
+			{ ( categoryNames && categoryNames.join( ', ' ) ) || <span>-</span> }
 		</div>
 	);
 
 	const renderStock = () => (
 		<div>
-			{ product.manage_stock && 'simple' === product.type &&
-				( <span>{ product.stock_quantity }</span> ) ||
-				( <span>-</span> )
-			}
+			{ ( product.manage_stock &&
+			'simple' === product.type && <span>{ product.stock_quantity }</span> ) || <span>-</span> }
 		</div>
 	);
 

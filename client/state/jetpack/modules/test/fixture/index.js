@@ -1,19 +1,20 @@
+/** @format */
 export const modules = {
 	123456: {
 		'module-a': {
 			module: 'module-a',
-			active: false
+			active: false,
 		},
 		'module-b': {
 			module: 'module-b',
 			active: true,
 			options: {
 				c: {
-					currentValue: 2
-				}
-			}
-		}
-	}
+					currentValue: 2,
+				},
+			},
+		},
+	},
 };
 
 export const requests = {
@@ -24,31 +25,31 @@ export const requests = {
 		},
 		'module-b': {
 			activating: true,
-			deactivating: false
+			deactivating: false,
 		},
-		fetchingModules: true
+		fetchingModules: true,
 	},
 	654321: {
-		fetchingModules: false
-	}
+		fetchingModules: false,
+	},
 };
 
 export const api_module_list_response = {
 	data: {
 		'module-a': {
 			module: 'module-a',
-			activated: false
+			activated: false,
 		},
 		'module-b': {
 			module: 'module-b',
 			activated: true,
 			options: {
 				c: {
-					currentValue: 2
-				}
-			}
-		}
-	}
+					currentValue: 2,
+				},
+			},
+		},
+	},
 };
 
 export const moduleData = {
@@ -61,7 +62,7 @@ export const moduleData = {
 		introduced: '1.0',
 		changed: '',
 		free: true,
-		module_tags: [ 'Test tag' ]
+		module_tags: [ 'Test tag' ],
 	},
 	'module-b': {
 		module: 'module-b',
@@ -72,6 +73,6 @@ export const moduleData = {
 		introduced: '1.0',
 		changed: '',
 		free: true,
-		module_tags: [ 'Test tag' ]
-	}
+		module_tags: [ 'Test tag' ],
+	},
 };

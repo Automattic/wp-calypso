@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +19,7 @@ import { getMyPostCounts } from 'state/posts/counts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery
+	isRequestingSitePostsForQuery,
 } from 'state/posts/selectors';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
@@ -34,13 +38,13 @@ class MasterbarDrafts extends Component {
 	};
 
 	state = {
-		showDrafts: false
+		showDrafts: false,
 	};
 
 	toggleDrafts = () => {
 		const { showDrafts } = this.state;
 		this.setState( {
-			showDrafts: ! showDrafts
+			showDrafts: ! showDrafts,
 		} );
 	};
 
@@ -59,16 +63,18 @@ class MasterbarDrafts extends Component {
 		return (
 			<div>
 				<QueryPostCounts siteId={ selectedSite.ID } type="post" />
-				{ this.props.draftCount > 0 &&
+				{ this.props.draftCount > 0 && (
 					<Button
-						compact borderless className="masterbar__toggle-drafts"
+						compact
+						borderless
+						className="masterbar__toggle-drafts"
 						onClick={ this.toggleDrafts }
 						ref="drafts"
 						title={ translate( 'Latest Drafts' ) }
 					>
 						<Count count={ this.props.draftCount } />
 					</Button>
-				}
+				) }
 				<Popover
 					isVisible={ this.state.showDrafts }
 					onClose={ this.closeDrafts }
@@ -76,13 +82,11 @@ class MasterbarDrafts extends Component {
 					context={ this.refs && this.refs.drafts }
 					className="masterbar__recent-drafts"
 				>
-					<QueryPosts
-						siteId={ selectedSite.ID }
-						query={ this.props.draftsQuery } />
+					<QueryPosts siteId={ selectedSite.ID } query={ this.props.draftsQuery } />
 					<Site compact site={ selectedSite } />
 					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 					{ isLoading && <Draft isPlaceholder /> }
-					{ this.props.draftCount > 6 &&
+					{ this.props.draftCount > 6 && (
 						<Button
 							compact
 							borderless
@@ -93,7 +97,7 @@ class MasterbarDrafts extends Component {
 							{ translate( 'See all drafts' ) }
 							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 						</Button>
-					}
+					) }
 				</Popover>
 			</div>
 		);
@@ -106,17 +110,19 @@ class MasterbarDrafts extends Component {
 
 		const site = this.props.selectedSite;
 
-		return <Draft
-			key={ draft.global_ID }
-			post={ draft }
-			siteId={ site && site.ID }
-			showAuthor={ site && ! site.single_user_site && ! this.props.userId }
-			onTitleClick={ this.closeDrafts }
-		/>;
+		return (
+			<Draft
+				key={ draft.global_ID }
+				post={ draft }
+				siteId={ site && site.ID }
+				showAuthor={ site && ! site.single_user_site && ! this.props.userId }
+				onTitleClick={ this.closeDrafts }
+			/>
+		);
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
 	const site = getSelectedSite( state );
@@ -125,7 +131,7 @@ export default connect( ( state ) => {
 		status: 'draft',
 		number: 10,
 		order_by: 'modified',
-		author: ( site && ! site.jetpack && ! site.single_user_site ) ? userId : null
+		author: site && ! site.jetpack && ! site.single_user_site ? userId : null,
 	};
 
 	const myPostCounts = getMyPostCounts( state, siteId, 'post' );

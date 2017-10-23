@@ -1,15 +1,17 @@
 /**
  * Internal Dependencies
+ *
+ * @format
  */
+
 import { action as InvitesActionTypes } from 'lib/invites/constants';
 import { JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST } from 'state/action-types';
-
 import SitesList from './list';
 import PollerPool from 'lib/data-poller';
 import Dispatcher from 'dispatcher';
-let	_sites;
+let _sites;
 
-module.exports = function() {
+export default function() {
 	if ( ! _sites ) {
 		_sites = new SitesList();
 		PollerPool.add( _sites, 'fetch' );
@@ -41,4 +43,4 @@ module.exports = function() {
 		} );
 	}
 	return _sites;
-};
+}

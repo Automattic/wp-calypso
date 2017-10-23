@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -13,8 +16,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
 
-module.exports = {
-
+export default {
 	media: function( context ) {
 		var MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
@@ -39,11 +41,10 @@ module.exports = {
 			React.createElement( MediaComponent, {
 				selectedSite,
 				filter: filter,
-				search: search
+				search: search,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
-
+	},
 };

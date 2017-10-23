@@ -1,44 +1,46 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
 
-describe( 'localStorage', function() {
-	describe( 'when window.localStorage does not exist', function() {
+describe( 'localStorage', () => {
+	describe( 'when window.localStorage does not exist', () => {
 		const window = {};
 
-		before( () => {
+		beforeAll( () => {
 			require( '..' )( window );
 		} );
 
-		it( 'should create a window.localStorage instance', function() {
+		test( 'should create a window.localStorage instance', () => {
 			assert( window.localStorage );
 		} );
 
-		it( 'should correctly store and retrieve data', function() {
+		test( 'should correctly store and retrieve data', () => {
 			window.localStorage.setItem( 'foo', 'bar' );
 			assert.equal( window.localStorage.getItem( 'foo' ), 'bar' );
 			assert.equal( window.localStorage.length, 1 );
 		} );
 	} );
 
-	describe( 'when window.localStorage is not working correctly', function() {
+	describe( 'when window.localStorage is not working correctly', () => {
 		const window = {
-			localStorage: {}
+			localStorage: {},
 		};
 
-		before( () => {
+		beforeAll( () => {
 			require( '..' )( window );
 		} );
 
-		it( 'should overwrite broken or missing methods', function() {
+		test( 'should overwrite broken or missing methods', () => {
 			assert( window.localStorage.setItem );
 			assert( window.localStorage.getItem );
 			assert( window.localStorage.removeItem );
 			assert( window.localStorage.clear );
 		} );
 
-		it( 'should correctly store and retrieve data', function() {
+		test( 'should correctly store and retrieve data', () => {
 			window.localStorage.setItem( 'foo', 'bar' );
 			assert.equal( window.localStorage.getItem( 'foo' ), 'bar' );
 			assert.equal( window.localStorage.length, 1 );

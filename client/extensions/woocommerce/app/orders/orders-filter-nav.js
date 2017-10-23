@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,23 +15,19 @@ import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-} from 'woocommerce/lib/order-status';
+import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
-	doSearch = ( search ) => {
+	doSearch = search => {
 		this.props.updateCurrentOrdersQuery( this.props.site.ID, { search } );
-	}
+	};
 
 	clearSearch = () => {
 		this.doSearch( '' );
-	}
+	};
 
 	render() {
 		const { translate, site, status } = this.props;
@@ -46,24 +43,25 @@ class OrdersFilterNav extends Component {
 		return (
 			<SectionNav selectedText={ currentSelection }>
 				<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>
-					<NavItem
-						path={ getLink( '/store/orders/:site', site ) }
-						selected={ 'any' === status }>
+					<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ 'any' === status }>
 						{ translate( 'All Orders' ) }
 					</NavItem>
 					<NavItem
 						path={ getLink( `/store/orders/${ ORDER_UNPAID }/:site`, site ) }
-						selected={ ORDER_UNPAID === status }>
+						selected={ ORDER_UNPAID === status }
+					>
 						{ translate( 'Awaiting Payment' ) }
 					</NavItem>
 					<NavItem
 						path={ getLink( `/store/orders/${ ORDER_UNFULFILLED }/:site`, site ) }
-						selected={ ORDER_UNFULFILLED === status }>
+						selected={ ORDER_UNFULFILLED === status }
+					>
 						{ translate( 'Awaiting Fulfillment' ) }
 					</NavItem>
 					<NavItem
 						path={ getLink( `/store/orders/${ ORDER_COMPLETED }/:site`, site ) }
-						selected={ ORDER_COMPLETED === status }>
+						selected={ ORDER_COMPLETED === status }
+					>
 						{ translate( 'Completed' ) }
 					</NavItem>
 				</NavTabs>

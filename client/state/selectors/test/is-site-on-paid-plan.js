@@ -1,56 +1,47 @@
+/** @format */
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { stub } from 'sinon';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import isSiteOnPaidPlan from '../is-site-on-paid-plan';
 import {
 	PLAN_BUSINESS,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_FREE,
 } from 'lib/plans/constants';
-import useMockery from 'test/helpers/use-mockery';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
 
 describe( 'isSiteOnPaidPlan', () => {
 	const state = deepFreeze( {} );
-	let getCurrentPlan;
-	let isSiteOnPaidPlan;
 
-	useMockery( mockery => {
-		getCurrentPlan = stub();
-		mockery.registerMock( 'state/sites/plans/selectors', { getCurrentPlan } );
-	} );
-
-	before( () => {
-		isSiteOnPaidPlan = require( '../is-site-on-paid-plan' );
-	} );
-
-	it( 'should return false when plan is not known', () => {
+	test( 'should return false when plan is not known', () => {
 		getCurrentPlan.returns( null );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return false when on free plan', () => {
+	test( 'should return false when on free plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_FREE } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return false when on free Jetpack plan', () => {
+	test( 'should return false when on free Jetpack plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return true when on paid plan', () => {
+	test( 'should return true when on paid plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.true;
 	} );
 
-	it( 'should return true when on paid Jetpack plan', () => {
+	test( 'should return true when on paid Jetpack plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_BUSINESS } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).to.be.true;
 	} );

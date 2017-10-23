@@ -1,8 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import PropTypes from 'prop-types';
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -34,13 +36,13 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		const line = [
 			emailAddress
 				? translate( 'We just emailed a link to %(emailAddress)s.', {
-					args: {
-						emailAddress
-					}
-				} )
+						args: {
+							emailAddress,
+						},
+					} )
 				: translate( 'We just emailed you a link.' ),
-			( ' ' ),
-			translate( 'Please check your inbox and click the link to log in.' )
+			' ',
+			translate( 'Please check your inbox and click the link to log in.' ),
 		];
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
@@ -52,16 +54,13 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 					replaceCurrentLocation={ true }
 					waitForEmailAddress={ emailAddress }
 				/>
-				<h1 className="magic-login__form-header">
-					{ translate( 'Check your email!' ) }
-				</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 				<Card className="magic-login__form">
 					<img
 						src="/calypso/images/login/check-email.svg"
-						className="magic-login__check-email-image" />
-					<p>
-						{ line }
-					</p>
+						className="magic-login__check-email-image"
+					/>
+					<p>{ line }</p>
 				</Card>
 				<div className="magic-login__footer">
 					<a href="#" onClick={ this.onClickBackLink }>

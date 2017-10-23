@@ -1,28 +1,28 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	requestCommentEmailUnsubscription,
 	receiveCommentEmailUnsubscription,
 	receiveCommentEmailUnsubscriptionError,
 } from '../';
+import { bypassDataLayer } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {
-		it( 'should dispatch an http request and call through next', () => {
+		test( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
 			const action = unsubscribeToNewCommentEmail( 1234 );
 			requestCommentEmailUnsubscription( { dispatch }, action );
@@ -40,14 +40,14 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveCommentEmailUnsubscription', () => {
-		it( 'should do nothing if successful', () => {
+		test( 'should do nothing if successful', () => {
 			const dispatch = spy();
 
 			receiveCommentEmailUnsubscription( { dispatch }, null, { subscribed: false } );
 			expect( dispatch ).to.not.have.been.called;
 		} );
 
-		it( 'should dispatch a subscribe if it fails using next', () => {
+		test( 'should dispatch a subscribe if it fails using next', () => {
 			const dispatch = spy();
 			receiveCommentEmailUnsubscription(
 				{ dispatch },
@@ -68,7 +68,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
-		it( 'should dispatch an error notice and subscribe action through next', () => {
+		test( 'should dispatch an error notice and subscribe action through next', () => {
 			const dispatch = spy();
 			receiveCommentEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } } );
 			expect( dispatch ).to.have.been.calledWithMatch( {

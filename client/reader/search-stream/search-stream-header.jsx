@@ -2,7 +2,8 @@
 /**
  * External Dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop, values } from 'lodash';
 
@@ -36,12 +37,8 @@ class SearchStreamHeader extends Component {
 		if ( wideDisplay ) {
 			return (
 				<ul className="search-stream__headers">
-					<li className="search-stream__post-header">
-						{ translate( 'Posts' ) }
-					</li>
-					<li className="search-stream__site-header">
-						{ translate( 'Sites' ) }
-					</li>
+					<li className="search-stream__post-header">{ translate( 'Posts' ) }</li>
+					<li className="search-stream__site-header">{ translate( 'Sites' ) }</li>
 				</ul>
 			);
 		}

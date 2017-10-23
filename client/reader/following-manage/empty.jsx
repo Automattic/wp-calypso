@@ -36,12 +36,12 @@ class FollowingManageEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
-				className="is-drake"
+				className="following-manage__empty"
 				action={ action }
 				title={ this.props.translate( "You haven't followed any sites yet" ) }
 				line={ this.props.translate( 'Search for a site above or explore Discover.' ) }
-				illustration={ '/calypso/images/drake/drake-all-done.svg' }
-				illustrationWidth={ 500 }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 400 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

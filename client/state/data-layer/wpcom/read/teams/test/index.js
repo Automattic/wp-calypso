@@ -9,10 +9,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-
-// import { requestTeams } from 'state/reader/teams/actions';
 import { READER_TEAMS_RECEIVE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 const apiResponse = { teams: [ { slug: 'a8c', title: 'Automattic' } ] };
 
@@ -20,7 +18,7 @@ describe( 'wpcom-api', () => {
 	describe( 'teams request', () => {
 		const action = { type: 'DUMMY_ACTION' };
 
-		it( 'should dispatch HTTP request to teams endpoint', () => {
+		test( 'should dispatch HTTP request to teams endpoint', () => {
 			const dispatch = spy();
 			handleTeamsRequest( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledOnce;
@@ -36,7 +34,7 @@ describe( 'wpcom-api', () => {
 			);
 		} );
 
-		it( 'should dispatch READER_TEAMS_RECEIVE action with error when request errors', () => {
+		test( 'should dispatch READER_TEAMS_RECEIVE action with error when request errors', () => {
 			const dispatch = spy();
 			teamRequestFailure( { dispatch }, action );
 
@@ -48,7 +46,7 @@ describe( 'wpcom-api', () => {
 			} );
 		} );
 
-		it( 'should dispatch READER_TEAMS_RECEIVE action without error when request succeeds', () => {
+		test( 'should dispatch READER_TEAMS_RECEIVE action without error when request succeeds', () => {
 			const dispatch = spy();
 			teamRequestReceived( { dispatch }, action, apiResponse );
 

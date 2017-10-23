@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -44,14 +46,14 @@ import {
 const siteId = 123;
 
 describe( 'Packages state actions', () => {
-	it( '#addPackage()', () => {
+	test( '#addPackage()', () => {
 		expect( addPackage( siteId ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
 			siteId,
 		} );
 	} );
 
-	it( '#editPackage()', () => {
+	test( '#editPackage()', () => {
 		const packageToEdit = {
 			name: 'Test box',
 			dimensions: '10 x 13 x 6',
@@ -59,19 +61,19 @@ describe( 'Packages state actions', () => {
 		};
 		expect( editPackage( siteId, packageToEdit ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
-			'package': packageToEdit,
+			package: packageToEdit,
 			siteId,
 		} );
 	} );
 
-	it( '#dismissModal()', () => {
+	test( '#dismissModal()', () => {
 		expect( dismissModal( siteId ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
 			siteId,
 		} );
 	} );
 
-	it( '#savePackage()', () => {
+	test( '#savePackage()', () => {
 		const packageData = {
 			name: 'Test box',
 			dimensions: '10 x 13 x 6',
@@ -87,7 +89,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#updatePackagesField()', () => {
+	test( '#updatePackagesField()', () => {
 		const fieldsToUpdate = {
 			name: 'Test box',
 			dimensions: '10 x 13 x 6',
@@ -100,14 +102,14 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#toggleOuterDimensions()', () => {
+	test( '#toggleOuterDimensions()', () => {
 		expect( toggleOuterDimensions( siteId ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
 			siteId,
 		} );
 	} );
 
-	it( '#setModalErrors()', () => {
+	test( '#setModalErrors()', () => {
 		expect( setModalErrors( siteId, true ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 			value: true,
@@ -127,7 +129,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#removePackage', () => {
+	test( '#removePackage', () => {
 		expect( removePackage( siteId, 0 ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE,
 			index: 0,
@@ -135,7 +137,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#setIsSaving', () => {
+	test( '#setIsSaving', () => {
 		expect( setIsSaving( siteId, true ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 			isSaving: true,
@@ -143,7 +145,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#setIsFetching', () => {
+	test( '#setIsFetching', () => {
 		expect( setIsFetching( siteId, true ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 			isFetching: true,
@@ -151,7 +153,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#removePredefinedPackage', () => {
+	test( '#removePredefinedPackage', () => {
 		expect( removePredefinedPackage( siteId, 'service', 'box' ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
 			serviceId: 'service',
@@ -160,14 +162,14 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#savePredefinedPackages', () => {
+	test( '#savePredefinedPackages', () => {
 		expect( savePredefinedPackages( siteId ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 			siteId,
 		} );
 	} );
 
-	it( '#toggleAll', () => {
+	test( '#toggleAll', () => {
 		expect( toggleAll( siteId, 'service', 'priority', true ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
 			serviceId: 'service',
@@ -177,7 +179,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#togglePackage', () => {
+	test( '#togglePackage', () => {
 		expect( togglePackage( siteId, 'service', 'box' ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
 			serviceId: 'service',
@@ -186,7 +188,7 @@ describe( 'Packages state actions', () => {
 		} );
 	} );
 
-	it( '#setAddMode', () => {
+	test( '#setAddMode', () => {
 		expect( setAddMode( siteId, 'add-predefined' ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 			mode: 'add-predefined',

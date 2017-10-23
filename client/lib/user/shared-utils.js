@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { assign, includes } from 'lodash';
 
 /**
@@ -35,7 +38,7 @@ function getSiteSlug( url ) {
 	return slug.replace( /\//g, '::' );
 }
 
-module.exports = {
+export default {
 	filterUserObject: function( obj ) {
 		var user = {},
 			allowedKeys = [
@@ -55,21 +58,17 @@ module.exports = {
 				'user_ip_country_code',
 				'logout_URL',
 				'primary_blog',
+				'primary_blog_is_jetpack',
 				'primary_blog_url',
 				'meta',
 				'is_new_reader',
 				'social_signup_service',
 			],
-			decodeWhitelist = [
-				'display_name',
-				'description',
-				'user_URL'
-			];
+			decodeWhitelist = [ 'display_name', 'description', 'user_URL' ];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = obj[ key ] && includes( decodeWhitelist, key )
-				? decodeEntities( obj[ key ] )
-				: obj[ key ];
+			user[ key ] =
+				obj[ key ] && includes( decodeWhitelist, key ) ? decodeEntities( obj[ key ] ) : obj[ key ];
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
@@ -81,8 +80,7 @@ module.exports = {
 		return {
 			primarySiteSlug: getSiteSlug( primayBlogUrl ),
 			localeSlug: attributes.language,
-			isRTL: !! ( language && language.rtl )
+			isRTL: !! ( language && language.rtl ),
 		};
-	}
-
+	},
 };

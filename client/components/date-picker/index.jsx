@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DayPicker from 'react-day-picker';
@@ -92,12 +95,14 @@ class DatePicker extends PureComponent {
 			},
 
 			formatWeekdayLong: function( day ) {
-				return moment().weekday( day ).format( 'dddd' );
+				return moment()
+					.weekday( day )
+					.format( 'dddd' );
 			},
 
 			getFirstDayOfWeek: function() {
 				return firstDayOfWeek;
-			}
+			},
 		};
 
 		return merge( locale, this.props.locale );
@@ -113,7 +118,7 @@ class DatePicker extends PureComponent {
 		const dateMods = {
 			year: momentDay.year(),
 			month: momentDay.month(),
-			date: momentDay.date()
+			date: momentDay.date(),
 		};
 
 		const date = ( this.props.timeReference || momentDay ).set( dateMods );
@@ -138,13 +143,14 @@ class DatePicker extends PureComponent {
 		return v;
 	}
 
-	renderDay = ( date, modifiers ) =>
+	renderDay = ( date, modifiers ) => (
 		<DayItem
 			date={ date }
 			modifiers={ modifiers }
 			onMouseEnter={ this.handleDayMouseEnter }
 			onMouseLeave={ this.handleDayMouseLeave }
-		/>;
+		/>
+	);
 
 	handleDayMouseEnter = ( date, modifiers, event ) => {
 		const eventsByDay = this.filterEventsByDay( date );
@@ -168,7 +174,9 @@ class DatePicker extends PureComponent {
 		}
 
 		if ( this.props.events && this.props.events.length ) {
-			modifiers.events = map( filter( this.props.events, event => event.date ), event => this.getDateInstance( event.date ) );
+			modifiers.events = map( filter( this.props.events, event => event.date ), event =>
+				this.getDateInstance( event.date )
+			);
 		}
 
 		return (
@@ -183,10 +191,10 @@ class DatePicker extends PureComponent {
 				localeUtils={ this.locale() }
 				onMonthChange={ this.props.onMonthChange }
 				enableOutsideDays={ this.props.enableOutsideDays }
-				onCaptionClick={ this.setCalendarMonth } />
+				onCaptionClick={ this.setCalendarMonth }
+			/>
 		);
 	}
 }
 
 export default localize( DatePicker );
-

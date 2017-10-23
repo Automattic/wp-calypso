@@ -1,0 +1,193 @@
+.design-type-with-atomic-store {
+	position: relative;
+	text-align: center;
+}
+
+.design-type-with-atomic-store__substep-wrapper {
+	position: relative;
+}
+
+.design-type-with-atomic-store__list {
+	margin: 0 auto;
+	display: flex;
+	flex-flow: row wrap;
+	max-width: 640px;
+
+	opacity: 1;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+
+	&.is-hidden {
+		pointer-events: none;
+		transform: translateZ( 0 ) translateX( -25% );
+		opacity: 0;
+	}
+}
+
+.design-type-with-atomic-store__store-wrapper {
+	position: absolute;
+	width: 100%;
+	opacity: 1;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+
+	&.is-hidden {
+		pointer-events: none;
+		transform: translateZ( 0 ) translateX( 25% );
+		opacity: 0;
+	}
+}
+
+.design-type-with-atomic-store__choice {
+	transition: all 100ms ease-in-out;
+	position: relative;
+	border: 1px solid lighten( $gray, 20% );
+	border-bottom: 0;
+	margin: 0 10px;
+
+	@include breakpoint( "<480px" ) {
+		box-shadow: none; //inherited from .card, remove for mobile only
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding: 0;
+		margin-bottom: 20px;
+		width: 230px;
+		text-align: center;
+		flex-grow: 1;
+		border: 0;
+
+		&:hover {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+		}
+	}
+
+	&:active {
+		.design-type-with-atomic-store__cta {
+			color: $blue-dark;
+		}
+
+		.design-type-with-atomic-store__choice-link:after {
+			border-top-color: $blue-dark;
+			border-right-color: $blue-dark;
+		}
+	}
+
+	&:first-child {
+		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
+
+		@include breakpoint( ">480px" ) {
+			border-radius: 0;
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 20px;
+		border: 1px solid lighten( $gray, 20% );
+		border-bottom-right-radius: 6px;
+		border-bottom-left-radius: 6px;
+
+		@include breakpoint( ">480px" ) {
+			border-radius: 0;
+			border: 0;
+		}
+	}
+
+	a, svg {
+		display: block;
+		width: 100%; // Safari fix
+	}
+}
+
+.design-type-with-atomic-store__choice-link {
+	padding-right: 40px;
+	display: block;
+	box-sizing: border-box;
+
+	&:after {
+		content: '';
+		display: block;
+		width: 8px; //Match the size of the cta copy
+		height: 8px; //Match the size of the cta copy
+		position: absolute;
+		top: 20px;
+		right: 15px;
+		border-top: 2px solid lighten( $gray, 20% );
+		border-right: 2px solid lighten( $gray, 20% );
+		transform: rotate(45deg);
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding-right: 0;
+		&:after {
+			display: none;
+		}
+	}
+}
+
+.design-type-with-atomic-store__image {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+
+	img {
+		display: block;
+		margin: 10% auto 4%;
+		width: 85%;
+	}
+}
+
+@include breakpoint( ">480px" ) {
+	.design-type-with-atomic-store__choice-copy {
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	}
+}
+
+.design-type-with-atomic-store__choice-label {
+	color: $blue-wordpress;
+	padding: 0;
+	position: relative;
+}
+
+.design-type-with-atomic-store__choice-description {
+	margin: 0;
+	color: $gray;
+	font-size: 0.875em;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 10px;
+	}
+}
+
+.button.design-type-with-atomic-store__cta {
+	color: $blue-wordpress;
+
+	@include breakpoint( "<480px" ) {
+		background: none;
+		font-size: 1.1em;
+		border: 0;
+		padding: 0;
+		text-transform: none;
+		margin: 0;
+		line-height: 1.1em;
+	}
+}
+
+.design-type-with-atomic-store__disclaimer {
+	text-align: center;
+	padding: 0 15px;
+	color: darken( $gray, 20 );
+	font-size: 0.875em;
+	width: 100%;
+	box-sizing: border-box;
+
+	@include breakpoint( "<480px" ) {
+		padding: 0 20px;
+	}
+}

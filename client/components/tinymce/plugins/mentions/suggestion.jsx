@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Suggestion = ( { avatarUrl, fullName, query, username } ) => {
 	const highlight = ( content, type ) => {
@@ -22,7 +26,11 @@ const Suggestion = ( { avatarUrl, fullName, query, username } ) => {
 			}
 
 			if ( query.toLowerCase() === item.toLowerCase() ) {
-				return <mark className="mentions__highlight" key={ index }>{ item }</mark>;
+				return (
+					<mark className="mentions__highlight" key={ index }>
+						{ item }
+					</mark>
+				);
 			}
 
 			return item;

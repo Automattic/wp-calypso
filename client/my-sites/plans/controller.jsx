@@ -1,6 +1,9 @@
 /**
  * External Dependencies
+ *
+ * @format
  */
+
 import page from 'page';
 import React from 'react';
 
@@ -56,5 +59,5 @@ export default {
 		}
 
 		return page.redirect( '/plans' );
-	}
+	},
 };

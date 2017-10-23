@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { find } from 'lodash';
 
 /**
@@ -13,30 +17,33 @@ import Dropdown from './dropdown';
 const OptionShape = PropTypes.shape( {
 	label: PropTypes.string.isRequired,
 	uri: PropTypes.string.isRequired,
-	icon: PropTypes.string
+	icon: PropTypes.string,
 } );
 
 export default class SubMasterbarNav extends Component {
 	static propTypes = {
 		fallback: OptionShape,
 		options: PropTypes.arrayOf( OptionShape ),
-		uri: PropTypes.string.isRequired
+		uri: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
-		options: []
-	}
+		options: [],
+	};
 
 	render() {
 		return (
 			<div className="sub-masterbar-nav">
-				<Dropdown selected={ this.getSelected() || this.props.fallback } options={ this.props.options } />
+				<Dropdown
+					selected={ this.getSelected() || this.props.fallback }
+					options={ this.props.options }
+				/>
 				<Navbar selected={ this.getSelected() } options={ this.props.options } />
 			</div>
 		);
 	}
 
 	getSelected() {
-		return find( this.props.options, ( option ) => option.uri === this.props.uri );
+		return find( this.props.options, option => option.uri === this.props.uri );
 	}
 }

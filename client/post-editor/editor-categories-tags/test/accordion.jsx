@@ -1,34 +1,27 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
-import React from 'react';
-import mockery from 'mockery';
 import { expect } from 'chai';
+import { mount } from 'enzyme';
+import { translate } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { EditorCategoriesTagsAccordion } from 'post-editor/editor-categories-tags/accordion';
 
-describe( 'EditorCategoriesTagsAccordion', function() {
-	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'post-editor/editor-term-selector', () => require( 'components/empty-component' ) );
 
-	useMockery();
-	useFakeDom();
-
-	before( () => {
-		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );
-		mockery.registerMock( 'components/info-popover', EmptyComponent );
-		mockery.registerMock( 'react-virtualized/List', EmptyComponent );
-
-		mount = require( 'enzyme' ).mount;
-		i18n = require( 'i18n-calypso' );
-
-		// require needs to be here in order for mocking of List to work
-		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
-	} );
+describe( 'EditorCategoriesTagsAccordion', () => {
+	let accordion;
 
 	function render( postTerms = {} ) {
 		accordion = mount(
@@ -36,137 +29,156 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 				siteId={ 777 }
 				postTerms={ postTerms }
 				postType="post"
-				translate={ i18n.translate } />
+				translate={ translate }
+			/>
 		);
 	}
 
-	describe( 'categories+tags subtitle', function() {
-		it( 'should display one top-level category name', function() {
+	describe( 'categories+tags subtitle', () => {
+		test( 'should display one top-level category name', () => {
 			render( {
 				category: {
 					cat: {
-						name: 'cat'
-					}
-				}
+						name: 'cat',
+					},
+				},
 			} );
 			expect( accordion.contains( <span className="accordion__subtitle">cat</span> ) ).to.be.true;
 		} );
 
-		it( 'should display category count if more than one', function() {
+		test( 'should display category count if more than one', () => {
 			render( {
 				category: {
 					cat: {
-						name: 'cat'
+						name: 'cat',
 					},
 					chewbacca: {
-						name: 'chewbacca'
-					}
-				}
+						name: 'chewbacca',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">2 categories</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">2 categories</span> ) ).to
+				.be.true;
 		} );
 
-		it( 'should display one tag name', function() {
+		test( 'should display one tag name', () => {
 			render( {
-				post_tag: [ 'swawesome' ]
+				post_tag: [ 'swawesome' ],
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">#swawesome</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">#swawesome</span> ) ).to.be
+				.true;
 		} );
 
-		it( 'should display two tag names', function() {
+		test( 'should display two tag names', () => {
 			render( {
-				post_tag: [ 'swawesome', 'another one' ]
+				post_tag: [ 'swawesome', 'another one' ],
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">#swawesome, #another one</span> ) ).to.be.true;
+			expect(
+				accordion.contains( <span className="accordion__subtitle">#swawesome, #another one</span> )
+			).to.be.true;
 		} );
 
-		it( 'should display tag count if more than two', function() {
+		test( 'should display tag count if more than two', () => {
 			render( {
-				post_tag: [ 'swawesome', 'another one', 'another one too' ]
+				post_tag: [ 'swawesome', 'another one', 'another one too' ],
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">3 tags</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">3 tags</span> ) ).to.be
+				.true;
 		} );
 
-		it( 'should display category and tag names together', function() {
+		test( 'should display category and tag names together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one' ],
 				category: {
 					cat: {
-						name: 'cat'
-					}
-				}
+						name: 'cat',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">cat, #swawesome, #another one</span> ) ).to.be.true;
+			expect(
+				accordion.contains(
+					<span className="accordion__subtitle">cat, #swawesome, #another one</span>
+				)
+			).to.be.true;
 		} );
 
-		it( 'should display category counts and tag names together', function() {
+		test( 'should display category counts and tag names together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one' ],
 				category: {
 					cat: {
-						name: 'cat'
+						name: 'cat',
 					},
 					sampson: {
-						name: 'sampson'
+						name: 'sampson',
 					},
 					kipper: {
-						name: 'kipper'
-					}
-				}
+						name: 'kipper',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">3 categories, #swawesome, #another one</span> ) ).to.be.true;
+			expect(
+				accordion.contains(
+					<span className="accordion__subtitle">3 categories, #swawesome, #another one</span>
+				)
+			).to.be.true;
 		} );
 
-		it( 'should display category names and tag counts together', function() {
+		test( 'should display category names and tag counts together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one', 'third tag' ],
 				category: {
 					cat: {
-						name: 'cat'
-					}
-				}
+						name: 'cat',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">cat, 3 tags</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">cat, 3 tags</span> ) ).to.be
+				.true;
 		} );
 
-		it( 'should display category and tag counts together', function() {
+		test( 'should display category and tag counts together', () => {
 			render( {
 				post_tag: [ 'swawesome', 'another one', 'third tag', 'fourth tag' ],
 				category: {
 					cat: {
-						name: 'cat'
+						name: 'cat',
 					},
 					sampson: {
-						name: 'sampson'
+						name: 'sampson',
 					},
 					kipper: {
-						name: 'kipper'
-					}
-				}
+						name: 'kipper',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">3 categories, 4 tags</span> ) ).to.be.true;
+			expect(
+				accordion.contains( <span className="accordion__subtitle">3 categories, 4 tags</span> )
+			).to.be.true;
 		} );
 
-		it( 'should display tags with ampersands correctly', function() {
+		test( 'should display tags with ampersands correctly', () => {
 			render( {
 				post_tag: {
 					'a &amp; b': {
-						name: 'a &amp; b'
-					}
-				}
+						name: 'a &amp; b',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">#a & b</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">#a & b</span> ) ).to.be
+				.true;
 		} );
 
-		it( 'should display categories with ampersands correctly', function() {
+		test( 'should display categories with ampersands correctly', () => {
 			render( {
 				category: {
 					'cats &amp; dogs': {
-						name: 'cats &amp; dogs'
-					}
-				}
+						name: 'cats &amp; dogs',
+					},
+				},
 			} );
-			expect( accordion.contains( <span className="accordion__subtitle">cats & dogs</span> ) ).to.be.true;
+			expect( accordion.contains( <span className="accordion__subtitle">cats & dogs</span> ) ).to.be
+				.true;
 		} );
 	} );
 } );

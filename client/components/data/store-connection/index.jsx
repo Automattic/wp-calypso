@@ -1,16 +1,20 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { isEqual } from 'lodash';
 
 const StoreConnection = React.createClass( {
 	propTypes: {
-		component: React.PropTypes.func,
-		getStateFromStores: React.PropTypes.func.isRequired,
-		isDataLoading: React.PropTypes.func,
-		loadingPlaceholder: React.PropTypes.func,
-		stores: React.PropTypes.array.isRequired
+		component: PropTypes.func,
+		getStateFromStores: PropTypes.func.isRequired,
+		isDataLoading: PropTypes.func,
+		loadingPlaceholder: PropTypes.func,
+		stores: PropTypes.array.isRequired,
 	},
 
 	getInitialState() {
@@ -69,7 +73,7 @@ const StoreConnection = React.createClass( {
 		const child = React.Children.only( this.props.children );
 
 		return React.cloneElement( child, this.state );
-	}
+	},
 } );
 
 export default StoreConnection;

@@ -50,6 +50,7 @@ The `value` property is handled in a manner similar to controlled form component
 - `maxLength` - If passed, `TokenField` will disable ability to add new tokens once number of tokens is greater than or equal to `maxLength`.
 - `disabled` - When true, tokens are not able to be added or removed.
 - `placeholder` - If passed, the `TokenField` input will show a placeholder string if no value tokens are present.
+- `id` - the ID of the token input, should be unique.
 
 ### Example
 

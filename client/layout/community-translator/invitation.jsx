@@ -1,6 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
@@ -10,11 +15,11 @@ import Gridicon from 'gridicons';
 import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
-export default React.createClass( {
+const CommunityTranslatorInvitation = React.createClass( {
 	displayName: 'CommunityTranslatorInvitation',
 
 	propTypes: {
-		isVisible: React.PropTypes.bool
+		isVisible: PropTypes.bool,
 	},
 
 	render: function() {
@@ -25,22 +30,35 @@ export default React.createClass( {
 		invitationUtils.recordInvitationDisplayed();
 
 		const subComponents = {
-			title: this.translate( 'Translate WordPress.com as you go' ),
-			acceptButtonText: this.translate( 'Try it now!' ),
-			dismissButtonText: this.translate( 'No thanks' ),
-			content: this.translate( 'Help translate the WordPress.com dashboard into your' +
-			' native language using the Community Translator tool. ' +
-			'{{docsLink}}Find out more{{/docsLink}}. ',
-				{ components: { docsLink: <a target="_blank" rel="noopener noreferrer"
-						className="community-translator__translator-invitation__link"
-						href="https://en.support.wordpress.com/community-translator/"
-						onClick={ this.docsLink } /> } } )
+			title: this.props.translate( 'Translate WordPress.com as you go' ),
+			acceptButtonText: this.props.translate( 'Try it now!' ),
+			dismissButtonText: this.props.translate( 'No thanks' ),
+			content: this.props.translate(
+				'Help translate the WordPress.com dashboard into your' +
+					' native language using the Community Translator tool. ' +
+					'{{docsLink}}Find out more{{/docsLink}}. ',
+				{
+					components: {
+						docsLink: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								className="community-translator__translator-invitation__link"
+								href="https://en.support.wordpress.com/community-translator/"
+								onClick={ this.docsLink }
+							/>
+						),
+					},
+				}
+			),
 		};
 
 		return (
 			<div className="community-translator__translator-invitation welcome-message">
 				<div className="community-translator__translator-invitation__primary-content">
-					<h3 className="community-translator__translator-invitation__title">{ subComponents.title }</h3>
+					<h3 className="community-translator__translator-invitation__title">
+						{ subComponents.title }
+					</h3>
 
 					<div className="community-translator__translator-invitation__secondary-content">
 						<p className="community-translator__translator-invitation__intro">
@@ -50,19 +68,24 @@ export default React.createClass( {
 							<button
 								type="button"
 								className="community-translator__action button is-primary"
-								onClick={ this.acceptButton }>
+								onClick={ this.acceptButton }
+							>
 								{ subComponents.acceptButtonText }
 							</button>
 							<button
 								type="button"
 								className="community-translator__action button"
-								onClick={ this.dismissButton }>
+								onClick={ this.dismissButton }
+							>
 								{ subComponents.dismissButtonText }
 							</button>
 						</div>
 					</div>
 				</div>
-				<Gridicon className="community-translator__translator-invitation__decoration" icon="globe" />
+				<Gridicon
+					className="community-translator__translator-invitation__decoration"
+					icon="globe"
+				/>
 			</div>
 		);
 	},
@@ -80,8 +103,10 @@ export default React.createClass( {
 	docsLink: function() {
 		recordEvent( 'More Info' );
 		invitationUtils.recordDocsEvent();
-	}
+	},
 } );
+
+export default localize( CommunityTranslatorInvitation );
 
 function recordEvent( eventAction ) {
 	googleAnalytics.recordEvent( 'Translator Invitation', eventAction );

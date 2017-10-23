@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,8 +9,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
 import { writeReplyComment } from '../';
+import * as Utils from 'state/data-layer/wpcom/sites/utils';
 
 describe( '#writeReplyComment()', () => {
 	const action = {
@@ -19,7 +21,7 @@ describe( '#writeReplyComment()', () => {
 		commentText: 'comment text',
 	};
 
-	it( 'should dispatch a http request action to the new comment replies endpoint', () => {
+	test( 'should dispatch a http request action to the new comment replies endpoint', () => {
 		const dispatch = spy();
 		const dispatchNewCommentRequestSpy = spy( Utils, 'dispatchNewCommentRequest' );
 
@@ -29,7 +31,7 @@ describe( '#writeReplyComment()', () => {
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
 			dispatch,
 			action,
-			'/sites/2916284/comments/1/replies/new',
+			'/sites/2916284/comments/1/replies/new'
 		);
 		dispatchNewCommentRequestSpy.restore();
 	} );

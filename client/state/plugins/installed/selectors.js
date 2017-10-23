@@ -1,17 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	every,
-	filter,
-	find,
-	get,
-	pick,
-	reduce,
-	some,
-	sortBy,
-	values
-} from 'lodash';
+
+import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +13,7 @@ import {
 	getSite,
 	getSiteTitle,
 	isJetpackSite,
-	isJetpackSiteSecondaryNetworkSite
+	isJetpackSiteSecondaryNetworkSite,
 } from 'state/sites/selectors';
 
 const _filters = {
@@ -47,7 +40,7 @@ const _filters = {
 	},
 	isEqual: function( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
-	}
+	},
 };
 
 export function isRequesting( state, siteId ) {
@@ -59,25 +52,29 @@ export function isRequesting( state, siteId ) {
 
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
-	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
+	return some( sites, siteId => isRequesting( state, siteId ) );
 }
 
 export function getPlugins( state, siteIds, pluginFilter ) {
-	let pluginList = reduce( siteIds, ( memo, siteId ) => {
-		const list = state.plugins.installed.plugins[ siteId ] || [];
-		list.forEach( ( item ) => {
-			const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
-			if ( memo[ item.slug ] ) {
-				memo[ item.slug ].sites = {
-					...memo[ item.slug ].sites,
-					[ siteId ]: sitePluginInfo
-				};
-			} else {
-				memo[ item.slug ] = { ...item, sites: { [ siteId ]: sitePluginInfo } };
-			}
-		} );
-		return memo;
-	}, {} );
+	let pluginList = reduce(
+		siteIds,
+		( memo, siteId ) => {
+			const list = state.plugins.installed.plugins[ siteId ] || [];
+			list.forEach( item => {
+				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+				if ( memo[ item.slug ] ) {
+					memo[ item.slug ].sites = {
+						...memo[ item.slug ].sites,
+						[ siteId ]: sitePluginInfo,
+					};
+				} else {
+					memo[ item.slug ] = { ...item, sites: { [ siteId ]: sitePluginInfo } };
+				}
+			} );
+			return memo;
+		},
+		{}
+	);
 
 	if ( pluginFilter && _filters[ pluginFilter ] ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
@@ -102,7 +99,7 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	}
 
 	// Filter the requested sites list by the list of sites for this plugin
-	const pluginSites = filter( siteIds, ( siteId ) => {
+	const pluginSites = filter( siteIds, siteId => {
 		return plugin.sites.hasOwnProperty( siteId );
 	} );
 
@@ -139,5 +136,5 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 
 export function isPluginDoingAction( state, siteId, pluginId ) {
 	const status = getStatusForPlugin( state, siteId, pluginId );
-	return ( !! status ) && ( 'inProgress' === status.status );
+	return !! status && 'inProgress' === status.status;
 }

@@ -3,16 +3,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import freeze from 'deep-freeze';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { initiateFeedSearch, receiveFeeds, receiveError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import queryKey from 'state/reader/feed-searches/query-key';
 
 const feeds = freeze( [ { blog_ID: 'IM A BLOG', subscribe_URL: 'feedUrl' } ] );
@@ -22,7 +22,7 @@ const query = 'okapis r us';
 describe( 'wpcom-api', () => {
 	describe( 'search feeds', () => {
 		describe( '#initiateFeedSearch', () => {
-			it( 'should dispatch http request for feed search with followed feeds excluded by default', () => {
+			test( 'should dispatch http request for feed search with followed feeds excluded by default', () => {
 				const action = requestFeedSearch( { query } );
 				const dispatch = sinon.spy();
 
@@ -41,7 +41,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should dispatch http request for feed search with followed feeds included if specified', () => {
+			test( 'should dispatch http request for feed search with followed feeds included if specified', () => {
 				const action = requestFeedSearch( { query, excludeFollowed: false } );
 				const dispatch = sinon.spy();
 
@@ -60,7 +60,7 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			it( 'should dispatch http request for feed search with the offset specified', () => {
+			test( 'should dispatch http request for feed search with the offset specified', () => {
 				const action = requestFeedSearch( { query, offset: 10 } );
 				const dispatch = sinon.spy();
 
@@ -81,7 +81,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveFeeds', () => {
-			it( 'should dispatch an action with the feed results', () => {
+			test( 'should dispatch an action with the feed results', () => {
 				const action = requestFeedSearch( { query } );
 				const dispatch = sinon.spy();
 				const apiResponse = { feeds, total: 500 };
@@ -106,7 +106,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveFeedsError', () => {
-			it( 'should dispatch error notice', () => {
+			test( 'should dispatch error notice', () => {
 				const action = requestFeedSearch( { query } );
 				const dispatch = sinon.spy();
 

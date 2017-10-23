@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, PureComponent } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, noop } from 'lodash';
@@ -12,34 +16,33 @@ import { find, noop } from 'lodash';
 import LanguagePickerModal from './modal';
 
 class LanguagePicker extends PureComponent {
-
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		languages: [],
 		valueKey: 'value',
 		onChange: noop,
 		onClick: noop,
-	}
+	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			selectedLanguage: this.findLanguage( props.valueKey, props.value )
+			selectedLanguage: this.findLanguage( props.valueKey, props.value ),
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
-				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value )
+				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
 			} );
 		}
 	}
@@ -51,7 +54,7 @@ class LanguagePicker extends PureComponent {
 		} );
 	}
 
-	selectLanguage = ( languageSlug ) => {
+	selectLanguage = languageSlug => {
 		// Find the language by the slug
 		const language = this.findLanguage( 'langSlug', languageSlug );
 		if ( ! language ) {
@@ -65,22 +68,22 @@ class LanguagePicker extends PureComponent {
 		this.setState( {
 			selectedLanguage: language,
 		} );
-	}
+	};
 
 	toggleOpen() {
 		this.setState( { open: ! this.state.open } );
 	}
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		if ( ! this.props.disabled ) {
 			this.props.onClick( event );
 			this.toggleOpen();
 		}
-	}
+	};
 
 	handleClose = () => {
 		this.setState( { open: false } );
-	}
+	};
 
 	renderPlaceholder() {
 		const classes = classNames( 'language-picker', 'is-loading' );
@@ -118,12 +121,8 @@ class LanguagePicker extends PureComponent {
 				</div>
 				<div className="language-picker__name">
 					<div className="language-picker__name-inner">
-						<div className="language-picker__name-label">
-							{ langName }
-						</div>
-						<div className="language-picker__name-change" >
-							{ translate( 'Change' ) }
-						</div>
+						<div className="language-picker__name-label">{ langName }</div>
+						<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
 					</div>
 				</div>
 				<LanguagePickerModal

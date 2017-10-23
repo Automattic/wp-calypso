@@ -55,22 +55,29 @@ const productFormToCustomPost = state => productToCustomPost( getProductFormValu
 const createPaymentButton = siteId => ( dispatch, getState ) => {
 	const productCustomPost = productFormToCustomPost( getState() );
 
-	return wpcom.site( siteId ).addPost( productCustomPost ).then( newPost => {
-		const newProduct = customPostToProduct( newPost );
-		dispatch( receiveUpdateProduct( siteId, newProduct ) );
-		return newProduct;
-	} );
+	return wpcom
+		.site( siteId )
+		.addPost( productCustomPost )
+		.then( newPost => {
+			const newProduct = customPostToProduct( newPost );
+			dispatch( receiveUpdateProduct( siteId, newProduct ) );
+			return newProduct;
+		} );
 };
 
 // Thunk action creator to update an existing button
 const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 	const productCustomPost = productFormToCustomPost( getState() );
 
-	return wpcom.site( siteId ).post( paymentId ).update( productCustomPost ).then( updatedPost => {
-		const updatedProduct = customPostToProduct( updatedPost );
-		dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
-		return updatedProduct;
-	} );
+	return wpcom
+		.site( siteId )
+		.post( paymentId )
+		.update( productCustomPost )
+		.then( updatedPost => {
+			const updatedProduct = customPostToProduct( updatedPost );
+			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
+			return updatedProduct;
+		} );
 };
 
 // Thunk action creator to delete a button
@@ -366,16 +373,13 @@ class SimplePaymentsDialog extends Component {
 			<Dialog
 				isVisible={ showDialog }
 				onClose={ onClose }
-				buttons={ [
-					<Button onClick={ onClose }>
-						{ translate( 'Close' ) }
-					</Button>,
-				] }
+				buttons={ [ <Button onClick={ onClose }>{ translate( 'Close' ) }</Button> ] }
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
-				{ ! disableNavigation &&
-					<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } /> }
+				{ ! disableNavigation && (
+					<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } />
+				) }
 				{ content }
 			</Dialog>
 		);
@@ -430,13 +434,13 @@ class SimplePaymentsDialog extends Component {
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
-					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
+					illustration="/calypso/images/illustrations/type-e-commerce.svg"
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"
-							title={ translate( 'Upgrade your plan!' ) }
+							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							message={ translate(
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
@@ -444,6 +448,14 @@ class SimplePaymentsDialog extends Component {
 							event="editor_simple_payments_modal_nudge"
 							shouldDisplay={ this.returnTrue }
 						/>
+					}
+					secondaryAction={
+						<a
+							className="empty-content__action button"
+							href="https://support.wordpress.com/simple-payments/"
+						>
+							{ translate( 'Learn more about Simple Payments' ) }
+						</a>
 					}
 				/>,
 				true
@@ -462,24 +474,28 @@ class SimplePaymentsDialog extends Component {
 
 				{ ( ! currencyCode || shouldQuerySitePlans ) && <QuerySitePlans siteId={ siteId } /> }
 
-				{ showNavigation &&
+				{ showNavigation && (
 					<Navigation
 						activeTab={ activeTab }
 						paymentButtons={ paymentButtons }
 						onChangeTabs={ this.handleChangeTabs }
-					/> }
-				{ errorMessage &&
-					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
-				{ activeTab === 'form'
-					? <ProductForm initialValues={ initialFormValues } showError={ this.showError } />
-					: <ProductList
-							siteId={ siteId }
-							paymentButtons={ paymentButtons }
-							selectedPaymentId={ this.state.selectedPaymentId }
-							onSelectedChange={ this.handleSelectedChange }
-							onTrashClick={ this.handleTrash }
-							onEditClick={ this.showButtonForm }
-						/> }
+					/>
+				) }
+				{ errorMessage && (
+					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } />
+				) }
+				{ activeTab === 'form' ? (
+					<ProductForm initialValues={ initialFormValues } showError={ this.showError } />
+				) : (
+					<ProductList
+						siteId={ siteId }
+						paymentButtons={ paymentButtons }
+						selectedPaymentId={ this.state.selectedPaymentId }
+						onSelectedChange={ this.handleSelectedChange }
+						onTrashClick={ this.handleTrash }
+						onEditClick={ this.showButtonForm }
+					/>
+				) }
 			</Dialog>
 		);
 	}

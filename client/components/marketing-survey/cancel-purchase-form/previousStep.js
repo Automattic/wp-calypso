@@ -1,3 +1,4 @@
+/** @format */
 export default function previousStep( currentStep, steps ) {
 	const index = steps.indexOf( currentStep );
 

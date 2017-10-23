@@ -8,13 +8,6 @@
 	width: 100%;
 }
 
-.store-stats__list-view-navigation {
-	&.section-nav {
-		margin-top: 0;
-		margin-bottom: 0;
-	}
-}
-
 @include breakpoint( ">960px" ) {
 	.store-stats__widgets {
 		flex-direction: row;

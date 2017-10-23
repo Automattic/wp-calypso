@@ -1,16 +1,22 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assert } from 'chai';
+
+/**
+ * Internal dependencies
+ */
 import olarkStore from 'lib/olark-store';
 
-describe( 'index', function() {
-	it( 'Olark store data should be an object', function() {
+describe( 'index', () => {
+	test( 'Olark store data should be an object', () => {
 		const data = olarkStore.get();
 		assert.isObject( data );
 	} );
 
-	it( 'Olark store data should have expected properties', function() {
+	test( 'Olark store data should have expected properties', () => {
 		const data = olarkStore.get();
 		assert.isBoolean( data.isOlarkReady );
 		assert.isBoolean( data.isOperatorAvailable );

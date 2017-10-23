@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,13 +13,13 @@ import { getMediaModalView } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getMediaModalView()', () => {
-		it( 'should return the current media modal view', () => {
+		test( 'should return the current media modal view', () => {
 			const view = getMediaModalView( {
 				ui: {
 					mediaModal: {
-						view: ModalViews.DETAIL
-					}
-				}
+						view: ModalViews.DETAIL,
+					},
+				},
 			} );
 
 			expect( view ).to.equal( ModalViews.DETAIL );

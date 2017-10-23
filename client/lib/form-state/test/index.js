@@ -1,13 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { assign, constant, mapValues, zipObject } from 'lodash';
-const assert = require( 'assert' );
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
-var formState = require( '../' );
+import formState from '../';
 
 function checkNthState( n, callback ) {
 	var count = 0;
@@ -39,16 +41,16 @@ function testController( options ) {
 
 		onNewState: function() {},
 
-		debounceWait: 0
+		debounceWait: 0,
 	};
 
 	return formState.Controller( assign( defaults, options ) );
 }
 
-describe( 'index', function() {
-	describe( '#Controller', function() {
-		describe( '#getInitialState', function() {
-			it( 'returns disabled fields', function() {
+describe( 'index', () => {
+	describe( '#Controller', () => {
+		describe( '#getInitialState', () => {
+			test( 'returns disabled fields', () => {
 				var controller = testController( { fieldNames: [ 'firstName' ] } ),
 					state = controller.getInitialState();
 
@@ -56,7 +58,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'enables the fields on the first event', function( done ) {
+		test( 'enables the fields on the first event', done => {
 			var onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
@@ -66,14 +68,13 @@ describe( 'index', function() {
 
 			testController( {
 				fieldNames: [ 'firstName' ],
-				onNewState: onNewState
+				onNewState: onNewState,
 			} );
 		} );
 
-		describe( '#handleFieldChange', function() {
-			it( 'updates the field value', function( done ) {
-				var onNewState,
-					controller;
+		describe( '#handleFieldChange', () => {
+			test( 'updates the field value', done => {
+				var onNewState, controller;
 
 				onNewState = checkNthState( 1, function( state ) {
 					assert.strictEqual( formState.getFieldValue( state, 'firstName' ), 'foo' );
@@ -82,19 +83,17 @@ describe( 'index', function() {
 
 				controller = testController( {
 					fieldNames: [ 'firstName' ],
-					onNewState: onNewState
+					onNewState: onNewState,
 				} );
 
 				controller.handleFieldChange( {
 					name: 'firstName',
-					value: 'foo'
+					value: 'foo',
 				} );
 			} );
 
-			it( 'validates the new value', function( done ) {
-				var validatorFunction,
-					onNewState,
-					controller;
+			test( 'validates the new value', done => {
+				var validatorFunction, onNewState, controller;
 
 				validatorFunction = function( fieldValues, onComplete ) {
 					onComplete( null, { firstName: [ 'invalid' ] } );
@@ -108,24 +107,22 @@ describe( 'index', function() {
 				controller = testController( {
 					fieldNames: [ 'firstName' ],
 					validatorFunction: validatorFunction,
-					onNewState: onNewState
+					onNewState: onNewState,
 				} );
 
 				controller.handleFieldChange( {
 					name: 'firstName',
-					value: 'foo'
+					value: 'foo',
 				} );
 			} );
 
-			context( 'when there are multiple changes at once', function() {
-				it( 'only shows errors for the latest values', function( done ) {
-					var validatorFunction,
-						onNewState,
-						controller;
+			describe( 'when there are multiple changes at once', () => {
+				test( 'only shows errors for the latest values', done => {
+					var validatorFunction, onNewState, controller;
 
 					validatorFunction = function( fieldValues, onComplete ) {
 						onComplete( null, {
-							firstName: fieldValues.firstName.length > 0 ? [] : [ 'invalid' ]
+							firstName: fieldValues.firstName.length > 0 ? [] : [ 'invalid' ],
 						} );
 					};
 
@@ -137,17 +134,17 @@ describe( 'index', function() {
 					controller = testController( {
 						fieldNames: [ 'firstName' ],
 						validatorFunction: validatorFunction,
-						onNewState: onNewState
+						onNewState: onNewState,
 					} );
 
 					controller.handleFieldChange( {
 						name: 'firstName',
-						value: 'foo'
+						value: 'foo',
 					} );
 
 					controller.handleFieldChange( {
 						name: 'firstName',
-						value: ''
+						value: '',
 					} );
 				} );
 			} );

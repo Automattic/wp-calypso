@@ -1,6 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop, partial } from 'lodash';
@@ -8,85 +13,99 @@ import { noop, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-var DetailItem = require( './detail-item' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	HeaderCake = require( 'components/header-cake' ),
-	preloadImage = require( '../preload-image' );
+import DetailItem from './detail-item';
+import MediaUtils from 'lib/media/utils';
+import HeaderCake from 'components/header-cake';
+import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
-	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number,
-		onSelectedIndexChange: React.PropTypes.func,
-		onReturnToList: React.PropTypes.func,
-		onEdit: React.PropTypes.func,
-		onRestore: React.PropTypes.func,
-	},
+// Don't move `localize()` to the default export (below)! See comment there.
+export const EditorMediaModalDetail = localize(
+	React.createClass( {
+		propTypes: {
+			site: PropTypes.object,
+			items: PropTypes.array,
+			selectedIndex: PropTypes.number,
+			onSelectedIndexChange: PropTypes.func,
+			onReturnToList: PropTypes.func,
+			onEdit: PropTypes.func,
+			onRestore: PropTypes.func,
+		},
 
-	getDefaultProps: function() {
-		return {
-			selectedIndex: 0,
-			onSelectedIndexChange: noop
-		};
-	},
+		getDefaultProps: function() {
+			return {
+				selectedIndex: 0,
+				onSelectedIndexChange: noop,
+			};
+		},
 
-	componentDidMount: function() {
-		this.preloadImages();
-	},
+		componentDidMount: function() {
+			this.preloadImages();
+		},
 
-	componentDidUpdate: function() {
-		this.preloadImages();
-	},
+		componentDidUpdate: function() {
+			this.preloadImages();
+		},
 
-	preloadImages: function() {
-		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-			var src = MediaUtils.url( image, {
-				photon: this.props.site && ! this.props.site.is_private
-			} );
+		preloadImages: function() {
+			MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+				var src = MediaUtils.url( image, {
+					photon: this.props.site && ! this.props.site.is_private,
+				} );
 
-			preloadImage( src );
-		}, this );
-	},
+				preloadImage( src );
+			}, this );
+		},
 
-	incrementIndex: function( increment ) {
-		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-	},
+		incrementIndex: function( increment ) {
+			this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
+		},
 
-	render: function() {
-		const {
-			items,
-			selectedIndex,
-			site,
+		render: function() {
+			const {
+				items,
+				selectedIndex,
+				site,
 
-			onEditImageItem,
-			onEditVideoItem,
-			onRestoreItem,
-			onReturnToList,
-		} = this.props;
+				onEditImageItem,
+				onEditVideoItem,
+				onRestoreItem,
+				onReturnToList,
+			} = this.props;
 
-		const item = items[ selectedIndex ];
-		const mimePrefix = MediaUtils.getMimePrefix( item );
+			const item = items[ selectedIndex ];
+			const mimePrefix = MediaUtils.getMimePrefix( item );
 
-		return (
-			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) } />
-				<DetailItem
-					site={ site }
-					item={ item }
-					hasPreviousItem={ selectedIndex - 1 >= 0 }
-					hasNextItem={ selectedIndex + 1 < items.length }
-					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
-			</div>
-		);
-	}
-} );
+			return (
+				<div className="editor-media-modal-detail">
+					<HeaderCake
+						onClick={ onReturnToList }
+						backText={ this.props.translate( 'Media Library' ) }
+					/>
+					<DetailItem
+						site={ site }
+						item={ item }
+						hasPreviousItem={ selectedIndex - 1 >= 0 }
+						hasNextItem={ selectedIndex + 1 < items.length }
+						onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
+						onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
+						onRestore={ onRestoreItem }
+						onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+					/>
+				</div>
+			);
+		},
+	} )
+);
 
+// The default export is only used by the post editor, which displays the image or
+// video editor depending on Redux state, which is set by the actions below.
+// In the Media library (i.e. `/media`) OTOH, we're explicitly passing `onEditImageItem`
+// and `onEditVideoItem` as props to the _named_ export (above), and use them to set
+// component state there to conditionally display the image/video editor.
+// (This is also the reason why we're `localize()`ing the named export.)
+// TODO: Fix this mess, rely on Redux state everywhere.
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),

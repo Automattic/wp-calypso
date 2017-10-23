@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, Component } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { cloneDeep, findIndex, map, toArray } from 'lodash';
 
@@ -32,10 +36,10 @@ class EditorTermSelector extends Component {
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
 	}
 
-	onAddTerm = ( term ) => {
+	onAddTerm = term => {
 		const { postId, taxonomyName, siteId } = this.props;
 		this.props.addTermForPost( siteId, taxonomyName, term, postId );
-	}
+	};
 
 	onTermsChange( selectedTerm ) {
 		const { postTerms, taxonomyName, siteId, postId } = this.props;
@@ -52,8 +56,8 @@ class EditorTermSelector extends Component {
 
 		this.props.editPost( siteId, postId, {
 			terms: {
-				[ taxonomyName ]: taxonomyTerms
-			}
+				[ taxonomyName ]: taxonomyTerms,
+			},
 		} );
 	}
 
@@ -77,19 +81,16 @@ class EditorTermSelector extends Component {
 					multiple={ true }
 					compact={ compact }
 				/>
-				{ canEditTerms &&
-					<AddTerm
-						taxonomy={ taxonomyName }
-						postType={ postType }
-						onSuccess={ this.onAddTerm } />
-				}
+				{ canEditTerms && (
+					<AddTerm taxonomy={ taxonomyName } postType={ postType } onSuccess={ this.onAddTerm } />
+				) }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 
@@ -98,7 +99,7 @@ export default connect(
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
 			canEditTerms: canCurrentUser( state, siteId, 'manage_categories' ),
 			siteId,
-			postId
+			postId,
 		};
 	},
 	{ editPost, addTermForPost }

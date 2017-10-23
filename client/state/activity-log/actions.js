@@ -1,8 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import {
-	ACTIVITY_LOG_ERROR,
 	ACTIVITY_LOG_REQUEST,
 	ACTIVITY_LOG_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
@@ -12,8 +12,10 @@ import {
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
+	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
+	REWIND_RESTORE_PLEASE,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_STATUS_ERROR,
@@ -79,19 +81,13 @@ export function activityLogRequest( siteId, params ) {
 	};
 }
 
-export function activityLogError( siteId, error ) {
-	return {
-		type: ACTIVITY_LOG_ERROR,
-		siteId,
-		error,
-	};
-}
-
-export function activityLogUpdate( siteId, data ) {
+export function activityLogUpdate( siteId, data, found, query ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
-		siteId,
 		data,
+		query,
+		siteId,
+		found,
 	};
 }
 
@@ -149,6 +145,35 @@ export function rewindStatusError( siteId, error ) {
 		type: REWIND_STATUS_ERROR,
 		siteId,
 		error,
+	};
+}
+
+/**
+ * Request a restore to a specific Activity.
+ *
+ * @param  {string|number} siteId Site ID
+ * @param  {number}        activityId Activity ID
+ * @return {Object}        action object
+ */
+export function rewindRequestRestore( siteId, activityId ) {
+	return {
+		type: REWIND_RESTORE_PLEASE,
+		siteId,
+		activityId,
+	};
+}
+
+/**
+ * Dismiss a restore request.
+ *
+ * @param  {string|number} siteId Site ID
+ * @param  {number}        activityId Activity ID
+ * @return {Object}        action object
+ */
+export function rewindRequestDismiss( siteId ) {
+	return {
+		type: REWIND_RESTORE_DISMISS,
+		siteId,
 	};
 }
 

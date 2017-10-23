@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -27,21 +30,20 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	}
 
 	return (
-		<Accordion title={ title }>
-			{ hierarchical && (
-				<PageParent />
-			) }
+		<Accordion title={ title } e2eTitle="page-options">
+			{ hierarchical && <PageParent /> }
 			<PageTemplates />
 			<PageOrder />
 		</Accordion>
 	);
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const hierarchical = 'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
+	const hierarchical =
+		'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
 
 	return { postType, hierarchical };
 } )( localize( EditorDrawerPageOptions ) );

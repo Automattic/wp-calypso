@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -23,11 +26,7 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
 import purchasesPaths from 'me/purchases/paths';
 import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
 
-const BillingHistory = ( {
-	pastTransactions,
-	upcomingTransactions,
-	translate
-} ) => (
+const BillingHistory = ( { pastTransactions, upcomingTransactions, translate } ) => (
 	<Main className="billing-history">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
@@ -40,23 +39,19 @@ const BillingHistory = ( {
 		<Card href={ purchasesPaths.purchasesRoot() }>
 			{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
 		</Card>
-		{ pastTransactions &&
+		{ pastTransactions && (
 			<div>
 				<SectionHeader label={ translate( 'Upcoming Charges' ) } />
 				<Card className="billing-history__upcoming-charges">
 					<UpcomingChargesTable transactions={ upcomingTransactions } />
 				</Card>
 			</div>
-		}
-		{ config.isEnabled( 'upgrades/credit-cards' ) &&
-			<CreditCards />
-		}
+		) }
+		{ config.isEnabled( 'upgrades/credit-cards' ) && <CreditCards /> }
 	</Main>
 );
 
-export default connect(
-	( state ) => ( {
-		pastTransactions: getPastBillingTransactions( state ),
-		upcomingTransactions: getUpcomingBillingTransactions( state ),
-	} ),
-)( localize( BillingHistory ) );
+export default connect( state => ( {
+	pastTransactions: getPastBillingTransactions( state ),
+	upcomingTransactions: getUpcomingBillingTransactions( state ),
+} ) )( localize( BillingHistory ) );

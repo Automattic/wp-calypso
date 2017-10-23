@@ -1,74 +1,68 @@
 /**
+ * @format
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
+import React from 'react';
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
-import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import { login as loginStub } from 'lib/oauth-store/actions';
+import { Login } from '../login.jsx';
+import FormButton from 'components/forms/form-button';
 
-describe( 'LoginTest', function() {
-	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
+jest.mock( 'lib/oauth-store/actions', () => ( {
+	login: require( 'sinon' ).stub(),
+} ) );
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {},
+	},
+} ) );
 
-	useFakeDom.withContainer();
-	useMockery( ( mockery ) => {
-		loginStub = stub();
-		mockery.registerMock( 'lib/oauth-store/actions', {
-			login: loginStub
-		} );
-		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
-	} );
+describe( 'LoginTest', () => {
+	const page = shallow( <Login translate={ identity } /> );
 
-	before( () => {
-		React = require( 'react' );
-		ReactDom = require( 'react-dom' );
-		ReactClass = require( 'react/lib/ReactClass' );
-		TestUtils = require( 'react-addons-test-utils' );
-		ReactClass.injection.injectMixin( { translate: identity } );
-		Login = require( '../login.jsx' );
-		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
-	} );
-
-	it( 'OTP is not present on first render', function( done ) {
+	test( 'OTP is not present on first render', done => {
 		page.setState( { requires2fa: false }, function() {
-			expect( page.refs.auth_code ).to.be.undefined;
+			expect( page.find( { name: 'auth_code' } ) ).to.have.length( 0 );
 			done();
 		} );
 	} );
 
-	it( 'cannot submit until login details entered', function( done ) {
-		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
-
+	test( 'cannot submit until login details entered', done => {
+		expect( page.find( FormButton ).props().disabled ).to.be.true;
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
-			expect( submit.disabled ).to.be.false;
+			expect( page.find( FormButton ).props().disabled ).to.be.false;
 			done();
 		} );
 	} );
 
-	it( 'shows OTP box with valid login', function( done ) {
+	test( 'shows OTP box with valid login', done => {
 		page.setState( { login: 'test', password: 'test', requires2fa: true }, function() {
-			expect( page.refs.auth_code ).to.not.be.undefined;
+			expect( page.find( { name: 'auth_code' } ) ).to.have.length( 1 );
 			done();
 		} );
 	} );
 
-	it( 'prevents change of login when asking for OTP', function( done ) {
+	test( 'prevents change of login when asking for OTP', done => {
 		page.setState( { login: 'test', password: 'test', requires2fa: true }, function() {
-			expect( page.refs.login.props.disabled ).to.be.true;
-			expect( page.refs.password.props.disabled ).to.be.true;
+			expect( page.find( { name: 'login' } ).props().disabled ).to.be.true;
+			expect( page.find( { name: 'password' } ).props().disabled ).to.be.true;
 			done();
 		} );
 	} );
 
-	it( 'submits login form', function( done ) {
-		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
-
+	test( 'submits login form', done => {
 		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
-			TestUtils.Simulate.submit( submit );
+			page.find( 'form' ).simulate( 'submit', { preventDefault: noop, stopPropagation: noop } );
 
 			expect( loginStub ).to.have.been.calledOnce;
 			expect( loginStub.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;

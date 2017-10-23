@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { PropTypes, PureComponent } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -18,7 +22,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 class EditorMoreOptionsSlug extends PureComponent {
 	static propTypes = {
 		postType: PropTypes.string,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	getPopoverLabel() {
@@ -38,19 +42,18 @@ class EditorMoreOptionsSlug extends PureComponent {
 				<EditorDrawerLabel labelText={ translate( 'Slug' ) } helpText={ this.getPopoverLabel() }>
 					<Slug
 						instanceName={ postType + '-sidebar' }
-						className="editor-more-options__slug-field" />
+						className="editor-more-options__slug-field"
+					/>
 				</EditorDrawerLabel>
 			</AccordionSection>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' )
-		};
-	},
-)( localize( EditorMoreOptionsSlug ) );
+	return {
+		postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
+	};
+} )( localize( EditorMoreOptionsSlug ) );

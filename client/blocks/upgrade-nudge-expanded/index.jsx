@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -35,7 +38,7 @@ class UpgradeNudgeExpanded extends Component {
 		this.eventProperties = {
 			cta_size: 'expanded',
 			cta_name: props.event,
-			cta_feature: props.highlightedFeature
+			cta_feature: props.highlightedFeature,
 		};
 	}
 
@@ -52,15 +55,17 @@ class UpgradeNudgeExpanded extends Component {
 		//Display only if upgrade path available
 		if (
 			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor && ! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
+			( this.props.planConstants.availableFor &&
+				! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
 		) {
 			return null;
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
-		const features = this.props.planConstants.getPromotedFeatures().filter(
-			feature => feature !== this.props.highlightedFeature
-		).slice( 0, 6 );
+		const features = this.props.planConstants
+			.getPromotedFeatures()
+			.filter( feature => feature !== this.props.highlightedFeature )
+			.slice( 0, 6 );
 
 		return (
 			<Card className="upgrade-nudge-expanded">
@@ -72,14 +77,19 @@ class UpgradeNudgeExpanded extends Component {
 				<div className="upgrade-nudge-expanded__plan-card">
 					<PlanCompareCard
 						title={ this.props.plan.product_name_short }
-						line={ this.props.translate( '%(price)s per month, billed yearly', { args: { price } } ) }
+						line={ this.props.translate( '%(price)s per month, billed yearly', {
+							args: { price },
+						} ) }
 						buttonName={ this.props.translate( 'Upgrade' ) }
 						onClick={ this.upgrade }
 						currentPlan={ false }
-						popularRibbon={ true } >
-						{ this.props.highlightedFeature && <PlanCompareCardItem highlight={ true } >
-							{ getFeatureTitle( this.props.highlightedFeature ) }
-						</PlanCompareCardItem> }
+						popularRibbon={ true }
+					>
+						{ this.props.highlightedFeature && (
+							<PlanCompareCardItem highlight={ true }>
+								{ getFeatureTitle( this.props.highlightedFeature ) }
+							</PlanCompareCardItem>
+						) }
 						{ features.map( feature => (
 							<PlanCompareCardItem key={ feature }>
 								{ getFeatureTitle( feature ) }
@@ -88,23 +98,33 @@ class UpgradeNudgeExpanded extends Component {
 					</PlanCompareCard>
 				</div>
 				<div className="upgrade-nudge-expanded__description">
-					{ this.props.title && <div className="upgrade-nudge-expanded__title">
-						<div className="upgrade-nudge-expanded__title-plan">
-							<PlanIcon plan={ this.props.plan.product_slug } className="upgrade-nudge-expanded__title-plan-icon" />
+					{ this.props.title && (
+						<div className="upgrade-nudge-expanded__title">
+							<div className="upgrade-nudge-expanded__title-plan">
+								<PlanIcon
+									plan={ this.props.plan.product_slug }
+									className="upgrade-nudge-expanded__title-plan-icon"
+								/>
+							</div>
+							<p className="upgrade-nudge-expanded__title-message">{ this.props.title }</p>
 						</div>
-						<p className="upgrade-nudge-expanded__title-message">
-							{ this.props.title }
-						</p>
-					</div> }
-					{ this.props.subtitle && <p className="upgrade-nudge-expanded__subtitle">
-						{ this.props.subtitle }
-					</p> }
-					{ this.props.benefits && <ul className="upgrade-nudge-expanded__features">
-						{ this.props.benefits.map( ( benefitTitle, index ) => <li key={ index } className="upgrade-nudge-expanded__feature-item">
-							<Gridicon className="upgrade-nudge-expanded__feature-item-checkmark" icon="checkmark" />
-							{ preventWidows( benefitTitle ) }
-						</li> ) }
-					</ul> }
+					) }
+					{ this.props.subtitle && (
+						<p className="upgrade-nudge-expanded__subtitle">{ this.props.subtitle }</p>
+					) }
+					{ this.props.benefits && (
+						<ul className="upgrade-nudge-expanded__features">
+							{ this.props.benefits.map( ( benefitTitle, index ) => (
+								<li key={ index } className="upgrade-nudge-expanded__feature-item">
+									<Gridicon
+										className="upgrade-nudge-expanded__feature-item-checkmark"
+										icon="checkmark"
+									/>
+									{ preventWidows( benefitTitle ) }
+								</li>
+							) ) }
+						</ul>
+					) }
 					{ this.props.children }
 				</div>
 			</Card>
@@ -116,7 +136,7 @@ UpgradeNudgeExpanded.defaultProps = {
 	plan: {},
 	currentPlan: {},
 	planConstants: {},
-	eventName: 'calypso_upgrade_nudge_impression'
+	eventName: 'calypso_upgrade_nudge_impression',
 };
 
 UpgradeNudgeExpanded.propTypes = {
@@ -132,16 +152,16 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
-	recordTracksEvent: PropTypes.func.isRequired
+	recordTracksEvent: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
 	currentPlan: getSitePlan( state, getSelectedSiteId( state ) ),
 	planConstants: getPlan( plan ),
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } );
 
-const mapDispatchToProps = ( dispatch ) => bindActionCreators( { recordTracksEvent }, dispatch );
+const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 
 /**
@@ -10,21 +12,23 @@ import Gridicon from 'gridicons';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { localize } from 'i18n-calypso';
 
-const JetpackConnectHelpButton = ( { translate, onClick } ) => {
+const JetpackConnectHelpButton = ( { label, translate, onClick } ) => {
 	return (
 		<LoggedOutFormLinkItem
 			className="jetpack-connect__help-button"
 			href="https://jetpack.com/contact-support"
-			target="_blank" rel="noopener noreferrer"
+			target="_blank"
+			rel="noopener noreferrer"
 			onClick={ onClick }
 		>
-			<Gridicon icon="help-outline" /> { translate( 'Get help connecting your site' ) }
+			<Gridicon icon="help-outline" /> { label || translate( 'Get help connecting your site' ) }
 		</LoggedOutFormLinkItem>
 	);
 };
 
 JetpackConnectHelpButton.propTypes = {
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
+	label: PropTypes.string,
 };
 
 export default localize( JetpackConnectHelpButton );

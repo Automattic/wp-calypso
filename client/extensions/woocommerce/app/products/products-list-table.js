@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -17,24 +20,31 @@ import TableItem from 'woocommerce/components/table/table-item';
 const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 	const headings = (
 		<TableRow isHeader className={ classNames( { 'products__list-placeholder': ! products } ) }>
-			{ [ translate( 'Product' ), translate( 'Inventory' ), translate( 'Category' ) ].map( ( item, i ) =>
-				<TableItem isHeader key={ i } isTitle={ 0 === i }>{ item }</TableItem>
-			) }
+			{ [
+				translate( 'Product' ),
+				translate( 'Inventory' ),
+				translate( 'Category' ),
+			].map( ( item, i ) => (
+				<TableItem isHeader key={ i } isTitle={ 0 === i }>
+					{ item }
+				</TableItem>
+			) ) }
 		</TableRow>
 	);
 
 	return (
 		<div>
-			<Table header={ headings } className={ classNames( { 'is-requesting': isRequesting } ) } horizontalScroll>
-				{ products && products.map( ( product, i ) => (
-					<ProductsListRow
-						key={ i }
-						site={ site }
-						product={ product }
-					/>
-				) ) }
+			<Table
+				header={ headings }
+				className={ classNames( { 'is-requesting': isRequesting } ) }
+				horizontalScroll
+			>
+				{ products &&
+					products.map( ( product, i ) => (
+						<ProductsListRow key={ i } site={ site } product={ product } />
+					) ) }
 			</Table>
-			{ ! products && ( <div className="products__list-placeholder"></div> ) }
+			{ ! products && <div className="products__list-placeholder" /> }
 		</div>
 	);
 };
@@ -44,10 +54,7 @@ ProductsListTable.propTypes = {
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ),
-	products: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.bool,
-	] ),
+	products: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 };
 
 export default localize( ProductsListTable );

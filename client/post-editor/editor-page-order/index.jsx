@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -20,11 +24,11 @@ class EditorPageOrder extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
-		menuOrder: PropTypes.number
+		menuOrder: PropTypes.number,
 	};
 
 	static defaultProps = {
-		menuOrder: 0
+		menuOrder: 0,
 	};
 
 	constructor() {
@@ -65,7 +69,8 @@ class EditorPageOrder extends Component {
 						pattern="[0-9]*"
 						onChange={ this.editMenuOrder }
 						onBlur={ this.editMenuOrder }
-						className="editor-page-order__input" />
+						className="editor-page-order__input"
+					/>
 				</label>
 			</AccordionSection>
 		);
@@ -73,7 +78,7 @@ class EditorPageOrder extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const menuOrder = getEditedPostValue( state, siteId, postId, 'menu_order' );

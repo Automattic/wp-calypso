@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,8 +14,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import Main from 'components/main';
@@ -35,6 +40,8 @@ export class Login extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		socialConnect: PropTypes.bool,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 	};
 
 	componentDidMount() {
@@ -132,12 +139,12 @@ export class Login extends React.Component {
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
+			socialService,
+			socialServiceResponse,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
-			return (
-				<PrivateSite />
-			);
+			return <PrivateSite />;
 		}
 
 		return (
@@ -147,19 +154,15 @@ export class Login extends React.Component {
 				privateSite={ privateSite }
 				clientId={ clientId }
 				oauth2Client={ oauth2Client }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
 			/>
 		);
 	}
 
 	render() {
-		const {
-			locale,
-			privateSite,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
-		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
+		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
 
 		return (
 			<div>
@@ -168,18 +171,21 @@ export class Login extends React.Component {
 
 					<DocumentHead
 						title={ translate( 'Log In', { textOnly: true } ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] } />
+						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+					/>
 
 					<GlobalNotices id="notices" notices={ notices.list } />
 
 					<div>
-						<div className="wp-login__container">
-							{ this.renderContent() }
-						</div>
+						<div className="wp-login__container">{ this.renderContent() }</div>
 
-						{ ! socialConnect &&
-							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } privateSite={ privateSite } />
-						}
+						{ ! socialConnect && (
+							<LoginLinks
+								locale={ locale }
+								twoFactorAuthType={ twoFactorAuthType }
+								privateSite={ privateSite }
+							/>
+						) }
 					</div>
 				</Main>
 
@@ -190,8 +196,9 @@ export class Login extends React.Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{

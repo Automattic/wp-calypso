@@ -1,6 +1,9 @@
 /**
  * Internal Dependencies
+ *
+ * @format
  */
+
 import AddGoogleApps from './add-google-apps';
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';

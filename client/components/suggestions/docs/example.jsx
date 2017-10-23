@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React, { Component } from 'react';
 import { noop } from 'lodash';
 
@@ -11,16 +14,15 @@ import SearchCard from 'components/search-card';
 import Suggestions from 'components/suggestions';
 
 class SuggestionsExample extends Component {
-
 	static displayName = 'Suggestions';
 
 	static hints = [ 'Foo', 'Bar', 'Baz' ];
 
 	state = {
 		query: '',
-	}
+	};
 
-	setSuggestionsRef = ref => this.suggestionsRef = ref;
+	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
 
@@ -42,12 +44,14 @@ class SuggestionsExample extends Component {
 					onSearch={ this.handleSearch }
 					onBlur={ this.hideSuggestions }
 					onKeyDown={ this.handleKeyDown }
-					placeholder="Type something..." />
+					placeholder="Type something..."
+				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }
 					query={ this.state.query }
 					suggestions={ this.getSuggestions() }
-					suggest={ noop } />
+					suggest={ noop }
+				/>
 			</div>
 		);
 	}

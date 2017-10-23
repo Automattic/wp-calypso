@@ -1,46 +1,48 @@
+/** @format */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import config from 'config';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { isLegacyRoute } from '../legacy-routes';
+import config from 'config';
 
 let features = [];
 
-describe( 'legacy-routes', function() {
+describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
-		before( () => {
-			sinon.stub( config, 'isEnabled', ( flag ) => {
+		beforeAll( () => {
+			sinon.stub( config, 'isEnabled', flag => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );
 
-		after( () => {
+		afterAll( () => {
 			config.isEnabled.restore();
 		} );
 
-		it( 'should return false for /settings/general', () => {
+		test( 'should return false for /settings/general', () => {
 			expect( isLegacyRoute( '/settings/general' ) ).to.be.false;
 		} );
 
-		it( 'should return true for / when reader is disabled', () => {
+		test( 'should return true for / when reader is disabled', () => {
 			// config.isEnabled( 'reader' ) === false
 			features = [];
 			expect( isLegacyRoute( '/' ) ).to.be.true;
 		} );
 
-		it( 'should return false for / when reader is enabled', () => {
+		test( 'should return false for / when reader is enabled', () => {
 			// config.isEnabled( 'reader' ) === true
 			features = [ 'reader' ];
 			expect( isLegacyRoute( '/' ) ).to.be.false;
 		} );
 
-		it( 'should return true for any path ending in .php', () => {
+		test( 'should return true for any path ending in .php', () => {
 			expect( isLegacyRoute( '/test.php' ) ).to.be.true;
 			expect( isLegacyRoute( 'test.php' ) ).to.be.true;
 			expect( isLegacyRoute( '/some/nested/page.php' ) ).to.be.true;
@@ -52,15 +54,15 @@ describe( 'legacy-routes', function() {
 				features = [ 'me/my-profile' ];
 			} );
 
-			it( 'should return false for /me', () => {
+			test( 'should return false for /me', () => {
 				expect( isLegacyRoute( '/me' ) ).to.be.false;
 			} );
 
-			it( 'should return false for /me/billing', () => {
+			test( 'should return false for /me/billing', () => {
 				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
 			} );
 
-			it( 'should return false for /me/next', () => {
+			test( 'should return false for /me/next', () => {
 				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
 			} );
 		} );
@@ -71,15 +73,15 @@ describe( 'legacy-routes', function() {
 				features = [];
 			} );
 
-			it( 'should return true for /me', () => {
+			test( 'should return true for /me', () => {
 				expect( isLegacyRoute( '/me' ) ).to.be.true;
 			} );
 
-			it( 'should return false for /me/billing', () => {
+			test( 'should return false for /me/billing', () => {
 				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
 			} );
 
-			it( 'should return false for /me/next', () => {
+			test( 'should return false for /me/next', () => {
 				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
 			} );
 		} );

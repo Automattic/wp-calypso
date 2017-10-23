@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,17 +11,13 @@ import { expect } from 'chai';
 import { http } from '../actions';
 
 describe( '#rawHttp', () => {
-	it( 'should set request parameters', () => {
+	test( 'should set request parameters', () => {
 		const url = 'http://yury.com';
 		const method = 'POST';
-		const headers = [
-			[ 'Content-Type', 'application/json' ]
-		];
-		const queryParams = [
-			[ 'hello', 'world' ]
-		];
+		const headers = [ [ 'Content-Type', 'application/json' ] ];
+		const queryParams = [ [ 'hello', 'world' ] ];
 		const body = {
-			hello: 'world'
+			hello: 'world',
 		};
 		const withCredentials = true;
 		const onSuccess = { type: 'SUCCESS' };
@@ -45,19 +43,22 @@ describe( '#rawHttp', () => {
 		expect( request ).to.have.property( 'onFailure', onFailure );
 	} );
 
-	it( 'should set onSuccess and onFailure to whatever passed even when we have action', () => {
+	test( 'should set onSuccess and onFailure to whatever passed even when we have action', () => {
 		const someFn = () => {};
 		const someAction = { type: 'HELLO' };
-		const request = http( {
-			onSuccess: someFn,
-			onFailure: someFn,
-		}, someAction );
+		const request = http(
+			{
+				onSuccess: someFn,
+				onFailure: someFn,
+			},
+			someAction
+		);
 
 		expect( request ).to.have.property( 'onSuccess', someFn );
 		expect( request ).to.have.property( 'onFailure', someFn );
 	} );
 
-	it( 'should set onSuccess and onFailure to action if there is no handlers', () => {
+	test( 'should set onSuccess and onFailure to action if there is no handlers', () => {
 		const someAction = { type: 'HELLO' };
 		const request = http( {}, someAction );
 

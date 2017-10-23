@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { get, find, isArray } from 'lodash';
 
 /**
@@ -16,7 +19,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @return {Array} List of product categories
  */
 export function getProductCategories( rootState, siteId = getSelectedSiteId( rootState ) ) {
-	const categories = get( rootState, [ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ], [] );
+	const categories = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ],
+		[]
+	);
 	if ( ! isArray( categories ) ) {
 		return [];
 	}
@@ -31,8 +38,16 @@ export function getProductCategories( rootState, siteId = getSelectedSiteId( roo
  * @param {Number} siteId wpcom site id
  * @return {Object|null} Product category if found, otherwise null.
  */
-export function getProductCategory( rootState, categoryId, siteId = getSelectedSiteId( rootState ) ) {
-	const categories = get( rootState, [ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ], [] );
+export function getProductCategory(
+	rootState,
+	categoryId,
+	siteId = getSelectedSiteId( rootState )
+) {
+	const categories = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories' ],
+		[]
+	);
 	if ( ! isArray( categories ) ) {
 		return;
 	}

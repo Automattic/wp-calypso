@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,13 +15,13 @@ describe( 'selectors', () => {
 	const secondarySiteId = 234567;
 
 	describe( 'isRequestingZones()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -27,17 +29,17 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, secondarySiteId );
@@ -45,17 +47,17 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the settings are not being fetched', () => {
+		test( 'should return false if the settings are not being fetched', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -63,17 +65,17 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the settings are being fetched', () => {
+		test( 'should return true if the settings are being fetched', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -91,13 +93,13 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return an empty array if no state exists', () => {
+		test( 'should return an empty array if no state exists', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );
@@ -105,17 +107,17 @@ describe( 'selectors', () => {
 			expect( zones ).to.deep.equal( [] );
 		} );
 
-		it( 'should return an empty array if no site is attached', () => {
+		test( 'should return an empty array if no site is attached', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, secondarySiteId );
@@ -123,17 +125,17 @@ describe( 'selectors', () => {
 			expect( zones ).to.deep.equal( [] );
 		} );
 
-		it( 'should return the zones for a siteId', () => {
+		test( 'should return the zones for a siteId', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );
@@ -151,13 +153,13 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return null if no state exists', () => {
+		test( 'should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const zone = getZone( state, primarySiteId, 1 );
@@ -165,17 +167,17 @@ describe( 'selectors', () => {
 			expect( zone ).to.be.null;
 		} );
 
-		it( 'should return null if no site is attached', () => {
+		test( 'should return null if no site is attached', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zone = getZone( state, secondarySiteId, 1 );
@@ -183,17 +185,17 @@ describe( 'selectors', () => {
 			expect( zone ).to.be.null;
 		} );
 
-		it( 'should return the zone for a siteId and zoneId combination', () => {
+		test( 'should return the zone for a siteId and zoneId combination', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zone = getZone( state, primarySiteId, 1 );

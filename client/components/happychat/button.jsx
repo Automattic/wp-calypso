@@ -1,7 +1,11 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import React, { Component, PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import page from 'page';
 import { identity, noop } from 'lodash';
 import { connect } from 'react-redux';
@@ -13,13 +17,10 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
-import {
-	hasUnreadMessages,
-	isHappychatAvailable,
-	hasActiveHappychatSession,
-} from 'state/happychat/selectors';
-import { connectChat } from 'state/happychat/actions';
-import { openChat } from 'state/ui/happychat/actions';
+import { hasUnreadMessages, hasActiveHappychatSession } from 'state/happychat/selectors';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { connectChat } from 'state/happychat/connection/actions';
+import { openChat } from 'state/happychat/ui/actions';
 import Button from 'components/button';
 
 class HappychatButton extends Component {
@@ -45,7 +46,7 @@ class HappychatButton extends Component {
 		translate: identity,
 	};
 
-	onClick = ( event ) => {
+	onClick = event => {
 		if ( this.props.allowMobileRedirect && viewport.isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page componet instead of the sidebar
@@ -55,17 +56,26 @@ class HappychatButton extends Component {
 		}
 
 		this.props.onClick( event );
-	}
+	};
 
 	componentDidMount() {
 		this.props.connectChat();
 	}
 
 	render() {
-		const { translate, children, className, primary, borderless, hasUnread, isChatAvailable, isChatActive } = this.props;
+		const {
+			translate,
+			children,
+			className,
+			primary,
+			borderless,
+			hasUnread,
+			isChatAvailable,
+			isChatActive,
+		} = this.props;
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
-			'has-unread': hasUnread
+			'has-unread': hasUnread,
 		} );
 
 		if ( ! showButton ) {
@@ -78,7 +88,8 @@ class HappychatButton extends Component {
 				primary={ primary }
 				borderless={ borderless }
 				onClick={ this.onClick }
-				title={ translate( 'Support Chat' ) }>
+				title={ translate( 'Support Chat' ) }
+			>
 				{ children || <Gridicon icon="chat" /> }
 			</Button>
 		);

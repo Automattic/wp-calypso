@@ -1,3 +1,4 @@
+/** @format */
 // External dependencies
 import { decodeEntities } from 'lib/formatting';
 import dispatcher from 'dispatcher';
@@ -127,4 +128,4 @@ ListStore.dispatchToken = dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = ListStore;
+export default ListStore;

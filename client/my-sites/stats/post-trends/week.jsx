@@ -1,8 +1,12 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { localize } from 'i18n-calypso';
-import React, { PropTypes, Component } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -12,7 +16,6 @@ import Day from './day';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 class PostTrendsWeek extends Component {
-
 	static propTypes = {
 		startDate: PropTypes.object.isRequired,
 		month: PropTypes.object.isRequired,
@@ -32,10 +35,12 @@ class PostTrendsWeek extends Component {
 		const { month, startDate, streakData, max, moment, userLocale } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
-			const dayDate = moment( startDate ).locale( 'en' ).add( i, 'day' );
+			const dayDate = moment( startDate )
+				.locale( 'en' )
+				.add( i, 'day' );
 			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
 			const classNames = [];
-			let level = Math.ceil( ( postCount / max ) * 4 );
+			let level = Math.ceil( postCount / max * 4 );
 
 			if (
 				dayDate.isBefore( moment( month ).startOf( 'month' ) ) ||
@@ -53,7 +58,8 @@ class PostTrendsWeek extends Component {
 			}
 
 			days.push(
-				<Day key={ dayDate.format( 'MMDD' ) }
+				<Day
+					key={ dayDate.format( 'MMDD' ) }
 					className={ classNames.join( ' ' ) }
 					label={ dayDate.locale( userLocale ).format( 'L' ) }
 					postCount={ postCount }
@@ -65,13 +71,10 @@ class PostTrendsWeek extends Component {
 	}
 
 	render() {
-		return (
-			<div className="post-trends__week">{ this.getDayComponents() }</div>
-		);
+		return <div className="post-trends__week">{ this.getDayComponents() }</div>;
 	}
-
 }
 
-export default connect(
-	( state ) => ( { userLocale: getCurrentUserLocale( state ) } )
-)( localize( PostTrendsWeek ) );
+export default connect( state => ( { userLocale: getCurrentUserLocale( state ) } ) )(
+	localize( PostTrendsWeek )
+);

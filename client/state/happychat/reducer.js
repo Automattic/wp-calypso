@@ -1,15 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
-import {
-	concat,
-	filter,
-	find,
-	map,
-	get,
-	sortBy,
-	takeRight,
-} from 'lodash';
+
+import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
 import validator from 'is-my-json-valid';
 
 /**
@@ -19,25 +14,18 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_DISCONNECTED,
-	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import {
-	HAPPYCHAT_CHAT_STATUS_DEFAULT,
-} from './selectors';
+import { combineReducers } from 'state/utils';
+import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
-import { timelineSchema, geoLocationSchema } from './schema';
+import { timelineSchema } from './schema';
+import user from './user/reducer';
+import connection from './connection/reducer';
+import ui from './ui/reducer';
 
 /**
  * Returns a timeline event from the redux action
@@ -51,34 +39,26 @@ const timeline_event = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
-			return Object.assign( {}, {
-				id: event.id,
-				source: event.source,
-				message: event.text,
-				name: event.user.name,
-				image: event.user.avatarURL,
-				timestamp: event.timestamp,
-				user_id: event.user.id,
-				type: get( event, 'type', 'message' ),
-				links: get( event, 'meta.links' )
-			} );
+			return Object.assign(
+				{},
+				{
+					id: event.id,
+					source: event.source,
+					message: event.text,
+					name: event.user.name,
+					image: event.user.avatarURL,
+					timestamp: event.timestamp,
+					user_id: event.user.id,
+					type: get( event, 'type', 'message' ),
+					links: get( event, 'meta.links' ),
+				}
+			);
 	}
 	return state;
 };
 
 const validateTimeline = validator( timelineSchema );
 const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
-
-/**
- * Tracks the current user geo location.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const geoLocation = createReducer( null, {
-	[ HAPPYCHAT_SET_GEO_LOCATION ]: ( state, action ) => action.geoLocation
-}, geoLocationSchema );
 
 /**
  * Adds timeline events for happychat
@@ -119,19 +99,23 @@ const timeline = ( state = [], action ) => {
 
 				return ! find( state, { id: message.id } );
 			} );
-			return sortTimeline( state.concat( map( messages, message => {
-				return Object.assign( {
-					id: message.id,
-					source: message.source,
-					message: message.text,
-					name: message.user.name,
-					image: message.user.picture,
-					timestamp: message.timestamp,
-					user_id: message.user.id,
-					type: get( message, 'type', 'message' ),
-					links: get( message, 'meta.links' )
-				} );
-			} ) ) );
+			return sortTimeline(
+				state.concat(
+					map( messages, message => {
+						return Object.assign( {
+							id: message.id,
+							source: message.source,
+							message: message.text,
+							name: message.user.name,
+							image: message.user.picture,
+							timestamp: message.timestamp,
+							user_id: message.user.id,
+							type: get( message, 'type', 'message' ),
+							links: get( message, 'meta.links' ),
+						} );
+					} )
+				)
+			);
 	}
 	return state;
 };
@@ -151,38 +135,6 @@ export const message = ( state = '', action ) => {
 			return '';
 		case HAPPYCHAT_SET_MESSAGE:
 			return action.message;
-	}
-	return state;
-};
-
-/**
- * Tracks the state of the happychat client connection
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- *
- */
-const connectionStatus = ( state = 'uninitialized', action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
-		case HAPPYCHAT_CONNECTED:
-			return 'connected';
-		case HAPPYCHAT_DISCONNECTED:
-			return 'disconnected';
-		case HAPPYCHAT_RECONNECTING:
-			return 'reconnecting';
-	}
-	return state;
-};
-
-const connectionError = ( state = null, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTED:
-			return null;
-		case HAPPYCHAT_DISCONNECTED:
-			return action.errorStatus;
 	}
 	return state;
 };
@@ -211,21 +163,6 @@ const chatStatus = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	return state;
 };
 
-/**
- * Tracks whether happychat.io is accepting new chats.
- *
- * @param  {Boolean} state  Current happychat status
- * @param  {Object}  action Action playload
- * @return {Boolean}        Updated happychat status
- */
-const isAvailable = ( state = false, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_SET_AVAILABLE:
-			return action.isAvailable;
-	}
-	return state;
-};
-
 export const lastActivityTimestamp = ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SEND_MESSAGE:
@@ -236,46 +173,12 @@ export const lastActivityTimestamp = ( state = null, action ) => {
 };
 lastActivityTimestamp.schema = { type: 'number' };
 
-/**
- * Tracks the last time Happychat had focus. This lets us determine things like
- * whether the user has unread messages. A numerical value is the timestamp where focus
- * was lost, and `null` means HC currently has focus.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const lostFocusAt = ( state = null, action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-			// If there's already a timestamp set, use that. Otherwise treat a SERIALIZE as a
-			// "loss of focus" since it represents the state when the browser (and HC) closed.
-			if ( state === null ) {
-				return Date.now();
-			}
-			return state;
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, { type: 'number' } ) ) {
-				return state;
-			}
-			return null;
-		case HAPPYCHAT_BLUR:
-			return Date.now();
-		case HAPPYCHAT_FOCUS:
-			return null;
-	}
-	return state;
-};
-lastActivityTimestamp.hasCustomPersistence = true;
-
 export default combineReducers( {
 	chatStatus,
-	connectionError,
-	connectionStatus,
-	isAvailable,
 	lastActivityTimestamp,
-	lostFocusAt,
 	message,
 	timeline,
-	geoLocation,
+	ui,
+	user,
+	connection,
 } );

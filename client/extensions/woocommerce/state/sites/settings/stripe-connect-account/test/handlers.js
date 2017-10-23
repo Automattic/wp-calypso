@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -7,22 +9,18 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	createAccount,
-} from '../actions.js';
+import { createAccount } from '../actions.js';
 import {
 	handleAccountCreate,
 	handleAccountCreateSuccess,
 	handleAccountCreateFailure,
 } from '../handlers.js';
-import {
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
-} from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleCreateAccountRequest', () => {
-		it( 'should dispatch a POST request', () => {
+		test( 'should dispatch a POST request', () => {
 			const siteId = '123';
 			const email = 'foo@bar.com';
 			const country = 'US';
@@ -31,20 +29,22 @@ describe( 'handlers', () => {
 			handleAccountCreate( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: WPCOM_HTTP_REQUEST,
-				body: JSON.stringify( { email, country } ),
+				body: {
+					path: '/wc/v1/connect/stripe/account/&_method=POST',
+					body: JSON.stringify( { email, country } ),
+				},
 				method: 'POST',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: '/wc/v1/connect/stripe/account/&_method=POST',
 					json: true,
 					apiVersion: '1.1',
-				}
+				},
 			} );
 		} );
 	} );
 
 	describe( '#handleAccountCreateSuccess()', () => {
-		it( 'should dispatch create account receive on success with the account info', () => {
+		test( 'should dispatch create account receive on success with the account info', () => {
 			const siteId = '123';
 			const email = 'foo@bar.com';
 			const countryCode = 'US';
@@ -55,7 +55,7 @@ describe( 'handlers', () => {
 				data: {
 					account_id: 'acct_14qyt6Alijdnw0EA',
 					success: true,
-				}
+				},
 			};
 
 			const action = createAccount( siteId, email, countryCode );
@@ -71,7 +71,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleAccountCreateFailure()', () => {
-		it( 'should dispatch create account error', () => {
+		test( 'should dispatch create account error', () => {
 			const siteId = '123';
 			const email = 'foo@bar.com';
 			const countryCode = 'US';
@@ -82,12 +82,12 @@ describe( 'handlers', () => {
 				data: {
 					body: {
 						data: {
-							message: 'An account using that email address already exists.'
+							message: 'An account using that email address already exists.',
 						},
 						success: false,
 					},
-					status: 400
-				}
+					status: 400,
+				},
 			};
 
 			const action = createAccount( siteId, email, countryCode );

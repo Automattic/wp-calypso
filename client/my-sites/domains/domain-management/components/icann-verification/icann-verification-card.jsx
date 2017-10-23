@@ -1,6 +1,10 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -21,10 +25,10 @@ import QueryWhois from 'components/data/query-whois';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
-		contactDetails: React.PropTypes.object,
-		explanationContext: React.PropTypes.string,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSiteSlug: React.PropTypes.string.isRequired,
+		contactDetails: PropTypes.object,
+		explanationContext: PropTypes.string,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -44,12 +48,12 @@ class IcannVerificationCard extends React.Component {
 		this.setState( { emailSent: false } );
 	};
 
-	handleSubmit = ( event ) => {
+	handleSubmit = event => {
 		event.preventDefault();
 
 		this.setState( { submitting: true } );
 
-		upgradesActions.resendIcannVerification( this.props.selectedDomainName, ( error ) => {
+		upgradesActions.resendIcannVerification( this.props.selectedDomainName, error => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
@@ -66,21 +70,25 @@ class IcannVerificationCard extends React.Component {
 		if ( explanationContext === 'name-servers' ) {
 			return translate(
 				'You have to verify the email address used to register this domain before you ' +
-				'are able to update the name servers for your domain. ' +
-				'Look for the verification message in your email inbox.'
+					'are able to update the name servers for your domain. ' +
+					'Look for the verification message in your email inbox.'
 			);
 		}
 
 		return translate(
 			'We need to check your contact information to make sure you can be reached. Please verify your ' +
-			'details using the email we sent you, or your domain will stop working. ' +
-			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
+				'details using the email we sent you, or your domain will stop working. ' +
+				'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+			{
 				components: {
-					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
-						target="_blank"
-						rel="noopener noreferrer"
-					/>
-				}
+					learnMoreLink: (
+						<a
+							href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
 			}
 		);
 	}
@@ -111,26 +119,23 @@ class IcannVerificationCard extends React.Component {
 					<Gridicon icon={ statusIcon } size={ 36 } />
 					{ statusText }
 
-					{ ! emailSent &&
+					{ ! emailSent && (
 						<div>
 							<Button
 								compact
 								busy={ submitting }
 								disabled={ submitting }
-								onClick={ this.handleSubmit }>
+								onClick={ this.handleSubmit }
+							>
 								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
 							</Button>
 
-							<Button
-								compact
-								href={ changeEmailHref }
-								onClick={ this.props.onClick }>
+							<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
 								{ this.props.translate( 'Change Email Address' ) }
 							</Button>
 						</div>
-					}
+					) }
 				</div>
-
 			</div>
 		);
 	}
