@@ -98,8 +98,8 @@ class RefundDialog extends Component {
 		const { order } = this.props;
 		return (
 			sum(
-				order.fee_lines.map( ( item, i ) => {
-					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, i ) );
+				order.fee_lines.map( item => {
+					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, item.id ) );
 				} )
 			) +
 			parseFloat( getOrderShippingTax( order ) ) +

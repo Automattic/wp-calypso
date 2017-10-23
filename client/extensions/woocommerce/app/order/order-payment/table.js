@@ -48,8 +48,9 @@ class OrderRefundTable extends Component {
 
 		this.state = {
 			quantities: {},
-			fees: props.order.fee_lines.map( ( item, i ) => {
-				const value = parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, i ) );
+			fees: props.order.fee_lines.map( item => {
+				const value =
+					parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, item.id ) );
 				return getCurrencyFormatDecimal( value );
 			} ),
 			shippingTotal: getCurrencyFormatDecimal( shippingTotal ),
