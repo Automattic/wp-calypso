@@ -59,14 +59,14 @@ class ThemesSelection extends Component {
 		showUploadButton: true,
 	};
 
-	recordSearchResultsClick = ( theme, resultsRank, action ) => {
+	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
 		const { query, themes, filterString } = this.props;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
-			theme: theme.id,
+			theme: themeId,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page,
@@ -85,12 +85,12 @@ class ThemesSelection extends Component {
 		this.props.recordTracksEvent( 'calypso_themeshowcase_last_page_scroll' );
 	}
 
-	onScreenshotClick = ( theme, resultsRank ) => {
+	onScreenshotClick = ( themeId, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( theme ) ) {
-			this.recordSearchResultsClick( theme, resultsRank, 'screenshot_info' );
+		if ( ! this.props.isThemeActive( themeId ) ) {
+			this.recordSearchResultsClick( themeId, resultsRank, 'screenshot_info' );
 		}
-		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
+		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
 	fetchNextPage = options => {

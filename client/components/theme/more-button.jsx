@@ -32,7 +32,7 @@ class ThemeMoreButton extends Component {
 	togglePopover() {
 		this.setState( { showPopover: ! this.state.showPopover } );
 		! this.state.showPopover &&
-			this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_open' );
+			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
 	}
 
 	closePopover( action ) {
@@ -43,8 +43,8 @@ class ThemeMoreButton extends Component {
 	}
 
 	popoverAction( action, label ) {
-		action( this.props.theme.id );
-		this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_' + label );
+		action( this.props.themeId );
+		this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
 	}
 
 	onPopoverActionClick( action, label ) {
@@ -85,7 +85,7 @@ class ThemeMoreButton extends Component {
 								return <hr key={ key } className="popover__hr" />;
 							}
 							if ( option.getUrl ) {
-								const url = option.getUrl( this.props.theme.id );
+								const url = option.getUrl( this.props.themeId );
 								return (
 									<a
 										className="theme__more-button-menu-item popover__menu-item"
@@ -120,8 +120,7 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
-	// See Theme component propTypes
-	theme: PropTypes.object,
+	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,
 	// More elaborate onClick action, used for tracking.
