@@ -43,6 +43,16 @@ class OrderRefundTable extends Component {
 
 	constructor( props ) {
 		super( props );
+		this.initializeState( props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.order.id !== this.props.order.id ) {
+			this.initializeState( nextProps );
+		}
+	}
+
+	initializeState = props => {
 		const { order } = props;
 		const shippingTax = getOrderShippingTax( order );
 		const shippingTotal = parseFloat( shippingTax ) + parseFloat( order.shipping_total );
@@ -56,7 +66,7 @@ class OrderRefundTable extends Component {
 			} ),
 			shippingTotal: getCurrencyFormatDecimal( shippingTotal, order.currency ),
 		};
-	}
+	};
 
 	shouldShowTax = () => {
 		const { order } = this.props;
