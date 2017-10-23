@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
 import { isEnabled } from 'config';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasActiveHappychatSession } from 'state/happychat/selectors';
@@ -35,7 +34,7 @@ const JetpackConnectHappychatButton = ( {
 	if ( ! isChatAvailable && ! isChatActive ) {
 		return (
 			<div>
-				<HappychatConnection />
+				// TODO: why was HappychatConnection here?
 				{ children }
 			</div>
 		);
@@ -46,7 +45,6 @@ const JetpackConnectHappychatButton = ( {
 			className="logged-out-form__link-item jetpack-connect__happychat-button"
 			borderless={ false }
 		>
-			<HappychatConnection />
 			<Gridicon icon="chat" /> { label || translate( 'Get help connecting your site' ) }
 		</HappychatButton>
 	);

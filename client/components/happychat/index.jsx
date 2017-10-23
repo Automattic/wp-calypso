@@ -12,6 +12,7 @@ import GridIcon from 'gridicons';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { localize } from 'i18n-calypso';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import {
@@ -22,9 +23,10 @@ import {
 	minimizeChat,
 	minimizedChat,
 } from 'state/happychat/ui/actions';
+import { connectChat } from 'state/happychat/connect/actions';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import HappychatConnection from './connection';
 import Composer from './composer';
 import Notices from './notices';
 import Timeline from './timeline';
@@ -46,6 +48,9 @@ const Title = localize( ( { onCloseChat, translate } ) => (
  */
 class Happychat extends React.Component {
 	componentDidMount() {
+		if ( this.props.isEnabled && this.props.isUninitialized ) {
+			this.props.connectChat();
+		}
 		this.props.setFocused();
 	}
 
@@ -58,7 +63,6 @@ class Happychat extends React.Component {
 
 		return (
 			<div className="happychat">
-				<HappychatConnection />
 				<div
 					className={ classnames( 'happychat__container', {
 						'is-open': isChatOpen,
@@ -81,7 +85,9 @@ const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		isChatOpen: isHappychatOpen( state ),
+		isEnabled: config.isEnabled( 'happychat' ),
 		isMinimizing: isHappychatMinimizing( state ),
+		isUninitialized: isHappychatConnectionUninitialized( state ),
 	};
 };
 
@@ -103,6 +109,7 @@ const mapDispatch = dispatch => {
 		setFocused() {
 			dispatch( focus() );
 		},
+		connectChat,
 	};
 };
 

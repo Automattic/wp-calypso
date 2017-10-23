@@ -13,7 +13,6 @@ import { spy } from 'sinon';
  */
 import { HappinessSupport } from '..';
 import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
 import support from 'lib/url/support';
 
 describe( 'HappinessSupport', () => {
@@ -74,17 +73,6 @@ describe( 'HappinessSupport', () => {
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder={ true } />
 		);
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.true;
-	} );
-
-	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
-		wrapper = shallow(
-			<HappinessSupport
-				translate={ translate }
-				recordTracksEvent={ noop }
-				showLiveChatButton={ true }
-			/>
-		);
-		expect( wrapper.find( HappychatConnection ) ).to.have.length( 1 );
 	} );
 
 	describe( 'LiveChat button', () => {

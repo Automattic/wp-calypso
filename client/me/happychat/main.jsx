@@ -12,16 +12,21 @@ import { findDOMNode } from 'react-dom';
  */
 import { blur, focus } from 'state/happychat/ui/actions';
 import viewport from 'lib/viewport';
-import HappychatConnection from 'components/happychat/connection';
+import { connectChat } from 'state/happychat/connection/actions';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import Composer from 'components/happychat/composer';
 import Notices from 'components/happychat/notices';
 import Timeline from 'components/happychat/timeline';
+import config from 'config';
 
 /**
  * React component for rendering a happychat client as a full page
  */
 class HappychatPage extends Component {
 	componentDidMount() {
+		if ( this.props.isEnabled && this.props.isUninitialized ) {
+			this.props.connectChat();
+		}
 		this.props.setFocused();
 	}
 
@@ -42,7 +47,6 @@ class HappychatPage extends Component {
 	render() {
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
-				<HappychatConnection />
 				<Timeline />
 				<Notices />
 				<Composer />
@@ -52,8 +56,15 @@ class HappychatPage extends Component {
 }
 
 const mapDispatch = {
+	connectChat: connectChat,
 	setBlurred: blur,
 	setFocused: focus,
 };
 
-export default connect( null, mapDispatch )( HappychatPage );
+export default connect(
+	state => ( {
+		isEnabled: config.isEnabled( 'happychat' ),
+		isUninitialized: isHappychatConnectionUninitialized( state ),
+	} ),
+	mapDispatch
+)( HappychatPage );

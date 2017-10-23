@@ -30,16 +30,17 @@ import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
+	connectChat as connectHappychat,
 	sendChatMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'state/happychat/connection/actions';
@@ -97,6 +98,10 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
+
+		if ( this.props.isHappychatEnabled && this.props.isHappychatUninitialized ) {
+			this.props.connectHappychat();
+		}
 	},
 
 	componentDidUpdate: function() {
@@ -733,7 +738,6 @@ const HelpContact = React.createClass( {
 				>
 					{ this.getView() }
 				</Card>
-				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
@@ -753,6 +757,8 @@ export default connect(
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
+			isHappychatEnabled: config.isEnabled( 'happychat' ),
+			isHappychatUninitialized: isHappychatConnectionUninitialized( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
@@ -767,6 +773,7 @@ export default connect(
 	},
 	{
 		openHappychat,
+		connectHappychat,
 		sendHappychatMessage,
 		sendUserInfo,
 		askDirectlyQuestion,

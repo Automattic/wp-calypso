@@ -17,7 +17,6 @@ import Button from 'components/button';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import support from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HappinessSupport extends Component {
@@ -119,7 +118,6 @@ export class HappinessSupport extends Component {
 				</p>
 
 				<div className="happiness-support__buttons">
-					{ showLiveChatButton && <HappychatConnection /> }
 					{ showLiveChatButton && liveChatAvailable ? (
 						this.renderLiveChatButton()
 					) : (
