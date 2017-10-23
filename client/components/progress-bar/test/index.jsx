@@ -86,5 +86,9 @@ describe( 'ProgressBar', () => {
 		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal(
 			'30%'
 		);
+
+		// Other props should update the component
+		progressBar.setProps( { isPulsing: true } );
+		expect( progressBar.hasClass( 'is-pulsing' ) );
 	} );
 } );
