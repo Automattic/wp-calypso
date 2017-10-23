@@ -16,6 +16,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import PriceInput from 'woocommerce/components/price-input';
 import promotionModels, { hasField, isRequiredField } from './promotion-models';
+import SectionHeader from 'components/section-header';
 
 function renderRequiredLabel( isRequired, translate ) {
 	if ( ! isRequired ) {
@@ -143,6 +144,17 @@ function renderSalePrice( siteId, model, promotion, editPromotion, translate, cu
 	);
 }
 
+function getHeaderText( promotionType, translate ) {
+	switch ( promotionType ) {
+		case 'product_sale':
+			return translate( 'Product & Sale Price' );
+		case 'fixed_product':
+		case 'fixed_cart':
+		case 'percent':
+			return translate( 'Coupon code & Discount' );
+	}
+}
+
 const PromotionFormCard = ( {
 	siteId,
 	currency,
@@ -153,36 +165,39 @@ const PromotionFormCard = ( {
 	const model = promotionModels[ promotion.type ];
 
 	return (
-		<Card className="promotions__promotion-form-card">
-			{ renderCouponCode( siteId, model, promotion, editPromotion, translate ) }
-			{ 'fixed_product' === promotion.type && renderFixedDiscount(
-				translate( 'Product Discount', { context: 'noun' } ),
-				siteId,
-				model,
-				promotion,
-				editPromotion,
-				translate,
-				currency
-			) }
-			{ 'fixed_cart' === promotion.type && renderFixedDiscount(
-				translate( 'Cart Discount', { context: 'noun' } ),
-				siteId,
-				model,
-				promotion,
-				editPromotion,
-				translate,
-				currency
-			) }
-			{ renderPercentDiscount(
-				translate( 'Cart Percent Discount', { context: 'noun' } ),
-				siteId,
-				model,
-				promotion,
-				editPromotion,
-				translate
-			) }
-			{ renderSalePrice( siteId, model, promotion, editPromotion, translate, currency ) }
-		</Card>
+		<div>
+			<SectionHeader label={ getHeaderText( promotion.type, translate ) } />
+			<Card className="promotions__promotion-form-card">
+				{ renderCouponCode( siteId, model, promotion, editPromotion, translate ) }
+				{ 'fixed_product' === promotion.type && renderFixedDiscount(
+					translate( 'Product Discount', { context: 'noun' } ),
+					siteId,
+					model,
+					promotion,
+					editPromotion,
+					translate,
+					currency
+				) }
+				{ 'fixed_cart' === promotion.type && renderFixedDiscount(
+					translate( 'Cart Discount', { context: 'noun' } ),
+					siteId,
+					model,
+					promotion,
+					editPromotion,
+					translate,
+					currency
+				) }
+				{ renderPercentDiscount(
+					translate( 'Cart Percent Discount', { context: 'noun' } ),
+					siteId,
+					model,
+					promotion,
+					editPromotion,
+					translate
+				) }
+				{ renderSalePrice( siteId, model, promotion, editPromotion, translate, currency ) }
+			</Card>
+		</div>
 	);
 };
 

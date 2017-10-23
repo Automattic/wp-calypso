@@ -16,7 +16,6 @@ export function createPromotionFromProduct( product ) {
 }
 
 export function createPromotionFromCoupon( coupon ) {
-
 	const promotion = {
 		id: uniqueId( 'promotion:' ),
 		name: coupon.code,
