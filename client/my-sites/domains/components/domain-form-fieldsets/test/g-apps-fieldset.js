@@ -30,9 +30,10 @@ describe( 'Google Apps Address Fieldset', () => {
 		expect( wrapper.find( '.g-apps-fieldset' ) ).to.have.length( 1 );
 	} );
 
-	test( 'should render Input and CountrySelect components', () => {
+	test( 'should render only Input and CountrySelect components', () => {
 		const wrapper = shallow( <GAppsFieldset { ...defaultProps } /> );
-		expect( wrapper.find( 'CountrySelect' ) ).to.have.length( 1 );
-		expect( wrapper.find( 'Input' ) ).to.have.length( 1 );
+		expect( wrapper.children() ).to.have.length( 2 );
+		expect( wrapper.find( '[name="country-code"]' ) ).to.have.length( 1 );
+		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
 	} );
 } );

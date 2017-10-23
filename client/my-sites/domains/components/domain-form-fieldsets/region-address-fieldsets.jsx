@@ -38,13 +38,9 @@ export class RegionAddressFieldsets extends Component {
 		shouldAutoFocusAddressField: false,
 	};
 
-	getAddressInputRefCallback = input => {
-		const { shouldAutoFocusAddressField } = this.props;
-
-		if ( shouldAutoFocusAddressField && input ) {
-			input.focus();
-		}
-	};
+	inputRefCallback( input ) {
+		input && input.focus();
+	}
 
 	getRegionAddressFieldset() {
 		const { countryCode } = this.props;
@@ -61,13 +57,13 @@ export class RegionAddressFieldsets extends Component {
 	}
 
 	render() {
-		const { getFieldProps, translate } = this.props;
+		const { getFieldProps, translate, shouldAutoFocusAddressField } = this.props;
 
 		return (
 			<div>
 				<div>
 					<Input
-						ref={ this.getAddressInputRefCallback }
+						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
 						{ ...getFieldProps( 'address-1', true ) }
