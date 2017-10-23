@@ -16,6 +16,7 @@ import SectionHeader from 'components/section-header';
 import { getSitePlanSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 
 function getFeatures( planClass, translate ) {
 	const features = {
@@ -50,7 +51,16 @@ const TooDifficult = ( { confirmHref, features, siteId, translate } ) => (
 		<QuerySitePlans siteId={ siteId } />
 		<SectionHeader label={ translate( 'Which feature or service caused you problems?' ) } />
 		{ map( features, ( label, slug ) => (
-			<CompactCard key={ slug } href={ confirmHref }>
+			<CompactCard
+				key={ slug }
+				href={ addQueryArgs(
+					{
+						reason: 'too-difficult',
+						text: slug,
+					},
+					confirmHref
+				) }
+			>
 				{ label }
 			</CompactCard>
 		) ) }
