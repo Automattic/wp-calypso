@@ -17,12 +17,15 @@ import { getSection } from 'state/ui/selectors';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 
+// Returns true if given section should display sidebar for logged out users.
+const hasSidebar = sectionName => sectionName === 'devdocs';
+
 const LayoutLoggedOut = ( { oauth2Client, primary, section, redirectUri, useOAuth2Layout } ) => {
 	const classes = {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': true, // Logged-out never has a sidebar
+		'has-no-sidebar': ! hasSidebar( section.name ),
 		'wp-singletree-layout': !! primary,
 	};
 
