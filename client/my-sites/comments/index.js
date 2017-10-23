@@ -27,15 +27,19 @@ export default function() {
 		);
 
 		// Post View
-		page(
-			`/comments/:status(${ VALID_STATUSES.join( '|' ) })/:site/:post`,
-			siteSelection,
-			navigation,
-			postComments
-		);
+		if ( config.isEnabled( 'comments/management/post-view' ) ) {
+			page(
+				`/comments/:status(${ VALID_STATUSES.join( '|' ) })/:site/:post`,
+				siteSelection,
+				navigation,
+				postComments
+			);
+		}
 
 		// Comment View
-		page( '/comment/:site/:comment', siteSelection, navigation, comment );
+		if ( config.isEnabled( 'comments/management/comment-view' ) ) {
+			page( '/comment/:site/:comment', siteSelection, navigation, comment );
+		}
 
 		// Redirect
 		page( `/comments/:status(${ VALID_STATUSES.join( '|' ) })`, siteSelection, sites );

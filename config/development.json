@@ -42,6 +42,8 @@
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management": true,
+		"comments/management/comment-view": true,
+		"comments/management/post-view": true,
 		"comments/management/quick-actions": true,
 		"comments/management/sorting": true,
 		"css-hot-reload": true,
