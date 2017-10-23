@@ -31,14 +31,15 @@ describe( 'conversation-follow', () => {
 			} );
 			requestConversationFollow( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
-				http( {
-					method: 'POST',
-					path: '/read/sites/123/posts/456/follow',
-					body: {},
-					apiNamespace: 'wpcom/v2',
-					onSuccess: actionWithRevert,
-					onFailure: actionWithRevert,
-				} )
+				http(
+					{
+						method: 'POST',
+						path: '/read/sites/123/posts/456/follow',
+						body: {},
+						apiNamespace: 'wpcom/v2',
+					},
+					actionWithRevert
+				)
 			);
 		} );
 	} );

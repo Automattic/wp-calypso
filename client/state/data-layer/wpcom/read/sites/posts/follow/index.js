@@ -27,14 +27,15 @@ export function requestConversationFollow( { dispatch }, action ) {
 		},
 	} );
 	dispatch(
-		http( {
-			method: 'POST',
-			apiNamespace: 'wpcom/v2',
-			path: `/read/sites/${ action.payload.blogId }/posts/${ action.payload.postId }/follow`,
-			body: {}, // have to have an empty body to make wpcom-http happy
-			onSuccess: actionWithRevert,
-			onFailure: actionWithRevert,
-		} )
+		http(
+			{
+				method: 'POST',
+				apiNamespace: 'wpcom/v2',
+				path: `/read/sites/${ action.payload.blogId }/posts/${ action.payload.postId }/follow`,
+				body: {}, // have to have an empty body to make wpcom-http happy
+			},
+			actionWithRevert
+		)
 	);
 }
 
