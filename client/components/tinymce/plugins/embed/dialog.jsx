@@ -45,14 +45,17 @@ export class EmbedDialog extends React.Component {
 
 	state = {
 		embedUrl: this.props.embedUrl,
-		previewUrl: this.props.embedUrl,
-		// might be simpler to get rid of previewUrl and just use embedUrl
-		// but i think that'd introduce extra unnecessary render() calls
-		// might not to revisit that now that using previewMarkup, though
 		previewMarkup: [],
 	};
 
 	componentWillMount() {
+		/**
+		 * Reset the state to the default state
+		 */
+		this.setState( {
+			embedUrl: this.props.embedUrl,
+		} );
+
 		/**
 		 * Prepare the markup for the new embed URL
 		 *
@@ -64,111 +67,89 @@ export class EmbedDialog extends React.Component {
 		 *        replacing the old URL. Troubleshooting proved to be very difficult.
 		 *        See `p1507898606000351-slack-delta-samus` for more details.
 		 */
-		this.debouncedUpdateEmbedPreview = debounce( function() {
-			this.setState( { previewUrl: this.state.embedUrl } );
+		this.debouncedFetchEmbedPreviewMarkup = debounce( this.fetchEmbedPreviewMarkup, 500 );
 
-			// todo should probably add an animated loading block so the user gets some visual feedback while they wait for the new embed to load
-
-			// Use cached data if it's available
-			if ( this.state.previewMarkup[ this.state.embedUrl ] ) {
-				return;
-			}
-
+		if ( this.isURLInCache( this.state.embedUrl ) ) {
 			this.setState( { isLoading: true } );
-
-			// Fetch fresh data from the API
-			wpcom
-				.undocumented()
-				.site( this.props.siteId )
-				.embeds( { embed_url: this.state.embedUrl }, ( error, data ) => {
-					const { previewMarkup, embedUrl } = this.state;
-
-					this.setState( { isLoading: false } );
-
-					let cachedMarkup;
-
-					if ( data && data.result ) {
-						cachedMarkup = data.result;
-						// todo need to do more to check that data.result is valid before using it?
-					} else {
-						console.log( 'lookup error:', error );
-						// todo add details? or just generic error message
-
-						cachedMarkup = 'error foo';
-
-						// todo handle errors
-						// xhr errors in `error` var
-						// and also application layer errors in `data.error` or however wpcom.js signals a error to the caller
-						// add unit tests for those. mock the xhr
-
-						// todo show an error in the preview box if fetching the embed failed / it's an invalid URL
-						// right now it just continues showing the last valid preview
-						// don't wanna do if they're still typing though. debounce might be enough to fix that, but still could be annoying.
-						// need to play with
-						// how to detect from the markup if it was an error? it'll be dependent on the service etc, right? or maybe wpcom.js normalizes it into a standard error format?
-					}
-
-					this.setState( {
-						// SECURITY WARNING: The value of previewMarkup is later used with
-						// dangerouslySetInnerHtml, so it must never be changed to include
-						// untrusted data.
-						previewMarkup: assign( previewMarkup, { [ embedUrl ]: cachedMarkup } ),
-						// todo merge() or other function would be better than assign() ^^^?
-					} );
-				} );
-		}, 500 );
-		// todo this doesn't need to be inside compwillmount? it can just be regular function below?
-		// that'd be cleaner and more consistent, but i was thinking it had to be declared in here for some reason. not sure about that anymore.
-
+		}
 		// Prepare the initial markup before the first render()
-		this.debouncedUpdateEmbedPreview();
-		// todo should probably call flush() so it runs immediately instead of debouncing for 500ms
-		// todo would this be more appropriate somewhere later in the lifecycle?
+		this.fetchEmbedPreviewMarkup( this.state.embedUrl );
 	}
 
-	/**
-	 * Reset some of the state whenever the component's dialog is opened or closed.
-	 *
-	 * If this were not done, then switching back and forth between multiple embeds would result in
-	 * the previous URL being displayed in the input field and preview. For example, when the second
-	 * embed was opened, `state.previewUrl` would equal the value of the first embed, since it
-	 * initially set the state.
-	 *
-	 * @param {object} nextProps The properties that will be received.
-	 */
-	componentWillReceiveProps = nextProps => {
-		this.setState(
-			{
-				embedUrl: nextProps.embedUrl,
-				previewUrl: nextProps.embedUrl,
-			},
-			() => {
-				// Refresh the preview
-				this.debouncedUpdateEmbedPreview();
-				// todo should probably call immediately w/ .flush() instead of waiting for debounce
-				// todo maybe pass new value directly instead of waiting for setstate to completely asyncronously?
-				// todo should probably only call if props.isvisible? otherwise calling when closing the dialog, which is wasteful and unnecessary
-			}
-		);
+	componentWillUpdate = ( newProps, newState ) => {
+		if ( this.props.embedUrl !== newProps.embedUrl ) {
+			this.setState( {
+				embedUrl: newProps.embedUrl,
+			} );
+		}
 
-		// todo this whole flow is getting a little complicated.
-		// state is updated here, and also updated in the debounced function, and maybe other places.
-		// and the functions are dependent on whether or not the state has been updated, etc.
-		// try to simplify everything
+		if ( newProps.isVisible ) {
+			// Refresh the preview
+			this.debouncedFetchEmbedPreviewMarkup( newState.embedUrl );
+		}
+	};
+
+	isURLInCache = url => {
+		return !! this.state.previewMarkup[ url ];
+	};
+
+	fetchEmbedPreviewMarkup = url => {
+		// Use cached data if it's available
+		if ( this.isURLInCache( url ) || url.trim() === '' ) {
+			return;
+		}
+
+		// Fetch fresh data from the API
+		wpcom
+			.undocumented()
+			.site( this.props.siteId )
+			.embeds( { embed_url: url }, ( error, data ) => {
+				this.setState( { isLoading: false } );
+
+				let cachedMarkup;
+
+				if ( data && data.result ) {
+					cachedMarkup = data.result;
+					// todo need to do more to check that data.result is valid before using it?
+				} else {
+					console.log( 'lookup error:', error );
+
+					// todo add details? or just generic error message
+
+					cachedMarkup = 'error foo';
+
+					// todo handle errors
+					// xhr errors in `error` var
+					// and also application layer errors in `data.error` or however wpcom.js signals a error to the caller
+					// add unit tests for those. mock the xhr
+
+					// todo show an error in the preview box if fetching the embed failed / it's an invalid URL
+					// right now it just continues showing the last valid preview
+					// don't wanna do if they're still typing though. debounce might be enough to fix that, but still could be annoying.
+					// need to play with
+					// how to detect from the markup if it was an error? it'll be dependent on the service etc, right? or maybe
+					//           wpcom.js normalizes it into a standard error format?
+				}
+
+				this.setState( {
+					// SECURITY WARNING: The value of previewMarkup is later used with
+					// dangerouslySetInnerHtml, so it must never be changed to include
+					// untrusted data.
+					previewMarkup: {
+						...this.state.previewMarkup,
+						[ url ]: cachedMarkup,
+					},
+					// todo merge() or other function would be better than assign() ^^^?
+				} );
+			} );
 	};
 
 	onChangeEmbedUrl = event => {
-		this.setState( { embedUrl: event.target.value }, () => {
-			this.debouncedUpdateEmbedPreview();
-			// todo i think this should wait until state is updated, b/c debounced function expected this.state.embedurl to have been updated when its called
-			// it seems to work being called immediately, but that could just be b/c fast enough to usually win race condition?
-			// alternate might be to pass the new url as param, instead of waiting. that might be better
-		} );
+		this.setState( { embedUrl: event.target.value } );
 
-		// todo when you click Update, the focus is jumping back to the start of the editor, instead of the position it was in before opening the dialog
-		// doesn't happen when click Cancel, though
-		// might not be impactful enough to spend time fixing
-		// might be easy to fix with wpcom-view::select() or editor.selection.set() or something, though
+		if ( ! this.isURLInCache( event.target.value ) ) {
+			this.setState( { isLoading: true } );
+		}
 	};
 
 	onUpdate = () => {
@@ -207,13 +188,13 @@ export class EmbedDialog extends React.Component {
 				<FormTextInput
 					autoFocus={ true }
 					className="embed__url"
-					defaultValue={ this.state.embedUrl }
+					defaultValue={ this.props.embedUrl }
 					onChange={ this.onChangeEmbedUrl }
 					onKeyDown={ this.onKeyDownEmbedUrl }
 				/>
 
 				{ this.state.isLoading && (
-					<div className="embed__loading">
+					<div className="embed__status">
 						<Spinner className="embed__loading-spinner" size={ 20 } />
 					</div>
 				) }
@@ -237,12 +218,12 @@ export class EmbedDialog extends React.Component {
 				{ /* are you sure that makes it safe? get security review */ }
 
 				{ ! this.state.isLoading &&
-				this.state.previewMarkup[ this.state.previewUrl ] && (
+				this.state.previewMarkup[ this.state.embedUrl ] && (
 					<EmbedContainer>
 						<div
 							className="embed__preview"
 							dangerouslySetInnerHTML={ {
-								__html: this.state.previewMarkup[ this.state.previewUrl ],
+								__html: this.state.previewMarkup[ this.state.embedUrl ],
 							} }
 						/>
 					</EmbedContainer>
