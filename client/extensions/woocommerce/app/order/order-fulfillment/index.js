@@ -39,7 +39,6 @@ import {
 import {
 	areLabelsEnabled,
 	getSelectedPaymentMethodId,
-	isPristine as areLabelSettingsPristine,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
@@ -161,7 +160,6 @@ class OrderFulfillment extends Component {
 			site,
 			translate,
 			hasLabelsPaymentMethod,
-			labelSettingsPristine,
 		} = this.props;
 		const isShippable = ! isOrderFinished( order.status );
 		const hideLabels = labelsLoaded && ! labelsEnabled;
@@ -182,17 +180,10 @@ class OrderFulfillment extends Component {
 		const buttonClassName = classNames( {
 			'is-placeholder': ! labelsLoaded,
 		} );
-		const printDisabled = ! hasLabelsPaymentMethod || ! labelSettingsPristine;
-		let disabledDesc = null;
-		if ( printDisabled && ! hasLabelsPaymentMethod ) {
-			disabledDesc = translate(
-				'Select a label payment method in shipping settings to be able to print labels.'
-			);
-		} else if ( printDisabled && ! labelSettingsPristine ) {
-			disabledDesc = translate(
-				'Save changes made to the shipping settings to be able to print labels.'
-			);
-		}
+		const printDisabled = ! hasLabelsPaymentMethod;
+		const disabledDesc = translate(
+			'Select a label payment method in shipping settings to be able to print labels.'
+		);
 
 		if ( ! isShippable ) {
 			return (
@@ -339,7 +330,6 @@ export default connect(
 			labelsLoaded,
 			labelsEnabled: areLabelsEnabled( state, site.ID ),
 			labels: getLabels( state, order.id, site.ID ),
-			labelSettingsPristine: areLabelSettingsPristine( state, site.ID ),
 			hasLabelsPaymentMethod,
 		};
 	},
