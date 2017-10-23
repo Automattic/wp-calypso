@@ -1,5 +1,6 @@
 /** @format */
 export const transferStates = {
+	PENDING: 'pending',
 	INQUIRING: 'inquiring',
 	FAILURE: 'failure',
 	START: 'start',

@@ -24,10 +24,15 @@ import {
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
-import { isNotificationsOpen } from 'state/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import {
+	isNotificationsOpen,
+	hasSitePendingAutomatedTransfer,
+	isFetchingAutomatedTransferStatus,
+} from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
+import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 // KILL IT WITH FIRE
 import sitesFactory from 'lib/sites-list';
@@ -189,6 +194,16 @@ const receiveSitesChangeListener = ( dispatch, action ) => {
 	sitesListeners.push( action.listener );
 };
 
+const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
+
+	if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
+		dispatch( fetchAutomatedTransferStatus( siteId ) );
+	}
+};
+
 /**
  * Calls all functions registered as listeners of site-state changes.
  */
@@ -227,6 +242,8 @@ const handler = ( dispatch, action, getState ) => {
 				if ( desktopEnabled ) {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
+
+				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
 			return;
 
