@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
 
@@ -28,16 +29,25 @@ export const CommentAuthor = ( {
 	commentType,
 	commentUrl,
 	isExpanded,
+	moment,
 	postTitle,
 	site,
 } ) => {
 	const gravatarUser = getGravatarUser( authorAvatarUrl, authorDisplayName );
 
-	const formattedDate = convertDateToUserLocation(
-		commentDate || new Date(),
+	const localizedDate = convertDateToUserLocation(
+		commentDate || moment(),
 		timezone( site ),
 		gmtOffset( site )
-	).format( 'll LT' );
+	);
+
+	const formattedDate = localizedDate.format( 'll LT' );
+
+	const relativeDate = moment()
+		.subtract( 1, 'month' )
+		.isBefore( localizedDate )
+		? localizedDate.fromNow()
+		: localizedDate.format( 'll' );
 
 	return (
 		<div className="comment__author">
@@ -62,7 +72,7 @@ export const CommentAuthor = ( {
 				<div className="comment__author-info-element">
 					<div className="comment__date">
 						{ isExpanded && <ExternalLink href={ commentUrl }>{ formattedDate }</ExternalLink> }
-						{ ! isExpanded && <span>{ formattedDate }</span> }
+						{ ! isExpanded && <span>{ relativeDate }</span> }
 					</div>
 					<div className="comment__author-url">
 						<span className="comment__author-url-separator">&middot;</span>
@@ -98,4 +108,4 @@ const mapStateToProps = ( state, { commentId, siteId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( CommentAuthor );
+export default connect( mapStateToProps )( localize( CommentAuthor ) );

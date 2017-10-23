@@ -91,6 +91,11 @@
 		vertical-align: text-bottom;
 	}
 
+	.comment__date,
+	.comment__author-url {
+		font-size: 12px;
+	}
+
 	.comment__author-url-separator {
 		color: $gray;
 		margin: 0 4px;
