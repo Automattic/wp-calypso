@@ -12,7 +12,6 @@ const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const prettier = require( 'prettier' );
-const path = require( 'path' );
 
 /**
  * Internal dependencies
@@ -39,8 +38,7 @@ function parseGitDiffToPathArray( command ) {
 		.toString()
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) )
-		.map( file => path.join( __dirname, '../', file ) );
+		.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 }
 
 const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
