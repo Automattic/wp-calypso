@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
 import classNames from 'classnames';
@@ -17,7 +17,7 @@ import TokenInput from './token-input';
 
 const debug = debugFactory( 'calypso:token-field' );
 
-class TokenField extends React.PureComponent {
+class TokenField extends PureComponent {
 	static displayName = 'TokenField';
 
 	static propTypes = {
