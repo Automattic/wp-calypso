@@ -4,6 +4,7 @@
  * External dependencies
  */
 const fs = require( 'fs' );
+const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -90,7 +91,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: [ babelLoader ]
+				loader: [ 'happypack/loader' ]
 			},
 		]
 	},
@@ -116,6 +117,7 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
+		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
