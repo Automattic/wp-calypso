@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 import { merge } from 'lodash';
 
 /**
@@ -22,7 +20,7 @@ import { CONVERSATION_FOLLOW_STATUS_MUTING } from 'state/reader/conversations/fo
 describe( 'conversation-follow', () => {
 	describe( 'requestConversationFollow', () => {
 		test( 'should dispatch an http request', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const action = followConversation( { blogId: 123, postId: 456 } );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
@@ -30,7 +28,7 @@ describe( 'conversation-follow', () => {
 				},
 			} );
 			requestConversationFollow( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
 						method: 'POST',
@@ -46,7 +44,7 @@ describe( 'conversation-follow', () => {
 
 	describe( 'receiveConversationFollow', () => {
 		test( 'should dispatch a success notice', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			receiveConversationFollow(
 				{ dispatch },
 				{
@@ -55,15 +53,17 @@ describe( 'conversation-follow', () => {
 				},
 				{ success: true }
 			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					status: 'is-success',
-				},
-			} );
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					notice: expect.objectContaining( {
+						status: 'is-success',
+					} ),
+				} )
+			);
 		} );
 
 		test( 'should revert to the previous follow state if it fails', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			receiveConversationFollow(
 				{ dispatch },
 				{
@@ -74,12 +74,14 @@ describe( 'conversation-follow', () => {
 					success: false,
 				}
 			);
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				notice: {
-					status: 'is-error',
-				},
-			} );
-			expect( dispatch ).to.have.been.calledWith(
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					notice: expect.objectContaining( {
+						status: 'is-error',
+					} ),
+				} )
+			);
+			expect( dispatch ).toHaveBeenCalledWith(
 				bypassDataLayer(
 					updateConversationFollowStatus( {
 						blogId: 123,
