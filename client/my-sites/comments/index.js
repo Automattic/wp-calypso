@@ -50,5 +50,6 @@ export default function() {
 
 		// Leaving Comment Management
 		page.exit( '/comments/*', clearCommentNotices );
+		page.exit( '/comment/*', clearCommentNotices );
 	}
 }
