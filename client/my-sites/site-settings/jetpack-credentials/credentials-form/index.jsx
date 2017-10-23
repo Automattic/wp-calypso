@@ -118,7 +118,7 @@ export class CredentialsForm extends Component {
 		this.setState( { showPublicKeyField: ! this.state.showPublicKeyField } );
 
 	render() {
-		const { credentialsUpdating, onCancel, translate } = this.props;
+		const { formIsSubmitting, onCancel, translate } = this.props;
 
 		const { showPublicKeyField, formErrors } = this.state;
 
@@ -134,7 +134,7 @@ export class CredentialsForm extends Component {
 										name="protocol"
 										value={ get( this.state.form, 'protocol', 'ssh' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 									>
 										<option value="ssh">{ translate( 'SSH' ) }</option>
 										<option value="sftp">{ translate( 'SFTP' ) }</option>
@@ -152,7 +152,7 @@ export class CredentialsForm extends Component {
 										placeholder={ translate( 'yoursite.com' ) }
 										value={ get( this.state.form, 'host', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 										isError={ !! formErrors.host }
 									/>
 									{ formErrors.host ? (
@@ -168,7 +168,7 @@ export class CredentialsForm extends Component {
 										placeholder={ translate( '22' ) }
 										value={ get( this.state.form, 'port', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 										isError={ !! formErrors.port }
 									/>
 									{ formErrors.port && (
@@ -186,7 +186,7 @@ export class CredentialsForm extends Component {
 										placeholder={ translate( 'username' ) }
 										value={ get( this.state.form, 'user', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 										isError={ !! formErrors.user }
 									/>
 									{ formErrors.user && (
@@ -204,7 +204,7 @@ export class CredentialsForm extends Component {
 										placeholder={ translate( 'password' ) }
 										value={ get( this.state.form, 'pass', '' ) }
 										onChange={ this.handleFieldChange }
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 										isError={ !! formErrors.pass }
 									/>
 									{ formErrors.pass && (
@@ -217,7 +217,7 @@ export class CredentialsForm extends Component {
 							<td colSpan="2" className="credentials-form__kpub-field">
 								<FormLabel>
 									<div>{ translate( 'Public Key' ) }</div>
-									<Button disabled={ credentialsUpdating } onClick={ this.togglePublicKeyField }>
+									<Button disabled={ formIsSubmitting } onClick={ this.togglePublicKeyField }>
 										{ showPublicKeyField ? (
 											translate( 'Hide Public Key' )
 										) : (
@@ -229,7 +229,7 @@ export class CredentialsForm extends Component {
 											name="kpub"
 											value={ get( this.state.form, 'kpub', '' ) }
 											onChange={ this.handleFieldChange }
-											disabled={ credentialsUpdating }
+											disabled={ formIsSubmitting }
 										/>
 									) }
 								</FormLabel>
@@ -237,12 +237,12 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td colSpan="2">
-								<Button primary disabled={ credentialsUpdating } onClick={ this.handleSubmit }>
+								<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
 									{ translate( 'Save' ) }
 								</Button>
 								{ ! this.props.hasMainCredentials && (
 									<Button
-										disabled={ credentialsUpdating }
+										disabled={ formIsSubmitting }
 										onClick={ onCancel }
 										className="credentials-form__cancel-button"
 									>

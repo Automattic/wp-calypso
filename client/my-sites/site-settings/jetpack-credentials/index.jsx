@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import CredentialsForm from './credentials-form/index';
-import Button from 'components/button';
+import CredentialsSetupFlow from './credentials-setup-flow/index';
 import Popover from 'components/popover';
 import Gridicon from 'gridicons';
 import QueryRewindStatus from 'components/data/query-rewind-status';
@@ -35,7 +35,7 @@ import {
 class Backups extends Component {
 	static propTypes = {
 		autoConfigStatus: PropTypes.string,
-		credentialsUpdating: PropTypes.bool,
+		formIsSubmitting: PropTypes.bool,
 		hasMainCredentials: PropTypes.bool,
 		mainCredentials: PropTypes.object,
 		isPressable: PropTypes.bool,
@@ -44,21 +44,8 @@ class Backups extends Component {
 	};
 
 	componentWillMount() {
-		this.setState( {
-			setupStep: 1,
-			showPopover: false,
-		} );
+		this.setState( { showPopover: false } );
 	}
-
-	goToNextSetupStep = () => {
-		let currentStep = this.state.setupStep;
-		currentStep++;
-		this.setState( { setupStep: currentStep } );
-	};
-
-	loadCredentialsForm = () => this.setState( { setupStep: 3 } );
-
-	resetSetup = () => this.setState( { setupStep: 1 } );
 
 	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
 
@@ -81,13 +68,14 @@ class Backups extends Component {
 		return '';
 	};
 
-	autoConfigure = () => this.props.autoConfigCredentials( this.props.siteId );
-
-	renderFormFoldable() {
+	renderConfiguredView() {
 		const {
 			mainCredentials,
 			translate,
-			isPressable
+			isPressable,
+			credentialsUpdating,
+			updateCredentials,
+			siteId
 		} = this.props;
 
 		const protocol = get( mainCredentials, 'protocol', 'SSH' ).toUpperCase();
@@ -122,87 +110,19 @@ class Backups extends Component {
 				header={ header }
 				className="jetpack-credentials__foldable-header"
 			>
-				{ this.renderForm() }
+				<CredentialsForm { ...{
+					credentialsUpdating,
+					protocol: get( this.props.mainCredentials, 'protocol', 'ssh' ),
+					host: get( this.props.mainCredentials, 'host', '' ),
+					port: get( this.props.mainCredentials, 'port', '' ),
+					user: get( this.props.mainCredentials, 'user', '' ),
+					pass: get( this.props.mainCredentials, 'pass', '' ),
+					abspath: get( this.props.mainCredentials, 'abspath', '' ),
+					kpub: get( this.props.mainCredentials, 'kpub', '' ),
+					siteId,
+					updateCredentials
+				} } />
 			</FoldableCard>
-		);
-	}
-
-	renderForm() {
-		const {
-			credentialsUpdating, // eslint-disable-line no-shadow
-			siteId,
-			updateCredentials,
-		} = this.props;
-
-		return (
-			<CredentialsForm { ...{
-				credentialsUpdating,
-				protocol: get( this.props.mainCredentials, 'protocol', 'ssh' ),
-				host: get( this.props.mainCredentials, 'host', '' ),
-				port: get( this.props.mainCredentials, 'port', '' ),
-				user: get( this.props.mainCredentials, 'user', '' ),
-				pass: get( this.props.mainCredentials, 'pass', '' ),
-				abspath: get( this.props.mainCredentials, 'abspath', '' ),
-				kpub: get( this.props.mainCredentials, 'kpub', '' ),
-				onCancel: this.resetSetup,
-				siteId,
-				updateCredentials,
-			} } />
-		);
-	}
-
-	renderSetupStart() {
-		const {
-			translate
-		} = this.props;
-
-		return (
-			<CompactCard
-				className="jetpack-credentials__setup-start"
-				onClick={ this.goToNextSetupStep }
-			>
-				<Gridicon icon="add-outline" size={ 48 } className="jetpack-credentials__header-gridicon" />
-				<div className="jetpack-credentials__header-text">
-					<h3 className="jetpack-credentials__header-text-title">{ translate( 'Add site credentials' ) }</h3>
-					<h4 className="jetpack-credentials__header-text-description">
-						{ translate( 'Used to perform automatic actions on your server including backing up and restoring.' ) }
-					</h4>
-				</div>
-			</CompactCard>
-		);
-	}
-
-	renderSetupTos() {
-		const {
-			isPressable,
-			translate
-		} = this.props;
-
-		return (
-			<CompactCard
-				className="jetpack-credentials__tos"
-				highlight="info"
-			>
-				<Gridicon icon="info" size={ 48 } className="jetpack-credentials__tos-gridicon" />
-				<div className="jetpack-credentials__tos-text">
-					{
-						isPressable
-							? translate( 'WordPress.com can obtain the credentials from your ' +
-								'current host which are necessary to perform site backups and ' +
-								'restores. Do you want to give WordPress.com access to your ' +
-								'host\'s server?' )
-							: translate( 'By adding your site credentials, you are giving ' +
-								'WordPress.com access to perform automatic actions on your ' +
-								'server including backing up your site, restoring your site, ' +
-								'as well as manually accessing your site in case of an emergency.' )
-					}
-				</div>
-				{
-					isPressable
-						? <Button primary onClick={ this.autoConfigure }>{ translate( 'Auto Configure' ) }</Button>
-						: <Button primary onClick={ this.loadCredentialsForm }>{ translate( 'Ok, I understand' ) }</Button>
-				}
-			</CompactCard>
 		);
 	}
 
@@ -213,33 +133,11 @@ class Backups extends Component {
 			isPressable,
 			isRewindActive, // eslint-disable-line no-shadow
 			translate,
+			formIsSubmitting,
+			updateCredentials,
+			siteId,
+			autoConfigCredentials
 		} = this.props;
-
-		const { setupStep } = this.state;
-
-		const autoConfigIdle = ( 'requesting' === autoConfigStatus || 'waiting' === autoConfigStatus );
-
-		const pressableConfigureFlow = (
-			<div className="jetpack-credentials__pressable-config-flow">
-				{ 1 === setupStep && this.renderSetupStart() }
-				{ 2 === setupStep && autoConfigIdle && this.renderSetupTos() }
-				{ 'success' === autoConfigStatus && this.renderFormFoldable() }
-				{ hasMainCredentials && this.renderFormFoldable() }
-			</div>
-		);
-
-		const selfHostedConfigureFlow = (
-			<div className="jetpack-credentials__self-hosted-config-flow">
-				{ 1 === setupStep && this.renderSetupStart() }
-				{ 2 === setupStep && this.renderSetupTos() }
-				{ 3 === setupStep && (
-					<CompactCard>
-						{ this.renderForm() }
-					</CompactCard>
-				) }
-				{ 4 === setupStep && this.renderFormFoldable() }
-			</div>
-		);
 
 		return (
 			<div className="jetpack-credentials">
@@ -256,10 +154,18 @@ class Backups extends Component {
 							) }
 					</CompactCard>
 				) }
-				{ isRewindActive && ! hasMainCredentials && isPressable && pressableConfigureFlow }
-				{ isRewindActive && ! hasMainCredentials && ! isPressable && selfHostedConfigureFlow }
-				{ isRewindActive && hasMainCredentials && this.renderFormFoldable() }
-				{ isRewindActive && 4 !== setupStep && ! hasMainCredentials && (
+				{ isRewindActive && hasMainCredentials && this.renderConfiguredView() }
+				{ isRewindActive && ! hasMainCredentials && (
+					<CredentialsSetupFlow
+						isPressable={ isPressable }
+						formIsSubmitting={ formIsSubmitting }
+						siteId={ siteId }
+						updateCredentials={ updateCredentials }
+						autoConfigCredentials={ autoConfigCredentials }
+						autoConfigStatus={ autoConfigStatus }
+					/>
+				) }
+				{ isRewindActive && ! hasMainCredentials && (
 					<CompactCard className="jetpack-credentials__footer">
 						<a
 							onClick={ this.togglePopover }
@@ -267,11 +173,7 @@ class Backups extends Component {
 							className="jetpack-credentials__footer-popover-link"
 						>
 							<Gridicon icon="help" size={ 18 } className="jetpack-credentials__footer-popover-icon" />
-							{
-								3 === setupStep
-									? translate( 'Need help finding your site\'s server credentials?' )
-									: translate( 'Why do I need this?' )
-							}
+							{ translate( 'Why do I need this?' ) }
 						</a>
 						<Popover
 							context={ this.refs && this.refs.popoverLink }
@@ -299,7 +201,7 @@ export default connect(
 
 		return {
 			autoConfigStatus: getCredentialsAutoConfigStatus( state, siteId ),
-			credentialsUpdating: isUpdatingJetpackCredentials( state, siteId ),
+			formIsSubmitting: isUpdatingJetpackCredentials( state, siteId ),
 			hasMainCredentials: hasMainCredentials( state, siteId ),
 			mainCredentials: credentials,
 			isPressable: isSitePressable( state, siteId ),
