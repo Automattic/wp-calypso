@@ -17,10 +17,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormPasswordInput from 'components/forms/form-password-input';
 
 export class CredentialsForm extends Component {
 	state = {
-		showPublicKeyField: false,
+		showPrivateKeyField: false,
 		form: {
 			protocol: this.props.protocol,
 			host: this.props.host,
@@ -28,7 +29,7 @@ export class CredentialsForm extends Component {
 			user: this.props.user,
 			pass: this.props.pass,
 			abspath: this.props.abspath,
-			kpub: this.props.kpub,
+			kpri: this.props.kpri,
 		},
 		formErrors: {
 			host: false,
@@ -114,13 +115,13 @@ export class CredentialsForm extends Component {
 		updateCredentials( siteId, payload );
 	};
 
-	togglePublicKeyField = () =>
-		this.setState( { showPublicKeyField: ! this.state.showPublicKeyField } );
+	togglePrivateKeyField = () =>
+		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
 
 	render() {
 		const { formIsSubmitting, onCancel, translate } = this.props;
 
-		const { showPublicKeyField, formErrors } = this.state;
+		const { showPrivateKeyField, formErrors } = this.state;
 
 		return (
 			<FormFieldset className="credentials-form">
@@ -199,7 +200,7 @@ export class CredentialsForm extends Component {
 							<td colSpan="2" className="credentials-form__pass-field">
 								<FormLabel>
 									<div>{ translate( 'Password' ) }</div>
-									<FormTextInput
+									<FormPasswordInput
 										name="pass"
 										placeholder={ translate( 'password' ) }
 										value={ get( this.state.form, 'pass', '' ) }
@@ -214,23 +215,28 @@ export class CredentialsForm extends Component {
 							</td>
 						</tr>
 						<tr>
-							<td colSpan="2" className="credentials-form__kpub-field">
+							<td colSpan="2" className="credentials-form__kpri-field">
 								<FormLabel>
-									<div>{ translate( 'Public Key' ) }</div>
-									<Button disabled={ formIsSubmitting } onClick={ this.togglePublicKeyField }>
-										{ showPublicKeyField ? (
-											translate( 'Hide Public Key' )
+									<div>{ translate( 'Private Key' ) }</div>
+									<Button disabled={ formIsSubmitting } onClick={ this.togglePrivateKeyField }>
+										{ showPrivateKeyField ? (
+											translate( 'Hide Private Key' )
 										) : (
-											translate( 'Show Public Key' )
+											translate( 'Show Private Key' )
 										) }
 									</Button>
-									{ showPublicKeyField && (
-										<FormTextArea
-											name="kpub"
-											value={ get( this.state.form, 'kpub', '' ) }
-											onChange={ this.handleFieldChange }
-											disabled={ formIsSubmitting }
-										/>
+									{ showPrivateKeyField && (
+										<div>
+											<FormTextArea
+												name="kpri"
+												value={ get( this.state.form, 'kpri', '' ) }
+												onChange={ this.handleFieldChange }
+												disabled={ formIsSubmitting }
+											/>
+											<p className="credentials-form__private-key-description">
+												This field is only required if your host uses key based authentication.
+											</p>
+										</div>
 									) }
 								</FormLabel>
 							</td>

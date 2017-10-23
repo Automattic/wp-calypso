@@ -90,11 +90,14 @@ class CredentialsSetupFlow extends Component {
 							'as well as manually accessing your site in case of an emergency.' )
 					}
 				</div>
-				{
-					isPressable
-						? <Button primary onClick={ this.autoConfigure }>{ translate( 'Auto Configure' ) }</Button>
-						: <Button primary onClick={ this.goToNextStep }>{ translate( 'Ok, I understand' ) }</Button>
-				}
+				<div className="credentials-setup-flow__tos-buttons">
+					<Button borderless={ true } onClick={ this.reset }>{ translate( 'Cancel' ) }</Button>
+					{
+						isPressable
+							? <Button primary onClick={ this.autoConfigure }>{ translate( 'Auto Configure' ) }</Button>
+							: <Button primary onClick={ this.goToNextStep }>{ translate( 'Ok, I understand' ) }</Button>
+					}
+				</div>
 			</CompactCard>
 		);
 	}
@@ -116,7 +119,7 @@ class CredentialsSetupFlow extends Component {
 					user: '',
 					pass: '',
 					abspath: '',
-					kpub: '',
+					kpri: '',
 					onCancel: this.reset,
 					siteId,
 					updateCredentials,

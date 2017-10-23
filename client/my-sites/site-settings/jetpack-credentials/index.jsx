@@ -75,7 +75,8 @@ class Backups extends Component {
 			isPressable,
 			credentialsUpdating,
 			updateCredentials,
-			siteId
+			siteId,
+			formIsSubmitting
 		} = this.props;
 
 		const protocol = get( mainCredentials, 'protocol', 'SSH' ).toUpperCase();
@@ -118,7 +119,8 @@ class Backups extends Component {
 					user: get( this.props.mainCredentials, 'user', '' ),
 					pass: get( this.props.mainCredentials, 'pass', '' ),
 					abspath: get( this.props.mainCredentials, 'abspath', '' ),
-					kpub: get( this.props.mainCredentials, 'kpub', '' ),
+					kpri: get( this.props.mainCredentials, 'kpri', '' ),
+					formIsSubmitting,
 					siteId,
 					updateCredentials
 				} } />

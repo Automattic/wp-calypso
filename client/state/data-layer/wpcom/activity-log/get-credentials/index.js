@@ -43,7 +43,7 @@ const fromApi = response => {
 
 	// this is an API goof - we get a false value for `ok` instead of an empty list
 	if ( ! response.ok && response.error === 'No credentials found for this site.' ) {
-		return { item: [] };
+		return {};
 	}
 
 	throw new Error( 'Could not obtain credentials' );
