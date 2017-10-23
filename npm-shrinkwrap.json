@@ -5912,20 +5912,6 @@
     "react-day-picker": {
       "version": "6.0.2"
     },
-    "react-docgen": {
-      "version": "2.13.0",
-      "dependencies": {
-        "async": {
-          "version": "1.5.2"
-        },
-        "babylon": {
-          "version": "5.8.38"
-        },
-        "commander": {
-          "version": "2.11.0"
-        }
-      }
-    },
     "react-dom": {
       "version": "15.6.2"
     },
