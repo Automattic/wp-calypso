@@ -26,6 +26,21 @@ import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
 
 /**
+ * Returns the PostsQueryManager from the state tree for a given site ID (or
+ * for queries related to all sites at once).
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
+ * @return {Object}         Posts query manager
+ */
+function getQueryManager( state, siteId ) {
+	if ( ! siteId ) {
+		return state.posts.allSitesQueries;
+	}
+	return state.posts.queries[ siteId ] || null;
+}
+
+/**
  * Returns a post object by its global ID.
  *
  * @param  {Object} state    Global state tree
@@ -176,11 +191,12 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * @return {?Number}        Last posts page
  */
 export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+	const manager = getQueryManager( state, siteId );
+	if ( ! manager ) {
 		return null;
 	}
 
-	const pages = state.posts.queries[ siteId ].getNumberOfPages( query );
+	const pages = manager.getNumberOfPages( query );
 	if ( null === pages ) {
 		return null;
 	}
@@ -198,7 +214,7 @@ export function getSitePostsLastPageForQuery( state, siteId, query ) {
  * @return {?Boolean}        Whether last posts page has been reached
  */
 export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
+	const lastPage = getPostsLastPageForQuery( state, siteId, query );
 	if ( null === lastPage ) {
 		return lastPage;
 	}
@@ -217,19 +233,19 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  */
 export const getSitePostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
-		const posts = state.posts.queries[ siteId ];
-		if ( ! posts ) {
+		const manager = getQueryManager( state, siteId );
+		if ( ! manager ) {
 			return null;
 		}
 
-		const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
+		const itemsIgnoringPage = manager.getItemsIgnoringPage( query );
 		if ( ! itemsIgnoringPage ) {
 			return null;
 		}
 
 		return itemsIgnoringPage.map( normalizePostForDisplay );
 	},
-	state => state.posts.queries,
+	state => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );
 
