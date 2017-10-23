@@ -10,14 +10,18 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CampaignDefaultsStep from './setup-steps/campaign-defaults.js';
 import Dialog from 'components/dialog';
 import { getSiteTitle } from 'state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { getSiteTimezoneValue } from 'state/selectors';
-import { isSubmittingApiKey, isApiKeyCorrect } from 'woocommerce/state/sites/settings/email/selectors';
+import {
+	isSubmittingApiKey,
+	isApiKeyCorrect,
+	isSubmittingNewsletterSetting,
+	isSubmittingStoreInfo,
+	} from 'woocommerce/state/sites/settings/email/selectors';
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
@@ -43,9 +47,11 @@ const steps = {
 	[ LOG_INTO_MAILCHIMP_STEP ]: { number: 0, nextStep: KEY_INPUT_STEP },
 	[ KEY_INPUT_STEP ]: { number: 1, nextStep: STORE_INFO_STEP },
 	[ STORE_INFO_STEP ]: { number: 2, nextStep: CAMPAIGN_DEFAULTS_STEP },
-	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 3, nextStep: NEWSLETTER_SETTINGS_STEP },
-	[ NEWSLETTER_SETTINGS_STEP ]: { number: 4, nextStep: STORE_SYNC },
-	[ STORE_SYNC ]: { number: 5, nextStep: null },
+	// CAMPAIGN_DEFAULTS_STEP is also number 2 because it happens silently in the
+	// background and the number here is used for UI purposes
+	[ CAMPAIGN_DEFAULTS_STEP ]: { number: 2, nextStep: NEWSLETTER_SETTINGS_STEP },
+	[ NEWSLETTER_SETTINGS_STEP ]: { number: 3, nextStep: STORE_SYNC },
+	[ STORE_SYNC ]: { number: 4, nextStep: null },
 };
 
 const storeSettingsRequiredFields = [ 'store_name', 'store_street', 'store_city', 'store_state',
@@ -78,7 +84,14 @@ class MailChimpSetup extends React.Component {
 		const { active_tab } = nextProps.settings;
 		if ( steps[ this.state.step ].nextStep === active_tab ) {
 			const settings = this.prepareDefaultValues( nextProps );
-			this.setState( { step: active_tab, settings } );
+			if ( active_tab === CAMPAIGN_DEFAULTS_STEP ) {
+				// quickly to the next step
+				// we want CAMPAIGN_DEFAULTS_STEP to happen in the background
+				// we already have all the required information
+				this.setState( { step: active_tab, settings }, this.next );
+			} else {
+				this.setState( { step: active_tab, settings } );
+			}
 			if ( active_tab === STORE_SYNC ) {
 				nextProps.onClose( 'wizard-completed' );
 			}
@@ -227,15 +240,10 @@ class MailChimpSetup extends React.Component {
 				apiKey={ this.state.api_key_input }
 				isKeyCorrect={ keyCorrect } />;
 		}
-		if ( STORE_INFO_STEP === step ) {
+		// we show the same UI view for two steps because the
+		// CAMPAIGN_DEFAULTS_STEP is executed sillently in the background
+		if ( STORE_INFO_STEP === step || CAMPAIGN_DEFAULTS_STEP === step ) {
 			return <StoreInfoStep
-				onChange={ this.onStoreInfoChange }
-				storeData={ settings }
-				validateFields={ settings_values_missing }
-			/>;
-		}
-		if ( CAMPAIGN_DEFAULTS_STEP === step ) {
-			return <CampaignDefaultsStep
 				onChange={ this.onStoreInfoChange }
 				storeData={ settings }
 				validateFields={ settings_values_missing }
@@ -295,13 +303,13 @@ class MailChimpSetup extends React.Component {
 					className={ dialogClass }>
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<ProgressBar
-						value={ stepNum + 1 }
-						total={ Object.keys( steps ).length }
+						value={ stepNum }
+						total={ Object.keys( steps ).length - 1 }
 						compact
 					/>
 					<ProgressIndicator
 						stepNumber={ stepNum }
-						totalSteps={ Object.keys( steps ).length }
+						totalSteps={ Object.keys( steps ).length - 1 }
 					/>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
@@ -330,20 +338,22 @@ MailChimpSetup.propTypes = {
 };
 
 export default localize( connect(
-	( state, props ) => {
-		const isSaving = isSubmittingApiKey( state, props.siteId );
-		const isKeyCorrect = isApiKeyCorrect( state, props.siteId );
+	( state, { siteId } ) => {
+		const isSavingApiKey = isSubmittingApiKey( state, siteId );
+		const isSavingStoreInfo = isSubmittingStoreInfo( state, siteId );
+		const isSavingNewsletterSettings = isSubmittingNewsletterSetting( state, siteId );
+		const isKeyCorrect = isApiKeyCorrect( state, siteId );
 		const address = getStoreLocation( state );
 		const currency = getCurrencyWithEdits( state );
-		const isBusy = isSaving;
+		const isBusy = isSavingApiKey || isSavingStoreInfo || isSavingNewsletterSettings;
 		return {
 			isBusy,
 			address,
 			currency,
 			isKeyCorrect,
-			siteTitle: getSiteTitle( state, props.siteId ),
+			siteTitle: getSiteTitle( state, siteId ),
 			currentUserEmail: getCurrentUserEmail( state ),
-			timezone: getSiteTimezoneValue( state, props.siteId )
+			timezone: getSiteTimezoneValue( state, siteId )
 		};
 	},
 	{

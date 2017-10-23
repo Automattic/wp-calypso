@@ -86,6 +86,19 @@ export const isSubmittingNewsletterSetting = ( state, siteId ) => {
 };
 
 /**
+ * Returns true if currently submitting MailChimp store information or false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether store informations are being submitted
+ */
+export const isSubmittingStoreInfo = ( state, siteId ) => {
+	const path = [ ...basePath( siteId ), 'storeInfoSubmit' ];
+
+	return get( state, path, false );
+};
+
+/**
  * Returns newletter settings submit error object
  *
  * @param  {Object}  state   Global state tree
