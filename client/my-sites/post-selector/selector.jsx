@@ -33,10 +33,10 @@ import analytics from 'lib/analytics';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQueryIgnoringPage,
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQueryIgnoringPage,
 	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery,
+	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
@@ -467,10 +467,10 @@ export default connect( ( state, ownProps ) => {
 	const queryWithVersion = { ...query, apiVersion };
 
 	return {
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
+		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
 		found: getSitePostsFoundForQuery( state, siteId, queryWithVersion ),
-		lastPage: getSitePostsLastPageForQuery( state, siteId, queryWithVersion ),
-		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
+		lastPage: getPostsLastPageForQuery( state, siteId, queryWithVersion ),
+		loading: isRequestingPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
 		postTypes: getPostTypes( state, siteId ),
 		queryWithVersion: queryWithVersion,
 	};

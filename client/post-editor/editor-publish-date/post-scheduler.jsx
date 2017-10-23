@@ -16,10 +16,10 @@ import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
+import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 
 const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
-	posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
+	posts: getPostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
 } ) )( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
 	return (
 		<PostSchedule

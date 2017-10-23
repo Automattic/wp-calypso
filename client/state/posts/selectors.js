@@ -159,7 +159,7 @@ export const getSitePostsForQuery = createSelector(
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
-export function isRequestingSitePostsForQuery( state, siteId, query ) {
+export function isRequestingPostsForQuery( state, siteId, query ) {
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
 	return !! state.posts.queryRequests[ serializedQuery ];
 }
@@ -190,7 +190,7 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * @param  {Object}  query  Post query object
  * @return {?Number}        Last posts page
  */
-export function getSitePostsLastPageForQuery( state, siteId, query ) {
+export function getPostsLastPageForQuery( state, siteId, query ) {
 	const manager = getQueryManager( state, siteId );
 	if ( ! manager ) {
 		return null;
@@ -213,7 +213,7 @@ export function getSitePostsLastPageForQuery( state, siteId, query ) {
  * @param  {Object}   query  Post query object
  * @return {?Boolean}        Whether last posts page has been reached
  */
-export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
+export function isPostsLastPageForQuery( state, siteId, query = {} ) {
 	const lastPage = getPostsLastPageForQuery( state, siteId, query );
 	if ( null === lastPage ) {
 		return lastPage;
@@ -231,7 +231,7 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export const getSitePostsForQueryIgnoringPage = createSelector(
+export const getPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
 		const manager = getQueryManager( state, siteId );
 		if ( ! manager ) {
@@ -258,7 +258,7 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
-export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
+export const isRequestingPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
 		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
 		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {

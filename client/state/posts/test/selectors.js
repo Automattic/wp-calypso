@@ -17,12 +17,12 @@ import {
 	getSitePost,
 	getSitePostsForQuery,
 	isPostPublished,
-	isRequestingSitePostsForQuery,
+	isRequestingPostsForQuery,
 	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery,
-	isSitePostsLastPageForQuery,
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQueryIgnoringPage,
+	getPostsLastPageForQuery,
+	isPostsLastPageForQuery,
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQueryIgnoringPage,
 	isEditedPostPrivate,
 	isPrivateEditedPostPasswordValid,
 	getEditedPost,
@@ -40,11 +40,11 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSitePosts.memoizedSelector.cache.clear();
 		getSitePost.memoizedSelector.cache.clear();
-		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isRequestingSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
+		isRequestingPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
 		getSitePostsForQuery.memoizedSelector.cache.clear();
-		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isPostPublished.memoizedSelector.cache.clear();
 	} );
 
@@ -355,9 +355,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isRequestingSitePostsForQuery()', () => {
+	describe( '#isRequestingPostsForQuery()', () => {
 		test( 'should return false if the site has not been queried', () => {
-			const isRequesting = isRequestingSitePostsForQuery(
+			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
 						queryRequests: {},
@@ -371,7 +371,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false if the site has not been queried for the specific query', () => {
-			const isRequesting = isRequestingSitePostsForQuery(
+			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
 						queryRequests: {
@@ -387,7 +387,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if the site has been queried for the specific query', () => {
-			const isRequesting = isRequestingSitePostsForQuery(
+			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
 						queryRequests: {
@@ -403,7 +403,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
-			const isRequesting = isRequestingSitePostsForQuery(
+			const isRequesting = isRequestingPostsForQuery(
 				{
 					posts: {
 						queryRequests: {
@@ -490,9 +490,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSitePostsLastPageForQuery()', () => {
+	describe( '#getPostsLastPageForQuery()', () => {
 		test( 'should return null if the site query is not tracked', () => {
-			const lastPage = getSitePostsLastPageForQuery(
+			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {},
@@ -506,7 +506,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return the last page value for a site query', () => {
-			const lastPage = getSitePostsLastPageForQuery(
+			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -537,7 +537,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return the last page value for a site query, even if including page param', () => {
-			const lastPage = getSitePostsLastPageForQuery(
+			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -568,7 +568,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return 1 if there are no found posts', () => {
-			const lastPage = getSitePostsLastPageForQuery(
+			const lastPage = getPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -592,9 +592,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isSitePostsLastPageForQuery()', () => {
+	describe( '#isPostsLastPageForQuery()', () => {
 		test( 'should return null if the last page is not known', () => {
-			const isLastPage = isSitePostsLastPageForQuery(
+			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {},
@@ -608,7 +608,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false if the query explicit value is not the last page', () => {
-			const isLastPage = isSitePostsLastPageForQuery(
+			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -639,7 +639,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if the query explicit value is the last page', () => {
-			const isLastPage = isSitePostsLastPageForQuery(
+			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -670,7 +670,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if the query implicit value is the last page', () => {
-			const isLastPage = isSitePostsLastPageForQuery(
+			const isLastPage = isPostsLastPageForQuery(
 				{
 					posts: {
 						queries: {
@@ -701,9 +701,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSitePostsForQueryIgnoringPage()', () => {
+	describe( '#getPostsForQueryIgnoringPage()', () => {
 		test( 'should return null if the query is not tracked', () => {
-			const sitePosts = getSitePostsForQueryIgnoringPage(
+			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
 						items: {},
@@ -718,7 +718,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return null if the query manager has not received items for query', () => {
-			const sitePosts = getSitePostsForQueryIgnoringPage(
+			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
 						items: {},
@@ -738,7 +738,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return a concatenated array of all site posts ignoring page', () => {
-			const sitePosts = getSitePostsForQueryIgnoringPage(
+			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
 						items: {
@@ -801,7 +801,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( "should omit found items for which the requested result hasn't been received", () => {
-			const sitePosts = getSitePostsForQueryIgnoringPage(
+			const sitePosts = getPostsForQueryIgnoringPage(
 				{
 					posts: {
 						items: {
@@ -847,9 +847,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isRequestingSitePostsForQueryIgnoringPage()', () => {
+	describe( 'isRequestingPostsForQueryIgnoringPage()', () => {
 		test( 'should return false if not requesting for query', () => {
-			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
 						queryRequests: {},
@@ -863,7 +863,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true requesting for query at exact page', () => {
-			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
 						queryRequests: {
@@ -879,7 +879,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true requesting for query without page specified', () => {
-			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
 						queryRequests: {
@@ -895,7 +895,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true for all-sites query', () => {
-			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
 						queryRequests: {
@@ -911,7 +911,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return false for single site when requesting all sites', () => {
-			const isRequesting = isRequestingSitePostsForQueryIgnoringPage(
+			const isRequesting = isRequestingPostsForQueryIgnoringPage(
 				{
 					posts: {
 						queryRequests: {

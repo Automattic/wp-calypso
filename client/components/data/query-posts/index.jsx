@@ -13,7 +13,7 @@ import debug from 'debug';
  * Internal dependencies
  */
 import {
-	isRequestingSitePostsForQuery,
+	isRequestingPostsForQuery,
 	isRequestingSitePost,
 } from 'state/posts/selectors';
 import {
@@ -74,7 +74,7 @@ export default connect(
 		const { siteId, postId, query } = ownProps;
 		return {
 			requestingPost: isRequestingSitePost( state, siteId, postId ),
-			requestingPosts: isRequestingSitePostsForQuery( state, siteId, query ),
+			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
 	dispatch => {
