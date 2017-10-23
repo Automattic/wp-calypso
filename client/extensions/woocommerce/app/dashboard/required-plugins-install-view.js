@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find, get, delay } from 'lodash';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -26,12 +26,9 @@ import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import QuerySites from 'components/data/query-sites';
 import { getSiteOptions } from 'state/selectors';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
-import { isSiteAutomatedTransfer as isSiteAutomatedTransferSelector } from 'state/selectors';
 
 // Time in seconds to complete various steps.
 const TIME_TO_TRANSFER_ELIGIBILITY = 5;
@@ -58,40 +55,26 @@ class RequiredPluginsInstallView extends Component {
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
-		this.transferStatusFetcher = null;
 	}
 
 	componentDidMount = () => {
-		const { signupIsStore } = this.props;
+		const { signupIsStore, automatedTransferStatus } = this.props;
 
 		this.createUpdateTimer();
 
+		if ( automatedTransferStatus ) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_ELIGIBILITY,
+			} );
+		}
+
 		if ( signupIsStore ) {
-			this.fetchAutomatedTransferStatus();
 			this.startSetup();
 		}
 	};
 
 	componentWillUnmount = () => {
 		this.destroyUpdateTimer();
-	};
-
-	fetchAutomatedTransferStatus = () => {
-		const { signupIsStore, automatedTransferStatus } = this.props;
-
-		if ( signupIsStore ) {
-			this.props.fetchAutomatedTransferStatus( this.props.siteId );
-
-			if ( ! automatedTransferStatus ) {
-				this.transferStatusFetcher = delay( this.fetchAutomatedTransferStatus, 4000 );
-
-				return;
-			}
-
-			this.setState( {
-				progress: this.state.progress + TIME_TO_TRANSFER_ELIGIBILITY,
-			} );
-		}
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -147,11 +130,6 @@ class RequiredPluginsInstallView extends Component {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = false;
-		}
-
-		if ( this.transferStatusFetcher ) {
-			window.clearTimeout( this.transferStatusFetcher );
-			this.transferStatusFetcher = null;
 		}
 	};
 
@@ -426,19 +404,6 @@ class RequiredPluginsInstallView extends Component {
 		);
 	};
 
-	fetchSiteData = () => {
-		const { automatedTransferStatus, isSiteAutomatedTransfer, siteId } = this.props;
-		const { COMPLETE } = transferStates;
-
-		if ( ! siteId ) {
-			return;
-		}
-
-		if ( COMPLETE === automatedTransferStatus && ! isSiteAutomatedTransfer ) {
-			return <QuerySites siteId={ siteId } />;
-		}
-	};
-
 	getTotalSeconds() {
 		const { signupIsStore } = this.props;
 
@@ -466,7 +431,6 @@ class RequiredPluginsInstallView extends Component {
 		return (
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
-				{ this.fetchSiteData() }
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
@@ -496,7 +460,6 @@ function mapStateToProps( state ) {
 		sitePlugins,
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
-		isSiteAutomatedTransfer: isSiteAutomatedTransferSelector( state, siteId ),
 		signupIsStore: get( siteOptions, 'signup_is_store', false ),
 	};
 }
@@ -508,7 +471,6 @@ function mapDispatchToProps( dispatch ) {
 			fetchPluginData,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
-			fetchAutomatedTransferStatus,
 			fetchPlugins,
 		},
 		dispatch
