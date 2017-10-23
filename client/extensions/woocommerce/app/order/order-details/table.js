@@ -186,12 +186,13 @@ class OrderDetailsTable extends Component {
 			return null;
 		}
 
+		const showTax = this.shouldShowTax();
 		const tableClasses = classnames( {
 			'order-details__table': true,
+			'hide-taxes': ! showTax,
 			'is-editing': isEditing,
 		} );
 
-		const showTax = this.shouldShowTax();
 		const totalsClasses = classnames( {
 			'order-details__totals': true,
 			'has-taxes': showTax,

@@ -16,6 +16,10 @@
 		font-style: italic;
 	}
 
+	&.hide-taxes.is-editing .order-details__item-tax {
+		display: none;
+	}
+
 	thead .table-heading {
 		border-bottom: 1px solid lighten( $gray, 30% );
 	}
