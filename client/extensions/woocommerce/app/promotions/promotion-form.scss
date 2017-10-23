@@ -37,17 +37,6 @@
 	}
 }
 
-.promotions__promotion-form-type-header {
-	.section-header__label {
-		flex-grow: 0;
-		margin-right: 25px;
-	}
-
-	.section-header__label::before {
-		display: none; // TODO: Find a better way to make this not fade.
-	}
-}
-
 .promotions__promotion-form-label-required {
 	color: $gray;
 	display: inline-block;

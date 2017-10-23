@@ -10,7 +10,7 @@ import { uniqueId } from 'lodash';
  * Internal dependencies
  */
 import PromotionFormCard from './promotion-form-card';
-import PromotionFormTypeHeader from './promotion-form-type-header';
+import PromotionFormTypeCard from './promotion-form-type-card';
 
 function renderPlaceholder() {
 	const { className } = this.props;
@@ -46,7 +46,7 @@ export default class PromotionForm extends React.PureComponent {
 
 		return (
 			<div className={ classNames( 'promotions__form', this.props.className ) }>
-				<PromotionFormTypeHeader { ...{ siteId, promotion, editPromotion } } />
+				<PromotionFormTypeCard { ...{ siteId, promotion, editPromotion } } />
 
 				<PromotionFormCard { ...{
 					siteId,
