@@ -62,7 +62,7 @@ class MissingFeature extends PureComponent {
 						href={ addQueryArgs(
 							{
 								reason: 'missing-feature',
-								text: this.state.tokens.map( this.normalizeToken ),
+								text: this.state.tokens.map( this.normalizeToken ).sort(),
 							},
 							confirmHref
 						) }
