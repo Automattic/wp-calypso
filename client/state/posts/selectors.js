@@ -120,6 +120,11 @@ export const getSitePostsForQuery = createSelector(
 		// request's `found` value) but the items haven't been received. While
 		// we could impose this on the developer to accommodate, instead we
 		// simply return null when any `undefined` entries exist in the set.
+		//
+		// TODO this is known to be incorrect behavior in some cases, because
+		// the WP.com API skips unreadable posts entirely instead of including
+		// them in the results.  See the 'handles items missing from the first
+		// and last pages' test case for PaginatedQueryManager.
 		if ( includes( posts, undefined ) ) {
 			return null;
 		}
