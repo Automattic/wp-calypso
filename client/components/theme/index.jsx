@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
@@ -20,6 +21,8 @@ import PulsingDot from 'components/pulsing-dot';
 import Ribbon from 'components/ribbon';
 import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Component
@@ -136,9 +139,16 @@ export class Theme extends Component {
 		}
 	};
 
+	onUpsellClick = () => {
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'theme-upsell-popup',
+			theme: this.props.theme.id,
+		} );
+	};
+
 	render() {
-		const { name, screenshot } = this.props.theme;
-		const { active, price, translate, upsellUrl } = this.props;
+		const { active, price, theme, translate, upsellUrl } = this.props;
+		const { name, screenshot } = theme;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick ),
@@ -156,14 +166,30 @@ export class Theme extends Component {
 			return this.renderPlaceholder();
 		}
 
+		const impressionEventName = 'calypso_upgrade_nudge_impression';
+		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
+		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
 		const upsell = hasPrice &&
 		upsellUrl && (
 			<span className="theme__upsell">
+				<TrackComponentView
+					eventName={ impressionEventName }
+					eventProperties={ upsellEventProperties }
+				/>
 				<InfoPopover icon="star-outline" position="top left">
+					<TrackComponentView
+						eventName={ impressionEventName }
+						eventProperties={ upsellPopupEventProperties }
+					/>
 					<h2 className="theme__upsell-heading">
 						Access all our premium themes for free with our Premium and Business Plans
 					</h2>
-					<Button className="theme__upsell-cta" primary href={ upsellUrl }>
+					<Button
+						onClick={ this.onUpsellClick }
+						className="theme__upsell-cta"
+						primary
+						href={ upsellUrl }
+					>
 						Upgrade Now
 					</Button>
 				</InfoPopover>
@@ -224,4 +250,7 @@ export class Theme extends Component {
 	}
 }
 
-export default localize( Theme );
+const mapStateToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Theme ) );
