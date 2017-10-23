@@ -16,17 +16,17 @@ jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'si
 describe( 'isSiteOnFreePlan', () => {
 	const state = deepFreeze( {} );
 
-	it( 'should return false when plan is not known', () => {
+	test( 'should return false when plan is not known', () => {
 		getCurrentPlan.returns( null );
 		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return false when not on free plan', () => {
+	test( 'should return false when not on free plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
 		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
 	} );
 
-	it( 'should return true when on free plan', () => {
+	test( 'should return true when on free plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_FREE } );
 		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.true;
 	} );

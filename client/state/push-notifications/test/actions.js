@@ -32,14 +32,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {
-		it( 'should return an action object with empty data for empty input', () => {
+		test( 'should return an action object with empty data for empty input', () => {
 			expect( receiveUnregisterDevice() ).to.eql( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 				data: {},
 			} );
 		} );
 
-		it( 'should return an action object with provided data intact', () => {
+		test( 'should return an action object with provided data intact', () => {
 			const data = {
 				devicestuff: 'some_value',
 			};
@@ -51,7 +51,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'apiNotReady()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			expect( apiNotReady() ).to.eql( {
 				type: PUSH_NOTIFICATIONS_API_NOT_READY,
 			} );
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 					.reply( 200, { ID: 123, settings: {} } );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return sendSubscriptionToWPCOM( 'someTruthyValue' )( spy, getState ).then( () => {
 					expect( spy ).to.have.been.calledWithMatch( {
 						type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,

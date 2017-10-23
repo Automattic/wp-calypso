@@ -1269,12 +1269,6 @@ Undocumented.prototype.readFollowing = function( query, fn ) {
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
-Undocumented.prototype.readFollowingMine = function( query, fn ) {
-	debug( '/read/following/mine' );
-	query.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/following/mine', query, fn );
-};
-
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
 	query.apiVersion = '1.3';
@@ -1503,15 +1497,6 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 		params,
 		fn
 	);
-};
-
-Undocumented.prototype.followReaderFeed = function( query, fn ) {
-	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
-	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
-};
-
-Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
-	return this.wpcom.req.post( '/read/following/mine/delete', query, {}, fn );
 };
 
 Undocumented.prototype.readSite = function( query, fn ) {
@@ -2837,4 +2822,4 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 /**
  * Expose `Undocumented` module
  */
-module.exports = Undocumented;
+export default Undocumented;

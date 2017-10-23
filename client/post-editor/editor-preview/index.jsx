@@ -144,7 +144,7 @@ const EditorPreview = React.createClass( {
 						editUrl={ this.props.editUrl }
 						externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
 						loadingMessage={ this.props.translate(
-							'{{strong}}One moment, please…{{/strong}} loading your new post.',
+							"{{strong}}One moment, please.{{/strong}} We're loading your preview.",
 							{ components: { strong: <strong /> } }
 						) }
 					/>
@@ -162,4 +162,4 @@ const EditorPreview = React.createClass( {
 	},
 } );
 
-module.exports = localize( EditorPreview );
+export default localize( EditorPreview );

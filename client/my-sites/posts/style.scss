@@ -538,6 +538,10 @@
 	.draft__actions {
 		display: none;
 	}
+
+	&.is-multiselect {
+		visibility: hidden;
+	}
 }
 
 .posts__recent-drafts .posts__drafts-header.card.is-compact {

@@ -33,7 +33,7 @@ describe( 'getPastBillingTransaction()', () => {
 		},
 	};
 
-	it( 'should return the billing transaction data for a known transaction', () => {
+	test( 'should return the billing transaction data for a known transaction', () => {
 		const output = getPastBillingTransaction( state, '12345678' );
 		expect( output ).to.eql( {
 			...state.billingTransactions.items.past[ 0 ],
@@ -41,12 +41,12 @@ describe( 'getPastBillingTransaction()', () => {
 		} );
 	} );
 
-	it( 'should return null for an unknown billing transaction', () => {
+	test( 'should return null for an unknown billing transaction', () => {
 		const output = getPastBillingTransaction( state, '87654321' );
 		expect( output ).to.be.null;
 	} );
 
-	it( 'should return null if billing transactions have not been fetched yet', () => {
+	test( 'should return null if billing transactions have not been fetched yet', () => {
 		const output = getPastBillingTransaction(
 			{
 				billingTransactions: {

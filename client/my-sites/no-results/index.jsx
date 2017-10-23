@@ -1,12 +1,10 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 
-var noResults = React.createClass( {
+const NoResults = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			text: 'No results',
@@ -24,4 +22,4 @@ var noResults = React.createClass( {
 	},
 } );
 
-module.exports = noResults;
+export default NoResults;

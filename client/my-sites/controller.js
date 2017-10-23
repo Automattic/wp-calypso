@@ -297,7 +297,7 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 	}
 }
 
-module.exports = {
+export default {
 	// Clears selected site from global redux state
 	noSite( context, next ) {
 		context.store.dispatch( setSelectedSiteId( null ) );

@@ -17,16 +17,16 @@ import Dispatcher from 'dispatcher';
 
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'post-edit-store', function() {
+describe( 'post-edit-store', () => {
 	let PostEditStore, dispatcherCallback;
 
-	before( () => {
+	beforeAll( () => {
 		spy( Dispatcher, 'register' );
 		PostEditStore = require( '../post-edit-store' );
 		dispatcherCallback = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
-	after( () => {
+	afterAll( () => {
 		Dispatcher.register.restore();
 	} );
 
@@ -49,7 +49,7 @@ describe( 'post-edit-store', function() {
 		} );
 	}
 
-	it( 'initializes new draft post properly', function() {
+	test( 'initializes new draft post properly', () => {
 		const siteId = 1234;
 
 		dispatcherCallback( {
@@ -66,7 +66,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.isNew() );
 	} );
 
-	it( 'initialize existing post', function() {
+	test( 'initialize existing post', () => {
 		const siteId = 12,
 			postId = 345;
 
@@ -81,13 +81,13 @@ describe( 'post-edit-store', function() {
 		assert( ! PostEditStore.isNew() );
 	} );
 
-	it( 'sets parent_id properly', function() {
+	test( 'sets parent_id properly', () => {
 		dispatchReceivePost();
 		const post = PostEditStore.get();
 		assert( post.parent_id === null );
 	} );
 
-	it( 'decodes entities on received post title', function() {
+	test( 'decodes entities on received post title', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
@@ -98,7 +98,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.get().title === 'Ribs & Chicken' );
 	} );
 
-	it( 'updates parent_id after a set', function() {
+	test( 'updates parent_id after a set', () => {
 		dispatchReceivePost();
 		dispatcherCallback( {
 			action: {
@@ -113,7 +113,7 @@ describe( 'post-edit-store', function() {
 		assert( post.parent_id, 101 );
 	} );
 
-	it( 'does not decode post title entities on EDIT_POST', function() {
+	test( 'does not decode post title entities on EDIT_POST', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
@@ -132,7 +132,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.get().title === 'Ribs &gt; Chicken' );
 	} );
 
-	it( 'decodes post title entities on RECEIVE_POST_BEING_EDITED', function() {
+	test( 'decodes post title entities on RECEIVE_POST_BEING_EDITED', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
@@ -151,7 +151,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.get().title === 'Ribs > Chicken' );
 	} );
 
-	it( 'reset on stop editing', function() {
+	test( 'reset on stop editing', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
@@ -179,7 +179,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.getSavedPost() === null );
 	} );
 
-	it( 'updates attributes on edit', function() {
+	test( 'updates attributes on edit', () => {
 		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
@@ -211,7 +211,7 @@ describe( 'post-edit-store', function() {
 		assert( isEqual( PostEditStore.getChangedAttributes().metadata, postEdits.metadata ) );
 	} );
 
-	it( 'preserves attributes when update is in-flight', function() {
+	test( 'preserves attributes when update is in-flight', () => {
 		const siteId = 1234,
 			initialPost = {
 				ID: 2345,
@@ -257,7 +257,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.isDirty() );
 	} );
 
-	it( 'excludes metadata without an operation on edit', function() {
+	test( 'excludes metadata without an operation on edit', () => {
 		const postEdits = {
 				title: 'Super Duper',
 				metadata: [
@@ -291,7 +291,7 @@ describe( 'post-edit-store', function() {
 		assert( isEqual( PostEditStore.getChangedAttributes().metadata, expectedMetadata ) );
 	} );
 
-	it( 'reset post after saving an edit', function() {
+	test( 'reset post after saving an edit', () => {
 		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
@@ -329,7 +329,7 @@ describe( 'post-edit-store', function() {
 		assert( PostEditStore.getChangedAttributes().metadata === undefined );
 	} );
 
-	it( 'resets raw content when receiving an updated post', function() {
+	test( 'resets raw content when receiving an updated post', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'RECEIVE_POST_TO_EDIT',
@@ -354,7 +354,7 @@ describe( 'post-edit-store', function() {
 		assert( ! PostEditStore.isDirty() );
 	} );
 
-	it( 'resets raw content on RESET_POST_RAW_CONTENT', function() {
+	test( 'resets raw content on RESET_POST_RAW_CONTENT', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'EDIT_POST_RAW_CONTENT',
@@ -378,8 +378,8 @@ describe( 'post-edit-store', function() {
 		assert( ! PostEditStore.isDirty() );
 	} );
 
-	describe( '#setRawContent', function() {
-		it( "should not emit a change event if content hasn't changed", function() {
+	describe( '#setRawContent', () => {
+		test( "should not emit a change event if content hasn't changed", () => {
 			const onChange = spy();
 
 			dispatcherCallback( {
@@ -412,8 +412,8 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( '#getChangedAttributes()', function() {
-		it( 'includes status for a new post', function() {
+	describe( '#getChangedAttributes()', () => {
+		test( 'includes status for a new post', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -424,7 +424,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.getChangedAttributes().status === 'draft' );
 		} );
 
-		it( 'includes all attributes on a new post', function() {
+		test( 'includes all attributes on a new post', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -445,8 +445,8 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( '#isDirty()', function() {
-		it( 'returns false for a new post', function() {
+	describe( '#isDirty()', () => {
+		test( 'returns false for a new post', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -457,7 +457,7 @@ describe( 'post-edit-store', function() {
 			assert( ! PostEditStore.isDirty() );
 		} );
 
-		it( 'returns false if the edited post is unchanged', function() {
+		test( 'returns false if the edited post is unchanged', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'RECEIVE_POST_TO_EDIT',
@@ -468,7 +468,7 @@ describe( 'post-edit-store', function() {
 			assert( ! PostEditStore.isDirty() );
 		} );
 
-		it( 'returns true if raw content changes over time', function() {
+		test( 'returns true if raw content changes over time', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'RECEIVE_POST_TO_EDIT',
@@ -494,8 +494,8 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( '#isSaveBlocked()', function() {
-		it( 'returns false for new post', function() {
+	describe( '#isSaveBlocked()', () => {
+		test( 'returns false for new post', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -506,7 +506,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.isSaveBlocked() === false );
 		} );
 
-		it( 'returns true if blocked and no key provided', function() {
+		test( 'returns true if blocked and no key provided', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -524,7 +524,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.isSaveBlocked() === true );
 		} );
 
-		it( 'returns false if blocked but not by provided key', function() {
+		test( 'returns false if blocked but not by provided key', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -542,7 +542,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.isSaveBlocked( 'bar' ) === false );
 		} );
 
-		it( 'returns true if blocked by provided key', function() {
+		test( 'returns true if blocked by provided key', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -561,8 +561,8 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( '#hasContent()', function() {
-		it( 'returns false for new post', function() {
+	describe( '#hasContent()', () => {
+		test( 'returns false for new post', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -573,7 +573,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === false );
 		} );
 
-		it( 'returns true if title is set', function() {
+		test( 'returns true if title is set', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -592,7 +592,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === true );
 		} );
 
-		it( 'returns false if title is whitespace', function() {
+		test( 'returns false if title is whitespace', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -611,7 +611,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === false );
 		} );
 
-		it( 'returns true if excerpt is set', function() {
+		test( 'returns true if excerpt is set', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -630,7 +630,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === true );
 		} );
 
-		it( 'returns false if content includes bogus line break', function() {
+		test( 'returns false if content includes bogus line break', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -649,7 +649,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === false );
 		} );
 
-		it( 'returns false if content includes non-breaking space', function() {
+		test( 'returns false if content includes non-breaking space', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -668,7 +668,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === false );
 		} );
 
-		it( 'returns false if content includes empty paragraph', function() {
+		test( 'returns false if content includes empty paragraph', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -687,7 +687,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === false );
 		} );
 
-		it( 'returns true if content is set', function() {
+		test( 'returns true if content is set', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -706,7 +706,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === true );
 		} );
 
-		it( 'returns true if raw content is set', function() {
+		test( 'returns true if raw content is set', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -724,7 +724,7 @@ describe( 'post-edit-store', function() {
 			assert( PostEditStore.hasContent() === true );
 		} );
 
-		it( 'returns false if post content exists, but raw content is empty', function() {
+		test( 'returns false if post content exists, but raw content is empty', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
@@ -751,12 +751,12 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( 'rawContent', function() {
-		after( function() {
+	describe( 'rawContent', () => {
+		afterAll( function() {
 			PostEditStore.removeAllListeners();
 		} );
 
-		it( "should not trigger changes if isDirty() and hadContent() don't change", function() {
+		test( "should not trigger changes if isDirty() and hadContent() don't change", () => {
 			let called = false;
 
 			dispatcherCallback( {

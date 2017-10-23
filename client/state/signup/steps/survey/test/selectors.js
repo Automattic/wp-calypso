@@ -11,13 +11,13 @@ import { expect } from 'chai';
 import { getSurveyVertical, getSurveyOtherText, getSurveySiteType } from '../selectors';
 
 describe( 'selectors', () => {
-	it( 'should return empty string as a default state', () => {
+	test( 'should return empty string as a default state', () => {
 		expect( getSurveyVertical( { signup: undefined } ) ).to.be.eql( '' );
 		expect( getSurveyOtherText( { signup: undefined } ) ).to.be.eql( '' );
 		expect( getSurveySiteType( { signup: undefined } ) ).to.be.eql( 'site' );
 	} );
 
-	it( 'should return chosen vertical from the state', () => {
+	test( 'should return chosen vertical from the state', () => {
 		expect(
 			getSurveyVertical( {
 				signup: {
@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 		).to.be.eql( 'test-survey' );
 	} );
 
-	it( 'should return typed other text from the state', () => {
+	test( 'should return typed other text from the state', () => {
 		expect(
 			getSurveyOtherText( {
 				signup: {
@@ -49,7 +49,7 @@ describe( 'selectors', () => {
 		).to.be.eql( 'test-other-text' );
 	} );
 
-	it( 'should return site type from the state', () => {
+	test( 'should return site type from the state', () => {
 		expect(
 			getSurveySiteType( {
 				signup: {

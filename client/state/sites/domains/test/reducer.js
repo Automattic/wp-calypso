@@ -48,16 +48,16 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( domainsReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( itemsReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index items state by site ID', () => {
+		test( 'should index items state by site ID', () => {
 			const newState = undefined;
 			const action = {
 				type: SITE_DOMAINS_RECEIVE,
@@ -73,7 +73,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should override domains for same site', () => {
+		test( 'should override domains for same site', () => {
 			const newState = {
 				[ siteId ]: [ firstDomain, secondDomain ],
 			};
@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should accumulate domains for different sites', () => {
+		test( 'should accumulate domains for different sites', () => {
 			const newState = {
 				[ firstSiteId ]: [ firstDomain ],
 			};
@@ -112,7 +112,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = deepFreeze( {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
@@ -120,7 +120,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( state, { type: 'SERIALIZE' } ) ).to.eql( state );
 		} );
 
-		it( 'should load persisted state', () => {
+		test( 'should load persisted state', () => {
 			const state = deepFreeze( {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
@@ -128,7 +128,7 @@ describe( 'reducer', () => {
 			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( state );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = deepFreeze( {
 				[ 77203074 ]: [ { domain: 1234 } ],
 			} );
@@ -137,11 +137,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( requestReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should index `requesting` state by site ID', () => {
+		test( 'should index `requesting` state by site ID', () => {
 			const newState = undefined;
 			const action = {
 				type: SITE_DOMAINS_REQUEST,
@@ -156,7 +156,7 @@ describe( 'reducer', () => {
 			expect( requestReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should update `requesting` state by site ID on SUCCESS', () => {
+		test( 'should update `requesting` state by site ID on SUCCESS', () => {
 			const newState = {
 				2916284: true,
 			};
@@ -175,7 +175,7 @@ describe( 'reducer', () => {
 			expect( requestReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should update `requesting` state by site ID on FAILURE', () => {
+		test( 'should update `requesting` state by site ID on FAILURE', () => {
 			const newState = {
 				2916284: true,
 			};
@@ -196,11 +196,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#errors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			expect( errorsReducer( undefined, {} ) ).to.eql( {} );
 		} );
 
-		it( 'should clean `errors` state by site ID on REQUEST', () => {
+		test( 'should clean `errors` state by site ID on REQUEST', () => {
 			const newState = {
 				[ siteId ]: errorMessageResponse,
 			};
@@ -215,7 +215,7 @@ describe( 'reducer', () => {
 			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should clean `errors` state by site ID on SUCCESS', () => {
+		test( 'should clean `errors` state by site ID on SUCCESS', () => {
 			const newState = {
 				[ siteId ]: errorMessageResponse,
 			};
@@ -230,7 +230,7 @@ describe( 'reducer', () => {
 			expect( errorsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		it( 'should index `errors` state by site ID on FAILURE', () => {
+		test( 'should index `errors` state by site ID on FAILURE', () => {
 			const newState = undefined;
 			const action = domainsRequestFailureAction( siteId, errorMessageResponse );
 			const expectedState = {

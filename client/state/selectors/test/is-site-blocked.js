@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isSiteBlocked } from '../';
 
 describe( 'isSiteBlocked()', () => {
-	it( 'should return true if the specified site is blocked', () => {
+	test( 'should return true if the specified site is blocked', () => {
 		const state = {
 			reader: {
 				siteBlocks: {

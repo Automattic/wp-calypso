@@ -1,6 +1,7 @@
-.woocommerce {
-	flex-grow: 1;
+// Core CSS Dependencies
+@import 'assets/stylesheets/shared/utils';      // utilities that are used by all CSS but don't produce any code
 
+.woocommerce {
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
 	@import 'app/order/order-create/style';
@@ -8,13 +9,15 @@
 	@import 'app/order/order-customer/style';
 	@import 'app/order/order-details/style';
 	@import 'app/order/order-fulfillment/style';
-	@import 'app/order/order-notes/style';
+	@import 'app/order/order-activity-log/style';
 	@import 'app/order/order-payment/style';
 	@import 'app/orders/style';
 	@import 'app/settings/payments/style';
 	@import 'app/settings/payments/stripe/style';
+	@import 'app/settings/email/mailchimp/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
+	@import 'app/promotions/promotion-form';
 	@import 'app/promotions/promotions-list';
 	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
@@ -97,6 +100,8 @@
 .is-section-woocommerce {
 	// overwrite notice styles due to sticky bar
 	.global-notices {
+		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
+
 		@include breakpoint( ">660px" ) {
 			top: 115px;
 		}

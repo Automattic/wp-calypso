@@ -24,7 +24,7 @@ describe( 'PageViewTracker', () => {
 		clock = fakeClock;
 	} );
 
-	it( 'should immediately fire off event when given no delay', () => {
+	test( 'should immediately fire off event when given no delay', () => {
 		const recorder = spy();
 
 		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );
@@ -32,7 +32,7 @@ describe( 'PageViewTracker', () => {
 		expect( recorder ).to.have.been.calledOnce;
 	} );
 
-	it( 'should wait for the delay before firing off the event', () => {
+	test( 'should wait for the delay before firing off the event', () => {
 		const recorder = spy();
 
 		mount( <PageViewTracker delay={ 500 } path="/test" title="test" recorder={ recorder } /> );
@@ -44,7 +44,7 @@ describe( 'PageViewTracker', () => {
 		expect( recorder ).to.have.been.calledOnce;
 	} );
 
-	it( 'should pass the appropriate event information', () => {
+	test( 'should pass the appropriate event information', () => {
 		const recorder = spy();
 
 		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );

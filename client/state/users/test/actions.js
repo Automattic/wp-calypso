@@ -13,7 +13,7 @@ import { USER_RECEIVE } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#receiveUser()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const user = { ID: 73705554, login: 'testonesite2014' };
 			const action = receiveUser( user );
 

@@ -17,21 +17,21 @@ jest.mock( '../../../../client/lib/analytics/statsd', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
 } ) );
 
-describe( 'Server-Side Analytics', function() {
-	describe( 'tracks.recordEvent', function() {} );
+describe( 'Server-Side Analytics', () => {
+	describe( 'tracks.recordEvent', () => {} );
 
-	describe( 'statsd.recordTiming', function() {
+	describe( 'statsd.recordTiming', () => {
 		beforeAll( function() {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 
-		afterEach( function() {
+		afterEach( () => {
 			config.reset();
 			statsdTimingUrl.reset();
 			superagent.get.reset();
 		} );
 
-		it( 'sends an HTTP request to the statsd URL', function() {
+		test( 'sends an HTTP request to the statsd URL', () => {
 			config.withArgs( 'server_side_boom_analytics_enabled' ).returns( true );
 			statsdTimingUrl.returns( 'http://example.com/boom.gif' );
 
@@ -41,7 +41,7 @@ describe( 'Server-Side Analytics', function() {
 			expect( superagent.get ).to.have.been.calledWith( 'http://example.com/boom.gif' );
 		} );
 
-		it( 'does nothing if statsd analytics is not allowed', function() {
+		test( 'does nothing if statsd analytics is not allowed', () => {
 			config.withArgs( 'server_side_boom_analytics_enabled' ).returns( false );
 
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );

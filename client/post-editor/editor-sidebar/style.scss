@@ -127,6 +127,10 @@
 	}
 }
 
+.editor-sidebar__nonscrolling-region {
+	overflow: hidden;
+}
+
 .editor-sidebar__header-title {
 	padding: 0;
 	font-size: 13px;

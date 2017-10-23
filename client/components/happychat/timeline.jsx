@@ -18,7 +18,8 @@ import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getHappychatConnectionStatus, getHappychatTimeline } from 'state/happychat/selectors';
+import { getHappychatTimeline } from 'state/happychat/selectors';
+import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import { isExternal, addSchemeIfMissing, setUrlScheme } from 'lib/url';
 
 import debugFactory from 'debug';

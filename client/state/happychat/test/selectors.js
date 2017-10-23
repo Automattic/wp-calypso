@@ -21,12 +21,9 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 	canUserSendMessages,
-	getLostFocusTimestamp,
 	hasUnreadMessages,
 	hasActiveHappychatSession,
-	isHappychatAvailable,
 	wasHappychatRecentlyActive,
-	getGeoLocation,
 	getGroups,
 } from '../selectors';
 import { isEnabled } from 'config';
@@ -47,7 +44,7 @@ describe( 'selectors', () => {
 			sandbox.stub( Date, 'now' ).returns( NOW );
 		} );
 
-		it( 'should return false if no activity', () => {
+		test( 'should return false if no activity', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
 					lastActivityTimestamp: null,
@@ -57,7 +54,7 @@ describe( 'selectors', () => {
 			expect( result ).to.be.false;
 		} );
 
-		it( 'should return false if last activity was 3 hours ago', () => {
+		test( 'should return false if last activity was 3 hours ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
 					lastActivityTimestamp: NOW - TIME_HOUR * 3,
@@ -67,7 +64,7 @@ describe( 'selectors', () => {
 			expect( result ).to.be.false;
 		} );
 
-		it( 'should return true if last activity was 5 minutes ago', () => {
+		test( 'should return true if last activity was 5 minutes ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
 					lastActivityTimestamp: NOW - TIME_MINUTE * 5,
@@ -93,21 +90,21 @@ describe( 'selectors', () => {
 			HAPPYCHAT_CHAT_STATUS_NEW,
 		];
 
-		it( 'should return false if Happychat is not connected', () => {
+		test( 'should return false if Happychat is not connected', () => {
 			const state = deepFreeze( {
 				happychat: {
-					connectionStatus: 'uninitialized',
+					connection: { status: 'uninitialized' },
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
 				},
 			} );
 			expect( canUserSendMessages( state ) ).to.be.false;
 		} );
 
-		it( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
+		test( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
 			messagingDisabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
-						connectionStatus: 'connected',
+						connection: { status: 'connected' },
 						chatStatus: status,
 					},
 				} );
@@ -115,11 +112,11 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return true if Happychat is connected and the chat status allows messaging', () => {
+		test( 'should return true if Happychat is connected and the chat status allows messaging', () => {
 			messagingEnabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
-						connectionStatus: 'connected',
+						connection: { status: 'connected' },
 						chatStatus: status,
 					},
 				} );
@@ -127,25 +124,18 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return true even when isAvailable is false', () => {
+		test( 'should return true even when isAvailable is false', () => {
 			// This test is here to prevent a code regression — isAvailable is supposed to
 			// determine whether Happychat is capable of starting new chats, and should not be
 			// a factor when determining if a user should be able to send messages to the service.
 			const state = deepFreeze( {
 				happychat: {
-					connectionStatus: 'connected',
+					connection: { status: 'connected' },
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
 					isAvailable: false,
 				},
 			} );
 			expect( canUserSendMessages( state ) ).to.be.true;
-		} );
-	} );
-
-	describe( '#getLostFocusTimestamp', () => {
-		it( 'returns the current timestamp', () => {
-			const state = deepFreeze( { happychat: { lostFocusAt: NOW } } );
-			expect( getLostFocusTimestamp( state ) ).to.eql( NOW );
 		} );
 	} );
 
@@ -161,31 +151,31 @@ describe( 'selectors', () => {
 			{ timestamp: NOW / 1000 },
 		];
 
-		it( 'returns false if Happychat is focused', () => {
+		test( 'returns false if Happychat is focused', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: null,
+					ui: { lostFocusAt: null },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
 
-		it( 'returns false if there are no new messages since the Happychat was blurred', () => {
+		test( 'returns false if there are no new messages since the Happychat was blurred', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW + ONE_MINUTE,
+					ui: { lostFocusAt: NOW + ONE_MINUTE },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
 
-		it( 'returns true if there are one or more messages after Happychat was blurred', () => {
+		test( 'returns true if there are one or more messages after Happychat was blurred', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE,
+					ui: { lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.true;
@@ -207,71 +197,18 @@ describe( 'selectors', () => {
 			HAPPYCHAT_CHAT_STATUS_PENDING,
 		];
 
-		it( 'should be false when chatStatus indicates the user has no active session', () => {
+		test( 'should be false when chatStatus indicates the user has no active session', () => {
 			inactiveChatStatuses.forEach( status => {
 				const state = deepFreeze( { happychat: { chatStatus: status } } );
 				expect( hasActiveHappychatSession( state ) ).to.be.false;
 			} );
 		} );
 
-		it( 'should be true when chatStatus indicates the user has an active session', () => {
+		test( 'should be true when chatStatus indicates the user has an active session', () => {
 			activeChatStatuses.forEach( status => {
 				const state = deepFreeze( { happychat: { chatStatus: status } } );
 				expect( hasActiveHappychatSession( state ) ).to.be.true;
 			} );
-		} );
-	} );
-
-	describe( '#isHappychatAvailable', () => {
-		it( "should be false if there's no active connection", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'uninitialized',
-					isAvailable: true,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.false;
-		} );
-
-		it( "should be false if Happychat isn't accepting new connections", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'connected',
-					isAvailable: false,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.false;
-		} );
-
-		it( "should be true when there's a connection and connections are being accepted", () => {
-			const state = deepFreeze( {
-				happychat: {
-					connectionStatus: 'connected',
-					isAvailable: true,
-				},
-			} );
-			expect( isHappychatAvailable( state ) ).to.be.true;
-		} );
-	} );
-
-	describe( 'getGeoLocation', () => {
-		it( 'should return null if geoLocation is not set', () => {
-			const selected = getGeoLocation( {
-				happychat: {
-					geoLocation: null,
-				},
-			} );
-			expect( selected ).to.equal( null );
-		} );
-		it( 'should return value if geoLocation is set', () => {
-			const selected = getGeoLocation( {
-				happychat: {
-					geoLocation: {
-						city: 'Timisoara',
-					},
-				},
-			} );
-			expect( selected.city ).to.equal( 'Timisoara' );
 		} );
 	} );
 
@@ -294,7 +231,7 @@ describe( 'selectors', () => {
 			global.window = _window;
 		} );
 
-		it( 'should return default group for no sites', () => {
+		test( 'should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
 				...uiState,
@@ -307,7 +244,7 @@ describe( 'selectors', () => {
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
-		it( 'should return default group for no siteId', () => {
+		test( 'should return default group for no siteId', () => {
 			const siteId = undefined;
 			const state = {
 				...uiState,
@@ -322,7 +259,7 @@ describe( 'selectors', () => {
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
-		it( 'should return JPOP group for jetpack paid sites', () => {
+		test( 'should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
 				...uiState,
@@ -351,7 +288,7 @@ describe( 'selectors', () => {
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
 		} );
 
-		it( 'should return WPCOM for AT sites group for jetpack site', () => {
+		test( 'should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 			const state = {
 				...uiState,
@@ -379,7 +316,7 @@ describe( 'selectors', () => {
 		} );
 
 		if ( isEnabled( 'jetpack/happychat' ) ) {
-			it( 'should return JPOP group if within the jetpackConnect section', () => {
+			test( 'should return JPOP group if within the jetpackConnect section', () => {
 				const state = {
 					...userState,
 					sites: {
@@ -397,7 +334,7 @@ describe( 'selectors', () => {
 				expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
 		} else {
-			it.skip( 'should not return JPOP group if within the jetpackConnect section' );
+			test.skip( 'should not return JPOP group if within the jetpackConnect section' );
 		}
 	} );
 } );

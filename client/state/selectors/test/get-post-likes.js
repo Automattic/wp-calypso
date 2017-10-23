@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getPostLikes } from '../';
 
 describe( 'getPostLikes()', () => {
-	it( 'should return null if the site has never been fetched', () => {
+	test( 'should return null if the site has never been fetched', () => {
 		const postLikes = getPostLikes(
 			{
 				posts: {
@@ -27,7 +27,7 @@ describe( 'getPostLikes()', () => {
 		expect( postLikes ).to.be.null;
 	} );
 
-	it( 'should return null if the post has never been fetched', () => {
+	test( 'should return null if the post has never been fetched', () => {
 		const likes = [ { ID: 1, login: 'chicken' } ];
 		const postLikes = getPostLikes(
 			{
@@ -48,7 +48,7 @@ describe( 'getPostLikes()', () => {
 		expect( postLikes ).to.be.null;
 	} );
 
-	it( 'should return the post likes', () => {
+	test( 'should return the post likes', () => {
 		const likes = [ { ID: 1, login: 'chicken' } ];
 		const postLikes = getPostLikes(
 			{

@@ -30,10 +30,16 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 			<DocumentHead title={ get( postType, 'label' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
-			{ userCanEdit &&
+			{ false !== userCanEdit &&
 			false !== postTypeSupported && [
-				<PostTypeFilter key="filter" query={ query } />,
-				<PostTypeList key="list" query={ query } largeTitles={ true } wrapTitles={ true } />,
+				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
+				<PostTypeList
+					key="list"
+					query={ userCanEdit ? query : null }
+					largeTitles={ true }
+					wrapTitles={ true }
+					scrollContainer={ document.body }
+				/>,
 			] }
 			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
 			{ false === userCanEdit && <PostTypeForbidden /> }

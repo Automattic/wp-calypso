@@ -135,4 +135,4 @@ ViewersStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( ViewersStore );
 
-module.exports = ViewersStore;
+export default ViewersStore;

@@ -24,7 +24,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#updateSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = updateSettings( siteId, settings );
 
 			expect( action ).to.deep.equal( {
@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchError()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = fetchError( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = fetchSettings( siteId );
 
 			expect( action ).to.deep.equal( {
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#saveSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = saveSettings( siteId, 'form', settings );
 
 			expect( action ).to.deep.equal( {

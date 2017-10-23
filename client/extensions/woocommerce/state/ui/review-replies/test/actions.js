@@ -17,7 +17,7 @@ import {
 describe( 'actions', () => {
 	describe( '#clearReviewReplyEdits()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const action = clearReviewReplyEdits( siteId );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT,
@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#editReviewReply()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const reply = { id: 50, content: 'testing' };
 			const action = editReviewReply( siteId, 50, reply );
 			expect( action ).to.eql( {

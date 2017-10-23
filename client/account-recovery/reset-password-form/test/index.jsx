@@ -38,7 +38,7 @@ describe( 'ResetPasswordForm', () => {
 		'.reset-password-form__sms-option.secondary',
 	];
 
-	it( 'should render as expected', () => {
+	test( 'should render as expected', () => {
 		const wrapper = shallow(
 			<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 		);
@@ -47,8 +47,8 @@ describe( 'ResetPasswordForm', () => {
 		expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
 
-	context( 'fields', () => {
-		it( 'should be disabled while isRequesting is true.', function() {
+	describe( 'fields', () => {
+		test( 'should be disabled while isRequesting is true.', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
@@ -64,8 +64,8 @@ describe( 'ResetPasswordForm', () => {
 		} );
 	} );
 
-	context( 'submit button', () => {
-		it( 'should be disabled if no reset option is selected', function() {
+	describe( 'submit button', () => {
+		test( 'should be disabled if no reset option is selected', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 			);
@@ -74,7 +74,7 @@ describe( 'ResetPasswordForm', () => {
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be enabled if a reset option is selected', function() {
+		test( 'should be enabled if a reset option is selected', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent resetOptions={ exampleResetOptions } translate={ identity } />
 			);
@@ -84,7 +84,7 @@ describe( 'ResetPasswordForm', () => {
 				.ok;
 		} );
 
-		it( 'should be disabled when isRequesting is true.', function() {
+		test( 'should be disabled when isRequesting is true.', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }

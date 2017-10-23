@@ -18,7 +18,7 @@ import tableRows from './table-rows';
 
 import SearchCard from 'components/search-card';
 
-var TransactionsTable = React.createClass( {
+const TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',
 
 	getInitialState: function() {
@@ -201,4 +201,4 @@ var TransactionsTable = React.createClass( {
 	},
 } );
 
-module.exports = localize( TransactionsTable );
+export default localize( TransactionsTable );

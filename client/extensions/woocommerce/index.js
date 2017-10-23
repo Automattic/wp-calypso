@@ -30,6 +30,7 @@ import PromotionCreate from './app/promotions/promotion-create';
 import PromotionUpdate from './app/promotions/promotion-update';
 import Reviews from './app/reviews';
 import SettingsPayments from './app/settings/payments';
+import SettingsEmail from './app/settings/email';
 import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
@@ -41,7 +42,7 @@ function initExtension() {
 }
 
 const getStorePages = () => {
-	return [
+	const pages = [
 		{
 			container: Dashboard,
 			configKey: 'woocommerce/extension-dashboard',
@@ -156,6 +157,17 @@ const getStorePages = () => {
 			path: '/store/settings/taxes/:site',
 		},
 	];
+
+	if ( config.isEnabled( 'woocommerce/extension-settings-email' ) ) {
+		pages.push( {
+			container: SettingsEmail,
+			configKey: 'woocommerce/extension-settings-email',
+			documentTitle: translate( 'Email' ),
+			path: '/store/settings/email/:site/:setup?',
+		} );
+	}
+
+	return pages;
 };
 
 function addStorePage( storePage, storeNavigation ) {

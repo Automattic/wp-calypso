@@ -53,7 +53,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProductCategories( siteId )( dispatch, getState );
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with product category information when request completes', () => {
+		test( 'should dispatch a success action with product category information when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProductCategories( siteId )( dispatch, getState );
@@ -85,7 +85,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch error action if the data is invalid', () => {
+		test( 'should dispatch error action if the data is invalid', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchProductCategories( errorSiteId )( dispatch, getState );

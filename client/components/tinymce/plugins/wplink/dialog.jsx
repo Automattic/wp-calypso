@@ -37,7 +37,7 @@ var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
-var LinkDialog = React.createClass( {
+const LinkDialog = React.createClass( {
 	propTypes: {
 		visible: PropTypes.bool,
 		editor: PropTypes.object,

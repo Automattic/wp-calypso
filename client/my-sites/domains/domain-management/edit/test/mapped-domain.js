@@ -5,7 +5,7 @@
 import assert from 'assert';
 import { identity } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import sinon from 'sinon';
 
 /**
@@ -18,7 +18,7 @@ jest.mock( 'lib/analytics', () => {} );
 describe( 'mapped-domain', () => {
 	let props;
 
-	before( () => {
+	beforeAll( () => {
 		props = {
 			selectedSite: {
 				slug: 'neverexpires.wordpress.com',
@@ -33,22 +33,22 @@ describe( 'mapped-domain', () => {
 		};
 	} );
 
-	it( 'should render when props.domain.expirationMoment is null', () => {
-		const renderer = TestUtils.createRenderer();
+	test( 'should render when props.domain.expirationMoment is null', () => {
+		const renderer = new ShallowRenderer();
 		renderer.render( <MappedDomain { ...props } /> );
 		const out = renderer.getRenderOutput();
 
 		assert( out );
 	} );
 
-	it(
+	test(
 		'should use selectedSite.slug for URLs',
 		sinon.test( function() {
 			const paths = require( 'my-sites/domains/paths' );
 			const dnsStub = this.stub( paths, 'domainManagementDns' );
 			const emailStub = this.stub( paths, 'domainManagementEmail' );
 
-			const renderer = TestUtils.createRenderer();
+			const renderer = new ShallowRenderer();
 			renderer.render( <MappedDomain { ...props } /> );
 			renderer.getRenderOutput();
 

@@ -56,6 +56,14 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => state => 
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
 
 /**
+ * Returns the country code for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current user country code
+ */
+export const getCurrentUserCountryCode = createCurrentUserSelector( 'user_ip_country_code' );
+
+/**
  * Returns the number of sites for the current user.
  *
  * @param  {Object}  state  Global state tree

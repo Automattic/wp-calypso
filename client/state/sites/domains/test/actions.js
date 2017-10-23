@@ -37,23 +37,23 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'Actions creators', () => {
-		it( '#domainsReceiveAction()', () => {
+		test( '#domainsReceiveAction()', () => {
 			const { domains } = wpcomResponse;
 			const action = domainsReceiveAction( siteId, domains );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_RECEIVE );
 		} );
 
-		it( '#domainsRequestAction()', () => {
+		test( '#domainsRequestAction()', () => {
 			const action = domainsRequestAction( siteId );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST );
 		} );
 
-		it( '#domainsRequestSuccessAction()', () => {
+		test( '#domainsRequestSuccessAction()', () => {
 			const action = domainsRequestSuccessAction( siteId );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_SUCCESS );
 		} );
 
-		it( '#domainsRequestFailureAction()', () => {
+		test( '#domainsRequestFailureAction()', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
 		} );
@@ -67,13 +67,13 @@ describe( 'actions', () => {
 				.reply( 200, wpcomResponse );
 		} );
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
+		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = domainsRequestAction( siteId );
 			fetchSiteDomains( siteId )( spy );
 			expect( spy ).to.have.been.calledWith( action );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
+		test( 'should dispatch RECEIVE action when request completes', () => {
 			const { domains } = wpcomResponse;
 			const action = domainsReceiveAction( siteId, domains );
 
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 				.reply( 403, wpcomErrorResponse );
 		} );
 
-		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {
+		test( 'should dispatch REQUEST_FAILURE action when request failed', () => {
 			const { message } = wpcomErrorResponse;
 			const requestAction = domainsRequestAction( siteId );
 			const failureAction = domainsRequestFailureAction( siteId, message );

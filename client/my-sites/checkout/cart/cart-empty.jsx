@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 
-var CartEmpty = React.createClass( {
+const CartEmpty = React.createClass( {
 	render: function() {
 		return (
 			<div>
@@ -45,4 +45,4 @@ var CartEmpty = React.createClass( {
 	},
 } );
 
-module.exports = localize( CartEmpty );
+export default localize( CartEmpty );

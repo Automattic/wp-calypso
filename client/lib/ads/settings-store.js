@@ -110,4 +110,4 @@ WordadsSettingsStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( WordadsSettingsStore );
 
-module.exports = WordadsSettingsStore;
+export default WordadsSettingsStore;

@@ -20,7 +20,7 @@ import { setMediaModalView } from 'state/ui/media-modal/actions';
 
 describe( 'actions', () => {
 	describe( 'startEditingPost()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = startEditingPost( 10, 183, 'post' );
 
 			expect( action ).to.eql( {
@@ -33,7 +33,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'stopEditingPost()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = stopEditingPost( 10, 183 );
 
 			expect( action ).to.eql( {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setEditorMediaModalView()', () => {
-		it( 'should dispatch setMediaModalView with analytics', () => {
+		test( 'should dispatch setMediaModalView with analytics', () => {
 			forEach( MODAL_VIEW_STAT_MAPPING, ( stat, view ) => {
 				expect( setEditorMediaModalView( view ) ).to.eql( {
 					...setMediaModalView( view ),

@@ -246,7 +246,12 @@ export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
 			}
 
 			const queryDetails = getDeserializedPostsQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
+			// Specific site query
+			if ( queryDetails.siteId && queryDetails.siteId !== siteId ) {
+				return false;
+			}
+			// All-sites query
+			if ( ! queryDetails.siteId && siteId ) {
 				return false;
 			}
 

@@ -18,7 +18,7 @@ import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'generalRequest', () => {
-		it( 'should mark the settings general tree as "loading" if no settings are loaded', () => {
+		test( 'should mark the settings general tree as "loading" if no settings are loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 			const newSiteData = reducer( {}, action );
 			expect( newSiteData[ siteId ].settings.general ).to.eql( LOADING );
 		} );
-		it( 'should do nothing if settings are already loaded', () => {
+		test( 'should do nothing if settings are already loaded', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			const newSiteData = reducer( state, action );
 			expect( newSiteData[ siteId ].settings.general ).to.eql( data );
 		} );
-		it( 'should store data from the action', () => {
+		test( 'should store data from the action', () => {
 			const siteId = 123;
 			const settings = [ {}, {} ];
 			const action = {
@@ -72,7 +72,7 @@ describe( 'reducer', () => {
 			expect( newState[ siteId ].settings ).to.exist;
 			expect( newState[ siteId ].settings.general ).to.deep.equal( settings );
 		} );
-		it( 'should handle error from the action', () => {
+		test( 'should handle error from the action', () => {
 			const siteId = 123;
 			const action = {
 				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'settings batch', () => {
-		it( 'should merge data from the action', () => {
+		test( 'should merge data from the action', () => {
 			const siteId = 123;
 			const emptyState = {
 				123: {

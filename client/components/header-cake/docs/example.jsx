@@ -20,7 +20,7 @@ const noop = function() {};
 
 const action = () => alert( 'i <3 cake' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Headers',
 
 	mixins: [ PureRenderMixin ],

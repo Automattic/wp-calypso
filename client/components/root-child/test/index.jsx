@@ -36,20 +36,20 @@ const Greeting = React.createClass( {
 	},
 } );
 
-describe( 'RootChild', function() {
+describe( 'RootChild', () => {
 	var container;
 
-	before( function() {
+	beforeAll( function() {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );
 
-	afterEach( function() {
+	afterEach( () => {
 		ReactDom.unmountComponentAtNode( container );
 	} );
 
-	describe( 'rendering', function() {
-		it( 'should render any children as descendants of body', function() {
+	describe( 'rendering', () => {
+		test( 'should render any children as descendants of body', () => {
 			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild.parentNode.className ).to.equal( 'parent' );
@@ -57,7 +57,7 @@ describe( 'RootChild', function() {
 			expect( tree.refs.rootChild.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'accepts props to be added to a wrapper element', function() {
+		test( 'accepts props to be added to a wrapper element', () => {
 			var tree = ReactDom.render(
 				React.createElement( Greeting, {
 					rootChildProps: { className: 'wrapper' },
@@ -70,7 +70,7 @@ describe( 'RootChild', function() {
 			expect( tree.refs.rootChild.parentNode.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'should update the children if parent is re-rendered', function() {
+		test( 'should update the children if parent is re-rendered', () => {
 			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
@@ -79,8 +79,8 @@ describe( 'RootChild', function() {
 		} );
 	} );
 
-	describe( 'unmounting', function() {
-		it( 'should destroy the root child when the component is unmounted', function() {
+	describe( 'unmounting', () => {
+		test( 'should destroy the root child when the component is unmounted', () => {
 			ReactDom.render( React.createElement( Greeting ), container );
 			ReactDom.unmountComponentAtNode( container );
 

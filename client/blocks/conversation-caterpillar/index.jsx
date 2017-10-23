@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
@@ -17,7 +16,6 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
 import { isAncestor } from 'blocks/comments/utils';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
@@ -45,23 +43,6 @@ class ConversationCaterpillarComponent extends React.Component {
 		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
-	};
-
-	handleShowAll = () => {
-		const { blogId, postId } = this.props;
-		const commentsToExpand = this.getExpandableComments();
-		this.props.expandComments( {
-			siteId: blogId,
-			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
-			displayType: POST_COMMENT_DISPLAY_TYPES.full,
-		} );
-		recordAction( 'comment_show_all_click' );
-		recordGaEvent( 'Clicked Comment Show All' );
-		recordTrack( 'calypso_reader_comment_show_all_click', {
-			blog_id: blogId,
-			post_id: postId,
-		} );
 	};
 
 	handleTickle = () => {
@@ -111,8 +92,8 @@ class ConversationCaterpillarComponent extends React.Component {
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		return (
-			<Card className="conversation-caterpillar" onClick={ this.handleTickle }>
-				<div className="conversation-caterpillar__gravatars">
+			<div className="conversation-caterpillar">
+				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
 						// If we have more than 5 gravs,
@@ -137,6 +118,7 @@ class ConversationCaterpillarComponent extends React.Component {
 				</div>
 				<button
 					className="conversation-caterpillar__count"
+					onClick={ this.handleTickle }
 					title={
 						commentCount > 1 ? (
 							translate( 'View comments from %(commenterName)s and %(count)d more', {
@@ -169,15 +151,7 @@ class ConversationCaterpillarComponent extends React.Component {
 						} )
 					) }
 				</button>
-				<button onClick={ this.handleShowAll } className="conversation-caterpillar__show-all">
-					<Gridicon
-						icon="chevron-down"
-						size={ 12 }
-						className="conversation-caterpillar__show-all-chevron"
-					/>
-					{ translate( 'Show all' ) }
-				</button>
-			</Card>
+			</div>
 		);
 	}
 }

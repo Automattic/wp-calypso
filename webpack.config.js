@@ -145,7 +145,7 @@ const webpackConfig = {
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
 		new HappyPack( {
 			loaders: _.compact( [
-				process.env.NODE_ENV === 'development' && 'react-hot-loader',
+				calypsoEnv === 'development' && config.isEnabled( 'webpack/hot-loader' ) && 'react-hot-loader',
 				babelLoader
 			] )
 		} ),
@@ -173,17 +173,19 @@ if ( calypsoEnv === 'desktop' ) {
 	// vendor chunk
 	webpackConfig.entry.vendor = [
 		'classnames',
+		'create-react-class',
+		'gridicons',
 		'i18n-calypso',
 		'lodash',
 		'moment',
 		'page',
-		'react',
-		'create-react-class',
 		'prop-types',
+		'react',
 		'react-dom',
 		'react-redux',
 		'redux',
 		'redux-thunk',
+		'social-logos',
 		'store',
 		'wpcom',
 	];

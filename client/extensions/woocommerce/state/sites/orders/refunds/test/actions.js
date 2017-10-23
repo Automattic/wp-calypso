@@ -44,7 +44,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			sendRefund( siteId, 40, refundObj )( dispatch, getState );
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the order when the refund request completes', () => {
+		test( 'should dispatch a success action with the order when the refund request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = sendRefund( siteId, 40, refundObj )( dispatch, getState );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a error action with the order when the refund request fails', () => {
+		test( 'should dispatch a error action with the order when the refund request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = sendRefund( 234, 'invalid', refundObj )( dispatch, getState );

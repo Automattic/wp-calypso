@@ -42,7 +42,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchSettingsProducts( siteId )( dispatch, getState );
@@ -52,7 +52,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with settings information when request completes', () => {
+		test( 'should dispatch a success action with settings information when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchSettingsProducts( siteId )( dispatch, getState );
@@ -77,7 +77,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if settings are already loading for this site', () => {
+		test( 'should not dispatch if settings are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {

@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Main
  */
-var PostImage = React.createClass( {
+const PostImage = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
@@ -104,4 +104,4 @@ var PostImage = React.createClass( {
 	},
 } );
 
-module.exports = PostImage;
+export default PostImage;

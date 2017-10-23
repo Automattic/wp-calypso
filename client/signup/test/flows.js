@@ -26,7 +26,7 @@ describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		let user;
 
-		before( () => {
+		beforeAll( () => {
 			user = require( 'lib/user' )();
 
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
@@ -35,16 +35,16 @@ describe( 'Signup Flows Configuration', () => {
 			} );
 		} );
 
-		after( () => {
+		afterAll( () => {
 			flows.getFlows.restore();
 			flows.getABTestFilteredFlow.restore();
 		} );
 
-		it( 'should return the full flow when the user is not logged in', () => {
+		test( 'should return the full flow when the user is not logged in', () => {
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
 		} );
 
-		it( 'should remove the user step from the flow when the user is not logged in', () => {
+		test( 'should remove the user step from the flow when the user is not logged in', () => {
 			user.setLoggedIn( true );
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'site' ] );
 			user.setLoggedIn( false );
@@ -59,7 +59,7 @@ describe( 'Signup Flows Configuration', () => {
 		getABTestVariationSpy.onCall( 2 ).returns( 'showSiteTitleStep' );
 		getABTestVariationSpy.onCall( 3 ).returns( 'showSiteTitleStep' );
 
-		before( () => {
+		beforeAll( () => {
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 			sinon.stub( flows, 'insertStepIntoFlow', ( stepName, flow ) => {
 				return flow;
@@ -69,25 +69,25 @@ describe( 'Signup Flows Configuration', () => {
 			} );
 		} );
 
-		after( () => {
+		afterAll( () => {
 			flows.getFlows.restore();
 			flows.insertStepIntoFlow.restore();
 			flows.removeStepFromFlow.restore();
 		} );
 
-		it( 'should return flow unmodified if not in main flow', () => {
+		test( 'should return flow unmodified if not in main flow', () => {
 			assert.equal( flows.getABTestFilteredFlow( 'test', 'testflow' ), 'testflow' );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 			assert.equal( flows.removeStepFromFlow.callCount, 0 );
 		} );
 
-		it( 'should check AB variation in main flow', () => {
+		test( 'should check AB variation in main flow', () => {
 			assert.equal( flows.getABTestFilteredFlow( 'main', 'testflow' ), 'testflow' );
 			assert.equal( getABTestVariationSpy.callCount, 0 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
 
-		it( 'should return flow unmodified if variation is not valid', () => {
+		test( 'should return flow unmodified if variation is not valid', () => {
 			const myFlow = {
 				name: 'test flow name',
 				steps: [ 1, 2, 3 ],
@@ -107,14 +107,14 @@ describe( 'Signup Flows Configuration', () => {
 
 		Object.freeze( myFlow );
 
-		it( 'should return flow unmodified if afterStep is not found', () => {
+		test( 'should return flow unmodified if afterStep is not found', () => {
 			const result = flows.insertStepIntoFlow( 'mystep', myFlow, 'test-step' );
 
 			assert.equal( myFlow, result );
 			assert.equal( myFlow.steps, result.steps );
 		} );
 
-		it( 'should add step at the beginning of flow if afterStep is empty', () => {
+		test( 'should add step at the beginning of flow if afterStep is empty', () => {
 			const result = flows.insertStepIntoFlow( 'mystep', myFlow );
 
 			assert.notStrictEqual( myFlow, result );
@@ -122,7 +122,7 @@ describe( 'Signup Flows Configuration', () => {
 			assert.deepEqual( [ 'mystep', 'step1', 'step2', 'step3', 'step4' ], result.steps );
 		} );
 
-		it( 'should insert step after afterStep', () => {
+		test( 'should insert step after afterStep', () => {
 			const result = flows.insertStepIntoFlow( 'mystep', myFlow, 'step2' );
 
 			assert.notStrictEqual( myFlow, result );

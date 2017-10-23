@@ -12,14 +12,14 @@ import React from 'react';
 import ValidationFieldset from '..';
 
 describe( 'ValidationFieldset', () => {
-	it( 'should pass className prop to the child FormFieldset component.', () => {
+	test( 'should pass className prop to the child FormFieldset component.', () => {
 		const wrapper = shallow( <ValidationFieldset className="test__foo-bar" /> );
 
 		expect( wrapper.find( 'FormFieldset' ) ).to.have.length( 1 );
 		expect( wrapper.find( 'FormFieldset' ).hasClass( 'test__foo-bar' ) ).to.be.true;
 	} );
 
-	it( 'should include a FormInputValidation only when errorMessages prop is set.', () => {
+	test( 'should include a FormInputValidation only when errorMessages prop is set.', () => {
 		const wrapper = shallow( <ValidationFieldset /> );
 
 		expect( wrapper.find( 'FormInputValidation' ).isEmpty() ).to.be.true;
@@ -38,7 +38,7 @@ describe( 'ValidationFieldset', () => {
 		).to.be.false;
 	} );
 
-	it( 'should render the children within a FormFieldset', () => {
+	test( 'should render the children within a FormFieldset', () => {
 		const wrapper = shallow(
 			<ValidationFieldset>
 				<p>Lorem ipsum dolor sit amet</p>

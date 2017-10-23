@@ -37,7 +37,7 @@ describe( 'actions', () => {
 		const siteId = 123456;
 		const silent = true;
 
-		it( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
+		test( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
 			activateModule( siteId, 'module-a', silent )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULE_ACTIVATE_SUCCESS when API activates a module', () => {
+			test( 'should dispatch JETPACK_MODULE_ACTIVATE_SUCCESS when API activates a module', () => {
 				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
+			test( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
 				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 		const siteId = 123456;
 		const silent = true;
 
-		it( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', () => {
+		test( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', () => {
 			deactivateModule( siteId, 'module-b', silent )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_SUCCESS when API deactivates a module', () => {
+			test( 'should dispatch JETPACK_MODULE_DEACTIVATE_SUCCESS when API deactivates a module', () => {
 				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_FAILURE when deactivating a module fails', () => {
+			test( 'should dispatch JETPACK_MODULE_DEACTIVATE_FAILURE when deactivating a module fails', () => {
 				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -189,7 +189,7 @@ describe( 'actions', () => {
 					.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
 			} );
 
-			it( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
+			test( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
 				fetchModuleList( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -198,7 +198,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
+			test( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -212,7 +212,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULES_REQUEST_SUCCESS when we get the response from the API', () => {
+			test( 'should dispatch JETPACK_MODULES_REQUEST_SUCCESS when we get the response from the API', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -236,7 +236,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch JETPACK_MODULES_REQUEST_FAILURE when the requests fails', () => {
+			test( 'should dispatch JETPACK_MODULES_REQUEST_FAILURE when the requests fails', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {

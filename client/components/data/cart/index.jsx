@@ -20,7 +20,7 @@ function getStateFromStores() {
 	};
 }
 
-var CartData = React.createClass( {
+const CartData = React.createClass( {
 	render: function() {
 		return (
 			<StoreConnection stores={ stores } getStateFromStores={ getStateFromStores }>
@@ -30,4 +30,4 @@ var CartData = React.createClass( {
 	},
 } );
 
-module.exports = CartData;
+export default CartData;

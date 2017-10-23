@@ -13,7 +13,7 @@ import { phpToMomentDatetimeFormat } from '../utils';
 
 describe( 'phpToMomentDatetimeFormat', () => {
 	const testDate = moment();
-	it( 'should return the correct Moment date', function() {
+	test( 'should return the correct Moment date', () => {
 		chai.assert.equal(
 			phpToMomentDatetimeFormat( testDate, 'F j, Y' ),
 			testDate.format( 'MMMM D, YYYY' )
@@ -32,7 +32,7 @@ describe( 'phpToMomentDatetimeFormat', () => {
 		);
 	} );
 
-	it( 'should return the correct Moment time', function() {
+	test( 'should return the correct Moment time', () => {
 		chai.assert.equal(
 			phpToMomentDatetimeFormat( testDate, 'g:i a' ),
 			testDate.format( 'h:mm a' )

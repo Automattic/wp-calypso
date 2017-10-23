@@ -13,7 +13,7 @@ import { variationUpdated } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#variationUpdated', () => {
-		it( 'should store a new variation via update', () => {
+		test( 'should store a new variation via update', () => {
 			const variation1 = {
 				id: 202,
 				attributes: [
@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 			expect( state[ 66 ] ).to.eql( [ variation1 ] );
 		} );
 
-		it( 'should overwrite an existing variation via update', () => {
+		test( 'should overwrite an existing variation via update', () => {
 			const variation1Before = {
 				id: 202,
 				attributes: [
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			expect( state2[ 66 ] ).to.eql( [ variation1After ] );
 		} );
 
-		it( 'should remove an existing variation if passed "undefined" for a variation', () => {
+		test( 'should remove an existing variation if passed "undefined" for a variation', () => {
 			const variation1Before = {
 				id: 202,
 				attributes: [

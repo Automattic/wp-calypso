@@ -204,7 +204,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		} );
 }
 
-module.exports = {
+export default {
 	post: function( context ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );

@@ -59,7 +59,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchOrders( siteId, { page: 1, status: 'any' } )( dispatch, getState );
@@ -70,7 +70,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with orders list when request completes', () => {
+		test( 'should dispatch a success action with orders list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchOrders( siteId, { page: 1 } )( dispatch, getState );
@@ -86,7 +86,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchOrders( 234, { page: 'invalid' } )( dispatch, getState );
@@ -99,7 +99,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if orders are already loading for this site', () => {
+		test( 'should not dispatch if orders are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -147,7 +147,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchOrder( siteId, 40 )( dispatch, getState );
@@ -158,7 +158,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the order when request completes', () => {
+		test( 'should dispatch a success action with the order when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchOrder( siteId, 40 )( dispatch, getState );
@@ -173,7 +173,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = fetchOrder( 234, 'invalid' )( dispatch, getState );
@@ -186,7 +186,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should not dispatch if orders are already loading for this site', () => {
+		test( 'should not dispatch if orders are already loading for this site', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -245,7 +245,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch an action', () => {
+		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			updateOrder( siteId, updatedOrder )( dispatch, getState );
@@ -256,7 +256,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a success action with the order when request completes', () => {
+		test( 'should dispatch a success action with the order when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = updateOrder( siteId, updatedOrder )( dispatch, getState );
@@ -271,7 +271,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			const response = updateOrder( 234, { id: 'invalid' } )( dispatch, getState );

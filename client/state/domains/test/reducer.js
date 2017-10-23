@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'management', 'suggestions' ] );
 	} );
 } );

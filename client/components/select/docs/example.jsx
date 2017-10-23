@@ -7,7 +7,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-var Selects = React.createClass( {
+const Selects = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
@@ -48,4 +48,4 @@ var Selects = React.createClass( {
 	},
 } );
 
-module.exports = Selects;
+export default Selects;

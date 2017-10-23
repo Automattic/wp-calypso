@@ -14,22 +14,22 @@ import { stub } from 'sinon';
  */
 import { BusinessATStep } from '../business-at-step';
 
-describe( 'BusinessATStep', function() {
-	describe( 'rendering translated content', function() {
+describe( 'BusinessATStep', () => {
+	describe( 'rendering translated content', () => {
 		let wrapper;
 		const translate = content => `Translated: ${ content }`;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			wrapper = shallow( <BusinessATStep recordTracksEvent={ noop } translate={ translate } /> );
 		} );
 
-		it( 'should render translated heading content', function() {
+		test( 'should render translated heading content', () => {
 			expect( wrapper.find( 'FormSectionHeading' ).props().children ).to.equal(
 				'Translated: New! Install Custom Plugins and Themes'
 			);
 		} );
 
-		it( 'should render translated link content', function() {
+		test( 'should render translated link content', () => {
 			expect(
 				wrapper
 					.find( 'FormFieldset > p' )
@@ -43,7 +43,7 @@ describe( 'BusinessATStep', function() {
 			);
 		} );
 
-		it( 'should render translated confirmation content', function() {
+		test( 'should render translated confirmation content', () => {
 			expect(
 				wrapper
 					.find( 'FormFieldset > p' )
@@ -55,7 +55,7 @@ describe( 'BusinessATStep', function() {
 		} );
 	} );
 
-	describe( 'rendered links', function() {
+	describe( 'rendered links', () => {
 		const translate = ( content, params ) => {
 			if ( params && params.components ) {
 				return (
@@ -69,14 +69,14 @@ describe( 'BusinessATStep', function() {
 		};
 		let recordTracksEvent, wrapper;
 
-		beforeEach( function() {
+		beforeEach( () => {
 			recordTracksEvent = stub();
 			wrapper = shallow(
 				<BusinessATStep translate={ translate } recordTracksEvent={ recordTracksEvent } />
 			);
 		} );
 
-		it( 'should fire tracks event for plugin support link when clicked', function() {
+		test( 'should fire tracks event for plugin support link when clicked', () => {
 			wrapper
 				.find( 'a' )
 				.at( 0 )
@@ -87,7 +87,7 @@ describe( 'BusinessATStep', function() {
 			);
 		} );
 
-		it( 'should fire tracks event for theme support link when clicked', function() {
+		test( 'should fire tracks event for theme support link when clicked', () => {
 			wrapper
 				.find( 'a' )
 				.at( 1 )

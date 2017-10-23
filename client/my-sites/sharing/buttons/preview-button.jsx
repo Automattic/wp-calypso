@@ -15,7 +15,7 @@ import SocialLogo from 'social-logos';
  */
 import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsPreviewButton',
 
 	propsTypes: {

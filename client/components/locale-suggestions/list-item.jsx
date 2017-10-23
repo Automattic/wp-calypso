@@ -17,15 +17,21 @@ import { getLanguage } from 'lib/i18n-utils';
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
 		locale: PropTypes.object.isRequired,
+		onLocaleSuggestionClick: PropTypes.func,
 		path: PropTypes.string.isRequired,
 	};
 
 	handleLocaleSuggestionClick = event => {
-		const { locale, path } = this.props;
+		const { locale, onLocaleSuggestionClick, path } = this.props;
 
 		if ( this.hasLocaleDirectionChanged( locale ) ) {
 			event.preventDefault();
+
 			window.location = path;
+		}
+
+		if ( onLocaleSuggestionClick ) {
+			onLocaleSuggestionClick();
 		}
 
 		// TODO: record analytics event here
@@ -44,6 +50,7 @@ class LocaleSuggestionsListItem extends Component {
 		return (
 			<div className="locale-suggestions__list-item" dir="auto">
 				{ locale.availability_text }
+
 				<a
 					href={ path }
 					onClick={ this.handleLocaleSuggestionClick }

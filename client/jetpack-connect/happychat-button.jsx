@@ -6,6 +6,7 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,15 +16,19 @@ import { localize } from 'i18n-calypso';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection';
 import { isEnabled } from 'config';
-import { hasActiveHappychatSession, isHappychatAvailable } from 'state/happychat/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { hasActiveHappychatSession } from 'state/happychat/selectors';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
 const JetpackConnectHappychatButton = ( {
 	children,
 	isChatActive,
 	isChatAvailable,
+	isLoggedIn,
+	label,
 	translate,
 } ) => {
-	if ( ! isEnabled( 'jetpack/happychat' ) ) {
+	if ( ! isEnabled( 'jetpack/happychat' ) || ! isLoggedIn ) {
 		return <div>{ children }</div>;
 	}
 
@@ -42,12 +47,17 @@ const JetpackConnectHappychatButton = ( {
 			borderless={ false }
 		>
 			<HappychatConnection />
-			<Gridicon icon="chat" /> { translate( 'Get help connecting your site' ) }
+			<Gridicon icon="chat" /> { label || translate( 'Get help connecting your site' ) }
 		</HappychatButton>
 	);
+};
+
+JetpackConnectHappychatButton.propTypes = {
+	label: PropTypes.string,
 };
 
 export default connect( state => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	isChatActive: hasActiveHappychatSession( state ),
+	isLoggedIn: Boolean( getCurrentUserId( state ) ),
 } ) )( localize( JetpackConnectHappychatButton ) );

@@ -454,4 +454,4 @@ UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
 
 UndocumentedMe.prototype.preferences = MePreferences;
 
-module.exports = UndocumentedMe;
+export default UndocumentedMe;

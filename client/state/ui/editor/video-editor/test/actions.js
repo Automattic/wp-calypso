@@ -18,7 +18,7 @@ import {
 
 describe( 'actions', () => {
 	describe( '#updatePoster()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const videoId = 'dummy-videoId';
 			const params = { atTime: 1 };
 			const action = updatePoster( videoId, params );
@@ -32,7 +32,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setPosterUrl()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
 			const action = setPosterUrl( poster );
 
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#showError()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = showError();
 
 			expect( action ).to.eql( {
@@ -54,7 +54,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#showUploadProgress()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const percentage = 50;
 			const action = showUploadProgress( percentage );
 
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updatePosterUploadProgress()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const percentage = 50;
 			const action = showUploadProgress( percentage );
 

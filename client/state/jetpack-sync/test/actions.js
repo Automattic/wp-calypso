@@ -71,7 +71,7 @@ describe( 'actions', () => {
 					.reply( 200, reply );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				const { getSyncStatus } = actions;
 
 				getSyncStatus( siteId )( spy );
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success action when request completes', () => {
+			test( 'should dispatch success action when request completes', () => {
 				const { getSyncStatus } = actions;
 
 				return getSyncStatus( siteId )( spy ).then( () => {
@@ -111,7 +111,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { getSyncStatus } = actions;
 
 				return getSyncStatus( siteId )( spy ).then( () => {
@@ -144,7 +144,7 @@ describe( 'actions', () => {
 					.reply( 200, reply );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				const { scheduleJetpackFullysync } = actions;
 
 				scheduleJetpackFullysync( siteId )( spy );
@@ -154,7 +154,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success action when request completes', () => {
+			test( 'should dispatch success action when request completes', () => {
 				const { scheduleJetpackFullysync } = actions;
 
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
@@ -184,7 +184,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { scheduleJetpackFullysync } = actions;
 
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {

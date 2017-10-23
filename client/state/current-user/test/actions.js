@@ -13,7 +13,7 @@ import { CURRENT_USER_ID_SET } from 'state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setCurrentUserId()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = setCurrentUserId( 73705554 );
 
 			expect( action ).to.eql( {

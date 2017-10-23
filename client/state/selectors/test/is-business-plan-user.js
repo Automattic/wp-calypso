@@ -13,7 +13,7 @@ import { isBusinessPlanUser } from '../';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {
-	it( 'should return true if any purchase is a business plan.', () => {
+	test( 'should return true if any purchase is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,
@@ -36,7 +36,7 @@ describe( 'isBusinessPlanUser()', () => {
 		assert.isTrue( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if non of the purchases is a business plan.', () => {
+	test( 'should return false if non of the purchases is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,
@@ -59,7 +59,7 @@ describe( 'isBusinessPlanUser()', () => {
 		assert.isFalse( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if current user id is null.', () => {
+	test( 'should return false if current user id is null.', () => {
 		const state = deepFreeze( {
 			currentUser: {},
 		} );
@@ -67,7 +67,7 @@ describe( 'isBusinessPlanUser()', () => {
 		assert.isFalse( isBusinessPlanUser( state ) );
 	} );
 
-	it( 'should return false if purchasing data is null.', () => {
+	test( 'should return false if purchasing data is null.', () => {
 		const state = deepFreeze( {
 			currentUser: {
 				id: 123,

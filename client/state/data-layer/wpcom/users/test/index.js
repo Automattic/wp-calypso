@@ -15,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveUser, requestUsers } from 'state/users/actions';
 
 describe( '#normalizeRevision', () => {
-	it( 'should rename `id`, `name` and `slug`', () => {
+	test( 'should rename `id`, `name` and `slug`', () => {
 		expect(
 			normalizeUser( {
 				id: 10,
@@ -29,7 +29,7 @@ describe( '#normalizeRevision', () => {
 		} );
 	} );
 
-	it( 'should not return `undefined` properties', () => {
+	test( 'should not return `undefined` properties', () => {
 		expect(
 			normalizeUser( {
 				id: 10,
@@ -41,7 +41,7 @@ describe( '#normalizeRevision', () => {
 } );
 
 describe( '#fetchUsers', () => {
-	it( 'should dispatch HTTP request to users endpoint', () => {
+	test( 'should dispatch HTTP request to users endpoint', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
 
@@ -65,7 +65,7 @@ describe( '#fetchUsers', () => {
 		);
 	} );
 
-	it( 'should respect pagination information coming from action', () => {
+	test( 'should respect pagination information coming from action', () => {
 		const action = requestUsers( 12345678, [ 10 ] );
 		action.page = 2;
 		action.perPage = 42;
@@ -93,7 +93,7 @@ describe( '#fetchUsers', () => {
 } );
 
 describe( '#receiveSuccess', () => {
-	it( 'should normalize the users and dispatch `receiveUser` for each one', () => {
+	test( 'should normalize the users and dispatch `receiveUser` for each one', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
 
@@ -112,7 +112,7 @@ describe( '#receiveSuccess', () => {
 		);
 	} );
 
-	it( 'should fetch another page if it receives a full page of users (default per page)', () => {
+	test( 'should fetch another page if it receives a full page of users (default per page)', () => {
 		const nbUsers = DEFAULT_PER_PAGE + 1;
 		const ids = times( nbUsers );
 		const users = times( nbUsers, id => ( { id } ) );
@@ -158,7 +158,7 @@ describe( '#receiveSuccess', () => {
 		);
 	} );
 
-	it( 'should fetch another page if it receives a full page of users (custom per page)', () => {
+	test( 'should fetch another page if it receives a full page of users (custom per page)', () => {
 		const perPage = 4;
 		const nbUsers = perPage + 1;
 		const ids = times( nbUsers );

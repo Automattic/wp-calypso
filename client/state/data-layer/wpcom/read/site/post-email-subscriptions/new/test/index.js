@@ -23,7 +23,7 @@ import {
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailSubscription', () => {
-		it( 'should dispatch an http request and call through next', () => {
+		test( 'should dispatch an http request and call through next', () => {
 			const dispatch = spy();
 			const action = subscribeToNewPostEmail( 1234 );
 			requestPostEmailSubscription( { dispatch }, action );
@@ -41,7 +41,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receivePostEmailSubscription', () => {
-		it( 'should call next to update the subscription with the delivery frequency from the response', () => {
+		test( 'should call next to update the subscription with the delivery frequency from the response', () => {
 			const dispatch = spy();
 			receivePostEmailSubscription( { dispatch }, subscribeToNewPostEmail( 1234 ), {
 				subscribed: true,
@@ -54,7 +54,7 @@ describe( 'comment-email-subscriptions', () => {
 			);
 		} );
 
-		it( 'should dispatch an unsubscribe if it fails using next', () => {
+		test( 'should dispatch an unsubscribe if it fails using next', () => {
 			const dispatch = spy();
 			receivePostEmailSubscription(
 				{ dispatch },
@@ -75,7 +75,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receivePostEmailSubscriptionError', () => {
-		it( 'should dispatch an error notice and unsubscribe action using next', () => {
+		test( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const dispatch = spy();
 			receivePostEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
 			expect( dispatch ).to.have.been.calledWithMatch( {

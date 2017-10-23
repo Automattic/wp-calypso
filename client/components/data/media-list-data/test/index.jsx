@@ -33,8 +33,8 @@ const EMPTY_COMPONENT = () => {
 	return <div />;
 };
 
-describe( 'EditorMediaModal', function() {
-	it( 'should pass search parameter to media query', () => {
+describe( 'EditorMediaModal', () => {
+	test( 'should pass search parameter to media query', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
@@ -46,7 +46,7 @@ describe( 'EditorMediaModal', function() {
 		expect( result ).to.eql( query );
 	} );
 
-	it( 'should pass and process filter parameter to media query', () => {
+	test( 'should pass and process filter parameter to media query', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />
@@ -58,7 +58,7 @@ describe( 'EditorMediaModal', function() {
 		expect( result ).to.eql( { mime_type: 'image/' } );
 	} );
 
-	it( 'should pass source parameter and set recent path to media query', () => {
+	test( 'should pass source parameter and set recent path to media query', () => {
 		const tree = shallow(
 			<MediaListData siteId={ DUMMY_SITE_ID }>
 				<EMPTY_COMPONENT />

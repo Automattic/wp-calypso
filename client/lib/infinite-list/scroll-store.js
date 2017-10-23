@@ -34,4 +34,4 @@ InfiniteListScrollStore.dispatchToken = Dispatcher.register( function( payload )
 	}
 } );
 
-module.exports = InfiniteListScrollStore;
+export default InfiniteListScrollStore;

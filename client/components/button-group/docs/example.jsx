@@ -15,7 +15,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
 
-var Buttons = React.createClass( {
+const Buttons = React.createClass( {
 	displayName: 'ButtonGroup',
 
 	mixins: [ PureRenderMixin ],
@@ -102,4 +102,4 @@ var Buttons = React.createClass( {
 	},
 } );
 
-module.exports = Buttons;
+export default Buttons;

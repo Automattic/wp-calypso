@@ -48,9 +48,9 @@ var makeCollection = function() {
 	return Collection;
 };
 
-describe( 'index', function() {
-	describe( 'searchNodes as array', function() {
-		it( 'should find node', function() {
+describe( 'index', () => {
+	describe( 'searchNodes as array', () => {
+		test( 'should find node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title', 'author' ] );
@@ -60,7 +60,7 @@ describe( 'index', function() {
 			assert.equal( collection.search( 'title' ).length, 2 );
 		} );
 
-		it( 'should not find a node', function() {
+		test( 'should not find a node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [ 'title', 'author' ] );
@@ -69,8 +69,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'searchNodes as string', function() {
-		it( 'should find node', function() {
+	describe( 'searchNodes as string', () => {
+		test( 'should find node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, 'title' );
@@ -79,7 +79,7 @@ describe( 'index', function() {
 			assert.equal( collection.search( 'title' ).length, 2 );
 		} );
 
-		it( 'should not find a node', function() {
+		test( 'should not find a node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, 'title' );
@@ -88,8 +88,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'searchNodes as object', function() {
-		it( 'should find node', function() {
+	describe( 'searchNodes as object', () => {
+		test( 'should find node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [
@@ -103,7 +103,7 @@ describe( 'index', function() {
 			assert.equal( collection.search( 'title' ).length, 2 );
 		} );
 
-		it( 'should not find a node', function() {
+		test( 'should not find a node', () => {
 			var Collection = makeCollection(),
 				collection;
 			Searchable( Collection.prototype, [

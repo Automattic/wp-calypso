@@ -14,7 +14,7 @@ import { WOOCOMMERCE_SETTINGS_GENERAL_REQUEST } from 'woocommerce/state/action-t
 describe( 'actions', () => {
 	describe( '#fetchSettingsGeneral()', () => {
 		const siteId = '123';
-		it( 'should return an action', () => {
+		test( 'should return an action', () => {
 			const action = fetchSettingsGeneral( siteId );
 			expect( action ).to.eql( { type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST, siteId } );
 		} );

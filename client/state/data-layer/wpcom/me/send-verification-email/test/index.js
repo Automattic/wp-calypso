@@ -20,7 +20,7 @@ describe( 'send-email-verification', () => {
 
 		requestEmailVerification( { dispatch: dispatchSpy }, dummyAction );
 
-		it( 'should dispatch HTTP request to plans endpoint', () => {
+		test( 'should dispatch HTTP request to plans endpoint', () => {
 			expect( dispatchSpy ).to.have.been.calledOnce;
 			expect( dispatchSpy ).to.have.been.calledWith(
 				http(
@@ -42,7 +42,7 @@ describe( 'send-email-verification', () => {
 
 		handleError( { dispatch: dispatchSpy }, null, rawError );
 
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: EMAIL_VERIFY_REQUEST_FAILURE,
 				message,
@@ -55,7 +55,7 @@ describe( 'send-email-verification', () => {
 
 		handleSuccess( { dispatch: dispatchSpy } );
 
-		it( 'should dispatch failure action with error message', () => {
+		test( 'should dispatch failure action with error message', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
 		} );
 	} );

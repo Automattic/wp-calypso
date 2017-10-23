@@ -165,7 +165,7 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
@@ -542,14 +542,14 @@ module.exports = React.createClass( {
 		} );
 
 		/*
-		 * Using `classnames()` here is just a hack to avoid the linter complaining that the
+		 * Using `classnames()` here is partly a hack to avoid the linter complaining that the
 		 * container is named `tinymce-container` instead of `tinymce`. Ideally the containing
 		 * `div` and the `textarea` should be refactored so that the `div` has the `tinymce`
 		 * class, but that would interfere with higher priority fixes. This component is slated
 		 * for some refactoring in the near future, so that will be a more convenient time to
 		 * clean this up.
 		 */
-		const containerClassName = classnames( 'tinymce-container' );
+		const containerClassName = classnames( 'tinymce-container', 'editor-mode-' + mode );
 
 		return (
 			<div className={ containerClassName }>

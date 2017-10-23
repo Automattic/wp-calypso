@@ -26,12 +26,12 @@ describe( 'cache-index', () => {
 	describe( '#getAll', () => {
 		beforeEach( clearLocal );
 
-		it( 'should return undefined for empty localforage', () => {
+		test( 'should return undefined for empty localforage', () => {
 			return cacheIndex.getAll().then( res => {
 				expect( res ).to.equal( undefined );
 			} );
 		} );
-		it( 'should return index from localforage and nothing else', () => {
+		test( 'should return index from localforage and nothing else', () => {
 			const { recordsList } = testData;
 			setLocalData( {
 				someStoredRecord: 1,
@@ -47,7 +47,7 @@ describe( 'cache-index', () => {
 	describe( '#addItem', () => {
 		beforeEach( clearLocal ); // also do inside nested blocks with >1 test
 
-		it( 'should add item to empty index', () => {
+		test( 'should add item to empty index', () => {
 			const key = 'unique-key';
 			return cacheIndex.addItem( key ).then( () => {
 				const currentIndex = localforageMock.getLocalData()[ RECORDS_LIST_KEY ];
@@ -56,7 +56,7 @@ describe( 'cache-index', () => {
 				expect( currentIndex[ 0 ] ).to.have.property( 'timestamp' );
 			} );
 		} );
-		it( 'should store a pageSeriesKey when passed as third parameter', () => {
+		test( 'should store a pageSeriesKey when passed as third parameter', () => {
 			const { postListKey, postListParams, postListPageSeriesKey } = testData;
 			const normalizedParams = normalizeRequestParams( postListParams );
 			return cacheIndex
@@ -72,7 +72,7 @@ describe( 'cache-index', () => {
 	} );
 
 	describe( '#removeItem', () => {
-		it( 'should remove item from a populated index', () => {
+		test( 'should remove item from a populated index', () => {
 			const { postListKey, localDataFull } = testData;
 			setLocalData( localDataFull );
 			return cacheIndex.removeItem( postListKey ).then( () => {
@@ -83,7 +83,7 @@ describe( 'cache-index', () => {
 	} );
 
 	describe( '#pruneStaleRecords', () => {
-		it( 'should prune old records', () => {
+		test( 'should prune old records', () => {
 			const {
 				postListKey,
 				postListWithSearchKey,
@@ -112,7 +112,7 @@ describe( 'cache-index', () => {
 	} );
 
 	describe( '#clearAll', () => {
-		it( 'should clear all sync records and nothing else', () => {
+		test( 'should clear all sync records and nothing else', () => {
 			const { localDataFull } = testData;
 			setLocalData( Object.assign( { someRecord: 1 }, localDataFull ) );
 			return cacheIndex.clearAll().then( () => {
@@ -123,7 +123,7 @@ describe( 'cache-index', () => {
 	} );
 
 	describe( '#clearPageSeries', () => {
-		it( 'should clear records with matching pageSeriesKey and leave other records intact', () => {
+		test( 'should clear records with matching pageSeriesKey and leave other records intact', () => {
 			const {
 				postListKey,
 				postListNextPageKey,
@@ -168,7 +168,7 @@ describe( 'cache-index', () => {
 	} );
 
 	describe( '#clearRecordsByParamFilter', () => {
-		it( 'should clear records with reqParams that matches filter and leave other records intact', () => {
+		test( 'should clear records with reqParams that matches filter and leave other records intact', () => {
 			const {
 				postListKey,
 				postListParams,

@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should default to a backPath of /themes', () => {
+	test( 'should default to a backPath of /themes', () => {
 		expect( reducer( undefined, {} ) ).to.eql( { backPath: '/themes' } );
 	} );
 } );

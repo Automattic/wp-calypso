@@ -24,14 +24,14 @@ describe( 'ReaderAuthorLink', () => {
 		author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
 	} );
 
-	it( 'should render children', () => {
+	test( 'should render children', () => {
 		const wrapper = shallow(
 			<ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink>
 		);
 		expect( wrapper.contains( 'Barnaby Blogwit' ) ).to.equal( true );
 	} );
 
-	it( 'should accept a custom class of `test__ace`', () => {
+	test( 'should accept a custom class of `test__ace`', () => {
 		const wrapper = shallow(
 			<ReaderAuthorLink author={ author } className="test__ace">
 				xyz
@@ -40,19 +40,19 @@ describe( 'ReaderAuthorLink', () => {
 		expect( wrapper.is( '.test__ace' ) ).to.equal( true );
 	} );
 
-	it( 'should return null with a null author name', () => {
+	test( 'should return null with a null author name', () => {
 		author.name = null;
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		expect( wrapper.type() ).to.be.null;
 	} );
 
-	it( 'should return null with a blacklisted author name', () => {
+	test( 'should return null with a blacklisted author name', () => {
 		author.name = 'admin';
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		expect( wrapper.type() ).to.be.null;
 	} );
 
-	it( 'should use siteUrl if provided', () => {
+	test( 'should use siteUrl if provided', () => {
 		const siteUrl = 'http://discover.wordpress.com';
 		const wrapper = shallow(
 			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>
@@ -64,14 +64,14 @@ describe( 'ReaderAuthorLink', () => {
 			.equal( siteUrl );
 	} );
 
-	it( 'should use author.URL if site URL is not provided', () => {
+	test( 'should use author.URL if site URL is not provided', () => {
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		expect( wrapper.find( '.reader-author-link' ) )
 			.to.have.prop( 'href' )
 			.equal( author.URL );
 	} );
 
-	it( 'should not return a link if siteUrl and author.URL are both missing', () => {
+	test( 'should not return a link if siteUrl and author.URL are both missing', () => {
 		author.URL = null;
 		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		// Should just return children

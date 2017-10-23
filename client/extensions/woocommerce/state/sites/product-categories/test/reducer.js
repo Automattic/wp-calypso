@@ -17,7 +17,7 @@ import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
-	it( 'should mark the product category tree as "loading"', () => {
+	test( 'should mark the product category tree as "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
@@ -29,7 +29,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].productCategories ).to.eql( LOADING );
 	} );
 
-	it( 'should store data from the action', () => {
+	test( 'should store data from the action', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].productCategories ).to.eql( categories );
 	} );
 
-	it( 'should not affect other state trees', () => {
+	test( 'should not affect other state trees', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {
@@ -80,10 +80,28 @@ describe( 'reducer', () => {
 			products: {},
 			stripeConnectAccount: {},
 			tax: {},
+			email: {
+				settings: {},
+				settingsRequest: false,
+				settingsRequestError: false,
+				syncStatus: {},
+				syncStatusRequest: false,
+				syncStatusRequestError: false,
+				resyncRequest: false,
+				resyncRequestError: false,
+				apiKeySubmit: false,
+				apiKeySubmitError: false,
+				storeInfoSubmit: false,
+				storeInfoSubmitError: false,
+				listsRequest: false,
+				listsRequestError: false,
+				newsletterSettingsSubmit: false,
+				newsletterSettingsSubmitError: false,
+			},
 		} );
 	} );
 
-	it( 'should store data from an updated action', () => {
+	test( 'should store data from an updated action', () => {
 		const siteId = 123;
 		const state = {
 			[ siteId ]: {

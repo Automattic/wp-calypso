@@ -29,7 +29,7 @@ const ERROR_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveRestoreSuccess', () => {
-	it( 'should dispatch get restore progress on success', () => {
+	test( 'should dispatch get restore progress on success', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreSuccess( { dispatch }, { siteId, timestamp }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
@@ -39,7 +39,7 @@ describe( 'receiveRestoreSuccess', () => {
 } );
 
 describe( 'receiveRestoreError', () => {
-	it( 'should dispatch update error on error', () => {
+	test( 'should dispatch update error on error', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreError( { dispatch }, { siteId, timestamp }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(

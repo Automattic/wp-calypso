@@ -28,8 +28,8 @@ jest.mock( 'my-sites/themes/themes-site-selector-modal', () =>
 	require( 'components/empty-component' )
 );
 
-describe( 'main', function() {
-	describe( 'Calling renderToString() on Theme Info sheet', function() {
+describe( 'main', () => {
+	describe( 'Calling renderToString() on Theme Info sheet', () => {
 		const themeData = {
 			name: 'Twenty Sixteen',
 			author: 'the WordPress team',
@@ -43,7 +43,7 @@ describe( 'main', function() {
 			demo_uri: 'https://twentysixteendemo.wordpress.com/',
 		};
 
-		it( "doesn't throw an exception without theme data", function() {
+		test( "doesn't throw an exception without theme data", () => {
 			const store = createReduxStore();
 			const layout = (
 				<ReduxProvider store={ store }>
@@ -57,7 +57,7 @@ describe( 'main', function() {
 			assert.isTrue( markup.includes( 'theme__sheet' ) );
 		} );
 
-		it( "doesn't throw an exception with theme data", function() {
+		test( "doesn't throw an exception with theme data", () => {
 			const store = createReduxStore();
 			store.dispatch( receiveTheme( themeData ) );
 			const layout = (
@@ -72,7 +72,7 @@ describe( 'main', function() {
 			assert.isTrue( markup.includes( 'theme__sheet' ) );
 		} );
 
-		it( "doesn't throw an exception with invalid theme data", function() {
+		test( "doesn't throw an exception with invalid theme data", () => {
 			const store = createReduxStore();
 			store.dispatch( themeRequestFailure( 'wpcom', 'invalidthemeid', 'not found' ) );
 			const layout = (

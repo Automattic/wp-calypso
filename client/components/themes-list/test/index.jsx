@@ -9,7 +9,7 @@
 import { assert } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
@@ -19,10 +19,10 @@ import { ThemesList } from '../';
 jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
 jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
 
-describe( 'ThemesList', function() {
+describe( 'ThemesList', () => {
 	let props, themesList, themesListElement;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		props = {
 			themes: [
 				{
@@ -47,21 +47,21 @@ describe( 'ThemesList', function() {
 		themesList = React.createElement( ThemesList, props );
 	} );
 
-	describe( 'propTypes', function() {
-		it( 'specifies the required propType', function() {
+	describe( 'propTypes', () => {
+		test( 'specifies the required propType', () => {
 			assert( themesList.type.propTypes.themes, 'themes propType missing' );
 		} );
 	} );
 
-	describe( 'rendering', function() {
-		beforeEach( function() {
-			const shallowRenderer = TestUtils.createRenderer();
+	describe( 'rendering', () => {
+		beforeEach( () => {
+			const renderer = new ShallowRenderer();
 
-			shallowRenderer.render( themesList );
-			themesListElement = shallowRenderer.getRenderOutput();
+			renderer.render( themesList );
+			themesListElement = renderer.getRenderOutput();
 		} );
 
-		it( 'should render a div with a className of "themes-list"', function() {
+		test( 'should render a div with a className of "themes-list"', () => {
 			assert( themesListElement, 'element does not exist' );
 			assert(
 				themesListElement.props.className === 'themes-list',
@@ -69,17 +69,17 @@ describe( 'ThemesList', function() {
 			);
 		} );
 
-		context( 'when no themes are found', function() {
-			beforeEach( function() {
-				const shallowRenderer = TestUtils.createRenderer();
+		describe( 'when no themes are found', () => {
+			beforeEach( () => {
+				const renderer = new ShallowRenderer();
 				props.themes = [];
 				themesList = React.createElement( ThemesList, props );
 
-				shallowRenderer.render( themesList );
-				themesListElement = shallowRenderer.getRenderOutput();
+				renderer.render( themesList );
+				themesListElement = renderer.getRenderOutput();
 			} );
 
-			it( 'displays the EmptyContent component', function() {
+			test( 'displays the EmptyContent component', () => {
 				assert( themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
 			} );
 		} );

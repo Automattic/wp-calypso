@@ -17,7 +17,7 @@ const error = {
 };
 
 describe( 'getPluginUploadError', () => {
-	it( 'should return null by default', () => {
+	test( 'should return null by default', () => {
 		const state = {
 			plugins: {
 				upload: {
@@ -28,7 +28,7 @@ describe( 'getPluginUploadError', () => {
 		expect( getPluginUploadError( state, siteId ) ).to.be.null;
 	} );
 
-	it( 'should return current value for site', () => {
+	test( 'should return current value for site', () => {
 		const state = {
 			plugins: {
 				upload: {

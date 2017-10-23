@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { hasJetpackSites } from '../';
 
 describe( 'hasJetpackSites()', () => {
-	it( 'it should return false if sites are empty', () => {
+	test( 'it should return false if sites are empty', () => {
 		expect(
 			hasJetpackSites( {
 				sites: {
@@ -21,7 +21,7 @@ describe( 'hasJetpackSites()', () => {
 		).to.be.false;
 	} );
 
-	it( 'it should return false if one site exists and the site is not a Jetpack site', () => {
+	test( 'it should return false if one site exists and the site is not a Jetpack site', () => {
 		expect(
 			hasJetpackSites( {
 				sites: {
@@ -33,7 +33,7 @@ describe( 'hasJetpackSites()', () => {
 		).to.be.false;
 	} );
 
-	it( 'it should return false if several sites exist and none of them is a Jetpack site', () => {
+	test( 'it should return false if several sites exist and none of them is a Jetpack site', () => {
 		expect(
 			hasJetpackSites( {
 				sites: {
@@ -47,7 +47,7 @@ describe( 'hasJetpackSites()', () => {
 		).to.be.false;
 	} );
 
-	it( 'it should return true if one site is a Jetpack site and the others are not', () => {
+	test( 'it should return true if one site is a Jetpack site and the others are not', () => {
 		expect(
 			hasJetpackSites( {
 				sites: {
@@ -61,7 +61,7 @@ describe( 'hasJetpackSites()', () => {
 		).to.be.true;
 	} );
 
-	it( 'it should return true if several sites exist and all of them are Jetpack sites', () => {
+	test( 'it should return true if several sites exist and all of them are Jetpack sites', () => {
 		expect(
 			hasJetpackSites( {
 				sites: {

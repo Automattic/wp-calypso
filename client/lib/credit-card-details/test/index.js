@@ -15,24 +15,24 @@ function getRandomInt( min, max ) {
 	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
 
-describe( 'index', function() {
-	describe( 'Validation', function() {
-		describe( 'Discover Card: range 622126-622925', function() {
+describe( 'index', () => {
+	describe( 'Validation', () => {
+		describe( 'Discover Card: range 622126-622925', () => {
 			const randomNumberBetweenRange = getRandomInt( 622126, 622925 ).toString();
 
-			it( 'should return null for 622125', function() {
+			test( 'should return null for 622125', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '622125' ) );
 			} );
 
-			it( 'should return `discover` for 622126', function() {
+			test( 'should return `discover` for 622126', () => {
 				assert.equal( 'discover', creditCardDetails.getCreditCardType( '622126' ) );
 			} );
 
-			it(
+			test(
 				'should return `discover` for ' +
 					randomNumberBetweenRange +
 					' (a random number between 622126 and 622925)',
-				function() {
+				() => {
 					assert.equal(
 						'discover',
 						creditCardDetails.getCreditCardType( randomNumberBetweenRange )
@@ -40,47 +40,47 @@ describe( 'index', function() {
 				}
 			);
 
-			it( 'should return `discover` for 622925', function() {
+			test( 'should return `discover` for 622925', () => {
 				assert.equal( 'discover', creditCardDetails.getCreditCardType( '622925' ) );
 			} );
 
-			it( 'should return null for 622926', function() {
+			test( 'should return null for 622926', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '622926' ) );
 			} );
 		} );
 
-		describe( 'Mastercard: range 2221-2720', function() {
-			it( 'should return null for 2220990000000000', function() {
+		describe( 'Mastercard: range 2221-2720', () => {
+			test( 'should return null for 2220990000000000', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '2220990000000000' ) );
 			} );
 
-			it( 'should return `mastercard` for 2221000000000000', function() {
+			test( 'should return `mastercard` for 2221000000000000', () => {
 				assert.equal( 'mastercard', creditCardDetails.getCreditCardType( '2221000000000000' ) );
 			} );
 
-			it( 'should return `mastercard` for 2720990000000000', function() {
+			test( 'should return `mastercard` for 2720990000000000', () => {
 				assert.equal( 'mastercard', creditCardDetails.getCreditCardType( '2720990000000000' ) );
 			} );
 
-			it( 'should return null for 2721000000000000', function() {
+			test( 'should return null for 2721000000000000', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '2721000000000000' ) );
 			} );
 		} );
 
-		describe( 'Mastercard: range 51-55', function() {
-			it( 'should return null for 5099999999999999', function() {
+		describe( 'Mastercard: range 51-55', () => {
+			test( 'should return null for 5099999999999999', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '5099999999999999' ) );
 			} );
 
-			it( 'should return `mastercard` for 5100000000000000', function() {
+			test( 'should return `mastercard` for 5100000000000000', () => {
 				assert.equal( 'mastercard', creditCardDetails.getCreditCardType( '5599000000000000' ) );
 			} );
 
-			it( 'should return `mastercard` for 5599000000000000', function() {
+			test( 'should return `mastercard` for 5599000000000000', () => {
 				assert.equal( 'mastercard', creditCardDetails.getCreditCardType( '5599000000000000' ) );
 			} );
 
-			it( 'should return null for 5600000000000000', function() {
+			test( 'should return null for 5600000000000000', () => {
 				assert.equal( null, creditCardDetails.getCreditCardType( '5600000000000000' ) );
 			} );
 		} );

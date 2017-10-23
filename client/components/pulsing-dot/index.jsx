@@ -12,7 +12,7 @@ import classnames from 'classnames';
  */
 import analytics from 'lib/analytics';
 
-var PulsingDot = React.createClass( {
+const PulsingDot = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			active: false,
@@ -52,4 +52,4 @@ var PulsingDot = React.createClass( {
 	},
 } );
 
-module.exports = PulsingDot;
+export default PulsingDot;

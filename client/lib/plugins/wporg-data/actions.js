@@ -137,4 +137,4 @@ const PluginsDataActions = {
 	},
 };
 
-module.exports = PluginsDataActions;
+export default PluginsDataActions;

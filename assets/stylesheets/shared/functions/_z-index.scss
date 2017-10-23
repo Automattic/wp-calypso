@@ -121,6 +121,7 @@ $z-layers: (
 		'.first-view': 175,
 		'.editor-confirmation-sidebar__overlay': 176,
 		'.editor-confirmation-sidebar__sidebar': 177,
+		'.popover.comment-detail__author-more-info': 178,
 		'.popover.editor-ground-control__post-schedule-popover': 178,
 		'.popover.editor-visibility__popover': 179,
 		'.feature-example__gradient': 179,
@@ -166,6 +167,7 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
+		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
 		'.webpack-build-monitor': 99999999,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
 	),

@@ -16,7 +16,7 @@ import {
 
 describe( 'utils', () => {
 	describe( 'getNormalizedTermsQuery()', () => {
-		it( 'should exclude default values', () => {
+		test( 'should exclude default values', () => {
 			const query = getNormalizedTermsQuery( {
 				page: 2,
 				number: 100,
@@ -29,7 +29,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'getSerializedTermsQuery()', () => {
-		it( 'should return a JSON string of a normalized query', () => {
+		test( 'should return a JSON string of a normalized query', () => {
 			const serializedQuery = getSerializedTermsQuery( {
 				search: 'ribs',
 				page: 1,
@@ -38,7 +38,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"search":"ribs"}' );
 		} );
 
-		it( 'should lowercase the result', () => {
+		test( 'should lowercase the result', () => {
 			const serializedQuery = getSerializedTermsQuery( {
 				search: 'Chicken',
 				page: '2',
@@ -49,7 +49,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'getSerializedTermsQueryWithoutPage()', () => {
-		it( 'should return a JSON string of a normalized query without page', () => {
+		test( 'should return a JSON string of a normalized query without page', () => {
 			const serializedQuery = getSerializedTermsQueryWithoutPage( {
 				search: 'Chicken',
 				page: '2',

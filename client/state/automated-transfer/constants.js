@@ -1,11 +1,16 @@
 /** @format */
 export const transferStates = {
+	PENDING: 'pending',
 	INQUIRING: 'inquiring',
 	FAILURE: 'failure',
 	START: 'start',
 	SETUP: 'setup',
 	CONFLICTS: 'conflicts',
+	ACTIVE: 'active',
+	UPLOADING: 'uploading',
+	BACKFILLING: 'backfilling',
 	COMPLETE: 'complete',
+	ERROR: 'error',
 };
 
 export const eligibilityHolds = {

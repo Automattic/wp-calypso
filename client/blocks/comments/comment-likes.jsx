@@ -67,7 +67,7 @@ CommentLikeButtonContainer.propTypes = {
 	tagName: PropTypes.string,
 
 	// connected props:
-	commentLike: PropTypes.object.isRequired,
+	commentLike: PropTypes.object,
 	likeComment: PropTypes.func.isRequired,
 	unlikeComment: PropTypes.func.isRequired,
 };

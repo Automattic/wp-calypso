@@ -10,7 +10,7 @@ import { findDOMNode } from 'react-dom';
 /**
  * Internal dependencies
  */
-import { blur, focus } from 'state/happychat/actions';
+import { blur, focus } from 'state/happychat/ui/actions';
 import viewport from 'lib/viewport';
 import HappychatConnection from 'components/happychat/connection';
 import Composer from 'components/happychat/composer';

@@ -39,7 +39,7 @@ describe( '#addComments', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch a tree initialization action for no comments', () => {
+	test( 'should dispatch a tree initialization action for no comments', () => {
 		addComments( { dispatch }, { query }, { comments: [] } );
 
 		expect( dispatch ).to.have.been.calledOnce;
@@ -51,7 +51,7 @@ describe( '#addComments', () => {
 		} );
 	} );
 
-	it( 'should dispatch to add received comments into state', () => {
+	test( 'should dispatch to add received comments into state', () => {
 		const comments = [ { ID: 5, post: { ID: 1 } }, { ID: 6, post: { ID: 1 } } ];
 
 		addComments( { dispatch }, { query }, { comments } );
@@ -65,7 +65,7 @@ describe( '#addComments', () => {
 		} );
 	} );
 
-	it( 'should dispatch received comments into separate actions per post', () => {
+	test( 'should dispatch received comments into separate actions per post', () => {
 		const comments = [
 			{ ID: 5, post: { ID: 1 } },
 			{ ID: 6, post: { ID: 2 } },
@@ -93,19 +93,19 @@ describe( '#fetchCommentList', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should do nothing if no listType provided', () => {
+	test( 'should do nothing if no listType provided', () => {
 		fetchCommentsList( { dispatch }, { query } );
 
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
-	it( 'should do nothing if invalid listType provided', () => {
+	test( 'should do nothing if invalid listType provided', () => {
 		fetchCommentsList( { dispatch }, { query: { ...query, listType: 'Calypso' } } );
 
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
-	it( 'should dispatch HTTP request for site comments', () => {
+	test( 'should dispatch HTTP request for site comments', () => {
 		fetchCommentsList( { dispatch }, { query: { ...query, listType: 'site' } } );
 
 		expect( dispatch ).to.have.been.calledWithMatch( {
@@ -114,13 +114,13 @@ describe( '#fetchCommentList', () => {
 		} );
 	} );
 
-	it( 'should default to fetch pending comments', () => {
+	test( 'should default to fetch pending comments', () => {
 		fetchCommentsList( { dispatch }, { query: { listType: 'site', siteId: 1337 } } );
 
 		expect( dispatch ).to.have.been.calledWithMatch( { query: { status: 'unapproved' } } );
 	} );
 
-	it( 'should default to fetch comment-type comments', () => {
+	test( 'should default to fetch comment-type comments', () => {
 		fetchCommentsList( { dispatch }, { query: { listType: 'site', siteId: 1337 } } );
 
 		expect( dispatch ).to.have.been.calledWithMatch( { query: { type: 'comment' } } );
@@ -131,7 +131,7 @@ describe( '#requestComment', () => {
 	let dispatch;
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch http action', () => {
+	test( 'should dispatch http action', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const action = requestCommentAction( { siteId, commentId } );
@@ -154,7 +154,7 @@ describe( '#receiveCommentSuccess', () => {
 	let dispatch;
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch receive comments with a single comment', () => {
+	test( 'should dispatch receive comments with a single comment', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const response = { post: { ID: 1 } };
@@ -176,7 +176,7 @@ describe( '#receiveCommentError', () => {
 	let dispatch;
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch receive comments with a single comment', () => {
+	test( 'should dispatch receive comments with a single comment', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const response = { post: { ID: 1 } };
@@ -205,7 +205,7 @@ describe( '#editComment', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch a http action', () => {
+	test( 'should dispatch a http action', () => {
 		const originalComment = { ID: 123, text: 'lorem ipsum' };
 		const newComment = { ID: 123, text: 'lorem ipsum dolor' };
 		const action = editCommentAction( 1, 1, 123, newComment );
@@ -241,7 +241,7 @@ describe( '#removeCommentStatusErrorNotice', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch a remove notice action', () => {
+	test( 'should dispatch a remove notice action', () => {
 		removeCommentStatusErrorNotice( { dispatch }, { commentId: 123 } );
 
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-error-123' ) );
@@ -256,7 +256,7 @@ describe( '#announceEditFailure', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch a local comment edit action', () => {
+	test( 'should dispatch a local comment edit action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
 		expect( dispatch ).to.have.been.calledWith(
@@ -270,13 +270,13 @@ describe( '#announceEditFailure', () => {
 		);
 	} );
 
-	it( 'should dispatch a remove notice action', () => {
+	test( 'should dispatch a remove notice action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-123' ) );
 	} );
 
-	it( 'should dispatch an error notice', () => {
+	test( 'should dispatch an error notice', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
 		expect( dispatch ).to.have.been.calledWith(

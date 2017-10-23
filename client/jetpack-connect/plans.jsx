@@ -52,10 +52,8 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	constructor() {
-		super();
-		this.selectPlan = this.selectPlan.bind( this );
-		this.storeSelectedPlan = this.storeSelectedPlan.bind( this );
+	constructor( props ) {
+		super( props );
 		this.redirecting = false;
 	}
 
@@ -233,7 +231,7 @@ class Plans extends Component {
 		}
 	}
 
-	selectPlan( cartItem ) {
+	selectPlan = cartItem => {
 		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
 		// clears whatever we had stored in local cache
 		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
@@ -256,9 +254,9 @@ class Plans extends Component {
 		this.redirecting = true;
 		this.props.completeFlow();
 		page.redirect( checkoutPath );
-	}
+	};
 
-	storeSelectedPlan( cartItem ) {
+	storeSelectedPlan = cartItem => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
 			user: this.props.userId,
 			plan: cartItem ? cartItem.product_slug : 'free',
@@ -267,10 +265,10 @@ class Plans extends Component {
 			cartItem ? cartItem.product_slug : 'free',
 			this.props.siteSlug
 		);
-	}
+	};
 
 	render() {
-		const { isRtlLayout } = this.props;
+		const { isRtlLayout, translate } = this.props;
 
 		if (
 			this.redirecting ||
@@ -280,6 +278,8 @@ class Plans extends Component {
 		) {
 			return <QueryPlans />;
 		}
+
+		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
 			<div>
@@ -299,8 +299,8 @@ class Plans extends Component {
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
-						<JetpackConnectHappychatButton>
-							<HelpButton onClick={ this.handleHelpButtonClick } />
+						<JetpackConnectHappychatButton label={ helpButtonLabel }>
+							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

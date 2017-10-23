@@ -23,7 +23,7 @@ describe( 'request', () => {
 				.reply( 200, { data: getResponse } );
 		} );
 
-		it( 'should fetch data via promise', () => {
+		test( 'should fetch data via promise', () => {
 			return request( siteId )
 				.get( 'placeholder_endpoint' )
 				.then( data => {
@@ -31,7 +31,7 @@ describe( 'request', () => {
 				} );
 		} );
 
-		it( 'should catch error via promise', () => {
+		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.get( 'bad_placeholder_endpoint' )
 				.catch( error => {
@@ -52,7 +52,7 @@ describe( 'request', () => {
 				.reply( 201, { data: postResponse } );
 		} );
 
-		it( 'should post data', () => {
+		test( 'should post data', () => {
 			return request( siteId )
 				.post( 'placeholder_endpoint', body )
 				.then( data => {
@@ -60,7 +60,7 @@ describe( 'request', () => {
 				} );
 		} );
 
-		it( 'should catch error via promise', () => {
+		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.post( 'bad_placeholder_endpoint' )
 				.catch( error => {
@@ -81,7 +81,7 @@ describe( 'request', () => {
 				.reply( 200, { data: putResponse } );
 		} );
 
-		it( 'should put data', () => {
+		test( 'should put data', () => {
 			return request( siteId )
 				.put( 'placeholder_endpoint', body )
 				.then( data => {
@@ -89,7 +89,7 @@ describe( 'request', () => {
 				} );
 		} );
 
-		it( 'should catch error via promise', () => {
+		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.put( 'bad_placeholder_endpoint' )
 				.catch( error => {
@@ -109,7 +109,7 @@ describe( 'request', () => {
 				.reply( 200, { data: deleteResponse } );
 		} );
 
-		it( 'should delete', () => {
+		test( 'should delete', () => {
 			return request( siteId )
 				.del( 'placeholder_endpoint' )
 				.then( data => {
@@ -117,7 +117,7 @@ describe( 'request', () => {
 				} );
 		} );
 
-		it( 'should catch error via promise', () => {
+		test( 'should catch error via promise', () => {
 			return request( siteId )
 				.del( 'bad_placeholder_endpoint' )
 				.catch( error => {

@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { noop, map, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,9 +22,11 @@ const ConversationCommentListExample = () => {
 				blogId={ 123 }
 				postId={ 12 }
 				commentIds={ [ 1, 2, 3 ] }
+				sortedComments={ compact( map( commentsTree, 'data' ) ) }
 				post={ post }
 				enableCaterpillar={ false }
 				shouldRequestComments={ false }
+				setActiveReply={ noop }
 			/>
 		</div>
 	);

@@ -25,7 +25,7 @@ describe( '#unlikeComment()', () => {
 		commentId: 1,
 	};
 
-	it( 'should dispatch a http action to remove a comment like', () => {
+	test( 'should dispatch a http action to remove a comment like', () => {
 		const dispatch = spy();
 		unlikeComment( { dispatch }, action );
 
@@ -44,7 +44,7 @@ describe( '#unlikeComment()', () => {
 } );
 
 describe( '#updateCommentLikes()', () => {
-	it( 'should dispatch a comment like update action', () => {
+	test( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
 		updateCommentLikes(
@@ -69,7 +69,7 @@ describe( '#updateCommentLikes()', () => {
 } );
 
 describe( '#handleUnlikeFailure()', () => {
-	it( 'should dispatch an like action to rollback optimistic update', () => {
+	test( 'should dispatch an like action to rollback optimistic update', () => {
 		const dispatch = spy();
 
 		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
@@ -85,7 +85,7 @@ describe( '#handleUnlikeFailure()', () => {
 		);
 	} );
 
-	it( 'should dispatch an error notice', () => {
+	test( 'should dispatch an error notice', () => {
 		const dispatch = spy();
 
 		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );

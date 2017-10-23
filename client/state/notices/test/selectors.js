@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 			getNotices.memoizedSelector.cache.clear();
 		} );
 
-		it( 'should return an array of notices', () => {
+		test( 'should return an array of notices', () => {
 			const notices = getNotices( {
 				notices: {
 					items: {

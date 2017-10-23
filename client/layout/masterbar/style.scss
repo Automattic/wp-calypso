@@ -3,9 +3,9 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: $masterbar-color;
-	border-bottom: 1px solid darken( $masterbar-color, 4% );
-	color: $white;
+	background: var( --masterbar-background-color );
+	border-bottom: 1px solid var( --masterbar-border-color );
+	color: var( --masterbar-color );
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -68,7 +68,7 @@ $autobar-height: 20px;
 	display: flex;
 		align-items: center;
 	position: relative;
-	color: $white;
+	color: var( --masterbar-color );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -78,7 +78,7 @@ $autobar-height: 20px;
 	transition: all 150ms ease-in;
 
 	&:visited {
-		color: $white;
+		color: var( --masterbar-color );
 	}
 
 	&[href] {
@@ -86,7 +86,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: $white;
+		color: var( --masterbar-color );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -95,13 +95,13 @@ $autobar-height: 20px;
 
 	&:hover,
 	&:focus {
-		background: lighten( $masterbar-color, 5% );
-		color: $white;
+		background: var( --masterbar-item-hover-background );
+		color: var( --masterbar-color );
 		outline: 0;
 	}
 
 	&.is-active {
-		background: darken( $masterbar-color, 17% );
+		background: var( --masterbar-item-active-background );
 	}
 
 	.is-support-user &.is-active {
@@ -170,13 +170,13 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: $blue-wordpress;
+	color: var( --masterbar-item-new-color );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
-		color: $blue-wordpress;
+		color: var( --masterbar-item-new-color );
 	}
 
 	&.is-active {
@@ -186,11 +186,11 @@ $autobar-height: 20px;
 	&:hover,
 	&:focus {
 		background: $gray-light;
-		color: $blue-wordpress;
+		color: var( --masterbar-item-new-color );
 	}
 
 	.masterbar__item-content {
-		color: $blue-wordpress;
+		color: var( --masterbar-item-new-color );
 		display: none;
 
 		@include breakpoint( ">960px" ) {

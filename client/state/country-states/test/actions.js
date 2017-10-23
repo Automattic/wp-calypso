@@ -23,7 +23,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( '#receiveCountryStates()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveCountryStates(
 				[ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
 				'US'
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestCountryStates( 'us' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch country states receive action when request completes', () => {
+		test( 'should dispatch country states receive action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: COUNTRY_STATES_RECEIVE,
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch country states request success action when request completes', () => {
+		test( 'should dispatch country states request success action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: COUNTRY_STATES_REQUEST_SUCCESS,
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestCountryStates( 'ca' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: COUNTRY_STATES_REQUEST_FAILURE,

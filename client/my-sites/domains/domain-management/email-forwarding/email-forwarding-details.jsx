@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import support from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 
-var EmailForwardingDetails = React.createClass( {
+const EmailForwardingDetails = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
 	render: function() {
@@ -40,4 +40,4 @@ var EmailForwardingDetails = React.createClass( {
 	},
 } );
 
-module.exports = localize( EmailForwardingDetails );
+export default localize( EmailForwardingDetails );

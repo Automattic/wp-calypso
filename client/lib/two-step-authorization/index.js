@@ -244,4 +244,4 @@ emitter( TwoStepAuthorization.prototype );
 /**
  * Expose TwoStepAuthorization
  */
-module.exports = new TwoStepAuthorization();
+export default new TwoStepAuthorization();

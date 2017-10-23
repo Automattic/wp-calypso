@@ -35,12 +35,12 @@ import {
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
-		it( 'state should default to empty object', () => {
+		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store new settings in the items object', () => {
+		test( 'should store new settings in the items object', () => {
 			const stateIn = {},
 				siteId = 12345678,
 				action = {
@@ -54,7 +54,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should store new settings to the items object for the right site', () => {
+		test( 'should store new settings to the items object for the right site', () => {
 			const siteId = 87654321,
 				stateIn = {
 					12345678: SETTINGS_FIXTURE[ 12345678 ],
@@ -68,7 +68,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( SETTINGS_FIXTURE );
 		} );
 
-		it( 'should accumulate new settings to the items object for the right site', () => {
+		test( 'should accumulate new settings to the items object for the right site', () => {
 			const siteId = 12345678,
 				stateIn = SETTINGS_FIXTURE,
 				action = {
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should replace settings in the items object when settings are already loaded for a site', () => {
+		test( 'should replace settings in the items object when settings are already loaded for a site', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: SETTINGS_FIXTURE[ siteId ],
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update settings in the items object', () => {
+		test( 'should update settings in the items object', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: SETTINGS_FIXTURE[ siteId ],
@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should mark the module as active upon successful module activation', () => {
+		test( 'should mark the module as active upon successful module activation', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: {
@@ -137,7 +137,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should mark the module as inactive upon successful module deactivation', () => {
+		test( 'should mark the module as inactive upon successful module deactivation', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: {
@@ -159,7 +159,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update the module activation state upon receiving new modules', () => {
+		test( 'should update the module activation state upon receiving new modules', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: {
@@ -190,7 +190,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update module settings with normalized ones when receiving new modules', () => {
+		test( 'should update module settings with normalized ones when receiving new modules', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: {
@@ -225,7 +225,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update the post_by_email_address setting after a successful post by email update', () => {
+		test( 'should update the post_by_email_address setting after a successful post by email update', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: {
@@ -247,7 +247,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const stateIn = SETTINGS_FIXTURE,
 				action = {
 					type: SERIALIZE,
@@ -256,7 +256,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const stateIn = SETTINGS_FIXTURE,
 				action = {
 					type: DESERIALIZE,
@@ -267,12 +267,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requests', () => {
-		it( 'state should default to an empty object', () => {
+		test( 'state should default to an empty object', () => {
 			const state = requestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set [ siteId ].requesting to true when requesting settings', () => {
+		test( 'should set [ siteId ].requesting to true when requesting settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -283,7 +283,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].requesting ).to.be.true;
 		} );
 
-		it( 'should set [ siteId ].requesting to false when successfully requested settings', () => {
+		test( 'should set [ siteId ].requesting to false when successfully requested settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -294,7 +294,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].requesting ).to.be.false;
 		} );
 
-		it( 'should set [ siteId ].requesting to false when unable to complete request for settings', () => {
+		test( 'should set [ siteId ].requesting to false when unable to complete request for settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -305,7 +305,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].requesting ).to.be.false;
 		} );
 
-		it( 'should set [ siteId ].updating to true when updating settings', () => {
+		test( 'should set [ siteId ].updating to true when updating settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -316,7 +316,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].updating ).to.be.true;
 		} );
 
-		it( 'should set [ siteId ].updating to false when successfully requested settings', () => {
+		test( 'should set [ siteId ].updating to false when successfully requested settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -327,7 +327,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].updating ).to.be.false;
 		} );
 
-		it( 'should set [ siteId ].updating to false when unable to complete request for settings', () => {
+		test( 'should set [ siteId ].updating to false when unable to complete request for settings', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -338,7 +338,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].updating ).to.be.false;
 		} );
 
-		it( 'should set [ siteId ].regeneratingPostByEmail to true when initiating post by email regeneration', () => {
+		test( 'should set [ siteId ].regeneratingPostByEmail to true when initiating post by email regeneration', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -349,7 +349,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.true;
 		} );
 
-		it( 'should set [ siteId ].regeneratingPostByEmail to false when successfully regenerated post by email', () => {
+		test( 'should set [ siteId ].regeneratingPostByEmail to false when successfully regenerated post by email', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -361,7 +361,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.false;
 		} );
 
-		it( 'should set [ siteId ].regeneratingPostByEmail to false when unable to complete regenerate post by email', () => {
+		test( 'should set [ siteId ].regeneratingPostByEmail to false when unable to complete regenerate post by email', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -372,7 +372,7 @@ describe( 'reducer', () => {
 			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.false;
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
 					type: SERIALIZE,
@@ -381,7 +381,7 @@ describe( 'reducer', () => {
 			expect( stateOut ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
 					type: DESERIALIZE,
@@ -392,13 +392,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'saveRequests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = saveRequestsReducer( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set request status to pending if request in progress', () => {
+		test( 'should set request status to pending if request in progress', () => {
 			const state = saveRequestsReducer( undefined, {
 				type: JETPACK_SETTINGS_UPDATE,
 				siteId: 12345678,
@@ -409,7 +409,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate save requests statuses', () => {
+		test( 'should accumulate save requests statuses', () => {
 			const previousState = deepFreeze( {
 				12345678: { saving: true, status: 'pending', error: false },
 			} );
@@ -424,7 +424,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to success if request finishes successfully', () => {
+		test( 'should set save request to success if request finishes successfully', () => {
 			const previousState = deepFreeze( {
 				12345678: { saving: true, status: 'pending', error: false },
 			} );
@@ -438,7 +438,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to error if request finishes with failure', () => {
+		test( 'should set save request to error if request finishes with failure', () => {
 			const previousState = deepFreeze( {
 				12345678: { saving: true, status: 'pending', error: false },
 			} );
@@ -453,7 +453,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const previousState = deepFreeze( {
 				12345678: { saving: true, status: 'pending', error: false },
 			} );
@@ -464,7 +464,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
 				12345678: { saving: true, status: 'pending', error: false },
 			} );

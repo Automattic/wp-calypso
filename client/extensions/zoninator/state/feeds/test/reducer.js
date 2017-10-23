@@ -11,12 +11,12 @@ import { expect } from 'chai';
 import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );

@@ -12,7 +12,7 @@ import { isActivatingJetpackJumpstart } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-jumpstart';
 
 describe( 'isActivatingJetpackJumpstart()', () => {
-	it( 'should return true if jumpstart is currently being activated', () => {
+	test( 'should return true if jumpstart is currently being activated', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
@@ -25,7 +25,7 @@ describe( 'isActivatingJetpackJumpstart()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if jumpstart is currently not being activated', () => {
+	test( 'should return false if jumpstart is currently not being activated', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {
@@ -38,7 +38,7 @@ describe( 'isActivatingJetpackJumpstart()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if that site is not known yet', () => {
+	test( 'should return null if that site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					jumpstart: {

@@ -22,7 +22,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	before( () => {
+	beforeAll( () => {
 		getSitePosts = createSelector( selector, state => state.posts );
 	} );
 
@@ -30,11 +30,11 @@ describe( 'index', () => {
 		getSitePosts.memoizedSelector.cache.clear();
 	} );
 
-	it( 'should expose its memoized function', () => {
+	test( 'should expose its memoized function', () => {
 		expect( getSitePosts.memoizedSelector ).to.be.a( 'function' );
 	} );
 
-	it( 'should create a function which returns the expected value when called', () => {
+	test( 'should create a function which returns the expected value when called', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -56,7 +56,7 @@ describe( 'index', () => {
 		] );
 	} );
 
-	it( 'should cache the result of a selector function', () => {
+	test( 'should cache the result of a selector function', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -74,7 +74,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should warn against complex arguments in development mode', () => {
+	test( 'should warn against complex arguments in development mode', () => {
 		const state = { posts: {} };
 
 		getSitePosts( state, 1 );
@@ -90,7 +90,7 @@ describe( 'index', () => {
 		expect( console.warn ).to.have.been.calledThrice;
 	} );
 
-	it( 'should return the expected value of differing arguments', () => {
+	test( 'should return the expected value of differing arguments', () => {
 		const state = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -123,7 +123,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should bust the cache when watched state changes', () => {
+	test( 'should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -165,7 +165,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should accept an array of dependent state values', () => {
+	test( 'should accept an array of dependent state values', () => {
 		const getSitePostsWithArrayDependants = createSelector( selector, state => [ state.posts ] );
 		const state = {
 			posts: {
@@ -184,7 +184,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should accept an array of dependent selectors', () => {
+	test( 'should accept an array of dependent selectors', () => {
 		const getPosts = state => state.posts;
 		const getSitePostsWithArrayDependants = createSelector( selector, [ getPosts ] );
 		const state = {
@@ -208,7 +208,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should default to watching entire state, returning cached result if no changes', () => {
+	test( 'should default to watching entire state, returning cached result if no changes', () => {
 		const getSitePostsWithDefaultGetDependants = createSelector( selector );
 		const state = {
 			posts: {
@@ -227,7 +227,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	it( 'should default to watching entire state, busting if state has changed', () => {
+	test( 'should default to watching entire state, busting if state has changed', () => {
 		const getSitePostsWithDefaultGetDependants = createSelector( selector );
 		const currentState = {
 			posts: {
@@ -264,7 +264,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	it( 'should accept an optional custom cache key generating function', () => {
+	test( 'should accept an optional custom cache key generating function', () => {
 		const getSitePostsWithCustomGetCacheKey = createSelector(
 			selector,
 			state => state.posts,
@@ -277,7 +277,7 @@ describe( 'index', () => {
 			.true;
 	} );
 
-	it( 'should call dependant state getter with arguments', () => {
+	test( 'should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
 		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
@@ -287,7 +287,7 @@ describe( 'index', () => {
 		expect( getDeps ).to.have.been.calledWithExactly( state, 1, 2, 3 );
 	} );
 
-	it( 'should handle an array of selectors instead of a dependant state getter', () => {
+	test( 'should handle an array of selectors instead of a dependant state getter', () => {
 		const getPosts = sinon.spy();
 		const getQuuxs = sinon.spy();
 		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );

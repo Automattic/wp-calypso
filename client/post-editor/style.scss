@@ -144,8 +144,12 @@
 	position: relative;
 }
 
-.post-editor .tinymce-container .drop-zone.is-active {
-	top: 80px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
+.post-editor .tinymce-container.editor-mode-tinymce .drop-zone.is-active {
+	top: 75px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
+}
+
+.post-editor .tinymce-container.editor-mode-html .drop-zone.is-active {
+	top: 40px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
 }
 
 .post-editor .tinymce {

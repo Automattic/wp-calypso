@@ -77,7 +77,7 @@ var suggestions = [
 	'their',
 ];
 
-var TokenFields = React.createClass( {
+const TokenFields = React.createClass( {
 	displayName: 'TokenFields',
 
 	mixins: [ PureRenderMixin ],
@@ -178,4 +178,4 @@ var TokenFields = React.createClass( {
 	},
 } );
 
-module.exports = TokenFields;
+export default TokenFields;

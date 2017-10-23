@@ -17,7 +17,7 @@ import NewCardForm from './new-card-form';
 import storeTransactions from 'lib/store-transactions';
 import upgradesActions from 'lib/upgrades/actions';
 
-var CreditCardSelector = React.createClass( {
+const CreditCardSelector = React.createClass( {
 	getInitialState: function() {
 		if ( this.props.initialCard ) {
 			return { section: this.props.initialCard.stored_details_id };
@@ -94,4 +94,4 @@ var CreditCardSelector = React.createClass( {
 	},
 } );
 
-module.exports = CreditCardSelector;
+export default CreditCardSelector;

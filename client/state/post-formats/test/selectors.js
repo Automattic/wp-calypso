@@ -12,7 +12,7 @@ import { isRequestingPostFormats, getPostFormats } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostFormats()', () => {
-		it( 'should return false if the site has never been fetched', () => {
+		test( 'should return false if the site has never been fetched', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -25,7 +25,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not fetching', () => {
+		test( 'should return false if the site is not fetching', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -40,7 +40,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site is fetching', () => {
+		test( 'should return true if the site is fetching', () => {
 			const isRequesting = isRequestingPostFormats(
 				{
 					postFormats: {
@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getPostFormats()', () => {
-		it( 'should return null if the site has never been fetched', () => {
+		test( 'should return null if the site has never been fetched', () => {
 			const postFormats = getPostFormats(
 				{
 					postFormats: {
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 			expect( postFormats ).to.be.null;
 		} );
 
-		it( 'should return the post formats for a site', () => {
+		test( 'should return the post formats for a site', () => {
 			const postFormats = getPostFormats(
 				{
 					postFormats: {

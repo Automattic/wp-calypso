@@ -18,7 +18,7 @@ describe( 'util', () => {
 			date: '2016-12-12T11:22:33+0000',
 		} );
 
-		it( 'should parse the date of the transaction', () => {
+		test( 'should parse the date of the transaction', () => {
 			const updatedTransaction = parseTransactionDate( transaction );
 
 			expect( updatedTransaction ).to.eql( {

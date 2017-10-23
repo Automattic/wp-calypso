@@ -25,7 +25,7 @@ describe( 'DocsExample', () => {
 	};
 	const childrenFixture = <div id="children">Test</div>;
 
-	it( 'should render', () => {
+	test( 'should render', () => {
 		// TODO: when chai-enzyme is available use `shallow` instead
 		const docsExample = mount( <DocsExample { ...props }>{ childrenFixture }</DocsExample> );
 		assert.lengthOf( docsExample.find( '.docs-example' ), 1 );
@@ -36,7 +36,7 @@ describe( 'DocsExample', () => {
 		assert.lengthOf( docsExample.find( '.docs-example__stats' ), 0 );
 	} );
 
-	it( 'should render the toggle button', () => {
+	test( 'should render the toggle button', () => {
 		const propsWithToggle = Object.assign( {}, props, {
 			toggleHandler: noop,
 			toggleText: 'My Test Example',
@@ -48,7 +48,7 @@ describe( 'DocsExample', () => {
 		assert.lengthOf( docsExample.find( '.docs-example__toggle' ), 1 );
 	} );
 
-	it( 'should render the stats', () => {
+	test( 'should render the stats', () => {
 		const propsWithStats = Object.assign( {}, props, {
 			componentUsageStats: {
 				count: 0,
@@ -68,7 +68,7 @@ describe( 'DocsExampleToggle', () => {
 		text: 'Toggle me baby!',
 	};
 
-	it( 'should render', () => {
+	test( 'should render', () => {
 		const docsExampleToggle = shallow( <DocsExampleToggle { ...props } /> );
 
 		assert.lengthOf( docsExampleToggle.find( Button ), 1 );
@@ -80,13 +80,13 @@ describe( 'DocsExampleStats', () => {
 		count: 10,
 	};
 
-	it( 'should render', () => {
+	test( 'should render', () => {
 		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
 
 		assert.lengthOf( docsExampleStats.find( 'p' ), 1 );
 	} );
 
-	it( "should have the component's usage count", () => {
+	test( "should have the component's usage count", () => {
 		const docsExampleStats = shallow( <DocsExampleStats { ...props } /> );
 
 		assert.lengthOf( docsExampleStats.find( Count ), 1 );

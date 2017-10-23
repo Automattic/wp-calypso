@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Gauge',
 
 	mixins: [ PureRenderMixin ],

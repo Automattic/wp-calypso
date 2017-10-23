@@ -246,4 +246,4 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( UsersStore );
 
-module.exports = UsersStore;
+export default UsersStore;

@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { canCurrentUser } from '../';
 
 describe( 'canCurrentUser()', () => {
-	it( 'should return null if the site is not known', () => {
+	test( 'should return null if the site is not known', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -25,7 +25,7 @@ describe( 'canCurrentUser()', () => {
 		expect( isCapable ).to.be.null;
 	} );
 
-	it( 'should return the value for the specified capability', () => {
+	test( 'should return the value for the specified capability', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -43,7 +43,7 @@ describe( 'canCurrentUser()', () => {
 		expect( isCapable ).to.be.false;
 	} );
 
-	it( 'should return null if the capability is invalid', () => {
+	test( 'should return null if the capability is invalid', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {

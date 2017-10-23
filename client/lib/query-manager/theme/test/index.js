@@ -11,7 +11,7 @@ import ThemeQueryManager from '../';
 
 describe( 'ThemeQueryManager', () => {
 	describe( '#sort()', () => {
-		it( 'should leave key order unchanged', () => {
+		test( 'should leave key order unchanged', () => {
 			const originalKeys = Object.freeze( [
 				'adaline',
 				'fanwood-light',
@@ -26,9 +26,8 @@ describe( 'ThemeQueryManager', () => {
 				'pachyderm',
 			] );
 			const keys = [ ...originalKeys ];
-			const manager = new ThemeQueryManager();
 
-			manager.sort( keys );
+			ThemeQueryManager.sort( keys );
 			expect( keys ).to.deep.equal( originalKeys );
 		} );
 	} );

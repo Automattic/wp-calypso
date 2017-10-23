@@ -20,7 +20,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isRequestingPostCounts()', () => {
-		it( 'should return false if no request has been made', () => {
+		test( 'should return false if no request has been made', () => {
 			const isRequesting = isRequestingPostCounts(
 				{
 					posts: {
@@ -36,7 +36,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if a request has finished', () => {
+		test( 'should return false if a request has finished', () => {
 			const isRequesting = isRequestingPostCounts(
 				{
 					posts: {
@@ -55,7 +55,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if a request is in progress', () => {
+		test( 'should return true if a request is in progress', () => {
 			const isRequesting = isRequestingPostCounts(
 				{
 					posts: {
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getAllPostCounts()', () => {
-		it( "should return null if counts haven't been received for site", () => {
+		test( "should return null if counts haven't been received for site", () => {
 			const postCounts = getAllPostCounts(
 				{
 					posts: {
@@ -90,7 +90,7 @@ describe( 'selectors', () => {
 			expect( postCounts ).to.be.null;
 		} );
 
-		it( 'should return post counts for all statuses', () => {
+		test( 'should return post counts for all statuses', () => {
 			const postCounts = getAllPostCounts(
 				{
 					posts: {
@@ -119,7 +119,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getAllPostCount()', () => {
-		it( "should return null if post counts haven't been received for site", () => {
+		test( "should return null if post counts haven't been received for site", () => {
 			const postCount = getAllPostCount(
 				{
 					posts: {
@@ -136,7 +136,7 @@ describe( 'selectors', () => {
 			expect( postCount ).to.be.null;
 		} );
 
-		it( 'should return post count for status', () => {
+		test( 'should return post count for status', () => {
 			const postCount = getAllPostCount(
 				{
 					posts: {
@@ -162,7 +162,7 @@ describe( 'selectors', () => {
 			expect( postCount ).to.equal( 2 );
 		} );
 
-		it( 'should return 0 if post counts have been received for site, but no status key exists', () => {
+		test( 'should return 0 if post counts have been received for site, but no status key exists', () => {
 			const postCount = getAllPostCount(
 				{
 					posts: {
@@ -190,7 +190,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getMyPostCounts()', () => {
-		it( "should return null if counts haven't been received for site", () => {
+		test( "should return null if counts haven't been received for site", () => {
 			const postCounts = getMyPostCounts(
 				{
 					posts: {
@@ -204,7 +204,7 @@ describe( 'selectors', () => {
 			expect( postCounts ).to.be.null;
 		} );
 
-		it( 'should return post counts for all statuses', () => {
+		test( 'should return post counts for all statuses', () => {
 			const postCounts = getMyPostCounts(
 				{
 					posts: {
@@ -233,7 +233,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getMyPostCount()', () => {
-		it( "should return null if post counts haven't been received for site", () => {
+		test( "should return null if post counts haven't been received for site", () => {
 			const postCount = getMyPostCount(
 				{
 					posts: {
@@ -250,7 +250,7 @@ describe( 'selectors', () => {
 			expect( postCount ).to.be.null;
 		} );
 
-		it( 'should return post count for status', () => {
+		test( 'should return post count for status', () => {
 			const postCount = getMyPostCount(
 				{
 					posts: {
@@ -276,7 +276,7 @@ describe( 'selectors', () => {
 			expect( postCount ).to.equal( 1 );
 		} );
 
-		it( 'should return 0 if post counts have been received for site, but no status key exists', () => {
+		test( 'should return 0 if post counts have been received for site, but no status key exists', () => {
 			const postCount = getMyPostCount(
 				{
 					posts: {
@@ -304,7 +304,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNormalizedPostCounts()', () => {
-		it( 'should return normalized post counts using selector', () => {
+		test( 'should return normalized post counts using selector', () => {
 			const postCounts = getNormalizedPostCounts(
 				{
 					posts: {
@@ -340,7 +340,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should default to returning all counts', () => {
+		test( 'should default to returning all counts', () => {
 			const postCounts = getNormalizedPostCounts(
 				{
 					posts: {
@@ -372,7 +372,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNormalizedMyPostCounts()', () => {
-		it( 'should return normalized post counts for mine counts', () => {
+		test( 'should return normalized post counts for mine counts', () => {
 			const postCounts = getNormalizedMyPostCounts(
 				{
 					posts: {

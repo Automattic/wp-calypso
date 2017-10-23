@@ -41,13 +41,13 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
 			expect( state.requesting ).to.eql( {} );
 		} );
 
-		it( 'should set request to true if request in progress', () => {
+		test( 'should set request to true if request in progress', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_REQUEST_SETTINGS,
 				siteId: primarySiteId,
@@ -58,7 +58,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting values', () => {
+		test( 'should accumulate requesting values', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_REQUEST_SETTINGS,
 				siteId: secondarySiteId,
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes successfully', () => {
+		test( 'should set request to false if request finishes successfully', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
 				siteId: primarySiteId,
@@ -81,7 +81,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes with failure', () => {
+		test( 'should set request to false if request finishes with failure', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 				siteId: primarySiteId,
@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = reducer( previousState, {
 				type: SERIALIZE,
 			} );
@@ -100,7 +100,7 @@ describe( 'reducer', () => {
 			expect( state.requesting ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = reducer( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -120,13 +120,13 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
 			expect( state.saveStatus ).to.eql( {} );
 		} );
 
-		it( 'should set save status to pending if request in progress', () => {
+		test( 'should set save status to pending if request in progress', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_SAVE_SETTINGS,
 				siteId: primarySiteId,
@@ -141,7 +141,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate save request statuses', () => {
+		test( 'should accumulate save request statuses', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_SAVE_SETTINGS,
 				siteId: secondarySiteId,
@@ -161,7 +161,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to success if request finishes successfully', () => {
+		test( 'should set save request to success if request finishes successfully', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 				siteId: primarySiteId,
@@ -176,7 +176,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set save request to error if request finishes with failure', () => {
+		test( 'should set save request to error if request finishes with failure', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 				siteId: primarySiteId,
@@ -192,7 +192,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = reducer( previousState, {
 				type: SERIALIZE,
 			} );
@@ -200,7 +200,7 @@ describe( 'reducer', () => {
 			expect( state.saveStatus ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = reducer( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -214,13 +214,13 @@ describe( 'reducer', () => {
 			[ primarySiteId ]: true,
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = restoring( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set request to true if request in progress', () => {
+		test( 'should set request to true if request in progress', () => {
 			const state = restoring( undefined, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
 				siteId: primarySiteId,
@@ -231,7 +231,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate restoring values', () => {
+		test( 'should accumulate restoring values', () => {
 			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS,
 				siteId: secondarySiteId,
@@ -243,7 +243,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes successfully', () => {
+		test( 'should set request to false if request finishes successfully', () => {
 			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS,
 				siteId: primarySiteId,
@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set request to false if request finishes with failure', () => {
+		test( 'should set request to false if request finishes with failure', () => {
 			const state = restoring( previousState, {
 				type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE,
 				siteId: primarySiteId,
@@ -265,7 +265,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = restoring( previousState, {
 				type: SERIALIZE,
 			} );
@@ -273,7 +273,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = restoring( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -291,13 +291,13 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
 			expect( state.items ).to.eql( {} );
 		} );
 
-		it( 'should index settings by site ID', () => {
+		test( 'should index settings by site ID', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: primarySiteId,
@@ -309,7 +309,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate settings', () => {
+		test( 'should accumulate settings', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: secondarySiteId,
@@ -322,7 +322,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous settings of same site ID', () => {
+		test( 'should override previous settings of same site ID', () => {
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: primarySiteId,
@@ -334,7 +334,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
+		test( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
 			const newSettings = { is_cache_enabled: false, is_super_cache_enabled: true };
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -347,7 +347,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = reducer( previousState, {
 				type: SERIALIZE,
 			} );
@@ -357,7 +357,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = reducer( previousState, {
 				type: DESERIALIZE,
 			} );
@@ -367,7 +367,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
 				items: {
 					[ primarySiteId ]: 2,
@@ -380,7 +380,7 @@ describe( 'reducer', () => {
 			expect( state.items ).to.eql( {} );
 		} );
 
-		it( 'should set is_preloading to true after switching preloading on', () => {
+		test( 'should set is_preloading to true after switching preloading on', () => {
 			const state = items(
 				{
 					[ primarySiteId ]: {
@@ -397,7 +397,7 @@ describe( 'reducer', () => {
 			expect( state[ primarySiteId ].is_preloading ).to.be.true;
 		} );
 
-		it( 'should set is_preloading to false after switching preloading off', () => {
+		test( 'should set is_preloading to false after switching preloading off', () => {
 			const state = items(
 				{
 					[ primarySiteId ]: {

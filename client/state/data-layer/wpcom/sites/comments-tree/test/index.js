@@ -17,7 +17,7 @@ describe( 'comments-tree', () => {
 	const action = { type: 'DUMMY_ACTION', query: { status: 'approved', siteId: 77203074 } };
 
 	describe( 'fetchCommentsTreeForSite()', () => {
-		it( 'should dispatch HTTP request to comments-tree endpoint', () => {
+		test( 'should dispatch HTTP request to comments-tree endpoint', () => {
 			const dispatch = spy();
 			fetchCommentsTreeForSite( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledOnce;
@@ -27,7 +27,7 @@ describe( 'comments-tree', () => {
 						method: 'GET',
 						path: '/sites/77203074/comments-tree',
 						query: { status: 'approved' },
-						apiVersion: '1',
+						apiVersion: '1.1',
 					},
 					action
 				)
@@ -36,12 +36,12 @@ describe( 'comments-tree', () => {
 	} );
 
 	describe( 'addCommentsTree', () => {
-		it( 'should dispatch comment tree updates', () => {
+		test( 'should dispatch comment tree updates', () => {
 			const dispatch = spy();
 			addCommentsTree( { dispatch }, action, {
-				comments_tree: [ [ 2, 1, 0 ] ],
-				pingbacks_tree: [ [ 3, 1, 0 ] ],
-				trackbacks_tree: [ [ 4, 1, 0 ] ],
+				comments_tree: { 1: [ [ 2 ], [] ] },
+				pingbacks_tree: { 1: [ [ 3 ], [] ] },
+				trackbacks_tree: { 1: [ [ 4 ], [] ] },
 			} );
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( {
@@ -76,7 +76,7 @@ describe( 'comments-tree', () => {
 	} );
 
 	describe( 'announceFailure', () => {
-		it( 'should dispatch an error notice', () => {
+		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
 			announceFailure( { dispatch, getState: () => ( { sites: { items: [] } } ) }, action );
 			expect( dispatch ).to.have.been.calledOnce;

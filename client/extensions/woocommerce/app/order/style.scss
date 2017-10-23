@@ -14,7 +14,7 @@
 			flex: 1 1 100%;
 		}
 
-		.order-notes {
+		.order-activity-log {
 			flex: 2;
 			margin-right: 16px;
 		}
@@ -49,7 +49,7 @@
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( ">480px" ) {
 		margin: 0 -24px;
 		padding: 24px;
 	}
@@ -80,6 +80,17 @@
 			margin-right: 8px;
 			white-space: nowrap;
 			margin-left: 12px;
+
+			&.is-placeholder {
+				@include placeholder();
+				pointer-events: none;
+			}
+		}
+
+		.order-fulfillment__button-group {
+			.button {
+				margin: 0;
+			}
 		}
 
 		& > .button:last-child {

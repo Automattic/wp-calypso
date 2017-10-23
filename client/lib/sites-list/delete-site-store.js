@@ -54,4 +54,4 @@ DeletedSiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = DeletedSiteStore;
+export default DeletedSiteStore;

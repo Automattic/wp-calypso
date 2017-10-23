@@ -49,4 +49,4 @@ const DomainsSelect = React.createClass( {
 	},
 } );
 
-module.exports = localize( DomainsSelect );
+export default localize( DomainsSelect );

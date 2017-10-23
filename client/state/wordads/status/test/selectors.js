@@ -29,23 +29,23 @@ describe( 'selectors', () => {
 		},
 	};
 	describe( '#isSiteWordadsUnsafe()', () => {
-		it( 'should return status value for a given site ID', () => {
+		test( 'should return status value for a given site ID', () => {
 			expect( isSiteWordadsUnsafe( state, 2916284 ) ).to.eql( 'mature' );
 		} );
-		it( 'should return false when sticker absent', () => {
+		test( 'should return false when sticker absent', () => {
 			expect( isSiteWordadsUnsafe( state, 77203074 ) ).to.eql( false );
 		} );
-		it( 'should return false when site absent', () => {
+		test( 'should return false when site absent', () => {
 			expect( isSiteWordadsUnsafe( state, 123 ) ).to.eql( false );
 		} );
 	} );
 
 	describe( '#isRequestingWordadsStatus()', () => {
-		it( 'should return fetching value for a site ID', () => {
+		test( 'should return fetching value for a site ID', () => {
 			expect( isRequestingWordadsStatus( state, 2916284 ) ).to.eql( true );
 			expect( isRequestingWordadsStatus( state, 77203074 ) ).to.eql( false );
 		} );
-		it( 'should return false when site ID value is absent', () => {
+		test( 'should return false when site ID value is absent', () => {
 			expect( isRequestingWordadsStatus( state, 12345 ) ).to.eql( false );
 		} );
 	} );

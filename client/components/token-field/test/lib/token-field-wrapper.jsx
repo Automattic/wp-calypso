@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 
 /**
@@ -12,7 +10,7 @@ import React from 'react';
 import TokenField from 'components/token-field';
 import { unescapeAndFormatSpaces } from 'lib/formatting';
 
-var suggestions = [
+const suggestions = [
 	'the',
 	'of',
 	'and',
@@ -49,7 +47,7 @@ var suggestions = [
 	'sound',
 ];
 
-var TokenFieldWrapper = React.createClass( {
+const TokenFieldWrapper = React.createClass( {
 	getInitialState: function() {
 		return {
 			tokenSuggestions: suggestions,
@@ -74,4 +72,4 @@ var TokenFieldWrapper = React.createClass( {
 	},
 } );
 
-module.exports = TokenFieldWrapper;
+export default TokenFieldWrapper;

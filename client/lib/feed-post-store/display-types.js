@@ -5,7 +5,7 @@
  * @type {Object} Types of post for display
  */
 
-module.exports = {
+export default {
 	UNCLASSIFIED: 0,
 	PHOTO_ONLY: 1,
 	LARGE_BANNER: 2,

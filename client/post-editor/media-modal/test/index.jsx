@@ -69,7 +69,7 @@ const DUMMY_VIDEO_MEDIA = [
 	{ ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'video/mp4' },
 ];
 
-describe( 'EditorMediaModal', function() {
+describe( 'EditorMediaModal', () => {
 	let spy, deleteMedia, onClose;
 
 	useSandbox( sandbox => {
@@ -83,7 +83,7 @@ describe( 'EditorMediaModal', function() {
 		accept.reset();
 	} );
 
-	it( 'should prompt to delete a single item from the list view', function( done ) {
+	test( 'should prompt to delete a single item from the list view', done => {
 		var media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
@@ -107,7 +107,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should prompt to delete multiple items from the list view', function( done ) {
+	test( 'should prompt to delete multiple items from the list view', done => {
 		var tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -128,7 +128,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should prompt to delete a single item from the detail view', function( done ) {
+	test( 'should prompt to delete a single item from the detail view', done => {
 		var media = DUMMY_MEDIA[ 0 ],
 			tree;
 
@@ -152,9 +152,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should prompt to delete a single item from the detail view, even when multiple selected', function(
-		done
-	) {
+	test( 'should prompt to delete a single item from the detail view, even when multiple selected', done => {
 		var tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -175,9 +173,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should return to the list view after deleting the only item in detail view', function(
-		done
-	) {
+	test( 'should return to the list view after deleting the only item in detail view', done => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -195,9 +191,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should revert to an earlier media item when the last item is deleted from detail view', function(
-		done
-	) {
+	test( 'should revert to an earlier media item when the last item is deleted from detail view', done => {
 		var tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -216,7 +210,7 @@ describe( 'EditorMediaModal', function() {
 		} );
 	} );
 
-	it( 'should show no buttons if editing an image', () => {
+	test( 'should show no buttons if editing an image', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -231,7 +225,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons ).to.be.undefined;
 	} );
 
-	it( 'should show an insert button when viewing external media (no selection)', () => {
+	test( 'should show an insert button when viewing external media (no selection)', () => {
 		const tree = shallow(
 			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
 		).instance();
@@ -243,7 +237,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
 	} );
 
-	it( 'should show a insert button when 1 external image is selected', () => {
+	test( 'should show a insert button when 1 external image is selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -260,7 +254,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
 	} );
 
-	it( 'should show a copy button when 1 external video is selected', () => {
+	test( 'should show a copy button when 1 external video is selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -277,7 +271,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
-	it( 'should show a copy button when 2 or more external media are selected', () => {
+	test( 'should show a copy button when 2 or more external media are selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -294,7 +288,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
-	it( 'should show a continue button when multiple images are selected', () => {
+	test( 'should show a continue button when multiple images are selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -309,7 +303,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Continue' );
 	} );
 
-	it( 'should show an insert button if none or one local items are selected', () => {
+	test( 'should show an insert button if none or one local items are selected', () => {
 		const tree = shallow(
 			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
 		).instance();
@@ -320,7 +314,7 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	describe( '#confirmSelection()', () => {
-		it( 'should close modal if viewing local media and button is pressed', done => {
+		test( 'should close modal if viewing local media and button is pressed', done => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -344,7 +338,7 @@ describe( 'EditorMediaModal', function() {
 			} );
 		} );
 
-		it( 'should copy external media after loading WordPress library if 2 or more media are selected and button is pressed', done => {
+		test( 'should copy external media after loading WordPress library if 2 or more media are selected and button is pressed', done => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -370,7 +364,7 @@ describe( 'EditorMediaModal', function() {
 			} );
 		} );
 
-		it( 'should copy external media and insert it in the editor if 1 image is selected and button is pressed', done => {
+		test( 'should copy external media and insert it in the editor if 1 image is selected and button is pressed', done => {
 			const SINGLE_ITEM_MEDIA = DUMMY_MEDIA.slice( 0, 1 );
 			const tree = shallow(
 				<EditorMediaModal
@@ -396,7 +390,7 @@ describe( 'EditorMediaModal', function() {
 			} );
 		} );
 
-		it( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', done => {
+		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', done => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }

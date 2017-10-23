@@ -193,7 +193,14 @@ function getDefaultContext( request ) {
 		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
 		shouldUsePreconnectGoogle:
 			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
-		shouldUsePreload: config.isEnabled( 'try/preload' ) && !! request.query.enablePreload,
+		shouldUseScriptPreload:
+			config.isEnabled( 'try/preload' ) && !! request.query.enableScriptPreload,
+		shouldUseStylePreloadCommon:
+			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadCommon,
+		shouldUseStylePreloadExternal:
+			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadExternal,
+		shouldUseStylePreloadSection:
+			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadSection,
 		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,

@@ -13,7 +13,7 @@ import { STORED_CARDS_FROM_API } from './fixture';
 
 describe( 'selectors', () => {
 	describe( 'getStoredCards', () => {
-		it( 'should return all cards', () => {
+		test( 'should return all cards', () => {
 			const state = deepFreeze( {
 				storedCards: {
 					hasLoadedFromServer: true,
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getStoredCardById', () => {
-		it( 'should return a card by its ID, preserving the top-level flags', () => {
+		test( 'should return a card by its ID, preserving the top-level flags', () => {
 			const state = deepFreeze( {
 				storedCards: {
 					hasLoadedFromServer: true,
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'hasLoadedStoredCardsFromServer', () => {
-		it( 'should return the flag that determines whether the list of cards has been loaded from the server', () => {
+		test( 'should return the flag that determines whether the list of cards has been loaded from the server', () => {
 			const state = deepFreeze( {
 				storedCards: {
 					hasLoadedFromServer: true,

@@ -32,7 +32,7 @@ import {
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {
-		it( 'should track when fetches start', () => {
+		test( 'should track when fetches start', () => {
 			const state = isRequesting( undefined, {
 				type: PLUGINS_REQUEST,
 				siteId: 'one.site',
@@ -40,7 +40,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': true } );
 		} );
 
-		it( 'should track when fetches end successfully', () => {
+		test( 'should track when fetches end successfully', () => {
 			const state = isRequesting( undefined, {
 				type: PLUGINS_REQUEST_SUCCESS,
 				siteId: 'one.site',
@@ -48,7 +48,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': false } );
 		} );
 
-		it( 'should track when fetches end unsuccessfully', () => {
+		test( 'should track when fetches end unsuccessfully', () => {
 			const state = isRequesting( undefined, {
 				type: PLUGINS_REQUEST_FAILURE,
 				siteId: 'one.site',
@@ -58,7 +58,7 @@ describe( 'reducer:', () => {
 	} );
 
 	describe( 'plugins', () => {
-		it( 'should load the plugins on this site', () => {
+		test( 'should load the plugins on this site', () => {
 			const originalState = deepFreeze( { 'one.site': [] } );
 			const state = plugins( originalState, {
 				type: PLUGINS_RECEIVE,
@@ -68,7 +68,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': [ akismet ] } );
 		} );
 
-		it( 'should show an activated plugin as active', () => {
+		test( 'should show an activated plugin as active', () => {
 			const originalState = deepFreeze( {
 				'one.site': [ Object.assign( {}, akismet, { active: false } ) ],
 			} );
@@ -81,7 +81,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': [ Object.assign( {}, akismet, { active: true } ) ] } );
 		} );
 
-		it( 'should show a deactivated plugin as inactive', () => {
+		test( 'should show a deactivated plugin as inactive', () => {
 			const originalState = deepFreeze( {
 				'one.site': [ Object.assign( {}, akismet, { active: true } ) ],
 			} );
@@ -94,7 +94,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': [ Object.assign( {}, akismet, { active: false } ) ] } );
 		} );
 
-		it( 'should show an updated plugin as up-to-date', () => {
+		test( 'should show an updated plugin as up-to-date', () => {
 			const originalState = deepFreeze( { 'one.site': [ jetpack ] } );
 			const updatedPlugin = omit( jetpack, 'update' );
 			const state = plugins( originalState, {
@@ -106,7 +106,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': [ updatedPlugin ] } );
 		} );
 
-		it( 'should show a plugin with autoupdate enabled', () => {
+		test( 'should show a plugin with autoupdate enabled', () => {
 			const originalState = deepFreeze( {
 				'one.site': [ Object.assign( {}, akismet, { autoupdate: false } ) ],
 			} );
@@ -121,7 +121,7 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should show a plugin with autoupdate disabled', () => {
+		test( 'should show a plugin with autoupdate disabled', () => {
 			const originalState = deepFreeze( {
 				'one.site': [ Object.assign( {}, akismet, { autoupdate: true } ) ],
 			} );
@@ -136,7 +136,7 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should load a new plugin when installed', () => {
+		test( 'should load a new plugin when installed', () => {
 			const originalState = deepFreeze( { 'one.site': [ akismet ] } );
 			const state = plugins( originalState, {
 				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -147,7 +147,7 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': [ akismet, jetpack ] } );
 		} );
 
-		it( 'should remove an existing plugin when deleted', () => {
+		test( 'should remove an existing plugin when deleted', () => {
 			const originalState = deepFreeze( { 'one.site': [ akismet, jetpack ] } );
 			const state = plugins( originalState, {
 				type: PLUGIN_REMOVE_REQUEST_SUCCESS,
@@ -159,7 +159,7 @@ describe( 'reducer:', () => {
 	} );
 
 	describe( 'status', () => {
-		it( 'should set a progress status entry when an action begins', () => {
+		test( 'should set a progress status entry when an action begins', () => {
 			const originalState = deepFreeze( {} );
 			const state = status( originalState, {
 				type: PLUGIN_ACTIVATE_REQUEST,
@@ -177,7 +177,7 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should set a successful status entry for a successful action', () => {
+		test( 'should set a successful status entry for a successful action', () => {
 			const originalState = deepFreeze( {
 				'one.site': {
 					[ akismet.id ]: {
@@ -203,7 +203,7 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should set a error status entry for a failed action', () => {
+		test( 'should set a error status entry for a failed action', () => {
 			const originalState = deepFreeze( {} );
 			const testError = new Error( 'Plugin file does not exist.' );
 			testError.name = 'activation_error';

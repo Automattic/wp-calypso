@@ -20,7 +20,7 @@ import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
+import { getNewOrdersWithoutPayPalPending } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
@@ -210,6 +210,7 @@ class StoreSidebar extends Component {
 			'/store/settings/payments',
 			'/store/settings/shipping',
 			'/store/settings/taxes',
+			'/store/settings/email'
 		];
 		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
 		const classes = classNames( {
@@ -257,7 +258,7 @@ class StoreSidebar extends Component {
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
 	const hasProducts = getTotalProducts( state ) > 0;
-	const orders = getNewOrders( state );
+	const orders = getNewOrdersWithoutPayPalPending( state );
 	const productsLoaded = areProductsLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
 	const totalPendingReviews = getTotalReviews( state, { status: 'pending' } );

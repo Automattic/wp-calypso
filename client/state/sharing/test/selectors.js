@@ -65,13 +65,13 @@ describe( 'selectors', () => {
 	};
 
 	describe( 'getAvailableExternalAccounts()', () => {
-		it( 'should return an empty array for a site which has not yet been fetched', () => {
+		test( 'should return an empty array for a site which has not yet been fetched', () => {
 			const connections = getAvailableExternalAccounts( state, 'path' );
 
 			expect( connections ).to.eql( [] );
 		} );
 
-		it( 'should return an array of available accounts', () => {
+		test( 'should return an array of available accounts', () => {
 			const connections = getAvailableExternalAccounts( state, 'twitter' );
 
 			expect( connections ).to.eql( [
@@ -79,7 +79,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should return an array of available accounts including external users', () => {
+		test( 'should return an array of available accounts including external users', () => {
 			const connections = getAvailableExternalAccounts( state, 'facebook' );
 
 			expect( connections ).to.eql( [

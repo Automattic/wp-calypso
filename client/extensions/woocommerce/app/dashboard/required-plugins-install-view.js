@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  *
@@ -8,13 +9,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -25,6 +26,16 @@ import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
+import { getSiteOptions } from 'state/selectors';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { transferStates } from 'state/automated-transfer/constants';
+
+// Time in seconds to complete various steps.
+const TIME_TO_TRANSFER_ELIGIBILITY = 5;
+const TIME_TO_TRANSFER_UPLOADING = 5;
+const TIME_TO_TRANSFER_BACKFILLING = 25;
+const TIME_TO_TRANSFER_COMPLETE = 6;
+const TIME_TO_PLUGIN_INSTALLATION = 15;
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
@@ -36,22 +47,73 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			engineState: 'CONFIRMING',
+			engineState: props.skipConfirmation ? 'INITIALIZING' : 'CONFIRMING',
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			stepIndex: 0,
+			progress: 0,
+			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
 	}
 
 	componentDidMount = () => {
+		const { signupIsStore, automatedTransferStatus } = this.props;
+
 		this.createUpdateTimer();
+
+		if ( automatedTransferStatus ) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_ELIGIBILITY,
+			} );
+		}
+
+		if ( signupIsStore ) {
+			this.startSetup();
+		}
 	};
 
 	componentWillUnmount = () => {
 		this.destroyUpdateTimer();
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		const { ACTIVE, UPLOADING, BACKFILLING, COMPLETE } = transferStates;
+		const { automatedTransferStatus: currentAutomatedTransferStatus, siteId } = this.props;
+		const { automatedTransferStatus: nextAutomatedTransferStatus } = nextProps;
+
+		if ( ACTIVE === currentAutomatedTransferStatus && UPLOADING === nextAutomatedTransferStatus ) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_UPLOADING,
+			} );
+
+			return;
+		}
+
+		if (
+			UPLOADING === currentAutomatedTransferStatus &&
+			BACKFILLING === nextAutomatedTransferStatus
+		) {
+			this.setState( {
+				progress: this.state.progress + TIME_TO_TRANSFER_BACKFILLING,
+			} );
+
+			return;
+		}
+
+		if (
+			BACKFILLING === currentAutomatedTransferStatus &&
+			COMPLETE === nextAutomatedTransferStatus
+		) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+				workingOn: '',
+				progress: this.state.progress + TIME_TO_TRANSFER_COMPLETE,
+			} );
+
+			this.props.fetchPlugins( [ siteId ] );
+		}
+	}
 
 	createUpdateTimer = () => {
 		if ( this.updateTimer ) {
@@ -78,8 +140,8 @@ class RequiredPluginsInstallView extends Component {
 			woocommerce: translate( 'WooCommerce' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
-			'taxjar-simplified-taxes-for-woocommerce': translate(
-				'TaxJar - Sales Tax Automation for WooCommerce'
+			'mailchimp-for-woocommerce': translate(
+				'MailChimp is the world’s largest marketing automation platform'
 			),
 		};
 	};
@@ -142,16 +204,16 @@ class RequiredPluginsInstallView extends Component {
 
 		const toInstall = [];
 		const toActivate = [];
-		let numTotalSteps = 0;
+		let pluginInstallationTotalSteps = 0;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
 				toActivate.push( requiredPluginSlug );
-				numTotalSteps++;
+				pluginInstallationTotalSteps++;
 			} else if ( ! pluginFound.active ) {
 				toActivate.push( requiredPluginSlug );
-				numTotalSteps++;
+				pluginInstallationTotalSteps++;
 			}
 		}
 
@@ -161,7 +223,7 @@ class RequiredPluginsInstallView extends Component {
 				toActivate,
 				toInstall,
 				workingOn: '',
-				numTotalSteps,
+				pluginInstallationTotalSteps,
 			} );
 			return;
 		}
@@ -171,7 +233,7 @@ class RequiredPluginsInstallView extends Component {
 				engineState: 'ACTIVATING',
 				toActivate,
 				workingOn: '',
-				numTotalSteps,
+				pluginInstallationTotalSteps,
 			} );
 			return;
 		}
@@ -211,7 +273,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound ) {
 			this.setState( {
 				workingOn: '',
-				stepIndex: this.state.stepIndex + 1,
+				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 	};
@@ -261,7 +323,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound && pluginFound.active ) {
 			this.setState( {
 				workingOn: '',
-				stepIndex: this.state.stepIndex + 1,
+				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 	};
@@ -292,23 +354,29 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getProgress = () => {
-		const { engineState, stepIndex, numTotalSteps } = this.state;
+	getPluginInstallationTime() {
+		const { pluginInstallationTotalSteps } = this.state;
 
-		if ( 'INITIALIZING' === engineState ) {
-			return 0;
+		if ( pluginInstallationTotalSteps ) {
+			return TIME_TO_PLUGIN_INSTALLATION / pluginInstallationTotalSteps;
 		}
 
-		return ( stepIndex + 1 ) / ( numTotalSteps + 1 ) * 100;
-	};
+		// If there's some error, return 3 seconds for a single plugin installation time.
+		return 3;
+	}
 
 	startSetup = () => {
+		const { signupIsStore } = this.props;
+
 		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'initial-setup',
 		} );
-		this.setState( {
-			engineState: 'INITIALIZING',
-		} );
+
+		if ( ! signupIsStore ) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+			} );
+		}
 	};
 
 	renderConfirmScreen = () => {
@@ -336,15 +404,29 @@ class RequiredPluginsInstallView extends Component {
 		);
 	};
 
-	render = () => {
-		const { site, translate } = this.props;
-		const { engineState } = this.state;
+	getTotalSeconds() {
+		const { signupIsStore } = this.props;
 
-		if ( 'CONFIRMING' === engineState ) {
-			return this.renderConfirmScreen();
+		if ( signupIsStore ) {
+			return (
+				TIME_TO_TRANSFER_ELIGIBILITY +
+				TIME_TO_TRANSFER_UPLOADING +
+				TIME_TO_TRANSFER_BACKFILLING +
+				TIME_TO_TRANSFER_COMPLETE +
+				TIME_TO_PLUGIN_INSTALLATION
+			);
 		}
 
-		const progress = this.getProgress();
+		return TIME_TO_PLUGIN_INSTALLATION;
+	}
+
+	render = () => {
+		const { site, translate, signupIsStore } = this.props;
+		const { engineState, progress, totalSeconds } = this.state;
+
+		if ( ! signupIsStore && 'CONFIRMING' === engineState ) {
+			return this.renderConfirmScreen();
+		}
 
 		return (
 			<div className="card dashboard__setup-wrapper">
@@ -352,10 +434,13 @@ class RequiredPluginsInstallView extends Component {
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
-					title={ translate( 'Setting up your store' ) }
-					subtitle={ translate( "Give us a minute and we'll move right along." ) }
+					title={ translate( 'Building your storefront' ) }
+					subtitle={ translate(
+						'We’ll be done with the behind-the-scenes work in a moment, ' +
+							'and then you can start adding products.'
+					) }
 				>
-					<ProgressBar value={ progress } isPulsing />
+					<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
 				</SetupHeader>
 			</div>
 		);
@@ -364,12 +449,18 @@ class RequiredPluginsInstallView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const siteId = site.ID;
+
+	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const siteOptions = getSiteOptions( state, siteId );
 
 	return {
 		site,
+		siteId,
 		sitePlugins,
 		wporg: state.plugins.wporg.items,
+		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		signupIsStore: get( siteOptions, 'signup_is_store', false ),
 	};
 }
 
@@ -380,6 +471,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchPluginData,
 			installPlugin,
 			setFinishedInstallOfRequiredPlugins,
+			fetchPlugins,
 		},
 		dispatch
 	);

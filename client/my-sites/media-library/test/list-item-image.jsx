@@ -20,10 +20,10 @@ import ListItemImage from 'my-sites/media-library/list-item-image';
 
 const WIDTH = 450;
 
-describe( 'MediaLibraryListItem image', function() {
+describe( 'MediaLibraryListItem image', () => {
 	let wrapper;
 
-	beforeEach( function() {
+	beforeEach( () => {
 		if ( wrapper ) {
 			wrapper.unmount();
 		}
@@ -40,32 +40,32 @@ describe( 'MediaLibraryListItem image', function() {
 		/>
 	);
 
-	context( 'thumbnail display mode', function() {
-		it( 'defaults to photon when no thumbnail parameter is passed', function() {
+	describe( 'thumbnail display mode', () => {
+		test( 'defaults to photon when no thumbnail parameter is passed', () => {
 			wrapper = shallow( getItem( 0 ) );
 
 			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
 		} );
 
-		it( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', function() {
+		test( 'returns a photon thumbnail for type MEDIA_IMAGE_PHOTON', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_PHOTON' ) );
 
 			expect( wrapper.props().src ).to.be.equal( getPhotonUrl() );
 		} );
 
-		it( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', function() {
+		test( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
 
 			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
 		} );
 
-		it( 'returns existing medium thumbnail for type MEDIA_IMAGE_THUMBNAIL', function() {
+		test( 'returns existing medium thumbnail for type MEDIA_IMAGE_THUMBNAIL', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
 			expect( wrapper.props().src ).to.be.equal( fixtures.media[ 0 ].thumbnails.medium );
 		} );
 
-		it( 'returns resized thumbnail for type MEDIA_IMAGE_THUMBNAIL when no medium thumbnail', function() {
+		test( 'returns resized thumbnail for type MEDIA_IMAGE_THUMBNAIL when no medium thumbnail', () => {
 			wrapper = shallow( getItem( 1, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
 			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );

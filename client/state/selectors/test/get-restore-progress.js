@@ -13,7 +13,7 @@ import { getRestoreProgress } from 'state/selectors';
 const SITE_ID = 1234;
 
 describe( 'getRestoreProgress()', () => {
-	it( 'should return null if no progress exists for a site', () => {
+	test( 'should return null if no progress exists for a site', () => {
 		const result = getRestoreProgress(
 			{
 				activityLog: {
@@ -25,7 +25,7 @@ describe( 'getRestoreProgress()', () => {
 		expect( result ).to.be.null;
 	} );
 
-	it( 'should return existing progress for a site', () => {
+	test( 'should return existing progress for a site', () => {
 		const progress = {
 			complete: false,
 			percent: 20,

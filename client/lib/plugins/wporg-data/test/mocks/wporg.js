@@ -2,7 +2,7 @@
 let fetchPluginsListCalls = 0,
 	lastRequestParams = null;
 
-module.exports = {
+export default {
 	deactivatedCallbacks: false,
 	mockedNumberOfReturnedPages: 10,
 	reset: function() {

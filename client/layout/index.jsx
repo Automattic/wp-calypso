@@ -42,13 +42,14 @@ import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
-import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
+import JITM from 'blocks/jitm';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -139,14 +140,15 @@ const Layout = React.createClass( {
 	render: function() {
 		const sectionClass = classnames(
 				'layout',
+				'color-scheme',
+				`is-${ this.props.colorSchemePreference }`,
 				`is-group-${ this.props.section.group }`,
 				`is-section-${ this.props.section.name }`,
 				`focus-${ this.props.currentLayoutFocus }`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'wp-singletree-layout': !! this.props.primary },
-				{ 'has-chat': this.props.chatIsOpen },
-				`is-${ this.props.colorSchemePreference }-theme`
+				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -169,6 +171,7 @@ const Layout = React.createClass( {
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
+					{ config.isEnabled( 'jitms' ) && <JITM /> }
 					{ this.renderWelcome() }
 					<GlobalNotices
 						id="notices"

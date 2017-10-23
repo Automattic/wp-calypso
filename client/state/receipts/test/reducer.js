@@ -13,13 +13,13 @@ import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'st
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should return an empty state when original state is undefined and action is empty', () => {
+		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should return the initial state with requesting enabled when fetching is triggered', () => {
+		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
 			const state = items( undefined, {
 				type: RECEIPT_FETCH,
 				receiptId: 11111111,
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return the original state with an error and requesting disabled when fetching failed', () => {
+		test( 'should return the original state with an error and requesting disabled when fetching failed', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: null,
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should return an updated state with new properties when fetching completes', () => {
+		test( 'should return an updated state with new properties when fetching completes', () => {
 			const original = Object.freeze( {
 					11111111: {
 						data: { amount: 10 },

@@ -16,7 +16,7 @@ import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
 
-var FreeCartPaymentBox = React.createClass( {
+const FreeCartPaymentBox = React.createClass( {
 	propTypes: {
 		products: PropTypes.object.isRequired,
 	},
@@ -86,4 +86,4 @@ var FreeCartPaymentBox = React.createClass( {
 	},
 } );
 
-module.exports = localize( FreeCartPaymentBox );
+export default localize( FreeCartPaymentBox );

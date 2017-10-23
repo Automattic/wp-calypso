@@ -56,7 +56,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a request connection status action when thunk triggered', () => {
+			test( 'should dispatch a request connection status action when thunk triggered', () => {
 				requestJetpackConnectionStatus( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -65,7 +65,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success and receive actions when request successfully completes', () => {
+			test( 'should dispatch success and receive actions when request successfully completes', () => {
 				return requestJetpackConnectionStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_CONNECTION_STATUS_RECEIVE,
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a failure action when request completes unsuccessfully', () => {
+			test( 'should dispatch a failure action when request completes unsuccessfully', () => {
 				return requestJetpackConnectionStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
@@ -136,7 +136,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a request user connection data action when thunk triggered', () => {
+			test( 'should dispatch a request user connection data action when thunk triggered', () => {
 				requestJetpackUserConnectionData( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -145,7 +145,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success and receive actions when request successfully completes', () => {
+			test( 'should dispatch success and receive actions when request successfully completes', () => {
 				return requestJetpackUserConnectionData( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
@@ -180,7 +180,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a failure action when request completes unsuccessfully', () => {
+			test( 'should dispatch a failure action when request completes unsuccessfully', () => {
 				return requestJetpackUserConnectionData( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
@@ -208,7 +208,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a request disconnect request action when thunk triggered', () => {
+			test( 'should dispatch a request disconnect request action when thunk triggered', () => {
 				disconnect( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -217,7 +217,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success and receive actions when disconnect request successfully completes', () => {
+			test( 'should dispatch success and receive actions when disconnect request successfully completes', () => {
 				return disconnect( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_DISCONNECT_RECEIVE,
@@ -248,7 +248,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a failure action when disconnect request completes unsuccessfully', () => {
+			test( 'should dispatch a failure action when disconnect request completes unsuccessfully', () => {
 				return disconnect( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_DISCONNECT_REQUEST_FAILURE,

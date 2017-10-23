@@ -31,7 +31,7 @@ describe( 'handlers', () => {
 				.reply( 200, { data: getResponse } );
 		} );
 
-		it( 'should handle get success', () => {
+		test( 'should handle get success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -53,7 +53,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should handle get failure', () => {
+		test( 'should handle get failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -86,7 +86,7 @@ describe( 'handlers', () => {
 				.reply( 200, { data: getResponse } );
 		} );
 
-		it( 'should dispatch a function for success', () => {
+		test( 'should dispatch a function for success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -111,7 +111,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should dispatch a function for failure', () => {
+		test( 'should dispatch a function for failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -153,7 +153,7 @@ describe( 'handlers', () => {
 
 		const body = { name: 'post request', placeholder: true };
 
-		it( 'should handle post success', () => {
+		test( 'should handle post success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -175,7 +175,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should handle post failure', () => {
+		test( 'should handle post failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -214,7 +214,7 @@ describe( 'handlers', () => {
 
 		const body = { name: 'put request', placeholder: true };
 
-		it( 'should handle put success', () => {
+		test( 'should handle put success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -236,7 +236,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should handle put failure', () => {
+		test( 'should handle put failure', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -273,7 +273,7 @@ describe( 'handlers', () => {
 				.reply( 200, { data: deleteResponse } );
 		} );
 
-		it( 'should handle delete success', () => {
+		test( 'should handle delete success', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -295,7 +295,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		it( 'should handle delete failure', () => {
+		test( 'should handle delete failure', () => {
 			const store = {
 				dispatch: spy(),
 			};

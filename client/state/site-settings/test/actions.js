@@ -32,7 +32,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveSiteSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const settings = { settingKey: 'cat' };
 			const action = receiveSiteSettings( 2916284, settings );
 
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateSiteSettings()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const settings = { settingKey: 'cat' };
 			const action = updateSiteSettings( 2916284, settings );
 
@@ -74,7 +74,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSiteSettings( 2916284 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					receiveSiteSettings( 2916284, {
@@ -95,7 +95,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_REQUEST_SUCCESS,
@@ -104,7 +104,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return requestSiteSettings( 2916285 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -139,7 +139,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch update action when request completes', () => {
+		test( 'should dispatch update action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					updateSiteSettings( 2916284, {
@@ -149,7 +149,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch save success action when request completes', () => {
+		test( 'should dispatch save success action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
@@ -158,7 +158,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return saveSiteSettings( 2916285 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,

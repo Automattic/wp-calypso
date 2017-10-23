@@ -13,6 +13,7 @@ import config from 'config';
 import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
+import { reasonComponents as reasons } from './disconnect-site';
 
 export default function() {
 	page( '/settings', mySitesController.siteSelection, controller.redirectToGeneral );
@@ -57,11 +58,24 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		const reasonSlugs = Object.keys( reasons );
 		page(
-			'/settings/disconnect-site/:site_id',
+			`/settings/disconnect-site/:step(${ [ ...reasonSlugs, 'confirm' ].join( '|' ) })?`,
+			mySitesController.sites
+		);
+
+		page(
+			`/settings/disconnect-site/:reason(${ reasonSlugs.join( '|' ) })?/:site_id`,
 			mySitesController.siteSelection,
 			settingsController.setScroll,
 			controller.disconnectSite
+		);
+
+		page(
+			'/settings/disconnect-site/confirm/:site_id',
+			mySitesController.siteSelection,
+			settingsController.setScroll,
+			controller.disconnectSiteConfirm
 		);
 	}
 

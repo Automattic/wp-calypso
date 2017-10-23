@@ -20,4 +20,4 @@ const Actions = {
 	},
 };
 
-module.exports = Actions;
+export default Actions;

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { cartItems } from 'lib/cart-values';
 
-var CartTotal = React.createClass( {
+const CartTotal = React.createClass( {
 	render: function() {
 		var cart = this.props.cart;
 
@@ -54,4 +54,4 @@ var CartTotal = React.createClass( {
 	},
 } );
 
-module.exports = localize( CartTotal );
+export default localize( CartTotal );

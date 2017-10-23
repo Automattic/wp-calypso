@@ -14,7 +14,7 @@ Handles the single site view. It can be used by any compoenent that needs to ren
 ```javascript
 var Site = require( 'my-sites/sites/site' );
 
-var Component = React.createClass({
+const Component = React.createClass({
   render: function() {
     return (
       <Site site={ site } />

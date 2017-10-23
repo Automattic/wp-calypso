@@ -47,7 +47,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch an activate action when thunk triggered', () => {
+			test( 'should dispatch an activate action when thunk triggered', () => {
 				activateJumpstart( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch an activate success action when request successfully completes', () => {
+			test( 'should dispatch an activate success action when request successfully completes', () => {
 				return activateJumpstart( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_ACTIVATE_SUCCESS,
@@ -85,7 +85,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch an activate failure action when request completes unsuccessfully', () => {
+			test( 'should dispatch an activate failure action when request completes unsuccessfully', () => {
 				return activateJumpstart( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_ACTIVATE_FAILURE,
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a deactivate action when thunk triggered', () => {
+			test( 'should dispatch a deactivate action when thunk triggered', () => {
 				deactivateJumpstart( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -124,7 +124,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch a deactivate success action when request successfully completes', () => {
+			test( 'should dispatch a deactivate success action when request successfully completes', () => {
 				return deactivateJumpstart( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_DEACTIVATE_SUCCESS,
@@ -153,7 +153,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a deactivate failure action when request completes unsuccessfully', () => {
+			test( 'should dispatch a deactivate failure action when request completes unsuccessfully', () => {
 				return deactivateJumpstart( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_DEACTIVATE_FAILURE,
@@ -186,7 +186,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a request jumpstart status action when thunk triggered', () => {
+			test( 'should dispatch a request jumpstart status action when thunk triggered', () => {
 				requestJumpstartStatus( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -195,7 +195,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success and receive actions when request successfully completes', () => {
+			test( 'should dispatch success and receive actions when request successfully completes', () => {
 				return requestJumpstartStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_STATUS_RECEIVE,
@@ -230,7 +230,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch a failure action when request completes unsuccessfully', () => {
+			test( 'should dispatch a failure action when request completes unsuccessfully', () => {
 				return requestJumpstartStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,

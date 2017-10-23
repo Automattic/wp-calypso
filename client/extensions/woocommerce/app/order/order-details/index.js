@@ -43,20 +43,34 @@ class OrderDetails extends Component {
 		}
 	};
 
+	updateLineItems = item => {
+		const { siteId, order } = this.props;
+		if ( siteId ) {
+			this.props.editOrder( siteId, { id: order.id, line_items: item } );
+		}
+	};
+
 	renderStatus = () => {
 		const { isEditing, order } = this.props;
 
 		return isEditing ? (
 			<OrderStatusSelect value={ order.status } onChange={ this.updateStatus } />
 		) : (
-			<OrderStatus status={ order.status } showShipping={ false } />
+			<OrderStatus order={ order } showShipping={ false } />
 		);
 	};
 
 	renderDetails = () => {
 		const { isEditing, order, site } = this.props;
 		if ( isEditing ) {
-			return <OrderDetailsTable order={ order } site={ site } />;
+			return (
+				<OrderDetailsTable
+					order={ order }
+					site={ site }
+					isEditing
+					onChange={ this.updateLineItems }
+				/>
+			);
 		}
 
 		return [

@@ -54,7 +54,7 @@ jest.mock( 'react-redux', () => ( {
 	connect: () => component => component,
 } ) );
 
-describe( 'PostEditor', function() {
+describe( 'PostEditor', () => {
 	let sandbox;
 	const defaultProps = {
 		translate: string => string,
@@ -65,12 +65,12 @@ describe( 'PostEditor', function() {
 
 	useSandbox( newSandbox => ( sandbox = newSandbox ) );
 
-	afterEach( function() {
+	afterEach( () => {
 		sandbox.restore();
 	} );
 
-	describe( 'onEditedPostChange', function() {
-		it( 'should clear content when store state transitions to isNew()', function() {
+	describe( 'onEditedPostChange', () => {
+		test( 'should clear content when store state transitions to isNew()', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
@@ -81,7 +81,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
 		} );
 
-		it( 'should not clear content when store state already isNew()', function() {
+		test( 'should not clear content when store state already isNew()', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
@@ -92,7 +92,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
 
-		it( 'should clear content when loading', function() {
+		test( 'should clear content when loading', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isLoading' );
@@ -102,7 +102,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
 		} );
 
-		it( 'should set content after load', function() {
+		test( 'should set content after load', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const content = 'loaded post';
@@ -116,7 +116,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( content );
 		} );
 
-		it( 'a normal content change should not clear content', function() {
+		test( 'a normal content change should not clear content', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const content = 'new content';
@@ -131,7 +131,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
 
-		it( 'is a copy and it should set the copied content', function() {
+		test( 'is a copy and it should set the copied content', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const content = 'copied content';
@@ -149,7 +149,7 @@ describe( 'PostEditor', function() {
 			expect( tree.editor.setEditorContent ).to.have.been.calledWith( content );
 		} );
 
-		it( 'should not set the copied content more than once', function() {
+		test( 'should not set the copied content more than once', () => {
 			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
 
 			const content = 'copied content';

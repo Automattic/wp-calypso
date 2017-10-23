@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getBlockedSites } from '../';
 
 describe( 'getBlockedSites()', () => {
-	it( 'should return an array of blocked site IDs', () => {
+	test( 'should return an array of blocked site IDs', () => {
 		const state = {
 			reader: {
 				siteBlocks: {

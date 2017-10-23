@@ -42,6 +42,7 @@
 		"help": true,
 		"jetpack/happychat": true,
 		"jetpack_core_inline_update": true,
+		"jitms": true,
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
@@ -103,6 +104,7 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"woocommerce/extension-wcservices": true
 	}
 }

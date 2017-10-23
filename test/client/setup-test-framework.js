@@ -3,11 +3,6 @@
  */
 import { disableNetConnect } from 'nock';
 
-// It allows to use Mocha API with Jest
-global.after = global.afterAll;
-global.before = global.beforeAll;
-global.context = global.describe;
-
 // It disables all network requests for all tests.
 disableNetConnect();
 

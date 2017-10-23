@@ -27,14 +27,12 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import SiteCard from './site-card';
 import Spinner from 'components/spinner';
-import FormattedHeader from 'components/formatted-header';
 import userUtilities from 'lib/user/utils';
-import versionCompare from 'lib/version-compare';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { login } from 'lib/paths';
+import AuthFormHeader from './auth-form-header';
 
 /**
  * Constants
@@ -135,27 +133,6 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	renderFormHeader( isConnected ) {
-		const { translate, isAlreadyOnSitesList } = this.props;
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const headerText = isConnected
-			? translate( 'You are connected!' )
-			: translate( 'Completing connection' );
-		const subHeaderText = isConnected
-			? translate( 'Thank you for flying with Jetpack' )
-			: translate( 'Jetpack is finishing up the connection process' );
-		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' ) ? (
-			<SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
-		) : null;
-
-		return (
-			<div>
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-				{ siteCard }
-			</div>
-		);
-	}
-
 	redirect() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
@@ -214,8 +191,9 @@ class LoggedInForm extends Component {
 		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if (
-			( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites,
-			queryObject.already_authorized )
+			! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites &&
+			queryObject.already_authorized
 		) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -540,10 +518,9 @@ class LoggedInForm extends Component {
 	}
 
 	render() {
-		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		return (
 			<div className="jetpack-connect__logged-in-form">
-				{ this.renderFormHeader( authorizeSuccess ) }
+				<AuthFormHeader />
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>

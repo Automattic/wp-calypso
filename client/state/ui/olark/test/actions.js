@@ -34,7 +34,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#setChatAvailability()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const sampleAvailablityObject = { dummyData: true };
 			const action = setChatAvailability( sampleAvailablityObject );
 			expect( action ).to.eql( {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#olarkTimeout()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = olarkTimeout();
 			expect( action ).to.eql( {
 				type: OLARK_TIMEOUT,
@@ -54,7 +54,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#operatorsAway()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = operatorsAway();
 			expect( action ).to.eql( {
 				type: OLARK_OPERATORS_AWAY,
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#operatorsAvailable()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = operatorsAvailable();
 			expect( action ).to.eql( {
 				type: OLARK_OPERATORS_AVAILABLE,
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestOlark()', () => {
-		it( 'should dispatch request action when thunk triggered', () => {
+		test( 'should dispatch request action when thunk triggered', () => {
 			requestOlark()( spy );
 			clock.tick( OLARK_TIMEOUT_MS );
 			expect( spy ).to.have.been.calledWith( {
@@ -80,7 +80,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch timeout action olark fails to load', () => {
+		test( 'should dispatch timeout action olark fails to load', () => {
 			requestOlark()( spy );
 			clock.tick( OLARK_TIMEOUT_MS );
 			expect( spy ).to.have.been.calledWith( {

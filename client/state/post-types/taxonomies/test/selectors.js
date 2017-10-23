@@ -16,7 +16,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( 'isRequestingPostTypeTaxonomies()', () => {
-		it( 'should return false if no request has been made for site', () => {
+		test( 'should return false if no request has been made for site', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if no request has been made for site post type', () => {
+		test( 'should return false if no request has been made for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -52,7 +52,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if request has finished for site post type', () => {
+		test( 'should return false if request has finished for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -73,7 +73,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if requesting for site post type', () => {
+		test( 'should return true if requesting for site post type', () => {
 			const isRequesting = isRequestingPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -96,7 +96,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPostTypeTaxonomies()', () => {
-		it( 'should return null if taxonomies are not known', () => {
+		test( 'should return null if taxonomies are not known', () => {
 			const taxonomies = getPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -112,7 +112,7 @@ describe( 'selectors', () => {
 			expect( taxonomies ).to.be.null;
 		} );
 
-		it( 'should return an array of known taxonomies', () => {
+		test( 'should return an array of known taxonomies', () => {
 			const taxonomies = getPostTypeTaxonomies(
 				{
 					postTypes: {
@@ -146,7 +146,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getPostTypeTaxonomy', () => {
-		it( 'should return null if taxonomies are not known', () => {
+		test( 'should return null if taxonomies are not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -163,7 +163,7 @@ describe( 'selectors', () => {
 			expect( taxonomy ).to.be.null;
 		} );
 
-		it( 'should return null if post type is not known', () => {
+		test( 'should return null if post type is not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -193,7 +193,7 @@ describe( 'selectors', () => {
 			expect( taxonomy ).to.be.null;
 		} );
 
-		it( 'should return null if taxonomy is not known', () => {
+		test( 'should return null if taxonomy is not known', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {
@@ -223,7 +223,7 @@ describe( 'selectors', () => {
 			expect( taxonomy ).to.be.null;
 		} );
 
-		it( 'should return a known taxonomy', () => {
+		test( 'should return a known taxonomy', () => {
 			const taxonomy = getPostTypeTaxonomy(
 				{
 					postTypes: {

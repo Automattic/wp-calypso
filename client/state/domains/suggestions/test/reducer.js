@@ -31,17 +31,17 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should export expected reducer keys', () => {
+	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index suggestions by serialized query', () => {
+		test( 'should index suggestions by serialized query', () => {
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate domain suggestions', () => {
+		test( 'should accumulate domain suggestions', () => {
 			const original = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 					{
@@ -121,7 +121,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous domains suggestions', () => {
+		test( 'should override previous domains suggestions', () => {
 			const original = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 					{
@@ -193,7 +193,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'persists state', () => {
+			test( 'persists state', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 						{
@@ -214,7 +214,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads valid persisted state', () => {
+			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 						{
@@ -235,7 +235,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads default state when schema does not match', () => {
+			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
 					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 						{ cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
@@ -249,12 +249,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by serialized query', () => {
+		test( 'should index requesting state by serialized query', () => {
 			const queryObject = {
 				query: 'example',
 				quantity: 2,
@@ -270,7 +270,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update requesting state on success', () => {
+		test( 'should update requesting state on success', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -290,7 +290,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update requesting state on failure', () => {
+		test( 'should update requesting state on failure', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -310,7 +310,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate requesting state by query', () => {
+		test( 'should accumulate requesting state by query', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -333,12 +333,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#errors()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = errors( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should update errors on failure', () => {
+		test( 'should update errors on failure', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -360,7 +360,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update errors on success', () => {
+		test( 'should update errors on success', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
@@ -381,7 +381,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update errors on request', () => {
+		test( 'should update errors on request', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
@@ -402,7 +402,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update errors on failure', () => {
+		test( 'should update errors on failure', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -424,7 +424,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate errors by queries', () => {
+		test( 'should accumulate errors by queries', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,

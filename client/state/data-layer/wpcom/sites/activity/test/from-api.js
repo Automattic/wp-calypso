@@ -44,10 +44,11 @@ const VALID_API_ITEM = deepFreeze( {
 	gridicon: 'posts',
 	activity_id: 'foobarbaz',
 	status: 'warning',
+	is_rewindable: false,
 } );
 
 describe( 'processItem', () => {
-	it( 'should process an item', () => {
+	test( 'should process an item', () => {
 		expect( processItem( VALID_API_ITEM ) )
 			.to.be.an( 'object' )
 			.that.has.keys( [
@@ -55,6 +56,7 @@ describe( 'processItem', () => {
 				'activityGroup',
 				'activityIcon',
 				'activityId',
+				'activityIsRewindable',
 				'activityName',
 				'activityStatus',
 				'activityTitle',

@@ -48,18 +48,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requests', 'items' ] );
 	} );
 
 	describe( 'requests()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should track stats list request fetching', () => {
+		test( 'should track stats list request fetching', () => {
 			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST,
 				siteId: 2916284,
@@ -79,7 +79,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate queries', () => {
+		test( 'should accumulate queries', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -114,7 +114,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track stats request success', () => {
+		test( 'should track stats request success', () => {
 			const today = new Date();
 			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST_SUCCESS,
@@ -137,7 +137,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should track stats request failure', () => {
+		test( 'should track stats request failure', () => {
 			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST_FAILURE,
 				siteId: 2916284,
@@ -158,7 +158,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -175,7 +175,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -194,7 +194,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -220,7 +220,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
@@ -231,13 +231,13 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should add received stats', () => {
+		test( 'should add received stats', () => {
 			const state = items( undefined, {
 				type: SITE_STATS_RECEIVE,
 				siteId: 2916284,
@@ -255,7 +255,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate received stats by statType', () => {
+		test( 'should accumulate received stats by statType', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -282,7 +282,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should change root site property when received stats by statType', () => {
+		test( 'should change root site property when received stats by statType', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -302,7 +302,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ] ).to.not.equal( original[ 2916284 ] );
 		} );
 
-		it( 'should add additional statTypes', () => {
+		test( 'should add additional statTypes', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -331,7 +331,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should should not change another statTypes property', () => {
+		test( 'should should not change another statTypes property', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -351,7 +351,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].statsStreak ).to.equal( original[ 2916284 ].statsStreak );
 		} );
 
-		it( 'should not change another site property', () => {
+		test( 'should not change another site property', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {

@@ -22,11 +22,11 @@ import {
 describe( "editor's contact form state reducer", () => {
 	let reducer;
 
-	before( () => {
+	beforeAll( () => {
 		reducer = require( '../reducer' );
 	} );
 
-	it( 'should return the default contact form when neither state nor action is provided', () => {
+	test( 'should return the default contact form when neither state nor action is provided', () => {
 		const state = reducer( undefined, {} );
 
 		assert.deepEqual( state, CONTACT_FORM_DEFAULT );
@@ -38,7 +38,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'load form', () => {
-		it( 'should override the state with the provided contact form', () => {
+		test( 'should override the state with the provided contact form', () => {
 			const contactForm = deepFreeze( {
 				to: 'user@example.com',
 				subject: 'here be dragons',
@@ -70,7 +70,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'add default field', () => {
-		it( 'should add the default new field to the provided state', () => {
+		test( 'should add the default new field to the provided state', () => {
 			const contactForm = deepFreeze( {
 				fields: [
 					{ label: 'Name' },
@@ -95,7 +95,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should add the default new field to the inital state when no state is provided', () => {
+		test( 'should add the default new field to the inital state when no state is provided', () => {
 			const state = reducer( undefined, { type: EDITOR_CONTACT_FORM_FIELD_ADD } );
 
 			assert.deepEqual( state, {
@@ -119,7 +119,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'remove field', () => {
-		it( 'should remove a field from the provided state by index', () => {
+		test( 'should remove a field from the provided state by index', () => {
 			const contactForm = deepFreeze( {
 				fields: [
 					{ label: 'Name' },
@@ -139,7 +139,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should not mutate the inital state when no state is provided', () => {
+		test( 'should not mutate the inital state when no state is provided', () => {
 			const state = reducer( undefined, {
 				type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 				index: 2,
@@ -168,7 +168,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'reset global state', () => {
-		it( "should add the default new field to the state's fields list", () => {
+		test( "should add the default new field to the state's fields list", () => {
 			const state = reducer(
 				{
 					fields: [ { label: 'Name' }, { label: 'Email' } ],
@@ -193,7 +193,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'update field', () => {
-		it( 'should update a field by index', () => {
+		test( 'should update a field by index', () => {
 			const contactForm = deepFreeze( {
 				fields: [
 					{ label: 'Name' },
@@ -219,7 +219,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should update field options', () => {
+		test( 'should update field options', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'Drop Down List', type: 'radio', options: 'option one,option two' } ],
 			} );
@@ -237,7 +237,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should remove the field options when chaning from radio', () => {
+		test( 'should remove the field options when chaning from radio', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'Drop Down List', type: 'radio', options: 'option1,option2,option3' } ],
 			} );
@@ -253,7 +253,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should remove the field options when chaning from drop down', () => {
+		test( 'should remove the field options when chaning from drop down', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'Drop Down List', type: 'select', options: 'option1,option2,option3' } ],
 			} );
@@ -269,7 +269,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should add default options when changing to radio', () => {
+		test( 'should add default options when changing to radio', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'Name', type: 'text' } ],
 			} );
@@ -285,7 +285,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should add default options when changing to drop down', () => {
+		test( 'should add default options when changing to drop down', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'Name', type: 'text' } ],
 			} );
@@ -301,7 +301,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should preserve options when changing between radio and drop down', () => {
+		test( 'should preserve options when changing between radio and drop down', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'List', type: 'select', options: 'option1,option2' } ],
 			} );
@@ -317,7 +317,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should allow empty options for radio buttons', () => {
+		test( 'should allow empty options for radio buttons', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'List', type: 'radio', options: 'option1,option2' } ],
 			} );
@@ -333,7 +333,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should allow empty options for drop down lists', () => {
+		test( 'should allow empty options for drop down lists', () => {
 			const contactForm = deepFreeze( {
 				fields: [ { label: 'List', type: 'select', options: 'option1,option2' } ],
 			} );
@@ -351,7 +351,7 @@ describe( "editor's contact form state reducer", () => {
 	} );
 
 	describe( 'update settings', () => {
-		it( 'should update the form destination address', () => {
+		test( 'should update the form destination address', () => {
 			const contactForm = deepFreeze( {
 				to: 'user@example.com',
 				subject: 'here be dragons',
@@ -380,7 +380,7 @@ describe( "editor's contact form state reducer", () => {
 			} );
 		} );
 
-		it( 'should update the form subject line', () => {
+		test( 'should update the form subject line', () => {
 			const contactForm = deepFreeze( {
 				to: 'user@example.com',
 				subject: 'here be dragons',

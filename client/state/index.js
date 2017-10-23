@@ -35,6 +35,7 @@ import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
+import jitm from './jitm/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
@@ -106,6 +107,7 @@ const reducers = {
 	jetpackConnect,
 	jetpack,
 	jetpackSync,
+	jitm,
 	login,
 	media,
 	notices,

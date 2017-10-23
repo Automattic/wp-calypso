@@ -13,7 +13,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"support_locales": [ "en", "es", "pt-br" ],
+	"support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
@@ -37,6 +41,7 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack_core_inline_update": true,
+		"jitms": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
@@ -88,6 +93,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
@@ -129,11 +135,12 @@
 		"woocommerce/extension-promotions": false,
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
+		"woocommerce/extension-settings-email": true,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-stripe-connect-flows": false,
 		"woocommerce/extension-settings-tax": true,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": false
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",

@@ -31,10 +31,10 @@ function asyncTransform( post, callback ) {
 	process.nextTick( callback );
 }
 
-describe( 'index', function() {
+describe( 'index', () => {
 	let normalizer, safeImageUrlFake, allTransforms;
 
-	before( function() {
+	beforeAll( function() {
 		normalizer = require( '../' );
 		safeImageUrlFake = require( 'lib/safe-image-url' );
 		allTransforms = [
@@ -60,18 +60,18 @@ describe( 'index', function() {
 		];
 	} );
 
-	it( 'should export a function', function() {
+	test( 'should export a function', () => {
 		assert.equal( typeof normalizer, 'function' );
 	} );
 
-	it( 'should return null if passed null', function( done ) {
+	test( 'should return null if passed null', done => {
 		normalizer( null, null, function( err, post ) {
 			assert.strictEqual( post, null );
 			done( err );
 		} );
 	} );
 
-	it( 'should return a copy of what it was passed', function( done ) {
+	test( 'should return a copy of what it was passed', done => {
 		const post = {};
 		normalizer( post, [ identifyTransform ], function( err, normalized ) {
 			assert.notStrictEqual( normalized, post );
@@ -79,7 +79,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'should leave an empty object alone', function( done ) {
+	test( 'should leave an empty object alone', done => {
 		const post = {};
 		normalizer( post, allTransforms, function( err, normalized ) {
 			assert.deepEqual( normalized, post );
@@ -87,7 +87,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'should support async transforms', function( done ) {
+	test( 'should support async transforms', done => {
 		const post = {
 			title: 'title',
 		};
@@ -97,7 +97,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'should pass along an error if a transform yields one', function( done ) {
+	test( 'should pass along an error if a transform yields one', done => {
 		function errorInTransform( post, callback ) {
 			callback( new Error( ' oh no' ) );
 		}
@@ -109,7 +109,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'should pass along an error if an async transform yields one', function( done ) {
+	test( 'should pass along an error if an async transform yields one', done => {
 		function errorInTransform( post, callback ) {
 			process.nextTick( function() {
 				callback( new Error( ' oh no' ) );
@@ -123,7 +123,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'can decode entities', function( done ) {
+	test( 'can decode entities', done => {
 		const post = {
 			title: 'title <i>&amp; bar</i>',
 			excerpt: 'excerpt &amp; bar',
@@ -144,7 +144,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'can prevent widows', function( done ) {
+	test( 'can prevent widows', done => {
 		const post = {
 			excerpt: 'this is a longer excerpt bar',
 		};
@@ -157,7 +157,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'can prevent widows in empty strings', function( done ) {
+	test( 'can prevent widows in empty strings', done => {
 		const post = {
 			excerpt: '   ',
 		};
@@ -170,7 +170,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	it( 'can remove html tags', function( done ) {
+	test( 'can remove html tags', done => {
 		const post = {
 			title: 'title <b>bar</b>',
 			excerpt: 'excerpt <b style="foo">bar</style>',
@@ -191,8 +191,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'makeSiteIDSafeForAPI', function() {
-		it( 'can make siteIDs into strings', function( done ) {
+	describe( 'makeSiteIDSafeForAPI', () => {
+		test( 'can make siteIDs into strings', done => {
 			normalizer(
 				{
 					site_id: 12345,
@@ -205,7 +205,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'can normalized the site_id for the api by replacing :: with /', function( done ) {
+		test( 'can normalized the site_id for the api by replacing :: with /', done => {
 			normalizer(
 				{
 					site_id: 'foo::bar',
@@ -220,8 +220,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'safeImageProperties', function() {
-		it( 'can make image properties safe', function( done ) {
+	describe( 'safeImageProperties', () => {
+		test( 'can make image properties safe', done => {
 			const post = {
 				author: {
 					avatar_URL: 'http://example.com/me.jpg',
@@ -274,7 +274,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'will ignore featured_media that is not of type "image"', function( done ) {
+		test( 'will ignore featured_media that is not of type "image"', done => {
 			const post = {
 				featured_media: {
 					uri: 'http://example.com/media.jpg',
@@ -287,10 +287,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'pickPrimaryTag', function() {
-		it( 'can pick the primary tag by taking the tag with the highest post_count as the primary', function(
-			done
-		) {
+	describe( 'pickPrimaryTag', () => {
+		test( 'can pick the primary tag by taking the tag with the highest post_count as the primary', done => {
 			const post = {
 				tags: {
 					first: {
@@ -310,9 +308,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'can pick the primary tag by taking the first tag as primary if there is a tie', function(
-			done
-		) {
+		test( 'can pick the primary tag by taking the first tag as primary if there is a tie', done => {
 			const post = {
 				tags: {
 					first: {
@@ -333,8 +329,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.disableAutoPlayOnMediaShortcodes', function() {
-		it( 'should strip autoplay attributes from video', function( done ) {
+	describe( 'content.disableAutoPlayOnMediaShortcodes', () => {
+		test( 'should strip autoplay attributes from video', done => {
 			normalizer(
 				{
 					content: '<video autoplay="1"></video>',
@@ -347,7 +343,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'should strip autoplay attributes from audio', function( done ) {
+		test( 'should strip autoplay attributes from audio', done => {
 			normalizer(
 				{
 					content: '<audio autoplay="1"></audio>',
@@ -361,8 +357,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'the content normalizer (withContentDOM)', function() {
-		it( 'should not call nested transforms if content is blank', function( done ) {
+	describe( 'the content normalizer (withContentDOM)', () => {
+		test( 'should not call nested transforms if content is blank', done => {
 			const post = {
 				content: '',
 			};
@@ -375,9 +371,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'should provide a __contentDOM property to transforms and remove it after', function(
-			done
-		) {
+		test( 'should provide a __contentDOM property to transforms and remove it after', done => {
 			function detectTimeTransform( post, dom ) {
 				assert.ok( dom );
 				assert.ok( dom.querySelectorAll );
@@ -397,8 +391,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.removeStyles ', function() {
-		it( 'can strip style attributes and style elements', function( done ) {
+	describe( 'content.removeStyles ', () => {
+		test( 'can strip style attributes and style elements', done => {
 			normalizer(
 				{
 					content: '<style>.foo{}</style><div style="width: 100000px">some content</div>',
@@ -411,7 +405,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'can strip align attributes from non images', function( done ) {
+		test( 'can strip align attributes from non images', done => {
 			normalizer(
 				{
 					content: '<div align="left"><img align="right" />some content</div>',
@@ -424,7 +418,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'leaves galleries intact', function( done ) {
+		test( 'leaves galleries intact', done => {
 			normalizer(
 				{
 					content:
@@ -442,7 +436,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'leaves twitter emdeds intact', function( done ) {
+		test( 'leaves twitter emdeds intact', done => {
 			normalizer(
 				{
 					content:
@@ -462,7 +456,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'leaves instagram emdeds intact', function( done ) {
+		test( 'leaves instagram emdeds intact', done => {
 			normalizer(
 				{
 					content:
@@ -485,7 +479,7 @@ describe( 'index', function() {
 	} );
 
 	describe( 'makeLinksSafe', () => {
-		it( 'can make links in the post safe', done => {
+		test( 'can make links in the post safe', done => {
 			normalizer(
 				{ content: '', URL: 'javascript:foo' },
 				[ normalizer.makeLinksSafe ],
@@ -497,7 +491,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.makeContentLinksSafe', function() {
+	describe( 'content.makeContentLinksSafe', () => {
 		const badLinks = [
 			'javascript:foo',
 			'gopher:uminn.edu',
@@ -506,7 +500,7 @@ describe( 'index', function() {
 			'feed://example.com',
 		];
 		badLinks.forEach( badLink => {
-			it( 'can remove javascript: links', done => {
+			test( 'can remove javascript: links', done => {
 				normalizer(
 					{ content: '<a href="' + badLink + '">hi there</a>' },
 					[ normalizer.withContentDOM( [ normalizer.content.makeContentLinksSafe ] ) ],
@@ -519,8 +513,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.makeImagesSafe', function() {
-		it( 'can route all images through wp-safe-image if no size specified', function( done ) {
+	describe( 'content.makeImagesSafe', () => {
+		test( 'can route all images through wp-safe-image if no size specified', done => {
 			normalizer(
 				{
 					content:
@@ -537,7 +531,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'updates images with relative sources to use the post domain', function( done ) {
+		test( 'updates images with relative sources to use the post domain', done => {
 			normalizer(
 				{
 					URL: 'http://example.wordpress.com/?post=123',
@@ -555,7 +549,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'handles relative images with dot segments', function( done ) {
+		test( 'handles relative images with dot segments', done => {
 			normalizer(
 				{
 					URL: 'http://example.wordpress.com/2015/01/my-post/',
@@ -572,7 +566,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'can route all images through photon if a size is specified', function( done ) {
+		test( 'can route all images through photon if a size is specified', done => {
 			normalizer(
 				{
 					content:
@@ -590,7 +584,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'can remove images that cannot be made safe', function( done ) {
+		test( 'can remove images that cannot be made safe', done => {
 			safeImageUrlFake.setReturns( null );
 			normalizer(
 				{
@@ -605,7 +599,7 @@ describe( 'index', function() {
 			safeImageUrlFake.undoReturns();
 		} );
 
-		it( 'can allow images that cannot be made safe but are from secure hosts', function( done ) {
+		test( 'can allow images that cannot be made safe but are from secure hosts', done => {
 			safeImageUrlFake.setReturns( null );
 			normalizer(
 				{
@@ -623,7 +617,7 @@ describe( 'index', function() {
 			safeImageUrlFake.undoReturns();
 		} );
 
-		it( 'removes event handlers from content images', function( done ) {
+		test( 'removes event handlers from content images', done => {
 			normalizer(
 				{
 					content: '<img onload="hi" onerror="there" src="http://example.com/example.jpg">',
@@ -636,7 +630,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes srcsets', function( done ) {
+		test( 'removes srcsets', done => {
 			normalizer(
 				{
 					content:
@@ -650,7 +644,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes invalid srcsets', function( done ) {
+		test( 'removes invalid srcsets', done => {
 			normalizer(
 				{
 					content:
@@ -665,8 +659,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'waitForImagesToLoad', function() {
-		it.skip( 'should fire when all images have loaded or errored', function( done ) {
+	describe( 'waitForImagesToLoad', () => {
+		test.skip( 'should fire when all images have loaded or errored', function( done ) {
 			// these need to be objects that mimic the Image object
 			const completeImage = {
 					complete: true,
@@ -700,7 +694,7 @@ describe( 'index', function() {
 			normalizer.waitForImagesToLoad( post, done );
 		} );
 
-		it.skip( 'should dedupe the images to check', function( done ) {
+		test.skip( 'should dedupe the images to check', function( done ) {
 			const first = {
 					complete: true,
 					src: 'http://example.com/one',
@@ -724,8 +718,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'canonical image picker', function() {
-		it( 'can pick the canonical image from images', function( done ) {
+	describe( 'canonical image picker', () => {
+		test( 'can pick the canonical image from images', done => {
 			const postRunThroughWaitForImagesToLoad = {
 				content_images: [
 					null, // null reference
@@ -763,7 +757,7 @@ describe( 'index', function() {
 			} );
 		} );
 
-		it( 'will pick featured_image if present and images missing', function( done ) {
+		test( 'will pick featured_image if present and images missing', done => {
 			normalizer(
 				{
 					post_thumbnail: {
@@ -780,9 +774,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'will pick post_thumbnail over featured_image if present and images missing', function(
-			done
-		) {
+		test( 'will pick post_thumbnail over featured_image if present and images missing', done => {
 			normalizer(
 				{
 					featured_image: 'http://example.com/featured.jpg',
@@ -806,8 +798,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'keepValidImages', function() {
-		it( 'should filter post.images based on size', function() {
+	describe( 'keepValidImages', () => {
+		test( 'should filter post.images based on size', () => {
 			function fakeImage( width, height ) {
 				return {
 					width: width,
@@ -834,8 +826,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.makeEmbedsSafe', function() {
-		it( 'makes iframes safe, rewriting to ssl and sandboxing', function( done ) {
+	describe( 'content.makeEmbedsSafe', () => {
+		test( 'makes iframes safe, rewriting to ssl and sandboxing', done => {
 			normalizer(
 				{
 					content: '<iframe src="http://example.com"></iframe>',
@@ -851,7 +843,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'allows trusted sources to be unsandboxed', function( done ) {
+		test( 'allows trusted sources to be unsandboxed', done => {
 			normalizer(
 				{
 					content: '<iframe src="http://spotify.com"></iframe>',
@@ -864,7 +856,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'applies the right level of sandboxing to whitelisted sources', function( done ) {
+		test( 'applies the right level of sandboxing to whitelisted sources', done => {
 			normalizer(
 				{
 					content: '<iframe src="http://youtube.com"></iframe>',
@@ -880,7 +872,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes iframes with an empty src', function( done ) {
+		test( 'removes iframes with an empty src', done => {
 			normalizer(
 				{
 					content: '<iframe src=""></iframe>',
@@ -893,7 +885,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes objects from external posts', function( done ) {
+		test( 'removes objects from external posts', done => {
 			normalizer(
 				{
 					is_external: true,
@@ -908,7 +900,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes embeds from external posts', function( done ) {
+		test( 'removes embeds from external posts', done => {
 			normalizer(
 				{
 					is_external: true,
@@ -923,8 +915,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.detectMedia', function() {
-		it( 'detects whitelisted iframes', function( done ) {
+	describe( 'content.detectMedia', () => {
+		test( 'detects whitelisted iframes', done => {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>',
@@ -948,7 +940,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'detects images intermixed with embeds and in the correct order', function( done ) {
+		test( 'detects images intermixed with embeds and in the correct order', done => {
 			normalizer(
 				{
 					content:
@@ -967,7 +959,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'detects images', function( done ) {
+		test( 'detects images', done => {
 			normalizer(
 				{
 					content: `<img src="example1.png" />
@@ -985,7 +977,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'detects trusted iframes', function( done ) {
+		test( 'detects trusted iframes', done => {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>',
@@ -1003,7 +995,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'detects youtube embed', function( done ) {
+		test( 'detects youtube embed', done => {
 			normalizer(
 				{
 					content:
@@ -1018,7 +1010,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'detects vimeo embed', function( done ) {
+		test( 'detects vimeo embed', done => {
 			normalizer(
 				{
 					content:
@@ -1031,7 +1023,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'empty content yields undefined', function( done ) {
+		test( 'empty content yields undefined', done => {
 			normalizer(
 				{
 					content: '',
@@ -1043,7 +1035,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'content with no embeds yields an empty array', function( done ) {
+		test( 'content with no embeds yields an empty array', done => {
 			normalizer(
 				{
 					content: '<p>foo</p>',
@@ -1055,7 +1047,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'ignores embeds from non-whitelisted providers', function( done ) {
+		test( 'ignores embeds from non-whitelisted providers', done => {
 			const badSrcs = [
 				'http://example.com',
 				'http://example.com?src=http://youtube.com',
@@ -1080,7 +1072,7 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'links to embedded Polldaddy polls', function( done ) {
+		test( 'links to embedded Polldaddy polls', done => {
 			normalizer(
 				{
 					content:
@@ -1101,7 +1093,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes elements by selector', function( done ) {
+		test( 'removes elements by selector', done => {
 			normalizer(
 				{
 					content: `
@@ -1129,7 +1121,7 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'The fancy excerpt creator', function() {
+	describe( 'The fancy excerpt creator', () => {
 		function assertExcerptBecomes( source, expected, done ) {
 			normalizer( { content: source }, [ normalizer.createBetterExcerpt ], function(
 				err,
@@ -1140,20 +1132,20 @@ describe( 'index', function() {
 			} );
 		}
 
-		it( 'strips empty elements, leading brs, and styling attributes', function( done ) {
+		test( 'strips empty elements, leading brs, and styling attributes', done => {
 			assertExcerptBecomes(
 				`<br>
-				<p>&nbsp;</p>
-				<p class="wp-caption">caption</p>
-				<p><img src="http://example.com/image.jpg"></p>
-				<p align="left" style="text-align:right"><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
-				<p></p>`,
+                <p>&nbsp;</p>
+                <p class="wp-caption">caption</p>
+                <p><img src="http://example.com/image.jpg"></p>
+                <p align="left" style="text-align:right"><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
+                <p></p>`,
 				'<p>Giraffes are <br>great</p>',
 				done
 			);
 		} );
 
-		it( 'strips leading brs even if they are nested', function( done ) {
+		test( 'strips leading brs even if they are nested', done => {
 			assertExcerptBecomes(
 				'<p><br>deep meaning lies within</p>',
 				'<p>deep meaning lies within</p>',
@@ -1161,7 +1153,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'strips multiple leading brs even if nested', function( done ) {
+		test( 'strips multiple leading brs even if nested', done => {
 			assertExcerptBecomes(
 				'<p><br><br><br></p><br><p><br></p>deep meaning lies within',
 				'deep meaning lies within',
@@ -1169,11 +1161,11 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'only trims break if there is no preceding text', function( done ) {
+		test( 'only trims break if there is no preceding text', done => {
 			assertExcerptBecomes( '<p>one<br>two</p>', '<p>one<br>two</p>', done );
 		} );
 
-		it( 'limits the excerpt to 3 elements', function( done ) {
+		test( 'limits the excerpt to 3 elements', done => {
 			assertExcerptBecomes(
 				'<p>one</p><p>two</p><p>three</p><p>four</p>',
 				'<p>one</p><p>two</p><p>three</p>',
@@ -1181,7 +1173,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'limits the excerpt to 3 elements after trimming', function( done ) {
+		test( 'limits the excerpt to 3 elements after trimming', done => {
 			assertExcerptBecomes(
 				'<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>',
 				'<p>one</p><p>two</p><br>',
@@ -1189,7 +1181,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'removes style tags', done => {
+		test( 'removes style tags', done => {
 			assertExcerptBecomes(
 				'<style>#foo{ color: blue; }</style><p>hi there</p>',
 				'<p>hi there</p>',
@@ -1197,7 +1189,7 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'builds the content without html', done => {
+		test( 'builds the content without html', done => {
 			const source = '<style>#foo{ color: blue; }</style><p>hi there</p>';
 			normalizer( { content: source }, [ normalizer.createBetterExcerpt ], function(
 				err,
@@ -1210,7 +1202,7 @@ describe( 'index', function() {
 	} );
 
 	describe( 'Jetpack Carousel Linker', () => {
-		it( 'should fix links to jetpack carousels', done => {
+		test( 'should fix links to jetpack carousels', done => {
 			const source = `
 				<div class="tiled-gallery"
 					data-carousel-extra="{&quot;permalink&quot;:&quot;https:\\/\\/example.com\\/foo\\/&quot;}">

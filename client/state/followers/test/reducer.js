@@ -15,7 +15,7 @@ import { getSerializedQuery } from 'state/followers/utils';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should key followers by id', () => {
+		test( 'should key followers by id', () => {
 			const state = items( null, {
 				type: FOLLOWERS_RECEIVE,
 				data: {
@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 				2: { ID: 2, avatar: 'url', avatar_URL: 'url' },
 			} );
 		} );
-		it( 'should accumulate followers', () => {
+		test( 'should accumulate followers', () => {
 			const original = deepFreeze( { 3: { ID: 3, avatar: 'url', avatar_URL: 'url' } } );
 			const state = items( original, {
 				type: FOLLOWERS_RECEIVE,
@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 				4: { ID: 4, avatar: 'url', avatar_URL: 'url' },
 			} );
 		} );
-		it( 'should overwrite an existing follower in the state with new data from the API', () => {
+		test( 'should overwrite an existing follower in the state with new data from the API', () => {
 			const original = deepFreeze( { 3: { ID: 3, avatar: 'url', avatar_URL: 'url' } } );
 			const state = items( original, {
 				type: FOLLOWERS_RECEIVE,
@@ -50,7 +50,7 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( { 3: { ID: 3, avatar: 'updated-url', avatar_URL: 'updated-url' } } );
 		} );
-		it( 'should remove a follower from the state', () => {
+		test( 'should remove a follower from the state', () => {
 			const original = deepFreeze( {
 				3: { ID: 3, avatar: 'url', avatar_URL: 'url' },
 				4: { ID: 4, avatar: 'url', avatar_URL: 'url' },
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 	describe( '#queries()', () => {
-		it( 'should only store the follower ids, total, and last page for a query', () => {
+		test( 'should only store the follower ids, total, and last page for a query', () => {
 			const query = { siteId: 1 };
 			const serializedQuery = getSerializedQuery( query );
 			const state = queries( undefined, {
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 1, 2 ], total: 1, lastPage: 1 } } );
 		} );
-		it( 'should create a separate closure for different queries', () => {
+		test( 'should create a separate closure for different queries', () => {
 			const query1 = { siteId: 1 };
 			const query2 = { siteId: 2 };
 			const serializedQuery1 = getSerializedQuery( query1 );
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 				[ serializedQuery2 ]: { ids: [ 1 ], total: 1, lastPage: 1 },
 			} );
 		} );
-		it( 'should accumulate follower ids and update total for identical queries', () => {
+		test( 'should accumulate follower ids and update total for identical queries', () => {
 			const query = { siteId: 1 };
 			const serializedQuery = getSerializedQuery( query );
 			const original = deepFreeze( { [ serializedQuery ]: { ids: [ 3 ], total: 1, lastPage: 1 } } );
@@ -114,7 +114,7 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 3, 4 ], total: 2, lastPage: 1 } } );
 		} );
-		it( 'should not repeat ids within the same query', () => {
+		test( 'should not repeat ids within the same query', () => {
 			const query = { siteId: 1 };
 			const serializedQuery = getSerializedQuery( query );
 			const original = deepFreeze( { [ serializedQuery ]: { ids: [ 1 ], total: 1, lastPage: 1 } } );
@@ -129,7 +129,7 @@ describe( 'reducer', () => {
 			} );
 			expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 1 ], total: 1, lastPage: 1 } } );
 		} );
-		it( 'should remove an id and update totals for all queries', () => {
+		test( 'should remove an id and update totals for all queries', () => {
 			const query1 = { siteId: 1 };
 			const query2 = { siteId: 2 };
 			const serializedQuery1 = getSerializedQuery( query1 );

@@ -19,9 +19,9 @@ import mockCountriesListEmpty from './mocks/mock-countries-list-empty';
 
 const countries = mockCountriesList.get();
 
-describe( 'FormPhoneInput', function() {
-	describe( 'getValue()', function() {
-		it( 'should set country from props', function() {
+describe( 'FormPhoneInput', () => {
+	describe( 'getValue()', () => {
+		test( 'should set country from props', () => {
 			const phoneComponent = shallow(
 				<FormPhoneInput
 					countriesList={ mockCountriesList }
@@ -31,12 +31,12 @@ describe( 'FormPhoneInput', function() {
 			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countries[ 1 ] );
 		} );
 
-		it( 'should set country to first element when not specified', function() {
+		test( 'should set country to first element when not specified', () => {
 			const phoneComponent = shallow( <FormPhoneInput countriesList={ mockCountriesList } /> );
 			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countries[ 0 ] );
 		} );
 
-		it( 'should update country on change', function() {
+		test( 'should update country on change', () => {
 			const phoneComponent = mount( <FormPhoneInput countriesList={ mockCountriesList } /> );
 			phoneComponent.find( 'select' ).simulate( 'change', {
 				target: {
@@ -47,12 +47,12 @@ describe( 'FormPhoneInput', function() {
 			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countries[ 1 ] );
 		} );
 
-		it( 'should have no country with empty countryList', function() {
+		test( 'should have no country with empty countryList', () => {
 			const phoneComponent = shallow( <FormPhoneInput countriesList={ mockCountriesListEmpty } /> );
 			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
 		} );
 
-		it( 'should update country on countryList change', function() {
+		test( 'should update country on countryList change', () => {
 			let phoneComponent = shallow( <FormPhoneInput countriesList={ mockCountriesListEmpty } /> );
 
 			// Render again with filled country list

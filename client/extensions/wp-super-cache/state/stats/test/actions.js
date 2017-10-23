@@ -77,7 +77,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			generateStats( siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -86,7 +86,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return generateStats( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
@@ -96,7 +96,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return generateStats( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
@@ -121,7 +121,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			deleteFile( siteId, url, true, false )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return deleteFile( siteId, url, true, false )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', () => {
 			return deleteFile( failedSiteId, url, true, false )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_FILE_FAILURE,

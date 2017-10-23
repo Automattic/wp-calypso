@@ -16,12 +16,14 @@ import { map } from 'lodash';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostListWrapper from './post-list-wrapper';
+import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import config from 'config';
 import Main from 'components/main';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
 import PostItem from 'blocks/post-item';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQuery,
@@ -85,11 +87,15 @@ const PostsMain = React.createClass( {
 			return null;
 		}
 
-		const { draftCount, translate } = this.props;
+		const { draftCount, translate, isMultiSelect } = this.props;
 		const isLoading = draftCount !== 0 && this.props.loadingDrafts;
 
+		const classes = classnames( 'posts__recent-drafts', {
+			'is-multiselect': isMultiSelect,
+		} );
+
 		return (
-			<div className="posts__recent-drafts">
+			<div className={ classes }>
 				<QueryPosts siteId={ siteId } query={ this.props.draftsQuery } />
 				<QueryPostCounts siteId={ siteId } type="post" />
 				<SectionHeader className="posts__drafts-header" label={ translate( 'Latest Drafts' ) }>
@@ -138,6 +144,7 @@ const PostsMain = React.createClass( {
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
+					<PostTypeBulkEditBar />
 					<PostListWrapper { ...this.props } />
 				</div>
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
@@ -180,6 +187,7 @@ function mapStateToProps( state, { author } ) {
 		draftsQuery,
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		isMultiSelect: isMultiSelectEnabled( state ),
 		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
 		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
 		newPostPath: getEditorNewPostPath( state, siteId ),

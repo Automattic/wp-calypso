@@ -24,18 +24,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to empty object', () => {
+		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store the product list received', () => {
+		test( 'should store the product list received', () => {
 			const productsList = [
 				{
 					guided_transfer: {
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			it( 'persists state', () => {
+			test( 'persists state', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
 						available: true,
@@ -82,7 +82,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads valid persisted state', () => {
+			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
 						available: true,
@@ -100,7 +100,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( original );
 			} );
 
-			it( 'loads default state when schema does not match', () => {
+			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
 						available: true,
@@ -116,34 +116,34 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#isFetching()', () => {
-		it( 'should default to false', () => {
+		test( 'should default to false', () => {
 			const state = isFetching( undefined, {} );
 
 			expect( state ).to.eql( false );
 		} );
 
-		it( 'should be true after a request begins', () => {
+		test( 'should be true after a request begins', () => {
 			const state = isFetching( false, { type: PRODUCTS_LIST_REQUEST } );
 			expect( state ).to.eql( true );
 		} );
 
-		it( 'should be false when a request completes', () => {
+		test( 'should be false when a request completes', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_RECEIVE } );
 			expect( state ).to.eql( false );
 		} );
 
-		it( 'should be false when a request fails', () => {
+		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
 			expect( state ).to.eql( false );
 		} );
 
-		it( 'should never persist state', () => {
+		test( 'should never persist state', () => {
 			const state = isFetching( true, { type: SERIALIZE } );
 
 			expect( state ).to.eql( false );
 		} );
 
-		it( 'should never load persisted state', () => {
+		test( 'should never load persisted state', () => {
 			const state = isFetching( true, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( false );

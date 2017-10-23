@@ -11,17 +11,17 @@ import { expect } from 'chai';
 import generateEmbedFrameMarkup from '../';
 
 describe( '#generateEmbedFrameMarkup()', () => {
-	it( 'should return an empty string if no arguments passed', () => {
+	test( 'should return an empty string if no arguments passed', () => {
 		expect( generateEmbedFrameMarkup() ).to.equal( '' );
 	} );
 
-	it( 'should generate markup with the body contents', () => {
+	test( 'should generate markup with the body contents', () => {
 		expect( generateEmbedFrameMarkup( { body: 'Hello World' } ) ).to.equal(
 			'<html><head><style>a { cursor: default; }</style></head><body style="margin:0;"><div>Hello World</div><script src="https://s0.wp.com/wp-includes/js/jquery/jquery.js"></script><script>\n\t\t\t\t\t[ \'click\', \'dragstart\' ].forEach( function( type ) {\n\t\t\t\t\t\tdocument.addEventListener( type, function( event ) {\n\t\t\t\t\t\t\tevent.preventDefault();\n\t\t\t\t\t\t\tevent.stopImmediatePropagation();\n\t\t\t\t\t\t}, true );\n\t\t\t\t\t} );\n\t\t\t\t</script></body></html>'
 		);
 	} );
 
-	it( 'should generate markup with styles', () => {
+	test( 'should generate markup with styles', () => {
 		const styles = {
 			'jetpack-carousel': {
 				src:
@@ -35,7 +35,7 @@ describe( '#generateEmbedFrameMarkup()', () => {
 		);
 	} );
 
-	it( 'should generate markup with scripts', () => {
+	test( 'should generate markup with scripts', () => {
 		const scripts = {
 			'jetpack-facebook-embed': {
 				src: 'https://s2.wp.com/wp-content/mu-plugins/shortcodes/js/facebook.js?ver',

@@ -9,17 +9,17 @@ describe( 'safeImageUrl()', () => {
 	let safeImageUrl;
 
 	function commonTests() {
-		it( 'should ignore a relative url', () => {
+		test( 'should ignore a relative url', () => {
 			expect( safeImageUrl( '/foo' ) ).to.equal( '/foo' );
 		} );
 
-		it( 'should ignore a data url', () => {
+		test( 'should ignore a data url', () => {
 			const dataImageUrl =
 				'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 			expect( safeImageUrl( dataImageUrl ) ).to.equal( dataImageUrl );
 		} );
 
-		it( 'should make a non-whitelisted protocol safe', () => {
+		test( 'should make a non-whitelisted protocol safe', () => {
 			[
 				'javascript:alert("foo")',
 				'data:application/json;base64,',
@@ -29,25 +29,25 @@ describe( 'safeImageUrl()', () => {
 			} );
 		} );
 
-		it( 'should make a non-wpcom http url safe', () => {
+		test( 'should make a non-wpcom http url safe', () => {
 			expect( safeImageUrl( 'http://example.com/foo' ) ).to.equal(
 				'https://i1.wp.com/example.com/foo'
 			);
 		} );
 
-		it( 'should make a non-wpcom https url safe', () => {
+		test( 'should make a non-wpcom https url safe', () => {
 			expect( safeImageUrl( 'https://example.com/foo' ) ).to.equal(
 				'https://i1.wp.com/example.com/foo?ssl=1'
 			);
 		} );
 
-		it( 'should make wp-com like subdomain url safe', () => {
+		test( 'should make wp-com like subdomain url safe', () => {
 			expect( safeImageUrl( 'https://wordpress.com.example.com/foo' ) ).to.equal(
 				'https://i0.wp.com/wordpress.com.example.com/foo?ssl=1'
 			);
 		} );
 
-		it( 'should make safe variations of urls testing extremes of safe patterns', () => {
+		test( 'should make safe variations of urls testing extremes of safe patterns', () => {
 			expect(
 				[
 					'https://examplewordpress.com/foo',
@@ -61,18 +61,18 @@ describe( 'safeImageUrl()', () => {
 			] );
 		} );
 
-		it( 'should make a non-wpcom protocol relative url safe', () => {
+		test( 'should make a non-wpcom protocol relative url safe', () => {
 			expect( safeImageUrl( '//example.com/foo' ) ).to.equal( 'https://i1.wp.com/example.com/foo' );
 		} );
 
-		it( 'should promote an http wpcom url to https', () => {
+		test( 'should promote an http wpcom url to https', () => {
 			expect( safeImageUrl( 'http://files.wordpress.com/' ) ).to.equal(
 				'https://files.wordpress.com/'
 			);
 			expect( safeImageUrl( 'http://wordpress.com/' ) ).to.equal( 'https://wordpress.com/' );
 		} );
 
-		it( 'should leave https wpcom url alone', () => {
+		test( 'should leave https wpcom url alone', () => {
 			expect( safeImageUrl( 'https://files.wordpress.com/' ) ).to.equal(
 				'https://files.wordpress.com/'
 			);
@@ -82,21 +82,21 @@ describe( 'safeImageUrl()', () => {
 			);
 		} );
 
-		it( 'should promote an http gravatar url to https', () => {
+		test( 'should promote an http gravatar url to https', () => {
 			expect( safeImageUrl( 'http://files.gravatar.com/' ) ).to.equal(
 				'https://files.gravatar.com/'
 			);
 			expect( safeImageUrl( 'http://gravatar.com/' ) ).to.equal( 'https://gravatar.com/' );
 		} );
 
-		it( 'should leave https gravatar url alone', () => {
+		test( 'should leave https gravatar url alone', () => {
 			expect( safeImageUrl( 'https://files.gravatar.com/' ) ).to.equal(
 				'https://files.gravatar.com/'
 			);
 			expect( safeImageUrl( 'https://gravatar.com/' ) ).to.equal( 'https://gravatar.com/' );
 		} );
 
-		it( 'should return null for urls with querystrings', () => {
+		test( 'should return null for urls with querystrings', () => {
 			expect( safeImageUrl( 'https://example.com/foo?bar' ) ).to.be.null;
 			expect( safeImageUrl( 'https://example.com/foo.jpg?bar' ) ).to.be.null;
 			expect( safeImageUrl( 'https://example.com/foo.jpeg?bar' ) ).to.be.null;
@@ -105,24 +105,24 @@ describe( 'safeImageUrl()', () => {
 		} );
 	}
 
-	context( 'browser', () => {
-		before( () => {
+	describe( 'browser', () => {
+		beforeAll( () => {
 			global.location = { origin: 'https://wordpress.com' };
 			delete require.cache[ require.resolve( '../' ) ];
 			safeImageUrl = require( '../' );
 		} );
 
-		after( () => {
+		afterAll( () => {
 			delete global.location;
 			delete require.cache[ require.resolve( '../' ) ];
 		} );
 
-		it( 'should ignore a blob url for current origin', () => {
+		test( 'should ignore a blob url for current origin', () => {
 			const originalUrl = 'blob:https://wordpress.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			expect( safeImageUrl( originalUrl ) ).to.equal( originalUrl );
 		} );
 
-		it( 'should make a blob url for other origin safe', () => {
+		test( 'should make a blob url for other origin safe', () => {
 			const originalUrl = 'blob:http://example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			const expectedUrl =
 				'https://i1.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
@@ -132,12 +132,12 @@ describe( 'safeImageUrl()', () => {
 		commonTests();
 	} );
 
-	context( 'node', () => {
-		before( () => {
+	describe( 'node', () => {
+		beforeAll( () => {
 			safeImageUrl = require( '../' );
 		} );
 
-		it( 'should make a blob url safe', () => {
+		test( 'should make a blob url safe', () => {
 			const originalUrl = 'blob:http://example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			const expectedUrl =
 				'https://i1.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';

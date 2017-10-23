@@ -20,7 +20,7 @@ import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-const EditorMediaModalDetail = React.createClass( {
+const EditorMediaModalDetailBase = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		items: PropTypes.array,
@@ -65,7 +65,6 @@ const EditorMediaModalDetail = React.createClass( {
 			items,
 			selectedIndex,
 			site,
-
 			onEditImageItem,
 			onEditVideoItem,
 			onRestoreItem,
@@ -96,8 +95,18 @@ const EditorMediaModalDetail = React.createClass( {
 	},
 } );
 
+// Don't move `localize()` to the default export (below)! See comment there.
+export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
+
+// The default export is only used by the post editor, which displays the image or
+// video editor depending on Redux state, which is set by the actions below.
+// In the Media library (i.e. `/media`) OTOH, we're explicitly passing `onEditImageItem`
+// and `onEditVideoItem` as props to the _named_ export (above), and use them to set
+// component state there to conditionally display the image/video editor.
+// (This is also the reason why we're `localize()`ing the named export.)
+// TODO: Fix this mess, rely on Redux state everywhere.
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( localize( EditorMediaModalDetail ) );
+} )( EditorMediaModalDetail );

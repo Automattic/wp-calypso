@@ -39,6 +39,11 @@ class PaymentMethodPaypal extends Component {
 
 	onEditFieldHandler = e => {
 		this.props.onEditField( e.target.name, e.target.value );
+
+		if ( 'email' === e.target.name ) {
+			// also set receiver_email to same value.
+			this.props.onEditField( 'receiver_email', e.target.value );
+		}
 	};
 
 	buttons = [

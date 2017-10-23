@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { isJetpackModuleUnavailableInDevelopmentMode } from '../';
 
 describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
-	it( 'should return null if the site modules are not known', () => {
+	test( 'should return null if the site modules are not known', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -28,7 +28,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 		expect( unavailable ).to.be.null;
 	} );
 
-	it( 'should return true for a module that requires connection', () => {
+	test( 'should return true for a module that requires connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -52,7 +52,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 		expect( unavailable ).to.be.true;
 	} );
 
-	it( 'should return false for a module that does not require connection', () => {
+	test( 'should return false for a module that does not require connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {
@@ -76,7 +76,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 		expect( unavailable ).to.be.false;
 	} );
 
-	it( 'should return false for a module that does not specify whether it requires connection', () => {
+	test( 'should return false for a module that does not specify whether it requires connection', () => {
 		const stateTree = {
 			jetpack: {
 				modules: {

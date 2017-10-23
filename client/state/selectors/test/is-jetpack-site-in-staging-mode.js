@@ -12,7 +12,7 @@ import { isJetpackSiteInStagingMode } from '../';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteInStagingMode()', () => {
-	it( 'should return true if the site is in staging mode', () => {
+	test( 'should return true if the site is in staging mode', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -25,7 +25,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 		expect( output ).to.be.true;
 	} );
 
-	it( 'should return false if the site is not in staging mode', () => {
+	test( 'should return false if the site is not in staging mode', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {
@@ -38,7 +38,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 		expect( output ).to.be.false;
 	} );
 
-	it( 'should return null if the site is not known yet', () => {
+	test( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
 					connection: {

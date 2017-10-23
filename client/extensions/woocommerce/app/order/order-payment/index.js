@@ -14,8 +14,8 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
-import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
@@ -63,6 +63,12 @@ class OrderPaymentCard extends Component {
 					refund: formatCurrency( refund, order.currency ),
 				},
 			} );
+		} else if ( 'cod' === order.payment_method && 'processing' === order.status ) {
+			paymentStatus = translate( 'Payment of %(total)s on delivery', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
+				},
+			} );
 		} else {
 			paymentStatus = translate( 'Payment of %(total)s received via %(method)s', {
 				args: {
@@ -76,7 +82,8 @@ class OrderPaymentCard extends Component {
 
 	getPaymentAction = () => {
 		const { order, translate } = this.props;
-		if ( 'refunded' === order.status ) {
+		const codProcessing = 'cod' === order.payment_method && 'processing' === order.status;
+		if ( 'refunded' === order.status || codProcessing ) {
 			return null;
 		} else if ( isOrderWaitingPayment( order.status ) ) {
 			return <Button onClick={ this.markAsPaid }>{ translate( 'Mark as Paid' ) }</Button>;
@@ -98,7 +105,7 @@ class OrderPaymentCard extends Component {
 	render() {
 		const { order } = this.props;
 
-		if ( 'cancelled' === order.status || 'failed' === order.status ) {
+		if ( isOrderFailed( order.status ) ) {
 			return null;
 		}
 

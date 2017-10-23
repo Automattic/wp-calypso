@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { getImageEditorOriginalAspectRatio } from '../';
 
 describe( 'getImageEditorOriginalAspectRatio()', () => {
-	it( 'should return null if the image has not loaded yet', () => {
+	test( 'should return null if the image has not loaded yet', () => {
 		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
 			ui: {
 				editor: {
@@ -25,7 +25,7 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 		expect( originalAspectRatio ).to.equal( null );
 	} );
 
-	it( 'should return the original aspect ratio', () => {
+	test( 'should return the original aspect ratio', () => {
 		const originalAspectRatio = getImageEditorOriginalAspectRatio( {
 			ui: {
 				editor: {

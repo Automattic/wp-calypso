@@ -121,4 +121,4 @@ function version_compare( v1, v2, operator ) {
 	}
 }
 
-module.exports = version_compare;
+export default version_compare;

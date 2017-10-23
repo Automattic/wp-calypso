@@ -12,11 +12,11 @@ import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 describe( 'SEO', () => {
 	describe( 'Title Format Editor', () => {
 		describe( '#nativeToRaw', () => {
-			it( 'should produce empty formats', () => {
+			test( 'should produce empty formats', () => {
 				expect( nativeToRaw( [] ) ).to.eql( [] );
 			} );
 
-			it( 'should produce plain-text strings', () => {
+			test( 'should produce plain-text strings', () => {
 				expect(
 					nativeToRaw( [
 						{ type: 'string', value: 'just' },
@@ -26,7 +26,7 @@ describe( 'SEO', () => {
 				).to.eql( [ { type: 'string', value: 'just a string' } ] );
 			} );
 
-			it( 'should convert token formats', () => {
+			test( 'should convert token formats', () => {
 				expect(
 					nativeToRaw( [
 						{ type: 'siteName' },
@@ -42,17 +42,17 @@ describe( 'SEO', () => {
 		} );
 
 		describe( '#rawToNative', () => {
-			it( 'should handle empty strings', () => {
+			test( 'should handle empty strings', () => {
 				expect( rawToNative( [] ) ).to.eql( [] );
 			} );
 
-			it( 'should handle plain strings', () => {
+			test( 'should handle plain strings', () => {
 				expect( rawToNative( [ { type: 'string', value: 'just a string' } ] ) ).to.eql( [
 					{ type: 'string', value: 'just a string' },
 				] );
 			} );
 
-			it( 'should convert token formats', () => {
+			test( 'should convert token formats', () => {
 				expect(
 					rawToNative( [
 						{ type: 'token', value: 'site_name' },
@@ -68,11 +68,11 @@ describe( 'SEO', () => {
 		} );
 
 		describe( '#fromApi', () => {
-			it( 'should produce empty formats', () => {
+			test( 'should produce empty formats', () => {
 				expect( fromApi( {} ) ).to.eql( {} );
 			} );
 
-			it( 'should remap keys and values', () => {
+			test( 'should remap keys and values', () => {
 				expect(
 					fromApi( {
 						front_page: [
@@ -93,11 +93,11 @@ describe( 'SEO', () => {
 		} );
 
 		describe( '#toApi', () => {
-			it( 'should produce empty formats', () => {
+			test( 'should produce empty formats', () => {
 				expect( toApi( {} ) ).to.eql( {} );
 			} );
 
-			it( 'should remap keys and values', () => {
+			test( 'should remap keys and values', () => {
 				expect(
 					toApi( {
 						frontPage: [ { type: 'siteName' }, { type: 'string', value: ' is awesome!' } ],

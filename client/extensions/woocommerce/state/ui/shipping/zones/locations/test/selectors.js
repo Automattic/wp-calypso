@@ -121,7 +121,7 @@ const createEditState = ( { zoneLocations, locationEdits } ) =>
 
 describe( 'selectors', () => {
 	describe( 'getShippingZoneLocationsWithEdits', () => {
-		it( 'should return null when the shipping zones are not fully loaded', () => {
+		test( 'should return null when the shipping zones are not fully loaded', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneLocationsWithEdits( state ) ).to.be.null;
 		} );
 
-		it( 'should return null when there is no zone currently being edited', () => {
+		test( 'should return null when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -154,7 +154,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneLocationsWithEdits( state ) ).to.be.null;
 		} );
 
-		it( 'should return null when there is no zone currently being edited', () => {
+		test( 'should return null when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],
@@ -181,7 +181,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return the original locations if there are no changes', () => {
+		test( 'should return the original locations if there are no changes', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -204,7 +204,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should add the continents logged in the journal', () => {
+		test( 'should add the continents logged in the journal', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -233,7 +233,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove the continents logged in the journal', () => {
+		test( 'should remove the continents logged in the journal', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -259,7 +259,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( "should add all the continent's countries instead of the continent if the locations already include countries", () => {
+		test( "should add all the continent's countries instead of the continent if the locations already include countries", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -285,7 +285,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should not add the countries that already belong to another zone', () => {
+		test( 'should not add the countries that already belong to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -317,7 +317,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( "should add remove all the continent's countries when adding the whole continent", () => {
+		test( "should add remove all the continent's countries when adding the whole continent", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -343,7 +343,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should add the countries logged in the journal', () => {
+		test( 'should add the countries logged in the journal', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -372,7 +372,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove the countries logged in the journal', () => {
+		test( 'should remove the countries logged in the journal', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -401,7 +401,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should replace all the continents with their respective countries when adding a country', () => {
+		test( 'should replace all the continents with their respective countries when adding a country', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -427,7 +427,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should not add the countries to the list of they already belong to another zone', () => {
+		test( 'should not add the countries to the list of they already belong to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -459,7 +459,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should allow selecting a single country even if it belongs to another zone', () => {
+		test( 'should allow selecting a single country even if it belongs to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -494,7 +494,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should allow selecting a second country even if the first belongs to another zone, but the first will be removed', () => {
+		test( 'should allow selecting a second country even if the first belongs to another zone, but the first will be removed', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -530,7 +530,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove the continent and add in its place all its countries when removing a country inside it', () => {
+		test( 'should remove the continent and add in its place all its countries when removing a country inside it', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -556,7 +556,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should not add the countries to the list if they already belong to another zone', () => {
+		test( 'should not add the countries to the list if they already belong to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -588,7 +588,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should process all the entries in the journal in order', () => {
+		test( 'should process all the entries in the journal in order', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -620,7 +620,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove all the states when there were country or continent additions or removals', () => {
+		test( 'should remove all the states when there were country or continent additions or removals', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -646,7 +646,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove the postcode when there were country or continent additions or removals', () => {
+		test( 'should remove the postcode when there were country or continent additions or removals', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -672,7 +672,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should add states to the locations', () => {
+		test( 'should add states to the locations', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -702,7 +702,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should remove states from the locations', () => {
+		test( 'should remove states from the locations', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -732,7 +732,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should both add and remove states on the locations', () => {
+		test( 'should both add and remove states on the locations', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -762,7 +762,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should clear the states list if the removeAll flag is set', () => {
+		test( 'should clear the states list if the removeAll flag is set', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -792,7 +792,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should clear the states list if the locations are not filtered by state anymore', () => {
+		test( 'should clear the states list if the locations are not filtered by state anymore', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -818,7 +818,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should clear the postcode if the locations are not filtered by postcode anymore', () => {
+		test( 'should clear the postcode if the locations are not filtered by postcode anymore', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -844,7 +844,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should overlay temporary edits by default', () => {
+		test( 'should overlay temporary edits by default', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -876,7 +876,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should NOT overlay temporary edits if specified', () => {
+		test( 'should NOT overlay temporary edits if specified', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -910,7 +910,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isEditLocationsModalOpen', () => {
-		it( 'should return false when there is no shipping zone being edited', () => {
+		test( 'should return false when there is no shipping zone being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -931,7 +931,7 @@ describe( 'selectors', () => {
 			expect( isEditLocationsModalOpen( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are no temporary changes', () => {
+		test( 'should return false when there are no temporary changes', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -947,7 +947,7 @@ describe( 'selectors', () => {
 			expect( isEditLocationsModalOpen( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are temporary changes (even empty changes)', () => {
+		test( 'should return false when there are temporary changes (even empty changes)', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -965,7 +965,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'canLocationsBeFiltered', () => {
-		it( 'should return false when there are continents selected', () => {
+		test( 'should return false when there are continents selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -981,7 +981,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are multiple countries selected', () => {
+		test( 'should return false when there are multiple countries selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -997,7 +997,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is no country selected', () => {
+		test( 'should return false when there is no country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1021,7 +1021,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a single country selected', () => {
+		test( 'should return true when there is a single country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1037,7 +1037,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFiltered( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country selected with states', () => {
+		test( 'should return true when there is a single country selected with states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1053,7 +1053,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFiltered( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country selected with postcode filter', () => {
+		test( 'should return true when there is a single country selected with postcode filter', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1071,7 +1071,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentSelectedCountryZoneOwner', () => {
-		it( "should return null when the zone locations can't be filtered", () => {
+		test( "should return null when the zone locations can't be filtered", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1092,7 +1092,7 @@ describe( 'selectors', () => {
 			expect( getCurrentSelectedCountryZoneOwner( state ) ).to.be.nil;
 		} );
 
-		it( 'should return null when there are no other zones that have the current country', () => {
+		test( 'should return null when there are no other zones that have the current country', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1122,7 +1122,7 @@ describe( 'selectors', () => {
 			expect( getCurrentSelectedCountryZoneOwner( state ) ).to.be.nil;
 		} );
 
-		it( 'should return null when there are no other zones that own the *whole* country', () => {
+		test( 'should return null when there are no other zones that own the *whole* country', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1144,7 +1144,7 @@ describe( 'selectors', () => {
 			expect( getCurrentSelectedCountryZoneOwner( state ) ).to.be.nil;
 		} );
 
-		it( 'should return the zone ID that owns the current country', () => {
+		test( 'should return the zone ID that owns the current country', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1179,7 +1179,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'canLocationsBeFilteredByState', () => {
-		it( 'should return false when there are continents selected', () => {
+		test( 'should return false when there are continents selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1195,7 +1195,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are multiple countries selected', () => {
+		test( 'should return false when there are multiple countries selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1211,7 +1211,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is no country selected', () => {
+		test( 'should return false when there is no country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1235,7 +1235,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a single country selected, and it has states', () => {
+		test( 'should return true when there is a single country selected, and it has states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1251,7 +1251,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country selected with states', () => {
+		test( 'should return true when there is a single country selected with states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1267,7 +1267,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country selected with postcode filter, and it has states', () => {
+		test( 'should return true when there is a single country selected with postcode filter, and it has states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1283,7 +1283,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country selected, and it does not have states', () => {
+		test( 'should return true when there is a single country selected, and it does not have states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1299,7 +1299,7 @@ describe( 'selectors', () => {
 			expect( canLocationsBeFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a single country selected with postcode filter, and it does not have states', () => {
+		test( 'should return false when there is a single country selected with postcode filter, and it does not have states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1317,7 +1317,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'areLocationsFilteredByPostcode', () => {
-		it( 'should return false when there are continents selected', () => {
+		test( 'should return false when there are continents selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1333,7 +1333,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are multiple countries selected', () => {
+		test( 'should return false when there are multiple countries selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1349,7 +1349,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is no country selected', () => {
+		test( 'should return false when there is no country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1373,7 +1373,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a whole single country selected', () => {
+		test( 'should return false when there is a whole single country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1389,7 +1389,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a whole country selected but the it belongs to other zone', () => {
+		test( 'should return false when there is a whole country selected but the it belongs to other zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1422,7 +1422,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a whole country selected but the it belongs to other zone and does not allow states', () => {
+		test( 'should return true when there is a whole country selected but the it belongs to other zone and does not allow states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1455,7 +1455,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.true;
 		} );
 
-		it( 'should return false when there is a single country selected, filtered by states', () => {
+		test( 'should return false when there is a single country selected, filtered by states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1483,7 +1483,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a single country with postcode selected, but the postcode filter was removed', () => {
+		test( 'should return false when there is a single country with postcode selected, but the postcode filter was removed', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1507,7 +1507,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a single country with postcode selected', () => {
+		test( 'should return true when there is a single country with postcode selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1523,7 +1523,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByPostcode( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country with postcode selected, and the postcode was edited', () => {
+		test( 'should return true when there is a single country with postcode selected, and the postcode was edited', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1549,7 +1549,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'areLocationsFilteredByState', () => {
-		it( 'should return false when there are continents selected', () => {
+		test( 'should return false when there are continents selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1565,7 +1565,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are multiple countries selected', () => {
+		test( 'should return false when there are multiple countries selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1581,7 +1581,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is no country selected', () => {
+		test( 'should return false when there is no country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1605,7 +1605,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a whole single country selected', () => {
+		test( 'should return false when there is a whole single country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1621,7 +1621,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a whole single country selected but it belongs to another zone', () => {
+		test( 'should return true when there is a whole single country selected but it belongs to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1654,7 +1654,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.true;
 		} );
 
-		it( 'should return false when there is a single country selected, filtered by postcode', () => {
+		test( 'should return false when there is a single country selected, filtered by postcode', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1678,7 +1678,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a single country with states selected, but the states filter was removed', () => {
+		test( 'should return false when there is a single country with states selected, but the states filter was removed', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1702,7 +1702,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a single country with states selected', () => {
+		test( 'should return true when there is a single country with states selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1730,7 +1730,7 @@ describe( 'selectors', () => {
 			expect( areLocationsFilteredByState( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when there is a single country with states selected, and the states filter was edited', () => {
+		test( 'should return true when there is a single country with states selected, and the states filter was edited', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1760,7 +1760,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'areLocationsUnfiltered', () => {
-		it( 'should return false when there are continents selected', () => {
+		test( 'should return false when there are continents selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1776,7 +1776,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there are multiple countries selected', () => {
+		test( 'should return false when there are multiple countries selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1792,7 +1792,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is no country selected', () => {
+		test( 'should return false when there is no country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1816,7 +1816,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when there is a whole single country selected', () => {
+		test( 'should return true when there is a whole single country selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1840,7 +1840,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.true;
 		} );
 
-		it( 'should return false when there is a whole single country selected but it belongs to another zone', () => {
+		test( 'should return false when there is a whole single country selected but it belongs to another zone', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1873,7 +1873,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a single country selected, filtered by postcode', () => {
+		test( 'should return false when there is a single country selected, filtered by postcode', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1897,7 +1897,7 @@ describe( 'selectors', () => {
 			expect( areLocationsUnfiltered( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when there is a single country with states selected', () => {
+		test( 'should return false when there is a single country with states selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1927,7 +1927,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneLocationsList', () => {
-		it( 'should return an empty list if the locations are not available', () => {
+		test( 'should return an empty list if the locations are not available', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: LOADING,
@@ -1938,7 +1938,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyEditingShippingZoneLocationsList( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return a list of continents if the locations are only continents, sorted by name', () => {
+		test( 'should return a list of continents if the locations are only continents, sorted by name', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1965,7 +1965,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should return a list of countries if the locations are only countries, sorted by name', () => {
+		test( 'should return a list of countries if the locations are only countries, sorted by name', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1994,7 +1994,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should return a list of states if the locations are only states, sorted by name', () => {
+		test( 'should return a list of states if the locations are only states, sorted by name', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2025,7 +2025,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should return the country info and the postcode filter info if the locations are a country plus a postcode', () => {
+		test( 'should return the country info and the postcode filter info if the locations are a country plus a postcode', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2048,7 +2048,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should apply the commited edits, but not the temporal edits', () => {
+		test( 'should apply the commited edits, but not the temporal edits', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2088,7 +2088,7 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		it( 'should group countries into continents if necessary', () => {
+		test( 'should group countries into continents if necessary', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2121,7 +2121,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneCountries', () => {
-		it( 'should return all the continents and countries, sorted hierarchically and by name', () => {
+		test( 'should return all the continents and countries, sorted hierarchically and by name', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2217,7 +2217,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneStates', () => {
-		it( 'should return an empty list when the locations are not filtered by state', () => {
+		test( 'should return an empty list when the locations are not filtered by state', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2239,7 +2239,7 @@ describe( 'selectors', () => {
 			expect( getCurrentlyEditingShippingZoneStates( state ) ).to.deep.equal( [] );
 		} );
 
-		it( 'should return all the country states, sorted by name', () => {
+		test( 'should return all the country states, sorted by name', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2302,7 +2302,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'areCurrentlyEditingShippingZoneLocationsValid', () => {
-		it( 'should return false when the locations are empty', () => {
+		test( 'should return false when the locations are empty', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2324,7 +2324,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when the locations are filtered by postcode but it is empty', () => {
+		test( 'should return false when the locations are filtered by postcode but it is empty', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2346,7 +2346,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
 		} );
 
-		it( 'should return false when the locations are filtered by state but there are no states selected', () => {
+		test( 'should return false when the locations are filtered by state but there are no states selected', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2372,7 +2372,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.false;
 		} );
 
-		it( 'should return true when the locations are several countries', () => {
+		test( 'should return true when the locations are several countries', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2394,7 +2394,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when the locations are several continents', () => {
+		test( 'should return true when the locations are several continents', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2416,7 +2416,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when the locations are a country with a postcode', () => {
+		test( 'should return true when the locations are a country with a postcode', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2438,7 +2438,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should return true when the locations are a country with states', () => {
+		test( 'should return true when the locations are a country with states', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2464,7 +2464,7 @@ describe( 'selectors', () => {
 			expect( areCurrentlyEditingShippingZoneLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should overlay the temporary changes', () => {
+		test( 'should overlay the temporary changes', () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -2493,7 +2493,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getOrderOperationsToSaveCurrentZone', () => {
-		it( 'should return an empty list if the zone does not have locations', () => {
+		test( 'should return an empty list if the zone does not have locations', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, methodIds: [] } ],
@@ -2530,7 +2530,7 @@ describe( 'selectors', () => {
 			expect( getOrderOperationsToSaveCurrentZone( state ) ).to.deep.equal( {} );
 		} );
 
-		it( 'should return a move operation if the zone locations edits have made it change priority', () => {
+		test( 'should return a move operation if the zone locations edits have made it change priority', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [ { id: 1, order: 3, methodIds: [] } ],
@@ -2573,7 +2573,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return multiple move operations if the existing zones were not in ideal order', () => {
+		test( 'should return multiple move operations if the existing zones were not in ideal order', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [

@@ -83,18 +83,6 @@
 
 }
 
-.happychat__loading {
-	flex: 1 auto;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-
-	.spinner {
-		margin: 16px 0;
-	}
-
-}
-
 .happychat__notice {
 	padding: 12px;
 	border-top: 1px solid lighten( $gray, 20% );
@@ -118,7 +106,7 @@
 }
 
 // experiment: style scrollbars
-.happychat, .happychat_page {
+.happychat, .happychat__page {
 
 	::-webkit-scrollbar {
 		width: 12px;
@@ -152,7 +140,6 @@
 	background: lighten( $gray, 30% );
 	animation: happychat-minimize .5s 1 forwards;
 
-	> .happychat__loading,
 	> .happychat__composer,
 	> .happychat__welcome,
 	> .happychat__conversation,
@@ -300,13 +287,6 @@
 	}
 }
 
-.happychat__timeline-join-message {
-	flex: 0 0 auto;
-	padding: 4px 8px;
-	color: $gray-dark;
-	text-align: center;
-}
-
 .happychat__message-text {
 	font-size: 14px;
 	flex: 1;
@@ -362,28 +342,6 @@
 	}
 }
 
-.happychat__message-meta {
-	align-self: flex-end;
-	margin: 0 8px 0 0;
-
-	.is-user-message & {
-		align-self: flex-end;
-		margin: 0 0 0 8px;
-	}
-}
-
-.happychat__message-avatar {
-	width: 48px;
-	height: 48px;
-
-	> img {
-		background: darken( $gray-light, 10% );
-		border-radius: 50%;
-		width: 100%;
-		height: auto;
-	}
-}
-
 .happychat__timeline-message {
 	flex: 0 0 auto;
 	display: flex;
@@ -414,34 +372,6 @@
 
 	}
 }
-
-.support-browser {
-	position: relative;
-	flex: 1 1 100%;
-	display: flex;
-	flex-direction: column;
-
-	&.disabled {
-		display: none;
-	}
-
-	.browser-bar {
-		height: 46px;
-		background: $blue-medium;
-		color: $white;
-		text-align: center;
-		border-bottom: 1px solid darken( $blue-medium, 5% );
-		display: flex;
-	}
-
-	iframe {
-		flex: 1 1 100%;
-		width: 100%;
-		height: 100%;
-		background: hsla( 0, 0%, 0%, 0.1 );
-	}
-}
-
 
 /**
  * Panel mode
@@ -508,7 +438,6 @@
 		box-sizing: border-box;
 		box-shadow: none;
 
-		.happychat__loading,
 		.happychat__conversation,
 		.happychat__composer,
 		.happychat__welcome {

@@ -15,7 +15,7 @@ describe( 'selectors', () => {
 	const secondarySiteId = 456789;
 
 	describe( 'isRequestingPlugins()', () => {
-		it( 'should return false if no state exists', () => {
+		test( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -28,7 +28,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the plugins are not being fetched', () => {
+		test( 'should return false if the plugins are not being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the plugins are being fetched', () => {
+		test( 'should return true if the plugins are being fetched', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -81,7 +81,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isTogglingPlugin()', () => {
-		it( 'should return false if the site is not attached', () => {
+		test( 'should return false if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -98,7 +98,7 @@ describe( 'selectors', () => {
 			expect( isToggling ).to.be.false;
 		} );
 
-		it( 'should return false if the plugin is not being enabled or disabled', () => {
+		test( 'should return false if the plugin is not being enabled or disabled', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -115,7 +115,7 @@ describe( 'selectors', () => {
 			expect( isToggling ).to.be.false;
 		} );
 
-		it( 'should return true if the plugin is being enabled or disabled', () => {
+		test( 'should return true if the plugin is being enabled or disabled', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -151,7 +151,7 @@ describe( 'selectors', () => {
 			},
 		};
 
-		it( 'should return null if no state exists', () => {
+		test( 'should return null if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -164,7 +164,7 @@ describe( 'selectors', () => {
 			expect( plugins ).to.be.null;
 		} );
 
-		it( 'should return null if the site is not attached', () => {
+		test( 'should return null if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -181,7 +181,7 @@ describe( 'selectors', () => {
 			expect( plugins ).to.be.null;
 		} );
 
-		it( 'should return the plugins for a siteId', () => {
+		test( 'should return the plugins for a siteId', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {

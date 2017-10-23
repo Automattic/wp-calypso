@@ -146,7 +146,7 @@ class Orders extends Component {
 					{ humanDate( order.date_created_gmt + 'Z' ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
-					<OrderStatus status={ order.status } />
+					<OrderStatus order={ order } />
 				</TableItem>
 				<TableItem className="orders__table-total">
 					{ formatCurrency( order.total, order.currency ) || order.total }

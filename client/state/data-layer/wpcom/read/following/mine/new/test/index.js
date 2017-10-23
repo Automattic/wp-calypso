@@ -15,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 
 describe( 'requestFollow', () => {
-	it( 'should dispatch a http request', () => {
+	test( 'should dispatch a http request', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 		const getState = () => ( {
@@ -52,7 +52,7 @@ describe( 'requestFollow', () => {
 } );
 
 describe( 'receiveFollow', () => {
-	it( 'should dispatch updateFollow with new subscription info', () => {
+	test( 'should dispatch updateFollow with new subscription info', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 		const response = {
@@ -84,7 +84,7 @@ describe( 'receiveFollow', () => {
 		);
 	} );
 
-	it( 'should dispatch an error notice when subscribed is false', () => {
+	test( 'should dispatch an error notice when subscribed is false', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 		const response = {
@@ -101,7 +101,7 @@ describe( 'receiveFollow', () => {
 } );
 
 describe( 'followError', () => {
-	it( 'should dispatch an error notice', () => {
+	test( 'should dispatch an error notice', () => {
 		const dispatch = spy();
 		const action = follow( 'http://example.com' );
 

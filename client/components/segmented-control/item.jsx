@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * SegmentedControlItem
  */
-var SegmentedControlItem = React.createClass( {
+const SegmentedControlItem = React.createClass( {
 	propTypes: {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
@@ -57,4 +57,4 @@ var SegmentedControlItem = React.createClass( {
 	},
 } );
 
-module.exports = SegmentedControlItem;
+export default SegmentedControlItem;

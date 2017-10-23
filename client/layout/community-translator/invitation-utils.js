@@ -187,4 +187,4 @@ invitePromise.then( function() {
 	maybeInvite();
 } );
 
-module.exports = invitationUtils;
+export default invitationUtils;

@@ -113,8 +113,8 @@
 		flex-direction: row-reverse;
 	}
 
-	.button {
-		margin: 0 4px 8px;
+	button {
+		margin: 0 0 8px 8px;
 
 		@include breakpoint("<480px") {
 			margin: 0 8px 0 0;
@@ -130,29 +130,29 @@
 	}
 }
 
-.activity-log-confirm-dialog__secondary-actions {
-	font-size: 14px;
-
-	@include breakpoint("<480px") {
-		font-size: 12px;
-	}
-}
-
-.activity-log-confirm-dialog__more-info-link {
+.button.activity-log-confirm-dialog__more-info-link {
 	color: $gray;
 	padding: 7px 8px 0 0;
 	display: inline-block;
 
+	@include breakpoint("<480px") {
+		margin-bottom: 4px;
+		font-size: 12px;
+	}
+
 	.gridicon {
+		float: left;
+		top: 4px;
 		width: 18px;
 		height: 18px;
+		margin-right: 6px;
 
 		@include breakpoint(">480px") {
+			top: 0;
 			width: 24px;
 			height: 24px;
+			margin-right: 8px;
 		}
-		float: left;
-		margin-right: 8px;
 	}
 }
 

@@ -85,7 +85,7 @@ describe( 'actions', () => {
 			},
 		} );
 
-		it( 'should dispatch THEMES_REQUEST_SUCCESS action', () => {
+		test( 'should dispatch THEMES_REQUEST_SUCCESS action', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
 			receiveTheme( theme, 'wpcom' )( spy, getState );
 
@@ -116,14 +116,14 @@ describe( 'actions', () => {
 			},
 		} );
 
-		context( 'with a wpcom site', () => {
+		describe( 'with a wpcom site', () => {
 			const themes = [
 				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				{ id: 'mood', name: 'Mood' },
 			];
 			const query = { search: 'Automattic' };
 
-			it( 'should dispatch themes request success action', () => {
+			test( 'should dispatch themes request success action', () => {
 				receiveThemes( themes, 'wpcom', query, 4 )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
@@ -135,13 +135,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'with a Jetpack site', () => {
+		describe( 'with a Jetpack site', () => {
 			const themes = [
 				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				{ id: 'mood', name: 'Mood' },
 			];
 
-			it( 'should dispatch themes request success action', () => {
+			test( 'should dispatch themes request success action', () => {
 				receiveThemes( themes, 77203074, {} )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
@@ -155,7 +155,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemes()', () => {
-		context( 'with a wpcom site', () => {
+		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( nock => {
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
@@ -169,7 +169,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestThemes( 'wpcom' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -181,7 +181,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'with a Jetpack site', () => {
+		describe( 'with a Jetpack site', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1/sites/77203074/themes' )
@@ -199,7 +199,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestThemes( 77203074 )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -209,7 +209,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestThemes( 1916284 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_FAILURE,
@@ -221,7 +221,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'with the WP.org API', () => {
+		describe( 'with the WP.org API', () => {
 			useNock( nock => {
 				nock( 'https://api.wordpress.org' )
 					.persist()
@@ -242,7 +242,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestThemes( 'wporg' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -255,7 +255,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestTheme()', () => {
-		context( 'with a wpcom site', () => {
+		describe( 'with a wpcom site', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -268,7 +268,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentysixteen', 'wpcom' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -278,7 +278,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch themes request success action when request completes', () => {
+			test( 'should dispatch themes request success action when request completes', () => {
 				return requestTheme( 'twentysixteen', 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_SUCCESS,
@@ -288,7 +288,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestTheme( 'twentyumpteen', 'wpcom' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_FAILURE,
@@ -300,7 +300,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'with a Jetpack site', () => {
+		describe( 'with a Jetpack site', () => {
 			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
@@ -314,7 +314,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentyfifteen', 77203074 )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -324,7 +324,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch themes request success action when request completes', () => {
+			test( 'should dispatch themes request success action when request completes', () => {
 				return requestTheme( 'twentyfifteen', 77203074 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_SUCCESS,
@@ -334,7 +334,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestTheme( 'twentyumpteen', 77203074 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_FAILURE,
@@ -346,7 +346,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'with the WP.org API', () => {
+		describe( 'with the WP.org API', () => {
 			useNock( nock => {
 				nock( 'https://api.wordpress.org' )
 					.persist()
@@ -365,7 +365,7 @@ describe( 'actions', () => {
 					.reply( 200, false );
 			} );
 
-			it( 'should dispatch request action when thunk triggered', () => {
+			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentyseventeen', 'wporg' )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -375,7 +375,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch themes request success action when request completes', () => {
+			test( 'should dispatch themes request success action when request completes', () => {
 				return requestTheme( 'twentyseventeen', 'wporg' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_SUCCESS,
@@ -385,7 +385,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch fail action when request fails', () => {
+			test( 'should dispatch fail action when request fails', () => {
 				return requestTheme( 'twentyumpteen', 'wporg' )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEME_REQUEST_FAILURE,
@@ -399,7 +399,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#themeActivated()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const expectedActivationSuccess = {
 				meta: {
 					analytics: [
@@ -444,7 +444,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#clearActivated()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = clearActivated( 22116677 );
 			expect( action ).to.eql( {
 				type: THEME_CLEAR_ACTIVATED,
@@ -474,7 +474,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk is triggered', () => {
+		test( 'should dispatch request action when thunk is triggered', () => {
 			activateTheme( 'twentysixteen', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -484,13 +484,13 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch theme activation success thunk when request completes', () => {
+		test( 'should dispatch theme activation success thunk when request completes', () => {
 			return activateTheme( 'twentysixteen', 2211667, trackingData )( spy ).then( () => {
 				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivatedThunk' );
 			} );
 		} );
 
-		it( 'should dispatch theme activation failure action when request completes', () => {
+		test( 'should dispatch theme activation failure action when request completes', () => {
 			const themeActivationFailure = {
 				error: sinon.match( { message: 'The specified theme was not found' } ),
 				siteId: 2211667,
@@ -512,7 +512,7 @@ describe( 'actions', () => {
 			} )
 		);
 
-		it( 'should dispatch installTheme() and activateTheme()', done => {
+		test( 'should dispatch installTheme() and activateTheme()', done => {
 			installAndActivateTheme( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith(
 					matchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
@@ -533,7 +533,7 @@ describe( 'actions', () => {
 			} )
 		);
 
-		context( 'on a WordPress.com site', () => {
+		describe( 'on a WordPress.com site', () => {
 			stub.reset();
 			const fakeGetState = () => ( {
 				sites: {
@@ -544,7 +544,7 @@ describe( 'actions', () => {
 					},
 				},
 			} );
-			it( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
+			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
 				activate( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
 					expect( stub ).to.have.been.calledWith(
 						matchFunction( activateTheme( 'karuna', 77203074 ) )
@@ -557,7 +557,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'on a Jetpack site', () => {
+		describe( 'on a Jetpack site', () => {
 			const sitesState = {
 				sites: {
 					items: {
@@ -567,7 +567,7 @@ describe( 'actions', () => {
 					},
 				},
 			};
-			context( 'if the theme is already installed', () => {
+			describe( 'if the theme is already installed', () => {
 				stub.reset();
 				const fakeGetState = () => ( {
 					...sitesState,
@@ -579,7 +579,7 @@ describe( 'actions', () => {
 						},
 					},
 				} );
-				it( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
+				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
 					activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.have.been.calledWith(
 							matchFunction( activateTheme( 'karuna', 2211667 ) )
@@ -592,7 +592,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			context( "if the theme isn't installed", () => {
+			describe( "if the theme isn't installed", () => {
 				stub.reset();
 				const fakeGetState = () => ( {
 					...sitesState,
@@ -600,7 +600,7 @@ describe( 'actions', () => {
 						queries: {},
 					},
 				} );
-				it( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', done => {
+				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', done => {
 					activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.not.have.been.calledWith(
 							matchFunction( activate( 'karuna', 2211667 ) )
@@ -680,7 +680,7 @@ describe( 'actions', () => {
 				.reply( 404, failureResponse );
 		} );
 
-		it( 'should dispatch active theme request action when triggered', () => {
+		test( 'should dispatch active theme request action when triggered', () => {
 			requestActiveTheme( 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -689,8 +689,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'when request completes successfully', () => {
-			it( 'should dispatch active theme request success action', () => {
+		describe( 'when request completes successfully', () => {
+			test( 'should dispatch active theme request success action', () => {
 				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: ACTIVE_THEME_REQUEST_SUCCESS,
@@ -701,7 +701,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch active theme request failure action when request completes', () => {
+		test( 'should dispatch active theme request failure action when request completes', () => {
 			return requestActiveTheme( 666 )( spy, fakeGetState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
@@ -731,7 +731,7 @@ describe( 'actions', () => {
 				.reply( 400, 'something wrong' );
 		} );
 
-		it( 'should dispatch success on status complete', () => {
+		test( 'should dispatch success on status complete', () => {
 			return pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
@@ -744,7 +744,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should time-out if status never complete', () => {
+		test( 'should time-out if status never complete', () => {
 			return pollThemeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
@@ -755,7 +755,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch status update', () => {
+		test( 'should dispatch status update', () => {
 			return pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				// Two 'progress' then a 'complete'
 				expect( spy ).to.have.callCount( 4 );
@@ -778,7 +778,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch failure on receipt of error', () => {
+		test( 'should dispatch failure on receipt of error', () => {
 			return pollThemeTransferStatus( siteId, 4 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
@@ -801,7 +801,7 @@ describe( 'actions', () => {
 				.reply( 400, 'some problem' );
 		} );
 
-		it( 'should dispatch success', () => {
+		test( 'should dispatch success', () => {
 			return initiateThemeTransfer( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
@@ -822,7 +822,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch failure on error', () => {
+		test( 'should dispatch failure on error', () => {
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledOnce;
 
@@ -890,7 +890,7 @@ describe( 'actions', () => {
 				.reply( 400, alreadyInstalledFailureResponse );
 		} );
 
-		it( 'should dispatch install theme request action when triggered', () => {
+		test( 'should dispatch install theme request action when triggered', () => {
 			installTheme( 'karuna-wpcom', 2211667 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -900,7 +900,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch wpcom theme install request success action when request completes', () => {
+		test( 'should dispatch wpcom theme install request success action when request completes', () => {
 			return installTheme( 'karuna-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
@@ -910,7 +910,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
+		test( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
 			return installTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
@@ -921,7 +921,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
+		test( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
 			return installTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
@@ -942,7 +942,7 @@ describe( 'actions', () => {
 				.reply( 404, { code: 'unknown_theme' } );
 		} );
 
-		it( 'should dispatch success action on success response', () => {
+		test( 'should dispatch success action on success response', () => {
 			return deleteTheme( 'karuna', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_DELETE_SUCCESS,
@@ -953,7 +953,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch failure action on error response', () => {
+		test( 'should dispatch failure action on error response', () => {
 			return deleteTheme( 'blahblah', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_DELETE_FAILURE,
@@ -973,7 +973,7 @@ describe( 'actions', () => {
 			} )
 		);
 
-		it( 'should dispatch installTheme(), and tryAndCustomizeTheme()', done => {
+		test( 'should dispatch installTheme(), and tryAndCustomizeTheme()', done => {
 			installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith(
 					matchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
@@ -994,7 +994,7 @@ describe( 'actions', () => {
 			} )
 		);
 
-		context( 'on a WordPress.com site', () => {
+		describe( 'on a WordPress.com site', () => {
 			stub.reset();
 			const fakeGetState = () => ( {
 				sites: {
@@ -1005,7 +1005,7 @@ describe( 'actions', () => {
 					},
 				},
 			} );
-			it( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
+			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', done => {
 				tryAndCustomize( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
 					expect( stub ).to.have.been.calledWith(
 						matchFunction( tryAndCustomizeTheme( 'karuna', 77203074 ) )
@@ -1018,7 +1018,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'on a Jetpack site', () => {
+		describe( 'on a Jetpack site', () => {
 			const sitesState = {
 				sites: {
 					items: {
@@ -1028,7 +1028,7 @@ describe( 'actions', () => {
 					},
 				},
 			};
-			context( 'if the theme is already installed', () => {
+			describe( 'if the theme is already installed', () => {
 				stub.reset();
 				const fakeGetState = () => ( {
 					...sitesState,
@@ -1040,7 +1040,7 @@ describe( 'actions', () => {
 						},
 					},
 				} );
-				it( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', done => {
+				test( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', done => {
 					tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.have.been.calledWith(
 							matchFunction( tryAndCustomizeTheme( 'karuna', 2211667 ) )
@@ -1053,7 +1053,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			context( "if the theme isn't installed", () => {
+			describe( "if the theme isn't installed", () => {
 				stub.reset();
 				const fakeGetState = () => ( {
 					...sitesState,
@@ -1061,7 +1061,7 @@ describe( 'actions', () => {
 						queries: {},
 					},
 				} );
-				it( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', done => {
+				test( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', done => {
 					tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
 						expect( stub ).to.not.have.been.calledWith(
 							matchFunction( tryAndCustomize( 'karuna', 2211667 ) )
@@ -1077,7 +1077,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemeFilters', () => {
-		it( 'should return THEME_FILTERS_REQUEST action', () => {
+		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
 			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
 		} );

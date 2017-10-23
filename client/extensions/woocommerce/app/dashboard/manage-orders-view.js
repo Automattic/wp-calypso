@@ -21,8 +21,8 @@ import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
-	getNewOrders,
-	getNewOrdersRevenue,
+	getNewOrdersWithoutPayPalPending,
+	getNewOrdersWithoutPayPalPendingRevenue,
 } from 'woocommerce/state/sites/orders/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -185,8 +185,8 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const ordersLoading = areOrdersLoading( state );
 	const ordersLoaded = areOrdersLoaded( state );
-	const orders = getNewOrders( state );
-	const ordersRevenue = getNewOrdersRevenue( state );
+	const orders = getNewOrdersWithoutPayPalPending( state );
+	const ordersRevenue = getNewOrdersWithoutPayPalPendingRevenue( state );
 	const user = getCurrentUser( state );
 	const currency = getPaymentCurrencySettings( state );
 	const pendingReviews = getTotalReviews( state, { status: 'pending' } );

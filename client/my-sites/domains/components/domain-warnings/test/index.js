@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { identity } from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 
 /**
@@ -25,7 +25,7 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'index', () => {
 	describe( 'rules', () => {
-		it( "should not render anything if there's no need", () => {
+		test( "should not render anything if there's no need", () => {
 			const props = {
 				translate: identity,
 				domain: {
@@ -39,7 +39,7 @@ describe( 'index', () => {
 			expect( ReactDom.findDOMNode( component ) ).to.be.a( 'null' );
 		} );
 
-		it( 'should render the highest priority notice when there are others', () => {
+		test( 'should render the highest priority notice when there are others', () => {
 			const props = {
 				translate: identity,
 				domain: {
@@ -60,7 +60,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'newDomain', () => {
-		it( 'should render new warning notice if the domain is new', () => {
+		test( 'should render new warning notice if the domain is new', () => {
 			const props = {
 				translate: identity,
 				domain: {
@@ -79,7 +79,7 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should render the multi version of the component if more than two domains match the same rule', () => {
+		test( 'should render the multi version of the component if more than two domains match the same rule', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -108,7 +108,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'mapped domain with wrong NS', () => {
-		it( 'should render a warning for misconfigured mapped domains', () => {
+		test( 'should render a warning for misconfigured mapped domains', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -136,7 +136,7 @@ describe( 'index', () => {
 			);
 		} );
 
-		it( 'should render the correct support url for multiple misconfigured mapped domains', () => {
+		test( 'should render the correct support url for multiple misconfigured mapped domains', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -164,7 +164,7 @@ describe( 'index', () => {
 			assert( links.some( link => link.href === support.MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
 		} );
 
-		it( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
+		test( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -187,7 +187,7 @@ describe( 'index', () => {
 			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
 		} );
 
-		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
+		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -218,7 +218,7 @@ describe( 'index', () => {
 			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
 		} );
 
-		it( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
+		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
 			const props = {
 				translate: identity,
 				domains: [
@@ -251,7 +251,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'Mutations', () => {
-		it( 'should not mutate domain objects', () => {
+		test( 'should not mutate domain objects', () => {
 			const props = {
 				translate: identity,
 				domain: {
@@ -271,7 +271,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'Ruleset filtering', () => {
-		it( 'should only process whitelisted renderers', () => {
+		test( 'should only process whitelisted renderers', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },
@@ -284,7 +284,7 @@ describe( 'index', () => {
 			expect( component.getPipe().length ).to.equal( 0 );
 		} );
 
-		it( 'should not allow running extra functions other than defined in getPipe()', () => {
+		test( 'should not allow running extra functions other than defined in getPipe()', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },

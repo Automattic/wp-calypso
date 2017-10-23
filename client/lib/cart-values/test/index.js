@@ -6,7 +6,7 @@
 import assert from 'assert';
 import { flow } from 'lodash';
 
-describe( 'index', function() {
+describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
 	let cartItems,
 		cartValues,
@@ -15,7 +15,7 @@ describe( 'index', function() {
 		PREMIUM_PRODUCT,
 		THEME_PRODUCT;
 
-	before( () => {
+	beforeAll( () => {
 		cartValues = require( 'lib/cart-values' );
 		cartItems = cartValues.cartItems;
 		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
@@ -30,9 +30,9 @@ describe( 'index', function() {
 		THEME_PRODUCT = cartItems.themeItem( 'mood' );
 	} );
 
-	describe( 'cart change functions', function() {
-		describe( 'flow( changeFunctions... )', function() {
-			it( 'should combine multiple cart operations into a single step', function() {
+	describe( 'cart change functions', () => {
+		describe( 'flow( changeFunctions... )', () => {
+			test( 'should combine multiple cart operations into a single step', () => {
 				var addTwo, newCart;
 
 				addTwo = flow(
@@ -46,8 +46,8 @@ describe( 'index', function() {
 			} );
 		} );
 
-		describe( 'cartItems.add( cartItem )', function() {
-			it( 'should add the cartItem to the products array', function() {
+		describe( 'cartItems.add( cartItem )', () => {
+			test( 'should add the cartItem to the products array', () => {
 				var initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
 					newCart = cartItems.add( PREMIUM_PRODUCT )( initialCart ),
 					expectedCart = {
@@ -59,8 +59,8 @@ describe( 'index', function() {
 			} );
 		} );
 
-		describe( 'cartItems.remove( cartItem )', function() {
-			it( 'should remove the cartItem from the products array', function() {
+		describe( 'cartItems.remove( cartItem )', () => {
+			test( 'should remove the cartItem from the products array', () => {
 				var initialCart, newCart, expectedCart;
 
 				initialCart = {
@@ -78,8 +78,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'cartItems.hasProduct( cart, productSlug )', function() {
-		it( 'should return a boolean that says whether the product is in the cart items', function() {
+	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
+		test( 'should return a boolean that says whether the product is in the cart items', () => {
 			var cartWithPremium, cartWithoutPremium;
 
 			cartWithPremium = {
@@ -96,8 +96,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'cartItems.hasTld( cart, tld )', function() {
-		it( 'should return a boolean that says whether a domain with the tld is in the cart items', function() {
+	describe( 'cartItems.hasTld( cart, tld )', () => {
+		test( 'should return a boolean that says whether a domain with the tld is in the cart items', () => {
 			const cartWithFrTld = {
 					blog_id: TEST_BLOG_ID,
 					products: [ FR_DOMAIN_REGISTRATION_PRODUCT ],
@@ -112,8 +112,8 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', function() {
-		it( 'should return a boolean that says whether only products of productSlug are in the cart items', function() {
+	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
+		test( 'should return a boolean that says whether only products of productSlug are in the cart items', () => {
 			var cartWithSameProductSlugs, cartWithMultipleProductSlugs, emptyCart;
 
 			cartWithMultipleProductSlugs = {
@@ -135,13 +135,13 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'emptyCart( siteID )', function() {
-		describe( 'returns a cart that', function() {
-			it( 'should have the provided blog_id', function() {
+	describe( 'emptyCart( siteID )', () => {
+		describe( 'returns a cart that', () => {
+			test( 'should have the provided blog_id', () => {
 				assert.equal( TEST_BLOG_ID, cartValues.emptyCart( TEST_BLOG_ID ).blog_id );
 			} );
 
-			it( 'should have no products', function() {
+			test( 'should have no products', () => {
 				assert.equal( 0, cartValues.emptyCart( TEST_BLOG_ID ).products.length );
 			} );
 		} );

@@ -80,7 +80,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	MEDIA_WALLAH_SCRIPT_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
 	QUORA_SCRIPT_URL = 'https://a.quora.com/qevents.js',
 	YANDEX_SCRIPT_URL = 'https://mc.yandex.ru/metrika/watch.js',
-	OUTBRAIN_SCRIPT_URL = '//amplify.outbrain.com/cp/obtp.js',
+	OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -368,6 +368,7 @@ function loadTrackingScripts( callback ) {
 			if ( typeof callback === 'function' ) {
 				callback();
 			}
+			debug( 'Scripts loaded successfully' );
 		} else {
 			debug( 'Some scripts failed to load: ', errors );
 		}

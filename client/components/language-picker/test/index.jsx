@@ -30,7 +30,7 @@ const languages = [
 ];
 
 describe( 'LanguagePicker', () => {
-	it( 'should render the right icon and label', () => {
+	test( 'should render the right icon and label', () => {
 		const wrapper = render(
 			<LanguagePicker languages={ languages } valueKey="langSlug" value="en" />
 		);

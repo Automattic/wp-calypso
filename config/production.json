@@ -11,7 +11,11 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"support_locales": [ "en", "es", "pt-br" ],
+	"support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": true,
 		"apple-pay": true,
@@ -32,6 +36,8 @@
 		"jetpack/api-cache": false,
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
+		"jetpack/happychat": true,
+		"jitms": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
@@ -84,6 +90,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/conversations": false,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": false,
@@ -123,6 +130,7 @@
 		"woocommerce/extension-promotions": false,
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
+		"woocommerce/extension-settings-email": false,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-stripe-connect-flows": false,

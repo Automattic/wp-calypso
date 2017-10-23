@@ -14,8 +14,8 @@ jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 var Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
-describe( 'feed-post-store', function() {
-	before( () => {
+describe( 'feed-post-store', () => {
+	beforeAll( () => {
 		Dispatcher = require( 'dispatcher' );
 		FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action;
 		FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
@@ -23,15 +23,15 @@ describe( 'feed-post-store', function() {
 		FeedPostStore = require( '../' );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		FeedPostStore._reset();
 	} );
 
-	it( 'should have a dispatch token', function() {
+	test( 'should have a dispatch token', () => {
 		expect( FeedPostStore ).to.have.property( 'dispatchToken' );
 	} );
 
-	it( 'should save a post from a feed page', function() {
+	test( 'should save a post from a feed page', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { feed_ID: 1, ID: 2 } ] },
@@ -46,7 +46,7 @@ describe( 'feed-post-store', function() {
 		).to.be.ok;
 	} );
 
-	it( 'should save a post from a blog page', function() {
+	test( 'should save a post from a blog page', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { site_ID: 1, ID: 2 } ] },
@@ -61,7 +61,7 @@ describe( 'feed-post-store', function() {
 		).to.be.ok;
 	} );
 
-	it( 'should ignore a post from a page without the right ID', function() {
+	test( 'should ignore a post from a page without the right ID', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { junk: '' } ] },
@@ -71,7 +71,7 @@ describe( 'feed-post-store', function() {
 		expect( FeedPostStore._all() ).to.eql( {} );
 	} );
 
-	it( 'should ignore a post from a page with an error', function() {
+	test( 'should ignore a post from a page with an error', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { global_ID: 1 } ] },
@@ -81,7 +81,7 @@ describe( 'feed-post-store', function() {
 		expect( FeedPostStore._all() ).to.be.empty;
 	} );
 
-	it( 'should normalize a received post', function() {
+	test( 'should normalize a received post', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedPostActionType.RECEIVE_FEED_POST,
 			data: {
@@ -109,7 +109,7 @@ describe( 'feed-post-store', function() {
 		).to.equal( 'chris & ben' );
 	} );
 
-	it( 'should index a post by the site_ID and ID if it is internal', function() {
+	test( 'should index a post by the site_ID and ID if it is internal', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedPostActionType.RECEIVE_FEED_POST,
 			data: {
@@ -138,7 +138,7 @@ describe( 'feed-post-store', function() {
 		).to.be.ok;
 	} );
 
-	it( 'should accept a post without a feed ID', function() {
+	test( 'should accept a post without a feed ID', () => {
 		Dispatcher.handleServerAction( {
 			type: FeedPostActionType.RECEIVE_FEED_POST,
 			data: {

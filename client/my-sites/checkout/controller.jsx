@@ -33,7 +33,7 @@ const checkoutRoutes = [
 	new Route( '/checkout/:product/renew/:receipt' ),
 ];
 
-module.exports = {
+export default {
 	checkout: function( context ) {
 		const Checkout = require( './checkout' ),
 			CheckoutData = require( 'components/data/checkout' ),

@@ -47,12 +47,12 @@ describe( 'actions', () => {
 		sandbox.stub( path, 'externalRedirect' );
 	} );
 
-	beforeEach( function() {
+	beforeEach( () => {
 		actions = require( '../actions' );
 	} );
 
 	describe( '#confirmJetpackInstallStatus()', () => {
-		it( 'should dispatch confirm status action when called', () => {
+		test( 'should dispatch confirm status action when called', () => {
 			const { confirmJetpackInstallStatus } = actions;
 			const jetpackStatus = true;
 
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#dismissUrl()', () => {
-		it( 'should dispatch dismiss url status action when called', () => {
+		test( 'should dispatch dismiss url status action when called', () => {
 			const { dismissUrl } = actions;
 			const url = 'http://example.com';
 
@@ -80,7 +80,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#goToRemoteAuth()', () => {
-		it( 'should dispatch redirect action when called', () => {
+		test( 'should dispatch redirect action when called', () => {
 			const { goToRemoteAuth } = actions;
 			const url = 'http://example.com';
 
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#goToPluginInstall()', () => {
-		it( 'should dispatch redirect action when called', () => {
+		test( 'should dispatch redirect action when called', () => {
 			const { goToPluginInstall } = actions;
 			const url = 'http://example.com';
 
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#goToPluginActivation()', () => {
-		it( 'should dispatch redirect action when called', () => {
+		test( 'should dispatch redirect action when called', () => {
 			const { goToPluginActivation } = actions;
 			const url = 'http://example.com';
 
@@ -122,7 +122,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#goBackToWpAdmin()', () => {
-		it( 'should dispatch redirect action when called', () => {
+		test( 'should dispatch redirect action when called', () => {
 			const { goBackToWpAdmin } = actions;
 			const url = 'http://example.com';
 
@@ -135,7 +135,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#goToXmlrpcErrorFallbackUrl()', () => {
-		it( 'should dispatch redirect with xmlrpc error action when called', () => {
+		test( 'should dispatch redirect with xmlrpc error action when called', () => {
 			const { goToXmlrpcErrorFallbackUrl } = actions;
 			const queryObject = {
 				state: '12345678',
@@ -156,7 +156,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#retryAuth()', () => {
-		it( 'should dispatch redirect action when called', () => {
+		test( 'should dispatch redirect action when called', () => {
 			const { retryAuth } = actions;
 			const url = 'http://example.com';
 
@@ -237,7 +237,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch authorize request action when thunk triggered', () => {
+			test( 'should dispatch authorize request action when thunk triggered', () => {
 				const { authorize } = actions;
 
 				authorize( queryObject )( spy );
@@ -248,7 +248,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch login complete action when request completes', () => {
+			test( 'should dispatch login complete action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
@@ -261,7 +261,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch authorize receive action when request completes', () => {
+			test( 'should dispatch authorize receive action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
@@ -277,7 +277,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch sites receive action when request completes', () => {
+			test( 'should dispatch sites receive action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
@@ -288,7 +288,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch authorize receive site list action when request completes', () => {
+			test( 'should dispatch authorize receive site list action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
@@ -325,7 +325,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch authorize receive action when request completes', () => {
+			test( 'should dispatch authorize receive action when request completes', () => {
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
@@ -392,7 +392,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch validate action when thunk triggered', () => {
+			test( 'should dispatch validate action when thunk triggered', () => {
 				const { validateSSONonce } = actions;
 
 				validateSSONonce( siteId, ssoNonce )( spy );
@@ -402,7 +402,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { validateSSONonce } = actions;
 
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
@@ -435,7 +435,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { validateSSONonce } = actions;
 
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
@@ -475,7 +475,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch validate action when thunk triggered', () => {
+			test( 'should dispatch validate action when thunk triggered', () => {
 				const { authorizeSSO } = actions;
 
 				authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
@@ -485,7 +485,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { authorizeSSO } = actions;
 
 				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
@@ -517,7 +517,7 @@ describe( 'actions', () => {
 					);
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				const { authorizeSSO } = actions;
 
 				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {

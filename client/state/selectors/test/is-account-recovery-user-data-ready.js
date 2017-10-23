@@ -12,7 +12,7 @@ import deepFreeze from 'deep-freeze';
 import { isAccountRecoveryUserDataReady } from '../';
 
 describe( 'isAccountRecoveryUserDataReady()', () => {
-	it( 'should return true if user field is set', () => {
+	test( 'should return true if user field is set', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
@@ -26,7 +26,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
 	} );
 
-	it( 'should return true if firstname, lastname, and url is set.', () => {
+	test( 'should return true if firstname, lastname, and url is set.', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
@@ -42,7 +42,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
 	} );
 
-	it( 'should return false if one of ( firstname, lastname, url ) is missing.', () => {
+	test( 'should return false if one of ( firstname, lastname, url ) is missing.', () => {
 		const noFirstname = deepFreeze( {
 			accountRecovery: {
 				reset: {
@@ -83,7 +83,7 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 		assert.isFalse( isAccountRecoveryUserDataReady( noUrl ) );
 	} );
 
-	it( 'should return false as default value', () => {
+	test( 'should return false as default value', () => {
 		assert.isFalse( isAccountRecoveryUserDataReady( undefined ) );
 	} );
 } );

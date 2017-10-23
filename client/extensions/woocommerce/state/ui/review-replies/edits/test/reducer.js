@@ -16,7 +16,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
-	it( 'should store the currently editing reply', () => {
+	test( 'should store the currently editing reply', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
@@ -36,7 +36,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( "should update the reply when it's changed", () => {
+	test( "should update the reply when it's changed", () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should merge updates to a reply if new fields are passed in', () => {
+	test( 'should merge updates to a reply if new fields are passed in', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
@@ -91,7 +91,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should store a generated ID for a created reply', () => {
+	test( 'should store a generated ID for a created reply', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
@@ -107,7 +107,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should merge updates to a new reply if additional fields are passed in', () => {
+	test( 'should merge updates to a new reply if additional fields are passed in', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_EDIT,
 			siteId: 123,
@@ -135,7 +135,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should clear reply changes from the state when requested', () => {
+	test( 'should clear reply changes from the state when requested', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_REVIEW_REPLIES_CLEAR_EDIT,
 			siteId: 123,

@@ -23,19 +23,19 @@ import {
 
 describe( 'utils', () => {
 	describe( '#isPremium()', () => {
-		it( 'given no theme object, should return false', () => {
+		test( 'given no theme object, should return false', () => {
 			const premium = isPremium();
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given a theme object with no stylesheet attr, should return false', () => {
+		test( 'given a theme object with no stylesheet attr, should return false', () => {
 			const premium = isPremium( {
 				id: 'twentysixteen',
 			} );
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given a theme object with a stylesheet attr that doesn\'t start with "premium/", should return false', () => {
+		test( 'given a theme object with a stylesheet attr that doesn\'t start with "premium/", should return false', () => {
 			const premium = isPremium( {
 				id: 'twentysixteen',
 				stylesheet: 'pub/twentysixteen',
@@ -43,7 +43,7 @@ describe( 'utils', () => {
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given a theme object with a stylesheet attr that starts with "premium/", should return true', () => {
+		test( 'given a theme object with a stylesheet attr that starts with "premium/", should return true', () => {
 			const premium = isPremium( {
 				id: 'mood',
 				stylesheet: 'premium/mood',
@@ -53,11 +53,11 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#normalizeJetpackTheme()', () => {
-		it( 'should return an empty object when given no argument', () => {
+		test( 'should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeJetpackTheme();
 			expect( normalizedTheme ).to.deep.equal( {} );
 		} );
-		it( 'should rename some keys', () => {
+		test( 'should rename some keys', () => {
 			const normalizedTheme = normalizeJetpackTheme( {
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
@@ -80,11 +80,11 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#normalizeWpcomTheme()', () => {
-		it( 'should return an empty object when given no argument', () => {
+		test( 'should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeWpcomTheme();
 			expect( normalizedTheme ).to.deep.equal( {} );
 		} );
-		it( 'should rename some keys', () => {
+		test( 'should rename some keys', () => {
 			const normalizedTheme = normalizeWpcomTheme( {
 				id: 'mood',
 				name: 'Mood',
@@ -117,12 +117,12 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#normalizeWporgTheme()', () => {
-		it( 'should return an empty object when given no argument', () => {
+		test( 'should return an empty object when given no argument', () => {
 			const normalizedTheme = normalizeWporgTheme();
 			expect( normalizedTheme ).to.deep.equal( {} );
 		} );
 
-		it( 'should rename some keys', () => {
+		test( 'should rename some keys', () => {
 			const normalizedTheme = normalizeWporgTheme( {
 				slug: 'twentyfifteen',
 				name: 'Twenty Fifteen',
@@ -161,24 +161,24 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getThemeIdFromStylesheet()', () => {
-		it( 'should return undefined when given no argument', () => {
+		test( 'should return undefined when given no argument', () => {
 			const themeId = getThemeIdFromStylesheet();
 			expect( themeId ).to.be.undefined;
 		} );
 
-		it( "should return the argument if it doesn't contain a slash (/)", () => {
+		test( "should return the argument if it doesn't contain a slash (/)", () => {
 			const themeId = getThemeIdFromStylesheet( 'twentysixteen' );
 			expect( themeId ).to.equal( 'twentysixteen' );
 		} );
 
-		it( "should return argument's part after the slash if it does contain a slash (/)", () => {
+		test( "should return argument's part after the slash if it does contain a slash (/)", () => {
 			const themeId = getThemeIdFromStylesheet( 'pub/twentysixteen' );
 			expect( themeId ).to.equal( 'twentysixteen' );
 		} );
 	} );
 
 	describe( '#getNormalizedThemesQuery()', () => {
-		it( 'should exclude default values', () => {
+		test( 'should exclude default values', () => {
 			const query = getNormalizedThemesQuery( {
 				page: 4,
 				number: 20,
@@ -191,7 +191,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getSerializedThemesQuery()', () => {
-		it( 'should return a JSON string of a normalized query', () => {
+		test( 'should return a JSON string of a normalized query', () => {
 			const serializedQuery = getSerializedThemesQuery( {
 				type: 'page',
 				page: 1,
@@ -200,7 +200,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should prefix site ID if specified', () => {
+		test( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedThemesQuery(
 				{
 					search: 'Hello',
@@ -213,7 +213,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'getDeserializedThemesQueryDetails()', () => {
-		it( 'should return undefined query and site if string does not contain JSON', () => {
+		test( 'should return undefined query and site if string does not contain JSON', () => {
 			const queryDetails = getDeserializedThemesQueryDetails( 'bad' );
 
 			expect( queryDetails ).to.eql( {
@@ -222,7 +222,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return query but not site if string does not contain site prefix', () => {
+		test( 'should return query but not site if string does not contain site prefix', () => {
 			const queryDetails = getDeserializedThemesQueryDetails( '{"search":"hello"}' );
 
 			expect( queryDetails ).to.eql( {
@@ -231,7 +231,7 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		it( 'should return query and site if string contains site prefix and JSON', () => {
+		test( 'should return query and site if string contains site prefix and JSON', () => {
 			const queryDetails = getDeserializedThemesQueryDetails( '2916284:{"search":"hello"}' );
 
 			expect( queryDetails ).to.eql( {
@@ -242,7 +242,7 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#getSerializedThemesQueryWithoutPage()', () => {
-		it( 'should return a JSON string of a normalized query omitting page', () => {
+		test( 'should return a JSON string of a normalized query omitting page', () => {
 			const serializedQuery = getSerializedThemesQueryWithoutPage( {
 				type: 'page',
 				page: 2,
@@ -251,7 +251,7 @@ describe( 'utils', () => {
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
-		it( 'should prefix site ID if specified', () => {
+		test( 'should prefix site ID if specified', () => {
 			const serializedQuery = getSerializedThemesQueryWithoutPage(
 				{
 					search: 'Hello',
@@ -313,8 +313,8 @@ describe( 'utils', () => {
 				' — the horizontal masthead with an optional right sidebar that works perfectly for blogs and websites.',
 		};
 
-		context( 'query.search', () => {
-			it( 'should return false for a non-matching search', () => {
+		describe( 'query.search', () => {
+			test( 'should return false for a non-matching search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'nonexisting',
@@ -325,7 +325,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return true for a falsey search', () => {
+			test( 'should return true for a falsey search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: null,
@@ -336,7 +336,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a matching ID search', () => {
+			test( 'should return true for a matching ID search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'twentysomething',
@@ -347,7 +347,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a matching title search', () => {
+			test( 'should return true for a matching title search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'Twenty',
@@ -358,7 +358,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a matching content search', () => {
+			test( 'should return true for a matching content search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'modern',
@@ -369,7 +369,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a matching author search', () => {
+			test( 'should return true for a matching author search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'team',
@@ -380,7 +380,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a matching filter search', () => {
+			test( 'should return true for a matching filter search', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'infinite',
@@ -391,7 +391,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should search case-insensitive', () => {
+			test( 'should search case-insensitive', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'Sidebar',
@@ -402,7 +402,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should separately test title and content fields', () => {
+			test( 'should separately test title and content fields', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						search: 'TwentyThe',
@@ -414,8 +414,8 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		context( 'query.filter', () => {
-			it( 'should return false if theme does not include filter', () => {
+		describe( 'query.filter', () => {
+			test( 'should return false if theme does not include filter', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'nosuchfilter',
@@ -426,7 +426,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return false on a partial match', () => {
+			test( 'should return false on a partial match', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'ourna',
@@ -437,7 +437,7 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return true if theme includes filter', () => {
+			test( 'should return true if theme includes filter', () => {
 				const isMatch = isThemeMatchingQuery(
 					{
 						filter: 'infinite-scroll',
@@ -448,8 +448,8 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
-			context( 'with multiple filters from a single taxonomy', () => {
-				it( "should return false if theme doesn't match all filters", () => {
+			describe( 'with multiple filters from a single taxonomy', () => {
+				test( "should return false if theme doesn't match all filters", () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,business',
@@ -459,7 +459,7 @@ describe( 'utils', () => {
 
 					expect( isMatch ).to.be.false;
 				} );
-				it( 'should return true if theme matches all filters', () => {
+				test( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,custom-header',
@@ -471,8 +471,8 @@ describe( 'utils', () => {
 				} );
 			} );
 
-			context( 'with multiple filters from different taxonomies', () => {
-				it( "should return false if theme doesn't match all filters", () => {
+			describe( 'with multiple filters from different taxonomies', () => {
+				test( "should return false if theme doesn't match all filters", () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,green',
@@ -482,7 +482,7 @@ describe( 'utils', () => {
 
 					expect( isMatch ).to.be.false;
 				} );
-				it( 'should return true if theme matches all filters', () => {
+				test( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery(
 						{
 							filter: 'infinite-scroll,black',

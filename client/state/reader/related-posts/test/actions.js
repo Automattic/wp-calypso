@@ -40,13 +40,13 @@ describe( 'actions', () => {
 
 		let fakeDispatch;
 		let requestPromise;
-		before( () => {
+		beforeAll( () => {
 			fakeDispatch = sinon.stub();
 			fakeDispatch.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			requestPromise = requestRelatedPosts( 1, 1 )( fakeDispatch );
 		} );
 
-		it( 'should have dispatched request', () => {
+		test( 'should have dispatched request', () => {
 			expect( fakeDispatch ).to.have.been.calledWith( {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
@@ -57,7 +57,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return a promise which has dispatched related posts', () => {
+		test( 'should return a promise which has dispatched related posts', () => {
 			return requestPromise.then( () => {
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_RECEIVE,
@@ -77,7 +77,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return a promise which has dispatched success', () => {
+		test( 'should return a promise which has dispatched success', () => {
 			return requestPromise.then( () => {
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
@@ -100,12 +100,12 @@ describe( 'actions', () => {
 
 		let fakeDispatch;
 		let requestPromise;
-		before( () => {
+		beforeAll( () => {
 			fakeDispatch = sinon.spy();
 			requestPromise = requestRelatedPosts( 1, 1 )( fakeDispatch );
 		} );
 
-		it( 'should have dispatched request', () => {
+		test( 'should have dispatched request', () => {
 			expect( fakeDispatch ).to.have.been.calledWith( {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
@@ -116,7 +116,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should have dispatched receive with an empty array', () => {
+		test( 'should have dispatched receive with an empty array', () => {
 			return requestPromise.catch( () => {
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_RECEIVE,
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should fail the promise and dispatch failure', () => {
+		test( 'should fail the promise and dispatch failure', () => {
 			return requestPromise.catch( () => {
 				expect( fakeDispatch ).to.have.been.calledWith( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,

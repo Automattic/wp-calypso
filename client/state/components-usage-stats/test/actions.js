@@ -11,9 +11,9 @@ import { expect } from 'chai';
 import { receiveComponentsUsageStats, requestComponentsUsageStats } from '../actions';
 import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
 
-describe( 'actions', function() {
-	describe( 'receiveComponentsUsageStats()', function() {
-		it( 'should return an action object', function() {
+describe( 'actions', () => {
+	describe( 'receiveComponentsUsageStats()', () => {
+		test( 'should return an action object', () => {
 			const action = receiveComponentsUsageStats( {
 				foo: { count: 1 },
 			} );
@@ -27,8 +27,8 @@ describe( 'actions', function() {
 		} );
 	} );
 
-	describe( 'requestComponentsUsageStats()', function() {
-		it( 'should return an action object', function() {
+	describe( 'requestComponentsUsageStats()', () => {
+		test( 'should return an action object', () => {
 			const action = requestComponentsUsageStats();
 
 			expect( action ).to.eql( {

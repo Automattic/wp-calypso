@@ -25,18 +25,18 @@ describe( 'reducer', () => {
 		sandbox.stub( console, 'warn' );
 	} );
 
-	it( 'should include expected keys in return value', () => {
+	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( '#requesting()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set site ID to true value if a request is initiated', () => {
+		test( 'should set site ID to true value if a request is initiated', () => {
 			const state = requesting( undefined, {
 				type: POST_FORMATS_REQUEST,
 				siteId: 12345678,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate the requested site IDs', () => {
+		test( 'should accumulate the requested site IDs', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -64,7 +64,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set site ID to false if request finishes successfully', () => {
+		test( 'should set site ID to false if request finishes successfully', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set site ID to false if request finishes unsuccessfully', () => {
+		test( 'should set site ID to false if request finishes unsuccessfully', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not persist state', () => {
+		test( 'should not persist state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not load persisted state', () => {
+		test( 'should not load persisted state', () => {
 			const state = requesting(
 				deepFreeze( {
 					12345678: true,
@@ -124,13 +124,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index post formats by site ID', () => {
+		test( 'should index post formats by site ID', () => {
 			const state = items( null, {
 				type: POST_FORMATS_RECEIVE,
 				siteId: 12345678,
@@ -150,7 +150,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate sites', () => {
+		test( 'should accumulate sites', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: {
@@ -180,7 +180,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should override previous post formats of same site ID', () => {
+		test( 'should override previous post formats of same site ID', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: {
@@ -205,7 +205,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: {
@@ -224,7 +224,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					12345678: {
@@ -243,7 +243,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const state = items(
 				deepFreeze( {
 					status: 'Status',

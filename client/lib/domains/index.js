@@ -12,6 +12,8 @@ import { some, includes, find } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import { type as domainTypes, domainAvailability } from './constants';
+import { parseDomainAgainstTldList } from './utils';
+import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
 
 const GOOGLE_APPS_INVALID_TLDS = [ 'in' ],
 	GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
@@ -144,10 +146,31 @@ function hasMappedDomain( domains ) {
 	return getMappedDomains( domains ).length > 0;
 }
 
+/**
+ * Parse the tld from a given domain name, semi-naively. The function
+ * first parses against a list of tlds that have been sold on WP.com
+ * and falls back to a simplistic "everything after the last dot" approach
+ * if the whitelist failed. This is ultimately not comprehensive as that
+ * is a poor base assumption (lots of second level tlds, etc). However,
+ * for our purposes, the approach should be "good enough" for a long time.
+ *
+ * @param {string}     domainName     The domain name parse the tld from
+ * @return {string}                   The TLD or an empty string
+ */
 function getTld( domainName ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
 
-	return lastIndexOfDot !== -1 && domainName.substring( lastIndexOfDot + 1 );
+	if ( lastIndexOfDot === -1 ) {
+		return '';
+	}
+
+	let tld = parseDomainAgainstTldList( domainName, wpcomMultiLevelTlds );
+
+	if ( ! tld ) {
+		tld = domainName.substring( lastIndexOfDot + 1 );
+	}
+
+	return tld;
 }
 
 export {

@@ -1,0 +1,90 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import Dialog from 'components/dialog';
+import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import formatCurrency from 'lib/format-currency';
+
+const RefundDialog = ( props ) => {
+	const { orderId, siteId, refundDialog, created, refundableAmount, currency, labelId, translate, moment } = props;
+
+	const getRefundableAmount = () => {
+		return formatCurrency( refundableAmount, currency );
+	};
+
+	const onClose = () => props.closeRefundDialog( orderId, siteId );
+	const onConfirm = () => props.confirmRefund( orderId, siteId );
+	return (
+		<Dialog
+			additionalClassNames="label-refund-modal woocommerce"
+			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
+			onClose={ onClose }>
+			<FormSectionHeading>
+				{ translate( 'Request a refund' ) }
+			</FormSectionHeading>
+			<p>
+				{ translate( 'You can request a refund for a shipping label that has not been used to ship a package. ' +
+					'It will take at least 14 days to process.' ) }
+			</p>
+			<hr />
+			<dl>
+				<dt>{ translate( 'Purchase date' ) }</dt>
+				<dd>{ moment( created ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
+
+				<dt>{ translate( 'Amount eligible for refund' ) }</dt>
+				<dd>{ getRefundableAmount() }</dd>
+			</dl>
+			<ActionButtons buttons={ [
+				{
+					onClick: onConfirm,
+					isPrimary: true,
+					isDisabled: refundDialog && refundDialog.isSubmitting,
+					isBusy: refundDialog && refundDialog.isSubmitting,
+					label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
+				},
+				{
+					onClick: onClose,
+					label: translate( 'Cancel' ),
+				},
+			] } />
+		</Dialog>
+	);
+};
+
+RefundDialog.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
+	refundDialog: PropTypes.object,
+	created: PropTypes.number,
+	refundableAmount: PropTypes.number,
+	currency: PropTypes.string,
+	labelId: PropTypes.number,
+	closeRefundDialog: PropTypes.func.isRequired,
+	confirmRefund: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = ( state, { orderId, siteId } ) => {
+	const loaded = isLoaded( state, orderId, siteId );
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return {
+		refundDialog: loaded ? shippingLabel.refundDialog : {},
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	return bindActionCreators( { closeRefundDialog, confirmRefund }, dispatch );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RefundDialog ) );

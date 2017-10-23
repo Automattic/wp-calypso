@@ -1,23 +1,40 @@
 &.order-payment__dialog {
-	max-width: 720px;
 	display: flex;
 	flex-direction: column;
 	padding: 0;
+	flex-grow: 0;
+
+	@include breakpoint( ">660px" ) {
+		width: 640px;
+	}
 
 	.order__detail-header,
 	.order__details-total {
 		color: $gray-dark;
 	}
 
-	.form-text-input,
-	.form-text-input-with-affixes input {
-		text-align: right;
-	}
-
 	.form-label {
 		.form-text-input-with-affixes {
 			font-weight: normal;
 		}
+	}
+
+	.form-text-input-with-affixes,
+	.form-text-input-with-suffixes {
+		width: 155px;
+		text-align: left;
+
+		input {
+			text-align: left;
+		}
+	}
+
+	.order-payment__amount-label {
+		margin-right: 16px;
+	}
+
+	.order-payment__item-total {
+		text-align: right;
 	}
 }
 
@@ -30,13 +47,14 @@
 	border-top: 1px solid lighten( $gray, 30% );
 	background: lighten( $gray, 35% );
 
-	.order-payment__note,
-	.order-payment__details {
-		flex: 1;
-	}
-
 	.order-payment__note {
-		margin-bottom: 0;
+		margin-bottom: 16px;
+		width: 100%;
+
+		@include breakpoint( ">660px" ) {
+			width: 40%;
+			margin-bottom: 0;
+		}
 
 		.form-textarea {
 			margin-top: 8px;
@@ -44,8 +62,11 @@
 	}
 
 	.order-payment__details {
-		margin-left: 50px;
 		margin-bottom: 0;
+
+		@include breakpoint( ">660px" ) {
+			width: 55%;
+		}
 	}
 
 	.order-payment__amount {
@@ -55,11 +76,7 @@
 		padding-bottom: 16px;
 		margin-bottom: 16px;
 		border-bottom: 1px solid lighten( $gray, 30% );
-
-		.order-payment__amount-label,
-		.order-payment__amount-value {
-			flex: 1;
-		}
+		justify-content: flex-end;
 	}
 
 	.order-payment__method h3 {

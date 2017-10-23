@@ -1,21 +1,20 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
+import { get, identity, noop } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
@@ -27,6 +26,7 @@ import {
 	NESTED_SIDEBAR_REVISIONS,
 	NestedSidebarPropType,
 } from 'post-editor/editor-sidebar/constants';
+import HistoryButton from 'post-editor/editor-ground-control/history-button';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -37,6 +37,7 @@ export class EditorGroundControl extends PureComponent {
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		isSidebarOpened: PropTypes.bool,
 		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
@@ -152,19 +153,13 @@ export class EditorGroundControl extends PureComponent {
 		return buttonLabels[ primaryButtonState ];
 	}
 
-	getSaveStatusLabel( translate ) {
-		if ( this.props.isSaving ) {
-			return translate( 'Saving…' );
-		}
+	shouldShowStatusLabel() {
+		const { isSaving, post } = this.props;
 
-		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
-			return null;
-		}
-
-		return translate( 'Saved' );
+		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	}
 
-	isSaveEnabled() {
+	isSaveAvailable() {
 		return (
 			! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
@@ -209,6 +204,64 @@ export class EditorGroundControl extends PureComponent {
 			recordEvent( eventLabel );
 		}
 	};
+
+	renderGroundControlQuickSaveButtons() {
+		const {
+			isSaving,
+			isSidebarOpened,
+			nestedSidebar,
+			post,
+			selectRevision,
+			setNestedSidebar,
+			toggleSidebar,
+			translate,
+		} = this.props;
+
+		const isSaveAvailable = this.isSaveAvailable();
+		const showingStatusLabel = this.shouldShowStatusLabel();
+		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
+		const hasRevisions = isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
+
+		if ( ! ( showingSaveStatus || hasRevisions ) ) {
+			return;
+		}
+
+		return (
+			<div className="editor-ground-control__quick-save">
+				{ showingSaveStatus && (
+					<div className="editor-ground-control__status">
+						{ isSaveAvailable && (
+							<button
+								className="editor-ground-control__save button is-link"
+								onClick={ this.onSaveButtonClick }
+								tabIndex={ 3 }
+							>
+								{ translate( 'Save' ) }
+							</button>
+						) }
+						{ ! isSaveAvailable &&
+						showingStatusLabel && (
+							<span
+								className="editor-ground-control__save-status"
+								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+							>
+								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+							</span>
+						) }
+					</div>
+				) }
+				{ hasRevisions && (
+					<HistoryButton
+						selectRevision={ selectRevision }
+						setNestedSidebar={ setNestedSidebar }
+						toggleSidebar={ toggleSidebar }
+						isSidebarOpened={ isSidebarOpened }
+						nestedSidebar={ nestedSidebar }
+					/>
+				) }
+			</div>
+		);
+	}
 
 	renderGroundControlActionButtons() {
 		if ( this.props.confirmationSidebarStatus === 'open' ) {
@@ -264,6 +317,8 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<Card className="editor-ground-control">
 				<Button
@@ -271,7 +326,7 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ page.back.bind( page, this.props.allPostsUrl ) }
-					aria-label={ this.props.translate( 'Go back' ) }
+					aria-label={ translate( 'Go back' ) }
 				>
 					<Gridicon icon="arrow-left" />
 				</Button>
@@ -294,29 +349,11 @@ export class EditorGroundControl extends PureComponent {
 						/>
 						{ this.getVerificationNoticeLabel() }{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
-							{ this.props.translate( 'Learn More' ) }
+							{ translate( 'Learn More' ) }
 						</span>
 					</div>
 				) }
-				<div className="editor-ground-control__status">
-					{ this.isSaveEnabled() && (
-						<button
-							className="editor-ground-control__save button is-link"
-							onClick={ this.onSaveButtonClick }
-							tabIndex={ 3 }
-						>
-							{ this.props.translate( 'Save' ) }
-						</button>
-					) }
-					{ ! this.isSaveEnabled() && (
-						<span
-							className="editor-ground-control__save-status"
-							data-e2e-status={ this.getSaveStatusLabel( identity ) }
-						>
-							{ this.getSaveStatusLabel( this.props.translate ) }
-						</span>
-					) }
-				</div>
+				{ this.renderGroundControlQuickSaveButtons() }
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);

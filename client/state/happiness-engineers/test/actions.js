@@ -23,7 +23,7 @@ describe( 'actions', () => {
 	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveHappinessEngineers()', () => {
-		it( 'should return an action object', () => {
+		test( 'should return an action object', () => {
 			const action = receiveHappinessEngineers( [
 				{ avatar_URL: 'test 1' },
 				{ avatar_URL: 'test 2' },
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchHappinessEngineers()', () => {
-		context( 'success', () => {
+		describe( 'success', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 					.reply( 200, [ { avatar_URL: 'test 1' } ] );
 			} );
 
-			it( 'should dispatch fetch action when thunk triggered', () => {
+			test( 'should dispatch fetch action when thunk triggered', () => {
 				fetchHappinessEngineers()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -53,7 +53,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch receive action when request completes', () => {
+			test( 'should dispatch receive action when request completes', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith(
 						receiveHappinessEngineers( [ { avatar_URL: 'test 1' } ] )
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch request success action when request completes', () => {
+			test( 'should dispatch request success action when request completes', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
@@ -70,7 +70,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		context( 'failed', () => {
+		describe( 'failed', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 					.reply( 500, { error: 'Server Error' } );
 			} );
 
-			it( 'should dispatch request failoure when request erorred', () => {
+			test( 'should dispatch request failoure when request erorred', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: HAPPINESS_ENGINEERS_FETCH_FAILURE,

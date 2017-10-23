@@ -1,0 +1,119 @@
+@import './step-confirmation-button/style';
+@import './address-step/style';
+@import './packages-step/style';
+@import './rates-step/style';
+
+&.label-purchase-modal {
+	height: 90%;
+	width: 90%;
+
+	.dialog__content {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.label-purchase-modal__sidebar {
+	flex-basis: 100%;
+	padding: 32px;
+
+	@include breakpoint( ">660px" ) {
+		flex-basis: 40%;
+		padding: 24px;
+		margin-left: 24px;
+		background: $gray-light;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-basis: 30%;
+	}
+}
+
+.label-purchase-modal__content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	flex-grow: 1;
+
+	.gridicon.is-success {
+		color: $alert-green;
+	}
+
+	.gridicon.is-warning {
+		color: $alert-yellow;
+	}
+
+	.is-error {
+		color: $alert-red;
+	}
+
+	.is-error,
+	.is-warning,
+	.is-success {
+		.gridicon {
+			margin-top: -2px;
+		}
+
+		span:first-child {
+			margin-right: 6px;
+		}
+	}
+
+	select {
+		width: 100%;
+	}
+
+	.foldable-card__header {
+		padding: 12px 16px;
+	}
+
+	.foldable-card__secondary {
+		white-space: nowrap;
+	}
+
+	.foldable-card.is-expanded {
+		.foldable-card__content {
+			padding: 24px;
+		}
+	}
+
+	.foldable-card__summary,
+	.foldable-card__summary-expanded  {
+		> span:first-child {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+		}
+
+		svg:empty {
+			display: none;
+		}
+	}
+}
+
+.label-purchase-modal__body {
+	display: flex;
+	flex-grow: 1;
+}
+
+.label-purchase-modal__main-section {
+	flex-basis: 100%;
+
+	@include breakpoint( ">660px" ) {
+		flex-basis: 60%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		flex-basis: 70%;
+	}
+}
+
+.label-purchase-modal__step-title,
+.label-purchase-modal__step-status {
+	float: left;
+}
+
+.label-purchase-modal__step-title {
+	margin: 0 0 0 8px;
+}

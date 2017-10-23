@@ -6,19 +6,27 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { find, findIndex, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
+	getOrderFeeTax,
 	getOrderLineItemTax,
-	getOrderRefundTotal,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
+import {
+	getOrderItemCost,
+	getOrderRefundTotal,
+	getOrderTotal,
+} from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -26,6 +34,8 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
+		isEditing: PropTypes.bool,
+		onChange: PropTypes.func,
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
 			discount_total: PropTypes.string.isRequired,
@@ -39,6 +49,11 @@ class OrderDetailsTable extends Component {
 			slug: PropTypes.string.isRequired,
 		} ),
 		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		isEditing: false,
+		onChange: noop,
 	};
 
 	shouldShowTax = () => {
@@ -73,24 +88,88 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItems = ( item, i ) => {
-		const { order, site } = this.props;
-		const tax = getOrderLineItemTax( order, i );
+	onChange = event => {
+		const { order } = this.props;
+		// Name is `quantity-x`, where x is the ID of the item
+		const id = parseInt( event.target.name.split( '-' )[ 1 ] );
+		const item = find( order.line_items, { id } );
+		if ( ! item ) {
+			return;
+		}
+		const index = findIndex( order.line_items, { id } );
+		// A zero quantity does strange things with the price, so we'll force 1
+		const quantity = parseInt( event.target.value ) || 1;
+		const subtotal = getOrderItemCost( order, id ) * quantity;
+		const total = subtotal;
+		const newItem = { ...item, quantity, subtotal, total };
+		this.props.onChange( { [ index ]: newItem } );
+	};
+
+	renderQuantity = item => {
+		const { isEditing } = this.props;
+		if ( isEditing ) {
+			return (
+				<FormTextInput
+					type="number"
+					min={ 1 }
+					name={ `quantity-${ item.id }` }
+					onChange={ this.onChange }
+					value={ item.quantity }
+				/>
+			);
+		}
+		return item.quantity;
+	};
+
+	renderName = item => {
+		const { isEditing, site } = this.props;
+		if ( isEditing ) {
+			return <span className="order-details__item-link">{ item.name }</span>;
+		}
 		return (
-			<TableRow key={ i } className="order-details__items">
+			<a
+				href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }
+				className="order-details__item-link"
+			>
+				{ item.name }
+			</a>
+		);
+	};
+
+	renderOrderItems = ( item, i ) => {
+		const { order } = this.props;
+		const tax = getOrderLineItemTax( order, item.id );
+		return (
+			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
-					<a
-						href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }
-						className="order-details__item-link"
-					>
-						{ item.name }
-					</a>
+					{ this.renderName( item ) }
 					<span className="order-details__item-sku">{ item.sku }</span>
 				</TableItem>
 				<TableItem className="order-details__item-cost">
 					{ formatCurrency( item.price, order.currency ) }
 				</TableItem>
-				<TableItem className="order-details__item-quantity">{ item.quantity }</TableItem>
+				<TableItem className="order-details__item-quantity">
+					{ this.renderQuantity( item, i ) }
+				</TableItem>
+				<TableItem className="order-details__item-tax">
+					{ formatCurrency( tax, order.currency ) }
+				</TableItem>
+				<TableItem className="order-details__item-total">
+					{ formatCurrency( item.total, order.currency ) }
+				</TableItem>
+			</TableRow>
+		);
+	};
+
+	renderOrderFees = item => {
+		const { order, translate } = this.props;
+		const tax = getOrderFeeTax( order, item.id );
+		return (
+			<TableRow key={ item.id } className="order-details__items">
+				<TableItem isRowHeader className="order-details__item-product" colSpan="3">
+					{ item.name }
+					<span className="order-details__item-sku">{ translate( 'Fee' ) }</span>
+				</TableItem>
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
@@ -102,22 +181,32 @@ class OrderDetailsTable extends Component {
 	};
 
 	render() {
-		const { order, translate } = this.props;
+		const { isEditing, order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
 		const showTax = this.shouldShowTax();
+		const tableClasses = classnames( {
+			'order-details__table': true,
+			'hide-taxes': ! showTax,
+			'is-editing': isEditing,
+		} );
+
 		const totalsClasses = classnames( {
 			'order-details__totals': true,
 			'has-taxes': showTax,
+			'is-editing': isEditing,
 		} );
 		const refundValue = getOrderRefundTotal( order );
+		const totalTaxValue = getOrderTotalTax( order );
+		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
 
 		return (
 			<div>
-				<Table className="order-details__table" header={ this.renderTableHeader() }>
+				<Table className={ tableClasses } header={ this.renderTableHeader() }>
 					{ order.line_items.map( this.renderOrderItems ) }
+					{ order.fee_lines.map( this.renderOrderFees ) }
 				</Table>
 
 				<div className={ totalsClasses }>
@@ -139,8 +228,8 @@ class OrderDetailsTable extends Component {
 						className="order-details__total-full"
 						currency={ order.currency }
 						label={ translate( 'Total' ) }
-						value={ order.total }
-						taxValue={ getOrderTotalTax( order ) }
+						value={ totalValue }
+						taxValue={ totalTaxValue }
 						showTax={ showTax }
 					/>
 					{ !! refundValue && (
@@ -151,6 +240,13 @@ class OrderDetailsTable extends Component {
 							value={ refundValue }
 							showTax={ showTax }
 						/>
+					) }
+					{ isEditing && (
+						<FormSettingExplanation>
+							{ translate(
+								'The total might not reflect updated tax values, tax will update when saved.'
+							) }
+						</FormSettingExplanation>
 					) }
 				</div>
 			</div>

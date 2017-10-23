@@ -4,6 +4,6 @@
  * @format
  */
 
-module.exports = {
+export default {
 	undocumented: function() {},
 };

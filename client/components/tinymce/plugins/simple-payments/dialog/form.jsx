@@ -182,8 +182,11 @@ class ProductForm extends Component {
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
 						name="title"
-						label={ translate( 'What are you selling?' ) }
+						label={ translate( 'What is this payment for?' ) }
 						component={ FormTextInput }
+						explanation={ translate(
+							'For example: event tickets, charitable donations, training courses, coaching fees, etc.'
+						) }
 					/>
 					<ReduxFormFieldset
 						name="description"

@@ -1,23 +1,24 @@
+/** @format */
+
 /**
- * Find all JS and JSX files in the project that have the @format tag
- * and reformat them with Prettier. Useful when upgrading Prettier to
- * a newer version.
- * @format
+ * External dependencies
  */
 const fs = require( 'fs' );
 const glob = require( 'glob' );
 const ignore = require( 'ignore' );
 const path = require( 'path' );
 const prettier = require( 'prettier' );
-const docblock = require( 'jest-docblock' );
 
 /**
- * Returns true if the given text contains @format.
- * within its first docblock. False otherwise.
- *
- * @param {String} text text to scan for the format keyword within the first docblock
+ * Internal dependencies
  */
-const shouldFormat = text => 'format' in docblock.parse( docblock.extract( text ) );
+const shouldFormat = require( './utils/should-format' );
+
+/**
+ * Find all JS and JSX files in the project that have the @format tag
+ * and reformat them with Prettier. Useful when upgrading Prettier to
+ * a newer version.
+ */
 
 // Load ignore file
 const ignoreFile = fs.readFileSync( '.eslintignore', 'utf-8' );

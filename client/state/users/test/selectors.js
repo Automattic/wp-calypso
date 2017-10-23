@@ -12,7 +12,7 @@ import { getUser } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getUser()', () => {
-		it( 'should return the object for the user ID', () => {
+		test( 'should return the object for the user ID', () => {
 			const user = getUser(
 				{
 					users: {

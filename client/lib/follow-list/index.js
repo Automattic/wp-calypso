@@ -39,4 +39,4 @@ FollowList.prototype.siteExists = function( site_id ) {
 	return find( this.data, { site_id } ) || false;
 };
 
-module.exports = FollowList;
+export default FollowList;

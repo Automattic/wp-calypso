@@ -323,4 +323,4 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	} );
 }
 
-module.exports = localize( AddEmailAddressesCard );
+export default localize( AddEmailAddressesCard );

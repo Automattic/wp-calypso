@@ -41,7 +41,15 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
-	const parsedURL = url.parse( imageURL, true, true ); // true, true means allow protocol-less hosts and parse the querystring
+	let parsedURL = {};
+	try {
+		parsedURL = url.parse( imageURL, true, true ); // true, true means allow protocol-less hosts and parse the querystring
+	} catch ( e ) {
+		/**
+		 * `url.parse` throws in a few places where it calls decodeURIComponent
+		 * @see e.g. https://github.com/Automattic/wp-calypso/issues/18645
+		 */
+	}
 
 	if ( ! parsedURL.host ) {
 		return imageURL;

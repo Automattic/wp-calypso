@@ -11,7 +11,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import scrollIntoView from 'dom-scroll-into-view';
 
-var SuggestionsList = React.createClass( {
+const SuggestionsList = React.createClass( {
 	propTypes: {
 		isExpanded: PropTypes.bool,
 		match: PropTypes.string,
@@ -146,4 +146,4 @@ var SuggestionsList = React.createClass( {
 	},
 } );
 
-module.exports = SuggestionsList;
+export default SuggestionsList;

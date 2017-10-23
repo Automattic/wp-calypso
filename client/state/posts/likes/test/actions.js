@@ -39,7 +39,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostLikes( 12345678, 50 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -49,7 +49,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch receive action when request completes', () => {
+		test( 'should dispatch receive action when request completes', () => {
 			return requestPostLikes( 12345678, 50 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_LIKES_RECEIVE,
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request success action when request completes', () => {
+		test( 'should dispatch request success action when request completes', () => {
 			return requestPostLikes( 12345678, 50 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_LIKES_REQUEST_SUCCESS,
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch request failure action when request fails', () => {
+		test( 'should dispatch request failure action when request fails', () => {
 			return requestPostLikes( 87654321, 50 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_LIKES_REQUEST_FAILURE,

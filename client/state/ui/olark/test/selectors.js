@@ -24,7 +24,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isChatAvailable()', () => {
-		it( 'should return true if chat is available', () => {
+		test( 'should return true if chat is available', () => {
 			const isAvailable = isChatAvailable(
 				{
 					ui: {
@@ -39,7 +39,7 @@ describe( 'selectors', () => {
 			);
 			expect( isAvailable ).to.equal( true );
 		} );
-		it( 'should return false if chat is not available', () => {
+		test( 'should return false if chat is not available', () => {
 			const isAvailable = isChatAvailable(
 				{
 					ui: {
@@ -54,7 +54,7 @@ describe( 'selectors', () => {
 			);
 			expect( isAvailable ).to.equal( false );
 		} );
-		it( 'should return false if area does not exist', () => {
+		test( 'should return false if area does not exist', () => {
 			const isAvailable = isChatAvailable(
 				{
 					ui: {
@@ -69,7 +69,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isOperatorsAvailable()', () => {
-		it( 'should return true if operators are available', () => {
+		test( 'should return true if operators are available', () => {
 			const isAvailable = isOperatorsAvailable( {
 				ui: {
 					olark: {
@@ -79,7 +79,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isAvailable ).to.equal( true );
 		} );
-		it( 'should return false if operators are away', () => {
+		test( 'should return false if operators are away', () => {
 			const isAvailable = isOperatorsAvailable( {
 				ui: {
 					olark: {
@@ -91,7 +91,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isOlarkReady()', () => {
-		it( 'should return false if olark has unknown status', () => {
+		test( 'should return false if olark has unknown status', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
@@ -101,7 +101,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isReady ).to.equal( false );
 		} );
-		it( 'should return false if olark is timed out', () => {
+		test( 'should return false if olark is timed out', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
@@ -111,7 +111,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isReady ).to.equal( false );
 		} );
-		it( 'should return true if olark is ready', () => {
+		test( 'should return true if olark is ready', () => {
 			const isReady = isOlarkReady( {
 				ui: {
 					olark: {
@@ -123,7 +123,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isOlarkTimedOut()', () => {
-		it( 'should return false if olark has unknown status', () => {
+		test( 'should return false if olark has unknown status', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isTimedOut ).to.equal( false );
 		} );
-		it( 'should return true if olark is timed out', () => {
+		test( 'should return true if olark is timed out', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
@@ -143,7 +143,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isTimedOut ).to.equal( true );
 		} );
-		it( 'should return false if olark is ready', () => {
+		test( 'should return false if olark is ready', () => {
 			const isTimedOut = isOlarkTimedOut( {
 				ui: {
 					olark: {
@@ -155,7 +155,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 	describe( '#isRequestingOlark()', () => {
-		it( 'should return false if olark is not requesting', () => {
+		test( 'should return false if olark is not requesting', () => {
 			const isRequesting = isRequestingOlark( {
 				ui: {
 					olark: {
@@ -165,7 +165,7 @@ describe( 'selectors', () => {
 			} );
 			expect( isRequesting ).to.equal( false );
 		} );
-		it( 'should return true if olark is requesting', () => {
+		test( 'should return true if olark is requesting', () => {
 			const isRequesting = isRequestingOlark( {
 				ui: {
 					olark: {

@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { find, map, sum } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,14 +23,20 @@ import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
+import {
+	getOrderFeeTax,
+	getOrderLineItemTax,
+	getOrderShippingTax,
+} from 'woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
-class OrderPaymentCard extends Component {
+class RefundDialog extends Component {
 	static propTypes = {
 		isPaymentLoading: PropTypes.bool,
 		fetchPaymentMethods: PropTypes.func.isRequired,
@@ -48,11 +55,15 @@ class OrderPaymentCard extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = {
-		errorMessage: false,
-		refundTotal: 0,
-		refundNote: '',
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			errorMessage: false,
+			refundTotal: this.getInitialRefund(),
+			refundNote: '',
+		};
+	}
 
 	componentDidMount = () => {
 		const { siteId } = this.props;
@@ -69,19 +80,62 @@ class OrderPaymentCard extends Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchPaymentMethods( newSiteId );
 		}
+		// Has been opened and closed before, let's reset the values.
+		if ( newProps.isVisible && ! this.props.isVisible ) {
+			this.setState( {
+				errorMessage: false,
+				refundTotal: this.getInitialRefund(),
+				refundNote: '',
+			} );
+		}
 	};
 
 	toggleDialog = () => {
-		this.setState( {
-			errorMessage: false,
-			refundTotal: 0,
-			refundNote: '',
-		} );
 		this.props.toggleDialog();
 	};
 
-	recalculateRefund = total => {
-		this.setState( { refundTotal: total } );
+	getInitialRefund = () => {
+		const { order } = this.props;
+		return (
+			sum(
+				order.fee_lines.map( item => {
+					return parseFloat( item.total ) + parseFloat( getOrderFeeTax( order, item.id ) );
+				} )
+			) +
+			parseFloat( getOrderShippingTax( order ) ) +
+			parseFloat( order.shipping_total )
+		);
+	};
+
+	recalculateRefund = data => {
+		const { order } = this.props;
+		if ( ! order ) {
+			return 0;
+		}
+		const subtotal = sum( [
+			...map( data.fees, parseFloat ),
+			...map( data.quantities, ( q, id ) => {
+				id = parseInt( id );
+				const line_item = find( order.line_items, { id } );
+				if ( ! line_item ) {
+					return 0;
+				}
+
+				const price = parseFloat( line_item.price );
+				if ( order.prices_include_tax ) {
+					return price * q;
+				}
+
+				const tax = getOrderLineItemTax( order, id ) / line_item.quantity;
+				return ( price + tax ) * q;
+			} ),
+		] );
+		const total = subtotal + ( parseFloat( data.shippingTotal ) || 0 );
+		return total;
+	};
+
+	recalculateAndSetState = data => {
+		this.setState( { refundTotal: this.recalculateRefund( data ) } );
 	};
 
 	updateNote = event => {
@@ -94,7 +148,8 @@ class OrderPaymentCard extends Component {
 		const { order, paymentMethod, siteId, translate } = this.props;
 		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
-		if ( this.state.refundTotal > maxRefund ) {
+		const thisRefund = getCurrencyFormatDecimal( this.state.refundTotal );
+		if ( thisRefund > maxRefund ) {
 			this.setState( {
 				errorMessage: translate(
 					'Refund must be less than or equal to the order balance, %(total)s',
@@ -106,13 +161,13 @@ class OrderPaymentCard extends Component {
 				),
 			} );
 			return;
-		} else if ( this.state.refundTotal <= 0 ) {
+		} else if ( thisRefund <= 0 ) {
 			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
 			return;
 		}
 		this.toggleDialog();
 		const refundObj = {
-			amount: this.state.refundTotal.toPrecision(),
+			amount: thisRefund.toPrecision(),
 			reason: this.state.refundNote,
 			api_refund: paymentMethod && -1 !== paymentMethod.method_supports.indexOf( 'refunds' ),
 		};
@@ -157,10 +212,6 @@ class OrderPaymentCard extends Component {
 		const { errorMessage, refundNote } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 
-		if ( 'cancelled' === order.status || 'failed' === order.status ) {
-			return null;
-		}
-
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
 			refundTotal = formatCurrency( this.state.refundTotal, order.currency );
@@ -183,7 +234,7 @@ class OrderPaymentCard extends Component {
 				additionalClassNames="order-payment__dialog woocommerce"
 			>
 				<h1>{ translate( 'Refund order' ) }</h1>
-				<OrderRefundTable order={ order } onChange={ this.recalculateRefund } />
+				<OrderRefundTable order={ order } onChange={ this.recalculateAndSetState } />
 				<form className="order-payment__container">
 					<FormLabel className="order-payment__note">
 						{ translate( 'Refund note', { comment: "Label for refund's comment field" } ) }
@@ -232,4 +283,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
-)( localize( OrderPaymentCard ) );
+)( localize( RefundDialog ) );

@@ -13,7 +13,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 
-var Notices = React.createClass( {
+const Notices = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
@@ -129,4 +129,4 @@ var Notices = React.createClass( {
 	},
 } );
 
-module.exports = Notices;
+export default Notices;

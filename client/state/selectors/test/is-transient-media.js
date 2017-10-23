@@ -12,7 +12,7 @@ import { isTransientMedia } from '../';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'isTransientMedia()', () => {
-	it( 'should return false if the media is not known', () => {
+	test( 'should return false if the media is not known', () => {
 		const isTransient = isTransientMedia(
 			{
 				media: {
@@ -26,7 +26,7 @@ describe( 'isTransientMedia()', () => {
 		expect( isTransient ).to.be.false;
 	} );
 
-	it( 'should return false if the media has no transient flag', () => {
+	test( 'should return false if the media has no transient flag', () => {
 		const isTransient = isTransientMedia(
 			{
 				media: {
@@ -46,7 +46,7 @@ describe( 'isTransientMedia()', () => {
 		expect( isTransient ).to.be.false;
 	} );
 
-	it( 'should return the true if truthy transient flag on media', () => {
+	test( 'should return the true if truthy transient flag on media', () => {
 		const isTransient = isTransientMedia(
 			{
 				media: {

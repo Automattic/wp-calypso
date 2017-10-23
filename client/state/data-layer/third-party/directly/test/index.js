@@ -55,12 +55,12 @@ describe( 'Directly data layer', () => {
 			directly.askQuestion.returns( Promise.resolve() );
 		} );
 
-		it( 'should invoke the corresponding Directly function', () => {
+		test( 'should invoke the corresponding Directly function', () => {
 			askQuestion( store, action );
 			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
 		} );
 
-		it( 'should dispatch an analytics event', () =>
+		test( 'should dispatch an analytics event', () =>
 			askQuestion( store, action ).then( () =>
 				expect( analytics.recordTracksEvent ).to.have.been.calledWith(
 					'calypso_directly_ask_question'
@@ -69,19 +69,19 @@ describe( 'Directly data layer', () => {
 	} );
 
 	describe( '#initialize', () => {
-		it( 'should invoke the corresponding Directly function', () => {
+		test( 'should invoke the corresponding Directly function', () => {
 			initialize( store );
 			expect( directly.initialize ).to.have.been.calledOnce;
 		} );
 
-		it( 'should dispatch an analytics event once initialization starts', () => {
+		test( 'should dispatch an analytics event once initialization starts', () => {
 			initialize( store );
 			expect( analytics.recordTracksEvent ).to.have.been.calledWith(
 				'calypso_directly_initialization_start'
 			);
 		} );
 
-		it( 'should dispatch a success action if initialization completes', done => {
+		test( 'should dispatch a success action if initialization completes', done => {
 			initialize( store )
 				.then( () =>
 					expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -93,7 +93,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationSuccess();
 		} );
 
-		it( 'should dispatch an analytics event if initialization completes', done => {
+		test( 'should dispatch an analytics event if initialization completes', done => {
 			initialize( store )
 				.then( () =>
 					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
@@ -105,7 +105,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationSuccess();
 		} );
 
-		it( 'should dispatch an error action if initialization fails', done => {
+		test( 'should dispatch an error action if initialization fails', done => {
 			initialize( store )
 				.then( () =>
 					expect( store.dispatch ).to.have.been.calledWithMatch( {
@@ -117,7 +117,7 @@ describe( 'Directly data layer', () => {
 			simulateInitializationError();
 		} );
 
-		it( 'should dispatch an analytics event if initialization fails', done => {
+		test( 'should dispatch an analytics event if initialization fails', done => {
 			initialize( store )
 				.then( () =>
 					expect(

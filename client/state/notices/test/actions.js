@@ -11,9 +11,9 @@ import { expect } from 'chai';
 import { removeNotice, successNotice, errorNotice } from '../actions';
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 
-describe( 'actions', function() {
-	describe( 'removeNotice()', function() {
-		it( 'should return an action object', function() {
+describe( 'actions', () => {
+	describe( 'removeNotice()', () => {
+		test( 'should return an action object', () => {
 			const action = removeNotice( 123 );
 
 			expect( action ).to.eql( {
@@ -23,8 +23,8 @@ describe( 'actions', function() {
 		} );
 	} );
 
-	describe( 'successNotice()', function() {
-		it( 'should return action object with a proper text', function() {
+	describe( 'successNotice()', () => {
+		test( 'should return action object with a proper text', () => {
 			const text = 'potato',
 				action = successNotice( text );
 
@@ -35,7 +35,7 @@ describe( 'actions', function() {
 			} );
 		} );
 
-		it( 'should use default options when none provided', function() {
+		test( 'should use default options when none provided', () => {
 			const action = successNotice( '' );
 
 			expect( action.notice ).to.include( {
@@ -44,8 +44,8 @@ describe( 'actions', function() {
 		} );
 	} );
 
-	describe( 'errorNotice()', function() {
-		it( 'should return action object with a proper text', function() {
+	describe( 'errorNotice()', () => {
+		test( 'should return action object with a proper text', () => {
 			const text = 'potato',
 				action = errorNotice( text );
 

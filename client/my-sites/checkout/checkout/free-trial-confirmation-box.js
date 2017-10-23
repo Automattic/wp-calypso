@@ -53,4 +53,4 @@ const FreeTrialConfirmationBox = React.createClass( {
 	},
 } );
 
-module.exports = localize( FreeTrialConfirmationBox );
+export default localize( FreeTrialConfirmationBox );

@@ -20,6 +20,7 @@ const ACTIVITY_ITEM = deepFreeze( {
 	activityGroup: 'plugin',
 	activityIcon: 'plugins',
 	activityId: 'foobarbas',
+	activityIsRewindable: false,
 	activityName: 'plugin__updated',
 	activityStatus: 'warning',
 	activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
@@ -41,13 +42,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#logItems()', () => {
-		it( 'should default to an empty object', () => {
+		test( 'should default to an empty object', () => {
 			const state = logItems( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should populate state with activity', () => {
+		test( 'should populate state with activity', () => {
 			const data = deepFreeze( [ ACTIVITY_ITEM ] );
 			const state = logItems( undefined, {
 				type: ACTIVITY_LOG_UPDATE,
@@ -62,7 +63,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should persist state', () => {
+		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				[ SITE_ID ]: populateQueryManager( [ ACTIVITY_ITEM ], {} ),
 			} );
@@ -71,7 +72,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should load valid persisted state', () => {
+		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				[ SITE_ID ]: {
 					data: {
@@ -91,7 +92,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load invalid persisted state', () => {
+		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				[ SITE_ID ]: {
 					data: {
