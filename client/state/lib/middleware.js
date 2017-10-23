@@ -194,7 +194,7 @@ const receiveSitesChangeListener = ( dispatch, action ) => {
 	sitesListeners.push( action.listener );
 };
 
-const fetchAutomatedTransferStatusForSite = ( dispatch, getState ) => {
+const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
@@ -243,7 +243,7 @@ const handler = ( dispatch, action, getState ) => {
 					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 
-				fetchAutomatedTransferStatusForSite( dispatch, getState );
+				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
 			return;
 

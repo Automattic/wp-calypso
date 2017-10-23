@@ -35,7 +35,7 @@ export const status = ( state = null, action ) =>
 		state
 	);
 
-export const fetchingStatus = ( state = [], action ) =>
+export const fetchingStatus = ( state = false, action ) =>
 	REQUEST_STATUS === action.type ? true : state;
 
 export const siteReducer = combineReducers( {

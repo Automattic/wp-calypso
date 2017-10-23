@@ -19,7 +19,7 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import config, { isEnabled } from 'config';
+import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import productsValues from 'lib/products-values';
 import ManageMenu from './manage-menu';
@@ -404,7 +404,7 @@ export class MySitesSidebar extends Component {
 
 		if (
 			! isJetpackOrAtomicSite &&
-			! ( isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
+			! ( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
 		) {
 			return null;
 		}
