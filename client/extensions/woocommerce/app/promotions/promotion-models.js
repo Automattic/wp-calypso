@@ -19,10 +19,10 @@ const productModel = {
 	canApplyTo: { products: 'one' },
 };
 
-const couponModel = {
+const fixedCouponModel = {
 	fields: [
 		'couponCode',
-		'amount',
+		'fixedDiscount',
 		'endDate',
 		'individualUse',
 		'usageLimit',
@@ -32,14 +32,32 @@ const couponModel = {
 	],
 	requiredFields: [
 		'couponCode',
-		'amount',
+		'fixedDiscount',
+	],
+	canApplyTo: { all: true, categories: 'many', products: 'many' },
+};
+
+const percentCouponModel = {
+	fields: [
+		'couponCode',
+		'percentDiscount',
+		'endDate',
+		'individualUse',
+		'usageLimit',
+		'usageLimitPerUser',
+		'minimumAmount',
+		'maximumAmount',
+	],
+	requiredFields: [
+		'couponCode',
+		'percentDiscount',
 	],
 	canApplyTo: { all: true, categories: 'many', products: 'many' },
 };
 
 export default {
 	[ 'product_sale' ]: productModel,
-	[ 'fixed_product' ]: couponModel,
-	[ 'fixed_cart' ]: couponModel,
-	[ 'percent' ]: couponModel,
+	[ 'fixed_product' ]: fixedCouponModel,
+	[ 'fixed_cart' ]: fixedCouponModel,
+	[ 'percent' ]: percentCouponModel,
 };

@@ -8,20 +8,21 @@ export function createPromotionFromProduct( product ) {
 		id: uniqueId( 'promotion:' ),
 		name: product.name,
 		type: 'product_sale',
+		appliesTo: { productIds: [ product.id ] },
 		salePrice: product.sale_price,
 		startDate: product.date_on_sale_from_gmt,
 		endDate: product.date_on_sale_to_gmt,
-		appliesTo: { productIds: [ product.id ] },
 	};
 }
 
 export function createPromotionFromCoupon( coupon ) {
-	return {
+
+	const promotion = {
 		id: uniqueId( 'promotion:' ),
 		name: coupon.code,
 		type: coupon.discount_type,
+		appliesTo: calculateCouponAppliesTo( coupon ),
 		couponCode: coupon.code,
-		amount: coupon.amount,
 		startDate: coupon.date_created_gmt,
 		endDate: coupon.date_expires_gmt,
 		individualUse: coupon.individual_use,
@@ -30,8 +31,19 @@ export function createPromotionFromCoupon( coupon ) {
 		freeShipping: coupon.free_shipping,
 		minimumAmount: coupon.minimum_amount,
 		maximumAmount: coupon.maximum_amount,
-		appliesTo: calculateCouponAppliesTo( coupon ),
 	};
+
+	switch ( coupon.discount_type ) {
+		case 'percent':
+			promotion.percentDiscount = coupon.amount;
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+			promotion.fixedDiscount = coupon.amount;
+			break;
+	}
+
+	return promotion;
 }
 
 function calculateCouponAppliesTo( coupon ) {

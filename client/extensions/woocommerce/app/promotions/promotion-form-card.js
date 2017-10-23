@@ -56,34 +56,51 @@ function renderCouponCode( siteId, model, promotion, editPromotion, translate ) 
 	);
 }
 
-function renderAmount( siteId, model, promotion, editPromotion, translate, currency ) {
-	if ( ! hasField( model, 'amount' ) ) {
+function renderFixedDiscount( labelText, siteId, model, promotion, editPromotion, translate, currency ) {
+	if ( ! hasField( model, 'fixedDiscount' ) ) {
 		return null;
 	}
 
+	const { fixedDiscount, type } = promotion;
+	const renderedAmount = ( 'undefined' !== typeof fixedDiscount ? fixedDiscount : '' );
+	const onChange = ( e ) => {
+		const newDiscount = e.target.value;
+		if ( newDiscount >= 0 ) {
+			editPromotion( siteId, promotion, { fixedDiscount: newDiscount, type } );
+		}
+	};
+
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'Discount', { context: 'noun' } ) }</FormLabel>
-			{ renderRequiredLabel( isRequiredField( model, 'couponCode' ), translate ) }
-			{ renderAmountField( siteId, model, promotion, editPromotion, translate, currency ) }
+			<FormLabel>{ labelText }</FormLabel>
+			{ renderRequiredLabel( isRequiredField( model, 'fixedDiscount' ), translate ) }
+			<PriceInput
+				currency={ currency }
+				value={ renderedAmount }
+				onChange={ onChange }
+			/>
 		</FormFieldset>
 	);
 }
 
-function renderAmountField( siteId, model, promotion, editPromotion, translate, currency ) {
-	const { type } = promotion;
-	const renderedAmount = ( 'undefined' !== typeof promotion.amount ? promotion.amount : '' );
+function renderPercentDiscount( labelText, siteId, model, promotion, editPromotion, translate ) {
+	if ( ! hasField( model, 'percentDiscount' ) ) {
+		return null;
+	}
 
-	if ( 'percent' === promotion.type ) {
-		const onAmountChange = ( e ) => {
-			const amount = e.target.value;
-			if ( amount >= 0 && amount <= 100 ) {
-				editPromotion( siteId, promotion, { amount, type } );
-			}
-		};
+	const { percentDiscount, type } = promotion;
+	const renderedAmount = ( 'undefined' !== typeof percentDiscount ? percentDiscount : '' );
+	const onPercentChange = ( e ) => {
+		const newDiscount = e.target.value;
+		if ( newDiscount >= 0 && newDiscount <= 100 ) {
+			editPromotion( siteId, promotion, { percentDiscount: newDiscount, type } );
+		}
+	};
 
-		// TODO: Consider making a FormPercentInput general purpose component.
-		return (
+	return (
+		<FormFieldset>
+			<FormLabel>{ labelText }</FormLabel>
+			{ renderRequiredLabel( isRequiredField( model, 'percentDiscount' ), translate ) }
 			<FormTextInputWithAffixes
 				type="number"
 				min="0"
@@ -91,25 +108,9 @@ function renderAmountField( siteId, model, promotion, editPromotion, translate, 
 				suffix="%"
 				placeholder="20"
 				value={ renderedAmount }
-				onChange={ onAmountChange }
+				onChange={ onPercentChange }
 			/>
-		);
-	}
-
-	// Not a percent, so a currency amount.
-	const onAmountChange = ( e ) => {
-		const amount = e.target.value;
-		if ( amount >= 0 ) {
-			editPromotion( siteId, promotion, { amount, type } );
-		}
-	};
-
-	return (
-		<PriceInput
-			currency={ currency }
-			value={ renderedAmount }
-			onChange={ onAmountChange }
-		/>
+		</FormFieldset>
 	);
 }
 
@@ -130,7 +131,7 @@ function renderSalePrice( siteId, model, promotion, editPromotion, translate, cu
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'Sale Price' ) }</FormLabel>
+			<FormLabel>{ translate( 'Product Sale Price' ) }</FormLabel>
 			{ renderRequiredLabel( isRequiredField( model, 'salePrice' ), translate ) }
 			<PriceInput
 				currency={ currency }
@@ -153,7 +154,32 @@ const PromotionFormCard = ( {
 	return (
 		<Card className="promotions__promotion-form-card">
 			{ renderCouponCode( siteId, model, promotion, editPromotion, translate ) }
-			{ renderAmount( siteId, model, promotion, editPromotion, translate, currency ) }
+			{ 'fixed_product' === promotion.type && renderFixedDiscount(
+				translate( 'Product Discount', { context: 'noun' } ),
+				siteId,
+				model,
+				promotion,
+				editPromotion,
+				translate,
+				currency
+			) }
+			{ 'fixed_cart' === promotion.type && renderFixedDiscount(
+				translate( 'Cart Discount', { context: 'noun' } ),
+				siteId,
+				model,
+				promotion,
+				editPromotion,
+				translate,
+				currency
+			) }
+			{ renderPercentDiscount(
+				translate( 'Cart Percent Discount', { context: 'noun' } ),
+				siteId,
+				model,
+				promotion,
+				editPromotion,
+				translate
+			) }
 			{ renderSalePrice( siteId, model, promotion, editPromotion, translate, currency ) }
 		</Card>
 	);
