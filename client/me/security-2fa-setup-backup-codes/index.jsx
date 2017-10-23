@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
 
@@ -20,7 +21,7 @@ import eventRecorder from 'me/event-recorder';
 import support from 'lib/url/support';
 import Notice from 'components/notice';
 
-const Security2faSetupBackupCodes = React.createClass( {
+const Security2faSetupBackupCodes = createReactClass( {
 	displayName: 'Security2faSetupBackupCodes',
 
 	mixins: [ eventRecorder ],

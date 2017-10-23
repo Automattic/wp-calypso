@@ -13,18 +13,16 @@ import Gridicon from 'gridicons';
  */
 var noop = () => {};
 
-export default React.createClass( {
-	displayName: 'PostScheduleHeaderControls',
+export default class extends React.Component {
+	static displayName = 'PostScheduleHeaderControls';
 
-	propTypes: {
+	static propTypes = {
 		onYearChange: PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onYearChange: noop,
-		};
-	},
+	static defaultProps = {
+		onYearChange: noop,
+	};
 
 	render() {
 		return (
@@ -48,5 +46,5 @@ export default React.createClass( {
 				</button>
 			</div>
 		);
-	},
-} );
+	}
+}

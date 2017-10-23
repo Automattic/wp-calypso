@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { get, find, defer } from 'lodash';
 
 /**
@@ -35,7 +36,8 @@ const { hasFreeTrial } = cartItems;
 const countriesListForPayments = countriesList.forPayments();
 const debug = debugFactory( 'calypso:checkout:payment' );
 
-const SecurePaymentForm = React.createClass( {
+const SecurePaymentForm = createReactClass( {
+	displayName: 'SecurePaymentForm',
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {

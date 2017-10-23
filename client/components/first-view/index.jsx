@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -29,28 +28,24 @@ const TransitionGroupComponent = props => {
 	return children[ 0 ] || null;
 };
 
-const FirstView = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			isEnabled: false,
-		};
-	},
+class FirstView extends React.PureComponent {
+	state = {
+		isEnabled: false,
+	};
 
 	componentDidMount() {
 		this.updateDocumentStyles();
-	},
+	}
 
 	componentDidUpdate() {
 		this.updateDocumentStyles();
-	},
+	}
 
 	componentWillUnmount() {
 		process.nextTick( () => {
 			this.updateDocumentStylesForHiddenFirstView();
 		} );
-	},
+	}
 
 	render() {
 		const classes = classNames( 'first-view', {
@@ -93,27 +88,27 @@ const FirstView = React.createClass( {
 				</ReactCSSTransitionGroup>
 			</RootChild>
 		);
-	},
+	}
 
-	hide() {
+	hide = () => {
 		this.props.hideView( { enabled: this.state.isEnabled } );
-	},
+	};
 
-	enableOrDisableNextTime( event ) {
+	enableOrDisableNextTime = event => {
 		this.setState( {
 			isEnabled: ! event.target.checked,
 		} );
-	},
+	};
 
-	updateDocumentStyles() {
+	updateDocumentStyles = () => {
 		if ( this.props.isVisible ) {
 			this.updateDocumentStylesForVisibleFirstView();
 		} else {
 			this.updateDocumentStylesForHiddenFirstView();
 		}
-	},
+	};
 
-	updateDocumentStylesForVisibleFirstView() {
+	updateDocumentStylesForVisibleFirstView = () => {
 		document.documentElement.classList.add( 'no-scroll' );
 		document.documentElement.classList.add( 'is-first-view-active' );
 		process.nextTick( () => {
@@ -121,9 +116,9 @@ const FirstView = React.createClass( {
 				document.documentElement.classList.add( 'is-first-view-visible' );
 			}
 		} );
-	},
+	};
 
-	updateDocumentStylesForHiddenFirstView() {
+	updateDocumentStylesForHiddenFirstView = () => {
 		document.documentElement.classList.remove( 'no-scroll' );
 		document.documentElement.classList.remove( 'is-first-view-visible' );
 		// wait a bit so that we trigger the CSS transition
@@ -132,8 +127,8 @@ const FirstView = React.createClass( {
 				document.documentElement.classList.remove( 'is-first-view-active' );
 			}
 		}, 600 );
-	},
-} );
+	};
+}
 
 export default connect(
 	state => {

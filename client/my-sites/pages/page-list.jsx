@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -81,7 +82,7 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = React.createClass( {
+const Pages = createReactClass( {
 	displayName: 'Pages',
 
 	mixins: [ infiniteScroll( 'fetchPages' ) ],

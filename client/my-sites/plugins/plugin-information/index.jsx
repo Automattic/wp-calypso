@@ -23,28 +23,26 @@ import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
 
-const PluginInformation = React.createClass( {
-	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
+class PluginInformation extends React.Component {
+	static displayName = 'PluginInformation';
 
-	displayName: 'PluginInformation',
-
-	propTypes: {
+	static propTypes = {
 		plugin: PropTypes.object.isRequired,
 		isPlaceholder: PropTypes.bool,
 		hasUpdate: PropTypes.bool,
 		pluginVersion: PropTypes.string,
 		siteVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			plugin: {
-				rating: 0,
-			},
-		};
-	},
+	static defaultProps = {
+		plugin: {
+			rating: 0,
+		},
+	};
 
-	renderHomepageLink() {
+	_WPORG_PLUGINS_URL = 'wordpress.org/plugins/';
+
+	renderHomepageLink = () => {
 		if ( ! this.props.plugin || ! this.props.plugin.plugin_url ) {
 			return;
 		}
@@ -73,9 +71,9 @@ const PluginInformation = React.createClass( {
 				{ this.props.translate( 'Plugin homepage' ) }
 			</ExternalLink>
 		);
-	},
+	};
 
-	renderWporgLink() {
+	renderWporgLink = () => {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
@@ -97,9 +95,9 @@ const PluginInformation = React.createClass( {
 				{ this.props.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
 		);
-	},
+	};
 
-	renderLastUpdated() {
+	renderLastUpdated = () => {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
 			const dateFromNow = i18n.moment
 				.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' )
@@ -113,9 +111,9 @@ const PluginInformation = React.createClass( {
 				</div>
 			);
 		}
-	},
+	};
 
-	renderSiteVersion() {
+	renderSiteVersion = () => {
 		return this.props.siteVersion ? (
 			<Version
 				version={ this.props.siteVersion }
@@ -123,9 +121,9 @@ const PluginInformation = React.createClass( {
 				className="plugin-information__version"
 			/>
 		) : null;
-	},
+	};
 
-	renderLimits() {
+	renderLimits = () => {
 		const limits = this.getCompatibilityLimits();
 		let versionView = null;
 		let versionCheck = null;
@@ -167,9 +165,9 @@ const PluginInformation = React.createClass( {
 			);
 		}
 		return <div className="plugin-information__versions">{ versionView }</div>;
-	},
+	};
 
-	getCompatibilityLimits() {
+	getCompatibilityLimits = () => {
 		if ( this.props.plugin.compatibility && this.props.plugin.compatibility.length ) {
 			return {
 				maxVersion: this.props.plugin.compatibility[ this.props.plugin.compatibility.length - 1 ],
@@ -177,9 +175,9 @@ const PluginInformation = React.createClass( {
 			};
 		}
 		return {};
-	},
+	};
 
-	getActionLinks( plugin ) {
+	getActionLinks = plugin => {
 		if ( ! get( plugin, 'active' ) ) {
 			return null;
 		}
@@ -203,9 +201,9 @@ const PluginInformation = React.createClass( {
 		}
 
 		return adminUrl ? { [ i18n.translate( 'WP Admin' ) ]: adminUrl } : null;
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true } );
 		return (
 			<div className={ classes }>
@@ -240,7 +238,7 @@ const PluginInformation = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.isPlaceholder ) {
@@ -311,7 +309,7 @@ const PluginInformation = React.createClass( {
 				/>
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PluginInformation );

@@ -9,20 +9,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'PlanCompareCardItem',
+export default class extends React.Component {
+	static displayName = 'PlanCompareCardItem';
 
-	propTypes: {
+	static propTypes = {
 		highlight: PropTypes.bool,
 		unavailable: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			highlight: false,
-			unavailable: false,
-		};
-	},
+	static defaultProps = {
+		highlight: false,
+		unavailable: false,
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'plan-compare-card-item', {
@@ -40,5 +38,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</li>
 		);
-	},
-} );
+	}
+}

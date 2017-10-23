@@ -17,11 +17,11 @@ import sinon from 'sinon';
  */
 import { DropZone } from '../';
 
-const Wrapper = React.createClass( {
-	render: function() {
+class Wrapper extends React.Component {
+	render() {
 		return <div>{ this.props.children }</div>;
-	},
-} );
+	}
+}
 
 describe( 'index', () => {
 	let container, sandbox;

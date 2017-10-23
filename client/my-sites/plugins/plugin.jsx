@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
@@ -39,9 +40,9 @@ import {
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 
-const SinglePlugin = React.createClass( {
+const SinglePlugin = createReactClass( {
+	displayName: 'SinglePlugin',
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
-
 	mixins: [ PluginNotices ],
 
 	componentWillMount() {

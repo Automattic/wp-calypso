@@ -9,15 +9,15 @@ import React from 'react';
 import classNames from 'classnames';
 import SidebarRegion from './region';
 
-export default React.createClass( {
-	displayName: 'Sidebar',
+export default class extends React.Component {
+	static displayName = 'Sidebar';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,
-	},
+	};
 
-	render: function() {
+	render() {
 		const hasRegions = React.Children
 			.toArray( this.props.children )
 			.some( el => el.type === SidebarRegion );
@@ -31,5 +31,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</ul>
 		);
-	},
-} );
+	}
+}

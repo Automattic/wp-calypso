@@ -16,8 +16,8 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import StoredCard from 'my-sites/checkout/checkout/stored-card';
 
-const CreditCardDelete = React.createClass( {
-	handleClick: function() {
+class CreditCardDelete extends React.Component {
+	handleClick = () => {
 		this.props
 			.deleteStoredCard( this.props.card )
 			.then( () => {
@@ -26,9 +26,9 @@ const CreditCardDelete = React.createClass( {
 			.catch( error => {
 				this.props.errorNotice( error.message );
 			} );
-	},
+	};
 
-	renderDeleteButton: function() {
+	renderDeleteButton = () => {
 		const text = this.props.isDeleting
 			? this.props.translate( 'Deleting' )
 			: this.props.translate( 'Delete' );
@@ -42,9 +42,9 @@ const CreditCardDelete = React.createClass( {
 				{ text }
 			</button>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="credit-card-delete" key={ this.props.card.stored_details_id }>
 				<StoredCard card={ this.props.card } />
@@ -52,8 +52,8 @@ const CreditCardDelete = React.createClass( {
 				{ this.renderDeleteButton() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

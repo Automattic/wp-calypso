@@ -19,23 +19,21 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 import { isModuleActive } from 'lib/site/utils';
 
-export const EditorMediaModalGalleryFields = React.createClass( {
-	propTypes: {
+export class EditorMediaModalGalleryFields extends React.Component {
+	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
 		numberOfItems: PropTypes.number,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			settings: Object.freeze( {} ),
-			onUpdateSetting: noop,
-			numberOfItems: 0,
-		};
-	},
+	static defaultProps = {
+		settings: Object.freeze( {} ),
+		onUpdateSetting: noop,
+		numberOfItems: 0,
+	};
 
-	getTypeOptions() {
+	getTypeOptions = () => {
 		const { site } = this.props;
 
 		const options = {
@@ -59,9 +57,9 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		}
 
 		return options;
-	},
+	};
 
-	getLinkOptions() {
+	getLinkOptions = () => {
 		if ( 'individual' === this.props.settings.type ) {
 			return {};
 		}
@@ -71,9 +69,9 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			file: this.props.translate( 'Media File' ),
 			none: this.props.translate( 'None' ),
 		};
-	},
+	};
 
-	getSizeOptions() {
+	getSizeOptions = () => {
 		if ( ! includes( GallerySizeableTypes, this.props.settings.type ) ) {
 			return {};
 		}
@@ -84,18 +82,18 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			large: this.props.translate( 'Large' ),
 			full: this.props.translate( 'Full Size' ),
 		};
-	},
+	};
 
-	getColumnOptions() {
+	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
 		return fromPairs( times( max, n => [ n + 1, ( n + 1 ).toString() ] ) );
-	},
+	};
 
-	updateRandomOrder( event ) {
+	updateRandomOrder = event => {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
-	},
+	};
 
-	renderDropdown( legend, options, settingName ) {
+	renderDropdown = ( legend, options, settingName ) => {
 		const { settings, onUpdateSetting } = this.props;
 
 		if ( ! Object.keys( options ).length ) {
@@ -122,9 +120,9 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				</SelectDropdown>
 			</EditorMediaModalFieldset>
 		);
-	},
+	};
 
-	renderColumnsOption() {
+	renderColumnsOption = () => {
 		if ( ! includes( GalleryColumnedTypes, this.props.settings.type ) ) {
 			return;
 		}
@@ -134,9 +132,9 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			this.getColumnOptions(),
 			'columns'
 		);
-	},
+	};
 
-	renderRandomOption() {
+	renderRandomOption = () => {
 		const { settings } = this.props;
 
 		if ( 'individual' === settings.type ) {
@@ -148,7 +146,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				<FormCheckbox onChange={ this.updateRandomOrder } checked={ settings.orderBy === 'rand' } />
 			</EditorMediaModalFieldset>
 		);
-	},
+	};
 
 	render() {
 		const types = this.getTypeOptions();
@@ -164,7 +162,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				{ this.renderDropdown( this.props.translate( 'Size' ), sizes, 'size' ) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EditorMediaModalGalleryFields );

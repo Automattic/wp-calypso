@@ -46,8 +46,8 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const ConfirmCancelDomain = React.createClass( {
-	propTypes: {
+class ConfirmCancelDomain extends React.Component {
+	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
@@ -55,30 +55,28 @@ const ConfirmCancelDomain = React.createClass( {
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
-	},
+	};
 
-	getInitialState() {
-		return {
-			selectedReason: null,
-			message: '',
-			confirmed: false,
-			submitting: false,
-		};
-	},
+	state = {
+		selectedReason: null,
+		message: '',
+		confirmed: false,
+		submitting: false,
+	};
 
 	componentWillMount() {
 		recordPageView( 'confirm_cancel_domain', this.props );
-	},
+	}
 
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-	},
+	}
 
-	redirectIfDataIsInvalid( props ) {
+	redirectIfDataIsInvalid = props => {
 		if ( isDataLoading( props ) || this.state.submitting ) {
 			return null;
 		}
@@ -88,9 +86,9 @@ const ConfirmCancelDomain = React.createClass( {
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
 			page.redirect( paths.purchasesRoot() );
 		}
-	},
+	};
 
-	isValidReasonToCancel() {
+	isValidReasonToCancel = () => {
 		const selectedReason = this.state.selectedReason;
 
 		if ( ! selectedReason ) {
@@ -98,13 +96,13 @@ const ConfirmCancelDomain = React.createClass( {
 		}
 
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
-	},
+	};
 
-	goToCancelPurchase() {
+	goToCancelPurchase = () => {
 		goToCancelPurchase( this.props );
-	},
+	};
 
-	onSubmit( event ) {
+	onSubmit = event => {
 		event.preventDefault();
 
 		const purchase = getPurchase( this.props ),
@@ -164,23 +162,23 @@ const ConfirmCancelDomain = React.createClass( {
 
 			page.redirect( paths.purchasesRoot() );
 		} );
-	},
+	};
 
-	onReasonChange( newReason ) {
+	onReasonChange = newReason => {
 		this.setState( { selectedReason: newReason } );
-	},
+	};
 
-	onConfirmationChange() {
+	onConfirmationChange = () => {
 		this.setState( { confirmed: ! this.state.confirmed } );
-	},
+	};
 
-	onMessageChange( event ) {
+	onMessageChange = event => {
 		this.setState( {
 			message: event.target.value,
 		} );
-	},
+	};
 
-	renderHelpMessage() {
+	renderHelpMessage = () => {
 		const selectedReason = this.state.selectedReason;
 
 		if ( ! selectedReason ) {
@@ -198,9 +196,9 @@ const ConfirmCancelDomain = React.createClass( {
 				) }
 			</div>
 		);
-	},
+	};
 
-	renderConfirmationCheckbox() {
+	renderConfirmationCheckbox = () => {
 		if ( ! this.isValidReasonToCancel() ) {
 			return;
 		}
@@ -222,9 +220,9 @@ const ConfirmCancelDomain = React.createClass( {
 				</FormLabel>
 			</div>
 		);
-	},
+	};
 
-	renderSubmitButton() {
+	renderSubmitButton = () => {
 		if ( ! this.isValidReasonToCancel() ) {
 			return;
 		}
@@ -253,7 +251,7 @@ const ConfirmCancelDomain = React.createClass( {
 				{ this.props.translate( 'Cancel Domain' ) }
 			</FormButton>
 		);
-	},
+	};
 
 	render() {
 		if ( isDataLoading( this.props ) ) {
@@ -306,8 +304,8 @@ const ConfirmCancelDomain = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, props ) => {

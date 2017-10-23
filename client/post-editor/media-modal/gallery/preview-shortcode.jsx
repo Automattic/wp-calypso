@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { some } from 'lodash';
 import classNames from 'classnames';
 
@@ -15,7 +16,7 @@ import classNames from 'classnames';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import GalleryShortcode from 'components/gallery-shortcode';
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'EditorMediaModalGalleryPreviewShortcode',
 
 	propTypes: {

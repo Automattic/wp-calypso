@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, get, flatMap, includes } from 'lodash';
@@ -46,11 +47,10 @@ import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
-const PluginsBrowser = React.createClass( {
+const PluginsBrowser = createReactClass( {
+	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
-
 	visibleCategories: [ 'new', 'popular', 'featured' ],
-
 	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
 
 	reinitializeSearch() {

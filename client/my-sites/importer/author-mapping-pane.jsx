@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -17,12 +16,10 @@ import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
-const ImporterMappingPane = React.createClass( {
-	displayName: 'ImporterMappingPane',
+class ImporterMappingPane extends React.PureComponent {
+	static displayName = 'ImporterMappingPane';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
@@ -35,9 +32,9 @@ const ImporterMappingPane = React.createClass( {
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired,
-	},
+	};
 
-	getFetchOptions( options = {} ) {
+	getFetchOptions = ( options = {} ) => {
 		return Object.assign(
 			{
 				number: 50,
@@ -47,9 +44,9 @@ const ImporterMappingPane = React.createClass( {
 			},
 			options
 		);
-	},
+	};
 
-	getMappingDescription( numSourceUsers, numTargetUsers, targetTitle ) {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +
@@ -113,16 +110,16 @@ const ImporterMappingPane = React.createClass( {
 				}
 			);
 		}
-	},
+	};
 
-	getUserCount() {
+	getUserCount = () => {
 		const fetchOptions = this.getFetchOptions( 50 );
 		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
 
 		return totalUsers;
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			hasSingleAuthor,
 			sourceAuthors,
@@ -165,7 +162,7 @@ const ImporterMappingPane = React.createClass( {
 				</Button>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ImporterMappingPane );

@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import page from 'page';
 
 /**
@@ -16,7 +17,8 @@ import analyticsMixin from 'lib/mixins/analytics';
 import paths from 'my-sites/domains/paths';
 import Button from 'components/button';
 
-const PrimaryDomainButton = React.createClass( {
+const PrimaryDomainButton = createReactClass( {
+	displayName: 'PrimaryDomainButton',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	propTypes: {

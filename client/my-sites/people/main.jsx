@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -32,7 +33,7 @@ import { canCurrentUser, isPrivateSite } from 'state/selectors';
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
 // TODO: port to es6 once we remove the last observe
-export const People = React.createClass( {
+export const People = createReactClass( {
 	// eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',

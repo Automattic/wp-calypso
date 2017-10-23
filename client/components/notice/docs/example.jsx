@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
 * Internal dependencies
@@ -13,16 +12,12 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 
-const Notices = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class Notices extends React.PureComponent {
+    state = {
+		compactNotices: false,
+	};
 
-	getInitialState: function() {
-		return {
-			compactNotices: false,
-		};
-	},
-
-	render: function() {
+	render() {
 		var toggleNoticesText = this.state.compactNotices ? 'Normal Notices' : 'Compact Notices';
 
 		return (
@@ -122,11 +117,11 @@ const Notices = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	toggleNotices: function() {
+	toggleNotices = () => {
 		this.setState( { compactNotices: ! this.state.compactNotices } );
-	},
-} );
+	};
+}
 
 export default Notices;

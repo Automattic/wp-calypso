@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
  */
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-const MobileBackToSidebar = React.createClass( {
-	toggleSidebar: function( event ) {
+class MobileBackToSidebar extends React.Component {
+	toggleSidebar = event => {
 		event.preventDefault();
 		this.props.setLayoutFocus( 'sidebar' );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="mobile-back-to-sidebar" onClick={ this.toggleSidebar }>
 				<svg
@@ -35,7 +35,7 @@ const MobileBackToSidebar = React.createClass( {
 				<span className="mobile-back-to-sidebar__content">{ this.props.children }</span>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, { setLayoutFocus } )( MobileBackToSidebar );

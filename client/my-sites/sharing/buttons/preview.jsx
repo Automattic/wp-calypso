@@ -19,10 +19,10 @@ import ButtonsTray from './tray';
 import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
 
-const SharingButtonsPreview = React.createClass( {
-	displayName: 'SharingButtonsPreview',
+class SharingButtonsPreview extends React.Component {
+	static displayName = 'SharingButtonsPreview';
 
-	propTypes: {
+	static propTypes = {
 		isPrivateSite: PropTypes.bool,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		label: PropTypes.string,
@@ -31,27 +31,23 @@ const SharingButtonsPreview = React.createClass( {
 		showReblog: PropTypes.bool,
 		onLabelChange: PropTypes.func,
 		onButtonsChange: PropTypes.func,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isEditingLabel: false,
-			buttonsTrayVisibility: null,
-		};
-	},
+	static defaultProps = {
+		style: 'icon',
+		buttons: [],
+		showLike: true,
+		showReblog: true,
+		onLabelChange: function() {},
+		onButtonsChange: function() {},
+	};
 
-	getDefaultProps: function() {
-		return {
-			style: 'icon',
-			buttons: [],
-			showLike: true,
-			showReblog: true,
-			onLabelChange: function() {},
-			onButtonsChange: function() {},
-		};
-	},
+	state = {
+		isEditingLabel: false,
+		buttonsTrayVisibility: null,
+	};
 
-	toggleEditLabel: function() {
+	toggleEditLabel = () => {
 		var isEditingLabel = ! this.state.isEditingLabel;
 		this.setState( { isEditingLabel: isEditingLabel } );
 
@@ -61,18 +57,18 @@ const SharingButtonsPreview = React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
 		}
-	},
+	};
 
-	showButtonsTray: function( visibility ) {
+	showButtonsTray = visibility => {
 		this.setState( {
 			isEditingLabel: false,
 			buttonsTrayVisibility: visibility,
 		} );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Links', visibility );
-	},
+	};
 
-	hideButtonsTray: function() {
+	hideButtonsTray = () => {
 		if ( ! this.state.buttonsTrayVisibility ) {
 			return;
 		}
@@ -81,9 +77,9 @@ const SharingButtonsPreview = React.createClass( {
 		this.setState( { buttonsTrayVisibility: null } );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
-	},
+	};
 
-	getButtonsTrayToggleButtonLabel: function( visibility, enabledButtonsExist ) {
+	getButtonsTrayToggleButtonLabel = ( visibility, enabledButtonsExist ) => {
 		if ( 'visible' === visibility ) {
 			if ( enabledButtonsExist ) {
 				return this.props.translate( 'Edit sharing buttons', {
@@ -103,9 +99,9 @@ const SharingButtonsPreview = React.createClass( {
 		return this.props.translate( 'Add “More” button', {
 			context: 'Sharing: Buttons edit label',
 		} );
-	},
+	};
 
-	getButtonsTrayToggleButtonElement: function( visibility ) {
+	getButtonsTrayToggleButtonElement = visibility => {
 		var enabledButtonsExist = some( this.props.buttons, {
 			visibility: visibility,
 			enabled: true,
@@ -121,9 +117,9 @@ const SharingButtonsPreview = React.createClass( {
 				{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
 			</ButtonsPreviewAction>
 		);
-	},
+	};
 
-	getReblogButtonElement: function() {
+	getReblogButtonElement = () => {
 		if ( this.props.showReblog ) {
 			return (
 				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
@@ -132,9 +128,9 @@ const SharingButtonsPreview = React.createClass( {
 				</a>
 			);
 		}
-	},
+	};
 
-	getLikeButtonElement: function() {
+	getLikeButtonElement = () => {
 		if ( this.props.showLike ) {
 			return (
 				<span>
@@ -151,9 +147,9 @@ const SharingButtonsPreview = React.createClass( {
 				</span>
 			);
 		}
-	},
+	};
 
-	getPreviewButtonsElement: function() {
+	getPreviewButtonsElement = () => {
 		var enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
@@ -170,9 +166,9 @@ const SharingButtonsPreview = React.createClass( {
 				/>
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="sharing-buttons-preview">
 				<ButtonsPreviewAction
@@ -224,7 +220,7 @@ const SharingButtonsPreview = React.createClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SharingButtonsPreview );

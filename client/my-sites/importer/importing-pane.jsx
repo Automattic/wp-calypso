@@ -5,7 +5,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
@@ -81,12 +80,10 @@ const hasProgressInfo = progress => {
 	return true;
 };
 
-const ImportingPane = React.createClass( {
-	displayName: 'SiteSettingsImportingPane',
+class ImportingPane extends React.PureComponent {
+	static displayName = 'SiteSettingsImportingPane';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			counts: PropTypes.shape( {
 				comments: PropTypes.number,
@@ -108,24 +105,24 @@ const ImportingPane = React.createClass( {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
-	},
+	};
 
-	getErrorMessage( { description } ) {
+	getErrorMessage = ( { description } ) => {
 		if ( ! description ) {
 			return translate( 'An unspecified error occured during the import.' );
 		}
 
 		return description;
-	},
+	};
 
-	getHeadingText: function() {
+	getHeadingText = () => {
 		return translate(
 			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
 				"You can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
-	},
+	};
 
-	getSuccessText: function() {
+	getSuccessText = () => {
 		const { site: { slug }, progress: { page, post } } = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
 			pageText = translate( 'Pages', { context: 'noun' } ),
@@ -159,9 +156,9 @@ const ImportingPane = React.createClass( {
 		}
 
 		return translate( 'Import complete!' );
-	},
+	};
 
-	getImportMessage( numResources ) {
+	getImportMessage = numResources => {
 		if ( 0 === numResources ) {
 			return translate( 'Finishing up the import' );
 		}
@@ -174,29 +171,29 @@ const ImportingPane = React.createClass( {
 				args: { numResources: numberFormat( numResources ) },
 			}
 		);
-	},
+	};
 
-	isError: function() {
+	isError = () => {
 		return this.isInState( appStates.IMPORT_FAILURE );
-	},
+	};
 
-	isFinished: function() {
+	isFinished = () => {
 		return this.isInState( appStates.IMPORT_SUCCESS );
-	},
+	};
 
-	isImporting: function() {
+	isImporting = () => {
 		return this.isInState( appStates.IMPORTING );
-	},
+	};
 
-	isInState: function( state ) {
+	isInState = state => {
 		return state === this.props.importerStatus.importerState;
-	},
+	};
 
-	isMapping: function() {
+	isMapping = () => {
 		return this.isInState( appStates.MAP_AUTHORS );
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			importerStatus: { importerId, errorData = {}, customData },
 			mapAuthorFor,
@@ -254,8 +251,8 @@ const ImportingPane = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 const mapDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>

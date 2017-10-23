@@ -25,19 +25,15 @@ var defaultOptions = {
 	offset: 0,
 };
 
-export default React.createClass( {
-	displayName: 'SiteUsersFetcher',
+export default class extends React.Component {
+	static displayName = 'SiteUsersFetcher';
 
-	propTypes: {
+	static propTypes = {
 		fetchOptions: PropTypes.object.isRequired,
 		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
-	},
+	};
 
-	getInitialState: function() {
-		return this._getState();
-	},
-
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
@@ -46,14 +42,14 @@ export default React.createClass( {
 			UsersActions.fetchUpdated.bind( UsersActions, this.props.fetchOptions, true ),
 			{ leading: false }
 		);
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.off( 'change', this._updateSiteUsers );
 		pollers.remove( this._poller );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}
@@ -67,20 +63,20 @@ export default React.createClass( {
 				{ leading: false }
 			);
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		var childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
 		// Clone the child element along and pass along state (containing data from the store)
 		return React.cloneElement( this.props.children, childrenProps );
-	},
+	}
 
-	_updateSiteUsers: function( fetchOptions ) {
+	_updateSiteUsers = fetchOptions => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		this.setState( this._getState( fetchOptions ) );
-	},
+	};
 
-	_getState: function( fetchOptions ) {
+	_getState = fetchOptions => {
 		var paginationData, users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
@@ -108,9 +104,9 @@ export default React.createClass( {
 			fetchOptions: fetchOptions,
 			excludedUsers: this.props.exclude ? users[ 1 ] : [],
 		} );
-	},
+	};
 
-	_fetchIfEmpty: function( fetchOptions ) {
+	_fetchIfEmpty = fetchOptions => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;
@@ -128,5 +124,7 @@ export default React.createClass( {
 			}
 			UsersActions.fetchUsers( fetchOptions );
 		}, 0 );
-	},
-} );
+	};
+
+	state = this._getState();
+}

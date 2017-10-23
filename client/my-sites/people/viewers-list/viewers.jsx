@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -20,31 +19,27 @@ import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import ListEnd from 'components/list-end';
 
-const Viewers = React.createClass( {
-	displayName: 'Viewers',
+class Viewers extends React.PureComponent {
+	static displayName = 'Viewers';
 
-	getInitialState: function() {
-		return {
-			bulkEditing: false,
-		};
-	},
+	state = {
+		bulkEditing: false,
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	renderPlaceholders() {
+	renderPlaceholders = () => {
 		return <PeopleListItem key="people-list-item-placeholder" />;
-	},
+	};
 
-	fetchNextPage() {
+	fetchNextPage = () => {
 		var paginationData = ViewersStore.getPaginationData( this.props.siteId ),
 			currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0,
 			page = currentPage + 1;
 
 		analytics.ga.recordEvent( 'People', 'Fetched more viewers with infinite list', 'page', page );
 		ViewersActions.fetch( this.props.siteId, page );
-	},
+	};
 
-	removeViewer: function( viewer ) {
+	removeViewer = viewer => {
 		analytics.ga.recordEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
 		accept(
 			<div>
@@ -71,9 +66,9 @@ const Viewers = React.createClass( {
 			},
 			this.props.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
 		);
-	},
+	};
 
-	renderViewer( viewer ) {
+	renderViewer = viewer => {
 		const removeThisViewer = () => {
 			this.removeViewer( viewer );
 		};
@@ -88,19 +83,19 @@ const Viewers = React.createClass( {
 				onRemove={ removeThisViewer }
 			/>
 		);
-	},
+	};
 
-	getViewerRef( viewer ) {
+	getViewerRef = viewer => {
 		return 'viewer-' + viewer.ID;
-	},
+	};
 
-	onClickSiteSettings() {
+	onClickSiteSettings = () => {
 		analytics.ga.recordEvent( 'People', 'Clicked Site Settings Link On Empty Viewers' );
-	},
+	};
 
-	isLastPage() {
+	isLastPage = () => {
 		return this.props.totalViewers <= this.props.viewers.length;
-	},
+	};
 
 	render() {
 		var viewers,
@@ -158,7 +153,7 @@ const Viewers = React.createClass( {
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( Viewers );

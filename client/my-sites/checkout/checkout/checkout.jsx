@@ -11,6 +11,8 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -51,7 +53,8 @@ import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 
-const Checkout = React.createClass( {
+const Checkout = createReactClass( {
+	displayName: 'Checkout',
 	mixins: [ observe( 'sites', 'productsList' ) ],
 
 	propTypes: {

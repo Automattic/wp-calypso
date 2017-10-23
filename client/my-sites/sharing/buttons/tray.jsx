@@ -17,10 +17,10 @@ import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
-const SharingButtonsTray = React.createClass( {
-	displayName: 'SharingButtonsTray',
+class SharingButtonsTray extends React.Component {
+	static displayName = 'SharingButtonsTray';
 
-	propTypes: {
+	static propTypes = {
 		buttons: PropTypes.array,
 		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		visibility: PropTypes.oneOf( [ 'visible', 'hidden' ] ),
@@ -29,34 +29,30 @@ const SharingButtonsTray = React.createClass( {
 		onClose: PropTypes.func,
 		active: PropTypes.bool,
 		limited: PropTypes.bool,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isReordering: false,
-		};
-	},
+	static defaultProps = {
+		buttons: [],
+		style: 'icon',
+		visibility: 'visible',
+		onButtonsChange: function() {},
+		onButtonChange: function() {},
+		onClose: function() {},
+		active: false,
+		limited: false,
+	};
 
-	componentWillUpdate: function( nextProps ) {
+	state = {
+		isReordering: false,
+	};
+
+	componentWillUpdate( nextProps ) {
 		if ( this.props.visibility !== nextProps.visibility ) {
 			this.setState( { isReordering: false } );
 		}
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			buttons: [],
-			style: 'icon',
-			visibility: 'visible',
-			onButtonsChange: function() {},
-			onButtonChange: function() {},
-			onClose: function() {},
-			active: false,
-			limited: false,
-		};
-	},
-
-	getHeadingText: function() {
+	getHeadingText = () => {
 		if ( 'visible' === this.props.visibility ) {
 			return this.props.translate( 'Edit visible buttons', {
 				context: 'Sharing: Buttons editor heading',
@@ -66,9 +62,9 @@ const SharingButtonsTray = React.createClass( {
 				context: 'Sharing: Buttons editor heading',
 			} );
 		}
-	},
+	};
 
-	getInstructionText: function() {
+	getInstructionText = () => {
 		var labels = {
 			touch: this.props.translate( 'Tap the buttons you would like to add or remove.', {
 				textOnly: true,
@@ -109,13 +105,13 @@ const SharingButtonsTray = React.createClass( {
 				</span>
 			);
 		}, this );
-	},
+	};
 
-	getButtonsOfCurrentVisibility: function() {
+	getButtonsOfCurrentVisibility = () => {
 		return filter( this.props.buttons, { visibility: this.props.visibility } );
-	},
+	};
 
-	onButtonsReordered: function( order ) {
+	onButtonsReordered = order => {
 		var buttons = [];
 
 		this.getButtonsOfCurrentVisibility().forEach( function( button, i ) {
@@ -129,9 +125,9 @@ const SharingButtonsTray = React.createClass( {
 		);
 
 		this.props.onButtonsChange( buttons );
-	},
+	};
 
-	onButtonClick: function( button ) {
+	onButtonClick = button => {
 		var buttons = this.props.buttons.slice( 0 ),
 			currentButton = find( buttons, { ID: button.ID } ),
 			isEnabled;
@@ -159,13 +155,13 @@ const SharingButtonsTray = React.createClass( {
 		}
 
 		this.props.onButtonsChange( buttons );
-	},
+	};
 
-	toggleReorder: function() {
+	toggleReorder = () => {
 		this.setState( { isReordering: ! this.state.isReordering } );
-	},
+	};
 
-	getLimitedButtonsNoticeElement: function() {
+	getLimitedButtonsNoticeElement = () => {
 		if ( this.props.limited ) {
 			return (
 				<em className="sharing-buttons-preview__panel-notice">
@@ -175,9 +171,9 @@ const SharingButtonsTray = React.createClass( {
 				</em>
 			);
 		}
-	},
+	};
 
-	getButtonElements: function() {
+	getButtonElements = () => {
 		if ( this.state.isReordering ) {
 			var buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
 				return (
@@ -202,9 +198,9 @@ const SharingButtonsTray = React.createClass( {
 				/>
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames(
 			'sharing-buttons-preview__panel',
 			'is-bottom',
@@ -249,7 +245,7 @@ const SharingButtonsTray = React.createClass( {
 				</footer>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SharingButtonsTray );

@@ -22,8 +22,8 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 
-const PayButton = React.createClass( {
-	buttonState: function() {
+class PayButton extends React.Component {
+	buttonState = () => {
 		var state;
 
 		switch ( this.props.transactionStep.name ) {
@@ -61,9 +61,9 @@ const PayButton = React.createClass( {
 		}
 
 		return state;
-	},
+	};
 
-	beforeSubmitText: function() {
+	beforeSubmitText = () => {
 		var cart = this.props.cart;
 
 		if ( this.props.beforeSubmitText ) {
@@ -106,25 +106,25 @@ const PayButton = React.createClass( {
 		}
 
 		return this.props.translate( 'Pay now', { context: 'Pay button on /checkout' } );
-	},
+	};
 
-	beforeSubmit: function() {
+	beforeSubmit = () => {
 		return {
 			disabled: false,
 			text: this.beforeSubmitText(),
 		};
-	},
+	};
 
-	sending: function() {
+	sending = () => {
 		return {
 			disabled: true,
 			text: this.props.translate( 'Sending your purchase', {
 				context: 'Loading state on /checkout',
 			} ),
 		};
-	},
+	};
 
-	completing: function() {
+	completing = () => {
 		var text;
 		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			text = this.props.translate( 'Starting your free trial…', {
@@ -139,9 +139,9 @@ const PayButton = React.createClass( {
 			disabled: true,
 			text: text,
 		};
-	},
+	};
 
-	render: function() {
+	render() {
 		var buttonState = this.buttonState();
 
 		return (
@@ -156,7 +156,7 @@ const PayButton = React.createClass( {
 				<SubscriptionText cart={ this.props.cart } />
 			</span>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PayButton );

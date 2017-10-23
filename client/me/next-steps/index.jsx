@@ -8,6 +8,8 @@ import { property, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -21,7 +23,7 @@ import observe from 'lib/mixins/data-observe';
 import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
-const NextSteps = React.createClass( {
+const NextSteps = createReactClass( {
 	displayName: 'NextSteps',
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],

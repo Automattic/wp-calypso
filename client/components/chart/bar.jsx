@@ -14,10 +14,10 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
-	displayName: 'ModuleChartBar',
+export default class extends React.Component {
+	static displayName = 'ModuleChartBar';
 
-	propTypes: {
+	static propTypes = {
 		isTouch: PropTypes.bool,
 		tooltipPosition: PropTypes.string,
 		className: PropTypes.string,
@@ -25,17 +25,15 @@ export default React.createClass( {
 		data: PropTypes.object.isRequired,
 		max: PropTypes.number,
 		count: PropTypes.number,
-	},
+	};
 
-	getDefaultProps: () => ( {
+	static defaultProps = {
 		max: Infinity,
-	} ),
+	};
 
-	getInitialState: function() {
-		return { showPopover: false };
-	},
+	state = { showPopover: false };
 
-	buildSections: function() {
+	buildSections = () => {
 		const { active, data, max } = this.props;
 		const { nestedValue, value } = data;
 
@@ -83,23 +81,23 @@ export default React.createClass( {
 		);
 
 		return sections;
-	},
+	};
 
-	clickHandler: function() {
+	clickHandler = () => {
 		if ( typeof this.props.clickHandler === 'function' ) {
 			this.props.clickHandler( this.props.data );
 		}
-	},
+	};
 
-	mouseEnter: function() {
+	mouseEnter = () => {
 		this.setState( { showPopover: true } );
-	},
+	};
 
-	mouseLeave: function() {
+	mouseLeave = () => {
 		this.setState( { showPopover: false } );
-	},
+	};
 
-	renderTooltip() {
+	renderTooltip = () => {
 		if (
 			! this.props.data.tooltipData ||
 			! this.props.data.tooltipData.length ||
@@ -145,9 +143,9 @@ export default React.createClass( {
 				<ul>{ listItemElements }</ul>
 			</Tooltip>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const barClass = classNames( 'chart__bar', this.props.className );
 		const count = this.props.count || 1;
 		const barStyle = {
@@ -169,5 +167,5 @@ export default React.createClass( {
 				{ this.renderTooltip() }
 			</div>
 		);
-	},
-} );
+	}
+}

@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
@@ -35,7 +36,9 @@ function getStateFromStores( props ) {
 	};
 }
 
-const DomainManagementData = React.createClass( {
+const DomainManagementData = createReactClass( {
+	displayName: 'DomainManagementData',
+
 	propTypes: {
 		context: PropTypes.object.isRequired,
 		productsList: PropTypes.object.isRequired,

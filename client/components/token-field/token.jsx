@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 
 /**
@@ -14,10 +13,10 @@ import classNames from 'classnames';
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
-	displayName: 'Token',
+export default class extends React.PureComponent {
+	static displayName = 'Token';
 
-	propTypes: {
+	static propTypes = {
 		value: PropTypes.string.isRequired,
 		displayTransform: PropTypes.func.isRequired,
 		onClickRemove: PropTypes.func,
@@ -25,17 +24,13 @@ export default React.createClass( {
 		isBorderless: PropTypes.bool,
 		tooltip: PropTypes.string,
 		disabled: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onClickRemove: () => {},
-			isBorderless: false,
-			disabled: false,
-		};
-	},
-
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		onClickRemove: () => {},
+		isBorderless: false,
+		disabled: false,
+	};
 
 	render() {
 		const { value, status, isBorderless, tooltip, displayTransform } = this.props;
@@ -72,11 +67,11 @@ export default React.createClass( {
 				) }
 			</span>
 		);
-	},
+	}
 
-	_onClickRemove() {
+	_onClickRemove = () => {
 		this.props.onClickRemove( {
 			value: this.props.value,
 		} );
-	},
-} );
+	};
+}

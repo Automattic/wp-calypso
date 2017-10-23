@@ -14,24 +14,22 @@ import { omit } from 'lodash';
 import Button from 'components/forms/form-button';
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
-	displayName: 'SpinnerButton',
+export default class extends React.Component {
+	static displayName = 'SpinnerButton';
 
-	propTypes: {
+	static propTypes = {
 		disabled: PropTypes.bool,
 		loading: PropTypes.bool,
 
 		text: PropTypes.string,
 		loadingText: PropTypes.string,
 		size: PropTypes.number,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			size: 24,
-			loading: false,
-		};
-	},
+	static defaultProps = {
+		size: 24,
+		loading: false,
+	};
 
 	render() {
 		const { loading, text, loadingText, size, disabled } = this.props;
@@ -55,5 +53,5 @@ export default React.createClass( {
 				{ loading && <Spinner size={ size } className="spinner-button__spinner" /> }
 			</div>
 		);
-	},
-} );
+	}
+}

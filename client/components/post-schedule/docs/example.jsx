@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -21,10 +20,9 @@ import EventsTooltip from 'components/date-picker/events-tooltip';
  * Date Picker Demo
  */
 const PostScheduleExample = localize(
-	React.createClass( {
-		mixins: [ PureRenderMixin ],
-
-		getInitialState() {
+	class extends React.PureComponent {
+		constructor( props ) {
+			super( props );
 			let date = new Date();
 			const tz = 'America/Los_Angeles';
 			const tomorrow = new Date().setDate( date.getDate() + 1 );
@@ -33,10 +31,10 @@ const PostScheduleExample = localize(
 			date.setMilliseconds( 0 );
 			date.setSeconds( 0 );
 
-			date = this.props.moment( date ).tz( tz );
+			date = props.moment( date ).tz( tz );
 			date.set( { hour: 11, minute: 20 } );
 
-			return {
+			this.state = {
 				events: [
 					{
 						id: 1,
@@ -64,60 +62,60 @@ const PostScheduleExample = localize(
 				showTooltip: false,
 				tooltipContext: null,
 			};
-		},
+		}
 
-		componentWillMount: function() {
+		componentWillMount() {
 			this.setState( {
 				isFuture: true,
 			} );
-		},
+		}
 
-		setDate( date ) {
+		setDate = date => {
 			console.log( 'date: ', date.format() ); // eslint-disable-line no-console
 
 			this.setState( {
 				isFuture: +new Date() < +new Date( date ),
 				date: date,
 			} );
-		},
+		};
 
-		setMonth( date ) {
+		setMonth = date => {
 			console.log( 'month: %s', date.format() ); // eslint-disable-line no-console
 			this.setState( { month: date } );
-		},
+		};
 
-		setGMTOffset( event ) {
+		setGMTOffset = event => {
 			if ( typeof event.target.value === 'undefined' ) {
 				return;
 			}
 
 			this.setState( { gmtOffset: Number( event.target.value ) } );
-		},
+		};
 
-		setTimezone( zone ) {
+		setTimezone = zone => {
 			this.setState( { timezone: zone } );
-		},
+		};
 
-		clearState( state, event ) {
+		clearState = ( state, event ) => {
 			event.preventDefault();
 			this.setState( { [ state ]: null } );
-		},
+		};
 
-		handleDayMouseEnter( date, modifiers, event, eventsByDay ) {
+		handleDayMouseEnter = ( date, modifiers, event, eventsByDay ) => {
 			this.setState( {
 				eventsByDay,
 				tooltipContext: event.target,
 				showTooltip: true,
 			} );
-		},
+		};
 
-		handleDayMouseLeave() {
+		handleDayMouseLeave = () => {
 			this.setState( {
 				eventsByDay: [],
 				tooltipContext: null,
 				showTooltip: false,
 			} );
-		},
+		};
 
 		render() {
 			return (
@@ -247,9 +245,9 @@ const PostScheduleExample = localize(
 					</div>
 				</div>
 			);
-		},
+		}
 
-		renderDateReference() {
+		renderDateReference = () => {
 			if ( ! this.state.date ) {
 				return;
 			}
@@ -265,8 +263,8 @@ const PostScheduleExample = localize(
 					{ this.state.isFuture ? 'FUTURE' : 'PRESENT or PAST' }
 				</span>
 			);
-		},
-	} )
+		};
+	}
 );
 
 PostScheduleExample.displayName = 'PostSchedule';

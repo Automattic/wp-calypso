@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -13,10 +12,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import PlanCompareCard from '../index';
 import PlanCompareCardItem from '../item';
 
-export default React.createClass( {
-	displayName: 'PlanCompareCard',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+    static displayName = 'PlanCompareCard';
 
 	render() {
 		return (
@@ -33,5 +30,5 @@ export default React.createClass( {
 				<PlanCompareCardItem unavailable={ true }>VideoPress</PlanCompareCardItem>
 			</PlanCompareCard>
 		);
-	},
-} );
+	}
+}

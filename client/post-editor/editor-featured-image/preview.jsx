@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
@@ -20,7 +21,9 @@ import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const EditorFeaturedImagePreview = React.createClass( {
+const EditorFeaturedImagePreview = createReactClass( {
+	displayName: 'EditorFeaturedImagePreview',
+
 	propTypes: {
 		siteId: PropTypes.number,
 		image: PropTypes.object,

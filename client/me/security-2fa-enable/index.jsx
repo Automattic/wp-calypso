@@ -26,69 +26,65 @@ import constants from 'me/constants';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 
-const Security2faEnable = React.createClass( {
-	displayName: 'Security2faEnable',
+class Security2faEnable extends React.Component {
+	static displayName = 'Security2faEnable';
 
-	codeRequestTimer: false,
+	static defaultProps = {
+		doSMSFlow: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			doSMSFlow: false,
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		doSMSFlow: PropTypes.bool,
 		onCancel: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			lastError: false,
-			lastErrorType: false,
-			method: this.props.doSMSFlow ? 'sms' : 'scan',
-			otpAuthUri: false,
-			smsRequestsAllowed: true,
-			smsRequestPerformed: false,
-			submittingCode: false,
-			timeCode: false,
-			verificationCode: '',
-		};
-	},
+	state = {
+		lastError: false,
+		lastErrorType: false,
+		method: this.props.doSMSFlow ? 'sms' : 'scan',
+		otpAuthUri: false,
+		smsRequestsAllowed: true,
+		smsRequestPerformed: false,
+		submittingCode: false,
+		timeCode: false,
+		verificationCode: '',
+	};
 
-	componentDidMount: function() {
+	codeRequestTimer = false;
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 		twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
 		if ( this.props.doSMSFlow ) {
 			this.requestSMS();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 		this.cancelCodeRequestTimer();
-	},
+	}
 
-	allowSMSRequests: function() {
+	allowSMSRequests = () => {
 		this.setState( { smsRequestsAllowed: true } );
-	},
+	};
 
-	onRequestSMS: function( event ) {
+	onRequestSMS = event => {
 		event.preventDefault();
 		this.requestSMS();
-	},
+	};
 
-	requestSMS: function() {
+	requestSMS = () => {
 		this.setState( {
 			smsRequestsAllowed: false,
 			lastError: false,
 		} );
 		twoStepAuthorization.sendSMSCode( this.onSMSRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
-	},
+	};
 
-	onSMSRequestResponse: function( error ) {
+	onSMSRequestResponse = error => {
 		if ( error ) {
 			this.setState( {
 				smsRequestPerformed: false,
@@ -100,30 +96,30 @@ const Security2faEnable = React.createClass( {
 		} else {
 			this.setState( { smsRequestPerformed: true } );
 		}
-	},
+	};
 
-	cancelCodeRequestTimer: function() {
+	cancelCodeRequestTimer = () => {
 		if ( this.codeRequestTimer ) {
 			clearTimeout( this.codeRequestTimer );
 		}
-	},
+	};
 
-	onResendCode: function( event ) {
+	onResendCode = event => {
 		event.preventDefault();
 		if ( this.state.smsRequestsAllowed ) {
 			this.requestSMS();
 		}
-	},
+	};
 
-	onVerifyBySMS: function( event ) {
+	onVerifyBySMS = event => {
 		event.preventDefault();
 		if ( this.state.smsRequestsAllowed ) {
 			this.requestSMS();
 		}
 		this.setState( { method: 'sms' } );
-	},
+	};
 
-	onAppAuthCodesRequestResponse: function( error, data ) {
+	onAppAuthCodesRequestResponse = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(
@@ -138,27 +134,27 @@ const Security2faEnable = React.createClass( {
 			otpAuthUri: data.otpauth_uri,
 			timeCode: data.time_code,
 		} );
-	},
+	};
 
-	getFormDisabled: function() {
+	getFormDisabled = () => {
 		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
-	},
+	};
 
-	onCodeSubmit: function( event ) {
+	onCodeSubmit = event => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
-	},
+	};
 
-	onBeginCodeValidation: function() {
+	onBeginCodeValidation = () => {
 		var args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step',
 		};
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
-	},
+	};
 
-	onValidationResponseReceived: function( error, data ) {
+	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
@@ -174,9 +170,9 @@ const Security2faEnable = React.createClass( {
 		} else {
 			this.props.onSuccess();
 		}
-	},
+	};
 
-	getToggleLink: function() {
+	getToggleLink = () => {
 		return (
 			<a
 				className="security-2fa-enable__toggle"
@@ -191,9 +187,9 @@ const Security2faEnable = React.createClass( {
 				}.bind( this ) }
 			/>
 		);
-	},
+	};
 
-	renderQRCode: function() {
+	renderQRCode = () => {
 		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri,
 		} );
@@ -215,9 +211,9 @@ const Security2faEnable = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	};
 
-	renderTimeCode: function() {
+	renderTimeCode = () => {
 		return (
 			<div className="security-2fa-enable__time-code-block">
 				<p className="security-2fa-enable__time-instruction">
@@ -233,9 +229,9 @@ const Security2faEnable = React.createClass( {
 				<p className="security-2fa-enable__time-code">{ this.state.timeCode }</p>
 			</div>
 		);
-	},
+	};
 
-	renderCodeBlock: function() {
+	renderCodeBlock = () => {
 		if ( 'sms' === this.state.method ) {
 			return null;
 		}
@@ -245,9 +241,9 @@ const Security2faEnable = React.createClass( {
 				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
 			</div>
 		);
-	},
+	};
 
-	renderInputHelp: function() {
+	renderInputHelp = () => {
 		if ( 'sms' === this.state.method ) {
 			return (
 				<FormLabel htmlFor="verification-code">
@@ -257,14 +253,14 @@ const Security2faEnable = React.createClass( {
 		}
 
 		return <p>{ this.props.translate( 'Then enter the six digit code provided by the app:' ) }</p>;
-	},
+	};
 
-	toggleMethod: function( event ) {
+	toggleMethod = event => {
 		event.preventDefault();
 		this.setState( { method: 'scan' === this.state.method ? 'time' : 'scan' } );
-	},
+	};
 
-	renderInputOptions: function() {
+	renderInputOptions = () => {
 		if ( 'sms' === this.state.method ) {
 			return null;
 		}
@@ -308,13 +304,13 @@ const Security2faEnable = React.createClass( {
 				</p>
 			</div>
 		);
-	},
+	};
 
-	clearLastError: function() {
+	clearLastError = () => {
 		this.setState( { lastError: false, lastErrorType: false } );
-	},
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError = () => {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -326,9 +322,9 @@ const Security2faEnable = React.createClass( {
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	};
 
-	renderInputBlock: function() {
+	renderInputBlock = () => {
 		return (
 			<div className="security-2fa-enable__next">
 				{ this.renderInputHelp() }
@@ -362,9 +358,9 @@ const Security2faEnable = React.createClass( {
 				{ this.renderInputOptions() }
 			</div>
 		);
-	},
+	};
 
-	renderButtons: function() {
+	renderButtons = () => {
 		return (
 			<FormButtonsBar className="security-2fa-enable__buttons-bar">
 				<FormButton
@@ -434,9 +430,9 @@ const Security2faEnable = React.createClass( {
 				) }
 			</FormButtonsBar>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<Security2faProgress step={ 2 } />
@@ -449,12 +445,12 @@ const Security2faEnable = React.createClass( {
 				</form>
 			</div>
 		);
-	},
+	}
 
-	handleChange( e ) {
+	handleChange = e => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
-	},
-} );
+	};
+}
 
 export default localize( Security2faEnable );

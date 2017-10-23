@@ -14,33 +14,33 @@ import Gridicon from 'gridicons';
  */
 import Count from 'components/count';
 
-export default React.createClass( {
-	displayName: 'BulkSelect',
+export default class extends React.Component {
+	static displayName = 'BulkSelect';
 
-	propTypes: {
+	static propTypes = {
 		totalElements: PropTypes.number.isRequired,
 		selectedElements: PropTypes.number.isRequired,
 		onToggle: PropTypes.func.isRequired,
-	},
+	};
 
-	getStateIcon() {
+	getStateIcon = () => {
 		if ( this.hasSomeElementsSelected() ) {
 			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 } />;
 		}
-	},
+	};
 
-	hasAllElementsSelected() {
+	hasAllElementsSelected = () => {
 		return this.props.selectedElements && this.props.selectedElements === this.props.totalElements;
-	},
+	};
 
-	hasSomeElementsSelected() {
+	hasSomeElementsSelected = () => {
 		return this.props.selectedElements && this.props.selectedElements < this.props.totalElements;
-	},
+	};
 
-	handleToggleAll() {
+	handleToggleAll = () => {
 		const newCheckedState = ! ( this.hasSomeElementsSelected() || this.hasAllElementsSelected() );
 		this.props.onToggle( newCheckedState );
-	},
+	};
 
 	render() {
 		const isChecked = this.hasAllElementsSelected();
@@ -58,5 +58,5 @@ export default React.createClass( {
 				</span>
 			</span>
 		);
-	},
-} );
+	}
+}

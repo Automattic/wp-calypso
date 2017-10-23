@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { identity, isFunction } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -15,7 +16,8 @@ import { localize } from 'i18n-calypso';
  */
 import AnalyticsMixin from 'lib/mixins/analytics';
 
-export const CartButtons = React.createClass( {
+export const CartButtons = createReactClass( {
+	displayName: 'CartButtons',
 	mixins: [ AnalyticsMixin( 'popupCart' ) ],
 
 	propTypes: {

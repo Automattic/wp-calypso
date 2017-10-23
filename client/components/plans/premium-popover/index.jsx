@@ -26,48 +26,54 @@ import QueryPlans from 'components/data/query-plans';
 
 let exclusiveViewLock = null;
 
-const PremiumPopover = React.createClass( {
-	propTypes: {
+class PremiumPopover extends React.Component {
+	static propTypes = {
 		className: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] ),
 		onClose: PropTypes.func,
 		isVisible: PropTypes.bool,
 		position: PropTypes.string.isRequired,
 		textLabel: PropTypes.string,
-	},
-	getInitialState() {
-		return {
-			visibleByClick: false,
-			visibleByHover: false,
-		};
-	},
-	isVisible() {
+	};
+
+	state = {
+		visibleByClick: false,
+		visibleByHover: false,
+	};
+
+	isVisible = () => {
 		return (
 			( this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover ) &&
 			( ! exclusiveViewLock || exclusiveViewLock === this )
 		);
-	},
-	priceMessage( price ) {
+	};
+
+	priceMessage = price => {
 		return this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: price },
 			components: { small: <small /> },
 		} );
-	},
+	};
+
 	componentWillUnmount() {
 		if ( exclusiveViewLock === this ) {
 			exclusiveViewLock = null;
 		}
-	},
-	handleClick() {
+	}
+
+	handleClick = () => {
 		exclusiveViewLock = this;
 		this.setState( { visibleByClick: true } );
-	},
-	handleMouseEnter() {
+	};
+
+	handleMouseEnter = () => {
 		this.setState( { visibleByHover: true } );
-	},
-	handleMouseLeave() {
+	};
+
+	handleMouseLeave = () => {
 		this.setState( { visibleByHover: false } );
-	},
-	onClose( event ) {
+	};
+
+	onClose = event => {
 		if ( exclusiveViewLock === this ) {
 			exclusiveViewLock = null;
 		}
@@ -80,7 +86,8 @@ const PremiumPopover = React.createClass( {
 		if ( this.props.onClose ) {
 			return this.props.onClose( event );
 		}
-	},
+	};
+
 	render() {
 		const { selectedSiteId, premiumPlan, premiumSitePlan } = this.props;
 		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
@@ -134,8 +141,8 @@ const PremiumPopover = React.createClass( {
 				</Popover>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );

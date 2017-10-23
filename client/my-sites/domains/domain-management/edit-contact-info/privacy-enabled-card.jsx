@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import support from 'lib/url/support';
 
-const EditContactInfoPrivacyEnabledCard = React.createClass( {
+class EditContactInfoPrivacyEnabledCard extends React.Component {
 	render() {
 		return (
 			<Card className="edit-contact-info-privacy-enabled-card">
@@ -31,7 +31,7 @@ const EditContactInfoPrivacyEnabledCard = React.createClass( {
 				</p>
 			</Card>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EditContactInfoPrivacyEnabledCard );

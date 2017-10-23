@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 
 /**
@@ -28,7 +29,9 @@ import support from 'lib/url/support';
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
-const CreditCardForm = React.createClass( {
+const CreditCardForm = createReactClass( {
+	displayName: 'CreditCardForm',
+
 	propTypes: {
 		apiParams: PropTypes.object,
 		createPaygateToken: PropTypes.func.isRequired,
@@ -48,7 +51,6 @@ const CreditCardForm = React.createClass( {
 	},
 
 	_mounted: false,
-
 	fieldNames: [ 'name', 'number', 'cvv', 'expirationDate', 'country', 'postalCode' ],
 
 	componentWillMount() {
@@ -301,6 +303,7 @@ const CreditCardForm = React.createClass( {
 			</form>
 		);
 	},
+
 	renderUsedForExistingPurchases() {
 		if ( this.props.showUsedForExistingPurchasesInfo ) {
 			return (

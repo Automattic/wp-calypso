@@ -14,16 +14,16 @@ import React from 'react';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-const NotificationSettingsFormLabels = React.createClass( {
-	displayName: 'NotificationSettingsFormLabels',
+class NotificationSettingsFormLabels extends React.Component {
+	static displayName = 'NotificationSettingsFormLabels';
 
-	propTypes: {
+	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-	},
+	};
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
@@ -32,7 +32,7 @@ const NotificationSettingsFormLabels = React.createClass( {
 				<LabelsList settingKeys={ this.props.settingKeys } />
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( NotificationSettingsFormLabels );

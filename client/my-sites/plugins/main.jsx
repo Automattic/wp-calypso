@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { find, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -43,7 +44,8 @@ import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import HeaderButton from 'components/header-button';
 import { isEnabled } from 'config';
 
-const PluginsMain = React.createClass( {
+const PluginsMain = createReactClass( {
+	displayName: 'PluginsMain',
 	mixins: [ URLSearch ],
 
 	getInitialState() {

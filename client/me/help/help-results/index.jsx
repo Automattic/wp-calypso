@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -14,12 +13,10 @@ import CompactCard from 'components/card/compact';
 import HelpResult from './item';
 import SectionHeader from 'components/section-header';
 
-export default React.createClass( {
-	displayName: 'HelpResults',
+export default class extends React.PureComponent {
+	static displayName = 'HelpResults';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		if ( ! this.props.helpLinks.length ) {
 			return null;
 		}
@@ -42,5 +39,5 @@ export default React.createClass( {
 				</a>
 			</div>
 		);
-	},
-} );
+	}
+}

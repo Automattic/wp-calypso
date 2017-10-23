@@ -33,8 +33,8 @@ import { getSiteFragment } from 'lib/route/path';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 
-const DesignMenu = React.createClass( {
-	propTypes: {
+class DesignMenu extends React.Component {
+	static propTypes = {
 		isVisible: PropTypes.bool,
 		// These are provided by the connect method
 		isUnsaved: PropTypes.bool,
@@ -47,15 +47,13 @@ const DesignMenu = React.createClass( {
 		saveCustomizations: PropTypes.func.isRequired,
 		setActiveDesignTool: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			isVisible: false,
-			isUnsaved: false,
-			customizations: {},
-		};
-	},
+	static defaultProps = {
+		isVisible: false,
+		isUnsaved: false,
+		customizations: {},
+	};
 
 	componentWillMount() {
 		if ( ! this.props.selectedSite ) {
@@ -64,24 +62,24 @@ const DesignMenu = React.createClass( {
 		this.props.clearCustomizations( this.props.selectedSite.ID );
 		// Fetch the preview
 		this.props.fetchPreviewMarkup( this.props.selectedSite.ID, '' );
-	},
+	}
 
-	activateDefaultDesignTool() {
+	activateDefaultDesignTool = () => {
 		this.props.setActiveDesignTool( null );
-	},
+	};
 
-	onSave() {
+	onSave = () => {
 		this.props.saveCustomizations();
-	},
+	};
 
-	onBack() {
+	onBack = () => {
 		if ( this.props.activeDesignToolId ) {
 			return this.activateDefaultDesignTool();
 		}
 		this.maybeCloseDesignMenu();
-	},
+	};
 
-	maybeCloseDesignMenu() {
+	maybeCloseDesignMenu = () => {
 		if ( ! this.props.selectedSite ) {
 			return;
 		}
@@ -96,9 +94,9 @@ const DesignMenu = React.createClass( {
 			} );
 		}
 		this.cleanAndClosePreview();
-	},
+	};
 
-	cleanAndClosePreview() {
+	cleanAndClosePreview = () => {
 		this.props.closePreview();
 		const siteFragment = getSiteFragment( page.current );
 		const isEmptyRoute =
@@ -107,9 +105,9 @@ const DesignMenu = React.createClass( {
 		if ( isEmptyRoute ) {
 			page.redirect( `/stats/${ siteFragment }` );
 		}
-	},
+	};
 
-	renderActiveDesignTool() {
+	renderActiveDesignTool = () => {
 		switch ( this.props.activeDesignToolId ) {
 			case 'siteTitle':
 				return (
@@ -120,9 +118,9 @@ const DesignMenu = React.createClass( {
 			default:
 				return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
 		}
-	},
+	};
 
-	getSiteCardSite() {
+	getSiteCardSite = () => {
 		if ( ! this.props.selectedSite ) {
 			return;
 		}
@@ -134,7 +132,7 @@ const DesignMenu = React.createClass( {
 			title: newSiteTitle || this.props.selectedSite.name,
 			domain: this.props.selectedSite.URL.replace( /^https?:\/\//, '' ),
 		} );
-	},
+	};
 
 	render() {
 		const classNames = classnames( 'design-menu', {
@@ -163,8 +161,8 @@ const DesignMenu = React.createClass( {
 				</div>
 			</RootChild>
 		);
-	},
-} );
+	}
+}
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );

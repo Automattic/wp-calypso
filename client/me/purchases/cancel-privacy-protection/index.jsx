@@ -11,6 +11,8 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -38,7 +40,9 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const user = userFactory();
 
-const CancelPrivacyProtection = React.createClass( {
+const CancelPrivacyProtection = createReactClass( {
+	displayName: 'CancelPrivacyProtection',
+
 	propTypes: {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,

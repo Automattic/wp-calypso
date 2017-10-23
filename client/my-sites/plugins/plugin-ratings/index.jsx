@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,7 @@ import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 
-const PluginRatings = React.createClass( {
+const PluginRatings = createReactClass( {
 	displayName: 'PluginRatings',
 
 	propTypes: {

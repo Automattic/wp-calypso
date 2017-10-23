@@ -20,33 +20,31 @@ import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 
-const MasterbarItemNew = React.createClass( {
-	propTypes: {
+class MasterbarItemNew extends React.Component {
+	static propTypes = {
 		user: PropTypes.object,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: PropTypes.string,
 		// connected props
 		selectedSite: PropTypes.object,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isShowingPopover: false,
-		};
-	},
+	state = {
+		isShowingPopover: false,
+	};
 
-	setPostButtonContext( component ) {
+	setPostButtonContext = component => {
 		this.setState( {
 			postButtonContext: component,
 		} );
-	},
+	};
 
-	toggleSitesPopover( isShowingPopover = ! this.state.isShowingPopover ) {
+	toggleSitesPopover = ( isShowingPopover = ! this.state.isShowingPopover ) => {
 		this.setState( { isShowingPopover } );
-	},
+	};
 
-	onClick( event ) {
+	onClick = event => {
 		const visibleSiteCount = this.props.user.get().visible_site_count;
 
 		// if multi-site and editor enabled, show site-selector
@@ -55,9 +53,9 @@ const MasterbarItemNew = React.createClass( {
 			event.preventDefault();
 			return;
 		}
-	},
+	};
 
-	getPopoverPosition() {
+	getPopoverPosition = () => {
 		if ( viewport.isMobile() ) {
 			return 'bottom';
 		}
@@ -67,7 +65,7 @@ const MasterbarItemNew = React.createClass( {
 		}
 
 		return 'bottom left';
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className );
@@ -99,8 +97,8 @@ const MasterbarItemNew = React.createClass( {
 				<AsyncLoad require="layout/masterbar/drafts" />
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	return { selectedSite: getSelectedSite( state ) };

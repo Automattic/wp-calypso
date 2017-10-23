@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,7 +20,8 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const WpcomDomain = React.createClass( {
+const WpcomDomain = createReactClass( {
+	displayName: 'WpcomDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	handleEditSiteAddressClick() {

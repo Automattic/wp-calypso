@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -41,7 +42,8 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-export const PluginsList = React.createClass( {
+export const PluginsList = createReactClass( {
+	displayName: 'PluginsList',
 	mixins: [ PluginNotices ],
 
 	propTypes: {

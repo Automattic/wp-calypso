@@ -16,10 +16,10 @@ import Popover from 'components/popover';
 import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
 
-export default React.createClass( {
-	displayName: 'SitesPopover',
+export default class extends React.Component {
+	static displayName = 'SitesPopover';
 
-	propTypes: {
+	static propTypes = {
 		showDelay: PropTypes.number,
 		context: PropTypes.object,
 		visible: PropTypes.bool,
@@ -28,46 +28,42 @@ export default React.createClass( {
 		id: PropTypes.string,
 		groups: PropTypes.bool,
 		className: PropTypes.string,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			popoverVisible: false,
-		};
-	},
+	static defaultProps = {
+		visible: false,
+		onClose: noop,
+		position: 'bottom left',
+		groups: false,
+		siteQuerystring: false,
+		className: '',
+	};
 
-	getDefaultProps: function() {
-		return {
-			visible: false,
-			onClose: noop,
-			position: 'bottom left',
-			groups: false,
-			siteQuerystring: false,
-			className: '',
-		};
-	},
+	state = {
+		popoverVisible: false,
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.updatePopoverVisibilityState();
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.props.visible !== prevProps.visible ) {
 			this.updatePopoverVisibilityState();
 		}
-	},
+	}
 
-	updatePopoverVisibilityState: function() {
+	updatePopoverVisibilityState = () => {
 		this.setState( {
 			popoverVisible: this.props.visible,
 		} );
-	},
+	};
 
-	renderHeader() {
+	renderHeader = () => {
 		return <div className="sites-popover__header">{ this.props.header }</div>;
-	},
+	};
 
-	renderSiteSelector() {
+	renderSiteSelector = () => {
 		return (
 			<SiteSelector
 				siteBasePath="/post"
@@ -79,9 +75,9 @@ export default React.createClass( {
 				onClose={ this.props.onClose }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		let classes = classnames(
 			this.props.className,
 			'popover sites-popover',
@@ -102,5 +98,5 @@ export default React.createClass( {
 				{ this.renderSiteSelector() }
 			</Popover>
 		);
-	},
-} );
+	}
+}

@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import ViewersStore from 'lib/viewers/store';
 import ViewersActions from 'lib/viewers/actions';
 import passToChildren from 'lib/react-pass-to-children';
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'ViewersData',
 
 	propTypes: {

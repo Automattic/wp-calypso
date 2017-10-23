@@ -15,28 +15,24 @@ import classNames from 'classnames';
  */
 import viewport from 'lib/viewport';
 
-export default React.createClass( {
-	displayName: 'StickyPanel',
+export default class extends React.Component {
+	static displayName = 'StickyPanel';
 
-	propTypes: {
+	static propTypes = {
 		minLimit: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.number ] ),
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			minLimit: false,
-		};
-	},
+	static defaultProps = {
+		minLimit: false,
+	};
 
-	getInitialState: function() {
-		return {
-			isSticky: false,
-			spacerHeight: 0,
-			blockWidth: 0,
-		};
-	},
+	state = {
+		isSticky: false,
+		spacerHeight: 0,
+		blockWidth: 0,
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
 		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
@@ -45,26 +41,26 @@ export default React.createClass( {
 		window.addEventListener( 'scroll', this.onWindowScroll );
 		window.addEventListener( 'resize', this.throttleOnResize );
 		this.updateIsSticky();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
 		window.cancelAnimationFrame( this.rafHandle );
-	},
+	}
 
-	onWindowScroll: function() {
+	onWindowScroll = () => {
 		this.rafHandle = window.requestAnimationFrame( this.updateIsSticky );
-	},
+	};
 
-	onWindowResize: function() {
+	onWindowResize = () => {
 		this.setState( {
 			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
 			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 		} );
-	},
+	};
 
-	updateIsSticky: function() {
+	updateIsSticky = () => {
 		var isSticky = window.pageYOffset > this.threshold;
 
 		if (
@@ -81,9 +77,9 @@ export default React.createClass( {
 				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 			} );
 		}
-	},
+	};
 
-	getBlockStyle: function() {
+	getBlockStyle = () => {
 		var offset;
 
 		if ( this.state.isSticky ) {
@@ -96,9 +92,9 @@ export default React.createClass( {
 				width: this.state.blockWidth,
 			};
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'sticky-panel', this.props.className, {
 			'is-sticky': this.state.isSticky,
 		} );
@@ -111,5 +107,5 @@ export default React.createClass( {
 				<div className="sticky-panel__spacer" style={ { height: this.state.spacerHeight } } />
 			</div>
 		);
-	},
-} );
+	}
+}

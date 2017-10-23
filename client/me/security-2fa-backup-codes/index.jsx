@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
@@ -21,7 +22,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
 
-const Security2faBackupCodes = React.createClass( {
+const Security2faBackupCodes = createReactClass( {
 	displayName: 'Security2faBackupCodes',
 
 	mixins: [ eventRecorder ],

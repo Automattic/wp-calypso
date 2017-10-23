@@ -8,8 +8,8 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-const ContactFormViewPreviewRequired = React.createClass( {
-	displayName: 'ContactFormViewPreviewRequired',
+class ContactFormViewPreviewRequired extends React.Component {
+	static displayName = 'ContactFormViewPreviewRequired';
 
 	render() {
 		if ( this.props.required ) {
@@ -17,7 +17,7 @@ const ContactFormViewPreviewRequired = React.createClass( {
 		}
 
 		return null;
-	},
-} );
+	}
+}
 
 export default localize( ContactFormViewPreviewRequired );

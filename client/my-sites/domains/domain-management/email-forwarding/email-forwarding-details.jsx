@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,7 +16,8 @@ import { localize } from 'i18n-calypso';
 import support from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 
-const EmailForwardingDetails = React.createClass( {
+const EmailForwardingDetails = createReactClass( {
+	displayName: 'EmailForwardingDetails',
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
 	render: function() {

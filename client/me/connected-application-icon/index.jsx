@@ -11,16 +11,14 @@ import React from 'react';
  */
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
-export default React.createClass( {
-	displayName: 'ConnectedApplicationIcon',
+export default class extends React.Component {
+	static displayName = 'ConnectedApplicationIcon';
 
-	getDefaultProps: function() {
-		return {
-			size: 40,
-		};
-	},
+	static defaultProps = {
+		size: 40,
+	};
 
-	render: function() {
+	render() {
 		return (
 			<PluginIcon
 				className="connected-application-icon"
@@ -28,5 +26,5 @@ export default React.createClass( {
 				size={ this.props.size }
 			/>
 		);
-	},
-} );
+	}
+}

@@ -23,10 +23,10 @@ import { GalleryDefaultAttrs } from 'lib/media/constants';
  */
 const debug = debugModule( 'calypso:gallery-shortcode' );
 
-export default React.createClass( {
-	displayName: 'GalleryShortcode',
+export default class extends React.Component {
+	static displayName = 'GalleryShortcode';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string,
 		items: PropTypes.array,
@@ -36,13 +36,11 @@ export default React.createClass( {
 		link: PropTypes.string,
 		size: PropTypes.string,
 		className: PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return GalleryDefaultAttrs;
-	},
+	static defaultProps = GalleryDefaultAttrs;
 
-	filterRenderResult( rendered ) {
+	filterRenderResult = rendered => {
 		if ( ! rendered.body && ! rendered.scripts && ! rendered.styles ) {
 			return rendered;
 		}
@@ -84,9 +82,9 @@ export default React.createClass( {
 		}
 
 		return filtered;
-	},
+	};
 
-	getAttributes() {
+	getAttributes = () => {
 		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
@@ -94,15 +92,15 @@ export default React.createClass( {
 		}
 
 		return attributes;
-	},
+	};
 
-	getShortcode() {
+	getShortcode = () => {
 		if ( this.props.children ) {
 			return this.props.children;
 		}
 
 		return MediaUtils.generateGalleryShortcode( this.getAttributes() );
-	},
+	};
 
 	render() {
 		const shortcode = this.getShortcode();
@@ -124,5 +122,5 @@ export default React.createClass( {
 				{ shortcode }
 			</Shortcode>
 		);
-	},
-} );
+	}
+}

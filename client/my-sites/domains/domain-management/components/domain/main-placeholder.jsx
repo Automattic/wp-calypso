@@ -15,7 +15,7 @@ import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const DomainMainPlaceholder = React.createClass( {
+class DomainMainPlaceholder extends React.Component {
 	render() {
 		return (
 			<Main className="domain-main-placeholder">
@@ -35,7 +35,7 @@ const DomainMainPlaceholder = React.createClass( {
 				</VerticalNav>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default DomainMainPlaceholder;

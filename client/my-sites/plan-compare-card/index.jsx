@@ -19,10 +19,10 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
-const PlanCompareCard = React.createClass( {
-	displayName: 'PlanCompareCard',
+class PlanCompareCard extends React.Component {
+	static displayName = 'PlanCompareCard';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		onClick: PropTypes.func,
 		title: PropTypes.string.isRequired,
@@ -30,21 +30,19 @@ const PlanCompareCard = React.createClass( {
 		buttonName: PropTypes.string.isRequired,
 		currentPlan: PropTypes.bool,
 		popularRibbon: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onClick: noop,
-			currentPlan: true,
-			popularRibbon: false,
-		};
-	},
+	static defaultProps = {
+		onClick: noop,
+		currentPlan: true,
+		popularRibbon: false,
+	};
 
-	buttonClick() {
+	buttonClick = () => {
 		if ( ! this.props.currentPlan ) {
 			this.props.onClick();
 		}
-	},
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'plan-compare-card' );
@@ -76,7 +74,7 @@ const PlanCompareCard = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PlanCompareCard );

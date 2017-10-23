@@ -21,24 +21,24 @@ import * as ShortcodesActions from 'lib/shortcodes/actions';
 import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
 
-export default React.createClass( {
-	displayName: 'Shortcode',
+export default class extends React.Component {
+	static displayName = 'Shortcode';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
 		filterRenderResult: PropTypes.func,
 		className: PropTypes.string,
-	},
+	};
 
 	componentDidMount() {
 		this.fetchRendered();
 		this.listener = ShortcodesStore.addListener( this.fetchRendered );
-	},
+	}
 
 	componentDidUpdate() {
 		this.fetchRendered();
-	},
+	}
 
 	componentWillUnmount() {
 		this.clearFetchTimeout();
@@ -46,9 +46,9 @@ export default React.createClass( {
 		if ( this.listener ) {
 			this.listener.remove();
 		}
-	},
+	}
 
-	fetchRendered() {
+	fetchRendered = () => {
 		const { siteId, children: shortcode } = this.props;
 
 		if ( ShortcodesStore.get( siteId, shortcode ) ) {
@@ -60,12 +60,12 @@ export default React.createClass( {
 			this.clearFetchTimeout();
 			ShortcodesActions.fetch( siteId, shortcode );
 		}, 0 );
-	},
+	};
 
-	clearFetchTimeout() {
+	clearFetchTimeout = () => {
 		clearTimeout( this.fetchTimeout );
 		this.fetchTimeout = null;
-	},
+	};
 
 	render() {
 		const { siteId, className, filterRenderResult, children } = this.props;
@@ -83,5 +83,5 @@ export default React.createClass( {
 				/>
 			</ShortcodeData>
 		);
-	},
-} );
+	}
+}

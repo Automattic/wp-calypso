@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,12 +15,10 @@ import AuthorSelector from 'blocks/author-selector';
 import UserItem from 'components/user';
 import user from 'lib/user';
 
-export default React.createClass( {
-	displayName: 'ImporterAuthorMapping',
+export default class extends React.PureComponent {
+	static displayName = 'ImporterAuthorMapping';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
 		onSelect: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
@@ -34,7 +31,7 @@ export default React.createClass( {
 				avatar_URL: PropTypes.string.isRequired,
 			} ),
 		} ).isRequired,
-	},
+	};
 
 	componentWillMount() {
 		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
@@ -42,15 +39,15 @@ export default React.createClass( {
 		if ( hasSingleAuthor ) {
 			selectAuthor( this.getCurrentUser() );
 		}
-	},
+	}
 
-	getCurrentUser() {
+	getCurrentUser = () => {
 		const currentUser = user().get();
 
 		return Object.assign( {}, currentUser, { name: currentUser.display_name } );
-	},
+	};
 
-	render: function() {
+	render() {
 		const {
 			hasSingleAuthor,
 			siteId,
@@ -74,5 +71,5 @@ export default React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}

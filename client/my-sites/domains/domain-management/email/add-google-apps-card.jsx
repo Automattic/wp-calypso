@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -23,7 +24,9 @@ import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
-const AddGoogleAppsCard = React.createClass( {
+const AddGoogleAppsCard = createReactClass( {
+	displayName: 'AddGoogleAppsCard',
+
 	propTypes: {
 		products: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,

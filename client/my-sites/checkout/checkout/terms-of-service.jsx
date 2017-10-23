@@ -15,14 +15,14 @@ import analytics from 'lib/analytics';
 import support from 'lib/url/support';
 import Gridicon from 'gridicons';
 
-const TermsOfService = React.createClass( {
-	displayName: 'TermsOfService',
+class TermsOfService extends React.Component {
+	static displayName = 'TermsOfService';
 
-	recordTermsAndConditionsClick: function() {
+	recordTermsAndConditionsClick = () => {
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
-	},
+	};
 
-	renderTerms: function() {
+	renderTerms = () => {
 		var message = this.props.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
 			{
@@ -51,16 +51,16 @@ const TermsOfService = React.createClass( {
 		}
 
 		return message;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>{ this.renderTerms() }</p>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( TermsOfService );

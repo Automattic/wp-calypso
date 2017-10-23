@@ -8,10 +8,10 @@ import React from 'react';
 
 import { localize } from 'i18n-calypso';
 
-const StoredCard = React.createClass( {
-	displayName: 'StoredCard',
+class StoredCard extends React.Component {
+	static displayName = 'StoredCard';
 
-	render: function() {
+	render() {
 		var card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
 			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
@@ -30,7 +30,7 @@ const StoredCard = React.createClass( {
 				</span>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( StoredCard );

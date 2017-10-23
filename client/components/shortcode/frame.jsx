@@ -15,50 +15,46 @@ import classNames from 'classnames';
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
 import ResizableIframe from 'components/resizable-iframe';
 
-export default React.createClass( {
-	displayName: 'ShortcodeFrame',
+export default class extends React.Component {
+	static displayName = 'ShortcodeFrame';
 
-	propTypes: {
+	static propTypes = {
 		body: PropTypes.string,
 		scripts: PropTypes.object,
 		style: PropTypes.object,
 		onLoad: PropTypes.func,
 		className: PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onLoad: () => {},
-		};
-	},
+	static defaultProps = {
+		onLoad: () => {},
+	};
 
-	getInitialState: function() {
-		return {
-			html: '',
-		};
-	},
+	state = {
+		html: '',
+	};
 
 	componentDidMount() {
 		this.updateHtmlState( this.props );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props, nextProps ) ) {
 			this.updateHtmlState( nextProps );
 		}
-	},
+	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		return nextState.html !== this.state.html;
-	},
+	}
 
-	updateHtmlState( props ) {
+	updateHtmlState = props => {
 		this.setState( {
 			html: generateEmbedFrameMarkup( props ),
 		} );
-	},
+	};
 
-	onFrameLoad( event ) {
+	onFrameLoad = event => {
 		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage(
 			JSON.stringify( {
@@ -68,7 +64,7 @@ export default React.createClass( {
 		);
 
 		this.props.onLoad( event );
-	},
+	};
 
 	render() {
 		const classes = classNames( 'shortcode-frame', this.props.className );
@@ -93,5 +89,5 @@ export default React.createClass( {
 				className={ classes }
 			/>
 		);
-	},
-} );
+	}
+}

@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -31,7 +32,8 @@ import { clearActivated } from 'state/themes/actions';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const ThanksModal = React.createClass( {
+const ThanksModal = createReactClass( {
+	displayName: 'ThanksModal',
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	propTypes: {

@@ -15,29 +15,27 @@ import MediaLibraryListItem from 'my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryEditItem',
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalGalleryEditItem';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
 		showRemoveButton: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			showRemoveButton: true,
-		};
-	},
+	static defaultProps = {
+		showRemoveButton: true,
+	};
 
-	renderCaption() {
+	renderCaption = () => {
 		const { site, item } = this.props;
 		if ( ! userCan( 'upload_files', site ) ) {
 			return;
 		}
 
 		return <EditorMediaModalGalleryCaption siteId={ site.ID } item={ item } />;
-	},
+	};
 
 	render() {
 		const { site, item, showRemoveButton } = this.props;
@@ -51,5 +49,5 @@ export default React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}

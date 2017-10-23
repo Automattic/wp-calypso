@@ -10,10 +10,10 @@ import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-const StatsTabsTab = React.createClass( {
-	displayName: 'StatsTabsTab',
+class StatsTabsTab extends React.Component {
+	static displayName = 'StatsTabsTab';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		gridicon: PropTypes.string,
 		href: PropTypes.string,
@@ -23,16 +23,16 @@ const StatsTabsTab = React.createClass( {
 		tabClick: PropTypes.func,
 		compact: PropTypes.bool,
 		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
-	},
+	};
 
-	clickHandler( event ) {
+	clickHandler = event => {
 		if ( this.props.tabClick ) {
 			event.preventDefault();
 			this.props.tabClick( this.props );
 		}
-	},
+	};
 
-	ensureValue( value ) {
+	ensureValue = value => {
 		const { loading, children } = this.props;
 		if ( children ) {
 			return null;
@@ -43,7 +43,7 @@ const StatsTabsTab = React.createClass( {
 		}
 
 		return String.fromCharCode( 8211 );
-	},
+	};
 
 	render() {
 		const {
@@ -90,7 +90,7 @@ const StatsTabsTab = React.createClass( {
 				) }
 			</li>
 		);
-	},
-} );
+	}
+}
 
 export default localize( StatsTabsTab );

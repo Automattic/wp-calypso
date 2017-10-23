@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:reauth-required' );
@@ -28,7 +29,7 @@ import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 
-const ReauthRequired = React.createClass( {
+const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
 	mixins: [ observe( 'twoStepAuthorization' ), eventRecorder ],
 

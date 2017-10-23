@@ -23,16 +23,16 @@ import React from 'react';
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-const CharMap = React.createClass( {
-	displayName: 'CharMap',
+class CharMap extends React.Component {
+	static displayName = 'CharMap';
 
-	propTypes: {
+	static propTypes = {
 		onClose: PropTypes.func,
 		showDialog: PropTypes.bool,
 		editor: PropTypes.object,
-	},
+	};
 
-	defaultCharMap() {
+	defaultCharMap = () => {
 		return [
 			[ '160', 'no-break space' ],
 			[ '173', 'soft hyphen' ],
@@ -293,9 +293,9 @@ const CharMap = React.createClass( {
 			[ '8206', 'left-to-right mark' ],
 			[ '8207', 'right-to-left mark' ],
 		];
-	},
+	};
 
-	renderCell( cell ) {
+	renderCell = cell => {
 		return (
 			<div
 				key={ cell[ 0 ] }
@@ -307,13 +307,13 @@ const CharMap = React.createClass( {
 				{ String.fromCharCode( parseInt( cell[ 0 ], 10 ) ) }
 			</div>
 		);
-	},
+	};
 
-	onCellClick( event ) {
+	onCellClick = event => {
 		this.props.editor.execCommand( 'mceInsertContent', false, event.target.textContent.trim() );
-	},
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
 			<FormButton
 				isPrimary={ false }
@@ -323,7 +323,7 @@ const CharMap = React.createClass( {
 				{ this.props.translate( 'Close' ) }
 			</FormButton>,
 		];
-	},
+	};
 
 	render() {
 		return (
@@ -339,7 +339,7 @@ const CharMap = React.createClass( {
 				</div>
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default localize( CharMap );

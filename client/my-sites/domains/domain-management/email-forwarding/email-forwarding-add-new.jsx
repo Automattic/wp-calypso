@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
 /**
  * Internal dependencies
  */
@@ -27,7 +29,9 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields } from 'lib/domains/email-forwarding';
 import support from 'lib/url/support';
 
-const EmailForwardingAddNew = React.createClass( {
+const EmailForwardingAddNew = createReactClass( {
+	displayName: 'EmailForwardingAddNew',
+
 	propTypes: {
 		initialShowForm: PropTypes.bool,
 	},

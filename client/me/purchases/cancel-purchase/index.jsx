@@ -46,13 +46,13 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const CancelPurchase = React.createClass( {
-	propTypes: {
+class CancelPurchase extends React.Component {
+	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-	},
+	};
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
@@ -61,7 +61,7 @@ const CancelPurchase = React.createClass( {
 		}
 
 		recordPageView( 'cancel_purchase', this.props );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
@@ -70,9 +70,9 @@ const CancelPurchase = React.createClass( {
 		}
 
 		recordPageView( 'cancel_purchase', this.props, nextProps );
-	},
+	}
 
-	isDataValid( props = this.props ) {
+	isDataValid = ( props = this.props ) => {
 		if ( isDataLoading( props ) ) {
 			return true;
 		}
@@ -81,9 +81,9 @@ const CancelPurchase = React.createClass( {
 			selectedSite = getSelectedSite( props );
 
 		return selectedSite && purchase && isCancelable( purchase );
-	},
+	};
 
-	redirect( props ) {
+	redirect = props => {
 		const purchase = getPurchase( props ),
 			selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
@@ -93,9 +93,9 @@ const CancelPurchase = React.createClass( {
 		}
 
 		page.redirect( redirectPath );
-	},
+	};
 
-	renderFooterText() {
+	renderFooterText = () => {
 		const purchase = getPurchase( this.props ),
 			{ refundText, renewDate } = purchase;
 
@@ -117,7 +117,7 @@ const CancelPurchase = React.createClass( {
 		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
 			args: { renewalDate },
 		} );
-	},
+	};
 
 	render() {
 		if ( ! this.isDataValid() ) {
@@ -179,8 +179,8 @@ const CancelPurchase = React.createClass( {
 				</CompactCard>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),

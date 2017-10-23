@@ -6,12 +6,15 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const StatUpdateIndicator = React.createClass( {
+const StatUpdateIndicator = createReactClass( {
+	displayName: 'StatUpdateIndicator',
+
 	propTypes: {
 		children: PropTypes.node.isRequired,
 		updateOn: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number, PropTypes.bool ] )

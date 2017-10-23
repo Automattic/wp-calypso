@@ -16,10 +16,10 @@ const debug = debugFactory( 'calypso:stats:action-page' );
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
-const StatsActionPage = React.createClass( {
-	displayName: 'StatsActionPage',
+class StatsActionPage extends React.Component {
+	static displayName = 'StatsActionPage';
 
-	clickHandler: function( event ) {
+	clickHandler = event => {
 		event.stopPropagation();
 		event.preventDefault();
 		debug( 'handling page click', this.props );
@@ -29,9 +29,9 @@ const StatsActionPage = React.createClass( {
 		);
 
 		page( this.props.page );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<li className="module-content-list-item-action">
 				<a
@@ -56,7 +56,7 @@ const StatsActionPage = React.createClass( {
 				</a>
 			</li>
 		);
-	},
-} );
+	}
+}
 
 export default localize( StatsActionPage );

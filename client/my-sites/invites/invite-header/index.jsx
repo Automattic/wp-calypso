@@ -17,18 +17,18 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Gravatar from 'components/gravatar';
 
-const InviteHeader = React.createClass( {
-	displayName: 'InviteHeader',
+class InviteHeader extends React.Component {
+	static displayName = 'InviteHeader';
 
-	getInviterName() {
+	getInviterName = () => {
 		return get(
 			this.props,
 			'inviter.name',
 			this.props.translate( 'User', { context: 'Placeholder text while loading an invitation.' } )
 		);
-	},
+	};
 
-	getInvitedYouText() {
+	getInvitedYouText = () => {
 		let text = '';
 
 		const inviterName = (
@@ -100,7 +100,7 @@ const InviteHeader = React.createClass( {
 		}
 
 		return text;
-	},
+	};
 
 	render() {
 		let classes = classNames( 'invite-header', { 'is-placeholder': ! this.props.inviteKey } );
@@ -118,7 +118,7 @@ const InviteHeader = React.createClass( {
 				</CompactCard>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( InviteHeader );

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -32,7 +33,8 @@ import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PostTypeFilter = React.createClass( {
+const PostTypeFilter = createReactClass( {
+	displayName: 'PostTypeFilter',
 	mixins: [ UrlSearch ],
 
 	propTypes: {

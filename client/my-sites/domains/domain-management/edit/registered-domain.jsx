@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,7 +23,8 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
-const RegisteredDomain = React.createClass( {
+const RegisteredDomain = createReactClass( {
+	displayName: 'RegisteredDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {

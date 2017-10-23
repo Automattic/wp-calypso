@@ -8,6 +8,7 @@ import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import update from 'immutability-helper';
 import page from 'page';
 
@@ -36,7 +37,8 @@ const validateUsers = googleAppsLibrary.validate,
 
 import Notice from 'components/notice';
 
-const AddEmailAddressesCard = React.createClass( {
+const AddEmailAddressesCard = createReactClass( {
+	displayName: 'AddEmailAddressesCard',
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
 
 	propTypes: {

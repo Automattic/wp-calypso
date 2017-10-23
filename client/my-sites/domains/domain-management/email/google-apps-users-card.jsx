@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { find, groupBy } from 'lodash';
 
 /**
@@ -23,7 +24,8 @@ import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import support from 'lib/url/support';
 
-const GoogleAppsUsers = React.createClass( {
+const GoogleAppsUsers = createReactClass( {
+	displayName: 'GoogleAppsUsers',
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
 	propTypes: {

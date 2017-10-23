@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { cartItems } from 'lib/cart-values';
 
-const SubscriptionText = React.createClass( {
+class SubscriptionText extends React.Component {
 	render() {
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			return (
@@ -26,7 +26,7 @@ const SubscriptionText = React.createClass( {
 		}
 
 		return null;
-	},
-} );
+	}
+}
 
 export default localize( SubscriptionText );

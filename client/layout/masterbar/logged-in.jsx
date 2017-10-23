@@ -31,36 +31,36 @@ import { domainManagementList } from 'my-sites/domains/paths';
 import { getSite } from 'state/sites/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 
-const MasterbarLoggedIn = React.createClass( {
-	propTypes: {
+class MasterbarLoggedIn extends React.Component {
+	static propTypes = {
 		domainOnlySite: PropTypes.bool,
 		user: PropTypes.object,
 		sites: PropTypes.object,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
-	},
+	};
 
-	clickMySites() {
+	clickMySites = () => {
 		this.props.setNextLayoutFocus( 'sidebar' );
-	},
+	};
 
-	clickReader() {
+	clickReader = () => {
 		this.props.setNextLayoutFocus( 'content' );
-	},
+	};
 
-	isActive( section ) {
+	isActive = section => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
-	},
+	};
 
-	wordpressIcon() {
+	wordpressIcon = () => {
 		// WP icon replacement for "horizon" environment
 		if ( config( 'hostname' ) === 'horizon.wordpress.com' ) {
 			return 'my-sites-horizon';
 		}
 
 		return 'my-sites';
-	},
+	};
 
 	render() {
 		const { domainOnlySite, siteSlug, translate } = this.props,
@@ -139,8 +139,8 @@ const MasterbarLoggedIn = React.createClass( {
 				</Notifications>
 			</Masterbar>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

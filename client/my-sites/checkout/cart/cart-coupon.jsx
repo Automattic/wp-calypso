@@ -14,28 +14,29 @@ import { localize } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import upgradesActions from 'lib/upgrades/actions';
 
-const CartCoupon = React.createClass( {
-	displayName: 'CartCoupon',
+class CartCoupon extends React.Component {
+	static displayName = 'CartCoupon';
 
-	getInitialState: function() {
-		var coupon = this.props.cart.coupon,
-			cartHadCouponBeforeMount = Boolean( this.props.cart.coupon );
+	constructor( props ) {
+		super( props );
+		var coupon = props.cart.coupon,
+			cartHadCouponBeforeMount = Boolean( props.cart.coupon );
 
-		return {
+		this.state = {
 			isCouponFormShowing: cartHadCouponBeforeMount,
 			hasSubmittedCoupon: cartHadCouponBeforeMount,
 			couponInputValue: coupon,
 			userChangedCoupon: false,
 		};
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}
-	},
+	}
 
-	toggleCouponDetails: function( event ) {
+	toggleCouponDetails = event => {
 		event.preventDefault();
 
 		this.setState( { isCouponFormShowing: ! this.state.isCouponFormShowing } );
@@ -45,9 +46,9 @@ const CartCoupon = React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Upgrades', 'Clicked Show Coupon Code Link' );
 		}
-	},
+	};
 
-	applyCoupon: function( event ) {
+	applyCoupon = event => {
 		event.preventDefault();
 
 		analytics.tracks.recordEvent( 'calypso_checkout_coupon_submit', {
@@ -59,16 +60,16 @@ const CartCoupon = React.createClass( {
 			hasSubmittedCoupon: true,
 		} );
 		upgradesActions.applyCoupon( this.state.couponInputValue );
-	},
+	};
 
-	handleCouponInput: function( event ) {
+	handleCouponInput = event => {
 		this.setState( {
 			userChangedCoupon: true,
 			couponInputValue: event.target.value,
 		} );
-	},
+	};
 
-	getToggleLink: function() {
+	getToggleLink = () => {
 		if ( this.props.cart.total_cost === 0 ) {
 			return;
 		}
@@ -82,9 +83,9 @@ const CartCoupon = React.createClass( {
 				{ this.props.translate( 'Have a coupon code?' ) }
 			</a>
 		);
-	},
+	};
 
-	getCouponForm: function() {
+	getCouponForm = () => {
 		if ( ! this.state.isCouponFormShowing ) {
 			return;
 		}
@@ -106,16 +107,16 @@ const CartCoupon = React.createClass( {
 				</button>
 			</form>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="cart-coupon">
 				{ this.getToggleLink() }
 				{ this.getCouponForm() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( CartCoupon );

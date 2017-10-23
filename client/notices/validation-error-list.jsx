@@ -9,14 +9,14 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const ValidationErrorList = React.createClass( {
-	displayName: 'ValidationErrorList',
+class ValidationErrorList extends React.Component {
+	static displayName = 'ValidationErrorList';
 
-	propTypes: {
+	static propTypes = {
 		messages: PropTypes.array.isRequired,
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>
@@ -35,7 +35,7 @@ const ValidationErrorList = React.createClass( {
 				</ul>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ValidationErrorList );

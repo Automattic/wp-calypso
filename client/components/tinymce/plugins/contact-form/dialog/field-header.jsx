@@ -13,17 +13,17 @@ import React from 'react';
  */
 import getLabel from './locales';
 
-const ContactFormDialogFieldHeader = React.createClass( {
-	displayName: 'ContactFormDialogFieldHeader',
+class ContactFormDialogFieldHeader extends React.Component {
+	static displayName = 'ContactFormDialogFieldHeader';
 
-	propTypes: {
+	static propTypes = {
 		label: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
 		options: PropTypes.string,
 		required: PropTypes.bool,
-	},
+	};
 
-	getLegend() {
+	getLegend = () => {
 		if ( this.props.options ) {
 			const count = this.props.options.split( ',' ).length;
 
@@ -75,7 +75,7 @@ const ContactFormDialogFieldHeader = React.createClass( {
 			comment:
 				'Explain to the user the field settings for fields other than dropdown and select list.',
 		} );
-	},
+	};
 
 	render() {
 		return (
@@ -86,7 +86,7 @@ const ContactFormDialogFieldHeader = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ContactFormDialogFieldHeader );

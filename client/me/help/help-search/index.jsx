@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { isEmpty } from 'lodash';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 
@@ -20,37 +19,33 @@ import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import analytics from 'lib/analytics';
 
-const HelpSearch = React.createClass( {
-	displayName: 'HelpSearch',
+class HelpSearch extends React.PureComponent {
+	static displayName = 'HelpSearch';
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		helpLinks: [],
+		searchQuery: '',
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		HelpSearchStore.on( 'change', this.refreshHelpLinks );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			helpLinks: [],
-			searchQuery: '',
-		};
-	},
-
-	refreshHelpLinks: function() {
+	refreshHelpLinks = () => {
 		this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
-	},
+	};
 
-	onSearch: function( searchQuery ) {
+	onSearch = searchQuery => {
 		this.setState( { helpLinks: [], searchQuery: searchQuery } );
 		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
 		HelpSearchActions.fetch( searchQuery );
-	},
+	};
 
-	displaySearchResults: function() {
+	displaySearchResults = () => {
 		if ( isEmpty( this.state.searchQuery ) ) {
 			return null;
 		}
@@ -120,9 +115,9 @@ const HelpSearch = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="help-search">
 				<SearchCard
@@ -135,7 +130,7 @@ const HelpSearch = React.createClass( {
 				{ this.displaySearchResults() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( HelpSearch );

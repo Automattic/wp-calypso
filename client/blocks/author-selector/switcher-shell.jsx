@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -26,7 +27,7 @@ import { hasTouch } from 'lib/touch-detect';
 const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
-const SwitcherShell = React.createClass( {
+const SwitcherShell = createReactClass( {
 	displayName: 'AuthorSwitcherShell',
 
 	propTypes: {

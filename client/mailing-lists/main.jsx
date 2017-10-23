@@ -21,22 +21,20 @@ import { preventWidows } from 'lib/formatting';
  * Constants
  */
 
-const MainComponent = React.createClass( {
-	displayName: 'MainComponent',
+class MainComponent extends React.Component {
+	static displayName = 'MainComponent';
 
-	getInitialState() {
-		return {
-			isError: false,
-			isSubscribed: true,
-		};
-	},
+	state = {
+		isError: false,
+		isSubscribed: true,
+	};
 
 	componentDidMount() {
 		// Automatically call unsubscribe when the page is viewed in the browser;
 		// it is done this way to prevent an accidental unsubscribe from occuring
 		// if an email client prefetches the unsubscribe link in an email
 		this.onUnsubscribeClick();
-	},
+	}
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isSubscribed !== prevState.isSubscribed ) {
@@ -52,9 +50,9 @@ const MainComponent = React.createClass( {
 				{ overlay: false, showDismiss: false }
 			);
 		}
-	},
+	}
 
-	getSubscribedMessage() {
+	getSubscribedMessage = () => {
 		return this.props.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName(),
@@ -63,9 +61,9 @@ const MainComponent = React.createClass( {
 				em: <em />,
 			},
 		} );
-	},
+	};
 
-	getUnsubscribedMessage() {
+	getUnsubscribedMessage = () => {
 		return this.props.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName(),
@@ -74,9 +72,9 @@ const MainComponent = React.createClass( {
 				em: <em />,
 			},
 		} );
-	},
+	};
 
-	getSubscribedErrorMessage() {
+	getSubscribedErrorMessage = () => {
 		return this.props.translate(
 			'Error subscribing to {{em}}%(categoryName)s{{/em}} mailing list! Try again later.',
 			{
@@ -88,9 +86,9 @@ const MainComponent = React.createClass( {
 				},
 			}
 		);
-	},
+	};
 
-	getUnsubscribedErrorMessage() {
+	getUnsubscribedErrorMessage = () => {
 		return this.props.translate(
 			'Error unsubscribing from {{em}}%(categoryName)s{{/em}} mailing list! Try again later.',
 			{
@@ -102,9 +100,9 @@ const MainComponent = React.createClass( {
 				},
 			}
 		);
-	},
+	};
 
-	getCategoryName() {
+	getCategoryName = () => {
 		if ( 'marketing' === this.props.category ) {
 			return this.props.translate( 'Suggestions' );
 		} else if ( 'research' === this.props.category ) {
@@ -116,9 +114,9 @@ const MainComponent = React.createClass( {
 		}
 
 		return this.props.category;
-	},
+	};
 
-	getCategoryDescription() {
+	getCategoryDescription = () => {
 		if ( 'marketing' === this.props.category ) {
 			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
 		} else if ( 'research' === this.props.category ) {
@@ -136,9 +134,9 @@ const MainComponent = React.createClass( {
 		}
 
 		return null;
-	},
+	};
 
-	onUnsubscribeClick() {
+	onUnsubscribeClick = () => {
 		utils
 			.deleteSubscriber(
 				this.props.category,
@@ -152,9 +150,9 @@ const MainComponent = React.createClass( {
 			.catch( () => {
 				this.setState( { isError: true } );
 			} );
-	},
+	};
 
-	onResubscribeClick() {
+	onResubscribeClick = () => {
 		utils
 			.addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
 			.then( () => {
@@ -163,13 +161,13 @@ const MainComponent = React.createClass( {
 			.catch( () => {
 				this.setState( { isError: true } );
 			} );
-	},
+	};
 
-	onManageUpdatesClick() {
+	onManageUpdatesClick = () => {
 		// Use redirect because we want to replace the history entry,
 		// preventing the user from going back to the unsubscribe page
 		page.redirect( '/me/notifications/updates' );
-	},
+	};
 
 	render() {
 		const translate = this.props.translate;
@@ -219,7 +217,7 @@ const MainComponent = React.createClass( {
 				</p>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( MainComponent );

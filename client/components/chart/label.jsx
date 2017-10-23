@@ -17,16 +17,16 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 
-export default React.createClass( {
-	displayName: 'ModuleChartLabel',
+export default class extends React.Component {
+	static displayName = 'ModuleChartLabel';
 
-	propTypes: {
+	static propTypes = {
 		width: PropTypes.number.isRequired,
 		x: PropTypes.number.isRequired,
 		label: PropTypes.string.isRequired,
-	},
+	};
 
-	render: function() {
+	render() {
 		const dir = user.isRTL() ? 'right' : 'left';
 		let labelStyle;
 
@@ -41,5 +41,5 @@ export default React.createClass( {
 				{ this.props.label }
 			</div>
 		);
-	},
-} );
+	}
+}

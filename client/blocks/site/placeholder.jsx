@@ -8,14 +8,14 @@ import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:site' );
 
-export default React.createClass( {
-	displayName: 'SitePlaceholder',
+export default class extends React.Component {
+	static displayName = 'SitePlaceholder';
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'The Site component is mounted.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="site is-loading">
 				<div className="site__content">
@@ -27,5 +27,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}

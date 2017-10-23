@@ -12,13 +12,13 @@ import React from 'react';
 import SitePicker from 'my-sites/picker';
 import Sidebar from 'my-sites/sidebar';
 
-const MySitesNavigation = React.createClass( {
-	displayName: 'MySitesNavigation',
+class MySitesNavigation extends React.Component {
+	static displayName = 'MySitesNavigation';
 
-	preventPickerDefault( event ) {
+	preventPickerDefault = event => {
 		event.preventDefault();
 		event.stopPropagation();
-	},
+	};
 
 	render() {
 		return (
@@ -35,7 +35,7 @@ const MySitesNavigation = React.createClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default MySitesNavigation;

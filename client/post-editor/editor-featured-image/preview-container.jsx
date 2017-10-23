@@ -16,38 +16,36 @@ import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
-export default React.createClass( {
-	displayName: 'EditorFeaturedImagePreviewContainer',
+export default class extends React.Component {
+	static displayName = 'EditorFeaturedImagePreviewContainer';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 		maxWidth: PropTypes.number,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			image: null,
-		};
-	},
+	state = {
+		image: null,
+	};
 
 	componentDidMount() {
 		this.fetchImage();
 		MediaStore.on( 'change', this.updateImageState );
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { siteId, itemId } = this.props;
 		if ( siteId !== prevProps.siteId || itemId !== prevProps.itemId ) {
 			this.fetchImage();
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		MediaStore.off( 'change', this.updateImageState );
-	},
+	}
 
-	fetchImage() {
+	fetchImage = () => {
 		// We may not necessarily need to trigger a network request if we
 		// already have the data for the media item, so first update the state
 		this.updateImageState( () => {
@@ -59,9 +57,9 @@ export default React.createClass( {
 				MediaActions.fetch( this.props.siteId, this.props.itemId );
 			} );
 		} );
-	},
+	};
 
-	updateImageState( callback ) {
+	updateImageState = callback => {
 		const image = MediaStore.get( this.props.siteId, this.props.itemId );
 		this.setState( { image }, () => {
 			if ( 'function' === typeof callback ) {
@@ -77,11 +75,11 @@ export default React.createClass( {
 				} );
 			}
 		} );
-	},
+	};
 
 	render() {
 		return (
 			<EditorFeaturedImagePreview image={ this.state.image } maxWidth={ this.props.maxWidth } />
 		);
-	},
-} );
+	}
+}

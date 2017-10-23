@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
@@ -18,7 +19,9 @@ import TokenInput from './token-input';
 
 const debug = debugFactory( 'calypso:token-field' );
 
-const TokenField = React.createClass( {
+const TokenField = createReactClass( {
+	displayName: 'TokenField',
+
 	propTypes: {
 		suggestions: PropTypes.array,
 		maxSuggestions: PropTypes.number,

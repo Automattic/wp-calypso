@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -30,7 +31,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
-const NotificationSubscriptions = React.createClass( {
+const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
 	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],

@@ -79,8 +79,15 @@ const SUPPORT_FORUM = 'SUPPORT_FORUM';
 const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
 const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
 
-const HelpContact = React.createClass( {
-	componentDidMount: function() {
+class HelpContact extends React.Component {
+	state = {
+		olark: olarkStore.get(),
+		isSubmitting: false,
+		confirmation: null,
+		isChatEnded: false,
+	};
+
+	componentDidMount() {
 		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
@@ -97,16 +104,16 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		// Directly initialization is a noop if it's already happened. This catches
 		// instances where a state/prop change moves a user to Directly support from
 		// some other variation.
 		this.prepareDirectlyWidget();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		const { details, isOperatorAvailable } = this.state.olark;
 
 		olarkStore.removeListener( 'change', this.updateOlarkState );
@@ -119,30 +126,21 @@ const HelpContact = React.createClass( {
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
 		}
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			olark: olarkStore.get(),
-			isSubmitting: false,
-			confirmation: null,
-			isChatEnded: false,
-		};
-	},
-
-	updateOlarkState: function() {
+	updateOlarkState = () => {
 		this.setState( { olark: olarkStore.get() } );
-	},
+	};
 
-	backToHelp: function() {
+	backToHelp = () => {
 		page( '/help' );
-	},
+	};
 
-	clearSavedContactForm: function() {
+	clearSavedContactForm = () => {
 		savedContactForm = null;
-	},
+	};
 
-	startHappychat: function( contactForm ) {
+	startHappychat = contactForm => {
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
@@ -155,9 +153,9 @@ const HelpContact = React.createClass( {
 		} );
 
 		page( '/help' );
-	},
+	};
 
-	startChat: function( contactForm ) {
+	startChat = contactForm => {
 		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
 
 		// Intentionally not translated since only HE's will see this in the olark console as a notification.
@@ -177,9 +175,9 @@ const HelpContact = React.createClass( {
 		this.sendMessageToOperator( message );
 
 		this.clearSavedContactForm();
-	},
+	};
 
-	prepareDirectlyWidget: function() {
+	prepareDirectlyWidget = () => {
 		if (
 			this.hasDataToDetermineVariation() &&
 			this.getSupportVariation() === SUPPORT_DIRECTLY &&
@@ -187,9 +185,9 @@ const HelpContact = React.createClass( {
 		) {
 			this.props.initializeDirectly();
 		}
-	},
+	};
 
-	submitDirectlyQuestion: function( contactForm ) {
+	submitDirectlyQuestion = contactForm => {
 		const { display_name, email } = this.props.currentUser;
 
 		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
@@ -197,9 +195,9 @@ const HelpContact = React.createClass( {
 		this.clearSavedContactForm();
 
 		page( '/help' );
-	},
+	};
 
-	submitKayakoTicket: function( contactForm ) {
+	submitKayakoTicket = contactForm => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
 		const { currentUserLocale } = this.props;
 
@@ -247,9 +245,9 @@ const HelpContact = React.createClass( {
 		);
 
 		this.clearSavedContactForm();
-	},
+	};
 
-	submitSupportForumsTopic: function( contactForm ) {
+	submitSupportForumsTopic = contactForm => {
 		const { subject, message } = contactForm;
 		const { currentUserLocale } = this.props;
 
@@ -289,13 +287,13 @@ const HelpContact = React.createClass( {
 		);
 
 		this.clearSavedContactForm();
-	},
+	};
 
 	/**
 	 * Send a message to an olark operator.
 	 * @param  {string} message The message to be sent to an operator
 	 */
-	sendMessageToOperator: function( message ) {
+	sendMessageToOperator = message => {
 		// Get the DOM element of the olark textarea
 		const widgetInput = window.document.getElementById( 'habla_wcsend_input' );
 		const KEY_ENTER = 13;
@@ -322,17 +320,17 @@ const HelpContact = React.createClass( {
 
 		// Trigger the onkeydown callback added by olark so that we can send the message to the operator.
 		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
-	},
+	};
 
-	onMessageToVisitor: function() {
+	onMessageToVisitor = () => {
 		this.trackChatDisplayError( 'onMessageToVisitor' );
-	},
+	};
 
-	onMessageToOperator: function() {
+	onMessageToOperator = () => {
 		this.trackChatDisplayError( 'onMessageToOperator' );
-	},
+	};
 
-	trackChatDisplayError: function( olarkEvent ) {
+	trackChatDisplayError = olarkEvent => {
 		const { olark, isChatEnded } = this.state;
 
 		// If the user sent/received a message to/from an operator but the chatbox is not inlined
@@ -360,9 +358,9 @@ const HelpContact = React.createClass( {
 		}
 
 		analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display', tracksData );
-	},
+	};
 
-	trackContactFormAndFillSubject() {
+	trackContactFormAndFillSubject = () => {
 		const { details } = this.state.olark;
 		if ( ! details.isConversing ) {
 			analytics.tracks.recordEvent( 'calypso_help_offline_form_display', {
@@ -370,21 +368,21 @@ const HelpContact = React.createClass( {
 			} );
 		}
 		this.autofillSubject();
-	},
+	};
 
-	onOperatorsAway: function() {
+	onOperatorsAway = () => {
 		const IS_UNAVAILABLE = false;
 		this.trackContactFormAndFillSubject();
 		this.showAvailabilityNotice( IS_UNAVAILABLE );
-	},
+	};
 
-	onOperatorsAvailable: function() {
+	onOperatorsAvailable = () => {
 		const IS_AVAILABLE = true;
 
 		this.showAvailabilityNotice( IS_AVAILABLE );
-	},
+	};
 
-	showAvailabilityNotice( isAvailable ) {
+	showAvailabilityNotice = isAvailable => {
 		const { isUserEligible, isOlarkReady } = this.state.olark;
 
 		if ( ! isOlarkReady || ! isUserEligible ) {
@@ -400,12 +398,12 @@ const HelpContact = React.createClass( {
 				this.props.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' )
 			);
 		}
-	},
+	};
 
 	/**
 	 * Auto fill the subject with the first five words contained in the message field of the contact form.
 	 */
-	autofillSubject: function() {
+	autofillSubject = () => {
 		if ( ! savedContactForm || ! savedContactForm.message || savedContactForm.subject ) {
 			return;
 		}
@@ -417,15 +415,15 @@ const HelpContact = React.createClass( {
 		} );
 
 		this.forceUpdate();
-	},
+	};
 
-	onCommandFromOperator: function( event ) {
+	onCommandFromOperator = event => {
 		if ( event.command.name === 'end' ) {
 			this.setState( { isChatEnded: true } );
 		}
-	},
+	};
 
-	shouldUseHappychat: function() {
+	shouldUseHappychat = () => {
 		const { olark } = this.state;
 
 		// if happychat is disabled in the config, do not use it
@@ -439,19 +437,19 @@ const HelpContact = React.createClass( {
 			olark.isUserEligible &&
 			this.props.isSelectedHelpSiteOnPaidPlan
 		);
-	},
+	};
 
-	shouldUseDirectly: function() {
+	shouldUseDirectly = () => {
 		const isEn = this.props.currentUserLocale === 'en';
 		return isEn && ! this.props.isDirectlyFailed;
-	},
+	};
 
-	canShowChatbox: function() {
+	canShowChatbox = () => {
 		const { olark, isChatEnded } = this.state;
 		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
-	},
+	};
 
-	getSupportVariation: function() {
+	getSupportVariation = () => {
 		const { olark } = this.state;
 		const { ticketSupportEligible } = this.props;
 
@@ -472,9 +470,9 @@ const HelpContact = React.createClass( {
 		}
 
 		return SUPPORT_FORUM;
-	},
+	};
 
-	getContactFormPropsVariation: function( variationSlug ) {
+	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
 		const { translate, hasMoreThanOneSite } = this.props;
 
@@ -559,9 +557,9 @@ const HelpContact = React.createClass( {
 					showSiteField: false,
 				};
 		}
-	},
+	};
 
-	getContactFormCommonProps: function( variationSlug ) {
+	getContactFormCommonProps = variationSlug => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale } = this.props;
 
@@ -583,9 +581,9 @@ const HelpContact = React.createClass( {
 				requestChange: contactForm => ( savedContactForm = contactForm ),
 			},
 		};
-	},
+	};
 
-	shouldShowTicketRequestErrorNotice: function( variationSlug ) {
+	shouldShowTicketRequestErrorNotice = variationSlug => {
 		const { ticketSupportRequestError } = this.props;
 
 		return (
@@ -593,7 +591,7 @@ const HelpContact = React.createClass( {
 			SUPPORT_LIVECHAT !== variationSlug &&
 			null != ticketSupportRequestError
 		);
-	},
+	};
 
 	/**
 	 * Before determining which variation to assign, certain async data needs to be in place.
@@ -601,7 +599,7 @@ const HelpContact = React.createClass( {
 	 *
 	 * @returns {Boolean} Whether all the data is present to determine the variation to show
 	 */
-	hasDataToDetermineVariation: function() {
+	hasDataToDetermineVariation = () => {
 		const { olark } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
@@ -609,22 +607,22 @@ const HelpContact = React.createClass( {
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
 		return olarkReadyOrTimedOut && ticketReadyOrError;
-	},
+	};
 
-	shouldShowPreloadForm: function() {
+	shouldShowPreloadForm = () => {
 		const waitingOnDirectly =
 			this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
 
 		return (
 			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
 		);
-	},
+	};
 
 	/**
 	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
 	 * @return {object} A JSX object that should be rendered
 	 */
-	getView: function() {
+	getView = () => {
 		const { confirmation, olark } = this.state;
 		const { translate, selectedSitePlanSlug } = this.props;
 
@@ -719,9 +717,9 @@ const HelpContact = React.createClass( {
 				{ ! shouldHideContactForm && <HelpContactForm { ...contactFormProps } /> }
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
@@ -739,8 +737,8 @@ const HelpContact = React.createClass( {
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

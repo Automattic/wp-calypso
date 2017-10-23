@@ -15,10 +15,10 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import PluginsActions from 'lib/plugins/actions';
 
-const PluginSiteUpdateIndicator = React.createClass( {
-	displayName: 'PluginSiteUpdateIndicator',
+class PluginSiteUpdateIndicator extends React.Component {
+	static displayName = 'PluginSiteUpdateIndicator';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.shape( {
 			canUpdateFiles: PropTypes.bool.isRequired,
 			ID: PropTypes.number.isRequired,
@@ -26,13 +26,11 @@ const PluginSiteUpdateIndicator = React.createClass( {
 		plugin: PropTypes.shape( { slug: PropTypes.string } ),
 		notices: PropTypes.object.isRequired,
 		expanded: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return { expanded: false };
-	},
+	static defaultProps = { expanded: false };
 
-	updatePlugin: function( ev ) {
+	updatePlugin = ev => {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
@@ -49,19 +47,19 @@ const PluginSiteUpdateIndicator = React.createClass( {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug,
 		} );
-	},
+	};
 
-	getOngoingUpdates: function() {
+	getOngoingUpdates = () => {
 		return this.props.notices.inProgress.filter(
 			log => log.site.ID === this.props.site.ID && log.action === 'UPDATE_PLUGIN'
 		);
-	},
+	};
 
-	isUpdating: function() {
+	isUpdating = () => {
 		return this.getOngoingUpdates().length > 0;
-	},
+	};
 
-	renderUpdate: function() {
+	renderUpdate = () => {
 		let message,
 			ongoingUpdates = this.getOngoingUpdates(),
 			isUpdating = ongoingUpdates.length > 0;
@@ -87,9 +85,9 @@ const PluginSiteUpdateIndicator = React.createClass( {
 				</button>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return;
 		}
@@ -111,7 +109,7 @@ const PluginSiteUpdateIndicator = React.createClass( {
 			return this.renderUpdate();
 		}
 		return null;
-	},
-} );
+	}
+}
 
 export default localize( PluginSiteUpdateIndicator );

@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 
@@ -37,12 +36,10 @@ const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
 		appStates.UPLOADING,
 	];
 
-export default React.createClass( {
-	displayName: 'FileImporter',
+export default class extends React.PureComponent {
+	static displayName = 'FileImporter';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		importerData: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
 			icon: PropTypes.string.isRequired,
@@ -60,9 +57,9 @@ export default React.createClass( {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
-	},
+	};
 
-	render: function() {
+	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
 		const site = this.props.site;
 		const state = this.props.importerStatus,
@@ -89,5 +86,5 @@ export default React.createClass( {
 				) }
 			</Card>
 		);
-	},
-} );
+	}
+}

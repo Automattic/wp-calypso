@@ -210,7 +210,7 @@ class StoreSidebar extends Component {
 			'/store/settings/payments',
 			'/store/settings/shipping',
 			'/store/settings/taxes',
-			'/store/settings/email'
+			'/store/settings/email',
 		];
 		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
 		const classes = classNames( {

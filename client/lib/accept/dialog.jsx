@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -14,7 +15,9 @@ import classnames from 'classnames';
  */
 import Dialog from 'components/dialog';
 
-const AcceptDialog = React.createClass( {
+const AcceptDialog = createReactClass( {
+	displayName: 'AcceptDialog',
+
 	propTypes: {
 		translate: PropTypes.func,
 		message: PropTypes.node,

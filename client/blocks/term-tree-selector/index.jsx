@@ -13,10 +13,10 @@ import classNames from 'classnames';
  */
 import TermTreeSelectorTerms from './terms';
 
-export default React.createClass( {
-	displayName: 'TermTreeSelector',
+export default class extends React.Component {
+	static displayName = 'TermTreeSelector';
 
-	propTypes: {
+	static propTypes = {
 		multiple: PropTypes.bool,
 		className: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
@@ -26,37 +26,33 @@ export default React.createClass( {
 		taxonomy: PropTypes.string,
 		height: PropTypes.number,
 		compact: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			analyticsPrefix: 'Category Selector',
-			selected: [],
-			taxonomy: 'category',
-			onChange: () => {},
-			height: 300,
-		};
-	},
+	static defaultProps = {
+		analyticsPrefix: 'Category Selector',
+		selected: [],
+		taxonomy: 'category',
+		onChange: () => {},
+		height: 300,
+	};
 
-	getInitialState() {
-		return {
-			search: '',
-		};
-	},
+	state = {
+		search: '',
+	};
 
-	onSearch( searchTerm ) {
+	onSearch = searchTerm => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,
 			} );
 		}
-	},
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( { search: '' } );
 		}
-	},
+	}
 
 	render() {
 		const {
@@ -92,5 +88,5 @@ export default React.createClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}

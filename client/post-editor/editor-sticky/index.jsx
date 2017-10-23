@@ -22,22 +22,20 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
-const EditorSticky = React.createClass( {
-	displayName: 'EditorSticky',
+class EditorSticky extends React.Component {
+	static displayName = 'EditorSticky';
 
-	propTypes: {
+	static propTypes = {
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		sticky: PropTypes.bool,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			tooltip: false,
-		};
-	},
+	state = {
+		tooltip: false,
+	};
 
-	toggleStickyStatus: function() {
+	toggleStickyStatus = () => {
 		let stickyStat;
 		let stickyEventLabel;
 
@@ -56,17 +54,17 @@ const EditorSticky = React.createClass( {
 			sticky: ! this.props.sticky,
 		} );
 		this.setState( { tooltip: false } );
-	},
+	};
 
-	enableTooltip: function() {
+	enableTooltip = () => {
 		this.setState( { tooltip: true } );
-	},
+	};
 
-	disableTooltip: function() {
+	disableTooltip = () => {
 		this.setState( { tooltip: false } );
-	},
+	};
 
-	render: function() {
+	render() {
 		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
 
 		return (
@@ -92,8 +90,8 @@ const EditorSticky = React.createClass( {
 				) }
 			</Button>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {

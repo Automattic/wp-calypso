@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -20,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 import FormSelect from 'components/forms/form-select';
 
-const CountrySelect = React.createClass( {
+const CountrySelect = createReactClass( {
 	displayName: 'CountrySelect',
 
 	mixins: [ observe( 'countriesList' ) ],

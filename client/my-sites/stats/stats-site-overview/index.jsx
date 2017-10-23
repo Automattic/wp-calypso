@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
@@ -20,7 +21,9 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const StatsSiteOverview = React.createClass( {
+const StatsSiteOverview = createReactClass( {
+	displayName: 'StatsSiteOverview',
+
 	proptypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,

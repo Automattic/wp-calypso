@@ -11,23 +11,21 @@ import classNames from 'classnames';
 /**
  * SegmentedControlItem
  */
-const SegmentedControlItem = React.createClass( {
-	propTypes: {
+class SegmentedControlItem extends React.Component {
+	static propTypes = {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,
 		selected: PropTypes.bool,
 		title: PropTypes.string,
 		value: PropTypes.string,
 		onClick: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			selected: false,
-		};
-	},
+	static defaultProps = {
+		selected: false,
+	};
 
-	render: function() {
+	render() {
 		const itemClassName = classNames( {
 			'segmented-control__item': true,
 			'is-selected': this.props.selected,
@@ -54,7 +52,7 @@ const SegmentedControlItem = React.createClass( {
 				</a>
 			</li>
 		);
-	},
-} );
+	}
+}
 
 export default SegmentedControlItem;

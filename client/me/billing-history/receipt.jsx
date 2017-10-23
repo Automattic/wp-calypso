@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -23,7 +24,8 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
 import purchasesPaths from 'me/purchases/paths';
 import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
 
-const BillingReceipt = React.createClass( {
+const BillingReceipt = createReactClass( {
+	displayName: 'BillingReceipt',
 	mixins: [ eventRecorder ],
 
 	componentDidMount() {

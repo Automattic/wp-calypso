@@ -23,8 +23,8 @@ var _instance = 1;
 /**
  * SegmentedControl
  */
-const SegmentedControl = React.createClass( {
-	propTypes: {
+class SegmentedControl extends React.Component {
+	static propTypes = {
 		initialSelected: PropTypes.string,
 		compact: PropTypes.bool,
 		className: PropTypes.string,
@@ -37,37 +37,36 @@ const SegmentedControl = React.createClass( {
 				path: PropTypes.string,
 			} )
 		),
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			compact: false,
-		};
-	},
+	static defaultProps = {
+		compact: false,
+	};
 
-	getInitialState: function() {
+	constructor( props ) {
+		super( props );
 		var initialSelected;
 
-		if ( this.props.options ) {
-			initialSelected = this.props.initialSelected || this.props.options[ 0 ].value;
+		if ( props.options ) {
+			initialSelected = props.initialSelected || props.options[ 0 ].value;
 		}
 
-		return {
+		this.state = {
 			selected: initialSelected,
 			keyboardNavigation: false,
 		};
-	},
+	}
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.id = _instance;
 		_instance++;
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.navigateItem );
-	},
+	}
 
-	render: function() {
+	render() {
 		var segmentedClasses = {
 			'segmented-control': true,
 			'keyboard-navigation': this.state.keyboardNavigation,
@@ -92,9 +91,9 @@ const SegmentedControl = React.createClass( {
 				{ this.getSegmentedItems() }
 			</ul>
 		);
-	},
+	}
 
-	getSegmentedItems: function() {
+	getSegmentedItems = () => {
 		var refIndex = 0;
 		if ( this.props.children ) {
 			// add keys and refs to children
@@ -138,9 +137,9 @@ const SegmentedControl = React.createClass( {
 				</ControlItem>
 			);
 		}, this );
-	},
+	};
 
-	selectItem: function( option ) {
+	selectItem = option => {
 		if ( ! option ) {
 			return;
 		}
@@ -153,15 +152,15 @@ const SegmentedControl = React.createClass( {
 			selected: option.value,
 			keyboardNavigation: false,
 		} );
-	},
+	};
 
-	setKeyboardNavigation: function( value ) {
+	setKeyboardNavigation = value => {
 		this.setState( {
 			keyboardNavigation: value,
 		} );
-	},
+	};
 
-	navigateItem: function( event ) {
+	navigateItem = event => {
 		switch ( event.keyCode ) {
 			case 9: // tab
 				this.navigateItemByTabKey( event );
@@ -180,9 +179,9 @@ const SegmentedControl = React.createClass( {
 				this.focusSibling( 'next' );
 				break;
 		}
-	},
+	};
 
-	navigateItemByTabKey: function( event ) {
+	navigateItemByTabKey = event => {
 		var direction = event.shiftKey ? 'previous' : 'next',
 			newIndex = this.focusSibling( direction );
 
@@ -190,14 +189,14 @@ const SegmentedControl = React.createClass( {
 		if ( newIndex !== false ) {
 			event.preventDefault();
 		}
-	},
+	};
 
 	/**
 	 * Allows for keyboard navigation
 	 * @param  {String} direction - `next` or `previous`
 	 * @return {Number|Boolean} - returns false if the newIndex is out of bounds
 	 */
-	focusSibling: function( direction ) {
+	focusSibling = direction => {
 		var increment, items, newIndex;
 
 		if ( this.props.options ) {
@@ -222,16 +221,16 @@ const SegmentedControl = React.createClass( {
 		this.focused = newIndex;
 
 		return newIndex;
-	},
+	};
 
-	getCurrentFocusedIndex: function() {
+	getCurrentFocusedIndex = () => {
 		// item is the <li> element containing the focused link
 		var activeItem = document.activeElement.parentNode,
 			siblings = Array.prototype.slice( activeItem.parentNode.children ),
 			index = siblings.indexOf( activeItem );
 
 		return index > -1 ? index : 0;
-	},
-} );
+	};
+}
 
 export default SegmentedControl;

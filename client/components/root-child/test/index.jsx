@@ -19,12 +19,10 @@ import RootChild from '../';
 /**
  * Module variables
  */
-const Greeting = React.createClass( {
-	getDefaultProps: function() {
-		return { toWhom: 'World' };
-	},
+class Greeting extends React.Component {
+	static defaultProps = { toWhom: 'World' };
 
-	render: function() {
+	render() {
 		return (
 			<div className="parent">
 				<h1 ref="parentChild">Greeting</h1>
@@ -33,8 +31,8 @@ const Greeting = React.createClass( {
 				</RootChild>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 describe( 'RootChild', () => {
 	var container;

@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -25,7 +26,9 @@ import CartPlanAd from './cart-plan-ad';
 import { isCredits } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const PopoverCart = React.createClass( {
+const PopoverCart = createReactClass( {
+	displayName: 'PopoverCart',
+
 	propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,

@@ -14,13 +14,13 @@ import { omit } from 'lodash';
  */
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'LoggedOutForm',
+export default class extends React.Component {
+	static displayName = 'LoggedOutForm';
 
-	propTypes: {
+	static propTypes = {
 		children: PropTypes.node.isRequired,
 		className: PropTypes.string,
-	},
+	};
 
 	render() {
 		return (
@@ -28,5 +28,5 @@ export default React.createClass( {
 				<form { ...omit( this.props, 'className' ) }>{ this.props.children }</form>
 			</Card>
 		);
-	},
-} );
+	}
+}

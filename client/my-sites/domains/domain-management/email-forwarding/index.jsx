@@ -22,12 +22,12 @@ import paths from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
-const EmailForwarding = React.createClass( {
-	propTypes: {
+class EmailForwarding extends React.Component {
+	static propTypes = {
 		emailForwarding: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	},
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
@@ -56,17 +56,17 @@ const EmailForwarding = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
+	}
 
-	isDataLoading() {
+	isDataLoading = () => {
 		return ! this.props.emailForwarding.hasLoadedFromServer;
-	},
+	};
 
-	goToEditEmail() {
+	goToEditEmail = () => {
 		page(
 			paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName )
 		);
-	},
-} );
+	};
+}
 
 export default localize( EmailForwarding );

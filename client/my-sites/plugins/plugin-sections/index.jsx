@@ -19,18 +19,22 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 
-const PluginSections = React.createClass( {
-	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
+class PluginSections extends React.Component {
+	static displayName = 'PluginSections';
 
-	displayName: 'PluginSections',
+	state = {
+		selectedSection: false,
+		readMore: false,
+	};
 
-	descriptionHeight: 0,
+	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
+	descriptionHeight = 0;
 
-	recordEvent: function( eventAction ) {
+	recordEvent = eventAction => {
 		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
-	},
+	};
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( this.refs.content ) {
 			const node = this.refs.content;
 
@@ -38,9 +42,9 @@ const PluginSections = React.createClass( {
 				this.descriptionHeight = node.offsetHeight;
 			}
 		}
-	},
+	}
 
-	getFilteredSections: function() {
+	getFilteredSections = () => {
 		if ( this.props.isWpcom ) {
 			return this.getWpcomFilteredSections();
 		}
@@ -82,9 +86,9 @@ const PluginSections = React.createClass( {
 				} ),
 			},
 		];
-	},
+	};
 
-	getWpcomFilteredSections: function() {
+	getWpcomFilteredSections = () => {
 		return [
 			{
 				key: 'description',
@@ -94,42 +98,35 @@ const PluginSections = React.createClass( {
 				} ),
 			},
 		];
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			selectedSection: false,
-			readMore: false,
-		};
-	},
-
-	getSelected: function() {
+	getSelected = () => {
 		return this.state.selectedSection || this.getDefaultSection();
-	},
+	};
 
-	getDefaultSection: function() {
+	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function( section ) {
 			return sections[ section.key ];
 		} ).key;
-	},
+	};
 
-	getAvailableSections: function() {
+	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
 		return filter( this.getFilteredSections(), function( section ) {
 			return sections[ section.key ];
 		} );
-	},
+	};
 
-	getNavTitle: function( sectionKey ) {
+	getNavTitle = sectionKey => {
 		const titleSection = find( this.getFilteredSections(), function( section ) {
 			return section.key === sectionKey;
 		} );
 
 		return titleSection && titleSection.title ? titleSection.title : titleCase( sectionKey );
-	},
+	};
 
-	setSelectedSection: function( section, event ) {
+	setSelectedSection = ( section, event ) => {
 		this.setState( {
 			readMore: false !== this.state.readMore || this.getSelected() !== section,
 			selectedSection: section,
@@ -137,13 +134,13 @@ const PluginSections = React.createClass( {
 		if ( event ) {
 			this.recordEvent( 'Clicked Section Tab: ' + section );
 		}
-	},
+	};
 
-	toggleReadMore: function() {
+	toggleReadMore = () => {
 		this.setState( { readMore: ! this.state.readMore } );
-	},
+	};
 
-	renderReadMore: function() {
+	renderReadMore = () => {
 		if ( this.props.isWpcom || this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
 			return null;
 		}
@@ -161,9 +158,9 @@ const PluginSections = React.createClass( {
 				this.state.readMore ? null : button }
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const contentClasses = classNames( 'plugin-sections__content', {
 			trimmed: ! this.props.isWpcom && ! this.state.readMore,
 		} );
@@ -207,7 +204,7 @@ const PluginSections = React.createClass( {
 			</div>
 		);
 		/*eslint-enable react/no-danger*/
-	},
-} );
+	}
+}
 
 export default localize( PluginSections );

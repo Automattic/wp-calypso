@@ -12,8 +12,8 @@ import { over } from 'lodash';
  */
 import Popover from 'components/popover';
 
-const PopoverMenu = React.createClass( {
-	propTypes: {
+class PopoverMenu extends React.Component {
+	static propTypes = {
 		autoPosition: PropTypes.bool,
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
@@ -22,22 +22,20 @@ const PopoverMenu = React.createClass( {
 		rootClassName: PropTypes.string,
 		popoverComponent: PropTypes.func,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			autoPosition: true,
-			position: 'top',
-			popoverComponent: Popover,
-		};
-	},
+	static defaultProps = {
+		autoPosition: true,
+		position: 'top',
+		popoverComponent: Popover,
+	};
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		// Make sure we don't hold on to reference to the DOM reference
 		this._previouslyFocusedElement = null;
-	},
+	}
 
-	render: function() {
+	render() {
 		const children = React.Children.map( this.props.children, this._setPropsOnChild, this );
 		const PopoverComponent = this.props.popoverComponent;
 		return (
@@ -63,9 +61,9 @@ const PopoverMenu = React.createClass( {
 				</div>
 			</PopoverComponent>
 		);
-	},
+	}
 
-	_setPropsOnChild: function( child ) {
+	_setPropsOnChild = child => {
 		if ( child == null ) {
 			return child;
 		}
@@ -80,9 +78,9 @@ const PopoverMenu = React.createClass( {
 		return React.cloneElement( child, {
 			onClick: onClick,
 		} );
-	},
+	};
 
-	_onShow: function() {
+	_onShow = () => {
 		const elementToFocus = ReactDom.findDOMNode( this.refs.menu );
 
 		this._previouslyFocusedElement = document.activeElement;
@@ -90,11 +88,11 @@ const PopoverMenu = React.createClass( {
 		if ( elementToFocus ) {
 			elementToFocus.focus();
 		}
-	},
+	};
 
-	_isInvalidTarget: function( target ) {
+	_isInvalidTarget = target => {
 		return target.tagName === 'HR';
-	},
+	};
 
 	/*
 	 * Warning:
@@ -102,7 +100,7 @@ const PopoverMenu = React.createClass( {
 	 * This doesn't cover crazy things like a separator at the very top or
 	 * bottom.
 	 */
-	_getClosestSibling: function( target, isDownwardMotion = true ) {
+	_getClosestSibling = ( target, isDownwardMotion = true ) => {
 		const menu = ReactDom.findDOMNode( this.refs.menu );
 
 		let first = menu.firstChild,
@@ -124,9 +122,9 @@ const PopoverMenu = React.createClass( {
 		return this._isInvalidTarget( sibling )
 			? this._getClosestSibling( sibling, isDownwardMotion )
 			: sibling;
-	},
+	};
 
-	_onKeyDown: function( event ) {
+	_onKeyDown = event => {
 		const target = event.target;
 		let handled = false;
 		let elementToFocus;
@@ -155,9 +153,9 @@ const PopoverMenu = React.createClass( {
 		if ( handled ) {
 			event.preventDefault();
 		}
-	},
+	};
 
-	_onClose: function( action ) {
+	_onClose = action => {
 		if ( this._previouslyFocusedElement ) {
 			this._previouslyFocusedElement.focus();
 			this._previouslyFocusedElement = null;
@@ -166,7 +164,7 @@ const PopoverMenu = React.createClass( {
 		if ( this.props.onClose ) {
 			this.props.onClose( action );
 		}
-	},
-} );
+	};
+}
 
 export default PopoverMenu;

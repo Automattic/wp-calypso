@@ -14,72 +14,68 @@ import chrono from 'chrono-node';
  */
 const supportedLanguages = [ 'en', 'jp' ];
 
-const InputChrono = React.createClass( {
-	displayName: 'InputChrono',
+class InputChrono extends React.Component {
+	static displayName = 'InputChrono';
 
-	focused: false,
-
-	propTypes: {
+	static propTypes = {
 		value: PropTypes.string,
 		lang: PropTypes.string,
 		onSet: PropTypes.func,
 		placeholder: PropTypes.string,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			value: '',
-			lang: '',
-			placeholder: '',
-			onSet: () => {},
-		};
-	},
+	static defaultProps = {
+		value: '',
+		lang: '',
+		placeholder: '',
+		onSet: () => {},
+	};
 
-	getInitialState() {
-		return {
-			value: this.props.value,
-		};
-	},
+	state = {
+		value: this.props.value,
+	};
+
+	focused = false;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.focused && this.props.value !== nextProps.value ) {
 			this.setState( { value: nextProps.value } );
 		}
-	},
+	}
 
-	handleChange( event ) {
+	handleChange = event => {
 		this.setState( { value: event.target.value } );
-	},
+	};
 
-	handleBlur( event ) {
+	handleBlur = event => {
 		this.setDateText( event );
 		this.focused = false;
-	},
+	};
 
-	handleFocus() {
+	handleFocus = () => {
 		this.focused = true;
-	},
+	};
 
-	onKeyDown( event ) {
+	onKeyDown = event => {
 		if ( 13 !== event.keyCode ) {
 			return;
 		}
 
 		this.setDateText( event );
-	},
+	};
 
-	setDateText( event ) {
+	setDateText = event => {
 		var date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
 			this.setState( { value: this.props.moment( date ).calendar() } );
 			this.props.onSet( this.props.moment( date ) );
 		}
-	},
+	};
 
-	isLangSupported( lang ) {
+	isLangSupported = lang => {
 		return supportedLanguages.indexOf( lang ) >= 0;
-	},
+	};
 
 	render() {
 		return (
@@ -99,7 +95,7 @@ const InputChrono = React.createClass( {
 				) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( InputChrono );

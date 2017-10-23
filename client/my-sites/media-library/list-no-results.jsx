@@ -13,21 +13,19 @@ import React from 'react';
  */
 import NoResults from 'my-sites/no-results';
 
-const MediaLibraryListNoResults = React.createClass( {
-	displayName: 'MediaLibraryListNoResults',
+class MediaLibraryListNoResults extends React.Component {
+	static displayName = 'MediaLibraryListNoResults';
 
-	propTypes: {
+	static propTypes = {
 		filter: PropTypes.string,
 		search: PropTypes.string,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			search: '',
-		};
-	},
+	static defaultProps = {
+		search: '',
+	};
 
-	getLabel: function() {
+	getLabel = () => {
 		var label;
 
 		switch ( this.props.filter ) {
@@ -74,13 +72,13 @@ const MediaLibraryListNoResults = React.createClass( {
 		}
 
 		return label;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<NoResults text={ this.getLabel() } image="/calypso/images/pages/illustration-pages.svg" />
 		);
-	},
-} );
+	}
+}
 
 export default localize( MediaLibraryListNoResults );

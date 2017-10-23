@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import photon from 'photon';
 import SocialLogo from 'social-logos';
@@ -15,7 +16,7 @@ import SocialLogo from 'social-logos';
  */
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'SharingButtonsPreviewButton',
 
 	propsTypes: {

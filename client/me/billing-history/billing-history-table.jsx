@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,7 +18,8 @@ import purchasesPaths from 'me/purchases/paths';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
 
-const BillingHistoryTable = React.createClass( {
+const BillingHistoryTable = createReactClass( {
+	displayName: 'BillingHistoryTable',
 	mixins: [ eventRecorder ],
 
 	emailReceipt( receiptId, event ) {

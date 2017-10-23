@@ -12,16 +12,14 @@ import React from 'react';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 
-const Cards = React.createClass( {
-	displayName: 'Cards',
+class Cards extends React.Component {
+    static displayName = 'Cards';
 
-	getInitialState: function() {
-		return {
-			compactCards: false,
-		};
-	},
+	state = {
+		compactCards: false,
+	};
 
-	render: function() {
+	render() {
 		var toggleCardsText = this.state.compactCards ? 'Normal Cards' : 'Compact Cards';
 
 		return (
@@ -32,9 +30,9 @@ const Cards = React.createClass( {
 				{ this.renderCards() }
 			</div>
 		);
-	},
+	}
 
-	renderCards: function() {
+	renderCards = () => {
 		if ( ! this.state.compactCards ) {
 			return (
 				<div>
@@ -70,11 +68,11 @@ const Cards = React.createClass( {
 				</div>
 			);
 		}
-	},
+	};
 
-	toggleCards: function() {
+	toggleCards = () => {
 		this.setState( { compactCards: ! this.state.compactCards } );
-	},
-} );
+	};
+}
 
 export default Cards;

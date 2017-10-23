@@ -7,33 +7,28 @@
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
 import scrollIntoView from 'dom-scroll-into-view';
 
-const SuggestionsList = React.createClass( {
-	propTypes: {
+class SuggestionsList extends React.PureComponent {
+	static propTypes = {
 		isExpanded: PropTypes.bool,
 		match: PropTypes.string,
 		displayTransform: PropTypes.func.isRequired,
 		onSelect: PropTypes.func,
 		suggestions: PropTypes.array,
 		selectedIndex: PropTypes.number,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			isExpanded: false,
-			match: '',
-			onHover: function() {},
-			onSelect: function() {},
-			suggestions: Object.freeze( [] ),
-		};
-	},
+	static defaultProps = {
+		isExpanded: false,
+		match: '',
+		onHover: function() {},
+		onSelect: function() {},
+		suggestions: Object.freeze( [] ),
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		var node;
 
 		// only have to worry about scrolling selected suggestion into view
@@ -58,9 +53,9 @@ const SuggestionsList = React.createClass( {
 				100
 			);
 		}
-	},
+	}
 
-	_computeSuggestionMatch: function( suggestion ) {
+	_computeSuggestionMatch = suggestion => {
 		var match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
 			indexOfMatch;
 
@@ -76,9 +71,9 @@ const SuggestionsList = React.createClass( {
 			suggestionMatch: suggestion.substring( indexOfMatch, indexOfMatch + match.length ),
 			suggestionAfterMatch: suggestion.substring( indexOfMatch + match.length ),
 		};
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'token-field__suggestions-list', {
 			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0,
 		} );
@@ -92,9 +87,9 @@ const SuggestionsList = React.createClass( {
 				{ this._renderSuggestions() }
 			</ul>
 		);
-	},
+	}
 
-	_renderSuggestions: function() {
+	_renderSuggestions = () => {
 		return map(
 			this.props.suggestions,
 			function( suggestion, index ) {
@@ -124,26 +119,26 @@ const SuggestionsList = React.createClass( {
 				);
 			}.bind( this )
 		);
-	},
+	};
 
-	_handleHover: function( suggestion ) {
+	_handleHover = suggestion => {
 		return function() {
 			if ( ! this._scrollingIntoView ) {
 				this.props.onHover( suggestion );
 			}
 		}.bind( this );
-	},
+	};
 
-	_handleClick: function( suggestion ) {
+	_handleClick = suggestion => {
 		return function() {
 			this.props.onSelect( suggestion );
 		}.bind( this );
-	},
+	};
 
-	_handleMouseDown: function( e ) {
+	_handleMouseDown = e => {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
 		e.preventDefault();
-	},
-} );
+	};
+}
 
 export default SuggestionsList;

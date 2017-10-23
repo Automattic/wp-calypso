@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
 
-const EmailForwardingLimit = React.createClass( {
+class EmailForwardingLimit extends React.Component {
 	render() {
 		const used = this.props.emailForwarding.list.length;
 
@@ -31,7 +31,7 @@ const EmailForwardingLimit = React.createClass( {
 				} ) }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( EmailForwardingLimit );

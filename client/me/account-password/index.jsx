@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
 import { bindActionCreators } from 'redux';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:account-password' );
 import classNames from 'classnames';
@@ -30,7 +31,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 
-const AccountPassword = React.createClass( {
+const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
 	mixins: [ observe( 'accountPasswordData' ), eventRecorder ],

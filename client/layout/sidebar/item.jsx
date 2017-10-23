@@ -15,10 +15,10 @@ import Gridicon from 'gridicons';
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
-export default React.createClass( {
-	displayName: 'SidebarItem',
+export default class extends React.Component {
+	static displayName = 'SidebarItem';
 
-	propTypes: {
+	static propTypes = {
 		label: PropTypes.string.isRequired,
 		className: PropTypes.string,
 		link: PropTypes.string.isRequired,
@@ -29,16 +29,16 @@ export default React.createClass( {
 		forceInternalLink: PropTypes.bool,
 		testTarget: PropTypes.string,
 		tipTarget: PropTypes.string,
-	},
+	};
 
-	_preloaded: false,
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
-	},
+	};
 
 	render() {
 		const isExternalLink = isExternal( this.props.link );
@@ -65,5 +65,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</li>
 		);
-	},
-} );
+	}
+}

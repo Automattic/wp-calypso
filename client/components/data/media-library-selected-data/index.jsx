@@ -19,36 +19,34 @@ function getStateData( siteId ) {
 	};
 }
 
-export default React.createClass( {
-	displayName: 'MediaLibrarySelectedData',
+export default class extends React.Component {
+	static displayName = 'MediaLibrarySelectedData';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-	},
+	};
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+	state = getStateData( this.props.siteId );
 
-	componentDidMount: function() {
+	componentDidMount() {
 		MediaLibrarySelectedStore.on( 'change', this.updateState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		MediaLibrarySelectedStore.off( 'change', this.updateState );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}
-	},
+	}
 
-	updateState: function() {
+	updateState = () => {
 		this.setState( getStateData( this.props.siteId ) );
-	},
+	};
 
-	render: function() {
+	render() {
 		return passToChildren( this, this.state );
-	},
-} );
+	}
+}

@@ -14,13 +14,13 @@ import classNames from 'classnames';
 import MediaUtils from 'lib/media/utils';
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewVideo',
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalDetailPreviewVideo';
 
-	propTypes: {
+	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired,
-	},
+	};
 
 	render() {
 		if ( MediaUtils.isVideoPressItem( this.props.item ) ) {
@@ -30,5 +30,5 @@ export default React.createClass( {
 		const classes = classNames( this.props.className, 'is-video' );
 
 		return <video src={ MediaUtils.url( this.props.item ) } controls className={ classes } />;
-	},
-} );
+	}
+}

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +21,8 @@ import { successNotice } from 'state/notices/actions';
 import support from 'lib/url/support';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-const EmailForwardingItem = React.createClass( {
+const EmailForwardingItem = createReactClass( {
+	displayName: 'EmailForwardingItem',
 	mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],
 
 	deleteItem: function() {

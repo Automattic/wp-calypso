@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-const Property = React.createClass( {
+class Property extends React.Component {
 	render() {
 		return (
 			<div className="domain-details-card__property">
@@ -14,7 +14,7 @@ const Property = React.createClass( {
 				<span>{ this.props.children }</span>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default Property;

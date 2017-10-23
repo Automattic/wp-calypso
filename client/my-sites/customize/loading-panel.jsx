@@ -14,20 +14,18 @@ import classnames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
-const CustomizerLoadingPanel = React.createClass( {
-	displayName: 'CustomizerLoadingPanel',
+class CustomizerLoadingPanel extends React.Component {
+	static displayName = 'CustomizerLoadingPanel';
 
-	propTypes: {
+	static propTypes = {
 		isLoaded: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			isLoaded: false,
-		};
-	},
+	static defaultProps = {
+		isLoaded: false,
+	};
 
-	render: function() {
+	render() {
 		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
 			'is-iframe-loaded': this.props.isLoaded,
 		} );
@@ -40,7 +38,7 @@ const CustomizerLoadingPanel = React.createClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( CustomizerLoadingPanel );

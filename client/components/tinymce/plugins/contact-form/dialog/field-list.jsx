@@ -14,15 +14,15 @@ import React from 'react';
 import EmptyContent from 'components/empty-content';
 import Field from './field';
 
-const ContactFormDialogFieldList = React.createClass( {
-	displayName: 'ContactFormDialogFieldList',
+class ContactFormDialogFieldList extends React.Component {
+	static displayName = 'ContactFormDialogFieldList';
 
-	propTypes: {
+	static propTypes = {
 		fields: PropTypes.array.isRequired,
 		onFieldAdd: PropTypes.func.isRequired,
 		onFieldRemove: PropTypes.func.isRequired,
 		onFieldUpdate: PropTypes.func.isRequired,
-	},
+	};
 
 	render() {
 		if ( this.props.fields.length > 0 ) {
@@ -51,7 +51,7 @@ const ContactFormDialogFieldList = React.createClass( {
 				isCompact={ true }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ContactFormDialogFieldList );

@@ -12,8 +12,8 @@ import React from 'react';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 
-export default React.createClass( {
-	displayName: 'FAQ',
+export default class extends React.Component {
+    static displayName = 'FAQ';
 
 	render() {
 		return (
@@ -62,5 +62,5 @@ export default React.createClass( {
 				/>
 			</FAQ>
 		);
-	},
-} );
+	}
+}

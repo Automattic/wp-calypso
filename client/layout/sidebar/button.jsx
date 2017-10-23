@@ -14,24 +14,24 @@ import React from 'react';
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
 
-const SidebarButton = React.createClass( {
-	displayName: 'SidebarButton',
+class SidebarButton extends React.Component {
+	static displayName = 'SidebarButton';
 
-	propTypes: {
+	static propTypes = {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		preloadSectionName: PropTypes.string,
 		children: PropTypes.node,
-	},
+	};
 
-	_preloaded: false,
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && this.props.preloadSectionName ) {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
-	},
+	};
 
 	render() {
 		if ( ! this.props.href ) {
@@ -51,7 +51,7 @@ const SidebarButton = React.createClass( {
 				{ this.props.children || this.props.translate( 'Add' ) }
 			</a>
 		);
-	},
-} );
+	}
+}
 
 export default localize( SidebarButton );

@@ -8,15 +8,13 @@ import classnames from 'classnames';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 
-const PostExcerpt = React.createClass( {
-	propTypes: {
+class PostExcerpt extends React.Component {
+	static propTypes = {
 		content: PropTypes.string.isRequired,
 		maxLength: PropTypes.number,
-	},
+	};
 
-	getDefaultProps() {
-		return { maxLength: 80 };
-	},
+	static defaultProps = { maxLength: 80 };
 
 	render() {
 		if ( ! this.props.content ) {
@@ -38,7 +36,7 @@ const PostExcerpt = React.createClass( {
 				</Emojify>
 			</AutoDirection>
 		);
-	},
-} );
+	}
+}
 
 export default PostExcerpt;

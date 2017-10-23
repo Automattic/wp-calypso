@@ -19,12 +19,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 
-const ThemesRelatedCard = React.createClass( {
-	propTypes: {
+class ThemesRelatedCard extends React.Component {
+	static propTypes = {
 		currentTheme: PropTypes.string.isRequired,
-	},
+	};
 
-	getRelatedThemes() {
+	getRelatedThemes = () => {
 		let themes = new Set( [
 			'independent-publisher-2',
 			'hemingway-rewritten',
@@ -48,7 +48,7 @@ const ThemesRelatedCard = React.createClass( {
 		selectedThemes.push( themes[ theme.charCodeAt( 0 ) % themes.length ] );
 
 		return selectedThemes;
-	},
+	};
 
 	render() {
 		const themes = this.getRelatedThemes().map( slug => ( {
@@ -72,8 +72,8 @@ const ThemesRelatedCard = React.createClass( {
 				</ul>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => ( {
 	getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) ),

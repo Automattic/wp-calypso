@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { flowRight } from 'lodash';
@@ -33,7 +34,7 @@ import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
-const Profile = React.createClass( {
+const Profile = createReactClass( {
 	displayName: 'Profile',
 
 	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],

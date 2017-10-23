@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,20 +15,16 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Popover from 'components/popover';
 
-const ContactFormDialogFieldRemoveButton = React.createClass( {
-	displayName: 'ContactFormDialogFieldRemoveButton',
+class ContactFormDialogFieldRemoveButton extends React.PureComponent {
+	static displayName = 'ContactFormDialogFieldRemoveButton';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		onRemove: PropTypes.func.isRequired,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			showTooltip: false,
-		};
-	},
+	state = {
+		showTooltip: false,
+	};
 
 	render() {
 		return (
@@ -54,7 +49,7 @@ const ContactFormDialogFieldRemoveButton = React.createClass( {
 				</Popover>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ContactFormDialogFieldRemoveButton );

@@ -13,16 +13,16 @@ import classNames from 'classnames';
 import CompactToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 
-const PluginAction = React.createClass( {
-	handleAction( event ) {
+class PluginAction extends React.Component {
+	handleAction = event => {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
 			this.refs.infoPopover._onClick( event );
 		}
-	},
+	};
 
-	renderLabel() {
+	renderLabel = () => {
 		if ( this.props.label ) {
 			return (
 				<label
@@ -37,9 +37,9 @@ const PluginAction = React.createClass( {
 			);
 		}
 		return null;
-	},
+	};
 
-	renderDisabledInfo() {
+	renderDisabledInfo = () => {
 		return [
 			<InfoPopover
 				key="renderDisabledInfoPopOver"
@@ -54,9 +54,9 @@ const PluginAction = React.createClass( {
 			</InfoPopover>,
 			this.renderLabel(),
 		];
-	},
+	};
 
-	renderToggle() {
+	renderToggle = () => {
 		return (
 			<CompactToggle
 				onChange={ this.props.action }
@@ -68,18 +68,18 @@ const PluginAction = React.createClass( {
 				{ this.renderLabel() }
 			</CompactToggle>
 		);
-	},
+	};
 
-	renderChildren() {
+	renderChildren = () => {
 		return (
 			<div>
 				<span className="plugin-action__children">{ this.props.children }</span>
 				{ this.renderLabel() }
 			</div>
 		);
-	},
+	};
 
-	renderInner() {
+	renderInner = () => {
 		if ( this.props.disabledInfo ) {
 			return this.renderDisabledInfo();
 		}
@@ -89,7 +89,7 @@ const PluginAction = React.createClass( {
 		}
 
 		return this.renderToggle();
-	},
+	};
 
 	render() {
 		const additionalClasses = {
@@ -102,7 +102,7 @@ const PluginAction = React.createClass( {
 				{ this.renderInner() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default PluginAction;

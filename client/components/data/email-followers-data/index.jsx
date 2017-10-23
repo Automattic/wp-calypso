@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import createReactClass from 'create-react-class';
 import { isEqual } from 'lodash';
 import debugModule from 'debug';
 
@@ -22,7 +22,7 @@ import pollers from 'lib/data-poller';
  */
 const debug = debugModule( 'calypso:email-followers-data' );
 
-export default React.createClass( {
+export default createReactClass( {
 	displayName: 'EmailFollowersData',
 
 	propTypes: {

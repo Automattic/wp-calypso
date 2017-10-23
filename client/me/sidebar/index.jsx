@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
@@ -32,7 +33,8 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 
-const MeSidebar = React.createClass( {
+const MeSidebar = createReactClass( {
+	displayName: 'MeSidebar',
 	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {

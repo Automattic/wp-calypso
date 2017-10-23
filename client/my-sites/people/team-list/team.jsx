@@ -22,20 +22,18 @@ import ListEnd from 'components/list-end';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
-const Team = React.createClass( {
-	displayName: 'Team',
+class Team extends React.Component {
+	static displayName = 'Team';
 
-	getInitialState: function() {
-		return {
-			bulkEditing: false,
-		};
-	},
+	state = {
+		bulkEditing: false,
+	};
 
-	isLastPage() {
+	isLastPage = () => {
 		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
-	},
+	};
 
-	render: function() {
+	render() {
 		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
 			headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = this.state.bulkEditing ? 'bulk-editing' : null,
@@ -110,9 +108,9 @@ const Team = React.createClass( {
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
-	},
+	}
 
-	_renderPerson: function( user ) {
+	_renderPerson = user => {
 		return (
 			<PeopleListItem
 				key={ user.ID }
@@ -122,23 +120,23 @@ const Team = React.createClass( {
 				isSelectable={ this.state.bulkEditing }
 			/>
 		);
-	},
+	};
 
-	_fetchNextPage: function() {
+	_fetchNextPage = () => {
 		const offset = this.props.users.length;
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
 		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
 		debug( 'fetching next batch of users' );
 		UsersActions.fetchUsers( fetchOptions );
-	},
+	};
 
-	_getPersonRef: function( user ) {
+	_getPersonRef = user => {
 		return 'user-' + user.ID;
-	},
+	};
 
-	_renderLoadingPeople: function() {
+	_renderLoadingPeople = () => {
 		return <PeopleListItem key="people-list-item-placeholder" />;
-	},
-} );
+	};
+}
 
 export default localize( Team );

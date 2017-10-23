@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-const TermTreeSelectorSearch = React.createClass( {
-	displayName: 'TermTreeSelectorSearch',
+class TermTreeSelectorSearch extends React.Component {
+	static displayName = 'TermTreeSelectorSearch';
 
-	propTypes: {
+	static propTypes = {
 		searchTerm: PropTypes.string,
 		onSearch: PropTypes.func.isRequired,
-	},
+	};
 
 	render() {
 		return (
@@ -29,7 +29,7 @@ const TermTreeSelectorSearch = React.createClass( {
 				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( TermTreeSelectorSearch );

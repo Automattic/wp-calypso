@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +20,8 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import paths from 'my-sites/domains/paths';
 
-const SiteRedirect = React.createClass( {
+const SiteRedirect = createReactClass( {
+	displayName: 'SiteRedirect',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {

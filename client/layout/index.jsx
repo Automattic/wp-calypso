@@ -6,6 +6,7 @@
 
 import { property, sortBy } from 'lodash';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -59,7 +60,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
 /* eslint-disable react/no-deprecated */
-const Layout = React.createClass( {
+const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 

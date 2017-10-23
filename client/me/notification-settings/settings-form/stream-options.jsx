@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
 
 /**
@@ -15,18 +14,16 @@ import Immutable from 'immutable';
 import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 import FormCheckbox from 'components/forms/form-checkbox';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormStreamOptions',
+export default class extends React.PureComponent {
+	static displayName = 'NotificationSettingsFormStreamOptions';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		stream: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ).isRequired,
 		onToggle: PropTypes.func.isRequired,
-	},
+	};
 
 	render() {
 		return (
@@ -51,5 +48,5 @@ export default React.createClass( {
 				} ) }
 			</ul>
 		);
-	},
-} );
+	}
+}

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,7 +21,8 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import paths from 'my-sites/domains/paths';
 
-const MappedDomain = React.createClass( {
+const MappedDomain = createReactClass( {
+	displayName: 'MappedDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {

@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
@@ -25,7 +26,9 @@ import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-const SecondaryCart = React.createClass( {
+const SecondaryCart = createReactClass( {
+	displayName: 'SecondaryCart',
+
 	propTypes: {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),

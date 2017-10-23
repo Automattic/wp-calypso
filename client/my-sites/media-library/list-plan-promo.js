@@ -17,15 +17,15 @@ import { preventWidows } from 'lib/formatting';
 import EmptyContent from 'components/empty-content';
 import Button from 'components/button';
 
-const MediaLibraryListPlanPromo = React.createClass( {
-	displayName: 'MediaLibraryListPlanPromo',
+class MediaLibraryListPlanPromo extends React.Component {
+	static displayName = 'MediaLibraryListPlanPromo';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		filter: PropTypes.string,
-	},
+	};
 
-	getTitle: function() {
+	getTitle = () => {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return this.props.translate( 'Upload Videos', {
@@ -45,9 +45,9 @@ const MediaLibraryListPlanPromo = React.createClass( {
 					context: 'Media upload plan needed',
 				} );
 		}
-	},
+	};
 
-	getSummary: function() {
+	getSummary = () => {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
@@ -79,17 +79,17 @@ const MediaLibraryListPlanPromo = React.createClass( {
 					2
 				);
 		}
-	},
+	};
 
-	viewPlansPage: function() {
+	viewPlansPage = () => {
 		const { slug = '' } = this.props.site;
 
 		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
 
 		page( `/plans/${ slug }` );
-	},
+	};
 
-	render: function() {
+	render() {
 		const action = (
 			<Button className="button is-primary" onClick={ this.viewPlansPage }>
 				{ this.props.translate( 'See Plans' ) }
@@ -104,7 +104,7 @@ const MediaLibraryListPlanPromo = React.createClass( {
 				illustration={ '' }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default localize( MediaLibraryListPlanPromo );

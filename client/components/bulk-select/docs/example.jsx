@@ -12,10 +12,14 @@ import React from 'react';
 import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
 
-export default React.createClass( {
-	displayName: 'BulkSelects',
+export default class extends React.Component {
+    static displayName = 'BulkSelects';
 
-	handleToggleAll( checkedState ) {
+	state = {
+		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
+	};
+
+	handleToggleAll = checkedState => {
 		let newElements = [];
 		this.state.elements.forEach( element => {
 			if ( typeof checkedState !== 'undefined' ) {
@@ -26,21 +30,15 @@ export default React.createClass( {
 			newElements.push( element );
 		} );
 		this.setState( { elements: newElements } );
-	},
+	};
 
-	getInitialState() {
-		return {
-			elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
-		};
-	},
-
-	getSelectedElementsNumber: function() {
+	getSelectedElementsNumber = () => {
 		return this.state.elements.filter( function( element ) {
 			return element.selected;
 		} ).length;
-	},
+	};
 
-	renderElements() {
+	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
 			const onClick = function() {
 				element.selected = ! element.selected;
@@ -53,7 +51,7 @@ export default React.createClass( {
 				</label>
 			);
 		} );
-	},
+	};
 
 	render() {
 		return (
@@ -68,5 +66,5 @@ export default React.createClass( {
 				{ this.renderElements() }
 			</Card>
 		);
-	},
-} );
+	}
+}

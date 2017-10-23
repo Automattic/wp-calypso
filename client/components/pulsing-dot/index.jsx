@@ -12,23 +12,21 @@ import classnames from 'classnames';
  */
 import analytics from 'lib/analytics';
 
-const PulsingDot = React.createClass( {
-	getDefaultProps: function() {
-		return {
-			active: false,
-		};
-	},
+class PulsingDot extends React.Component {
+	static defaultProps = {
+		active: false,
+	};
 
-	_loadingStatTimeout: null,
+	_loadingStatTimeout = null;
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( this._loadingStatTimeout ) {
 			clearTimeout( this._loadingStatTimeout );
 			this._loadingStatTimeout = null;
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.active === this.props.active || ! this.props.chunkName ) {
 			return;
 		}
@@ -41,15 +39,15 @@ const PulsingDot = React.createClass( {
 			clearTimeout( this._loadingStatTimeout );
 			this._loadingStatTimeout = null;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		var className = classnames( {
 			'pulsing-dot': true,
 			'is-active': this.props.active,
 		} );
 		return <div className={ className } />;
-	},
-} );
+	}
+}
 
 export default PulsingDot;

@@ -26,13 +26,13 @@ import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
 import { registrar as registrarNames } from 'lib/domains/constants';
 
-const EditContactInfo = React.createClass( {
-	propTypes: {
+class EditContactInfo extends React.Component {
+	static propTypes = {
 		domains: PropTypes.object.isRequired,
 		whois: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-	},
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
@@ -50,13 +50,13 @@ const EditContactInfo = React.createClass( {
 				{ this.getCard() }
 			</Main>
 		);
-	},
+	}
 
-	isDataLoading() {
+	isDataLoading = () => {
 		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
-	},
+	};
 
-	getCard() {
+	getCard = () => {
 		const domain = getSelectedDomain( this.props ),
 			{ OPENHRS, OPENSRS } = registrarNames;
 
@@ -82,16 +82,16 @@ const EditContactInfo = React.createClass( {
 				/>
 			</div>
 		);
-	},
+	};
 
-	goToContactsPrivacy() {
+	goToContactsPrivacy = () => {
 		page(
 			paths.domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
 				this.props.selectedDomainName
 			)
 		);
-	},
-} );
+	};
+}
 
 export default localize( EditContactInfo );

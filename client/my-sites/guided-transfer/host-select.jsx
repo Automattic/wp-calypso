@@ -15,10 +15,10 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 
-const HostSelect = React.createClass( {
-	displayName: 'HostSelect',
+class HostSelect extends React.Component {
+	static displayName = 'HostSelect';
 
-	propTypes: {
+	static propTypes = {
 		hosts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				showHost: PropTypes.func.isRequired,
@@ -26,7 +26,7 @@ const HostSelect = React.createClass( {
 				logo: PropTypes.string.isRequired,
 			} )
 		).isRequired,
-	},
+	};
 
 	render() {
 		const { hosts } = this.props;
@@ -69,7 +69,7 @@ const HostSelect = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( HostSelect );
