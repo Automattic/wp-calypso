@@ -20,7 +20,7 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormToggle from 'components/forms/form-toggle';
 import LabelSettings from './label-settings';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
-import { setFormDataValue } from '../../state/label-settings/actions';
+import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
@@ -29,6 +29,10 @@ import {
 } from '../../state/label-settings/selectors';
 
 class AccountSettingsRootView extends Component {
+	componentWillUnmount() {
+		this.props.restorePristineSettings( this.props.siteId );
+	}
+
 	render() {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
@@ -103,6 +107,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			setFormDataValue,
+			restorePristineSettings,
 		},
 		dispatch
 	);

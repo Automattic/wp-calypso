@@ -1,11 +1,16 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { cloneDeep } from 'lodash';
+/**
  * Internal dependencies
  */
 import {
 	WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
+	WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
 } from '../action-types';
 
 export const initialState = {
@@ -19,6 +24,7 @@ export const initialState = {
 		pristine: true,
 	},
 	data: null,
+	pristineData: null,
 };
 
 const reducers = {};
@@ -44,6 +50,11 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = (
 };
 
 reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE ] = ( state, { key, value } ) => {
+	let pristineData = state.pristineData;
+	if ( state.meta.pristine ) {
+		pristineData = cloneDeep( state.data );
+	}
+
 	return {
 		...state,
 		meta: {
@@ -54,6 +65,7 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE ] = ( state, { key, va
 			...state.data,
 			[ key ]: value,
 		},
+		pristineData,
 	};
 };
 
@@ -64,6 +76,22 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY ] = ( state, { key,
 			...state.meta,
 			[ key ]: value,
 		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE ] = state => {
+	if ( state.meta.pristine ) {
+		return state;
+	}
+
+	return {
+		...state,
+		meta: {
+			...state.meta,
+			pristine: true,
+		},
+		data: state.pristineData,
+		pristineData: null,
 	};
 };
 
