@@ -159,7 +159,7 @@ export class Theme extends Component {
 		const upsell = hasPrice &&
 		upsellUrl && (
 			<span className="theme__upsell">
-				<InfoPopover position="top left">
+				<InfoPopover icon="star-outline" position="top left">
 					<h2 className="theme__upsell-heading">
 						Access all our premium themes with our Premium and Business Plans
 					</h2>
