@@ -16,40 +16,39 @@ import Card from 'components/card';
 /**
  * Date Picker Demo
  */
-const InputChronoExample = localize(/**
- * Date Picker Demo
- */
-class extends React.PureComponent {
-    state = {
-		date: this.props.moment(),
-	};
+const InputChronoExample = localize(
+	class extends React.PureComponent {
+		state = {
+			date: this.props.moment(),
+		};
 
-	componentWillMount() {
-		var self = this;
-		this.interval = setInterval( function() {
-			var date = self.props.moment( self.state.date );
-			date.hours( date.hours() + 1 );
-			self.setState( { date: date } );
-		}, 1000 );
+		componentWillMount() {
+			var self = this;
+			this.interval = setInterval( function() {
+				var date = self.props.moment( self.state.date );
+				date.hours( date.hours() + 1 );
+				self.setState( { date: date } );
+			}, 1000 );
+		}
+
+		componentWillUnmount() {
+			clearInterval( this.interval );
+		}
+
+		onSet = date => {
+			console.log( `date: %s`, date.toDate() );
+			this.setState( { date: date } );
+		};
+
+		render() {
+			return (
+				<Card style={ { width: '300px', margin: 0 } }>
+					<InputChrono value={ this.state.date.calendar() } onSet={ this.onSet } />
+				</Card>
+			);
+		}
 	}
-
-	componentWillUnmount() {
-		clearInterval( this.interval );
-	}
-
-	onSet = date => {
-		console.log( `date: %s`, date.toDate() );
-		this.setState( { date: date } );
-	};
-
-	render() {
-		return (
-			<Card style={ { width: '300px', margin: 0 } }>
-				<InputChrono value={ this.state.date.calendar() } onSet={ this.onSet } />
-			</Card>
-		);
-	}
-});
+);
 
 InputChronoExample.displayName = 'InputChrono';
 
