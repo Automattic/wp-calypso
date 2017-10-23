@@ -67,6 +67,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: theme.id,
+			free_or_premium: theme.price ? 'premium' : 'free',
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page,
