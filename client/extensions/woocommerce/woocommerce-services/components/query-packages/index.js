@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,7 +15,6 @@ import {
 	isFetching,
 	isFetchError,
 } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryPackages extends Component {
 	fetch( props ) {
@@ -37,9 +37,12 @@ class QueryPackages extends Component {
 	}
 }
 
+QueryPackages.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
 export default connect(
 	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
 		loaded: isLoaded( state ),
 		fetching: isFetching( state ),
 		error: isFetchError( state ),

@@ -13,7 +13,6 @@ import QueryLabelSettings from 'woocommerce/woocommerce-services/components/quer
 import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
 import { fetchLabelsData } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, isFetching, isError } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryLabels extends Component {
 	fetch() {
@@ -36,22 +35,24 @@ class QueryLabels extends Component {
 	}
 
 	render() {
+		const { siteId } = this.props;
+
 		return (
 			<div>
-				<QueryLabelSettings />
-				<QueryPackages />
+				<QueryLabelSettings siteId={ siteId } />
+				<QueryPackages siteId={ siteId } />
 			</div>
 		);
 	}
 }
 
 QueryLabels.propTypes = {
+	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 };
 
 export default connect(
 	( state, { orderId } ) => ( {
-		siteId: getSelectedSiteId( state, orderId ),
 		loaded: isLoaded( state, orderId ),
 		fetching: isFetching( state, orderId ),
 		error: isError( state, orderId ),

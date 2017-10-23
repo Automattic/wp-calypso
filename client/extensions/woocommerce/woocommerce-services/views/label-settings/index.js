@@ -33,7 +33,7 @@ class AccountSettingsRootView extends Component {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
 		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
-			return <QueryLabelSettings />;
+			return <QueryLabelSettings siteId={ siteId } />;
 		}
 		const setValue = ( key, value ) => this.props.setFormDataValue( siteId, key, value );
 		const onEnabledToggle = () =>
@@ -67,7 +67,7 @@ class AccountSettingsRootView extends Component {
 
 		return (
 			<div>
-				<QueryLabelSettings />
+				<QueryLabelSettings siteId={ siteId } />
 				<ExtendedHeader
 					label={ translate( 'Shipping Labels' ) }
 					description={ translate(

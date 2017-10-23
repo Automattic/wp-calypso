@@ -267,7 +267,7 @@ class OrderFulfillment extends Component {
 						) }
 					</form>
 				</Dialog>
-				{ wcsEnabled && <QueryLabels orderId={ order.id } /> }
+				{ wcsEnabled && <QueryLabels orderId={ order.id } siteId={ site.ID } /> }
 				{ wcsEnabled && <LabelPurchaseDialog orderId={ order.id } siteId={ site.ID } /> }
 			</div>
 		);

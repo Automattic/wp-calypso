@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,7 +15,6 @@ import {
 	areSettingsFetching,
 	areSettingsErrored,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryLabelSettings extends Component {
 	fetch( props ) {
@@ -37,9 +37,12 @@ class QueryLabelSettings extends Component {
 	}
 }
 
+QueryLabelSettings.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
 export default connect(
 	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
 		loaded: areSettingsLoaded( state ),
 		fetching: areSettingsFetching( state ),
 		error: areSettingsErrored( state ),

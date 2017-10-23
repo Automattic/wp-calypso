@@ -83,7 +83,7 @@ class Packages extends Component {
 
 		return (
 			<div>
-				<QueryPackages />
+				<QueryPackages siteId={ siteId } />
 				<ExtendedHeader
 					label={ translate( 'Packages' ) }
 					description={ translate(
