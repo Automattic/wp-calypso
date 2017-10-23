@@ -220,7 +220,7 @@
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && ( check-node-version --package || exit 0 )",
     "start": "npm run -s build",
-    "poststart": "npm run -s env -- cross-env node $NODE_ARGS build/bundle.js",
+    "poststart": "npm run -s env -- cross-env node build/bundle.js",
     "reformat-files": "node bin/reformat-files.js",
     "pretest": "npm run -s install-if-deps-outdated",
     "test": "run-s -s test-client test-server",
