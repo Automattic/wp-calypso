@@ -36,11 +36,12 @@ export class CredentialsForm extends Component {
 			port: false,
 			user: false,
 			pass: false,
+			abspath: false,
 		},
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const changedFields = [ 'protocol', 'host', 'port', 'user' ].filter(
+		const changedFields = [ 'protocol', 'host', 'port', 'user', 'abspath' ].filter(
 			key => nextProps[ key ] !== this.props[ key ]
 		);
 
@@ -104,6 +105,11 @@ export class CredentialsForm extends Component {
 
 		if ( '' === payload.pass ) {
 			errors.pass = translate( 'Please enter your server password.' );
+			error = true;
+		}
+
+		if ( '' === payload.abspath ) {
+			errors.abspath = translate( 'Please enter a valid upload path.' );
 			error = true;
 		}
 
@@ -210,6 +216,24 @@ export class CredentialsForm extends Component {
 									/>
 									{ formErrors.pass && (
 										<FormInputValidation isError={ true } text={ formErrors.pass } />
+									) }
+								</FormLabel>
+							</td>
+						</tr>
+						<tr>
+							<td colSpan="2" className="credentials-form__abspath-field">
+								<FormLabel>
+									<div>{ translate( 'Upload Path' ) }</div>
+									<FormTextInput
+										name="abspath"
+										placeholder="/public_html/"
+										value={ get( this.state.form, 'abspath', '' ) }
+										onChange={ this.handleFieldChange }
+										disabled={ formIsSubmitting }
+										isError={ !! formErrors.abspath }
+									/>
+									{ formErrors.abspath && (
+										<FormInputValidation isError={ true } text={ formErrors.abspath } />
 									) }
 								</FormLabel>
 							</td>
