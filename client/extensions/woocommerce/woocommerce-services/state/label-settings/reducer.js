@@ -1,9 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { cloneDeep } from 'lodash';
-/**
  * Internal dependencies
  */
 import {
@@ -52,7 +48,7 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = (
 reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE ] = ( state, { key, value } ) => {
 	let pristineData = state.pristineData;
 	if ( state.meta.pristine ) {
-		pristineData = cloneDeep( state.data );
+		pristineData = state.data;
 	}
 
 	return {
