@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import PriceInput from 'woocommerce/components/price-input';
@@ -49,9 +50,9 @@ function renderCouponCode( siteId, model, promotion, editPromotion, translate ) 
 				onChange={ onCouponCodeChange }
 				placeholder={ translate( 'Enter coupon code' ) }
 			/>
-			<div className="promotions__promotion-form-field-footnote">
+			<FormSettingExplanation>
 				{ translate( 'Only apply this promotion when the customer supplies the coupon code' ) }
-			</div>
+			</FormSettingExplanation>
 		</FormFieldset>
 	);
 }
