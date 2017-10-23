@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,14 +19,21 @@ import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 
 // Returns true if given section should display sidebar for logged out users.
-const hasSidebar = sectionName => sectionName === 'devdocs';
+const hasSidebar = section => {
+	if ( section.name === 'devdocs' ) {
+		// Devdocs should always display a sidebar, except for landing page.
+		return ! includes( section.paths, '/devdocs/start' );
+	}
+
+	return false;
+};
 
 const LayoutLoggedOut = ( { oauth2Client, primary, section, redirectUri, useOAuth2Layout } ) => {
 	const classes = {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': ! hasSidebar( section.name ),
+		'has-no-sidebar': ! hasSidebar( section ),
 		'wp-singletree-layout': !! primary,
 	};
 
