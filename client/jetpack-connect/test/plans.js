@@ -40,7 +40,7 @@ describe( 'Plans', () => {
 	test( 'should redirect if Atomic', () => {
 		const goBackToWpAdmin = jest.fn();
 
-		const atomicPlans = (
+		mount(
 			<PlansWrapper
 				goBackToWpAdmin={ goBackToWpAdmin }
 				isAutomatedTransfer={ true }
@@ -52,12 +52,6 @@ describe( 'Plans', () => {
 				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
 			/>
 		);
-
-		const wrapper = render( atomicPlans );
-
-		expect( wrapper ).toMatchSnapshot();
-
-		mount( atomicPlans );
 
 		expect( goBackToWpAdmin.mock.calls.length ).toBe( 1 );
 	} );
