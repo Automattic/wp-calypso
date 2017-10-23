@@ -254,11 +254,11 @@ const ThemeShowcase = React.createClass( {
 							}
 							return getScreenshotOption( theme ).getUrl( theme );
 						} }
-						onScreenshotClick={ function( theme ) {
-							if ( ! getScreenshotOption( theme ).action ) {
+						onScreenshotClick={ function( themeId ) {
+							if ( ! getScreenshotOption( themeId ).action ) {
 								return;
 							}
-							getScreenshotOption( theme ).action( theme );
+							getScreenshotOption( themeId ).action( themeId );
 						} }
 						getActionLabel={ function( theme ) {
 							return getScreenshotOption( theme ).label;

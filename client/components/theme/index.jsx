@@ -193,7 +193,7 @@ export class Theme extends Component {
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
-								theme={ this.props.theme }
+								themeId={ this.props.theme.id }
 								active={ this.props.active }
 								onMoreButtonClick={ this.props.onMoreButtonClick }
 								options={ this.props.buttonContents }
