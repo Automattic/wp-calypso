@@ -161,7 +161,7 @@ export class Theme extends Component {
 			<span className="theme__upsell">
 				<InfoPopover icon="star-outline" position="top left">
 					<h2 className="theme__upsell-heading">
-						Access all our premium themes with our Premium and Business Plans
+						Access all our premium themes for free with our Premium and Business Plans
 					</h2>
 					<Button className="theme__upsell-cta" primary href={ upsellUrl }>
 						Upgrade Now
