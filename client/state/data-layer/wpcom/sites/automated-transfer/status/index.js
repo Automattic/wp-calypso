@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { delay, noop } from 'lodash';
+import { delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
+	automatedTransferStatusFetchingFailure,
 } from 'state/automated-transfer/actions';
 import { transferStates } from 'state/automated-transfer/constants';
 
@@ -60,6 +61,12 @@ export const receiveStatus = (
 	}
 };
 
+export const requestingStatusFailure = ( { dispatch }, { siteId } ) => {
+	dispatch( automatedTransferStatusFetchingFailure( siteId ) );
+};
+
 export default {
-	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [ dispatchRequest( requestStatus, receiveStatus, noop ) ],
+	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
+		dispatchRequest( requestStatus, receiveStatus, requestingStatusFailure ),
+	],
 };
