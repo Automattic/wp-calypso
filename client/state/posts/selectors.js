@@ -176,7 +176,7 @@ export const getSitePostsForQuery = createSelector(
  * otherwise.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
@@ -214,7 +214,7 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * total number of queryable posts if unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID
  * @param  {Object}  query  Post query object
  * @return {?Number}        Last posts page
  */
