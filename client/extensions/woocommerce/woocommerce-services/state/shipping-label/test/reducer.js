@@ -29,14 +29,6 @@ import {
 const orderId = 1;
 const siteId = 123456;
 
-const packageDefinitions = {
-	customPackage1: {
-		inner_dimensions: '1 x 2 x 3',
-		box_weight: 3.5,
-	},
-	customPackage2: {},
-};
-
 const initialState = {
 	[ orderId ]: {
 		form: {
@@ -218,7 +210,10 @@ describe( 'Label purchase form reducer', () => {
 			orderId,
 			packageId: 'weight_0_custom1',
 			boxTypeId: 'customPackage1',
-			allBoxes: packageDefinitions,
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 3.5,
+			},
 		};
 		const state = reducer( initialState, action );
 
@@ -244,7 +239,10 @@ describe( 'Label purchase form reducer', () => {
 			orderId,
 			packageId: 'weight_0_custom1',
 			boxTypeId: 'customPackage1',
-			allBoxes: packageDefinitions,
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 3.5,
+			},
 		};
 		const state = reducer( existingState, action );
 
@@ -359,8 +357,6 @@ describe( 'Label purchase form reducer', () => {
 
 	it( 'Maintains fixed precision upon adjusting total weight', () => {
 		const existingState = hoek.clone( initialState );
-		const existingPackageDefinitions = hoek.clone( packageDefinitions );
-		existingPackageDefinitions.customPackage1.box_weight = 1.33;
 		existingState[ orderId ].form.packages.selected.weight_0_custom1 = {
 			items: [
 				{
@@ -396,7 +392,10 @@ describe( 'Label purchase form reducer', () => {
 			orderId,
 			packageId: 'weight_0_custom1',
 			boxTypeId: 'customPackage1',
-			allBoxes: existingPackageDefinitions,
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 1.33,
+			},
 		};
 		state = reducer( state, packageTypeAction );
 

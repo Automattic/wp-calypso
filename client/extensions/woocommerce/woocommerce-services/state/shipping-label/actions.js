@@ -488,13 +488,16 @@ export const removePackage = ( orderId, siteId, packageId ) => {
 };
 
 export const setPackageType = ( orderId, siteId, packageId, boxTypeId ) => ( dispatch, getState ) => {
+	const allBoxes = getAllPackageDefinitions( getState(), siteId );
+	const box = allBoxes[ boxTypeId ];
+
 	dispatch( {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
 		siteId,
 		orderId,
 		packageId,
 		boxTypeId,
-		allBoxes: getAllPackageDefinitions( getState(), siteId ),
+		box,
 	} );
 };
 
