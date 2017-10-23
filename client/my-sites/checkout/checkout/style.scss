@@ -588,31 +588,9 @@
 				}
 			}
 
-			.g-apps-fieldset {
+			&.only-google-apps-details {
 				.country {
 					width: 66%;
-				}
-			}
-
-			.eu-address-fieldset {
-				.postal-code {
-					 float: left;
-					 width: calc( 33% - 7px );
-				 }
-
-				.city {
-					float: right;
-					width: calc( 66% );
-				}
-			}
-
-			.uk-address-fieldset {
-				.postal-code {
-					width: calc( 33% - 7px );
-				}
-
-				.city {
-					width: calc( 66% );
 				}
 			}
 		}
