@@ -84,6 +84,13 @@ export const getNormalizedPost = createSelector(
  * @return {Array}         Site posts
  */
 export const getSitePosts = createSelector( ( state, siteId ) => {
+	if ( ! siteId ) {
+		// TODO remove me after testing and before merge
+		// eslint-disable-next-line no-console
+		console.warn( 'getSitePosts called without siteId' );
+		return null;
+	}
+
 	const manager = state.posts.queries[ siteId ];
 	if ( ! manager ) {
 		return [];
@@ -101,6 +108,13 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
  * @return {?Object}        Post object
  */
 export const getSitePost = createSelector( ( state, siteId, postId ) => {
+	if ( ! siteId ) {
+		// TODO remove me after testing and before merge
+		// eslint-disable-next-line no-console
+		console.warn( 'getSitePost called without siteId' );
+		return null;
+	}
+
 	const manager = state.posts.queries[ siteId ];
 	if ( ! manager ) {
 		return null;
@@ -120,6 +134,13 @@ export const getSitePost = createSelector( ( state, siteId, postId ) => {
  */
 export const getSitePostsForQuery = createSelector(
 	( state, siteId, query ) => {
+		if ( ! siteId ) {
+			// TODO remove me after testing and before merge
+			// eslint-disable-next-line no-console
+			console.warn( 'getSitePostsForQuery called without siteId' );
+			return null;
+		}
+
 		const manager = state.posts.queries[ siteId ];
 		if ( ! manager ) {
 			return null;
@@ -174,6 +195,13 @@ export function isRequestingPostsForQuery( state, siteId, query ) {
  * @return {?Number}        Total number of found items
  */
 export function getSitePostsFoundForQuery( state, siteId, query ) {
+	if ( ! siteId ) {
+		// TODO remove me after testing and before merge
+		// eslint-disable-next-line no-console
+		console.warn( 'getSitePostsFoundForQuery called without siteId' );
+		return null;
+	}
+
 	if ( ! state.posts.queries[ siteId ] ) {
 		return null;
 	}
@@ -293,6 +321,13 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
  * @return {Boolean}        Whether request is in progress
  */
 export function isRequestingSitePost( state, siteId, postId ) {
+	if ( ! siteId ) {
+		// TODO remove me after testing and before merge
+		// eslint-disable-next-line no-console
+		console.warn( 'isRequestingSitePost called without siteId' );
+		return null;
+	}
+
 	if ( ! state.posts.siteRequests[ siteId ] ) {
 		return false;
 	}
