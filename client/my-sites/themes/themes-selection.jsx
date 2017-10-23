@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, property, snakeCase } from 'lodash';
+import { compact, find, includes, isEqual, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -67,6 +67,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: theme.id,
+			free_or_premium: theme.price ? 'premium' : 'free',
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page,
@@ -86,9 +87,14 @@ class ThemesSelection extends Component {
 	}
 
 	onScreenshotClick = ( theme, resultsRank ) => {
+		const themes = this.props.themes;
 		trackClick( 'theme', 'screenshot' );
 		if ( ! this.props.isThemeActive( theme ) ) {
-			this.recordSearchResultsClick( theme, resultsRank, 'screenshot_info' );
+			this.recordSearchResultsClick(
+				find( themes, t => t.id === theme ),
+				resultsRank,
+				'screenshot_info'
+			);
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
 	};
