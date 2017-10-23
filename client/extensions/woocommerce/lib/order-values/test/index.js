@@ -49,15 +49,19 @@ describe( 'getOrderFeeTax', () => {
 	} );
 
 	test( 'should get the correct tax amount', () => {
-		expect( getOrderFeeTax( orderWithTax, 0 ) ).to.eql( 0.1262 );
+		expect( getOrderFeeTax( orderWithTax, 48 ) ).to.eql( 0.1262 );
 	} );
 
 	test( 'should get the correct tax amount with multiple fees', () => {
-		expect( getOrderFeeTax( orderWithCoupons, 1 ) ).to.eql( 0.625 );
+		expect( getOrderFeeTax( orderWithCoupons, 41 ) ).to.eql( 0.625 );
 	} );
 
 	test( 'should return 0 if there is no tax', () => {
-		expect( getOrderFeeTax( orderWithoutTax, 0 ) ).to.eql( 0 );
+		expect( getOrderFeeTax( orderWithoutTax, 2 ) ).to.eql( 0 );
+	} );
+
+	test( 'should return 0 if there is no fee with that ID', () => {
+		expect( getOrderFeeTax( orderWithoutTax, 50 ) ).to.eql( 0 );
 	} );
 } );
 
