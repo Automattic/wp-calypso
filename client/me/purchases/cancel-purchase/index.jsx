@@ -46,143 +46,141 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const CancelPurchase = localize(
-	React.createClass( {
-		propTypes: {
-			hasLoadedSites: PropTypes.bool.isRequired,
-			hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-			selectedPurchase: PropTypes.object,
-			selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-		},
+const CancelPurchase = React.createClass( {
+	propTypes: {
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	},
 
-		componentWillMount() {
-			if ( ! this.isDataValid() ) {
-				this.redirect( this.props );
-				return;
-			}
+	componentWillMount() {
+		if ( ! this.isDataValid() ) {
+			this.redirect( this.props );
+			return;
+		}
 
-			recordPageView( 'cancel_purchase', this.props );
-		},
+		recordPageView( 'cancel_purchase', this.props );
+	},
 
-		componentWillReceiveProps( nextProps ) {
-			if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-				this.redirect( nextProps );
-				return;
-			}
+	componentWillReceiveProps( nextProps ) {
+		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
+			this.redirect( nextProps );
+			return;
+		}
 
-			recordPageView( 'cancel_purchase', this.props, nextProps );
-		},
+		recordPageView( 'cancel_purchase', this.props, nextProps );
+	},
 
-		isDataValid( props = this.props ) {
-			if ( isDataLoading( props ) ) {
-				return true;
-			}
+	isDataValid( props = this.props ) {
+		if ( isDataLoading( props ) ) {
+			return true;
+		}
 
-			const purchase = getPurchase( props ),
-				selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
 
-			return selectedSite && purchase && isCancelable( purchase );
-		},
+		return selectedSite && purchase && isCancelable( purchase );
+	},
 
-		redirect( props ) {
-			const purchase = getPurchase( props ),
-				selectedSite = getSelectedSite( props );
-			let redirectPath = paths.purchasesRoot();
+	redirect( props ) {
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
+		let redirectPath = paths.purchasesRoot();
 
-			if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
-				redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
-			}
+		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
+			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
+		}
 
-			page.redirect( redirectPath );
-		},
+		page.redirect( redirectPath );
+	},
 
-		renderFooterText() {
-			const purchase = getPurchase( this.props ),
-				{ refundText, renewDate } = purchase;
+	renderFooterText() {
+		const purchase = getPurchase( this.props ),
+			{ refundText, renewDate } = purchase;
 
-			if ( isRefundable( purchase ) ) {
-				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText },
-					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-				} );
-			}
+		if ( isRefundable( purchase ) ) {
+			return this.props.translate( '%(refundText)s to be refunded', {
+				args: { refundText },
+				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+			} );
+		}
 
-			const renewalDate = this.props.moment( renewDate ).format( 'LL' );
+		const renewalDate = this.props.moment( renewDate ).format( 'LL' );
 
-			if ( isDomainRegistration( purchase ) ) {
-				return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
-					args: { renewalDate },
-				} );
-			}
-
-			return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
+		if ( isDomainRegistration( purchase ) ) {
+			return this.props.translate( 'Domain will be removed on %(renewalDate)s', {
 				args: { renewalDate },
 			} );
-		},
+		}
 
-		render() {
-			if ( ! this.isDataValid() ) {
-				return null;
-			}
+		return this.props.translate( 'Subscription will be removed on %(renewalDate)s', {
+			args: { renewalDate },
+		} );
+	},
 
-			if ( isDataLoading( this.props ) ) {
-				return (
-					<div>
-						<QueryUserPurchases userId={ user.get().ID } />
-						<CancelPurchaseLoadingPlaceholder
-							purchaseId={ this.props.purchaseId }
-							selectedSite={ this.props.selectedSite }
-						/>
-					</div>
-				);
-			}
+	render() {
+		if ( ! this.isDataValid() ) {
+			return null;
+		}
 
-			const purchase = getPurchase( this.props ),
-				purchaseName = getName( purchase ),
-				{ siteName, domain: siteDomain } = purchase;
-
-			let heading;
-
-			if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
-				heading = this.props.translate( 'Cancel %(purchaseName)s', {
-					args: { purchaseName },
-				} );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
-					args: { purchaseName },
-				} );
-			}
-
+		if ( isDataLoading( this.props ) ) {
 			return (
-				<Main className="cancel-purchase">
-					<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-						{ titles.cancelPurchase }
-					</HeaderCake>
-
-					<Card className="cancel-purchase__card">
-						<h2>{ heading }</h2>
-
-						<CancelPurchaseRefundInformation purchase={ purchase } />
-					</Card>
-
-					<CompactCard className="cancel-purchase__product-information">
-						<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-						<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
-						<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
-					</CompactCard>
-					<CompactCard className="cancel-purchase__footer">
-						<div className="cancel-purchase__refund-amount">
-							{ this.renderFooterText( this.props ) }
-						</div>
-						<CancelPurchaseButton purchase={ purchase } selectedSite={ this.props.selectedSite } />
-					</CompactCard>
-				</Main>
+				<div>
+					<QueryUserPurchases userId={ user.get().ID } />
+					<CancelPurchaseLoadingPlaceholder
+						purchaseId={ this.props.purchaseId }
+						selectedSite={ this.props.selectedSite }
+					/>
+				</div>
 			);
-		},
-	} )
-);
+		}
+
+		const purchase = getPurchase( this.props ),
+			purchaseName = getName( purchase ),
+			{ siteName, domain: siteDomain } = purchase;
+
+		let heading;
+
+		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
+			heading = this.props.translate( 'Cancel %(purchaseName)s', {
+				args: { purchaseName },
+			} );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+				args: { purchaseName },
+			} );
+		}
+
+		return (
+			<Main className="cancel-purchase">
+				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+					{ titles.cancelPurchase }
+				</HeaderCake>
+
+				<Card className="cancel-purchase__card">
+					<h2>{ heading }</h2>
+
+					<CancelPurchaseRefundInformation purchase={ purchase } />
+				</Card>
+
+				<CompactCard className="cancel-purchase__product-information">
+					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
+					<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
+				</CompactCard>
+				<CompactCard className="cancel-purchase__footer">
+					<div className="cancel-purchase__refund-amount">
+						{ this.renderFooterText( this.props ) }
+					</div>
+					<CancelPurchaseButton purchase={ purchase } selectedSite={ this.props.selectedSite } />
+				</CompactCard>
+			</Main>
+		);
+	},
+} );
 
 export default connect( ( state, props ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),
