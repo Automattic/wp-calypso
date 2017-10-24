@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,13 +23,14 @@ import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/email/que
 import {
 	syncStatus,
 	mailChimpSettings,
-	isRequestingSettings
+	isRequestingSettings,
+	isRequestingSyncStatus,
 	} from 'woocommerce/state/sites/settings/email/selectors';
 import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/email/actions.js';
 import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
-const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
+const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting } ) => {
 	const { account_name, store_syncing, product_count, mailchimp_total_products,
 		mailchimp_total_orders, order_count } = syncState;
 	const hasProductInfo = ( undefined !== product_count ) && ( undefined !== mailchimp_total_products );
@@ -56,9 +58,24 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
 		/>
 	);
 
+	const loadingSyncStatus = () => (
+		<Notice
+			isCompact
+			showDismiss={ false }
+			text={ translate( 'Loading sync status.' ) }
+		/>
+	);
+
 	const onResyncClick = () => {
 		! store_syncing && resync( siteId );
 	};
+
+	const notice = ( () => {
+		if ( isRequesting && isEmpty( syncState ) ) {
+			return loadingSyncStatus();
+		}
+		return store_syncing ? syncing() : synced();
+	} )();
 
 	return (
 		<div>
@@ -73,7 +90,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
 					}
 				} ) }
 			</div>
-			<span className="mailchimp__sync-status">{ store_syncing ? syncing() : synced() }</span>
+			<span className="mailchimp__sync-status">{ notice }</span>
 			<a className="mailchimp__resync-link" onClick={ onResyncClick }>
 				{ translate( 'Resync', { comment: 'to synchronize again' } ) }
 			</a>
@@ -104,6 +121,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
 SyncTab.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	syncState: PropTypes.object,
+	isRequestingSettings: PropTypes.bool,
 	resync: PropTypes.func.isRequired,
 };
 
@@ -250,6 +268,7 @@ class MailChimpDashboard extends React.Component {
 						<span className="mailchimp__dashboard-sync-status" >
 							<SyncTab
 								siteId={ siteId }
+								isRequesting={ this.props.isRequestingSyncStatus }
 								syncState={ syncStatusData }
 								resync={ this.props.requestResync } />
 						</span>
@@ -290,6 +309,7 @@ export default connect(
 		siteId,
 		syncStatusData: syncStatus( state, siteId ),
 		isRequestingSettings: isRequestingSettings( state, siteId ),
+		isRequestingSyncStatus: isRequestingSyncStatus( state, siteId ),
 		isSaving: isSubmittingNewsletterSetting( state, siteId ),
 		newsletterSettingsSubmitError: newsletterSettingsSubmitError( state, siteId ),
 		settings: mailChimpSettings( state, siteId ),
