@@ -16,6 +16,7 @@ import Card from 'components/card';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
+import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import { abtest } from 'lib/abtest';
@@ -116,7 +117,7 @@ class PaymentBox extends PureComponent {
 			);
 		}
 
-		return null;
+		return <SectionHeader label={ this.props.title } />;
 	}
 
 	getSectionNav() {
