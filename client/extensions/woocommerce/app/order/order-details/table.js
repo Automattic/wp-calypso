@@ -233,6 +233,15 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderTaxWarning = () => {
+		const { translate } = this.props;
+		return (
+			<FormSettingExplanation>
+				{ translate( 'If applicable, taxes will be applied or updated after saving.' ) }
+			</FormSettingExplanation>
+		);
+	};
+
 	render() {
 		const { isEditing, order, translate } = this.props;
 		if ( ! order ) {
@@ -294,14 +303,8 @@ class OrderDetailsTable extends Component {
 							showTax={ showTax }
 						/>
 					) }
-					{ isEditing && (
-						<FormSettingExplanation>
-							{ translate(
-								'The total might not reflect updated tax values, tax will update when saved.'
-							) }
-						</FormSettingExplanation>
-					) }
 				</Table>
+				{ isEditing && this.renderTaxWarning() }
 			</div>
 		);
 	}
