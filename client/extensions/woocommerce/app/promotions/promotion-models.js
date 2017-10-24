@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 import CurrencyField from './fields/currency-field';
 import PercentField from './fields/percent-field';
 import TextField from './fields/text-field';
+import AppliesToSingleProductField from './fields/applies-to-single-product-field';
 
 /**
  * Field reused for all coupon promotion types.
@@ -39,6 +40,11 @@ const productSaleModel = {
 	salePrice: {
 		component: CurrencyField,
 		labelText: translate( 'Product Sale Price' ),
+		isRequired: true,
+	},
+	appliesTo: {
+		component: AppliesToSingleProductField,
+		labelText: translate( 'Applies to product' ),
 		isRequired: true,
 	},
 };
