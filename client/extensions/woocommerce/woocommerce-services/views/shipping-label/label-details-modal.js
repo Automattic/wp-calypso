@@ -44,9 +44,8 @@ const DetailsDialog = ( props ) => {
 			</dl>
 			<ActionButtons buttons={ [
 				{
-					isPrimary: true,
 					onClick: onClose,
-					label: translate( 'OK' ),
+					label: translate( 'Close' ),
 				},
 			] } />
 		</Dialog>
