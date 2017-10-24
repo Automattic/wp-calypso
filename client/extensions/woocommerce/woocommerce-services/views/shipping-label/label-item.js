@@ -94,11 +94,13 @@ class LabelItem extends Component {
 							}
 						} ) }
 					</span>
-					{ this.renderLabelDetails( label ) }
+					{ label.showDetails && this.renderLabelDetails( label ) }
 				</p>
-				<p className="shipping-label__item-tracking">
-					{ translate( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
-				</p>
+				{ label.showDetails &&
+					<p className="shipping-label__item-tracking">
+						{ translate( 'Tracking #: {{trackingLink/}}', { components: { trackingLink: <TrackingLink { ...label } /> } } ) }
+					</p>
+				}
 				{ label.showDetails &&
 					<p className="shipping-label__item-actions">
 						{ this.renderRefund( label ) }
