@@ -261,7 +261,7 @@ class OrderDetailsTable extends Component {
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
 
-				<div className={ totalsClasses }>
+				<Table className={ totalsClasses } compact>
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Discount' ) }
@@ -300,7 +300,7 @@ class OrderDetailsTable extends Component {
 							) }
 						</FormSettingExplanation>
 					) }
-				</div>
+				</Table>
 			</div>
 		);
 	}
