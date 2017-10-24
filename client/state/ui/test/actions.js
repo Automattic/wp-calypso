@@ -9,6 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	navigate,
 	setAllSitesSelected,
 	setPreviewShowing,
 	setRoute,
@@ -17,6 +18,7 @@ import {
 	toggleNotificationsPanel,
 } from '../actions';
 import {
+	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
@@ -130,6 +132,18 @@ describe( 'actions', () => {
 		test( 'should return an action object with just the action type', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
+			} );
+		} );
+	} );
+
+	describe( 'navigate()', () => {
+		test( 'should return an action object with the path specified', () => {
+			const path = '/test/path';
+			const action = navigate( path );
+
+			expect( action ).to.eql( {
+				type: NAVIGATE,
+				path,
 			} );
 		} );
 	} );
