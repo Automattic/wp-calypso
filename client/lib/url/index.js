@@ -218,7 +218,7 @@ function decodeURIComponentIfValid( encodedURIComponent ) {
 	}
 }
 
-export default {
+const exported = {
 	decodeURIIfValid,
 	decodeURIComponentIfValid,
 	isOutsideCalypso,
@@ -229,7 +229,26 @@ export default {
 	setUrlScheme,
 	urlToSlug,
 	urlToDomainAndPath,
+
 	// [TODO]: Move lib/route/add-query-args contents here
+	addQueryArgs,
+
+	resemblesUrl,
+	omitUrlParams,
+};
+
+export default exported;
+export {
+	decodeURIIfValid,
+	decodeURIComponentIfValid,
+	isOutsideCalypso,
+	isExternal,
+	isHttps,
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
+	urlToSlug,
+	urlToDomainAndPath,
 	addQueryArgs,
 	resemblesUrl,
 	omitUrlParams,

@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 import { get } from 'lodash';
 import { withoutHttp } from 'lib/url';
 
-export default {
+const exported = {
 	userCan( capability, site ) {
 		return site && site.capabilities && site.capabilities[ capability ];
 	},
@@ -160,3 +160,17 @@ export default {
 		return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
 	},
 };
+
+export default exported;
+
+export const {
+	userCan,
+	timezone,
+	gmtOffset,
+	getSiteFileModDisableReason,
+	canUpdateFiles,
+	canAutoupdateFiles,
+	isMainNetworkSite,
+	hasCustomDomain,
+	isModuleActive,
+} = exported;

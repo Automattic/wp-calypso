@@ -6,7 +6,7 @@
 
 import paths from 'my-sites/domains/paths';
 
-function getDomainManagementUrl( { slug }, domain ) {
+export function getDomainManagementUrl( { slug }, domain ) {
 	return domain ? paths.domainManagementEdit( slug, domain ) : paths.domainManagementList( slug );
 }
 

@@ -159,4 +159,6 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
+export const getAll = MediaStore.getAll;
+
 export default MediaStore;

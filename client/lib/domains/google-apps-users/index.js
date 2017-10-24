@@ -8,7 +8,7 @@ import { compact, flatten, includes, isEmpty, mapValues, property, some, values 
 import i18n from 'i18n-calypso';
 import emailValidator from 'email-validator';
 
-function filter( { users, fields } ) {
+export function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {
 		var isFirst = index === 0,
 			hasInput = some( Object.keys( fields ), function( name ) {
@@ -19,7 +19,7 @@ function filter( { users, fields } ) {
 	} );
 }
 
-function validate( { users, fields } ) {
+export function validate( { users, fields } ) {
 	var errors;
 
 	users = filter( { users, fields } );

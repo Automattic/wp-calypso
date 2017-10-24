@@ -79,10 +79,13 @@ function jetpackModules( site, module ) {
 	return url;
 }
 
-export default {
+const exported = {
 	jetpackModules,
 	login,
 	newPost,
 	newPage,
 	publicizeConnections,
 };
+
+export default exported;
+export { jetpackModules, login, newPost, newPage, publicizeConnections };

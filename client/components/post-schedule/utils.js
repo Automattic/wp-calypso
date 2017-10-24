@@ -123,7 +123,21 @@ const parseAndValidateNumber = value => {
 	return false;
 };
 
-export default {
+const exported = {
+	convertDateToGivenOffset,
+	convertDateToUserLocation,
+	convertHoursToHHMM,
+	convertMinutesToHHMM,
+	getDateInLocalUTC,
+	getLocalizedDate,
+	getTimeOffset,
+	is12hr,
+	isValidGMTOffset,
+	parseAndValidateNumber,
+};
+
+export default exported;
+export {
 	convertDateToGivenOffset,
 	convertDateToUserLocation,
 	convertHoursToHHMM,

@@ -8,7 +8,7 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
-export default {
+const exported = {
 	acceptedNotice( invite, displayOnNextPage = true ) {
 		const site = (
 			<a href={ get( invite, 'site.URL' ) } className="invite-accept__notice-site-link">
@@ -154,3 +154,7 @@ export default {
 		}
 	},
 };
+
+export default exported;
+
+export const { acceptedNotice, getRedirectAfterAccept } = exported;

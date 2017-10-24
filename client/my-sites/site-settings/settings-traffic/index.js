@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import mySitesController from 'my-sites/controller';
+import { siteSelection, navigation } from 'my-sites/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 
 const redirectToTrafficSection = context => {
@@ -20,8 +20,8 @@ const redirectToTrafficSection = context => {
 export default function() {
 	page(
 		'/settings/traffic/:site_id',
-		mySitesController.siteSelection,
-		mySitesController.navigation,
+		siteSelection,
+		navigation,
 		settingsController.siteSettings,
 		controller.traffic
 	);

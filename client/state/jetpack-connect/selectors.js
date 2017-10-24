@@ -168,7 +168,30 @@ const getSiteIdFromQueryObject = function( state ) {
 	return null;
 };
 
-export default {
+const exported = {
+	getConnectingSite,
+	getAuthorizationData,
+	getAuthorizationRemoteQueryData,
+	getAuthorizationRemoteSite,
+	getSessions,
+	getSSO,
+	isCalypsoStartedConnection,
+	isRedirectingToWpAdmin,
+	isRemoteSiteOnSitesList,
+	getFlowType,
+	getJetpackSiteByUrl,
+	hasXmlrpcError,
+	hasExpiredSecretError,
+	getJetpackPlanSelected,
+	getSiteSelectedPlan,
+	getGlobalSelectedPlan,
+	getAuthAttempts,
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected,
+};
+
+export default exported;
+export {
 	getConnectingSite,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,

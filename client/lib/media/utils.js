@@ -587,3 +587,56 @@ const MediaUtils = {
 };
 
 export default MediaUtils;
+
+const {
+	getFileExtension,
+	getMimePrefix,
+	getMimeType,
+	filterItemsByMimePrefix,
+	sortItemsByDate,
+	isSiteAllowedFileTypesToBeTrusted,
+	getAllowedFileTypesForSite,
+	isSupportedFileTypeInPremium,
+	isSupportedFileTypeForSite,
+	isExceedingSiteMaxUploadSize,
+	isVideoPressItem,
+	playtime,
+	getThumbnailSizeDimensions,
+	generateGalleryShortcode,
+	canUserDeleteItem,
+	canvasToBlob,
+	isItemBeingUploaded,
+	isTransientPreviewable,
+	createTransientMedia,
+	userCan,
+	getEditUrl,
+	getPreviewUrl,
+} = MediaUtils;
+
+const mediaUrl = MediaUtils.url;
+
+export {
+	mediaUrl as url,
+	getFileExtension,
+	getMimePrefix,
+	getMimeType,
+	filterItemsByMimePrefix,
+	sortItemsByDate,
+	isSiteAllowedFileTypesToBeTrusted,
+	getAllowedFileTypesForSite,
+	isSupportedFileTypeInPremium,
+	isSupportedFileTypeForSite,
+	isExceedingSiteMaxUploadSize,
+	isVideoPressItem,
+	playtime,
+	getThumbnailSizeDimensions,
+	generateGalleryShortcode,
+	canUserDeleteItem,
+	canvasToBlob,
+	isItemBeingUploaded,
+	isTransientPreviewable,
+	createTransientMedia,
+	userCan,
+	getEditUrl,
+	getPreviewUrl,
+};

@@ -29,7 +29,7 @@ describe( 'MediaListStore', () => {
 	let Dispatcher, sandbox, MediaListStore, handler, MediaStore;
 
 	beforeAll( function() {
-		MediaStore = require( '../store' );
+		MediaStore = require( '../store' ).default;
 		Dispatcher = require( 'dispatcher' );
 
 		sandbox = sinon.sandbox.create();

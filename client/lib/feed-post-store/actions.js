@@ -8,9 +8,11 @@ import { assign, defer } from 'lodash';
 
 // Internal dependencies
 import Dispatcher from 'dispatcher';
-import { action as ACTION } from './constants';
+import constants from './constants';
 import PostFetcher from './post-fetcher';
 import wpcom from 'lib/wp';
+
+const ACTION = constants.action;
 
 let feedPostFetcher, blogPostFetcher, FeedPostActions;
 
@@ -101,5 +103,8 @@ FeedPostActions = {
 		} );
 	},
 };
+
+const { fetchPost, receivePost, markSeen } = FeedPostActions;
+export { fetchPost, receivePost, markSeen };
 
 export default FeedPostActions;

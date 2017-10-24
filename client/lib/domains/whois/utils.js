@@ -19,7 +19,10 @@ function findPrivacyServiceWhois( whoisContacts ) {
 	return find( whoisContacts, { type: whoisType.PRIVACY_SERVICE } );
 }
 
-export default {
+const exported = {
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
 };
+
+export default exported;
+export { findRegistrantWhois, findPrivacyServiceWhois };

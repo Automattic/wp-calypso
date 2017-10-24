@@ -346,3 +346,15 @@ export default {
 	parseHtml: parseHtml,
 	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
 };
+
+export {
+	decodeEntities,
+	interpose,
+	stripHTML,
+	preventWidows,
+	wpautop,
+	removep,
+	capitalPDangit,
+	parseHtml,
+	unescapeAndFormatSpaces,
+};

@@ -13,10 +13,9 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import App from './app';
-import controller from 'my-sites/controller';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
@@ -221,7 +220,7 @@ export default function() {
 	} );
 
 	// Add pages that use my-sites navigation instead
-	page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
+	page( '/store/stats/:type/:unit', siteSelection, sites );
 	page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 
 	page( '/store/*', notFoundError );

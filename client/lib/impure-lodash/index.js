@@ -10,8 +10,11 @@ import {
 	uniqueId, // depends on previous calls
 } from 'lodash';
 
-export default {
+const exported = {
 	debounce,
 	isPlainObject,
 	uniqueId,
 };
+
+export default exported;
+export { debounce, isPlainObject, uniqueId };
