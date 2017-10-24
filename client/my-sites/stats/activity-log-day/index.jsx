@@ -22,6 +22,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 import { withAnalytics as withAnalyticsAction } from 'state/analytics/actions';
 import { getRequestedRewind } from 'state/selectors';
 import { rewindRequestDismiss as rewindRequestDismissAction } from 'state/activity-log/actions';
+import { rewriteStream } from 'state/activity-log/log/is-discarded';
 
 /**
  * Module constants
@@ -223,7 +224,7 @@ class ActivityLogDay extends Component {
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
 					{ hasLogs &&
-						flatMap( logs, log => [
+						flatMap( rewriteStream( logs ), log => [
 							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
 							<ActivityLogItem
 								applySiteOffset={ applySiteOffset }
