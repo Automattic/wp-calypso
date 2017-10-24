@@ -10,7 +10,6 @@ import page from 'page';
 import { siteSelection, navigation, sites } from 'my-sites/controller';
 import { clearCommentNotices, comment, postComments, redirect, siteComments } from './controller';
 import config from 'config';
-import { VALID_STATUSES } from './constants';
 
 export default function() {
 	if ( ! config.isEnabled( 'comments/management' ) ) {
@@ -20,7 +19,7 @@ export default function() {
 	if ( config.isEnabled( 'comments/management' ) ) {
 		// Site View
 		page(
-			`/comments/:status(${ VALID_STATUSES.join( '|' ) })/:site`,
+			'/comments/:status(all|pending|approved|spam|trash)/:site',
 			siteSelection,
 			navigation,
 			siteComments
@@ -29,7 +28,7 @@ export default function() {
 		// Post View
 		if ( config.isEnabled( 'comments/management/post-view' ) ) {
 			page(
-				`/comments/:status(${ VALID_STATUSES.join( '|' ) })/:site/:post`,
+				'/comments/:status(all|pending|approved|spam|trash)/:site/:post',
 				siteSelection,
 				navigation,
 				postComments
@@ -42,7 +41,7 @@ export default function() {
 		}
 
 		// Redirect
-		page( `/comments/:status(${ VALID_STATUSES.join( '|' ) })`, siteSelection, sites );
+		page( '/comments/:status(all|pending|approved|spam|trash)', siteSelection, sites );
 		page( '/comments/*', siteSelection, redirect );
 		page( '/comments', siteSelection, redirect );
 		page( '/comment/*', siteSelection, redirect );
