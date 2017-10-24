@@ -28,11 +28,14 @@ const TextField = ( {
 
 	return (
 		<FormField
+			fieldName={ fieldName }
 			labelText={ labelText }
 			explanationText={ explanationText }
 			isRequired={ isRequired }
 		>
 			<FormTextInput
+				htmlFor={ fieldName + '-label' }
+				aria-describedby={ explanationText && fieldName + '-description' }
 				value={ renderedValue }
 				placeholder={ placeholderText }
 				onChange={ onChange }

@@ -13,6 +13,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const FormField = ( {
+	fieldName,
 	labelText,
 	explanationText,
 	isRequired,
@@ -26,12 +27,16 @@ const FormField = ( {
 	);
 
 	const explanation = ( explanationText &&
-		<FormSettingExplanation>{ explanationText }</FormSettingExplanation>
+		<FormSettingExplanation id={ fieldName + '-description' }>
+			{ explanationText }
+		</FormSettingExplanation>
 	);
 
 	return (
 		<FormFieldset>
-			<FormLabel>{ labelText }</FormLabel> { requiredLabel }
+			<FormLabel id={ fieldName + '-label' }>
+				{ labelText } { requiredLabel }
+			</FormLabel>
 			{ children }
 			{ explanation }
 		</FormFieldset>
@@ -39,6 +44,7 @@ const FormField = ( {
 };
 
 FormField.PropTypes = {
+	fieldName: PropTypes.string.isRequired,
 	labelText: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
 	isRequired: PropTypes.bool.isRequired,

@@ -10,7 +10,7 @@ Promotions are a synthetic state construct that are actually created from one of
 
 ## Promotions Object
 
-As Promotions only exist in memory state on the client at this point, the definition of a product is as follows:
+As Promotions only exist in memory state on the client at this point, the definition of a promotion is as follows:
 
 ```js
 {

@@ -30,11 +30,14 @@ const PercentField = ( {
 
 	return (
 		<FormField
+			fieldName={ fieldName }
 			labelText={ labelText }
 			explanationText={ explanationText }
 			isRequired={ isRequired }
 		>
 			<FormTextInputWithAffixes
+				htmlFor={ fieldName + '-label' }
+				aria-describedby={ explanationText && fieldName + '-description' }
 				type="number"
 				min="0"
 				max="100"
