@@ -193,9 +193,8 @@ describe( '#receiveCommentError', () => {
 
 		receiveCommentError( { dispatch, getState }, action, response );
 		expect( dispatch ).to.have.been.calledWithMatch( {
-			notice: {
-				text: 'Failed to retrieve comment for site “sqeeeeee!”',
-			},
+			siteId,
+			commentId,
 		} );
 	} );
 } );
