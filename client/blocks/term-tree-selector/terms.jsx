@@ -66,7 +66,7 @@ class TermTreeSelectorList extends Component {
 		analyticsPrefix: 'Category Selector',
 		searchThreshold: 8,
 		loading: true,
-		terms: [],
+		terms: Object.freeze( [] ),
 		onSearch: () => {},
 		onChange: () => {},
 		onNextPage: () => {},
