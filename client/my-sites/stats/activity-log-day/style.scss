@@ -41,6 +41,7 @@
 
 	.foldable-card.card.is-expanded {
 		box-shadow: none;
+		margin: 0;
 
 		.foldable-card__header {
 			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
@@ -86,3 +87,34 @@
 	}
 }
 
+.activity-log-day, .activity-log-item {
+	position: relative;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 73px;
+		height: 16px;
+		left: 33px;
+		width: 2px;
+		background-color: lighten( $gray, 20% );
+
+		@include breakpoint( "<480px" ) {
+			left: 29px;
+		}
+	}
+}
+
+.activity-log-day.is-empty:before {
+	top: 48px;
+}
+
+.activity-log-item:last-of-type:before {
+	height: 41px;
+}
+
+.activity-log-item__restore-confirm:before {
+	bottom: 0;
+	height: auto;
+	top: 57px;
+}

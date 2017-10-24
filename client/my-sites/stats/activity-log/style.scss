@@ -1,23 +1,5 @@
 // Activity Log
 
-.activity-log__wrapper {
-	position: relative;
-
-	&:before {
-		content: "";
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 33px;
-		width: 2px;
-		background-color: lighten( $gray, 20% );
-
-		@include breakpoint( "<480px" ) {
-			left: 29px;
-		}
-	}
-}
-
 .activity-log__rewind-toggle {
 	margin-bottom: 18px;
 }
