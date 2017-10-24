@@ -4,8 +4,10 @@
  * @format
  */
 
-import config from 'config';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import config from 'config';
+import { connect } from 'react-redux';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,6 +15,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { fetchAccountDetails } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getStripeConnectAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
 import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
@@ -47,29 +52,32 @@ class PaymentMethodStripe extends Component {
 		} ),
 	};
 
-	////////////////////////////////////////////////////////////////////////////
-	// TODO - temporary to facilitate testing - will be removed in a subsequent PR
-	static defaultProps = {
-		stripeConnectAccount: {
-			connectedUserID: '', // e.g. acct_14qyt6Alijdnw0EA
-			displayName: '',
-			email: '',
-			firstName: '',
-			isActivated: false,
-			lastName: '',
-			logo: '',
-		},
-	};
-
 	constructor( props ) {
 		super( props );
 		this.state = {
 			hadKeysAtStart: hasStripeKeyPairForMode( props.method ),
+			initializing: config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' ),
 			userRequestedConnectFlow: false,
 			userRequestedKeyFlow: false,
 		};
 	}
 
+	componentDidMount() {
+		const { site } = this.props;
+		if ( site && site.ID ) {
+			this.props.fetchAccountDetails( site.ID );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		const { site } = this.props;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchAccountDetails( newSiteId );
+		}
+	}
 	////////////////////////////////////////////////////////////////////////////
 	// Misc helpers
 
@@ -165,4 +173,22 @@ class PaymentMethodStripe extends Component {
 	}
 }
 
-export default localize( PaymentMethodStripe );
+function mapStateToProps( state ) {
+	const site = getSelectedSiteWithFallback( state );
+	const stripeConnectAccount = getStripeConnectAccount( state, site.ID );
+	return {
+		site,
+		stripeConnectAccount,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchAccountDetails,
+		},
+		dispatch
+	);
+}
+
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripe ) );
