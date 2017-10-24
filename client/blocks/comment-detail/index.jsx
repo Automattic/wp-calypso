@@ -27,7 +27,7 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
-import { getSite, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -61,7 +61,6 @@ export class CommentDetail extends Component {
 		commentDate: PropTypes.string,
 		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
-		commentIsSelected: PropTypes.bool,
 		commentRawContent: PropTypes.string,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
@@ -83,11 +82,9 @@ export class CommentDetail extends Component {
 		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		toggleCommentLike: PropTypes.func,
-		toggleCommentSelected: PropTypes.func,
 	};
 
 	static defaultProps = {
-		commentIsSelected: false,
 		isBulkEdit: false,
 		isLoading: true,
 		refreshCommentData: false,
@@ -160,8 +157,6 @@ export class CommentDetail extends Component {
 			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
 		}
 	};
-
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleLike = e => {
 		e.stopPropagation();
@@ -246,7 +241,6 @@ export class CommentDetail extends Component {
 			commentDate,
 			commentId,
 			commentIsLiked,
-			commentIsSelected,
 			commentRawContent,
 			commentStatus,
 			commentType,
@@ -266,7 +260,6 @@ export class CommentDetail extends Component {
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
-			site,
 			siteBlacklist,
 			siteId,
 			translate,
@@ -306,10 +299,10 @@ export class CommentDetail extends Component {
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
+					commentId={ commentId }
 					commentContent={ commentContent }
 					commentDate={ commentDate }
 					commentIsLiked={ commentIsLiked }
-					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -318,13 +311,12 @@ export class CommentDetail extends Component {
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
-					site={ site }
+					siteId={ siteId }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
 					toggleReply={ this.enterReplyState }
-					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
 				/>
@@ -450,7 +442,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
-		site: getSite( state, siteId ),
 	};
 };
 

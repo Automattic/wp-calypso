@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { get, includes, isUndefined, map } from 'lodash';
+import { difference, get, includes, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,8 @@ import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComment } from 'state/selectors';
+import { clearSelectedComments, selectAllComments } from 'state/ui/comments/selected/actions';
+import { getSiteComment, getSelectedComments, getSelectedCommentsCount } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
 const bulkActions = {
@@ -42,7 +43,6 @@ const bulkActions = {
 export class CommentNavigation extends Component {
 	static defaultProps = {
 		isSelectedAll: false,
-		selectedCount: 0,
 		status: 'unapproved',
 		sortOrder: NEWEST_FIRST,
 	};
@@ -91,10 +91,10 @@ export class CommentNavigation extends Component {
 
 	toggleSelectAll = () => {
 		if ( this.props.isSelectedAll ) {
-			return this.props.toggleSelectAll( [] );
+			return this.props.clearSelectedComments();
 		}
 
-		return this.props.toggleSelectAll( this.props.visibleComments );
+		return this.props.selectAllComments();
 	};
 
 	render() {
@@ -249,11 +249,16 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 			};
 		}
 	} );
+	const selectedComments = getSelectedComments( state, siteId );
 
 	return {
+		isSelectedAll:
+			difference( commentsPage, map( selectedComments, ( { commentId } ) => commentId ) ).length ===
+			0,
 		visibleComments,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+		selectedCount: getSelectedCommentsCount( state, siteId ),
 	};
 };
 
@@ -263,8 +268,19 @@ const mapDispatchToProps = {
 			recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
 			bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 		),
+	clearSelectedComments,
+	selectAllComments,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => ( {
+	...ownProps,
+	...stateProps,
+	...dispatchProps,
+	clearSelectedComments: () => dispatchProps.clearSelectedComments( ownProps.siteId ),
+	selectAllComments: () =>
+		dispatchProps.selectAllComments( ownProps.siteId, stateProps.visibleComments ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
 	localize( UrlSearch( CommentNavigation ) )
 );
