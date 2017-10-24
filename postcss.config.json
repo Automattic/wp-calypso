@@ -1,6 +1,6 @@
 {
     "postcss-custom-properties": {
-        "preserve": "true",
-        "warnings": "false"
+        "preserve": true,
+        "warnings": false
     }
 }
