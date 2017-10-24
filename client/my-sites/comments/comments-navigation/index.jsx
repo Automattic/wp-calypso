@@ -17,7 +17,7 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import ControlItem from 'components/segmented-control/item';
 import Count from 'components/count';
-import CommentNavigationTab from './comment-navigation-tab';
+import CommentsNavigationTab from './comments-navigation-tab';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import NavItem from 'components/section-nav/item';
@@ -39,7 +39,7 @@ const bulkActions = {
 	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
 };
 
-export class CommentNavigation extends Component {
+export class CommentsNavigation extends Component {
 	static defaultProps = {
 		isSelectedAll: false,
 		selectedCount: 0,
@@ -118,12 +118,12 @@ export class CommentNavigation extends Component {
 
 		if ( isBulkEdit ) {
 			return (
-				<SectionNav className="comment-navigation is-bulk-edit">
-					<CommentNavigationTab className="comment-navigation__bulk-count">
+				<SectionNav className="comments-navigation is-bulk-edit">
+					<CommentsNavigationTab className="comments-navigation__bulk-count">
 						<FormCheckbox checked={ isSelectedAll } onChange={ this.toggleSelectAll } />
 						<Count count={ selectedCount } />
-					</CommentNavigationTab>
-					<CommentNavigationTab className="comment-navigation__actions">
+					</CommentsNavigationTab>
+					<CommentsNavigationTab className="comments-navigation__actions">
 						<ButtonGroup>
 							{ this.statusHasAction( 'approve' ) && (
 								<Button
@@ -176,18 +176,18 @@ export class CommentNavigation extends Component {
 								</Button>
 							) }
 						</ButtonGroup>
-					</CommentNavigationTab>
-					<CommentNavigationTab className="comment-navigation__close-bulk">
+					</CommentsNavigationTab>
+					<CommentsNavigationTab className="comments-navigation__close-bulk">
 						<a onClick={ toggleBulkEdit }>
 							<Gridicon icon="cross" />
 						</a>
-					</CommentNavigationTab>
+					</CommentsNavigationTab>
 				</SectionNav>
 			);
 		}
 
 		return (
-			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
+			<SectionNav className="comments-navigation" selectedText={ navItems[ queryStatus ].label }>
 				<NavTabs selectedText={ navItems[ queryStatus ].label }>
 					{ map( navItems, ( { label }, status ) => (
 						<NavItem
@@ -201,10 +201,10 @@ export class CommentNavigation extends Component {
 					) ) }
 				</NavTabs>
 
-				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+				<CommentsNavigationTab className="comments-navigation__actions comments-navigation__open-bulk">
 					{ isEnabled( 'comments/management/sorting' ) &&
 					isCommentsTreeSupported && (
-						<SegmentedControl compact className="comment-navigation__sort-buttons">
+						<SegmentedControl compact className="comments-navigation__sort-buttons">
 							<ControlItem
 								onClick={ setSortOrder( NEWEST_FIRST ) }
 								selected={ sortOrder === NEWEST_FIRST }
@@ -227,7 +227,7 @@ export class CommentNavigation extends Component {
 					<Button compact onClick={ toggleBulkEdit }>
 						{ translate( 'Bulk Edit' ) }
 					</Button>
-				</CommentNavigationTab>
+				</CommentsNavigationTab>
 
 				{ hasSearch && (
 					<Search delaySearch fitsContainer initialValue={ query } onSearch={ doSearch } pinned />
@@ -266,5 +266,5 @@ const mapDispatchToProps = {
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( UrlSearch( CommentNavigation ) )
+	localize( UrlSearch( CommentsNavigation ) )
 );

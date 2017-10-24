@@ -10,7 +10,7 @@ import { each, includes, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentsManagement from './main';
+import Comments from './main';
 import route, { addQueryArgs } from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
@@ -64,7 +64,7 @@ export const comments = function( context ) {
 	}
 
 	renderWithReduxStore(
-		<CommentsManagement
+		<Comments
 			basePath={ context.path }
 			page={ pageNumber }
 			changePage={ changePage( status, siteFragment ) }
