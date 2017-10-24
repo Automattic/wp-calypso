@@ -277,7 +277,7 @@ class Security2faEnable extends React.Component {
 							components: {
 								authyLink: (
 									<a
-										href="https://www.authy.com/users/"
+										href="https://www.authy.com/download/"
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ function() {
