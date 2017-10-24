@@ -45,7 +45,7 @@ class CancelPrivacyProtection extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	};
 
-	initialState = {
+	static initialState = {
 		disabled: false,
 		cancelling: false,
 	};

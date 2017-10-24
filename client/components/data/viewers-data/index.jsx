@@ -18,7 +18,7 @@ export default class extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	initialState = {
+	static initialState = {
 		viewers: false,
 		totalViewers: false,
 		currentPage: false,

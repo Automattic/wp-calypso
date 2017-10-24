@@ -26,7 +26,7 @@ export default class extends Component {
 		fetchOptions: PropTypes.object.isRequired,
 	};
 
-	initialState = {
+	static initialState = {
 		followers: false,
 		totalFollowers: false,
 		currentPage: false,
