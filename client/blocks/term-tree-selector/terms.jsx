@@ -76,7 +76,7 @@ class TermTreeSelectorList extends Component {
 	// initialState is also used to reset state when a the taxonomy prop changes
 	static initialState = {
 		searchTerm: '',
-		requestedPages: [ 1 ],
+		requestedPages: Object.freeze( [ 1 ] ),
 	};
 
 	state = this.constructor.initialState;
