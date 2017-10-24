@@ -147,6 +147,37 @@ dispatch( { type: DELETE, username: 'hunter02' } );
 state.users === {}
 ```
 
+Finally, it's sometimes desirable to apply specific actions to all items in the collection.
+In these cases we can tell the `keyedReducer` which actions are in this class.
+Even without the necessary key in the action they will still get applied.
+For example, each item may have a custom persistence need or an action may have related data which is applicable to the items being reduced in this collection.
+
+For these cases we can simply add in a list of global action types.
+
+```js
+const hexPersister = ( state = 0, { type } ) => {
+	switch ( type ) {
+		case INCREMENT:
+			return state + 1;
+		
+		case DECREMENT:
+			return state - 1;
+		
+		case DESERIALIZE:
+			return parseInt( state, 16 );
+		
+		case SERIALIZE:
+			return state.toString( 16 );
+		
+		default:
+			return state;
+	}
+}
+
+const hexNumbers = keyedReducer( 'counterId', hexPersister, [ DESERIALIZE, SERIALIZE ] );
+hexNumbers.hasCustomPersistence = true;
+```
+
 ### withSchemaValidation( schema, reducer )
 
 When Calypso boots up it loads the last-known state out of persistent storage in the browser.
