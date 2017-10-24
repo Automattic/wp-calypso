@@ -1,0 +1,13 @@
+.flexbox-grid {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+}
+
+.flexbox-grid__content {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+}
