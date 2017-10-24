@@ -5,7 +5,17 @@
  */
 
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight, reduce, isEqual, omit } from 'lodash';
+import {
+	flow,
+	includes,
+	isEqual,
+	mapValues,
+	merge,
+	partialRight,
+	omit,
+	omitBy,
+	reduce,
+} from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
 
@@ -42,8 +52,12 @@ export function isValidStateWithSchema( state, schema ) {
  * previous state.
  *
  * If some action should apply to every single item
- * in the map of keyed objects, this utility cannot be
- * used as it will only reduce the referenced item.
+ * in the map of keyed objects, then that action type
+ * should be supplied in the list of `globalActions`
+ * These will apply to every item in the collection
+ * and they may not have the necessary key: for
+ * example, the DESERIALIZE and SERIALIZE actions
+ * may apply to all items.
  *
  * @example
  * const age = ( state = 0, action ) =>
@@ -72,11 +86,18 @@ export function isValidStateWithSchema( state, schema ) {
  *     }
  * }
  *
- * @param {string} keyName name of key in action referencing item in state map
- * @param {function} reducer applied to referenced item in state map
- * @return {function} super-reducer applying reducer over map of keyed items
+ * @example
+ * const reducer = keyedReducer( 'username', userReducer, [ DESERIALIZE, SERIALIZE ] );
+ * reducer.hasCustomerPersistence = true;
+ *
+ * // now every item can decide what to do for persistence
+ *
+ * @param {String} keyName name of key in action referencing item in state map
+ * @param {Function} reducer applied to referenced item in state map
+ * @param {Array} globalActions set of types which apply to every item in the collection
+ * @return {Function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer ) => {
+export const keyedReducer = ( keyName, reducer, globalActions ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyName ) {
 		throw new TypeError(
@@ -96,7 +117,16 @@ export const keyedReducer = ( keyName, reducer ) => {
 		);
 	}
 
+	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
+
 	return ( state = {}, action ) => {
+		if ( globalActions && includes( globalActions, action.type ) ) {
+			return omitBy(
+				mapValues( state, item => reducer( item, action ) ),
+				a => a === undefined || a === initialState
+			);
+		}
+
 		// don't allow coercion of key name: null => 0
 		if ( ! action.hasOwnProperty( keyName ) ) {
 			return state;
@@ -114,7 +144,6 @@ export const keyedReducer = ( keyName, reducer ) => {
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 		const oldItemState = state[ itemKey ];
 		const newItemState = reducer( oldItemState, action );
 
