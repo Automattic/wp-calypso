@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import PriceInput from 'woocommerce/components/price-input';
 import FormField from './form-field';
 
@@ -24,9 +25,15 @@ const CurrencyField = ( {
 
 	const onChange = ( e ) => {
 		const newValue = e.target.value;
-		// TODO: Round to correct decimal number count (e.g. 2.505 -> 2.51).
-		if ( newValue >= 0 ) {
-			edit( fieldName, newValue );
+		if ( 0 === newValue.length ) {
+			edit( fieldName, '' );
+			return;
+		}
+
+		const numberValue = Number( newValue );
+		if ( 0 <= Number( newValue ) ) {
+			const formattedValue = getCurrencyFormatDecimal( numberValue, currency );
+			edit( fieldName, formattedValue );
 		}
 	};
 
