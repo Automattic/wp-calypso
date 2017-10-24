@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { isPlainObject, isArray } from 'lodash';
 
 /**
@@ -141,39 +140,39 @@ describe( 'post-list-store', () => {
 
 	describe( 'postListStoreId', () => {
 		test( 'should set the default postListStoreId', () => {
-			assert.equal( defaultPostListStore.id, DEFAULT_POST_LIST_ID );
+			expect( defaultPostListStore.id ).toEqual( DEFAULT_POST_LIST_ID );
 		} );
 	} );
 
 	describe( 'dispatcher', () => {
 		test( 'should have a dispatch token', () => {
-			assert.typeOf( defaultPostListStore.dispatchToken, 'string' );
+			expect( typeof defaultPostListStore.dispatchToken ).toBe( 'string' );
 		} );
 	} );
 
 	describe( '#get', () => {
 		test( 'should return an object', () => {
-			assert.isTrue( isPlainObject( defaultPostListStore.get() ) );
+			expect( isPlainObject( defaultPostListStore.get() ) ).toBe( true );
 		} );
 
 		test( 'should return the correct default values', () => {
 			const postList = defaultPostListStore.get();
-			assert.isTrue( isArray( postList.postIds ) );
-			assert.equal( postList.postIds.length, 0 );
-			assert.isTrue( isArray( postList.errors ) );
-			assert.isTrue( isPlainObject( postList.query ) );
-			assert.equal( postList.errors.length, 0 );
-			assert.equal( postList.page, 0 );
-			assert.isFalse( postList.nextPageHandle );
-			assert.isFalse( postList.isLastPage );
-			assert.isFalse( postList.isFetchingNextPage );
-			assert.isFalse( postList.isFetchingUpdated );
+			expect( isArray( postList.postIds ) ).toBe( true );
+			expect( postList.postIds.length ).toEqual( 0 );
+			expect( isArray( postList.errors ) ).toBe( true );
+			expect( isPlainObject( postList.query ) ).toBe( true );
+			expect( postList.errors.length ).toEqual( 0 );
+			expect( postList.page ).toEqual( 0 );
+			expect( postList.nextPageHandle ).toBe( false );
+			expect( postList.isLastPage ).toBe( false );
+			expect( postList.isFetchingNextPage ).toBe( false );
+			expect( postList.isFetchingUpdated ).toBe( false );
 		} );
 	} );
 
 	describe( '#getId', () => {
 		test( 'should the return list ID', () => {
-			assert.equal( defaultPostListStore.getID(), defaultPostListStore.get().id );
+			expect( defaultPostListStore.getID() ).toEqual( defaultPostListStore.get().id );
 		} );
 
 		// fairly certain this doesn't actually work. Thes store ID is not part of the cache key...
@@ -187,48 +186,47 @@ describe( 'post-list-store', () => {
 				type: 'page',
 				order: 'ASC',
 			} );
-			assert.equal( defaultPostListStore.getID(), anotherPostListStore.getID() );
+			expect( defaultPostListStore.getID() ).toEqual( anotherPostListStore.getID() );
 		} );
 	} );
 
 	describe( '#getSiteId', () => {
 		test( 'should the return site ID', () => {
-			assert.equal( defaultPostListStore.getSiteId(), defaultPostListStore.get().query.siteId );
+			expect( defaultPostListStore.getSiteId() ).toEqual( defaultPostListStore.get().query.siteId );
 		} );
 	} );
 
 	describe( '#getAll', () => {
 		test( 'should return an array of posts', () => {
 			const allPosts = defaultPostListStore.getAll();
-			assert.isTrue( isArray( allPosts ) );
-			assert.equal( allPosts.length, 0 );
+			expect( isArray( allPosts ) ).toBe( true );
+			expect( allPosts.length ).toEqual( 0 );
 		} );
 	} );
 
 	describe( '#getTree', () => {
 		test( 'should return a tree-ified array of posts', () => {
 			const treePosts = defaultPostListStore.getTree();
-			assert.isTrue( isArray( treePosts ) );
-			assert.equal( treePosts.length, 0 );
+			expect( isArray( treePosts ) ).toBe( true );
+			expect( treePosts.length ).toEqual( 0 );
 		} );
 	} );
 
 	describe( '#getPage', () => {
 		test( 'should return the page number', () => {
-			assert.equal( defaultPostListStore.getPage(), defaultPostListStore.get().page );
+			expect( defaultPostListStore.getPage() ).toEqual( defaultPostListStore.get().page );
 		} );
 	} );
 
 	describe( '#isLastPage', () => {
 		test( 'should return isLastPage boolean', () => {
-			assert.equal( defaultPostListStore.isLastPage(), defaultPostListStore.get().isLastPage );
+			expect( defaultPostListStore.isLastPage() ).toEqual( defaultPostListStore.get().isLastPage );
 		} );
 	} );
 
 	describe( '#isFetchingNextPage', () => {
 		test( 'should return isFetchingNextPage boolean', () => {
-			assert.equal(
-				defaultPostListStore.isFetchingNextPage(),
+			expect( defaultPostListStore.isFetchingNextPage() ).toEqual(
 				defaultPostListStore.get().isFetchingNextPage
 			);
 		} );
@@ -236,7 +234,7 @@ describe( 'post-list-store', () => {
 
 	describe( '#getNextPageParams', () => {
 		test( 'should return an object of params', () => {
-			assert.isTrue( isPlainObject( defaultPostListStore.getNextPageParams() ) );
+			expect( isPlainObject( defaultPostListStore.getNextPageParams() ) ).toBe( true );
 		} );
 	} );
 
@@ -245,20 +243,20 @@ describe( 'post-list-store', () => {
 			const storedList = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
 			const freshList = [ 3, 5, 7, 9 ];
 			const expectedResults = [ 4, 6, 8 ];
-			assert.deepEqual( getRemovedPosts( storedList, freshList ), expectedResults );
+			expect( getRemovedPosts( storedList, freshList ) ).toEqual( expectedResults );
 		} );
 	} );
 
 	describe( '#getUpdatesParams', () => {
 		test( 'should return an object of params', () => {
-			assert.isTrue( isPlainObject( defaultPostListStore.getUpdatesParams() ) );
+			expect( isPlainObject( defaultPostListStore.getUpdatesParams() ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#hasRecentError', () => {
 		test( 'should return false if there are no errors', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.isFalse( defaultPostListStore.hasRecentError() );
+			expect( defaultPostListStore.hasRecentError() ).toBe( false );
 		} );
 
 		test( 'should return true if recent payload had error', () => {
@@ -271,25 +269,25 @@ describe( 'post-list-store', () => {
 					omg: 'error!',
 				},
 			} );
-			assert.isTrue( defaultPostListStore.hasRecentError() );
+			expect( defaultPostListStore.hasRecentError() ).toBe( true );
 		} );
 	} );
 
 	describe( 'RECEIVE_POSTS_PAGE', () => {
 		test( 'should add post ids for matching postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 		} );
 
 		test( 'should add additional post ids for matching postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 			dispatchReceivePostsPage(
 				defaultPostListStore.getID(),
 				defaultPostListStore.id,
 				TWO_POST_PAYLOAD
 			);
-			assert.equal( defaultPostListStore.getAll().length, 3 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 3 );
 		} );
 
 		test( 'should remove posts omitted in a follow-up post-list page', () => {
@@ -298,13 +296,13 @@ describe( 'post-list-store', () => {
 				defaultPostListStore.id,
 				THREE_POST_PAYLOAD
 			);
-			assert.equal( defaultPostListStore.getAll().length, 3 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 3 );
 			dispatchReceivePostsPage(
 				defaultPostListStore.getID(),
 				defaultPostListStore.id,
 				OMITTED_POST_PAYLOAD
 			);
-			assert.equal( defaultPostListStore.getAll().length, 2 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 2 );
 		} );
 
 		test( 'should remove posts omitted in a follow-up server response', () => {
@@ -313,37 +311,37 @@ describe( 'post-list-store', () => {
 				defaultPostListStore.id,
 				THREE_POST_PAYLOAD_LOCAL
 			);
-			assert.equal( defaultPostListStore.getAll().length, 3 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 3 );
 			dispatchReceivePostsPage(
 				defaultPostListStore.getID(),
 				defaultPostListStore.id,
 				OMIT_INITIAL_POST_PAYLOAD_SERVER
 			);
-			assert.equal( defaultPostListStore.getAll().length, 2 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 2 );
 		} );
 
 		test( 'should add only unique post.global_IDs postListStore', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 		} );
 
 		test( 'should not update if cached store id does not match', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 			dispatchReceivePostsPage( 999, defaultPostListStore.id );
-			assert.equal( defaultPostListStore.getAll().length, 1 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 1 );
 		} );
 
 		test( 'should not add post ids if postListStore does not match', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), 'some-other-post-list-store' );
-			assert.equal( defaultPostListStore.getAll().length, 0 );
+			expect( defaultPostListStore.getAll().length ).toEqual( 0 );
 		} );
 
 		test( 'should set isLastPage true if no next page handle returned', () => {
 			dispatchReceivePostsPage( defaultPostListStore.getID(), defaultPostListStore.id );
-			assert.isTrue( defaultPostListStore.isLastPage() );
+			expect( defaultPostListStore.isLastPage() ).toBe( true );
 		} );
 	} );
 
@@ -353,19 +351,19 @@ describe( 'post-list-store', () => {
 			dispatchReceivePostsPage( DEFAULT_POST_LIST_ID );
 			const currentCacheId = defaultPostListStore.getID();
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
-			assert.equal( currentCacheId, defaultPostListStore.getID() );
+			expect( currentCacheId ).toEqual( defaultPostListStore.getID() );
 		} );
 
 		test( 'should change the active query and id when query options change', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, {} );
 			const currentCacheId = defaultPostListStore.getID();
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
-			assert.notEqual( currentCacheId, defaultPostListStore.getID() );
+			expect( currentCacheId ).not.toEqual( defaultPostListStore.getID() );
 		} );
 
 		test( 'should set site_visibility if no siteId is present', () => {
 			dispatchQueryPosts( DEFAULT_POST_LIST_ID, { type: 'page' } );
-			assert.equal( defaultPostListStore.getNextPageParams().site_visibility, 'visible' );
+			expect( defaultPostListStore.getNextPageParams().site_visibility ).toEqual( 'visible' );
 		} );
 
 		test( 'should set query options passed in', () => {
@@ -374,8 +372,8 @@ describe( 'post-list-store', () => {
 				order: 'ASC',
 			} );
 			const params = defaultPostListStore.getNextPageParams();
-			assert.equal( params.type, 'page' );
-			assert.equal( params.order, 'ASC' );
+			expect( params.type ).toEqual( 'page' );
+			expect( params.order ).toEqual( 'ASC' );
 		} );
 
 		test( 'should remove null query options passed in', () => {
@@ -385,14 +383,14 @@ describe( 'post-list-store', () => {
 				search: null,
 			} );
 			const params = defaultPostListStore.getNextPageParams();
-			assert.isUndefined( params.search );
+			expect( params.search ).not.toBeDefined();
 		} );
 
 		test( 'should not set query options on a different postListStore instance', () => {
 			dispatchQueryPosts( 'some-other-post-list-store', { type: 'page' } );
 			const params = defaultPostListStore.getNextPageParams();
-			assert.equal( params.type, 'post' );
-			assert.equal( params.order, 'DESC' );
+			expect( params.type ).toEqual( 'post' );
+			expect( params.order ).toEqual( 'DESC' );
 		} );
 	} );
 } );

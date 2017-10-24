@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 
@@ -15,7 +14,7 @@ import FeatureExample from '../index';
 describe( 'Feature Example', () => {
 	test( 'should have Feature-example class', () => {
 		const featureExample = shallow( <FeatureExample /> );
-		assert.lengthOf( featureExample.find( '.feature-example' ), 1 );
+		expect( featureExample.find( '.feature-example' ).length ).toBe( 1 );
 	} );
 
 	test( 'should contains the passed children wrapped by a feature-example div', () => {
@@ -24,6 +23,6 @@ describe( 'Feature Example', () => {
 				<div>test</div>
 			</FeatureExample>
 		);
-		assert.isTrue( featureExample.contains( <div>test</div> ) );
+		expect( featureExample.contains( <div>test</div> ) ).toBe( true );
 	} );
 } );

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -79,8 +78,8 @@ describe( 'utils', () => {
 
 		test( 'should return empty array if payload is null', () => {
 			const actualDeltas = parseOrderDeltas( null );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect( Array.isArray( actualDeltas ) ).toBe( true );
+			expect( actualDeltas.length === 0 ).toBe( true );
 		} );
 
 		test( 'should return empty array if payload.deltas has no keys', () => {
@@ -89,26 +88,26 @@ describe( 'utils', () => {
 				deltas: {},
 				delta_fields: [ 'period' ],
 			} );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect( Array.isArray( actualDeltas ) ).toBe( true );
+			expect( actualDeltas.length === 0 ).toBe( true );
 		} );
 
 		test( 'should return empty array if payload.deltas or delta_fields are missing', () => {
 			const actualDeltas = parseOrderDeltas( { date: '2017' } );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect( Array.isArray( actualDeltas ) ).toBe( true );
+			expect( actualDeltas.length === 0 ).toBe( true );
 		} );
 
 		test( 'should return a well formed array of delta objects', () => {
 			const actualDeltas = parseOrderDeltas( orderPayload );
-			assert.isArray( actualDeltas );
-			assert.isObject( actualDeltas[ 0 ] );
-			assert.isObject( actualDeltas[ 0 ].orders );
+			expect( Array.isArray( actualDeltas ) ).toBe( true );
+			expect( typeof actualDeltas[ 0 ] ).toBe( 'object' );
+			expect( typeof actualDeltas[ 0 ].orders ).toBe( 'object' );
 		} );
 
 		test( 'should return an array of delta objects as expected', () => {
 			const actualDeltas = parseOrderDeltas( orderPayload );
-			assert.deepEqual( actualDeltas, expectedDeltas );
+			expect( actualDeltas ).toEqual( expectedDeltas );
 		} );
 	} );
 	describe( 'parseOrdersChartData', () => {
@@ -137,60 +136,60 @@ describe( 'utils', () => {
 
 		test( 'should return empty array if payload.data is missing', () => {
 			const actualOrders = parseOrdersChartData( { date: '2017' } );
-			assert.isArray( actualOrders );
-			assert.isTrue( actualOrders.length === 0 );
+			expect( Array.isArray( actualOrders ) ).toBe( true );
+			expect( actualOrders.length === 0 ).toBe( true );
 		} );
 
 		test( 'should return a well formed array of objects', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
-			assert.isArray( actualOrders );
-			assert.isObject( actualOrders[ 0 ] );
+			expect( Array.isArray( actualOrders ) ).toBe( true );
+			expect( typeof actualOrders[ 0 ] ).toBe( 'object' );
 		} );
 
 		test( 'should return an array of objects as expected', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
-			assert.deepEqual( actualOrders, expectedOrders );
+			expect( actualOrders ).toEqual( expectedOrders );
 		} );
 	} );
 	describe( 'getPeriodFormat', () => {
 		test( 'should return correctly day format for long formats', () => {
 			const response = getPeriodFormat( 'day', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( response ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly week format for long formats', () => {
 			const response = getPeriodFormat( 'week', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( response ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly month format for long formats', () => {
 			const response = getPeriodFormat( 'month', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( response ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly year format for long formats', () => {
 			const response = getPeriodFormat( 'year', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( response ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly day format for short (new) formats', () => {
 			const response = getPeriodFormat( 'day', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( response ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly week format for short (new) formats', () => {
 			const response = getPeriodFormat( 'week', '2017-W27' );
-			assert.strictEqual( response, 'YYYY-[W]WW' );
+			expect( response ).toBe( 'YYYY-[W]WW' );
 		} );
 
 		test( 'should return correctly month format for short (new) formats', () => {
 			const response = getPeriodFormat( 'month', '2017-07' );
-			assert.strictEqual( response, 'YYYY-MM' );
+			expect( response ).toBe( 'YYYY-MM' );
 		} );
 
 		test( 'should return correctly year format for short (new) formats', () => {
 			const response = getPeriodFormat( 'year', '2017' );
-			assert.strictEqual( response, 'YYYY' );
+			expect( response ).toBe( 'YYYY' );
 		} );
 	} );
 

@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -51,10 +50,10 @@ describe( 'main', () => {
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'theme__sheet' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'theme__sheet' ) ).toBe( true );
 		} );
 
 		test( "doesn't throw an exception with theme data", () => {
@@ -66,10 +65,10 @@ describe( 'main', () => {
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'theme__sheet' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'theme__sheet' ) ).toBe( true );
 		} );
 
 		test( "doesn't throw an exception with invalid theme data", () => {
@@ -81,10 +80,10 @@ describe( 'main', () => {
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'empty-content' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'empty-content' ) ).toBe( true );
 		} );
 	} );
 } );

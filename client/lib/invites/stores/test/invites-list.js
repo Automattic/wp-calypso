@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import Dispatcher from 'dispatcher';
 import { action as ActionTypes } from 'lib/invites/constants';
 
@@ -64,16 +59,16 @@ describe( 'List Invites Store', () => {
 
 		test( 'List of invites should be an object', () => {
 			const invites = ListInvitesStore.getInvites( siteId );
-			assert.isObject( invites );
+			expect( typeof invites ).toBe( 'object' );
 		} );
 
 		test( 'Fetching more invites should add to the object', () => {
 			const invites = ListInvitesStore.getInvites( siteId );
 			let invitesAgain = [];
-			assert.equal( 1, invites.size );
+			expect( 1 ).toEqual( invites.size );
 			Dispatcher.handleServerAction( actions.receiveMoreInvites );
 			invitesAgain = ListInvitesStore.getInvites( siteId );
-			assert.equal( 2, invitesAgain.size );
+			expect( 2 ).toEqual( invitesAgain.size );
 		} );
 	} );
 } );

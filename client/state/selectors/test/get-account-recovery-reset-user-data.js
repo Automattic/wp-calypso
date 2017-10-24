@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -27,6 +26,6 @@ describe( 'getAccountRecoveryResetUserData()', () => {
 			},
 		} );
 
-		assert.deepEqual( getAccountRecoveryResetUserData( state ), expectedUserData );
+		expect( getAccountRecoveryResetUserData( state ) ).toEqual( expectedUserData );
 	} );
 } );

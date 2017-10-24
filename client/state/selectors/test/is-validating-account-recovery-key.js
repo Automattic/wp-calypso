@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -23,10 +22,10 @@ describe( 'isValidatingAccountRecoveryKey()', () => {
 			},
 		} );
 
-		assert.isTrue( isValidatingAccountRecoveryKey( state ) );
+		expect( isValidatingAccountRecoveryKey( state ) ).toBe( true );
 	} );
 
 	test( 'should return false as the default value.', () => {
-		assert.isFalse( isValidatingAccountRecoveryKey( undefined ) );
+		expect( isValidatingAccountRecoveryKey( undefined ) ).toBe( false );
 	} );
 } );

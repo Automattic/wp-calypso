@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	formClear,
 	formLoad,
@@ -30,7 +25,7 @@ describe( 'actions', () => {
 	test( 'should return an action object to signal the initialization of the store', () => {
 		const action = formLoad( CONTACT_FORM_DEFAULT );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: EDITOR_CONTACT_FORM_LOAD,
 			contactForm: CONTACT_FORM_DEFAULT,
 		} );
@@ -39,13 +34,13 @@ describe( 'actions', () => {
 	test( 'should return an action object to signal the creation of a new default field', () => {
 		const action = fieldAdd();
 
-		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_FIELD_ADD } );
+		expect( action ).toEqual( { type: EDITOR_CONTACT_FORM_FIELD_ADD } );
 	} );
 
 	test( 'should return an action object to signal the removal of a field by index', () => {
 		const action = fieldRemove( 1 );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: EDITOR_CONTACT_FORM_FIELD_REMOVE,
 			index: 1,
 		} );
@@ -54,13 +49,13 @@ describe( 'actions', () => {
 	test( 'should return an action object to signal the removal of the contact form data', () => {
 		const action = formClear();
 
-		assert.deepEqual( action, { type: EDITOR_CONTACT_FORM_CLEAR } );
+		expect( action ).toEqual( { type: EDITOR_CONTACT_FORM_CLEAR } );
 	} );
 
 	test( 'should return an action object to signal the update of a field by index', () => {
 		const action = fieldUpdate( 1, { label: 'Name', type: 'text', required: true } );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: EDITOR_CONTACT_FORM_FIELD_UPDATE,
 			index: 1,
 			field: { label: 'Name', type: 'text', required: true },
@@ -70,7 +65,7 @@ describe( 'actions', () => {
 	test( 'should return an action object to signal the update of the form settings', () => {
 		const action = settingsUpdate( { to: 'user@example.com', subject: 'this is the subject' } );
 
-		assert.deepEqual( action, {
+		expect( action ).toEqual( {
 			type: EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 			settings: {
 				to: 'user@example.com',

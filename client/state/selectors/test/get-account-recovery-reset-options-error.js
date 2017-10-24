@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getAccountRecoveryResetOptionsError } from '../';
 
 describe( 'getAccountRecoveryResetOptionsError()', () => {
@@ -26,7 +21,7 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 			},
 		};
 
-		assert.deepEqual( getAccountRecoveryResetOptionsError( state ), expectedError );
+		expect( getAccountRecoveryResetOptionsError( state ) ).toEqual( expectedError );
 	} );
 
 	test( 'should return null if no error exists.', () => {
@@ -38,6 +33,6 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 			},
 		};
 
-		assert.isNull( getAccountRecoveryResetOptionsError( state ) );
+		expect( getAccountRecoveryResetOptionsError( state ) ).toBeNull();
 	} );
 } );

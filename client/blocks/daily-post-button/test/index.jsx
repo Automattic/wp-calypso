@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import pageSpy from 'page';
@@ -47,7 +46,7 @@ describe( 'DailyPostButton', () => {
 					onlyOneSite={ false }
 				/>
 			);
-			assert.isNull( dailyPostPrompt.type() );
+			expect( dailyPostPrompt.type() ).toBeNull();
 		} );
 
 		test( 'renders as a span tag by default', () => {
@@ -60,7 +59,7 @@ describe( 'DailyPostButton', () => {
 					onlyOneSite={ true }
 				/>
 			);
-			assert.equal( 'span', renderAsSpan.type() );
+			expect( 'span' ).toEqual( renderAsSpan.type() );
 		} );
 
 		test( 'renders as the tag specified in props tagName', () => {
@@ -74,7 +73,7 @@ describe( 'DailyPostButton', () => {
 					onlyOneSite={ true }
 				/>
 			);
-			assert.equal( 'span', renderAsSpan.type() );
+			expect( 'span' ).toEqual( renderAsSpan.type() );
 		} );
 	} );
 
@@ -90,7 +89,7 @@ describe( 'DailyPostButton', () => {
 				/>
 			);
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
-			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
+			expect( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) ).toBe( true );
 		} );
 
 		test( 'shows the site selector if the user has more than one site', done => {
@@ -125,7 +124,7 @@ describe( 'DailyPostButton', () => {
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
 			const query = qs.parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
-			assert.deepEqual( query, { title: `Daily Prompt: ${ title }`, url: URL } );
+			expect( query ).toEqual( { title: `Daily Prompt: ${ title }`, url: URL } );
 		} );
 	} );
 } );

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -33,7 +32,7 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isTrue( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( true );
 	} );
 
 	test( 'should return false if non of the purchases is a business plan.', () => {
@@ -56,7 +55,7 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if current user id is null.', () => {
@@ -64,7 +63,7 @@ describe( 'isBusinessPlanUser()', () => {
 			currentUser: {},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 
 	test( 'should return false if purchasing data is null.', () => {
@@ -84,6 +83,6 @@ describe( 'isBusinessPlanUser()', () => {
 			},
 		} );
 
-		assert.isFalse( isBusinessPlanUser( state ) );
+		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 } );

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -23,10 +22,10 @@ describe( 'isRequestingResetPassword()', () => {
 			},
 		} );
 
-		assert.isTrue( isRequestingResetPassword( state ) );
+		expect( isRequestingResetPassword( state ) ).toBe( true );
 	} );
 
 	test( 'should return false as default value.', () => {
-		assert.isFalse( isRequestingResetPassword( undefined ) );
+		expect( isRequestingResetPassword( undefined ) ).toBe( false );
 	} );
 } );

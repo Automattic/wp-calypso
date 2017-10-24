@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
 import { spy } from 'sinon';
@@ -24,10 +23,10 @@ describe( 'EmbedDialog', () => {
 			<EmbedDialog embedUrl={ url } onCancel={ noop } onUpdate={ noop } translate={ identity } />
 		);
 
-		assert.isFalse( wrapper.instance().props.isVisible );
-		assert.strictEqual( wrapper.find( '.embed__title' ).length, 1 );
-		assert.strictEqual( wrapper.find( FormTextInput ).length, 1 );
-		assert.strictEqual( wrapper.find( FormTextInput ).get( 0 ).props.defaultValue, url );
+		expect( wrapper.instance().props.isVisible ).toBe( false );
+		expect( wrapper.find( '.embed__title' ).length ).toBe( 1 );
+		expect( wrapper.find( FormTextInput ).length ).toBe( 1 );
+		expect( wrapper.find( FormTextInput ).get( 0 ).props.defaultValue ).toBe( url );
 	} );
 
 	test( "should update the input field's value when input changes", () => {
@@ -49,10 +48,10 @@ describe( 'EmbedDialog', () => {
 		};
 		let inputField = wrapper.find( FormTextInput ).get( 0 );
 
-		assert.strictEqual( inputField.props.defaultValue, originalUrl );
+		expect( inputField.props.defaultValue ).toBe( originalUrl );
 		wrapper.find( FormTextInput ).simulate( 'change', mockChangeEvent );
 		inputField = wrapper.find( FormTextInput ).get( 0 );
-		assert.strictEqual( inputField.props.defaultValue, newUrl );
+		expect( inputField.props.defaultValue ).toBe( newUrl );
 	} );
 
 	test( 'should return the new url to onUpdate when updating', () => {
@@ -77,10 +76,10 @@ describe( 'EmbedDialog', () => {
 			/>
 		);
 
-		assert.strictEqual( currentUrl, originalUrl );
+		expect( currentUrl ).toBe( originalUrl );
 		wrapper.find( FormTextInput ).simulate( 'change', mockChangeEvent );
 		wrapper.instance().onUpdate();
-		assert.strictEqual( currentUrl, newUrl );
+		expect( currentUrl ).toBe( newUrl );
 	} );
 
 	test( 'should not return the new url to onUpdate when canceling', () => {
@@ -106,11 +105,11 @@ describe( 'EmbedDialog', () => {
 			/>
 		);
 
-		assert.strictEqual( currentUrl, originalUrl );
+		expect( currentUrl ).toBe( originalUrl );
 		wrapper.find( FormTextInput ).simulate( 'change', mockChangeEvent );
-		assert.isFalse( noopSpy.called );
+		expect( noopSpy.called ).toBe( false );
 		wrapper.find( Dialog ).simulate( 'cancel' );
-		assert.isTrue( noopSpy.called );
-		assert.strictEqual( currentUrl, originalUrl );
+		expect( noopSpy.called ).toBe( true );
+		expect( currentUrl ).toBe( originalUrl );
 	} );
 } );

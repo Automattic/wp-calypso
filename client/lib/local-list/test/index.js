@@ -6,11 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import LocalList from '../';
 
 jest.mock( 'store', () => {
@@ -46,46 +41,46 @@ describe( 'LocalList', () => {
 	describe( 'options', () => {
 		test( 'should set the localStoreKey', () => {
 			const statList2 = new LocalList( { localStoreKey: 'RandomKey' } );
-			assert.equal( statList2.localStoreKey, 'RandomKey' );
+			expect( statList2.localStoreKey ).toEqual( 'RandomKey' );
 		} );
 
 		test( 'should set the limit', () => {
 			const statList2 = new LocalList( { localStoreKey: 'RandomKey2', limit: 25 } );
-			assert.equal( statList2.limit, 25 );
+			expect( statList2.limit ).toEqual( 25 );
 		} );
 	} );
 
 	describe( 'functions', () => {
 		test( 'should have set function', () => {
-			assert.isFunction( statList.set, 'set should be a function' );
+			expect( typeof statList.set ).toBe( 'function' );
 		} );
 
 		test( 'should have find function', () => {
-			assert.isFunction( statList.find, 'find should be a function' );
+			expect( typeof statList.find ).toBe( 'function' );
 		} );
 
 		test( 'should have getData function', () => {
-			assert.isFunction( statList.getData, 'getData should be a function' );
+			expect( typeof statList.getData ).toBe( 'function' );
 		} );
 
 		test( 'should have clear function', () => {
-			assert.isFunction( statList.clear, 'clear should be a function' );
+			expect( typeof statList.clear ).toBe( 'function' );
 		} );
 	} );
 
 	describe( 'getData', () => {
 		test( 'should return an empty array', () => {
-			assert.lengthOf( statList.getData(), 0, 'localData should be empty' );
+			expect( statList.getData().length ).toBe( 0 );
 		} );
 	} );
 
 	describe( 'clear', () => {
 		test( 'should empty the localStorage', () => {
 			createLocalRecords( statList, 2 );
-			assert.lengthOf( statList.getData(), 2, 'localData should have two records' );
+			expect( statList.getData().length ).toBe( 2 );
 
 			statList.clear();
-			assert.lengthOf( statList.getData(), 0, 'localData should have no records' );
+			expect( statList.getData().length ).toBe( 0 );
 		} );
 	} );
 
@@ -96,19 +91,19 @@ describe( 'LocalList', () => {
 
 		test( 'should store local data for a given key', () => {
 			statList.set( anExampleKey, {} );
-			assert.lengthOf( statList.getData(), 1, 'localData should have one record' );
+			expect( statList.getData().length ).toBe( 1 );
 		} );
 
 		test( 'should only store one record for a given key', () => {
 			statList.set( anExampleKey, {} );
 			statList.set( anExampleKey, {} );
-			assert.lengthOf( statList.getData(), 1, 'localData should have one record' );
+			expect( statList.getData().length ).toBe( 1 );
 		} );
 
 		test( 'should store multiple records for different keys', () => {
 			statList.set( anExampleKey, {} );
 			statList.set( anExampleKey + '-too', {} );
-			assert.lengthOf( statList.getData(), 2, 'localData should have two records' );
+			expect( statList.getData().length ).toBe( 2 );
 		} );
 
 		test( 'should store the newest record for a given key', () => {
@@ -117,8 +112,8 @@ describe( 'LocalList', () => {
 			statList.set( anExampleKey, { newest: true } );
 
 			const localRecord = statList.getData()[ 0 ];
-			assert.lengthOf( statList.getData(), 1, 'localData should have one record' );
-			assert.isTrue( localRecord.data.newest );
+			expect( statList.getData().length ).toBe( 1 );
+			expect( localRecord.data.newest ).toBe( true );
 		} );
 
 		describe( 'record', () => {
@@ -126,17 +121,17 @@ describe( 'LocalList', () => {
 				statList.clear();
 				const localRecord = statList.set( anExampleKey, {} );
 
-				assert.equal( localRecord.key, anExampleKey, 'It should have the correct key' );
+				expect( localRecord.key ).toEqual( anExampleKey );
 			} );
 
 			test( 'should set a createdAt attribute', () => {
 				const localRecord = statList.getData()[ 0 ];
-				assert.typeOf( localRecord.createdAt, 'number', 'It should have a timestamp' );
+				expect( typeof localRecord.createdAt ).toBe( 'number' );
 			} );
 
 			test( 'should set the data', () => {
 				const localRecord = statList.getData()[ 0 ];
-				assert.typeOf( localRecord.data, 'object', 'It should have a data object' );
+				expect( typeof localRecord.data ).toBe( 'object' );
 			} );
 		} );
 	} );
@@ -145,40 +140,28 @@ describe( 'LocalList', () => {
 		test( 'should default to only allow 10 records to be stored', () => {
 			statList.clear();
 			createLocalRecords( statList, 12 );
-			assert.lengthOf( statList.getData(), 10, 'localData should have 10 records' );
-			assert.equal(
-				statList.getData()[ 9 ].key,
-				anExampleKey + '||' + 11,
-				'the last record should be the last created'
-			);
-			assert.equal(
-				statList.getData()[ 0 ].key,
-				anExampleKey + '||' + 2,
-				'the oldest record should be correct'
-			);
+			expect( statList.getData().length ).toBe( 10 );
+			expect( statList.getData()[ 9 ].key ).toEqual( anExampleKey + '||' + 11 );
+			expect( statList.getData()[ 0 ].key ).toEqual( anExampleKey + '||' + 2 );
 		} );
 
 		test( 'should allow default limit to be overidden', () => {
 			const limit = 14,
 				statList2 = new LocalList( { localStoreKey: 'TestLocalListKey2', limit: limit } );
-			assert.equal( statList2.limit, limit );
+			expect( statList2.limit ).toEqual( limit );
 
 			for ( let i = 0; i < limit; i++ ) {
 				const key = anExampleKey + '||' + i;
 				statList2.set( key, {} );
 			}
 
-			assert.equal(
-				statList2.getData().length,
-				limit,
-				'localData should have ' + limit + ' records'
-			);
+			expect( statList2.getData().length ).toEqual( limit );
 		} );
 	} );
 
 	describe( 'find', () => {
 		test( 'should return false if record not found', () => {
-			assert.isFalse( statList.find( 'chewbacca' ), 'there should not be a chewbacca in here' );
+			expect( statList.find( 'chewbacca' ) ).toBe( false );
 		} );
 
 		test( 'should return the correct record', () => {
@@ -186,7 +169,7 @@ describe( 'LocalList', () => {
 			statList.set( anExampleKey, {} );
 			createLocalRecords( statList, 2 );
 			const record = statList.find( anExampleKey );
-			assert.equal( record.key, anExampleKey, 'Keys should match' );
+			expect( record.key ).toEqual( anExampleKey );
 		} );
 	} );
 } );

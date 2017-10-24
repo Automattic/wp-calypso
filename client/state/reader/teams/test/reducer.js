@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
 import deepfreeze from 'deep-freeze';
 
 /**
@@ -66,16 +65,16 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'deserialize: should succeed with good data', () => {
-			assert.deepEqual( validState, items( validState, { type: DESERIALIZE } ) );
+			expect( validState ).toEqual( items( validState, { type: DESERIALIZE } ) );
 		} );
 
 		test( 'deserialize: should ignore bad data', () => {
 			let state;
 			try {
 				state = items( invalidState, { type: DESERIALIZE } );
-				assert.fail();
+				expect( false ).toBe( true );
 			} catch ( err ) {
-				assert.deepEqual( [], state );
+				expect( [] ).toEqual( state );
 			}
 		} );
 	} );

@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
@@ -49,7 +48,7 @@ describe( 'ThemesList', () => {
 
 	describe( 'propTypes', () => {
 		test( 'specifies the required propType', () => {
-			assert( themesList.type.propTypes.themes, 'themes propType missing' );
+			expect( themesList.type.propTypes.themes ).toBeTruthy();
 		} );
 	} );
 
@@ -62,11 +61,8 @@ describe( 'ThemesList', () => {
 		} );
 
 		test( 'should render a div with a className of "themes-list"', () => {
-			assert( themesListElement, 'element does not exist' );
-			assert(
-				themesListElement.props.className === 'themes-list',
-				'className does not equal "themes-list"'
-			);
+			expect( themesListElement ).toBeTruthy();
+			expect( themesListElement.props.className === 'themes-list' ).toBeTruthy();
 		} );
 
 		describe( 'when no themes are found', () => {
@@ -80,7 +76,7 @@ describe( 'ThemesList', () => {
 			} );
 
 			test( 'displays the EmptyContent component', () => {
-				assert( themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
+				expect( themesListElement.type.displayName === 'EmptyContent' ).toBeTruthy();
 			} );
 		} );
 	} );

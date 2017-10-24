@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import { cloneDeep, forEach } from 'lodash';
 import sinon from 'sinon';
 
@@ -31,12 +30,12 @@ describe( 'SitesList', () => {
 
 	describe( 'initialization', () => {
 		test( 'should create the correct number of sites', () => {
-			assert.equal( initializedSites.length, originalData.length );
+			expect( initializedSites.length ).toEqual( originalData.length );
 		} );
 
 		test( 'should create Site objects', () => {
 			forEach( initializedSites, site => {
-				assert.instanceOf( site, Site );
+				expect( site ).toBeInstanceOf( Site );
 			} );
 		} );
 
@@ -45,13 +44,13 @@ describe( 'SitesList', () => {
 			const origSite = originalData[ 0 ];
 
 			forEach( origSite, ( value, prop ) => {
-				assert.deepEqual( value, site[ prop ] );
+				expect( value ).toEqual( site[ prop ] );
 			} );
 		} );
 
 		test( 'should add change handlers', () => {
 			forEach( initializedSites, site => {
-				assert.isDefined( site.listeners( 'change' ) );
+				expect( site.listeners( 'change' ) ).toBeDefined();
 			} );
 		} );
 	} );
@@ -69,7 +68,7 @@ describe( 'SitesList', () => {
 			const updatedList = sitesList.get();
 
 			forEach( originalList, ( site, index ) => {
-				assert.strictEqual( site, updatedList[ index ] );
+				expect( site ).toBe( updatedList[ index ] );
 			} );
 		} );
 
@@ -82,7 +81,7 @@ describe( 'SitesList', () => {
 			const updatedList = sitesList.get();
 
 			forEach( updatedList, site => {
-				assert.notProperty( site, 'icon' );
+				expect( 'icon' in site ).toBeFalsy();
 			} );
 		} );
 
@@ -92,7 +91,7 @@ describe( 'SitesList', () => {
 			const updatedSite = updatedData[ 0 ];
 
 			forEach( updatedSite, ( updatedValue, prop ) => {
-				assert.deepEqual( updatedValue, site[ prop ] );
+				expect( updatedValue ).toEqual( site[ prop ] );
 			} );
 		} );
 	} );
@@ -107,7 +106,7 @@ describe( 'SitesList', () => {
 
 			const site = sitesList.getSite( siteId );
 			site.set( { description: 'Calypso rocks!' } );
-			assert.isTrue( changeCallback.called );
+			expect( changeCallback.called ).toBe( true );
 		} );
 	} );
 } );

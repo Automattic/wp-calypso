@@ -3,23 +3,18 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import olarkStore from 'lib/olark-store';
 
 describe( 'index', () => {
 	test( 'Olark store data should be an object', () => {
 		const data = olarkStore.get();
-		assert.isObject( data );
+		expect( typeof data ).toBe( 'object' );
 	} );
 
 	test( 'Olark store data should have expected properties', () => {
 		const data = olarkStore.get();
-		assert.isBoolean( data.isOlarkReady );
-		assert.isBoolean( data.isOperatorAvailable );
-		assert.isObject( data.details );
+		expect( typeof data.isOlarkReady ).toBe( 'boolean' );
+		expect( typeof data.isOperatorAvailable ).toBe( 'boolean' );
+		expect( typeof data.details ).toBe( 'object' );
 	} );
 } );

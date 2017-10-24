@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -93,24 +92,24 @@ describe( 'logged-out', () => {
 
 		test( 'renders without error when no themes are present', () => {
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
+			} ).not.toThrow();
 			// Should show a "No themes found" message
-			assert.isTrue( markup.includes( 'empty-content' ) );
+			expect( markup.includes( 'empty-content' ) ).toBe( true );
 		} );
 
 		test( 'renders without error when themes are present', () => {
 			store.dispatch( receiveThemes( themes, 'wpcom', DEFAULT_THEME_QUERY, themes.length ) );
 
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
+			} ).not.toThrow();
 			// All 5 themes should appear...
-			assert.equal( 5, markup.match( /theme__content/g ).length );
+			expect( 5 ).toEqual( markup.match( /theme__content/g ).length );
 			// .. and no empty content placeholders should appear
-			assert.isFalse( markup.includes( 'empty-content' ) );
+			expect( markup.includes( 'empty-content' ) ).toBe( false );
 		} );
 
 		test( 'renders without error when theme fetch fails', () => {
@@ -122,11 +121,11 @@ describe( 'logged-out', () => {
 			} );
 
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
+			} ).not.toThrow();
 			// Should show a "No themes found" message
-			assert.isTrue( markup.includes( 'empty-content' ) );
+			expect( markup.includes( 'empty-content' ) ).toBe( true );
 		} );
 	} );
 } );

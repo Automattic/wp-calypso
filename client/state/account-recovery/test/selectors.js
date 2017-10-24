@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isFetchingAccountRecoverySettings } from '../selectors';
 
 describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () => {
@@ -18,6 +13,6 @@ describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () =>
 			},
 		};
 
-		assert.isTrue( isFetchingAccountRecoverySettings( state ) );
+		expect( isFetchingAccountRecoverySettings( state ) ).toBe( true );
 	} );
 } );

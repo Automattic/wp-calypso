@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -45,7 +44,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 		} );
 
-		assert.isTrue( state.options.isRequesting );
+		expect( state.options.isRequesting ).toBe( true );
 	} );
 
 	const hasItemsState = deepFreeze( {
@@ -59,7 +58,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 		} );
 
-		assert.deepEqual( state.options.items, [] );
+		expect( state.options.items ).toEqual( [] );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should delete the previous items.', () => {
@@ -68,7 +67,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.deepEqual( state.options.items, [] );
+		expect( state.options.items ).toEqual( [] );
 	} );
 
 	const requestingState = deepFreeze( {
@@ -83,7 +82,7 @@ describe( '#account-recovery/reset reducer', () => {
 			items: [],
 		} );
 
-		assert.isFalse( state.options.isRequesting );
+		expect( state.options.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should unset isRequesting flag.', () => {
@@ -92,7 +91,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.options.isRequesting );
+		expect( state.options.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should populate the items field.', () => {
@@ -101,7 +100,7 @@ describe( '#account-recovery/reset reducer', () => {
 			items: fetchedOptions,
 		} );
 
-		assert.deepEqual( state.options.items, fetchedOptions );
+		expect( state.options.items ).toEqual( fetchedOptions );
 	} );
 
 	const mockError = deepFreeze( {
@@ -115,7 +114,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: mockError,
 		} );
 
-		assert.deepEqual( state.options.error, mockError );
+		expect( state.options.error ).toEqual( mockError );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the userData field.', () => {
@@ -130,7 +129,7 @@ describe( '#account-recovery/reset reducer', () => {
 			userData,
 		} );
 
-		assert.deepEqual( state.userData, userData );
+		expect( state.userData ).toEqual( userData );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_SET_METHOD action should populate the method field', () => {
@@ -140,7 +139,7 @@ describe( '#account-recovery/reset reducer', () => {
 			method,
 		} );
 
-		assert.equal( state.method, method );
+		expect( state.method ).toEqual( method );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_REQUEST action should set the requesting status flag', () => {
@@ -148,7 +147,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST,
 		} );
 
-		assert.isTrue( state.requestReset.isRequesting );
+		expect( state.requestReset.isRequesting ).toBe( true );
 	} );
 
 	const requestingResetState = deepFreeze( {
@@ -162,7 +161,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 		} );
 
-		assert.isFalse( state.requestReset.isRequesting );
+		expect( state.requestReset.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should unset the requesting status flag', () => {
@@ -171,7 +170,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.requestReset.isRequesting );
+		expect( state.requestReset.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should populate the error field', () => {
@@ -180,7 +179,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: mockError,
 		} );
 
-		assert.deepEqual( state.requestReset.error, mockError );
+		expect( state.requestReset.error ).toEqual( mockError );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY action should set the key field', () => {
@@ -190,7 +189,7 @@ describe( '#account-recovery/reset reducer', () => {
 			key,
 		} );
 
-		assert.equal( state.key, key );
+		expect( state.key ).toEqual( key );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST action should set the requesting status flag of the validate state tree', () => {
@@ -198,7 +197,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 		} );
 
-		assert.isTrue( state.validate.isRequesting );
+		expect( state.validate.isRequesting ).toBe( true );
 	} );
 
 	const validatingState = deepFreeze( {
@@ -212,7 +211,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 		} );
 
-		assert.isFalse( state.validate.isRequesting );
+		expect( state.validate.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR action should unset the requesting status flag of the validate state tree', () => {
@@ -221,7 +220,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.validate.isRequesting );
+		expect( state.validate.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR action should save the error data in the validate state tree', () => {
@@ -230,7 +229,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: mockError,
 		} );
 
-		assert.deepEqual( state.validate.error, mockError );
+		expect( state.validate.error ).toEqual( mockError );
 	} );
 
 	const validateErrorState = deepFreeze( {
@@ -244,7 +243,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
 		} );
 
-		assert.isNull( state.validate.error );
+		expect( state.validate.error ).toBeNull();
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS action should clear the error field of the validate state tree', () => {
@@ -252,7 +251,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 		} );
 
-		assert.isNull( state.validate.error );
+		expect( state.validate.error ).toBeNull();
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST action should set the requesting status flag as true.', () => {
@@ -260,7 +259,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 		} );
 
-		assert.isTrue( state.resetPassword.isRequesting );
+		expect( state.resetPassword.isRequesting ).toBe( true );
 	} );
 
 	const requestingResetPasswordState = deepFreeze( {
@@ -274,7 +273,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 		} );
 
-		assert.isFalse( state.resetPassword.isRequesting );
+		expect( state.resetPassword.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR action should set the requesting flag as false.', () => {
@@ -283,7 +282,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.resetPassword.isRequesting );
+		expect( state.resetPassword.isRequesting ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS action should set the succeeded flag as true.', () => {
@@ -291,7 +290,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 		} );
 
-		assert.isTrue( state.resetPassword.succeeded );
+		expect( state.resetPassword.succeeded ).toBe( true );
 	} );
 
 	const resetPasswordSucceededState = deepFreeze( {
@@ -306,7 +305,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.resetPassword.succeeded );
+		expect( state.resetPassword.succeeded ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST action should set the succeeded flag as false.', () => {
@@ -314,7 +313,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 		} );
 
-		assert.isFalse( state.resetPassword.succeeded );
+		expect( state.resetPassword.succeeded ).toBe( false );
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR action should populate the error field.', () => {
@@ -327,7 +326,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error,
 		} );
 
-		assert.deepEqual( state.resetPassword.error, error );
+		expect( state.resetPassword.error ).toEqual( error );
 	} );
 
 	const resetPasswordErrorState = deepFreeze( {
@@ -344,7 +343,7 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 		} );
 
-		assert.isNull( state.resetPassword.error );
+		expect( state.resetPassword.error ).toBeNull();
 	} );
 
 	test( 'ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS action should clear the error field.', () => {
@@ -352,6 +351,6 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 		} );
 
-		assert.isNull( state.resetPassword.error );
+		expect( state.resetPassword.error ).toBeNull();
 	} );
 } );

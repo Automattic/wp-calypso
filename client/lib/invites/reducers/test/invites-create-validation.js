@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import Dispatcher from 'dispatcher';
 import { action as ActionTypes } from 'lib/invites/constants';
 
@@ -46,9 +41,9 @@ describe( 'Invites Create Validation Store', () => {
 
 		test( 'Validation is not empty', () => {
 			const success = InvitesCreateValidationStore.getSuccess( siteId );
-			assert.lengthOf( success, 2 );
+			expect( success.length ).toBe( 2 );
 			const errors = InvitesCreateValidationStore.getErrors( siteId );
-			assert.equal( errors, validationData.errors );
+			expect( errors ).toEqual( validationData.errors );
 		} );
 	} );
 } );

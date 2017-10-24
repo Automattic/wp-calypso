@@ -2,11 +2,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import WPorgActions from '../actions';
 import wporg from 'lib/wporg';
 jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
@@ -30,17 +25,17 @@ describe( 'WPorg Data Actions', () => {
 	} );
 
 	test( 'Actions should be an object', () => {
-		assert.isObject( WPorgActions );
+		expect( typeof WPorgActions ).toBe( 'object' );
 	} );
 
 	test( 'Actions should have method fetchPluginData', () => {
-		assert.isFunction( WPorgActions.fetchPluginData );
+		expect( typeof WPorgActions.fetchPluginData ).toBe( 'function' );
 	} );
 
 	test( 'FetchPluginData action should make a request', done => {
 		WPorgActions.fetchPluginData( 'test' )(
 			testDispatch( function() {
-				assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
+				expect( wporg.getActivity().fetchPluginInformation ).toEqual( 1 );
 				done();
 			}, 2 )
 		);
@@ -57,7 +52,7 @@ describe( 'WPorg Data Actions', () => {
 	test( 'FetchPluginData action should return a plugin ', done => {
 		WPorgActions.fetchPluginData( 'test' )(
 			testDispatch( function( action ) {
-				assert.equal( action.data.slug, 'test' );
+				expect( action.data.slug ).toEqual( 'test' );
 				done();
 			}, 2 )
 		);
@@ -67,6 +62,6 @@ describe( 'WPorg Data Actions', () => {
 		wporg.deactivatedCallbacks = true;
 		WPorgActions.fetchPluginData( 'test' )( function() {} );
 		WPorgActions.fetchPluginData( 'test' )( function() {} );
-		assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
+		expect( wporg.getActivity().fetchPluginInformation ).toEqual( 1 );
 	} );
 } );

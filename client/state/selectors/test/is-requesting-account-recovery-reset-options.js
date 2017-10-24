@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isRequestingAccountRecoveryResetOptions } from '../';
 
 describe( 'isRequestingAccountRecoveryResetOptions()', () => {
@@ -22,6 +17,6 @@ describe( 'isRequestingAccountRecoveryResetOptions()', () => {
 			},
 		};
 
-		assert.isTrue( isRequestingAccountRecoveryResetOptions( state ) );
+		expect( isRequestingAccountRecoveryResetOptions( state ) ).toBe( true );
 	} );
 } );

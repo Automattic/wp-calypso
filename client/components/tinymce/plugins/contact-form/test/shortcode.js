@@ -3,18 +3,13 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { serialize, deserialize } from '../shortcode-utils';
 
 describe( 'contact form shortcode serializer', () => {
 	test( 'should create an empty form if no definition provided', () => {
 		const shortcode = serialize();
 
-		assert.equal( shortcode, '[contact-form][/contact-form]' );
+		expect( shortcode ).toEqual( '[contact-form][/contact-form]' );
 	} );
 
 	test( 'should correctly add both to and subject attributes', () => {
@@ -23,8 +18,7 @@ describe( 'contact form shortcode serializer', () => {
 			subject: 'contact form subject',
 		} );
 
-		assert.equal(
-			shortcode,
+		expect( shortcode ).toEqual(
 			'[contact-form to="user@example.com" subject="contact form subject"][/contact-form]'
 		);
 	} );
@@ -34,7 +28,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [],
 		} );
 
-		assert.equal( shortcode, '[contact-form][/contact-form]' );
+		expect( shortcode ).toEqual( '[contact-form][/contact-form]' );
 	} );
 
 	test( 'should not add empty fields for empty objects', () => {
@@ -42,7 +36,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ {} ],
 		} );
 
-		assert.equal( shortcode, '[contact-form][/contact-form]' );
+		expect( shortcode ).toEqual( '[contact-form][/contact-form]' );
 	} );
 
 	test( 'should not serialize fields with missing type', () => {
@@ -50,7 +44,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ { label: 'Name' } ],
 		} );
 
-		assert.equal( shortcode, '[contact-form][/contact-form]' );
+		expect( shortcode ).toEqual( '[contact-form][/contact-form]' );
 	} );
 
 	test( 'should not serialize fields with missing labels', () => {
@@ -58,7 +52,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ { type: 'Name' } ],
 		} );
 
-		assert.equal( shortcode, '[contact-form][/contact-form]' );
+		expect( shortcode ).toEqual( '[contact-form][/contact-form]' );
 	} );
 
 	test( 'should serialize a single field', () => {
@@ -66,8 +60,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ { type: 'text', label: 'Name' } ],
 		} );
 
-		assert.equal(
-			shortcode,
+		expect( shortcode ).toEqual(
 			'[contact-form][contact-field label="Name" type="text" /][/contact-form]'
 		);
 	} );
@@ -77,8 +70,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ { type: 'text', label: 'First Name' }, { type: 'text', label: 'Last Name' } ],
 		} );
 
-		assert.equal(
-			shortcode,
+		expect( shortcode ).toEqual(
 			'[contact-form][contact-field label="First Name" type="text" /][contact-field label="Last Name" type="text" /][/contact-form]'
 		);
 	} );
@@ -88,8 +80,7 @@ describe( 'contact form shortcode serializer', () => {
 			fields: [ { type: 'text', label: 'Name', required: true } ],
 		} );
 
-		assert.equal(
-			shortcode,
+		expect( shortcode ).toEqual(
 			'[contact-form][contact-field label="Name" type="text" required="1" /][/contact-form]'
 		);
 	} );
@@ -106,8 +97,7 @@ describe( 'contact form shortcode serializer', () => {
 			],
 		} );
 
-		assert.equal(
-			shortcode,
+		expect( shortcode ).toEqual(
 			'[contact-form][contact-field label="options" type="dropdown" options="option 1,option 2,option 3" required="1" /][/contact-form]'
 		);
 	} );
@@ -117,7 +107,7 @@ describe( 'contact form shortcode deserializer', () => {
 	test( 'should deserialize an empty contact form', () => {
 		const contactForm = deserialize( '[contact-form][/contact-form]' );
 
-		assert.deepEqual( contactForm, { fields: [] } );
+		expect( contactForm ).toEqual( { fields: [] } );
 	} );
 
 	test( 'should deserialize both to and subject attribute from the contact form shortcode', () => {
@@ -125,7 +115,7 @@ describe( 'contact form shortcode deserializer', () => {
 			'[contact-form to="user@example.com" subject="contact form subject"][/contact-form]'
 		);
 
-		assert.deepEqual( contactForm, {
+		expect( contactForm ).toEqual( {
 			to: 'user@example.com',
 			subject: 'contact form subject',
 			fields: [],
@@ -137,7 +127,7 @@ describe( 'contact form shortcode deserializer', () => {
 			'[contact-form][contact-field label="name" type="text" /][/contact-form]'
 		);
 
-		assert.deepEqual( contactForm, {
+		expect( contactForm ).toEqual( {
 			fields: [ { label: 'name', type: 'text' } ],
 		} );
 	} );
@@ -147,7 +137,7 @@ describe( 'contact form shortcode deserializer', () => {
 			'[contact-form][contact-field label="name" type="text" required="1" /][/contact-form]'
 		);
 
-		assert.deepEqual( contactForm, {
+		expect( contactForm ).toEqual( {
 			fields: [ { label: 'name', type: 'text', required: true } ],
 		} );
 	} );
@@ -157,7 +147,7 @@ describe( 'contact form shortcode deserializer', () => {
 			'[contact-form][contact-field label="name" type="text" /][contact-field this is invalid [/contact-form]'
 		);
 
-		assert.deepEqual( contactForm, {
+		expect( contactForm ).toEqual( {
 			fields: [ { label: 'name', type: 'text' } ],
 		} );
 	} );
@@ -167,7 +157,7 @@ describe( 'contact form shortcode deserializer', () => {
 			'[contact-form][contact-field label="options" type="dropdown" options="option 1,option 2,option 3" required="1" /][/contact-form]'
 		);
 
-		assert.deepEqual( contactForm, {
+		expect( contactForm ).toEqual( {
 			fields: [
 				{
 					type: 'dropdown',
