@@ -52,6 +52,10 @@ class SiteSettingsFormWriting extends Component {
 		);
 	}
 
+	isMobile() {
+		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
+	}
+
 	render() {
 		const {
 			eventTracker,
@@ -159,6 +163,7 @@ class SiteSettingsFormWriting extends Component {
 				) }
 
 				{ config.isEnabled( 'press-this' ) &&
+				! this.isMobile() &&
 				! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
 					<div>
 						{ this.renderSectionHeader(
