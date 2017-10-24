@@ -19,6 +19,7 @@ import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeAddItem, setAddedItem, addItems } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const AddItemDialog = ( props ) => {
 	const {
@@ -123,7 +124,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		addedItems: shippingLabel.addedItems,
 		openedPackageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
+		all: getAllPackageDefinitions( state, siteId ),
 	};
 };
 

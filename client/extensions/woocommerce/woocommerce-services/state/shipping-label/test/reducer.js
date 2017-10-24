@@ -15,7 +15,6 @@ import {
 	addItems,
 	addPackage,
 	removePackage,
-	setPackageType,
 	updatePackageWeight,
 	savePackages,
 	removeIgnoreValidation,
@@ -23,6 +22,7 @@ import {
     clearAvailableRates,
 } from '../actions';
 import {
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE,
  } from '../../action-types';
 
@@ -39,13 +39,6 @@ const initialState = {
 				ignoreValidation: { address: true, postcode: true, state: true, country: true },
 			},
 			packages: {
-				all: {
-					customPackage1: {
-						inner_dimensions: '1 x 2 x 3',
-						box_weight: 3.5,
-					},
-					customPackage2: {},
-				},
 				selected: {
 					weight_0_custom1: {
 						items: [
@@ -211,7 +204,17 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'SET_PACKAGE_TYPE changes an existing package', () => {
-		const action = setPackageType( orderId, siteId, 'weight_0_custom1', 'customPackage1' );
+		const action = {
+			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
+			siteId,
+			orderId,
+			packageId: 'weight_0_custom1',
+			boxTypeId: 'customPackage1',
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 3.5,
+			},
+		};
 		const state = reducer( initialState, action );
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.items.length ).to.eql( 1 );
@@ -230,7 +233,17 @@ describe( 'Label purchase form reducer', () => {
 		const priorAction = updatePackageWeight( orderId, siteId, 'weight_0_custom1', 5.8 );
 		const existingState = reducer( initialState, priorAction );
 
-		const action = setPackageType( orderId, siteId, 'weight_0_custom1', 'customPackage1' );
+		const action = {
+			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
+			siteId,
+			orderId,
+			packageId: 'weight_0_custom1',
+			boxTypeId: 'customPackage1',
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 3.5,
+			},
+		};
 		const state = reducer( existingState, action );
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.box_id ).to.eql( 'customPackage1' );
@@ -344,7 +357,6 @@ describe( 'Label purchase form reducer', () => {
 
 	it( 'Maintains fixed precision upon adjusting total weight', () => {
 		const existingState = hoek.clone( initialState );
-		existingState[ orderId ].form.packages.all.customPackage1.box_weight = 1.33;
 		existingState[ orderId ].form.packages.selected.weight_0_custom1 = {
 			items: [
 				{
@@ -374,7 +386,17 @@ describe( 'Label purchase form reducer', () => {
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.weight ).to.eql( 0.3 );
 		expect( state[ orderId ].form.packages.selected.weight_1_custom1.weight ).to.eql( 4.44 );
 
-		const packageTypeAction = setPackageType( orderId, siteId, 'weight_0_custom1', 'customPackage1' );
+		const packageTypeAction = {
+			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
+			siteId,
+			orderId,
+			packageId: 'weight_0_custom1',
+			boxTypeId: 'customPackage1',
+			box: {
+				inner_dimensions: '1 x 2 x 3',
+				box_weight: 1.33,
+			},
+		};
 		state = reducer( state, packageTypeAction );
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.weight ).to.eql( 1.63 );

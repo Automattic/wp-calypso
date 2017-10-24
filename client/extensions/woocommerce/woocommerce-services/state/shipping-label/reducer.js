@@ -401,10 +401,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_ITEMS ] = ( state, { targetPac
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADD_PACKAGE ] = ( state ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const packageKeys = Object.keys( newPackages );
-	const boxesKeys = Object.keys( state.form.packages.all );
-	if ( ! boxesKeys.length ) {
-		return state;
-	}
 
 	const addedPackageId = generateUniqueBoxId( 'client_custom_', packageKeys );
 	const openedPackageId = addedPackageId;
@@ -469,11 +465,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REMOVE_PACKAGE ] = ( state, { pack
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { packageId, boxTypeId } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = ( state, { box, packageId, boxTypeId } ) => {
 	const newPackages = { ...state.form.packages.selected };
 	const oldPackage = newPackages[ packageId ];
-
-	const box = state.form.packages.all[ boxTypeId ];
 	const weight = round(
 		oldPackage.isUserSpecifiedWeight
 			? oldPackage.weight

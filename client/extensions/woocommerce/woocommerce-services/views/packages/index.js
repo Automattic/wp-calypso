@@ -18,23 +18,12 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import PackageDialog from './package-dialog';
 import PackagesListItem from './packages-list-item';
+import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
 import * as PackagesActions from '../../state/packages/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPackagesForm, getAllSelectedPackages } from '../../state/packages/selectors';
 
 class Packages extends Component {
-	componentWillMount() {
-		if ( this.props.siteId ) {
-			this.props.fetchSettings( this.props.siteId );
-		}
-	}
-
-	componentWillReceiveProps( props ) {
-		if ( props.siteId && props.siteId !== this.props.siteId ) {
-			this.props.fetchSettings( props.siteId );
-		}
-	}
-
 	renderListHeader = packages => {
 		const { translate } = this.props;
 
@@ -94,6 +83,7 @@ class Packages extends Component {
 
 		return (
 			<div>
+				<QueryPackages siteId={ siteId } />
 				<ExtendedHeader
 					label={ translate( 'Packages' ) }
 					description={ translate(

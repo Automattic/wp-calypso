@@ -19,7 +19,8 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormToggle from 'components/forms/form-toggle';
 import LabelSettings from './label-settings';
-import { fetchSettings, setFormDataValue } from '../../state/label-settings/actions';
+import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
+import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
@@ -28,23 +29,15 @@ import {
 } from '../../state/label-settings/selectors';
 
 class AccountSettingsRootView extends Component {
-	componentWillMount() {
-		if ( this.props.siteId ) {
-			this.props.fetchSettings( this.props.siteId );
-		}
-	}
-
-	componentWillReceiveProps( props ) {
-		if ( props.siteId !== this.props.siteId ) {
-			this.props.fetchSettings( props.siteId );
-		}
+	componentWillUnmount() {
+		this.props.restorePristineSettings( this.props.siteId );
 	}
 
 	render() {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
 		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
-			return null;
+			return <QueryLabelSettings siteId={ siteId } />;
 		}
 		const setValue = ( key, value ) => this.props.setFormDataValue( siteId, key, value );
 		const onEnabledToggle = () =>
@@ -78,6 +71,7 @@ class AccountSettingsRootView extends Component {
 
 		return (
 			<div>
+				<QueryLabelSettings siteId={ siteId } />
 				<ExtendedHeader
 					label={ translate( 'Shipping Labels' ) }
 					description={ translate(
@@ -112,8 +106,8 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettings,
 			setFormDataValue,
+			restorePristineSettings,
 		},
 		dispatch
 	);

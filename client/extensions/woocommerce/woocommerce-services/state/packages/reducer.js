@@ -24,6 +24,7 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCH_ERROR,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
 } from '../action-types';
@@ -248,6 +249,13 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING ] = ( state, { isFetchin
 	};
 };
 
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCH_ERROR ] = ( state, { isFetchError } ) => {
+	return {
+		...state,
+		isFetchError,
+	};
+};
+
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM ] = (
 	state,
 	{ packages, dimensionUnit, weightUnit, packageSchema, predefinedSchema }
@@ -262,6 +270,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM ] = (
 		packageData: state.packageData || {
 			is_user_defined: true,
 		},
+		isLoaded: true,
 	};
 };
 

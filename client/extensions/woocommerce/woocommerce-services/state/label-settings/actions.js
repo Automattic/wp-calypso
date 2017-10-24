@@ -1,12 +1,11 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import * as api from '../../api';
 import {
 	WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
+	WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
 } from '../action-types';
@@ -52,6 +51,7 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 			dispatch( initForm( siteId, storeOptions, formData, formMeta ) );
 		} )
 		.catch( error => {
+			setFormMetaProperty( siteId, 'isFetchError', true );
 			console.error( error ); // eslint-disable-line no-console
 		} )
 		.then( () => dispatch( setFormMetaProperty( siteId, 'isFetching', false ) ) );
@@ -64,7 +64,14 @@ export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, ge
 		.then( onSaveSuccess )
 		.catch( onSaveFailure )
 		.then( () => {
-			dispatch( setFormMetaProperty( 'isSaving', false ) );
-			dispatch( setFormMetaProperty( 'pristine', true ) );
+			dispatch( setFormMetaProperty( siteId, 'isSaving', false ) );
+			dispatch( setFormMetaProperty( siteId, 'pristine', true ) );
 		} );
+};
+
+export const restorePristineSettings = siteId => {
+	return {
+		type: WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
+		siteId,
+	};
 };

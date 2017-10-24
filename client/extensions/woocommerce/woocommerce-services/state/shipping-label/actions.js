@@ -19,6 +19,7 @@ import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-util
 import { getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -119,7 +120,7 @@ const getNextErroneousStep = ( form, errors, currentStep ) => {
 				return 'destination';
 			}
 		case 'packages':
-			if ( hasNonEmptyLeaves( errors.packages ) || ! form.packages.all || ! Object.keys( form.packages.all ).length ) {
+			if ( hasNonEmptyLeaves( errors.packages ) ) {
 				return 'packages';
 			}
 		case 'rates':
@@ -225,7 +226,6 @@ export const openPrintingFlow = ( orderId, siteId ) => (
 			form.destination.isNormalized &&
 			isEqual( form.destination.values, form.destination.normalized ) &&
 			isEmpty( form.rates.available ) &&
-			form.packages.all && Object.keys( form.packages.all ).length &&
 			! hasNonEmptyLeaves( errors.packages )
 		) {
 			return getLabelRates( orderId, siteId, dispatch, getState, expandStepAfterAction );
@@ -487,14 +487,18 @@ export const removePackage = ( orderId, siteId, packageId ) => {
 	};
 };
 
-export const setPackageType = ( orderId, siteId, packageId, boxTypeId ) => {
-	return {
+export const setPackageType = ( orderId, siteId, packageId, boxTypeId ) => ( dispatch, getState ) => {
+	const allBoxes = getAllPackageDefinitions( getState(), siteId );
+	const box = allBoxes[ boxTypeId ];
+
+	dispatch( {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
 		siteId,
 		orderId,
 		packageId,
 		boxTypeId,
-	};
+		box,
+	} );
 };
 
 export const savePackages = ( orderId, siteId ) => {

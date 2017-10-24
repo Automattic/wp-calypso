@@ -29,14 +29,17 @@ import Notice from 'components/notice';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
+import Tooltip from 'components/tooltip';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getLabels,
-	getSelectedPaymentMethod,
-	isEnabled as areLabelsEnabled,
-	isLoaded as areLabelsLoaded,
+	areLabelsFullyLoaded,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	areLabelsEnabled,
+	getSelectedPaymentMethodId,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
@@ -56,6 +59,7 @@ class OrderFulfillment extends Component {
 		shouldEmail: false,
 		showDialog: false,
 		showPopoverMenu: false,
+		showPrintTooltip: false,
 		trackingNumber: '',
 	};
 
@@ -68,6 +72,12 @@ class OrderFulfillment extends Component {
 	togglePopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
+		} );
+	};
+
+	togglePrintTooltip = () => {
+		this.setState( {
+			showPrintTooltip: ! this.state.showPrintTooltip,
 		} );
 	};
 
@@ -152,7 +162,7 @@ class OrderFulfillment extends Component {
 			hasLabelsPaymentMethod,
 		} = this.props;
 		const isShippable = ! isOrderFinished( order.status );
-		const hideLabels = labelsLoaded && ( ! hasLabelsPaymentMethod || ! labelsEnabled );
+		const hideLabels = labelsLoaded && ! labelsEnabled;
 
 		if ( ! isShippable && ( ! wcsEnabled || hideLabels ) ) {
 			return null;
@@ -170,19 +180,49 @@ class OrderFulfillment extends Component {
 		const buttonClassName = classNames( {
 			'is-placeholder': ! labelsLoaded,
 		} );
+		const printDisabled = ! hasLabelsPaymentMethod;
+		const disabledDesc = translate(
+			'Select a label payment method in shipping settings to be able to print labels.'
+		);
 
 		if ( ! isShippable ) {
 			return (
-				<Button onClick={ onLabelPrint } className={ buttonClassName }>
-					{ translate( 'Print new label' ) }
-				</Button>
+				<div>
+					<Button
+						onClick={ onLabelPrint }
+						className={ buttonClassName }
+						disabled={ printDisabled }
+						onMouseEnter={ this.togglePrintTooltip }
+						onMouseLeave={ this.togglePrintTooltip }
+						ref="printLabelButton"
+					>
+						{ translate( 'Print new label' ) }
+					</Button>
+					{ printDisabled && (
+						<Tooltip
+							isVisible={ this.state.showPrintTooltip }
+							context={ this.refs && this.refs.printLabelButton }
+							position="top"
+						>
+							{ disabledDesc }
+						</Tooltip>
+					) }
+				</div>
 			);
 		}
 
 		return (
 			<div>
 				<ButtonGroup className="order-fulfillment__button-group">
-					<Button primary={ labelsLoaded } onClick={ onLabelPrint } className={ buttonClassName }>
+					<Button
+						primary={ labelsLoaded }
+						onClick={ onLabelPrint }
+						className={ buttonClassName }
+						disabled={ printDisabled }
+						onMouseEnter={ this.togglePrintTooltip }
+						onMouseLeave={ this.togglePrintTooltip }
+						ref="printLabelButton"
+					>
 						{ translate( 'Print label & fulfill' ) }
 					</Button>
 					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
@@ -198,6 +238,15 @@ class OrderFulfillment extends Component {
 						{ translate( 'Fulfill without printing a label' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
+				{ printDisabled && (
+					<Tooltip
+						isVisible={ this.state.showPrintTooltip }
+						context={ this.refs && this.refs.printLabelButton }
+						position="top"
+					>
+						{ disabledDesc }
+					</Tooltip>
+				) }
 			</div>
 		);
 	}
@@ -264,7 +313,7 @@ class OrderFulfillment extends Component {
 						) }
 					</form>
 				</Dialog>
-				{ wcsEnabled && <QueryLabels orderId={ order.id } /> }
+				{ wcsEnabled && <QueryLabels orderId={ order.id } siteId={ site.ID } /> }
 				{ wcsEnabled && <LabelPurchaseDialog orderId={ order.id } siteId={ site.ID } /> }
 			</div>
 		);
@@ -273,13 +322,13 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	( state, { order, site } ) => {
-		const labelsLoaded = wcsEnabled && Boolean( areLabelsLoaded( state, order.id, site.ID ) );
+		const labelsLoaded = wcsEnabled && Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) );
 		const hasLabelsPaymentMethod =
-			wcsEnabled && labelsLoaded && getSelectedPaymentMethod( state, order.id, site.ID );
+			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
 
 		return {
 			labelsLoaded,
-			labelsEnabled: areLabelsEnabled( state, order.id, site.ID ),
+			labelsEnabled: areLabelsEnabled( state, site.ID ),
 			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,
 		};

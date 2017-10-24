@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, map, pickBy, reduce, some } from 'lodash';
+import { isEmpty, map, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +30,7 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getPackageGroupsForLabelPurchase } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
 	return [
@@ -47,10 +48,9 @@ const PackageInfo = ( props ) => {
 		orderId,
 		packageId,
 		selected,
-		all,
-		flatRateGroups,
 		dimensionUnit,
 		weightUnit,
+		packageGroups,
 		errors,
 		translate,
 	} = props;
@@ -61,7 +61,7 @@ const PackageInfo = ( props ) => {
 	}
 
 	const pckg = selected[ packageId ];
-	const isIndividualPackage = ! ( 'not_selected' === pckg.box_id || all[ pckg.box_id ] );
+	const isIndividualPackage = 'individual' === pckg.box_id;
 
 	const renderItemInfo = ( item, itemIndex ) => {
 		return (
@@ -77,8 +77,9 @@ const PackageInfo = ( props ) => {
 		);
 	};
 
-	const renderPackageOption = ( box, boxId ) => {
+	const renderPackageOption = ( box ) => {
 		const dimensions = getBoxDimensions( box );
+		const boxId = box.id || box.name;
 		return ( <option value={ boxId } key={ boxId }>{ box.name } - { renderPackageDimensions( dimensions, dimensionUnit ) }</option> );
 	};
 
@@ -130,18 +131,6 @@ const PackageInfo = ( props ) => {
 			</div> );
 		}
 
-		const groups = reduce( flatRateGroups, ( result, groupTitle, groupId ) => {
-			const definitions = pickBy( all, { group_id: groupId } );
-			if ( isEmpty( definitions ) ) {
-				return result;
-			}
-
-			result[ groupId ] = { title: groupTitle, definitions };
-			return result;
-		}, {
-			custom: { title: translate( 'Custom Packages' ), definitions: pickBy( all, p => ! p.group_id ) },
-		} );
-
 		return (
 			<div>
 				<div className="packages-step__package-items-header">
@@ -149,7 +138,7 @@ const PackageInfo = ( props ) => {
 				</div>
 				<FormSelect onChange={ packageOptionChange } value={ pckg.box_id } isError={ pckgErrors.box_id }>
 					<option value={ 'not_selected' } key={ 'not_selected' }>{ translate( 'Please select a package' ) }</option> )
-					{ map( groups, ( group, groupId ) => {
+					{ map( packageGroups, ( group, groupId ) => {
 						if ( isEmpty( group.definitions ) ) {
 							return null;
 						}
@@ -200,8 +189,6 @@ PackageInfo.propTypes = {
 	orderId: PropTypes.number.isRequired,
 	packageId: PropTypes.string.isRequired,
 	selected: PropTypes.object.isRequired,
-	all: PropTypes.object.isRequired,
-	flatRateGroups: PropTypes.object.isRequired,
 	updatePackageWeight: PropTypes.func.isRequired,
 	dimensionUnit: PropTypes.string.isRequired,
 	weightUnit: PropTypes.string.isRequired,
@@ -219,10 +206,9 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		errors,
 		packageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
-		flatRateGroups: shippingLabel.form.packages.flatRateGroups,
 		dimensionUnit: storeOptions.dimension_unit,
 		weightUnit: storeOptions.weight_unit,
+		packageGroups: getPackageGroupsForLabelPurchase( state, siteId ),
 	};
 };
 
