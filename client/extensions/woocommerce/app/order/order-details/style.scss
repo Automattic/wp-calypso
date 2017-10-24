@@ -34,6 +34,10 @@
 	.order-details__item-quantity .form-text-input {
 		width: 5em;
 	}
+
+	.order-details__item-delete {
+		width: 1.5em;
+	}
 }
 
 .order-details__item-delete,
@@ -41,15 +45,53 @@
 	text-align: right;
 }
 
-.order-details__totals.table {
-	margin: 0 -24px;
+// Duplicating `.table` for increased specificity
+.order-details__totals.table.table {
+	margin: 16px -24px;
 	box-shadow: none;
 	border: none;
 	text-align: right;
 
-	.table-heading:last-child,
-	.table-item:last-child {
-		padding-right: 24px;
+	.table-row {
+		&:hover {
+			background: transparent;
+		}
+	}
+
+	.table-item {
 		font-size: 14px;
+	}
+
+	.order-details__total-refund {
+		color: $alert-red;
+	}
+
+	.order-details__total-full .order-details__totals-label,
+	.order-details__total-full .order-details__totals-value {
+		font-weight: 600;
+	}
+
+	.order-details__totals-value.table-item {
+		padding-right: 24px;
+		width: 10em;
+	}
+
+	&.has-taxes {
+		.order-details__totals-tax,
+		.order-details__totals-value {
+			width: 8em;
+		}
+	}
+
+	&.is-editing {
+		.order-details__totals-value {
+			// Indent enough to account for delete button
+			padding-right: 78px !important;
+		}
+
+		.order-details__totals-tax {
+			color: $gray-text-min;
+			font-style: italic;
+		}
 	}
 }

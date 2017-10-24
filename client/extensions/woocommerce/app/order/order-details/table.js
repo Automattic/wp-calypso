@@ -30,6 +30,7 @@ import {
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from './row-total';
+import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -88,7 +89,7 @@ class OrderDetailsTable extends Component {
 				</TableItem>
 				{ isEditing && (
 					<TableItem isHeader className="order-details__item-delete">
-						{ translate( 'Delete' ) }
+						<ScreenReaderText>{ translate( 'Delete' ) }</ScreenReaderText>
 					</TableItem>
 				) }
 			</TableRow>
