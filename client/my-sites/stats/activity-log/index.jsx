@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import config from 'config';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
@@ -353,7 +354,15 @@ class ActivityLog extends Component {
 			);
 		}
 
-		return <section className="activity-log__wrapper">{ activityDays }</section>;
+		return (
+			<section
+				className={ classNames( 'activity-log__wrapper', {
+					'rewind-requested': this.props.requestedRestoreActivity,
+				} ) }
+			>
+				{ activityDays }
+			</section>
+		);
 	}
 
 	renderMonthNavigation( position ) {
