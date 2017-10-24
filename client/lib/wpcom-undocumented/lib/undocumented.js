@@ -1541,68 +1541,9 @@ Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
 	return this.wpcom.req.get( '/read/recommendations/mine', query, fn );
 };
 
-Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
-	return this.wpcom.req.get( '/read/recommendations/start', query, fn );
-};
-
 Undocumented.prototype.graduateNewReader = function( fn ) {
 	const params = { apiVersion: '1.2' };
 	return this.wpcom.req.post( '/read/graduate-new-reader', params, {}, fn );
-};
-
-Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
-	debug( '/read/site/:site/post_email_subscriptions/new' );
-	return this.wpcom.req.post(
-		'/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/new',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readUpdatePostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
-	debug( '/read/site/:site/post_email_subscriptions/update' );
-	return this.wpcom.req.post(
-		'/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/update',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readDeletePostEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
-	debug( '/read/site/:site/post_email_subscriptions/delete' );
-	return this.wpcom.req.post(
-		'/read/site/' + encodeURIComponent( query.site ) + '/post_email_subscriptions/delete',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readNewCommentEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
-	debug( '/read/site/:site/comment_email_subscriptions/new' );
-	return this.wpcom.req.post(
-		'/read/site/' + encodeURIComponent( query.site ) + '/comment_email_subscriptions/new',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readDeleteCommentEmailSubscription = function( query, fn ) {
-	var params = omit( query, [ 'site' ] );
-	debug( '/read/site/:site/comment_email_subscriptions/delete' );
-	return this.wpcom.req.post(
-		'/read/site/' + encodeURIComponent( query.site ) + '/comment_email_subscriptions/delete',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
 };
 
 /**
