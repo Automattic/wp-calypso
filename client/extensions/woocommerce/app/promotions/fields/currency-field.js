@@ -39,11 +39,14 @@ const CurrencyField = ( {
 
 	return (
 		<FormField
+			fieldName={ fieldName }
 			labelText={ labelText }
 			explanationText={ explanationText }
 			isRequired={ isRequired }
 		>
 			<PriceInput
+				htmlFor={ fieldName + '-label' }
+				aria-describedby={ explanationText && fieldName + '-description' }
 				currency={ currency }
 				value={ renderedValue }
 				placeholder={ placeholderText }
