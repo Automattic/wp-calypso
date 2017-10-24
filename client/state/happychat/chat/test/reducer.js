@@ -8,11 +8,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { lastActivityTimestamp, message } from '../reducer';
+import { lastActivityTimestamp } from '../reducer';
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_CONNECTED,
 } from 'state/action-types';
 
@@ -42,25 +41,6 @@ describe( 'reducers', () => {
 		test( 'should not update on other actions', () => {
 			const result = lastActivityTimestamp( null, { type: HAPPYCHAT_CONNECTED } );
 			expect( result ).to.equal( null );
-		} );
-	} );
-
-	describe( '#message()', () => {
-		test( 'defaults to an empty string', () => {
-			const result = message( undefined, {} );
-			expect( result ).to.eql( '' );
-		} );
-
-		test( 'saves messages passed from HAPPYCHAT_SET_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_SET_MESSAGE, message: 'abcd' };
-			const result = message( undefined, action );
-			expect( result ).to.eql( 'abcd' );
-		} );
-
-		test( 'resets to empty string on HAPPYCHAT_SEND_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'abcd' };
-			const result = message( 'abcd', action );
-			expect( result ).to.eql( '' );
 		} );
 	} );
 } );

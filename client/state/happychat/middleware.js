@@ -18,7 +18,7 @@ import {
 	HAPPYCHAT_INITIALIZE,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_SET_CURRENT_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
@@ -338,7 +338,7 @@ export default function( connection = null ) {
 				sendMessage( connection, action.message );
 				break;
 
-			case HAPPYCHAT_SET_MESSAGE:
+			case HAPPYCHAT_SET_CURRENT_MESSAGE:
 				onMessageChange( connection, action.message );
 				break;
 

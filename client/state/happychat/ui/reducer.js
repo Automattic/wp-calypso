@@ -10,8 +10,28 @@ import {
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
+	HAPPYCHAT_SET_CURRENT_MESSAGE,
+	HAPPYCHAT_SEND_MESSAGE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
+
+/**
+ * Tracks the current message the user has typed into the happychat client
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+export const currentMessage = ( state = '', action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_SEND_MESSAGE:
+			return '';
+		case HAPPYCHAT_SET_CURRENT_MESSAGE:
+			return action.message;
+	}
+	return state;
+};
 
 /**
  * Tracks the last time Happychat had focus. This lets us determine things like
@@ -68,4 +88,4 @@ const isMinimizing = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { isMinimizing, isOpen, lostFocusAt } );
+export default combineReducers( { currentMessage, isMinimizing, isOpen, lostFocusAt } );

@@ -11,9 +11,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { setChatMessage } from 'state/happychat/chat/actions';
 import { sendChatMessage } from 'state/happychat/connection/actions';
-import getHappychatMessage from 'state/happychat/selectors/get-happychat-message';
+import { setCurrentMessage } from 'state/happychat/ui/actions';
+import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
 import { canUserSendMessages } from 'state/happychat/selectors';
 import { when, forEach, compose, propEquals, call, prop } from './functional';
 import scrollbleed from './scrollbleed';
@@ -70,12 +70,12 @@ export const Composer = createReactClass( {
 
 const mapState = state => ( {
 	disabled: ! canUserSendMessages( state ),
-	message: getHappychatMessage( state ),
+	message: getCurrentMessage( state ),
 } );
 
 const mapDispatch = dispatch => ( {
 	onUpdateChatMessage( message ) {
-		dispatch( setChatMessage( message ) );
+		dispatch( setCurrentMessage( message ) );
 	},
 	onSendChatMessage( message ) {
 		dispatch( sendChatMessage( message ) );

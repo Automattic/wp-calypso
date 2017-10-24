@@ -15,7 +15,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
@@ -57,24 +56,6 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_CHAT_STATUS:
 			return action.status;
-	}
-	return state;
-};
-
-/**
- * Tracks the current message the user has typed into the happychat client
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- *
- */
-export const message = ( state = '', action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_SEND_MESSAGE:
-			return '';
-		case HAPPYCHAT_SET_MESSAGE:
-			return action.message;
 	}
 	return state;
 };
@@ -139,8 +120,8 @@ export const timeline = ( state = [], action ) => {
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
 		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
-			const messages = filter( action.messages, msg => {
-				if ( ! msg.id ) {
+			const messages = filter( action.messages, message => {
+				if ( ! message.id ) {
 					return false;
 				}
 
@@ -153,17 +134,17 @@ export const timeline = ( state = [], action ) => {
 			} );
 			return sortTimeline(
 				state.concat(
-					map( messages, msg => {
+					map( messages, message => {
 						return Object.assign( {
-							id: msg.id,
-							source: msg.source,
-							message: msg.text,
-							name: msg.user.name,
-							image: msg.user.picture,
-							timestamp: msg.timestamp,
-							user_id: msg.user.id,
-							type: get( msg, 'type', 'message' ),
-							links: get( msg, 'meta.links' ),
+							id: message.id,
+							source: message.source,
+							message: message.text,
+							name: message.user.name,
+							image: message.user.picture,
+							timestamp: message.timestamp,
+							user_id: message.user.id,
+							type: get( message, 'type', 'message' ),
+							links: get( message, 'meta.links' ),
 						} );
 					} )
 				)
@@ -176,6 +157,5 @@ timeline.hasCustomPersistence = true;
 export default combineReducers( {
 	status,
 	timeline,
-	message,
 	lastActivityTimestamp,
 } );
