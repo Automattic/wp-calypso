@@ -43,6 +43,7 @@ export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
+export getJetpackCredentials from './get-jetpack-credentials';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getJetpackModule from './get-jetpack-module';
 export getJetpackModules from './get-jetpack-modules';
@@ -215,6 +216,7 @@ export isRequestingAccountRecoveryResetOptions from './is-requesting-account-rec
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
 export isRequestingContactDetailsCache from './is-requesting-contact-details-cache';
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
+export isRequestingJetpackCredentials from './is-requesting-jetpack-credentials';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
 export isRequestingJetpackUserConnection from './is-requesting-jetpack-user-connection';
