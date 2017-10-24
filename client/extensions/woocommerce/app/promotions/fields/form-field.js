@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,14 +17,7 @@ const FormField = ( {
 	explanationText,
 	isRequired,
 	children,
-	translate,
 } ) => {
-	const requiredLabel = ( isRequired &&
-		<span className="fields__form-label-required">
-			{ translate( 'Required' ) }
-		</span>
-	);
-
 	const explanation = ( explanationText &&
 		<FormSettingExplanation id={ fieldName + '-description' }>
 			{ explanationText }
@@ -34,8 +26,8 @@ const FormField = ( {
 
 	return (
 		<FormFieldset>
-			<FormLabel id={ fieldName + '-label' }>
-				{ labelText } { requiredLabel }
+			<FormLabel id={ fieldName + '-label' } required={ isRequired }>
+				{ labelText }
 			</FormLabel>
 			{ children }
 			{ explanation }
@@ -49,7 +41,6 @@ FormField.PropTypes = {
 	explanationText: PropTypes.string,
 	isRequired: PropTypes.bool.isRequired,
 	children: PropTypes.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default localize( FormField );
+export default FormField;
