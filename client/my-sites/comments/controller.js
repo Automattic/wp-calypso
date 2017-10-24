@@ -5,7 +5,7 @@
 import { renderWithReduxStore } from 'lib/react-helpers';
 import React from 'react';
 import page from 'page';
-import { each, isFinite, startsWith } from 'lodash';
+import { each, isNaN, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,11 @@ import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
 const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
+
+const sanitizeInt = number => {
+	const integer = parseInt( number, 10 );
+	return ! isNaN( integer ) && integer > 0 ? integer : false;
+};
 
 const changePage = path => pageNumber => {
 	if ( window ) {
@@ -33,8 +38,8 @@ export const siteComments = ( { params, path, query, store } ) => {
 
 	const status = mapPendingStatusToUnapproved( params.status );
 
-	const pageNumber = parseInt( query.page, 10 );
-	if ( isNaN( pageNumber ) || pageNumber < 1 ) {
+	const pageNumber = sanitizeInt( query.page );
+	if ( ! pageNumber ) {
 		return changePage( path )( 1 );
 	}
 
@@ -59,14 +64,14 @@ export const postComments = ( { params, path, query, store } ) => {
 	}
 
 	const status = mapPendingStatusToUnapproved( params.status );
-	const postId = parseInt( params.post, 10 );
+	const postId = sanitizeInt( params.post );
 
-	if ( ! isFinite( postId ) ) {
+	if ( ! postId ) {
 		return page.redirect( `/comments/${ params.status }/${ siteFragment }` );
 	}
 
-	const pageNumber = parseInt( query.page, 10 );
-	if ( isNaN( pageNumber ) || pageNumber < 1 ) {
+	const pageNumber = sanitizeInt( query.page );
+	if ( ! pageNumber ) {
 		return changePage( path )( 1 );
 	}
 
@@ -86,9 +91,9 @@ export const postComments = ( { params, path, query, store } ) => {
 
 export const comment = ( { params, path, store } ) => {
 	const siteFragment = route.getSiteFragment( path );
-	const commentId = parseInt( params.comment, 10 );
+	const commentId = sanitizeInt( params.comment );
 
-	if ( ! isFinite( commentId ) ) {
+	if ( ! commentId ) {
 		return siteFragment
 			? page.redirect( `/comments/all/${ siteFragment }` )
 			: page.redirect( '/comments/all' );
