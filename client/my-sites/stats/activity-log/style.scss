@@ -28,3 +28,15 @@
 		max-width: 200px;
 	}
 }
+
+.rewind-requested .activity-log-day:not(.has-rewind-dialog),
+.has-rewind-dialog .activity-log-item,
+.has-rewind-dialog > .foldable-card > .foldable-card__header {
+	opacity: .5;
+}
+
+.has-rewind-dialog .activity-log-item__restore-confirm,
+.activity-log-item__restore-confirm ~ .activity-log-item,
+.rewind-requested .has-rewind-dialog ~ .activity-log-day {
+	opacity: 1;
+}
