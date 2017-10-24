@@ -18,8 +18,6 @@ import TokenInput from './token-input';
 const debug = debugFactory( 'calypso:token-field' );
 
 class TokenField extends PureComponent {
-	static displayName = 'TokenField';
-
 	static propTypes = {
 		suggestions: PropTypes.array,
 		maxSuggestions: PropTypes.number,
