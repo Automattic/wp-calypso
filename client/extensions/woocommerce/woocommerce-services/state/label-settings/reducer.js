@@ -46,10 +46,7 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = (
 };
 
 reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE ] = ( state, { key, value } ) => {
-	let pristineData = state.pristineData;
-	if ( state.meta.pristine ) {
-		pristineData = state.data;
-	}
+	const pristineData = state.meta.pristine ? state.data : state.pristineData;
 
 	return {
 		...state,
