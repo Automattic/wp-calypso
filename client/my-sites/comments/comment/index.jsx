@@ -33,9 +33,7 @@ export class Comment extends Component {
 		isExpanded: false,
 	};
 
-	storeCardRef = card => {
-		this.commentCard = card;
-	};
+	storeCardRef = card => ( this.commentCard = card );
 
 	keyDownHandler = event => {
 		const commentHasFocus =

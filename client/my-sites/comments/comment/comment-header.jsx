@@ -11,6 +11,7 @@ import noop from 'lodash';
  */
 import Button from 'components/button';
 import CommentAuthor from './comment-author';
+import CommentAuthorMoreInfo from './comment-author-more-info';
 import FormCheckbox from 'components/forms/form-checkbox';
 
 export const CommentHeader = ( {
@@ -30,6 +31,8 @@ export const CommentHeader = ( {
 		) }
 
 		<CommentAuthor { ...{ commentId, isExpanded, siteId } } />
+
+		{ isExpanded && <CommentAuthorMoreInfo /> }
 
 		{ ! isBulkMode && (
 			<Button

@@ -20,9 +20,7 @@
 	flex-wrap: nowrap;
 
 	.comment__author {
-		box-sizing: border-box;
 		padding: 8px;
-		width: calc(100% - 56px);
 	}
 }
 
@@ -54,7 +52,9 @@
 .comment__author {
 	display: flex;
 	flex-flow: row;
+	flex-grow: 1;
 	flex-wrap: nowrap;
+	width: 0;
 }
 .comment__author-avatar {
 	align-self: center;
@@ -102,6 +102,31 @@
 	}
 }
 
+// Comment Author More Info Block
+.comment__author-more-info {
+	align-items: center;
+	display: flex;
+	color: $gray-text-min;
+	cursor: pointer;
+	fill: lighten($gray, 10%);
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 8px 16px 8px 8px;
+
+	&:hover {
+		.gridicon,
+		label {
+			color: $gray-dark;
+			cursor: pointer;
+			fill: $gray-dark;
+		}
+	}
+
+	.gridicon {
+		margin: 4px 4px 0 0;
+	}
+}
+
 // Collapsed View
 .card.comment.is-collapsed {
 	&:hover {
@@ -122,8 +147,9 @@
 		border-bottom: 1px solid lighten($gray, 30%);
 		cursor: default;
 
-		.comment__author {
-			border-right: 1px solid lighten($gray, 30%);
+		.button.comment__toggle-expanded {
+			border-left: 1px solid lighten($gray, 30%);
+			border-radius: 0;
 		}
 
 		.comment__toggle-expanded .gridicon {
@@ -134,9 +160,4 @@
 
 // Bulk Select Mode
 .card.comment.is-bulk-mode {
-	.comment__header .comment__author {
-		box-sizing: border-box;
-		padding: 8px;
-		width: calc(100% - 32px);
-	}
 }
