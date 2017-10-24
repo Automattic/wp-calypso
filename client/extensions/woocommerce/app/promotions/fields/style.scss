@@ -1,0 +1,61 @@
+
+.fields__applies-to {
+	.search {
+		margin-bottom: 4px;
+		border: 1px solid lighten( $gray, 20% );
+		z-index: 0; // Keeps search from overlapping header above.
+	}
+
+	.fields__applies-to-list {
+		position: relative;
+		background-color: $gray-light;
+		border: 1px solid lighten( $gray, 20% );
+		overflow-y: auto;
+		height: 250px; // TODO: media query breaks for mobile?
+
+		.fields__applies-to-row {
+			margin: 4px;
+			background-color: $white;
+
+			label {
+				margin-top: 5px;
+				margin-bottom: 5px;
+				width: 100%;
+			}
+
+			input[type=radio] {
+				margin-top: 12px;
+				margin-left: 12px;
+				margin-right: 0;
+			}
+
+			span {
+				vertical-align: middle;
+			}
+
+			.fields__product-list-image {
+				display: inline-block;
+				height: 40px;
+				width: 40px;
+				overflow: hidden;
+				position: relative;
+				margin-right: 16px;
+
+				&.is-thumb-placeholder {
+					background: $gray-light;
+				}
+
+				img {
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					height: 100%;
+					width: auto;
+					-webkit-transform: translate( -50%, -50% );
+					transform: translate( -50%, -50% );
+				}
+			}
+
+		}
+	}
+}

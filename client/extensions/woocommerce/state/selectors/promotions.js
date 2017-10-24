@@ -81,3 +81,15 @@ export function getPromotionWithLocalEdits(
 	return null;
 }
 
+export function getPromotionableProducts(
+	rootState,
+	siteId = getSelectedSiteWithFallback( rootState )
+) {
+	const promotions = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'promotions' ],
+		{}
+	);
+	return promotions.products;
+}
+

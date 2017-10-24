@@ -16,6 +16,8 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import {
@@ -37,12 +39,17 @@ class PromotionCreate extends React.Component {
 		} ),
 		editPromotion: PropTypes.func.isRequired,
 		clearPromotionEdits: PropTypes.func.isRequired,
+		fetchProductCategories: PropTypes.func.isRequired,
+		fetchPromotions: PropTypes.func.isRequired,
+		fetchSettingsGeneral: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
+			this.props.fetchProductCategories( site.ID );
+			this.props.fetchPromotions( site.ID );
 			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
@@ -52,6 +59,8 @@ class PromotionCreate extends React.Component {
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchProductCategories( newSiteId );
+			this.props.fetchPromotions( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
@@ -104,9 +113,9 @@ class PromotionCreate extends React.Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currencySettings = getPaymentCurrencySettings( state );
-	const currency = ( currencySettings ? currencySettings.value : null );
+	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
-	const promotion = ( promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null );
+	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 
 	return {
 		site,
@@ -120,6 +129,8 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editPromotion,
 			clearPromotionEdits,
+			fetchProductCategories,
+			fetchPromotions,
 			fetchSettingsGeneral,
 		},
 		dispatch
