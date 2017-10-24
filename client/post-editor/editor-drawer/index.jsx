@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
@@ -116,27 +115,28 @@ class EditorDrawer extends Component {
 		recordEvent( 'Changed Excerpt' );
 	}
 
-	renderTaxonomies() {
-		const { type, canJetpackUseTaxonomies } = this.props;
+	// Categories & Tags
+	renderCategories() {
+		const { type } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
 		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
 		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
 
-		// Categories & Tags
-		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
-			categories = <CategoriesTagsAccordion />;
+			return <CategoriesTagsAccordion />;
 		}
+	}
 
-		// Custom Taxonomies
-		let taxonomies;
+	// Custom Taxonomies
+	renderTaxonomies() {
+		const { canJetpackUseTaxonomies } = this.props;
+		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+
 		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
-			taxonomies = <EditorDrawerTaxonomies />;
+			return <EditorDrawerTaxonomies />;
 		}
-
-		return createFragment( { categories, taxonomies } );
 	}
 
 	renderPostFormats() {
@@ -349,6 +349,7 @@ class EditorDrawer extends Component {
 				{ site && <QueryPostTypes siteId={ site.ID } /> }
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				{ this.renderStatus() }
+				{ this.renderCategories() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }
