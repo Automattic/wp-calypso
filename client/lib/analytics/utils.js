@@ -5,11 +5,40 @@
  */
 
 import debugFactory from 'debug';
+import userModule from 'lib/user';
+
+const crypto = require( 'crypto' );
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:utils' );
+const user = userModule();
+
+const userIdMd5 = user.get()
+	? crypto
+			.createHash( 'md5' )
+			.update( user.get().ID.toString() )
+			.digest( 'hex' )
+	: 0;
+const userEmailMd5 =
+	user.get() && typeof user.get().email === 'string'
+		? crypto
+				.createHash( 'md5' )
+				.update( user.get().email )
+				.digest( 'hex' )
+		: null;
+
+debug( `User ID: ${ user.get().ID }, MD5: ${ userIdMd5 }` );
+debug( `User email MD5: ${ userEmailMd5 }` );
+
+export function getUserIdMd5() {
+	return userIdMd5;
+}
+
+export function getUserEmailMd5() {
+	return userEmailMd5;
+}
 
 /**
  * Whether Do Not Track is enabled in the user's browser.
