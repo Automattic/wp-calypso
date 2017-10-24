@@ -717,6 +717,34 @@
 	}
 }
 
+@include breakpoint( ">660px" ) {
+	.payment-box__payment-buttons-test {
+		display: flex;
+		align-items: center;	
+	}
+}
+
+.checkout__secure-payment {
+	margin-top: 10px;
+	color: lighten( $gray, 10% );
+
+	@include breakpoint( ">660px" ) {
+		margin-left: 10px;
+		margin-top: 0;
+		display: inline-block;
+	}
+}
+
+.checkout__secure-payment-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include breakpoint( ">660px" ) {
+		justify-content: left;
+	}
+}
+
 .checkout__payment-chat-button-icon {
 	color: $blue-wordpress;
 	margin-right: 5px;
@@ -863,23 +891,17 @@
 		}
 	}
 
-
-	 img {
-		&.checkout__paypal {
-			width: 80px;
-			margin-top: 4px;
-		}
-		&.checkout__credit-card {
-			margin-right: 3px;
-			width: 28px;
-			margin-bottom: -2px;
-		}
+	.checkout__provider {
+		display: flex;
+		align-items: center;
 	}
 
-	.section-nav-tab__link {
-		img {
-			vertical-align: bottom;
-		}
+	.checkout__paypal {
+		width: 80px;
+	}
+
+	.checkout__credit-card {
+		margin-right: 5px;
 	}
 
 	.select-dropdown__item-text {

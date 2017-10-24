@@ -8,6 +8,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -95,13 +96,27 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	progressBar = () => {
-
 		return (
 			<div className="credit-card-payment-box__progress-bar">
 				{ this.props.translate( 'Processing payment…' ) }
 				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
 		);
+	};
+
+	getSecurePaymentCopy = () => {
+		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+			return (
+				<div className="checkout__secure-payment">
+					<div className="checkout__secure-payment-content">
+						<Gridicon icon="lock" />
+						{ this.props.translate( 'Secure payment' ) }
+					</div>
+				</div>
+			);
+		}
+
+		return null;
 	};
 
 	paymentButtons = () => {
@@ -113,11 +128,16 @@ class CreditCardPaymentBox extends React.Component {
 				hasBusinessPlanInCart,
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
+			} ),
+			paymentButtonsClasses = classnames( 'payment-box__payment-buttons', {
+				'payment-box__payment-buttons-test': abtest( 'checkoutPaymentMethodTabs' ) === 'tabs',
 			} );
 
 		return (
-			<div className="payment-box__payment-buttons">
+			<div className={ paymentButtonsClasses }>
 				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
+
+				{ this.getSecurePaymentCopy() }
 
 				{ this.props.onToggle && cartValues.isPayPalExpressEnabled( cart ) ? (
 					<a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
