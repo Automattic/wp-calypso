@@ -23,6 +23,7 @@ Usage:
     <RegionAddressFieldsets
         getFieldProps={ getFieldProps }
         countryCode={ countryCode }
+        shouldAutoFocusAddressField={ true }
     />
 ```
 
@@ -36,6 +37,9 @@ Returns an object of props expected by our form input components: `my-sites/doma
 
 The user's country code, for example: 'AU', 'GB', 'IT', 'US' and so on.
 
+`shouldAutoFocusAddressField` _{Bool}_ 
+
+Informs the component if it should focus the first address field when a user switches countries.
 
 ## g-apps-fieldset.jsx
 

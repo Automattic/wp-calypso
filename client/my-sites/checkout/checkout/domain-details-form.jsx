@@ -57,6 +57,8 @@ import ExtraInfoForm, {
 import config from 'config';
 import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
 import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
+import notices from 'notices';
+import support from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
@@ -147,6 +149,11 @@ export class DomainDetailsForm extends PureComponent {
 
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
+	}
+
+	getCountryCode() {
+		const { contactDetails } = this.props;
+		return ( contactDetails || {} ).countryCode;
 	}
 
 	switchToNextStep() {
@@ -362,7 +369,7 @@ export class DomainDetailsForm extends PureComponent {
 			<CountrySelect
 				label={ this.props.translate( 'Country' ) }
 				countriesList={ countriesList }
-				{ ...this.getFieldProps( 'country-code' ) }
+				{ ...this.getFieldProps( 'country-code', true ) }
 			/>
 		);
 	}
@@ -386,8 +393,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	renderDomainContactDetailsFields() {
-		const { contactDetails } = this.props;
-		const countryCode = ( contactDetails || {} ).countryCode;
+		const countryCode = this.getCountryCode();
 		return (
 			<div className="checkout__domain-contact-details-fields">
 				{ this.renderOrganizationField() }
@@ -431,11 +437,38 @@ export class DomainDetailsForm extends PureComponent {
 	focusFirstError() {
 		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
 		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
-		firstErrorRef.focus();
+
+		// Where there is no country code the address fields are absent and not focussable
+		// country-select component doesn't pass down inputRef to child select
+		if ( ! this.getCountryCode() ) {
+			return;
+		}
+
+		try {
+			firstErrorRef.focus();
+		} catch ( err ) {
+			const noticeMessage = this.props.translate(
+				'There was a problem validating your contact details: "%(firstErrorName)s" required. ' +
+					'Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				{
+					args: {
+						firstErrorName,
+					},
+					components: {
+						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+					},
+					comment: 'Validation error when filling out domain checkout contact details form',
+				}
+			);
+			notices.error( noticeMessage );
+			throw new Error(
+				`Cannot focus() on invalid form element in domain details checkout form with name: '${ firstErrorName }'`
+			);
+		}
 	}
 
 	focusAddressField() {
-		const inputRef = this.inputRefs[ 'address-1' ] || null;
+		const inputRef = this.inputRefs[ 'address-1' ];
 
 		if ( inputRef ) {
 			inputRef.focus();
