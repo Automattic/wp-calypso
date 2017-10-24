@@ -569,13 +569,14 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 
-	recordBulkAction: ( action, count, fromList ) =>
+	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_comment_management_bulk_action', {
 					action,
 					count,
 					from_list: fromList,
+					view,
 				} ),
 				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
