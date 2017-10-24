@@ -359,7 +359,7 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => ( dis
 
 /**
  * Triggers a internal action that represents request to save settings
- * Components interested in this acction will subscribe to store with
+ * Components interested in this action will subscribe to store with
  * isSaveSettingsReqested
  *
  * @param  {Number|String} siteId      Jetpack site ID
