@@ -15,13 +15,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
 import { canCurrentUser } from 'state/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackSite, getSiteDomain } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, post ) => {
@@ -47,6 +48,7 @@ const PostActions = ( {
 	showComments,
 	showLikes,
 	showStats,
+	siteDomain,
 	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
@@ -67,14 +69,25 @@ const PostActions = ( {
 			{ ! isDraft &&
 			showComments && (
 				<li className="post-actions__item">
-					<CommentButton
-						key="comment-button"
-						post={ post }
-						showLabel={ false }
-						commentCount={ post.discussion.comment_count }
-						onClick={ toggleComments }
-						tagName="div"
-					/>
+					{ config.isEnabled( 'comments/management/post-view' ) ? (
+						<CommentButton
+							key="comment-button"
+							post={ post }
+							showLabel={ false }
+							commentCount={ post.discussion.comment_count }
+							tagName="a"
+							link={ `/comments/all/${ siteDomain }/${ post.ID }` }
+						/>
+					) : (
+						<CommentButton
+							key="comment-button"
+							post={ post }
+							showLabel={ false }
+							commentCount={ post.discussion.comment_count }
+							onClick={ toggleComments }
+							tagName="div"
+						/>
+					) }
 				</li>
 			) }
 			{ ! isDraft &&
@@ -109,6 +122,7 @@ PostActions.propTypes = {
 
 const mapStateToProps = ( state, { siteId, post } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
+	const siteDomain = getSiteDomain( state, siteId );
 
 	// TODO: Maybe add dedicated selectors for the following.
 	const showComments =
@@ -125,6 +139,7 @@ const mapStateToProps = ( state, { siteId, post } ) => {
 		showComments,
 		showLikes,
 		showStats,
+		siteDomain,
 	};
 };
 
