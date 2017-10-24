@@ -96,7 +96,7 @@ class DocumentHead extends Component {
 		if ( ! element ) {
 			const newTag = document.createElement( tagName );
 			forEach( properties, ( value, key ) => {
-				newTag[ key ] = value;
+				newTag.setAttribute( key, value );
 			} );
 			const head = document.getElementsByTagName( 'head' )[ 0 ];
 			head.appendChild( newTag );
