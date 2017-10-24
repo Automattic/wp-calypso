@@ -15,7 +15,7 @@ import MyChildComponent from 'components/my-child-component';
 
 // initialize rest of the variables
 
-const MyComponent = React.createClass( {
+class MyComponent extends React.Component {
 	render() {
 		return (
 			<EmailForwardingData
@@ -24,7 +24,7 @@ const MyComponent = React.createClass( {
 				sites={ sites } />
 		);
 	}
-} );
+}
 
 export default MyComponent;
 ```
