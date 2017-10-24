@@ -17,7 +17,7 @@ import postUtils from 'lib/posts/utils';
 // More semantic way to express this??
 const isPostNotYetPublished = post => get( post, 'ID' ) && ! postUtils.isPublished( post );
 
-const SaveStatus = ( { isSaveAvailable, isSaving, onClick, post, translate } ) => {
+const SaveStatus = ( { isSaveAvailable, isSaving, onClick, post, tabIndex, translate } ) => {
 	const shouldShowStatusLabel = isSaveAvailable || isSaving || isPostNotYetPublished( post );
 
 	if ( ! shouldShowStatusLabel ) {
@@ -27,7 +27,11 @@ const SaveStatus = ( { isSaveAvailable, isSaving, onClick, post, translate } ) =
 	return (
 		<div className="editor-ground-control__status">
 			{ isSaveAvailable ? (
-				<button className="editor-ground-control__save button is-link" onClick={ onClick }>
+				<button
+					className="editor-ground-control__save button is-link"
+					onClick={ onClick }
+					tabIndex={ tabIndex }
+				>
 					{ translate( 'Save' ) }
 				</button>
 			) : (
@@ -46,11 +50,13 @@ SaveStatus.propTypes = {
 	isSaveAvailable: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	post: PropTypes.object,
+	tabIndex: PropTypes.number,
 	translate: PropTypes.func,
 };
 
 SaveStatus.defaultProps = {
 	onClick: noop,
+	tabIndex: 0,
 };
 
 export default localize( SaveStatus );

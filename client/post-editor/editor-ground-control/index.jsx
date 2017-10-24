@@ -297,6 +297,7 @@ export class EditorGroundControl extends PureComponent {
 					isSaveAvailable={ isSaveAvailable }
 					onClick={ this.onSaveButtonClick }
 					post={ post }
+					tabIndex={ 3 }
 				/>
 				{ hasRevisions && (
 					<HistoryButton
