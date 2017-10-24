@@ -1,4 +1,5 @@
 {
+	"additionalProperties": false,
 	"type": "object",
 	"required": [ "itemsPerPage", "page", "totalItems", "totalPages" ],
 	"properties": {
@@ -13,6 +14,7 @@
 		"totalPages": { "type": "integer" },
 		"type": { "type": "string" },
 		"current": {
+			"additionalProperties": false,
 			"type": "object",
 			"required": [ "orderedItems", "totalItems" ],
 			"properties": {
@@ -35,6 +37,7 @@
 			"properties": {
 				"activity_id": { "type": "string" },
 				"actor": {
+					"additionalProperties": false,
 					"type": "object",
 					"required": [ "type", "name" ],
 					"properties": {
@@ -79,7 +82,8 @@
 					"min": 0,
 					"type": "integer"},
 				"type": { "type": "string" }
-			}
+			},
+			"additionalProperties": false
 		}
 	}
 }
