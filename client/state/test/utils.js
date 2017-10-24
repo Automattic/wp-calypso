@@ -351,6 +351,71 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { 10: 10 }, remove( '10' ) ) ).to.eql( {} );
 		} );
+
+		test( 'should apply global actions to every item', () => {
+			const counter = ( state = 0, { type } ) => {
+				switch ( type ) {
+					case 'INC':
+						return state + 1;
+					case 'DESERIALIZE':
+						return parseInt( state, 16 );
+					case 'SERIALIZE':
+						return state.toString( 16 );
+					default:
+						return state;
+				}
+			};
+
+			const keyed = keyedReducer( 'id', counter, [ 'DESERIALIZE', 'SERIALIZE' ] );
+
+			const prev = { 14: 5, 23: 19 };
+
+			expect( keyed( prev, { type: 'INC', id: 14 } ) ).to.eql( { 14: 6, 23: 19 } );
+			expect( keyed( prev, { type: 'SERIALIZE' } ) ).to.eql( { 14: '5', 23: '13' } );
+			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).to.eql( { 14: 5, 23: 25 } );
+		} );
+
+		test( 'should not apply global actions if not whitelisted', () => {
+			const counter = ( state = 0, { type } ) => {
+				switch ( type ) {
+					case 'INC':
+						return state + 1;
+					case 'DESERIALIZE':
+						return parseInt( state, 16 );
+					case 'SERIALIZE':
+						return state.toString( 16 );
+					default:
+						return state;
+				}
+			};
+
+			const keyed = keyedReducer( 'id', counter );
+
+			const prev = { 14: 5, 23: 19 };
+
+			expect( keyed( prev, { type: 'INC', id: 14 } ) ).to.eql( { 14: 6, 23: 19 } );
+			expect( keyed( prev, { type: 'SERIALIZE' } ) ).to.equal( prev );
+			expect( keyed( prev, { type: 'DESERIALIZE' } ) ).to.equal( prev );
+		} );
+
+		test( 'should prune items after global actions are applied', () => {
+			const counter = ( state = 0, { type } ) => {
+				switch ( type ) {
+					case 'INC':
+						return state + 1;
+					case 'PURGE':
+						return state <= 10 ? state : undefined;
+					default:
+						return state;
+				}
+			};
+
+			const keyed = keyedReducer( 'id', counter, [ 'PURGE' ] );
+
+			const prev = { 14: 5, 23: 19 };
+
+			expect( keyed( prev, { type: 'PURGE' } ) ).to.eql( { 14: 5 } );
+		} );
 	} );
 
 	describe( '#withSchemaValidation', () => {
