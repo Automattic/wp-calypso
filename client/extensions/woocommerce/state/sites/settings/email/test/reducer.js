@@ -9,13 +9,15 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
-	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
+	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
 } from 'woocommerce/state/action-types';
 import reducer from 'woocommerce/state/sites/reducer';
 
@@ -182,5 +184,34 @@ describe( 'reducer', () => {
 		const newSiteData = reducer( {}, action );
 		const updatedState = reducer( newSiteData, secondAction );
 		expect( updatedState[ siteId ].settings.email.apiKeySubmit ).to.eql( false );
+	} );
+
+	test( 'should mark saveSettings as true after dispatching mailChimpSaveSettings', () => {
+		const siteId = 123;
+		const action = {
+			type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
+			siteId,
+		};
+
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ].settings.email.saveSettings ).to.eql( true );
+	} );
+
+	test( 'should mark saveSettings as false after newsletter settings submit success', () => {
+		const siteId = 123;
+		const action = {
+			type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
+			siteId,
+		};
+
+		const secondAction = {
+			type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
+			siteId,
+			settings: { mailchimp_list: 'woot' },
+		};
+
+		const newSiteData = reducer( {}, action );
+		const updatedState = reducer( newSiteData, secondAction );
+		expect( updatedState[ siteId ].settings.email.saveSettings ).to.eql( false );
 	} );
 } );
