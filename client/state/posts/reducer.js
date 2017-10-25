@@ -313,35 +313,97 @@ export const queries = ( () => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const allSitesQueries = createReducer(
-	new PostQueryManager( {}, { itemKey: 'global_ID' } ),
-	{
-		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
-			if ( siteId ) { // Handle all-sites queries only.
-				return state;
-			}
-			return state.receive(
-				posts.map( normalizePostForState ),
-				{ query, found }
-			);
-		},
-		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
-			return state.receive( posts );
-		},
-		[ SERIALIZE ]: state => {
-			return {
-				data: state.data,
-				options: state.options,
-			};
-		},
-		[ DESERIALIZE ]: state => {
-			if ( ! isValidStateWithSchema( state, allSitesQueriesSchema ) ) {
-				return new PostQueryManager( {}, { itemKey: 'global_ID' } );
-			}
-			return new PostQueryManager( state.data, state.options );
-		},
+export const allSitesQueries = ( () => {
+	function findItemKey( state, siteId, postId ) {
+		return findKey( state.data.items, post => {
+			return post.site_ID === siteId && post.ID === postId;
+		} ) || null;
 	}
-);
+	
+	return createReducer(
+		new PostQueryManager( {}, { itemKey: 'global_ID' } ),
+		{
+			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
+				if ( siteId ) { // Handle all-sites queries only.
+					return state;
+				}
+				return state.receive(
+					posts.map( normalizePostForState ),
+					{ query, found }
+				);
+			},
+			[ POSTS_RECEIVE ]: ( state, { posts } ) => {
+				return state.receive( posts );
+			},
+			[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.receive(
+					{
+						global_ID: globalId,
+						status: '__RESTORE_PENDING',
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.receive(
+					{
+						global_ID: globalId,
+						status: 'trash',
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_SAVE ]: ( state, { siteId, postId, post } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.receive(
+					{
+						global_ID: globalId,
+						...post,
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_DELETE ]: ( state, { siteId, postId } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.receive(
+					{
+						global_ID: globalId,
+						status: '__DELETE_PENDING',
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_DELETE_FAILURE ]: ( state, { siteId, postId } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.receive(
+					{
+						global_ID: globalId,
+						status: 'trash',
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
+				const globalId = findItemKey( state, siteId, postId );
+				return state.removeItem( globalId );
+			},
+			[ SERIALIZE ]: state => {
+				return {
+					data: state.data,
+					options: state.options,
+				};
+			},
+			[ DESERIALIZE ]: state => {
+				if ( ! isValidStateWithSchema( state, allSitesQueriesSchema ) ) {
+					return new PostQueryManager( {}, { itemKey: 'global_ID' } );
+				}
+				return new PostQueryManager( state.data, state.options );
+			},
+		}
+	);
+} )();
 
 /**
  * Returns the updated editor posts state after an action has been dispatched.
