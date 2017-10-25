@@ -36,20 +36,9 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 		} );
 	}
 
-	const showNonAtomicWarrningNotice = config.isEnabled( 'woocommerce/store-on-non-atomic-sites' );
-
 	return (
 		<StickyPanel>
 			<SidebarNavigation />
-			{ showNonAtomicWarrningNotice && (
-				<Notice
-					status="is-warning"
-					className="action-header__notice"
-					isCompact={ true }
-					text={ 'Store on non Atomic Jetpack site development mode!' }
-					showDismiss={ false }
-				/>
-			) }
 			<Card className="action-header__header">
 				<span className="action-header__breadcrumbs">{ breadcrumbsOutput }</span>
 				<div className="action-header__actions">{ children }</div>
