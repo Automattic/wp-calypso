@@ -11,14 +11,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
-	getHappychatStatus,
-} from 'state/happychat/selectors';
+} from 'state/happychat/constants';
+import { localize } from 'i18n-calypso';
+import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 
@@ -77,7 +77,7 @@ class Notices extends Component {
 
 const mapState = state => ( {
 	isServerReachable: isHappychatServerReachable( state ),
-	chatStatus: getHappychatStatus( state ),
+	chatStatus: getHappychatChatStatus( state ),
 	connectionStatus: getHappychatConnectionStatus( state ),
 } );
 

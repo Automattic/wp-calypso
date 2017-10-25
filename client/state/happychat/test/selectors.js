@@ -20,61 +20,16 @@ import {
 	HAPPYCHAT_CHAT_STATUS_NEW,
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-	canUserSendMessages,
-	hasUnreadMessages,
-	hasActiveHappychatSession,
-	wasHappychatRecentlyActive,
-	getGroups,
-} from '../selectors';
+} from 'state/happychat/constants';
+import { canUserSendMessages, hasUnreadMessages, getGroups } from '../selectors';
 import { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-const TIME_SECOND = 1000;
-const TIME_MINUTE = TIME_SECOND * 60;
-const TIME_HOUR = TIME_MINUTE * 60;
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;
 
 describe( 'selectors', () => {
-	describe( '#wasHappychatRecentlyActive()', () => {
-		useSandbox( sandbox => {
-			sandbox.stub( Date, 'now' ).returns( NOW );
-		} );
-
-		test( 'should return false if no activity', () => {
-			const result = wasHappychatRecentlyActive( {
-				happychat: {
-					lastActivityTimestamp: null,
-				},
-			} );
-
-			expect( result ).to.be.false;
-		} );
-
-		test( 'should return false if last activity was 3 hours ago', () => {
-			const result = wasHappychatRecentlyActive( {
-				happychat: {
-					lastActivityTimestamp: NOW - TIME_HOUR * 3,
-				},
-			} );
-
-			expect( result ).to.be.false;
-		} );
-
-		test( 'should return true if last activity was 5 minutes ago', () => {
-			const result = wasHappychatRecentlyActive( {
-				happychat: {
-					lastActivityTimestamp: NOW - TIME_MINUTE * 5,
-				},
-			} );
-
-			expect( result ).to.be.true;
-		} );
-	} );
-
 	describe( '#canUserSendMessages', () => {
 		const messagingDisabledChatStatuses = [
 			HAPPYCHAT_CHAT_STATUS_ABANDONED,
@@ -94,7 +49,7 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connection: { status: 'uninitialized' },
-					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
+					chat: { status: HAPPYCHAT_CHAT_STATUS_NEW },
 				},
 			} );
 			expect( canUserSendMessages( state ) ).to.be.false;
@@ -105,7 +60,7 @@ describe( 'selectors', () => {
 				const state = deepFreeze( {
 					happychat: {
 						connection: { status: 'connected' },
-						chatStatus: status,
+						chat: { status },
 					},
 				} );
 				expect( canUserSendMessages( state ) ).to.be.false;
@@ -117,7 +72,7 @@ describe( 'selectors', () => {
 				const state = deepFreeze( {
 					happychat: {
 						connection: { status: 'connected' },
-						chatStatus: status,
+						chat: { status },
 					},
 				} );
 				expect( canUserSendMessages( state ) ).to.be.true;
@@ -131,7 +86,7 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connection: { status: 'connected' },
-					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
+					chat: { status: HAPPYCHAT_CHAT_STATUS_NEW },
 					isAvailable: false,
 				},
 			} );
@@ -154,7 +109,7 @@ describe( 'selectors', () => {
 		test( 'returns false if Happychat is focused', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline,
+					chat: { timeline },
 					ui: { lostFocusAt: null },
 				},
 			} );
@@ -164,7 +119,7 @@ describe( 'selectors', () => {
 		test( 'returns false if there are no new messages since the Happychat was blurred', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline,
+					chat: { timeline },
 					ui: { lostFocusAt: NOW + ONE_MINUTE },
 				},
 			} );
@@ -174,41 +129,11 @@ describe( 'selectors', () => {
 		test( 'returns true if there are one or more messages after Happychat was blurred', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline,
+					chat: { timeline },
 					ui: { lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE },
 				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.true;
-		} );
-	} );
-
-	describe( '#hasActiveHappychatSession', () => {
-		const inactiveChatStatuses = [
-			HAPPYCHAT_CHAT_STATUS_BLOCKED,
-			HAPPYCHAT_CHAT_STATUS_CLOSED,
-			HAPPYCHAT_CHAT_STATUS_DEFAULT,
-			HAPPYCHAT_CHAT_STATUS_NEW,
-		];
-		const activeChatStatuses = [
-			HAPPYCHAT_CHAT_STATUS_ABANDONED,
-			HAPPYCHAT_CHAT_STATUS_ASSIGNED,
-			HAPPYCHAT_CHAT_STATUS_ASSIGNING,
-			HAPPYCHAT_CHAT_STATUS_MISSED,
-			HAPPYCHAT_CHAT_STATUS_PENDING,
-		];
-
-		test( 'should be false when chatStatus indicates the user has no active session', () => {
-			inactiveChatStatuses.forEach( status => {
-				const state = deepFreeze( { happychat: { chatStatus: status } } );
-				expect( hasActiveHappychatSession( state ) ).to.be.false;
-			} );
-		} );
-
-		test( 'should be true when chatStatus indicates the user has an active session', () => {
-			activeChatStatuses.forEach( status => {
-				const state = deepFreeze( { happychat: { chatStatus: status } } );
-				expect( hasActiveHappychatSession( state ) ).to.be.true;
-			} );
 		} );
 	} );
 
