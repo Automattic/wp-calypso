@@ -33,7 +33,7 @@ describe( 'PostFetcher', () => {
 		jest.clearAllTimers();
 	} );
 
-	test( 'a succesful batch calls the right handlers', () => {
+	test( 'a successful batch calls the right handlers', () => {
 		const postKey = { feedId: 1, postId: 2 };
 		const data = {};
 		const requestPromise = Promise.resolve( data );
