@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { omit, get } from 'lodash';
 import { recordTrack } from 'reader/stats';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -77,8 +78,23 @@ class PeopleProfile extends React.PureComponent {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	};
-	
-	handleLinkToReaderSiteStream = () => recordTrack( 'calypso_reader_people_followers_link_click' );
+
+	handleLinkToReaderSiteStream = event => {
+		const modifierPressed =
+			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
+
+		recordTrack( 'calypso_sites_people_followers_link_click', {
+			modifier_pressed: modifierPressed,
+		} );
+
+		if ( modifierPressed ) {
+			return;
+		}
+
+		const blogId = get( this.props.user, 'follow_data.params.blog_id', false );
+		event.preventDefault();
+		page( `/read/blogs/${ blogId }` );
+	};
 
 	renderName = () => {
 		const user = this.props.user;
@@ -98,7 +114,7 @@ class PeopleProfile extends React.PureComponent {
 		if ( name && blogId ) {
 			name = (
 				<div className="people-profile__username">
-					<a href={ `/read/blogs/${ blogId }` } onClick={ this.handleLinkToReaderSiteStream }>
+					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
 						{ name }
 					</a>
 				</div>
@@ -189,7 +205,10 @@ class PeopleProfile extends React.PureComponent {
 			} );
 
 		return (
-			<div { ...omit( this.props, 'className', 'user' ) } className={ classes }>
+			<div
+				{ ...omit( this.props, 'className', 'user', 'moment', 'numberFormat', 'translate' ) }
+				className={ classes }
+			>
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>

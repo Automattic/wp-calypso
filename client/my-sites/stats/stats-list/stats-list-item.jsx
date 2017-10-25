@@ -230,19 +230,28 @@ class StatsListItem extends React.Component {
 			if ( data.link ) {
 				let href = data.link;
 				let onClickHandler = this.preventDefaultOnClick;
-				if ( this.isFollowersModule ) {
-					const siteId = this.getSiteIdForFollow();
-					if ( siteId ) {
-						href = '';
-						onClickHandler = event => {
-							event.preventDefault();
-							page( `/read/blogs/${ siteId }` );
-							recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
-								siteId,
-								module_name: this.props.moduleName,
-							} );
-						};
-					}
+				const siteId = this.getSiteIdForFollow();
+				if ( this.isFollowersModule && siteId ) {
+					onClickHandler = event => {
+						const modifierPressed =
+							event.button > 0 ||
+							event.metaKey ||
+							event.controlKey ||
+							event.shiftKey ||
+							event.altKey;
+						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
+							siteId,
+							module_name: this.props.moduleName,
+							modifier_pressed: modifierPressed,
+						} );
+
+						if ( modifierPressed ) {
+							return;
+						}
+
+						event.preventDefault();
+						page( `/read/blogs/${ siteId }` );
+					};
 				}
 				itemLabel = (
 					<a onClick={ onClickHandler } href={ href }>

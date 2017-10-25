@@ -46,11 +46,13 @@ class PeopleListItem extends React.PureComponent {
 
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
+		const tagName = canLinkToProfile ? 'a' : 'span';
+
 		return (
 			<CompactCard
 				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
-				tagName="a"
+				tagName={ tagName }
 				href={
 					canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login
 				}
