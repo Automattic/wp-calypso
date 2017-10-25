@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
-import { get, includes, omitBy, reduce } from 'lodash';
+import { omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
