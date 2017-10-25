@@ -9,7 +9,14 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items, queryRequests, queries, siteRequests, edits } from '../reducer';
+import reducer, {
+	items,
+	queryRequests,
+	queries,
+	allSitesQueries,
+	siteRequests,
+	edits,
+} from '../reducer';
 import PostQueryManager from 'lib/query-manager/post';
 import {
 	EDITOR_START,
@@ -1225,6 +1232,480 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
+		} );
+	} );
+
+	describe( '#allSitesQueries()', () => {
+		test( 'should default to a new PostQueryManager', () => {
+			const state = allSitesQueries( undefined, {} );
+
+			expect( state ).to.be.an.instanceof( PostQueryManager );
+			expect( state.data ).to.eql( { items: {}, queries: {} } );
+			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
+		} );
+
+		test( 'should track post query request success', () => {
+			const state = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						meta: {},
+					},
+				],
+			} );
+
+			expect( state.getItems( { search: 'Hello' } ) ).to.eql( [
+				{
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World',
+				},
+			] );
+		} );
+
+		test( 'should accumulate query request success', () => {
+			const original = deepFreeze(
+				allSitesQueries( undefined, {
+					type: POSTS_REQUEST_SUCCESS,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish',
+							type: 'post',
+						},
+					],
+				} )
+			);
+
+			const state = allSitesQueries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				query: { search: 'Hello W' },
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						status: 'publish',
+						type: 'post',
+					},
+				],
+			} );
+
+			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
+			expect( state.getItems( { search: 'Hello' } ) ).to.have.length( 1 );
+			expect( state.getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
+		} );
+
+		test( 'should return the same state if successful request has no changes', () => {
+			const action = {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						status: 'publish',
+						type: 'post',
+					},
+				],
+			};
+			const original = deepFreeze( allSitesQueries( undefined, action ) );
+			const state = allSitesQueries( original, action );
+
+			expect( state ).to.equal( original );
+		} );
+
+		test( 'should track post items received from site-specific queries', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+			};
+			const state = allSitesQueries( undefined, {
+				type: POSTS_RECEIVE,
+				posts: [ postObject ],
+			} );
+
+			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
+		} );
+
+		test( 'should ignore query results of site-specific queries', () => {
+			const state = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Hello' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+					},
+				],
+			} );
+
+			expect( state.data ).to.eql( { items: {}, queries: {} } );
+		} );
+
+		test( 'should update received posts', () => {
+			const original = deepFreeze(
+				allSitesQueries( undefined, {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: null,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'publish',
+							type: 'post',
+						},
+					],
+				} )
+			);
+
+			const state = allSitesQueries( original, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						status: 'draft',
+						type: 'post',
+					},
+				],
+			} );
+
+			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				status: 'draft',
+				type: 'post',
+			} );
+		} );
+
+		test( 'should apply pending restore status on restore actions', () => {
+			let original = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '48b6010b559efe6a77a429773e0cbf12',
+						title: 'Trashed',
+						status: 'trash',
+						type: 'post',
+					},
+				],
+			} );
+
+			const state = allSitesQueries( original, {
+				type: POST_RESTORE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( '__RESTORE_PENDING' );
+			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		test( 'should apply pending trash status on restore failure actions', () => {
+			let original = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '48b6010b559efe6a77a429773e0cbf12',
+						title: 'Trashed',
+						status: 'trash',
+						type: 'post',
+					},
+				],
+			} );
+
+			original = allSitesQueries( original, {
+				type: POST_RESTORE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			const state = allSitesQueries( original, {
+				type: POST_RESTORE_FAILURE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( 'trash' );
+			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
+		} );
+
+		test( 'should apply save actions as partial received posts', () => {
+			const original = deepFreeze(
+				allSitesQueries( undefined, {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: null,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'draft',
+							type: 'post',
+						},
+					],
+				} )
+			);
+
+			const state = allSitesQueries( original, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: 841,
+				post: {
+					status: 'trash',
+				},
+			} );
+
+			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				status: 'trash',
+				type: 'post',
+			} );
+		} );
+
+		test( 'should apply pending delete status on delete actions', () => {
+			let original = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '48b6010b559efe6a77a429773e0cbf12',
+						title: 'Trashed',
+						status: 'trash',
+						type: 'post',
+					},
+				],
+			} );
+
+			const state = allSitesQueries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( '__DELETE_PENDING' );
+			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		test( 'should restore item when post delete fails', () => {
+			let original = allSitesQueries( undefined, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: null,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '48b6010b559efe6a77a429773e0cbf12',
+						title: 'Trashed',
+						status: 'trash',
+						type: 'post',
+					},
+				],
+			} );
+			original = allSitesQueries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect( original.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+
+			const state = allSitesQueries( original, {
+				type: POST_DELETE_FAILURE,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( 'trash' );
+			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
+		} );
+
+		test( 'should remove item when post delete action success dispatched', () => {
+			const original = deepFreeze(
+				allSitesQueries( undefined, {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: null,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+							status: 'trash',
+							type: 'post',
+						},
+					],
+				} )
+			);
+
+			const state = allSitesQueries( original, {
+				type: POST_DELETE_SUCCESS,
+				siteId: 2916284,
+				postId: 841,
+			} );
+
+			expect( state.getItems() ).to.have.length( 0 );
+		} );
+
+		test( 'should persist state', () => {
+			const original = deepFreeze(
+				allSitesQueries( undefined, {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId: null,
+					query: { search: 'Hello' },
+					found: 1,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+						},
+					],
+				} )
+			);
+
+			const state = allSitesQueries( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {
+				data: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+						},
+					},
+					queries: {
+						'[["search","Hello"]]': {
+							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+							found: 1,
+						},
+					},
+				},
+				options: {
+					itemKey: 'global_ID',
+				},
+			} );
+		} );
+
+		test( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				data: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841,
+							site_ID: 2916284,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							title: 'Hello World',
+						},
+					},
+					queries: {
+						'[["search","Hello"]]': {
+							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+							found: 1,
+						},
+					},
+				},
+				options: {
+					itemKey: 'global_ID',
+				},
+			} );
+
+			const state = allSitesQueries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( new PostQueryManager( {
+				items: {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						site_ID: 2916284,
+						title: 'Hello World',
+					},
+				},
+				queries: {
+					'[["search","Hello"]]': {
+						found: 1,
+						itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+					},
+				},
+			}, { itemKey: 'global_ID' } ) );
+		} );
+
+		test( 'should not load invalid persisted state', () => {
+			const original = '{INVALID';
+
+			const state = allSitesQueries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.be.an.instanceof( PostQueryManager );
+			expect( state.data ).to.eql( { items: {}, queries: {} } );
+			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
 		} );
 	} );
 } );
