@@ -119,7 +119,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	return startSession()
 		.then( ( { session_id, geo_location } ) => {
-			happychatUser.geo_location = geo_location;
+			happychatUser.geoLocation = geo_location;
 			return sign( { user, session_id } );
 		} )
 		.then( ( { jwt } ) => connection.init( url, dispatch, { jwt, ...happychatUser } ) )

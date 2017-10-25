@@ -18,9 +18,9 @@ export const geoLocation = createReducer(
 	null,
 	{
 		[ HAPPYCHAT_CONNECTED ]: ( state, action ) => {
-			const { user: { geo_location } } = action;
-			if ( geo_location && geo_location.country_long && geo_location.city ) {
-				return geo_location;
+			const { user: { geoLocation: location } } = action;
+			if ( location && location.country_long && location.city ) {
+				return location;
 			}
 			return state;
 		},

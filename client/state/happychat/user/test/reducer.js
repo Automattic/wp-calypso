@@ -22,7 +22,7 @@ describe( '#geoLocation()', () => {
 		const state = geoLocation( null, {
 			type: HAPPYCHAT_CONNECTED,
 			user: {
-				geo_location: {
+				geoLocation: {
 					country_long: 'Romania',
 					city: 'Timisoara',
 				},
