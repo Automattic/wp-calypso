@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -65,7 +66,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
-			<Backups />
+			{ config.isEnabled( 'jetpack/credentials' ) && <Backups /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
