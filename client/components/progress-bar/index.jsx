@@ -30,8 +30,12 @@ export default class ProgressBar extends PureComponent {
 		isPulsing: PropTypes.bool,
 	};
 
+	state = {
+		allTimeMax: this.props.value,
+	};
+
 	getCompletionPercentage() {
-		const percentage = Math.ceil( this.props.value / this.props.total * 100 );
+		const percentage = Math.ceil( this.state.allTimeMax / this.props.total * 100 );
 
 		// The percentage should not be allowed to be more than 100
 		return Math.min( percentage, 100 );
@@ -52,6 +56,10 @@ export default class ProgressBar extends PureComponent {
 				{ title }
 			</div>
 		);
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		this.setState( { allTimeMax: Math.max( this.state.allTimeMax, nextProps.value ) } );
 	}
 
 	render() {
