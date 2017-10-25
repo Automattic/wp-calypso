@@ -19,7 +19,14 @@ import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 
-function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, isStatsActive, bumpStat, } ) {
+function PostActionsEllipsisMenuStats( {
+	translate,
+	siteSlug,
+	postId,
+	status,
+	isStatsActive,
+	bumpStat,
+} ) {
 	if ( ! isStatsActive || 'publish' !== status ) {
 		return null;
 	}
@@ -63,8 +70,14 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type.name, 'stats', dispatchProps.bumpAnalyticsStat );
+	const bumpStat = bumpStatGenerator(
+		stateProps.type.name,
+		'stats',
+		dispatchProps.bumpAnalyticsStat
+	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( PostActionsEllipsisMenuStats ) );
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuStats )
+);

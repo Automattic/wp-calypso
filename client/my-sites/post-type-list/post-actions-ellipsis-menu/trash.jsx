@@ -99,10 +99,22 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { trashPost, deletePost, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpTrashStat = bumpStatGenerator( stateProps.type.name, 'trash', dispatchProps.bumpAnalyticsStat );
-	const bumpDeleteStat = bumpStatGenerator( stateProps.type.name, 'delete', dispatchProps.bumpAnalyticsStat );
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpTrashStat, bumpDeleteStat } );
+	const bumpTrashStat = bumpStatGenerator(
+		stateProps.type.name,
+		'trash',
+		dispatchProps.bumpAnalyticsStat
+	);
+	const bumpDeleteStat = bumpStatGenerator(
+		stateProps.type.name,
+		'delete',
+		dispatchProps.bumpAnalyticsStat
+	);
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, {
+		bumpTrashStat,
+		bumpDeleteStat,
+	} );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( PostActionsEllipsisMenuTrash ) );
-
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuTrash )
+);
