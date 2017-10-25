@@ -424,33 +424,32 @@ export function getSitePlans( currentPlan = PLAN_JETPACK_FREE ) {
 	};
 }
 
+export const DEFAULT_PROPS = {
+	basePlansPath: BASE_PLANS_PATH,
+	calypsoStartedConnection: false,
+	canPurchasePlans: true,
+	cart: CART,
+	completeFlow: noop,
+	context: CONTEXT,
+	flowType: false,
+	getPlanBySlug: noop,
+	goBackToWpAdmin: noop,
+	isAutomatedTransfer: false,
+	isRequestingPlans: false,
+	isRtlLayout: false,
+	jetpackConnectAuthorize: {},
+	recordTracksEvent: noop,
+	redirectingToWpAdmin: false,
+	selectedSite: SELECTED_SITE,
+	selectedSiteSlug: SITE_SLUG,
+	selectPlanInAdvance: noop,
+	sitePlans: getSitePlans(),
+	siteSlug: PLANS_SLUG,
+	transaction: TRANSACTION,
+	translate: identity,
+	userId: USER_ID,
+};
+
 export default function PlansWrapper( props ) {
-	return (
-		<Plans
-			basePlansPath={ BASE_PLANS_PATH }
-			calypsoStartedConnection={ false }
-			canPurchasePlans={ true }
-			cart={ CART }
-			completeFlow={ noop }
-			context={ CONTEXT }
-			flowType={ false }
-			getPlanBySlug={ noop }
-			goBackToWpAdmin={ noop }
-			isAutomatedTransfer={ false }
-			isRequestingPlans={ false }
-			isRtlLayout={ false }
-			jetpackConnectAuthorize={ {} }
-			recordTracksEvent={ noop }
-			redirectingToWpAdmin={ false }
-			selectedSite={ SELECTED_SITE }
-			selectedSiteSlug={ SITE_SLUG }
-			selectPlanInAdvance={ noop }
-			sitePlans={ getSitePlans() }
-			siteSlug={ PLANS_SLUG }
-			transaction={ TRANSACTION }
-			translate={ identity }
-			userId={ USER_ID }
-			{ ...props }
-		/>
-	);
+	return <Plans { ...DEFAULT_PROPS } { ...props } />;
 }
