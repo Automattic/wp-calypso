@@ -14,10 +14,12 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { mc } from 'lib/analytics';
+import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/selectors';
+import { getPostType } from 'state/post-types/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {
@@ -28,6 +30,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 		postId: PropTypes.number,
 		canPublish: PropTypes.bool,
 		savePost: PropTypes.func,
+		bumpStat: PropTypes.func,
 	};
 
 	constructor() {
@@ -42,7 +45,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 			return;
 		}
 
-		mc.bumpStat( 'calypso_cpt_actions', 'publish' );
+		this.props.bumpStat();
 		this.props.savePost( siteId, postId, { status: 'publish' } );
 	}
 
@@ -60,19 +63,32 @@ class PostActionsEllipsisMenuPublish extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+const mapStateToProps = ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
+	if ( ! post ) {
+		return {};
+	}
 
-		return {
-			status: post.status,
-			siteId: post.site_ID,
-			postId: post.ID,
-			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
-		};
-	},
-	{ savePost }
-)( localize( PostActionsEllipsisMenuPublish ) );
+	return {
+		status: post.status,
+		siteId: post.site_ID,
+		postId: post.ID,
+		canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
+		type: getPostType( state, post.site_ID, post.type ),
+	};
+};
+
+const mapDispatchToProps = { savePost, bumpAnalyticsStat };
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpStat = bumpStatGenerator(
+		stateProps.type.name,
+		'publish',
+		dispatchProps.bumpAnalyticsStat
+	);
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuPublish )
+);

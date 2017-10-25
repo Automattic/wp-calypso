@@ -14,8 +14,10 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { mc } from 'lib/analytics';
+import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
+import { getPostType } from 'state/post-types/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -30,6 +32,7 @@ class PostActionsEllipsisMenuView extends Component {
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -42,7 +45,7 @@ class PostActionsEllipsisMenuView extends Component {
 
 	previewPost = event => {
 		const { isPreviewable, previewUrl } = this.props;
-		mc.bumpStat( 'calypso_cpt_actions', 'view' );
+		this.props.bumpStat();
 		if ( ! isPreviewable ) {
 			return;
 		}
@@ -77,18 +80,31 @@ class PostActionsEllipsisMenuView extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+const mapStateToProps = ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
+	if ( ! post ) {
+		return {};
+	}
 
-		return {
-			status: post.status,
-			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
-		};
-	},
-	{ setPreviewUrl, setLayoutFocus }
-)( localize( PostActionsEllipsisMenuView ) );
+	return {
+		status: post.status,
+		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
+		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
+		type: getPostType( state, post.site_ID, post.type ),
+	};
+};
+
+const mapDispatchToProps = { setPreviewUrl, setLayoutFocus, bumpAnalyticsStat };
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpStat = bumpStatGenerator(
+		stateProps.type.name,
+		'view',
+		dispatchProps.bumpAnalyticsStat
+	);
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuView )
+);
