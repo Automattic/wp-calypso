@@ -32,16 +32,17 @@ export class Happychat extends React.Component {
 		this.props.setBlurred();
 	}
 
-	render() {
-		const { isChatOpen, isMinimizing, onCloseChat, onMinimizeChat, onMinimizedChat } = this.props;
+	onCloseChatTitle() {
+		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
+		onMinimizeChat();
+		setTimeout( () => {
+			onMinimizedChat();
+			onCloseChat();
+		}, 500 );
+	}
 
-		const onCloseChatTitle = () => {
-			onMinimizeChat();
-			setTimeout( () => {
-				onMinimizedChat();
-				onCloseChat();
-			}, 500 );
-		};
+	render() {
+		const { isChatOpen, isMinimizing } = this.props;
 
 		return (
 			<div className="happychat">
@@ -52,7 +53,7 @@ export class Happychat extends React.Component {
 						'is-minimizing': isMinimizing,
 					} ) }
 				>
-					<Title onCloseChat={ onCloseChatTitle } />
+					<Title onCloseChat={ this.onCloseChatTitle } />
 					<Timeline />
 					<Notices />
 					<Composer />
