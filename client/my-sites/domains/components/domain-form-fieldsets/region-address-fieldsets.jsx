@@ -22,6 +22,7 @@ import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'my-sites/domains/components/form';
+import { abtest } from 'lib/abtest';
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {
@@ -44,12 +45,21 @@ export class RegionAddressFieldsets extends Component {
 
 	getRegionAddressFieldset() {
 		const { countryCode } = this.props;
+		// we want to measure the impact of these variations on successful checkout purchases
+		const showDefaultAddressFormat =
+			abtest( 'domainsCheckoutLocalizedAddresses' ) === 'showDefaultAddressFormat';
 
-		if ( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+		if (
+			! showDefaultAddressFormat &&
+			includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode )
+		) {
 			return <EuAddressFieldset { ...this.props } />;
 		}
 
-		if ( includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+		if (
+			! showDefaultAddressFormat &&
+			includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode )
+		) {
 			return <UkAddressFieldset { ...this.props } />;
 		}
 

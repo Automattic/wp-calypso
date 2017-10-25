@@ -22,7 +22,9 @@ import {
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
-
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
 describe( 'Region Address Fieldsets', () => {
 	const defaultProps = {
 		getFieldProps: name => ( { value: '', name } ),
