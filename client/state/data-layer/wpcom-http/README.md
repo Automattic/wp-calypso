@@ -286,6 +286,8 @@ export default {
 };
 ```
 
+#### Parsing the response
+
 It's important that perform the mapping stage when handling API request responses to go _from_ the API's native data format _to_ Calypso's native data format.
 These middleware functions are the perfect place to perform this mapping because it will leave API-specific code separated into specific places that are relatively easy to find.
 
@@ -329,3 +331,39 @@ export default {
 	) ]
 }
 ```
+
+Of course, not every response is very complicated or warrants a full-blown parser.
+Sometimes we just want to determine the failure or success based off of a simple value in the response.
+Let's put this together for a fictitious two-factor authentication process.
+
+
+```js
+const fromApi = response => {
+	if ( ! response.hasOwnProperty( 'auth_granted' ) ) {
+		throw new ValueError( 'Could not understand API response' );
+	}
+
+	if (  ! response.auth_granted ) {
+		throw 'authorization-denied';
+	}
+
+	return {
+		token: response.auth_token,
+		expiresAt: response.auth_valid_until,
+	};
+}
+
+dispatchRequest(
+	fetch2Auth,
+	approveAuth,
+	announceAppropriateFailureMessage,
+	{ fromApi },
+)
+```
+
+In this case we're not only validating the _schema_ of the response data but also the values and deciding
+to mark a response as a failure not only when we don't recognize it, but plainly too when the value of the
+response indicates that our actual need was a failure. Here we can see that an auth request is a failure
+not only if we can't recognize the response, but also if the response indicates that the attempt was a failure.
+By incorporating this into the response parser we can keep the logic of Calypso data further separated from
+the act of handling network activity.
