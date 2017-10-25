@@ -27,6 +27,8 @@ const state = {
 	},
 };
 
+const noSiteSettingsState = { siteSettings: {} };
+
 describe( 'isEmailBlacklisted()', () => {
 	test( 'should return true if email is blacklisted', () => {
 		expect( isEmailBlacklisted( state, 123, email ) ).to.be.true;
@@ -36,5 +38,14 @@ describe( 'isEmailBlacklisted()', () => {
 	} );
 	test( 'should return false if blacklist is empty', () => {
 		expect( isEmailBlacklisted( state, 789, email ) ).to.be.false;
+	} );
+	test( 'should return false if there are no site settings in state', () => {
+		expect( isEmailBlacklisted( noSiteSettingsState, 123, email ) ).to.be.false;
+	} );
+	test( 'should return false if no email is provided', () => {
+		expect( isEmailBlacklisted( state, 123 ) ).to.be.false;
+	} );
+	test( 'should return false if email is empty', () => {
+		expect( isEmailBlacklisted( state, 123, '' ) ).to.be.false;
 	} );
 } );
