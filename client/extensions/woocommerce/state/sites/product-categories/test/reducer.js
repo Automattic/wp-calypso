@@ -97,6 +97,7 @@ describe( 'reducer', () => {
 				listsRequestError: false,
 				newsletterSettingsSubmit: false,
 				newsletterSettingsSubmitError: false,
+				saveSettings: false,
 			},
 		} );
 	} );

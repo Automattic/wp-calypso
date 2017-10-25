@@ -10,24 +10,26 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
+	mailChimpSaveSettings,
 	requestSettings,
-	submitMailChimpApiKey,
-	submitMailChimpStoreInfo,
 	requestSyncStatus,
+	submitMailChimpApiKey,
 	submitMailChimpCampaignDefaults,
+	submitMailChimpStoreInfo,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
-	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
-	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
-	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
-	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
-	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
-	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
-	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
-	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
+	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
+	WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
+	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
+	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
+	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -338,6 +340,20 @@ describe( 'actions', () => {
 						store_id: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
 					},
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#mailChimpSaveSettings()', () => {
+		const siteId = '123';
+
+		test( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			mailChimpSaveSettings( siteId )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_MAILCHIMP_SAVE_SETTINGS,
+				siteId,
 			} );
 		} );
 	} );
