@@ -50,7 +50,17 @@ class PeopleListItem extends React.PureComponent {
 
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
+				{ ...omit(
+					this.props,
+					'className',
+					'user',
+					'site',
+					'isSelectable',
+					'onRemove',
+					'moment',
+					'numberFormat',
+					'translate'
+				) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName={ tagName }
 				href={
