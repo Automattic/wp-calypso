@@ -109,7 +109,7 @@ export const receiveCommentSuccess = ( store, action, response ) => {
 	} );
 };
 
-export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId } ) =>
+export const receiveCommentError = ( { dispatch }, { siteId, commentId } ) =>
 	dispatch( {
 		type: COMMENTS_RECEIVE_ERROR,
 		siteId,
