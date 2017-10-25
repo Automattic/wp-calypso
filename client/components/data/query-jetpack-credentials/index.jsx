@@ -21,12 +21,8 @@ class QueryJetpackCredentials extends Component {
 }
 
 QueryJetpackCredentials.propTypes = {
-	requestCredentials: PropTypes.func,
+	requestCredentials: PropTypes.func.isRequired,
 	siteId: PropTypes.number.isRequired
-};
-
-QueryJetpackCredentials.defaultProps = {
-	requestCredentials: () => {},
 };
 
 export default connect( null, { requestCredentials } )( QueryJetpackCredentials );

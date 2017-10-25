@@ -4,7 +4,7 @@
  * External dependendies
  */
 import React, { Component } from 'react';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -40,26 +40,6 @@ export class CredentialsForm extends Component {
 		},
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		const changedFields = [ 'protocol', 'host', 'port', 'user', 'abspath' ].filter(
-			key => nextProps[ key ] !== this.props[ key ]
-		);
-
-		const changedForm = changedFields.reduce(
-			( props, key ) => ( { ...props, [ key ]: nextProps[ key ] } ),
-			{}
-		);
-		const resetErrors = changedFields.reduce(
-			( props, key ) => ( { ...props, [ key ]: false } ),
-			{}
-		);
-
-		this.setState( {
-			form: { ...this.state.form, ...changedForm },
-			formError: { ...this.state.formErrors, resetErrors },
-		} );
-	}
-
 	handleFieldChange = event => {
 		const formState = get( this.state, 'form', {} );
 		const { formErrors } = this.state;
@@ -80,49 +60,44 @@ export class CredentialsForm extends Component {
 			role: 'main',
 		};
 
-		let error = false;
-		const errors = this.state.formErrors;
+		const errors = Object.assign(
+			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
+			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
+			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
+			! payload.user && { user: translate( 'Please enter your server username.' ) },
+			! payload.pass && { pass: translate( 'Please enter your server password.' ) },
+			! payload.abspath && { abspath: translate( 'Please enter a valid upload path.' ) }
+		);
 
-		if ( '' === payload.host ) {
-			errors.host = translate( 'Please enter a valid server address.' );
-			error = true;
-		}
-
-		if ( '' === payload.port ) {
-			errors.port = translate( 'Please enter a valid server port.' );
-			error = true;
-		}
-
-		if ( isNaN( payload.port ) ) {
-			errors.port = translate( 'Port number must be numeric.' );
-			error = true;
-		}
-
-		if ( '' === payload.user ) {
-			errors.user = translate( 'Please enter your server username.' );
-			error = true;
-		}
-
-		if ( '' === payload.pass ) {
-			errors.pass = translate( 'Please enter your server password.' );
-			error = true;
-		}
-
-		if ( '' === payload.abspath ) {
-			errors.abspath = translate( 'Please enter a valid upload path.' );
-			error = true;
-		}
-
-		if ( error ) {
-			this.setState( { formErrors: errors } );
-			return;
-		}
-
-		updateCredentials( siteId, payload );
+		return isEmpty( errors )
+			? updateCredentials( siteId, payload )
+			: this.setState( { formErrors: errors } );
 	};
 
 	togglePrivateKeyField = () =>
 		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
+
+	renderInputField = ( name, title, placeholder ) => {
+		const { formIsSubmitting, onCancel, translate } = this.props;
+		const { formErrors } = this.state;
+
+		return (
+			<FormLabel>
+				<div>{ title }</div>
+				<FormTextInput
+					name={ name }
+					placeholder={ placeholder }
+					value={ get( this.state.form, name, '' ) }
+					onChange={ this.handleFieldChange }
+					disabled={ formIsSubmitting }
+					isError={ !! formErrors[ name ] }
+				/>
+				{ formErrors[ name ] && (
+					<FormInputValidation isError={ true } text={ formErrors[ name ] } />
+				) }
+			</FormLabel>
+		);
+	};
 
 	render() {
 		const { formIsSubmitting, onCancel, translate } = this.props;
@@ -152,54 +127,23 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td className="credentials-form__host-field">
-								<FormLabel>
-									<div>{ translate( 'Server Address' ) }</div>
-									<FormTextInput
-										name="host"
-										placeholder={ translate( 'yoursite.com' ) }
-										value={ get( this.state.form, 'host', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.host }
-									/>
-									{ formErrors.host ? (
-										<FormInputValidation isError={ true } text={ formErrors.host } />
-									) : null }
-								</FormLabel>
+								{ this.renderInputField(
+									'host',
+									translate( 'Server Address' ),
+									translate( 'yoursite.com' )
+								) }
 							</td>
 							<td className="credentials-form__port-field">
-								<FormLabel>
-									<div>{ translate( 'Port Number' ) }</div>
-									<FormTextInput
-										name="port"
-										placeholder={ translate( '22' ) }
-										value={ get( this.state.form, 'port', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.port }
-									/>
-									{ formErrors.port && (
-										<FormInputValidation isError={ true } text={ formErrors.port } />
-									) }
-								</FormLabel>
+								{ this.renderInputField( 'port', translate( 'Port Number' ), translate( '22' ) ) }
 							</td>
 						</tr>
 						<tr>
 							<td colSpan="2" className="credentials-form__user-field">
-								<FormLabel>
-									<div>{ translate( 'Username' ) }</div>
-									<FormTextInput
-										name="user"
-										placeholder={ translate( 'username' ) }
-										value={ get( this.state.form, 'user', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.user }
-									/>
-									{ formErrors.user && (
-										<FormInputValidation isError={ true } text={ formErrors.user } />
-									) }
-								</FormLabel>
+								{ this.renderInputField(
+									'user',
+									translate( 'Username' ),
+									translate( 'username' )
+								) }
 							</td>
 						</tr>
 						<tr>
@@ -222,20 +166,11 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td colSpan="2" className="credentials-form__abspath-field">
-								<FormLabel>
-									<div>{ translate( 'Upload Path' ) }</div>
-									<FormTextInput
-										name="abspath"
-										placeholder="/public_html/"
-										value={ get( this.state.form, 'abspath', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.abspath }
-									/>
-									{ formErrors.abspath && (
-										<FormInputValidation isError={ true } text={ formErrors.abspath } />
-									) }
-								</FormLabel>
+								{ this.renderInputField(
+									'abspath',
+									translate( 'Upload Path' ),
+									translate( '/public_html' )
+								) }
 							</td>
 						</tr>
 						<tr>
@@ -270,7 +205,7 @@ export class CredentialsForm extends Component {
 								<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
 									{ translate( 'Save' ) }
 								</Button>
-								{ ! this.props.hasMainCredentials && (
+								{ this.props.showCancelButton && (
 									<Button
 										disabled={ formIsSubmitting }
 										onClick={ onCancel }

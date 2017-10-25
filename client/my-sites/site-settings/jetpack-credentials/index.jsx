@@ -122,7 +122,8 @@ class Backups extends Component {
 					kpri: get( this.props.mainCredentials, 'kpri', '' ),
 					formIsSubmitting,
 					siteId,
-					updateCredentials
+					updateCredentials,
+					showCancelButton: false
 				} } />
 			</FoldableCard>
 		);

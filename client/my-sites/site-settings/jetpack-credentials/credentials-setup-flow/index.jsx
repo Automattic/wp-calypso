@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,16 +32,14 @@ class CredentialsSetupFlow extends Component {
 		this.setState( { currentStep: 'start' } );
 	};
 
-	goToNextStep = () => {
-		switch ( this.state.currentStep ) {
-			case 'start':
-				this.setState( { currentStep: 'tos' } );
-				return;
-			case 'tos':
-				this.setState( { currentStep: 'form' } );
-				return;
-		}
-	};
+	getNextStep = step => get( {
+		start: 'tos',
+		tos: 'form',
+	}, step, step );
+
+	goToNextStep = () => this.setState( {
+		currentStep: this.getNextStep( this.state.currentStep )
+	} );
 
 	autoConfigure = () => this.props.autoConfigCredentials( this.props.siteId );
 
@@ -123,6 +122,7 @@ class CredentialsSetupFlow extends Component {
 					onCancel: this.reset,
 					siteId,
 					updateCredentials,
+					showCancelButton: true
 				} } />
 			</CompactCard>
 		);
