@@ -179,6 +179,25 @@
 	}
 }
 
+.mailchimp__sync-notice-content {
+	width: 165px;
+	display: flex;
+}
+
+.mailchimp__sync-notice-list {
+	margin-right: 4px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	flex-grow: 0;
+	white-space: nowrap;
+	flex-shrink: 2;
+}
+
+.mailchimp__sync-notice-info {
+	flex-grow: 1;
+	white-space: nowrap;
+}
+
 .mailchimp__header-description {
 	color: $gray-text-min;
 	font-size: 12px;
