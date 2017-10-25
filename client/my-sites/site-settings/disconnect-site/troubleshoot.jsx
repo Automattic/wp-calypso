@@ -14,6 +14,8 @@ import CompactCard from 'components/card/compact';
 import FoldableCard from 'components/foldable-card';
 import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
+import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
+import HelpButton from 'jetpack-connect/help-button';
 import { openChat as openChatAction } from 'state/happychat/ui/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
@@ -29,6 +31,10 @@ const Troubleshoot = ( { openChat, siteSlug, translate } ) => (
 				{ translate( 'Start Chat' ) }
 			</Button>
 		</FoldableCard>
+
+		<JetpackConnectHappychatButton label={ translate( 'Get help from our Happiness Engineers' ) }>
+			<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />
+		</JetpackConnectHappychatButton>
 	</div>
 );
 
