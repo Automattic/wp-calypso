@@ -325,6 +325,9 @@ export const allSitesQueries = createReducer(
 				{ query, found }
 			);
 		},
+		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
+			return state.receive( posts );
+		},
 		[ SERIALIZE ]: state => {
 			return {
 				data: state.data,
