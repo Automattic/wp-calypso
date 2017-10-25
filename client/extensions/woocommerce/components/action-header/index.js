@@ -14,8 +14,6 @@ import { isArray } from 'lodash';
 import Card from 'components/card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StickyPanel from 'components/sticky-panel';
-import Notice from 'components/notice';
-import config from 'config';
 
 const ActionHeader = ( { children, breadcrumbs } ) => {
 	// TODO: Implement proper breadcrumbs component.
