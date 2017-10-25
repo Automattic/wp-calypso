@@ -241,7 +241,7 @@ class MailChimpSetup extends React.Component {
 				isKeyCorrect={ keyCorrect } />;
 		}
 		// we show the same UI view for two steps because the
-		// CAMPAIGN_DEFAULTS_STEP is executed sillently in the background
+		// CAMPAIGN_DEFAULTS_STEP is executed silently in the background
 		if ( STORE_INFO_STEP === step || CAMPAIGN_DEFAULTS_STEP === step ) {
 			return <StoreInfoStep
 				onChange={ this.onStoreInfoChange }
