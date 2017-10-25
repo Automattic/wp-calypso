@@ -118,10 +118,10 @@ class ActivityLogItem extends Component {
 		);
 	}
 
-	renderSummary() {
-		const { disableRestore, hideRestore, translate } = this.props;
+	renderItemAction() {
+		const { disableRestore, hideRestore, translate, log: { activityIsRewindable } } = this.props;
 
-		if ( hideRestore ) {
+		if ( hideRestore || ! activityIsRewindable ) {
 			return null;
 		}
 
@@ -167,10 +167,10 @@ class ActivityLogItem extends Component {
 				<FoldableCard
 					className="activity-log-item__card"
 					clickableHeader
-					expandedSummary={ this.renderSummary() }
+					expandedSummary={ this.renderItemAction() }
 					header={ this.renderHeader() }
 					onClick={ this.handleOpen }
-					summary={ this.renderSummary() }
+					summary={ this.renderItemAction() }
 				/>
 			</div>
 		);
