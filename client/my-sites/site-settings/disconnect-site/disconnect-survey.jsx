@@ -15,7 +15,7 @@ import SectionHeader from 'components/section-header';
 import { isSiteOnPaidPlan } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const DisconnectSurvey = ( { isPaidPlan, siteId, siteSlug, translate } ) => (
+const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translate } ) => (
 	<div className="disconnect-site__survey main">
 		<QuerySitePlans siteId={ siteId } />
 		<SectionHeader
@@ -46,6 +46,12 @@ const DisconnectSurvey = ( { isPaidPlan, siteId, siteSlug, translate } ) => (
 				{ translate( 'This plan is too expensive' ) }
 			</CompactCard>
 		) }
+		<CompactCard
+			href={ confirmHref + '?reason=troubleshooting' }
+			className="disconnect-site__survey-one"
+		>
+			{ translate( "This is temporary -- I'm troubleshooting a problem" ) }
+		</CompactCard>
 	</div>
 );
 
