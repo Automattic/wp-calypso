@@ -50,6 +50,10 @@ input[type="text"].embed__url {
 	margin-top: 1.75em;
 	background: $gray-light;
 
+	&.isError {
+		color: $alert-red;
+	}
+
 	.embed__loading-spinner .spinner__image {
 		margin: 0 auto;
 	}
