@@ -1,31 +1,49 @@
+$post-item-border-color: darken( $sidebar-bg-color, 5% );
+$expanded-post-item-outline-color: $sidebar-selected-color;
+
+$post-item-border: solid 1px $post-item-border-color;
+$expanded-post-item-border: 1px solid $expanded-post-item-outline-color;
+$expanded-post-item-outline: 4px solid $post-item-border-color;
+
 .post-item {
-	// The padding here ensures that margins of child elements are included
-	// within the height of this element, and the margin cancels the padding.
-	// See https://stackoverflow.com/a/28121477
-	padding: 1px 0;
-	margin: -1px 0;
+	box-sizing: border-box;
+	margin: 0 -1px; // to line up with SectionNav, which still uses box-shadow
+
+	&,
+	&.is-expanded + & {
+		border: $post-item-border;
+	}
+
+	&:not( :first-child ) {
+		border-top: 0;
+	}
 
 	&.is-expanded {
-		margin: 11px 0;
+		margin-top: 16px;
+		margin-bottom: 16px;
+
+		border: $expanded-post-item-border;
+		outline: $expanded-post-item-outline;
 	}
 }
 
-.card.is-compact.post-item__card /* for specificity */ {
+.post-item__panel {
+	box-sizing: border-box;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-top: 0;
-	padding-bottom: 0;
-	margin: 0;
+	padding: 0 16px;
 
 	min-height: 84px;
 	&.has-large-title {
 		min-height: 89px;
 	}
-	// <PostItem compact> -> <Card className="... is-mini">
-	&.is-mini {
-		min-height: 50px;
+
+	@include breakpoint( ">480px" ) {
+		padding: 0 24px;
 	}
+
+	background: $white;
 }
 
 .post-item__select {
@@ -57,7 +75,7 @@
 		padding: 12px 0;
 	}
 
-	.post-item__card:not( .has-wrapped-title ) & {
+	.post-item__panel:not( .has-wrapped-title ) & {
 		overflow: hidden;
 		&::after {
 			@include long-content-fade( $size: 40px );
@@ -75,12 +93,12 @@
 	margin-bottom: 2px;
 	font-weight: 700;
 
-	.post-item__card.has-large-title & {
+	.post-item__panel.has-large-title & {
 		font-size: 20px;
 		line-height: 1.2;
 	}
 
-	.post-item__card:not( .has-wrapped-title ) & {
+	.post-item__panel:not( .has-wrapped-title ) & {
 		white-space: nowrap;
 	}
 }
@@ -93,12 +111,12 @@ a.post-item__title-link:visited {
 		color: darken( $gray, 20% );
 	}
 
-	.post-item__card.is-untitled & {
+	.post-item__panel.is-untitled & {
 		color: $gray;
 		font-style: italic;
 	}
 
-	.post-item__card.is-placeholder & {
+	.post-item__panel.is-placeholder & {
 		@include placeholder;
 	}
 }
@@ -125,26 +143,4 @@ a.post-item__title-link:visited {
 	height: 14px;
 	margin-top: -3px;
 	margin-right: 2px;
-}
-
-.post-item__card.is-mini.is-compact {
-	padding: 0 16px;
-
-	.post-item__meta {
-		display: none;
-	}
-
-	.post-item__title {
-		display: inline;
-		font-size: 13px;
-		margin: 0;
-	}
-
-	.post-type-site-info__title {
-		font-size: 11px;
-	}
-
-	.post-actions-ellipsis-menu {
-		margin: 0;
-	}
 }

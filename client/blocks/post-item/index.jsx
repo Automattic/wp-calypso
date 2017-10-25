@@ -25,7 +25,6 @@ import {
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
-import Card from 'components/card';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
@@ -102,7 +101,6 @@ class PostItem extends React.Component {
 			post,
 			globalId,
 			isAllSitesModeSelected,
-			compact,
 			editUrl,
 			translate,
 			largeTitle,
@@ -111,9 +109,8 @@ class PostItem extends React.Component {
 
 		const title = post ? post.title : null;
 
-		const cardClasses = classnames( 'post-item__card', className, {
+		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
-			'is-mini': compact,
 			'is-placeholder': ! globalId,
 			'has-large-title': largeTitle,
 			'has-wrapped-title': wrapTitle,
@@ -122,11 +119,7 @@ class PostItem extends React.Component {
 		const isSiteInfoVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 
 		const isAuthorVisible =
-			isEnabled( 'posts/post-type-list' ) &&
-			this.hasMultipleUsers() &&
-			! compact &&
-			post &&
-			post.author;
+			isEnabled( 'posts/post-type-list' ) && this.hasMultipleUsers() && post && post.author;
 
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
@@ -137,7 +130,7 @@ class PostItem extends React.Component {
 
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
-				<Card compact className={ cardClasses }>
+				<div className={ panelClasses }>
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
@@ -156,7 +149,7 @@ class PostItem extends React.Component {
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
 					<PostActionsEllipsisMenu globalId={ globalId } />
-				</Card>
+				</div>
 				{ variableHeightContent }
 			</div>
 		);
