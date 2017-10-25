@@ -57,6 +57,7 @@ import ExtraInfoForm, {
 import config from 'config';
 import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
 import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
+import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
 import notices from 'notices';
 import support from 'lib/url/support';
 
@@ -306,6 +307,7 @@ export class DomainDetailsForm extends PureComponent {
 			<FormButton
 				className="checkout__domain-details-form-submit-button"
 				onClick={ this.handleSubmitButtonClick }
+				disabled={ ! this.getCountryCode() }
 			>
 				{ continueText }
 			</FormButton>
@@ -400,6 +402,7 @@ export class DomainDetailsForm extends PureComponent {
 				{ this.renderEmailField() }
 				{ this.renderPhoneField() }
 				{ this.needsFax() && this.renderFaxField() }
+				{ this.renderCountryField() }
 				{ countryCode && (
 					<RegionAddressFieldsets
 						getFieldProps={ this.getFieldProps }
@@ -407,7 +410,6 @@ export class DomainDetailsForm extends PureComponent {
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 					/>
 				) }
-				{ this.renderCountryField() }
 			</div>
 		);
 	}
@@ -438,24 +440,16 @@ export class DomainDetailsForm extends PureComponent {
 		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
 		const firstErrorRef = this.inputRefs[ firstErrorName ] || this.refs[ firstErrorName ];
 
-		// Where there is no country code the address fields are absent and not focussable
-		// country-select component doesn't pass down inputRef to child select
-		if ( ! this.getCountryCode() ) {
-			return;
-		}
-
 		try {
 			firstErrorRef.focus();
 		} catch ( err ) {
 			const noticeMessage = this.props.translate(
-				'There was a problem validating your contact details: "%(firstErrorName)s" required. ' +
+				'There was a problem validating your contact details: {{firstErrorName/}} required. ' +
 					'Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
-					args: {
-						firstErrorName,
-					},
 					components: {
 						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+						firstErrorName: <NoticeErrorMessage message={ firstErrorName } />,
 					},
 					comment: 'Validation error when filling out domain checkout contact details form',
 				}
