@@ -146,9 +146,9 @@ const onMessageChange = ( connection, message ) => {
 	}
 };
 
-const sendMessage = ( connection, message ) => {
+const sendMessage = ( connection, { message, meta } ) => {
 	debug( 'sending message', message );
-	connection.send( message );
+	connection.send( message, meta );
 	connection.notTyping();
 };
 
@@ -335,7 +335,7 @@ export default function( connection = null ) {
 				break;
 
 			case HAPPYCHAT_SEND_MESSAGE:
-				sendMessage( connection, action.message );
+				sendMessage( connection, action );
 				break;
 
 			case HAPPYCHAT_SET_CURRENT_MESSAGE:
