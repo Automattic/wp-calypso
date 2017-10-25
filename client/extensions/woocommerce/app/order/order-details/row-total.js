@@ -13,6 +13,8 @@ import { localize } from 'i18n-calypso';
  */
 import formatCurrency from 'lib/format-currency';
 import PriceInput from 'woocommerce/components/price-input';
+import TableRow from 'woocommerce/components/table/table-row';
+import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderTotalRow extends Component {
 	static propTypes = {
@@ -45,9 +47,11 @@ class OrderTotalRow extends Component {
 
 		const classes = classnames( className, 'order-details__total order-details__total-edit' );
 		return (
-			<div className={ classes }>
-				<div className="order-details__totals-label">{ label }</div>
-				<div className="order-details__totals-value">
+			<TableRow className={ classes }>
+				<TableItem isRowHeader className="order-details__totals-label">
+					{ label }
+				</TableItem>
+				<TableItem className="order-details__totals-value" colSpan="2">
 					<PriceInput
 						name={ name }
 						currency={ currency }
@@ -55,8 +59,8 @@ class OrderTotalRow extends Component {
 						onChange={ onChange }
 						value={ total }
 					/>
-				</div>
-			</div>
+				</TableItem>
+			</TableRow>
 		);
 	};
 
@@ -67,16 +71,22 @@ class OrderTotalRow extends Component {
 		const { className, currency, label, value, showTax, taxValue } = this.props;
 
 		const tax = (
-			<div className="order-details__totals-tax">{ formatCurrency( taxValue, currency ) }</div>
+			<TableItem className="order-details__totals-tax">
+				{ formatCurrency( taxValue, currency ) }
+			</TableItem>
 		);
 		const classes = classnames( className, 'order-details__total' );
 
 		return (
-			<div className={ classes }>
-				<div className="order-details__totals-label">{ label }</div>
+			<TableRow className={ classes }>
+				<TableItem isRowHeader className="order-details__totals-label">
+					{ label }
+				</TableItem>
 				{ showTax && tax }
-				<div className="order-details__totals-value">{ formatCurrency( value, currency ) }</div>
-			</div>
+				<TableItem className="order-details__totals-value">
+					{ formatCurrency( value, currency ) }
+				</TableItem>
+			</TableRow>
 		);
 	}
 }
