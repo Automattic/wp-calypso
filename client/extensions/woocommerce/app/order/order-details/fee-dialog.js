@@ -50,12 +50,13 @@ class OrderFeeDialog extends Component {
 	}
 
 	handleChange = event => {
+		const value = event.target.value;
 		switch ( event.target.name ) {
 			case 'new_fee_name':
-				this.setState( { name: event.target.value } );
+				this.setState( { name: value } );
 				break;
 			case 'new_fee_total':
-				this.setState( { total: event.target.value } );
+				this.setState( { total: value > 0 ? value : 0 } );
 				break;
 		}
 	};
