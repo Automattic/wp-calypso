@@ -26,6 +26,7 @@ const JetpackConnectHappychatButton = ( {
 	isChatAvailable,
 	isLoggedIn,
 	label,
+	onClick,
 	translate,
 } ) => {
 	if ( ! isEnabled( 'jetpack/happychat' ) || ! isLoggedIn ) {
@@ -43,8 +44,9 @@ const JetpackConnectHappychatButton = ( {
 
 	return (
 		<HappychatButton
-			className="logged-out-form__link-item jetpack-connect__happychat-button"
 			borderless={ false }
+			className="logged-out-form__link-item jetpack-connect__happychat-button"
+			onClick={ onClick }
 		>
 			<HappychatConnection />
 			<Gridicon icon="chat" /> { label || translate( 'Get help connecting your site' ) }
@@ -54,6 +56,7 @@ const JetpackConnectHappychatButton = ( {
 
 JetpackConnectHappychatButton.propTypes = {
 	label: PropTypes.string,
+	onClick: PropTypes.func,
 };
 
 export default connect( state => ( {
