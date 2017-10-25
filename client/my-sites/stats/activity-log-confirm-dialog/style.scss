@@ -10,6 +10,9 @@
 		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		0 2px 5px lighten( $gray, 20% );
 	}
+	.activity-log-item__activity-icon {
+		background: $blue-medium;
+	}
 }
 
 .activity-log-confirm-dialog .dialog__content {
