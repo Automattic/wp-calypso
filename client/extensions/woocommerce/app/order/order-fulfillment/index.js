@@ -29,7 +29,6 @@ import Notice from 'components/notice';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
-import Tooltip from 'components/tooltip';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -162,51 +161,33 @@ class OrderFulfillment extends Component {
 			hasLabelsPaymentMethod,
 		} = this.props;
 		const isShippable = ! isOrderFinished( order.status );
-		const hideLabels = labelsLoaded && ! labelsEnabled;
+		const hideLabels = ! labelsEnabled || ! hasLabelsPaymentMethod;
+		const buttonClassName = classNames( {
+			'is-placeholder': wcsEnabled && ! labelsLoaded,
+		} );
 
-		if ( ! isShippable && ( ! wcsEnabled || hideLabels ) ) {
+		if ( ! isShippable && ( ! wcsEnabled || ( labelsLoaded && hideLabels ) ) ) {
 			return null;
 		}
 
-		if ( ! wcsEnabled || hideLabels ) {
+		if ( ! wcsEnabled || ! labelsLoaded || hideLabels ) {
 			return (
-				<Button primary onClick={ this.toggleDialog }>
+				<Button
+					primary={ ! wcsEnabled || labelsLoaded }
+					onClick={ this.toggleDialog }
+					className={ buttonClassName }
+				>
 					{ translate( 'Fulfill' ) }
 				</Button>
 			);
 		}
 
 		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
-		const buttonClassName = classNames( {
-			'is-placeholder': ! labelsLoaded,
-		} );
-		const printDisabled = ! hasLabelsPaymentMethod;
-		const disabledDesc = translate(
-			'Select a label payment method in shipping settings to be able to print labels.'
-		);
 
 		if ( ! isShippable ) {
 			return (
 				<div>
-					<Button
-						onClick={ onLabelPrint }
-						className={ buttonClassName }
-						disabled={ printDisabled }
-						onMouseEnter={ this.togglePrintTooltip }
-						onMouseLeave={ this.togglePrintTooltip }
-						ref="printLabelButton"
-					>
-						{ translate( 'Print new label' ) }
-					</Button>
-					{ printDisabled && (
-						<Tooltip
-							isVisible={ this.state.showPrintTooltip }
-							context={ this.refs && this.refs.printLabelButton }
-							position="top"
-						>
-							{ disabledDesc }
-						</Tooltip>
-					) }
+					<Button onClick={ onLabelPrint }>{ translate( 'Print new label' ) }</Button>
 				</div>
 			);
 		}
@@ -214,15 +195,7 @@ class OrderFulfillment extends Component {
 		return (
 			<div>
 				<ButtonGroup className="order-fulfillment__button-group">
-					<Button
-						primary={ labelsLoaded }
-						onClick={ onLabelPrint }
-						className={ buttonClassName }
-						disabled={ printDisabled }
-						onMouseEnter={ this.togglePrintTooltip }
-						onMouseLeave={ this.togglePrintTooltip }
-						ref="printLabelButton"
-					>
+					<Button primary={ labelsLoaded } onClick={ onLabelPrint }>
 						{ translate( 'Print label & fulfill' ) }
 					</Button>
 					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
@@ -238,15 +211,6 @@ class OrderFulfillment extends Component {
 						{ translate( 'Fulfill without printing a label' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
-				{ printDisabled && (
-					<Tooltip
-						isVisible={ this.state.showPrintTooltip }
-						context={ this.refs && this.refs.printLabelButton }
-						position="top"
-					>
-						{ disabledDesc }
-					</Tooltip>
-				) }
 			</div>
 		);
 	}
