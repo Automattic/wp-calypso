@@ -229,9 +229,9 @@ const SecurePaymentForm = createReactClass( {
 	renderSourcePaymentBox( paymentType ) {
 		return (
 			<PaymentBox
-				classSet="paypal-payment-box"
+				classSet="source-payment-box"
 				cart={ this.props.cart }
-				title={ this.props.translate( 'Secure Payment with PayPal' ) }
+				title="Secure Payment with iDEAL"
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
