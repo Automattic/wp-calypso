@@ -447,8 +447,6 @@ export const isEditedPostDirty = createSelector(
  * Returns true if the post status is publish, private, or future
  * and the date is in the past
  *
- * TODO Unused selector
- *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
