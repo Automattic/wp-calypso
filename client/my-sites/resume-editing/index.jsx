@@ -126,7 +126,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
-			requesting: isRequestingSitePost( state, siteId, postId ),
+			requesting: siteId && postId && isRequestingSitePost( state, siteId, postId ),
 			draft: getEditorLastDraftPost( state ),
 			editPath: getEditorPath( state, siteId, postId ),
 			section: getSectionName( state ),

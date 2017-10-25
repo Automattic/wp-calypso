@@ -73,7 +73,7 @@ export default connect(
 	( state, ownProps ) => {
 		const { siteId, postId, query } = ownProps;
 		return {
-			requestingPost: isRequestingSitePost( state, siteId, postId ),
+			requestingPost: siteId && postId && isRequestingSitePost( state, siteId, postId ),
 			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
