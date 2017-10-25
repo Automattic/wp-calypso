@@ -175,13 +175,16 @@
 	font-size: 12px;
 	background: $white;
 	@include breakpoint( "<960px" ) {
-		width: 100%;
+		width: auto;
 	}
 }
 
 .mailchimp__sync-notice-content {
 	width: 165px;
 	display: flex;
+	@include breakpoint( "<960px" ) {
+		width: auto;
+	}
 }
 
 .mailchimp__sync-notice-list {
