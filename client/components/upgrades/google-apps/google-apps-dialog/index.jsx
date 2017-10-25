@@ -65,7 +65,11 @@ class GoogleAppsDialog extends React.Component {
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
-					<GoogleAppsProductDetails monthlyPrice={ monthlyPrice } annualPrice={ annualPrice } />
+					<GoogleAppsProductDetails
+						domain={ this.props.domain }
+						monthlyPrice={ monthlyPrice }
+						annualPrice={ annualPrice }
+					/>
 					<ReactCSSTransitionGroup
 						transitionName="google-apps-dialog__users"
 						transitionEnterTimeout={ 200 }
@@ -105,7 +109,7 @@ class GoogleAppsDialog extends React.Component {
 		return (
 			<header className="google-apps-dialog__header">
 				<h2 className="google-apps-dialog__title">
-					{ translate( 'Add Professional email from Google to %(domain)s', {
+					{ translate( 'Add Professional email from G Suite by Google Cloud to %(domain)s', {
 						args: {
 							domain: this.props.domain,
 						},
@@ -138,10 +142,14 @@ class GoogleAppsDialog extends React.Component {
 	checkoutButtonOrLink() {
 		const { translate } = this.props;
 
+		if ( this.state.isAddingEmail ) {
+			return null;
+		}
+
 		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
 			return (
 				<a className="google-apps-dialog__cancel-link" href="#" onClick={ this.handleFormCheckout }>
-					{ translate( "No thanks, I don't need email or will use another provider." ) }
+					{ translate( 'No thanks, I don’t need email or I’ll use another provider.' ) }
 				</a>
 			);
 		}

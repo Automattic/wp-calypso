@@ -12,15 +12,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isPersonal } from 'lib/products-values';
+import { isPersonal, isGoogleApps } from 'lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 import PurchaseDetail from 'components/purchase-detail';
 
-const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
+const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (
 		<div>
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }

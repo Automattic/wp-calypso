@@ -80,7 +80,10 @@ import {
 import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
 
 function getPurchases( props ) {
-	return ( props.receipt.data && props.receipt.data.purchases ) || [];
+	return [
+		...get( props, 'receipt.data.purchases', [] ),
+		...get( props, 'gsuiteReceipt.data.purchases', [] ),
+	];
 }
 
 function getFailedPurchases( props ) {
@@ -99,6 +102,7 @@ class CheckoutThankYou extends React.Component {
 		failedPurchases: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
 		receiptId: PropTypes.number,
+		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	};
@@ -106,7 +110,14 @@ class CheckoutThankYou extends React.Component {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const { receipt, receiptId, selectedSite, sitePlans } = this.props;
+		const {
+			gsuiteReceipt,
+			gsuiteReceiptId,
+			receipt,
+			receiptId,
+			selectedSite,
+			sitePlans,
+		} = this.props;
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite );
@@ -116,6 +127,15 @@ class CheckoutThankYou extends React.Component {
 
 		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
 			this.props.fetchReceipt( receiptId );
+		}
+
+		if (
+			gsuiteReceiptId &&
+			gsuiteReceipt &&
+			! gsuiteReceipt.hasLoadedFromServer &&
+			! gsuiteReceipt.isRequesting
+		) {
+			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
@@ -178,7 +198,8 @@ class CheckoutThankYou extends React.Component {
 
 		return (
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
-			this.props.receipt.hasLoadedFromServer
+			this.props.receipt.hasLoadedFromServer &&
+			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer )
 		);
 	};
 
@@ -451,6 +472,7 @@ export default connect(
 		return {
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
+			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),

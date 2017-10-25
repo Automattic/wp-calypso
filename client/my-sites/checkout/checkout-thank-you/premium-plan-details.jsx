@@ -14,14 +14,15 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 import GoogleVoucherDetails from './google-voucher';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { isPremium } from 'lib/products-values';
+import { isPremium, isGoogleApps } from 'lib/products-values';
 import paths from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
-const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
+const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';
 	const customizerInAdmin =
 		adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
@@ -30,9 +31,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 		: customizerInAdmin;
 	const plan = find( sitePlans.data, isPremium ),
 		isPremiumPlan = isPremium( selectedSite.plan );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (
 		<div>
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
