@@ -29,6 +29,7 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
+import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -55,6 +56,7 @@ import {
 	getRewindStartDate,
 	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
+import { getLastRestore } from 'state/selectors';
 
 /**
  * Module constants
@@ -191,7 +193,6 @@ class ActivityLog extends Component {
 		if ( status === 'finished' ) {
 			return (
 				<div>
-					<QueryActivityLog siteId={ siteId } />
 					{ errorCode ? (
 						<ErrorBanner
 							errorCode={ errorCode }
@@ -402,6 +403,8 @@ class ActivityLog extends Component {
 			startDate,
 			timezone,
 			translate,
+			restoreProgress,
+			lastRestore,
 			rewindStartDate,
 		} = this.props;
 		const hasFirstBackup = ! isEmpty( rewindStartDate );
@@ -418,6 +421,13 @@ class ActivityLog extends Component {
 			);
 		}
 
+		console.log( restoreProgress );
+		console.log( siteId && ( ! restoreProgress || 'finished' !== restoreProgress.status ) );
+
+		const restoreInProgress =
+			restoreProgress &&
+			( 'running' === restoreProgress.status || 'queued' === restoreProgress.status );
+
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
@@ -426,6 +436,14 @@ class ActivityLog extends Component {
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
+				{ siteId &&
+				restoreInProgress && (
+					<QueryRewindRestoreStatus
+						siteId={ siteId }
+						restoreId={ lastRestore.restore_id }
+						timestamp={ new Date( lastRestore.when ).getTime() }
+					/>
+				) }
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
@@ -466,6 +484,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
+			lastRestore: getLastRestore( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),

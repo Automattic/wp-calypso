@@ -25,6 +25,9 @@ class QueryRewindRestoreStatus extends PureComponent {
 
 	static defaultProps = {
 		queryDelay: 0,
+		restoreId: 0,
+		freshness: 0,
+		timestamp: 0,
 	};
 
 	query( props ) {
