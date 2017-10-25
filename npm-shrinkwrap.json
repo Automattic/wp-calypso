@@ -74,7 +74,7 @@
       "version": "0.8.1"
     },
     "ajv": {
-      "version": "5.2.4"
+      "version": "5.3.0"
     },
     "ajv-keywords": {
       "version": "2.1.0"
@@ -874,10 +874,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000749"
+      "version": "1.0.30000750"
     },
     "caniuse-lite": {
-      "version": "1.0.30000749"
+      "version": "1.0.30000750"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -2094,6 +2094,9 @@
     "fast-future": {
       "version": "1.0.2"
     },
+    "fast-json-stable-stringify": {
+      "version": "2.0.0"
+    },
     "fast-levenshtein": {
       "version": "1.1.4",
       "dev": true
@@ -2871,7 +2874,7 @@
       "dev": true
     },
     "gridicons": {
-      "version": "2.0.5"
+      "version": "2.1.0"
     },
     "growly": {
       "version": "1.3.0",
@@ -3549,7 +3552,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "cliui": {
@@ -3667,7 +3670,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3697,7 +3700,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3753,7 +3756,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3783,7 +3786,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3843,7 +3846,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3877,7 +3880,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -3925,7 +3928,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "cliui": {
@@ -4019,7 +4022,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -4049,7 +4052,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -4075,7 +4078,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -5349,7 +5352,7 @@
           "version": "3.2.0"
         },
         "chalk": {
-          "version": "2.2.0"
+          "version": "2.3.0"
         },
         "escape-string-regexp": {
           "version": "1.0.5"
@@ -5393,7 +5396,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.2.0",
+          "version": "2.3.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -5541,7 +5544,7 @@
               "dev": true
             },
             "chalk": {
-              "version": "2.2.0",
+              "version": "2.3.0",
               "dev": true
             },
             "escape-string-regexp": {
@@ -6259,7 +6262,7 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.4.0"
+      "version": "1.5.0"
     },
     "resolve-from": {
       "version": "1.0.1",
