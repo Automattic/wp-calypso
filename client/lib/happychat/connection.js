@@ -21,7 +21,7 @@ import {
 	setHappychatAvailable,
 	setReconnecting,
 } from 'state/happychat/connection/actions';
-import { setHappychatChatStatus } from 'state/happychat/actions';
+import { setHappychatChatStatus } from 'state/happychat/chat/actions';
 
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 

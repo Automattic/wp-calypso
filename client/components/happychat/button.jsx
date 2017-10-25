@@ -17,7 +17,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
-import { hasUnreadMessages, hasActiveHappychatSession } from 'state/happychat/selectors';
+import { hasUnreadMessages } from 'state/happychat/selectors';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { connectChat } from 'state/happychat/connection/actions';
 import { openChat } from 'state/happychat/ui/actions';

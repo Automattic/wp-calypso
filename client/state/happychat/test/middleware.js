@@ -26,19 +26,17 @@ import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from '../selectors';
-import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
-} from 'state/happychat/constants';
+} from '../constants';
 import wpcom from 'lib/wp';
 import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_SET_CURRENT_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -265,15 +263,15 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	describe( 'HAPPYCHAT_SET_MESSAGE action', () => {
+	describe( 'HAPPYCHAT_SET_CURRENT_MESSAGE action', () => {
 		test( 'should send the connection a typing signal when a message is present', () => {
-			const action = { type: HAPPYCHAT_SET_MESSAGE, message: 'Hello world' };
+			const action = { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message: 'Hello world' };
 			const connection = { typing: spy() };
 			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.typing ).to.have.been.calledWith( action.message );
 		} );
 		test( 'should send the connection a notTyping signal when the message is blank', () => {
-			const action = { type: HAPPYCHAT_SET_MESSAGE, message: '' };
+			const action = { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message: '' };
 			const connection = { notTyping: spy() };
 			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.notTyping ).to.have.been.calledOnce;
@@ -284,7 +282,7 @@ describe( 'middleware', () => {
 		test( 'should fetch transcript from connection and dispatch receive action', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline: [],
+					chat: { timeline: [] },
 				},
 			} );
 			const response = {
@@ -374,7 +372,7 @@ describe( 'middleware', () => {
 					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: true,
 				},
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_ASSIGNED },
 			},
 		};
 
@@ -402,7 +400,7 @@ describe( 'middleware', () => {
 		test( 'should not sent the page URL the user is in when chat is not assigned', () => {
 			const getState = () =>
 				Object.assign( {}, state, {
-					happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING },
+					happychat: { chat: { status: HAPPYCHAT_CHAT_STATUS_PENDING } },
 				} );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
@@ -472,19 +470,19 @@ describe( 'middleware', () => {
 		const assignedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_ASSIGNED },
 			},
 		} );
 		const unassignedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 			},
 		} );
 		const unconnectedState = deepFreeze( {
 			happychat: {
 				connection: { status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED },
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
+				chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 			},
 		} );
 
