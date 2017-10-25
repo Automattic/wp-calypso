@@ -4,20 +4,20 @@
  * @format
  */
 
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { assign, some } from 'lodash';
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import classnames from 'classnames';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
-import PaymentBox from './payment-box';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import { abtest } from 'lib/abtest';
@@ -145,38 +145,58 @@ class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	content = () => {
+	renderSecurePaymentNotice = () => {
+		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+			return (
+				<div className="checkout__secure-payment">
+					<div className="checkout__secure-payment-content">
+						<Gridicon icon="lock" />
+						{ this.props.translate( 'Secure Payment' ) }
+					</div>
+				</div>
+			);
+		}
+
+		return null;
+	};
+
+	render = () => {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
 		} );
 		const showPaymentChatButton =
-			config.isEnabled( 'upgrades/presale-chat' ) &&
-			abtest( 'presaleChatButton' ) === 'showChatButton' &&
-			hasBusinessPlanInCart;
-		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
-			'credit-card-payment-box__switch-link-left': showPaymentChatButton,
-		} );
+				config.isEnabled( 'upgrades/presale-chat' ) &&
+				abtest( 'presaleChatButton' ) === 'showChatButton' &&
+				hasBusinessPlanInCart,
+			creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
+				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
+			} ),
+			paymentButtonsClasses = classnames( 'payment-box__payment-buttons', {
+				'payment-box__payment-buttons-test': abtest( 'checkoutPaymentMethodTabs' ) === 'tabs',
+			} );
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
-				<div className="payment-box-section">
-					<CountrySelect
-						additionalClasses="checkout-field"
-						name="country"
-						label={ this.props.translate( 'Country', { textOnly: true } ) }
-						countriesList={ this.props.countriesList }
-						value={ this.state.country }
-						onChange={ this.handleChange }
-						disabled={ this.state.formDisabled }
-						eventFormName="Checkout Form"
-					/>
-					<Input
-						additionalClasses="checkout-field"
-						name="postal-code"
-						label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
-						onChange={ this.handleChange }
-						disabled={ this.state.formDisabled }
-						eventFormName="Checkout Form"
-					/>
+				<div className="checkout__payment-box-sections">
+					<div className="checkout__payment-box-section">
+						<CountrySelect
+							additionalClasses="checkout-field"
+							name="country"
+							label={ this.props.translate( 'Country', { textOnly: true } ) }
+							countriesList={ this.props.countriesList }
+							value={ this.state.country }
+							onChange={ this.handleChange }
+							disabled={ this.state.formDisabled }
+							eventFormName="Checkout Form"
+						/>
+						<Input
+							additionalClasses="checkout-field"
+							name="postal-code"
+							label={ this.props.translate( 'Postal Code', { textOnly: true } ) }
+							onChange={ this.handleChange }
+							disabled={ this.state.formDisabled }
+							eventFormName="Checkout Form"
+						/>
+					</div>
 				</div>
 
 				<TermsOfService
@@ -186,48 +206,42 @@ class PaypalPaymentBox extends React.Component {
 				/>
 
 				<div className="payment-box-actions">
-					<div className="pay-button">
-						<button
-							type="submit"
-							className="button is-primary button-pay"
-							disabled={ this.state.formDisabled }
-						>
-							{ this.renderButtonText() }
-						</button>
-						<SubscriptionText cart={ this.props.cart } />
+					<div className={ paymentButtonsClasses }>
+						<span className="checkout__pay-button">
+							<button
+								type="submit"
+								className="button is-primary button-pay checkout__button"
+								disabled={ this.state.formDisabled }
+							>
+								{ this.renderButtonText() }
+							</button>
+							<SubscriptionText cart={ this.props.cart } />
+						</span>
+
+						{ this.renderSecurePaymentNotice() }
+
+						{ this.props.onToggle &&
+						cartValues.isCreditCardPaymentsEnabled( this.props.cart ) && (
+							<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
+								{ this.props.translate( 'or use a credit card', {
+									context: 'Upgrades: PayPal checkout screen',
+									comment: 'Checkout with PayPal -- or use a credit card',
+								} ) }
+							</a>
+						) }
+
+						{ showPaymentChatButton && (
+							<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
+						) }
+
+						<CartCoupon cart={ this.props.cart } />
+
+						<CartToggle />
 					</div>
-
-					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) && (
-						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
-							{ this.props.translate( 'or use a credit card', {
-								context: 'Upgrades: PayPal checkout screen',
-								comment: 'Checkout with PayPal -- or use a credit card',
-							} ) }
-						</a>
-					) }
-
-					{ showPaymentChatButton && (
-						<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
-					) }
 				</div>
-
-				<CartCoupon cart={ this.props.cart } />
-
-				<CartToggle />
 			</form>
 		);
 	};
-
-	render() {
-		return (
-			<PaymentBox
-				classSet="paypal-payment-box"
-				title={ this.props.translate( 'Secure Payment with PayPal' ) }
-			>
-				{ this.content() }
-			</PaymentBox>
-		);
-	}
 }
 
 export default localize( PaypalPaymentBox );

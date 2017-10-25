@@ -8,6 +8,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
-import PaymentBox from './payment-box';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import {
@@ -104,6 +104,21 @@ class CreditCardPaymentBox extends React.Component {
 		);
 	};
 
+	renderSecurePaymentNotice = () => {
+		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+			return (
+				<div className="checkout__secure-payment">
+					<div className="checkout__secure-payment-content">
+						<Gridicon icon="lock" />
+						{ this.props.translate( 'Secure Payment' ) }
+					</div>
+				</div>
+			);
+		}
+
+		return null;
+	};
+
 	paymentButtons = () => {
 		const cart = this.props.cart,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
@@ -113,13 +128,18 @@ class CreditCardPaymentBox extends React.Component {
 				hasBusinessPlanInCart,
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
+			} ),
+			paymentButtonsClasses = classnames( 'payment-box__payment-buttons', {
+				'payment-box__payment-buttons-test': abtest( 'checkoutPaymentMethodTabs' ) === 'tabs',
 			} );
 
 		return (
-			<div className="payment-box__payment-buttons">
+			<div className={ paymentButtonsClasses }>
 				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 
-				{ cartValues.isPayPalExpressEnabled( cart ) ? (
+				{ this.renderSecurePaymentNotice() }
+
+				{ this.props.onToggle && cartValues.isPayPalExpressEnabled( cart ) ? (
 					<a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
 						{ this.props.translate( 'or use {{paypal/}}', {
 							components: {
@@ -161,7 +181,7 @@ class CreditCardPaymentBox extends React.Component {
 		this.props.onSubmit( event );
 	};
 
-	content = () => {
+	render = () => {
 		var cart = this.props.cart;
 
 		return (
@@ -181,17 +201,6 @@ class CreditCardPaymentBox extends React.Component {
 			</form>
 		);
 	};
-
-	render() {
-		return (
-			<PaymentBox
-				classSet="credit-card-payment-box"
-				title={ this.props.translate( 'Secure Payment' ) }
-			>
-				{ this.content() }
-			</PaymentBox>
-		);
-	}
 }
 
 export default localize( CreditCardPaymentBox );
