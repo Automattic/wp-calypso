@@ -17,6 +17,7 @@ import Dialog from 'components/dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import PriceInput from 'woocommerce/components/price-input';
@@ -57,6 +58,13 @@ class OrderFeeDialog extends Component {
 				this.setState( { total: event.target.value } );
 				break;
 		}
+	};
+
+	formatCurrencyInput = () => {
+		const { currency } = this.props.order;
+		this.setState( prevState => ( {
+			total: getCurrencyFormatDecimal( prevState.total, currency ),
+		} ) );
 	};
 
 	handleFeeSave = () => {
@@ -110,6 +118,7 @@ class OrderFeeDialog extends Component {
 					currency={ order.currency }
 					value={ this.state.total }
 					onChange={ this.handleChange }
+					onBlur={ this.formatCurrencyInput }
 				/>
 			</Dialog>
 		);
