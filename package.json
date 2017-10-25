@@ -275,7 +275,6 @@
     "nodemon": "1.4.1",
     "prettier": "github:automattic/calypso-prettier#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
     "pretty-bytes": "4.0.2",
-    "react-addons-test-utils": "15.6.2",
     "react-codemod": "reactjs/react-codemod",
     "react-test-env": "0.2.0",
     "react-test-renderer": "15.6.2",
