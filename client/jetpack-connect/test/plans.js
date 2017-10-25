@@ -14,10 +14,10 @@ import React from 'react';
 import PlansWrapper, { getSitePlans, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 
-jest.mock( 'components/data/query-plans', () => require( 'components/empty-component' ) );
-jest.mock( 'components/data/query-site-plans', () => require( 'components/empty-component' ) );
-jest.mock( 'jetpack-connect/happychat-button', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/plan-features', () => require( 'components/empty-component' ) );
+jest.mock( 'components/data/query-plans', () => 'components--data--query-plans' );
+jest.mock( 'components/data/query-site-plans', () => 'components--data--query-site-plans' );
+jest.mock( 'jetpack-connect/happychat-button', () => 'jetpack-connect--happychat-button' );
+jest.mock( 'my-sites/plan-features', () => 'my-sites--plan-features' );
 
 describe( 'Plans', () => {
 	test( 'should render with no plan (free)', () => {
