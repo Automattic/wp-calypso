@@ -62,31 +62,27 @@ export const CommentAuthor = ( {
 						<Emojify>{ authorDisplayName }</Emojify>
 					</strong>
 					{ ! isExpanded && (
-						<div className="comment__post">
+						<span className="comment__post">
 							<Gridicon icon="chevron-right" size={ 18 } />
 							<span>{ postTitle }</span>
-						</div>
+						</span>
 					) }
 				</div>
 
 				<div className="comment__author-info-element">
-					<div className="comment__date">
+					<span className="comment__date">
 						{ isExpanded && <ExternalLink href={ commentUrl }>{ formattedDate }</ExternalLink> }
 						{ ! isExpanded && <span>{ relativeDate }</span> }
-					</div>
-					<div className="comment__author-url">
+					</span>
+					<span className="comment__author-url">
 						<span className="comment__author-url-separator">&middot;</span>
 						{ isExpanded && (
 							<ExternalLink href={ authorUrl }>
 								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
 							</ExternalLink>
 						) }
-						{ ! isExpanded && (
-							<span>
-								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-							</span>
-						) }
-					</div>
+						{ ! isExpanded && <Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify> }
+					</span>
 				</div>
 			</div>
 		</div>
