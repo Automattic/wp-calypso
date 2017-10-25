@@ -365,11 +365,9 @@ export class CommentList extends Component {
 			return;
 		}
 
-		const alsoApprove = 'unapproved' === status;
+		this.props.likeComment( commentId, postId );
 
-		this.props.likeComment( commentId, postId, { alsoApprove } );
-
-		if ( alsoApprove ) {
+		if ( 'unapproved' === status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: true } );
 			this.updatePersistedComments( commentId );
@@ -556,18 +554,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 
-	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) =>
-		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_like', {
-						also_approve: analytics.alsoApprove,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_liked' )
-				),
-				likeComment( siteId, postId, commentId )
-			)
-		),
+	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
 		dispatch(
