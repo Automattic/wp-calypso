@@ -24,6 +24,11 @@ import Timeline from './timeline';
  * Main chat UI component
  */
 export class Happychat extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.onCloseChatTitle = this.onCloseChatTitle.bind( this );
+	}
+
 	componentDidMount() {
 		this.props.setFocused();
 	}
