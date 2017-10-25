@@ -277,7 +277,6 @@
     "pretty-bytes": "4.0.2",
     "react-addons-test-utils": "15.6.2",
     "react-codemod": "reactjs/react-codemod",
-    "react-test-env": "0.2.0",
     "react-test-renderer": "15.6.2",
     "readline-sync": "1.4.5",
     "sinon": "1.17.7",
