@@ -77,9 +77,11 @@ class OrderFeeDialog extends Component {
 		const { closeDialog, isVisible, order, translate } = this.props;
 		const dialogClass = 'woocommerce order-details__dialog'; // eslint/css specificity hack
 
+		const canSave = this.state.name && this.state.total;
+
 		const dialogButtons = [
 			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary onClick={ this.handleFeeSave }>
+			<Button primary onClick={ this.handleFeeSave } disabled={ ! canSave }>
 				{ translate( 'Add Fee' ) }
 			</Button>,
 		];
