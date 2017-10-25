@@ -28,6 +28,8 @@ import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
+import PaymentBox from './payment-box';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -55,8 +57,10 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	getVisiblePaymentBox( cart, paymentMethods ) {
+		let i;
 		const primary = 0,
 			secondary = 1;
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -66,12 +70,19 @@ const SecurePaymentForm = createReactClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
+		}
+
+		if ( tabsEnabled ) {
+			for ( i = 0; i < paymentMethods.length; i++ ) {
+				if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+					return paymentMethods[ i ];
+				}
+			}
 		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ primary ] ) ) ) {
 			return paymentMethods[ primary ];
 		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ secondary ] ) ) ) {
 			return paymentMethods[ secondary ];
 		}
-
 		return null;
 	},
 
@@ -148,7 +159,7 @@ const SecurePaymentForm = createReactClass( {
 		} );
 	},
 
-	renderCreditsPayentBox() {
+	renderCreditsPaymentBox() {
 		return (
 			<CreditsPaymentBox
 				cart={ this.props.cart }
@@ -181,31 +192,51 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	renderCreditCardPaymentBox() {
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
-			<CreditCardPaymentBox
-				cards={ this.props.cards }
-				transaction={ this.props.transaction }
+			<PaymentBox
+				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
-				countriesList={ countriesListForPayments }
-				initialCard={ this.getInitialCard() }
-				selectedSite={ this.props.selectedSite }
-				onToggle={ this.selectPaymentBox }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step }
-			/>
+				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				title={ this.props.translate( 'Secure Payment' ) }
+				currentPaymentMethod="credit-card"
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<CreditCardPaymentBox
+					cards={ this.props.cards }
+					transaction={ this.props.transaction }
+					cart={ this.props.cart }
+					countriesList={ countriesListForPayments }
+					initialCard={ this.getInitialCard() }
+					selectedSite={ this.props.selectedSite }
+					onSubmit={ this.handlePaymentBoxSubmit }
+					transactionStep={ this.props.transaction.step }
+					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
+				/>
+			</PaymentBox>
 		);
 	},
 
 	renderPayPalPaymentBox() {
+		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
-			<PayPalPaymentBox
+			<PaymentBox
+				classSet="paypal-payment-box"
 				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				countriesList={ countriesListForPayments }
-				selectedSite={ this.props.selectedSite }
-				onToggle={ this.selectPaymentBox }
-				redirectTo={ this.props.redirectTo }
-			/>
+				title={ this.props.translate( 'Secure Payment with PayPal' ) }
+				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				currentPaymentMethod="paypal"
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<PayPalPaymentBox
+					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					countriesList={ countriesListForPayments }
+					selectedSite={ this.props.selectedSite }
+					redirectTo={ this.props.redirectTo }
+					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
+				/>
+			</PaymentBox>
 		);
 	},
 
@@ -238,7 +269,7 @@ const SecurePaymentForm = createReactClass( {
 
 		switch ( visiblePaymentBox ) {
 			case 'credits':
-				return this.renderCreditsPayentBox();
+				return this.renderCreditsPaymentBox();
 
 			case 'free-trial':
 				return this.renderFreeTrialConfirmationBox();
@@ -251,6 +282,7 @@ const SecurePaymentForm = createReactClass( {
 
 			case 'paypal':
 				return this.renderPayPalPaymentBox();
+
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;

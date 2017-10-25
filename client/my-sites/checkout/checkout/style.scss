@@ -30,7 +30,7 @@
 		}
 
 		&.is-empty {
-			.payment-box-section {
+			.payment-box-section, .checkout__payment-box-section {
 				border: 1px solid lighten( $gray, 30% );
 				margin: 5px 0;
 				display: flex;
@@ -156,7 +156,7 @@
 		padding: 16px 8px;
 
 		@include breakpoint( ">660px" ) {
-			padding: 30px 30px 20px 30px;
+			padding: 10px 30px 20px 30px;
 		}
 	}
 
@@ -176,7 +176,7 @@
 		}
 	}
 
-	button[type=submit].button-pay {
+	button[type=submit].button-pay, button[type=submit].checkout__button-pay {
 		@include breakpoint( "<660px" ) {
 			width: 100%;
 
@@ -278,7 +278,7 @@
 		}
 	}
 
-	.payment-box-actions {
+	.payment-box-actions, .checkout__payment-box-actions {
 		margin: 20px -30px 0px -30px;
 		padding: 20px 30px 0 30px;
 		@include clear-fix;
@@ -406,7 +406,7 @@
 
 	.paypal-payment-box,
 	.credits-payment-box {
-		.payment-box-section {
+		.payment-box-section, .checkout__payment-box-section {
 			background-color: $white;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
 
@@ -418,7 +418,7 @@
 	}
 
 	.paypal-payment-box {
-		.payment-box-section {
+		.payment-box-section, .checkout__payment-box-section {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
@@ -679,7 +679,7 @@
 // If there's no sidebar, we don't show the cart on the checkout page.
 
 @include breakpoint( ">660px" ) {
-	.pay-button {
+	.pay-button, .checkout__pay-button {
 		float: left;
 	}
 }
@@ -714,6 +714,34 @@
 	@include breakpoint( ">960px" ) {
 		float: left;
 		padding-left: 20px
+	}
+}
+
+@include breakpoint( ">660px" ) {
+	.payment-box__payment-buttons-test {
+		display: flex;
+		align-items: center;
+	}
+}
+
+.checkout__secure-payment {
+	margin-top: 10px;
+	color: lighten( $gray, 10% );
+
+	@include breakpoint( ">660px" ) {
+		margin-left: 10px;
+		margin-top: 0;
+		display: inline-block;
+	}
+}
+
+.checkout__secure-payment-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include breakpoint( ">660px" ) {
+		justify-content: left;
 	}
 }
 
@@ -806,4 +834,109 @@
 	color: $blue-wordpress;
 	margin: 4px 0 0 10px;
 	font-size: 15px;
+}
+
+.checkout__alternative-payment-methods {
+	float: right;
+}
+.checkout__payment-box-container {
+
+	.checkout__payment-box-title {
+		padding: 20px 16px 14px 20px;
+		font-weight: bold;
+		display:none;
+	}
+
+	.select-dropdown__option {
+		&:first-child {
+			display: none;
+		}
+		.is-selected {
+			background-color: $gray-light;
+			color: $gray-dark;
+		}
+	}
+
+	div.section-nav {
+		margin-bottom: 0;
+
+		.section-nav-tabs__list > span {
+			font-weight: bold;
+		}
+
+		.section-nav-tab__link {
+			color: $blue-wordpress;
+			font-weight: bold;
+		}
+
+		.section-nav-tab.is-selected {
+			border-bottom-color: $blue-wordpress;
+
+			.section-nav-tab__link {
+				color: $blue-wordpress;
+				background-color: $gray-light;
+			}
+		}
+
+		.select-dropdown__container {
+			max-width: 500px;
+
+			.select-dropdown__option {
+				height: 50px;
+
+				.select-dropdown__item {
+					height: 50px;
+				}
+			}
+		}
+	}
+
+	.checkout__provider {
+		display: flex;
+		align-items: center;
+	}
+
+	.checkout__paypal {
+		width: 80px;
+	}
+
+	.checkout__credit-card {
+		margin-right: 5px;
+	}
+
+	.select-dropdown__item-text {
+		top: 4px;
+		font-weight: bold;
+
+		img {
+			vertical-align: middle;
+		}
+	}
+
+	@media (min-width: 481px) {
+		div.section-nav {
+			.section-nav-tabs__list {
+				.checkout__payment-box-title {
+					display:block;
+				}
+			}
+			.section-nav-tab {
+				&.is-selected {
+					.section-nav-tab__link {
+						color: $blue-wordpress;
+						background-color: transparent;
+					}
+				}
+			}
+		}
+	}
+
+	@media (max-width: 480px) {
+		.is-open .section-nav__panel {
+			padding-bottom: 0;
+		}
+		.section-nav-group {
+			margin-top: 0;
+		}
+	}
 }
