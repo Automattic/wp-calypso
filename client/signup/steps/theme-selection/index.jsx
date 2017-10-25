@@ -91,6 +91,10 @@ class ThemeSelectionStep extends Component {
 	}
 
 	shouldSkipStep() {
+		return false;
+	}
+
+	isStoreSignup() {
 		const { signupDependencies = {} } = this.props;
 
 		return (
@@ -124,15 +128,22 @@ class ThemeSelectionStep extends Component {
 			return null;
 		}
 
+		const storeSignup = this.isStoreSignup();
 		const defaultDependencies = this.props.useHeadstart
 			? { themeSlugWithRepo: 'pub/twentysixteen' }
 			: undefined;
 		const { translate } = this.props;
-		const headerText = translate( 'Choose a theme.' );
-		const subHeaderText = translate(
-			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
-			{ context: 'Themes step subheader in Signup' }
-		);
+		const headerText = storeSignup
+			? translate( 'Choose a store theme.' )
+			: translate( 'Choose a theme.' );
+		const subHeaderText = storeSignup
+			? translate( 'Pick one of our store themes to start with. You can change this later.', {
+					context: 'Themes step subheader in Signup',
+				} )
+			: translate(
+					'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
+					{ context: 'Themes step subheader in Signup' }
+				);
 
 		return (
 			<StepWrapper
