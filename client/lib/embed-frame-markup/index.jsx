@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { map } from 'lodash';
+import { flatMap, map } from 'lodash';
 
 /**
  * Constants
@@ -43,7 +43,7 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 				`,
 					} }
 				/>
-				{ map( scripts, ( { extra, src }, key ) => {
+				{ flatMap( scripts, ( { extra, src }, key ) => {
 					return [
 						extra ? (
 							<script
