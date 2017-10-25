@@ -148,7 +148,7 @@ class RefundDialog extends Component {
 		const { order, paymentMethod, siteId, translate } = this.props;
 		// Refund total is negative, so this effectively subtracts the refund from total.
 		const maxRefund = parseFloat( order.total ) + getOrderRefundTotal( order );
-		const thisRefund = getCurrencyFormatDecimal( this.state.refundTotal );
+		const thisRefund = getCurrencyFormatDecimal( this.state.refundTotal, order.currency );
 		if ( thisRefund > maxRefund ) {
 			this.setState( {
 				errorMessage: translate(
