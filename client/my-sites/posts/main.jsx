@@ -19,7 +19,6 @@ import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import config from 'config';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { mapPostStatus as mapStatus } from 'lib/route';
 import { warningNotice } from 'state/notices/actions';
 import {
@@ -95,7 +94,6 @@ function mapStateToProps( state ) {
 		adminUrl: getSiteAdminUrl( state, siteId, 'plugins.php?plugin_status=upgrade' ),
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isMultiSelect: isMultiSelectEnabled( state ),
 		siteId,
 	};
 }
