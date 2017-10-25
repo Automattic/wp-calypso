@@ -154,15 +154,18 @@ class RegisterDomainStep extends React.Component {
 
 	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
+		const loadingResults = Boolean( suggestion );
 
 		return {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
-			loadingResults: Boolean( suggestion ),
+			loadingResults: loadingResults,
+			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
 			notice: null,
 			searchResults: null,
+			subdomainSearchResults: null,
 		};
 	}
 
@@ -217,6 +220,11 @@ class RegisterDomainStep extends React.Component {
 
 			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
 				state.loadingResults = true;
+
+				if ( this.props.includeWordPressDotCom ) {
+					state.loadingSubdomainResults = true;
+				}
+
 				delete state.lastSurveyVertical;
 			}
 
@@ -322,12 +330,16 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onSearchChange = searchQuery => {
+		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
+
 		this.setState( {
 			lastQuery: searchQuery,
 			lastDomainSearched: null,
-			loadingResults: Boolean( getFixedDomainSearch( searchQuery ) ),
+			loadingResults: loadingResults,
+			loadingSubdomainResults: loadingResults,
 			notice: null,
 			searchResults: null,
+			subdomainSearchResults: null,
 		} );
 	};
 
@@ -355,6 +367,7 @@ class RegisterDomainStep extends React.Component {
 		this.setState( {
 			lastDomainSearched: domain,
 			searchResults: [],
+			subdomainSearchResults: [],
 			railcarSeed: this.getNewRailcarSeed(),
 		} );
 
@@ -400,10 +413,14 @@ class RegisterDomainStep extends React.Component {
 					} );
 				},
 				callback => {
+					const suggestionQuantity = this.props.includeWordPressDotCom
+						? SUGGESTION_QUANTITY - 1
+						: SUGGESTION_QUANTITY;
+
 					const query = {
 						query: domain,
-						quantity: SUGGESTION_QUANTITY,
-						include_wordpressdotcom: this.props.includeWordPressDotCom,
+						quantity: suggestionQuantity,
+						include_wordpressdotcom: false,
 						include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 						tld_weight_overrides: this.getTldWeightOverrides(),
 						vendor: searchVendor,
@@ -520,6 +537,63 @@ class RegisterDomainStep extends React.Component {
 				);
 			}
 		);
+
+		if ( this.props.includeWordPressDotCom ) {
+			const subdomainQuery = {
+				query: domain,
+				quantity: 1,
+				include_wordpressdotcom: true,
+				include_dotblogsubdomain: false,
+				tld_weight_overrides: null,
+				vendor: 'wpcom',
+				vertical: this.props.surveyVertical,
+			};
+
+			domains
+				.suggestions( subdomainQuery )
+				.then( subdomainSuggestions => {
+					this.props.onDomainsAvailabilityChange( true );
+					const timeDiff = Date.now() - timestamp;
+					const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
+
+					this.props.recordSearchResultsReceive(
+						domain,
+						analyticsResults,
+						timeDiff,
+						subdomainSuggestions.length,
+						this.props.analyticsSection
+					);
+
+					this.setState(
+						{
+							subdomainSearchResults: subdomainSuggestions,
+							loadingSubdomainResults: false,
+						},
+						this.save
+					);
+				} )
+				.catch( error => {
+					const timeDiff = Date.now() - timestamp;
+
+					if ( error && error.statusCode === 503 ) {
+						this.props.onDomainsAvailabilityChange( false );
+					} else if ( error && error.error ) {
+						error.code = error.error;
+						this.showValidationErrorMessage( domain, error );
+					}
+
+					const analyticsResults = [
+						error.code || error.error || 'ERROR' + ( error.statusCode || '' ),
+					];
+					this.props.recordSearchResultsReceive(
+						domain,
+						analyticsResults,
+						timeDiff,
+						-1,
+						this.props.analyticsSection
+					);
+				} );
+		}
 	};
 
 	getStrippedDomainBase( domain ) {
@@ -591,6 +665,14 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+
+		if ( this.props.includeWordPressDotCom ) {
+			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
+				suggestions.unshift( { is_placeholder: true } );
+			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
+				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+			}
+		}
 
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
