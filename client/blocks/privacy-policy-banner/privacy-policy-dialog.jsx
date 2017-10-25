@@ -19,6 +19,9 @@ class PrivacyPolicyDialog extends Component {
 			{ this.props.translate( 'Close' ) }
 		</Button>;
 
+		// let's enable `dangerouslySetInnerHTML` since we trust in the content.
+		// It's gotten from the privacy-policy WP REST API.
+		/* eslint-disable react/no-danger */
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -32,9 +35,10 @@ class PrivacyPolicyDialog extends Component {
 					</div>
 				</div>
 
-				<div className="privacy-policy-banner__dialog-body">
-					{ this.props.content }
-				</div>
+				<div
+					className="privacy-policy-banner__dialog-body"
+					dangerouslySetInnerHTML={ { __html: this.props.content } }
+				/>
 			</Dialog>
 		);
 	}
