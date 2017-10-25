@@ -19,11 +19,15 @@
 	display: flex;
 	align-items: center;
 	margin: -24px -24px 0;
-	padding: 20px 24px 24px;
+	padding: 0 24px;
 	background-color: #fbfcfd;
 	height: 116px;
 	box-shadow: 0 1px 0 0 lighten( $gray, 20% ),
 		0 1px 0 lighten( $gray, 40% );
+
+	p {
+		margin: 0;
+	}
 }
 
 .privacy-policy-banner__dialog-header-image {
