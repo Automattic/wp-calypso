@@ -63,6 +63,26 @@ describe( '#updateCommentLikes()', () => {
 				postId: POST_ID,
 				commentId: 1,
 				like_count: 4,
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								name: 'calypso_comment_management_unlike',
+								properties: undefined,
+								service: 'tracks',
+							},
+						},
+						{
+							type: 'ANALYTICS_STAT_BUMP',
+							payload: {
+								group: 'calypso_comment_management',
+								name: 'comment_unliked',
+							},
+						},
+					],
+					dataLayer: { doBypass: true },
+				},
 			} )
 		);
 	} );
