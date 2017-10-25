@@ -7,7 +7,7 @@
 		background: transparent;
 
 		.foldable-card__content {
-			padding: 0 0 24px;
+			padding: 0 0 16px;
 			background: transparent;
 		}
 	}
@@ -109,8 +109,17 @@
 	top: 48px;
 }
 
-.activity-log-item:last-of-type:before {
-	height: 41px;
+.activity-log-day:last-of-type:before {
+	width: 0;
+}
+
+.activity-log-item:before {
+	bottom: -16px;
+	height: auto;
+
+	@include breakpoint( "<480px" ) {
+		left: 21px;
+	}
 }
 
 .activity-log-item__restore-confirm:before {
