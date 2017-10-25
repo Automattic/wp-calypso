@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -23,12 +23,7 @@ import Timeline from './timeline';
 /*
  * Main chat UI component
  */
-export class Happychat extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.onCloseChatTitle = this.onCloseChatTitle.bind( this );
-	}
-
+export class Happychat extends Component {
 	componentDidMount() {
 		this.props.setFocused();
 	}
@@ -37,14 +32,15 @@ export class Happychat extends React.Component {
 		this.props.setBlurred();
 	}
 
-	onCloseChatTitle() {
+	// transform-class-properties syntax so this is bound within the function
+	onCloseChatTitle = () => {
 		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
 		onMinimizeChat();
 		setTimeout( () => {
 			onMinimizedChat();
 			onCloseChat();
 		}, 500 );
-	}
+	};
 
 	render() {
 		const { isChatOpen, isMinimizing } = this.props;
