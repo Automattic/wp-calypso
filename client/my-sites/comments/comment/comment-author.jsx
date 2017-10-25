@@ -19,14 +19,13 @@ import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getAuthorDisplayName, getPostTitle } from './utils';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getAuthorDisplayName, getPostTitle } from 'my-sites/comments/comment/utils';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isExpanded: PropTypes.bool,
-		siteId: PropTypes.number,
 	};
 
 	render() {
@@ -98,15 +97,14 @@ export class CommentAuthor extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { commentId, siteId } ) => {
+const mapStateToProps = ( state, { commentId } ) => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
 	const authorDisplayName = getAuthorDisplayName( comment );
-	const gravatarUser = {
-		avatar_URL: authorAvatarUrl,
-		display_name: authorDisplayName,
-	};
+	const gravatarUser = { avatar_URL: authorAvatarUrl, display_name: authorDisplayName };
 
 	return {
 		authorAvatarUrl,
@@ -117,7 +115,7 @@ const mapStateToProps = ( state, { commentId, siteId } ) => {
 		commentUrl: get( comment, 'URL' ),
 		gravatarUser,
 		postTitle: getPostTitle( comment ),
-		site: getSite( state, siteId ),
+		site,
 	};
 };
 

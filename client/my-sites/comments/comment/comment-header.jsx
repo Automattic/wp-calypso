@@ -20,7 +20,6 @@ export const CommentHeader = ( {
 	isEditMode,
 	isExpanded,
 	isSelected,
-	siteId,
 	toggleExpanded,
 } ) => (
 	<div className="comment__header" onClick={ ! isExpanded && ! isBulkMode ? toggleExpanded : noop }>
@@ -30,7 +29,7 @@ export const CommentHeader = ( {
 			</label>
 		) }
 
-		<CommentAuthor { ...{ commentId, isExpanded, siteId } } />
+		<CommentAuthor { ...{ commentId, isExpanded } } />
 
 		{ isExpanded && <CommentAuthorMoreInfo /> }
 
