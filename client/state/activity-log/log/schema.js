@@ -40,55 +40,49 @@ const activityItemSchema = {
 export const logItemsSchema = {
 	type: 'object',
 	additionalProperties: false,
-	patternProperties: {
-		'^\\d+$': {
+	properties: {
+		data: {
 			type: 'object',
 			additionalProperties: false,
+			required: [ 'items', 'queries' ],
 			properties: {
-				data: {
+				items: {
+					patternProperties: {
+						'^.+$': activityItemSchema,
+					},
+				},
+				queries: {
 					type: 'object',
 					additionalProperties: false,
-					required: [ 'items', 'queries' ],
-					properties: {
-						items: {
-							patternProperties: {
-								'^.+$': activityItemSchema,
-							},
-						},
-						queries: {
+					patternProperties: {
+						// Query key pairs
+						'^\\[.*\\]$': {
 							type: 'object',
 							additionalProperties: false,
-							patternProperties: {
-								// Query key pairs
-								'^\\[.*\\]$': {
-									type: 'object',
-									additionalProperties: false,
-									required: [ 'itemKeys' ],
-									properties: {
-										itemKeys: {
-											type: 'array',
-											items: {
-												type: 'string',
-											},
-										},
-										found: {
-											type: 'integer',
-										},
+							required: [ 'itemKeys' ],
+							properties: {
+								itemKeys: {
+									type: 'array',
+									items: {
+										type: 'string',
 									},
+								},
+								found: {
+									type: 'integer',
 								},
 							},
 						},
 					},
 				},
-				options: {
-					type: 'object',
-					additionalProperties: false,
-					required: [ 'itemKey' ],
-					properties: {
-						itemKey: {
-							type: 'string',
-						},
-					},
+			},
+		},
+		options: {
+			type: 'object',
+			additionalProperties: false,
+			required: [ 'itemKey' ],
+			properties: {
+				itemKey: {
+					type: 'string',
 				},
 			},
 		},
