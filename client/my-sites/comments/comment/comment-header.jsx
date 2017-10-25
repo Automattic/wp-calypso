@@ -10,8 +10,8 @@ import noop from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import CommentAuthor from './comment-author';
-import CommentAuthorMoreInfo from './comment-author-more-info';
+import CommentAuthor from 'my-sites/comments/comment/comment-author';
+import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
 import FormCheckbox from 'components/forms/form-checkbox';
 
 export const CommentHeader = ( {

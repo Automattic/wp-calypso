@@ -11,7 +11,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import Card from 'components/card';
-import CommentHeader from './comment-header';
+import CommentHeader from 'my-sites/comments/comment/comment-header';
 
 export class Comment extends Component {
 	static propTypes = {
