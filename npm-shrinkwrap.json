@@ -3215,7 +3215,7 @@
       "version": "1.0.1"
     },
     "is-buffer": {
-      "version": "1.1.5"
+      "version": "1.1.6"
     },
     "is-builtin-module": {
       "version": "1.0.0"
@@ -4988,7 +4988,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.2.6"
+      "version": "1.2.7"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -7142,7 +7142,7 @@
       "version": "1.0.0"
     },
     "unquoted-property-validator": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "dev": true
     },
     "unreachable-branch-transform": {
