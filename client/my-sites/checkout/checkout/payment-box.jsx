@@ -69,9 +69,9 @@ class PaymentBox extends PureComponent {
 				);
 			case 'ideal':
 				return (
-					<div>
+					<div className="checkout__provider">
 						<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
-						<span>iDEAL</span>
+						{ this.getPaymentProviderName( method ) }
 					</div>
 				);
 		}
