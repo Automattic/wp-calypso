@@ -4,13 +4,12 @@
  * @format
  */
 
-import { assign, noop, pick } from 'lodash';
-import Immutable from 'immutable';
+import { assign, noop, pick, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import FeedPostStore from './';
+import FeedPostStore from 'lib/feed-post-store';
 
 function PostFetcher( options ) {
 	assign(
@@ -23,15 +22,29 @@ function PostFetcher( options ) {
 		options
 	);
 
-	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+	this.postsToFetch = new Set();
 	this.batchQueued = false;
+}
+
+function toKey( o ) {
+	return `${ o.feedId || '' }-${ o.blogId || '' }-${ o.postId || '' }`;
+}
+
+function fromKey( key ) {
+	const [ feedId, blogId, postId ] = key.split( '-' ).map( Number );
+	return pickBy(
+		{
+			feedId,
+			blogId,
+			postId,
+		},
+		value => value > 0
+	);
 }
 
 assign( PostFetcher.prototype, {
 	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add(
-			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
-		);
+		this.postsToFetch.add( toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 
 		if ( ! this.batchQueued ) {
 			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
@@ -39,9 +52,7 @@ assign( PostFetcher.prototype, {
 	},
 
 	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete(
-			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
-		);
+		this.postsToFetch.delete( toKey( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
 	},
 
 	run: function() {
@@ -53,8 +64,8 @@ assign( PostFetcher.prototype, {
 			return;
 		}
 
-		toFetch.forEach( function( postKey ) {
-			postKey = postKey.toJS();
+		toFetch.forEach( function( key ) {
+			const postKey = fromKey( key );
 			const post = FeedPostStore.get( postKey );
 
 			if ( post && post._state !== 'minimal' ) {
@@ -73,7 +84,7 @@ assign( PostFetcher.prototype, {
 			);
 		}, this );
 
-		this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+		this.postsToFetch = new Set();
 	},
 } );
 
