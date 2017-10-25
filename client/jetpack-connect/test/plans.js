@@ -11,7 +11,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PlansWrapper, { getSitePlans, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
+import PlansWrapper, {
+	DEFAULT_PROPS,
+	getSitePlans,
+	SELECTED_SITE,
+	SITE_PLAN_PRO,
+} from './lib/plans';
+import { PlansTestComponent as Plans } from '../plans';
 import { PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 
 jest.mock( 'components/data/query-plans', () => 'components--data--query-plans' );
@@ -37,10 +43,25 @@ describe( 'Plans', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
+	test( 'should redirect on update from free to paid plan', () => {
+		const wrapper = mount( <Plans { ...DEFAULT_PROPS } /> );
+
+		const redirect = ( wrapper.instance().redirect = jest.fn() );
+
+		wrapper.setProps( {
+			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
+			sitePlans: getSitePlans( PLAN_JETPACK_BUSINESS ),
+		} );
+
+		expect( redirect.mock.calls.length ).toBe( 1 );
+
+		wrapper.unmount();
+	} );
+
 	test( 'should redirect if Atomic', () => {
 		const goBackToWpAdmin = jest.fn();
 
-		mount(
+		const wrapper = mount(
 			<PlansWrapper
 				goBackToWpAdmin={ goBackToWpAdmin }
 				isAutomatedTransfer={ true }
@@ -54,5 +75,7 @@ describe( 'Plans', () => {
 		);
 
 		expect( goBackToWpAdmin.mock.calls.length ).toBe( 1 );
+
+		wrapper.unmount();
 	} );
 } );
