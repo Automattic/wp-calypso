@@ -1,23 +1,38 @@
+$post-item-border-color: darken( $sidebar-bg-color, 5% );
+$expanded-post-item-outline-color: $sidebar-selected-color;
+
+$post-item-border: solid 1px $post-item-border-color;
+$expanded-post-item-border: 1px solid $expanded-post-item-outline-color;
+$expanded-post-item-outline: 4px solid $post-item-border-color;
+
 .post-item {
-	// The padding here ensures that margins of child elements are included
-	// within the height of this element, and the margin cancels the padding.
-	// See https://stackoverflow.com/a/28121477
-	padding: 1px 0;
-	margin: -1px 0;
+	box-sizing: border-box;
+	margin: 0 -1px; // to line up with SectionNav, which still uses box-shadow
+
+	&,
+	&.is-expanded + & {
+		border: $post-item-border;
+	}
+
+	&:not( :first-child ) {
+		border-top: 0;
+	}
 
 	&.is-expanded {
-		margin: 11px 0;
+		margin-top: 16px;
+		margin-bottom: 16px;
+
+		border: $expanded-post-item-border;
+		outline: $expanded-post-item-outline;
 	}
 }
 
 .post-item__panel {
 	box-sizing: border-box;
-	background: $white;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 0 16px;
-	margin: 0 0 1px;
 
 	min-height: 84px;
 	&.has-large-title {
@@ -27,6 +42,8 @@
 	@include breakpoint( ">480px" ) {
 		padding: 0 24px;
 	}
+
+	background: $white;
 }
 
 .post-item__select {
