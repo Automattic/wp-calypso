@@ -23,6 +23,7 @@ import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 
 /**
  * Component
@@ -157,6 +158,7 @@ export class Theme extends Component {
 		const hasPrice = /\d/g.test( price );
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! hasPrice,
+			'theme__badge-price-test': abtest( 'unlimitedThemeNudge' ) === 'show',
 		} );
 
 		// for performance testing
@@ -176,7 +178,7 @@ export class Theme extends Component {
 					eventName={ impressionEventName }
 					eventProperties={ upsellEventProperties }
 				/>
-				<InfoPopover icon="star-outline" position="top left">
+				<InfoPopover icon="star" className="theme__upsell-icon" position="top left">
 					<TrackComponentView
 						eventName={ impressionEventName }
 						eventProperties={ upsellPopupEventProperties }
