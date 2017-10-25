@@ -81,14 +81,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { savePost, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
-		'publish',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type.name, 'publish', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( PostActionsEllipsisMenuPublish )
-);
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( PostActionsEllipsisMenuPublish ) );
+

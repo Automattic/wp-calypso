@@ -77,14 +77,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { toggleSharePanel, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
-		'share',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type.name, 'share', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( PostActionsEllipsisMenuShare )
-);
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( PostActionsEllipsisMenuShare ) );
