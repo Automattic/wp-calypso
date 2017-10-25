@@ -319,7 +319,7 @@ export const allSitesQueries = ( () => {
 			return post.site_ID === siteId && post.ID === postId;
 		} ) || null;
 	}
-	
+
 	return createReducer(
 		new PostQueryManager( {}, { itemKey: 'global_ID' } ),
 		{

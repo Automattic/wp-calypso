@@ -1412,7 +1412,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should apply pending restore status on restore actions', () => {
-			let original = allSitesQueries( undefined, {
+			const original = allSitesQueries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
@@ -1517,7 +1517,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should apply pending delete status on delete actions', () => {
-			let original = allSitesQueries( undefined, {
+			const original = allSitesQueries( undefined, {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: null,
 				query: { status: 'trash' },
