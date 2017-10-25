@@ -35,7 +35,11 @@ export const setHappychatAvailable = isAvailable => ( {
 	isAvailable,
 } );
 
-export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
+export const sendChatMessage = ( message, meta ) => ( {
+	type: HAPPYCHAT_SEND_MESSAGE,
+	message,
+	meta,
+} );
 
 /**
  * Returns an action object that sends information about the customer to happychat
