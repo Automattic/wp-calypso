@@ -116,7 +116,12 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
-					<Button primary disabled={ ! url || isFetching || hasError } onClick={ onSubmit }>
+					<Button
+						className="jetpack-connect__connect-button"
+						primary
+						disabled={ ! url || isFetching || hasError }
+						onClick={ onSubmit }
+					>
 						{ this.renderButtonLabel() }
 					</Button>
 				</Card>
