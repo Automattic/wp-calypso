@@ -144,11 +144,12 @@ export const replyComment = ( commentText, siteId, postId, parentCommentId ) => 
  * @param {Number} commentId comment identifier
  * @returns {Function} think that likes a comment
  */
-export const likeComment = ( siteId, postId, commentId ) => ( {
+export const likeComment = ( siteId, postId, commentId, status ) => ( {
 	type: COMMENTS_LIKE,
 	siteId,
 	postId,
 	commentId,
+	status,
 } );
 
 /***

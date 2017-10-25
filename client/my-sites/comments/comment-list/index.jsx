@@ -343,7 +343,7 @@ export class CommentList extends Component {
 					showNotice: false,
 				} );
 				if ( previousIsLiked ) {
-					this.props.likeComment( commentId, postId );
+					this.props.likeComment( commentId, postId, newStatus );
 				} else if ( ! previousIsLiked && 'approved' !== previousStatus ) {
 					this.props.unlikeComment( commentId, postId );
 				}
@@ -365,7 +365,7 @@ export class CommentList extends Component {
 			return;
 		}
 
-		this.props.likeComment( commentId, postId );
+		this.props.likeComment( commentId, postId, status );
 
 		if ( 'unapproved' === status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -554,7 +554,8 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 
-	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
+	likeComment: ( commentId, postId, status ) =>
+		dispatch( likeComment( siteId, postId, commentId, status ) ),
 
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
 		dispatch(

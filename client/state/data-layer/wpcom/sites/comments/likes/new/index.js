@@ -20,7 +20,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { errorNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
 
 export const likeComment = ( { dispatch }, action ) => {
 	dispatch(
@@ -36,17 +35,15 @@ export const likeComment = ( { dispatch }, action ) => {
 };
 
 export const updateCommentLikes = (
-	{ dispatch, getState },
-	{ siteId, postId, commentId },
+	{ dispatch },
+	{ siteId, postId, commentId, status },
 	{ like_count }
-) => {
-	const comment = getSiteComment( getState(), siteId, commentId );
-
+) =>
 	dispatch(
 		withAnalytics(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_comment_management_like', {
-					also_approve: 'unapproved' !== comment.status,
+					also_approve: 'unapproved' === status,
 				} ),
 				bumpStat( 'calypso_comment_management', 'comment_liked' )
 			),
@@ -59,7 +56,6 @@ export const updateCommentLikes = (
 			} )
 		)
 	);
-};
 
 /***
  * dispatches a error notice if creating a new comment request failed

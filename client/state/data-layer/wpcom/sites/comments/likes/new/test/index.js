@@ -76,7 +76,7 @@ describe( '#updateCommentLikes()', () => {
 							type: 'ANALYTICS_EVENT_RECORD',
 							payload: {
 								name: 'calypso_comment_management_like',
-								properties: { also_approve: true },
+								properties: { also_approve: false },
 								service: 'tracks',
 							},
 						},
