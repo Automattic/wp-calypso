@@ -183,17 +183,19 @@ export class Theme extends Component {
 						eventName={ impressionEventName }
 						eventProperties={ upsellPopupEventProperties }
 					/>
-					<h2 className="theme__upsell-heading">
-						Access all our premium themes for free with our Premium and Business Plans
-					</h2>
-					<Button
-						onClick={ this.onUpsellClick }
-						className="theme__upsell-cta"
-						primary
-						href={ upsellUrl }
-					>
-						Upgrade Now
-					</Button>
+					<div className="theme__upsell-popover">
+						<h2 className="theme__upsell-heading">
+							Access all our premium themes for free with our Premium and Business Plans
+						</h2>
+						<Button
+							onClick={ this.onUpsellClick }
+							className="theme__upsell-cta"
+							primary
+							href={ upsellUrl }
+						>
+							Upgrade Now
+						</Button>
+					</div>
 				</InfoPopover>
 			</span>
 		);
