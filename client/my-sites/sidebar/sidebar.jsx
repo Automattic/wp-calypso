@@ -55,7 +55,6 @@ import {
 	isSitePreviewable,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
-import { abtest } from 'lib/abtest';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 
