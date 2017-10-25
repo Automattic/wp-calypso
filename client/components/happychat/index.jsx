@@ -1,50 +1,29 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import GridIcon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import {
-	blur,
-	focus,
-	openChat,
-	closeChat,
-	minimizeChat,
-	minimizedChat,
-} from 'state/happychat/ui/actions';
+import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import HappychatConnection from './connection';
+import Title from './title';
 import Composer from './composer';
 import Notices from './notices';
 import Timeline from './timeline';
 
-/**
- * React component for rendering title bar
- */
-const Title = localize( ( { onCloseChat, translate } ) => (
-	<div className="happychat__active-toolbar">
-		<h4>{ translate( 'Support Chat' ) }</h4>
-		<div onClick={ onCloseChat }>
-			<GridIcon icon="cross" />
-		</div>
-	</div>
-) );
-
 /*
  * Main chat UI component
  */
-class Happychat extends React.Component {
+export class Happychat extends Component {
 	componentDidMount() {
 		this.props.setFocused();
 	}
@@ -53,8 +32,18 @@ class Happychat extends React.Component {
 		this.props.setBlurred();
 	}
 
+	// transform-class-properties syntax so this is bound within the function
+	onCloseChatTitle = () => {
+		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
+		onMinimizeChat();
+		setTimeout( () => {
+			onMinimizedChat();
+			onCloseChat();
+		}, 500 );
+	};
+
 	render() {
-		const { isChatOpen, isMinimizing, onCloseChat } = this.props;
+		const { isChatOpen, isMinimizing } = this.props;
 
 		return (
 			<div className="happychat">
@@ -65,9 +54,7 @@ class Happychat extends React.Component {
 						'is-minimizing': isMinimizing,
 					} ) }
 				>
-					<div className="happychat__title">
-						<Title onCloseChat={ onCloseChat } />
-					</div>
+					<Title onCloseChat={ this.onCloseChatTitle } />
 					<Timeline />
 					<Notices />
 					<Composer />
@@ -77,9 +64,18 @@ class Happychat extends React.Component {
 	}
 }
 
+Happychat.propTypes = {
+	isChatOpen: PropTypes.bool,
+	isMinimizing: PropTypes.bool,
+	onCloseChat: PropTypes.func,
+	onMinimizeChat: PropTypes.func,
+	onMinimizedChat: PropTypes.func,
+	setBlurred: PropTypes.func,
+	setFocused: PropTypes.func,
+};
+
 const mapState = state => {
 	return {
-		connectionStatus: getHappychatConnectionStatus( state ),
 		isChatOpen: isHappychatOpen( state ),
 		isMinimizing: isHappychatMinimizing( state ),
 	};
@@ -87,15 +83,14 @@ const mapState = state => {
 
 const mapDispatch = dispatch => {
 	return {
-		onOpenChat() {
-			dispatch( openChat() );
-		},
 		onCloseChat() {
+			dispatch( closeChat() );
+		},
+		onMinimizeChat() {
 			dispatch( minimizeChat() );
-			setTimeout( function() {
-				dispatch( minimizedChat() );
-				dispatch( closeChat() );
-			}, 500 );
+		},
+		onMinimizedChat() {
+			dispatch( minimizedChat() );
 		},
 		setBlurred() {
 			dispatch( blur() );

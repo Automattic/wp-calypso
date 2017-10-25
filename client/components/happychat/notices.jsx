@@ -25,7 +25,7 @@ import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-s
 /*
  * Renders any notices about the chat session to the user
  */
-class Notices extends Component {
+export class Notices extends Component {
 	statusNotice() {
 		const { isServerReachable, connectionStatus, chatStatus, translate } = this.props;
 
