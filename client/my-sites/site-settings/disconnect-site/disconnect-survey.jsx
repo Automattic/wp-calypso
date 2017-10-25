@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -54,6 +55,15 @@ const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translat
 		</CompactCard>
 	</div>
 );
+
+DisconnectSurvey.propTypes = {
+	confirmHref: PropTypes.string,
+	// Provided by HOCs
+	isPaidPlan: PropTypes.bool,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
+	translate: PropTypes.func,
+};
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
