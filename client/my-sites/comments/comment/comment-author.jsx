@@ -2,7 +2,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -19,86 +20,102 @@ import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getAuthorDisplayName, getGravatarUser, getPostTitle } from './utils';
+import { getAuthorDisplayName, getPostTitle } from './utils';
 
-export const CommentAuthor = ( {
-	authorAvatarUrl,
-	authorDisplayName,
-	authorUrl,
-	commentDate,
-	commentType,
-	commentUrl,
-	isExpanded,
-	moment,
-	postTitle,
-	site,
-} ) => {
-	const gravatarUser = getGravatarUser( authorAvatarUrl, authorDisplayName );
+export class CommentAuthor extends Component {
+	static propTypes = {
+		commentId: PropTypes.number,
+		isExpanded: PropTypes.bool,
+		siteId: PropTypes.number,
+	};
 
-	const localizedDate = convertDateToUserLocation(
-		commentDate || moment(),
-		timezone( site ),
-		gmtOffset( site )
-	);
+	render() {
+		const {
+			authorDisplayName,
+			authorUrl,
+			commentDate,
+			commentType,
+			commentUrl,
+			gravatarUser,
+			isExpanded,
+			moment,
+			postTitle,
+			site,
+		} = this.props;
 
-	const formattedDate = localizedDate.format( 'll LT' );
+		const localizedDate = convertDateToUserLocation(
+			commentDate || moment(),
+			timezone( site ),
+			gmtOffset( site )
+		);
 
-	const relativeDate = moment()
-		.subtract( 1, 'month' )
-		.isBefore( localizedDate )
-		? localizedDate.fromNow()
-		: localizedDate.format( 'll' );
+		const formattedDate = localizedDate.format( 'll LT' );
 
-	return (
-		<div className="comment__author">
-			<div className="comment__author-avatar">
-				{ 'comment' === commentType && <Gravatar user={ gravatarUser } /> }
-				{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
-			</div>
+		const relativeDate = moment()
+			.subtract( 1, 'month' )
+			.isBefore( localizedDate )
+			? localizedDate.fromNow()
+			: localizedDate.format( 'll' );
 
-			<div className="comment__author-info">
-				<div className="comment__author-info-element">
-					<strong className="comment__author-name">
-						<Emojify>{ authorDisplayName }</Emojify>
-					</strong>
-					{ ! isExpanded && (
-						<span className="comment__post">
-							<Gridicon icon="chevron-right" size={ 18 } />
-							<span>{ postTitle }</span>
-						</span>
-					) }
+		return (
+			<div className="comment__author">
+				<div className="comment__author-avatar">
+					{ 'comment' === commentType && <Gravatar user={ gravatarUser } /> }
+					{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
 				</div>
 
-				<div className="comment__author-info-element">
-					<span className="comment__date">
-						{ isExpanded && <ExternalLink href={ commentUrl }>{ formattedDate }</ExternalLink> }
-						{ ! isExpanded && <span>{ relativeDate }</span> }
-					</span>
-					<span className="comment__author-url">
-						<span className="comment__author-url-separator">&middot;</span>
-						{ isExpanded && (
-							<ExternalLink href={ authorUrl }>
-								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-							</ExternalLink>
+				<div className="comment__author-info">
+					<div className="comment__author-info-element">
+						<strong className="comment__author-name">
+							<Emojify>{ authorDisplayName }</Emojify>
+						</strong>
+						{ ! isExpanded && (
+							<span className="comment__post">
+								<Gridicon icon="chevron-right" size={ 18 } />
+								<span>{ postTitle }</span>
+							</span>
 						) }
-						{ ! isExpanded && <Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify> }
-					</span>
+					</div>
+
+					<div className="comment__author-info-element">
+						<span className="comment__date">
+							{ isExpanded && <ExternalLink href={ commentUrl }>{ formattedDate }</ExternalLink> }
+							{ ! isExpanded && <span>{ relativeDate }</span> }
+						</span>
+						<span className="comment__author-url">
+							<span className="comment__author-url-separator">&middot;</span>
+							{ isExpanded && (
+								<ExternalLink href={ authorUrl }>
+									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+								</ExternalLink>
+							) }
+							{ ! isExpanded && <Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify> }
+						</span>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
-};
+		);
+	}
+}
 
 const mapStateToProps = ( state, { commentId, siteId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
+	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
+	const authorDisplayName = getAuthorDisplayName( comment );
+	const gravatarUser = {
+		avatar_URL: authorAvatarUrl,
+		display_name: authorDisplayName,
+	};
+
 	return {
-		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
-		authorDisplayName: getAuthorDisplayName( comment ),
+		authorAvatarUrl,
+		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
+		gravatarUser,
 		postTitle: getPostTitle( comment ),
 		site: getSite( state, siteId ),
 	};

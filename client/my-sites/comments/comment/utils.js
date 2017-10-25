@@ -20,18 +20,6 @@ export const getAuthorDisplayName = comment =>
 	decodeEntities( get( comment, 'author.name', translate( 'Anonymous' ) ) );
 
 /**
- * Return a user object fit for `<Gravatar />` use.
- *
- * @param {String} avatarUrl The user's avatar URL.
- * @param {String} displayName The user's display name.
- * @returns {Object} A Gravatar user object.
- */
-export const getGravatarUser = ( avatarUrl, displayName ) => ( {
-	avatar_URL: avatarUrl,
-	display_name: displayName,
-} );
-
-/**
  * Create a stripped down comment object containing only the information needed by
  * CommentList's change status and reply functions, and their respective undos.
  *
