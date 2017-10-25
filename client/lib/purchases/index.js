@@ -76,7 +76,8 @@ function hasPaymentMethod( purchase ) {
 	return (
 		isPaidWithPaypal( purchase ) ||
 		isPaidWithCreditCard( purchase ) ||
-		isPaidWithPayPalDirect( purchase )
+		isPaidWithPayPalDirect( purchase ) ||
+		isPaidWithIdeal( purchase )
 	);
 }
 
@@ -134,6 +135,10 @@ function isOneTimePurchase( purchase ) {
 
 function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
+}
+
+function isPaidWithIdeal( purchase ) {
+	return 'iDEAL' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
@@ -241,6 +246,10 @@ function paymentLogoType( purchase ) {
 
 	if ( isPaidWithPaypal( purchase ) ) {
 		return 'paypal';
+	}
+
+	if ( isPaidWithIdeal( purchase ) ) {
+		return 'ideal';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
