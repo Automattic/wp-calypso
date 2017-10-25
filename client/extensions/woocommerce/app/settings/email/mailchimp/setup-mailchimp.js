@@ -303,7 +303,7 @@ class MailChimpSetup extends React.Component {
 					className={ dialogClass }>
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<ProgressBar
-						value={ stepNum }
+						value={ stepNum + 1 }
 						total={ Object.keys( steps ).length - 1 }
 						compact
 					/>
