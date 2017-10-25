@@ -7,8 +7,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { assign, debounce } from 'lodash';
+import { debounce } from 'lodash';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -109,14 +110,15 @@ export class EmbedDialog extends React.Component {
 				let cachedMarkup;
 
 				if ( data && data.result ) {
-					cachedMarkup = data.result;
+					cachedMarkup = {
+						renderMarkup: data.result,
+					};
 					// todo need to do more to check that data.result is valid before using it?
 				} else {
-					console.log( 'lookup error:', error );
-
-					// todo add details? or just generic error message
-
-					cachedMarkup = 'error foo';
+					cachedMarkup = {
+						renderMarkup: error,
+						error: true,
+					};
 
 					// todo handle errors
 					// xhr errors in `error` var
@@ -165,6 +167,15 @@ export class EmbedDialog extends React.Component {
 		this.onUpdate();
 	};
 
+	getError = errorObj => {
+		switch ( errorObj.error ) {
+			case 'invalid_embed_url':
+				return this.props.translate( 'The Embed URL parameter must be a valid URL.' );
+			default:
+				return errorObj.message;
+		}
+	};
+
 	render() {
 		const { translate } = this.props;
 		const dialogButtons = [
@@ -173,6 +184,16 @@ export class EmbedDialog extends React.Component {
 				{ translate( 'Update' ) }
 			</Button>,
 		];
+
+		const isLoading = this.state.isLoading;
+		const isURLInCache = this.isURLInCache( this.state.embedUrl );
+		const cachedMarkup = isURLInCache ? this.state.previewMarkup[ this.state.embedUrl ] : null;
+		const isError = cachedMarkup && cachedMarkup.error;
+
+		const statusClassNames = classNames( 'embed__status', {
+			isError,
+			isLoading,
+		} );
 
 		return (
 			<Dialog
@@ -192,10 +213,14 @@ export class EmbedDialog extends React.Component {
 					onChange={ this.onChangeEmbedUrl }
 					onKeyDown={ this.onKeyDownEmbedUrl }
 				/>
-
-				{ this.state.isLoading && (
-					<div className="embed__status">
-						<Spinner className="embed__loading-spinner" size={ 20 } />
+				{ ( isLoading || isError ) && (
+					<div className={ statusClassNames }>
+						{ isLoading && <Spinner className="embed__loading-spinner" size={ 20 } /> }
+						{ isError && (
+							<div className="embed__status-error">
+								{ this.getError( cachedMarkup.renderMarkup ) }
+							</div>
+						) }
 					</div>
 				) }
 
@@ -218,12 +243,13 @@ export class EmbedDialog extends React.Component {
 				{ /* are you sure that makes it safe? get security review */ }
 
 				{ ! this.state.isLoading &&
-				this.state.previewMarkup[ this.state.embedUrl ] && (
+				cachedMarkup &&
+				! isError && (
 					<EmbedContainer>
 						<div
 							className="embed__preview"
 							dangerouslySetInnerHTML={ {
-								__html: this.state.previewMarkup[ this.state.embedUrl ],
+								__html: cachedMarkup.renderMarkup,
 							} }
 						/>
 					</EmbedContainer>
