@@ -5974,36 +5974,6 @@
         }
       }
     },
-    "react-test-env": {
-      "version": "0.2.0",
-      "dev": true,
-      "dependencies": {
-        "acorn": {
-          "version": "2.7.0",
-          "dev": true
-        },
-        "acorn-globals": {
-          "version": "1.0.9",
-          "dev": true
-        },
-        "jsdom": {
-          "version": "9.4.1",
-          "dev": true
-        },
-        "lodash.assign": {
-          "version": "4.1.0",
-          "dev": true
-        },
-        "webidl-conversions": {
-          "version": "3.0.1",
-          "dev": true
-        },
-        "whatwg-url": {
-          "version": "3.1.0",
-          "dev": true
-        }
-      }
-    },
     "react-test-renderer": {
       "version": "15.6.2",
       "dev": true
