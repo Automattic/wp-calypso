@@ -103,16 +103,14 @@ class SourcePaymentBox extends PureComponent {
 				if ( error.message ) {
 					errorMessage = error.message;
 				} else {
-					errorMessage = translate( 'Please specify your name.' );
+					errorMessage = translate( "We've encountered a problem. Please try again later." );
 				}
 
 				this.setSubmitState( {
 					error: errorMessage,
 					disabled: false
 				} );
-			}
-
-			if ( result.redirect_url ) {
+			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
 					info: translate( 'Redirecting you to our payment provider' ),
 					disabled: true
