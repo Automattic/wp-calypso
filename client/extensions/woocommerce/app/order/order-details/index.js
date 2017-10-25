@@ -43,10 +43,10 @@ class OrderDetails extends Component {
 		}
 	};
 
-	updateLineItems = item => {
+	updateOrder = newOrder => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
-			this.props.editOrder( siteId, { id: order.id, line_items: item } );
+			this.props.editOrder( siteId, { id: order.id, ...newOrder } );
 		}
 	};
 
@@ -64,12 +64,7 @@ class OrderDetails extends Component {
 		const { isEditing, order, site } = this.props;
 		if ( isEditing ) {
 			return (
-				<OrderDetailsTable
-					order={ order }
-					site={ site }
-					isEditing
-					onChange={ this.updateLineItems }
-				/>
+				<OrderDetailsTable order={ order } site={ site } isEditing onChange={ this.updateOrder } />
 			);
 		}
 

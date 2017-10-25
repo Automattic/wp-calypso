@@ -1,7 +1,8 @@
+/** @format */
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten($gray, 30%);
 
 	.order-details__item-sku {
 		display: block;
@@ -21,7 +22,7 @@
 	}
 
 	thead .table-heading {
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid lighten($gray, 30%);
 	}
 
 	.table-row {
@@ -33,55 +34,32 @@
 	.order-details__item-quantity .form-text-input {
 		width: 5em;
 	}
+
+	.order-details__item-delete {
+		width: 1.5em;
+	}
 }
 
+.order-details__item-delete,
 .order-details__item-total {
 	text-align: right;
 }
 
-.order-details__totals {
-	padding: 24px 0;
+// Duplicating `.table` for increased specificity
+.order-details__totals.table.table {
+	margin: 16px -24px;
+	box-shadow: none;
+	border: none;
 	text-align: right;
-	font-size: 14px;
 
-	.order-details__total {
-		margin-bottom: 8px;
-		display: flex;
-		align-items: center;
-
-		.order-details__totals-label {
-			flex: 1 0 calc(100% - 104px);
-		}
-
-		.order-details__totals-tax,
-		.order-details__totals-value {
-			flex: 1 0 92px;
+	.table-row {
+		&:hover {
+			background: transparent;
 		}
 	}
 
-	.form-text-input-with-affixes,
-	.form-text-input-with-suffixes {
-		text-align: left;
-	}
-
-	&.is-editing .order-details__totals-tax {
-		color: $gray-text-min;
-		font-style: italic;
-	}
-
-	&.is-refund-modal,
-	&.has-taxes {
-		.order-details__total {
-			.order-details__totals-label {
-				flex: 1 0 calc(100% - 250px);
-			}
-		}
-	}
-
-	&.has-taxes {
-		.order-details__total-edit .order-details__totals-value {
-			flex: 1 0 192px;
-		}
+	.table-item {
+		font-size: 14px;
 	}
 
 	.order-details__total-refund {
@@ -93,7 +71,32 @@
 		font-weight: 600;
 	}
 
-	& > div:last-child {
-		margin-bottom: 0;
+	.order-details__totals-value.table-item {
+		padding-right: 24px;
+		width: 10em;
 	}
+
+	&.has-taxes {
+		.order-details__totals-tax,
+		.order-details__totals-value {
+			width: 8em;
+		}
+	}
+
+	&.is-editing {
+		.order-details__totals-value {
+			// Indent enough to account for delete button
+			padding-right: 78px !important;
+		}
+
+		.order-details__totals-tax {
+			color: $gray-text-min;
+			font-style: italic;
+		}
+	}
+}
+
+.order-details__card .form-setting-explanation {
+	margin: -8px 0 16px;
+	text-align: right;
 }
