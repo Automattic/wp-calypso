@@ -104,13 +104,13 @@ class CreditCardPaymentBox extends React.Component {
 		);
 	};
 
-	getSecurePaymentCopy = () => {
+	renderSecurePaymentNotice = () => {
 		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
 			return (
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ this.props.translate( 'Secure payment' ) }
+						{ this.props.translate( 'Secure Payment' ) }
 					</div>
 				</div>
 			);
@@ -137,7 +137,7 @@ class CreditCardPaymentBox extends React.Component {
 			<div className={ paymentButtonsClasses }>
 				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 
-				{ this.getSecurePaymentCopy() }
+				{ this.renderSecurePaymentNotice() }
 
 				{ this.props.onToggle && cartValues.isPayPalExpressEnabled( cart ) ? (
 					<a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>

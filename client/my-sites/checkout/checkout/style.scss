@@ -406,7 +406,7 @@
 
 	.paypal-payment-box,
 	.credits-payment-box {
-		.payment-box-section {
+		.payment-box-section, .checkout__payment-box-section {
 			background-color: $white;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
 
@@ -418,7 +418,7 @@
 	}
 
 	.paypal-payment-box {
-		.payment-box-section {
+		.payment-box-section, .checkout__payment-box-section {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
@@ -720,7 +720,7 @@
 @include breakpoint( ">660px" ) {
 	.payment-box__payment-buttons-test {
 		display: flex;
-		align-items: center;	
+		align-items: center;
 	}
 }
 
