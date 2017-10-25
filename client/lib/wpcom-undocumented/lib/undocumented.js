@@ -571,6 +571,7 @@ Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
  * @param {int|string} siteId The site ID
  * @param {string} domain The domain name to check
  * @param {function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.canRedirect = function( siteId, domain, fn ) {
