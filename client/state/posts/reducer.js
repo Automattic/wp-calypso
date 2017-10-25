@@ -190,32 +190,6 @@ export const queries = ( () => {
 	return createReducer(
 		{},
 		{
-			[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
-				return applyToManager(
-					state,
-					siteId,
-					'receive',
-					false,
-					{
-						ID: postId,
-						status: '__RESTORE_PENDING',
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
-				return applyToManager(
-					state,
-					siteId,
-					'receive',
-					false,
-					{
-						ID: postId,
-						status: 'trash',
-					},
-					{ patch: true }
-				);
-			},
 			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
 				if ( ! siteId ) { // Handle site-specific queries only
 					return state;
@@ -243,6 +217,32 @@ export const queries = ( () => {
 						return applyToManager( memo, siteId, 'receive', true, sitePosts );
 					},
 					state
+				);
+			},
+			[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
+				return applyToManager(
+					state,
+					siteId,
+					'receive',
+					false,
+					{
+						ID: postId,
+						status: '__RESTORE_PENDING',
+					},
+					{ patch: true }
+				);
+			},
+			[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
+				return applyToManager(
+					state,
+					siteId,
+					'receive',
+					false,
+					{
+						ID: postId,
+						status: 'trash',
+					},
+					{ patch: true }
 				);
 			},
 			[ POST_SAVE ]: ( state, { siteId, postId, post } ) => {
