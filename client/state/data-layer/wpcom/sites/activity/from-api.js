@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, head, map, split } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,33 +35,26 @@ export function transformer( apiResponse ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	return {
-		...processItemBase( item ),
-	};
-}
+	const published = item.published;
+	const actor = item.actor;
 
-export function processItemActor( item ) {
 	return {
-		actorAvatarUrl: get( item, [ 'actor', 'icon', 'url' ], DEFAULT_GRAVATAR_URL ),
-		actorName: get( item, [ 'actor', 'name' ], '' ),
-		actorRemoteId: get( item, [ 'actor', 'external_user_id' ], 0 ),
-		actorRole: get( item, [ 'actor', 'role' ], '' ),
-		actorType: get( item, [ 'actor', 'type' ], '' ),
-		actorWpcomId: get( item, [ 'actor', 'wpcom_user_id' ], 0 ),
-	};
-}
+		/* activity actor */
+		actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
+		actorName: get( actor, 'name', '' ),
+		actorRemoteId: get( actor, 'external_user_id', 0 ),
+		actorRole: get( actor, 'role', '' ),
+		actorType: get( actor, 'type', '' ),
+		actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
 
-export function processItemBase( item ) {
-	const published = get( item, 'published' );
-	return {
-		...processItemActor( item ),
+		/* base activity info */
 		activityDate: published,
-		activityGroup: head( split( get( item, 'name' ), '__', 1 ) ),
+		activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
 		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
-		activityId: get( item, 'activity_id' ),
+		activityId: item.activity_id,
 		activityIsRewindable: item.is_rewindable,
-		activityName: get( item, 'name' ),
-		activityStatus: get( item, 'status' ),
+		activityName: item.name,
+		activityStatus: item.status,
 		activityTitle: get( item, 'summary', '' ),
 		activityTs: Date.parse( published ),
 	};
