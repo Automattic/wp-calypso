@@ -24,7 +24,11 @@ export function getDefaultThemes() {
 }
 
 export default function getThemes( vertical, designType, quantity = 9 ) {
-	const filterByType = theme => theme.design === designType;
+	const filterByType = theme => {
+		return Array.isArray( theme.design )
+			? includes( theme.design, designType )
+			: theme.design === designType;
+	};
 	const themePool = themes;
 	const themesByType = themePool.filter( filterByType );
 	let themeSet = themesByType;

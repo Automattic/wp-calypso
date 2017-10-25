@@ -1,6 +1,15 @@
 /** @format */
 export const themes = [
 	{
+		name: 'Shoreditch',
+		slug: 'shoreditch',
+		repo: 'pub',
+		fallback: true,
+		design: [ 'page', 'store' ],
+		demo_uri: 'https://wordpress.com/theme/shoreditch',
+		verticals: [],
+	},
+	{
 		name: 'Independent Publisher',
 		slug: 'independent-publisher-2',
 		repo: 'pub',
@@ -68,7 +77,7 @@ export const themes = [
 		slug: 'karuna',
 		repo: 'pub',
 		fallback: false,
-		design: 'page',
+		design: [ 'page', 'store' ],
 		demo_uri: 'https://karunademo.wordpress.com',
 		verticals: [],
 	},
@@ -77,7 +86,7 @@ export const themes = [
 		slug: 'dara',
 		repo: 'pub',
 		fallback: true,
-		design: 'page',
+		design: [ 'page', 'store' ],
 		demo_uri: 'https://darademo.wordpress.com',
 		verticals: [],
 	},
