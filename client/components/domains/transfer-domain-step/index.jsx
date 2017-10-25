@@ -3,7 +3,7 @@
  *
  * @format
  */
-
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -115,12 +115,11 @@ class TransferDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
+						<p>{ translate( 'Use your own domain for your WordPress.com site.' ) }</p>
 						<p>
-							{ translate( 'Use your own domain for your WordPress.com site.' ) }
-						</p>
-						<p>
-							{ translate( 'Enter the domain you want to transfer to WordPress.com and manage your domain and site' +
-								' all in one place. Domains purchased in the last 60 days can\'t be transferred. {{a}}Learn More{{/a}}',
+							{ translate(
+								'Enter the domain you want to transfer to WordPress.com and manage your domain and site' +
+									" all in one place. Domains purchased in the last 60 days can't be transferred. {{a}}Learn More{{/a}}",
 								{
 									components: { a: <a href="#" /> },
 								}
@@ -150,7 +149,7 @@ class TransferDomainStep extends React.Component {
 					<div>
 						<p>
 							{ translate(
-								'Don\'t want to transfer? You can {{a}}map it{{/a}} for %(cost)s instead.',
+								"Don't want to transfer? You can {{a}}map it{{/a}} for %(cost)s instead.",
 								{
 									args: { cost },
 									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
@@ -171,7 +170,12 @@ class TransferDomainStep extends React.Component {
 		}
 
 		return (
-			<div className="domain-search-results__domain-availability is-mapping-suggestion">
+			<div
+				className={ classnames(
+					'domain-search-results__domain-availability',
+					'is-mapping-suggestion'
+				) }
+			>
 				<Notice status="is-success" showDismiss={ false }>
 					{ this.props.translate( '%(domain)s is available!', {
 						args: { domain: suggestion.domain_name },

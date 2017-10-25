@@ -47,7 +47,7 @@ class Transfer extends React.PureComponent {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
-			<div className="domain-details-card">
+			<div className="edit__domain-details-card">
 				<Header domain={ domain } />
 
 				<Card>
