@@ -129,6 +129,9 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						orders
 					}
 				} ) }
+				<a className="mailchimp__resync-link" onClick={ onResyncClick }>
+					{ translate( 'Resync', { comment: 'to synchronize again' } ) }
+				</a>
 			</div>
 		</div>
 	);
