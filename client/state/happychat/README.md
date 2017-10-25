@@ -8,9 +8,9 @@ Happychat state shape:
   - isAvailable: whether the Happychat service is accepting new chats.
   - status: one of the HAPPYCHAT_CONNECTION_STATUS_* [constants](./constants.js)
 - chat
-  - status: one of the HAPPYCHAT_CHAT_STATUS_* [constants](./constans.js)
+  - status: one of the HAPPYCHAT_CHAT_STATUS_* [constants](./constants.js)
   - timeline: array of timeline messages, as received from the Happychat service.
-  - lastActivityTimestamp: milliseconds since the ongoing chat received or set a message. n
+  - lastActivityTimestamp: milliseconds since the ongoing chat received or set a message.
 - ui
   - currentMessage: current message as typed by the customer in the happychat client.
   - isMinimizing: whether the happychat client is minimizing.
