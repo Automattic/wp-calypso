@@ -62,17 +62,14 @@ class App extends Component {
 			return null;
 		}
 
-		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
-			// Show stats page for non Atomic sites for now
-			if ( ! isAtomicSite && ! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ) {
-				this.redirect();
-				return null;
-			}
+		if ( ! isAtomicSite && ! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ) {
+			this.redirect();
+			return null;
+		}
 
-			if ( ! canUserManageOptions ) {
-				this.redirect();
-				return null;
-			}
+		if ( ! canUserManageOptions ) {
+			this.redirect();
+			return null;
 		}
 
 		const documentTitle = this.props.documentTitle || translate( 'Store' );

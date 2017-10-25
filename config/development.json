@@ -193,7 +193,7 @@
 		"woocommerce/extension-settings-stripe-connect-flows": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
-		"woocommerce/store-on-non-atomic-sites": false,
+		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	}
 }
