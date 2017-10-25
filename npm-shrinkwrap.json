@@ -5950,7 +5950,7 @@
       }
     },
     "react-modal": {
-      "version": "3.0.4"
+      "version": "3.1.0"
     },
     "react-pure-render": {
       "version": "1.0.2"
@@ -7161,7 +7161,7 @@
       "version": "1.0.0"
     },
     "unquoted-property-validator": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "dev": true
     },
     "unreachable-branch-transform": {
