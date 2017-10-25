@@ -1,62 +1,63 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
-import React from 'react';
+import React, { Component } from 'react';
 import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
-const Card = props => {
-	const { href, tagName, target, compact, children, highlight } = props;
+class Card extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+		href: PropTypes.string,
+		tagName: PropTypes.string,
+		target: PropTypes.string,
+		compact: PropTypes.bool,
+		children: PropTypes.node,
+		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
+	};
 
-	const highlightClass = highlight ? 'is-' + highlight : false;
+	static defaultProps = {
+		tagName: 'div',
+		highlight: false,
+	};
 
-	const className = classnames(
-		'card',
-		props.className,
-		{
-			'is-card-link': !! href,
-			'is-compact': compact,
-		},
-		highlightClass
-	);
+	render() {
+		const { href, tagName, target, compact, children, highlight } = this.props;
 
-	const omitProps = [ 'compact', 'highlight', 'tagName' ];
+		const highlightClass = highlight ? 'is-' + highlight : false;
 
-	let linkIndicator;
-	if ( href ) {
-		linkIndicator = (
-			<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+		const className = classnames(
+			'card',
+			this.props.className,
+			{
+				'is-card-link': !! href,
+				'is-compact': compact,
+			},
+			highlightClass
 		);
-	} else {
-		omitProps.push( 'href', 'target' );
+
+		const omitProps = [ 'compact', 'highlight', 'tagName' ];
+
+		let linkIndicator;
+		if ( href ) {
+			linkIndicator = (
+				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			);
+		} else {
+			omitProps.push( 'href', 'target' );
+		}
+
+		return React.createElement(
+			href ? 'a' : tagName,
+			assign( omit( this.props, omitProps ), { className } ),
+			linkIndicator,
+			children
+		);
 	}
-
-	return React.createElement(
-		href ? 'a' : tagName,
-		assign( omit( props, omitProps ), { className } ),
-		linkIndicator,
-		children
-	);
-};
-
-Card.propTypes = {
-	className: PropTypes.string,
-	href: PropTypes.string,
-	tagName: PropTypes.string,
-	target: PropTypes.string,
-	compact: PropTypes.bool,
-	children: PropTypes.node,
-	highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
-};
-
-Card.defaultProps = {
-	tagName: 'div',
-	highlight: false,
-};
+}
 
 export default Card;
