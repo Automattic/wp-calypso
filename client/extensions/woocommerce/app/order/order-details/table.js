@@ -237,7 +237,7 @@ class OrderDetailsTable extends Component {
 		const { translate } = this.props;
 		return (
 			<FormSettingExplanation>
-				{ translate( 'If applicable, taxes will be applied or updated after saving.' ) }
+				{ translate( 'If applicable, taxes will be updated after saving.' ) }
 			</FormSettingExplanation>
 		);
 	};
