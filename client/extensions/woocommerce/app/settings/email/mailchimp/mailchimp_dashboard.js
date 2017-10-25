@@ -10,7 +10,6 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
 import Card from 'components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
