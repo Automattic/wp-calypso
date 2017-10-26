@@ -97,7 +97,7 @@
 	}
 
 	.comment__post-link {
-		display: inline-block;
+		display: inline;
 
 		.gridicon {
 			color: $gray;
@@ -153,22 +153,20 @@
 
 	.comment__post-link {
 		margin: 8px 0 16px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 
 		.gridicon {
 			display: none;
-		}
-
-		a {
-			color: $gray-text-min;
-		}
-		a:focus,
-		a:hover {
-			color: $blue-wordpress;
 		}
 	}
 
 	.comment__in-reply-to {
 		color: $gray-text-min;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 
 		.gridicon {
 			fill: $gray-text-min;
@@ -213,6 +211,18 @@
 		&:after {
 			background: transparent;
 		}
+	}
+}
+
+// Comment Post Link Block
+
+.comment__post-link {
+	a {
+		color: $gray-text-min;
+	}
+	a:focus,
+	a:hover {
+		color: $blue-wordpress;
 	}
 }
 
