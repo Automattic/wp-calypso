@@ -17,6 +17,7 @@ import {
 	filter,
 	find,
 	indexOf,
+	isEmpty,
 	last,
 	matchesProperty,
 	pick,
@@ -106,14 +107,15 @@ class Signup extends React.Component {
 	};
 
 	submitQueryDependencies = () => {
-		if ( ! this.props.queryObject ) {
+		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
 		}
 
+		const queryObject = this.props.initialContext.query;
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 
 		// `vertical` query parameter
-		const vertical = this.props.queryObject.vertical;
+		const vertical = queryObject.vertical;
 		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
 			debug( 'From query string: vertical = %s', vertical );
 			this.props.setSurvey( {
@@ -142,11 +144,12 @@ class Signup extends React.Component {
 		this.submitQueryDependencies();
 
 		const flow = flows.getFlow( this.props.flowName );
+		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
 
 		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( this.props.queryObject, flow.providesDependenciesInQuery );
+			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
 		this.signupFlowController = new SignupFlowController( {
@@ -175,13 +178,7 @@ class Signup extends React.Component {
 
 		this.loadProgressFromStore();
 
-		const flowSteps = flow.steps;
-		const flowStepsInProgressStore = filter(
-			SignupProgressStore.get(),
-			step => -1 !== flowSteps.indexOf( step.stepName )
-		);
-
-		if ( flowStepsInProgressStore.length > 0 && ! flow.disallowResume ) {
+		if ( utils.canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
@@ -476,6 +473,7 @@ class Signup extends React.Component {
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
+						initialContext={ this.props.initialContext }
 						steps={ flow.steps }
 						stepName={ this.props.stepName }
 						meta={ flow.meta || {} }

@@ -35,6 +35,10 @@ var SignupProgressStore = {
 		signupProgress = [];
 		store.remove( STORAGE_KEY );
 	},
+	getFromCache: function() {
+		loadProgressFromCache();
+		return this.get();
+	},
 };
 
 emitter( SignupProgressStore );
