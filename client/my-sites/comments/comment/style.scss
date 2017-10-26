@@ -67,6 +67,13 @@
 	flex-shrink: 0;
 	padding: 0 8px;
 	width: 32px;
+
+	.gridicon {
+		background-color: $gray;
+		border-radius: 50%;
+		fill: $white;
+		padding: 4px;
+	}
 }
 
 .comment__author-info {

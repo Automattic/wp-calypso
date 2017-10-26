@@ -61,6 +61,7 @@ export class CommentAuthor extends Component {
 		return (
 			<div className="comment__author">
 				<div className="comment__author-avatar">
+					{ /* A comment can be of type 'comment', 'pingback' or 'trackback'. */ }
 					{ 'comment' === commentType && <Gravatar user={ gravatarUser } /> }
 					{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
 				</div>
