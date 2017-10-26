@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { debounce, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,15 +36,7 @@ class ProductSearch extends Component {
 	};
 
 	componentDidMount() {
-		const { siteId } = this.props;
-		this.props.fetchProductSearchResults( siteId, 1, '' );
-	}
-
-	componentWillReceiveProps( newProps ) {
-		const { siteId } = newProps;
-		if ( this.props.siteId !== siteId ) {
-			this.props.fetchProductSearchResults( siteId, 1, '' );
-		}
+		this.debouncedSearch = debounce( this.fetchSearch, 500 );
 	}
 
 	componentWillUnmount() {
@@ -54,7 +46,10 @@ class ProductSearch extends Component {
 
 	handleSearch = query => {
 		this.setState( { currentSearch: query } );
-		// @todo Debounce this
+		this.debouncedSearch( query );
+	};
+
+	fetchSearch = query => {
 		const { siteId } = this.props;
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
