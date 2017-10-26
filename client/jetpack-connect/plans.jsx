@@ -35,7 +35,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser, isRtl } from 'state/selectors';
+import { canCurrentUser, isRtl, isSiteOnPaidPlan } from 'state/selectors';
 import {
 	getFlowType,
 	isRedirectingToWpAdmin,
@@ -85,7 +85,7 @@ class Plans extends Component {
 			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 
-		if ( this.hasPlan( this.props.selectedSite ) && ! this.redirecting ) {
+		if ( this.props.hasPlan && ! this.redirecting ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.canPurchasePlans && ! this.redirecting ) {
@@ -145,19 +145,6 @@ class Plans extends Component {
 		}
 
 		return !! this.props.selectedPlan;
-	}
-
-	hasPlan( site ) {
-		return (
-			site &&
-			site.plan &&
-			( site.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-				site.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY ||
-				site.plan.product_slug === PLAN_JETPACK_PREMIUM ||
-				site.plan.product_slug === PLAN_JETPACK_PREMIUM_MONTHLY ||
-				site.plan.product_slug === PLAN_JETPACK_PERSONAL ||
-				site.plan.product_slug === PLAN_JETPACK_PERSONAL_MONTHLY )
-		);
 	}
 
 	autoselectPlan() {
@@ -274,7 +261,7 @@ class Plans extends Component {
 			this.redirecting ||
 			this.hasPreSelectedPlan() ||
 			( ! this.props.showFirst && ! this.props.canPurchasePlans ) ||
-			( ! this.props.showFirst && this.hasPlan( this.props.selectedSite ) )
+			( ! this.props.showFirst && this.props.hasPlan )
 		) {
 			return <QueryPlans />;
 		}
@@ -340,6 +327,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 			isRtlLayout: isRtl( state ),
+			hasPlan: isSiteOnPaidPlan( state, selectedSite.ID ),
 		};
 	},
 	{
