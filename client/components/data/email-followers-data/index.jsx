@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
