@@ -17,7 +17,7 @@ import {
 	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_MUTING,
 } from './follow-status';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { key } from './utils';
 
 /**
@@ -29,7 +29,7 @@ export const items = createReducer(
 		[ READER_CONVERSATION_FOLLOW ]: ( state, action ) => {
 			state = assign( {}, state, {
 				[ key(
-					action.payload.blogId,
+					action.payload.siteId,
 					action.payload.postId
 				) ]: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 			} );
