@@ -40,6 +40,7 @@ class ConfirmDisconnection extends PureComponent {
 			'missing-feature': 'didNotInclude',
 			'too-difficult': 'tooHard',
 			'too-expensive': 'onlyNeedFree',
+			troubleshooting: 'troubleshooting',
 		};
 
 		const surveyData = {
