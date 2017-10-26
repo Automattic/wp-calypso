@@ -34,17 +34,15 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 				break;
 
 			case 'dimensions':
-				value = (
-					<span>
-						<abbr title={ this.props.translate( 'Width in pixels' ) }>
-							{ this.props.item.width }
-						</abbr>
-						{ ' ✕ ' }
-						<abbr title={ this.props.translate( 'Height in pixels' ) }>
-							{ this.props.item.height }
-						</abbr>
-					</span>
-				);
+				value = [
+					<abbr key="width" title={ this.props.translate( 'Width in pixels' ) }>
+						{ this.props.item.width }
+					</abbr>,
+					' ✕ ',
+					<abbr key="height" title={ this.props.translate( 'Height in pixels' ) }>
+						{ this.props.item.height }
+					</abbr>,
+				];
 				break;
 
 			case 'date':
