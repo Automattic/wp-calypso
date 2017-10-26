@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,10 +22,10 @@ import ProductSearchResults from './results';
 class ProductSearch extends Component {
 	static propTypes = {
 		clearProductSearch: PropTypes.func,
+		disabled: PropTypes.bool,
 		fetchProductSearchResults: PropTypes.func.isRequired,
 		onChange: PropTypes.func.isRequired,
-		selected: PropTypes.array,
-		translate: PropTypes.func,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -82,9 +81,9 @@ class ProductSearch extends Component {
 		}
 		this.setState(
 			prevState => ( {
+				currentSearch: '',
 				isActive: true,
 				tokenInputHasFocus: true,
-				currentSearch: '',
 				tokens: [ ...prevState.tokens, token ],
 			} ),
 			() => this.props.onChange( this.state.tokens )
@@ -132,4 +131,4 @@ export default connect( null, dispatch =>
 		},
 		dispatch
 	)
-)( localize( ProductSearch ) );
+)( ProductSearch );
