@@ -147,11 +147,11 @@ export const receiveError = error => ( { type: HAPPYCHAT_IO_RECEIVE_ERROR, error
  * @param  { Object } meta meta info to be sent along the message
  * @return { Object } Action object
  */
-export const sendMessage = ( message, meta = {} ) => ( {
+export const sendMessage = message => ( {
 	type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	event: 'message',
 	error: 'failed to send message',
-	payload: { id: uuid(), text: message, meta },
+	payload: { id: uuid(), text: message },
 } );
 
 /**
