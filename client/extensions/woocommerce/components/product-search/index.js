@@ -25,6 +25,7 @@ class ProductSearch extends Component {
 		clearProductSearch: PropTypes.func,
 		disabled: PropTypes.bool,
 		fetchProductSearchResults: PropTypes.func.isRequired,
+		maxLength: PropTypes.number,
 		onChange: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 	};
@@ -56,6 +57,9 @@ class ProductSearch extends Component {
 	};
 
 	onFocus = () => {
+		if ( this.state.tokens.length >= this.props.maxLength ) {
+			return;
+		}
 		this.setState( { isActive: true, tokenInputHasFocus: true } );
 	};
 
@@ -76,12 +80,19 @@ class ProductSearch extends Component {
 			return;
 		}
 		this.setState(
-			prevState => ( {
-				currentSearch: '',
-				isActive: true,
-				tokenInputHasFocus: true,
-				tokens: [ ...prevState.tokens, token ],
-			} ),
+			prevState => {
+				const tokens = [ ...prevState.tokens, token ];
+				let isActive = true;
+				if ( tokens.length >= this.props.maxLength ) {
+					isActive = false;
+				}
+				return {
+					currentSearch: '',
+					isActive,
+					tokenInputHasFocus: isActive,
+					tokens,
+				};
+			},
 			() => this.props.onChange( this.state.tokens )
 		);
 	};
@@ -108,6 +119,7 @@ class ProductSearch extends Component {
 					value={ tokens }
 					onFocus={ this.onFocus }
 					onBlur={ this.onBlur }
+					maxLength={ this.props.maxLength }
 				/>
 				<ProductSearchResults
 					search={ currentSearch }

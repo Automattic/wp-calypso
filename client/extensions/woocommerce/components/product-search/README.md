@@ -25,3 +25,4 @@ render: function() {
 #### Props
 
 * `onChange`: Function called when a result is clicked, with product object as an argument.
+* `maxLength`: A limit to the number of tokens that can be selected
