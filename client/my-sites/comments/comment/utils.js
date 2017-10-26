@@ -3,21 +3,6 @@
  * External dependencies
  */
 import { get, includes } from 'lodash';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { decodeEntities } from 'lib/formatting';
-
-/**
- * Return the comment author display name, or "Anonymous" if the comment author has no name.
- *
- * @param {Object} comment A comment object.
- * @returns {String} The comment author display name.
- */
-export const getAuthorDisplayName = comment =>
-	decodeEntities( get( comment, 'author.name', translate( 'Anonymous' ) ) );
 
 /**
  * Create a stripped down comment object containing only the information needed by

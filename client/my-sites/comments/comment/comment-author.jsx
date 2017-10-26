@@ -17,9 +17,9 @@ import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
+import { decodeEntities } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
-import { getAuthorDisplayName } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
@@ -41,6 +41,7 @@ export class CommentAuthor extends Component {
 			isExpanded,
 			moment,
 			site,
+			translate,
 		} = this.props;
 
 		const localizedDate = convertDateToUserLocation(
@@ -68,7 +69,7 @@ export class CommentAuthor extends Component {
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
 						<strong className="comment__author-name">
-							<Emojify>{ authorDisplayName }</Emojify>
+							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
 						{ ! isExpanded && <CommentPostLink { ...{ commentId } } /> }
 					</div>
@@ -98,7 +99,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
-	const authorDisplayName = getAuthorDisplayName( comment );
+	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
 	const gravatarUser = { avatar_URL: authorAvatarUrl, display_name: authorDisplayName };
 
 	return {
