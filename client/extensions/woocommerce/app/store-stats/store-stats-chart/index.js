@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import page from 'page';
 import { findIndex } from 'lodash';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -62,6 +62,39 @@ class StoreStatsChart extends Component {
 		} );
 	};
 
+	createTooltipDate = item => {
+		const { unit } = this.props;
+		const dateFormat = UNITS[ unit ].shortFormat;
+		const date = moment( item.period );
+		if ( unit === 'week' ) {
+			return `${ date.subtract( 6, 'days' ).format( dateFormat ) } - ${ moment(
+				item.period
+			).format( dateFormat ) }`;
+		}
+		return date.format( dateFormat );
+	};
+
+	buildToolTipData = ( item, selectedTab ) => {
+		const value =
+			selectedTab.type === 'currency'
+				? formatCurrency( item[ selectedTab.attr ], item.currency )
+				: Math.round( item[ selectedTab.attr ] * 100 ) / 100;
+		const data = [
+			{ className: 'is-date-label', value: null, label: this.createTooltipDate( item ) },
+			{
+				value,
+				label: selectedTab.label,
+			},
+		];
+		if ( selectedTab.attr === 'gross_sales' ) {
+			data.push( {
+				value: formatCurrency( item.net_sales, item.currency ),
+				label: translate( 'Net Sales' ),
+			} );
+		}
+		return data;
+	};
+
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const className = classnames( item.classNames.join( ' ' ), {
@@ -70,9 +103,9 @@ class StoreStatsChart extends Component {
 		return {
 			label: item[ chartFormat ],
 			value: item[ selectedTab.attr ],
-			nestedValue: null,
+			nestedValue: selectedTab.attr === 'gross_sales' ? item.net_sales : null,
 			data: item,
-			tooltipData: [],
+			tooltipData: this.buildToolTipData( item, selectedTab ),
 			className,
 		};
 	};
@@ -87,7 +120,15 @@ class StoreStatsChart extends Component {
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
-				<Legend activeTab={ selectedTab } />
+				{ selectedTab.attr === 'gross_sales' ? (
+					<Legend
+						activeTab={ selectedTab }
+						availableCharts={ [ 'net_sales' ] }
+						tabs={ [ { label: translate( 'Net Sales' ), attr: 'net_sales' } ] }
+					/>
+				) : (
+					<Legend activeTab={ selectedTab } />
+				) }
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
 				<Tabs data={ chartData }>
 					{ tabs.map( ( tab, tabIndex ) => {
@@ -103,7 +144,7 @@ class StoreStatsChart extends Component {
 								<Tab
 									key={ tab.attr }
 									index={ tabIndex }
-									label={ tab.label }
+									label={ tab.tabLabel || tab.label }
 									selected={ tabIndex === selectedTabIndex }
 									tabClick={ this.tabClick }
 								>
@@ -116,7 +157,7 @@ class StoreStatsChart extends Component {
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
 										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format(
-											UNITS[ unit ].sinceFormat
+											UNITS[ unit ].shortFormat
 										) }` }
 									/>
 								</Tab>

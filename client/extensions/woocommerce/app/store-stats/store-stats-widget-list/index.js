@@ -58,7 +58,7 @@ class StoreStatsWidgetList extends Component {
 			{
 				key: 'delta',
 				label: `${ translate( 'Since' ) } \
-				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`,
+				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].shortFormat ) }`,
 			},
 		];
 
