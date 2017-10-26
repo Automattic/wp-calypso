@@ -36,7 +36,6 @@ const PostCommentFormRoot = ( {
 
 	return (
 		<PostCommentForm
-			ref="postCommentForm"
 			post={ post }
 			parentCommentId={ null }
 			commentText={ commentText }
