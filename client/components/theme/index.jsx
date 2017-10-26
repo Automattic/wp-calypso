@@ -23,7 +23,6 @@ import InfoPopover from 'components/info-popover';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { abtest } from 'lib/abtest';
 
 /**
  * Component
@@ -156,9 +155,10 @@ export class Theme extends Component {
 		} );
 
 		const hasPrice = /\d/g.test( price );
+		const showUpsell = hasPrice && upsellUrl;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! hasPrice,
-			'theme__badge-price-test': abtest( 'unlimitedThemeNudge' ) === 'show',
+			'theme__badge-price-test': showUpsell,
 		} );
 
 		// for performance testing
@@ -171,8 +171,7 @@ export class Theme extends Component {
 		const impressionEventName = 'calypso_upgrade_nudge_impression';
 		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
 		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
-		const upsell = hasPrice &&
-		upsellUrl && (
+		const upsell = showUpsell && (
 			<span className="theme__upsell">
 				<TrackComponentView
 					eventName={ impressionEventName }
