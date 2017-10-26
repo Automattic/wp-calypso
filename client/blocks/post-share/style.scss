@@ -286,9 +286,24 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share .post-share__footer-items {
 	align-items: center;
+	box-sizing: border-box;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
+
+	margin: 0 auto 1px;
+	padding: 16px;
+
+	background: $white;
+
+	&:not( :first-child ) {
+		border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 1px;
+		padding: 16px 24px;
+	}
 
 	&::after {
 		content: '';
