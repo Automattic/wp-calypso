@@ -28,9 +28,7 @@ class CredentialsSetupFlow extends Component {
 		this.setState( { currentStep: 'start' } );
 	}
 
-	reset = () => {
-		this.setState( { currentStep: 'start' } );
-	};
+	reset = () => this.setState( { currentStep: 'start' } );
 
 	getNextStep = step => get( {
 		start: 'tos',

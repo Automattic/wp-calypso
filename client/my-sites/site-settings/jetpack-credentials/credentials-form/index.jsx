@@ -41,14 +41,9 @@ export class CredentialsForm extends Component {
 	};
 
 	handleFieldChange = event => {
-		const formState = get( this.state, 'form', {} );
-		const { formErrors } = this.state;
-
-		formState[ event.target.name ] = event.target.value;
-		formErrors[ event.target.name ] = false;
 		this.setState( {
-			form: formState,
-			formErrors,
+			form: { ...this.state.form, [ event.target.name ]: event.target.value },
+			formErrors: { ...this.state.formErrors, [ event.target.name ]: false },
 		} );
 	};
 
@@ -76,28 +71,6 @@ export class CredentialsForm extends Component {
 
 	togglePrivateKeyField = () =>
 		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
-
-	renderInputField = ( name, title, placeholder ) => {
-		const { formIsSubmitting, onCancel, translate } = this.props;
-		const { formErrors } = this.state;
-
-		return (
-			<FormLabel>
-				<div>{ title }</div>
-				<FormTextInput
-					name={ name }
-					placeholder={ placeholder }
-					value={ get( this.state.form, name, '' ) }
-					onChange={ this.handleFieldChange }
-					disabled={ formIsSubmitting }
-					isError={ !! formErrors[ name ] }
-				/>
-				{ formErrors[ name ] && (
-					<FormInputValidation isError={ true } text={ formErrors[ name ] } />
-				) }
-			</FormLabel>
-		);
-	};
 
 	render() {
 		const { formIsSubmitting, onCancel, translate } = this.props;
@@ -127,23 +100,54 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td className="credentials-form__host-field">
-								{ this.renderInputField(
-									'host',
-									translate( 'Server Address' ),
-									translate( 'yoursite.com' )
-								) }
+								<FormLabel>
+									<div>{ translate( 'Server Address' ) }</div>
+									<FormTextInput
+										name="host"
+										placeholder={ translate( 'yoursite.com' ) }
+										value={ get( this.state.form, 'host', '' ) }
+										onChange={ this.handleFieldChange }
+										disabled={ formIsSubmitting }
+										isError={ !! formErrors.host }
+									/>
+									{ formErrors.host && (
+										<FormInputValidation isError={ true } text={ formErrors.host } />
+									) }
+								</FormLabel>
 							</td>
 							<td className="credentials-form__port-field">
-								{ this.renderInputField( 'port', translate( 'Port Number' ), translate( '22' ) ) }
+								<FormLabel>
+									<div>{ translate( 'Port Number' ) }</div>
+									<FormTextInput
+										name="port"
+										placeholder={ translate( '22' ) }
+										value={ get( this.state.form, 'port', '' ) }
+										onChange={ this.handleFieldChange }
+										disabled={ formIsSubmitting }
+										isError={ !! formErrors.port }
+									/>
+									{ formErrors.port && (
+										<FormInputValidation isError={ true } text={ formErrors.port } />
+									) }
+								</FormLabel>
 							</td>
 						</tr>
 						<tr>
 							<td colSpan="2" className="credentials-form__user-field">
-								{ this.renderInputField(
-									'user',
-									translate( 'Username' ),
-									translate( 'username' )
-								) }
+								<FormLabel>
+									<div>{ translate( 'Username' ) }</div>
+									<FormTextInput
+										name="user"
+										placeholder={ translate( 'username' ) }
+										value={ get( this.state.form, 'user', '' ) }
+										onChange={ this.handleFieldChange }
+										disabled={ formIsSubmitting }
+										isError={ !! formErrors.user }
+									/>
+									{ formErrors.user && (
+										<FormInputValidation isError={ true } text={ formErrors.user } />
+									) }
+								</FormLabel>
 							</td>
 						</tr>
 						<tr>
@@ -166,11 +170,20 @@ export class CredentialsForm extends Component {
 						</tr>
 						<tr>
 							<td colSpan="2" className="credentials-form__abspath-field">
-								{ this.renderInputField(
-									'abspath',
-									translate( 'Upload Path' ),
-									translate( '/public_html' )
-								) }
+								<FormLabel>
+									<div>{ translate( 'Upload Path' ) }</div>
+									<FormTextInput
+										name="abspath"
+										placeholder={ translate( '/public_html' ) }
+										value={ get( this.state.form, 'abspath', '' ) }
+										onChange={ this.handleFieldChange }
+										disabled={ formIsSubmitting }
+										isError={ !! formErrors.abspath }
+									/>
+									{ formErrors.abspath && (
+										<FormInputValidation isError={ true } text={ formErrors.abspath } />
+									) }
+								</FormLabel>
 							</td>
 						</tr>
 						<tr>
