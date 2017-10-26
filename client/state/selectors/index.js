@@ -68,6 +68,7 @@ export getMenuItemTypes from './get-menu-item-types';
 export getMenusUrl from './get-menus-url';
 export getNetworkSites from './get-network-sites';
 export getOriginalUserSetting from './get-original-user-setting';
+export getParentComment from './get-parent-comment';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPluginUploadError from './get-plugin-upload-error';
