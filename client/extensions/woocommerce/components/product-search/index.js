@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, find } from 'lodash';
+import { debounce, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import {
 	fetchProductSearchResults,
 	clearProductSearch,
 } from 'woocommerce/state/sites/products/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProductSearchField from './search';
 import ProductSearchResults from './results';
 
@@ -118,12 +119,16 @@ class ProductSearch extends Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			fetchProductSearchResults,
-			clearProductSearch,
-		},
-		dispatch
-	)
+export default connect(
+	state => ( {
+		siteId: get( getSelectedSiteWithFallback( state ), 'ID' ),
+	} ),
+	dispatch =>
+		bindActionCreators(
+			{
+				fetchProductSearchResults,
+				clearProductSearch,
+			},
+			dispatch
+		)
 )( ProductSearch );

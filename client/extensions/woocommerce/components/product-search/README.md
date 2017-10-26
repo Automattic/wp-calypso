@@ -10,13 +10,13 @@ import Card from 'components/card';
 import ProductSearch from 'woocommerce/components/product-search';
 
 render: function() {
-	const onSelect = product => {
-		// Do something with product object
+	const onChange = products => {
+		// Do something with your products array
 	};
 
 	return (
 		<Card>
-			<ProductSearch onSelect={ onSelect } />
+			<ProductSearch onChange={ onChange } />
 		</Card>
 	);
 }
@@ -24,4 +24,4 @@ render: function() {
 
 #### Props
 
-* `onSelect`: Function called when a result is clicked, with product object as an argument.
+* `onChange`: Function called when a result is clicked, with product object as an argument.
