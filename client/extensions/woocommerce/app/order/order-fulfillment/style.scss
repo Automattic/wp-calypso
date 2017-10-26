@@ -10,6 +10,11 @@
 	}
 }
 
+.order-fulfillment__print-container {
+	display: flex;
+	align-items: center;
+}
+
 .order-fulfillment__tracking,
 .order-fulfillment__email {
 	margin: 0 0 24px;
