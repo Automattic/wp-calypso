@@ -18,6 +18,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 import route from 'lib/route';
 
 class App extends Component {
@@ -89,10 +90,13 @@ function mapStateToProps( state ) {
 	const canUserManageOptions =
 		( siteId && canCurrentUser( state, siteId, 'manage_options' ) ) || false;
 	const isAtomicSite = ( siteId && !! isSiteAutomatedTransfer( state, siteId ) ) || false;
+	const isPendingAutomatedTransfer =
+		( siteId && !! hasSitePendingAutomatedTransfer( state, siteId ) ) || false;
+
 	return {
 		siteId,
 		canUserManageOptions,
-		isAtomicSite,
+		isAtomicSite: isAtomicSite || isPendingAutomatedTransfer,
 		currentRoute: page.current,
 	};
 }
