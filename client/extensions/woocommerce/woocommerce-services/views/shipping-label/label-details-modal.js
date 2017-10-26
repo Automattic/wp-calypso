@@ -17,13 +17,13 @@ import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipp
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const DetailsDialog = ( props ) => {
-	const { orderId, siteId, detailsDialog, labelId, labelIndex, serviceName, packageName, productNames, translate } = props;
+	const { orderId, siteId, isVisible, labelIndex, serviceName, packageName, productNames, translate } = props;
 
 	const onClose = () => props.closeDetailsDialog( orderId, siteId );
 	return (
 		<Dialog
 			additionalClassNames="label-details-modal woocommerce"
-			isVisible={ Boolean( detailsDialog && detailsDialog.labelId === labelId ) }
+			isVisible={ isVisible }
 			onClose={ onClose }>
 			<FormSectionHeading>
 				{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
@@ -55,19 +55,18 @@ const DetailsDialog = ( props ) => {
 DetailsDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
-	detailsDialog: PropTypes.object,
-	labelId: PropTypes.number,
+	isVisible: PropTypes.bool,
 	serviceName: PropTypes.string,
 	packageName: PropTypes.string,
 	productNames: PropTypes.array,
 	closeDetailsDialog: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId, siteId } ) => {
+const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const { detailsDialog } = getShippingLabel( state, orderId, siteId );
 	return {
-		detailsDialog: loaded ? shippingLabel.detailsDialog : {},
+		isVisible: Boolean( loaded && detailsDialog && detailsDialog.labelId === labelId ),
 	};
 };
 
