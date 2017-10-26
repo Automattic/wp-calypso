@@ -1,10 +1,6 @@
 /** @format */
 
 export default {
-	type: 'object',
+	type: 'number',
 	additionalProperties: false,
-	patternProperties: {
-		// todo: does this match everything? thats what i want
-		'': { type: 'number' },
-	},
 };

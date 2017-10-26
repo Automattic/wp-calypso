@@ -5,6 +5,7 @@
  */
 import { viewStream } from '../actions';
 import { watermarks } from '../reducer';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 const streamId = 'special-chicken-stream';
 const mark = Date.now();
@@ -37,5 +38,20 @@ describe( '#watermarks', () => {
 		expect( watermarks( prevState, action ) ).toEqual( {
 			[ streamId ]: mark,
 		} );
+	} );
+
+	test( 'will skip deserializing invalid marks', () => {
+		const invalidState = { [ streamId ]: 'invalid' };
+		expect( watermarks( invalidState, { type: DESERIALIZE } ) ).toEqual( {} );
+	} );
+
+	test( 'will deserialize valid mark', () => {
+		const validState = { [ streamId ]: 42 };
+		expect( watermarks( validState, { type: DESERIALIZE } ) ).toEqual( validState );
+	} );
+
+	test( 'will serialize', () => {
+		const validState = { [ streamId ]: 42 };
+		expect( watermarks( validState, { type: SERIALIZE } ) ).toEqual( validState );
 	} );
 } );

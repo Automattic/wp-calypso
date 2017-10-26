@@ -8,19 +8,20 @@ import { max } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_VIEW_STREAM } from 'state/action-types';
+import { READER_VIEW_STREAM, DESERIALIZE } from 'state/action-types';
 import { createReducer, keyedReducer } from 'state/utils';
 import schema from './watermark-schema';
 
 export const watermarks = keyedReducer(
 	'streamId',
 	createReducer(
-		undefined,
+		{},
 		{
 			[ READER_VIEW_STREAM ]: ( state, action ) => max( [ +state, +action.mark ] ),
 		},
 		schema
-	)
+	),
+	[ DESERIALIZE ]
 );
 
 watermarks.hasCustomPersistence = true;
