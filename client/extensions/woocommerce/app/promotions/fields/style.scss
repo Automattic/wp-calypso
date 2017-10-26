@@ -1,45 +1,53 @@
 
 .fields__applies-to {
 	.search {
-		margin-bottom: 4px;
+		margin-bottom: 0;
 		border: 1px solid lighten( $gray, 20% );
 		z-index: 0; // Keeps search from overlapping header above.
+		box-sizing: border-box;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
 	}
 
 	.fields__applies-to-list {
 		position: relative;
-		background-color: $gray-light;
 		border: 1px solid lighten( $gray, 20% );
+		border-top: 0;
 		overflow-y: auto;
 		height: 250px; // TODO: media query breaks for mobile?
 
 		.fields__applies-to-row {
-			margin: 4px;
 			background-color: $white;
+			cursor: pointer;
+			border-bottom: 1px solid $gray-light;
+			padding: 12px 16px;
+
+			&:hover {
+				background: lighten( $gray-light, 2% );
+			}
+
+			&:last-child {
+				border-bottom: 0;
+			}
 
 			label {
-				margin-top: 5px;
-				margin-bottom: 5px;
 				width: 100%;
-			}
-
-			input[type=radio] {
-				margin-top: 12px;
-				margin-left: 12px;
-				margin-right: 0;
-			}
-
-			span {
-				vertical-align: middle;
+				display: flex;
+				align-items: center;
+				margin: 0;
+				font-weight: 400;
+				cursor: pointer;
 			}
 
 			.fields__product-list-image {
 				display: inline-block;
-				height: 40px;
-				width: 40px;
+				height: 32px;
+				width: 32px;
 				overflow: hidden;
 				position: relative;
-				margin-right: 16px;
+				margin: 0 12px;
 
 				&.is-thumb-placeholder {
 					background: $gray-light;
