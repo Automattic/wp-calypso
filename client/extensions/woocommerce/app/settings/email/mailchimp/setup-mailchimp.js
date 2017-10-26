@@ -54,6 +54,8 @@ const steps = {
 	[ STORE_SYNC ]: { number: 4, nextStep: null },
 };
 
+const uiStepsCount = steps[ STORE_SYNC ].number + 1;
+
 const storeSettingsRequiredFields = [ 'store_name', 'store_street', 'store_city', 'store_state',
 	'store_postal_code', 'store_country', 'store_phone', 'store_locale', 'store_timezone',
 	'store_currency_code', 'admin_email' ];
@@ -304,12 +306,12 @@ class MailChimpSetup extends React.Component {
 					<div className="mailchimp__setup-dialog-title">MailChimp</div>
 					<ProgressBar
 						value={ stepNum + 1 }
-						total={ Object.keys( steps ).length - 1 }
+						total={ uiStepsCount }
 						compact
 					/>
 					<ProgressIndicator
 						stepNumber={ stepNum }
-						totalSteps={ Object.keys( steps ).length - 1 }
+						totalSteps={ uiStepsCount }
 					/>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
