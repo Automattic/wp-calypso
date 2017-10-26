@@ -1,11 +1,9 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -14,42 +12,40 @@ import ViewersStore from 'lib/viewers/store';
 import ViewersActions from 'lib/viewers/actions';
 import passToChildren from 'lib/react-pass-to-children';
 
-export default createReactClass( {
-	displayName: 'ViewersData',
-
-	propTypes: {
+export default class ViewersData extends Component {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-	},
+	};
 
-	getInitialState() {
-		return {
-			viewers: false,
-			totalViewers: false,
-			currentPage: false,
-			fetchInitialized: false,
-		};
-	},
+	static initialState = {
+		viewers: false,
+		totalViewers: false,
+		currentPage: false,
+		fetchInitialized: false,
+	};
+
+	state = this.constructor.initialState;
 
 	componentDidMount() {
 		ViewersStore.on( 'change', this.refreshViewers );
 		this.fetchIfEmpty( this.props.siteId );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId ) {
 			return;
 		}
 		if ( this.props.siteId !== nextProps.siteId ) {
-			this.setState( this.getInitialState() );
+			this.setState( this.constructor.initialState );
 			this.fetchIfEmpty( nextProps.siteId );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		ViewersStore.removeListener( 'change', this.refreshViewers );
-	},
+	}
 
-	fetchIfEmpty( siteId ) {
+	fetchIfEmpty = siteId => {
 		siteId = siteId || this.props.siteId;
 		if ( ! siteId ) {
 			return;
@@ -69,9 +65,9 @@ export default createReactClass( {
 			this.setState( { fetchInitialized: true } );
 		}.bind( this );
 		setTimeout( defer, 0 );
-	},
+	};
 
-	isFetching: function() {
+	isFetching = () => {
 		let siteId = this.props.siteId;
 		if ( ! siteId ) {
 			return true;
@@ -87,18 +83,18 @@ export default createReactClass( {
 			return true;
 		}
 		return false;
-	},
+	};
 
-	refreshViewers( siteId ) {
+	refreshViewers = siteId => {
 		siteId = siteId || this.props.siteId;
 		this.setState( {
 			viewers: ViewersStore.getViewers( siteId ),
 			totalViewers: ViewersStore.getPaginationData( siteId ).totalViewers,
 			currentPage: ViewersStore.getPaginationData( siteId ).currentViewersPage,
 		} );
-	},
+	};
 
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
-	},
-} );
+	}
+}

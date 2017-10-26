@@ -9,7 +9,7 @@ A component that fetches a private wpcom site's viewers and passes them to its c
 
 ## Usage
 
-A component wrapped with `<FollowersData />` will receive the following props:
+A component wrapped with `<ViewersData />` will receive the following props:
 
 - viewers: An array of viewer objects
 - totalViewers: The total number of viewers found for the site

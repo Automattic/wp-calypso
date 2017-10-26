@@ -79,14 +79,6 @@ class SiteSelector extends Component {
 		isKeyboardEngaged: false,
 	};
 
-	reset() {
-		if ( this.props.sitesFound && this.refs.siteSearch ) {
-			this.refs.siteSearch.clear();
-		} else {
-			this.setState( this.getInitialState() );
-		}
-	}
-
 	onSearch = terms => {
 		this.props.searchSites( terms );
 

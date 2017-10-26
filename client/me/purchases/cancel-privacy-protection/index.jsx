@@ -1,17 +1,13 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,42 +36,40 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const user = userFactory();
 
-const CancelPrivacyProtection = createReactClass( {
-	displayName: 'CancelPrivacyProtection',
-
-	propTypes: {
+class CancelPrivacyProtection extends Component {
+	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-	},
+	};
 
-	getInitialState() {
-		return {
-			disabled: false,
-			cancelling: false,
-		};
-	},
+	static initialState = {
+		disabled: false,
+		cancelling: false,
+	};
+
+	state = this.constructor.initialState;
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
 
 		recordPageView( 'cancel_private_registration', this.props );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
 
 		recordPageView( 'cancel_private_registration', this.props, nextProps );
-	},
+	}
 
-	redirectIfDataIsInvalid( props = this.props ) {
+	redirectIfDataIsInvalid = ( props = this.props ) => {
 		if ( ! this.isDataValid( props ) ) {
 			page.redirect( paths.purchasesRoot() );
 		}
-	},
+	};
 
-	isDataValid( props = this.props ) {
+	isDataValid = ( props = this.props ) => {
 		if ( isDataLoading( props ) ) {
 			return true;
 		}
@@ -84,9 +78,9 @@ const CancelPrivacyProtection = createReactClass( {
 			purchase = getPurchase( props );
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
-	},
+	};
 
-	cancel( event ) {
+	cancel = event => {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
@@ -117,13 +111,11 @@ const CancelPrivacyProtection = createReactClass( {
 			.catch( () => {
 				this.resetState();
 			} );
-	},
+	};
 
-	resetState() {
-		this.setState( this.getInitialState() );
-	},
+	resetState = () => this.setState( this.constructor.initialState );
 
-	renderDescriptionText() {
+	renderDescriptionText = () => {
 		const purchase = getPurchase( this.props );
 
 		return (
@@ -139,9 +131,9 @@ const CancelPrivacyProtection = createReactClass( {
 				) }
 			</p>
 		);
-	},
+	};
 
-	renderWarningText() {
+	renderWarningText = () => {
 		const purchase = getPurchase( this.props );
 
 		return (
@@ -153,9 +145,9 @@ const CancelPrivacyProtection = createReactClass( {
 				) }
 			</strong>
 		);
-	},
+	};
 
-	renderButton() {
+	renderButton = () => {
 		return (
 			<Button
 				onClick={ this.cancel }
@@ -169,9 +161,9 @@ const CancelPrivacyProtection = createReactClass( {
 				) }
 			</Button>
 		);
-	},
+	};
 
-	renderNotice() {
+	renderNotice = () => {
 		const { error, translate } = this.props;
 
 		if ( error ) {
@@ -186,7 +178,7 @@ const CancelPrivacyProtection = createReactClass( {
 		}
 
 		return null;
-	},
+	};
 
 	render() {
 		const classes = classNames( 'cancel-privacy-protection__card', {
@@ -233,8 +225,8 @@ const CancelPrivacyProtection = createReactClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, props ) => ( {
