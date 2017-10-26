@@ -123,7 +123,11 @@ class ProductSearch extends Component {
 					value={ tokens.map( this.getTokenValue ) }
 					onBlur={ this.onBlur }
 				/>
-				<ProductSearchResults search={ currentSearch } onSelect={ this.addToken } />
+				<ProductSearchResults
+					search={ currentSearch }
+					isSelected={ this.hasToken }
+					onSelect={ this.addToken }
+				/>
 			</div>
 		);
 	}

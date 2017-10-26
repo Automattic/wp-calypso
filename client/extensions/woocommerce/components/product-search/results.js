@@ -22,6 +22,7 @@ import ProductItem from './item';
 
 class ProductSearchResults extends Component {
 	static propTypes = {
+		isSelected: PropTypes.func,
 		onSelect: PropTypes.func.isRequired,
 		search: PropTypes.string.isRequired,
 	};
@@ -85,6 +86,7 @@ class ProductSearchResults extends Component {
 							onClick={ this.props.onSelect }
 							product={ p }
 							search={ search }
+							isSelected={ this.props.isSelected }
 						/>
 					) )
 				) : (

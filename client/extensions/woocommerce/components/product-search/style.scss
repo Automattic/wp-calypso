@@ -127,6 +127,10 @@
 	.product-search__value-emphasis {
 		font-weight: bold;
 	}
+
+	&.is-selected {
+		font-style: italic;
+	}
 }
 
 .product-search__image {

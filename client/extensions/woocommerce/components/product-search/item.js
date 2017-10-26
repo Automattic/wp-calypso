@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
@@ -22,6 +23,7 @@ class ProductItem extends Component {
 	static propTypes = {
 		onClick: PropTypes.func.isRequired,
 		product: PropTypes.object.isRequired,
+		isSelected: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -70,15 +72,21 @@ class ProductItem extends Component {
 	renderItem = product => {
 		const { search } = this.props;
 		const featuredImage = get( product, 'images[0]', false );
+		const selected = this.props.isSelected( product );
+		const props = {
+			className: classNames( {
+				'product-search__item': true,
+				'is-selected': selected,
+			} ),
+		};
+		if ( ! selected ) {
+			props.role = 'button';
+			props.tabIndex = '0';
+			props.onClick = this.handleClick( product );
+			props.onKeyDown = getKeyboardHandler( this.handleClick( product ) );
+		}
 		return (
-			<CompactCard
-				key={ product.key }
-				className="product-search__item"
-				role="button"
-				tabIndex="0"
-				onClick={ this.handleClick( product ) }
-				onKeyDown={ getKeyboardHandler( this.handleClick( product ) ) }
-			>
+			<CompactCard key={ product.key } { ...props }>
 				<div className="product-search__image">
 					{ featuredImage && <img src={ featuredImage.src } /> }
 				</div>
