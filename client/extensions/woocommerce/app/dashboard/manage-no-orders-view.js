@@ -15,7 +15,6 @@ import page from 'page';
 import analytics from 'lib/analytics';
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import ShareWidget from 'woocommerce/components/share-widget';
 import WidgetGroup from 'woocommerce/components/widget-group';
 
@@ -100,7 +99,6 @@ class ManageNoOrdersView extends Component {
 	render = () => {
 		return (
 			<div className="dashboard__manage-no-orders">
-				<LabelsSetupNotice />
 				{ this.renderShareWidget() }
 				<WidgetGroup>
 					{ this.renderStatsWidget() }
