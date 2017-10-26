@@ -14,7 +14,6 @@ import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import CredentialsForm from './credentials-form/index';
 import CredentialsSetupFlow from './credentials-setup-flow/index';
-import Popover from 'components/popover';
 import Gridicon from 'gridicons';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
@@ -42,12 +41,6 @@ class Backups extends Component {
 		isRewindActive: PropTypes.bool,
 		siteId: PropTypes.number.isRequired
 	};
-
-	componentWillMount() {
-		this.setState( { showPopover: false } );
-	}
-
-	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
 
 	getProtocolDescription = ( protocol ) => {
 		const {
@@ -167,30 +160,6 @@ class Backups extends Component {
 						autoConfigCredentials={ autoConfigCredentials }
 						autoConfigStatus={ autoConfigStatus }
 					/>
-				) }
-				{ isRewindActive && ! hasMainCredentials && (
-					<CompactCard className="jetpack-credentials__footer">
-						<a
-							onClick={ this.togglePopover }
-							ref="popoverLink"
-							className="jetpack-credentials__footer-popover-link"
-						>
-							<Gridicon icon="help" size={ 18 } className="jetpack-credentials__footer-popover-icon" />
-							{ translate( 'Why do I need this?' ) }
-						</a>
-						<Popover
-							context={ this.refs && this.refs.popoverLink }
-							isVisible={ get( this.state, 'showPopover', false ) }
-							onClose={ this.togglePopover }
-							className="jetpack-credentials__footer-popover"
-							position="top"
-						>
-							{ translate(
-								'These credentials are used to perform automatic actions ' +
-								'on your server including backups and restores.'
-							) }
-						</Popover>
-					</CompactCard>
 				) }
 			</div>
 		);

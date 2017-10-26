@@ -13,6 +13,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Button from 'components/button';
 import CredentialsForm from '../credentials-form/index';
+import Popover from 'components/popover';
 
 class CredentialsSetupFlow extends Component {
 	static propTypes = {
@@ -25,8 +26,13 @@ class CredentialsSetupFlow extends Component {
 	};
 
 	componentWillMount() {
-		this.setState( { currentStep: 'start' } );
+		this.setState( {
+			currentStep: 'start',
+			showPopover: false
+		} );
 	}
+
+	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
 
 	reset = () => this.setState( { currentStep: 'start' } );
 
@@ -127,11 +133,37 @@ class CredentialsSetupFlow extends Component {
 	}
 
 	render() {
+		const {
+			translate
+		} = this.props;
+
 		return (
 			<div className="credentials-setup-flow">
 				{ 'start' === this.state.currentStep && this.renderStepStart() }
 				{ 'tos' === this.state.currentStep && this.renderStepTos() }
 				{ 'form' === this.state.currentStep && this.renderStepForm() }
+				<CompactCard className="credentials-setup-flow__footer">
+					<a
+						onClick={ this.togglePopover }
+						ref="popoverLink"
+						className="credentials-setup-flow__footer-popover-link"
+					>
+						<Gridicon icon="help" size={ 18 } className="credentials-setup-flow__footer-popover-icon" />
+						{ translate( 'Why do I need this?' ) }
+					</a>
+					<Popover
+						context={ this.refs && this.refs.popoverLink }
+						isVisible={ get( this.state, 'showPopover', false ) }
+						onClose={ this.togglePopover }
+						className="credentials-setup-flow__footer-popover"
+						position="top"
+					>
+						{ translate(
+							'These credentials are used to perform automatic actions ' +
+							'on your server including backups and restores.'
+						) }
+					</Popover>
+				</CompactCard>
 			</div>
 		);
 	}
