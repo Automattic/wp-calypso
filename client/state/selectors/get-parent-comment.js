@@ -21,8 +21,7 @@ import { getPostCommentsTree } from 'state/comments/selectors';
 export const getParentComment = ( state, siteId, postId, commentId ) => {
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
 	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
-
-	return parentCommentId ? get( commentsTree, [ parentCommentId, 'data' ], {} ) : {};
+	return get( commentsTree, [ parentCommentId, 'data' ], {} );
 };
 
 export default getParentComment;
