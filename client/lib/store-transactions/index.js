@@ -126,13 +126,13 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new card' );
 
-		this._createPaygateToken(
-			function( paygateToken ) {
+		this._createCardToken(
+			function( cardToken ) {
 				const { name, country, 'postal-code': zip } = newCardDetails;
 
 				this._submitWithPayment( {
 					payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-					payment_key: paygateToken,
+					payment_key: cardToken,
 					name,
 					zip,
 					country,
@@ -147,13 +147,13 @@ TransactionFlow.prototype._paymentHandlers = {
 	},
 };
 
-TransactionFlow.prototype._createPaygateToken = function( callback ) {
+TransactionFlow.prototype._createCardToken = function( callback ) {
 	this._pushStep( { name: SUBMITTING_PAYMENT_KEY_REQUEST } );
 
-	createPaygateToken(
+	createCardToken(
 		'new_purchase',
 		this._initialData.payment.newCardDetails,
-		function( error, paygateToken ) {
+		function( error, cardToken ) {
 			if ( error ) {
 				return this._pushStep( {
 					name: RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -163,7 +163,7 @@ TransactionFlow.prototype._createPaygateToken = function( callback ) {
 			}
 
 			this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
-			callback( paygateToken );
+			callback( cardToken );
 		}.bind( this )
 	);
 };
@@ -246,6 +246,10 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
+function createCardToken( requestType, cardDetails, callback ) {
+	return createPaygateToken( requestType, cardDetails, callback );
+}
+
 function getPaygateParameters( cardDetails ) {
 	return {
 		name: cardDetails.name,
@@ -281,7 +285,7 @@ function fullCreditsPayment() {
 }
 
 export default {
-	createPaygateToken,
+	createCardToken,
 	fullCreditsPayment,
 	hasDomainDetails,
 	newCardPayment,
