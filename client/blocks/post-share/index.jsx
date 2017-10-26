@@ -562,7 +562,20 @@ class PostShare extends Component {
 
 				<div className={ classes }>
 					<div className="post-share__head">
-						<h4 className="post-share__title">{ translate( 'Share this post' ) }</h4>
+						<h4 className="post-share__title">
+							<span>{ translate( 'Share this post' ) }</span>
+							{ showClose && (
+								<Button
+									borderless
+									aria-label={ translate( 'Close post sharing' ) }
+									className="post-share__close"
+									data-tip-target="post-share__close"
+									onClick={ onClose }
+								>
+									<Gridicon icon="cross" />
+								</Button>
+							) }
+						</h4>
 						<div className="post-share__subtitle">
 							{ translate(
 								'Share your post on all of your connected social media accounts using ' +
@@ -575,17 +588,6 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
-					{ showClose && (
-						<Button
-							borderless
-							aria-label={ translate( 'Close post sharing' ) }
-							className="post-share__close"
-							data-tip-target="post-share__close"
-							onClick={ onClose }
-						>
-							<Gridicon icon="cross" />
-						</Button>
-					) }
 					{ ! hasFetchedConnections && <div className="post-share__placeholder" /> }
 					{ this.renderRequestSharingNotice() }
 					{ this.renderConnectionsWarning() }

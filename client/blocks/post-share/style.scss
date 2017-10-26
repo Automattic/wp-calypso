@@ -18,11 +18,17 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__title {
+	display: flex;
+
 	font-size: 15px;
 	margin: 16px 0 4px;
 
 	@include breakpoint( ">660px" ) {
 		font-size: 18px;
+	}
+
+	span {
+		flex: 1;
 	}
 }
 
@@ -59,13 +65,9 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 }
 
-.post-share__close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	&.button.is-borderless { // for specificity
-		padding: 10px;
-	}
+.button.post-share__close {
+	margin-top: -6px;
+	padding: 0;
 }
 
 .post-share__form {
