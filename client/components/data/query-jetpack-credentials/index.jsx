@@ -12,7 +12,19 @@ import { requestCredentials } from 'state/jetpack/credentials/actions';
 
 class QueryJetpackCredentials extends Component {
 	componentWillMount() {
-		this.props.requestCredentials( this.props.siteId );
+		this.request( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.siteId === nextProps.siteId ) {
+			return;
+		}
+
+		this.request( nextProps );
+	}
+
+	request( props ) {
+		this.props.requestCredentials( props.siteId );
 	}
 
 	render() {
