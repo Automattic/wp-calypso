@@ -14,6 +14,10 @@
 .stats-tab {
 	float: none;
 
+	@include breakpoint( '>480px' ) {
+		width: 33.3%;
+	}
+
 	a {
 		align-items: center;
 		display: flex;
@@ -53,4 +57,16 @@
 			}
 		}
 	}
+}
+
+.chart__legend-label.is-selectable {
+	cursor: initial;
+
+	&:hover {
+		color: inherit;
+	}
+}
+
+.chart__legend-checkbox {
+	display: none;
 }
