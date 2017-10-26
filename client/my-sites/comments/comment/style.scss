@@ -28,7 +28,7 @@
 
 .comment__bulk-select {
 	align-self: center;
-	padding-left: 16px;
+	padding: 16px;
 
 	.form-checkbox {
 		margin: 0;
@@ -188,5 +188,13 @@
 
 	.comment__content {
 		padding-top: 8px;
+	}
+}
+
+// Bulk Mode View
+
+.card.comment.is-bulk-mode {
+	.comment__header .comment__author {
+		padding-left: 0;
 	}
 }
