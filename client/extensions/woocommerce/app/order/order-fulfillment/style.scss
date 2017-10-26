@@ -12,7 +12,30 @@
 
 .order-fulfillment__print-container {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+
+	a {
+		order: 2;
+		text-align: center;
+	}
+
+	button {
+		order: 1;
+	}
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+
+		a {
+			order: 1;
+		}
+
+		button {
+			order: 2;
+		}
+	}
 }
 
 .order-fulfillment__tracking,
