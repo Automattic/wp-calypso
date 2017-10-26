@@ -56,7 +56,10 @@ class OrderCreate extends Component {
 
 					<SectionHeader label={ translate( 'Add products to the order' ) } />
 					<Card className="order-create__card">
-						<ProductSearch onChange={ this.setTokens } />
+						<ProductSearch
+							onChange={ this.setTokens }
+							placeholder={ translate( 'Search products' ) }
+						/>
 						{ this.state.products.map( item => <p key={ item.key }>{ item.name }</p> ) }
 					</Card>
 

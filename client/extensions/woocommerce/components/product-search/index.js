@@ -111,20 +111,21 @@ class ProductSearch extends Component {
 		return (
 			<div className={ classes }>
 				<ProductSearchField
-					disabled={ this.props.disabled }
 					currentSearch={ this.state.currentSearch }
+					disabled={ this.props.disabled }
 					hasFocus={ this.state.tokenInputHasFocus }
-					onChange={ this.updateTokens }
-					onInputChange={ this.handleSearch }
-					value={ tokens }
-					onFocus={ this.onFocus }
-					onBlur={ this.onBlur }
 					maxLength={ this.props.maxLength }
+					onBlur={ this.onBlur }
+					onChange={ this.updateTokens }
+					onFocus={ this.onFocus }
+					onInputChange={ this.handleSearch }
+					placeholder={ this.props.placeholder }
+					value={ tokens }
 				/>
 				<ProductSearchResults
-					search={ currentSearch }
 					isSelected={ this.hasToken }
 					onSelect={ this.addToken }
+					search={ currentSearch }
 				/>
 			</div>
 		);
