@@ -22,7 +22,7 @@ export const CommentHeader = ( {
 	isSelected,
 	toggleExpanded,
 } ) => (
-	<div className="comment__header" onClick={ ! isExpanded && ! isBulkMode ? toggleExpanded : noop }>
+	<div className="comment__header">
 		{ isBulkMode && (
 			<label className="comment__bulk-select">
 				<FormCheckbox checked={ isSelected } onChange={ noop } />
@@ -38,7 +38,7 @@ export const CommentHeader = ( {
 				borderless
 				className="comment__toggle-expanded"
 				disabled={ isEditMode }
-				onClick={ isExpanded ? toggleExpanded : noop }
+				onClick={ toggleExpanded }
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>

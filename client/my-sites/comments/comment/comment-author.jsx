@@ -19,7 +19,7 @@ import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getAuthorDisplayName, getPostTitle } from 'my-sites/comments/comment/utils';
 
 export class CommentAuthor extends Component {
@@ -38,8 +38,10 @@ export class CommentAuthor extends Component {
 			gravatarUser,
 			isExpanded,
 			moment,
+			postId,
 			postTitle,
 			site,
+			siteSlug,
 		} = this.props;
 
 		const localizedDate = convertDateToUserLocation(
@@ -71,24 +73,22 @@ export class CommentAuthor extends Component {
 						{ ! isExpanded && (
 							<span className="comment__post">
 								<Gridicon icon="chevron-right" size={ 18 } />
-								<span>{ postTitle }</span>
+								<a href={ `/comments/all/${ siteSlug }/${ postId }` }>{ postTitle }</a>
 							</span>
 						) }
 					</div>
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							{ isExpanded && <ExternalLink href={ commentUrl }>{ formattedDate }</ExternalLink> }
-							{ ! isExpanded && <span>{ relativeDate }</span> }
+							<ExternalLink href={ commentUrl }>
+								{ isExpanded ? formattedDate : relativeDate }
+							</ExternalLink>
 						</span>
 						<span className="comment__author-url">
 							<span className="comment__author-url-separator">&middot;</span>
-							{ isExpanded && (
-								<ExternalLink href={ authorUrl }>
-									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-								</ExternalLink>
-							) }
-							{ ! isExpanded && <Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify> }
+							<ExternalLink href={ authorUrl }>
+								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+							</ExternalLink>
 						</span>
 					</div>
 				</div>
@@ -114,8 +114,10 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
 		gravatarUser,
+		postId: get( comment, 'post.ID' ),
 		postTitle: getPostTitle( comment ),
 		site,
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 
