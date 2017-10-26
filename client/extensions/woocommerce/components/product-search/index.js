@@ -60,11 +60,8 @@ class ProductSearch extends Component {
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
 
-	onFocus = event => {
+	onFocus = () => {
 		this.setState( { isActive: true, tokenInputHasFocus: true } );
-		if ( 'function' === typeof this.props.onFocus ) {
-			this.props.onFocus( event );
-		}
 	};
 
 	onBlur = () => {
@@ -85,7 +82,8 @@ class ProductSearch extends Component {
 		}
 		this.setState(
 			prevState => ( {
-				tokenInputHasFocus: prevState.isActive,
+				isActive: true,
+				tokenInputHasFocus: true,
 				currentSearch: '',
 				tokens: [ ...prevState.tokens, token ],
 			} ),
@@ -104,24 +102,16 @@ class ProductSearch extends Component {
 			'is-disabled': this.props.disabled,
 		} );
 
-		const props = {
-			className: classes,
-		};
-		if ( ! this.props.disabled ) {
-			props.tabIndex = '-1';
-			props.onFocus = this.onFocus;
-		}
-
 		return (
-			<div { ...props }>
+			<div className={ classes }>
 				<ProductSearchField
-					ref="productSearch"
 					disabled={ this.props.disabled }
 					currentSearch={ this.state.currentSearch }
 					hasFocus={ this.state.tokenInputHasFocus }
 					onChange={ this.updateTokens }
 					onInputChange={ this.handleSearch }
 					value={ tokens }
+					onFocus={ this.onFocus }
 					onBlur={ this.onBlur }
 				/>
 				<ProductSearchResults

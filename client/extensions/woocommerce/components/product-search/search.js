@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { filter, identity, map } from 'lodash';
+import { filter, get, identity, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -34,6 +34,10 @@ class ProductSearchField extends Component {
 		return this.props.value.length;
 	};
 
+	_isInputEmpty = () => {
+		return this.props.currentSearch.length === 0;
+	};
+
 	_deleteToken = token => {
 		const newTokens = filter( this.props.value, item => item.name !== token );
 		this.props.onChange( newTokens );
@@ -46,6 +50,48 @@ class ProductSearchField extends Component {
 	_onInputChange = event => {
 		const text = event.value;
 		this.props.onInputChange( text );
+	};
+
+	_onKeyDown = event => {
+		let preventDefault = false;
+
+		switch ( event.keyCode ) {
+			case 8: // backspace (delete to left)
+				preventDefault = this._handleDeleteKey();
+				break;
+			case 27: // escape
+				preventDefault = this._handleEscapeKey();
+			default:
+				break;
+		}
+
+		if ( preventDefault ) {
+			event.preventDefault();
+		}
+	};
+
+	_handleDeleteKey = () => {
+		let preventDefault = false;
+
+		if ( this.props.hasFocus && this._isInputEmpty() ) {
+			const index = this._getIndexOfInput() - 1;
+			if ( index > -1 ) {
+				this._deleteToken( get( this.props.value, `[${ index }].name` ) );
+			}
+			preventDefault = true;
+		}
+
+		return preventDefault;
+	};
+
+	_handleEscapeKey = () => {
+		let preventDefault = false;
+		if ( this.props.hasFocus && ! this._isInputEmpty() ) {
+			this.props.onInputChange( '' );
+			this.props.onBlur();
+			preventDefault = true;
+		}
+		return preventDefault;
 	};
 
 	_renderTokensAndInput = () => {
@@ -78,16 +124,15 @@ class ProductSearchField extends Component {
 			disabled,
 			hasFocus,
 			id,
-			onBlur,
 			maxLength,
-			value,
+			onBlur,
 			placeholder,
+			value,
 		} = this.props;
 
 		let props = {
 			id,
 			disabled,
-			key: 'input',
 			hasFocus,
 			onBlur,
 			value: currentSearch,
@@ -101,11 +146,19 @@ class ProductSearchField extends Component {
 			props = { ...props, onChange: this._onInputChange };
 		}
 
-		return <TokenInput { ...props } />;
+		return <TokenInput key="input" { ...props } />;
 	};
 
 	render() {
-		return <div className="product-search__input-container">{ this._renderTokensAndInput() }</div>;
+		const props = {
+			className: 'product-search__input-container',
+		};
+		if ( ! this.props.disabled ) {
+			props.tabIndex = '-1';
+			props.onFocus = this.props.onFocus;
+			props.onKeyDown = this._onKeyDown;
+		}
+		return <div { ...props }>{ this._renderTokensAndInput() }</div>;
 	}
 }
 
