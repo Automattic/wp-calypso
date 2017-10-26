@@ -53,7 +53,7 @@ class OrderFeeDialog extends Component {
 		const value = event.target.value;
 		switch ( event.target.name ) {
 			case 'new_fee_name':
-				this.setState( { name: trim( value ) } );
+				this.setState( { name: value } );
 				break;
 			case 'new_fee_total':
 				// If value is a positive number, we can use it
@@ -93,7 +93,7 @@ class OrderFeeDialog extends Component {
 		const hasName = !! trim( this.state.name );
 		const hasValue = getCurrencyFormatDecimal( this.state.total, currency ) > 0;
 		return hasName && hasValue;
-	}
+	};
 
 	render() {
 		const { closeDialog, isVisible, order, translate } = this.props;
