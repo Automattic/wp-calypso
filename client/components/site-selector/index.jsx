@@ -73,21 +73,11 @@ class SiteSelector extends Component {
 		groups: false,
 	};
 
-	static initialState = {
+	state = {
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false,
 	};
-
-	state = this.constructor.initialState;
-
-	reset() {
-		if ( this.props.sitesFound && this.refs.siteSearch ) {
-			this.refs.siteSearch.clear();
-		} else {
-			this.setState( this.constructor.initialState );
-		}
-	}
 
 	onSearch = terms => {
 		this.props.searchSites( terms );
