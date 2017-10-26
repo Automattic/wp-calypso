@@ -1176,7 +1176,7 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  *
  * The post data format is: {
  *		payment_method: {string} The payment gateway,
- *		payment_key: {string} Either the Paygate key or the mp_ref from /me/stored_cards,
+ *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
  *		products: {array} An array of products from the card,
  *		coupon: {string} A coupon code,
  *		currency: {string} The three letter currency code,
@@ -1205,7 +1205,7 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
 	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.paygateToken;
+	data.paygate_token = params.cardToken;
 
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
