@@ -31,12 +31,13 @@ function PaygateLoader() {
  *
  * @api public
  * @param {string} paygateUrl - the URL to fetch the paygate script
+ * @param {string} paygateNamespace - the global namespace of the script
  * @param {function} callback - the callback function
  * @returns {void}
  */
-PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
-	if ( window.Paygate ) {
-		return callback( null, window.Paygate );
+PaygateLoader.prototype.ready = function( paygateUrl, paygateNamespace, callback ) {
+	if ( window[ paygateNamespace ] ) {
+		return callback( null, window[ paygateNamespace ] );
 	}
 
 	loadjQueryDependentScript(
@@ -48,7 +49,7 @@ PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
 			}
 
 			debug( 'Paygate loaded for the first time' );
-			callback( null, window.Paygate );
+			callback( null, window[ paygateNamespace ] );
 		}.bind( this )
 	);
 };
