@@ -14,10 +14,9 @@ import {
 	isRequestingSettings,
 	isSavingSettings,
 	isSubmittingApiKey,
+	isSubmittingStoreInfo,
 	mailChimpSettings,
 	requestingSettingsError,
-	hasMailChimpConnection,
-	isSubmittingStoreInfo,
 } from '../selectors';
 
 const settings = {
