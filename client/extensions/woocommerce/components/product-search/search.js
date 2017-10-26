@@ -4,8 +4,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { filter, identity, map } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { identity, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ class ProductSearchField extends Component {
 
 	_getTokenValue = token => {
 		if ( 'object' === typeof token ) {
-			return token.value;
+			return token.name;
 		}
 
 		return token;
@@ -35,9 +35,7 @@ class ProductSearchField extends Component {
 	};
 
 	_deleteToken = token => {
-		const newTokens = this.props.value.filter( item => {
-			return this._getTokenValue( item ) !== this._getTokenValue( token );
-		} );
+		const newTokens = filter( this.props.value, item => item.name !== token );
 		this.props.onChange( newTokens );
 	};
 

@@ -97,14 +97,6 @@ class ProductSearch extends Component {
 		this.setState( { tokens }, () => this.props.onChange( this.state.tokens ) );
 	};
 
-	getTokenValue = token => {
-		if ( 'object' === typeof token ) {
-			return token.name;
-		}
-
-		return token;
-	};
-
 	render() {
 		const { currentSearch, tokens } = this.state;
 		const classes = classNames( 'product-search', {
@@ -120,7 +112,7 @@ class ProductSearch extends Component {
 					hasFocus={ this.state.tokenInputHasFocus }
 					onChange={ this.updateTokens }
 					onInputChange={ this.handleSearch }
-					value={ tokens.map( this.getTokenValue ) }
+					value={ tokens }
 					onBlur={ this.onBlur }
 				/>
 				<ProductSearchResults
