@@ -112,7 +112,7 @@ The key used in the `ABTests` object above is comprised object key name from the
 
 When you set up an A/B test, think about what you want to measure its impact on. For example, if you run a test within the NUX flow you might want to measure its impact on how many people successfully sign up for an account. We call this the _conversion event_.
 
-You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](https://wpcalypso.wordpress.com/devdocs/client/analytics/README.md).
+You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](../analytics/README.md).
 
 ## Ensuring users don't participate in future tests
 
