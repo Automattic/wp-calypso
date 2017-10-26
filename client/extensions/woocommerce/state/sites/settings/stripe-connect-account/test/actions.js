@@ -8,8 +8,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { createAccount } from '../actions';
-import { WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE } from 'woocommerce/state/action-types';
+import { createAccount, fetchAccountDetails } from '../actions';
+import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
+} from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#createAccount()', () => {
@@ -23,6 +26,17 @@ describe( 'actions', () => {
 				siteId,
 				email,
 				countryCode,
+			} );
+		} );
+	} );
+
+	describe( '#fetchAccountDetails()', () => {
+		const siteId = '123';
+		test( 'should return an action', () => {
+			const action = fetchAccountDetails( siteId );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
+				siteId,
 			} );
 		} );
 	} );
