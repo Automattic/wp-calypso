@@ -18,9 +18,9 @@ import Gravatar from 'components/gravatar';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
+import { getAuthorDisplayName, getPostTitle } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getAuthorDisplayName, getPostTitle } from 'my-sites/comments/comment/utils';
 
 export class CommentAuthor extends Component {
 	static propTypes = {

@@ -46,7 +46,8 @@
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	&:hover .gridicon {
+	a:focus .gridicon,
+	a:hover .gridicon {
 		fill: $blue-medium;
 	}
 }
@@ -90,6 +91,7 @@
 	a {
 		color: $gray-text-min;
 	}
+	a:focus,
 	a:hover {
 		color: $blue-wordpress;
 	}
@@ -122,7 +124,8 @@
 	flex-shrink: 0;
 	padding: 8px 16px 8px 8px;
 
-	&:hover {
+	a:focus,
+	a:hover {
 		.gridicon,
 		label {
 			color: $gray-dark;
@@ -140,6 +143,18 @@
 
 .comment__content {
 	padding: 0 56px 16px 56px;
+
+	.comment__post {
+		margin: 8px 0 16px;
+
+		a {
+			color: $gray-text-min;
+		}
+		a:focus,
+		a:hover {
+			color: $blue-wordpress;
+		}
+	}
 }
 
 .comment__content-preview {

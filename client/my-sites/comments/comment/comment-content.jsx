@@ -12,27 +12,34 @@ import { get } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 import { stripHTML, decodeEntities } from 'lib/formatting';
+import { getPostTitle } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-export const CommentContent = ( { commentContent, isExpanded } ) => (
+export const CommentContent = ( { commentContent, isExpanded, postId, postTitle, siteSlug } ) => (
 	<div className="comment__content">
 		{ ! isExpanded && (
-			<AutoDirection>
-				<div className="comment__content-preview">
+			<div className="comment__content-preview">
+				<AutoDirection>
 					<Emojify>{ decodeEntities( stripHTML( commentContent ) ) }</Emojify>
-				</div>
-			</AutoDirection>
+				</AutoDirection>
+			</div>
 		) }
+
 		{ isExpanded && (
-			<AutoDirection>
-				<Emojify>
-					<div
-						className="comment__content-full"
-						dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
-					/>
-				</Emojify>
-			</AutoDirection>
+			<div className="comment__content-full">
+				<div className="comment__post">
+					<a href={ `/comments/all/${ siteSlug }/${ postId }` }>{ postTitle }</a>
+				</div>
+
+				<AutoDirection>
+					<Emojify>
+						<div
+							dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+						/>
+					</Emojify>
+				</AutoDirection>
+			</div>
 		) }
 	</div>
 );
@@ -43,6 +50,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
+		postId: get( comment, 'post.ID' ),
+		postTitle: getPostTitle( comment ),
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 
