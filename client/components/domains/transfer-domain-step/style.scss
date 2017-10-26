@@ -7,9 +7,6 @@
 	}
 
 	p {
-		color: $gray-dark;
-		font-size: 13px;
-		font-weight: 600;
 		margin-bottom: 0;
 		opacity: 0.7;
 	}
@@ -35,34 +32,33 @@
 }
 
 .transfer-domain-step__domain-description {
+	font-size: 16px;
+	color: #2e4453;
+
 	@include breakpoint( ">960px" ) {
-		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
 	}
 }
 
+.transfer-domain-step__go {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.transfer-domain-step__domain-heading {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
 .transfer-domain-step__add-domain {
 	display: flex;
-	flex-flow: column;
+	flex-direction: column;
 	width: 100%;
-
-	@include breakpoint( ">660px" ) {
-		flex-flow: row;
-	}
 }
 
-input.transfer-domain-step__external-domain {
-	flex-grow: 1;
-	width: auto;
-}
-
-.transfer-domain-step__go {
-	flex-grow: 1;
-	margin: 10px 0 0 0;
-
-	@include breakpoint( ">660px" ) {
-		flex-grow: 0;
-		margin: 0 0 0 10px;
-	}
+.transfer-domain-step__map-option {
+	font-size: 14px;
+	text-align: center;
 }
