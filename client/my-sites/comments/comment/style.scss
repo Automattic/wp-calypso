@@ -136,6 +136,39 @@
 	}
 }
 
+// Comment Content Block
+
+.comment__content {
+	padding: 0 56px 16px 56px;
+}
+
+.comment__content-preview {
+	overflow: hidden;
+	position: relative;
+
+	&:after {
+		background: linear-gradient(to right, rgba($white, 0), rgba($white, 1) 50%);
+		content: '';
+		height: 20px;
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 30%;
+	}
+}
+
+@supports (-webkit-line-clamp: 2) {
+	.comment__content-preview {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+
+		&:after {
+			background: transparent;
+		}
+	}
+}
+
 // Expanded View
 
 .card.comment.is-expanded {
@@ -143,7 +176,6 @@
 
 	.comment__header {
 		border-bottom: 1px solid lighten($gray, 30%);
-		cursor: default;
 
 		.button.comment__toggle-expanded {
 			border-left: 1px solid lighten($gray, 30%);
@@ -152,5 +184,9 @@
 		.comment__toggle-expanded .gridicon {
 			transform: rotate(180deg);
 		}
+	}
+
+	.comment__content {
+		padding-top: 8px;
 	}
 }
