@@ -1,9 +1,14 @@
 .dashboard__manage-has-orders,
 .dashboard__manage-no-orders,
+.dashboard__placeholder,
 .dashboard__setup-wrapper {
 	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
 	}
+}
+
+.dashboard__placeholder .card {
+	@include placeholder();
 }
 
 .dashboard__setup-header {
