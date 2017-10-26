@@ -114,9 +114,7 @@ class CancelPrivacyProtection extends Component {
 			} );
 	};
 
-	resetState = () => {
-		this.setState( this.constructor.initialState );
-	};
+	resetState = () => this.setState( this.constructor.initialState );
 
 	renderDescriptionText = () => {
 		const purchase = getPurchase( this.props );
