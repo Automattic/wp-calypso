@@ -144,26 +144,24 @@ class OrderFulfillment extends Component {
 			translate,
 			hasLabelsPaymentMethod,
 		} = this.props;
-		const isShippable = ! isOrderFinished( order.status );
-		const hideLabels = ! labelsEnabled || ! hasLabelsPaymentMethod;
-		const buttonClassName = classNames( {
-			'is-placeholder': wcsEnabled && ! labelsLoaded,
-		} );
+		const orderFinished = isOrderFinished( order.status );
+		const orderCancelled = 'cancelled' === order.status;
+		const showLabels =
+			wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod && ! orderCancelled;
+		const labelsLoading = wcsEnabled && ! labelsLoaded && ! orderCancelled;
 
-		if (
-			! isShippable &&
-			( ! wcsEnabled || ( labelsLoaded && hideLabels ) || 'cancelled' === order.status )
-		) {
+		if ( orderFinished && ! labelsLoading && ! showLabels ) {
 			return null;
 		}
 
-		if ( ! wcsEnabled || ! labelsLoaded || hideLabels ) {
+		if ( labelsLoading ) {
+			const buttonClassName = 'is-placeholder';
+			return <Button className={ buttonClassName }>{ translate( 'Fulfill' ) }</Button>;
+		}
+
+		if ( ! showLabels ) {
 			return (
-				<Button
-					primary={ ! wcsEnabled || labelsLoaded }
-					onClick={ this.toggleDialog }
-					className={ buttonClassName }
-				>
+				<Button primary onClick={ this.toggleDialog }>
 					{ translate( 'Fulfill' ) }
 				</Button>
 			);
@@ -171,7 +169,7 @@ class OrderFulfillment extends Component {
 
 		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
 
-		if ( ! isShippable ) {
+		if ( orderFinished ) {
 			return <Button onClick={ onLabelPrint }>{ translate( 'Print new label' ) }</Button>;
 		}
 
