@@ -1,4 +1,4 @@
-$section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+$section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share .card.banner,
 .card.post-share__upgrade-nudge {
@@ -282,6 +282,8 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share .post-share__footer-nav {
 	margin: 0;
+	box-shadow: none;
+	border-top: $section-border;
 }
 
 .post-share .post-share__footer-items {
@@ -296,9 +298,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 	background: $white;
 
-	&:not( :first-child ) {
-		border-top: 1px solid darken( $sidebar-bg-color, 5% );
-	}
+	border-top: $section-border;
 
 	@include breakpoint( ">480px" ) {
 		margin-bottom: 1px;
