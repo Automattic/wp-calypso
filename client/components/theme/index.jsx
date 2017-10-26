@@ -185,7 +185,7 @@ export class Theme extends Component {
 					/>
 					<div className="theme__upsell-popover">
 						<h2 className="theme__upsell-heading">
-							Access all our premium themes for free with our Premium and Business Plans
+							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
 						</h2>
 						<Button
 							onClick={ this.onUpsellClick }
@@ -193,7 +193,7 @@ export class Theme extends Component {
 							primary
 							href={ upsellUrl }
 						>
-							Upgrade Now
+							{ translate( 'Upgrade Now' ) }
 						</Button>
 					</div>
 				</InfoPopover>
