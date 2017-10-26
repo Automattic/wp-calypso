@@ -1,10 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { getReaderConversationFollowStatus } from '../';
