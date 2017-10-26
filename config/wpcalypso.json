@@ -155,6 +155,7 @@
 		"woocommerce/extension-settings-stripe-connect-flows": false,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
+		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	},
 	"siftscience_key": "e00e878351",
