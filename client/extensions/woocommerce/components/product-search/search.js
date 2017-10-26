@@ -22,7 +22,7 @@ class ProductSearchField extends Component {
 		value: PropTypes.array,
 	};
 
-	_getTokenValue = token => {
+	getTokenValue = token => {
 		if ( 'object' === typeof token ) {
 			return token.name;
 		}
@@ -30,37 +30,37 @@ class ProductSearchField extends Component {
 		return token;
 	};
 
-	_getIndexOfInput = () => {
+	getIndexOfInput = () => {
 		return this.props.value.length;
 	};
 
-	_isInputEmpty = () => {
+	isInputEmpty = () => {
 		return this.props.currentSearch.length === 0;
 	};
 
-	_deleteToken = token => {
+	deleteToken = token => {
 		const newTokens = filter( this.props.value, item => item.name !== token );
 		this.props.onChange( newTokens );
 	};
 
-	_onTokenClickRemove = event => {
-		this._deleteToken( event.value );
+	onTokenClickRemove = event => {
+		this.deleteToken( event.value );
 	};
 
-	_onInputChange = event => {
+	onInputChange = event => {
 		const text = event.value;
 		this.props.onInputChange( text );
 	};
 
-	_onKeyDown = event => {
+	onKeyDown = event => {
 		let preventDefault = false;
 
 		switch ( event.keyCode ) {
 			case 8: // backspace (delete to left)
-				preventDefault = this._handleDeleteKey();
+				preventDefault = this.handleDeleteKey();
 				break;
 			case 27: // escape
-				preventDefault = this._handleEscapeKey();
+				preventDefault = this.handleEscapeKey();
 			default:
 				break;
 		}
@@ -70,13 +70,13 @@ class ProductSearchField extends Component {
 		}
 	};
 
-	_handleDeleteKey = () => {
+	handleDeleteKey = () => {
 		let preventDefault = false;
 
-		if ( this.props.hasFocus && this._isInputEmpty() ) {
-			const index = this._getIndexOfInput() - 1;
+		if ( this.props.hasFocus && this.isInputEmpty() ) {
+			const index = this.getIndexOfInput() - 1;
 			if ( index > -1 ) {
-				this._deleteToken( get( this.props.value, `[${ index }].name` ) );
+				this.deleteToken( get( this.props.value, `[${ index }].name` ) );
 			}
 			preventDefault = true;
 		}
@@ -84,9 +84,9 @@ class ProductSearchField extends Component {
 		return preventDefault;
 	};
 
-	_handleEscapeKey = () => {
+	handleEscapeKey = () => {
 		let preventDefault = false;
-		if ( this.props.hasFocus && ! this._isInputEmpty() ) {
+		if ( this.props.hasFocus && ! this.isInputEmpty() ) {
 			this.props.onInputChange( '' );
 			this.props.onBlur();
 			preventDefault = true;
@@ -94,16 +94,16 @@ class ProductSearchField extends Component {
 		return preventDefault;
 	};
 
-	_renderTokensAndInput = () => {
-		const components = map( this.props.value, this._renderToken );
+	renderTokensAndInput = () => {
+		const components = map( this.props.value, this.renderToken );
 
-		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
+		components.splice( this.getIndexOfInput(), 0, this.renderInput() );
 
 		return components;
 	};
 
-	_renderToken = token => {
-		const value = this._getTokenValue( token );
+	renderToken = token => {
+		const value = this.getTokenValue( token );
 
 		return (
 			<Token
@@ -111,14 +111,14 @@ class ProductSearchField extends Component {
 				value={ value }
 				displayTransform={ identity }
 				tooltip={ token.tooltip }
-				onClickRemove={ this._onTokenClickRemove }
+				onClickRemove={ this.onTokenClickRemove }
 				isBorderless={ token.isBorderless || this.props.isBorderless }
 				disabled={ 'error' !== status && this.props.disabled }
 			/>
 		);
 	};
 
-	_renderInput = () => {
+	renderInput = () => {
 		const {
 			currentSearch,
 			disabled,
@@ -143,7 +143,7 @@ class ProductSearchField extends Component {
 		}
 
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
-			props = { ...props, onChange: this._onInputChange };
+			props = { ...props, onChange: this.onInputChange };
 		}
 
 		return <TokenInput key="input" { ...props } />;
@@ -156,9 +156,9 @@ class ProductSearchField extends Component {
 		if ( ! this.props.disabled ) {
 			props.tabIndex = '-1';
 			props.onFocus = this.props.onFocus;
-			props.onKeyDown = this._onKeyDown;
+			props.onKeyDown = this.onKeyDown;
 		}
-		return <div { ...props }>{ this._renderTokensAndInput() }</div>;
+		return <div { ...props }>{ this.renderTokensAndInput() }</div>;
 	}
 }
 
