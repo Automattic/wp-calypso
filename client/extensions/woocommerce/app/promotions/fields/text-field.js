@@ -49,7 +49,7 @@ TextField.PropTypes = {
 	labelText: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
-	isRequired: PropTypes.bool.isRequired,
+	isRequired: PropTypes.bool,
 	value: PropTypes.number,
 	edit: PropTypes.func.isRequired,
 };

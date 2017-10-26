@@ -39,7 +39,7 @@ FormField.PropTypes = {
 	fieldName: PropTypes.string.isRequired,
 	labelText: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
-	isRequired: PropTypes.bool.isRequired,
+	isRequired: PropTypes.bool,
 	children: PropTypes.isRequired,
 };
 
