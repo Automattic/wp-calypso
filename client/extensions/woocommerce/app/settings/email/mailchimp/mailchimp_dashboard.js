@@ -43,8 +43,16 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 			status="is-success"
 			isCompact
 			showDismiss={ false }
-			text={ translate( '%(mailingListname)s list synced.', {
-				args: { mailingListname: syncState.mailchimp_list_name } } ) }
+			text={ translate(
+				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list synced.{{/div_info}}{{/div}}',
+				{
+					components: {
+						div: <div className="mailchimp__sync-notice-content" />,
+						div_name: <span className="mailchimp__sync-notice-list" />,
+						div_info: <span className="mailchimp__sync-notice-info" />,
+					},
+					args: { mailingListname: syncState.mailchimp_list_name }
+				} ) }
 		/>
 	);
 
@@ -53,8 +61,16 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 			status="is-warning"
 			isCompact
 			showDismiss={ false }
-			text={ translate( '%(mailingListname)s list is being synced.', {
-				args: { mailingListname: syncState.mailchimp_list_name } } ) }
+			text={ translate(
+				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list is being synced.{{/div_info}}{{/div}}',
+				{
+					components: {
+						div: <div className="mailchimp__sync-notice-content" />,
+						div_name: <span className="mailchimp__sync-notice-list" />,
+						div_info: <span className="mailchimp__sync-notice-info" />,
+					},
+					args: { mailingListname: syncState.mailchimp_list_name }
+				} ) }
 		/>
 	);
 
