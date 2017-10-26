@@ -24,22 +24,33 @@ Usage:
         getFieldProps={ getFieldProps }
         countryCode={ countryCode }
         shouldAutoFocusAddressField={ true }
+        hasCountryStates={ false }
     />
 ```
 
 #### Props
 
-`getFieldProps` _{Function}_ 
+`getFieldProps` _{Function}_ _Required_
 
 Returns an object of props expected by our form input components: `my-sites/domains/components/form`
 
-`countryCode` _{String}_ 
+`countryCode` _{String}_ _Optional_
 
 The user's country code, for example: 'AU', 'GB', 'IT', 'US' and so on.
 
-`shouldAutoFocusAddressField` _{Bool}_ 
+Default: `'US'`. 
 
-Informs the component if it should focus the first address field when a user switches countries.
+`shouldAutoFocusAddressField` _{Bool}_ _Optional_
+
+Informs the component if it should focus the first address field when a user switches countries. 
+
+Default: `false`. 
+
+`hasCountryStates` _{Bool}_ 
+
+Overrides the constants check. Informs the component whether the country code is associated with a list of states, and therefore must display the US-style address fields.
+
+Default: `false`. 
 
 ## g-apps-fieldset.jsx
 

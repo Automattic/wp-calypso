@@ -13,7 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import RegionAddressFieldsets from '../region-address-fieldsets';
+import { RegionAddressFieldsets } from '../region-address-fieldsets';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -27,7 +27,19 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 describe( 'Region Address Fieldsets', () => {
 	const defaultProps = {
-		getFieldProps: name => ( { value: '', name } ),
+		getFieldProps: name => ( {
+			value: '',
+			name,
+		} ),
+		hasCountryStates: false,
+	};
+
+	const propsWithStates = {
+		getFieldProps: name => ( {
+			value: '',
+			name,
+		} ),
+		hasCountryStates: true,
 	};
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {
@@ -55,5 +67,27 @@ describe( 'Region Address Fieldsets', () => {
 			/>
 		);
 		expect( wrapper.find( 'EuAddressFieldset' ) ).to.have.length( 1 );
+	} );
+
+	test( 'should render `<UsAddressFieldset />` with an EU region country that has states', () => {
+		const wrapper = shallow(
+			<RegionAddressFieldsets
+				{ ...propsWithStates }
+				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+			/>
+		);
+		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
+		expect( wrapper.find( 'EuAddressFieldset' ) ).to.have.length( 0 );
+	} );
+
+	test( 'should render `<UsAddressFieldset />` with a UK region country that has states', () => {
+		const wrapper = shallow(
+			<RegionAddressFieldsets
+				{ ...propsWithStates }
+				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
+			/>
+		);
+		expect( wrapper.find( 'UsAddressFieldset' ) ).to.have.length( 1 );
+		expect( wrapper.find( 'UkAddressFieldset' ) ).to.have.length( 0 );
 	} );
 } );

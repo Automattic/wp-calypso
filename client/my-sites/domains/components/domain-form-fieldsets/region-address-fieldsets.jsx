@@ -30,6 +30,7 @@ export class RegionAddressFieldsets extends Component {
 		translate: PropTypes.func,
 		countryCode: PropTypes.string,
 		shouldAutoFocusAddressField: PropTypes.bool,
+		hasCountryStates: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +38,7 @@ export class RegionAddressFieldsets extends Component {
 		translate: identity,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
+		hasCountryStates: false,
 	};
 
 	inputRefCallback( input ) {
@@ -44,23 +46,20 @@ export class RegionAddressFieldsets extends Component {
 	}
 
 	getRegionAddressFieldset() {
-		const { countryCode } = this.props;
+		const { countryCode, hasCountryStates } = this.props;
+
 		// we want to measure the impact of these variations on successful checkout purchases
 		const showDefaultAddressFormat =
 			abtest( 'domainsCheckoutLocalizedAddresses' ) === 'showDefaultAddressFormat';
 
-		if (
-			! showDefaultAddressFormat &&
-			includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode )
-		) {
-			return <EuAddressFieldset { ...this.props } />;
-		}
+		if ( ! showDefaultAddressFormat && ! hasCountryStates ) {
+			if ( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+				return <EuAddressFieldset { ...this.props } />;
+			}
 
-		if (
-			! showDefaultAddressFormat &&
-			includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode )
-		) {
-			return <UkAddressFieldset { ...this.props } />;
+			if ( includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+				return <UkAddressFieldset { ...this.props } />;
+			}
 		}
 
 		return <UsAddressFieldset { ...this.props } />;
