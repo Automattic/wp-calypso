@@ -34,15 +34,6 @@ export const getMinimalComment = comment => ( {
 } );
 
 /**
- * Return the comment parent post title, or "Untitled" if the parent post has no title.
- *
- * @param {Object} comment A comment object.
- * @returns {String} The comment parent post title.
- */
-export const getPostTitle = comment =>
-	decodeEntities( get( comment, 'post.title', translate( 'Untitled' ) ) );
-
-/**
  * Check if a site blacklist contains an email address.
  *
  * @param {String} blacklist A site blacklist.

@@ -14,13 +14,13 @@ import { get, noop } from 'lodash';
  */
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
+import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import { stripHTML, decodeEntities } from 'lib/formatting';
-import { getPostTitle } from 'my-sites/comments/comment/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getSiteComment } from 'state/selectors';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {
@@ -50,7 +50,7 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const { commentContent, isExpanded, postId, postTitle, siteSlug } = this.props;
+		const { commentContent, commentId, isExpanded } = this.props;
 		return (
 			<div className="comment__content">
 				{ ! isExpanded && (
@@ -65,9 +65,7 @@ export class CommentContent extends Component {
 
 				{ isExpanded && (
 					<div className="comment__content-full">
-						<div className="comment__post">
-							<a href={ `/comments/all/${ siteSlug }/${ postId }` }>{ postTitle }</a>
-						</div>
+						<CommentPostLink { ...{ commentId } } />
 
 						{ this.renderInReplyTo() }
 
@@ -106,8 +104,6 @@ const mapStateToProps = ( state, { commentId } ) => {
 		isJetpack,
 		parentCommentContent,
 		postId,
-		postTitle: getPostTitle( comment ),
-		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 

@@ -96,9 +96,13 @@
 		color: $blue-wordpress;
 	}
 
-	.comment__post .gridicon {
-		color: $gray;
-		margin-bottom: -4px;
+	.comment__post-link {
+		display: inline-block;
+
+		.gridicon {
+			color: $gray;
+			margin-bottom: -4px;
+		}
 	}
 
 	.comment__date,
@@ -147,8 +151,12 @@
 .comment__content {
 	padding: 0 56px 16px 56px;
 
-	.comment__post {
+	.comment__post-link {
 		margin: 8px 0 16px;
+
+		.gridicon {
+			display: none;
+		}
 
 		a {
 			color: $gray-text-min;

@@ -15,12 +15,13 @@ import { get } from 'lodash';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
+import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
-import { getAuthorDisplayName, getPostTitle } from 'my-sites/comments/comment/utils';
+import { getAuthorDisplayName } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
@@ -33,15 +34,13 @@ export class CommentAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentDate,
+			commentId,
 			commentType,
 			commentUrl,
 			gravatarUser,
 			isExpanded,
 			moment,
-			postId,
-			postTitle,
 			site,
-			siteSlug,
 		} = this.props;
 
 		const localizedDate = convertDateToUserLocation(
@@ -71,12 +70,7 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName }</Emojify>
 						</strong>
-						{ ! isExpanded && (
-							<span className="comment__post">
-								<Gridicon icon="chevron-right" size={ 18 } />
-								<a href={ `/comments/all/${ siteSlug }/${ postId }` }>{ postTitle }</a>
-							</span>
-						) }
+						{ ! isExpanded && <CommentPostLink { ...{ commentId } } /> }
 					</div>
 
 					<div className="comment__author-info-element">
@@ -115,10 +109,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
 		gravatarUser,
-		postId: get( comment, 'post.ID' ),
-		postTitle: getPostTitle( comment ),
 		site,
-		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 
