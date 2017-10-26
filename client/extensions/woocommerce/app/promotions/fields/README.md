@@ -14,7 +14,7 @@ Displays a currency input.
 
 ## PercentField
 
-Displays a numeric input that constraints the value from 0 to 100.
+Displays a numeric input that constrains the value from 0 to 100.
 
 ## Props
 

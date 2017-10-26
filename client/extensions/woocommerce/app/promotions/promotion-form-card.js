@@ -58,7 +58,7 @@ function getHeaderText( promotionType, translate ) {
 		case 'fixed_product':
 		case 'fixed_cart':
 		case 'percent':
-			return translate( 'Coupon code & Discount' );
+			return translate( 'Coupon Code & Discount' );
 	}
 }
 
