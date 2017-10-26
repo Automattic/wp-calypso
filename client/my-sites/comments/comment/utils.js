@@ -43,15 +43,6 @@ export const getPostTitle = comment =>
 	decodeEntities( get( comment, 'post.title', translate( 'Untitled' ) ) );
 
 /**
- * Return a post's Reader URL.
- *
- * @param {Number} siteId A site identifier.
- * @param {Number} postId A post identifier.
- * @returns {String} The post's Reader URL.
- */
-export const getPostReaderUrl = ( siteId, postId ) => `/read/blogs/${ siteId }/posts/${ postId }`;
-
-/**
  * Check if a site blacklist contains an email address.
  *
  * @param {String} blacklist A site blacklist.

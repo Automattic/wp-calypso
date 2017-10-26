@@ -119,13 +119,16 @@
 	display: flex;
 	color: $gray-text-min;
 	cursor: pointer;
-	fill: lighten($gray, 10%);
 	flex-grow: 0;
 	flex-shrink: 0;
 	padding: 8px 16px 8px 8px;
 
-	a:focus,
-	a:hover {
+	.gridicon {
+		fill: $gray-text-min;
+	}
+
+	&:focus,
+	&:hover {
 		.gridicon,
 		label {
 			color: $gray-dark;
@@ -146,6 +149,27 @@
 
 	.comment__post {
 		margin: 8px 0 16px;
+
+		a {
+			color: $gray-text-min;
+		}
+		a:focus,
+		a:hover {
+			color: $blue-wordpress;
+		}
+	}
+
+	.comment__in-reply-to {
+		color: $gray-text-min;
+
+		.gridicon {
+			fill: $gray-text-min;
+			margin-bottom: -4px;
+		}
+
+		span {
+			margin: 0 4px;
+		}
 
 		a {
 			color: $gray-text-min;
