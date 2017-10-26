@@ -26,10 +26,6 @@ class ProductSearchResults extends Component {
 		search: PropTypes.string.isRequired,
 	};
 
-	onSelect = product => () => {
-		this.props.onSelect( product.name );
-	};
-
 	renderLoading = () => {
 		return (
 			<div className="product-search__results is-placeholder">
@@ -86,7 +82,7 @@ class ProductSearchResults extends Component {
 					products.map( p => (
 						<ProductItem
 							key={ p.id }
-							onClick={ this.onSelect( p ) }
+							onClick={ this.props.onSelect }
 							product={ p }
 							search={ search }
 						/>

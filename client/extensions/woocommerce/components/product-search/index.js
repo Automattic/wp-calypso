@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,8 +23,8 @@ import ProductSearchResults from './results';
 class ProductSearch extends Component {
 	static propTypes = {
 		clearProductSearch: PropTypes.func,
-		fetchProductSearchResults: PropTypes.func,
-		onSelect: PropTypes.func.isRequired,
+		fetchProductSearchResults: PropTypes.func.isRequired,
+		onChange: PropTypes.func.isRequired,
 		selected: PropTypes.array,
 		translate: PropTypes.func,
 	};
@@ -32,7 +33,7 @@ class ProductSearch extends Component {
 		currentSearch: '',
 		isActive: false,
 		tokenInputHasFocus: false,
-		tokens: [ 'Mug' ],
+		tokens: [],
 	};
 
 	componentDidMount() {
@@ -45,6 +46,11 @@ class ProductSearch extends Component {
 		if ( this.props.siteId !== siteId ) {
 			this.props.fetchProductSearchResults( siteId, 1, '' );
 		}
+	}
+
+	componentWillUnmount() {
+		const { siteId } = this.props;
+		this.props.clearProductSearch( siteId );
 	}
 
 	handleSearch = query => {
@@ -65,16 +71,34 @@ class ProductSearch extends Component {
 		this.setState( { isActive: false, tokenInputHasFocus: false } );
 	};
 
+	hasToken = token => {
+		return !! find( this.state.tokens, { id: token.id, variation: token.variation } );
+	};
+
 	addToken = token => {
-		this.setState( prevState => ( {
-			tokenInputHasFocus: prevState.isActive,
-			currentSearch: '',
-			tokens: [ ...prevState.tokens, token ],
-		} ) );
+		if ( this.hasToken( token ) ) {
+			return;
+		}
+		this.setState(
+			prevState => ( {
+				tokenInputHasFocus: prevState.isActive,
+				currentSearch: '',
+				tokens: [ ...prevState.tokens, token ],
+			} ),
+			() => this.props.onChange( this.state.tokens )
+		);
 	};
 
 	updateTokens = tokens => {
-		this.setState( { tokens } );
+		this.setState( { tokens }, () => this.props.onChange( this.state.tokens ) );
+	};
+
+	getTokenValue = token => {
+		if ( 'object' === typeof token ) {
+			return token.name;
+		}
+
+		return token;
 	};
 
 	render() {
@@ -92,7 +116,7 @@ class ProductSearch extends Component {
 					hasFocus={ this.state.tokenInputHasFocus }
 					onChange={ this.updateTokens }
 					onInputChange={ this.handleSearch }
-					value={ tokens }
+					value={ tokens.map( this.getTokenValue ) }
 					onBlur={ this.onBlur }
 				/>
 				<ProductSearchResults search={ currentSearch } onSelect={ this.addToken } />

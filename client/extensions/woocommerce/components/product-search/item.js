@@ -39,8 +39,7 @@ class ProductItem extends Component {
 		}
 	}
 
-	handleClick = () => {
-		const { product } = this.props;
+	handleClick = product => () => {
 		this.props.onClick( product );
 	};
 
@@ -77,8 +76,8 @@ class ProductItem extends Component {
 				className="product-search__item"
 				role="button"
 				tabIndex="0"
-				onClick={ this.handleClick }
-				onKeyDown={ getKeyboardHandler( this.handleClick ) }
+				onClick={ this.handleClick( product ) }
+				onKeyDown={ getKeyboardHandler( this.handleClick( product ) ) }
 			>
 				<div className="product-search__image">
 					{ featuredImage && <img src={ featuredImage.src } /> }

@@ -60,13 +60,11 @@ class ProductSearchField extends Component {
 
 	_renderToken = token => {
 		const value = this._getTokenValue( token );
-		const status = token.status ? token.status : undefined;
 
 		return (
 			<Token
 				key={ 'token-' + value }
 				value={ value }
-				status={ status }
 				displayTransform={ identity }
 				tooltip={ token.tooltip }
 				onClickRemove={ this._onTokenClickRemove }
