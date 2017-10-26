@@ -228,7 +228,7 @@ class StatsListItem extends React.Component {
 			}
 
 			if ( data.link ) {
-				let href = data.link;
+				const href = data.link;
 				let onClickHandler = this.preventDefaultOnClick;
 				const siteId = this.getSiteIdForFollow();
 				if ( this.isFollowersModule && siteId ) {
