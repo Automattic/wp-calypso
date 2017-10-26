@@ -104,10 +104,19 @@ class ProductSearch extends Component {
 			'is-disabled': this.props.disabled,
 		} );
 
+		const props = {
+			className: classes,
+		};
+		if ( ! this.props.disabled ) {
+			props.tabIndex = '-1';
+			props.onFocus = this.onFocus;
+		}
+
 		return (
-			<div className={ classes } onFocus={ this.onFocus } tabIndex="-1">
+			<div { ...props }>
 				<ProductSearchField
 					ref="productSearch"
+					disabled={ this.props.disabled }
 					currentSearch={ this.state.currentSearch }
 					hasFocus={ this.state.tokenInputHasFocus }
 					onChange={ this.updateTokens }
