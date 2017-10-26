@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import page from 'page';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { merge, reduce } from 'lodash';
@@ -15,6 +14,7 @@ import { merge, reduce } from 'lodash';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { navigate } from 'state/ui/actions';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getZone } from '../../zones/selectors';
 import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
@@ -108,17 +108,17 @@ export const saveZone = ( { dispatch }, action ) => {
 	);
 };
 
-export const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
+const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
 	dispatch( stopSubmit( form ) );
 	dispatch( updateZone( siteId, zone.id, zone ) );
 	dispatch( successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ) );
 };
 
 export const handleZoneCreated = ( { dispatch, getState }, action, response ) => {
-	const { siteId } = action;
+	const siteSlug = getSiteSlug( getState(), action.siteId );
 	const zone = fromApi( response.data );
 
-	page( `/extensions/zoninator/zone/${ getSiteSlug( getState(), siteId ) }/${ zone.id }` );
+	dispatch( navigate( `${ settingsPath }/zone/${ siteSlug }/${ zone.id }` ) );
 	announceZoneSaved( dispatch, action, zone );
 };
 
@@ -158,7 +158,7 @@ export const deleteZone = ( { dispatch }, action ) => {
 };
 
 export const announceZoneDeleted = ( { dispatch, getState }, { siteId } ) => {
-	page( `${ settingsPath }/${ getSiteSlug( getState(), siteId ) }` );
+	dispatch( navigate( `${ settingsPath }/${ getSiteSlug( getState(), siteId ) }` ) );
 	dispatch( requestZones( siteId ) );
 	dispatch( successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ) );
 };
