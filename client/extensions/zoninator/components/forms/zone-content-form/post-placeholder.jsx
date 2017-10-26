@@ -8,10 +8,8 @@ import React from 'react';
  */
 import SectionHeader from 'components/section-header';
 
-const PostPlaceholder = () => {
-	const className = 'zoninator__zone-list-item is-placeholder';
-
-	return <SectionHeader className={ className } />;
-};
+const PostPlaceholder = () => (
+	<SectionHeader className="zone-content-form__placeholder" />
+);
 
 export default PostPlaceholder;
