@@ -230,13 +230,12 @@ class PostTypeList extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
 
 	return {
 		siteId,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		lastPage,
+		lastPage: getSitePostsLastPageForQuery( state, siteId, ownProps.query ),
 		totalPosts: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
 	};
 } )( PostTypeList );
