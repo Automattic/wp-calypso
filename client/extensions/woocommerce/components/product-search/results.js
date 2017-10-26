@@ -26,6 +26,10 @@ class ProductSearchResults extends Component {
 		search: PropTypes.string.isRequired,
 	};
 
+	onSelect = product => () => {
+		this.props.onSelect( product.name );
+	};
+
 	renderLoading = () => {
 		return (
 			<div className="product-search__results is-placeholder">
@@ -62,7 +66,7 @@ class ProductSearchResults extends Component {
 	};
 
 	render() {
-		const { isLoaded, isLoading, onSelect, products, search } = this.props;
+		const { isLoaded, isLoading, products, search } = this.props;
 		if ( ! isLoaded && ! search ) {
 			return null;
 		}
@@ -80,7 +84,12 @@ class ProductSearchResults extends Component {
 			<div className={ classes }>
 				{ products.length ? (
 					products.map( p => (
-						<ProductItem key={ p.id } onClick={ onSelect } product={ p } search={ search } />
+						<ProductItem
+							key={ p.id }
+							onClick={ this.onSelect( p ) }
+							product={ p }
+							search={ search }
+						/>
 					) )
 				) : (
 					this.renderNotFound()

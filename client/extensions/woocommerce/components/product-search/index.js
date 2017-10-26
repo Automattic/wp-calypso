@@ -7,75 +7,111 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { areProductSearchResultsLoading } from 'woocommerce/state/sites/products/selectors';
 import {
 	fetchProductSearchResults,
 	clearProductSearch,
 } from 'woocommerce/state/sites/products/actions';
+import { getProductSearchResults } from 'woocommerce/state/ui/products/selectors';
+import { getProductSearchQuery } from 'woocommerce/state/sites/products/selectors';
+
+import ProductSearchField from './search';
 import ProductSearchResults from './results';
-import SearchCard from 'components/search-card';
 
 class ProductSearch extends Component {
 	static propTypes = {
+		clearProductSearch: PropTypes.func,
+		fetchProductSearchResults: PropTypes.func,
 		onSelect: PropTypes.func.isRequired,
+		selected: PropTypes.array,
+		translate: PropTypes.func,
 	};
 
 	state = {
-		query: '',
+		currentSearch: '',
+		tokens: [ 'Mug' ],
 	};
 
-	handleSearch = query => {
+	componentDidMount() {
 		const { siteId } = this.props;
+		this.props.fetchProductSearchResults( siteId, 1, '' );
+	}
 
-		if ( trim( query ) === '' ) {
-			this.setState( { query: '' } );
-			this.props.clearProductSearch( siteId );
-			return;
+	componentWillReceiveProps( newProps ) {
+		const { siteId } = newProps;
+		if ( this.props.siteId !== siteId ) {
+			this.props.fetchProductSearchResults( siteId, 1, '' );
 		}
+	}
 
-		this.setState( { query } );
+	handleSearch = query => {
+		this.setState( { currentSearch: query } );
+		// @todo Debounce this
+		const { siteId } = this.props;
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
 
-	handleSelect = product => {
-		const { siteId } = this.props;
-		// Clear the search field
-		this.setState( { query: '' } );
-		this.props.clearProductSearch( siteId );
-		this.refs.searchCard.clear();
+	addToken = token => {
+		this.setState( prevState => ( {
+			currentSearch: '',
+			tokens: [ ...prevState.tokens, token ],
+		} ) );
+	};
 
-		// Pass products back to parent component
-		this.props.onSelect( product );
+	updateTokens = tokens => {
+		this.setState( { tokens } );
+	};
+
+	getProductResults = () => {
+		const { isLoading, products } = this.props;
+		if ( isLoading || ! products.length ) {
+			return [];
+		}
+
+		return products;
 	};
 
 	render() {
-		const { translate } = this.props;
-
+		const { currentSearch, tokens } = this.state;
 		return (
 			<div className="product-search">
-				<SearchCard
-					ref="searchCard"
-					onSearch={ this.handleSearch }
-					delaySearch
-					delayTimeout={ 400 }
-					placeholder={ translate( 'Search products…' ) }
+				<ProductSearchField
+					ref="productSearch"
+					currentSearch={ this.state.currentSearch }
+					value={ tokens }
+					onChange={ this.updateTokens }
+					onInputChange={ this.handleSearch }
 				/>
-				<ProductSearchResults search={ this.state.query } onSelect={ this.handleSelect } />
+				<ProductSearchResults search={ currentSearch } onSelect={ this.addToken } />
 			</div>
 		);
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			fetchProductSearchResults,
-			clearProductSearch,
-		},
-		dispatch
-	)
+export default connect(
+	state => {
+		const search = getProductSearchQuery( state ) || '';
+		const query = {
+			page: 1,
+			per_page: 10,
+			search,
+		};
+
+		return {
+			isLoading: areProductSearchResultsLoading( state, query ),
+			products: getProductSearchResults( state ) || [],
+		};
+	},
+	dispatch =>
+		bindActionCreators(
+			{
+				fetchProductSearchResults,
+				clearProductSearch,
+			},
+			dispatch
+		)
 )( localize( ProductSearch ) );
