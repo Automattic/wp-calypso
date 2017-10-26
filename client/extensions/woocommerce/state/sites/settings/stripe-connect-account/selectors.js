@@ -23,7 +23,7 @@ const getRawSettings = ( state, siteId ) => {
 };
 
 export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
-	return getRawSettings( state, siteId ).isRequesting || false;
+	return get( getRawSettings( state, siteId ), [ 'isRequesting' ] );
 }
 
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {

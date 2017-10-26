@@ -17,9 +17,13 @@ import PropTypes from 'prop-types';
  */
 import { fetchAccountDetails } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getStripeConnectAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import {
+	getIsRequesting,
+	getStripeConnectAccount,
+} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
+import PaymentMethodStripePlaceholderDialog from './stripe/payment-method-stripe-placeholder-dialog';
 import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
 
 class PaymentMethodStripe extends Component {
@@ -56,7 +60,6 @@ class PaymentMethodStripe extends Component {
 		super( props );
 		this.state = {
 			hadKeysAtStart: hasStripeKeyPairForMode( props.method ),
-			initializing: config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' ),
 			userRequestedConnectFlow: false,
 			userRequestedKeyFlow: false,
 		};
@@ -78,6 +81,7 @@ class PaymentMethodStripe extends Component {
 			this.props.fetchAccountDetails( newSiteId );
 		}
 	}
+
 	////////////////////////////////////////////////////////////////////////////
 	// Misc helpers
 
@@ -108,7 +112,7 @@ class PaymentMethodStripe extends Component {
 	// And render brings it all together
 
 	render() {
-		const { method, onCancel, onDone, site, stripeConnectAccount } = this.props;
+		const { isRequesting, method, onCancel, onDone, site, stripeConnectAccount } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		const connectFlowsEnabled = config.isEnabled(
@@ -134,6 +138,11 @@ class PaymentMethodStripe extends Component {
 			if ( connectedUserID ) {
 				dialog = 'connected';
 			}
+
+			// Still waiting for a response? You get a placeholder
+			if ( isRequesting ) {
+				dialog = 'placeholder';
+			}
 		}
 
 		// Now, render the appropriate dialog
@@ -155,6 +164,8 @@ class PaymentMethodStripe extends Component {
 					stripeConnectAccount={ stripeConnectAccount }
 				/>
 			);
+		} else if ( 'placeholder' === dialog ) {
+			return <PaymentMethodStripePlaceholderDialog />;
 		}
 
 		// Key-based dialog by default
@@ -175,8 +186,10 @@ class PaymentMethodStripe extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const isRequesting = getIsRequesting( state, site.ID );
 	const stripeConnectAccount = getStripeConnectAccount( state, site.ID );
 	return {
+		isRequesting,
 		site,
 		stripeConnectAccount,
 	};
