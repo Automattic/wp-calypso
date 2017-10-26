@@ -56,7 +56,12 @@ class OrderFeeDialog extends Component {
 				this.setState( { name: trim( value ) } );
 				break;
 			case 'new_fee_total':
-				this.setState( { total: value > 0 ? value : 0 } );
+				// If value is a positive number, we can use it
+				if ( ! isNaN( parseFloat( value ) ) && parseFloat( value ) >= 0 ) {
+					this.setState( { total: value } );
+				} else {
+					this.setState( { total: '' } );
+				}
 				break;
 		}
 	};
@@ -111,7 +116,7 @@ class OrderFeeDialog extends Component {
 					value={ this.state.name }
 					onChange={ this.handleChange }
 				/>
-			<FormLabel htmlFor="newFeeTotal">{ translate( 'Value' ) }</FormLabel>
+				<FormLabel htmlFor="newFeeTotal">{ translate( 'Value' ) }</FormLabel>
 				<PriceInput
 					id="new_fee_total"
 					name="new_fee_total"
