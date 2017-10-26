@@ -23,3 +23,22 @@
 		}
 	}
 }
+
+.domain-search-results__transfer-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	font-size: 17px;
+}
+
+.domain-search-results__transfer-card-copy {
+	margin-left: 10px;
+	p {
+		padding-top: 10px;
+		margin-bottom: 0;
+	}
+}
+
+.domain-search-results__transfer-card-link {
+	min-width: 190px;
+}
