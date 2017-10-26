@@ -8,7 +8,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, some, startsWith } from 'lodash';
+import { uniq, some, startsWith, endsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -294,6 +294,9 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 		);
 	} else {
 		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+		dispatch(
+			warningNotice( i18n.translate( "We're sorry, but an unexpected error has occured" ) )
+		);
 	}
 }
 
@@ -318,7 +321,12 @@ export default {
 		const primary = getSite( getState(), primaryId ) || '';
 
 		const redirectToPrimary = () => {
-			let redirectPath = `${ context.pathname }/${ primary.slug }`;
+			let redirectPath;
+			if ( ! primary.slug && endsWith( context.pathname, 'undefined' ) ) {
+				redirectPath = context.pathname;
+			} else {
+				redirectPath = `${ context.pathname }/${ primary.slug }`;
+			}
 
 			redirectPath = context.querystring
 				? `${ redirectPath }?${ context.querystring }`
@@ -358,12 +366,12 @@ export default {
 			if ( hasInitialized ) {
 				if ( primary ) {
 					redirectToPrimary();
+					return;
 				} else {
 					// If the primary site does not exist, skip redirect
 					// and display a useful error notification
 					showMissingPrimaryError( currentUser, dispatch );
 				}
-				return;
 			}
 			dispatch( {
 				type: SITES_ONCE_CHANGED,
