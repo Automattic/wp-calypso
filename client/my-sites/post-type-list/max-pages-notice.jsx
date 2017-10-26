@@ -37,24 +37,26 @@ class PostTypeListMaxPagesNotice extends Component {
 		return (
 			<div className="post-type-list__max-pages-notice">
 				{ translate(
-					'%(displayedPosts)d of %(totalPosts)d posts shown' +
-						'{{br/}}to view more posts, {{a}}switch to a specific site{{/a}}.',
+					'Showing %(displayedPosts)d post of %(totalPosts)d.',
+					'Showing %(displayedPosts)d posts of %(totalPosts)d.',
 					{
 						args: {
 							displayedPosts,
 							totalPosts,
 						},
-						components: {
-							a: (
-								<a
-									className="post-type-list__max-pages-notice-link"
-									onClick={ this.focusSiteSelector }
-								/>
-							),
-							br: <br />,
-						},
 					}
 				) }
+				<br />
+				{ translate( 'To view more posts, {{a}}switch to a specific site{{/a}}.', {
+					components: {
+						a: (
+							<a
+								className="post-type-list__max-pages-notice-link"
+								onClick={ this.focusSiteSelector }
+							/>
+						),
+					},
+				} ) }
 			</div>
 		);
 	}
