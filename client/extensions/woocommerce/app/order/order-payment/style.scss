@@ -13,6 +13,11 @@
 		color: $gray-dark;
 	}
 
+	.form-text-input,
+	.form-text-input-with-affixes input {
+		text-align: right;
+	}
+
 	.form-label {
 		.form-text-input-with-affixes {
 			font-weight: normal;
@@ -22,11 +27,6 @@
 	.form-text-input-with-affixes,
 	.form-text-input-with-suffixes {
 		width: 155px;
-		text-align: left;
-
-		input {
-			text-align: left;
-		}
 	}
 
 	.order-payment__amount-label {
