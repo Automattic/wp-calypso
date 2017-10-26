@@ -77,12 +77,14 @@ class ProductSearchField extends Component {
 	};
 
 	_renderInput = () => {
-		const { currentSearch, id, maxLength, value, placeholder } = this.props;
+		const { currentSearch, hasFocus, id, onBlur, maxLength, value, placeholder } = this.props;
 
 		let props = {
 			id,
 			key: 'input',
 			value: currentSearch,
+			hasFocus,
+			onBlur,
 		};
 
 		if ( value.length === 0 && placeholder ) {
