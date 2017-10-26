@@ -8,7 +8,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-/** * Internal dependencies
+/**
+ * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
 import CurrentTheme from 'my-sites/themes/current-theme';
