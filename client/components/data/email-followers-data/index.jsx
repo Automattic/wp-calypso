@@ -21,7 +21,7 @@ import pollers from 'lib/data-poller';
  */
 const debug = debugModule( 'calypso:email-followers-data' );
 
-export default class extends Component {
+export default class EmailFollowersData extends Component {
 	static propTypes = {
 		fetchOptions: PropTypes.object.isRequired,
 	};

@@ -13,7 +13,7 @@ import ViewersStore from 'lib/viewers/store';
 import ViewersActions from 'lib/viewers/actions';
 import passToChildren from 'lib/react-pass-to-children';
 
-export default class extends Component {
+export default class ViewersData extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 	};
