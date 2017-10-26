@@ -1142,7 +1142,7 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
  *
  * The post data format is: {
  *		payment_method: {string} The payment gateway,
- *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
+ *		payment_key: {string} Either the Paygate key or the mp_ref from /me/stored_cards,
  *		products: {array} An array of products from the card,
  *		coupon: {string} A coupon code,
  *		currency: {string} The three letter currency code,
@@ -1171,7 +1171,7 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
 	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
-	data.paygate_token = params.cardToken;
+	data.paygate_token = params.paygateToken;
 
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
@@ -1190,11 +1190,28 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 };
 
 /**
+ * GET ebanx js configuration
+ *
+ * @param {Object} query - query parameters
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
+	debug( '/me/ebanx-configuration query' );
+
+	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
+};
+
+/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data
  * @param {Function} fn The callback function
  * @api public
+ *
+ * @returns {string} Url
  *
  * The data format is: {
  *		country: {string} The billing country,
