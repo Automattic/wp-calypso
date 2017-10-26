@@ -15,7 +15,7 @@ import { find, flowRight, map } from 'lodash';
  */
 import QueryPosts from 'components/data/query-posts';
 import SelectDropdown from 'components/select-dropdown';
-import { getSitePostsForQuery } from 'state/posts/selectors';
+import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const recentPostsQuery = {
@@ -69,7 +69,7 @@ const connectComponent = connect( ( state, { exclude } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		posts: getSitePostsForQuery( state, siteId, { ...recentPostsQuery, exclude } ) || [],
+		posts: getPostsForQuery( state, siteId, { ...recentPostsQuery, exclude } ) || [],
 		siteId,
 	};
 } );

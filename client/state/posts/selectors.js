@@ -128,20 +128,13 @@ export const getSitePost = createSelector( ( state, siteId, postId ) => {
  * posts have been received.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export const getSitePostsForQuery = createSelector(
+export const getPostsForQuery = createSelector(
 	( state, siteId, query ) => {
-		if ( ! siteId ) {
-			// TODO remove me after testing and before merge
-			// eslint-disable-next-line no-console
-			console.warn( 'getSitePostsForQuery called without siteId' );
-			return null;
-		}
-
-		const manager = state.posts.queries[ siteId ];
+		const manager = getQueryManager( state, siteId );
 		if ( ! manager ) {
 			return null;
 		}
@@ -167,7 +160,7 @@ export const getSitePostsForQuery = createSelector(
 
 		return posts.map( normalizePostForDisplay );
 	},
-	state => state.posts.queries,
+	state => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );
 

@@ -23,7 +23,7 @@ import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
-import { isRequestingPostsForQuery, getSitePostsForQuery } from 'state/posts/selectors';
+import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -147,7 +147,7 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const query = { status: 'publish', number: 1 };
-		const posts = siteId ? getSitePostsForQuery( state, siteId, query ) : null;
+		const posts = siteId ? getPostsForQuery( state, siteId, query ) : null;
 		const post = posts && posts.length ? posts[ 0 ] : null;
 		const viewCount = post && siteId ? getPostStat( state, siteId, post.ID, 'views' ) : null;
 		const isRequesting = isRequestingPostsForQuery( state, siteId, query );

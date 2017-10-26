@@ -15,7 +15,7 @@ import {
 	getNormalizedPost,
 	getSitePosts,
 	getSitePost,
-	getSitePostsForQuery,
+	getPostsForQuery,
 	isPostPublished,
 	isRequestingPostsForQuery,
 	getSitePostsFoundForQuery,
@@ -43,7 +43,7 @@ describe( 'selectors', () => {
 		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		getNormalizedPost.memoizedSelector.cache.clear();
-		getSitePostsForQuery.memoizedSelector.cache.clear();
+		getPostsForQuery.memoizedSelector.cache.clear();
 		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isPostPublished.memoizedSelector.cache.clear();
 	} );
@@ -252,9 +252,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSitePostsForQuery()', () => {
+	describe( '#getPostsForQuery()', () => {
 		test( 'should return null if the site query is not tracked', () => {
-			const sitePosts = getSitePostsForQuery(
+			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {},
@@ -268,7 +268,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return null if the query is not tracked to the query manager', () => {
-			const sitePosts = getSitePostsForQuery(
+			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
@@ -287,7 +287,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return an array of normalized known queried posts', () => {
-			const sitePosts = getSitePostsForQuery(
+			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
@@ -324,7 +324,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( "should return null if we know the number of found items but the requested set hasn't been received", () => {
-			const sitePosts = getSitePostsForQuery(
+			const sitePosts = getPostsForQuery(
 				{
 					posts: {
 						queries: {
