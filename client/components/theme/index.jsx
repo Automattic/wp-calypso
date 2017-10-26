@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
@@ -18,6 +19,10 @@ import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import PulsingDot from 'components/pulsing-dot';
 import Ribbon from 'components/ribbon';
+import InfoPopover from 'components/info-popover';
+import Button from 'components/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Component
@@ -134,16 +139,26 @@ export class Theme extends Component {
 		}
 	};
 
+	onUpsellClick = () => {
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'theme-upsell-popup',
+			theme: this.props.theme.id,
+		} );
+	};
+
 	render() {
-		const { name, screenshot } = this.props.theme;
-		const { active, price, translate } = this.props;
+		const { active, price, theme, translate, upsellUrl } = this.props;
+		const { name, screenshot } = theme;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick ),
 		} );
 
-		const priceClass = classNames( 'theme-badge__price', {
-			'theme-badge__price-upgrade': ! /\d/g.test( price ),
+		const hasPrice = /\d/g.test( price );
+		const showUpsell = hasPrice && upsellUrl;
+		const priceClass = classNames( 'theme__badge-price', {
+			'theme__badge-price-upgrade': ! hasPrice,
+			'theme__badge-price-test': showUpsell,
 		} );
 
 		// for performance testing
@@ -152,6 +167,37 @@ export class Theme extends Component {
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
+
+		const impressionEventName = 'calypso_upgrade_nudge_impression';
+		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
+		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
+		const upsell = showUpsell && (
+			<span className="theme__upsell">
+				<TrackComponentView
+					eventName={ impressionEventName }
+					eventProperties={ upsellEventProperties }
+				/>
+				<InfoPopover icon="star" className="theme__upsell-icon" position="top left">
+					<TrackComponentView
+						eventName={ impressionEventName }
+						eventProperties={ upsellPopupEventProperties }
+					/>
+					<div className="theme__upsell-popover">
+						<h2 className="theme__upsell-heading">
+							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
+						</h2>
+						<Button
+							onClick={ this.onUpsellClick }
+							className="theme__upsell-cta"
+							primary
+							href={ upsellUrl }
+						>
+							{ translate( 'Upgrade Now' ) }
+						</Button>
+					</div>
+				</InfoPopover>
+			</span>
+		);
 
 		return (
 			<Card className={ themeClass }>
@@ -183,13 +229,14 @@ export class Theme extends Component {
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>
 						{ active && (
-							<span className="theme-badge__active">
+							<span className="theme__badge-active">
 								{ translate( 'Active', {
 									context: 'singular noun, the currently active theme',
 								} ) }
 							</span>
 						) }
 						<span className={ priceClass }>{ price }</span>
+						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
@@ -206,4 +253,7 @@ export class Theme extends Component {
 	}
 }
 
-export default localize( Theme );
+const mapStateToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Theme ) );

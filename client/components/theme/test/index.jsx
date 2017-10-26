@@ -125,7 +125,7 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'should show a price', () => {
-			assert( themeNode.getElementsByClassName( 'theme-badge__price' )[ 0 ].textContent === '$50' );
+			assert( themeNode.getElementsByClassName( 'theme__badge-price' )[ 0 ].textContent === '$50' );
 		} );
 	} );
 } );
