@@ -72,7 +72,11 @@ class ProductSearch extends Component {
 	};
 
 	hasToken = token => {
-		return !! find( this.state.tokens, { id: token.id, variation: token.variation } );
+		const match = { id: token.id };
+		if ( token.variation ) {
+			match.variation = token.variation;
+		}
+		return !! find( this.state.tokens, match );
 	};
 
 	addToken = token => {
