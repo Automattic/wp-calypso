@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Create a stripped down comment object containing only the information needed by
@@ -17,13 +17,3 @@ export const getMinimalComment = comment => ( {
 	postId: get( comment, 'post.ID' ),
 	status: get( comment, 'status' ),
 } );
-
-/**
- * Check if a site blacklist contains an email address.
- *
- * @param {String} blacklist A site blacklist.
- * @param {String} email An email address.
- * @returns {Boolean} If the blacklist contains the email address.
- */
-export const isEmailBlacklisted = ( blacklist, email ) =>
-	!! email && !! blacklist ? includes( blacklist.split( '\n' ), email ) : false;

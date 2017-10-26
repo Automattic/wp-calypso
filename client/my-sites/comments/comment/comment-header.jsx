@@ -31,7 +31,7 @@ export const CommentHeader = ( {
 
 		<CommentAuthor { ...{ commentId, isExpanded } } />
 
-		{ isExpanded && <CommentAuthorMoreInfo /> }
+		{ isExpanded && <CommentAuthorMoreInfo { ...{ commentId } } /> }
 
 		{ ! isBulkMode && (
 			<Button
