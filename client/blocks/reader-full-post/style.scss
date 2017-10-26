@@ -319,6 +319,10 @@
 	}
 }
 
+.reader-full-post .like-button .gridicon {
+	top: 4px;
+}
+
 .reader-full-post__sidebar .like-button {
 
 	@include breakpoint( "<660px" ) {
