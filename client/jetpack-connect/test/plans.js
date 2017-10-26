@@ -35,6 +35,7 @@ describe( 'Plans', () => {
 		const wrapper = shallow(
 			<Plans
 				{ ...DEFAULT_PROPS }
+				hasPlan={ true }
 				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
 				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
 			/>
@@ -49,6 +50,7 @@ describe( 'Plans', () => {
 		const wrapper = shallow(
 			<Plans
 				{ ...DEFAULT_PROPS }
+				hasPlan={ true }
 				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
 				showFirst={ true }
 				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
@@ -66,6 +68,7 @@ describe( 'Plans', () => {
 		const redirect = ( wrapper.instance().redirect = jest.fn() );
 
 		wrapper.setProps( {
+			hasPlan: true,
 			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
 			sitePlans: getSitePlans( PLAN_JETPACK_BUSINESS ),
 		} );
@@ -82,6 +85,7 @@ describe( 'Plans', () => {
 			<Plans
 				{ ...DEFAULT_PROPS }
 				goBackToWpAdmin={ goBackToWpAdmin }
+				hasPlan={ true }
 				isAutomatedTransfer={ true }
 				selectedSite={ {
 					...SELECTED_SITE,

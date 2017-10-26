@@ -432,6 +432,7 @@ export const DEFAULT_PROPS = {
 	flowType: false,
 	getPlanBySlug: noop,
 	goBackToWpAdmin: noop,
+	hasPlan: false,
 	isAutomatedTransfer: false,
 	isRequestingPlans: false,
 	isRtlLayout: false,

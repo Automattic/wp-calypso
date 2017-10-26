@@ -78,6 +78,7 @@ ShallowWrapper {
         flowType={false}
         getPlanBySlug={[Function]}
         goBackToWpAdmin={[Function]}
+        hasPlan={true}
         isAutomatedTransfer={false}
         isRequestingPlans={false}
         isRtlLayout={false}
@@ -469,6 +470,7 @@ ShallowWrapper {
           "flowType": false,
           "getPlanBySlug": [Function],
           "goBackToWpAdmin": [Function],
+          "hasPlan": true,
           "isAutomatedTransfer": false,
           "isRequestingPlans": false,
           "isRtlLayout": false,
@@ -887,6 +889,7 @@ ShallowWrapper {
     flowType={false}
     getPlanBySlug={[Function]}
     goBackToWpAdmin={[Function]}
+    hasPlan={true}
     isAutomatedTransfer={false}
     isRequestingPlans={false}
     isRtlLayout={false}
@@ -1290,6 +1293,7 @@ ShallowWrapper {
       flowType={false}
       getPlanBySlug={[Function]}
       goBackToWpAdmin={[Function]}
+      hasPlan={true}
       hideFreePlan={true}
       isAutomatedTransfer={false}
       isRequestingPlans={false}
@@ -1702,6 +1706,7 @@ ShallowWrapper {
         flowType={false}
         getPlanBySlug={[Function]}
         goBackToWpAdmin={[Function]}
+        hasPlan={true}
         hideFreePlan={true}
         isAutomatedTransfer={false}
         isRequestingPlans={false}
@@ -2115,6 +2120,7 @@ ShallowWrapper {
         flowType={false}
         getPlanBySlug={[Function]}
         goBackToWpAdmin={[Function]}
+        hasPlan={true}
         isAutomatedTransfer={false}
         isRequestingPlans={false}
         isRtlLayout={false}
@@ -2507,6 +2513,7 @@ ShallowWrapper {
           "flowType": false,
           "getPlanBySlug": [Function],
           "goBackToWpAdmin": [Function],
+          "hasPlan": true,
           "isAutomatedTransfer": false,
           "isRequestingPlans": false,
           "isRtlLayout": false,
@@ -2917,6 +2924,7 @@ ShallowWrapper {
             flowType={false}
             getPlanBySlug={[Function]}
             goBackToWpAdmin={[Function]}
+            hasPlan={true}
             hideFreePlan={true}
             isAutomatedTransfer={false}
             isRequestingPlans={false}
@@ -3329,6 +3337,7 @@ ShallowWrapper {
             flowType={false}
             getPlanBySlug={[Function]}
             goBackToWpAdmin={[Function]}
+            hasPlan={true}
             hideFreePlan={true}
             isAutomatedTransfer={false}
             isRequestingPlans={false}
@@ -3746,6 +3755,7 @@ ShallowWrapper {
     flowType={false}
     getPlanBySlug={[Function]}
     goBackToWpAdmin={[Function]}
+    hasPlan={true}
     isAutomatedTransfer={false}
     isRequestingPlans={false}
     isRtlLayout={false}
@@ -4150,6 +4160,7 @@ ShallowWrapper {
       flowType={false}
       getPlanBySlug={[Function]}
       goBackToWpAdmin={[Function]}
+      hasPlan={false}
       hideFreePlan={true}
       isAutomatedTransfer={false}
       isRequestingPlans={false}
@@ -4561,6 +4572,7 @@ ShallowWrapper {
         flowType={false}
         getPlanBySlug={[Function]}
         goBackToWpAdmin={[Function]}
+        hasPlan={false}
         hideFreePlan={true}
         isAutomatedTransfer={false}
         isRequestingPlans={false}
@@ -4973,6 +4985,7 @@ ShallowWrapper {
         flowType={false}
         getPlanBySlug={[Function]}
         goBackToWpAdmin={[Function]}
+        hasPlan={false}
         isAutomatedTransfer={false}
         isRequestingPlans={false}
         isRtlLayout={false}
@@ -5364,6 +5377,7 @@ ShallowWrapper {
           "flowType": false,
           "getPlanBySlug": [Function],
           "goBackToWpAdmin": [Function],
+          "hasPlan": false,
           "isAutomatedTransfer": false,
           "isRequestingPlans": false,
           "isRtlLayout": false,
@@ -5773,6 +5787,7 @@ ShallowWrapper {
             flowType={false}
             getPlanBySlug={[Function]}
             goBackToWpAdmin={[Function]}
+            hasPlan={false}
             hideFreePlan={true}
             isAutomatedTransfer={false}
             isRequestingPlans={false}
@@ -6184,6 +6199,7 @@ ShallowWrapper {
             flowType={false}
             getPlanBySlug={[Function]}
             goBackToWpAdmin={[Function]}
+            hasPlan={false}
             hideFreePlan={true}
             isAutomatedTransfer={false}
             isRequestingPlans={false}
@@ -6600,6 +6616,7 @@ ShallowWrapper {
     flowType={false}
     getPlanBySlug={[Function]}
     goBackToWpAdmin={[Function]}
+    hasPlan={false}
     isAutomatedTransfer={false}
     isRequestingPlans={false}
     isRtlLayout={false}
