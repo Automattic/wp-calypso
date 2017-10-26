@@ -1,38 +1,6 @@
 /** @format */
 .product-search {
 	position: relative;
-	@extend %form-field;
-
-	box-sizing: border-box;
-	width: 100%;
-	margin: 0;
-	padding: 0;
-	background-color: $white;
-	border: 1px solid lighten($gray, 20%);
-	color: $gray-dark;
-	cursor: text;
-	transition: all 0.15s ease-in-out;
-
-	&:hover {
-		border-color: lighten($gray, 10%);
-	}
-
-	&.is-disabled {
-		background: $gray-light;
-		border-color: lighten($gray, 30%);
-	}
-
-	&.is-active {
-		border-color: $blue-wordpress;
-		box-shadow: 0 0 0 2px $blue-light;
-	}
-}
-
-.product-search__input-container {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	padding: 5px 14px 5px 0;
 }
 
 .product-search__results {

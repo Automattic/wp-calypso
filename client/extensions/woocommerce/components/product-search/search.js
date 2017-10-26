@@ -151,7 +151,7 @@ class ProductSearchField extends Component {
 
 	render() {
 		const props = {
-			className: 'product-search__input-container',
+			className: 'product-search__input-container token-field__input-container',
 		};
 		if ( ! this.props.disabled ) {
 			props.tabIndex = '-1';

@@ -103,7 +103,9 @@ class ProductSearch extends Component {
 
 	render() {
 		const { currentSearch, tokens } = this.state;
-		const classes = classNames( 'product-search', {
+		const classes = classNames( {
+			'product-search': true,
+			'token-field': true,
 			'is-active': this.state.isActive,
 			'is-disabled': this.props.disabled,
 		} );
