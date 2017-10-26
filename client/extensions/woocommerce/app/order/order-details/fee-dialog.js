@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId } from 'lodash';
+import { trim, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ class OrderFeeDialog extends Component {
 		const value = event.target.value;
 		switch ( event.target.name ) {
 			case 'new_fee_name':
-				this.setState( { name: value } );
+				this.setState( { name: trim( value ) } );
 				break;
 			case 'new_fee_total':
 				this.setState( { total: value > 0 ? value : 0 } );
@@ -86,7 +86,7 @@ class OrderFeeDialog extends Component {
 		const { closeDialog, isVisible, order, translate } = this.props;
 		const dialogClass = 'woocommerce order-details__dialog'; // eslint/css specificity hack
 
-		const canSave = this.state.name && this.state.total;
+		const canSave = trim( this.state.name ) && this.state.total;
 
 		const dialogButtons = [
 			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
@@ -101,10 +101,9 @@ class OrderFeeDialog extends Component {
 				onClose={ closeDialog }
 				className={ dialogClass }
 				buttons={ dialogButtons }
-				additionalClassNames="order-payment__dialog woocommerce"
 			>
 				<h1>{ translate( 'Add a fee' ) }</h1>
-				<FormLabel htmlFor="newFeeName">{ translate( 'Fee name' ) }</FormLabel>
+				<FormLabel htmlFor="newFeeName">{ translate( 'Name' ) }</FormLabel>
 				<FormTextInput
 					id="new_fee_name"
 					name="new_fee_name"
@@ -112,7 +111,7 @@ class OrderFeeDialog extends Component {
 					value={ this.state.name }
 					onChange={ this.handleChange }
 				/>
-				<FormLabel htmlFor="newFeeTotal">{ translate( 'Fee value' ) }</FormLabel>
+			<FormLabel htmlFor="newFeeTotal">{ translate( 'Value' ) }</FormLabel>
 				<PriceInput
 					id="new_fee_total"
 					name="new_fee_total"

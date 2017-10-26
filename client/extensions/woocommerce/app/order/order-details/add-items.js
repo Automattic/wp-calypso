@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -25,10 +26,12 @@ class OrderAddItems extends Component {
 		return (
 			<div className="order-details__actions">
 				<Button borderless onClick={ this.toggleDialog( 'product' ) }>
-					{ translate( '+ Add Product' ) }
+					<Gridicon icon="plus-small" />
+					{ translate( 'Add Product' ) }
 				</Button>
 				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					{ translate( '+ Add Fee' ) }
+					<Gridicon icon="plus-small" />
+					{ translate( 'Add Fee' ) }
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }
