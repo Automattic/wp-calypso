@@ -12,14 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { areProductSearchResultsLoading } from 'woocommerce/state/sites/products/selectors';
 import {
 	fetchProductSearchResults,
 	clearProductSearch,
 } from 'woocommerce/state/sites/products/actions';
-import { getProductSearchResults } from 'woocommerce/state/ui/products/selectors';
-import { getProductSearchQuery } from 'woocommerce/state/sites/products/selectors';
-
 import ProductSearchField from './search';
 import ProductSearchResults from './results';
 
@@ -81,15 +77,6 @@ class ProductSearch extends Component {
 		this.setState( { tokens } );
 	};
 
-	getProductResults = () => {
-		const { isLoading, products } = this.props;
-		if ( isLoading || ! products.length ) {
-			return [];
-		}
-
-		return products;
-	};
-
 	render() {
 		const { currentSearch, tokens } = this.state;
 		const classes = classNames( 'product-search', {
@@ -114,26 +101,12 @@ class ProductSearch extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const search = getProductSearchQuery( state ) || '';
-		const query = {
-			page: 1,
-			per_page: 10,
-			search,
-		};
-
-		return {
-			isLoading: areProductSearchResultsLoading( state, query ),
-			products: getProductSearchResults( state ) || [],
-		};
-	},
-	dispatch =>
-		bindActionCreators(
-			{
-				fetchProductSearchResults,
-				clearProductSearch,
-			},
-			dispatch
-		)
+export default connect( null, dispatch =>
+	bindActionCreators(
+		{
+			fetchProductSearchResults,
+			clearProductSearch,
+		},
+		dispatch
+	)
 )( localize( ProductSearch ) );
