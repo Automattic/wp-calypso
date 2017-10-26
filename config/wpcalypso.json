@@ -137,6 +137,7 @@
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
+		"upgrades/ebanx": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/netherlands-ideal": true,
