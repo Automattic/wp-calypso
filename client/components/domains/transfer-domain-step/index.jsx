@@ -3,7 +3,6 @@
  *
  * @format
  */
-import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -170,12 +169,7 @@ class TransferDomainStep extends React.Component {
 		}
 
 		return (
-			<div
-				className={ classnames(
-					'domain-search-results__domain-availability',
-					'is-mapping-suggestion'
-				) }
-			>
+			<div className={ 'transfer-domain-step__domain-availability' }>
 				<Notice status="is-success" showDismiss={ false }>
 					{ this.props.translate( '%(domain)s is available!', {
 						args: { domain: suggestion.domain_name },
