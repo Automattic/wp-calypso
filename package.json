@@ -62,7 +62,7 @@
     "doctrine": "2.0.0",
     "dom-helpers": "2.4.0",
     "dom-scroll-into-view": "1.0.1",
-    "draft-js": "0.8.1",
+    "draft-js": "0.10.4",
     "email-validator": "1.0.1",
     "emoji-text": "0.2.6",
     "escape-regexp": "0.0.1",
