@@ -159,7 +159,10 @@ class OrderFulfillment extends Component {
 			'is-placeholder': wcsEnabled && ! labelsLoaded,
 		} );
 
-		if ( ! isShippable && ( ! wcsEnabled || ( labelsLoaded && hideLabels ) ) ) {
+		if (
+			! isShippable &&
+			( ! wcsEnabled || ( labelsLoaded && hideLabels ) || 'cancelled' === order.status )
+		) {
 			return null;
 		}
 
