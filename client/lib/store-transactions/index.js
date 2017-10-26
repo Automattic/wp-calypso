@@ -212,10 +212,10 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 				return;
 			}
 
-			paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
+			paygateLoader.ready.ready( configuration.js_url, 'Paygate', function( loaderError, Paygate ) {
 				var parameters;
-				if ( error ) {
-					callback( error );
+				if ( loaderError ) {
+					callback( loaderError );
 					return;
 				}
 
