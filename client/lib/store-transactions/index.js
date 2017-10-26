@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
 import { Readable } from 'stream';
 import inherits from 'inherits';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -127,12 +128,12 @@ TransactionFlow.prototype._paymentHandlers = {
 		debug( 'submitting transaction with new card' );
 
 		this._createCardToken(
-			function( cardToken ) {
+			function( gatewayData ) {
 				const { name, country, 'postal-code': zip } = newCardDetails;
 
 				this._submitWithPayment( {
-					payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-					payment_key: cardToken,
+					payment_key: gatewayData.token,
+					payment_method: gatewayData.payment_method,
 					name,
 					zip,
 					country,
@@ -206,9 +207,9 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 			request_type: requestType,
 			country: cardDetails.country,
 		},
-		function( error, configuration ) {
-			if ( error ) {
-				callback( error );
+		function( configError, configuration ) {
+			if ( configError ) {
+				callback( configError );
 				return;
 			}
 
@@ -238,7 +239,9 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 			return callback( new Error( 'Paygate Response Error: ' + data.error_msg ) );
 		}
 
-		callback( null, data.token );
+		data.payment_method = 'WPCOM_Billing_MoneyPress_Paygate';
+
+		callback( null, data );
 	}
 
 	function onFailure() {
@@ -246,7 +249,50 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
+function createEbanxToken( requestType, cardDetails, callback ) {
+	wpcom.ebanxConfiguration(
+		{
+			request_type: requestType,
+		},
+		function( configError, configuration ) {
+			if ( configError ) {
+				callback( configError );
+				return;
+			}
+
+			paymentGatewayLoader.ready( configuration.js_url, 'EBANX', function( loaderError, EBANX ) {
+				if ( loaderError ) {
+					callback( loaderError );
+					return;
+				}
+
+				EBANX.config.setMode( configuration.environment );
+				EBANX.config.setPublishableKey( configuration.public_key );
+				EBANX.config.setCountry( 'br' ); // TODO: more countries, pass from config?
+
+				const parameters = getEbanxParameters( cardDetails );
+				EBANX.card.createToken( parameters, createTokenCallback );
+			} );
+		}
+	);
+
+	function createTokenCallback( ebanxResponse ) {
+		if ( ebanxResponse.data.hasOwnProperty( 'status' ) ) {
+			ebanxResponse.data.payment_method = 'WPCOM_Billing_Ebanx';
+			callback( null, ebanxResponse.data );
+		} else {
+			const errorMessage =
+				ebanxResponse.error.err.status_message || ebanxResponse.error.err.message;
+			callback( new Error( 'Ebanx Request Error: ' + errorMessage ) );
+		}
+	}
+}
+
 function createCardToken( requestType, cardDetails, callback ) {
+	if ( 'BR' === cardDetails.country && config.isEnabled( 'upgrades/ebanx' ) ) {
+		return createEbanxToken( requestType, cardDetails, callback );
+	}
+
 	return createPaygateToken( requestType, cardDetails, callback );
 }
 
@@ -259,6 +305,18 @@ function getPaygateParameters( cardDetails ) {
 		country: cardDetails.country,
 		exp_month: cardDetails[ 'expiration-date' ].substring( 0, 2 ),
 		exp_year: '20' + cardDetails[ 'expiration-date' ].substring( 3, 5 ),
+	};
+}
+
+function getEbanxParameters( cardDetails ) {
+	return {
+		card_name: cardDetails.name,
+		card_number: cardDetails.number,
+		card_cvv: cardDetails.cvv,
+		card_due_date:
+			cardDetails[ 'expiration-date' ].substring( 0, 2 ) +
+			'/20' +
+			cardDetails[ 'expiration-date' ].substring( 3, 5 ),
 	};
 }
 
