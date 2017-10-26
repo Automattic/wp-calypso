@@ -13,7 +13,7 @@ import inherits from 'inherits';
 /**
  * Internal dependencies
  */
-import paygateLoader from 'lib/paygate-loader';
+import paymentGatewayLoader from 'lib/payment-gateway-loader';
 import { validateCardDetails } from 'lib/credit-card-details';
 import {
 	INPUT_VALIDATION,
@@ -212,7 +212,10 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 				return;
 			}
 
-			paygateLoader.ready.ready( configuration.js_url, 'Paygate', function( loaderError, Paygate ) {
+			paymentGatewayLoader.ready( configuration.js_url, 'Paygate', function(
+				loaderError,
+				Paygate
+			) {
 				var parameters;
 				if ( loaderError ) {
 					callback( loaderError );
