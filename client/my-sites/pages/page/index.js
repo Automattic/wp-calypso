@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import createFragment from 'react-addons-create-fragment';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
@@ -200,26 +199,22 @@ class Page extends Component {
 		}
 
 		if ( this.props.page.status !== 'trash' ) {
-			return createFragment( {
-				separator: <MenuSeparator />,
-				item: (
-					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-						<Gridicon icon="trash" size={ 18 } />
-						{ this.props.translate( 'Trash' ) }
-					</PopoverMenuItem>
-				),
-			} );
+			return [
+				<MenuSeparator key="separator" />,
+				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
+					<Gridicon icon="trash" size={ 18 } />
+					{ this.props.translate( 'Trash' ) }
+				</PopoverMenuItem>,
+			];
 		}
 
-		return createFragment( {
-			separator: <MenuSeparator />,
-			item: (
-				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.props.translate( 'Delete' ) }
-				</PopoverMenuItem>
-			),
-		} );
+		return [
+			<MenuSeparator key="separator" />,
+			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
+				<Gridicon icon="trash" size={ 18 } />
+				{ this.props.translate( 'Delete' ) }
+			</PopoverMenuItem>,
+		];
 	}
 
 	getCopyItem() {

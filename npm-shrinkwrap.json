@@ -874,10 +874,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000750"
+      "version": "1.0.30000751"
     },
     "caniuse-lite": {
-      "version": "1.0.30000750"
+      "version": "1.0.30000751"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -6479,7 +6479,7 @@
       "version": "1.1.2"
     },
     "sntp": {
-      "version": "2.0.2"
+      "version": "2.1.0"
     },
     "social-logos": {
       "version": "2.0.0"
@@ -7131,7 +7131,7 @@
       "version": "1.0.0"
     },
     "unquoted-property-validator": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "dev": true
     },
     "unreachable-branch-transform": {
