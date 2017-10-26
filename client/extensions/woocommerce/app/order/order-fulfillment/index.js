@@ -58,7 +58,6 @@ class OrderFulfillment extends Component {
 		shouldEmail: false,
 		showDialog: false,
 		showPopoverMenu: false,
-		showPrintTooltip: false,
 		trackingNumber: '',
 	};
 
@@ -71,12 +70,6 @@ class OrderFulfillment extends Component {
 	togglePopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
-	};
-
-	togglePrintTooltip = () => {
-		this.setState( {
-			showPrintTooltip: ! this.state.showPrintTooltip,
 		} );
 	};
 
