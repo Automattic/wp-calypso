@@ -6,7 +6,7 @@
 
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -77,7 +77,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { getSiteOptions, isSiteAutomatedTransfer } from 'state/selectors';
+import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -268,9 +268,9 @@ class CheckoutThankYou extends React.Component {
 			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
 		}
 
-		const { signupIsStore, isAtomicSite } = this.props;
+		const { hasPendingAT, isAtomicSite } = this.props;
 
-		if ( wasDotcomPlanPurchased && ( signupIsStore || isAtomicSite ) ) {
+		if ( wasDotcomPlanPurchased && ( hasPendingAT || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
@@ -447,7 +447,6 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
-		const siteOptions = getSiteOptions( state, siteId );
 
 		return {
 			planSlug,
@@ -455,7 +454,7 @@ export default connect(
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
-			signupIsStore: get( siteOptions, 'signup_is_store', false ),
+			hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
