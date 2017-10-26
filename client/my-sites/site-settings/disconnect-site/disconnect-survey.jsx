@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import { isSiteOnPaidPlan } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const DisconnectSurvey = ( { isPaidPlan, siteId, siteSlug, translate } ) => (
+const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translate } ) => (
 	<div className="disconnect-site__survey main">
 		<QuerySitePlans siteId={ siteId } />
 		<SectionHeader
@@ -46,8 +47,23 @@ const DisconnectSurvey = ( { isPaidPlan, siteId, siteSlug, translate } ) => (
 				{ translate( 'This plan is too expensive' ) }
 			</CompactCard>
 		) }
+		<CompactCard
+			href={ confirmHref + '?reason=troubleshooting' }
+			className="disconnect-site__survey-one"
+		>
+			{ translate( "Troubleshooting -- I'll be reconnecting afterwards" ) }
+		</CompactCard>
 	</div>
 );
+
+DisconnectSurvey.propTypes = {
+	confirmHref: PropTypes.string,
+	// Provided by HOCs
+	isPaidPlan: PropTypes.bool,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
+	translate: PropTypes.func,
+};
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
