@@ -180,26 +180,20 @@ export function isRequestingPostsForQuery( state, siteId, query ) {
 
 /**
  * Returns the total number of items reported to be found for the given query,
- * or null if the total number of queryable posts if unknown.
+ * or null if the total number of queryable posts is unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID
  * @param  {Object}  query  Post query object
  * @return {?Number}        Total number of found items
  */
-export function getSitePostsFoundForQuery( state, siteId, query ) {
-	if ( ! siteId ) {
-		// TODO remove me after testing and before merge
-		// eslint-disable-next-line no-console
-		console.warn( 'getSitePostsFoundForQuery called without siteId' );
+export function getPostsFoundForQuery( state, siteId, query ) {
+	const manager = getQueryManager( state, siteId );
+	if ( ! manager ) {
 		return null;
 	}
 
-	if ( ! state.posts.queries[ siteId ] ) {
-		return null;
-	}
-
-	return state.posts.queries[ siteId ].getFound( query );
+	return manager.getFound( query );
 }
 
 /**

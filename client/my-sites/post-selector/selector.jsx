@@ -35,7 +35,7 @@ import { decodeEntities } from 'lib/formatting';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQueryIgnoringPage,
-	getSitePostsFoundForQuery,
+	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -468,7 +468,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
-		found: getSitePostsFoundForQuery( state, siteId, queryWithVersion ),
+		found: getPostsFoundForQuery( state, siteId, queryWithVersion ),
 		lastPage: getPostsLastPageForQuery( state, siteId, queryWithVersion ),
 		loading: isRequestingPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
 		postTypes: getPostTypes( state, siteId ),

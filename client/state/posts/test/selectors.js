@@ -18,7 +18,7 @@ import {
 	getPostsForQuery,
 	isPostPublished,
 	isRequestingPostsForQuery,
-	getSitePostsFoundForQuery,
+	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 	isPostsLastPageForQuery,
 	getPostsForQueryIgnoringPage,
@@ -419,9 +419,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSitePostsFoundForQuery()', () => {
+	describe( 'getPostsFoundForQuery()', () => {
 		test( 'should return null if the site query is not tracked', () => {
-			const found = getSitePostsFoundForQuery(
+			const found = getPostsFoundForQuery(
 				{
 					posts: {
 						queries: {},
@@ -435,7 +435,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return the found items for a site query', () => {
-			const found = getSitePostsFoundForQuery(
+			const found = getPostsFoundForQuery(
 				{
 					posts: {
 						queries: {
@@ -466,7 +466,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return zero if in-fact there are zero items', () => {
-			const found = getSitePostsFoundForQuery(
+			const found = getPostsFoundForQuery(
 				{
 					posts: {
 						queries: {
