@@ -5,14 +5,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { identity, noop } from 'lodash';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { PlansTestComponent as Plans } from '../../plans';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_FREE,
@@ -449,7 +447,3 @@ export const DEFAULT_PROPS = {
 	translate: identity,
 	userId: USER_ID,
 };
-
-export default function PlansWrapper( props ) {
-	return <Plans { ...DEFAULT_PROPS } { ...props } />;
-}
