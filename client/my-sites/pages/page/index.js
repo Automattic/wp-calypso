@@ -199,26 +199,22 @@ class Page extends Component {
 		}
 
 		if ( this.props.page.status !== 'trash' ) {
-			return (
-				<div>
-					<MenuSeparator />
-					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-						<Gridicon icon="trash" size={ 18 } />
-						{ this.props.translate( 'Trash' ) }
-					</PopoverMenuItem>
-				</div>
-			);
+			return [
+				<MenuSeparator key="separator" />,
+				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
+					<Gridicon icon="trash" size={ 18 } />
+					{ this.props.translate( 'Trash' ) }
+				</PopoverMenuItem>,
+			];
 		}
 
-		return (
-			<div>
-				<MenuSeparator />
-				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.props.translate( 'Delete' ) }
-				</PopoverMenuItem>
-			</div>
-		);
+		return [
+			<MenuSeparator key="separator" />,
+			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
+				<Gridicon icon="trash" size={ 18 } />
+				{ this.props.translate( 'Delete' ) }
+			</PopoverMenuItem>,
+		];
 	}
 
 	getCopyItem() {
