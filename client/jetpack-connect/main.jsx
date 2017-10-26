@@ -348,7 +348,7 @@ class JetpackConnectMain extends Component {
 		const { translate } = this.props;
 		return (
 			<LoggedOutFormLinks>
-				<JetpackConnectHappychatButton>
+				<JetpackConnectHappychatButton eventName="calypso_jpc_firststep_chat_initiated">
 					<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -479,7 +479,7 @@ class JetpackConnectMain extends Component {
 					<div className="jetpack-connect__navigation">{ this.renderBackButton() }</div>
 				</div>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton>
+					<JetpackConnectHappychatButton eventName="calypso_jpc_instructions_chat_initiated">
 						<HelpButton />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
