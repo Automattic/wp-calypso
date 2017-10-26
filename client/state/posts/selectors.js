@@ -128,7 +128,7 @@ export const getSitePost = createSelector( ( state, siteId, postId ) => {
  * posts have been received.
  *
  * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
@@ -169,7 +169,7 @@ export const getPostsForQuery = createSelector(
  * otherwise.
  *
  * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
@@ -183,7 +183,7 @@ export function isRequestingPostsForQuery( state, siteId, query ) {
  * or null if the total number of queryable posts is unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Number}        Total number of found items
  */
@@ -201,7 +201,7 @@ export function getPostsFoundForQuery( state, siteId, query ) {
  * total number of queryable posts if unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {?Number} siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Number}        Last posts page
  */
@@ -224,7 +224,7 @@ export function getPostsLastPageForQuery( state, siteId, query ) {
  * null if the total number of queryable posts if unknown.
  *
  * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {?Number}  siteId Site ID, or `null` for all-sites queries
  * @param  {Object}   query  Post query object
  * @return {?Boolean}        Whether last posts page has been reached
  */
@@ -242,7 +242,7 @@ export function isPostsLastPageForQuery( state, siteId, query = {} ) {
  * known queried pages, or null if the posts for the query are not known.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
@@ -269,7 +269,7 @@ export const getPostsForQueryIgnoringPage = createSelector(
  * of page, or false otherwise.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
