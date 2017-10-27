@@ -48,11 +48,7 @@ function ProgressBanner( {
 
 			<div>
 				<em>{ restoreStatusDescription }</em>
-				<ProgressBar
-					className={ status === 'queued' ? 'activity-log-banner__progress-bar--queued' : null }
-					isPulsing
-					value={ status === 'queued' ? 100 : percent }
-				/>
+				{ 'running' === status && <ProgressBar isPulsing value={ percent } /> }
 			</div>
 		</ActivityLogBanner>
 	);
