@@ -26,7 +26,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { getPlansBySite } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { addItem } from 'lib/upgrades/actions';
@@ -56,14 +55,9 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	static propTypes = {
-		sitePlans: PropTypes.object.isRequired,
-		showJetpackFreePlan: PropTypes.bool,
-	};
+	static propTypes = { showJetpackFreePlan: PropTypes.bool };
 
-	static defaultProps = {
-		siteSlug: '*',
-	};
+	static defaultProps = { siteSlug: '*' };
 
 	redirecting = false;
 
@@ -313,7 +307,6 @@ export default connect(
 			selectedSiteSlug,
 			selectedPlan,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : false,
-			sitePlans: getPlansBySite( state, selectedSite ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: selectedSite
