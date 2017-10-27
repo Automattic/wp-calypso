@@ -448,6 +448,7 @@ export class CommentList extends Component {
 					commentsPage={ commentsPage }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
+					postId={ postId }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
 					setSortOrder={ this.setSortOrder }
