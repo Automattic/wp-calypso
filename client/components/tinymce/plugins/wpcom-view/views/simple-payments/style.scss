@@ -116,14 +116,15 @@
 	position: relative;
 	text-align: left;
 	text-shadow: rgb(204, 204, 204) 0px -1px;
-	top: -3px;
+	top: 50%;
 	width: 43px;
-	perspective-origin: 21.125px 6px;
-	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 10px;
 	font-style: normal;
 	font-weight: 500;
 	line-height: normal;
+	transform: translateY(-50%);
+	vertical-align: top;
 }
 
 .wpview-type-simple-payments_paypal-logo {
