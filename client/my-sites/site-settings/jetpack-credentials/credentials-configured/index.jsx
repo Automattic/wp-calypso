@@ -48,7 +48,7 @@ class CredentialsConfigured extends Component {
 
 		if ( isPressable ) {
 			return (
-				<CompactCard className="credentials-configured__pressable-configured">
+				<CompactCard className="credentials-configured">
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 48 }
@@ -80,7 +80,7 @@ class CredentialsConfigured extends Component {
 		);
 
 		return (
-			<FoldableCard header={ header } className="credentials-configured__foldable-header">
+			<FoldableCard header={ header } className="credentials-configured">
 				<CredentialsForm
 					{ ...{
 						credentialsUpdating,
