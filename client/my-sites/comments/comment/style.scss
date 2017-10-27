@@ -46,8 +46,7 @@
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	a:focus .gridicon,
-	a:hover .gridicon {
+	&:hover .gridicon {
 		fill: $blue-medium;
 	}
 }
@@ -149,10 +148,15 @@
 // Comment Content Block
 
 .comment__content {
-	padding: 0 56px 16px 56px;
+	padding: 0 16px 16px 56px;
+
+	@include breakpoint( '>480px' ) {
+		padding-right: 56px;
+	}
 
 	.comment__post-link {
-		margin: 8px 0 16px;
+		font-weight: 600;
+		margin: 8px 0 1em 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -245,6 +249,12 @@
 
 	.comment__content {
 		padding-top: 8px;
+
+		.comment__in-reply-to {
+			border-left: 4px solid lighten($gray, 30%);
+			margin-bottom: 1em;
+			padding: 2px 4px;
+		}
 	}
 }
 
