@@ -7,6 +7,7 @@ import { isEmpty, omit, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import jetpackAuthAttempts from './jetpack-auth-attempts';
 import jetpackConnectSite from './jetpack-connect-site';
 import jetpackSSO from './jetpack-sso';
 import {
@@ -21,7 +22,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
@@ -29,13 +29,9 @@ import {
 	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
-import {
-	jetpackConnectSessionsSchema,
-	jetpackAuthAttemptsSchema,
-	jetpackConnectSelectedPlansSchema,
-} from './schema';
+import { jetpackConnectSessionsSchema, jetpackConnectSelectedPlansSchema } from './schema';
 import { isStale } from '../utils';
-import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from '../constants';
+import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { urlToSlug } from 'lib/url';
 
 function buildDefaultAuthorizeState() {
@@ -164,29 +160,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 	return state;
 }
 jetpackConnectAuthorize.hasCustomPersistence = true;
-
-export function jetpackAuthAttempts( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_RETRY_AUTH:
-			const slug = action.slug;
-			let currentTimestamp = state[ slug ] ? state[ slug ].timestamp || Date.now() : Date.now();
-			let attemptNumber = action.attemptNumber;
-			if ( attemptNumber > 0 ) {
-				const now = Date.now();
-				if ( isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
-					currentTimestamp = now;
-					attemptNumber = 0;
-				}
-			}
-			return Object.assign( {}, state, {
-				[ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp },
-			} );
-		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
-	}
-	return state;
-}
-jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
 
 export function jetpackConnectSelectedPlans( state = {}, action ) {
 	switch ( action.type ) {
