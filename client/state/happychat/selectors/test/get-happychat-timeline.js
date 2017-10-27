@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import getHappychatTimeline from '../get-happychat-timeline';
@@ -45,7 +40,7 @@ describe( '#getHappychatTimeline', () => {
 		const timelineCached = getHappychatTimeline( state );
 		// force a new reference, but with the same data
 		state.happychat.chat.timeline = [ ...timelineWithoutIds2 ];
-		expect( getHappychatTimeline( state ) ).to.be.equals( timelineCached );
+		expect( getHappychatTimeline( state ) ).toBe( timelineCached );
 	} );
 
 	test( 'returns the cached timeline if messages ids are the same', () => {
@@ -59,7 +54,7 @@ describe( '#getHappychatTimeline', () => {
 		const timelineCached = getHappychatTimeline( state );
 		// force a new reference, but with the same data
 		state.happychat.chat.timeline = [ ...timelineAtTime1 ];
-		expect( getHappychatTimeline( state ) ).to.be.equals( timelineCached );
+		expect( getHappychatTimeline( state ) ).toBe( timelineCached );
 	} );
 
 	test( 'returns the new timeline if some message id is different', () => {
@@ -73,6 +68,6 @@ describe( '#getHappychatTimeline', () => {
 		const timelineCached = getHappychatTimeline( state );
 		// force a new reference, but with the same data
 		state.happychat.chat.timeline = [ ...timelineAtTime2 ];
-		expect( getHappychatTimeline( state ) ).to.not.be.equals( timelineCached );
+		expect( getHappychatTimeline( state ) ).not.toBe( timelineCached );
 	} );
 } );

@@ -40,6 +40,10 @@ export class Notices extends Component {
 				return translate( 'Waiting to connect you with a Happiness Engineer…' );
 			case 'connecting':
 				return translate( 'Connecting you with a Happiness Engineer…' );
+			case 'unauthorized':
+				return translate(
+					'Your user is not authorized to chat at the moment. Would you mind contacting support by other means?'
+				);
 			case 'reconnecting':
 			// Fall through to the same notice as `disconnected`
 			case 'disconnected':

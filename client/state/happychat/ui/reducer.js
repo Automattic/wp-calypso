@@ -11,7 +11,7 @@ import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
@@ -25,7 +25,7 @@ import { combineReducers, isValidStateWithSchema } from 'state/utils';
  */
 export const currentMessage = ( state = '', action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_SEND_MESSAGE:
+		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 			return '';
 		case HAPPYCHAT_SET_CURRENT_MESSAGE:
 			return action.message;

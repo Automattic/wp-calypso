@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -52,7 +51,7 @@ describe( 'selectors', () => {
 					chat: { status: HAPPYCHAT_CHAT_STATUS_NEW },
 				},
 			} );
-			expect( canUserSendMessages( state ) ).to.be.false;
+			expect( canUserSendMessages( state ) ).toBeFalsy();
 		} );
 
 		test( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
@@ -63,7 +62,7 @@ describe( 'selectors', () => {
 						chat: { status },
 					},
 				} );
-				expect( canUserSendMessages( state ) ).to.be.false;
+				expect( canUserSendMessages( state ) ).toBeFalsy();
 			} );
 		} );
 
@@ -75,7 +74,7 @@ describe( 'selectors', () => {
 						chat: { status },
 					},
 				} );
-				expect( canUserSendMessages( state ) ).to.be.true;
+				expect( canUserSendMessages( state ) ).toBeTruthy();
 			} );
 		} );
 
@@ -90,7 +89,7 @@ describe( 'selectors', () => {
 					isAvailable: false,
 				},
 			} );
-			expect( canUserSendMessages( state ) ).to.be.true;
+			expect( canUserSendMessages( state ) ).toBeTruthy();
 		} );
 	} );
 
@@ -113,7 +112,7 @@ describe( 'selectors', () => {
 					ui: { lostFocusAt: null },
 				},
 			} );
-			expect( hasUnreadMessages( state ) ).to.be.false;
+			expect( hasUnreadMessages( state ) ).toBeFalsy();
 		} );
 
 		test( 'returns false if there are no new messages since the Happychat was blurred', () => {
@@ -123,7 +122,7 @@ describe( 'selectors', () => {
 					ui: { lostFocusAt: NOW + ONE_MINUTE },
 				},
 			} );
-			expect( hasUnreadMessages( state ) ).to.be.false;
+			expect( hasUnreadMessages( state ) ).toBeFalsy();
 		} );
 
 		test( 'returns true if there are one or more messages after Happychat was blurred', () => {
@@ -133,7 +132,7 @@ describe( 'selectors', () => {
 					ui: { lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE },
 				},
 			} );
-			expect( hasUnreadMessages( state ) ).to.be.true;
+			expect( hasUnreadMessages( state ) ).toBeTruthy();
 		} );
 	} );
 
@@ -166,7 +165,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toEqual( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		test( 'should return default group for no siteId', () => {
@@ -181,7 +180,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toEqual( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		test( 'should return JPOP group for jetpack paid sites', () => {
@@ -210,7 +209,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+			expect( getGroups( state, siteId ) ).toEqual( [ HAPPYCHAT_GROUP_JPOP ] );
 		} );
 
 		test( 'should return WPCOM for AT sites group for jetpack site', () => {
@@ -237,7 +236,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toEqual( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		if ( isEnabled( 'jetpack/happychat' ) ) {
@@ -256,7 +255,7 @@ describe( 'selectors', () => {
 					},
 				};
 
-				expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+				expect( getGroups( state ) ).toEqual( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
 		} else {
 			test.skip( 'should not return JPOP group if within the jetpackConnect section' );

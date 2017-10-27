@@ -11,13 +11,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import { connectChat } from 'state/happychat/connection/actions';
+import { initConnection } from 'state/happychat/connection/actions';
+import getHappychatConfig from 'state/happychat/selectors/get-happychat-config';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 
 export class HappychatConnection extends Component {
 	componentDidMount() {
 		if ( this.props.isEnabled && this.props.isUninitialized ) {
-			this.props.connectChat();
+			this.props.initConnection( this.props.getConfig() );
 		}
 	}
 
@@ -29,13 +30,14 @@ export class HappychatConnection extends Component {
 HappychatConnection.propTypes = {
 	isEnabled: PropTypes.bool,
 	isUninitialized: PropTypes.bool,
-	connectChat: PropTypes.func,
+	initConnection: PropTypes.func,
 };
 
 export default connect(
 	state => ( {
 		isEnabled: config.isEnabled( 'happychat' ),
 		isUninitialized: isHappychatConnectionUninitialized( state ),
+		getConfig: getHappychatConfig( state ),
 	} ),
-	{ connectChat }
+	{ initConnection }
 )( HappychatConnection );

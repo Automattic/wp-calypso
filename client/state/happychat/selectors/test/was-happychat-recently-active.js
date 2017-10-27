@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
@@ -28,7 +23,7 @@ describe( '#wasHappychatRecentlyActive()', () => {
 			},
 		} );
 
-		expect( result ).to.be.false;
+		expect( result ).toBeFalsy();
 	} );
 
 	test( 'should return false if last activity was 3 hours ago', () => {
@@ -38,7 +33,7 @@ describe( '#wasHappychatRecentlyActive()', () => {
 			},
 		} );
 
-		expect( result ).to.be.false;
+		expect( result ).toBeFalsy();
 	} );
 
 	test( 'should return true if last activity was 5 minutes ago', () => {
@@ -48,6 +43,6 @@ describe( '#wasHappychatRecentlyActive()', () => {
 			},
 		} );
 
-		expect( result ).to.be.true;
+		expect( result ).toBeTruthy();
 	} );
 } );
