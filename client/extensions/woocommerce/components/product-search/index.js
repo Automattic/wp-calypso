@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, find, get } from 'lodash';
+import { debounce, find, get, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,6 +48,10 @@ class ProductSearch extends Component {
 
 	handleSearch = query => {
 		this.setState( { currentSearch: query } );
+		// Query is just empty spaces, don't trigger the search
+		if ( '' === trim( query ) ) {
+			return;
+		}
 		this.debouncedSearch( query );
 	};
 
