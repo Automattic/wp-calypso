@@ -75,17 +75,29 @@ class Connection {
 		return this.openSocket;
 	}
 
-	typing( message ) {
-		this.openSocket.then(
-			socket => socket.emit( 'typing', { message } ),
-			e => debug( 'failed to send typing', e )
-		);
-	}
-
-	notTyping() {
-		this.openSocket.then(
-			socket => socket.emit( 'typing', false ),
-			e => debug( 'failed to send typing', e )
+	/**
+	 * Given a Redux action, emits a SocketIO event.
+	 *
+	 * @param  { Object } action A Redux action with props
+	 *                    {
+	 *                  		event: SocketIO event name,
+	 *                  	  payload: contents to be sent,
+	 *                  	  error: message to be shown should the event fails to be sent,
+	 *                  	}
+	 * @return { Promise } Fulfilled (returns nothing)
+	 *                     or rejected (returns an error message)
+	 */
+	sendNG( action ) {
+		if ( ! this.openSocket ) {
+			return;
+		}
+		return this.openSocket.then(
+			socket => socket.emit( action.event, action.payload ),
+			e => {
+				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				// so we can relay the error message, for testing purposes
+				return Promise.reject( e );
+			}
 		);
 	}
 

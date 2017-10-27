@@ -13,6 +13,7 @@ import {
 	receiveTranscript,
 	receiveTranscriptTimeout,
 	requestTranscript,
+	sendTyping,
 	setConnected,
 	setDisconnected,
 	setReconnecting,
@@ -234,16 +235,15 @@ describe( 'connection', () => {
 			connection.init( dispatch, config );
 		} );
 
-		// TODO: to be enabled when corresponding connection changes land
-		// test( 'connection.send should emit a SocketIO event', () => {
-		// 	socket.emit( 'init' ); // resolve internal openSocket promise
-		//
-		// 	socket.emit = jest.fn();
-		// 	const action = sendMessage( 'my msg' );
-		// 	return connection.send( action ).then( () => {
-		// 		expect( socket.emit ).toHaveBeenCalledWith( action.event, action.payload );
-		// 	} );
-		// } );
+		test( 'connection.send should emit a SocketIO event', () => {
+			socket.emit( 'init' ); // resolve internal openSocket promise
+
+			socket.emit = jest.fn();
+			const action = sendTyping( 'my msg' );
+			return connection.sendNG( action ).then( () => {
+				expect( socket.emit ).toHaveBeenCalledWith( action.event, action.payload );
+			} );
+		} );
 
 		describe( 'connection.request should emit a SocketIO event', () => {
 			test( 'and dispatch callbackTimeout if request ran out of time', () => {
@@ -303,14 +303,15 @@ describe( 'connection', () => {
 			connection.init( dispatch, config );
 		} );
 
-		// TODO: to be enabled when corresponding connection changes land
-		// test( 'connection.send should dispatch receiveError action', () => {
-		// 	socket.emit = jest.fn();
-		// 	const action = sendMessage( 'content' );
-		// 	return connection.send( action ).catch( e => {
-		// 		expect( dispatch ).toHaveBeenCalledWith( receiveError( action.error + ': ' + e ) );
-		// 	} );
-		// } );
+		test( 'connection.send should dispatch receiveError action', () => {
+			socket.emit = jest.fn();
+			const action = sendTyping( 'content' );
+			return connection.sendNG( action ).catch( e => {
+				expect( dispatch ).toHaveBeenCalledWith(
+					receiveError( 'failed to send ' + action.event + ': ' + e )
+				);
+			} );
+		} );
 
 		test( 'connection.request should dispatch receiveError action', () => {
 			socket.emit = jest.fn();
