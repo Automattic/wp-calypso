@@ -255,7 +255,7 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, isRtlLayout, showFirst, translate } = this.props;
+		const { interval, isRtlLayout, selectedSite, showFirst, translate } = this.props;
 
 		if (
 			this.redirecting ||
@@ -271,9 +271,7 @@ class Plans extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				{ this.props.selectedSite ? (
-					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
-				) : null }
+				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
 					{ ...this.props }
 					basePlansPath={ showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
@@ -282,6 +280,7 @@ class Plans extends Component {
 					isLanding={ false }
 					interval={ interval }
 					showFirst={ showFirst }
+					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
