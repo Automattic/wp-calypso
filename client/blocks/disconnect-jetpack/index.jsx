@@ -16,7 +16,10 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	recordGoogleEvent,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
 import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
@@ -41,6 +44,7 @@ class DisconnectJetpack extends PureComponent {
 		siteTitle: PropTypes.string,
 		setAllSitesSelected: PropTypes.func,
 		recordGoogleEvent: PropTypes.func,
+		recordTracksEventAction: PropTypes.func,
 		disconnect: PropTypes.func,
 		successNotice: PropTypes.func,
 		errorNotice: PropTypes.func,
@@ -163,10 +167,12 @@ class DisconnectJetpack extends PureComponent {
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
 			recordGoogleEvent: recordGAEvent,
+			recordTracksEventAction: recordTracksEvent,
 		} = this.props;
 
 		onDisconnectClick();
 
+		recordTracksEvent( 'calypso_jetpack_disconnect_confirm' );
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
@@ -282,6 +288,7 @@ export default connect(
 	{
 		setAllSitesSelected,
 		recordGoogleEvent,
+		recordTracksEvent: recordTracksEventAction,
 		disconnect,
 		successNotice,
 		errorNotice,
