@@ -38,12 +38,12 @@ class SiteOrDomain extends Component {
 	}
 
 	getDomainName() {
-		const { queryObject, step } = this.props;
+		const { initialContext: { query }, step } = this.props;
 		let domain,
 			isValidDomain = false;
 
-		if ( queryObject && queryObject.new ) {
-			domain = queryObject.new;
+		if ( query && query.new ) {
+			domain = query.new;
 		} else if ( step && step.domainItem ) {
 			domain = step.domainItem.meta;
 		}
