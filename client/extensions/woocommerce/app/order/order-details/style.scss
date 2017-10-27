@@ -45,6 +45,28 @@
 	text-align: right;
 }
 
+.order-details__actions {
+	margin: 0 -24px;
+	padding: 8px 78px 8px 24px;
+	border-bottom: 1px solid lighten($gray, 30%);
+	text-align: right;
+
+	.button + .button {
+		margin-left: 24px;
+	}
+
+	.button {
+		color: $blue-medium;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $link-highlight;
+		}
+	}
+}
+
+
 // Duplicating `.table` for increased specificity
 .order-details__totals.table.table {
 	margin: 16px -24px;
