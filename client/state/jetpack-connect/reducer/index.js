@@ -8,11 +8,11 @@ import { isEmpty, omit } from 'lodash';
  * Internal dependencies
  */
 import jetpackAuthAttempts from './jetpack-auth-attempts';
+import jetpackConnectSelectedPlans from './jetpack-connect-selected-plans';
 import jetpackConnectSessions from './jetpack-connect-site';
 import jetpackConnectSite from './jetpack-connect-site';
 import jetpackSSO from './jetpack-sso';
 import {
-	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_AUTHORIZE,
@@ -23,17 +23,14 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import { jetpackConnectSelectedPlansSchema } from './schema';
 import { isStale } from '../utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
-import { urlToSlug } from 'lib/url';
 
 function buildDefaultAuthorizeState() {
 	return {
@@ -134,20 +131,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 	return state;
 }
 jetpackConnectAuthorize.hasCustomPersistence = true;
-
-export function jetpackConnectSelectedPlans( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE:
-			const siteSlug = urlToSlug( action.site );
-			return Object.assign( {}, state, { [ siteSlug ]: action.plan } );
-		case JETPACK_CONNECT_CHECK_URL:
-			return { '*': state[ '*' ] };
-		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
-	}
-	return state;
-}
-jetpackConnectSelectedPlans.schema = jetpackConnectSelectedPlansSchema;
 
 export default combineReducers( {
 	jetpackConnectSite,
