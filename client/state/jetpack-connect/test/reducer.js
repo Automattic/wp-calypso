@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -45,6 +44,8 @@ import {
 
 import { useSandbox } from 'test/helpers/use-sinon';
 
+const jestExpect = global.expect;
+
 const successfulSSOValidation = {
 	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	success: true,
@@ -80,7 +81,8 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
+		const initialState = reducer( undefined, {} );
+		expect( initialState ).to.have.keys( [
 			'jetpackConnectSite',
 			'jetpackConnectAuthorize',
 			'jetpackConnectSessions',
@@ -88,6 +90,7 @@ describe( 'reducer', () => {
 			'jetpackConnectSelectedPlans',
 			'jetpackAuthAttempts',
 		] );
+		jestExpect( initialState ).toMatchSnapshot();
 	} );
 
 	describe( '#jetpackConnectSessions()', () => {
