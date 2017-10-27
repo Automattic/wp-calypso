@@ -2614,8 +2614,8 @@
       }
     },
     "cross-env": {
-      "version": "4.0.0",
-      "integrity": "sha1-Fgg4YtCCdaRiiwskOxIb7apV3YA=",
+      "version": "5.1.1",
+      "integrity": "sha512-Wtvr+z0Z06KO1JxjfRRsPC+df7biIOiuV4iZ73cThjFGkH+ULBZq1MkBdywEcJC4cTDbO6c8IjgRjfswx3YTBA==",
       "requires": {
         "cross-spawn": "5.1.0",
         "is-windows": "1.0.1"
