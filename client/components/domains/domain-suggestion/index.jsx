@@ -25,6 +25,15 @@ class DomainSuggestion extends React.Component {
 		domain: PropTypes.string,
 	};
 
+	keyboardHandler = event => {
+		switch ( event.which ) {
+			case 13:
+			case 32:
+				this.props.onButtonClick( event );
+				break;
+		}
+	};
+
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
 		const classes = classNames(
@@ -44,6 +53,8 @@ class DomainSuggestion extends React.Component {
 				onClick={ this.props.onButtonClick }
 				role="button"
 				data-e2e-domain={ this.props.domain }
+				onKeyPress={ this.keyboardHandler }
+				tabIndex="0"
 			>
 				<div className="domain-suggestion__content">
 					{ children }
