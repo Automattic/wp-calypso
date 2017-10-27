@@ -513,7 +513,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 	return {
 		comments,
 		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
