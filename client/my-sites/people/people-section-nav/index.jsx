@@ -122,7 +122,7 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		var allowedFilterIds = [ 'team' ];
+		var allowedFilterIds = [ 'team', 'invitations' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
