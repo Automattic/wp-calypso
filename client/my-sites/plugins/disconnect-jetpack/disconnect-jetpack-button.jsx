@@ -17,7 +17,7 @@ import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
-	recordGoogleEvent,
+	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
 } from 'state/analytics/actions';
 
@@ -29,22 +29,19 @@ class DisconnectJetpackButton extends Component {
 
 	handleClick = event => {
 		event.preventDefault();
-		const { isMock, recordGoogleEvent: recordGAEvent } = this.props;
+		const { isMock, recordGoogleEvent } = this.props;
 
 		if ( isMock ) {
 			return;
 		}
 		this.setState( { dialogVisible: true } );
-		recordGAEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	};
 
 	hideDialog = () => {
-		const {
-			recordGoogleEvent: recordGAEvent,
-			recordTracksEventAction: recordTracksEvent,
-		} = this.props;
+		const { recordGoogleEvent, recordTracksEvent } = this.props;
 		this.setState( { dialogVisible: false } );
-		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
@@ -99,7 +96,7 @@ DisconnectJetpackButton.propTypes = {
 	isMock: PropTypes.bool,
 	text: PropTypes.string,
 	recordGoogleEvent: PropTypes.func.isRequired,
-	recordTracksEventAction: PropTypes.func.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
 };
 
 DisconnectJetpackButton.defaultProps = {
@@ -107,6 +104,6 @@ DisconnectJetpackButton.defaultProps = {
 };
 
 export default connect( null, {
-	recordGoogleEvent,
+	recordGoogleEvent: recordGoogleEventAction,
 	recordTracksEvent: recordTracksEventAction,
 } )( localize( DisconnectJetpackButton ) );
