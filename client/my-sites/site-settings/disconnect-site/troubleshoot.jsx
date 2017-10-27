@@ -13,13 +13,15 @@ import HelpButton from 'jetpack-connect/help-button';
 import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import addQueryArgs from 'lib/route/add-query-args';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSiteUrl } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const Troubleshoot = ( { siteSlug, trackDebugClick, trackSupportClick, translate } ) => (
+const Troubleshoot = ( { siteUrl, trackDebugClick, trackSupportClick, translate } ) => (
 	<LoggedOutFormLinks>
 		<LoggedOutFormLinkItem
-			href={ 'https://jetpack.com/support/debug/?url=' + siteSlug }
+			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
 			onClick={ trackDebugClick }
 		>
 			{ translate( 'Diagnose a connection problem' ) }
@@ -38,7 +40,7 @@ const Troubleshoot = ( { siteSlug, trackDebugClick, trackSupportClick, translate
 
 export default connect(
 	state => ( {
-		siteSlug: getSelectedSiteSlug( state ),
+		siteUrl: getSiteUrl( state, getSelectedSiteId( state ) ),
 	} ),
 	{
 		trackDebugClick: withAnalytics( recordTracksEvent( 'calypso_jetpack_disconnect_debug_click' ) ),
