@@ -3,13 +3,6 @@
 
 	.logged-out-form__links {
 		max-width: 100%;
-
-		.logged-out-form__link-item {
-			.gridicon {
-				position: relative;
-				top: 4px;
-			}
-		}
 	}
 
 	.formatted-header{
@@ -35,13 +28,6 @@
 	.logged-out-form__links {
 		margin-top: 15px;
 		text-align: center;
-
-		.logged-out-form__link-item {
-			.gridicon {
-				position: relative;
-				top: 4px;
-			}
-		}
 
 		.jetpack-connect__happychat-button {
 			text-align: center;
@@ -485,6 +471,8 @@
 	.gridicon {
 		width: 18px;
 		height: 18px;
+		position: relative;
+		top: 4px;
 	}
 }
 
@@ -550,13 +538,6 @@
 	.logged-out-form__links,
 	.jetpack-connect__happychat-button {
 		text-align: center;
-	}
-
-	.logged-out-form__link-item {
-		.gridicon {
-			position: relative;
-			top: 4px;
-		}
 	}
 }
 
