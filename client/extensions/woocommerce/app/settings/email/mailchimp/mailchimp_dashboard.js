@@ -58,7 +58,8 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 
 	const syncing = () => (
 		<Notice
-			status="is-warning"
+			className="mailchimp__sync-notice-syncing"
+			status="is-info"
 			isCompact
 			showDismiss={ false }
 			text={ translate(

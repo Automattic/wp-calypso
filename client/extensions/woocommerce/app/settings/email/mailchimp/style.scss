@@ -201,6 +201,10 @@
 	white-space: nowrap;
 }
 
+.mailchimp__sync-notice-syncing {
+	@include placeholder();	
+}
+
 .mailchimp__header-description {
 	color: $gray-text-min;
 	font-size: 12px;
