@@ -21,7 +21,7 @@ import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
 import { canCurrentUser } from 'state/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackSite, getSiteDomain } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, post ) => {
@@ -47,7 +47,7 @@ const PostActions = ( {
 	showComments,
 	showLikes,
 	showStats,
-	toggleComments,
+	siteDomain,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
 } ) => {
@@ -72,8 +72,8 @@ const PostActions = ( {
 						post={ post }
 						showLabel={ false }
 						commentCount={ post.discussion.comment_count }
-						onClick={ toggleComments }
-						tagName="div"
+						tagName="a"
+						link={ '/comments/' + siteDomain + '/' + post.ID }
 					/>
 				</li>
 			) }
@@ -102,13 +102,13 @@ PostActions.propTypes = {
 	className: PropTypes.string,
 	post: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	toggleComments: PropTypes.func.isRequired,
 	trackRelativeTimeStatusOnClick: PropTypes.func,
 	trackTotalViewsOnClick: PropTypes.func,
 };
 
 const mapStateToProps = ( state, { siteId, post } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
+	const siteDomain = getSiteDomain( state, siteId );
 
 	// TODO: Maybe add dedicated selectors for the following.
 	const showComments =
@@ -125,6 +125,7 @@ const mapStateToProps = ( state, { siteId, post } ) => {
 		showComments,
 		showLikes,
 		showStats,
+		siteDomain,
 	};
 };
 
