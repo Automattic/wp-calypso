@@ -279,10 +279,9 @@ class Plans extends Component {
 					basePlansPath={
 						this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans'
 					}
-					onSelect={
-						this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan
-					}
+					onSelect={ this.props.showFirst ? this.storeSelectedPlan : this.selectPlan }
 					hideFreePlan={ true }
+					isLanding={ false }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
