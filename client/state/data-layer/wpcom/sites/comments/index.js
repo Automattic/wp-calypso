@@ -26,8 +26,6 @@ import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 import { getSiteComment } from 'state/selectors';
-import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
-import { getSite as getReaderSite } from 'state/reader/sites/selectors';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
@@ -111,37 +109,12 @@ export const receiveCommentSuccess = ( store, action, response ) => {
 	} );
 };
 
-export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId } ) => {
-	const site = getReaderSite( getState(), siteId );
-	const siteName = getReaderSiteName( { site } );
-
-	if ( siteName ) {
-		dispatch(
-			errorNotice(
-				translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-					args: { siteName },
-				} ),
-				{ id: `request-comment-error-${ siteId }` }
-			)
-		);
-	} else {
-		const rawSite = getRawSite( getState(), siteId );
-		const error =
-			rawSite && rawSite.name
-				? translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-						args: { siteName: rawSite.name },
-					} )
-				: translate( 'Failed to retrieve comment for your site' );
-
-		dispatch( errorNotice( error, { id: `request-comment-error-${ siteId }` } ) );
-	}
-
+export const receiveCommentError = ( { dispatch }, { siteId, commentId } ) =>
 	dispatch( {
 		type: COMMENTS_RECEIVE_ERROR,
 		siteId,
 		commentId,
 	} );
-};
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( { dispatch }, action ) => {
