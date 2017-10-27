@@ -83,6 +83,7 @@ describe( '#jetpackConnectSite()', () => {
 		);
 
 		expect( state ).to.eql( { url: 'https://automattic.com' } );
+		expect( state ).to.not.have.property( 'isFetched' );
 	} );
 
 	test( 'should mark the url as dismissed if it is the current one', () => {
