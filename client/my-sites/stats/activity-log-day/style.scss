@@ -127,3 +127,7 @@
 	height: auto;
 	top: 57px;
 }
+
+.activity-log-item.is-before-dialog:before {
+	content: none;
+}
