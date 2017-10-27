@@ -150,7 +150,7 @@ class OrderFulfillment extends Component {
 			wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod && ! orderCancelled;
 		const labelsLoading = wcsEnabled && ! labelsLoaded && ! orderCancelled;
 
-		if ( orderFinished && ! labelsLoading && ! showLabels ) {
+		if ( ( orderFinished || orderCancelled ) && ! labelsLoading && ! showLabels ) {
 			return null;
 		}
 
