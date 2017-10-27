@@ -44,7 +44,7 @@ class DisconnectJetpack extends PureComponent {
 		siteTitle: PropTypes.string,
 		setAllSitesSelected: PropTypes.func,
 		recordGoogleEvent: PropTypes.func,
-		recordTracksEventAction: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
 		disconnect: PropTypes.func,
 		successNotice: PropTypes.func,
 		errorNotice: PropTypes.func,
@@ -167,7 +167,7 @@ class DisconnectJetpack extends PureComponent {
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
 			recordGoogleEvent: recordGAEvent,
-			recordTracksEventAction: recordTracksEvent,
+			recordTracksEvent,
 		} = this.props;
 
 		onDisconnectClick();
