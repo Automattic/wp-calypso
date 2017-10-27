@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -26,11 +25,24 @@ const RefundDialog = ( props ) => {
 
 	const onClose = () => props.closeRefundDialog( orderId, siteId );
 	const onConfirm = () => props.confirmRefund( orderId, siteId );
+
+	const buttons = [
+		{ label: translate( 'Cancel' ) },
+		{
+			onClick: onConfirm,
+			isPrimary: true,
+			disabled: refundDialog && refundDialog.isSubmitting,
+			additionalClassNames: refundDialog && refundDialog.isSubmitting ? 'is-busy' : '',
+			label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
+		},
+	];
+
 	return (
 		<Dialog
 			additionalClassNames="label-refund-modal woocommerce"
 			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
-			onClose={ onClose }>
+			onClose={ onClose }
+			buttons={ buttons }>
 			<FormSectionHeading>
 				{ translate( 'Request a refund' ) }
 			</FormSectionHeading>
@@ -46,19 +58,6 @@ const RefundDialog = ( props ) => {
 				<dt>{ translate( 'Amount eligible for refund' ) }</dt>
 				<dd>{ getRefundableAmount() }</dd>
 			</dl>
-			<ActionButtons buttons={ [
-				{
-					onClick: onConfirm,
-					isPrimary: true,
-					isDisabled: refundDialog && refundDialog.isSubmitting,
-					isBusy: refundDialog && refundDialog.isSubmitting,
-					label: translate( 'Refund label (-%(amount)s)', { args: { amount: getRefundableAmount() } } ),
-				},
-				{
-					onClick: onClose,
-					label: translate( 'Cancel' ),
-				},
-			] } />
 		</Dialog>
 	);
 };

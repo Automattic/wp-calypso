@@ -19,13 +19,8 @@ const DetailsDialog = ( props ) => {
 	const { orderId, siteId, isVisible, labelIndex, serviceName, packageName, productNames, translate } = props;
 
 	const onClose = () => props.closeDetailsDialog( orderId, siteId );
-
 	const buttons = [
-		{
-			primary: false,
-			onClick: onClose,
-			label: translate( 'Close' ),
-		},
+		{ label: translate( 'Close' ) },
 	];
 
 	return (
