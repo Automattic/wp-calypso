@@ -26,9 +26,9 @@ class DomainSuggestion extends React.Component {
 	};
 
 	keyboardHandler = event => {
-		switch ( event.which ) {
-			case 13:
-			case 32:
+		switch ( event.key ) {
+			case 'Enter':
+			case ' ':
 				this.props.onButtonClick( event );
 				break;
 		}
