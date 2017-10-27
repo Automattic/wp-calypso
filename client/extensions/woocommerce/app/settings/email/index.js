@@ -17,13 +17,13 @@ import MailChimp from './mailchimp';
 import ActionHeader from 'woocommerce/components/action-header';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { mailChimpSaveSettings } from 'woocommerce/state/sites/settings/email/actions';
 import { isSavingSettings } from 'woocommerce/state/sites/settings/email/selectors';
 
-const SettingsEmail = ( { site, siteId, translate, className, params, isSaving, mailChimpSaveSettings: saveSettings } ) => {
+const SettingsEmail = ( { site, translate, className, params, isSaving, mailChimpSaveSettings: saveSettings } ) => {
 	const breadcrumbs = [
-		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
+		( <a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
 		( <span>{ translate( 'Email' ) }</span> ),
 	];
 
@@ -31,7 +31,7 @@ const SettingsEmail = ( { site, siteId, translate, className, params, isSaving, 
 	const startWizard = 'wizard' === setup;
 
 	const onSave = () => (
-		saveSettings( siteId )
+		saveSettings( site.ID )
 	);
 
 	return (
@@ -42,23 +42,25 @@ const SettingsEmail = ( { site, siteId, translate, className, params, isSaving, 
 				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
-			<MailChimp siteId={ siteId } site={ site } startWizard={ startWizard } />
+			<MailChimp siteId={ site.ID } site={ site } startWizard={ startWizard } />
 		</Main>
 	);
 };
 
 SettingsEmail.propTypes = {
 	className: PropTypes.string,
-	siteId: PropTypes.number,
-	site: PropTypes.object,
+	site: PropTypes.shape( {
+		slug: PropTypes.string,
+		ID: PropTypes.number,
+	} ),
 	mailChimpSaveSettings: PropTypes.func.isRequired,
 };
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSiteWithFallback( state );
 	return {
-		siteId,
-		isSaving: isSavingSettings( state, siteId ),
+		site,
+		isSaving: isSavingSettings( state, site.ID ),
 	};
 }
 
