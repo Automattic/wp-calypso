@@ -15,7 +15,9 @@ import peopleController from './controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
-		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
+		[ 'team', 'followers', 'email-followers', 'viewers', 'invitations' ].forEach( function(
+			filter
+		) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );
 			page(
 				'/people/' + filter + '/:site_id',
