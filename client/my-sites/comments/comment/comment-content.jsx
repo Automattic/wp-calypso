@@ -17,8 +17,7 @@ import Emojify from 'components/emojify';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComment } from 'state/selectors';
-import { getPostCommentsTree } from 'state/comments/selectors';
+import { getParentComment, getSiteComment } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -32,7 +31,7 @@ export class CommentContent extends Component {
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, parentCommentContent, translate } = this.props;
+		const { commentUrl, isExpanded, parentCommentContent, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -40,7 +39,7 @@ export class CommentContent extends Component {
 
 		return (
 			<div className="comment__in-reply-to">
-				<Gridicon icon="reply" size={ 18 } />
+				{ ! isExpanded && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
 				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick }>
 					<Emojify>{ parentCommentContent }</Emojify>
@@ -89,13 +88,12 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
+
 	const commentUrl = isJetpack
 		? get( comment, 'URL' )
 		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
 
-	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
-	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
+	const parentComment = getParentComment( state, siteId, postId, commentId );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
 	return {
