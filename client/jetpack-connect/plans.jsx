@@ -273,7 +273,6 @@ class Plans extends Component {
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					{ ...this.props }
 					basePlansPath={ showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
 					onSelect={ showFirst ? this.storeSelectedPlan : this.selectPlan }
 					hideFreePlan={ true }
