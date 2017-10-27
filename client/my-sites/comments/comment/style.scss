@@ -145,6 +145,30 @@
 	}
 }
 
+.popover.comment__author-more-info-popover {
+	/* applying a lower z-index to ensure it is layered behind global notice */
+	z-index: z-index('root', '.popover.comment-detail__author-more-info');
+}
+
+.comment__author-more-info-element {
+	align-items: center;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	margin-bottom: 8px;
+
+	.gridicon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 8px;
+		width: 24px;
+	}
+
+	.button {
+		width: 100%;
+	}
+}
+
 // Comment Content Block
 
 .comment__content {

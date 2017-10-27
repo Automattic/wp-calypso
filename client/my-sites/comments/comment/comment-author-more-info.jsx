@@ -116,54 +116,54 @@ export class CommentAuthorMoreInfo extends Component {
 				onClick={ this.openAuthorMoreInfoPopover }
 				ref={ this.storeLabelRef }
 			>
-				<InfoPopover ignoreContext={ this.authorMoreInfoLabel } ref={ this.storePopoverRef }>
-					<div className="comment__author-more-info-popover">
-						<div className="comment__author-more-info-popover-element">
-							<Gridicon icon="user-circle" />
-							<div className="comment__author-more-info-popover-element-text">
-								<div>
-									<strong>{ authorDisplayName || translate( 'Anonymous' ) }</strong>
-								</div>
-								<div>{ authorUsername }</div>
+				<InfoPopover
+					className="comment__author-more-info-popover"
+					ignoreContext={ this.authorMoreInfoLabel }
+					ref={ this.storePopoverRef }
+				>
+					<div className="comment__author-more-info-element">
+						<Gridicon icon="user-circle" />
+						<div>
+							<div>
+								<strong>{ authorDisplayName || translate( 'Anonymous' ) }</strong>
 							</div>
+							<div>{ authorUsername }</div>
 						</div>
+					</div>
 
-						<div className="comment__author-more-info-popover-element">
-							<Gridicon icon="mail" />
-							<div className="comment__author-more-info-popover-element-text">
-								{ authorEmail || <em>{ translate( 'No email address' ) }</em> }
-							</div>
+					<div className="comment__author-more-info-element">
+						<Gridicon icon="mail" />
+						<div>{ authorEmail || <em>{ translate( 'No email address' ) }</em> }</div>
+					</div>
+
+					<div className="comment__author-more-info-element">
+						<Gridicon icon="link" />
+						<div>
+							{ !! authorUrl && (
+								<ExternalLink href={ authorUrl }>
+									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+								</ExternalLink>
+							) }
+							{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
 						</div>
+					</div>
 
-						<div className="comment__author-more-info-popover-element">
-							<Gridicon icon="link" />
-							<div className="comment__author-more-info-popover-element-text">
-								{ !! authorUrl && (
-									<ExternalLink href={ authorUrl }>
-										<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-									</ExternalLink>
-								) }
-								{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
-							</div>
+					<div className="comment__author-more-info-element">
+						<Gridicon icon="globe" />
+						<div>{ authorIp || <em>{ translate( 'No IP address' ) }</em> }</div>
+					</div>
+
+					{ showBlockUser && (
+						<div className="comment__author-more-info-element">
+							<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
+								{ isAuthorBlacklisted ? translate( 'Unblock user' ) : translate( 'Block user' ) }
+							</Button>
 						</div>
+					) }
 
-						<div className="comment__author-more-info-popover-element">
-							<Gridicon icon="globe" />
-							<div className="comment__author-more-info-popover-element-text">
-								{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
-							</div>
-						</div>
-
-						{ showBlockUser && (
-							<div className="comment__author-more-info-popover-element">
-								<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
-									{ isAuthorBlacklisted ? translate( 'Unblock user' ) : translate( 'Block user' ) }
-								</Button>
-							</div>
-						) }
-
-						{ ! authorEmail && (
-							<div className="comment__author-more-info-popover-element">
+					{ ! authorEmail && (
+						<div className="comment__author-more-info-element">
+							<div>
 								{ translate(
 									// eslint-disable-next-line max-len
 									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
@@ -179,8 +179,8 @@ export class CommentAuthorMoreInfo extends Component {
 									}
 								) }
 							</div>
-						) }
-					</div>
+						</div>
+					) }
 				</InfoPopover>
 				<label>{ translate( 'User Info' ) }</label>
 			</div>
