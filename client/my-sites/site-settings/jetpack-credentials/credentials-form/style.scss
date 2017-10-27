@@ -1,0 +1,32 @@
+.credentials-form .form-label {
+	margin-bottom: 15px;
+}
+
+.credentials-form__host-field {
+	width: 70%;
+}
+
+.credentials-form__port-field {
+	width: 25%;
+	padding-left: 5%;
+}
+
+.credentials-form__port-field .form-input-validation {
+	padding: 0;
+	margin-top: 5px;
+}
+
+.credentials-form__port-field .form-input-validation .gridicon {
+	display: none;
+}
+
+.credentials-form__cancel-button {
+	float: right;
+	margin-right: 15px;
+}
+
+.credentials-form__private-key-description {
+	font-weight: normal;
+	font-style: italic;
+	color: $gray;
+}
