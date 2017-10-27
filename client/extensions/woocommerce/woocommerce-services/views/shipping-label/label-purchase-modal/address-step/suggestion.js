@@ -57,7 +57,7 @@ const AddressSummary = ( { values, originalValues, countriesData } ) => {
 		<div className="address-step__suggestion-summary">
 			<p>{ getValue( 'name' ) }</p>
 			<p>{ getValue( 'address' ) } { getValue( 'address_2' ) }</p>
-			<p>{ getValue( 'city' ) }, { getValue( 'postcode' ) } { getValue( 'state' ) }</p>
+			<p>{ getValue( 'city' ) }, { getValue( 'state' ) }&nbsp; { getValue( 'postcode' ) }</p>
 			<p>{ getValue( 'country' ) }</p>
 		</div>
 	);

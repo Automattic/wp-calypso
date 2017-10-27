@@ -39,11 +39,11 @@ const renderSummary = ( {
 	}
 	const { countriesData } = storeOptions;
 	const { city, postcode, state, country } = ( normalized && selectNormalized ) ? normalized : values;
-	// Summary format: "city, state postcode [, country]"
+	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
 		const statesMap = ( countriesData[ country ] || {} ).states || {};
-		str += ( statesMap[ state ] || state ) + ' ';
+		str += ( statesMap[ state ] || state ) + '\xa0 ';
 	}
 	str += ( 'US' === country ? postcode.split( '-' )[ 0 ] : postcode );
 	if ( showCountry ) {
