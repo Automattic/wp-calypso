@@ -140,22 +140,6 @@ class Connection {
 	}
 
 	/**
-	 * Send customer and browser information
-	 * @param { Object } info selected form fields, customer date time, user agent and browser info
-	 */
-	sendInfo( info ) {
-		this.openSocket.then(
-			socket =>
-				socket.emit( 'message', {
-					id: uuid(),
-					meta: { ...info, forOperator: true },
-					type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_INFO,
-				} ),
-			e => debug( 'failed to send message', e )
-		);
-	}
-
-	/**
 	 *
 	 * Given a Redux action and a timeout, emits a SocketIO event that request
 	 * some info to the Happychat server.

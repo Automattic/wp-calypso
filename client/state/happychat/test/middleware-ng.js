@@ -20,7 +20,7 @@ import {
 	// sendEvent,
 	// sendLog,
 	sendMessage,
-	// sendUserInfo,
+	sendUserInfo,
 	// sendPreferences,
 	sendTyping,
 	sendNotTyping,
@@ -89,12 +89,12 @@ describe( 'middleware', () => {
 			expect( connection.send ).toHaveBeenCalledWith( action );
 		} );
 
-		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO', () => {
-		// 		const action = sendUserInfo( { user: 'user' } );
-		// 		actionMiddleware( action );
-		// 		expect( connection.send ).toHaveBeenCalledWith( action );
-		// 	} );
-		//
+		test( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO', () => {
+			const action = sendUserInfo( { user: 'user' } );
+			actionMiddleware( action );
+			expect( connection.send ).toHaveBeenCalledWith( action );
+		} );
+
 		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_PREFERENCES', () => {
 		// 		const action = sendPreferences( 'locale', [] );
 		// 		actionMiddleware( action );

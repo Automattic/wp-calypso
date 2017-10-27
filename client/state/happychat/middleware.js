@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import { has } from 'lodash';
 
 /**
@@ -21,7 +20,6 @@ import {
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
 	// end of new happychat action types
-	HAPPYCHAT_SEND_USER_INFO,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 	COMMENTS_CHANGE_STATUS,
@@ -42,13 +40,10 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
 import { getGroups } from './selectors';
-import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import buildConnection from 'lib/happychat/connection';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:happychat:actions' );
 
 export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	const state = getState();
@@ -59,48 +54,6 @@ export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 
 		connection.setPreferences( locale, groups );
 	}
-};
-
-export const sendInfo = ( connection, { getState }, action ) => {
-	const { howCanWeHelp, howYouFeel, site } = action;
-	const info = {
-		howCanWeHelp,
-		howYouFeel,
-		siteId: site.ID,
-		siteUrl: site.URL,
-		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
-	};
-
-	// add screen size
-	if ( 'object' === typeof screen ) {
-		info.screenSize = {
-			width: screen.width,
-			height: screen.height,
-		};
-	}
-
-	// add browser size
-	if ( 'object' === typeof window ) {
-		info.browserSize = {
-			width: window.innerWidth,
-			height: window.innerHeight,
-		};
-	}
-
-	// add user agent
-	if ( 'object' === typeof navigator ) {
-		info.userAgent = navigator.userAgent;
-	}
-
-	//  add geo location
-	const state = getState();
-	const geoLocation = getGeoLocation( state );
-	if ( geoLocation ) {
-		info.geoLocation = geoLocation;
-	}
-
-	debug( 'sending info message', info );
-	connection.sendInfo( info );
 };
 
 export const sendRouteSetEventMessage = ( connection, { getState }, action ) => {
@@ -230,10 +183,6 @@ export default function( connection = null ) {
 				updateChatPreferences( connection, store, action.siteId );
 				break;
 
-			case HAPPYCHAT_SEND_USER_INFO:
-				sendInfo( connection, store, action );
-				break;
-
 			case ROUTE_SET:
 				sendRouteSetEventMessage( connection, store, action );
 				break;
@@ -248,13 +197,13 @@ export default function( connection = null ) {
 
 			case HAPPYCHAT_IO_SEND_TYPING:
 			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
+			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 				connection.send( action );
 				break;
 
 			// NEW SOCKET API SURFACE - still not in use
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
 			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
-			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 				connectionNG.send( action );
 				break;
