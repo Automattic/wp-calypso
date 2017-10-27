@@ -190,7 +190,7 @@ export class CommentList extends Component {
 	};
 
 	setBulkStatus = status => () => {
-		const { recordBulkAction, status: listStatus } = this.props;
+		const { postId, recordBulkAction, status: listStatus } = this.props;
 		const { selectedComments } = this.state;
 
 		this.props.removeNotice( 'comment-notice-bulk' );
@@ -213,7 +213,7 @@ export class CommentList extends Component {
 			} );
 		} );
 
-		recordBulkAction( status, selectedComments.length, listStatus );
+		recordBulkAction( status, selectedComments.length, listStatus, !! postId ? 'post' : 'site' );
 
 		this.showBulkNotice( status );
 
