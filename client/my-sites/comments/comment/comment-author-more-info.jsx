@@ -33,7 +33,7 @@ import {
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { successNotice } from 'state/notices/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthorMoreInfo extends Component {
 	static propTypes = {
@@ -105,6 +105,8 @@ export class CommentAuthorMoreInfo extends Component {
 			authorUsername,
 			isAuthorBlacklisted,
 			showBlockUser,
+			siteSlug,
+			trackAnonymousModeration,
 			translate,
 		} = this.props;
 
@@ -125,12 +127,14 @@ export class CommentAuthorMoreInfo extends Component {
 								<div>{ authorUsername }</div>
 							</div>
 						</div>
+
 						<div className="comment__author-more-info-popover-element">
 							<Gridicon icon="mail" />
 							<div className="comment__author-more-info-popover-element-text">
 								{ authorEmail || <em>{ translate( 'No email address' ) }</em> }
 							</div>
 						</div>
+
 						<div className="comment__author-more-info-popover-element">
 							<Gridicon icon="link" />
 							<div className="comment__author-more-info-popover-element-text">
@@ -141,24 +145,41 @@ export class CommentAuthorMoreInfo extends Component {
 								) }
 								{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
 							</div>
-							<div className="comment__author-more-info-popover-element">
-								<Gridicon icon="globe" />
-								<div className="comment__author-more-info-popover-element-text">
-									{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
-								</div>
-							</div>
-							{ showBlockUser && (
-								<div className="comment__author-more-info-popover-element">
-									<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
-										{ isAuthorBlacklisted ? (
-											translate( 'Unblock user' )
-										) : (
-											translate( 'Block user' )
-										) }
-									</Button>
-								</div>
-							) }
 						</div>
+
+						<div className="comment__author-more-info-popover-element">
+							<Gridicon icon="globe" />
+							<div className="comment__author-more-info-popover-element-text">
+								{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
+							</div>
+						</div>
+
+						{ showBlockUser && (
+							<div className="comment__author-more-info-popover-element">
+								<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
+									{ isAuthorBlacklisted ? translate( 'Unblock user' ) : translate( 'Block user' ) }
+								</Button>
+							</div>
+						) }
+
+						{ ! authorEmail && (
+							<div className="comment__author-more-info-popover-element">
+								{ translate(
+									// eslint-disable-next-line max-len
+									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
+									{
+										components: {
+											a: (
+												<a
+													href={ `/settings/discussion/${ siteSlug }` }
+													onClick={ trackAnonymousModeration }
+												/>
+											),
+										},
+									}
+								) }
+							</div>
+						) }
 					</div>
 				</InfoPopover>
 				<label>{ translate( 'User Info' ) }</label>
@@ -190,6 +211,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		showBlockUser,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 
