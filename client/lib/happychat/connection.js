@@ -87,7 +87,7 @@ class Connection {
 	 * @return { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
-	sendNG( action ) {
+	send( action ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
@@ -98,13 +98,6 @@ class Connection {
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
-		);
-	}
-
-	send( message, meta = {} ) {
-		this.openSocket.then(
-			socket => socket.emit( 'message', { text: message, id: uuid(), meta } ),
-			e => debug( 'failed to send message', e )
 		);
 	}
 

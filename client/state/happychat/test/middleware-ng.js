@@ -19,7 +19,7 @@ import {
 	requestTranscript,
 	// sendEvent,
 	// sendLog,
-	// sendMessage,
+	sendMessage,
 	// sendUserInfo,
 	// sendPreferences,
 	sendTyping,
@@ -49,8 +49,7 @@ describe( 'middleware', () => {
 	beforeEach( () => {
 		connection = {
 			init: jest.fn(),
-			// send: jest.fn(),
-			sendNG: jest.fn(),
+			send: jest.fn(),
 			request: jest.fn(),
 		};
 
@@ -83,13 +82,13 @@ describe( 'middleware', () => {
 		// 		actionMiddleware( action );
 		// 		expect( connection.send ).toHaveBeenCalledWith( action );
 		// 	} );
-		//
-		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
-		// 		const action = sendMessage( 'msg' );
-		// 		actionMiddleware( action );
-		// 		expect( connection.send ).toHaveBeenCalledWith( action );
-		// 	} );
-		//
+
+		test( 'HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
+			const action = sendMessage( 'msg' );
+			actionMiddleware( action );
+			expect( connection.send ).toHaveBeenCalledWith( action );
+		} );
+
 		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO', () => {
 		// 		const action = sendUserInfo( { user: 'user' } );
 		// 		actionMiddleware( action );
@@ -105,13 +104,13 @@ describe( 'middleware', () => {
 		test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendTyping)', () => {
 			const action = sendTyping( 'msg' );
 			actionMiddleware( action );
-			expect( connection.sendNG ).toHaveBeenCalledWith( action );
+			expect( connection.send ).toHaveBeenCalledWith( action );
 		} );
 
 		test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendNotTyping)', () => {
 			const action = sendNotTyping( 'msg' );
 			actionMiddleware( action );
-			expect( connection.sendNG ).toHaveBeenCalledWith( action );
+			expect( connection.send ).toHaveBeenCalledWith( action );
 		} );
 	} );
 

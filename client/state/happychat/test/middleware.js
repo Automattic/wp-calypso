@@ -5,14 +5,13 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { noop } from 'lodash';
 import moment from 'moment';
 import { spy, stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import middleware, {
+import {
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
@@ -30,7 +29,6 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_SEND_USER_INFO,
-	HAPPYCHAT_SEND_MESSAGE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -104,17 +102,6 @@ describe( 'middleware', () => {
 
 			expect( connection.sendInfo ).to.have.been.calledOnce;
 			expect( connection.sendInfo ).to.have.been.calledWithMatch( expectedInfo );
-		} );
-	} );
-
-	describe( 'HAPPYCHAT_SEND_MESSAGE action', () => {
-		test( 'should send the message through the connection', () => {
-			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'Hello world' };
-			const connection = {
-				send: spy(),
-			};
-			middleware( connection )( { getState: noop } )( noop )( action );
-			expect( connection.send ).to.have.been.calledWith( action.message );
 		} );
 	} );
 

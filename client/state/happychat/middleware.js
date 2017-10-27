@@ -22,7 +22,6 @@ import {
 	HAPPYCHAT_IO_SEND_TYPING,
 	// end of new happychat action types
 	HAPPYCHAT_SEND_USER_INFO,
-	HAPPYCHAT_SEND_MESSAGE,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 	COMMENTS_CHANGE_STATUS,
@@ -60,11 +59,6 @@ export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 
 		connection.setPreferences( locale, groups );
 	}
-};
-
-const sendMessage = ( connection, { message, meta } ) => {
-	debug( 'sending message', message );
-	connection.send( message, meta );
 };
 
 export const sendInfo = ( connection, { getState }, action ) => {
@@ -240,10 +234,6 @@ export default function( connection = null ) {
 				sendInfo( connection, store, action );
 				break;
 
-			case HAPPYCHAT_SEND_MESSAGE:
-				sendMessage( connection, action );
-				break;
-
 			case ROUTE_SET:
 				sendRouteSetEventMessage( connection, store, action );
 				break;
@@ -257,13 +247,13 @@ export default function( connection = null ) {
 				break;
 
 			case HAPPYCHAT_IO_SEND_TYPING:
-				connection.sendNG( action );
+			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
+				connection.send( action );
 				break;
 
 			// NEW SOCKET API SURFACE - still not in use
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
 			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
-			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 				connectionNG.send( action );

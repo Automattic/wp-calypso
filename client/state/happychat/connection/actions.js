@@ -13,7 +13,6 @@ import {
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SET_AVAILABLE,
 	// NEW ACTION TYPES
@@ -49,12 +48,6 @@ export const setReconnecting = () => ( { type: HAPPYCHAT_RECONNECTING } );
 export const setHappychatAvailable = isAvailable => ( {
 	type: HAPPYCHAT_SET_AVAILABLE,
 	isAvailable,
-} );
-
-export const sendChatMessage = ( message, meta ) => ( {
-	type: HAPPYCHAT_SEND_MESSAGE,
-	message,
-	meta,
 } );
 
 /**

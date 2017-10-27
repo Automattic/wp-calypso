@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { sendChatMessage } from 'state/happychat/connection/actions';
+import { sendMessage } from 'state/happychat/connection/actions';
 import { setCurrentMessage } from 'state/happychat/ui/actions';
 import { sendTyping, sendNotTyping } from 'state/happychat/connection/actions';
 import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
@@ -113,7 +113,7 @@ const mapState = state => ( {
 const mapDispatch = {
 	onSendTyping: sendTyping,
 	onSendNotTyping: sendNotTyping,
-	onSendMessage: sendChatMessage,
+	onSendMessage: sendMessage,
 	onSetCurrentMessage: setCurrentMessage,
 };
 
