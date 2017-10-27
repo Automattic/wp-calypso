@@ -30,7 +30,7 @@ const DetailsDialog = ( props ) => {
 			onClose={ onClose }
 			buttons={ buttons }>
 			<FormSectionHeading>
-				{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
+				{ translate( 'Label #%(labelIndex)s Details', { args: { labelIndex: labelIndex + 1 } } ) }
 			</FormSectionHeading>
 			<dl>
 				<dt>{ translate( 'Service' ) }</dt>
