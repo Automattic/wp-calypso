@@ -29,6 +29,7 @@ import {
 	getOrderRefundTotal,
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
+import OrderAddItems from './add-items';
 import OrderTotalRow from './row-total';
 import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
@@ -270,6 +271,7 @@ class OrderDetailsTable extends Component {
 					{ order.line_items.map( this.renderOrderItem ) }
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
+				{ isEditing && <OrderAddItems /> }
 
 				<Table className={ totalsClasses } compact>
 					<OrderTotalRow
