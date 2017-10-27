@@ -255,7 +255,7 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { isRtlLayout, showFirst, translate } = this.props;
+		const { interval, isRtlLayout, showFirst, translate } = this.props;
 
 		if (
 			this.redirecting ||
@@ -280,6 +280,7 @@ class Plans extends Component {
 					onSelect={ showFirst ? this.storeSelectedPlan : this.selectPlan }
 					hideFreePlan={ true }
 					isLanding={ false }
+					interval={ interval }
 					showFirst={ showFirst }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
