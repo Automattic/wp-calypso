@@ -22,10 +22,7 @@ import {
 } from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { dialogVisible: false };
-	}
+	state = { dialogVisible: false };
 
 	handleClick = event => {
 		event.preventDefault();
