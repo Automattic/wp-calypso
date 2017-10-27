@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay, some } from 'lodash';
+import { get, size, takeRight, delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ import { requestPostComments, requestComment, setActiveReply } from 'state/comme
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostComment from './post-comment';
-import PostCommentForm from './form';
+import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
@@ -277,31 +277,6 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	renderCommentForm = () => {
-		const { post, commentsTree } = this.props;
-		const commentText = this.state.commentText;
-
-		// Are we displaying the comment form at the top-level?
-		if (
-			this.props.activeReplyCommentId ||
-			some( commentsTree, comment => {
-				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-			} )
-		) {
-			return null;
-		}
-
-		return (
-			<PostCommentForm
-				ref="postCommentForm"
-				post={ post }
-				parentCommentId={ null }
-				commentText={ commentText }
-				onUpdateCommentText={ this.onUpdateCommentText }
-			/>
-		);
-	};
-
 	scrollToComment = () => {
 		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
 		comment.scrollIntoView();
@@ -460,7 +435,13 @@ class PostCommentList extends React.Component {
 						} ) }
 					</span>
 				) }
-				{ this.renderCommentForm() }
+				<PostCommentFormRoot
+					post={ this.props.post }
+					commentsTree={ this.props.commentsTree }
+					commentText={ this.state.commentText }
+					onUpdateCommentText={ this.onUpdateCommentText }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
+				/>
 			</div>
 		);
 	}
