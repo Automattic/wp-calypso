@@ -43,8 +43,8 @@ import {
 	jetpackAuthAttemptsSchema,
 	jetpackConnectSelectedPlansSchema,
 } from './schema';
-import { isStale } from './utils';
-import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from './constants';
+import { isStale } from '../utils';
+import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from '../constants';
 import { urlToSlug } from 'lib/url';
 
 function buildDefaultAuthorizeState() {
