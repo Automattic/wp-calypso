@@ -23,7 +23,7 @@ class ProductItem extends Component {
 	static propTypes = {
 		onClick: PropTypes.func.isRequired,
 		product: PropTypes.object.isRequired,
-		isSelected: PropTypes.func,
+		isSelected: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
