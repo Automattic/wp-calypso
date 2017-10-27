@@ -6,11 +6,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty } from 'lodash';
+import { map, flatMap, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -177,6 +177,16 @@ class ActivityLogDay extends Component {
 		);
 	}
 
+	/**
+	 * Check that the object passed is the Rewind dialog.
+	 *
+	 * @param {object} item Can be a regular object or a React element.
+	 * @returns {boolean} True if this is the React element for the Rewind dialog.
+	 */
+	static isRewindDialog( item ) {
+		return 'activity-rewind-dialog' === get( item, 'key', '' );
+	}
+
 	render() {
 		const {
 			applySiteOffset,
@@ -209,7 +219,7 @@ class ActivityLogDay extends Component {
 
 		return (
 			<div
-				className={ classnames( 'activity-log-day', {
+				className={ classNames( 'activity-log-day', {
 					'is-empty': ! hasLogs,
 					'has-rewind-dialog': hasConfirmDialog,
 				} ) }
@@ -224,18 +234,36 @@ class ActivityLogDay extends Component {
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
 					{ hasLogs &&
-						flatMap( rewriteStream( logs ), log => [
-							log.activityId === requestedRestoreActivityId && rewindConfirmDialog,
-							<ActivityLogItem
-								applySiteOffset={ applySiteOffset }
-								disableRestore={ disableRestore }
-								hideRestore={ hideRestore }
-								key={ log.activityId }
-								log={ log }
-								requestRestore={ requestRestore }
-								siteId={ siteId }
-							/>,
-						] ) }
+						map(
+							// Include the Rewind dialog in the right place in the collection
+							flatMap(
+								rewriteStream( logs ),
+								log =>
+									log.activityId === requestedRestoreActivityId
+										? [ rewindConfirmDialog, log ]
+										: [ log ]
+							),
+							( log, index, collection ) =>
+								ActivityLogDay.isRewindDialog( log ) ? (
+									// If this is the Rewind dialog, insert it in timeline
+									log
+								) : (
+									// Otherwise it's a regular event
+									<ActivityLogItem
+										className={ classNames( {
+											// Is this event right before the Rewind dialog?
+											'is-before-dialog': ActivityLogDay.isRewindDialog( collection[ index + 1 ] ),
+										} ) }
+										applySiteOffset={ applySiteOffset }
+										disableRestore={ disableRestore }
+										hideRestore={ hideRestore }
+										key={ log.activityId }
+										log={ log }
+										requestRestore={ requestRestore }
+										siteId={ siteId }
+									/>
+								)
+						) }
 				</FoldableCard>
 			</div>
 		);
