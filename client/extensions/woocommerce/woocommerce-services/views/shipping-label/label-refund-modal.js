@@ -50,7 +50,6 @@ const RefundDialog = ( props ) => {
 				{ translate( 'You can request a refund for a shipping label that has not been used to ship a package. ' +
 					'It will take at least 14 days to process.' ) }
 			</p>
-			<hr />
 			<dl>
 				<dt>{ translate( 'Purchase date' ) }</dt>
 				<dd>{ moment( created ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
