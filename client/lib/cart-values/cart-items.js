@@ -50,6 +50,7 @@ import {
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
+import { domainProductSlugs } from 'lib/domains/constants';
 
 import {
 	PLAN_FREE,
@@ -343,7 +344,7 @@ function hasRenewalItem( cart ) {
  * Determines whether there is at least one domain transfer item in the specified shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
- * @returns {boolean} true if there is at least one renewal item, false otherwise
+ * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 function hasTransferProduct( cart ) {
 	return some( getAll( cart ), isTransfer );
@@ -356,7 +357,7 @@ function hasTransferProduct( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getDomainTransfers( cart ) {
-	return filter( getAll( cart ), { product_slug: 'domain_transfer' } );
+	return filter( getAll( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
 }
 
 /**
@@ -522,7 +523,7 @@ function domainRedemption( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainTransfer( properties ) {
-	return domainItem( 'domain_transfer', properties.domain, properties.source );
+	return domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source );
 }
 
 function googleApps( properties ) {
@@ -806,7 +807,7 @@ function isRenewal( cartItem ) {
  * @returns {boolean} true if item is a renewal
  */
 function isTransfer( cartItem ) {
-	return cartItem.product_slug === 'domain_transfer';
+	return cartItem.product_slug === domainProductSlugs.TRANSFER_IN;
 }
 
 /**
@@ -913,6 +914,7 @@ export default {
 	getDomainRegistrations,
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
+	getDomainTransfers,
 	getIncludedDomain,
 	getItemForPlan,
 	getRenewalItemFromCartItem,
@@ -923,8 +925,9 @@ export default {
 	googleApps,
 	googleAppsExtraLicenses,
 	guidedTransferItem,
-	isNextDomainFree,
 	isDomainBeingUsedForPlan,
+	isNextDomainFree,
+	isTransfer,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
@@ -956,5 +959,4 @@ export default {
 	videoPressItem,
 	hasStaleItem,
 	hasTransferProduct,
-	getDomainTransfers,
 };

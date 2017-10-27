@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, noop } from 'lodash';
+import { endsWith, get, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import qs from 'qs';
@@ -219,7 +219,7 @@ class TransferDomainStep extends React.Component {
 		this.setState( { suggestion: null, notice: null } );
 
 		checkDomainAvailability( domain, ( error, result ) => {
-			const status = result && result.status ? result.status : error;
+			const status = get( result, 'status', error );
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:

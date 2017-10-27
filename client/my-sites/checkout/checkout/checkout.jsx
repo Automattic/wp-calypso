@@ -381,32 +381,22 @@ const Checkout = createReactClass( {
 		page( redirectPath );
 	},
 
-	hasTransferProduct() {
-		return cartItems.hasTransferProduct( this.props.cart );
-	},
-
 	setValidTransfer( domain ) {
 		const domainTransfers = {};
 		domainTransfers[ domain ] = true;
 
-		this.setState(
-			{
-				domainTransfers: Object.assign(
-					{},
-					this.state.domainTransfers,
-					domainTransfers
-				),
-			}
-		);
+		this.setState( {
+			domainTransfers: Object.assign( {}, this.state.domainTransfers, domainTransfers ),
+		} );
 	},
 
 	content: function() {
 		const { cart, selectedSite } = this.props;
 		const { domainTransfers } = this.state;
 
-		if ( ! this.isLoading() && this.hasTransferProduct() ) {
+		if ( ! this.isLoading() && cartItems.hasTransferProduct( this.props.cart ) ) {
 			const domainTransfersCart = cartItems.getDomainTransfers( cart );
-			const index = findIndex( domainTransfersCart, ( product ) => {
+			const index = findIndex( domainTransfersCart, product => {
 				return ! domainTransfers[ product.meta ];
 			} );
 

@@ -15,9 +15,9 @@ import i18n from 'i18n-calypso';
 import {
 	isDomainMapping,
 	isDomainRegistration,
+	isDomainTransfer,
 	isGoogleApps,
 	isGuidedTransfer,
-	isDomainTransfer,
 } from 'lib/products-values';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {

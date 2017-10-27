@@ -61,10 +61,15 @@ const dnsTemplates = {
 	},
 };
 
+const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
 export default {
 	dnsTemplates,
 	domainAvailability,
+	domainProductSlugs,
 	registrar,
-	type,
 	transferStatus,
+	type,
 };

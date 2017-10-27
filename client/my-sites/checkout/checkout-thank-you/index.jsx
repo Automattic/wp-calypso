@@ -43,6 +43,7 @@ import {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDomainTransfer,
 	isDotComPlan,
 	isGoogleApps,
 	isGuidedTransfer,
@@ -53,7 +54,6 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
-	isDomainTransfer,
 } from 'lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
 import Main from 'components/main';

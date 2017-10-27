@@ -46,7 +46,7 @@ function getTransferStatus( domainFromApi ) {
 	}
 
 	if ( domainFromApi.transfer_status === 'completed' ) {
-		return transferStatus.COMPLETE;
+		return transferStatus.COMPLETED;
 	}
 
 	return null;
@@ -94,4 +94,9 @@ function parseDomainAgainstTldList( domainFragment, tldList ) {
 	return parseDomainAgainstTldList( suffix, tldList );
 }
 
-export { getDomainNameFromReceiptOrCart, getDomainType, getTransferStatus, parseDomainAgainstTldList };
+export {
+	getDomainNameFromReceiptOrCart,
+	getDomainType,
+	getTransferStatus,
+	parseDomainAgainstTldList,
+};

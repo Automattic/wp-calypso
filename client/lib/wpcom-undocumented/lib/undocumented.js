@@ -559,7 +559,7 @@ Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
 Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-info`,
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
 		},
 		fn
 	);

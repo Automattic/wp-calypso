@@ -16,11 +16,11 @@ import {
 	isChargeback,
 	isDomainMapping,
 	isDomainRegistration,
+	isDomainTransfer,
 	isGoogleApps,
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
-	isDomainTransfer,
 } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';

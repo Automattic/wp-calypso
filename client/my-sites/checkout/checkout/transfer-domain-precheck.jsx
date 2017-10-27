@@ -124,7 +124,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		return this.getSection( icon, heading, message );
 	}
 
-	getEPPMessage() {
+	getEppMessage() {
 		const { translate } = this.props;
 
 		const icon = <Gridicon icon="info" />;
@@ -172,7 +172,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					</p>
 					{ this.getStatusMessage() }
 					{ this.getPrivacyMessage() }
-					{ this.getEPPMessage() }
+					{ this.getEppMessage() }
 					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick }>
 						{ translate( 'Continue' ) }
 					</Button>

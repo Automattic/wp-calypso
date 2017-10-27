@@ -760,9 +760,12 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	transferStatus = () => {
-		const domain = find( this.getDomains(), d => d.type === domainTypes.TRANSFER );
+		const domainInTransfer = find(
+			this.getDomains(),
+			domain => domain.type === domainTypes.TRANSFER
+		);
 
-		if ( ! domain ) {
+		if ( ! domainInTransfer ) {
 			return null;
 		}
 
@@ -773,12 +776,14 @@ export class DomainWarnings extends React.PureComponent {
 		let message = translate( 'Transfer in Progress' );
 
 		const action = (
-			<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
+			<NoticeAction
+				href={ paths.domainManagementEdit( this.props.selectedSite.slug, domainInTransfer ) }
+			>
 				{ translate( 'Fix' ) }
 			</NoticeAction>
 		);
 
-		switch ( domain.transferStatus ) {
+		switch ( domainInTransfer.transferStatus ) {
 			case transferStatus.PENDING_OWNER:
 				compactMessage = translate( 'Transfer confirmation required' );
 				message = translate(
@@ -789,7 +794,7 @@ export class DomainWarnings extends React.PureComponent {
 							strong: <strong />,
 							a: <a href="#" />,
 						},
-						args: { domain: domain.name },
+						args: { domain: domainInTransfer.name },
 					}
 				);
 				break;
@@ -805,7 +810,7 @@ export class DomainWarnings extends React.PureComponent {
 							strong: <strong />,
 							a: <a href="#" />,
 						},
-						args: { domain: domain.name },
+						args: { domain: domainInTransfer.name },
 					}
 				);
 				break;
@@ -820,8 +825,7 @@ export class DomainWarnings extends React.PureComponent {
 				key="transfer-status"
 				text={ this.props.isCompact && compactMessage }
 			>
-				{ ! this.props.isCompact && message }
-				{ this.props.isCompact && compactMessage && action }
+				{ this.props.isCompact ? compactMessage && action : message }
 			</Notice>
 		);
 	};
