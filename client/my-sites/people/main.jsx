@@ -17,6 +17,7 @@ import Main from 'components/main';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
 import TeamList from 'my-sites/people/team-list';
+import InvitationsList from 'my-sites/people/invitations-list';
 import EmptyContent from 'components/empty-content';
 import observe from 'lib/mixins/data-observe';
 import PeopleNotices from 'my-sites/people/people-notices';
@@ -61,6 +62,8 @@ export const People = createReactClass( {
 				);
 			case 'viewers':
 				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
+			case 'invitations':
+				return <InvitationsList invitees={ invitees } />;
 			default:
 				return null;
 		}
