@@ -16,7 +16,6 @@ import { first } from 'lodash';
  */
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
 import config from 'config';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -26,8 +25,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import { isOrderFinished } from 'woocommerce/lib/order-status';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -57,19 +54,13 @@ class OrderFulfillment extends Component {
 		errorMessage: false,
 		shouldEmail: false,
 		showDialog: false,
-		showPopoverMenu: false,
 		trackingNumber: '',
 	};
 
-	toggleDialog = () => {
+	toggleDialog = event => {
+		event && event.preventDefault();
 		this.setState( {
 			showDialog: ! this.state.showDialog,
-		} );
-	};
-
-	togglePopoverMenu = () => {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
 	};
 
@@ -153,23 +144,24 @@ class OrderFulfillment extends Component {
 			translate,
 			hasLabelsPaymentMethod,
 		} = this.props;
-		const isShippable = ! isOrderFinished( order.status );
-		const hideLabels = ! labelsEnabled || ! hasLabelsPaymentMethod;
-		const buttonClassName = classNames( {
-			'is-placeholder': wcsEnabled && ! labelsLoaded,
-		} );
+		const orderFinished = isOrderFinished( order.status );
+		const orderCancelled = 'cancelled' === order.status;
+		const showLabels =
+			wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod && ! orderCancelled;
+		const labelsLoading = wcsEnabled && ! labelsLoaded && ! orderCancelled;
 
-		if ( ! isShippable && ( ! wcsEnabled || ( labelsLoaded && hideLabels ) ) ) {
+		if ( ( orderFinished || orderCancelled ) && ! labelsLoading && ! showLabels ) {
 			return null;
 		}
 
-		if ( ! wcsEnabled || ! labelsLoaded || hideLabels ) {
+		if ( labelsLoading ) {
+			const buttonClassName = 'is-placeholder';
+			return <Button className={ buttonClassName }>{ translate( 'Fulfill' ) }</Button>;
+		}
+
+		if ( ! showLabels ) {
 			return (
-				<Button
-					primary={ ! wcsEnabled || labelsLoaded }
-					onClick={ this.toggleDialog }
-					className={ buttonClassName }
-				>
+				<Button primary onClick={ this.toggleDialog }>
 					{ translate( 'Fulfill' ) }
 				</Button>
 			);
@@ -177,33 +169,18 @@ class OrderFulfillment extends Component {
 
 		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
 
-		if ( ! isShippable ) {
-			return (
-				<div>
-					<Button onClick={ onLabelPrint }>{ translate( 'Print new label' ) }</Button>
-				</div>
-			);
+		if ( orderFinished ) {
+			return <Button onClick={ onLabelPrint }>{ translate( 'Print new label' ) }</Button>;
 		}
 
 		return (
-			<div>
-				<ButtonGroup className="order-fulfillment__button-group">
-					<Button primary={ labelsLoaded } onClick={ onLabelPrint }>
-						{ translate( 'Print label & fulfill' ) }
-					</Button>
-					<Button onClick={ this.togglePopoverMenu } ref="popoverMenuButton">
-						<Gridicon icon="ellipsis" />
-					</Button>
-				</ButtonGroup>
-				<PopoverMenu
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.togglePopoverMenu }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					<PopoverMenuItem onClick={ this.toggleDialog }>
-						{ translate( 'Fulfill without printing a label' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
+			<div className="order-fulfillment__print-container">
+				<a href="#" onClick={ this.toggleDialog }>
+					{ translate( 'Fulfill without printing a label' ) }
+				</a>
+				<Button primary={ labelsLoaded } onClick={ onLabelPrint }>
+					{ translate( 'Print label & fulfill' ) }
+				</Button>
 			</div>
 		);
 	}

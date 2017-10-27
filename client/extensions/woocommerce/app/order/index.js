@@ -25,6 +25,7 @@ import {
 	getOrderWithEdits,
 } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
+import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import Main from 'components/main';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
@@ -134,6 +135,7 @@ class Order extends Component {
 				</ActionHeader>
 
 				<div className="order__container">
+					<LabelsSetupNotice />
 					<OrderDetails orderId={ orderId } />
 					<OrderActivityLog orderId={ orderId } siteId={ site.ID } />
 					<OrderCustomer orderId={ orderId } />
