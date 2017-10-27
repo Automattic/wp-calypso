@@ -35,13 +35,17 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser, isRtl, isSiteOnPaidPlan } from 'state/selectors';
+import {
+	canCurrentUser,
+	getJetpackConnectRedirectAfterAuth,
+	isRtl,
+	isSiteOnPaidPlan,
+} from 'state/selectors';
 import {
 	getFlowType,
 	isRedirectingToWpAdmin,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
-	getAuthorizationData,
 	isCalypsoStartedConnection,
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
@@ -124,9 +128,9 @@ class Plans extends Component {
 			return;
 		}
 
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		if ( queryObject ) {
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		const { redirectAfterAuth } = this.props;
+		if ( redirectAfterAuth ) {
+			this.props.goBackToWpAdmin( redirectAfterAuth );
 		} else if ( this.props.selectedSite ) {
 			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
@@ -313,7 +317,7 @@ export default connect(
 			selectedPlan,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : false,
 			sitePlans: getPlansBySite( state, selectedSite ),
-			jetpackConnectAuthorize: getAuthorizationData( state ),
+			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: selectedSite
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
