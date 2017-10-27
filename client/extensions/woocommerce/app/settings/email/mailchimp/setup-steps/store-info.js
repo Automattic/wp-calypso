@@ -62,8 +62,8 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 					? translate( 'number needs at least 6 digits' )
 					: translate( 'field is required' );
 				return (
-					<FormFieldset>
-						<div key={ index }>
+					<FormFieldset key={ index }>
+						<div>
 							<FormLabel>
 								{ item.label }
 							</FormLabel>

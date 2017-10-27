@@ -35,8 +35,8 @@ const CampaignDefaults = ( { storeData = {}, onChange, validateFields } ) => {
 			</p>
 			<div className="setup-steps__campaign-defaults">
 				{ fields.map( ( item, index ) => (
-					<FormFieldset>
-						<div key={ index }>
+					<FormFieldset key={ index }>
+						<div>
 							<FormLabel>
 								{ item.label }
 							</FormLabel>
@@ -49,7 +49,8 @@ const CampaignDefaults = ( { storeData = {}, onChange, validateFields } ) => {
 						<FormSettingExplanation>
 							{ item.explanation }
 						</FormSettingExplanation>
-							{ ( validateFields && ! storeData[ item.name ] ) && <FormInputValidation iserror text="field is required" /> }
+							{ ( validateFields && ! storeData[ item.name ] ) &&
+								<FormInputValidation iserror text={ translate( 'field is required' ) } /> }
 						</div>
 					</FormFieldset>
 				) ) }

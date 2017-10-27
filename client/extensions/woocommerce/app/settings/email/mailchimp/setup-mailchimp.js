@@ -307,12 +307,12 @@ class MailChimpSetup extends React.Component {
 					<div className="mailchimp__setup-dialog-progress">
 						<ProgressBar
 							value={ stepNum + 1 }
-						  total={ uiStepsCount }
-						  compact
+							total={ uiStepsCount }
+							compact
 						/>
 						<ProgressIndicator
 							stepNumber={ stepNum }
-						  totalSteps={ uiStepsCount }
+							totalSteps={ uiStepsCount }
 						/>
 					</div>
 					<div className="mailchimp__setup-dialog-content">

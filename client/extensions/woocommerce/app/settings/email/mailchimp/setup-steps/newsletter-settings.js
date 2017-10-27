@@ -45,13 +45,11 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 					) )
 				}
 			</FormSelect>
-			<FormSettingExplanation>
-				<p className="setup-steps__sync-explanation">
-					{ translate(
-						'We\'ll sync your orders with this list so you can segment based on purchase history. We\'ll also ' +
-							'sync products so you can add relevant product information to customer emails.'
-					) }
-				</p>
+			<FormSettingExplanation className="setup-steps__sync-explanation">
+				{ translate(
+					'We\'ll sync your orders with this list so you can segment based on purchase history. We\'ll also ' +
+						'sync products so you can add relevant product information to customer emails.'
+				) }
 			</FormSettingExplanation>
 		</FormFieldset>
 	);
