@@ -293,16 +293,17 @@ class MailChimpSetup extends React.Component {
 					buttons={ buttons }
 					onClose={ this.props.onClose }
 					className={ dialogClass }>
-					<div className="mailchimp__setup-dialog-title">MailChimp</div>
-					<ProgressBar
-						value={ stepNum + 1 }
-						total={ Object.keys( steps ).length }
-						compact
-					/>
-					<ProgressIndicator
-						stepNumber={ stepNum }
-						totalSteps={ Object.keys( steps ).length }
-					/>
+					<div className="mailchimp__setup-dialog-progress">
+						<ProgressBar
+							value={ stepNum + 1 }
+							total={ Object.keys( steps ).length }
+							color={ '#00aadc' }
+						/>
+						<ProgressIndicator
+							stepNumber={ stepNum }
+							totalSteps={ Object.keys( steps ).length }
+						/>
+					</div>
 						<div className="mailchimp__setup-dialog-content">
 							{ this.renderStep() }
 						</div>
