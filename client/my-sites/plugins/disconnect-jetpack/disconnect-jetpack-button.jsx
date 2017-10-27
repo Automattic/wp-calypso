@@ -29,20 +29,20 @@ class DisconnectJetpackButton extends Component {
 
 	handleClick = event => {
 		event.preventDefault();
-		const { isMock, recordGoogleEvent } = this.props;
+		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		if ( isMock ) {
 			return;
 		}
 		this.setState( { dialogVisible: true } );
 		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
 	hideDialog = () => {
-		const { recordGoogleEvent, recordTracksEvent } = this.props;
+		const { recordGoogleEvent } = this.props;
 		this.setState( { dialogVisible: false } );
 		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
-		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
 	render() {
