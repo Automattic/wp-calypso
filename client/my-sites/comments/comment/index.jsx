@@ -11,6 +11,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 
 export class Comment extends Component {
@@ -80,6 +81,8 @@ export class Comment extends Component {
 							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected } }
 							toggleExpanded={ this.toggleExpanded }
 						/>
+
+						<CommentContent { ...{ commentId, isExpanded } } />
 					</div>
 				) }
 			</Card>
