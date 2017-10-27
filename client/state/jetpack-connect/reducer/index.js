@@ -8,6 +8,7 @@ import { isEmpty, omit, pickBy } from 'lodash';
  * Internal dependencies
  */
 import jetpackConnectSite from './jetpack-connect-site';
+import jetpackSSO from './jetpack-sso';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_COMPLETE_FLOW,
@@ -22,12 +23,6 @@ import {
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
-	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
-	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
-	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
-	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
 	SERIALIZE,
@@ -192,42 +187,6 @@ export function jetpackAuthAttempts( state = {}, action ) {
 	return state;
 }
 jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
-
-export function jetpackSSO( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
-			return Object.assign( {}, state, { isValidating: true } );
-		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
-			return Object.assign( {}, state, {
-				isValidating: false,
-				validationError: false,
-				nonceValid: action.success,
-				blogDetails: action.blogDetails,
-				sharedDetails: action.sharedDetails,
-			} );
-		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
-			return Object.assign( {}, state, {
-				isValidating: false,
-				validationError: action.error,
-				nonceValid: false,
-			} );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
-			return Object.assign( {}, state, { isAuthorizing: true } );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			return Object.assign( {}, state, {
-				isAuthorizing: false,
-				authorizationError: false,
-				ssoUrl: action.ssoUrl,
-			} );
-		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
-			return Object.assign( {}, state, {
-				isAuthorizing: false,
-				authorizationError: action.error,
-				ssoUrl: false,
-			} );
-	}
-	return state;
-}
 
 export function jetpackConnectSelectedPlans( state = {}, action ) {
 	switch ( action.type ) {
