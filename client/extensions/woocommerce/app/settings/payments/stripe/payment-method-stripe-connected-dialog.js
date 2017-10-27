@@ -36,6 +36,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 			} ),
 		} ),
 		onCancel: PropTypes.func.isRequired,
+		onDisconnect: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
 		stripeConnectAccount: PropTypes.shape( {
@@ -111,15 +112,23 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	};
 
 	getButtons = () => {
-		const { onCancel, onDone, stripeConnectAccount, translate } = this.props;
+		const { onCancel, onDone, isDisconnecting, stripeConnectAccount, translate } = this.props;
 
 		const buttons = [];
 
+		const disabled = isDisconnecting;
+
 		if ( stripeConnectAccount.isActivated ) {
-			buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
+			buttons.push( {
+				action: 'cancel',
+				disabled: disabled,
+				label: translate( 'Cancel' ),
+				onClick: onCancel,
+			} );
 
 			buttons.push( {
 				action: 'save',
+				disabled: disabled,
 				label: translate( 'Done' ),
 				onClick: onDone,
 				isPrimary: true,
@@ -127,6 +136,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		} else {
 			buttons.push( {
 				action: 'cancel',
+				disabled: disabled,
 				label: translate( 'Close' ),
 				onClick: onCancel,
 				isPrimary: true,
@@ -137,7 +147,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	};
 
 	render() {
-		const { stripeConnectAccount, translate } = this.props;
+		const { isDisconnecting, onDisconnect, stripeConnectAccount, translate } = this.props;
 
 		return (
 			<Dialog
@@ -146,7 +156,11 @@ class PaymentMethodStripeConnectedDialog extends Component {
 				isVisible
 			>
 				<div className="stripe__method-edit-header">{ translate( 'Manage Stripe' ) }</div>
-				<StripeConnectAccount stripeConnectAccount={ stripeConnectAccount } />
+				<StripeConnectAccount
+					isDisconnecting={ isDisconnecting }
+					onDisconnect={ onDisconnect }
+					stripeConnectAccount={ stripeConnectAccount }
+				/>
 				{ stripeConnectAccount.isActivated && this.renderMoreSettings() }
 			</Dialog>
 		);

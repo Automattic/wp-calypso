@@ -25,7 +25,12 @@ class StripeConnectAccount extends Component {
 			lastName: PropTypes.string,
 			logo: PropTypes.string,
 		} ),
-		onDisconnect: PropTypes.func, // TODO - require most of these props in subsequent PR
+		isDisconnecting: PropTypes.bool,
+		onDisconnect: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		isDisconnecting: false,
 	};
 
 	renderLogo = () => {
@@ -61,19 +66,17 @@ class StripeConnectAccount extends Component {
 		);
 	};
 
-	// TODO - when we are ready to connect this for-reals, this layer may not be needed
 	onDisconnect = event => {
 		event.preventDefault();
-		if ( this.props.onDisconnect ) {
-			this.props.onDisconnect();
-		}
+		this.props.onDisconnect();
 	};
 
 	renderStatus = () => {
-		const { stripeConnectAccount, translate } = this.props;
+		const { isDisconnecting, stripeConnectAccount, translate } = this.props;
 		const { isActivated } = stripeConnectAccount;
 
 		let status = null;
+		let disconnect = null;
 
 		if ( isActivated ) {
 			status = (
@@ -89,12 +92,22 @@ class StripeConnectAccount extends Component {
 			);
 		}
 
-		return (
-			<div>
-				{ status }
+		if ( isDisconnecting ) {
+			disconnect = (
+				<span className="stripe__connect-account-disconnect">{ translate( 'Disconnecting' ) }</span>
+			);
+		} else {
+			disconnect = (
 				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDisconnect }>
 					{ translate( 'Disconnect' ) }
 				</a>
+			);
+		}
+
+		return (
+			<div>
+				{ status }
+				{ disconnect }
 			</div>
 		);
 	};

@@ -10,6 +10,7 @@
 import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
@@ -76,3 +77,11 @@ function fetchFailure( siteId, action, errorMessage ) {
 		siteId,
 	};
 }
+
+export function disconnectAccount( siteId ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
+		siteId,
+	};
+}
+

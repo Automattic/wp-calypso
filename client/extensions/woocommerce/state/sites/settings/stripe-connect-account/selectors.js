@@ -19,6 +19,10 @@ const getRawSettings = ( state, siteId ) => {
 	);
 };
 
+export function getIsDisconnecting( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isDisconnecting' ], false );
+}
+
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
@@ -35,5 +39,5 @@ export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
  */
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {
 	const rawSettings = getRawSettings( state, siteId );
-	return omit( rawSettings, [ 'isRequesting' ] );
+	return omit( rawSettings, [ 'isDisconnecting', 'isRequesting' ] );
 }

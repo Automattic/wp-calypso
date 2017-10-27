@@ -9,11 +9,12 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchAccountDetails } from '../actions';
 import useNock from 'test/helpers/use-nock';
+import { createAccount, disconnectAccount, fetchAccountDetails } from '../actions';
 import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -68,6 +69,17 @@ describe( 'actions', () => {
 					logo: 'https://foo.com/bar.png',
 					lastName: 'Bar',
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#disconnectAccount()', () => {
+		const siteId = '123';
+		test( 'should return an action', () => {
+			const action = disconnectAccount( siteId );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
+				siteId,
 			} );
 		} );
 	} );

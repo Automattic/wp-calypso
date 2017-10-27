@@ -9,6 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getIsRequesting, getStripeConnectAccount } from '../selectors';
+import { getIsDisconnecting } from '../selectors';
 
 const uninitializedState = {
 	extensions: {
@@ -70,6 +71,30 @@ const fetchedState = {
 	},
 };
 
+const disconnectedState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: '',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDisconnecting: false,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
 describe( 'selectors', () => {
 	describe( '#getIsRequesting', () => {
 		test( 'should be false when state is uninitialized.', () => {
@@ -100,6 +125,24 @@ describe( 'selectors', () => {
 				lastName: 'Bar',
 				logo: 'https://foo.com/bar.png',
 			} );
+		} );
+	} );
+
+	describe( '#getIsDisconnecting', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( getIsDisconnecting( preInitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be false when connected.', () => {
+			expect( getIsDisconnecting( connectedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when disconnecting.', () => {
+			expect( getIsDisconnecting( disconnectingState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when disconnected.', () => {
+			expect( getIsDisconnecting( disconnectedState, 123 ) ).to.be.false;
 		} );
 	} );
 } );
