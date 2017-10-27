@@ -27,7 +27,8 @@ import { removeNotice, successNotice } from 'state/notices/actions';
 import Comment from 'my-sites/comments/comment';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentNavigation from '../comment-navigation';
+import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
@@ -408,6 +409,7 @@ export class CommentList extends Component {
 			isCommentsTreeSupported,
 			isLoading,
 			page,
+			postId,
 			siteBlacklist,
 			siteId,
 			siteFragment,
@@ -439,6 +441,8 @@ export class CommentList extends Component {
 					/>
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+
+				{ !! postId && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
