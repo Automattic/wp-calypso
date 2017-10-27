@@ -16,7 +16,10 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	recordGoogleEvent,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {
@@ -36,9 +39,13 @@ class DisconnectJetpackButton extends Component {
 	};
 
 	hideDialog = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const {
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEventAction: recordTracksEvent,
+		} = this.props;
 		this.setState( { dialogVisible: false } );
 		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
 	render() {
@@ -92,10 +99,14 @@ DisconnectJetpackButton.propTypes = {
 	isMock: PropTypes.bool,
 	text: PropTypes.string,
 	recordGoogleEvent: PropTypes.func.isRequired,
+	recordTracksEventAction: PropTypes.func.isRequired,
 };
 
 DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect( null, { recordGoogleEvent } )( localize( DisconnectJetpackButton ) );
+export default connect( null, {
+	recordGoogleEvent,
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( DisconnectJetpackButton ) );
