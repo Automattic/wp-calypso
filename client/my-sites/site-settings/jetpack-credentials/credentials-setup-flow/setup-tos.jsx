@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,4 +41,4 @@ const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep 
 	</CompactCard>
 );
 
-export default SetupTos;
+export default localize( SetupTos );

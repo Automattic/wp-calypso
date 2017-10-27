@@ -45,7 +45,6 @@ class CredentialsSetupFlow extends Component {
 
 	render() {
 		const {
-			translate,
 			isPressable,
 			formIsSubmitting,
 			updateCredentials,
@@ -57,7 +56,6 @@ class CredentialsSetupFlow extends Component {
 				{ 'start' === this.state.currentStep && (
 					<SetupStart
 						goToNextStep={ this.goToNextStep }
-						translate={ translate }
 					/>
 				) }
 				{ 'tos' === this.state.currentStep && (
@@ -65,7 +63,6 @@ class CredentialsSetupFlow extends Component {
 						autoConfigure={ this.autoConfigure }
 						isPressable={ isPressable }
 						reset={ this.reset }
-						translate={ translate }
 						goToNextStep={ this.goToNextStep }
 					/>
 				) }

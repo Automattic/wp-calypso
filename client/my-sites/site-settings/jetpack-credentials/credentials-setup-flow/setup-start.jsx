@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,4 +22,4 @@ const SetupStart = ( { goToNextStep, translate } ) => (
 	</CompactCard>
 );
 
-export default SetupStart;
+export default localize( SetupStart );

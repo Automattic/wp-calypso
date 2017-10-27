@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +18,8 @@ class SetupFooter extends Component {
 
 	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
 
+	storePopoverLink = ref => this.popoverLink = ref;
+
 	render() {
 		const { translate } = this.props;
 
@@ -27,15 +28,15 @@ class SetupFooter extends Component {
 			<CompactCard className="credentials-setup-flow__footer">
 				<a
 					onClick={ this.togglePopover }
-					ref="popoverLink"
+					ref={ this.storePopoverLink }
 					className="credentials-setup-flow__footer-popover-link"
 				>
 					<Gridicon icon="help" size={ 18 } className="credentials-setup-flow__footer-popover-icon" />
 					{ translate( 'Why do I need this?' ) }
 				</a>
 				<Popover
-					context={ this.refs && this.refs.popoverLink }
-					isVisible={ get( this.state, 'showPopover', false ) }
+					context={ this.popoverLink }
+					isVisible={ this.state.showPopover }
 					onClose={ this.togglePopover }
 					className="credentials-setup-flow__footer-popover"
 					position="top"
