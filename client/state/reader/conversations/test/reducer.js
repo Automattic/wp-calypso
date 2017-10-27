@@ -12,6 +12,8 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+	SERIALIZE,
+	DESERIALIZE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -52,6 +54,21 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ '123-456' ] ).toEqual( 'F' );
+		} );
+
+		test( 'will deserialize valid state', () => {
+			const validState = { '123-456': 'M' };
+			expect( items( validState, { type: DESERIALIZE } ) ).toEqual( validState );
+		} );
+
+		test( 'will not deserialize invalid state', () => {
+			const invalidState = { '123-456': 'X' };
+			expect( items( invalidState, { type: DESERIALIZE } ) ).toEqual( {} );
+		} );
+
+		test( 'will serialize', () => {
+			const validState = { '123-456': 'M' };
+			expect( items( validState, { type: SERIALIZE } ) ).toEqual( validState );
 		} );
 	} );
 } );
