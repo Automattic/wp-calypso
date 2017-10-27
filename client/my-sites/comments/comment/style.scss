@@ -156,6 +156,7 @@
 	flex-flow: row;
 	flex-wrap: nowrap;
 	margin-bottom: 8px;
+	word-break: break-all;
 
 	&:last-child {
 		margin-bottom: 0;
