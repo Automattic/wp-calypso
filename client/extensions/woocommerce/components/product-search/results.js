@@ -64,7 +64,7 @@ class ProductSearchResults extends Component {
 
 	render() {
 		const { isLoaded, isLoading, products, search } = this.props;
-		if ( ! isLoaded && ! search ) {
+		if ( ! isLoaded || ! search ) {
 			return null;
 		}
 
