@@ -1,3 +1,29 @@
+.dashboard {
+	.mailchimp__getting-started-title {
+		display: none;
+	}
+
+	.mailchimp__getting-started-content {
+		@include breakpoint( ">960px" ) {
+			padding-top: 48px;
+			padding-bottom: 48px;
+		}
+
+		img {
+			@include breakpoint( ">960px" ) {
+				width: 390px;
+			}
+		}
+	}
+
+	.mailchimp__getting-started-list-header {
+		font-weight: 400;
+		font-size: 24px;
+		line-height: 1.2em;
+		margin-bottom: 16px;
+	}
+}
+
 .mailchimp__getting-started-title {
 	margin: 0;
 }
@@ -17,8 +43,22 @@
 
 .mailchimp__getting-started-content {
 	width: 100%;
-	@include breakpoint( ">660px" ) {
-		display: inline-flex;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+
+	img {
+		width: 200px;
+		margin-bottom: 16px;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+			width: 230px;
+		}
 	}
 }
 
@@ -34,10 +74,12 @@
 
 	li {
 		margin: 6px 0;
+		padding-left: 27px;
 
 		.gridicon {
 			display: inline;
 			margin-right: 8px;
+			margin-left: -27px;
 			vertical-align: bottom;
 			color: $alert-green;
 		}
