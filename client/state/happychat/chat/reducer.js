@@ -14,10 +14,11 @@ import validator from 'is-my-json-valid';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
+	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
@@ -119,7 +120,9 @@ export const timeline = ( state = [], action ) => {
 			const event = timelineEvent( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
-		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
+		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
+			return state;
+		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
 			const messages = filter( action.messages, message => {
 				if ( ! message.id ) {
 					return false;

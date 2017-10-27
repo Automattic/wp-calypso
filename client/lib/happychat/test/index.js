@@ -9,8 +9,11 @@ import { EventEmitter } from 'events';
  * Internal dependencies
  */
 import {
+	receiveError,
+	receiveTranscript,
+	receiveTranscriptTimeout,
+	requestTranscript,
 	setConnected,
-	requestChatTranscript,
 	setDisconnected,
 	setReconnecting,
 	setHappychatAvailable,
@@ -68,7 +71,7 @@ describe( 'connection', () => {
 				expect( dispatch.mock.calls[ 0 ][ 0 ] ).toEqual(
 					setConnected( { signer_user_id, locale, groups, geoLocation } )
 				);
-				expect( dispatch.mock.calls[ 1 ][ 0 ] ).toEqual( requestChatTranscript() );
+				expect( dispatch.mock.calls[ 1 ][ 0 ] ).toEqual( requestTranscript() );
 				return expect( openSocket ).resolves.toBe( socket );
 			} );
 
@@ -206,114 +209,117 @@ describe( 'connection', () => {
 		} );
 	} );
 
-	// TODO: to be enabled when corresponding connection changes are merged
-	// describe( 'when auth promise chain is fulfilled', () => {
-	// 	const signer_user_id = 12;
-	// 	const jwt = 'jwt';
-	// 	const locale = 'locale';
-	// 	const groups = 'groups';
-	// 	const geoLocation = 'location';
-	//
-	// 	let socket, dispatch, connection, config;
-	// 	beforeEach( () => {
-	// 		socket = new EventEmitter();
-	// 		dispatch = jest.fn();
-	// 		connection = buildConnection();
-	// 		config = Promise.resolve( {
-	// 			url: socket,
-	// 			user: {
-	// 				signer_user_id,
-	// 				jwt,
-	// 				locale,
-	// 				groups,
-	// 				geoLocation,
-	// 			},
-	// 		} );
-	// 		connection.init( dispatch, config );
-	// 	} );
-	//
-	// 	test( 'connection.send should emit a SocketIO event', () => {
-	// 		socket.emit( 'init' ); // resolve internal openSocket promise
-	//
-	// 		socket.emit = jest.fn();
-	// 		const action = sendMessage( 'my msg' );
-	// 		return connection.send( action ).then( () => {
-	// 			expect( socket.emit ).toHaveBeenCalledWith( action.event, action.payload );
-	// 		} );
-	// 	} );
-	//
-	// 	describe( 'connection.request should emit a SocketIO event', () => {
-	// 		test( 'and dispatch callbackTimeout if socket did not respond', () => {
-	// 			socket.emit( 'init' ); // resolve internal openSocket promise
-	//
-	// 			const action = requestTranscript( null );
-	// 			socket.emit = jest.fn();
-	// 			return connection.request( action, 100 ).catch( error => {
-	// 				expect( socket.emit ).toHaveBeenCalled();
-	// 				expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
-	// 				expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
-	// 				expect( dispatch ).toHaveBeenCalledWith( action.callbackTimeout() );
-	// 				expect( error.message ).toBe( 'timeout' );
-	// 			} );
-	// 		} );
-	//
-	// 		test( 'and dispatch callback if socket responded successfully', () => {
-	// 			socket.emit( 'init' ); // resolve internal openSocket promise
-	//
-	// 			const action = requestTranscript( null );
-	// 			socket.on( action.event, ( payload, callback ) => {
-	// 				const result = {
-	// 					messages: [ 'msg1', 'msg2' ],
-	// 					timestamp: Date.now(),
-	// 				};
-	// 				callback( null, result ); // fake server responded ok
-	// 			} );
-	// 			return connection.request( action, 100 ).then( result => {
-	// 				expect( dispatch ).toHaveBeenCalledWith( receiveTranscript( result ) );
-	// 			} );
-	// 		} );
-	//
-	// 		test( 'and dispatch error if socket responded with error', () => {
-	// 			socket.emit( 'init' ); // resolve internal openSocket promise
-	//
-	// 			const action = requestTranscript( null );
-	// 			socket.on( action.event, ( payload, callback ) => {
-	// 				callback( 'no data', null ); // fake server responded with error
-	// 			} );
-	// 			return connection.request( action, 100 ).catch( error => {
-	// 				expect( error.message ).toBe( 'no data' );
-	// 				expect( dispatch ).toHaveBeenCalledWith(
-	// 					receiveError( action.error + ': ' + error.message )
-	// 				);
-	// 			} );
-	// 		} );
-	// 	} );
-	// } );
-	//
-	// describe( 'when auth promise chain is rejected', () => {
-	// 	let socket, dispatch, connection, config;
-	// 	beforeEach( () => {
-	// 		socket = new EventEmitter();
-	// 		dispatch = jest.fn();
-	// 		connection = buildConnection();
-	// 		config = Promise.reject( 'no auth' );
-	// 		connection.init( dispatch, config );
-	// 	} );
-	//
-	// 	test( 'connection.send should dispatch receiveError action', () => {
-	// 		socket.emit = jest.fn();
-	// 		const action = sendMessage( 'content' );
-	// 		return connection.send( action ).catch( e => {
-	// 			expect( dispatch ).toHaveBeenCalledWith( receiveError( action.error + ': ' + e ) );
-	// 		} );
-	// 	} );
-	//
-	// 	test( 'connection.request should dispatch receiveError action', () => {
-	// 		socket.emit = jest.fn();
-	// 		const action = requestTranscript( null );
-	// 		return connection.request( action, 100 ).catch( e => {
-	// 			expect( dispatch ).toHaveBeenCalledWith( receiveError( action.error + ': ' + e ) );
-	// 		} );
-	// 	} );
-	// } );
+	describe( 'when auth promise chain is fulfilled', () => {
+		const signer_user_id = 12;
+		const jwt = 'jwt';
+		const locale = 'locale';
+		const groups = 'groups';
+		const geoLocation = 'location';
+
+		let socket, dispatch, connection, config;
+		beforeEach( () => {
+			socket = new EventEmitter();
+			dispatch = jest.fn();
+			connection = buildConnection();
+			config = Promise.resolve( {
+				url: socket,
+				user: {
+					signer_user_id,
+					jwt,
+					locale,
+					groups,
+					geoLocation,
+				},
+			} );
+			connection.init( dispatch, config );
+		} );
+
+		// TODO: to be enabled when corresponding connection changes land
+		// test( 'connection.send should emit a SocketIO event', () => {
+		// 	socket.emit( 'init' ); // resolve internal openSocket promise
+		//
+		// 	socket.emit = jest.fn();
+		// 	const action = sendMessage( 'my msg' );
+		// 	return connection.send( action ).then( () => {
+		// 		expect( socket.emit ).toHaveBeenCalledWith( action.event, action.payload );
+		// 	} );
+		// } );
+
+		describe( 'connection.request should emit a SocketIO event', () => {
+			test( 'and dispatch callbackTimeout if request ran out of time', () => {
+				socket.emit( 'init' ); // resolve internal openSocket promise
+
+				const action = requestTranscript( null );
+				socket.emit = jest.fn();
+				return connection.request( action, 100 ).catch( error => {
+					expect( socket.emit ).toHaveBeenCalled();
+					expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
+					expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
+					expect( dispatch ).toHaveBeenCalledWith( receiveTranscriptTimeout() );
+					expect( error.message ).toBe( 'timeout' );
+				} );
+			} );
+
+			test( 'and dispatch callback if request responded successfully', () => {
+				socket.emit( 'init' ); // resolve internal openSocket promise
+
+				const action = requestTranscript( null );
+				socket.on( action.event, ( payload, callback ) => {
+					const result = {
+						messages: [ 'msg1', 'msg2' ],
+						timestamp: Date.now(),
+					};
+					callback( null, result ); // fake server responded ok
+				} );
+				return connection.request( action, 100 ).then( result => {
+					expect( dispatch ).toHaveBeenCalledWith( receiveTranscript( result ) );
+				} );
+			} );
+
+			test( 'and dispatch error if request was not successful', () => {
+				socket.emit( 'init' ); // resolve internal openSocket promise
+
+				const action = requestTranscript( null );
+				socket.on( action.event, ( payload, callback ) => {
+					callback( 'no data', null ); // fake server responded with error
+				} );
+				return connection.request( action, 100 ).catch( error => {
+					expect( error.message ).toBe( 'no data' );
+					expect( dispatch ).toHaveBeenCalledWith(
+						receiveError( action.event + ' request failed: ' + error.message )
+					);
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'when auth promise chain is rejected', () => {
+		let socket, dispatch, connection, config;
+		beforeEach( () => {
+			socket = new EventEmitter();
+			dispatch = jest.fn();
+			connection = buildConnection();
+			config = Promise.reject( 'no auth' );
+			connection.init( dispatch, config );
+		} );
+
+		// TODO: to be enabled when corresponding connection changes land
+		// test( 'connection.send should dispatch receiveError action', () => {
+		// 	socket.emit = jest.fn();
+		// 	const action = sendMessage( 'content' );
+		// 	return connection.send( action ).catch( e => {
+		// 		expect( dispatch ).toHaveBeenCalledWith( receiveError( action.error + ': ' + e ) );
+		// 	} );
+		// } );
+
+		test( 'connection.request should dispatch receiveError action', () => {
+			socket.emit = jest.fn();
+			const action = requestTranscript( null );
+			return connection.request( action, 100 ).catch( e => {
+				expect( dispatch ).toHaveBeenCalledWith(
+					receiveError( 'failed to send ' + action.event + ': ' + e )
+				);
+			} );
+		} );
+	} );
 } );
