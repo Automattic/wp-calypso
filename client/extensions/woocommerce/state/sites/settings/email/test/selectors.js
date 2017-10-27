@@ -14,6 +14,7 @@ import {
 	isRequestingSettings,
 	isSavingSettings,
 	isSubmittingApiKey,
+	isSubmittingStoreInfo,
 	mailChimpSettings,
 	requestingSettingsError,
 } from '../selectors';
@@ -147,6 +148,16 @@ const mailChimpSaveSettings = Object.assign( {}, emailState, {
 	},
 } );
 
+const submitStoreInfoState = Object.assign( {}, emailState, {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: { settings: { email: { storeInfoSubmit: true } } },
+			},
+		},
+	},
+} );
+
 describe( 'selectors', () => {
 	describe( '#isRequestingSettings', () => {
 		test( 'should be false when woocommerce state is not available.', () => {
@@ -235,6 +246,20 @@ describe( 'selectors', () => {
 
 		test( 'should be false when user has not requested Save action', () => {
 			expect( isSavingSettings( emailState, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isSubmittingStoreInfo', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( isSubmittingStoreInfo( {}, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when mailchimp has valid connection with server.', () => {
+			expect( isSubmittingStoreInfo( submitStoreInfoState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when store infor submit is not pending', () => {
+			expect( isSubmittingStoreInfo( emailState, 123 ) ).to.be.false;
 		} );
 	} );
 } );

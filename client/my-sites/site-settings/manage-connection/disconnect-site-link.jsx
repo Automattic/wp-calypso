@@ -16,6 +16,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DisconnectSiteLink extends Component {
 	state = {
@@ -28,6 +29,8 @@ class DisconnectSiteLink extends Component {
 		this.setState( {
 			dialogVisible: true,
 		} );
+
+		this.props.recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
 	handleHideDialog = () => {
@@ -69,11 +72,14 @@ class DisconnectSiteLink extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-		siteId,
-	};
-} )( localize( DisconnectSiteLink ) );
+		return {
+			isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			siteId,
+		};
+	},
+	{ recordTracksEvent }
+)( localize( DisconnectSiteLink ) );

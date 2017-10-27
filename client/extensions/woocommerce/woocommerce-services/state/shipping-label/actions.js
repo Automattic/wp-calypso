@@ -49,6 +49,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
@@ -860,4 +862,17 @@ export const updatePaperSize = ( orderId, siteId, value ) => ( dispatch, getStat
 	if ( shippingLabel.reprintDialog != null ) {
 		dispatch( openReprintDialog( orderId, siteId, shippingLabel.reprintDialog.labelId ) );
 	}
+};
+
+export const openDetailsDialog = ( orderId, siteId, labelId ) => {
+	return {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
+		labelId,
+		siteId,
+		orderId,
+	};
+};
+
+export const closeDetailsDialog = ( orderId, siteId ) => {
+	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG, orderId, siteId };
 };

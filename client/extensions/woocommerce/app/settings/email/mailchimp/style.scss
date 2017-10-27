@@ -252,6 +252,13 @@
 	white-space: nowrap;
 }
 
+.mailchimp__sync-notice-syncing {
+	animation: button__busy-animation 3000ms infinite linear;
+	background-size: 120px 100%;
+	background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+	border-color: darken( $blue-medium, 8% );
+}
+
 .mailchimp__header-description {
 	color: $gray-text-min;
 	font-size: 12px;
