@@ -36,6 +36,7 @@ class SettingsPayments extends Component {
 		isSaving: PropTypes.bool,
 		site: PropTypes.shape( {
 			slug: PropTypes.string,
+			ID: PropTypes.number,
 		} ),
 		className: PropTypes.string,
 	};
