@@ -15,10 +15,10 @@ import { get } from 'lodash';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import InfoPopover from 'components/info-popover';
+import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getAuthorDisplayName } from 'my-sites/comments/comment/utils';
 
 export class CommentAuthorMoreInfo extends Component {
 	static propTypes = {
@@ -93,7 +93,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 
-	const authorDisplayName = getAuthorDisplayName( comment );
+	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
 
 	return {
 		authorDisplayName,
