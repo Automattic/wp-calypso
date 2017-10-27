@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, orderBy, size, slice, uniq } from 'lodash';
+import { each, filter, find, get, map, orderBy, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -534,8 +534,12 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status } ) => {
-	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
+const mapStateToProps = ( state, { postId, siteId, status } ) => {
+	const siteCommentsTree = getSiteCommentsTree( state, siteId, status );
+	const comments = !! postId
+		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
+		: map( siteCommentsTree, 'commentId' );
+
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
