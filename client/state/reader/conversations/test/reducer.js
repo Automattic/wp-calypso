@@ -53,16 +53,5 @@ describe( 'reducer', () => {
 
 			expect( state[ '123-456' ] ).toEqual( 'F' );
 		} );
-
-		test( 'should not update when given an invalid follow status', () => {
-			const original = deepFreeze( { '123-456': 'M' } );
-
-			const state = items( original, {
-				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-				payload: { siteId: 123, postId: 456, followStatus: 'X' },
-			} );
-
-			expect( state[ '123-456' ] ).toEqual( 'M' );
-		} );
 	} );
 } );

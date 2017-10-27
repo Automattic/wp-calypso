@@ -16,7 +16,7 @@ import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_MUTING,
 } from './follow-status';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
@@ -42,14 +42,9 @@ export const items = createReducer(
 			return newState;
 		},
 		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
-			// Use of a valid follow status is enforced by the schema
 			const newState = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId ) ]: action.payload.followStatus,
 			} );
-
-			if ( ! isValidStateWithSchema( newState, itemsSchema ) ) {
-				return state;
-			}
 
 			return newState;
 		},
