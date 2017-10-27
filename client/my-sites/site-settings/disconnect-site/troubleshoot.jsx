@@ -9,12 +9,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
 import HelpButton from 'jetpack-connect/help-button';
+import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import addQueryArgs from 'lib/route/add-query-args';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { getSiteUrl } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const Troubleshoot = ( { trackSupportClick, translate } ) => (
-	<div className="disconnect-site__troubleshooting">
+const Troubleshoot = ( { siteUrl, trackDebugClick, trackSupportClick, translate } ) => (
+	<LoggedOutFormLinks>
+		<LoggedOutFormLinkItem
+			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
+			onClick={ trackDebugClick }
+		>
+			{ translate( 'Diagnose a connection problem' ) }
+		</LoggedOutFormLinkItem>
 		<JetpackConnectHappychatButton
 			label={ translate( 'Get help from our Happiness Engineers' ) }
 			onClick={ trackSupportClick }
@@ -24,11 +35,17 @@ const Troubleshoot = ( { trackSupportClick, translate } ) => (
 				onClick={ trackSupportClick }
 			/>
 		</JetpackConnectHappychatButton>
-	</div>
+	</LoggedOutFormLinks>
 );
 
-export default connect( null, {
-	trackSupportClick: withAnalytics(
-		recordTracksEvent( 'calypso_jetpack_disconnect_support_click' )
-	),
-} )( localize( Troubleshoot ) );
+export default connect(
+	state => ( {
+		siteUrl: getSiteUrl( state, getSelectedSiteId( state ) ),
+	} ),
+	{
+		trackDebugClick: withAnalytics( recordTracksEvent( 'calypso_jetpack_disconnect_debug_click' ) ),
+		trackSupportClick: withAnalytics(
+			recordTracksEvent( 'calypso_jetpack_disconnect_support_click' )
+		),
+	}
+)( localize( Troubleshoot ) );
