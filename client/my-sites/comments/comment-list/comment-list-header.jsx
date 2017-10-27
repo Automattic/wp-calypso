@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,14 +15,18 @@ import QueryPosts from 'components/data/query-posts';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getSiteComments } from 'state/selectors';
 import { getSitePost } from 'state/posts/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export const CommentListHeader = ( {
 	postDate,
 	postId,
 	postTitle,
+	postUrl,
+	recordReaderArticleOpened,
 	site,
 	siteId,
 	siteSlug,
@@ -37,9 +41,9 @@ export const CommentListHeader = ( {
 			<QueryPosts siteId={ siteId } postId={ postId } />
 
 			<HeaderCake
-				actionHref={ `/comments/all/${ siteSlug }/${ postId }` }
+				actionHref={ postUrl }
 				actionIcon="visible"
-				actionOnClick={ noop }
+				actionOnClick={ recordReaderArticleOpened }
 				actionText={ translate( 'View Post' ) }
 				backHref={ `/comments/all/${ siteSlug }` }
 			>
@@ -66,13 +70,26 @@ const mapStateToProps = ( state, { postId } ) => {
 		)
 	);
 
+	const isJetpack = isJetpackSite( state, siteId );
+
 	return {
 		postDate,
 		postTitle,
+		postUrl: isJetpack ? get( post, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		site,
 		siteId,
 		siteSlug,
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentListHeader ) );
+const mapDispatchToProps = dispatch => ( {
+	recordReaderArticleOpened: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_article_opened' ),
+				bumpStat( 'calypso_comment_management', 'article_opened' )
+			)
+		),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentListHeader ) );
