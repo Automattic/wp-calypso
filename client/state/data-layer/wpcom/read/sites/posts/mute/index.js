@@ -31,7 +31,7 @@ export function requestConversationMute( { dispatch }, action ) {
 			{
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
-				path: `/read/sites/${ action.payload.blogId }/posts/${ action.payload.postId }/mute`,
+				path: `/read/sites/${ action.payload.siteId }/posts/${ action.payload.postId }/mute`,
 				body: {}, // have to have an empty body to make wpcom-http happy
 			},
 			actionWithRevert
@@ -56,7 +56,7 @@ export function receiveConversationMute( store, action, response ) {
 
 export function receiveConversationMuteError(
 	{ dispatch },
-	{ payload: { blogId, postId }, meta: { previousState } }
+	{ payload: { siteId, postId }, meta: { previousState } }
 ) {
 	dispatch(
 		errorNotice(
@@ -67,8 +67,8 @@ export function receiveConversationMuteError(
 	dispatch(
 		bypassDataLayer(
 			updateConversationFollowStatus( {
-				blogId: blogId,
-				postId: postId,
+				siteId,
+				postId,
 				followStatus: previousState,
 			} )
 		)

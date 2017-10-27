@@ -21,7 +21,7 @@ describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {
 		test( 'should dispatch an http request', () => {
 			const dispatch = jest.fn();
-			const action = muteConversation( { blogId: 123, postId: 456 } );
+			const action = muteConversation( { siteId: 123, postId: 456 } );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
 					previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
@@ -48,7 +48,7 @@ describe( 'conversation-mute', () => {
 			receiveConversationMute(
 				{ dispatch },
 				{
-					payload: { blogId: 123, postId: 456 },
+					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING },
 				},
 				{ success: true }
@@ -67,7 +67,7 @@ describe( 'conversation-mute', () => {
 			receiveConversationMute(
 				{ dispatch },
 				{
-					payload: { blogId: 123, postId: 456 },
+					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING },
 				},
 				{
@@ -84,7 +84,7 @@ describe( 'conversation-mute', () => {
 			expect( dispatch ).toHaveBeenCalledWith(
 				bypassDataLayer(
 					updateConversationFollowStatus( {
-						blogId: 123,
+						siteId: 123,
 						postId: 456,
 						followStatus: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 					} )
