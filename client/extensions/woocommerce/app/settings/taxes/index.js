@@ -54,6 +54,7 @@ class SettingsTaxes extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
 			slug: PropTypes.string,
+			ID: PropTypes.number,
 		} ),
 		className: PropTypes.string,
 	};
