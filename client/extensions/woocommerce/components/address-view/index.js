@@ -154,8 +154,8 @@ class AddressView extends Component {
 				{ street2 && <p>{ street2 }</p> }
 				<p>
 					{ city && <span className="address-view__city">{ city }</span> }
-					{ state && <span className="address-view__state">{ state }</span> }
-					{ postcode && <span className="address-view__postcode">{ postcode }</span> }
+					, { state && <span className="address-view__state">{ state }</span> }
+					&nbsp; { postcode && <span className="address-view__postcode">{ postcode }</span> }
 				</p>
 				<p>{ country }</p>
 			</div>
