@@ -16,6 +16,16 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_INITIALIZE,
+	// new happychat action types
+	HAPPYCHAT_IO_INIT,
+	HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
+	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
+	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
+	HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
+	HAPPYCHAT_IO_SEND_PREFERENCES,
+	HAPPYCHAT_IO_SEND_TYPING,
+	// end of new happychat action types
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
@@ -313,6 +323,14 @@ export default function( connection = null ) {
 		connection = require( './common' ).connection;
 	}
 
+	// This is a placeholder to make sure connectionNG is never used,
+	// but doesn't give a compilation error either.
+	const connectionNG = {
+		init: () => {},
+		send: () => {},
+		request: () => {},
+	};
+
 	return store => next => action => {
 		// Send any relevant log/event data from this action to Happychat
 		sendActionLogsAndEvents( connection, store, action );
@@ -349,6 +367,25 @@ export default function( connection = null ) {
 			case ROUTE_SET:
 				sendRouteSetEventMessage( connection, store, action );
 				break;
+
+			// NEW SOCKET API SURFACE
+			case HAPPYCHAT_IO_INIT:
+				connectionNG.init( store.dispatch, action.config );
+				break;
+
+			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
+			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
+			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
+			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
+			case HAPPYCHAT_IO_SEND_PREFERENCES:
+			case HAPPYCHAT_IO_SEND_TYPING:
+				connectionNG.send( action );
+				break;
+
+			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
+				connectionNG.request( action, action.timeout );
+				break;
+			// END OF NEW SOCKET API SURFACE
 		}
 		return next( action );
 	};
