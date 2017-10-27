@@ -101,6 +101,7 @@ export getReaderRecommendedSites from './get-reader-recommended-sites';
 export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-sites-paging-offset';
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
+export getReaderWatermark from './get-reader-watermark';
 export getRegistrantWhois from './get-registrant-whois';
 export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
