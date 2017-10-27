@@ -15,6 +15,7 @@ import QueryPosts from 'components/data/query-posts';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
+import { getSiteComments } from 'state/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
@@ -57,9 +58,13 @@ const mapStateToProps = ( state, { postId } ) => {
 	const post = getSitePost( state, siteId, postId );
 
 	const postDate = get( post, 'date' );
-	const postTitle =
-		decodeEntities( stripHTML( get( post, 'title' ) ) ) ||
-		decodeEntities( stripHTML( get( post, 'excerpt' ) ) );
+	const postTitle = decodeEntities(
+		stripHTML(
+			get( post, 'title' ) ||
+				get( post, 'excerpt' ) ||
+				get( getSiteComments( state, siteId ), '[0].post.title' )
+		)
+	);
 
 	return {
 		postDate,
