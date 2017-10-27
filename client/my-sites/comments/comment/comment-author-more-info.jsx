@@ -12,12 +12,27 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import InfoPopover from 'components/info-popover';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
-import { getSiteComment } from 'state/selectors';
+import {
+	canCurrentUser,
+	getSiteComment,
+	getSiteSetting,
+	isEmailBlacklisted,
+} from 'state/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
+import { successNotice } from 'state/notices/actions';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentAuthorMoreInfo extends Component {
@@ -31,6 +46,56 @@ export class CommentAuthorMoreInfo extends Component {
 
 	openAuthorMoreInfoPopover = event => this.authorMoreInfoPopover.handleClick( event );
 
+	toggleBlockUser = () => {
+		const {
+			authorEmail,
+			authorId,
+			commentId,
+			isAuthorBlacklisted,
+			showNotice,
+			siteBlacklist,
+			siteId,
+			translate,
+			updateBlacklist,
+		} = this.props;
+
+		const noticeOptions = {
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+		};
+
+		const analytics = {
+			action: isAuthorBlacklisted ? 'unblock_user' : 'block_user',
+			user_type: authorId ? 'wpcom' : 'email_only',
+		};
+
+		if ( isAuthorBlacklisted ) {
+			const newBlacklist = siteBlacklist
+				.split( '\n' )
+				.filter( item => item !== authorEmail )
+				.join( '\n' );
+
+			updateBlacklist( siteId, newBlacklist, analytics );
+
+			return showNotice(
+				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
+				noticeOptions
+			);
+		}
+
+		const newBlacklist = !! siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+
+		updateBlacklist( siteId, newBlacklist, analytics );
+
+		showNotice(
+			translate( 'User %(email)s is blocked and can no longer comment on your site.', {
+				args: { email: authorEmail },
+			} ),
+			noticeOptions
+		);
+	};
+
 	render() {
 		const {
 			authorDisplayName,
@@ -38,6 +103,8 @@ export class CommentAuthorMoreInfo extends Component {
 			authorIp,
 			authorUrl,
 			authorUsername,
+			isAuthorBlacklisted,
+			showBlockUser,
 			translate,
 		} = this.props;
 
@@ -80,6 +147,17 @@ export class CommentAuthorMoreInfo extends Component {
 									{ authorIp || <em>{ translate( 'No IP address' ) }</em> }
 								</div>
 							</div>
+							{ showBlockUser && (
+								<div className="comment__author-more-info-popover-element">
+									<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
+										{ isAuthorBlacklisted ? (
+											translate( 'Unblock user' )
+										) : (
+											translate( 'Block user' )
+										) }
+									</Button>
+								</div>
+							) }
 						</div>
 					</div>
 				</InfoPopover>
@@ -94,16 +172,54 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
+	const authorEmail = get( comment, 'author.email' );
+
+	const showBlockUser =
+		canCurrentUser( state, siteId, 'manage_options' ) &&
+		!! authorEmail &&
+		authorEmail !== getCurrentUserEmail( state );
 
 	return {
 		authorDisplayName,
-		authorEmail: get( comment, 'author.email' ),
+		authorEmail,
+		authorId: get( comment, 'author.ID' ),
 		authorIp: get( comment, 'author.ip_address' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		authorUrl: get( comment, 'author.URL', '' ),
+		isAuthorBlacklisted: isEmailBlacklisted( state, siteId, authorEmail ),
+		showBlockUser,
+		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
+		siteId,
 	};
 };
 
-const mapDispatchToProps = () => ( {} );
+const mapDispatchToProps = dispatch => ( {
+	showNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
+	updateBlacklist: ( siteId, blacklist_keys, analytics ) =>
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_moderate_user', analytics ),
+					bumpStat(
+						'calypso_comment_management',
+						'block_user' === analytics.action
+							? 'comment_author_blocked'
+							: 'comment_author_unblocked'
+					)
+				),
+				saveSiteSettings( siteId, { blacklist_keys } )
+			)
+		),
+	trackAnonymousModeration: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_moderate_user', {
+					action: 'open_discussion_settings',
+					user_type: 'anonymous',
+				} ),
+				bumpStat( 'calypso_comment_management', 'open_discussion_settings' )
+			)
+		),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentAuthorMoreInfo ) );
