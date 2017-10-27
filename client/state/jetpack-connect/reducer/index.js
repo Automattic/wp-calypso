@@ -2,12 +2,13 @@
 /**
  * External dependencis
  */
-import { isEmpty, omit, pickBy } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import jetpackAuthAttempts from './jetpack-auth-attempts';
+import jetpackConnectSessions from './jetpack-connect-site';
 import jetpackConnectSite from './jetpack-connect-site';
 import jetpackSSO from './jetpack-sso';
 import {
@@ -28,8 +29,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
-import { jetpackConnectSessionsSchema, jetpackConnectSelectedPlansSchema } from './schema';
+import { combineReducers } from 'state/utils';
+import { jetpackConnectSelectedPlansSchema } from './schema';
 import { isStale } from '../utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { urlToSlug } from 'lib/url';
@@ -44,33 +45,6 @@ function buildDefaultAuthorizeState() {
 		userAlreadyConnected: false,
 	};
 }
-
-function buildUrlSessionObj( url, flowType ) {
-	const slug = urlToSlug( url );
-	const sessionValue = {
-		timestamp: Date.now(),
-		flowType: flowType || '',
-	};
-	return { [ slug ]: sessionValue };
-}
-
-export function jetpackConnectSessions( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, state, buildUrlSessionObj( action.url, action.flowType ) );
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
-				return pickBy( state, session => {
-					return ! isStale( session.timestamp );
-				} );
-			}
-			return {};
-		case SERIALIZE:
-			return state;
-	}
-	return state;
-}
-jetpackConnectSessions.hasCustomPersistence = true;
 
 export function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
