@@ -5,7 +5,7 @@
  */
 
 import inherits from 'inherits';
-import { some, includes, find } from 'lodash';
+import { includes, find, replace, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -189,11 +189,23 @@ function getTld( domainName ) {
 	return tld;
 }
 
+function getDomainProductSlug( domain ) {
+	const tld = getTld( domain );
+	const tldSlug = replace( tld, /\./g, 'dot' );
+
+	if ( includes( [ 'com', 'net', 'org' ], tldSlug ) ) {
+		return 'domain_reg';
+	}
+
+	return `dot${ tldSlug }_domain`;
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
 	checkDomainAvailability,
 	checkInboundTransferStatus,
+	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,
