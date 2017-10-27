@@ -4,13 +4,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import getSiteId from 'state/selectors/get-site-id';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -18,7 +22,6 @@ import CommentList from './comment-list';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { canCurrentUser } from 'state/selectors';
 import { preventWidows } from 'lib/formatting';
-import EmptyContent from 'components/empty-content';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -39,6 +42,10 @@ export class CommentsManagement extends Component {
 
 	render() {
 		const {
+			isJetpack,
+			jetpackCommentsManagementSupported,
+			showPermissionError,
+			page,
 			changePage,
 			page,
 			postId,
@@ -49,12 +56,33 @@ export class CommentsManagement extends Component {
 			translate,
 		} = this.props;
 
+		const jetpackUpdateLink = `/plugins/jetpack/${ this.props.siteSlug }`;
+
+		const showJetpackUpdateScreen =
+			isJetpack &&
+			! jetpackCommentsManagementSupported &&
+			config.isEnabled( 'comments/management/jetpack-5.5' );
+
 		return (
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comments/:status/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
-				<SidebarNavigation />
-				{ showPermissionError && (
+				{ showJetpackUpdateScreen && (
+					<EmptyContent
+						title={ preventWidows( translate( "Looking to manage this site's comments?" ) ) }
+						line={ preventWidows(
+							translate( 'We need you to update to the latest version of Jetpack' )
+						) }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						action={ translate( 'Update Jetpack' ) }
+						actionURL={ jetpackUpdateLink }
+						secondaryAction={ translate( 'Enable autoupdates' ) }
+						secondaryActionURL={ jetpackUpdateLink }
+					/>
+				) }
+				{ ! showJetpackUpdateScreen && <SidebarNavigation /> }
+				{ ! showJetpackUpdateScreen &&
+				showPermissionError && (
 					<EmptyContent
 						title={ preventWidows(
 							translate( "Oops! You don't have permission to manage comments." )
@@ -65,7 +93,8 @@ export class CommentsManagement extends Component {
 						illustration="/calypso/images/illustrations/illustration-500.svg"
 					/>
 				) }
-				{ ! showPermissionError && (
+				{ ! showJetpackUpdateScreen &&
+				! showPermissionError && (
 					<CommentList
 						changePage={ changePage }
 						order={ 'desc' }
@@ -83,9 +112,15 @@ export class CommentsManagement extends Component {
 
 const mapStateToProps = ( state, { siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
+	const siteSlug = getSelectedSiteSlug( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const jetpackCommentsManagementSupported = isJetpackMinimumVersion( state, siteId, '5.5' );
 	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
 	return {
 		siteId,
+		siteSlug,
+		isJetpack,
+		jetpackCommentsManagementSupported,
 		showPermissionError: canModerateComments === false,
 	};
 };
