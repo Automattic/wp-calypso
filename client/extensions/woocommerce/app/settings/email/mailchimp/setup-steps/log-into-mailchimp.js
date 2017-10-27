@@ -14,7 +14,7 @@ export default () => (
 	<div>
 		<div className="setup-steps__login-title">{ translate( 'Get started' ) }</div>
 		<p>
-			{ translate( 'First, you\'ll have to have a MailChimp account. If you already have one, log in.' ) }
+			{ translate( 'First, you\'ll need to have a MailChimp account. If you already have one, log in.' ) }
 		</p>
 		<Button
 			href="https://login.mailchimp.com/"
