@@ -1,14 +1,17 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
 
 class DialogBase extends Component {
+	static propTypes = {
+		shouldCloseOnEsc: PropTypes.bool,
+	};
+
 	static defaultProps = {
 		baseClassName: 'dialog',
 		isFullScreen: true,
@@ -17,7 +20,7 @@ class DialogBase extends Component {
 	};
 
 	render() {
-		const { additionalClassNames, baseClassName, isFullScreen } = this.props,
+		const { additionalClassNames, baseClassName, isFullScreen, shouldCloseOnEsc } = this.props,
 			contentClassName = baseClassName + '__content',
 			// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 			dialogClassName = classnames( baseClassName, 'card', additionalClassNames ),
@@ -34,6 +37,7 @@ class DialogBase extends Component {
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
 				role="dialog"
+				shouldCloseOnEsc={ shouldCloseOnEsc }
 			>
 				<div
 					className={ classnames( this.props.className, contentClassName ) }
