@@ -18,20 +18,20 @@ import { CONVERSATION_FOLLOW_STATUS_MUTING } from 'state/reader/conversations/fo
 describe( 'actions', () => {
 	describe( '#followConversation', () => {
 		test( 'should return an action when a conversation is followed', () => {
-			const action = followConversation( { blogId: 123, postId: 456 } );
+			const action = followConversation( { siteId: 123, postId: 456 } );
 			expect( action ).toEqual( {
 				type: READER_CONVERSATION_FOLLOW,
-				payload: { blogId: 123, postId: 456 },
+				payload: { siteId: 123, postId: 456 },
 			} );
 		} );
 	} );
 
 	describe( '#muteConversation', () => {
 		test( 'should return an action when a conversation is muted', () => {
-			const action = muteConversation( { blogId: 123, postId: 456 } );
+			const action = muteConversation( { siteId: 123, postId: 456 } );
 			expect( action ).toEqual( {
 				type: READER_CONVERSATION_MUTE,
-				payload: { blogId: 123, postId: 456 },
+				payload: { siteId: 123, postId: 456 },
 			} );
 		} );
 	} );
@@ -39,13 +39,13 @@ describe( 'actions', () => {
 	describe( '#updateConversationFollowStatus', () => {
 		test( 'should return an action when a conversation follow status is updated', () => {
 			const action = updateConversationFollowStatus( {
-				blogId: 123,
+				siteId: 123,
 				postId: 456,
 				followStatus: CONVERSATION_FOLLOW_STATUS_MUTING,
 			} );
 			expect( action ).toEqual( {
 				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-				payload: { blogId: 123, postId: 456, followStatus: CONVERSATION_FOLLOW_STATUS_MUTING },
+				payload: { siteId: 123, postId: 456, followStatus: CONVERSATION_FOLLOW_STATUS_MUTING },
 			} );
 		} );
 	} );
