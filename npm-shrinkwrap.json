@@ -874,10 +874,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000751"
+      "version": "1.0.30000752"
     },
     "caniuse-lite": {
-      "version": "1.0.30000751"
+      "version": "1.0.30000752"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -5667,7 +5667,7 @@
       "version": "0.0.0"
     },
     "qrcode.react": {
-      "version": "0.6.1"
+      "version": "0.7.2"
     },
     "qs": {
       "version": "4.0.0"
@@ -5929,7 +5929,12 @@
       }
     },
     "react-day-picker": {
-      "version": "6.0.2"
+      "version": "6.2.1",
+      "dependencies": {
+        "prop-types": {
+          "version": "15.6.0"
+        }
+      }
     },
     "react-dom": {
       "version": "15.6.2"
