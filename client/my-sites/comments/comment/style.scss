@@ -118,36 +118,36 @@
 // Comment Author More Info Block
 
 .comment__author-more-info {
-	align-items: center;
+	align-items: stretch;
 	display: flex;
-	color: $gray-text-min;
-	cursor: pointer;
 	flex-grow: 0;
 	flex-shrink: 0;
-	padding: 8px 16px 8px 8px;
 
-	.gridicon {
-		fill: $gray-text-min;
-	}
+	.button.is-borderless {
+		border-radius: 0;
+		font-weight: 400;
+		padding: 0 16px 0 8px;
 
-	&:focus,
-	&:hover {
-		.gridicon,
-		label {
-			color: $gray-dark;
-			cursor: pointer;
-			fill: $gray-dark;
+		.gridicon {
+			height: 18px;
+			margin-right: 4px;
+			top: 3px;
+			width: 18px;
 		}
-	}
-
-	.gridicon {
-		margin: 4px 4px 0 0;
 	}
 }
 
 .popover.comment__author-more-info-popover {
 	/* applying a lower z-index to ensure it is layered behind global notice */
 	z-index: z-index('root', '.popover.comment-detail__author-more-info');
+
+	.popover__inner {
+		color: $gray-text-min;
+		font-size: 13px;
+		max-width: 320px;
+		padding: 16px;
+		text-align: left;
+	}
 }
 
 .comment__author-more-info-element {
@@ -156,6 +156,10 @@
 	flex-flow: row;
 	flex-wrap: nowrap;
 	margin-bottom: 8px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 
 	.gridicon {
 		flex-grow: 0;

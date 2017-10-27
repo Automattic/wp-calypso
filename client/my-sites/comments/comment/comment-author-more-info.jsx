@@ -15,7 +15,7 @@ import { get } from 'lodash';
 import Button from 'components/button';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
-import InfoPopover from 'components/info-popover';
+import Popover from 'components/popover';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import {
@@ -40,11 +40,15 @@ export class CommentAuthorMoreInfo extends Component {
 		commentId: PropTypes.number,
 	};
 
-	storeLabelRef = label => ( this.authorMoreInfoLabel = label );
+	state = {
+		showPopover: false,
+	};
 
-	storePopoverRef = popover => ( this.authorMoreInfoPopover = popover );
+	storePopoverButtonRef = button => ( this.popoverButton = button );
 
-	openAuthorMoreInfoPopover = event => this.authorMoreInfoPopover.handleClick( event );
+	closePopover = () => this.setState( { showPopover: false } );
+
+	togglePopover = () => this.setState( ( { showPopover } ) => ( { showPopover: ! showPopover } ) );
 
 	toggleBlockUser = () => {
 		const {
@@ -110,16 +114,21 @@ export class CommentAuthorMoreInfo extends Component {
 			translate,
 		} = this.props;
 
+		const { showPopover } = this.state;
+
 		return (
-			<div
-				className="comment__author-more-info"
-				onClick={ this.openAuthorMoreInfoPopover }
-				ref={ this.storeLabelRef }
-			>
-				<InfoPopover
+			<div className="comment__author-more-info">
+				<Button borderless onClick={ this.togglePopover } ref={ this.storePopoverButtonRef }>
+					<Gridicon icon="info-outline" size={ 18 } />
+					{ translate( 'User Info' ) }
+				</Button>
+
+				<Popover
 					className="comment__author-more-info-popover"
-					ignoreContext={ this.authorMoreInfoLabel }
-					ref={ this.storePopoverRef }
+					context={ this.popoverButton }
+					isVisible={ showPopover }
+					onClose={ this.closePopover }
+					position="bottom"
 				>
 					<div className="comment__author-more-info-element">
 						<Gridicon icon="user-circle" />
@@ -181,8 +190,7 @@ export class CommentAuthorMoreInfo extends Component {
 							</div>
 						</div>
 					) }
-				</InfoPopover>
-				<label>{ translate( 'User Info' ) }</label>
+				</Popover>
 			</div>
 		);
 	}
