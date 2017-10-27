@@ -42,4 +42,12 @@ sections.push( {
 	enableLoggedOut: true,
 } );
 
+if ( config.isEnabled( 'hello-world' ) ) {
+	sections.push( {
+		name: 'hello-world',
+		paths: [ '/hello-world' ],
+		module: 'themes/hello-world',
+	} );
+}
+
 module.exports = sections.concat( extensionSections.filter( Boolean ) );
