@@ -15,9 +15,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { fetchAccountDetails } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import {
+	createAccount,
+	fetchAccountDetails,
+} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
+	getIsCreating,
 	getIsRequesting,
 	getStripeConnectAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
@@ -100,6 +104,20 @@ class PaymentMethodStripe extends Component {
 	////////////////////////////////////////////////////////////////////////////
 	// Dialog action button methods, including the links that let the user force a flow
 
+	onConnect = () => {
+		// TODO in the next PR (OAuth flow)
+	};
+
+	onCreate = () => {
+		const { site } = this.props;
+
+		// TODO - hook up correctly
+		const email = 'allendav200@allendav.com';
+		const countryCode = 'US';
+
+		this.props.createAccount( site.ID, email, countryCode );
+	};
+
 	onUserRequestsKeyFlow = () => {
 		this.setState( { userRequestedKeyFlow: true, userRequestedConnectFlow: false } );
 	};
@@ -112,7 +130,16 @@ class PaymentMethodStripe extends Component {
 	// And render brings it all together
 
 	render() {
-		const { isRequesting, method, onCancel, onDone, site, stripeConnectAccount } = this.props;
+		const {
+			isConnecting,
+			isCreating,
+			isRequesting,
+			method,
+			onCancel,
+			onDone,
+			site,
+			stripeConnectAccount,
+		} = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		const connectFlowsEnabled = config.isEnabled(
@@ -149,7 +176,10 @@ class PaymentMethodStripe extends Component {
 		if ( 'setup' === dialog ) {
 			return (
 				<PaymentMethodStripeSetupDialog
+					isBusy={ isConnecting || isCreating }
 					onCancel={ onCancel }
+					onConnect={ this.onConnect }
+					onCreate={ this.onCreate }
 					onUserRequestsKeyFlow={ this.onUserRequestsKeyFlow }
 				/>
 			);
@@ -186,9 +216,13 @@ class PaymentMethodStripe extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const isCreating = getIsCreating( state, site.ID );
+	const isConnecting = false; // TODO in the next PR
 	const isRequesting = getIsRequesting( state, site.ID );
 	const stripeConnectAccount = getStripeConnectAccount( state, site.ID );
 	return {
+		isConnecting,
+		isCreating,
 		isRequesting,
 		site,
 		stripeConnectAccount,
@@ -198,6 +232,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			createAccount,
 			fetchAccountDetails,
 		},
 		dispatch

@@ -28,7 +28,8 @@ function connectAccountCreate( state = {} ) {
 		email: '',
 		firstName: '',
 		isActivated: false,
-		isRequesting: true,
+		isCreating: true,
+		isRequesting: false,
 		lastName: '',
 		logo: '',
 	} );
@@ -47,7 +48,7 @@ function connectAccountCreateComplete( state = {}, action ) {
 		email: action.email || '',
 		error: action.error || '',
 		isActivated: false,
-		isRequesting: false,
+		isCreating: false,
 	} );
 }
 
@@ -64,6 +65,7 @@ function connectAccountFetch( state = {} ) {
 		email: '',
 		firstName: '',
 		isActivated: false,
+		isCreating: false,
 		isRequesting: true,
 		lastName: '',
 		logo: '',
@@ -85,6 +87,7 @@ function connectAccountFetchComplete( state = {}, action ) {
 		error: action.error || '',
 		firstName: action.firstName || '',
 		isActivated: action.isActivated || false,
+		isCreating: false,
 		isRequesting: false,
 		lastName: action.lastName || '',
 		logo: action.logo || '',

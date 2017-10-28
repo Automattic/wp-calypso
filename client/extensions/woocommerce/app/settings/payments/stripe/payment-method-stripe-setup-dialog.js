@@ -16,7 +16,10 @@ import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
 
 class PaymentMethodStripeSetupDialog extends Component {
 	static propTypes = {
+		isBusy: PropTypes.bool.isRequired,
 		onCancel: PropTypes.func.isRequired,
+		onConnect: PropTypes.func.isRequired,
+		onCreate: PropTypes.func.isRequired,
 		onUserRequestsKeyFlow: PropTypes.func.isRequired,
 	};
 
@@ -36,28 +39,39 @@ class PaymentMethodStripeSetupDialog extends Component {
 	};
 
 	onConnect = () => {
-		// Not yet implemented
+		if ( this.state.createSelected ) {
+			this.props.onCreate();
+		} else {
+			this.props.onConnect();
+		}
 	};
 
 	getButtons = () => {
-		const { onCancel, onUserRequestsKeyFlow, translate } = this.props;
+		const { isBusy, onCancel, onUserRequestsKeyFlow, translate } = this.props;
 		const buttons = [];
 
-		// Allow them to switch to key based flow if they want
-		buttons.push( {
-			action: 'switch',
-			additionalClassNames: 'payments__method-stripe-force-flow is-borderless',
-			label: <span>{ translate( 'I want to enter my own keys' ) }</span>,
-			onClick: onUserRequestsKeyFlow,
-		} );
+		if ( ! isBusy ) {
+			// Allow them to switch to key based flow if they want
+			buttons.push( {
+				action: 'switch',
+				additionalClassNames: 'payments__method-stripe-force-flow is-borderless',
+				label: <span>{ translate( 'I want to enter my own keys' ) }</span>,
+				onClick: onUserRequestsKeyFlow,
+			} );
+		}
 
 		// Always give the user a Cancel button
-		buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
+		buttons.push( {
+			action: 'cancel',
+			disabled: isBusy,
+			label: translate( 'Cancel' ),
+			onClick: onCancel,
+		} );
 
 		// And then the connect button itself
 		buttons.push( {
 			action: 'connect',
-			disabled: true, // TODO: will be enabled in a subsequent PR
+			disabled: isBusy || ! this.state.createSelected, // TODO account connection (OAuth) comes in the next PR
 			isPrimary: true,
 			label: translate( 'Connect' ),
 			onClick: this.onConnect,

@@ -22,11 +22,15 @@ const getRawSettings = ( state, siteId ) => {
 	] );
 };
 
+export function getIsCreating( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isCreating' ] );
+}
+
 export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
 	return get( getRawSettings( state, siteId ), [ 'isRequesting' ] );
 }
 
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {
 	const rawSettings = getRawSettings( state, siteId );
-	return omit( rawSettings, [ 'isRequesting' ] );
+	return omit( rawSettings, [ 'isCreating', 'isRequesting' ] );
 }
