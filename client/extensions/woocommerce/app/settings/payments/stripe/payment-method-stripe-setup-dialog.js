@@ -5,21 +5,29 @@
  */
 
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import { createAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import Dialog from 'components/dialog';
+import { getIsCreating } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class PaymentMethodStripeSetupDialog extends Component {
 	static propTypes = {
-		isBusy: PropTypes.bool.isRequired,
 		onCancel: PropTypes.func.isRequired,
-		onConnect: PropTypes.func.isRequired,
-		onCreate: PropTypes.func.isRequired,
 		onUserRequestsKeyFlow: PropTypes.func.isRequired,
 	};
 
@@ -39,16 +47,22 @@ class PaymentMethodStripeSetupDialog extends Component {
 	};
 
 	onConnect = () => {
-		if ( this.state.createSelected ) {
-			this.props.onCreate();
-		} else {
-			this.props.onConnect();
-		}
+		const { address, email, site } = this.props;
+		// TODO support OAuth (Connect) flow too
+		this.props.createAccount( site.ID, email, address.country );
 	};
 
 	getButtons = () => {
-		const { isBusy, onCancel, onUserRequestsKeyFlow, translate } = this.props;
+		const {
+			isCreating,
+			onCancel,
+			onUserRequestsKeyFlow,
+			settingsGeneralLoaded,
+			translate,
+		} = this.props;
 		const buttons = [];
+
+		const isBusy = ! settingsGeneralLoaded || isCreating;
 
 		if ( ! isBusy ) {
 			// Allow them to switch to key based flow if they want
@@ -81,7 +95,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 
 		return (
 			<Dialog
@@ -97,9 +111,39 @@ class PaymentMethodStripeSetupDialog extends Component {
 					onSelectCreate={ this.onSelectCreate }
 					onSelectConnect={ this.onSelectConnect }
 				/>
+				<QuerySettingsGeneral siteId={ site && site.ID } />
 			</Dialog>
 		);
 	}
 }
 
-export default localize( PaymentMethodStripeSetupDialog );
+/*
+*/
+
+function mapStateToProps( state ) {
+	const site = getSelectedSiteWithFallback( state );
+	const address = getStoreLocation( state, site.ID );
+	const email = getCurrentUserEmail( state );
+	const isCreating = getIsCreating( state, site.ID );
+	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, site.ID );
+	return {
+		address,
+		email,
+		isCreating,
+		settingsGeneralLoaded,
+		site,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			createAccount,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )(
+	localize( PaymentMethodStripeSetupDialog )
+);
