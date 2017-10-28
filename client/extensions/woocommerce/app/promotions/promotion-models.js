@@ -55,20 +55,25 @@ const fixedDiscountField = {
  * Promotion Type: Product Sale (e.g. $5 off the "I <3 Robots" t-shirt)
  */
 const productSaleModel = {
-	salePrice: {
-		component: CurrencyField,
-		labelText: translate( 'Product Sale Price' ),
-		isRequired: true,
-	},
-	appliesTo: {
-		component: (
-			<PromotionAppliesToField
-				selectionTypes={ [ { type: 'productIds' } ] }
-				singular={ true }
-			/>
-		),
-		labelText: translate( 'Applies to product' ),
-		isRequired: true,
+	productAndSalePrice: {
+		labelText: translate( 'Product & Sale Price' ),
+		fields: {
+			salePrice: {
+				component: CurrencyField,
+				labelText: translate( 'Product Sale Price' ),
+				isRequired: true,
+			},
+			appliesTo: {
+				component: (
+					<PromotionAppliesToField
+						selectionTypes={ [ { type: 'productIds' } ] }
+						singular={ true }
+					/>
+				),
+				labelText: translate( 'Applies to product' ),
+				isRequired: true,
+			},
+		}
 	},
 };
 
@@ -76,37 +81,52 @@ const productSaleModel = {
  * Promotion Type: Fixed Product Discount (e.g. $5 off any t-shirt)
  */
 const fixedProductModel = {
-	couponCode: couponCodeField,
-	fixedDiscount: {
-		...fixedDiscountField,
-		labelText: translate( 'Product Discount', { context: 'noun' } )
+	couponCodeAndDiscount: {
+		labelText: translate( 'Coupon Code & Discount' ),
+		fields: {
+			couponCode: couponCodeField,
+			fixedDiscount: {
+				...fixedDiscountField,
+				labelText: translate( 'Product Discount', { context: 'noun' } )
+			},
+			appliesTo: appliesToCouponField,
+		},
 	},
-	appliesTo: appliesToCouponField,
 };
 
 /**
  * Promotion Type: Fixed Cart Discount (e.g. $10 off my cart)
  */
 const fixedCartModel = {
-	couponCode: couponCodeField,
-	fixedDiscount: {
-		...fixedDiscountField,
-		labelText: translate( 'Cart Discount', { context: 'noun' } ),
-	},
-	appliesTo: appliesToCouponField,
+	couponCodeAndDiscount: {
+		labelText: translate( 'Coupon Code & Discount' ),
+		fields: {
+			couponCode: couponCodeField,
+			fixedDiscount: {
+				...fixedDiscountField,
+				labelText: translate( 'Cart Discount', { context: 'noun' } ),
+			},
+			appliesTo: appliesToCouponField,
+		},
+	}
 };
 
 /**
  * Promotion Type: Percentage Cart Discount (e.g. 10% off my cart)
  */
 const percentCartModel = {
-	couponCode: couponCodeField,
-	percentDiscount: {
-		component: PercentField,
-		labelText: translate( 'Percent Cart Discount', { context: 'noun' } ),
-		isRequired: true,
-	},
-	appliesTo: appliesToCouponField,
+	couponCodeAndDiscount: {
+		labelText: translate( 'Coupon Code & Discount' ),
+		fields: {
+			couponCode: couponCodeField,
+			percentDiscount: {
+				component: PercentField,
+				labelText: translate( 'Percent Cart Discount', { context: 'noun' } ),
+				isRequired: true,
+			},
+			appliesTo: appliesToCouponField,
+		},
+	}
 };
 
 /**
