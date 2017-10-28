@@ -46,6 +46,8 @@ For each field in a promotion model, there is a model in the following format:
 	explanationText: string (optional),
 	placeholderText: string (optional),
 	isRequired: boolean (optional),
+	isEnableable: boolean (optional),
+	defaultValue: any (optional),
 }
 ```
 

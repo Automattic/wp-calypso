@@ -1,3 +1,17 @@
+.fields__fieldset {
+	.form-label {
+		input[type=checkbox] {
+			margin-right: 8px;
+		}
+	}
+}
+
+.fields__fieldset {
+	.date-picker {
+		max-width: 300px;
+		border: 1px solid lighten( $gray, 20% );
+	}
+}
 
 .promotion-applies-to-field {
 	.search {
