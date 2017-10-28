@@ -146,7 +146,7 @@ class PaypalPaymentBox extends React.Component {
 	};
 
 	renderSecurePaymentNotice = () => {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+		if ( ! this.props.onToggle ) {
 			return (
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
@@ -172,7 +172,7 @@ class PaypalPaymentBox extends React.Component {
 				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
 			} ),
 			paymentButtonsClasses = classnames( 'payment-box__payment-buttons', {
-				'payment-box__payment-buttons-test': abtest( 'checkoutPaymentMethodTabs' ) === 'tabs',
+				'payment-box__payment-buttons-test': ! this.props.onToggle,
 			} );
 		return (
 			<form onSubmit={ this.redirectToPayPal }>

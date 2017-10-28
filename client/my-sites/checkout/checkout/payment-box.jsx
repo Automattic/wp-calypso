@@ -19,7 +19,6 @@ import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
-import { abtest } from 'lib/abtest';
 
 class PaymentBox extends PureComponent {
 	constructor() {
@@ -100,7 +99,7 @@ class PaymentBox extends PureComponent {
 	}
 
 	getCardTitle() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+		if ( this.props.tabsEnabled ) {
 			const formatHeaderClass = 'formatted-header',
 				formatHeaderTitleClass = 'formatted-header__title';
 
@@ -121,7 +120,7 @@ class PaymentBox extends PureComponent {
 	}
 
 	getSectionNav() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
+		if ( this.props.tabsEnabled ) {
 			const titleText = this.props.currentPaymentMethod
 				? translate( 'Pay with %(paymentMethod)s', {
 						args: {

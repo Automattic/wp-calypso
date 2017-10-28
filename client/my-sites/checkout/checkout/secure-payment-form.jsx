@@ -29,7 +29,6 @@ import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -60,7 +59,6 @@ const SecurePaymentForm = createReactClass( {
 		let i;
 		const primary = 0,
 			secondary = 1;
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -72,7 +70,7 @@ const SecurePaymentForm = createReactClass( {
 			return this.state.userSelectedPaymentBox;
 		}
 
-		if ( tabsEnabled ) {
+		if ( this.shouldDisplayTabs() ) {
 			for ( i = 0; i < paymentMethods.length; i++ ) {
 				if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
 					return paymentMethods[ i ];
@@ -94,6 +92,11 @@ const SecurePaymentForm = createReactClass( {
 		this.setState( {
 			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods ),
 		} );
+	},
+
+	shouldDisplayTabs() {
+		// return abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		return this.props.paymentMethods && this.props.paymentMethods.length > 2;
 	},
 
 	handlePaymentBoxSubmit( event ) {
@@ -192,12 +195,13 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	renderCreditCardPaymentBox() {
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		const tabsEnabled = this.shouldDisplayTabs();
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				tabsEnabled={ tabsEnabled }
 				title={ this.props.translate( 'Secure Payment' ) }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
@@ -218,13 +222,14 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	renderPayPalPaymentBox() {
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
+		const tabsEnabled = this.shouldDisplayTabs();
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
 				cart={ this.props.cart }
 				title={ this.props.translate( 'Secure Payment with PayPal' ) }
 				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				tabsEnabled={ tabsEnabled }
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
