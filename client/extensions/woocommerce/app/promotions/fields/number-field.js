@@ -7,50 +7,51 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
-import PriceInput from 'woocommerce/components/price-input';
+import FormTextInput from 'components/forms/form-text-input';
 import FormField from './form-field';
 
-const CurrencyField = ( props ) => {
-	const { fieldName, explanationText, placeholderText, value, edit, currency } = props;
+const NumberField = ( props ) => {
+	const { fieldName, explanationText, placeholderText, value, edit, minValue, maxValue } = props;
 	const renderedValue = ( 'undefined' !== typeof value ? value : '' );
 
 	const onChange = ( e ) => {
 		const newValue = e.target.value;
-		if ( 0 === newValue.length ) {
-			edit( fieldName, '' );
+
+		if ( 'undefined' !== minValue && newValue < minValue ) {
+			return;
+		}
+		if ( 'undefined' !== maxValue && newValue > maxValue ) {
 			return;
 		}
 
-		const numberValue = Number( newValue );
-		if ( 0 <= Number( newValue ) ) {
-			const formattedValue = getCurrencyFormatDecimal( numberValue, currency );
-			edit( fieldName, formattedValue );
-		}
+		edit( fieldName, newValue );
 	};
 
 	return (
 		<FormField { ...props } >
-			<PriceInput
+			<FormTextInput
 				htmlFor={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
-				currency={ currency }
+				type="number"
+				min={ minValue }
+				max={ maxValue }
+				placeholder={ placeholderText || '10' }
 				value={ renderedValue }
-				placeholder={ placeholderText }
 				onChange={ onChange }
 			/>
 		</FormField>
 	);
 };
 
-CurrencyField.PropTypes = {
+NumberField.PropTypes = {
 	fieldName: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.number,
+	minValue: PropTypes.number,
+	maxValue: PropTypes.number,
 	edit: PropTypes.func.isRequired,
-	currency: PropTypes.string.isRequired,
 };
 
-export default CurrencyField;
+export default NumberField;
 
