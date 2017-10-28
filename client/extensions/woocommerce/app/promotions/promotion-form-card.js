@@ -11,6 +11,7 @@ import warn from 'lib/warn';
  */
 import Card from 'components/card';
 import promotionModels from './promotion-models';
+import { renderField } from './fields';
 import SectionHeader from 'components/section-header';
 
 const promotionFieldEdit = ( siteId, promotion, editPromotion ) => ( fieldName, newValue ) => {
@@ -32,22 +33,6 @@ function renderFields( promotion, edit, translate, currency ) {
 	return Object.keys( model ).map( ( fieldName ) => {
 		const fieldModel = model[ fieldName ];
 		return renderField( fieldName, fieldModel, promotion, edit, currency );
-	} );
-}
-
-function renderField( fieldName, fieldModel, promotion, edit, currency ) {
-	const { component, labelText, explanationText, placeholderText, isRequired } = fieldModel;
-
-	return React.createElement( component, {
-		key: fieldName,
-		fieldName,
-		labelText,
-		explanationText,
-		placeholderText,
-		isRequired,
-		value: promotion[ fieldName ],
-		edit,
-		currency,
 	} );
 }
 

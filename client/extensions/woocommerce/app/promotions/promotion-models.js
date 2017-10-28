@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -9,10 +10,10 @@ import { translate } from 'i18n-calypso';
 import CurrencyField from './fields/currency-field';
 import PercentField from './fields/percent-field';
 import TextField from './fields/text-field';
-import AppliesToSingleProductField from './fields/applies-to-single-product-field';
+import PromotionAppliesToField from './fields/promotion-applies-to-field';
 
 /**
- * Field reused for all coupon promotion types.
+ * "Coupon code" field reused for all coupon promotion types.
  */
 const couponCodeField = {
 	component: TextField,
@@ -21,6 +22,23 @@ const couponCodeField = {
 		'Only apply this promotion when the customer supplies the coupon code'
 	),
 	placeholderText: translate( 'Enter coupon code' ),
+	isRequired: true,
+};
+
+/**
+ * "Applies to" field reused for all coupon promotion types.
+ */
+const appliesToCouponField = {
+	component: (
+		<PromotionAppliesToField
+			selectionTypes={ [
+				{ labelText: translate( 'All' ), type: 'all' },
+				{ labelText: translate( 'Specific Products' ), type: 'productIds' },
+				{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
+			] }
+		/>
+	),
+	labelText: translate( 'Applies to' ),
 	isRequired: true,
 };
 
@@ -43,7 +61,12 @@ const productSaleModel = {
 		isRequired: true,
 	},
 	appliesTo: {
-		component: AppliesToSingleProductField,
+		component: (
+			<PromotionAppliesToField
+				selectionTypes={ [ { type: 'productIds' } ] }
+				singular={ true }
+			/>
+		),
 		labelText: translate( 'Applies to product' ),
 		isRequired: true,
 	},
@@ -58,6 +81,7 @@ const fixedProductModel = {
 		...fixedDiscountField,
 		labelText: translate( 'Product Discount', { context: 'noun' } )
 	},
+	appliesTo: appliesToCouponField,
 };
 
 /**
@@ -69,6 +93,7 @@ const fixedCartModel = {
 		...fixedDiscountField,
 		labelText: translate( 'Cart Discount', { context: 'noun' } ),
 	},
+	appliesTo: appliesToCouponField,
 };
 
 /**
@@ -81,6 +106,7 @@ const percentCartModel = {
 		labelText: translate( 'Percent Cart Discount', { context: 'noun' } ),
 		isRequired: true,
 	},
+	appliesTo: appliesToCouponField,
 };
 
 /**
