@@ -257,6 +257,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			'themes',
 			'preview',
 			'domain-connect-authorize',
+			'hello-world',
 		];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );

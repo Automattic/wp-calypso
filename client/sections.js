@@ -46,7 +46,11 @@ if ( config.isEnabled( 'hello-world' ) ) {
 	sections.push( {
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
-		module: 'themes/hello-world',
+		module: 'hello-world',
+		enableLoggedOut: true,
+		secondary: false,
+		// group: 'sites',
+		isomorphic: true,
 	} );
 }
 

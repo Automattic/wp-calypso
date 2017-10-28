@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
@@ -13,8 +16,8 @@ export default class HelloWorldPrimary extends React.Component {
 	render() {
 		return (
 			<Main>
+				<Gridicon icon="heading-h1" />
 				<h1>Hello Primary Component</h1>
-				<Gridicon icon="ellipsis" />
 			</Main>
 		);
 	}
