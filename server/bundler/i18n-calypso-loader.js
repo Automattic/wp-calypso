@@ -13,9 +13,12 @@ module.exports = function( content ) {
 	if ( this.state.localeSlug === 'en' ) {
 		// Moment ships with the English locale by default, no need to load anything in that case
 	} else {
-		require( 'bundle-loader?name=moment-locale-[name]!moment/locale/' + this.state.localeSlug )( () => {
+	    import(
+			/* webpackChunkName: moment/locale/[request] */
+			'moment/locale/' + this.state.localeSlug
+		).then( _ => {
 			moment.locale( this.state.localeSlug );
-		} );
+		});
 	}` );
 		return newContent;
 	}
