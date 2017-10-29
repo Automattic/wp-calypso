@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 				siteId: 123,
 			};
 			const newState = stripeConnectAccountReducer( undefined, action );
-			expect( newState.isRequesting ).to.eql( true );
+			expect( newState.isCreating ).to.eql( true );
 		} );
 
 		test( 'should only update the request in progress flag for the appropriate siteId', () => {
@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: false,
+								isCreating: false,
 							},
 						},
 					},
@@ -58,15 +58,15 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: false,
+								isCreating: false,
 							},
 						},
 					},
 				},
 				action
 			);
-			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
-			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
 		} );
 	} );
 
@@ -84,7 +84,7 @@ describe( 'reducer', () => {
 				email: 'foo@bar.com',
 				error: '',
 				isActivated: false,
-				isRequesting: false,
+				isCreating: false,
 			} );
 		} );
 
@@ -103,7 +103,7 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: true,
+								isCreating: true,
 							},
 						},
 					},
@@ -113,19 +113,19 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: true,
+								isCreating: true,
 							},
 						},
 					},
 				},
 				action
 			);
-			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
 			expect( newState[ 123 ].settings.stripeConnectAccount.connectedUserID ).to.eql(
 				'acct_14qyt6Alijdnw0EA'
 			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.email ).to.eql( 'foo@bar.com' );
-			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
 		} );
 	} );
 
@@ -140,7 +140,7 @@ describe( 'reducer', () => {
 			const newState = stripeConnectAccountReducer( undefined, action );
 			expect( newState.error ).to.eql( 'My error' );
 			expect( newState.email ).to.eql( 'foo@bar.com' );
-			expect( newState.isRequesting ).to.eql( false );
+			expect( newState.isCreating ).to.eql( false );
 		} );
 
 		test( 'should leave other sites state unchanged', () => {
@@ -158,7 +158,7 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: true,
+								isCreating: true,
 							},
 						},
 					},
@@ -168,15 +168,15 @@ describe( 'reducer', () => {
 								connectedUserID: '',
 								email: '',
 								isActivated: false,
-								isRequesting: true,
+								isCreating: true,
 							},
 						},
 					},
 				},
 				action
 			);
-			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
-			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
 		} );
 	} );
 
@@ -246,6 +246,7 @@ describe( 'reducer', () => {
 				error: '',
 				firstName: 'Foo',
 				isActivated: false,
+				isCreating: false,
 				isRequesting: false,
 				lastName: 'Bar',
 				logo: 'http://bar.com/foo.png',
@@ -296,14 +297,12 @@ describe( 'reducer', () => {
 	describe( 'connectAccountFetchError', () => {
 		test( 'should reset the isRequesting flag in state', () => {
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 				siteId: 123,
-				email: 'foo@bar.com',
 				error: 'My error',
 			};
 			const newState = stripeConnectAccountReducer( undefined, action );
 			expect( newState.error ).to.eql( 'My error' );
-			expect( newState.email ).to.eql( 'foo@bar.com' );
 			expect( newState.isRequesting ).to.eql( false );
 		} );
 
