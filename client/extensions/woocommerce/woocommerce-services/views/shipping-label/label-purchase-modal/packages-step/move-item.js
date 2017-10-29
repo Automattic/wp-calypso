@@ -104,7 +104,7 @@ const MoveItemDialog = ( props ) => {
 	const onClose = () => props.closeItemMove( orderId, siteId );
 
 	const buttons = [
-		{ label: translate( 'Cancel' ) },
+		{ label: translate( 'Cancel' ), onClick: onClose },
 		{
 			label: translate( 'Move' ),
 			isPrimary: true,

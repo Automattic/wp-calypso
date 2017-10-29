@@ -74,7 +74,7 @@ const AddItemDialog = ( props ) => {
 	const onClose = () => props.closeAddItem( orderId, siteId );
 
 	const buttons = [
-		{ label: translate( 'Close' ) },
+		{ label: translate( 'Close' ), onClick: onClose },
 		{
 			label: translate( 'Add' ),
 			isPrimary: true,

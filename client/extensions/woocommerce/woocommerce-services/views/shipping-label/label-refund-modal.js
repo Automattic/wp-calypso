@@ -27,7 +27,7 @@ const RefundDialog = ( props ) => {
 	const onConfirm = () => props.confirmRefund( orderId, siteId );
 
 	const buttons = [
-		{ label: translate( 'Cancel' ) },
+		{ label: translate( 'Cancel' ), onClick: onClose },
 		{
 			onClick: onConfirm,
 			isPrimary: true,

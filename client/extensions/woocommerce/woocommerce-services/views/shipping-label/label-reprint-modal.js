@@ -25,7 +25,7 @@ const ReprintDialog = ( props ) => {
 	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	const buttons = [
-		{ label: translate( 'Cancel' ) },
+		{ label: translate( 'Cancel' ), onClick: onClose },
 		{
 			onClick: onConfirm,
 			isPrimary: true,
