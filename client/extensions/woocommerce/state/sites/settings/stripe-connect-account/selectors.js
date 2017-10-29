@@ -12,14 +12,11 @@ import { get, omit } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const getRawSettings = ( state, siteId ) => {
-	return get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'settings',
-		'stripeConnectAccount',
-	], {} );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'stripeConnectAccount' ],
+		{}
+	);
 };
 
 /**
