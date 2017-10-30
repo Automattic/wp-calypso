@@ -9,7 +9,14 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { getData, getError, getProgress, dispatchRequest, makeParser } from '../utils.js';
+import {
+	getData,
+	getError,
+	getProgress,
+	dispatchRequest,
+	dispatchRequestEx,
+	makeParser,
+} from '../utils.js';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
@@ -234,6 +241,146 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				haveTrouble: true,
 			} );
 			expect( onFailure ).to.not.have.been.called;
+		} );
+	} );
+
+	describe( '#dispatchRequestEx', () => {
+		const fetch = () => ( { type: 'REQUEST' } );
+		const onSuccess = ( action, data ) => ( { type: 'SUCCESS', data } );
+		const onError = ( action, error ) => ( { type: 'FAILURE', error } );
+		const onProgress = ( action, progress ) => ( { type: 'PROGRESS', progress } );
+
+		const dispatcher = dispatchRequestEx( {
+			fetch,
+			onSuccess,
+			onError,
+			onProgress,
+		} );
+
+		const data = { count: 5 };
+		const error = { message: 'oh no!' };
+		const progress = { loaded: 45, total: 80 };
+
+		const fetchHttpAction = { type: 'REFILL' };
+		const successHttpAction = { type: 'REFILL', meta: { dataLayer: { data } } };
+		const failureHttpAction = { type: 'REFILL', meta: { dataLayer: { error } } };
+		const progressHttpAction = { type: 'REFILL', meta: { dataLayer: { progress } } };
+		const bothHttpAction = { type: 'REFILL', meta: { dataLayer: { data, error } } };
+
+		const fetchAction = { type: 'REQUEST' };
+		const successAction = { type: 'SUCCESS', data };
+		const failureAction = { type: 'FAILURE', error };
+		const progressAction = { type: 'PROGRESS', progress };
+
+		let dispatch;
+		let store;
+
+		beforeEach( () => {
+			dispatch = spy();
+			store = { dispatch };
+		} );
+
+		test( 'should initiate request if meta information missing', () => {
+			dispatcher( store, fetchHttpAction );
+			expect( dispatch ).to.have.been.calledWith( fetchAction );
+		} );
+
+		test( 'should call onSuccess if meta includes response data', () => {
+			dispatcher( store, successHttpAction );
+			expect( dispatch ).to.have.been.calledWith( successAction );
+		} );
+
+		test( 'should call onError if meta includes error data', () => {
+			dispatcher( store, failureHttpAction );
+			expect( dispatch ).to.have.been.calledWith( failureAction );
+		} );
+
+		test( 'should call onError if meta includes both response data and error data', () => {
+			dispatcher( store, bothHttpAction );
+			expect( dispatch ).to.have.been.calledWith( failureAction );
+		} );
+
+		test( 'should call onProgress if meta includes progress data', () => {
+			dispatcher( store, progressHttpAction );
+			expect( dispatch ).to.have.been.calledWith( progressAction );
+		} );
+
+		test( 'should not throw runtime error if onProgress is not specified', () => {
+			expect( () => {
+				dispatchRequestEx( { fetch, onSuccess, onError } )( store, progressHttpAction );
+			} ).to.not.throw( TypeError );
+		} );
+
+		test( 'should validate response data', () => {
+			const fromApi = makeParser( {
+				type: 'object',
+				properties: { count: { type: 'integer' } },
+			} );
+			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
+			expect( dispatch ).to.have.been.calledWith( successAction );
+		} );
+
+		test( 'should fail-over on invalid response data', () => {
+			const fromApi = makeParser( {
+				type: 'object',
+				properties: { count: { type: 'string' } },
+			} );
+			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
+			expect( dispatch ).to.have.been.calledWithMatch( { type: 'FAILURE' } );
+		} );
+
+		test( 'should validate with additional fields', () => {
+			const fromApi = makeParser( {
+				type: 'object',
+				properties: { count: { type: 'integer' } },
+			} );
+
+			const action = {
+				type: 'REFILL',
+				meta: { dataLayer: { data: { count: 15, is_active: true } } },
+			};
+
+			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
+			expect( dispatch ).to.have.been.calledWithMatch( { type: 'SUCCESS' } );
+		} );
+
+		test( 'should filter out additional fields', () => {
+			const fromApi = makeParser( {
+				type: 'object',
+				properties: { count: { type: 'integer' } },
+			} );
+
+			const action = {
+				type: 'REFILL',
+				meta: { dataLayer: { data: { count: 15, is_active: true } } },
+			};
+
+			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
+			expect( dispatch ).to.have.been.calledWith( { type: 'SUCCESS', data: { count: 15 } } );
+		} );
+
+		test( 'should transform validated output', () => {
+			const schema = {
+				type: 'object',
+				properties: { count: { type: 'integer' } },
+			};
+			const transformer = ( { count } ) => ( { tribbleCount: count * 2, haveTrouble: true } );
+			const fromApi = makeParser( schema, {}, transformer );
+
+			const action = {
+				type: 'REFILL',
+				meta: { dataLayer: { data: { count: 15, is_active: true } } },
+			};
+
+			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: 'SUCCESS',
+				data: {
+					tribbleCount: 30,
+					haveTrouble: true,
+				},
+			} );
 		} );
 	} );
 } );
