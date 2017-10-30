@@ -11,6 +11,14 @@ const type = keyMirror( {
 	REGISTERED: null,
 	SITE_REDIRECT: null,
 	WPCOM: null,
+	TRANSFER: null,
+} );
+
+const transferStatus = keyMirror( {
+	PENDING_OWNER: null,
+	PENDING_REGISTRY: null,
+	CANCELLED: null,
+	COMPLETED: null,
 } );
 
 const registrar = {
@@ -53,9 +61,15 @@ const dnsTemplates = {
 	},
 };
 
+const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
 export default {
 	dnsTemplates,
 	domainAvailability,
+	domainProductSlugs,
 	registrar,
+	transferStatus,
 	type,
 };

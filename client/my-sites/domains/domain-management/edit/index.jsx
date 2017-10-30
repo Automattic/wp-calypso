@@ -21,6 +21,7 @@ import paths from 'my-sites/domains/paths';
 import RegisteredDomain from './registered-domain';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
+import Transfer from './transfer';
 import { type as domainTypes } from 'lib/domains/constants';
 import WpcomDomain from './wpcom-domain';
 
@@ -56,6 +57,9 @@ class Edit extends React.Component {
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
+
+			case domainTypes.TRANSFER:
+				return Transfer;
 
 			case domainTypes.WPCOM:
 				return WpcomDomain;
