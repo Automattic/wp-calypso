@@ -170,22 +170,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.true;
 		} );
-
-		test( 'should not persist state', () => {
-			const state = isRequesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = isRequesting( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
 	} );
 
 	describe( 'isRequestingTwoFactorAuth', () => {
