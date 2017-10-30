@@ -26,7 +26,7 @@ describe( 'validateContactDetails', () => {
 		phone: '+1.2506382995',
 		extra: {
 			sirenSiret: '123456789',
-			registrantVatId: 'FRXX12345678901234',
+			registrantVatId: 'FRXX123456789',
 			trademarkNumber: '123456789',
 		},
 	};
@@ -94,7 +94,7 @@ describe( 'validateContactDetails', () => {
 		} );
 	} );
 
-	describe( 'VAT', () => {
+	describe( 'VAT Validation', () => {
 		test( 'should accept VAT patterns', () => {
 			const vatPatterns = [
 				[ 'ATU99999999' ],
@@ -109,8 +109,8 @@ describe( 'validateContactDetails', () => {
 				[ 'DK99999999' ],
 				[ 'EE999999999' ],
 				[ 'EL999999999' ],
-				[ 'ESX9999999X4' ],
-				[ 'ES99999999X4' ],
+				[ 'ESX9999999X' ],
+				[ 'ES99999999X' ],
 				[ 'FI99999999' ],
 				[ 'FRXX999999999' ],
 				[ 'FR99999999999' ],
@@ -127,20 +127,18 @@ describe( 'validateContactDetails', () => {
 				[ 'LU99999999' ],
 				[ 'LV99999999999' ],
 				[ 'MT99999999' ],
-				[ 'NL999999999B998', 'extra alphanumeric character' ],
+				[ 'NL999999999B99', 'extra alphanumeric character' ],
 				[ 'PL9999999999' ],
 				[ 'PT999999999' ],
 				[ 'RO999999999' ],
 				[ 'SE999999999999' ],
 				[ 'SI99999999' ],
 				[ 'SK9999999999' ],
-				[ 'sk9999999999', 'lowercase' ],
 				// GB :(
-				[ '999999GB999' ],
 				[ 'GB999999999' ],
-				[ 'GB9999999999995' ],
-				[ 'GBGD9996' ],
-				[ 'GBHA9997' ],
+				[ 'GB999999999999' ],
+				[ 'GBGD999' ],
+				[ 'GBHA999' ],
 			];
 
 			vatPatterns.forEach( ( [ registrantVatId ] ) => {
