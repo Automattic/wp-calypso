@@ -33,10 +33,13 @@ import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 
 class CreditCardPaymentBox extends React.Component {
-	state = {
-		progress: 0,
-		previousCart: null,
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			progress: 0,
+			previousCart: null,
+		};
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if (
@@ -44,17 +47,21 @@ class CreditCardPaymentBox extends React.Component {
 			this.submitting( nextProps.transactionStep )
 		) {
 			this.timer = setInterval( this.tick, 100 );
+		} else {
+			this.clearTickInterval();
 		}
 	}
 
 	componentWillUnmount() {
+		this.clearTickInterval();
+	}
+
+	clearTickInterval() {
 		clearInterval( this.timer );
 	}
 
 	tick = () => {
-		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
 		const progress = this.state.progress + 1 / 200 * ( 100 - this.state.progress );
-
 		this.setState( { progress } );
 	};
 
@@ -64,7 +71,7 @@ class CreditCardPaymentBox extends React.Component {
 				return false;
 
 			case INPUT_VALIDATION:
-				if ( this.props.transactionStep.error ) {
+				if ( transactionStep.error ) {
 					return false;
 				}
 				return true;
@@ -87,7 +94,7 @@ class CreditCardPaymentBox extends React.Component {
 
 	progressBar = () => {
 		return (
-			<div className="credit-card-payment-box__progress-bar">
+			<div className="checkout__credit-card-payment-box-progress-bar">
 				{ this.props.translate( 'Processing payment…' ) }
 				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
@@ -134,8 +141,7 @@ class CreditCardPaymentBox extends React.Component {
 		if ( this.props.transactionStep && this.submitting( this.props.transactionStep ) ) {
 			content = this.progressBar();
 		}
-
-		return <div className="payment-box-actions">{ content }</div>;
+		return <div className="checkout__payment-box-actions">{ content }</div>;
 	};
 
 	submit = event => {
@@ -147,7 +153,7 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		return (
 			<form autoComplete="off" onSubmit={ this.submit }>

@@ -11,13 +11,11 @@
 		margin-left: 15px;
 	}
 
-	.country {
-		label {
-			display: none;
-		}
+	.credit-card-form-fields__state-field {
+		flex-basis: calc( 100% );
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		.cvv,
 		.expiration-date {
 			flex-basis: calc( 50% - 15px );
@@ -29,6 +27,29 @@
 
 		.postal-code {
 			flex-basis: 8em;
+		}
+
+		&.ebanx-details-required {
+
+			.country,
+			.city {
+				flex-basis: calc( 100% - 15px );
+			}
+
+			.street-number {
+				flex-basis: calc( 33% - 15px);
+			}
+
+			.address {
+				flex-basis: calc( 66% - 15px);
+			}
+
+			.document,
+			.phone,
+			.credit-card-form-fields__state-field,
+			.postal-code {
+				flex-basis: calc( 50% - 15px );
+			}
 		}
 	}
 }
@@ -42,19 +63,19 @@
 		width: 100%;
 	}
 
-	input[ disabled ] {
+	input[disabled] {
 		cursor: not-allowed;
 	}
 }
 
-.credit-card-form-fields__label {
+.credit-card-form-fields__field {
 	label {
 		color: darken( $gray, 10% );
-		display: none;
 		font-size: 11px;
 		font-weight: bold;
 		position: absolute;
-		left: 13px;
-		top: 12px;
+		left: -1000px;
+		top: -1000px;
+		margin: 0;
 	}
 }
