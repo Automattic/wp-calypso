@@ -38,7 +38,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 
 export class CommentList extends Component {
@@ -402,7 +402,15 @@ export class CommentList extends Component {
 	};
 
 	render() {
-		const { isJetpack, isLoading, page, siteBlacklist, siteId, siteFragment, status } = this.props;
+		const {
+			isCommentsTreeSupported,
+			isLoading,
+			page,
+			siteBlacklist,
+			siteId,
+			siteFragment,
+			status,
+		} = this.props;
 		const { isBulkEdit, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
@@ -420,7 +428,7 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
 
-				{ isJetpack && (
+				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
 						number={ 100 }
 						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
@@ -428,7 +436,7 @@ export class CommentList extends Component {
 						status={ status }
 					/>
 				) }
-				{ ! isJetpack && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
@@ -459,7 +467,8 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							key={ `comment-${ siteId }-${ commentId }` }
 							refreshCommentData={
-								! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+								isCommentsTreeSupported &&
+								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 							}
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
@@ -503,7 +512,8 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isJetpack: isJetpackSite( state, siteId ),
+		isCommentsTreeSupported:
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,

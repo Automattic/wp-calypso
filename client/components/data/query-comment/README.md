@@ -22,3 +22,4 @@ const CommentDetail = ( { comment, commentId, siteId } ) =>
 | --- | --- | --- |
 | `commentId` | Number | The comment to request. |
 | `siteId` | Number | The site ID for which the comment should be queried. |
+| `forceWpcom` | Bool | (default: false) Forces the request to wpcom. |
