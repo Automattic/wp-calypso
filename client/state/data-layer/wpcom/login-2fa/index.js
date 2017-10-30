@@ -17,7 +17,6 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 } from 'state/action-types';
 import {
-	getRememberMe,
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,
 	getTwoFactorPushToken,
@@ -49,8 +48,8 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 				body: {
 					user_id: getTwoFactorUserId( store.getState() ),
 					auth_type: authType,
+					remember_me: true,
 					two_step_nonce: getTwoFactorAuthNonce( store.getState(), authType ),
-					remember_me: getRememberMe( store.getState() ),
 					two_step_push_token: getTwoFactorPushToken( store.getState() ),
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),

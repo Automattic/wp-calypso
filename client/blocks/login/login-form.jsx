@@ -21,7 +21,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
@@ -62,13 +61,12 @@ export class LoginForm extends Component {
 		isDisabledWhileLoading: true,
 		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		password: '',
-		rememberMe: false,
 	};
 
 	componentDidMount() {
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isDisabledWhileLoading: false }, () => {
-			// eslint-disable-line react/no-did-mount-set-state
-			this.usernameOrEmail && this.usernameOrEmail.focus();
+			this.usernameOrEmail.focus();
 		} );
 	}
 
@@ -106,26 +104,16 @@ export class LoginForm extends Component {
 		} );
 	};
 
-	onChangeRememberMe = event => {
-		const { name, checked } = event.target;
-
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_click', { new_value: checked } );
-
-		this.setState( { [ name ]: checked } );
-	};
-
 	onSubmitForm = event => {
 		event.preventDefault();
 
 		const { usernameOrEmail, password } = this.state;
 		const { onSuccess, redirectTo } = this.props;
 
-		const rememberMe = this.props.socialAccountIsLinking ? true : this.state.rememberMe;
-
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
 		this.props
-			.loginUser( usernameOrEmail, password, rememberMe, redirectTo )
+			.loginUser( usernameOrEmail, password, redirectTo )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
@@ -262,20 +250,6 @@ export class LoginForm extends Component {
 							<FormInputValidation isError text={ requestError.message } />
 						) }
 					</div>
-
-					{ ! linkingSocialUser && (
-						<div className="login__form-remember-me">
-							<label>
-								<FormCheckbox
-									name="rememberMe"
-									checked={ this.state.rememberMe }
-									onChange={ this.onChangeRememberMe }
-									{ ...isDisabled }
-								/>
-								<span>{ this.props.translate( 'Keep me logged in' ) }</span>
-							</label>
-						</div>
-					) }
 
 					{ config.isEnabled( 'signup/social' ) && (
 						<p className="login__form-terms">

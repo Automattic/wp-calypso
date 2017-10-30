@@ -103,8 +103,6 @@ export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: get( response, 'body.data' ),
-				// @TODO figure how we should treat `rememberMe`...
-				rememberMe: 0,
 			} );
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
