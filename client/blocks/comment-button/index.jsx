@@ -37,18 +37,10 @@ class CommentButton extends Component {
 	};
 
 	render() {
-		const {
-			commentCount,
-			link,
-			onClick,
-			showLabel,
-			tagName: containerTag,
-			target,
-			translate,
-		} = this.props;
+		const { commentCount, href, onClick, showLabel, tagName, target, translate } = this.props;
 
 		return React.createElement(
-			containerTag,
+			tagName,
 			omitBy(
 				{
 					className: 'comment-button',
