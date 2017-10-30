@@ -12,9 +12,8 @@ import { translate } from 'i18n-calypso';
 
 export default () => (
 	<div>
-		<div className="setup-steps__login-title">{ translate( 'Get started' ) }</div>
 		<p>
-			{ translate( 'First, you\'ll have to have a MailChimp account. If you already have one, log in.' ) }
+			{ translate( 'To get started, you need a MailChimp account. Please log in or register by clicking the button below.' ) }
 		</p>
 		<Button
 			href="https://login.mailchimp.com/"
