@@ -44,7 +44,7 @@ class Card extends Component {
 		const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 		let linkIndicator;
-		if ( href ) {
+		if ( href || onClick ) {
 			linkIndicator = (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 			);
