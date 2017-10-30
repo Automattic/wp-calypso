@@ -8,6 +8,9 @@
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
@@ -15,6 +18,90 @@ import {
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
+
+/**
+ * Action Creator: Clear any error from a previous action.
+ *
+ * @param {Number} siteId The id of the site for which to clear errors.
+ * @return {Object} Action object
+ */
+export const clearError = siteId => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const clearErrorAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+		siteId,
+	};
+
+	dispatch( clearErrorAction );
+};
+
+/**
+ * Action Creator: Create (and connect) a Stripe Connect Account.
+ *
+ * @param {Number} siteId The id of the site for which to create an account.
+ * @param {String} email Email address (i.e. of the logged in WordPress.com user) to pass to Stripe.
+ * @param {String} country Two character country code to pass to Stripe (e.g. US).
+ * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @return {Object} Action object
+ */
+export const createAccount = (
+	siteId,
+	email,
+	country,
+	successAction = null,
+	failureAction = null
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const createAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+		country,
+		email,
+		siteId,
+	};
+
+	dispatch( createAction );
+
+	return request( siteId )
+		.post( 'connect/stripe/account', { email, country }, 'wc/v1' )
+		.then( data => {
+			dispatch( createSuccess( siteId, createAction, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( error => {
+			dispatch( createFailure( siteId, createAction, error ) );
+			if ( failureAction ) {
+				dispatch( failureAction( error ) );
+			}
+		} );
+};
+
+function createSuccess( siteId, { email }, { account_id } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+		connectedUserID: account_id,
+		email,
+		siteId,
+	};
+}
+
+function createFailure( siteId, action, { message } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+		error: message,
+		siteId,
+	};
+}
 
 /**
  * Action Creator: Fetch Stripe Connect Account Details.
@@ -71,10 +158,10 @@ function fetchSuccess( siteId, data ) {
 	};
 }
 
-function fetchFailure( siteId, action, errorMessage ) {
+function fetchFailure( siteId, action, { message } ) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
-		error: errorMessage,
+		error: message,
 		siteId,
 	};
 }

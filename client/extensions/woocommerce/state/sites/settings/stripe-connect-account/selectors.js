@@ -22,6 +22,24 @@ const getRawSettings = ( state, siteId ) => {
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we are presently attempting to create an account
+ */
+export function getError( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'error' ], '' );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we are presently attempting to create an account
+ */
+export function getIsCreating( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isCreating' ], false );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently attempting to deauthorize the connected account for the site
  */
 export function getIsDeauthorizing( state, siteId = getSelectedSiteId( state ) ) {
@@ -44,5 +62,5 @@ export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
  */
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {
 	const rawSettings = getRawSettings( state, siteId );
-	return omit( rawSettings, [ 'isDeauthorizing', 'isRequesting' ] );
+	return omit( rawSettings, [ 'error', 'isCreating', 'isDeauthorizing', 'isRequesting' ] );
 }

@@ -10,8 +10,11 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import useNock from 'test/helpers/use-nock';
-import { deauthorizeAccount, fetchAccountDetails } from '../actions';
+import { clearError, createAccount, deauthorizeAccount, fetchAccountDetails } from '../actions';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
@@ -19,6 +22,64 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
+	describe( '#clearError()', () => {
+		const siteId = '123';
+
+		test( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			clearError( siteId )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#createAccount()', () => {
+		const siteId = '123';
+
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( { path: '/wc/v1/connect/stripe/account&_method=post', json: true } )
+				.reply( 200, {
+					data: {
+						success: true,
+						account_id: 'acct_14qyt6Alijdnw0EA',
+					},
+				} );
+		} );
+
+		test( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+				country: 'US',
+				email: 'foo@bar.com',
+				siteId,
+			} );
+		} );
+
+		test( 'should dispatch a success action with account details when the request completes', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+					siteId,
+					connectedUserID: 'acct_14qyt6Alijdnw0EA',
+					email: 'foo@bar.com',
+				} );
+			} );
+		} );
+	} );
+
 	describe( '#fetchAccountDetails()', () => {
 		const siteId = '123';
 

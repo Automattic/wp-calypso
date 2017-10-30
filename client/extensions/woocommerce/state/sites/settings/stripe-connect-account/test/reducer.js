@@ -10,6 +10,9 @@ import { expect } from 'chai';
  */
 import stripeConnectAccountReducer from '../reducer';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
@@ -22,6 +25,165 @@ describe( 'reducer', () => {
 		test( 'should have no change by default', () => {
 			const newState = stripeConnectAccountReducer( {}, {} );
 			expect( newState ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'clearError', () => {
+		test( 'should reset error in state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( { error: 'My error message' }, action );
+			expect( newState.error ).to.eql( '' );
+		} );
+	} );
+
+	describe( 'connectAccountCreate', () => {
+		test( 'should update state to show request in progress', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.isCreating ).to.eql( true );
+		} );
+
+		test( 'should only update the request in progress flag for the appropriate siteId', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								isCreating: false,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								isCreating: false,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
+		} );
+	} );
+
+	describe( 'connectAccountCreateComplete', () => {
+		test( 'should update state with the received account details', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				connectedUserID: 'acct_14qyt6Alijdnw0EA',
+				email: 'foo@bar.com',
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState ).to.eql( {
+				connectedUserID: 'acct_14qyt6Alijdnw0EA',
+				displayName: '',
+				email: 'foo@bar.com',
+				error: '',
+				firstName: '',
+				isActivated: false,
+				isCreating: false,
+				isRequesting: false,
+				lastName: '',
+				logo: '',
+			} );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				connectedUserID: 'acct_14qyt6Alijdnw0EA',
+				email: 'foo@bar.com',
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isCreating: true,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: '',
+								email: '',
+								isActivated: false,
+								isCreating: true,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
+			expect( newState[ 123 ].settings.stripeConnectAccount.connectedUserID ).to.eql(
+				'acct_14qyt6Alijdnw0EA'
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.email ).to.eql( 'foo@bar.com' );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
+		} );
+	} );
+
+	describe( 'connectAccountCreateError', () => {
+		test( 'should reset the isCreating flag in state and store the email and error', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				siteId: 123,
+				email: 'foo@bar.com',
+				error: 'My error',
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.error ).to.eql( 'My error' );
+			expect( newState.email ).to.eql( 'foo@bar.com' );
+			expect( newState.isCreating ).to.eql( false );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
+				siteId: 123,
+				email: 'foo@bar.com',
+				error: 'My error',
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								isCreating: true,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								isCreating: true,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isCreating ).to.eql( false );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isCreating ).to.eql( true );
 		} );
 	} );
 
