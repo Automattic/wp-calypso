@@ -133,14 +133,14 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		if ( stripeConnectAccount.isActivated ) {
 			buttons.push( {
 				action: 'cancel',
-				disabled: disabled,
+				disabled,
 				label: translate( 'Cancel' ),
 				onClick: onCancel,
 			} );
 
 			buttons.push( {
 				action: 'save',
-				disabled: disabled,
+				disabled,
 				label: translate( 'Done' ),
 				onClick: onDone,
 				isPrimary: true,
@@ -148,7 +148,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		} else {
 			buttons.push( {
 				action: 'cancel',
-				disabled: disabled,
+				disabled,
 				label: translate( 'Close' ),
 				onClick: onCancel,
 				isPrimary: true,
