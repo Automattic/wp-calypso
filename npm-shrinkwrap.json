@@ -77,7 +77,7 @@
       "version": "5.3.0"
     },
     "ajv-keywords": {
-      "version": "2.1.0"
+      "version": "2.1.1"
     },
     "align-text": {
       "version": "0.1.4"
@@ -608,7 +608,7 @@
       "version": "1.6.0",
       "dependencies": {
         "browserslist": {
-          "version": "2.5.1"
+          "version": "2.6.1"
         },
         "semver": {
           "version": "5.4.1"
@@ -874,10 +874,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000751"
+      "version": "1.0.30000756"
     },
     "caniuse-lite": {
-      "version": "1.0.30000751"
+      "version": "1.0.30000756"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1946,7 +1946,7 @@
       "dev": true,
       "dependencies": {
         "acorn": {
-          "version": "5.1.2",
+          "version": "5.2.1",
           "dev": true
         }
       }
@@ -5667,7 +5667,7 @@
       "version": "0.0.0"
     },
     "qrcode.react": {
-      "version": "0.6.1"
+      "version": "0.7.2"
     },
     "qs": {
       "version": "4.0.0"
@@ -5929,7 +5929,12 @@
       }
     },
     "react-day-picker": {
-      "version": "6.0.2"
+      "version": "6.2.1",
+      "dependencies": {
+        "prop-types": {
+          "version": "15.6.0"
+        }
+      }
     },
     "react-dom": {
       "version": "15.6.2"
@@ -6636,7 +6641,7 @@
       "version": "0.10.31"
     },
     "string-kit": {
-      "version": "0.6.2",
+      "version": "0.6.3",
       "dev": true
     },
     "string-length": {
@@ -7290,7 +7295,7 @@
       "version": "3.8.1",
       "dependencies": {
         "acorn": {
-          "version": "5.1.2"
+          "version": "5.2.1"
         },
         "ansi-regex": {
           "version": "3.0.0"
@@ -7376,7 +7381,7 @@
           "dev": true
         },
         "acorn": {
-          "version": "5.1.2",
+          "version": "5.2.1",
           "dev": true
         },
         "body-parser": {
@@ -7652,11 +7657,11 @@
       "version": "0.1.9"
     },
     "whatwg-encoding": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "dev": true,
       "dependencies": {
         "iconv-lite": {
-          "version": "0.4.13",
+          "version": "0.4.19",
           "dev": true
         }
       }
@@ -7693,7 +7698,7 @@
       "version": "0.0.2"
     },
     "worker-farm": {
-      "version": "1.5.0",
+      "version": "1.5.1",
       "dev": true
     },
     "wp-error": {
