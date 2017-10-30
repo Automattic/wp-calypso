@@ -107,8 +107,13 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 					}
 				} ) }
 			</div>
-			<span className="mailchimp__sync-status">{ notice }</span>
-			<div>
+			<span className="mailchimp__sync-status">
+				{ notice }
+				<a className="mailchimp__resync-link" onClick={ onResyncClick }>
+					{ translate( 'Resync', { comment: 'to synchronize again' } ) }
+				</a>
+			</span>
+			<div className="mailchimp__account-data">
 				{ translate( '{{span_info}}Products:{{/span_info}} {{span}}%(products)s{{/span}}', {
 					components: {
 						span_info: <span className="mailchimp__account-info" />,
@@ -127,9 +132,6 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 						orders
 					}
 				} ) }
-				<a className="mailchimp__resync-link" onClick={ onResyncClick }>
-					{ translate( 'Resync', { comment: 'to synchronize again' } ) }
-				</a>
 			</div>
 		</div>
 	);
@@ -185,14 +187,17 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 						/>
 						<span>{ translate( 'Subscribe message is checked by default' ) }</span>
 					</FormLabel>
-					<FormLabel className="mailchimp__dashboard-settings-form-field">
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel className="mailchimp__dashboard-settings-form-field mailchimp__dashboard-settings-subscribe-message">
 						<span>{ translate( 'Subscribe message' ) }</span>
-						<FormTextInput
-							name="newsletter_label"
-							onChange={ onNewsletterLabelChange }
-							value={ settings.newsletter_label }
-						/>
 					</FormLabel>
+					<FormTextInput
+						name="newsletter_label"
+						onChange={ onNewsletterLabelChange }
+						value={ settings.newsletter_label }
+					/>
+
 				</FormFieldset>
 			</span>
 			<span className="mailchimp__dashboard-settings-preview">
@@ -271,9 +276,11 @@ class MailChimpDashboard extends React.Component {
 				<Card className="mailchimp__dashboard" >
 					<div className="mailchimp__dashboard-first-section" >
 						<span className="mailchimp__dashboard-title-and-slogan">
-							<div className="mailchimp__dashboard-title">MailChimp</div>
-							<div className="mailchimp__header-description">
-								{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+							<div>
+								<div className="mailchimp__dashboard-title">MailChimp</div>
+								<div className="mailchimp__header-description">
+									{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+								</div>
 							</div>
 						</span>
 						<span className="mailchimp__dashboard-sync-status" >
