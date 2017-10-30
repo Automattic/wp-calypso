@@ -89,22 +89,6 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	componentWillMount() {
-		SignupActions.submitSignupStep(
-			{
-				stepName: this.props.stepName,
-				processingMessage: this.props.translate( 'Adding your theme' ),
-				repoSlug: '',
-			},
-			null,
-			{
-				themeSlugWithRepo: '',
-			}
-		);
-
-		this.props.goToNextStep();
-	}
-
 	render = () => {
 		const storeSignup = this.isStoreSignup();
 		const defaultDependencies = this.props.useHeadstart
