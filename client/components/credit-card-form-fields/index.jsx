@@ -32,6 +32,7 @@ export class CreditCardFormFields extends React.Component {
 		super( props );
 		this.state = {
 			countryCode: '',
+			phoneCountryCode: '',
 		};
 	}
 
@@ -62,6 +63,9 @@ export class CreditCardFormFields extends React.Component {
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
 		// eslint-disable-next-line
 		console.log( value, countryCode );
+		this.setState( {
+			phoneCountryCode: countryCode,
+		} );
 	};
 
 	handleFieldChange = event => {
@@ -80,9 +84,13 @@ export class CreditCardFormFields extends React.Component {
 		this.props.onFieldChange( rawDetails, maskedDetails );
 
 		if ( fieldName === 'country' ) {
-			this.setState( {
+			const newState = {
 				countryCode: nextValue,
-			} );
+			};
+			if ( ! this.state.phoneCountryCode ) {
+				newState.phoneCountryCode = nextValue;
+			}
+			this.setState( newState );
 		}
 	};
 
@@ -93,7 +101,7 @@ export class CreditCardFormFields extends React.Component {
 
 	renderEbanksFields() {
 		const { translate, countriesList } = this.props;
-		const { countryCode } = this.state;
+		const { countryCode, phoneCountryCode } = this.state;
 		return [
 			this.createField( 'document', Input, {
 				label: translate( 'Taxpayer Identification Number', {
@@ -108,9 +116,16 @@ export class CreditCardFormFields extends React.Component {
 				onChange: this.handlePhoneFieldChange,
 				onBlur: this.handlePhoneFieldChange,
 				countriesList: countriesList,
-				countryCode: 'BR',
+				countryCode: phoneCountryCode,
 				label: translate( 'Phone' ),
 				key: 'phone',
+			} ),
+
+			this.createField( 'address', Input, {
+				maxLength: 40,
+				labelClass: 'credit-card-form-fields__label',
+				label: translate( 'Address' ),
+				key: 'address',
 			} ),
 
 			this.createField( 'street-number', Input, {
@@ -119,13 +134,6 @@ export class CreditCardFormFields extends React.Component {
 					context: 'Street number associated with address on credit card form',
 				} ),
 				key: 'street-number',
-			} ),
-
-			this.createField( 'address', Input, {
-				maxLength: 40,
-				labelClass: 'credit-card-form-fields__label',
-				label: translate( 'Address' ),
-				key: 'address',
 			} ),
 
 			this.createField( 'city', Input, {
