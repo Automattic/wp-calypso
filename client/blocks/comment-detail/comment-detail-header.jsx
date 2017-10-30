@@ -28,7 +28,7 @@ import { gmtOffset, timezone } from 'lib/site/utils';
 const getRelativeTimePeriod = ( commentDate, site, moment ) => {
 	const localizedDate = convertDateToUserLocation(
 		commentDate || moment(),
-		timezone( site ),
+		moment.tz.guess() || timezone( site ),
 		gmtOffset( site )
 	);
 
