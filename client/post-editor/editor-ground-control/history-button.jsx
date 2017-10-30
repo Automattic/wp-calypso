@@ -11,37 +11,45 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
 import {
-	NESTED_SIDEBAR_NONE,
-	NESTED_SIDEBAR_REVISIONS,
-	NestedSidebarPropType,
-} from 'post-editor/editor-sidebar/constants';
+	closeEditorSidebar,
+	openEditorSidebar,
+	setNestedSidebar,
+} from 'state/ui/editor/sidebar/actions';
+import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class HistoryButton extends PureComponent {
-	toggleShowing = () => {
-		const {
-			isSidebarOpened,
-			nestedSidebar,
-			selectRevision,
-			setNestedSidebar,
-			toggleSidebar,
-		} = this.props;
+	static propTypes = {
+		// passed props
+		isSidebarOpened: PropTypes.bool,
+		selectRevision: PropTypes.func.isRequired,
 
-		// hide revisions if visible
-		if ( nestedSidebar === NESTED_SIDEBAR_REVISIONS ) {
-			setNestedSidebar( NESTED_SIDEBAR_NONE );
+		// connected props
+		closeEditorSidebar: PropTypes.func.isRequired,
+		nestedSidebarTarget: PropTypes.oneOf( [ NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS ] ),
+		openEditorSidebar: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		setNestedSidebar: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	toggleShowing = () => {
+		const { isSidebarOpened, nestedSidebarTarget, selectRevision } = this.props;
+		// hide revisions if shown
+		if ( nestedSidebarTarget === NESTED_SIDEBAR_REVISIONS ) {
+			this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
 			return;
 		}
 
 		// otherwise, show revisions...
 		this.trackPostRevisionsOpen();
 		selectRevision( null );
-		setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
+		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
 
-		// and open the sidebar if it's not open already.
 		if ( ! isSidebarOpened ) {
-			toggleSidebar();
+			this.props.openEditorSidebar();
 		}
 	};
 
@@ -65,13 +73,17 @@ class HistoryButton extends PureComponent {
 	}
 }
 
-HistoryButton.PropTypes = {
-	isSidebarOpened: PropTypes.bool,
-	nestedSidebar: NestedSidebarPropType,
-	selectRevision: PropTypes.func,
-	setNestedSidebar: PropTypes.func,
-	toggleSidebar: PropTypes.func,
-	translate: PropTypes.func,
-};
-
-export default flow( localize, connect( null, { recordTracksEvent } ) )( HistoryButton );
+export default flow(
+	localize,
+	connect(
+		state => ( {
+			nestedSidebarTarget: getNestedSidebarTarget( state ),
+		} ),
+		{
+			recordTracksEvent,
+			closeEditorSidebar,
+			openEditorSidebar,
+			setNestedSidebar,
+		}
+	)
+)( HistoryButton );
