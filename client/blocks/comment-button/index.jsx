@@ -19,7 +19,7 @@ import { getPostTotalCommentsCount } from 'state/comments/selectors';
 class CommentButton extends Component {
 	static propTypes = {
 		commentCount: PropTypes.number,
-		link: PropTypes.string,
+		href: PropTypes.string,
 		onClick: PropTypes.func,
 		showLabel: PropTypes.bool,
 		tagName: PropTypes.string,
@@ -28,7 +28,7 @@ class CommentButton extends Component {
 
 	static defaultProps = {
 		commentCount: 0,
-		link: null,
+		href: null,
 		onClick: noop,
 		showLabel: true,
 		size: 24,
@@ -52,9 +52,9 @@ class CommentButton extends Component {
 			omitBy(
 				{
 					className: 'comment-button',
-					href: link,
+					href: 'a' === tagName ? href : null,
 					onClick,
-					target,
+					target: 'a' === tagName ? target : null,
 				},
 				isNull
 			),
