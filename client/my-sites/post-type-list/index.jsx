@@ -139,11 +139,6 @@ class PostTypeList extends Component {
 		return ! isRequestingPosts && maxRequestedPage >= lastPage;
 	}
 
-	isTruncatedResults() {
-		const { siteId, lastPage } = this.props;
-		return null === siteId && this.hasListFullyLoaded() && lastPage > MAX_ALL_SITES_PAGES;
-	}
-
 	maybeLoadNextPage() {
 		const { scrollContainer, lastPage, isRequestingPosts } = this.props;
 		if ( ! scrollContainer ) {
@@ -176,8 +171,14 @@ class PostTypeList extends Component {
 	}
 
 	renderMaxPagesNotice() {
-		const { totalPosts } = this.props;
+		const { totalPosts, siteId, lastPage } = this.props;
 		const displayedPosts = this.getPostsPerPageCount() * MAX_ALL_SITES_PAGES;
+		const isTruncated =
+			null === siteId && this.hasListFullyLoaded() && lastPage > MAX_ALL_SITES_PAGES;
+
+		if ( ! isTruncated ) {
+			return null;
+		}
 
 		return (
 			<PostTypeListMaxPagesNotice displayedPosts={ displayedPosts } totalPosts={ totalPosts } />
@@ -221,7 +222,7 @@ class PostTypeList extends Component {
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ this.isTruncatedResults() && this.renderMaxPagesNotice() }
+				{ this.renderMaxPagesNotice() }
 				{ this.hasListFullyLoaded() ? this.renderListEnd() : this.renderPlaceholder() }
 			</div>
 		);
