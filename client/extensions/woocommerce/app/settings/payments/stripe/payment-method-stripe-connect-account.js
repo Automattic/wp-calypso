@@ -25,12 +25,8 @@ class StripeConnectAccount extends Component {
 			lastName: PropTypes.string,
 			logo: PropTypes.string,
 		} ),
-		isDisconnecting: PropTypes.bool,
-		onDisconnect: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		isDisconnecting: false,
+		isDeauthorizing: PropTypes.bool.isRequired,
+		onDeauthorize: PropTypes.func.isRequired,
 	};
 
 	renderLogo = () => {
@@ -66,17 +62,17 @@ class StripeConnectAccount extends Component {
 		);
 	};
 
-	onDisconnect = event => {
+	onDeauthorize = event => {
 		event.preventDefault();
-		this.props.onDisconnect();
+		this.props.onDeauthorize();
 	};
 
 	renderStatus = () => {
-		const { isDisconnecting, stripeConnectAccount, translate } = this.props;
+		const { isDeauthorizing, stripeConnectAccount, translate } = this.props;
 		const { isActivated } = stripeConnectAccount;
 
 		let status = null;
-		let disconnect = null;
+		let deauthorize = null;
 
 		if ( isActivated ) {
 			status = (
@@ -92,13 +88,13 @@ class StripeConnectAccount extends Component {
 			);
 		}
 
-		if ( isDisconnecting ) {
-			disconnect = (
+		if ( isDeauthorizing ) {
+			deauthorize = (
 				<span className="stripe__connect-account-disconnect">{ translate( 'Disconnecting' ) }</span>
 			);
 		} else {
-			disconnect = (
-				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDisconnect }>
+			deauthorize = (
+				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDeauthorize }>
 					{ translate( 'Disconnect' ) }
 				</a>
 			);
@@ -107,7 +103,7 @@ class StripeConnectAccount extends Component {
 		return (
 			<div>
 				{ status }
-				{ disconnect }
+				{ deauthorize }
 			</div>
 		);
 	};

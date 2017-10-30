@@ -15,13 +15,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import {
-	disconnectAccount,
-	fetchAccountDetails,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import { fetchAccountDetails } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
-	getIsDisconnecting,
 	getIsRequesting,
 	getStripeConnectAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
@@ -110,24 +106,11 @@ class PaymentMethodStripe extends Component {
 		this.setState( { userRequestedKeyFlow: false, userRequestedConnectFlow: true } );
 	};
 
-	onDisconnect = () => {
-		const { site } = this.props;
-		this.props.disconnectAccount( site.ID );
-	};
-
 	////////////////////////////////////////////////////////////////////////////
 	// And render brings it all together
 
 	render() {
-		const {
-			domain,
-			isDisconnecting,
-			isRequesting,
-			method,
-			onCancel,
-			onDone,
-			stripeConnectAccount,
-		} = this.props;
+		const { domain, isRequesting, method, onCancel, onDone, stripeConnectAccount } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		const connectFlowsEnabled = config.isEnabled(
@@ -172,10 +155,8 @@ class PaymentMethodStripe extends Component {
 			return (
 				<PaymentMethodStripeConnectedDialog
 					domain={ domain }
-					isDisconnecting={ isDisconnecting }
 					method={ method }
 					onCancel={ onCancel }
-					onDisconnect={ this.onDisconnect }
 					onDone={ onDone }
 					onEditField={ this.onEditFieldHandler }
 					stripeConnectAccount={ stripeConnectAccount }
@@ -207,12 +188,8 @@ function mapStateToProps( state ) {
 	const domain = site.domain || '';
 	const isRequesting = getIsRequesting( state, siteId );
 	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
-	const isDisconnecting = getIsDisconnecting( state, siteId );
-	const isRequesting = getIsRequesting( state, siteId );
-	const stripeConnectAccount = getStripeConnectAccount( state, site.ID );
 	return {
 		domain,
-		isDisconnecting,
 		isRequesting,
 		siteId,
 		stripeConnectAccount,
@@ -222,7 +199,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			disconnectAccount,
 			fetchAccountDetails,
 		},
 		dispatch

@@ -8,9 +8,10 @@
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
-	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
@@ -78,10 +79,57 @@ function fetchFailure( siteId, action, errorMessage ) {
 	};
 }
 
-export function disconnectAccount( siteId ) {
+/**
+ * Action Creator: Disconnect Account.
+ *
+ * @param {Number} siteId The id of the site to disconnect from Stripe Connect.
+ * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @return {Object} Action object
+ */
+export const deauthorizeAccount = ( siteId, successAction = null, failureAction = null ) => (
+	dispatch,
+	getState
+) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const deauthorizeAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
+		siteId,
+	};
+
+	dispatch( deauthorizeAction );
+
+	return request( siteId )
+		.post( 'connect/stripe/account/deauthorize', {}, 'wc/v1' )
+		.then( data => {
+			dispatch( deauthorizeSuccess( siteId ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( error => {
+			dispatch( deauthorizeFailure( siteId, deauthorizeAction, error ) );
+			if ( failureAction ) {
+				dispatch( failureAction( error ) );
+			}
+		} );
+};
+
+function deauthorizeSuccess( siteId ) {
 	return {
-		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DISCONNECT,
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 		siteId,
 	};
 }
 
+function deauthorizeFailure( siteId, action, errorMessage ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
+		error: errorMessage,
+		siteId,
+	};
+}
