@@ -74,12 +74,6 @@ export const redirectTo = createReducer( null, {
 	[ LOGOUT_REQUEST_FAILURE ]: () => null,
 } );
 
-export const rememberMe = createReducer( null, {
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, action ) => action.rememberMe,
-	[ LOGIN_REQUEST_FAILURE ]: () => false,
-} );
-
 export const isFormDisabled = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
@@ -263,7 +257,6 @@ export default combineReducers( {
 	isRequestingTwoFactorAuth,
 	magicLogin,
 	redirectTo,
-	rememberMe,
 	isFormDisabled,
 	requestError,
 	requestNotice,

@@ -53,7 +53,6 @@ describe( 'reducer', () => {
 			'isRequestingTwoFactorAuth',
 			'magicLogin',
 			'redirectTo',
-			'rememberMe',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
@@ -508,7 +507,6 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
@@ -531,7 +529,6 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
