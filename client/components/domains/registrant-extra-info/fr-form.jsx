@@ -39,7 +39,7 @@ function onlyNumericCharacters( string ) {
  * letters, plus or star symbols.
  */
 export function sanitizeVat( string ) {
-	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z\+\*]/g, '' ) : '';
+	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z+*]/g, '' ) : '';
 }
 
 // If we set a field to null, react decides it's uncontrolled and complains
@@ -169,7 +169,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				translate(
 					'The VAT Number field is a pattern ' +
 						'of letters and numbers that depends on the country, ' +
-						'but it always includes a 2 letter country code'
+						'but it always starts with a 2 letter country code'
 				)
 			);
 
