@@ -1,4 +1,6 @@
-/** @format */
+/** 
+ * @format 
+ */
 
 /**
  * Get the high watermark for a Reader stream
@@ -7,6 +9,6 @@
  * @param {String} streamId -
  * @returns {Number} date in number form
  */
-const getReaderWatermark = ( state, streamId ) => state.reader.watermarks[ streamId ];
+const getReaderWatermark = ( state, { streamId } ) => state.reader.watermarks[ streamId ];
 
 export default getReaderWatermark;

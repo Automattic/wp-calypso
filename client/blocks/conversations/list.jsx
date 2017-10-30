@@ -19,6 +19,7 @@ import {
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
+	getReaderWatermark,
 } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -156,7 +157,16 @@ export class ConversationCommentList extends React.Component {
 	getCommentsToShow = () => {
 		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
 
-		const minId = min( commentIds );
+		let minId;
+		if ( config( 'reader/high-watermark' ) ) {
+			const firstUnseenComment = find(
+				sortedComments,
+				comment => this.props.watermark <= comment.date
+			);
+			minId = get( firstUnseenComment, 'ID', Infinity );
+		} else {
+			minId = min( commentIds );
+		}
 		const startingCommentIds = ( sortedComments || [] )
 			.filter( comment => {
 				return comment.ID >= minId || comment.isPlaceholder;
@@ -277,6 +287,7 @@ const ConnectedConversationCommentList = connect(
 				siteId,
 				postId,
 			} ),
+			watermark: getReaderWatermark( state, { streamId: 'conversations' } ),
 		};
 	},
 	{ requestPostComments, requestComment, setActiveReply }
