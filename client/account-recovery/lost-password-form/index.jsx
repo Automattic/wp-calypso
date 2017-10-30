@@ -58,7 +58,7 @@ export class LostPasswordFormComponent extends Component {
 					<ol className="lost-password-form__instruction-list">
 						<li>
 							{ translate(
-								'Enter your {{strong}}WordPress.com{{/strong}} username or email address',
+								'Enter your {{strong}}WordPress.com{{/strong}} email address or username',
 								{ components: { strong: <strong /> } }
 							) }
 						</li>

@@ -218,7 +218,7 @@ export class LoginForm extends Component {
 							</div>
 						) }
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
-							{ this.props.translate( 'Username or Email Address' ) }
+							{ this.props.translate( 'Email Address or Username' ) }
 						</label>
 
 						<FormTextInput
