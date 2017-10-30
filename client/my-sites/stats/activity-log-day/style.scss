@@ -127,3 +127,20 @@
 	height: auto;
 	top: 57px;
 }
+
+.activity-log-item.is-before-dialog:before {
+	content: none;
+}
+.has-rewind-dialog .activity-log-item__restore-confirm:first-child:after {
+	content: " ";
+	position: absolute;
+	top: -24px;
+	left: 33px;
+	height: 20px;
+	width: 4px;
+	background: $gray-light;
+
+	@include breakpoint( "<480px" ) {
+		left: 21px;
+	}
+}
