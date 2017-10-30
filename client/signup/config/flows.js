@@ -244,8 +244,8 @@ const flows = {
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
-	flows[ 'atomic-store' ] = {
-		steps: [ 'design-type-with-atomic-store', 'themes', 'domains', 'plans-atomic-store', 'user' ],
+	flows[ 'store-nux' ] = {
+		steps: [ 'design-type-with-store-nux', 'themes', 'domains', 'plans-store-nux', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for creating an online store with an Atomic site',
 		lastModified: '2017-09-27',
