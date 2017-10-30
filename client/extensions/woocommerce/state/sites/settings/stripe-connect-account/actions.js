@@ -15,6 +15,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
@@ -217,6 +219,64 @@ function deauthorizeFailure( siteId, action, errorMessage ) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 		error: errorMessage,
+		siteId,
+	};
+}
+
+/**
+ * Action Creator: Create (and connect) a Stripe Connect Account.
+ *
+ * @param {Number} siteId The id of the site for which to create an account.
+ * @param {String} returnUrl The URL for Stripe to return the user to (to complete the setup)
+ * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @return {Object} Action object
+ */
+export const oauthInit = ( siteId, returnUrl, successAction = null, failureAction = null ) => (
+	dispatch,
+	getState
+) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const initAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+		returnUrl,
+		siteId,
+	};
+
+	dispatch( initAction );
+
+	return request( siteId )
+		.post( 'connect/stripe/oauth/init', { returnUrl }, 'wc/v1' )
+		.then( data => {
+			dispatch( oauthInitSuccess( siteId, initAction, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( error => {
+			dispatch( oauthInitFailure( siteId, initAction, error ) );
+			if ( failureAction ) {
+				dispatch( failureAction( error ) );
+			}
+		} );
+};
+
+function oauthInitSuccess( siteId, { email }, { oauthUrl } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+		oauthUrl,
+		siteId,
+	};
+}
+
+function oauthInitFailure( siteId, action, { message } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+		error: message,
 		siteId,
 	};
 }

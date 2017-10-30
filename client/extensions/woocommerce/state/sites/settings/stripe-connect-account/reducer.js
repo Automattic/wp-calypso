@@ -16,6 +16,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -142,6 +144,33 @@ function connectAccountDeauthorizeComplete( state = {}, action ) {
 	} );
 }
 
+/**
+ * Updates state to indicate oauth initialization request is in progress
+ *
+ * @param  {Object} state  Current state
+ * @return {Object}        Updated state
+ */
+function connectAccountOAuthInit( state = {} ) {
+	return Object.assign( {}, state, {
+		isOAuthInitializing: true,
+		oauthUrl: '',
+	} );
+}
+
+/**
+ * Updates state after oauth initialization completes
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+function connectAccountOAuthInitComplete( state = {}, action ) {
+	return Object.assign( {}, state, {
+		isOAuthInitializing: false,
+		error: action.error || '',
+		oauthUrl: action.oauthUrl || '',
+	} );
+}
 export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR ]: connectAccountClearError,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE ]: connectAccountCreate,
@@ -150,4 +179,6 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE ]: connectAccountDeauthorizeComplete,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST ]: connectAccountFetch,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE ]: connectAccountFetchComplete,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT ]: connectAccountOAuthInit,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE ]: connectAccountOAuthInitComplete,
 } );

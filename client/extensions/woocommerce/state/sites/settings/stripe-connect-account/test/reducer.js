@@ -17,6 +17,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 } from 'woocommerce/state/action-types';
 import sitesReducer from 'woocommerce/state/sites/reducer';
 
@@ -521,6 +523,179 @@ describe( 'reducer', () => {
 			expect( newState[ 123 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( false );
 			expect( newState[ 456 ].settings.stripeConnectAccount.error ).to.eql( '' );
 			expect( newState[ 456 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( true );
+		} );
+	} );
+
+	describe( 'connectAccountOAuthInit', () => {
+		test( 'should update state to show request in progress', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.isOAuthInitializing ).to.eql( true );
+		} );
+
+		test( 'should only update the request in progress flag for the appropriate siteId', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								isOAuthInitializing: false,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								isOAuthInitializing: false,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( false );
+		} );
+	} );
+
+	describe( 'connectAccountOAuthInitComplete Success', () => {
+		test( 'should update state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+				oauthUrl: 'https://connect.stripe.com/oauth/authorize',
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState ).to.eql( {
+				error: '',
+				isOAuthInitializing: false,
+				oauthUrl: 'https://connect.stripe.com/oauth/authorize',
+			} );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+				oauthUrl: 'https://connect.stripe.com/oauth/authorize',
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_25rzu7Alijdnw0FB',
+								displayName: 'Bar Foo',
+								email: 'bar@foo.com',
+								error: '',
+								firstName: 'Bar',
+								isActivated: false,
+								isDeauthorizing: false,
+								isOAuthInitializing: true,
+								isRequesting: false,
+								lastName: 'Foo',
+								logo: '',
+								oauthUrl: 'https://connect.stripe.com/oauth/authorize',
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: true,
+								isOAuthInitializing: false,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+								oauthUrl: '',
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( false );
+			expect( newState[ 123 ].settings.stripeConnectAccount.oauthUrl ).to.eql(
+				'https://connect.stripe.com/oauth/authorize'
+			);
+			expect( newState[ 456 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( false );
+			expect( newState[ 456 ].settings.stripeConnectAccount.oauthUrl ).to.eql( '' );
+		} );
+	} );
+
+	describe( 'connectAccountOAuthInitComplete w/ Error', () => {
+		test( 'should set the error in state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+				siteId: 123,
+				error: 'My error message',
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.error ).to.eql( 'My error message' );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+				siteId: 123,
+				error: 'My error message',
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: false,
+								isOAuthInitializing: true,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: false,
+								isOAuthInitializing: true,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.error ).to.eql( 'My error message' );
+			expect( newState[ 123 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( false );
+			expect( newState[ 456 ].settings.stripeConnectAccount.error ).to.eql( '' );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isOAuthInitializing ).to.eql( true );
 		} );
 	} );
 } );
