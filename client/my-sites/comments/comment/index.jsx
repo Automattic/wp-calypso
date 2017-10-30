@@ -38,6 +38,12 @@ export class Comment extends Component {
 		isExpanded: false,
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isBulkMode && ! this.props.isBulkMode ) {
+			this.setState( { isExpanded: false } );
+		}
+	}
+
 	storeCardRef = card => ( this.commentCard = card );
 
 	keyDownHandler = event => {
