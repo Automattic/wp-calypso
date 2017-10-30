@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
@@ -18,7 +18,7 @@ import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-export class CommentHeader extends Component {
+export class CommentHeader extends PureComponent {
 	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
 	render() {
