@@ -25,7 +25,11 @@ class DisconnectSiteLink extends Component {
 		dialogVisible: false,
 	};
 
-	handleClick = () => {
+	handleClick = event => {
+		if ( ! isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+			event.preventDefault();
+		}
+
 		this.setState( {
 			dialogVisible: true,
 		} );
