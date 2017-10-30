@@ -11,6 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { isExternal } from 'lib/url';
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
 import {
@@ -550,6 +551,10 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
+		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
+		if ( isExternal( url ) ) {
+			return window.open( url );
+		}
 		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
 }
