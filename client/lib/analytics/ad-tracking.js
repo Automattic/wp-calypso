@@ -7,7 +7,7 @@
 import async from 'async';
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { assign, clone, cloneDeep, noop, some } from 'lodash';
+import { assign, clone, cloneDeep, noop } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -39,7 +39,7 @@ const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
 const isLinkedinEnabled = true;
-const isYandexEnabled = true;
+let isYandexEnabled = true;
 const isOutbrainEnabled = true;
 const isAtlasEnabled = false;
 const isPandoraEnabled = false;
@@ -322,8 +322,10 @@ function loadTrackingScripts( callback ) {
 		} );
 	}
 
-	async.series( scripts, function( errors ) {
-		if ( ! some( errors ) ) {
+	async.series( scripts, function( error ) {
+		if ( error ) {
+			debug( 'Some scripts failed to load: ', error );
+		} else {
 			// init Facebook
 			if ( isFacebookEnabled ) {
 				window.fbq( 'init', TRACKING_IDS.facebookInit );
@@ -360,7 +362,12 @@ function loadTrackingScripts( callback ) {
 
 			// init Yandex counter
 			if ( isYandexEnabled ) {
-				window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
+				if ( window.Ya ) {
+					window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
+				} else {
+					debug( "Error: Yandex's window.Ya not ready or missing" );
+					isYandexEnabled = false;
+				}
 			}
 
 			hasFinishedFetchingScripts = true;
@@ -369,8 +376,6 @@ function loadTrackingScripts( callback ) {
 				callback();
 			}
 			debug( 'Scripts loaded successfully' );
-		} else {
-			debug( 'Some scripts failed to load: ', errors );
 		}
 	} );
 }
