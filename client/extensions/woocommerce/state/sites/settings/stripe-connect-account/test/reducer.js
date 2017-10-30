@@ -10,6 +10,8 @@ import { expect } from 'chai';
  */
 import stripeConnectAccountReducer from '../reducer';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 } from 'woocommerce/state/action-types';
@@ -89,6 +91,7 @@ describe( 'reducer', () => {
 				error: '',
 				firstName: 'Foo',
 				isActivated: false,
+				isDeauthorizing: false,
 				isRequesting: false,
 				lastName: 'Bar',
 				logo: 'http://bar.com/foo.png',
@@ -184,6 +187,178 @@ describe( 'reducer', () => {
 			);
 			expect( newState[ 123 ].settings.stripeConnectAccount.isRequesting ).to.eql( false );
 			expect( newState[ 456 ].settings.stripeConnectAccount.isRequesting ).to.eql( true );
+		} );
+	} );
+
+	describe( 'connectAccountDeauthorize', () => {
+		test( 'should update state to show request in progress', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.isDeauthorizing ).to.eql( true );
+		} );
+
+		test( 'should only update the request in progress flag for the appropriate siteId', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE,
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								isDeauthorizing: false,
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								isDeauthorizing: false,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( false );
+		} );
+	} );
+
+	describe( 'connectAccountDeauthorizeComplete Success', () => {
+		test( 'should update state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState ).to.eql( {
+				connectedUserID: '',
+				displayName: '',
+				email: '',
+				error: '',
+				firstName: '',
+				isActivated: false,
+				isDeauthorizing: false,
+				isRequesting: false,
+				lastName: '',
+				logo: '',
+			} );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
+				siteId: 123,
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_25rzu7Alijdnw0FB',
+								displayName: 'Bar Foo',
+								email: 'bar@foo.com',
+								error: '',
+								firstName: 'Bar',
+								isActivated: false,
+								isDeauthorizing: true,
+								isRequesting: false,
+								lastName: 'Foo',
+								logo: '',
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: true,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( false );
+			expect( newState[ 123 ].settings.stripeConnectAccount.connectedUserID ).to.eql( '' );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( true );
+			expect( newState[ 456 ].settings.stripeConnectAccount.connectedUserID ).to.eql(
+				'acct_14qyt6Alijdnw0EA'
+			);
+		} );
+	} );
+
+	describe( 'connectAccountDeauthorizeComplete w/ Error', () => {
+		test( 'should set the error in state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
+				siteId: 123,
+				error: 'My error message',
+			};
+			const newState = stripeConnectAccountReducer( undefined, action );
+			expect( newState.error ).to.eql( 'My error message' );
+		} );
+
+		test( 'should leave other sites state unchanged', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
+				siteId: 123,
+				error: 'My error message',
+			};
+			const newState = sitesReducer(
+				{
+					123: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: true,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+							},
+						},
+					},
+					456: {
+						settings: {
+							stripeConnectAccount: {
+								connectedUserID: 'acct_14qyt6Alijdnw0EA',
+								displayName: 'Foo Bar',
+								email: 'foo@bar.com',
+								error: '',
+								firstName: 'Foo',
+								isActivated: false,
+								isDeauthorizing: true,
+								isRequesting: false,
+								lastName: 'Bar',
+								logo: '',
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 123 ].settings.stripeConnectAccount.error ).to.eql( 'My error message' );
+			expect( newState[ 123 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( false );
+			expect( newState[ 456 ].settings.stripeConnectAccount.error ).to.eql( '' );
+			expect( newState[ 456 ].settings.stripeConnectAccount.isDeauthorizing ).to.eql( true );
 		} );
 	} );
 } );
