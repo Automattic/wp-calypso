@@ -404,13 +404,13 @@ ShallowWrapper {
   "renderer": ReactShallowRenderer {
     "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
+      "_compositeType": 2,
       "_context": Object {},
       "_currentElement": <CompactCard />,
       "_debugID": 9,
       "_hostContainerInfo": null,
       "_hostParent": null,
-      "_instance":  {
+      "_instance": StatelessComponent {
         "_reactInternalInstance": [Circular],
         "context": Object {},
         "props": Object {},
@@ -484,7 +484,7 @@ ShallowWrapper {
   "renderer": ReactShallowRenderer {
     "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
+      "_compositeType": 2,
       "_context": Object {},
       "_currentElement": <CompactCard
         className="test__ace"
@@ -492,7 +492,7 @@ ShallowWrapper {
       "_debugID": 11,
       "_hostContainerInfo": null,
       "_hostParent": null,
-      "_instance":  {
+      "_instance": StatelessComponent {
         "_reactInternalInstance": [Circular],
         "context": Object {},
         "props": Object {
@@ -574,7 +574,7 @@ ShallowWrapper {
   "renderer": ReactShallowRenderer {
     "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
+      "_compositeType": 2,
       "_context": Object {},
       "_currentElement": <CompactCard>
         This is a compact card
@@ -582,7 +582,7 @@ ShallowWrapper {
       "_debugID": 13,
       "_hostContainerInfo": null,
       "_hostParent": null,
-      "_instance":  {
+      "_instance": StatelessComponent {
         "_reactInternalInstance": [Circular],
         "context": Object {},
         "props": Object {
@@ -664,13 +664,13 @@ ShallowWrapper {
   "renderer": ReactShallowRenderer {
     "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
+      "_compositeType": 2,
       "_context": Object {},
       "_currentElement": <CompactCard />,
       "_debugID": 15,
       "_hostContainerInfo": null,
       "_hostParent": null,
-      "_instance":  {
+      "_instance": StatelessComponent {
         "_reactInternalInstance": [Circular],
         "context": Object {},
         "props": Object {},

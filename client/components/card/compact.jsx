@@ -1,27 +1,20 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import { assign } from 'lodash';
 import classnames from 'classnames';
-import createClass from 'create-react-class';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 
-export default createClass( {
-	displayName: 'CompactCard',
+export default function CompactCard( props ) {
+	const nextProps = assign( {}, props, {
+		className: classnames( props.className, 'is-compact' ),
+	} );
 
-	render: function() {
-		const props = assign( {}, this.props, {
-			className: classnames( this.props.className, 'is-compact' ),
-		} );
-
-		return <Card { ...props }>{ this.props.children }</Card>;
-	},
-} );
+	return <Card { ...nextProps }>{ props.children }</Card>;
+}
