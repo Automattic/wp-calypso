@@ -273,9 +273,11 @@ class MailChimpDashboard extends React.Component {
 				<Card className="mailchimp__dashboard" >
 					<div className="mailchimp__dashboard-first-section" >
 						<span className="mailchimp__dashboard-title-and-slogan">
-							<div className="mailchimp__dashboard-title">MailChimp</div>
-							<div className="mailchimp__header-description">
-								{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+							<div>
+								<div className="mailchimp__dashboard-title">MailChimp</div>
+								<div className="mailchimp__header-description">
+									{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+								</div>
 							</div>
 						</span>
 						<span className="mailchimp__dashboard-sync-status" >
