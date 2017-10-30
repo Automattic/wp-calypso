@@ -9,15 +9,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { createProductUpdateFromPromotion, createCouponUpdateFromPromotion } from './helpers';
 import {
 	fetchCoupons,
 	createCoupon,
 	updateCoupon,
 	deleteCoupon,
 } from 'woocommerce/state/sites/coupons/actions';
-import {
-	updateProduct,
-} from 'woocommerce/state/sites/products/actions';
+import { updateProduct } from 'woocommerce/state/sites/products/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import {
 	WOOCOMMERCE_PROMOTION_CREATE,
@@ -103,43 +102,63 @@ export function couponsUpdated( { dispatch }, action ) {
 export function promotionCreate( { dispatch }, action ) {
 	const { siteId, promotion } = action;
 
-	if ( 'coupon' === promotion.type && promotion.coupon ) {
-		dispatch( createCoupon( siteId, promotion.coupon, action.successAction, action.failureAction ) );
-	}
-	if ( 'product_sale' === promotion.type && promotion.product ) {
-		dispatch( updateProduct( siteId, promotion.product, action.successAction, action.failureAction ) );
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( createCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
 	}
 }
 
 export function promotionUpdate( { dispatch }, action ) {
 	const { siteId, promotion } = action;
 
-	if ( 'coupon' === promotion.type && promotion.coupon ) {
-		dispatch( updateCoupon( siteId, promotion.coupon, action.successAction, action.failureAction ) );
-	}
-	if ( 'product_sale' === promotion.type && promotion.product ) {
-		dispatch( updateProduct( siteId, promotion.product, action.successAction, action.failureAction ) );
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( updateCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
 	}
 }
 
 export function promotionDelete( { dispatch }, action ) {
 	const { siteId, promotion } = action;
 
-	if ( 'coupon' === promotion.type && promotion.coupon ) {
-		dispatch( deleteCoupon( siteId, promotion.coupon.id, action.successAction, action.failureAction ) );
-	}
-	if ( 'product_sale' === promotion.type && promotion.product ) {
-		// Remove all sale-related fields from the product.
-		const {
-			sale_price,
-			date_on_sale_from,
-			date_on_sale_from_gmt,
-			date_on_sale_to,
-			date_on_sale_to_gmt,
-			...productDeletedSale
-		} = promotion.product; // eslint-disable-line no-unused-vars
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
 
-		dispatch( updateProduct( siteId, productDeletedSale, action.successAction, action.failureAction ) );
+			const productUpdateData = {
+				id: product.id,
+				sale_price: null,
+				date_on_sale_from: null,
+				date_on_sale_from_gmt: null,
+				date_on_sale_to: null,
+				date_on_sale_to_gmt: null,
+			};
+
+			dispatch(
+				updateProduct( siteId, productUpdateData, action.successAction, action.failureAction )
+			);
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			dispatch(
+				deleteCoupon( siteId, promotion.couponId, action.successAction, action.failureAction )
+			);
+			break;
 	}
 }
-

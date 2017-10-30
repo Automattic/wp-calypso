@@ -1,7 +1,5 @@
 /**
  * Internal dependencies
- *
- * @format
  */
 import {
 	WOOCOMMERCE_PROMOTION_CREATE,

@@ -9,18 +9,8 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	coupons1,
-	coupons2,
-	products1,
-	products2,
-} from './fixtures/promotions';
-import {
-	fetchPromotions,
-	createPromotion,
-	updatePromotion,
-	deletePromotion,
-} from '../actions';
+import { coupons1, coupons2, products1, products2 } from './fixtures/promotions';
+import { fetchPromotions, createPromotion, updatePromotion, deletePromotion } from '../actions';
 import {
 	promotionsRequest,
 	productsRequestSuccess,
@@ -152,21 +142,31 @@ describe( 'handlers', () => {
 
 			const promotion = {
 				id: 'coupon:12',
-				type: 'coupon',
-				coupon: {
-					code: '10off',
-					discount_type: 'percent',
-					amount: '10'
-				}
+				type: 'percent',
+				appliesTo: { productIds: [ 1, 2 ] },
+				couponCode: '10off',
+				percentDiscount: '10',
+				endDate: '2017-12-15T12:15:02',
 			};
+
+			const expectedCouponData = {
+				code: '10off',
+				discount_type: 'percent',
+				amount: '10',
+				product_ids: [ 1, 2 ],
+				date_expires_gmt: '2017-12-15T12:15:02',
+			};
+
 			const action = createPromotion( siteId, promotion, successAction, failureAction );
 
 			promotionCreate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_COUPON_CREATE',
-				coupon: promotion.coupon,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_COUPON_CREATE',
+					coupon: expectedCouponData,
+				} )
+			);
 		} );
 
 		it( 'should dispatch an update product action', () => {
@@ -177,19 +177,29 @@ describe( 'handlers', () => {
 			const promotion = {
 				id: 'product:12',
 				type: 'product_sale',
-				product: {
-					id: 12,
-					sale_price: '9.99',
-				}
+				appliesTo: { productIds: [ 12 ] },
+				salePrice: '9.99',
+				startDate: '2017-10-15T12:15:02',
+				endDate: '2017-11-15T12:15:02',
 			};
+
+			const expectedProductData = {
+				id: 12,
+				sale_price: '9.99',
+				date_on_sale_from_gmt: '2017-10-15T12:15:02',
+				date_on_sale_to_gmt: '2017-11-15T12:15:02',
+			};
+
 			const action = createPromotion( siteId, promotion, successAction, failureAction );
 
 			promotionCreate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_PRODUCT_UPDATE',
-				product: promotion.product,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_PRODUCT_UPDATE',
+					product: expectedProductData,
+				} )
+			);
 		} );
 	} );
 
@@ -200,22 +210,35 @@ describe( 'handlers', () => {
 			};
 
 			const promotion = {
-				id: 14,
-				type: 'coupon',
-				coupon: {
-					code: '10off',
-					discount_type: 'percent',
-					amount: '10'
-				}
+				id: 'coupon:23',
+				type: 'percent',
+				couponCode: '10off',
+				percentDiscount: '10',
+				appliesTo: { all: true },
+				usageLimit: '25',
+				individualUse: true,
+				couponId: 27,
 			};
+
+			const expectedCouponData = {
+				id: 27,
+				code: '10off',
+				discount_type: 'percent',
+				amount: '10',
+				individual_use: true,
+				usage_limit: '25',
+			};
+
 			const action = updatePromotion( siteId, promotion, successAction, failureAction );
 
 			promotionUpdate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_COUPON_UPDATE',
-				coupon: promotion.coupon,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_COUPON_UPDATE',
+					coupon: expectedCouponData,
+				} )
+			);
 		} );
 
 		it( 'should dispatch an update product action', () => {
@@ -226,19 +249,25 @@ describe( 'handlers', () => {
 			const promotion = {
 				id: 'product:12',
 				type: 'product_sale',
-				product: {
-					id: 12,
-					sale_price: '9.99',
-				}
+				salePrice: '9.99',
+				appliesTo: { productIds: [ 12 ] },
 			};
+
+			const expectedProductData = {
+				id: 12,
+				sale_price: '9.99',
+			};
+
 			const action = updatePromotion( siteId, promotion, successAction, failureAction );
 
 			promotionUpdate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_PRODUCT_UPDATE',
-				product: promotion.product,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_PRODUCT_UPDATE',
+					product: expectedProductData,
+				} )
+			);
 		} );
 	} );
 
@@ -250,21 +279,23 @@ describe( 'handlers', () => {
 
 			const promotion = {
 				id: 14,
-				type: 'coupon',
-				coupon: {
-					code: '10off',
-					discount_type: 'percent',
-					amount: '10'
-				}
+				type: 'percent',
+				couponCode: '10off',
+				percentDiscount: '10',
+				appliesTo: { all: true },
+				couponId: 25,
 			};
+
 			const action = deletePromotion( siteId, promotion, successAction, failureAction );
 
 			promotionDelete( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_COUPON_DELETE',
-				couponId: promotion.coupon.id,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_COUPON_DELETE',
+					couponId: 25,
+				} )
+			);
 		} );
 
 		it( 'should dispatch an update product action', () => {
@@ -275,19 +306,30 @@ describe( 'handlers', () => {
 			const promotion = {
 				id: 'product:12',
 				type: 'product_sale',
-				product: {
-					id: 12,
-					sale_price: '10',
-				}
+				appliesTo: { productIds: [ 12 ] },
+				salePrice: '10',
+				endDate: '2017-12-01T05:25:00',
 			};
+
+			const expectedProductData = {
+				id: 12,
+				date_on_sale_from: null,
+				date_on_sale_from_gmt: null,
+				date_on_sale_to: null,
+				date_on_sale_to_gmt: null,
+				sale_price: null,
+			};
+
 			const action = deletePromotion( siteId, promotion, successAction, failureAction );
 
 			promotionDelete( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: 'WOOCOMMERCE_PRODUCT_UPDATE',
-				product: match( { id: 12, sale_price: undefined } ),
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: 'WOOCOMMERCE_PRODUCT_UPDATE',
+					product: match( expectedProductData ),
+				} )
+			);
 		} );
 	} );
 } );
