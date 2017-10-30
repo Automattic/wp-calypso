@@ -22,7 +22,6 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
-import { NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 
 export class EditorGroundControl extends PureComponent {
@@ -35,7 +34,6 @@ export class EditorGroundControl extends PureComponent {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
-		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -202,16 +200,7 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	renderGroundControlQuickSaveButtons() {
-		const {
-			isSaving,
-			isSidebarOpened,
-			nestedSidebar,
-			post,
-			selectRevision,
-			setNestedSidebar,
-			toggleSidebar,
-			translate,
-		} = this.props;
+		const { isSaving, isSidebarOpened, post, selectRevision, translate } = this.props;
 
 		const isSaveAvailable = this.isSaveAvailable();
 		const showingStatusLabel = this.shouldShowStatusLabel();
@@ -247,13 +236,7 @@ export class EditorGroundControl extends PureComponent {
 					</div>
 				) }
 				{ hasRevisions && (
-					<HistoryButton
-						selectRevision={ selectRevision }
-						setNestedSidebar={ setNestedSidebar }
-						toggleSidebar={ toggleSidebar }
-						isSidebarOpened={ isSidebarOpened }
-						nestedSidebar={ nestedSidebar }
-					/>
+					<HistoryButton selectRevision={ selectRevision } isSidebarOpened={ isSidebarOpened } />
 				) }
 			</div>
 		);
