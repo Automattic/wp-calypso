@@ -32,7 +32,7 @@ const appliesToCouponField = {
 	component: (
 		<PromotionAppliesToField
 			selectionTypes={ [
-				{ labelText: translate( 'All' ), type: 'all' },
+				{ labelText: translate( 'All Products' ), type: 'all' },
 				{ labelText: translate( 'Specific Products' ), type: 'productIds' },
 				{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
 			] }
