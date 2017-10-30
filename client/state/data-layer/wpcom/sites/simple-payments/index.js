@@ -16,11 +16,7 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE,
 } from 'state/action-types';
-import {
-	receiveProductsList,
-	receiveUpdateProduct,
-	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
+import crudActions from 'state/crud/actions';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
@@ -140,9 +136,11 @@ export function productToCustomPost( product ) {
 	};
 }
 
-const replaceProductList = ( { siteId }, products ) => receiveProductsList( siteId, products );
-const addOrUpdateProduct = ( { siteId }, newProduct ) => receiveUpdateProduct( siteId, newProduct );
-const deleteProduct = ( { siteId }, deletedPost ) => receiveDeleteProduct( siteId, deletedPost.ID );
+const actions = crudActions( 'simplePayments.productList' );
+
+const replaceProductList = ( { siteId }, products ) => actions.replace( products, { siteId } );
+const addOrUpdateProduct = ( { siteId }, product ) => actions.createOrUpdate( product, { siteId } );
+const deleteProduct = ( { siteId }, post ) => actions.delete( post.ID, { siteId } );
 
 export const handleProductGet = dispatchRequestEx( {
 	fetch: action =>
