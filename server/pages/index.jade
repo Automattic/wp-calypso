@@ -238,5 +238,19 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(src=urls[ chunk ])
 		script(type='text/javascript')!='window.AppBoot();'
 
+		script.
+			(function() {
+				if ( window.console ) {
+					console.log( "%cSTOP!", "color:#f00;font-size:xx-large" );
+					console.log(
+						"%cWait! This browser feature runs code that can alter your website or its security, " +
+						"and is intended for developers. If you've been told to copy and paste something here " +
+						"to enable a feature, someone may be trying to compromise your account. Please make " +
+						"sure you understand the code and trust the source before adding anything here.",
+						"font-size:large;"
+					);
+				}
+			})();
+
 		noscript.wpcom-site__global-noscript
 			|Please enable JavaScript in your browser to enjoy WordPress.com.
