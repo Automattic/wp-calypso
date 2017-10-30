@@ -165,7 +165,7 @@ function getDefaultContext( request ) {
 		bodyClasses.push( 'pride' );
 	}
 
-	if ( request.context.sectionCss ) {
+	if ( request.context && request.context.sectionCss ) {
 		const urls = utils.getCssUrls( request.context.sectionCss );
 		sectionCss = urls.ltr;
 		sectionCssRtl = urls.rtl;
