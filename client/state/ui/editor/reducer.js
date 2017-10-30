@@ -1,15 +1,14 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
 import contactForm from './contact-form/reducer';
+import sidebar from './sidebar/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -36,4 +35,5 @@ export default combineReducers( {
 	videoEditor,
 	lastDraft,
 	contactForm,
+	sidebar,
 } );

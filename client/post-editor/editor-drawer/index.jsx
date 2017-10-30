@@ -85,7 +85,6 @@ class EditorDrawer extends Component {
 		onSave: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
 		selectRevision: PropTypes.func,
 	};
 
@@ -333,7 +332,6 @@ class EditorDrawer extends Component {
 					status={ postStatus }
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
-					setNestedSidebar={ this.props.setNestedSidebar }
 					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
