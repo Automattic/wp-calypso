@@ -22,6 +22,7 @@ class ConversationFollowButtonContainer extends Component {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
+		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
 	static defaultProps = {
@@ -46,6 +47,7 @@ class ConversationFollowButtonContainer extends Component {
 				isFollowing={ this.props.isFollowing }
 				onFollowToggle={ this.handleFollowToggle }
 				className={ this.props.className }
+				tagName={ this.props.tagName }
 			/>
 		);
 	}

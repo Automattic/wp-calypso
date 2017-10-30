@@ -13,13 +13,15 @@ import Gridicon from 'gridicons';
 
 class ConversationFollowButton extends React.Component {
 	static propTypes = {
-		following: PropTypes.bool.isRequired,
+		isFollowing: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
+		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	};
 
 	static defaultProps = {
-		following: false,
+		isFollowing: false,
 		onFollowToggle: noop,
+		tagName: 'button',
 	};
 
 	toggleFollow = event => {
@@ -33,13 +35,20 @@ class ConversationFollowButton extends React.Component {
 	};
 
 	render() {
-		const classes = [ 'conversation-follow-button', this.props.className ];
+		const { isFollowing, translate } = this.props;
+		const buttonClasses = [
+			'button',
+			'has-icon',
+			'conversation-follow-button',
+			this.props.className,
+		];
 		const iconSize = 20;
-		let label = this.props.translate( 'Follow Conversation' );
+		const label = isFollowing
+			? translate( 'Following Conversation' )
+			: translate( 'Follow Conversation' );
 
-		if ( this.props.following ) {
-			classes.push( 'is-following' );
-			label = this.props.translate( 'Following Conversation' );
+		if ( this.props.isFollowing ) {
+			buttonClasses.push( 'is-following' );
 		}
 
 		const followingIcon = (
@@ -53,10 +62,10 @@ class ConversationFollowButton extends React.Component {
 			);
 
 		return React.createElement(
-			'button',
+			this.props.tagName,
 			{
 				onClick: this.toggleFollow,
-				className: classes.join( ' ' ),
+				className: buttonClasses.join( ' ' ),
 				title: label,
 			},
 			[ followingIcon, followIcon, followLabelElement ]
