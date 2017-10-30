@@ -286,6 +286,23 @@ export default {
 };
 ```
 
+#### "Stateless" handlers
+
+There's something special about many of our handlers that we write: they don't depend on the response.
+One of the most common types of responders is the `announceFailure()` handler which does nothing more dispatch a single Redux action.
+Creating multiple functions just to return a static object can be cumbersome.
+Let's take advantage of a shortcut designed just for these situations: we can choose to send in a disptchable object in place of the handler functions.
+
+```js
+export default {
+	[ REQUEST_LIKES ]: [ dispatchRequest(
+		fetchLikes,
+		updateLikes,
+		createNotice( translate( 'Could not fetch likes, try again.' ) ), // <- this is a simple action
+	) ],
+}
+```
+
 #### Parsing the response
 
 It's important that perform the mapping stage when handling API request responses to go _from_ the API's native data format _to_ Calypso's native data format.
@@ -336,7 +353,6 @@ Of course, not every response is very complicated or warrants a full-blown parse
 Sometimes we just want to determine the failure or success based off of a simple value in the response.
 Let's put this together for a fictitious two-factor authentication process.
 
-
 ```js
 const fromApi = response => {
 	if ( ! response.hasOwnProperty( 'auth_granted' ) ) {
@@ -354,7 +370,7 @@ const fromApi = response => {
 }
 
 dispatchRequest(
-	fetch2Auth,
+	http( { method: 'GET', apiVersion: '1.1', path: '/me/2fa' } ),
 	approveAuth,
 	announceAppropriateFailureMessage,
 	{ fromApi },
