@@ -36,8 +36,7 @@ function onlyNumericCharacters( string ) {
 
 /*
  * Sanitize a VAT string by removing everything except digits,
- * letters, plus or star
- * symbols.
+ * letters, plus or star symbols.
  */
 export function sanitizeVat( string ) {
 	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z\+\*]/g, '' ) : '';
