@@ -355,6 +355,10 @@
 .mailchimp__dashboard-settings-form {
 	flex-grow: 1;
 
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+
 	@include breakpoint( ">960px" ) {
 		padding-right: 24px;
 	}
@@ -401,5 +405,9 @@
 }
 
 .mailchimp__dashboard-settings-form-field {
-	margin-top: 8px;
+	font-weight: 400;
+}
+
+.mailchimp__dashboard-settings-subscribe-message {
+	font-weight: 600;
 }

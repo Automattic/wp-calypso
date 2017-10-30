@@ -187,14 +187,17 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 						/>
 						<span>{ translate( 'Subscribe message is checked by default' ) }</span>
 					</FormLabel>
-					<FormLabel className="mailchimp__dashboard-settings-form-field">
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel className="mailchimp__dashboard-settings-form-field mailchimp__dashboard-settings-subscribe-message">
 						<span>{ translate( 'Subscribe message' ) }</span>
-						<FormTextInput
-							name="newsletter_label"
-							onChange={ onNewsletterLabelChange }
-							value={ settings.newsletter_label }
-						/>
 					</FormLabel>
+					<FormTextInput
+						name="newsletter_label"
+						onChange={ onNewsletterLabelChange }
+						value={ settings.newsletter_label }
+					/>
+
 				</FormFieldset>
 			</span>
 			<span className="mailchimp__dashboard-settings-preview">
