@@ -305,6 +305,14 @@
 
 	background-color: $white;
 
+	.comment__bulk-select {
+		display: none;
+	}
+
+	.comment__header .comment__author {
+		padding: 8px;
+	}
+
 	.comment__author-gravatar-placeholder {
 		background-color: lighten($gray, 30%);
 		border-radius: 50%;

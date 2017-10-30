@@ -24,6 +24,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
+import Comment from 'my-sites/comments/comment';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
@@ -41,8 +42,6 @@ import {
 } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
-
-import Comment from '../comment';
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -473,6 +472,7 @@ export class CommentList extends Component {
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 								}
+								toggleSelected={ this.toggleCommentSelected }
 							/>
 						) ) }
 

@@ -25,6 +25,7 @@ export class Comment extends Component {
 		isBulkMode: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
+		toggleSelected: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -63,7 +64,15 @@ export class Comment extends Component {
 	};
 
 	render() {
-		const { commentId, isBulkMode, isLoading, isSelected, refreshCommentData, siteId } = this.props;
+		const {
+			commentId,
+			isBulkMode,
+			isLoading,
+			isSelected,
+			refreshCommentData,
+			siteId,
+			toggleSelected,
+		} = this.props;
 		const { isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment', {
@@ -85,7 +94,7 @@ export class Comment extends Component {
 				{ ! isEditMode && (
 					<div className="comment__detail">
 						<CommentHeader
-							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected } }
+							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected, toggleSelected } }
 							toggleExpanded={ this.toggleExpanded }
 						/>
 
