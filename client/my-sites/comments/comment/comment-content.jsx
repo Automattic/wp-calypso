@@ -49,7 +49,7 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const { commentContent, commentId, isExpanded } = this.props;
+		const { commentContent, commentId, commentStatus, isExpanded, translate } = this.props;
 		return (
 			<div className="comment__content">
 				{ ! isExpanded && (
@@ -64,7 +64,13 @@ export class CommentContent extends Component {
 
 				{ isExpanded && (
 					<div className="comment__content-full">
-						<CommentPostLink { ...{ commentId } } />
+						<div className="comment__content-info">
+							<CommentPostLink { ...{ commentId } } />
+
+							{ 'unapproved' === commentStatus && (
+								<div className="comment__status-label">{ translate( 'Pending' ) }</div>
+							) }
+						</div>
 
 						{ this.renderInReplyTo() }
 
@@ -98,6 +104,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
+		commentStatus: get( comment, 'status' ),
 		commentUrl,
 		isJetpack,
 		parentCommentContent,

@@ -182,13 +182,16 @@
 .comment__content {
 	padding: 0 16px 16px 56px;
 
-	@include breakpoint( '>480px' ) {
-		padding-right: 56px;
+	.comment__content-info {
+		display: flex;
+		flex-flow: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		margin: 8px 0 1em 0;
 	}
 
 	.comment__post-link {
 		font-weight: 600;
-		margin: 8px 0 1em 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -196,6 +199,16 @@
 		.gridicon {
 			display: none;
 		}
+	}
+
+	.comment__status-label {
+		align-self: center;
+		background: lighten($alert-yellow, 18%);
+		border-radius: 9px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		font-size: 12px;
+		padding: 0 10px;
 	}
 
 	.comment__in-reply-to {
@@ -259,6 +272,16 @@
 	a:focus,
 	a:hover {
 		color: $blue-wordpress;
+	}
+}
+
+// Collapsed View
+
+.card.comment.is-collapsed {
+	&.is-unapproved {
+		background: mix($alert-yellow, $white, 8.5%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
+			0 1px 2px lighten($gray, 30%);
 	}
 }
 
@@ -342,10 +365,6 @@
 
 	.button.comment__toggle-expanded {
 		display: none;
-	}
-
-	.comment__content {
-		padding-right: 16px;
 	}
 
 	.comment__content-preview {

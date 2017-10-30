@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { isUndefined } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,6 +66,7 @@ export class Comment extends Component {
 	render() {
 		const {
 			commentId,
+			commentStatus,
 			isBulkMode,
 			isLoading,
 			isSelected,
@@ -80,6 +81,7 @@ export class Comment extends Component {
 			'is-collapsed': ! isExpanded && ! isBulkMode,
 			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
+			'is-unapproved': 'unapproved' === commentStatus,
 		} );
 
 		return (
@@ -110,6 +112,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	return {
+		commentStatus: get( comment, 'status' ),
 		isLoading: isUndefined( comment ),
 		siteId,
 	};
