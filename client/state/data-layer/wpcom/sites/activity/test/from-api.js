@@ -58,6 +58,7 @@ describe( 'processItem', () => {
 				'activityIcon',
 				'activityId',
 				'activityIsRewindable',
+				'rewindId',
 				'activityName',
 				'activityStatus',
 				'activityTitle',
