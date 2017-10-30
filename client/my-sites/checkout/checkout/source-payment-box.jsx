@@ -149,7 +149,7 @@ class SourcePaymentBox extends PureComponent {
 						additionalClasses="checkout-field"
 						name="name"
 						onChange={ this.handleChange }
-						label={ translate( 'Name', { textOnly: true } ) }
+						label={ translate( 'Your Name' ) }
 						eventFormName="Checkout Form" />
 				</div>
 
