@@ -1,44 +1,44 @@
+/** @format */
 /**
  * Internal Dependencies
  */
 import { JITM_DISMISS, JITM_SET } from 'state/action-types.js';
 
-export const dismissJetpackJITM = ( dispatch, siteId, id, featureClass ) => {
-	dispatch(
-		{
-			type: JITM_DISMISS,
-			siteId,
-			id,
-			featureClass,
-		}
-	);
-};
+/**
+ * Dismisses a jitm
+ * @param {int} siteId The site id to dismiss the jitm for
+ * @param {string} id The id of the jitm to dismiss
+ * @param {string} featureClass The feature class of the jitm to dismiss
+ * @return {object} The dismiss action
+ */
+export const dismissJetpackJITM = ( siteId, id, featureClass ) => ( {
+	type: JITM_DISMISS,
+	siteId,
+	id,
+	featureClass,
+} );
 
 /**
  * Inserts a jitm into the store for display
- * @param {function} dispatch The dispatch function
  * @param {int} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
  * @param {object} jitms The objects to display
- * @return {undefined}
+ * @return {object} The jitm insert action
  */
-export const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
-	dispatch( {
-		type: JITM_SET,
-		keyedPath: messagePath + siteId,
-		jitms: jitms.map( jitm => ( { ...jitm, lastUpdated: Date.now() } ) ),
-	} );
+export const insertJITM = ( siteId, messagePath, jitms ) => ( {
+	type: JITM_SET,
+	keyedPath: messagePath + siteId,
+	jitms: jitms.map( jitm => ( { ...jitm, lastUpdated: Date.now() } ) ),
+} );
 
 /**
  * Removes all jitms for a given message path
- * @param {function} dispatch The dispatch function
  * @param {int} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
- * @return {undefined}
+ * @return {object} The action to clear out all the jitms
  */
-export const clearJITM = ( dispatch, siteId, messagePath ) =>
-	dispatch( {
-		type: JITM_SET,
-		keyedPath: messagePath + siteId,
-		jitms: [],
-	} );
+export const clearJITM = ( siteId, messagePath ) => ( {
+	type: JITM_SET,
+	keyedPath: messagePath + siteId,
+	jitms: [],
+} );

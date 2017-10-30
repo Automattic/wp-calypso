@@ -175,7 +175,7 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * @return {undefined} Nothing
  */
 export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) =>
-	insertJITM( dispatch, siteId || site_id, messagePath, jitms );
+	dispatch( insertJITM( siteId || site_id, messagePath, jitms ) );
 
 /**
  * Called when a jitm fails for any network related reason
@@ -186,7 +186,7 @@ export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jit
  * @return {undefined} Nothing
  */
 export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
-	clearJITM( dispatch, siteId || site_id, messagePath );
+	dispatch( clearJITM( siteId || site_id, messagePath ) );
 
 export default {
 	[ SECTION_SET ]: [
