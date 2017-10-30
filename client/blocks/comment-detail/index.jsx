@@ -161,7 +161,7 @@ export class CommentDetail extends Component {
 		}
 	};
 
-	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
+	// toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleLike = e => {
 		e.stopPropagation();
@@ -246,7 +246,7 @@ export class CommentDetail extends Component {
 			commentDate,
 			commentId,
 			commentIsLiked,
-			commentIsSelected,
+			// commentIsSelected,
 			commentRawContent,
 			commentStatus,
 			commentType,
@@ -306,10 +306,10 @@ export class CommentDetail extends Component {
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
+					commentId={ commentId }
 					commentContent={ commentContent }
 					commentDate={ commentDate }
 					commentIsLiked={ commentIsLiked }
-					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					commentType={ commentType }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -319,12 +319,12 @@ export class CommentDetail extends Component {
 					postId={ postId }
 					postTitle={ postTitle }
 					site={ site }
+					siteId={ siteId }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
 					toggleReply={ this.enterReplyState }
-					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
 				/>

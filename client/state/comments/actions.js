@@ -4,6 +4,7 @@
  */
 import { isEnabled } from 'config';
 import {
+	COMMENTS_BULK_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
@@ -246,4 +247,11 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		postId,
 		commentId,
 	},
+} );
+
+export const bulkChangeStatus = ( siteId, selectedComments, status ) => ( {
+	type: COMMENTS_BULK_CHANGE_STATUS,
+	siteId,
+	selectedComments,
+	status,
 } );
