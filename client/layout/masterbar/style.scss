@@ -3,7 +3,7 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --masterbar-background-color );
+	background: var( --masterbar-background );
 	border-bottom: 1px solid var( --masterbar-border-color );
 	color: var( --masterbar-color );
 	font-size: 16px;
@@ -392,7 +392,7 @@ $autobar-height: 20px;
 
 	.is-group-editor & {
 		background: var( --masterbar-toggle-drafts-editor-background );
-		border-left: 1px solid var( --masterbar-toggle-drafts-editor-border );
+		border-left: 1px solid var( --masterbar-toggle-drafts-editor-border-color );
 
 		.count {
 			color: $gray-light;
