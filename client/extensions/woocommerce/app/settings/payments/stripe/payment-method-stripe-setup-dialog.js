@@ -150,8 +150,8 @@ function mapStateToProps( state ) {
 	const error = getError( state, siteId );
 	const isCreating = getIsCreating( state, siteId );
 
-	const isLoadingAddress = areSettingsGeneralLoading( state, site.ID );
-	const storeLocation = getStoreLocation( state, site.ID );
+	const isLoadingAddress = areSettingsGeneralLoading( state, siteId );
+	const storeLocation = getStoreLocation( state, siteId );
 	const country = isLoadingAddress ? '' : storeLocation.country;
 
 	return {
