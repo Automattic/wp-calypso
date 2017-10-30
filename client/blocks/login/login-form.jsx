@@ -5,7 +5,7 @@
  */
 
 import classNames from 'classnames';
-import { defer } from 'lodash';
+import { capitalize, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -194,17 +194,19 @@ export class LoginForm extends Component {
 								<p>
 									{ this.props.translate(
 										'We found a WordPress.com account with the email address "%(email)s". ' +
-											'Log in to this account to connect it to your %(service)s profile.',
+										'Log in to this account to connect it to your %(service)s profile, ' +
+										'or choose a different %(service)s profile.',
 										{
 											args: {
 												email: this.props.socialAccountLinkEmail,
-												service: this.props.socialAccountLinkService,
+												service: capitalize( this.props.socialAccountLinkService ),
 											},
 										}
 									) }
 								</p>
 							</div>
 						) }
+
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
 							{ this.props.translate( 'Email Address or Username' ) }
 						</label>
@@ -256,7 +258,8 @@ export class LoginForm extends Component {
 							{ preventWidows(
 								this.props.translate(
 									// To make any changes to this copy please speak to the legal team
-									'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+									'By continuing with any of the options below, ' +
+									'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
 									{
 										components: {
 											tosLink: (
@@ -289,18 +292,25 @@ export class LoginForm extends Component {
 						</div>
 					) }
 				</Card>
+
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card className="login__form-social">
-						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							linkingSocialService={
-								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-							}
-							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-						/>
-					</Card>
+					<div className="login__form-social">
+						<div className="login__form-social-divider">
+							<span>{ this.props.translate( 'or' ) }</span>
+						</div>
+
+						<Card>
+							<SocialLoginForm
+								onSuccess={ this.props.onSuccess }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+								linkingSocialService={
+									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+								}
+								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+							/>
+						</Card>
+					</div>
 				) }
 			</form>
 		);
