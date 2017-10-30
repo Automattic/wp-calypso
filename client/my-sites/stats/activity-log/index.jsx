@@ -203,7 +203,7 @@ class ActivityLog extends Component {
 				// 'success',
 				// 'success-with-errors',
 			] ).isRequired,
-			timestamp: PropTypes.number.isRequired,
+			timestamp: PropTypes.string.isRequired,
 		} ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestedRestoreActivity: PropTypes.shape( {

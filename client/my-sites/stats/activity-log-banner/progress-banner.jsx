@@ -59,7 +59,7 @@ ProgressBanner.propTypes = {
 	percent: PropTypes.number.isRequired,
 	siteId: PropTypes.number,
 	status: PropTypes.oneOf( [ 'queued', 'running' ] ).isRequired,
-	timestamp: PropTypes.number.isRequired,
+	timestamp: PropTypes.string.isRequired,
 };
 
 export default localize( ProgressBanner );
