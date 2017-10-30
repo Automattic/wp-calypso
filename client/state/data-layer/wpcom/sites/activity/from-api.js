@@ -53,6 +53,7 @@ export function processItem( item ) {
 		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
 		activityId: item.activity_id,
 		activityIsRewindable: item.is_rewindable,
+		rewindId: item.rewind_id,
 		activityName: item.name,
 		activityStatus: item.status,
 		activityTitle: get( item, 'summary', '' ),
