@@ -49,6 +49,15 @@ export function getIsDeauthorizing( state, siteId = getSelectedSiteId( state ) )
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we are presently attempting to complete the OAuth connection
+ */
+export function getIsOAuthConnecting( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isOAuthConnecting' ], false );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently requesting oauth initialization
  */
 export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state ) ) {
@@ -84,6 +93,7 @@ export function getStripeConnectAccount( state, siteId = getSelectedSiteId( stat
 		'error',
 		'isCreating',
 		'isDeauthorizing',
+		'isOAuthConnecting',
 		'isOAuthInitializing',
 		'isRequesting',
 		'oauthUrl',

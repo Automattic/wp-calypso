@@ -18,6 +18,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -171,6 +173,42 @@ function connectAccountOAuthInitComplete( state = {}, action ) {
 		oauthUrl: action.oauthUrl || '',
 	} );
 }
+
+/**
+ * Updates state to indicate account creation is in progress
+ *
+ * @param  {Object} state  Current state
+ * @return {Object}        Updated state
+ */
+function connectAccountOAuthConnect( state = {} ) {
+	return Object.assign( {}, state, {
+		error: '',
+		isOAuthConnecting: true,
+	} );
+}
+
+/**
+ * Updates state to reflect account creation completed (or failed with an error)
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+function connectAccountOAuthConnectComplete( state = {}, action ) {
+	return Object.assign( {}, state, {
+		connectedUserID: action.connectedUserID || '',
+		email: '',
+		error: action.error || '',
+		firstName: '',
+		isActivated: false,
+		isCreating: false,
+		isOAuthConnecting: false,
+		isRequesting: false,
+		lastName: '',
+		logo: '',
+	} );
+}
+
 export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR ]: connectAccountClearError,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE ]: connectAccountCreate,
@@ -181,4 +219,6 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE ]: connectAccountFetchComplete,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT ]: connectAccountOAuthInit,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE ]: connectAccountOAuthInitComplete,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT ]: connectAccountOAuthConnect,
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE ]: connectAccountOAuthConnectComplete,
 } );

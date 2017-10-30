@@ -12,6 +12,7 @@ import {
 	getError,
 	getIsCreating,
 	getIsDeauthorizing,
+	getIsOAuthConnecting,
 	getIsOAuthInitializing,
 	getIsRequesting,
 	getOAuthURL,
@@ -204,6 +205,60 @@ const oauthInitializingState = {
 	},
 };
 
+const oauthConnectingState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: '',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: false,
+							isOAuthConnecting: true,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const oauthConnectedState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: 'acct_14qyt6Alijdnw0EA',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: false,
+							isOAuthConnecting: false,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
 const oauthInitializedState = {
 	extensions: {
 		woocommerce: {
@@ -316,6 +371,20 @@ describe( 'selectors', () => {
 
 		test( 'should be false when initialization has completed.', () => {
 			expect( getIsOAuthInitializing( oauthInitializedState, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getIsOAuthConnecting', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( getIsOAuthConnecting( uninitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when connecting.', () => {
+			expect( getIsOAuthConnecting( oauthConnectingState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when connection has completed.', () => {
+			expect( getIsOAuthConnecting( oauthConnectedState, 123 ) ).to.be.false;
 		} );
 	} );
 

@@ -17,6 +17,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
@@ -224,7 +226,7 @@ function deauthorizeFailure( siteId, action, errorMessage ) {
 }
 
 /**
- * Action Creator: Create (and connect) a Stripe Connect Account.
+ * Action Creator: Get the initial OAuth URL for connecting a Stripe Account.
  *
  * @param {Number} siteId The id of the site for which to create an account.
  * @param {String} returnUrl The URL for Stripe to return the user to (to complete the setup)
@@ -276,6 +278,69 @@ function oauthInitSuccess( siteId, { email }, { oauthUrl } ) {
 function oauthInitFailure( siteId, action, { message } ) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
+		error: message,
+		siteId,
+	};
+}
+
+/**
+ * Action Creator: Complete the OAuth flow and connect the Stripe Account.
+ *
+ * @param {Number} siteId The id of the site for which to create an account.
+ * @param {String} stripeCode The hexadecimal code provided by Stripe (GET param) when the user is returned to calypso
+ * @param {String} stripeState The hexadecimal code provided by Stripe (GET param) when the user is returned to calypso
+ * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
+ * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @return {Object} Action object
+ */
+export const oauthConnect = (
+	siteId,
+	stripeCode,
+	stripeState,
+	successAction = null,
+	failureAction = null
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const connectAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
+		stripeCode,
+		stripeState,
+		siteId,
+	};
+
+	dispatch( connectAction );
+
+	return request( siteId )
+		.post( 'connect/stripe/oauth/connect', { stripeCode, stripeState }, 'wc/v1' )
+		.then( data => {
+			dispatch( oauthConnectSuccess( siteId, connectAction, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( error => {
+			dispatch( oauthConnectFailure( siteId, connectAction, error ) );
+			if ( failureAction ) {
+				dispatch( failureAction( error ) );
+			}
+		} );
+};
+
+function oauthConnectSuccess( siteId, action, { account_id } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
+		connectedUserID: account_id,
+		siteId,
+	};
+}
+
+function oauthConnectFailure( siteId, action, { message } ) {
+	return {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
 		error: message,
 		siteId,
 	};
