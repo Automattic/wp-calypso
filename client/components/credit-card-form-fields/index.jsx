@@ -17,6 +17,7 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import { CountrySelect, StateSelect, Input } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
+import config from 'config';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -55,7 +56,7 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	getFieldValue = fieldName => {
-		return this.props.card[ fieldName ];
+		return this.props.card[ fieldName ] || '';
 	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
@@ -84,6 +85,11 @@ export class CreditCardFormFields extends React.Component {
 			} );
 		}
 	};
+
+	shouldRenderEbanx() {
+		const { countryCode } = this.state;
+		return countryCode === 'BR' && config.isEnabled( 'upgrades/ebanx' );
+	}
 
 	renderEbanksFields() {
 		const { translate, countriesList } = this.props;
@@ -138,14 +144,14 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	render() {
-		const { translate, countriesList } = this.props;
-		const { countryCode } = this.state;
-		const ebanxDetailsRequired = countryCode === 'BR';
+		const { translate, countriesList, card } = this.props;
+		const ebanxDetailsRequired = this.shouldRenderEbanx();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': ebanxDetailsRequired,
 		} );
-
+		// eslint-disable-next-line
+		console.log( 'card', card );
 		return (
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
