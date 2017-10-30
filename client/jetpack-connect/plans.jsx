@@ -255,13 +255,13 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { isRtlLayout, translate } = this.props;
+		const { interval, isRtlLayout, selectedSite, showFirst, translate } = this.props;
 
 		if (
 			this.redirecting ||
 			this.hasPreSelectedPlan() ||
-			( ! this.props.showFirst && ! this.props.canPurchasePlans ) ||
-			( ! this.props.showFirst && this.props.hasPlan )
+			( ! showFirst && ! this.props.canPurchasePlans ) ||
+			( ! showFirst && this.props.hasPlan )
 		) {
 			return <QueryPlans />;
 		}
@@ -271,18 +271,15 @@ class Plans extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				{ this.props.selectedSite ? (
-					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
-				) : null }
+				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					{ ...this.props }
-					basePlansPath={
-						this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans'
-					}
-					onSelect={
-						this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan
-					}
+					basePlansPath={ showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
+					onSelect={ showFirst ? this.storeSelectedPlan : this.selectPlan }
 					hideFreePlan={ true }
+					isLanding={ false }
+					interval={ interval }
+					showFirst={ showFirst }
+					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>

@@ -27,6 +27,9 @@ class JetpackPlansGrid extends Component {
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
 		showFirst: PropTypes.bool,
+
+		// Connected
+		translate: PropTypes.func.isRequired,
 	};
 
 	renderConnectHeader() {
