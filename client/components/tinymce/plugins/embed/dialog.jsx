@@ -6,8 +6,9 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, pick } from 'lodash';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -16,11 +17,12 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import EmbedContainer from 'components/embed-container';
 import FormTextInput from 'components/forms/form-text-input';
 import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Spinner from 'components/spinner';
+import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
+import ResizableIframe from 'components/resizable-iframe';
 
 /*
  * Shows the URL and preview of an embed, and allows it to be edited.
@@ -73,9 +75,9 @@ export class EmbedDialog extends React.Component {
 
 		if ( ! this.isURLInCache( this.state.embedUrl ) ) {
 			this.setState( { isLoading: true } );
+			// Prepare the initial markup before the first render()
+			this.fetchEmbedPreviewMarkup( this.state.embedUrl );
 		}
-		// Prepare the initial markup before the first render()
-		this.fetchEmbedPreviewMarkup( this.state.embedUrl );
 	}
 
 	componentWillUpdate = ( newProps, newState ) => {
@@ -88,6 +90,9 @@ export class EmbedDialog extends React.Component {
 		if ( newProps.isVisible ) {
 			// Refresh the preview
 			this.debouncedFetchEmbedPreviewMarkup( newState.embedUrl );
+			if ( newState.isLoading === false && this.state.isLoading === true ) {
+				this.setHtml();
+			}
 		}
 	};
 
@@ -106,14 +111,10 @@ export class EmbedDialog extends React.Component {
 			.undocumented()
 			.site( this.props.siteId )
 			.embeds( { embed_url: url }, ( error, data ) => {
-				this.setState( { isLoading: false } );
-
 				let cachedMarkup;
 
 				if ( data && data.result ) {
-					cachedMarkup = {
-						renderMarkup: data.result,
-					};
+					cachedMarkup = data;
 					// todo need to do more to check that data.result is valid before using it?
 				} else {
 					cachedMarkup = {
@@ -135,14 +136,11 @@ export class EmbedDialog extends React.Component {
 				}
 
 				this.setState( {
-					// SECURITY WARNING: The value of previewMarkup is later used with
-					// dangerouslySetInnerHtml, so it must never be changed to include
-					// untrusted data.
+					isLoading: false,
 					previewMarkup: {
 						...this.state.previewMarkup,
 						[ url ]: cachedMarkup,
 					},
-					// todo merge() or other function would be better than assign() ^^^?
 				} );
 			} );
 	};
@@ -175,6 +173,69 @@ export class EmbedDialog extends React.Component {
 			default:
 				return errorObj.message;
 		}
+	};
+
+	constrainEmbedDimensions() {
+		if ( ! this.iframe ) {
+			return;
+		}
+
+		const view = ReactDom.findDOMNode( this.viewref );
+		const iframe = ReactDom.findDOMNode( this.iframe );
+		if ( ! iframe.contentDocument ) {
+			return;
+		}
+
+		const embed = iframe.contentDocument.querySelector( 'iframe' );
+
+		if ( ! embed || ! embed.width ) {
+			return;
+		}
+
+		const width = parseInt( embed.width, 10 );
+		if ( width <= view.clientWidth ) {
+			return;
+		}
+		embed.style.width = view.clientWidth + 'px';
+
+		if ( embed.height ) {
+			const proportion = parseInt( embed.height, 10 ) / width;
+			embed.style.height = Math.round( view.clientWidth * proportion ) + 'px';
+		}
+	}
+
+	setHtml() {
+		const embedURL = this.state.embedUrl;
+		if ( ! this.iframe || ! this.isURLInCache( embedURL ) ) {
+			return;
+		}
+
+		const iframe = ReactDom.findDOMNode( this.iframe );
+		if ( ! iframe.contentDocument ) {
+			return;
+		}
+
+		const embedData = this.state.previewMarkup[ embedURL ];
+		const content = pick( embedData, [ 'result', 'scripts', 'styles' ] );
+		content.body = content.result; // generateEmbedFrameMarkup required `body`, which in this call is named `result`
+
+		const markup = generateEmbedFrameMarkup( content );
+		iframe.contentDocument.open();
+		iframe.contentDocument.write( markup );
+		iframe.contentDocument.body.style.width = '100%';
+		iframe.contentDocument.body.style.overflow = 'hidden';
+		iframe.contentDocument.close();
+
+		this.constrainEmbedDimensions();
+	}
+
+	handleIframeRef = iframe => {
+		this.iframe = iframe;
+		this.setHtml();
+	};
+
+	handleViewRef = view => {
+		this.viewref = view;
 	};
 
 	render() {
@@ -225,35 +286,18 @@ export class EmbedDialog extends React.Component {
 					</div>
 				) }
 
-				{ /* todo another approach would be to use an iframe instead of a div
-				<iframe className="embed__preview" srcDoc={ this.state.previewMarkup[ this.state.previewUrl ] } />
-
-				that feels a bit safer because we can sandbox it to improve security, but maybe it's not needed because the markup
-				returned by the api is always trusted? i think it is, but need to verify
-
-				using an iframe seems to work, but is probably redundant since the API markup always returns things in an iframe anyway?
-				not 100% sure it always does, though
-				if use iframe, add sandbox attribute and disable everything except `allow-scripts`?
-
-				need to use ResizeableIframe to deal w/ unknown dimensions of various embeds?
-				maybe try again to just use EmbedView, even if you have to modify it to accept a url prop or something
-					use it directly, though, don't mess with EmbedViewManager
-				*/ }
-
-				{ /* This is safe because previewMarkup comes from our API endpoint */ }
-				{ /* are you sure that makes it safe? get security review */ }
-
 				{ ! this.state.isLoading &&
 				cachedMarkup &&
 				! isError && (
-					<EmbedContainer>
-						<div
-							className="embed__preview"
-							dangerouslySetInnerHTML={ {
-								__html: cachedMarkup.renderMarkup,
-							} }
+					<div ref={ this.handleViewRef } className="embed__preview">
+						<ResizableIframe
+							ref={ this.handleIframeRef }
+							onResize={ this.props.onResize }
+							frameBorder="0"
+							seamless
+							width="100%"
 						/>
-					</EmbedContainer>
+					</div>
 				) }
 			</Dialog>
 		);
@@ -270,13 +314,6 @@ export class EmbedDialog extends React.Component {
 				only happens with some services, like pinterest & fb, maybe others from embedcotainer?
 				might need to EmbedContainer::embedPinterest() detect if already loaded and return early, or could need something totally different.
 
-			bug: open the dialog, the input field has the focus. click outside the field (but still within modal), input loses focus. that's all normal.
-				now, try to click back into the field (but not on the text itself, just the whitespace). it won't focus
-				sometimes it won't focus when clicking on the text either, or have to click several times.
-
-			chrome console warning: "Refused to display 'https://www.facebook.com/xti.php?xt=AZW4yx3ElFj8wS2zZ0awYZYeCHQX9GKfcaP5HUVhjVUJe2rhI0dScOBaE4IALljF-1-71pVsHv4FYfcrV6ozzCPdIBMFedrUFTypnEMwzlYEJ9YvnQhpZG4rWmmMFM2YjhtMLSx-PiBt9vIW1iFuPVuadBkqQffHDRynmqZNDMSykA&isv=1&cts=1508425830&csp' in a frame because it set 'X-Frame-Options' to 'sameorigin'."
-				it happens intermittently, though, and the embed still works, so not sure if it's an issue
-
 		*/
 		}
 	}
@@ -289,6 +326,3 @@ const connectedEmbedDialog = connect( ( state, { siteId } ) => {
 } )( EmbedDialog );
 
 export default localize( connectedEmbedDialog );
-// todo should localize() and then connect()? for consistency in dev tools element tree?
-// the code reads cleaning having it this way, though, since localize() is concise enough to fit in the export statement,
-// but connect() needs several lines and extra logic, so it's nicer to have it as a separate piece
