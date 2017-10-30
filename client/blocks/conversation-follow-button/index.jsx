@@ -29,16 +29,16 @@ class ConversationFollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = following => {
-		const { siteId, postId, isFollowing } = this.props;
+	handleFollowToggle = isFollowingNow => {
+		const { siteId, postId } = this.props;
 
-		if ( isFollowing ) {
-			this.props.muteConversation( { siteId, postId } );
-		} else {
+		if ( isFollowingNow ) {
 			this.props.followConversation( { siteId, postId } );
+		} else {
+			this.props.muteConversation( { siteId, postId } );
 		}
 
-		this.props.onFollowToggle( following );
+		this.props.onFollowToggle( isFollowingNow );
 	};
 
 	render() {

@@ -30,7 +30,7 @@ class ConversationFollowButton extends React.Component {
 		}
 
 		if ( this.props.onFollowToggle ) {
-			this.props.onFollowToggle( ! this.props.following );
+			this.props.onFollowToggle( ! this.props.isFollowing );
 		}
 	};
 
