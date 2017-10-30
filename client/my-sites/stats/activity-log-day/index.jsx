@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, findKey, get, isEmpty } from 'lodash';
+import { findKey, flatMap, get, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -199,22 +199,16 @@ class ActivityLogDay extends Component {
 			tsEndOfSiteDay,
 		} = this.props;
 
-		const hasLogs = ! isEmpty( logs );
 		const rewindHere = this.state.rewindHere;
 		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
 
-		const hasConfirmDialog =
-			hasLogs &&
-			logs.some(
-				( { activityId, activityTs } ) =>
-					activityId === requestedRestoreActivityId &&
-					( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
-			);
+		const hasConfirmDialog = logs.some(
+			( { activityId, activityTs } ) =>
+				activityId === requestedRestoreActivityId &&
+				( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
+		);
 
-		const rewindButton = hasLogs
-			? this.renderRewindButton( hasConfirmDialog ? '' : 'primary' )
-			: null;
-
+		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
 		const elementsInDay = rewriteStream( logs );
 
 		// Include the Rewind dialog in the right place in the collection
@@ -229,20 +223,19 @@ class ActivityLogDay extends Component {
 		return (
 			<div
 				className={ classNames( 'activity-log-day', {
-					'is-empty': ! hasLogs,
 					'has-rewind-dialog': hasConfirmDialog,
 				} ) }
 			>
 				<FoldableCard
-					clickableHeader={ hasLogs }
-					expanded={ hasLogs && ( isToday || dayExpanded ) }
+					clickableHeader={ true }
+					expanded={ isToday || dayExpanded }
 					expandedSummary={ rewindButton }
 					summary={ rewindButton }
 					header={ this.renderEventsHeading() }
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
-					{ hasLogs &&
+					{ flatMap(
 						map(
 							elementsInDay,
 							( elem, index, list ) =>
@@ -266,7 +259,8 @@ class ActivityLogDay extends Component {
 										siteId={ siteId }
 									/>
 								)
-						) }
+						)
+					) }
 				</FoldableCard>
 			</div>
 		);
