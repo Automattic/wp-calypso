@@ -13,9 +13,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
+import Button from 'components/button';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { isEnabled } from 'config';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
@@ -24,8 +25,7 @@ import {
 class DisconnectJetpackButton extends Component {
 	state = { dialogVisible: false };
 
-	handleClick = event => {
-		event.preventDefault();
+	handleClick = () => {
 		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		if ( isMock ) {
@@ -64,6 +64,11 @@ class DisconnectJetpackButton extends Component {
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				className="disconnect-jetpack-button"
 				compact
+				href={
+					isEnabled( 'manage/site-settings/disconnect-flow' ) ? (
+						'/settings/disconnect-site/' + site.slug
+					) : null
+				}
 				id={ `disconnect-jetpack-${ site.ID }` }
 				onClick={ this.handleClick }
 				scary
@@ -73,13 +78,15 @@ class DisconnectJetpackButton extends Component {
 						context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
 					} ) }
 				<QuerySitePlans siteId={ site.ID } />
-				<DisconnectJetpackDialog
-					isVisible={ this.state.dialogVisible }
-					onClose={ this.hideDialog }
-					isBroken={ false }
-					siteId={ site.ID }
-					disconnectHref={ this.props.redirect }
-				/>
+				{ ! isEnabled( 'manage/site-settings/disconnect-flow' ) && (
+					<DisconnectJetpackDialog
+						isVisible={ this.state.dialogVisible }
+						onClose={ this.hideDialog }
+						isBroken={ false }
+						siteId={ site.ID }
+						disconnectHref={ this.props.redirect }
+					/>
+				) }
 			</Button>
 		);
 	}
