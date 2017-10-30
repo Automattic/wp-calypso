@@ -43,14 +43,33 @@ class MailChimp extends React.Component {
 	}
 
 	render() {
-		const { hasMailChimp, isRequestingMailChimpSettings,
-			isRequestingPlugins, siteId, site, settings, redirectToSettings } = this.props;
+		const { dashboardView, hasMailChimp, isRequestingMailChimpSettings,
+			isRequestingPlugins, siteId, site, settings } = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData &&
 			( settings && settings.active_tab === 'sync' );
 		const gettingStarted = ! setupWizardStarted && ! isRequestingData &&
 			( settings && settings.active_tab !== 'sync' );
+
+		// Special case for store dashboard where we want to only show MailChimpGetingStarted in case
+		// when user has not finished settup. We show nothing in other cases.
+		if ( dashboardView ) {
+			return (
+				<div className="mailchimp">
+					{ ( ! isRequestingMailChimpSettings ) && ( settings && settings.active_tab !== 'sync' ) &&
+						<MailChimpGettingStarted
+							siteId={ siteId }
+							site={ site }
+							isPlaceholder={ isRequestingData }
+							onClick={ this.startWizard }
+							redirectToSettings
+						/>
+					}
+				</div>
+			);
+		}
+
 		return (
 			<div className="mailchimp">
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
@@ -61,7 +80,6 @@ class MailChimp extends React.Component {
 						site={ site }
 						isPlaceholder={ isRequestingData }
 						onClick={ this.startWizard }
-						redirectToSettings={ redirectToSettings }
 					/>
 				}
 				{ mailChimpIsReady &&
@@ -88,8 +106,8 @@ MailChimp.propTypes = {
 	isRequestingPlugins: PropTypes.bool,
 	isRequestingMailChimpSettings: PropTypes.bool,
 	settings: PropTypes.object,
-	redirectToSettings: PropTypes.bool,
 	startWizard: PropTypes.bool,
+	dashboardView: PropTypes.bool,
 };
 
 function mapStateToProps( state ) {
