@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import config from 'config';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
