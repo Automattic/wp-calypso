@@ -249,7 +249,7 @@ input[type=radio].domain-management-list-item__radio {
 	}
 }
 
-.domain-details-card {
+.domain-details-card, .edit__domain-details-card {
 	.flag {
 		font-size: 11px;
 		padding: 3px 10px 3px 5px;

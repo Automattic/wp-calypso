@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
+import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
@@ -57,6 +58,7 @@ class ListItem extends React.PureComponent {
 					{ this.props.domain.type !== 'WPCOM' &&
 						this.showDomainExpirationWarning( this.props.domain ) }
 					<DomainPrimaryFlag domain={ this.props.domain } />
+					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
 			</div>
@@ -160,6 +162,9 @@ class ListItem extends React.PureComponent {
 
 			case domainTypes.SITE_REDIRECT:
 				return translate( 'Site Redirect' );
+
+			case domainTypes.TRANSFER:
+				return translate( 'Transfer' );
 
 			case domainTypes.WPCOM:
 				return translate( 'Included with Site' );

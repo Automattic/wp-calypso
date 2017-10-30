@@ -165,6 +165,14 @@ export default function() {
 		);
 
 		page(
+			'/domains/add/transfer',
+			controller.siteSelection,
+			domainsController.domainsAddHeader,
+			controller.jetPackWarning,
+			controller.sites
+		);
+
+		page(
 			'/domains/add/site-redirect',
 			controller.siteSelection,
 			domainsController.domainsAddRedirectHeader,
@@ -217,6 +225,15 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
 			controller.jetPackWarning,
 			domainsController.siteRedirect
+		);
+
+		page(
+			'/domains/add/transfer/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
+			controller.jetPackWarning,
+			domainsController.transferDomain
 		);
 	}
 

@@ -43,6 +43,7 @@ import {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDomainTransfer,
 	isDotComPlan,
 	isGoogleApps,
 	isGuidedTransfer,
@@ -369,6 +370,8 @@ class CheckoutThankYou extends React.Component {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
 				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
+			} else if ( purchases.some( isDomainTransfer ) ) {
+				return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
 			} else if ( purchases.some( isGuidedTransfer ) ) {
