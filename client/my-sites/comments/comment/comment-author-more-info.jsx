@@ -174,8 +174,9 @@ export class CommentAuthorMoreInfo extends Component {
 						<div className="comment__author-more-info-element">
 							<div>
 								{ translate(
-									// eslint-disable-next-line max-len
-									"Anonymous messages can't be blocked individually, but you can update your {{a}}settings{{/a}} to only allow comments from registered users.",
+									"Anonymous messages can't be blocked individually, " +
+										'but you can update your {{a}}settings{{/a}} to ' +
+										'only allow comments from registered users.',
 									{
 										components: {
 											a: (
