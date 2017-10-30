@@ -1,16 +1,16 @@
 /** @format */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import config from 'config';
 import debugFactory from 'debug';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, groupBy, includes, isEmpty, isNull } from 'lodash';
+import { first, get, groupBy, includes, isEmpty, isNull, last, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,6 +61,127 @@ import {
  */
 const debug = debugFactory( 'calypso:activity-log' );
 const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
+
+const flushEmptyDays = days => [
+	days.length === 1 ? 'empty-day' : 'empty-range',
+	[ first( days ), last( days ) ],
+];
+
+/**
+ * Takes a list of [ day, eventList ] pairs and produces
+ * a list of [ type, [ start, end ], eventList? ] triplets
+ *
+ * We have three ways to represent any given day with
+ * Activity Log events:
+ *
+ *  - The day has events
+ *  - The day has no events
+ *  - The day has no events _and_
+ *    neither did the previous day
+ *
+ * When "empty days" follow other empty days then we
+ * want to group them into "empty ranges" so that we
+ * don't end up showing a bunch of needless empty
+ * day visual components on the page.
+ *
+ * Note: although this is recursive, since we don't
+ *       expect to ever be descending more than than
+ *       31 times (in the worst case because there are
+ *       no months with more than 31 days) we don't
+ *       need to guard against stack overflow here, it
+ *       just won't recurse that deeply.
+ *
+ * Example input:
+ * [ [ moment( '2017-10-08 14:48:01' ), [] ]
+ * , [ moment( '2017-10-09 03:13:48' ), [ event1, event2, … ] ]
+ * , [ moment( … ), [] ]
+ * , [ moment( … ), [] ]
+ * , [ moment( … ), [ event3 ] ]
+ * ]
+ *
+ * Example output:
+ * [ [ 'empty-day', [ moment( … ) ] ]
+ * , [ 'non-empty-day', [ moment( … ) ], [ event1, event2, … ] ]
+ * , [ 'empty-range', [ moment( … ), moment( … ) ] ]
+ * , [ 'non-empty-day', [ moment( …) ], [ event3 ] ]
+ * ]
+ *
+ * Note: the days coming into this function must be sorted.
+ *       it doesn't matter in which direction, but they must
+ *       be sequential one way or the other
+ *
+ * @param {Array} remainingDays remaining _sorted_ days to process
+ * @param {Array} groups final output data structure (see comment above)
+ * @param {Array} emptyDays running track of empty days to group
+ * @returns {Array} grouped days and events
+ */
+const intoVisualGroups = ( remainingDays, groups = [], emptyDays = [] ) => {
+	if ( ! remainingDays.length ) {
+		return emptyDays.length ? [ ...groups, flushEmptyDays( emptyDays ) ] : groups;
+	}
+
+	const [ nextDay, ...nextRemaining ] = remainingDays;
+	const [ day, events ] = nextDay;
+
+	// without activity we track the day in order to group empty days
+	if ( ! events.length ) {
+		return intoVisualGroups( nextRemaining, groups, [ ...emptyDays, day ] );
+	}
+
+	// if we have activity but no previously-tracked empty days
+	// then just push out this day onto the output
+	if ( ! emptyDays.length ) {
+		return intoVisualGroups(
+			nextRemaining,
+			[ ...groups, [ 'non-empty-day', [ day, day ], events ] ],
+			[]
+		);
+	}
+
+	// otherwise we want to flush out the tracked group into the output
+	// push this day out as well
+	// and restart without any tracked empty days
+	if ( emptyDays.length ) {
+		return intoVisualGroups(
+			nextRemaining,
+			[ ...groups, flushEmptyDays( emptyDays ), [ 'non-empty-day', [ day, day ], events ] ],
+			[]
+		);
+	}
+};
+
+const daysInMonth = ( moment, startMoment, today ) => {
+	const endOfMonth = startMoment
+		.clone()
+		.endOf( 'month' )
+		.startOf( 'day' );
+	const startOfMonth = startMoment.clone().startOf( 'month' );
+	const startOfToday = today.clone().startOf( 'day' );
+	const endOfStream = moment.min( endOfMonth, startOfToday );
+
+	const asDayInMonth = n => startOfMonth.clone().add( n, 'day' );
+	return range( endOfStream.date() ).map( asDayInMonth );
+};
+
+const logsByDay = ( moment, logs, startMoment, applyOffset ) => {
+	const dayGroups = groupBy( logs, log =>
+		applyOffset( moment.utc( log.activityTs ) )
+			.endOf( 'day' )
+			.valueOf()
+	);
+
+	return daysInMonth( moment, startMoment, applyOffset( moment.utc() ) ).map( day => [
+		day,
+		get(
+			dayGroups,
+			day
+				.clone()
+				.endOf( 'day' )
+				.valueOf(),
+			[]
+		),
+	] );
+};
 
 class ActivityLog extends Component {
 	static propTypes = {
@@ -252,119 +373,6 @@ class ActivityLog extends Component {
 		}
 	}
 
-	renderLogs() {
-		const {
-			isPressable,
-			isRewindActive,
-			logs,
-			moment,
-			requestedRestoreActivity,
-			requestedRestoreActivityId,
-			siteId,
-			translate,
-			rewindStartDate,
-		} = this.props;
-		const startMoment = this.getStartMoment();
-
-		if ( isNull( logs ) ) {
-			return (
-				<section className="activity-log__wrapper">
-					<ActivityLogDayPlaceholder />
-					<ActivityLogDayPlaceholder />
-					<ActivityLogDayPlaceholder />
-				</section>
-			);
-		}
-
-		if ( isEmpty( rewindStartDate ) ) {
-			return [
-				<EmptyContent
-					title={ translate( 'Your site is being synced' ) }
-					line={
-						<span>
-							{ translate( 'Come back in a little while to see your site activity.' ) }
-							<br />
-							{ translate( "You will receive a notification once it's complete!" ) }
-						</span>
-					}
-					illustration="/calypso/images/illustrations/al-syncing-site.svg"
-					className="activity-log__first-sync"
-				/>,
-			];
-		}
-
-		if ( isEmpty( logs ) ) {
-			return (
-				<EmptyContent
-					title={ translate( 'No activity for %s', {
-						args: startMoment.format( 'MMMM YYYY' ),
-					} ) }
-				/>
-			);
-		}
-
-		const disableRestore = this.isRestoreInProgress();
-		const logsGroupedByDay = groupBy( logs, log =>
-			this.applySiteOffset( moment.utc( log.activityTs ) )
-				.endOf( 'day' )
-				.valueOf()
-		);
-		const rewindConfirmDialog = requestedRestoreActivity && (
-			<ActivityLogConfirmDialog
-				applySiteOffset={ this.applySiteOffset }
-				key="activity-rewind-dialog"
-				onClose={ this.handleRestoreDialogClose }
-				onConfirm={ this.handleRestoreDialogConfirm }
-				timestamp={ requestedRestoreActivity.activityTs }
-			/>
-		);
-
-		const activityDays = [];
-		// loop backwards through each day in the month
-		for (
-			const m = moment.min(
-					startMoment
-						.clone()
-						.endOf( 'month' )
-						.startOf( 'day' ),
-					this.applySiteOffset( moment.utc() ).startOf( 'day' )
-				),
-				startOfMonth = startMoment
-					.clone()
-					.startOf( 'month' )
-					.valueOf();
-			startOfMonth <= m.valueOf();
-			m.subtract( 1, 'day' )
-		) {
-			const dayEnd = m.endOf( 'day' ).valueOf();
-			activityDays.push(
-				<ActivityLogDay
-					applySiteOffset={ this.applySiteOffset }
-					requestedRestoreActivityId={ requestedRestoreActivityId }
-					rewindConfirmDialog={ rewindConfirmDialog }
-					disableRestore={ disableRestore }
-					hideRestore={ ! rewindEnabledByConfig || ! isPressable }
-					isRewindActive={ isRewindActive }
-					key={ dayEnd }
-					logs={ get( logsGroupedByDay, dayEnd, [] ) }
-					requestRestore={ this.handleRequestRestore }
-					siteId={ siteId }
-					tsEndOfSiteDay={ dayEnd }
-				/>
-			);
-		}
-
-		return (
-			<section
-				className={ classNames( 'activity-log__wrapper', {
-					'rewind-requested': this.props.requestedRestoreActivity,
-				} ) }
-			>
-				{ activityDays }
-			</section>
-		);
-	}
-
 	renderMonthNavigation( position ) {
 		const { logs, slug } = this.props;
 		const startOfMonth = this.getStartMoment().startOf( 'month' );
@@ -397,6 +405,10 @@ class ActivityLog extends Component {
 			gmtOffset,
 			isPressable,
 			isRewindActive,
+			logs,
+			moment,
+			requestedRestoreActivity,
+			requestedRestoreActivityId,
 			siteId,
 			slug,
 			startDate,
@@ -418,6 +430,25 @@ class ActivityLog extends Component {
 			);
 		}
 
+		const disableRestore = this.isRestoreInProgress();
+
+		const rewindConfirmDialog = requestedRestoreActivity && (
+			<ActivityLogConfirmDialog
+				applySiteOffset={ this.applySiteOffset }
+				key="activity-rewind-dialog"
+				onClose={ this.handleRestoreDialogClose }
+				onConfirm={ this.handleRestoreDialogConfirm }
+				timestamp={ requestedRestoreActivity.activityTs }
+			/>
+		);
+
+		const visualGroups = intoVisualGroups(
+			logsByDay( moment, logs, this.getStartMoment(), this.applySiteOffset )
+		);
+		const today = moment()
+			.utc()
+			.startOf( 'day' );
+
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
@@ -433,7 +464,81 @@ class ActivityLog extends Component {
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
-				{ this.renderLogs() }
+				{ isNull( logs ) && (
+					<section className="activity-log__wrapper">
+						<ActivityLogDayPlaceholder />
+						<ActivityLogDayPlaceholder />
+						<ActivityLogDayPlaceholder />
+					</section>
+				) }
+				{ ! isNull( logs ) &&
+				isEmpty( logs ) && (
+					<EmptyContent
+						title={ translate( 'No activity for %s', {
+							args: this.getStartMoment().format( 'MMMM YYYY' ),
+						} ) }
+					/>
+				) }
+				{ ! isEmpty( logs ) && (
+					<section className="activity-log__wrapper">
+						{ visualGroups
+							.slice()
+							.reverse() // show with newest event on top
+							.map( ( [ type, [ start, end ], events ] ) => {
+								const isToday = today.isSame(
+									end
+										.clone()
+										.utc()
+										.startOf( 'day' )
+								);
+
+								switch ( type ) {
+									case 'empty-day':
+										return (
+											<div key={ start.format() } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ start.format( 'LL' ) }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
+											</div>
+										);
+
+									case 'empty-range':
+										return (
+											<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
+											</div>
+										);
+
+									case 'non-empty-day':
+										return (
+											<ActivityLogDay
+												key={ start.format() }
+												applySiteOffset={ this.applySiteOffset }
+												requestedRestoreActivityId={ requestedRestoreActivityId }
+												rewindConfirmDialog={ rewindConfirmDialog }
+												disableRestore={ disableRestore }
+												hideRestore={ ! rewindEnabledByConfig || ! isPressable }
+												isRewindActive={ isRewindActive }
+												logs={ events }
+												requestRestore={ this.handleRequestRestore }
+												siteId={ siteId }
+												tsEndOfSiteDay={ start.valueOf() }
+											/>
+										);
+								}
+							} ) }
+					</section>
+				) }
 				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }
 				<JetpackColophon />
 			</Main>
