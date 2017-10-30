@@ -51,9 +51,8 @@ class PaymentMethodStripe extends Component {
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
-		site: PropTypes.shape( {
-			domain: PropTypes.string.isRequired,
-		} ),
+		siteId: PropTypes.number.isRequired,
+		domain: PropTypes.string.isRequired,
 	};
 
 	constructor( props ) {
@@ -66,18 +65,17 @@ class PaymentMethodStripe extends Component {
 	}
 
 	componentDidMount() {
-		const { site } = this.props;
-		if ( site && site.ID ) {
-			this.props.fetchAccountDetails( site.ID );
+		const { siteId } = this.props;
+		if ( siteId ) {
+			this.props.fetchAccountDetails( siteId );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const { site } = this.props;
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
+		const { siteId } = this.props;
+		const newSiteId = newProps.siteId;
 
-		if ( oldSiteId !== newSiteId ) {
+		if ( siteId !== newSiteId ) {
 			this.props.fetchAccountDetails( newSiteId );
 		}
 	}
@@ -112,7 +110,7 @@ class PaymentMethodStripe extends Component {
 	// And render brings it all together
 
 	render() {
-		const { isRequesting, method, onCancel, onDone, site, stripeConnectAccount } = this.props;
+		const { domain, isRequesting, method, onCancel, onDone, stripeConnectAccount } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		const connectFlowsEnabled = config.isEnabled(
@@ -156,7 +154,7 @@ class PaymentMethodStripe extends Component {
 		} else if ( 'connected' === dialog ) {
 			return (
 				<PaymentMethodStripeConnectedDialog
-					domain={ site.domain }
+					domain={ domain }
 					method={ method }
 					onCancel={ onCancel }
 					onDone={ onDone }
@@ -171,7 +169,7 @@ class PaymentMethodStripe extends Component {
 		// Key-based dialog by default
 		return (
 			<PaymentMethodStripeKeyBasedDialog
-				domain={ site.domain }
+				domain={ domain }
 				method={ method }
 				onCancel={ onCancel }
 				onDone={ onDone }
@@ -186,11 +184,14 @@ class PaymentMethodStripe extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const isRequesting = getIsRequesting( state, site.ID );
-	const stripeConnectAccount = getStripeConnectAccount( state, site.ID );
+	const siteId = site.ID || false;
+	const domain = site.domain || '';
+	const isRequesting = getIsRequesting( state, siteId );
+	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
 	return {
+		domain,
 		isRequesting,
-		site,
+		siteId,
 		stripeConnectAccount,
 	};
 }
