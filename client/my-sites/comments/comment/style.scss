@@ -46,8 +46,11 @@
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	&:hover .gridicon {
-		fill: $blue-medium;
+	&:focus,
+	&:hover {
+		.gridicon {
+			fill: $blue-medium;
+		}
 	}
 }
 
@@ -292,5 +295,58 @@
 .card.comment.is-bulk-mode {
 	.comment__header .comment__author {
 		padding-left: 0;
+	}
+}
+
+// Placeholder View
+
+.card.comment.is-placeholder {
+	@include placeholder();
+
+	background-color: $white;
+
+	.comment__author-gravatar-placeholder {
+		background-color: lighten($gray, 30%);
+		border-radius: 50%;
+		display: block;
+		height: 32px;
+		width: 32px;
+	}
+
+	.comment__author-info {
+		padding: 5px 8px 5px 0;
+	}
+
+	.comment__author-info-element {
+		background-color: lighten($gray, 30%);
+		color: transparent;
+		height: 16px;
+
+		a,
+		a:focus,
+		a:hover,
+		.gridicon,
+		.comment__author-url-separator {
+			color: transparent;
+			cursor: default;
+		}
+	}
+
+	.button.comment__toggle-expanded {
+		display: none;
+	}
+
+	.comment__content {
+		padding-right: 16px;
+	}
+
+	.comment__content-preview {
+		background-color: lighten($gray, 30%);
+		color: transparent;
+		height: 21px;
+	}
+
+	.comment__in-reply-to {
+		display: none;
 	}
 }

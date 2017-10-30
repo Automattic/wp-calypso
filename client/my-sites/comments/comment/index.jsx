@@ -4,8 +4,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
+import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,18 +15,18 @@ import ReactDom from 'react-dom';
 import Card from 'components/card';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
+import { getSiteComment } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class Comment extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
-		isLoading: PropTypes.bool,
 		isSelected: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isBulkMode: false,
-		isLoading: false,
 		isSelected: false,
 	};
 
@@ -59,13 +61,14 @@ export class Comment extends Component {
 	};
 
 	render() {
-		const { commentId, isBulkMode, isSelected } = this.props;
+		const { commentId, isBulkMode, isLoading, isSelected } = this.props;
 		const { isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
 			'is-collapsed': ! isExpanded && ! isBulkMode,
 			'is-expanded': isExpanded,
+			'is-placeholder': isLoading,
 		} );
 
 		return (
@@ -90,4 +93,12 @@ export class Comment extends Component {
 	}
 }
 
-export default Comment;
+const mapStateToProps = ( state, { commentId } ) => {
+	const siteId = getSelectedSiteId( state );
+	const comment = getSiteComment( state, siteId, commentId );
+	return {
+		isLoading: isUndefined( comment ),
+	};
+};
+
+export default connect( mapStateToProps )( Comment );
