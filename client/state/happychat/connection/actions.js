@@ -9,12 +9,6 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import {
-	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_DISCONNECTED,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SET_AVAILABLE,
-	// NEW ACTION TYPES
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	HAPPYCHAT_IO_RECEIVE_CONNECT,
@@ -26,34 +20,17 @@ import {
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_RECEIVE_TOKEN,
 	HAPPYCHAT_IO_RECEIVE_UNAUTHORIZED,
-	HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
+	HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
 	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
-	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
 } from 'state/action-types';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
-
-export const setConnected = user => ( { type: HAPPYCHAT_CONNECTED, user } );
-
-export const setDisconnected = errorStatus => ( { type: HAPPYCHAT_DISCONNECTED, errorStatus } );
-
-export const setReconnecting = () => ( { type: HAPPYCHAT_RECONNECTING } );
-
-export const setHappychatAvailable = isAvailable => ( {
-	type: HAPPYCHAT_SET_AVAILABLE,
-	isAvailable,
-} );
-
-export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
-
-// === NEW ACTION CREATORS =====================================================
-// === NEW ACTION CREATORS =====================================================
-// === NEW ACTION CREATORS =====================================================
 
 /**
  * Returns an action object indicating that the connection is being stablished.
