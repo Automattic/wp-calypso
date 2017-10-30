@@ -204,8 +204,18 @@ class PostTypeList extends Component {
 		);
 	}
 
+	renderQueryPosts( page ) {
+		const { query, siteId } = this.props;
+
+		if ( null === siteId && page > MAX_ALL_SITES_PAGES ) {
+			return null;
+		}
+
+		return <QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />;
+	}
+
 	render() {
-		const { query, siteId, posts, isRequestingPosts } = this.props;
+		const { query, posts, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -214,10 +224,7 @@ class PostTypeList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ query &&
-					range( 1, maxRequestedPage + 1 ).map( page => (
-						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
-					) ) }
+				{ query && range( 1, maxRequestedPage + 1 ).map( page => this.renderQueryPosts( page ) ) }
 				{ posts && posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
