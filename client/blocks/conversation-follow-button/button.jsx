@@ -50,14 +50,16 @@ class ConversationFollowButton extends React.Component {
 		}
 
 		const followingIcon = (
-				<Gridicon key="following" icon="reader-following-conversation" size={ iconSize } />
-			),
-			followIcon = <Gridicon key="follow" icon="reader-follow-conversation" size={ iconSize } />,
-			followLabelElement = (
-				<span key="label" className="conversation-follow-button__label">
-					{ label }
-				</span>
-			);
+			<Gridicon key="following" icon="reader-following-conversation" size={ iconSize } />
+		);
+		const followIcon = (
+			<Gridicon key="follow" icon="reader-follow-conversation" size={ iconSize } />
+		);
+		const followLabelElement = (
+			<span key="label" className="conversation-follow-button__label">
+				{ label }
+			</span>
+		);
 
 		return React.createElement(
 			this.props.tagName,
