@@ -1,5 +1,5 @@
 .card.login__form,
-.card.login__form-social {
+.login__form-social .card {
 	margin-bottom: 0;
 }
 
@@ -73,13 +73,8 @@
 	}
 }
 
-.login__social-text {
-	text-align: center;
-}
-
 .login__social-buttons {
 	button {
-		margin: 0 0 10px;
 		width: 100%;
 	}
 
@@ -139,6 +134,24 @@
 	clear: both;
 	font-size: 11px;
 	padding: 1em 0;
+}
+
+.login__form-social-divider {
+	margin-bottom: -11px;
+	margin-top: -11px;
+	position: relative;
+	text-align: center;
+	text-transform: uppercase;
+
+	span {
+		background: $white;
+		color: $gray;
+		font-size: 14px;
+		padding-left: 8px;
+		padding-right: 8px;
+		position: relative;
+		z-index: 2;
+	}
 }
 
 .login__social-connect-prompt-logos {

@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -114,26 +113,6 @@ class SocialLoginForm extends Component {
 		}
 	};
 
-	renderText() {
-		if ( this.props.linkingSocialService ) {
-			return (
-				<p className="login__social-text">
-					{ this.props.translate( 'Or, choose a different %(service)s account:', {
-						args: {
-							service: capitalize( this.props.linkingSocialService ),
-						},
-					} ) }
-				</p>
-			);
-		}
-
-		return (
-			<p className="login__social-text">
-				{ this.props.translate( 'Or log in with your existing social profile:' ) }
-			</p>
-		);
-	}
-
 	render() {
 		const { redirectTo, uxMode } = this.props;
 		const redirectUri = uxMode
@@ -143,8 +122,6 @@ class SocialLoginForm extends Component {
 
 		return (
 			<div className="login__social">
-				{ this.renderText() }
-
 				<div className="login__social-buttons">
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
