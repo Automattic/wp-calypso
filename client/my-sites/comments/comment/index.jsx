@@ -15,6 +15,7 @@ import { isUndefined } from 'lodash';
 import Card from 'components/card';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
+import QueryComment from 'components/data/query-comment';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -23,6 +24,7 @@ export class Comment extends Component {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
 		isSelected: PropTypes.bool,
+		refreshCommentData: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -61,7 +63,7 @@ export class Comment extends Component {
 	};
 
 	render() {
-		const { commentId, isBulkMode, isLoading, isSelected } = this.props;
+		const { commentId, isBulkMode, isLoading, isSelected, refreshCommentData, siteId } = this.props;
 		const { isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment', {
@@ -78,6 +80,8 @@ export class Comment extends Component {
 				ref={ this.storeCardRef }
 				tabIndex="0"
 			>
+				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
+
 				{ ! isEditMode && (
 					<div className="comment__detail">
 						<CommentHeader
@@ -98,6 +102,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 	return {
 		isLoading: isUndefined( comment ),
+		siteId,
 	};
 };
 
