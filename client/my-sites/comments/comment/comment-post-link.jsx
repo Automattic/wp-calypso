@@ -53,6 +53,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		postId,
 		postTitle,
 		siteSlug,
+		siteId,
 	};
 };
 
