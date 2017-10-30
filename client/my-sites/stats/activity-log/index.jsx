@@ -148,11 +148,11 @@ class ActivityLog extends Component {
 
 	handleRestoreDialogConfirm = () => {
 		const { recordTracksEvent, requestedRestoreActivity, rewindRestore, siteId } = this.props;
-		const { activityTs: timestamp } = requestedRestoreActivity;
+		const { rewindId } = requestedRestoreActivity;
 
 		debug( 'Restore requested for after activity %o', requestedRestoreActivity );
-		recordTracksEvent( 'calypso_activitylog_restore_confirm', { timestamp } );
-		rewindRestore( siteId, timestamp );
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', { rewindId } );
+		rewindRestore( siteId, rewindId );
 	};
 
 	/**
