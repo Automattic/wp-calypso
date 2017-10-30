@@ -14,17 +14,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import { getReaderConversationFollowStatus } from 'state/selectors';
+import { isFollowingReaderConversation } from 'state/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
-import { CONVERSATION_FOLLOW_STATUS_FOLLOWING } from './follow-status';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
-		followLabel: PropTypes.string,
-		followingLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -32,9 +29,9 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	handleFollowToggle = following => {
-		const { siteId, postId, followStatus } = this.props;
+		const { siteId, postId, isFollowing } = this.props;
 
-		if ( followStatus === CONVERSATION_FOLLOW_STATUS_FOLLOWING ) {
+		if ( isFollowing ) {
 			this.props.muteConversation( { siteId, postId } );
 		} else {
 			this.props.followConversation( { siteId, postId } );
@@ -44,14 +41,10 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	render() {
-		// Maybe change selector to do this?
-		const following = this.props.followStatus === CONVERSATION_FOLLOW_STATUS_FOLLOWING;
 		return (
 			<ConversationFollowButton
-				following={ following }
+				isFollowing={ this.props.isFollowing }
 				onFollowToggle={ this.handleFollowToggle }
-				followLabel={ this.props.followLabel }
-				followingLabel={ this.props.followingLabel }
 				className={ this.props.className }
 			/>
 		);
@@ -60,7 +53,7 @@ class ConversationFollowButtonContainer extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		followStatus: getReaderConversationFollowStatus( state, {
+		isFollowing: isFollowingReaderConversation( state, {
 			siteId: ownProps.siteId,
 			postId: ownProps.postId,
 		} ),

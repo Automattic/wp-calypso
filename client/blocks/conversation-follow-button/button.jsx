@@ -15,21 +15,12 @@ class ConversationFollowButton extends React.Component {
 	static propTypes = {
 		following: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
-		followLabel: PropTypes.string,
-		followingLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
 		following: false,
 		onFollowToggle: noop,
 	};
-
-	componentWillMount() {
-		this.strings = {
-			FOLLOW: this.props.translate( 'Follow' ),
-			FOLLOWING: this.props.translate( 'Following' ),
-		};
-	}
 
 	toggleFollow = event => {
 		if ( event ) {
@@ -42,13 +33,13 @@ class ConversationFollowButton extends React.Component {
 	};
 
 	render() {
-		let label = this.props.followLabel ? this.props.followLabel : this.strings.FOLLOW;
 		const classes = [ 'conversation-follow-button', this.props.className ];
 		const iconSize = 20;
+		let label = this.props.translate( 'Follow Conversation' );
 
 		if ( this.props.following ) {
 			classes.push( 'is-following' );
-			label = this.props.followingLabel ? this.props.followingLabel : this.strings.FOLLOWING;
+			label = this.props.translate( 'Following Conversation' );
 		}
 
 		const followingIcon = (
