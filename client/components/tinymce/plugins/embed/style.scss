@@ -56,5 +56,7 @@ input[type="text"].embed__url {
 
 	.embed__loading-spinner .spinner__image {
 		margin: 0 auto;
+		min-height: 200px;
+		vertical-align: middle;
 	}
 }

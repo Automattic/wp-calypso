@@ -42,6 +42,7 @@ export class EmbedDialog extends React.Component {
 	static defaultProps = {
 		embedUrl: '',
 		isVisible: false,
+		isLoading: false,
 	};
 
 	state = {
@@ -70,7 +71,7 @@ export class EmbedDialog extends React.Component {
 		 */
 		this.debouncedFetchEmbedPreviewMarkup = debounce( this.fetchEmbedPreviewMarkup, 500 );
 
-		if ( this.isURLInCache( this.state.embedUrl ) ) {
+		if ( ! this.isURLInCache( this.state.embedUrl ) ) {
 			this.setState( { isLoading: true } );
 		}
 		// Prepare the initial markup before the first render()
