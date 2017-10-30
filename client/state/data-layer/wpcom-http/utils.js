@@ -8,6 +8,11 @@ import schemaValidator from 'is-my-json-valid';
 import { get, identity, noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import warn from 'lib/warn';
+
+/**
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
@@ -46,18 +51,18 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', undef
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
 
-class SchemaError extends Error {
+export class SchemaError extends Error {
 	constructor( errors ) {
 		super( 'Failed to validate with JSON schema' );
 		this.schemaErrors = errors;
 	}
 }
 
-class TransformerError extends Error {
-	constructor( error, transformer, data ) {
+export class TransformerError extends Error {
+	constructor( error, data, transformer ) {
 		super( error.message );
-		this.transformer = transformer;
 		this.inputData = data;
+		this.transformer = transformer;
 	}
 }
 
@@ -83,7 +88,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 		try {
 			return transformer( data );
 		} catch ( e ) {
-			throw new TransformerError( e, transformer, data );
+			throw new TransformerError( e, data, transformer );
 		}
 	};
 
@@ -161,3 +166,101 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) =
 
 	return initiator( store, action );
 };
+
+/**
+ * Dispatches to appropriate function based on HTTP request meta
+ *
+ * @see state/data-layer/wpcom-http/actions#fetch creates HTTP requests
+ *
+ * When the WPCOM HTTP data layer handles requests it will add
+ * response data and errors to a meta property on the given success
+ * error, and progress handling actions.
+ *
+ * This function accepts several functions as the fetch, success, error and
+ * progress handlers for actions and it will call the appropriate
+ * one based on the stored meta.
+ *
+ * These handlers are action creators: based on the input data coming from the HTTP request,
+ * it will return an action (or an action thunk) to be executed as a response to the given
+ * HTTP event.
+ *
+ * If both error and response data is available this will call the
+ * error handler in preference over the success handler, but the
+ * response data will also still be available through the action meta.
+ *
+ * The functions should conform to the following type signatures:
+ *   fetch  :: Action -> Action (action creator with one Action parameter)
+ *   onSuccess  :: Action -> ResponseData -> Action (action creator with two params)
+ *   onError    :: Action -> ErrorData -> Action
+ *   onProgress :: Action -> ProgressData -> Action
+ *   fromApi    :: ResponseData -> TransformedData throws TransformerError|SchemaError
+ *
+ * @param {Object} options object with named parameters:
+ * @param {Function} fetch called if action lacks response meta; should create HTTP request
+ * @param {Function} onSuccess called if the action meta includes response data
+ * @param {Function} onError called if the action meta includes error data
+ * @param {Function} onProgress called on progress events when uploading
+ * @param {Function} fromApi maps between API data and Calypso data
+ * @returns {Action} action or action thunk to be executed in response to HTTP event
+ */
+export const dispatchRequestEx = options => {
+	if ( ! options.fetch ) {
+		warn( 'fetch handler is not defined: no request will ever be issued' );
+	}
+
+	if ( ! options.onSuccess ) {
+		warn( 'onSuccess handler is not defined: response to the request is being ignored' );
+	}
+
+	if ( ! options.onError ) {
+		warn( 'onError handler is not defined: error during the request is being ignored' );
+	}
+
+	return ( store, action ) => {
+		// create the low-level action we want to dispatch
+		const requestAction = createRequestAction( options, action );
+		// dispatch the low level action (if any was created) and return the result
+		return requestAction ? store.dispatch( requestAction ) : undefined;
+	};
+};
+
+/*
+ * Converts an application-level Calypso action that's handled by the data-layer middleware
+ * into a low-level action. For example, HTTP request that's being initiated, or a response
+ * action with a `meta.dataLayer` property.
+ */
+function createRequestAction( options, action ) {
+	const {
+		fetch = noop,
+		onSuccess = noop,
+		onError = noop,
+		onProgress = noop,
+		fromApi = identity,
+	} = options;
+
+	const error = getError( action );
+	if ( error ) {
+		return onError( action, error );
+	}
+
+	const data = getData( action );
+	if ( data ) {
+		try {
+			return onSuccess( action, fromApi( data ) );
+		} catch ( err ) {
+			return onError( action, err );
+		}
+	}
+
+	const progress = getProgress( action );
+	if ( progress ) {
+		return onProgress( action, progress );
+	}
+
+	const fetchAction = fetch( action );
+	if ( ! fetchAction ) {
+		warn( "The `fetch` handler didn't return any action: no request will be issued" );
+	}
+
+	return fetchAction;
+}
