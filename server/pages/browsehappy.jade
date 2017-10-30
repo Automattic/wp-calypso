@@ -58,10 +58,13 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 								h2.empty-content__title Unsupported Browser
 								h3.empty-content__line
 									| Unfortunately this page cannot be used by your browser. You can either
+									=  ' '
 									a(
 										href=dashboardUrl
 									) use the classic WordPress dashboard
 									| , or
+									=  ' '
 									a(
 										href="https://browsehappy.com"
 									) upgrade your browser
+									=  '.'
