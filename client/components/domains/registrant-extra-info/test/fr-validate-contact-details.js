@@ -94,7 +94,7 @@ describe( 'validateContactDetails', () => {
 		} );
 	} );
 
-	describe( 'VAT', () => {
+	describe( 'VAT Validation', () => {
 		test( 'should accept VAT patterns', () => {
 			const vatPatterns = [
 				[ 'ATU99999999' ],

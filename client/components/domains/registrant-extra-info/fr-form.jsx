@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { castArray, defaults, get, identity, isEmpty, isString, map, noop } from 'lodash';
+import { castArray, defaults, get, identity, isEmpty, isString, map, noop, toUpper } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,15 @@ let defaultRegistrantType;
  */
 function onlyNumericCharacters( string ) {
 	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
+}
+
+/*
+ * Sanitize a VAT string by removing everything except digits,
+ * letters, plus or star
+ * symbols.
+ */
+export function sanitizeVat( string ) {
+	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z\+\*]/g, '' ) : '';
 }
 
 // If we set a field to null, react decides it's uncontrolled and complains
@@ -66,6 +75,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	sanitizeFunctions = {
 		sirenSiret: onlyNumericCharacters,
 		trademarkNumber: onlyNumericCharacters,
+		registrantVatId: sanitizeVat,
 	};
 
 	componentWillMount() {
