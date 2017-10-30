@@ -15,6 +15,22 @@ export function createPromotionFromProduct( product ) {
 	};
 }
 
+export function createProductUpdateFromPromotion( promotion ) {
+	const { productIds } = promotion.appliesTo;
+	const id = productIds && productIds[ 0 ];
+
+	if ( ! id ) {
+		throw new Error( 'Cannot create product from promotion, product id not found.' );
+	}
+
+	return {
+		id,
+		sale_price: promotion.salePrice,
+		date_on_sale_from_gmt: promotion.startDate,
+		date_on_sale_to_gmt: promotion.endDate,
+	};
+}
+
 export function createPromotionFromCoupon( coupon ) {
 	const promotion = {
 		id: uniqueId( 'promotion:' ),
@@ -43,6 +59,32 @@ export function createPromotionFromCoupon( coupon ) {
 	}
 
 	return promotion;
+}
+
+export function createCouponUpdateFromPromotion( promotion ) {
+	if ( ! promotion.couponCode ) {
+		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
+	}
+
+	const amount = ( 'percent' === promotion.type
+		? promotion.percentDiscount
+		: promotion.fixedDiscount );
+
+	return {
+		id: promotion.couponId, // May not be present in case of create.
+		discount_type: promotion.type,
+		code: promotion.couponCode,
+		amount: amount,
+		date_expires_gmt: promotion.endDate,
+		individual_use: promotion.individualUse,
+		usage_limit: promotion.usageLimit,
+		usage_limit_per_user: promotion.usageLimitPerUser,
+		free_shipping: promotion.freeShipping,
+		minimum_amount: promotion.minimumAmount,
+		maximum_amount: promotion.maximumAmount,
+		product_ids: promotion.appliesTo.productIds,
+		product_categories: promotion.appliesTo.productCategoryIds,
+	};
 }
 
 function calculateCouponAppliesTo( coupon ) {

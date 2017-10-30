@@ -8,7 +8,9 @@ import { expect } from 'chai';
  */
 import {
 	createPromotionFromProduct,
+	createProductUpdateFromPromotion,
 	createPromotionFromCoupon,
+	createCouponUpdateFromPromotion,
 	isCategoryExplicitlySelected,
 	isCategorySelected,
 	isProductExplicitlySelected,
@@ -39,6 +41,39 @@ describe( 'helpers', () => {
 			expect( promotion.appliesTo.productIds[ 0 ] ).to.equal( product1.id );
 			expect( promotion.appliesTo.all ).to.not.exist;
 			expect( promotion.appliesTo.productCategoryIds ).to.not.exist;
+		} );
+	} );
+
+	describe( '#createProductUpdateFromPromotion', () => {
+		test( 'should set product fields from promotion', () => {
+			const promotion = {
+				type: 'product_sale',
+				salePrice: '20',
+				startDate: '2017-09-20T12:12:15',
+				endDate: '2017-10-22T10:10:15',
+				appliesTo: { productIds: [ 52 ] },
+			};
+
+			const productData = createProductUpdateFromPromotion( promotion );
+
+			expect( productData ).to.exist;
+			expect( productData.id ).to.equal( 52 );
+			expect( productData.date_on_sale_from_gmt ).to.equal( promotion.startDate );
+			expect( productData.date_on_sale_to_gmt ).to.equal( promotion.endDate );
+		} );
+
+		test( 'should throw if promotion does not apply to product', () => {
+			const promotion = {
+				type: 'product_sale',
+				salePrice: '20',
+				appliesTo: { productCategoryIds: [ 52 ] },
+			};
+
+			const badProductPromotionCall = () => {
+				createProductUpdateFromPromotion( promotion );
+			};
+
+			expect( badProductPromotionCall ).to.throw( Error );
 		} );
 	} );
 
@@ -121,6 +156,122 @@ describe( 'helpers', () => {
 			expect( promotion.appliesTo.productCategoryIds ).to.exist;
 			expect( promotion.appliesTo.productCategoryIds.length ).to.equal( 1 );
 			expect( promotion.appliesTo.productCategoryIds[ 0 ] ).to.equal( 22 );
+		} );
+	} );
+
+	describe( '#createCouponUpdateFromPromotion', () => {
+		test( 'should set fixed discount fields from promotion', () => {
+			const promotion = {
+				type: 'fixed_cart',
+				couponCode: '20bucks',
+				fixedDiscount: '20',
+				appliesTo: { all: true },
+				couponId: 25,
+			};
+
+			const couponData = createCouponUpdateFromPromotion( promotion );
+
+			expect( couponData ).to.exist;
+			expect( couponData.id ).to.equal( 25 );
+			expect( couponData.discount_type ).to.equal( 'fixed_cart' );
+			expect( couponData.code ).to.equal( promotion.couponCode );
+			expect( couponData.amount ).to.equal( promotion.fixedDiscount );
+		} );
+
+		test( 'should set percent discount fields from promotion', () => {
+			const promotion = {
+				type: 'percent',
+				couponCode: '10percent',
+				fixedDiscount: '10',
+				appliesTo: { all: true },
+				couponId: 25,
+			};
+
+			const couponData = createCouponUpdateFromPromotion( promotion );
+
+			expect( couponData ).to.exist;
+			expect( couponData.id ).to.equal( 25 );
+			expect( couponData.discount_type ).to.equal( 'percent' );
+			expect( couponData.code ).to.equal( promotion.couponCode );
+			expect( couponData.amount ).to.equal( promotion.percentDiscount );
+		} );
+
+		test( 'should set applied product ids from promotion', () => {
+			const promotion = {
+				type: 'percent',
+				couponCode: '10percent',
+				percentDiscount: '10',
+				appliesTo: { productIds: [ 12, 14, 16 ] },
+				couponId: 25,
+			};
+
+			const couponData = createCouponUpdateFromPromotion( promotion );
+
+			expect( couponData ).to.exist;
+			expect( couponData.id ).to.equal( 25 );
+			expect( couponData.product_ids ).to.equal( promotion.appliesTo.productIds );
+		} );
+
+		test( 'should set applied product category ids from promotion', () => {
+			const promotion = {
+				type: 'percent',
+				couponCode: '10percent',
+				fixedDiscount: '10',
+				appliesTo: { productCategoryIds: [ 22, 24, 26 ] },
+				couponId: 25,
+			};
+
+			const couponData = createCouponUpdateFromPromotion( promotion );
+
+			expect( couponData ).to.exist;
+			expect( couponData.id ).to.equal( 25 );
+			expect( couponData.product_categories ).to.equal(
+				promotion.appliesTo.productCategoryIds
+			);
+		} );
+
+		test( 'should set conditions on coupon from promotion', () => {
+			const promotion = {
+				type: 'percent',
+				couponCode: '10percent',
+				fixedDiscount: '20',
+				appliesTo: { all: true },
+				couponId: 25,
+				endDate: '2017-10-22T10:10:15',
+				individualUse: true,
+				usageLimit: '20',
+				usageLimitPerUser: '1',
+				freeShipping: true,
+				minimumAmount: '20',
+				maximumAmount: '200',
+			};
+
+			const couponData = createCouponUpdateFromPromotion( promotion );
+
+			expect( couponData ).to.exist;
+			expect( couponData.id ).to.equal( 25 );
+			expect( couponData.date_expires_gmt ).to.equal( promotion.endDate );
+			expect( couponData.individual_use ).to.equal( promotion.individualUse );
+			expect( couponData.usage_limit ).to.equal( promotion.usageLimit );
+			expect( couponData.usage_limit_per_user ).to.equal( promotion.usageLimitPerUser );
+			expect( couponData.free_shipping ).to.equal( promotion.freeShipping );
+			expect( couponData.minimum_amount ).to.equal( promotion.minimumAmount );
+			expect( couponData.maximum_amount ).to.equal( promotion.maximumAmount );
+		} );
+
+		test( 'should throw if promotion does not have a coupon code', () => {
+			const promotion = {
+				type: 'fixed_cart',
+				amount: '20',
+				appliesTo: { all: true },
+				couponId: 25
+			};
+
+			const badCouponPromotionCall = () => {
+				createCouponUpdateFromPromotion( promotion );
+			};
+
+			expect( badCouponPromotionCall ).to.throw( Error );
 		} );
 	} );
 
