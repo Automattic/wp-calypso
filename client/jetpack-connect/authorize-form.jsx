@@ -146,6 +146,8 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 }
 
+export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent };
+
 export default connect(
 	state => {
 		const remoteSiteUrl = getAuthorizationRemoteSite( state );
