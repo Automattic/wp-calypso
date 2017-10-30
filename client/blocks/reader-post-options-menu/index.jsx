@@ -161,7 +161,12 @@ class ReaderPostOptionsMenu extends React.Component {
 					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 					{ this.props.showFollow && (
-						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
+						<FollowButton
+							tagName={ PopoverMenuItem }
+							siteUrl={ followUrl }
+							followLabel={ showConversationFollow ? translate( 'Follow Site' ) : null }
+							followingLabel={ showConversationFollow ? translate( 'Following Site' ) : null }
+						/>
 					) }
 
 					{ showConversationFollow && (
