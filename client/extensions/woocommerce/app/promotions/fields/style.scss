@@ -24,7 +24,7 @@
 		border: 1px solid lighten( $gray, 20% );
 		border-top: 0;
 		overflow-y: auto;
-		max-height: 250px; // TODO: media query breaks for mobile?
+		max-height: 250px;
 
 		.promotion-applies-to-field__row {
 			background-color: $white;
