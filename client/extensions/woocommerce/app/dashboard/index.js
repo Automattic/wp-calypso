@@ -39,6 +39,7 @@ import {
 import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
+import Placeholder from './placeholder';
 import PreSetupView from './pre-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
@@ -129,9 +130,14 @@ class Dashboard extends Component {
 			finishedInitialSetup,
 			hasOrders,
 			hasProducts,
+			loading,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
 		} = this.props;
+
+		if ( loading || ! selectedSite ) {
+			return <Placeholder />;
+		}
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
@@ -168,14 +174,12 @@ class Dashboard extends Component {
 	render = () => {
 		const { className, loading, selectedSite } = this.props;
 
-		if ( loading || ! selectedSite ) {
-			// TODO have a placeholder/loading view instead
-			return null;
-		}
-
 		return (
 			<Main className={ classNames( 'dashboard', className ) }>
-				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
+				<ActionHeader
+					breadcrumbs={ this.getBreadcrumb() }
+					isLoading={ loading || ! selectedSite }
+				/>
 				{ this.renderDashboardContent() }
 			</Main>
 		);
