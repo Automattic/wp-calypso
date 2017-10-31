@@ -20,9 +20,14 @@
 	display: none;
 }
 
+.credentials-form__delete-button,
 .credentials-form__cancel-button {
 	float: right;
 	margin-right: 15px;
+}
+
+.credentials-form__delete-button.button.is-borderless {
+	color: $alert-red;
 }
 
 .credentials-form__private-key-description {

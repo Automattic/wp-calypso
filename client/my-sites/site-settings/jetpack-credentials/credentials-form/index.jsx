@@ -69,6 +69,8 @@ export class CredentialsForm extends Component {
 			: this.setState( { formErrors: errors } );
 	};
 
+	handleDelete = () => this.props.deleteCredentials( this.props.siteId, this.props.role );
+
 	togglePrivateKeyField = () =>
 		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
 
@@ -225,6 +227,16 @@ export class CredentialsForm extends Component {
 										className="credentials-form__cancel-button"
 									>
 										{ translate( 'Cancel' ) }
+									</Button>
+								) }
+								{ this.props.showDeleteButton && (
+									<Button
+										borderless={ true }
+										disabled={ formIsSubmitting }
+										onClick={ this.handleDelete }
+										className="credentials-form__delete-button"
+									>
+										{ translate( 'Delete' ) }
 									</Button>
 								) }
 							</td>

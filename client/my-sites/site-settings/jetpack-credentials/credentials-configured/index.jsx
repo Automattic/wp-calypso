@@ -40,6 +40,7 @@ class CredentialsConfigured extends Component {
 			formIsSubmitting,
 			siteId,
 			updateCredentials,
+			deleteCredentials,
 			translate,
 		} = this.props;
 
@@ -91,10 +92,13 @@ class CredentialsConfigured extends Component {
 						pass: get( mainCredentials, 'pass', '' ),
 						abspath: get( mainCredentials, 'abspath', '' ),
 						kpri: get( mainCredentials, 'kpri', '' ),
+						role: 'main',
 						formIsSubmitting,
 						siteId,
 						updateCredentials,
 						showCancelButton: false,
+						showDeleteButton: true,
+						deleteCredentials,
 					} }
 				/>
 			</FoldableCard>
