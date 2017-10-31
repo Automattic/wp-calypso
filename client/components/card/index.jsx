@@ -51,7 +51,7 @@ class Card extends Component {
 		}
 
 		if ( ! href ) {
-			omitProps.push( 'target' );
+			omitProps.push( 'href', 'target' );
 		}
 
 		return React.createElement(
