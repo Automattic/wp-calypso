@@ -49,7 +49,9 @@ class PostTypeList extends Component {
 		siteId: PropTypes.number,
 		posts: PropTypes.array,
 		isRequestingPosts: PropTypes.bool,
-		lastPage: PropTypes.number,
+		totalPostCount: PropTypes.number,
+		totalPageCount: PropTypes.number,
+		lastPageToRequest: PropTypes.number,
 	};
 
 	constructor() {
@@ -133,14 +135,14 @@ class PostTypeList extends Component {
 	}
 
 	hasListFullyLoaded() {
-		const { lastPage, isRequestingPosts } = this.props;
+		const { lastPageToRequest, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
 
-		return ! isRequestingPosts && maxRequestedPage >= lastPage;
+		return ! isRequestingPosts && maxRequestedPage >= lastPageToRequest;
 	}
 
 	maybeLoadNextPage() {
-		const { scrollContainer, lastPage, isRequestingPosts } = this.props;
+		const { scrollContainer, lastPageToRequest, isRequestingPosts } = this.props;
 		if ( ! scrollContainer ) {
 			return;
 		}
@@ -157,7 +159,7 @@ class PostTypeList extends Component {
 		const { maxRequestedPage } = this.state;
 		if (
 			pixelsBelowViewport <= LOAD_NEXT_PAGE_THRESHOLD_PIXELS &&
-			maxRequestedPage < lastPage &&
+			maxRequestedPage < lastPageToRequest &&
 			! isRequestingPosts
 		) {
 			this.setState( {
@@ -171,17 +173,21 @@ class PostTypeList extends Component {
 	}
 
 	renderMaxPagesNotice() {
-		const { totalPosts, siteId, lastPage } = this.props;
-		const displayedPosts = this.getPostsPerPageCount() * MAX_ALL_SITES_PAGES;
-		const isTruncated =
-			null === siteId && this.hasListFullyLoaded() && lastPage > MAX_ALL_SITES_PAGES;
+		const { siteId, totalPageCount, totalPostCount } = this.props;
+		const isTruncated = (
+			null === siteId &&
+			this.hasListFullyLoaded() &&
+			totalPageCount > MAX_ALL_SITES_PAGES
+		);
 
 		if ( ! isTruncated ) {
 			return null;
 		}
 
+		const displayedPosts = this.getPostsPerPageCount() * MAX_ALL_SITES_PAGES;
+
 		return (
-			<PostTypeListMaxPagesNotice displayedPosts={ displayedPosts } totalPosts={ totalPosts } />
+			<PostTypeListMaxPagesNotice displayedPosts={ displayedPosts } totalPosts={ totalPostCount } />
 		);
 	}
 
@@ -204,18 +210,8 @@ class PostTypeList extends Component {
 		);
 	}
 
-	renderQueryPosts( page ) {
-		const { query, siteId } = this.props;
-
-		if ( null === siteId && page > MAX_ALL_SITES_PAGES ) {
-			return null;
-		}
-
-		return <QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />;
-	}
-
 	render() {
-		const { query, posts, isRequestingPosts } = this.props;
+		const { query, siteId, posts, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -224,7 +220,13 @@ class PostTypeList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ query && range( 1, maxRequestedPage + 1 ).map( page => this.renderQueryPosts( page ) ) }
+				{ query && range( 1, maxRequestedPage + 1 ).map( page => (
+					<QueryPosts
+						key={ `query-${ page }` }
+						siteId={ siteId }
+						query={ { ...query, page } }
+					/>
+				) ) }
 				{ posts && posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
@@ -239,11 +241,19 @@ class PostTypeList extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
+	const totalPageCount = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+	const lastPageToRequest = (
+		siteId === null
+			? Math.min( MAX_ALL_SITES_PAGES, totalPageCount )
+			: totalPageCount
+	);
+
 	return {
 		siteId,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		lastPage: getSitePostsLastPageForQuery( state, siteId, ownProps.query ),
-		totalPosts: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
+		totalPostCount: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
+		totalPageCount,
+		lastPageToRequest,
 	};
 } )( PostTypeList );
