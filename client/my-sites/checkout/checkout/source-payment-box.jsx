@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { assign, some } from 'lodash';
+import { assign, some, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,8 @@ import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import notices from 'notices';
+import FormSelect from 'components/forms/form-select';
+import FormLabel from 'components/forms/form-label';
 
 class SourcePaymentBox extends PureComponent {
 	static propTypes = {
@@ -112,7 +114,7 @@ class SourcePaymentBox extends PureComponent {
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
-					info: translate( 'Redirecting you to our payment provider' ),
+					info: translate( 'Redirecting you to your bank to complete the payment.' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
@@ -134,6 +136,28 @@ class SourcePaymentBox extends PureComponent {
 		} );
 	}
 
+	renderBankOptions() {
+		const idealBanks = {
+			'-': translate( 'Select bank…' ),
+			abn_amro: 'ABN AMRO',
+			asn_bank: 'ASN Bank',
+			bunq: 'Bunq',
+			ing: 'ING',
+			knab: 'Knab',
+			rabobank: 'Rabobank',
+			regiobank: 'RegioBank',
+			sns_bank: 'SNS Bank',
+			triodos_bank: 'Triodos Bank',
+			van_lanschot: 'Van Lanschot',
+		};
+
+		return map( idealBanks, ( text, optionValue ) => (
+			<option value={ optionValue } key={ optionValue }>
+				{ text }
+			</option>
+		) );
+	}
+
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -151,6 +175,17 @@ class SourcePaymentBox extends PureComponent {
 						onChange={ this.handleChange }
 						label={ translate( 'Your Name' ) }
 						eventFormName="Checkout Form" />
+					<div className="checkout-field">
+						<FormLabel htmlFor="ideal-bank">
+							{ translate( 'Bank' ) }
+						</FormLabel>
+						<FormSelect
+							name="ideal-bank"
+							onChange={ this.handleChange }
+						>
+							{ this.renderBankOptions() }
+						</FormSelect>
+					</div>
 				</div>
 
 				<TermsOfService
