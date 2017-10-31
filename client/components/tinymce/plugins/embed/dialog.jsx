@@ -96,6 +96,17 @@ export class EmbedDialog extends React.Component {
 		}
 	};
 
+	componentDidUpdate = ( prevProps, prevState ) => {
+		if (
+			this.state.isLoading === false &&
+			prevState.isLoading === false &&
+			this.state.embedUrl !== prevState.embedUrl &&
+			this.isURLInCache( this.state.embedUrl )
+		) {
+			this.setHtml();
+		}
+	};
+
 	isURLInCache = url => {
 		return !! this.state.previewMarkup[ url ];
 	};
