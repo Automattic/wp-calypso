@@ -60,12 +60,7 @@ class EditorRevisions extends Component {
 				</a>
 			);
 		}
-		/*		console.log( 'top level render', {
-			postId,
-			siteId,
-			authorsIds,
-			selectedRevisionId,
-		} );*/
+
 		return (
 			<div className="editor-revisions__wrapper">
 				<QueryPostRevisions postId={ postId } siteId={ siteId } />

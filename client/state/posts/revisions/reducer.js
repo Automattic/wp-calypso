@@ -49,14 +49,13 @@ export function revisions( state = {}, action ) {
 	return state;
 }
 
-// @TODO ensure no rehydration
 export function selection( state = {}, action ) {
 	switch ( action.type ) {
-		case SELECTED_SITE_SET: {
-			return { ...state, revisionId: null };
-		}
 		case POST_REVISIONS_SELECT: {
 			return { ...state, revisionId: action.revisionId };
+		}
+		case SELECTED_SITE_SET: {
+			return { ...state, revisionId: null };
 		}
 		default:
 			return state;

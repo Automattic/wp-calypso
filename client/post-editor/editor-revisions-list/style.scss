@@ -63,7 +63,7 @@
 .editor-ground-control__popover {
 	// @TODO at wider viewports, move this left some
 	//margin-left: -4vw;
-	width: 95vw;
+	width: 93vw;
 
 	.popover__arrow {
 		// The initial render causes this to be off, just hiding for now
@@ -117,6 +117,10 @@
 
 .editor-revisions-list__header {
 	padding: 1rem;
+
+	.gridicons-history {
+		margin-right: 5px;
+	}
 }
 
 .editor-revisions-list__load-revision {
