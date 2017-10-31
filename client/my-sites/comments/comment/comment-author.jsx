@@ -27,6 +27,17 @@ export class CommentAuthor extends Component {
 		isExpanded: PropTypes.bool,
 	};
 
+	commentHasLink = () => {
+		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
+			const parser = new DOMParser();
+			const commentDom = parser.parseFromString( this.props.commentContent, 'text/html' );
+
+			return !! commentDom.getElementsByTagName( 'a' ).length;
+		}
+
+		return false;
+	};
+
 	render() {
 		const {
 			authorAvatarUrl,
@@ -62,6 +73,9 @@ export class CommentAuthor extends Component {
 
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
+						{ this.commentHasLink() && (
+							<Gridicon icon="link" size="18" className="comment__author-has-link" />
+						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
@@ -92,7 +106,6 @@ export class CommentAuthor extends Component {
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
-
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
 	const gravatarUser = { avatar_URL: authorAvatarUrl, display_name: authorDisplayName };
@@ -101,6 +114,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorAvatarUrl,
 		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
+		commentContent: get( comment, 'content' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),

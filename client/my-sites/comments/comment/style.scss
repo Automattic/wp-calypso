@@ -89,6 +89,12 @@
 	width: calc(100% - 48px);
 }
 
+.comment__author-has-link {
+	position: relative;
+	top: 4px;
+	margin-right: 5px;
+}
+
 .comment__author-info-element {
 	overflow: hidden;
 	text-overflow: ellipsis;
