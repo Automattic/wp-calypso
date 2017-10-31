@@ -252,7 +252,7 @@
 
 .mailchimp__sync-notice-content {
 	display: flex;
-	width: 145px;
+	max-width: 140px;
 
 	@include breakpoint( "<960px" ) {
 		width: auto;
