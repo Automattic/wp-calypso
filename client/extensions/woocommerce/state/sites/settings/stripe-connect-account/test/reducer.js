@@ -701,7 +701,6 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	/////
 	describe( 'connectAccountOAuthConnect', () => {
 		test( 'should update state to show request in progress', () => {
 			const action = {

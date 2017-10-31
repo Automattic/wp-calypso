@@ -67,7 +67,7 @@ export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether we are presently requesting oauth initialization
+ * @return {String} URL to which to navigate to kick off the OAuth flow at Stripe
  */
 export function getOAuthURL( state, siteId = getSelectedSiteId( state ) ) {
 	return get( getRawSettings( state, siteId ), [ 'oauthUrl' ], '' );

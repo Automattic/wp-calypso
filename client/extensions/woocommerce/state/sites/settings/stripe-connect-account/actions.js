@@ -288,8 +288,8 @@ function oauthInitFailure( siteId, action, { message } ) {
  * Action Creator: Complete the OAuth flow and connect the Stripe Account.
  *
  * @param {Number} siteId The id of the site for which to create an account.
- * @param {String} stripeCode The hexadecimal code provided by Stripe (GET param) when the user is returned to calypso
- * @param {String} stripeState The hexadecimal code provided by Stripe (GET param) when the user is returned to calypso
+ * @param {String} stripeCode The code which Stripe will exchange for the account id.
+ * @param {String} stripeState An arbitrary string passed throughout the flow as a CSRF protection.
  * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
  * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {Object} Action object
