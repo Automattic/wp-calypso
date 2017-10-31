@@ -24,11 +24,13 @@ import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/a
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import {
 	getCurrentlyEditingPromotionId,
+	getPromotionEdits,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
 import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
+import { ProtectFormGuard } from 'lib/protect-form';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 class PromotionCreate extends React.Component {
@@ -104,6 +106,8 @@ class PromotionCreate extends React.Component {
 		};
 
 		const successAction = dispatch => {
+			this.props.clearPromotionEdits( site.ID );
+
 			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
 		};
@@ -123,11 +127,11 @@ class PromotionCreate extends React.Component {
 	};
 
 	render() {
-		const { site, currency, className, promotion } = this.props;
+		const { site, currency, className, promotion, hasEdits } = this.props;
 		const { busy } = this.state;
 
 		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
-		const saveEnabled = isValid && ! busy;
+		const saveEnabled = isValid && ! busy && hasEdits;
 
 		return (
 			<Main className={ className }>
@@ -137,6 +141,7 @@ class PromotionCreate extends React.Component {
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ busy }
 				/>
+				<ProtectFormGuard isChanged={ hasEdits } />
 				<PromotionForm
 					siteId={ site && site.ID }
 					currency={ currency }
@@ -154,8 +159,10 @@ function mapStateToProps( state ) {
 	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
+	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
 
 	return {
+		hasEdits,
 		site,
 		promotion,
 		currency,
