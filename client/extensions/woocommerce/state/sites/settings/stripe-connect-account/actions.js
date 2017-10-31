@@ -79,13 +79,13 @@ export const createAccount = (
 		.then( data => {
 			dispatch( createSuccess( siteId, createAction, data ) );
 			if ( successAction ) {
-				dispatch( successAction( data ) );
+				dispatch( successAction( siteId, createAction, data ) );
 			}
 		} )
 		.catch( error => {
 			dispatch( createFailure( siteId, createAction, error ) );
 			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+				dispatch( failureAction( siteId, createAction, error ) );
 			}
 		} );
 };
@@ -134,9 +134,9 @@ export const fetchAccountDetails = ( siteId, successAction = null, failureAction
 	return request( siteId )
 		.get( 'connect/stripe/account', 'wc/v1' )
 		.then( data => {
-			dispatch( fetchSuccess( siteId, data ) );
+			dispatch( fetchSuccess( siteId, fetchAction, data ) );
 			if ( successAction ) {
-				dispatch( successAction( data ) );
+				dispatch( successAction( siteId, fetchAction, data ) );
 			}
 		} )
 		.catch( error => {
@@ -147,7 +147,7 @@ export const fetchAccountDetails = ( siteId, successAction = null, failureAction
 		} );
 };
 
-function fetchSuccess( siteId, data ) {
+function fetchSuccess( siteId, fetchAction, data ) {
 	const { account_id, display_name, email, business_logo, legal_entity, payouts_enabled } = data;
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE,
@@ -197,9 +197,9 @@ export const deauthorizeAccount = ( siteId, successAction = null, failureAction 
 	return request( siteId )
 		.post( 'connect/stripe/account/deauthorize', {}, 'wc/v1' )
 		.then( data => {
-			dispatch( deauthorizeSuccess( siteId ) );
+			dispatch( deauthorizeSuccess( siteId, deauthorizeAction, data ) );
 			if ( successAction ) {
-				dispatch( successAction( data ) );
+				dispatch( successAction( siteId, deauthorizeAction, data ) );
 			}
 		} )
 		.catch( error => {
@@ -210,7 +210,8 @@ export const deauthorizeAccount = ( siteId, successAction = null, failureAction 
 		} );
 };
 
-function deauthorizeSuccess( siteId ) {
+// eslint-disable-next-line no-unused-vars
+function deauthorizeSuccess( siteId, action, data ) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE,
 		siteId,
@@ -256,13 +257,13 @@ export const oauthInit = ( siteId, returnUrl, successAction = null, failureActio
 		.then( data => {
 			dispatch( oauthInitSuccess( siteId, initAction, data ) );
 			if ( successAction ) {
-				dispatch( successAction( data ) );
+				dispatch( successAction( siteId, initAction, data ) );
 			}
 		} )
 		.catch( error => {
 			dispatch( oauthInitFailure( siteId, initAction, error ) );
 			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+				dispatch( failureAction( siteId, initAction, error ) );
 			}
 		} );
 };
@@ -319,13 +320,13 @@ export const oauthConnect = (
 		.then( data => {
 			dispatch( oauthConnectSuccess( siteId, connectAction, data ) );
 			if ( successAction ) {
-				dispatch( successAction( data ) );
+				dispatch( successAction( siteId, connectAction, data ) );
 			}
 		} )
 		.catch( error => {
 			dispatch( oauthConnectFailure( siteId, connectAction, error ) );
 			if ( failureAction ) {
-				dispatch( failureAction( error ) );
+				dispatch( failureAction( siteId, connectAction, error ) );
 			}
 		} );
 };

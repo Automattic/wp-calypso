@@ -9,8 +9,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import debugFactory from 'debug';
-const debug = debugFactory( 'allendav' );
 
 /**
  * Internal dependencies
@@ -24,30 +22,26 @@ import {
 	getError,
 	getIsOAuthConnecting,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
-import { navigate } from 'state/ui/actions';
+import { getLink } from 'woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
+import page from 'page';
 import ProgressBar from 'components/progress-bar';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {
 		oauthCode: PropTypes.string.isRequired,
 		oauthState: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		onCancel: PropTypes.func.isRequired,
 	};
-
-	constructor( props ) {
-		super( props );
-	}
 
 	componentWillMount = () => {
 		this.props.clearError();
 	};
 
 	componentDidMount = () => {
-		const { oauthCode, oauthState, siteId, siteSlug } = this.props;
-		const completeLink = ( '/store/settings/payments/:site?oauth_complete', { slug: siteSlug } );
-		this.props.oauthConnect( siteId, oauthCode, oauthState, navigate( completeLink ) );
+		const { oauthCode, oauthState, siteId } = this.props;
+		this.props.oauthConnect( siteId, oauthCode, oauthState );
 	};
 
 	possiblyRenderProgress = () => {
@@ -67,8 +61,17 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	};
 
 	onClose = () => {
+		const { site } = this.props;
 		this.props.clearError();
-		// TODO - navigate away from this location with state and code
+
+		// Important - when the user closes the dialog (which should only happen
+		// in case of error), let's clear the query params by calling page
+		// with the payment settings path
+		const paymentsSettings = getLink( '/store/settings/payments/:site', site );
+		page( paymentsSettings );
+
+		// Let's make sure state reflects that the dialog is closed
+		this.props.onCancel();
 	};
 
 	getButtons = () => {
@@ -87,8 +90,6 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	render = () => {
 		const { translate } = this.props;
 
-		debug( 'in complete dialog, props=', this.props );
-
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
@@ -105,13 +106,17 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	};
 }
 
-function mapStateToProps( state, ownProps ) {
-	const error = getError( state, ownProps.siteId );
-	const isOAuthConnecting = getIsOAuthConnecting( state, ownProps.siteId );
+function mapStateToProps( state ) {
+	const site = getSelectedSiteWithFallback( state );
+	const siteId = site.ID || false;
+	const error = getError( state, siteId );
+	const isOAuthConnecting = getIsOAuthConnecting( state, siteId );
 
 	return {
-		isOAuthConnecting,
 		error,
+		isOAuthConnecting,
+		site,
+		siteId,
 	};
 }
 

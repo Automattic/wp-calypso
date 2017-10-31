@@ -115,16 +115,7 @@ class PaymentMethodStripe extends Component {
 	// And render brings it all together
 
 	render() {
-		const {
-			domain,
-			isRequesting,
-			method,
-			onCancel,
-			onDone,
-			siteId,
-			siteSlug,
-			stripeConnectAccount,
-		} = this.props;
+		const { domain, isRequesting, method, onCancel, onDone, stripeConnectAccount } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 		const oauthParams = getOAuthParamsFromLocation();
 
@@ -188,8 +179,6 @@ class PaymentMethodStripe extends Component {
 					oauthCode={ oauthParams.code }
 					oauthState={ oauthParams.state }
 					onCancel={ onCancel }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
 				/>
 			);
 		} else if ( 'placeholder' === dialog ) {
@@ -215,7 +204,6 @@ class PaymentMethodStripe extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID || false;
-	const siteSlug = site.slug || '';
 	const domain = site.domain || '';
 	const isRequesting = getIsRequesting( state, siteId );
 	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
@@ -223,7 +211,6 @@ function mapStateToProps( state ) {
 		domain,
 		isRequesting,
 		siteId,
-		siteSlug,
 		stripeConnectAccount,
 	};
 }
