@@ -18,15 +18,31 @@ import { getPromotionableProducts } from 'woocommerce/state/selectors/promotions
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Search from 'components/search';
 
+function categoryContainsString( category, textString ) {
+	const matchString = textString.trim().toLocaleLowerCase();
+
+	if ( -1 < category.name.toLocaleLowerCase().indexOf( matchString ) ) {
+		// found in category name
+		return true;
+	}
+	return false;
+}
+
 function productContainsString( product, textString ) {
-	const matchString = textString.trim().toLowerCase();
+	const matchString = textString.trim().toLocaleLowerCase();
 
 	if ( -1 < product.name.toLocaleLowerCase().indexOf( matchString ) ) {
 		// found in product name
 		return true;
 	}
-
 	return false;
+}
+
+function isCategorySelected( appliesTo, categoryId ) {
+	if ( ! appliesTo || ! appliesTo.productCategoryIds ) {
+		return false;
+	}
+	return ( -1 !== appliesTo.productCategoryIds.indexOf( categoryId ) );
 }
 
 function isProductSelected( appliesTo, productId ) {
@@ -34,6 +50,18 @@ function isProductSelected( appliesTo, productId ) {
 		return false;
 	}
 	return ( -1 !== appliesTo.productIds.indexOf( productId ) );
+}
+
+function addCategoryId( appliesTo, categoryId ) {
+	const categoryIds = ( appliesTo ? appliesTo.productCategoryIds : [] );
+	const newCategoryIds = [ ...categoryIds, categoryId ];
+	return { ...appliesTo, productCategoryIds: newCategoryIds };
+}
+
+function removeCategoryId( appliesTo, categoryId ) {
+	const categoryIds = ( appliesTo ? appliesTo.productCategoryIds : [] );
+	const newCategoryIds = categoryIds.filter( ( id ) => id !== categoryId );
+	return { ...appliesTo, productCategoryIds: newCategoryIds };
 }
 
 function addProductId( appliesTo, productId ) {
@@ -48,20 +76,19 @@ function removeProductId( appliesTo, productId ) {
 	return { ...appliesTo, productIds: newProductIds };
 }
 
-function renderImage( images ) {
-	const featuredImage = images && images[ 0 ];
-	const imageClasses = classNames( 'fields__product-list-image', {
-		'is-thumb-placeholder': ! featuredImage,
+function renderImage( imageSrc ) {
+	const imageClasses = classNames( 'promotion-applies-to-field__list-image', {
+		'is-thumb-placeholder': ! imageSrc,
 	} );
 
 	return (
 		<span className={ imageClasses }>
-			{ featuredImage && <img src={ featuredImage.src } /> }
+			{ imageSrc && <img src={ imageSrc } /> }
 		</span>
 	);
 }
 
-function renderRow( component, rowText, rowValue, images, selected, onChange ) {
+function renderRow( component, rowText, rowValue, imageSrc, selected, onChange ) {
 	const labelId = `applies-to-row-${ rowValue }-label`;
 
 	const rowComponent = React.createElement( component, {
@@ -76,7 +103,7 @@ function renderRow( component, rowText, rowValue, images, selected, onChange ) {
 		<div className="promotion-applies-to-field__row" key={ rowValue }>
 			<FormLabel id={ labelId }>
 				{ rowComponent }
-				{ renderImage( images ) }
+				{ renderImage( imageSrc ) }
 				<span>{ rowText }</span>
 			</FormLabel>
 		</div>
@@ -98,6 +125,22 @@ class AppliesToFilteredList extends React.Component {
 		this.state = {
 			searchFilter: '',
 		};
+	}
+
+	getFilteredCategories() {
+		const { value, productCategories } = this.props;
+		const { searchFilter } = this.state;
+
+		if ( 0 === searchFilter.length ) {
+			return productCategories;
+		}
+
+		return productCategories && productCategories.filter(
+			( category ) => {
+				return categoryContainsString( category, searchFilter ) ||
+					isCategorySelected( value, category.id );
+			}
+		);
 	}
 
 	getFilteredProducts() {
@@ -133,7 +176,7 @@ class AppliesToFilteredList extends React.Component {
 			case 'productIds':
 				return this.renderProductList( singular );
 			case 'productCategoryIds':
-				return <div>categories</div>;
+				return this.renderCategoryList();
 			case null:
 				// TODO: Add placeholder?
 				return null;
@@ -141,6 +184,16 @@ class AppliesToFilteredList extends React.Component {
 				warn( 'Unrecognized appliesToType: ', appliesToType );
 				return null;
 		}
+	}
+
+	renderCategoryList() {
+		const filteredCategories = this.getFilteredCategories() || [];
+
+		return (
+			<div className="promotion-applies-to-field__list">
+				{ filteredCategories.map( this.renderCategoryCheckbox ) }
+			</div>
+		);
 	}
 
 	renderProductList( singular ) {
@@ -154,27 +207,51 @@ class AppliesToFilteredList extends React.Component {
 		);
 	}
 
+	renderCategoryCheckbox = ( category ) => {
+		const { value } = this.props;
+		const { name, id, image } = category;
+		const selected = isCategorySelected( value, id );
+		const imageSrc = image && image.src;
+
+		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onCategoryCheckbox );
+	}
+
 	renderProductCheckbox = ( product ) => {
 		const { value } = this.props;
 		const { name, id, images } = product;
-		const selected = isProductSelected( value, product.id );
+		const selected = isProductSelected( value, id );
+		const image = images && images[ 0 ];
+		const imageSrc = image && image.src;
 
-		return renderRow( FormCheckbox, name, id, images, selected, this.onCheckboxChange );
+		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onProductCheckbox );
 	}
 
 	renderProductRadio = ( product ) => {
 		const { value } = this.props;
 		const { name, id, images } = product;
 		const selected = isProductSelected( value, product.id );
+		const image = images && images[ 0 ];
+		const imageSrc = image && image.src;
 
-		return renderRow( FormRadio, name, id, images, selected, this.onRadioChange );
+		return renderRow( FormRadio, name, id, imageSrc, selected, this.onProductRadio );
 	}
 
 	onSearch = ( searchFilter ) => {
 		this.setState( () => ( { searchFilter } ) );
 	}
 
-	onCheckboxChange = ( e ) => {
+	onCategoryCheckbox = ( e ) => {
+		const { value, edit } = this.props;
+		const categoryId = Number( e.target.value );
+		const selected = isCategorySelected( value, categoryId );
+		const newValue = ( selected
+			? removeCategoryId( value, categoryId )
+			: addCategoryId( value, categoryId )
+		);
+		edit( 'appliesTo', newValue );
+	}
+
+	onProductCheckbox = ( e ) => {
 		const { value, edit } = this.props;
 		const productId = Number( e.target.value );
 		const selected = isProductSelected( value, productId );
@@ -185,7 +262,7 @@ class AppliesToFilteredList extends React.Component {
 		edit( 'appliesTo', newValue );
 	}
 
-	onRadioChange = ( e ) => {
+	onProductRadio = ( e ) => {
 		const { edit } = this.props;
 		const productId = Number( e.target.value );
 		edit( 'appliesTo', { productIds: [ productId ] } );

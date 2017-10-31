@@ -1,18 +1,19 @@
 
 .promotion-applies-to-field {
 	.search {
-		margin-bottom: 1px;
+		margin-bottom: 0;
 		border: 1px solid lighten( $gray, 20% );
 		z-index: 0; // Keeps search from overlapping header above.
 		box-sizing: border-box;
-	}
-
-	.form-select {
-		margin-bottom: 8px;
+		z-index: 99;
 	}
 
 	.form-fieldset {
 		margin-bottom: 0;
+	}
+
+	select + .promotion-applies-to-field__filtered-list {
+		margin-top: 16px;
 	}
 
 	.promotion-applies-to-field__list {
@@ -20,7 +21,7 @@
 		border: 1px solid lighten( $gray, 20% );
 		border-top: 0;
 		overflow-y: auto;
-		height: 250px; // TODO: media query breaks for mobile?
+		max-height: 250px;
 
 		.promotion-applies-to-field__row {
 			background-color: $white;
@@ -45,7 +46,7 @@
 				cursor: pointer;
 			}
 
-			.fields__product-list-image {
+			.promotion-applies-to-field__list-image {
 				display: inline-block;
 				height: 32px;
 				width: 32px;
