@@ -75,7 +75,7 @@ class SourcePaymentBox extends PureComponent {
 		event.preventDefault();
 
 		this.setSubmitState( {
-			info: translate( 'Sending details to %(paymentProvider)s', {
+			info: translate( 'Setting up your %(paymentProvider)s payment', {
 				args: { paymentProvider: this.getPaymentProviderName() } } ),
 			disabled: true
 		} );
@@ -137,8 +137,8 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	renderBankOptions() {
+		// Source https://stripe.com/docs/sources/ideal
 		const idealBanks = {
-			'-': translate( 'Select bank…' ),
 			abn_amro: 'ABN AMRO',
 			asn_bank: 'ASN Bank',
 			bunq: 'Bunq',
@@ -151,11 +151,14 @@ class SourcePaymentBox extends PureComponent {
 			van_lanschot: 'Van Lanschot',
 		};
 
-		return map( idealBanks, ( text, optionValue ) => (
-			<option value={ optionValue } key={ optionValue }>
-				{ text }
-			</option>
+		const idealBanksOptions = map( idealBanks, ( text, optionValue ) => (
+			<option value={ optionValue } key={ optionValue }>{ text }</option>
 		) );
+
+		return [
+			<option value="" key="-">{ translate( 'Please select your bank…' ) }</option>,
+			...idealBanksOptions
+		];
 	}
 
 	render() {
