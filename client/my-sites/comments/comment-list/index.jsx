@@ -14,6 +14,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	changeCommentStatus,
 	deleteComment,
@@ -23,6 +24,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
+import Comment from 'my-sites/comments/comment';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
@@ -452,34 +454,55 @@ export class CommentList extends Component {
 					toggleBulkEdit={ this.toggleBulkEdit }
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
+
 				<ReactCSSTransitionGroup
 					className="comment-list__transition-wrapper"
 					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( commentsPage, commentId => (
-						<CommentDetail
-							commentId={ commentId }
-							commentIsSelected={ this.isCommentSelected( commentId ) }
-							deleteCommentPermanently={ this.deleteCommentPermanently }
-							editComment={ this.editComment }
-							isBulkEdit={ isBulkEdit }
-							key={ `comment-${ siteId }-${ commentId }` }
-							refreshCommentData={
-								isCommentsTreeSupported &&
-								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-							}
-							replyComment={ this.replyComment }
-							setCommentStatus={ this.setCommentStatus }
-							siteBlacklist={ siteBlacklist }
-							siteId={ siteId }
-							toggleCommentLike={ this.toggleCommentLike }
-							toggleCommentSelected={ this.toggleCommentSelected }
-						/>
-					) ) }
+					{ isEnabled( 'comments/management/m3-design' ) &&
+						map( commentsPage, commentId => (
+							<Comment
+								commentId={ commentId }
+								key={ `comment-${ siteId }-${ commentId }` }
+								isBulkMode={ isBulkEdit }
+								isSelected={ this.isCommentSelected( commentId ) }
+								refreshCommentData={
+									isCommentsTreeSupported &&
+									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+								}
+								toggleSelected={ this.toggleCommentSelected }
+							/>
+						) ) }
 
-					{ showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+					{ isEnabled( 'comments/management/m3-design' ) &&
+					showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
+
+					{ ! isEnabled( 'comments/management/m3-design' ) &&
+						map( commentsPage, commentId => (
+							<CommentDetail
+								commentId={ commentId }
+								commentIsSelected={ this.isCommentSelected( commentId ) }
+								deleteCommentPermanently={ this.deleteCommentPermanently }
+								editComment={ this.editComment }
+								isBulkEdit={ isBulkEdit }
+								key={ `comment-${ siteId }-${ commentId }` }
+								refreshCommentData={
+									isCommentsTreeSupported &&
+									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+								}
+								replyComment={ this.replyComment }
+								setCommentStatus={ this.setCommentStatus }
+								siteBlacklist={ siteBlacklist }
+								siteId={ siteId }
+								toggleCommentLike={ this.toggleCommentLike }
+								toggleCommentSelected={ this.toggleCommentSelected }
+							/>
+						) ) }
+
+					{ ! isEnabled( 'comments/management/m3-design' ) &&
+					showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
 
 					{ showEmptyContent && (
 						<EmptyContent

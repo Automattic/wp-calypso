@@ -6,12 +6,16 @@
 	font-size: 14px;
 	margin: 0 auto;
 	padding: 0;
-	transition: margin 0.15s linear;
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
 		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
 	}
+}
+
+// `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
+.comment {
+	transition: margin 0.15s linear;
 }
 
 // Comment Header Block
@@ -46,8 +50,11 @@
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
-	&:hover .gridicon {
-		fill: $blue-medium;
+	&:focus,
+	&:hover {
+		.gridicon {
+			fill: $blue-medium;
+		}
 	}
 }
 
@@ -179,13 +186,16 @@
 .comment__content {
 	padding: 0 16px 16px 56px;
 
-	@include breakpoint( '>480px' ) {
-		padding-right: 56px;
+	.comment__content-info {
+		display: flex;
+		flex-flow: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		margin: 8px 0 1em 0;
 	}
 
 	.comment__post-link {
 		font-weight: 600;
-		margin: 8px 0 1em 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -193,6 +203,16 @@
 		.gridicon {
 			display: none;
 		}
+	}
+
+	.comment__status-label {
+		align-self: center;
+		background: lighten($alert-yellow, 18%);
+		border-radius: 9px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		font-size: 12px;
+		padding: 0 10px;
 	}
 
 	.comment__in-reply-to {
@@ -259,6 +279,16 @@
 	}
 }
 
+// Collapsed View
+
+.card.comment.is-collapsed {
+	&.is-unapproved {
+		background: mix($alert-yellow, $white, 8.5%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
+			0 1px 2px lighten($gray, 30%);
+	}
+}
+
 // Expanded View
 
 .card.comment.is-expanded {
@@ -292,5 +322,62 @@
 .card.comment.is-bulk-mode {
 	.comment__header .comment__author {
 		padding-left: 0;
+	}
+}
+
+// Placeholder View
+
+.card.comment.is-placeholder {
+	@include placeholder();
+
+	background-color: $white;
+
+	.comment__bulk-select {
+		display: none;
+	}
+
+	.comment__header .comment__author {
+		padding: 8px;
+	}
+
+	.comment__author-gravatar-placeholder {
+		background-color: lighten($gray, 30%);
+		border-radius: 50%;
+		display: block;
+		height: 32px;
+		width: 32px;
+	}
+
+	.comment__author-info {
+		padding: 5px 8px 5px 0;
+	}
+
+	.comment__author-info-element {
+		background-color: lighten($gray, 30%);
+		color: transparent;
+		height: 16px;
+
+		a,
+		a:focus,
+		a:hover,
+		.gridicon,
+		.comment__author-url-separator {
+			color: transparent;
+			cursor: default;
+		}
+	}
+
+	.button.comment__toggle-expanded {
+		display: none;
+	}
+
+	.comment__content-preview {
+		background-color: lighten($gray, 30%);
+		color: transparent;
+		height: 21px;
+	}
+
+	.comment__in-reply-to {
+		display: none;
 	}
 }
