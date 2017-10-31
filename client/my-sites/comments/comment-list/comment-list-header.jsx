@@ -58,9 +58,7 @@ const mapStateToProps = ( state, { postId } ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-
 	const post = getSitePost( state, siteId, postId );
-
 	const postDate = get( post, 'date' );
 	const postTitle = decodeEntities(
 		stripHTML(
@@ -69,7 +67,6 @@ const mapStateToProps = ( state, { postId } ) => {
 				get( getSiteComments( state, siteId ), '[0].post.title' )
 		)
 	);
-
 	const isJetpack = isJetpackSite( state, siteId );
 
 	return {
