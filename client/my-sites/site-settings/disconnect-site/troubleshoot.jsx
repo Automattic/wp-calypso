@@ -28,7 +28,7 @@ const Troubleshoot = ( { siteUrl, trackDebugClick, trackSupportClick, translate 
 		</LoggedOutFormLinkItem>
 		<JetpackConnectHappychatButton
 			label={ translate( 'Get help from our Happiness Engineers' ) }
-			onClick={ trackSupportClick }
+			eventName="calypso_jetpack_disconnect_chat_initiated"
 		>
 			<HelpButton
 				label={ translate( 'Get help from our Happiness Engineers' ) }
