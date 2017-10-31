@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { invoke } from 'lodash';
+import { includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
@@ -28,6 +29,8 @@ import SignupProgressStore from 'lib/signup/progress-store';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
+import QueryGeo from 'components/data/query-geo';
+import { getGeoCountryShort } from 'state/geo/selectors';
 
 class DesignTypeWithAtomicStoreStep extends Component {
 	state = { showStore: false };
@@ -94,9 +97,12 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
+		const isCountryAllowed =
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+
 		if (
-			abtest( 'signupPressableStoreFlow' ) === 'pressable' &&
-			designType === DESIGN_TYPE_STORE
+			designType === DESIGN_TYPE_STORE &&
+			( abtest( 'signupPressableStoreFlow' ) === 'pressable' || ! isCountryAllowed )
 		) {
 			this.scrollUp();
 
@@ -154,6 +160,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
+				<QueryGeo />
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
@@ -222,11 +229,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 }
 
 export default connect(
-	state => {
-		return {
-			signupDependencyStore: getSignupDependencyStore( state ),
-		};
-	},
+	state => ( {
+		signupDependencyStore: getSignupDependencyStore( state ),
+		countryCode: getGeoCountryShort( state ),
+	} ),
 	{
 		recordTracksEvent,
 		setDesignType,
