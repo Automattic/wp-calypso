@@ -89,7 +89,7 @@ export function couponUpdateSuccess( { dispatch }, action ) {
 
 export function couponDelete( { dispatch }, action ) {
 	const { siteId, couponId } = action;
-	const path = `coupons/${ couponId }`;
+	const path = `coupons/${ couponId }?force=true`;
 
 	dispatch( request( siteId, action ).del( path ) );
 }
