@@ -31,9 +31,13 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import QueryGeo from 'components/data/query-geo';
 import { getGeoCountryShort } from 'state/geo/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 class DesignTypeWithAtomicStoreStep extends Component {
-	state = { showStore: false };
+	state = {
+		showStore: false,
+		pendingClickWithDesignType: null,
+	};
 	setPressableStore = ref => ( this.pressableStore = ref );
 
 	getChoices() {
@@ -93,6 +97,14 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	handleNextStep = designType => {
+		if ( ! this.props.countryCode ) {
+			// if we don't know the country code, we can't proceed. Continue after the code arrives
+			this.setState( { pendingClickWithDesignType: designType } );
+			return;
+		}
+
+		this.setState( { pendingClickWithDesignType: null } );
+
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
@@ -123,6 +135,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoice = choice => {
+		const buttonClassName = classNames( 'button design-type-with-atomic-store__cta is-compact', {
+			'is-busy': this.state.pendingClickWithDesignType === choice.type,
+		} );
+
 		return (
 			<Card className="design-type-with-atomic-store__choice" key={ choice.type }>
 				<a
@@ -132,9 +148,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 				>
 					<div className="design-type-with-atomic-store__image">{ choice.image }</div>
 					<div className="design-type-with-atomic-store__choice-copy">
-						<span className="button is-compact design-type-with-atomic-store__cta">
-							{ choice.label }
-						</span>
+						<span className={ buttonClassName }>{ choice.label }</span>
 						<p className="design-type-with-atomic-store__choice-description">
 							{ choice.description }
 						</p>
@@ -145,7 +159,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoices() {
-		const { translate } = this.props;
+		const { countryCode, translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
 		); // eslint-disable-line max-len
@@ -160,7 +174,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
-				<QueryGeo />
+				{ ! countryCode && <QueryGeo /> }
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
@@ -207,6 +221,15 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		// If geoip data arrived, check if there is a pending click on a design type choice and
+		// process it -- all data are available now to proceed.
+		const { pendingClickWithDesignType } = this.state;
+		if ( pendingClickWithDesignType && ! prevProps.countryCode && this.props.countryCode ) {
+			this.handleNextStep( pendingClickWithDesignType );
+		}
+	}
+
 	render() {
 		const headerText = this.getHeaderText();
 		const subHeaderText = this.getSubHeaderText();
@@ -231,7 +254,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 export default connect(
 	state => ( {
 		signupDependencyStore: getSignupDependencyStore( state ),
-		countryCode: getGeoCountryShort( state ),
+		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
 	} ),
 	{
 		recordTracksEvent,
