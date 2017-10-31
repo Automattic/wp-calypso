@@ -553,7 +553,8 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
 		if ( isExternal( url ) ) {
-			return window.open( url );
+			window.location.href = url;
+			return;
 		}
 		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
