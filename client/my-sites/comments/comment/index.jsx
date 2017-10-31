@@ -88,6 +88,7 @@ export class Comment extends Component {
 			commentIsPending,
 			isBulkMode,
 			isLoading,
+			isPersistent,
 			isPostView,
 			isSelected,
 			refreshCommentData,
@@ -130,7 +131,8 @@ export class Comment extends Component {
 
 						{ showActions && (
 							<CommentActions
-								{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+								{ ...{ commentId, isExpanded, isPersistent, removeFromPersisted, updatePersisted } }
+								toggleExpanded={ this.toggleExpanded }
 							/>
 						) }
 

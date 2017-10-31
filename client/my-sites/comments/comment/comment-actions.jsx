@@ -14,6 +14,7 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import CommentConfirmation from 'my-sites/comments/comment/comment-confirmation';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -39,7 +40,10 @@ const commentActions = {
 export class CommentActions extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		isExpanded: PropTypes.bool,
+		isPersistent: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
+		toggleExpanded: PropTypes.func,
 		updatePersisted: PropTypes.func,
 	};
 
@@ -54,11 +58,12 @@ export class CommentActions extends Component {
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
 	setSpam = () => {
-		const { commentId, removeFromPersisted } = this.props;
-
+		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+		if ( isExpanded ) {
+			toggleExpanded();
+		}
 		this.setStatus( 'spam' );
-
-		removeFromPersisted( commentId );
+		updatePersisted( commentId );
 	};
 
 	setStatus = status => {
@@ -85,11 +90,12 @@ export class CommentActions extends Component {
 	};
 
 	setTrash = () => {
-		const { commentId, removeFromPersisted } = this.props;
-
+		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+		if ( isExpanded ) {
+			toggleExpanded();
+		}
 		this.setStatus( 'trash' );
-
-		removeFromPersisted( commentId );
+		updatePersisted( commentId );
 	};
 
 	toggleApproved = () => {
@@ -129,7 +135,11 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { commentIsApproved, commentIsLiked, translate } = this.props;
+		const { commentId, commentIsApproved, commentIsLiked, isPersistent, translate } = this.props;
+
+		if ( isPersistent ) {
+			return <CommentConfirmation { ...{ commentId } } />;
+		}
 
 		return (
 			<div className="comment__actions">

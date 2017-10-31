@@ -6,6 +6,7 @@
 	font-size: 14px;
 	margin: 0 auto;
 	padding: 0;
+	position: relative;
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
@@ -348,6 +349,46 @@
 		span {
 			display: inline;
 		}
+	}
+}
+
+// Comment Confirmation Block
+
+.comment__confirmation {
+	align-items: center;
+	background-color: rgba($white, 0.8);
+	display: flex;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.comment__confirmation-alert {
+	background: $white;
+	border: 1px solid $alert-red;
+	border-radius: 3px;
+	color: $alert-red;
+	min-width: 200px;
+	padding: 8px;
+	text-align: center;
+
+	.gridicon {
+		margin-left: 4px;
+		vertical-align: text-bottom;
+	}
+
+	a {
+		color: $gray-text-min;
+		cursor: pointer;
+		display: block;
+		font-size: 12px;
+		padding-top: 8px;
+	}
+	a:hover {
+		color: $blue-wordpress;
 	}
 }
 
