@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getProduct,
+	getProducts,
 	areProductsLoaded,
 	areProductsLoading,
 	getTotalProductsPages,
@@ -48,6 +49,10 @@ const loadedState = {
 						isLoading: {
 							'{}': false,
 							'{"search":"testing"}': false,
+						},
+						queries: {
+							'{}': [ 15, 389 ],
+							'{"search":"testing"}': [ 15 ],
 						},
 						products,
 						totalPages: {
@@ -153,6 +158,39 @@ describe( 'selectors', () => {
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areProductsLoading( loadedStateWithUi, params ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getProducts', () => {
+		const params = { page: 1, per_page: 10 };
+
+		test( 'should be an empty array when woocommerce state is not available.', () => {
+			expect( getProducts( preInitializedState, params, 123 ) ).to.be.empty;
+		} );
+
+		test( 'should be an empty array when product page is loading.', () => {
+			expect( getProducts( loadingState, params, 123 ) ).to.be.empty;
+		} );
+
+		test( 'should be the list of products if the current page is loaded.', () => {
+			expect( getProducts( loadedState, params, 123 ) ).to.eql( products );
+		} );
+
+		test( 'should be an empty array when a search request is loading.', () => {
+			expect( getProducts( loadingState, { search: 'testing' }, 123 ) ).to.be.empty;
+		} );
+
+		test( 'should be the list of products if the search result is loaded.', () => {
+			expect( getProducts( loadedState, { search: 'testing' }, 123 ).length ).to.eql( 1 );
+			expect( getProducts( loadedState, { search: 'testing' }, 123 ) ).to.eql( [ products[ 0 ] ] );
+		} );
+
+		test( 'should be an empty array when products are loaded only for a different site.', () => {
+			expect( getProducts( loadedState, params, 456 ) ).to.be.empty;
+		} );
+
+		test( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getProducts( loadedStateWithUi, params ) ).to.eql( products );
 		} );
 	} );
 

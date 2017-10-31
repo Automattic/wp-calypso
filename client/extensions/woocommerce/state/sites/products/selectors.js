@@ -68,6 +68,34 @@ export const areProductsLoading = ( state, params = {}, siteId = getSelectedSite
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
+ *                          defaults to first page, all products
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {array|false} List of orders, or false if there was an error
+ */
+export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areProductsLoaded( state, params, siteId ) ) {
+		return [];
+	}
+	const key = getSerializedProductsQuery( params );
+	const products = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
+		{}
+	);
+	const productIdsOnPage = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key ],
+		[]
+	);
+	if ( productIdsOnPage.length ) {
+		return productIdsOnPage.map( id => find( products, { id } ) );
+	}
+	return false;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of pages of products available on a site, or 0 if not loaded yet.
