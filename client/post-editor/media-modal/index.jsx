@@ -610,6 +610,15 @@ export class EditorMediaModal extends Component {
 	}
 }
 
+// I'd actually be tempted to say that this particular case is too smart
+// to be included in the connection - such logic/composition might be better off
+// in the component or in an action.
+const onViewDetails = flow(
+	withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+	withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+	partial( setEditorMediaModalView, ModalViews.DETAIL )
+);
+
 export default connect(
 	( state, { site, siteId } ) => ( {
 		view: getMediaModalView( state ),
@@ -622,10 +631,6 @@ export default connect(
 		setView: setEditorMediaModalView,
 		resetView: resetMediaModalView,
 		deleteMedia,
-		onViewDetails: flow(
-			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
-			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
-		),
+		onViewDetails,
 	}
 )( localize( EditorMediaModal ) );

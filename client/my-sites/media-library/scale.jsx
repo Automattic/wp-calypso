@@ -147,12 +147,15 @@ class MediaLibraryScale extends Component {
 	}
 }
 
+const setMediaScalePreference = partial( setPreference, 'mediaScale' );
+const saveMediaScalePreference = partial( savePreference, 'mediaScale' );
+
 export default connect(
 	state => ( {
 		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	{
-		setMediaScalePreference: partial( setPreference, 'mediaScale' ),
-		saveMediaScalePreference: partial( savePreference, 'mediaScale' ),
+		setMediaScalePreference,
+		saveMediaScalePreference,
 	}
 )( localize( MediaLibraryScale ) );

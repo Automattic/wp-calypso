@@ -105,6 +105,12 @@ class MediaModalSecondaryActions extends Component {
 	}
 }
 
+const onViewDetails = flow(
+	withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+	withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+	partial( setEditorMediaModalView, ModalViews.DETAIL )
+);
+
 export default connect(
 	( state, ownProps ) => ( {
 		view: getMediaModalView( state ),
@@ -112,11 +118,7 @@ export default connect(
 		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 	} ),
 	{
-		onViewDetails: flow(
-			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
-			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
-		),
+		onViewDetails,
 	},
 	function mergeProps( stateProps, dispatchProps, ownProps ) {
 		//We want to overwrite connected props if 'onViewDetails', 'view' were provided

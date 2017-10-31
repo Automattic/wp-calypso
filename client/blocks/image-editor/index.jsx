@@ -303,6 +303,7 @@ export default connect(
 			{
 				setImageEditorFileInfo,
 				setImageEditorDefaultAspectRatio,
+				// In this case, we can't move the partials out easily because there is a dependence on ownProp(s)
 				resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
 				resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData ),
 			},
