@@ -14,7 +14,7 @@ ShallowWrapper {
   ],
   "options": Object {},
   "renderer": ReactShallowRenderer {
-    "_instance":  {
+    "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
       "_compositeType": 0,
       "_context": Object {},
@@ -1019,7 +1019,7 @@ ShallowWrapper {
   ],
   "options": Object {},
   "renderer": ReactShallowRenderer {
-    "_instance":  {
+    "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
       "_compositeType": 0,
       "_context": Object {},
@@ -2341,7 +2341,7 @@ ShallowWrapper {
   ],
   "options": Object {},
   "renderer": ReactShallowRenderer {
-    "_instance":  {
+    "_instance": ShallowComponentWrapper {
       "_calledComponentWillUnmount": false,
       "_compositeType": 0,
       "_context": Object {},
