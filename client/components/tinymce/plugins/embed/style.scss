@@ -24,6 +24,7 @@ input[type="text"].embed__url {
 	margin: 1.75em -24px 0 -24px; /* counter-act the left/right padding from `.dialog__content`, so that the preview can have a background color that extends to the edge of `.dialog__content` */
 	padding: 24px;
 	margin-top: 1.75em;
+	min-height: 150px;
 		/* todo rem instead? */
 	background: $gray-light;
 		/* todo mockup calls for #f4f6f8, but have to reuse an existing color variable instead of creating new one? */
@@ -56,7 +57,7 @@ input[type="text"].embed__url {
 
 	.embed__loading-spinner .spinner__image {
 		margin: 0 auto;
-		min-height: 200px;
+		min-height: 150px;
 		vertical-align: middle;
 	}
 }

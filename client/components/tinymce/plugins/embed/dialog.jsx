@@ -126,13 +126,6 @@ export class EmbedDialog extends React.Component {
 					// xhr errors in `error` var
 					// and also application layer errors in `data.error` or however wpcom.js signals a error to the caller
 					// add unit tests for those. mock the xhr
-
-					// todo show an error in the preview box if fetching the embed failed / it's an invalid URL
-					// right now it just continues showing the last valid preview
-					// don't wanna do if they're still typing though. debounce might be enough to fix that, but still could be annoying.
-					// need to play with
-					// how to detect from the markup if it was an error? it'll be dependent on the service etc, right? or maybe
-					//           wpcom.js normalizes it into a standard error format?
 				}
 
 				this.setState( {
@@ -176,7 +169,7 @@ export class EmbedDialog extends React.Component {
 	};
 
 	constrainEmbedDimensions() {
-		if ( ! this.iframe ) {
+		if ( ! this.iframe || ! this.viewref ) {
 			return;
 		}
 
@@ -211,6 +204,9 @@ export class EmbedDialog extends React.Component {
 		}
 
 		const iframe = ReactDom.findDOMNode( this.iframe );
+
+		iframe.removeAttribute( 'sandbox' );
+
 		if ( ! iframe.contentDocument ) {
 			return;
 		}
@@ -225,6 +221,8 @@ export class EmbedDialog extends React.Component {
 		iframe.contentDocument.body.style.width = '100%';
 		iframe.contentDocument.body.style.overflow = 'hidden';
 		iframe.contentDocument.close();
+
+		iframe.setAttribute( 'sandbox', 'allow-scripts' );
 
 		this.constrainEmbedDimensions();
 	}
