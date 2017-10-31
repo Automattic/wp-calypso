@@ -8,14 +8,10 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import EmptyContent from 'components/empty-content';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getPromotions,
@@ -28,31 +24,13 @@ import PromotionsListPagination from './promotions-list-pagination';
 import { setPromotionsPage } from 'woocommerce/state/ui/promotions/actions';
 
 const PromotionsList = props => {
-	const { site, translate, promotions, promotionsPage, currentPage, perPage } = props;
-
-	const renderEmptyContent = () => {
-		const emptyContentAction = (
-			<Button href={ getLink( '/store/promotions/:site/', site ) }>
-				{ translate( 'Start a promotion!' ) }
-			</Button>
-		);
-		return (
-			<EmptyContent
-				title={ translate( "You don't have any promotions." ) }
-				action={ emptyContentAction }
-			/>
-		);
-	};
+	const { site, promotions, promotionsPage, currentPage, perPage } = props;
 
 	const switchPage = index => {
 		if ( site ) {
 			props.setPromotionsPage( site.ID, index, perPage );
 		}
 	};
-
-	if ( promotions && promotions.length === 0 ) {
-		return renderEmptyContent();
-	}
 
 	return (
 		<div className="promotions__list-wrapper">
@@ -102,4 +80,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionsList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( PromotionsList );
