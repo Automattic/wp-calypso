@@ -230,9 +230,9 @@ class ActivityLogDay extends Component {
 			requestedRestoreActivityId
 		);
 
-		const LogItem = ( { log, extraClasses } ) => (
+		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
-				className={ extraClasses }
+				className={ hasBreak ? 'is-before-dialog' : '' }
 				applySiteOffset={ applySiteOffset }
 				disableRestore={ disableRestore }
 				hideRestore={ hideRestore }
@@ -258,11 +258,7 @@ class ActivityLogDay extends Component {
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
 					{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
-					{ above && (
-						<LogItem
-							{ ...{ key: above.activityId, log: above, extraClasses: 'is-before-dialog' } }
-						/>
-					) }
+					{ above && <LogItem { ...{ key: above.activityId, log: above, hasBreak: true } } /> }
 					{ older.length > 0 && rewindConfirmDialog }
 					{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
 				</FoldableCard>
