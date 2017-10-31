@@ -143,29 +143,28 @@ class PostTypeList extends Component {
 
 	maybeLoadNextPage() {
 		const { scrollContainer, lastPageToRequest, isRequestingPosts } = this.props;
-		if ( ! scrollContainer ) {
+		const { maxRequestedPage } = this.state;
+		if (
+			! scrollContainer ||
+			isRequestingPosts ||
+			maxRequestedPage >= lastPageToRequest
+		) {
 			return;
 		}
+
 		const scrollTop = this.getScrollTop();
 		const { scrollHeight, clientHeight } = scrollContainer;
+		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
 		if (
 			typeof scrollTop !== 'number' ||
 			typeof scrollHeight !== 'number' ||
-			typeof clientHeight !== 'number'
+			typeof clientHeight !== 'number' ||
+			pixelsBelowViewport > LOAD_NEXT_PAGE_THRESHOLD_PIXELS
 		) {
 			return;
 		}
-		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
-		const { maxRequestedPage } = this.state;
-		if (
-			pixelsBelowViewport <= LOAD_NEXT_PAGE_THRESHOLD_PIXELS &&
-			maxRequestedPage < lastPageToRequest &&
-			! isRequestingPosts
-		) {
-			this.setState( {
-				maxRequestedPage: maxRequestedPage + 1,
-			} );
-		}
+
+		this.setState( { maxRequestedPage: maxRequestedPage + 1 } );
 	}
 
 	renderListEnd() {
