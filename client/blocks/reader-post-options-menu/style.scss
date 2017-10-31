@@ -22,6 +22,9 @@
 }
 
 .reader-post-options-menu__popover {
+	.popover__menu {
+		min-width: 212px;
+	}
 
 	.popover__menu .follow-button,
 	.popover__menu .conversation-follow-button {
