@@ -26,7 +26,7 @@ class Card extends Component {
 	};
 
 	render() {
-		const { href, tagName, target, compact, children, highlight } = this.props;
+		const { children, compact, highlight, href, onClick, tagName, target } = this.props;
 
 		const highlightClass = highlight ? 'is-' + highlight : false;
 
@@ -35,6 +35,7 @@ class Card extends Component {
 			this.props.className,
 			{
 				'is-card-link': !! href,
+				'is-clickable': !! onClick,
 				'is-compact': compact,
 			},
 			highlightClass
@@ -43,11 +44,13 @@ class Card extends Component {
 		const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 		let linkIndicator;
-		if ( href ) {
+		if ( href || onClick ) {
 			linkIndicator = (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 			);
-		} else {
+		}
+
+		if ( ! href ) {
 			omitProps.push( 'href', 'target' );
 		}
 
