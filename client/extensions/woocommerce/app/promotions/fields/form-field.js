@@ -52,8 +52,10 @@ const FormField = ( {
 				{ enableCheckbox }
 				{ labelText }
 			</FormLabel>
-			{ showChildren && children }
-			{ explanation }
+			<div className="fields__fieldset-children">
+				{ showChildren && children }
+				{ explanation }
+			</div>
 		</FormFieldset>
 	);
 };
