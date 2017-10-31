@@ -40,6 +40,8 @@ export class CommentActions extends Component {
 
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
+	setSpam = () => this.setStatus( 'spam' );
+
 	setStatus = status => {
 		const {
 			changeStatus,
@@ -62,6 +64,8 @@ export class CommentActions extends Component {
 			unlike( siteId, postId, commentId );
 		}
 	};
+
+	setTrash = () => this.setStatus( 'trash' );
 
 	toggleApproved = () => {
 		const { commentId, commentIsApproved, commentStatus, updatePersisted } = this.props;
@@ -98,10 +102,6 @@ export class CommentActions extends Component {
 			updatePersisted( commentId );
 		}
 	};
-
-	setSpam = () => this.setStatus( 'spam' );
-
-	setTrash = () => this.setStatus( 'trash' );
 
 	render() {
 		const { commentIsApproved, commentIsLiked, translate } = this.props;
