@@ -21,7 +21,7 @@ class ErrorBanner extends PureComponent {
 		failureReason: PropTypes.string.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
-		timestamp: PropTypes.number.isRequired,
+		timestamp: PropTypes.string.isRequired,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,

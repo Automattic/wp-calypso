@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { findKey, flatMap, get, isEmpty, map } from 'lodash';
+import { findIndex, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,12 +30,28 @@ import { rewriteStream } from 'state/activity-log/log/is-discarded';
 const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 /**
- * Check that the object passed is the Rewind dialog.
+ * Separates events into those before, at, and after a rewind operation
  *
- * @param {object} item Can be a regular object or a React element.
- * @returns {boolean} True if this is the React element for the Rewind dialog.
+ * @param {Array} logs activity log items
+ * @param {Number} activityId selected rewind operation
+ * @returns {[Array, ?Object, Array]} [ before, above, after ]
  */
-const isRewindDialog = ( { key } ) => 'activity-rewind-dialog' === key;
+const splitByRewind = ( logs, activityId ) => {
+	const rewindIndex = findIndex( logs, log => log.activityId === activityId );
+
+	// no dialog is open
+	if ( -1 === rewindIndex ) {
+		return [ logs, null, [] ];
+	}
+
+	// first event is rewind
+	if ( 0 === rewindIndex ) {
+		return [ [], null, logs ];
+	}
+
+	// everything else is standard
+	return [ logs.slice( 0, rewindIndex - 1 ), logs[ rewindIndex - 1 ], logs.slice( rewindIndex ) ];
+};
 
 class ActivityLogDay extends Component {
 	static propTypes = {
@@ -209,16 +225,22 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const elementsInDay = rewriteStream( logs );
+		const [ newer, above, older ] = splitByRewind(
+			rewriteStream( logs ),
+			requestedRestoreActivityId
+		);
 
-		// Include the Rewind dialog in the right place in the collection
-		if ( hasConfirmDialog ) {
-			elementsInDay.splice(
-				findKey( elementsInDay, [ 'activityId', requestedRestoreActivityId ] ),
-				0,
-				rewindConfirmDialog
-			);
-		}
+		const LogItem = ( { log, hasBreak } ) => (
+			<ActivityLogItem
+				className={ hasBreak ? 'is-before-dialog' : '' }
+				applySiteOffset={ applySiteOffset }
+				disableRestore={ disableRestore }
+				hideRestore={ hideRestore }
+				log={ log }
+				requestRestore={ requestRestore }
+				siteId={ siteId }
+			/>
+		);
 
 		return (
 			<div
@@ -235,32 +257,10 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
-					{ flatMap(
-						map(
-							elementsInDay,
-							( elem, index, list ) =>
-								isRewindDialog( elem ) ? (
-									// If this is the Rewind dialog, insert it in timeline
-									elem
-								) : (
-									// Otherwise it's a regular event
-									<ActivityLogItem
-										className={ classNames( {
-											// Is this event right before the Rewind dialog?
-											'is-before-dialog':
-												index < list.length - 1 && isRewindDialog( list[ ++index ] ),
-										} ) }
-										applySiteOffset={ applySiteOffset }
-										disableRestore={ disableRestore }
-										hideRestore={ hideRestore }
-										key={ elem.activityId }
-										log={ elem }
-										requestRestore={ requestRestore }
-										siteId={ siteId }
-									/>
-								)
-						)
-					) }
+					{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
+					{ above && <LogItem { ...{ key: above.activityId, log: above, hasBreak: true } } /> }
+					{ older.length > 0 && rewindConfirmDialog }
+					{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
 				</FoldableCard>
 			</div>
 		);

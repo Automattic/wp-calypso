@@ -56,6 +56,14 @@
 	.foldable-card__main {
 		flex: 5 1;
 	}
+
+	&.is-discarded {
+		margin-left: 80px;
+	}
+
+	&.is-discarded * {
+		background-color: unset;
+	}
 }
 
 .activity-log-item__type {
