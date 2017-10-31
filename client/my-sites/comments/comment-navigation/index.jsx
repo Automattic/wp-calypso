@@ -32,8 +32,8 @@ import { getSiteComment } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
 const bulkActions = {
-	unapproved: [ 'approve', 'spam', 'trash' ],
-	approved: [ 'unapprove', 'spam', 'trash' ],
+	unapproved: [ 'approve', 'unapprove', 'spam', 'trash' ],
+	approved: [ 'approve', 'unapprove', 'spam', 'trash' ],
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
