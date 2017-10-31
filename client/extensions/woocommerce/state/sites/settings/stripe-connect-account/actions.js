@@ -323,6 +323,9 @@ export const oauthConnect = (
 				dispatch( successAction( siteId, connectAction, data ) );
 			}
 		} )
+		.then( () => {
+			dispatch( fetchAccountDetails( siteId ) );
+		} )
 		.catch( error => {
 			dispatch( oauthConnectFailure( siteId, connectAction, error ) );
 			if ( failureAction ) {

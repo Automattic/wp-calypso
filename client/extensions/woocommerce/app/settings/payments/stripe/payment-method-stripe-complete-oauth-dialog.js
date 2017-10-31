@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -21,6 +22,8 @@ import Dialog from 'components/dialog';
 import {
 	getError,
 	getIsOAuthConnecting,
+	getIsRequesting,
+	getStripeConnectAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -40,8 +43,23 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	};
 
 	componentDidMount = () => {
-		const { oauthCode, oauthState, siteId } = this.props;
-		this.props.oauthConnect( siteId, oauthCode, oauthState );
+		const { oauthCode, oauthState, siteId, stripeConnectAccount } = this.props;
+
+		// Kick off the last step of the OAuth flow, but only if we don't
+		// have a connected user ID (to prevent re-entrancy)
+		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );
+		if ( isEmpty( connectedUserID ) ) {
+			this.props.oauthConnect( siteId, oauthCode, oauthState );
+		}
+	};
+
+	componentWillReceiveProps = ( { stripeConnectAccount } ) => {
+		// Did we receive a connected user ID? Connect must have finished, so
+		// let's close this dialog
+		const connectedUserID = get( stripeConnectAccount, [ 'connectedUserID' ], '' );
+		if ( ! isEmpty( connectedUserID ) ) {
+			this.onClose();
+		}
 	};
 
 	possiblyRenderProgress = () => {
@@ -75,12 +93,15 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	};
 
 	getButtons = () => {
-		const { isOAuthConnecting, translate } = this.props;
+		const { isOAuthConnecting, isRequesting, translate } = this.props;
+
+		if ( isOAuthConnecting || isRequesting ) {
+			return [];
+		}
 
 		return [
 			{
 				action: 'cancel',
-				disabled: isOAuthConnecting,
 				label: translate( 'Close' ),
 				onClick: this.onClose,
 			},
@@ -111,12 +132,16 @@ function mapStateToProps( state ) {
 	const siteId = site.ID || false;
 	const error = getError( state, siteId );
 	const isOAuthConnecting = getIsOAuthConnecting( state, siteId );
+	const isRequesting = getIsRequesting( state, siteId );
+	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
 
 	return {
 		error,
 		isOAuthConnecting,
+		isRequesting,
 		site,
 		siteId,
+		stripeConnectAccount,
 	};
 }
 
