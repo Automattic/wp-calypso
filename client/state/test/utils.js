@@ -306,6 +306,14 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		test( 'should handle keyNames referencing nested keys', () => {
+			const keyed = keyedReducer( 'person.name', age );
+			const action = { type: 'GROW', person: { name: 'Calypso' } };
+			expect( keyed( undefined, action ) ).to.eql( {
+				Calypso: 1,
+			} );
+		} );
+
 		test( 'should only affect the keyed item in a collection', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, grow( 'Calypso' ) ) ).to.eql( {

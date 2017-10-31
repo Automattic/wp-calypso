@@ -7,6 +7,7 @@
 import validator from 'is-my-json-valid';
 import {
 	flow,
+	get,
 	includes,
 	isEqual,
 	mapValues,
@@ -92,7 +93,7 @@ export function isValidStateWithSchema( state, schema ) {
  *
  * // now every item can decide what to do for persistence
  *
- * @param {String} keyName name of key in action referencing item in state map
+ * @param {string} keyName lodash-style path to the key in action referencing item in state map
  * @param {Function} reducer applied to referenced item in state map
  * @param {Array} globalActions set of types which apply to every item in the collection
  * @return {Function} super-reducer applying reducer over map of keyed items
@@ -128,12 +129,7 @@ export const keyedReducer = ( keyName, reducer, globalActions ) => {
 		}
 
 		// don't allow coercion of key name: null => 0
-		if ( ! action.hasOwnProperty( keyName ) ) {
-			return state;
-		}
-
-		// the action must refer to some item in the map
-		const itemKey = action[ keyName ];
+		const itemKey = get( action, keyName, undefined );
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates
