@@ -15,7 +15,7 @@ const SetupForm = ( { formIsSubmitting, reset, siteId, updateCredentials } ) => 
 			formIsSubmitting,
 			protocol: 'ssh',
 			host: '',
-			port: '',
+			port: '22',
 			user: '',
 			pass: '',
 			abspath: '',

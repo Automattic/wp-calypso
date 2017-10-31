@@ -41,8 +41,23 @@ export class CredentialsForm extends Component {
 	};
 
 	handleFieldChange = event => {
+		const newForm = {
+			...this.state.form,
+			[ event.target.name ]: event.target.value,
+		};
+
+		if ( 'protocol' === event.target.name ) {
+			switch ( event.target.value ) {
+				case 'ftp':
+					newForm.port = 21;
+					break;
+				default:
+					newForm.port = 22;
+			}
+		}
+
 		this.setState( {
-			form: { ...this.state.form, [ event.target.name ]: event.target.value },
+			form: newForm,
 			formErrors: { ...this.state.formErrors, [ event.target.name ]: false },
 		} );
 	};
