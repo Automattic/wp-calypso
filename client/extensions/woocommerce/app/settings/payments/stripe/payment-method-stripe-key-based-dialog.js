@@ -21,7 +21,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import {
 	getStripeSampleStatementDescriptor,
 	hasStripeKeyPairForMode,
-} from './payment-method-stripe-utils';
+} from './payment-method-stripe-utils.js';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
