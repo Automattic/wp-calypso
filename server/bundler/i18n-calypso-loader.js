@@ -1,6 +1,6 @@
 /**
  * Webpack loader used to inject Webpack code into `i18n-calypso` module to
- * load asyncronously the current locale.
+ * load asynchronously the current locale.
  */
 
 module.exports = function( content ) {
@@ -16,7 +16,7 @@ module.exports = function( content ) {
 	    import(
 			/* webpackChunkName: "moment/locale/[request]" */
 			'moment/locale/' + this.state.localeSlug
-		).then( _ => {
+		).then( function() {
 			moment.locale( this.state.localeSlug );
 		});
 	}` );
