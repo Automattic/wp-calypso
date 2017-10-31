@@ -92,6 +92,11 @@ class PeopleProfile extends React.PureComponent {
 		}
 
 		const blogId = get( this.props.user, 'follow_data.params.blog_id', false );
+
+		if ( ! blogId ) {
+			return;
+		}
+
 		event.preventDefault();
 		page( `/read/blogs/${ blogId }` );
 	};
