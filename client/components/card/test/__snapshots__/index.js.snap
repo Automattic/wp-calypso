@@ -41,6 +41,7 @@ ShallowWrapper {
       "_currentElement": <Card
         highlight={false}
         href="/test"
+        showLinkIndicator={true}
         tagName="div"
       >
         This is a linked card
@@ -55,6 +56,7 @@ ShallowWrapper {
           "children": "This is a linked card",
           "highlight": false,
           "href": "/test",
+          "showLinkIndicator": true,
           "tagName": "div",
         },
         "refs": Object {},
@@ -114,6 +116,7 @@ ShallowWrapper {
   "unrendered": <Card
     highlight={false}
     href="/test"
+    showLinkIndicator={true}
     tagName="div"
   >
     This is a linked card
@@ -145,6 +148,7 @@ ShallowWrapper {
       "_context": Object {},
       "_currentElement": <Card
         highlight={false}
+        showLinkIndicator={true}
         tagName="div"
       />,
       "_debugID": 1,
@@ -155,6 +159,7 @@ ShallowWrapper {
         "context": Object {},
         "props": Object {
           "highlight": false,
+          "showLinkIndicator": true,
           "tagName": "div",
         },
         "refs": Object {},
@@ -197,6 +202,7 @@ ShallowWrapper {
   "root": [Circular],
   "unrendered": <Card
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   />,
 }
@@ -227,6 +233,7 @@ ShallowWrapper {
       "_currentElement": <Card
         className="test__ace"
         highlight={false}
+        showLinkIndicator={true}
         tagName="div"
       />,
       "_debugID": 3,
@@ -238,6 +245,7 @@ ShallowWrapper {
         "props": Object {
           "className": "test__ace",
           "highlight": false,
+          "showLinkIndicator": true,
           "tagName": "div",
         },
         "refs": Object {},
@@ -281,6 +289,7 @@ ShallowWrapper {
   "unrendered": <Card
     className="test__ace"
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   />,
 }
@@ -314,6 +323,7 @@ ShallowWrapper {
       "_context": Object {},
       "_currentElement": <Card
         highlight={false}
+        showLinkIndicator={true}
         tagName="div"
       >
         This is a card
@@ -327,6 +337,7 @@ ShallowWrapper {
         "props": Object {
           "children": "This is a card",
           "highlight": false,
+          "showLinkIndicator": true,
           "tagName": "div",
         },
         "refs": Object {},
@@ -373,6 +384,7 @@ ShallowWrapper {
   "root": [Circular],
   "unrendered": <Card
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   >
     This is a card
@@ -391,12 +403,14 @@ ShallowWrapper {
   "node": <Card
     className="is-compact"
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   />,
   "nodes": Array [
     <Card
       className="is-compact"
       highlight={false}
+      showLinkIndicator={true}
       tagName="div"
     />,
   ],
@@ -437,12 +451,14 @@ ShallowWrapper {
         "_currentElement": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
         "_debugID": 10,
         "_renderedOutput": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
       },
@@ -471,12 +487,14 @@ ShallowWrapper {
   "node": <Card
     className="test__ace is-compact"
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   />,
   "nodes": Array [
     <Card
       className="test__ace is-compact"
       highlight={false}
+      showLinkIndicator={true}
       tagName="div"
     />,
   ],
@@ -521,12 +539,14 @@ ShallowWrapper {
         "_currentElement": <Card
           className="test__ace is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
         "_debugID": 12,
         "_renderedOutput": <Card
           className="test__ace is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
       },
@@ -557,6 +577,7 @@ ShallowWrapper {
   "node": <Card
     className="is-compact"
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   >
     This is a compact card
@@ -565,6 +586,7 @@ ShallowWrapper {
     <Card
       className="is-compact"
       highlight={false}
+      showLinkIndicator={true}
       tagName="div"
     >
       This is a compact card
@@ -611,6 +633,7 @@ ShallowWrapper {
         "_currentElement": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         >
           This is a compact card
@@ -619,6 +642,7 @@ ShallowWrapper {
         "_renderedOutput": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         >
           This is a compact card
@@ -651,12 +675,14 @@ ShallowWrapper {
   "node": <Card
     className="is-compact"
     highlight={false}
+    showLinkIndicator={true}
     tagName="div"
   />,
   "nodes": Array [
     <Card
       className="is-compact"
       highlight={false}
+      showLinkIndicator={true}
       tagName="div"
     />,
   ],
@@ -697,12 +723,14 @@ ShallowWrapper {
         "_currentElement": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
         "_debugID": 16,
         "_renderedOutput": <Card
           className="is-compact"
           highlight={false}
+          showLinkIndicator={true}
           tagName="div"
         />,
       },
