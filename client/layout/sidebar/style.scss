@@ -232,6 +232,10 @@ form.sidebar__button input {
 		a {
 			color: $white;
 
+			.sidebar__menu-link-secondary-text {
+				color: inherit;
+			}
+
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
