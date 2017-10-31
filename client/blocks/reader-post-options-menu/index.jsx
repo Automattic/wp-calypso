@@ -30,6 +30,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
+import { shouldShowComments } from 'blocks/comments/helper';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -127,7 +128,12 @@ class ReaderPostOptionsMenu extends React.Component {
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
-		const showConversationFollow = config.isEnabled( 'reader/conversations' ) && siteId;
+		const showConversationFollow =
+			config.isEnabled( 'reader/conversations' ) &&
+			siteId &&
+			! post.is_external &&
+			shouldShowComments( post ) &&
+			! isDiscoverPost;
 
 		let isBlockPossible = false;
 
