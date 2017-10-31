@@ -25,6 +25,7 @@
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"comments/management": true,
+		"comments/management/jetpack-5.5": false,
 		"comments/management/sorting": false,
 		"desktop-promo": true,
 		"domains/cctlds": true,
