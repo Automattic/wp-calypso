@@ -17,7 +17,7 @@ import {
 	WOOCOMMERCE_COUPON_UPDATE,
 	WOOCOMMERCE_COUPONS_REQUEST,
 } from 'woocommerce/state/action-types';
-import { couponsUpdated } from './actions';
+import { couponDeleted, couponUpdated, couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 
@@ -25,15 +25,9 @@ export default {
 	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
 		dispatchRequest( requestCoupons, requestCouponsSuccess, apiError ),
 	],
-	[ WOOCOMMERCE_COUPON_CREATE ]: [
-		dispatchRequest( couponCreate, couponCreateSuccess, apiError ),
-	],
-	[ WOOCOMMERCE_COUPON_UPDATE ]: [
-		dispatchRequest( couponUpdate, couponUpdateSuccess, apiError ),
-	],
-	[ WOOCOMMERCE_COUPON_DELETE ]: [
-		dispatchRequest( couponDelete, couponDeleteSuccess, apiError ),
-	]
+	[ WOOCOMMERCE_COUPON_CREATE ]: [ dispatchRequest( couponCreate, couponCreateSuccess, apiError ) ],
+	[ WOOCOMMERCE_COUPON_UPDATE ]: [ dispatchRequest( couponUpdate, couponUpdateSuccess, apiError ) ],
+	[ WOOCOMMERCE_COUPON_DELETE ]: [ dispatchRequest( couponDelete, couponDeleteSuccess, apiError ) ],
 };
 
 export function requestCoupons( { dispatch }, action ) {
@@ -72,7 +66,7 @@ export function couponCreate( { dispatch }, action ) {
 }
 
 export function couponCreateSuccess( { dispatch }, action ) {
-	// TODO: Update local state for this coupon.
+	dispatch( couponUpdated( action.siteId, action.coupon ) );
 	if ( action.successAction ) {
 		dispatch( action.successAction );
 	}
@@ -86,7 +80,7 @@ export function couponUpdate( { dispatch }, action ) {
 }
 
 export function couponUpdateSuccess( { dispatch }, action ) {
-	// TODO: Update local state for this coupon.
+	dispatch( couponUpdated( action.siteId, action.coupon ) );
 	if ( action.successAction ) {
 		dispatch( action.successAction );
 	}
@@ -100,7 +94,7 @@ export function couponDelete( { dispatch }, action ) {
 }
 
 export function couponDeleteSuccess( { dispatch }, action ) {
-	// TODO: Update local state for this coupon.
+	dispatch( couponDeleted( action.siteId, action.couponId ) );
 	if ( action.successAction ) {
 		dispatch( action.successAction );
 	}
