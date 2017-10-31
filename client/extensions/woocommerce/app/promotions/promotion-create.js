@@ -22,9 +22,11 @@ import { fetchProductCategories } from 'woocommerce/state/sites/product-categori
 import { fetchPromotions, createPromotion } from 'woocommerce/state/sites/promotions/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
+import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import {
 	getCurrentlyEditingPromotionId,
 	getPromotionEdits,
+	getPromotionableProducts,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
 import { isValidPromotion } from './helpers';
@@ -128,7 +130,15 @@ class PromotionCreate extends React.Component {
 	};
 
 	render() {
-		const { site, currency, className, promotion, hasEdits } = this.props;
+		const {
+			site,
+			currency,
+			className,
+			promotion,
+			hasEdits,
+			products,
+			productCategories
+		} = this.props;
 		const { busy } = this.state;
 
 		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
@@ -148,6 +158,8 @@ class PromotionCreate extends React.Component {
 					currency={ currency }
 					promotion={ promotion }
 					editPromotion={ this.props.editPromotion }
+					products={ products }
+					productCategories={ productCategories }
 				/>
 			</Main>
 		);
@@ -161,12 +173,16 @@ function mapStateToProps( state ) {
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
+	const products = getPromotionableProducts( state, site.ID );
+	const productCategories = getProductCategories( state, site.ID );
 
 	return {
 		hasEdits,
 		site,
 		promotion,
 		currency,
+		products,
+		productCategories,
 	};
 }
 
