@@ -275,15 +275,9 @@ export const PostEditor = createReactClass( {
 	// Instead of simply moving it down, I'd rather pull that particular button
 	// in to a new component and connect there.
 	toggleSidebar: function() {
-		if ( this.props.layoutFocus === 'sidebar' ) {
-			this.props.closeEditorSidebar();
-			recordStat( 'close-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'close' );
-		} else {
-			this.props.openEditorSidebar();
-			recordStat( 'open-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'open' );
-		}
+		this.props.layoutFocus === 'sidebar'
+			? this.props.closeEditorSidebar()
+			: this.props.openEditorSidebar();
 	},
 
 	selectRevision: function( selectedRevisionId ) {
