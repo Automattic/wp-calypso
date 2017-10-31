@@ -113,7 +113,7 @@ class JetpackConnectAuthorizeForm extends Component {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton>
+					<JetpackConnectHappychatButton eventName="calypso_jpc_noqueryarguments_chat_initiated">
 						<HelpButton onClick={ this.handleClickHelp } />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>

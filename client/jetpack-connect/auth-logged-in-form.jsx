@@ -482,7 +482,7 @@ class LoggedInForm extends Component {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
-				<JetpackConnectHappychatButton>
+				<JetpackConnectHappychatButton eventName="calypso_jpc_authorize_chat_initiated">
 					<HelpButton onClick={ this.handleClickHelp } />
 				</JetpackConnectHappychatButton>
 			</LoggedOutFormLinks>
