@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 
 const ConciergeMain = () => {
 	return (
-		<div>{ 'Business concierge page placeholder.' }</div>
+		<div>{ 'Concierge chats page placeholder.' }</div>
 	);
 };
 

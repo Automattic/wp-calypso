@@ -14,7 +14,7 @@ import meController from 'me/controller';
 import controller from './controller';
 
 export default () => {
-	if ( config.isEnabled( 'business-concierge' ) ) {
+	if ( config.isEnabled( 'concierge-chats' ) ) {
 		page( '/me/concierge', meController.sidebar, controller.concierge );
 	}
 };
