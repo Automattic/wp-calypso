@@ -14,7 +14,7 @@ module.exports = function( content ) {
 		// Moment ships with the English locale by default, no need to load anything in that case
 	} else {
 	    import(
-			/* webpackChunkName: moment/locale/[request] */
+			/* webpackChunkName: "moment/locale/[request]" */
 			'moment/locale/' + this.state.localeSlug
 		).then( _ => {
 			moment.locale( this.state.localeSlug );
