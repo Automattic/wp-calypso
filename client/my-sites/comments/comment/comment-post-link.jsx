@@ -23,6 +23,7 @@ const CommentPostLink = ( {
 	postTitle,
 	siteId,
 	siteSlug,
+	status,
 	translate,
 } ) => (
 	<div className="comment__post-link">
@@ -30,7 +31,7 @@ const CommentPostLink = ( {
 
 		<Gridicon icon="chevron-right" size={ 18 } />
 
-		<a href={ `/comments/all/${ siteSlug }/${ postId }` }>
+		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
 			{ postTitle || translate( 'Untitled' ) }
 		</a>
 	</div>
@@ -41,6 +42,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	const comment = getSiteComment( state, siteId, commentId );
+	const commentStatus = get( comment, 'status' );
 
 	const postId = get( comment, 'post.ID' );
 	const post = getSitePost( state, siteId, postId );
@@ -54,6 +56,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		postTitle,
 		siteSlug,
 		siteId,
+		status: 'unapproved' === commentStatus ? 'pending' : commentStatus,
 	};
 };
 
