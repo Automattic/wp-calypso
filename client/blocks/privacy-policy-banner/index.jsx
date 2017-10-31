@@ -15,6 +15,7 @@ import { get, identity } from 'lodash';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import Banner from 'components/banner';
+import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
 import QueryPrivacyPolicy from 'components/data/query-privacy-policy';
 import { getPrivacyPolicyByEntity } from 'state/selectors';
@@ -73,6 +74,10 @@ class PrivacyPolicyBanner extends Component {
 	};
 
 	render() {
+		if ( ! config.isEnabled( 'privacy-policy' ) ) {
+			return null;
+		}
+
 		const {
 			fetchingPreferences,
 			isPolicyAlreadyAccepted,
@@ -86,14 +91,18 @@ class PrivacyPolicyBanner extends Component {
 		}
 
 		// check if the user has already accepted/read the privacy policy.
-		if ( isPolicyAlreadyAccepted === true ) {
+		if ( isPolicyAlreadyAccepted === true && ! config.isEnabled( 'privacy-policy/test' ) ) {
 			return <QueryPrivacyPolicy />;
 		}
 
 		// check if the current policy is under the notification period.
 		const notifyFrom = moment( get( privacyPolicy, 'notification_period.from' ) );
 		const notifyTo = moment( get( privacyPolicy, 'notification_period.to' ) );
-		if ( ! notifyFrom.isBefore() || ! notifyTo.isAfter() ) {
+
+		if (
+			( ! notifyFrom.isBefore() || ! notifyTo.isAfter() ) &&
+			! config.isEnabled( 'privacy-policy/test' )
+		) {
 			return <QueryPrivacyPolicy />;
 		}
 
@@ -115,7 +124,6 @@ class PrivacyPolicyBanner extends Component {
 					content={ privacyPolicy.content }
 					title={ privacyPolicy.title }
 					version={ privacyPolicy.id }
-
 					onClose={ this.closePrivacyPolicyDialog }
 					onDismiss={ this.closePrivacyPolicyDialog }
 				/>
