@@ -222,8 +222,11 @@ export class EmbedDialog extends React.Component {
 			return;
 		}
 
+		this.setState( { iframeLoading: true } );
+
 		const embedData = this.state.previewMarkup[ embedURL ];
 		const content = pick( embedData, [ 'result', 'scripts', 'styles' ] );
+
 		content.body = content.result; // generateEmbedFrameMarkup required `body`, which in this call is named `result`
 
 		const markup = generateEmbedFrameMarkup( content );
@@ -237,6 +240,10 @@ export class EmbedDialog extends React.Component {
 
 		this.constrainEmbedDimensions();
 	}
+
+	iframeOnLoad = () => {
+		this.setState( { iframeLoading: false } );
+	};
 
 	handleIframeRef = iframe => {
 		this.iframe = iframe;
@@ -256,7 +263,7 @@ export class EmbedDialog extends React.Component {
 			</Button>,
 		];
 
-		const isLoading = this.state.isLoading;
+		const isLoading = this.state.isLoading || this.state.iframeLoading;
 		const isURLInCache = this.isURLInCache( this.state.embedUrl );
 		const cachedMarkup = isURLInCache ? this.state.previewMarkup[ this.state.embedUrl ] : null;
 		const isError = cachedMarkup && cachedMarkup.error;
@@ -264,6 +271,10 @@ export class EmbedDialog extends React.Component {
 		const statusClassNames = classNames( 'embed__status', {
 			isError,
 			isLoading,
+		} );
+
+		const previewBlockClassNames = classNames( 'embed__preview', {
+			isLoading: this.state.iframeLoading,
 		} );
 
 		return (
@@ -275,39 +286,44 @@ export class EmbedDialog extends React.Component {
 				onCancel={ this.props.onCancel }
 				onClose={ this.props.onCancel }
 			>
-				<h3 className="embed__title">{ translate( 'Embed URL' ) }</h3>
+				<div className="embed__header">
+					<h3 className="embed__title">{ translate( 'Embed URL' ) }</h3>
 
-				<FormTextInput
-					autoFocus={ true }
-					className="embed__url"
-					defaultValue={ this.props.embedUrl }
-					onChange={ this.onChangeEmbedUrl }
-					onKeyDown={ this.onKeyDownEmbedUrl }
-				/>
-				{ ( isLoading || isError ) && (
-					<div className={ statusClassNames }>
-						{ isLoading && <Spinner className="embed__loading-spinner" size={ 20 } /> }
-						{ isError && (
-							<div className="embed__status-error">
-								{ this.getError( cachedMarkup.renderMarkup ) }
-							</div>
-						) }
-					</div>
-				) }
+					<FormTextInput
+						autoFocus={ true }
+						className="embed__url"
+						defaultValue={ this.props.embedUrl }
+						onChange={ this.onChangeEmbedUrl }
+						onKeyDown={ this.onKeyDownEmbedUrl }
+					/>
+				</div>
+				<div className="embed__preview-container">
+					{ ( isLoading || isError ) && (
+						<div className={ statusClassNames }>
+							{ isLoading && <Spinner className="embed__loading-spinner" size={ 20 } /> }
+							{ isError && (
+								<div className="embed__status-error">
+									{ this.getError( cachedMarkup.renderMarkup ) }
+								</div>
+							) }
+						</div>
+					) }
 
-				{ ! this.state.isLoading &&
-				cachedMarkup &&
-				! isError && (
-					<div ref={ this.handleViewRef } className="embed__preview">
-						<ResizableIframe
-							ref={ this.handleIframeRef }
-							onResize={ this.props.onResize }
-							frameBorder="0"
-							seamless
-							width="100%"
-						/>
-					</div>
-				) }
+					{ ! this.state.isLoading &&
+					cachedMarkup &&
+					! isError && (
+						<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
+							<ResizableIframe
+								ref={ this.handleIframeRef }
+								onResize={ this.props.onResize }
+								onLoad={ this.iframeOnLoad }
+								frameBorder="0"
+								seamless
+								width="100%"
+							/>
+						</div>
+					) }
+				</div>
 			</Dialog>
 		);
 

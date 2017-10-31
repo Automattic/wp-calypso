@@ -1,63 +1,91 @@
-.dialog.card.embed__modal {
-	width: 80%;
-	max-width: 690px;
-}
-
-.embed__modal .dialog__content {
-	padding-bottom: 0;
-}
-
-.embed__title {
-	color: #4b6476;
-	font-weight: bold;
-}
-
-.embed-dialog__url {
-	margin-top: 1em;
-}
-
-input[type="text"].embed__url {
-	margin-top: 1em;
-}
-
-.embed__preview {
-	margin: 1.75em -24px 0 -24px; /* counter-act the left/right padding from `.dialog__content`, so that the preview can have a background color that extends to the edge of `.dialog__content` */
-	padding: 24px;
-	margin-top: 1.75em;
-	min-height: 150px;
-		/* todo rem instead? */
-	background: $gray-light;
-		/* todo mockup calls for #f4f6f8, but have to reuse an existing color variable instead of creating new one? */
-
-	/* todo
-	- the embed should take up 100% width of the container, but that'll distort it's aspect ratio?
-	 	need to make the modal 640px wide instead? will that work for all embeds, or just youtube?
-	- make margin/padding around embed and other places match the ones around the title, so everything is visually consistent
-	- videopress embeds are smaller than youtube, leaving undesired space. need them to be 100% width too. are there other services to test as well? vimeo, etc
-	*/
-}
-
-.embed__modal .dialog__action-buttons {
-	border-top: none; /* When there is no preview, this border looks bad. When there is a preview, it's not needed because of .embed__preview's background. */
-	/* todo maybe remove ^ if add a error message or default thing when there isn't a preview */
-}
-
-.embed__modal .dialog__action-buttons:before {
-	background: none;
-}
-
-.embed__status {
-	padding: 24px;
-	margin-top: 1.75em;
-	background: $gray-light;
-
-	&.isError {
-		color: $alert-red;
+.embed__modal {
+	&.dialog.card {
+		width: 80%;
+		max-width: 690px;
 	}
 
-	.embed__loading-spinner .spinner__image {
-		margin: 0 auto;
-		min-height: 150px;
-		vertical-align: middle;
+	.dialog__content {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 0;
+
+		.embed__header {
+			padding-bottom: 10px;
+
+			.embed__title {
+				color: #4b6476;
+				font-weight: bold;
+			}
+
+			input[type="text"].embed__url {
+				margin-top: 1em;
+			}
+		}
+
+		.embed__preview-container {
+			background: $gray-light;
+			padding: 24px;
+			flex: 3;
+			display: flex;
+			overflow-y: auto;
+			position: relative;
+			min-height: 150px;
+
+			.embed__status {
+				padding: 24px;
+				width: 100%;
+
+				&.isError {
+					color: $alert-red;
+				}
+
+				&.isLoading {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					width: auto;
+					padding: 0;
+					margin-top: -10px; // move the spinner 10px upwards, to offset centering
+				}
+
+				.embed__loading-spinner .spinner__image {
+					vertical-align: middle;
+				}
+			}
+
+
+			.embed__preview {
+				height: 100%;
+				width: 100%;
+				/* todo rem instead? */
+				/* todo mockup calls for #f4f6f8, but have to reuse an existing color variable instead of creating new one? */
+
+				&.isLoading {
+					visibility: hidden;
+				}
+				/* todo
+				- the embed should take up 100% width of the container, but that'll distort it's aspect ratio?
+					 need to make the modal 640px wide instead? will that work for all embeds, or just youtube?
+				- make margin/padding around embed and other places match the ones around the title, so everything is visually consistent
+				- videopress embeds are smaller than youtube, leaving undesired space. need them to be 100% width too. are there other services to test as well? vimeo, etc
+				*/
+			}
+
+
+		}
+	}
+
+
+
+
+
+	.dialog__action-buttons {
+		border-top: none; /* When there is no preview, this border looks bad. When there is a preview, it's not needed because of .embed__preview's background. */
+		/* todo maybe remove ^ if add a error message or default thing when there isn't a preview */
+	}
+
+	.dialog__action-buttons:before {
+		background: none;
 	}
 }
