@@ -33,8 +33,8 @@ import PostTypeListMaxPagesNotice from './max-pages-notice';
 // When this many pixels or less are below the viewport, begin loading the next
 // page of items.
 const LOAD_NEXT_PAGE_THRESHOLD_PIXELS = 400;
-
-// The number of pages of results that are displayed in "All My Sites"
+// The maximum number of pages of results that can be displayed in "All My
+// Sites" (API endpoint limitation).
 const MAX_ALL_SITES_PAGES = 10;
 
 class PostTypeList extends Component {
