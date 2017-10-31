@@ -55,21 +55,18 @@ function updateCachedProduct( products, product ) {
 }
 
 /**
- * Set a given property in state for a param set
+ * Set the loading status for a param set in state
  *
  * @param  {Object}  state     The current state
- * @param  {Object}  property  The property to update
  * @param  {Object}  params    Params of the query to update
- * @param  {Boolean} newValue  The new value to save
+ * @param  {Boolean} newStatus The new value to save
  * @return {Object}            Updated isLoading state
  */
-function setQueryResponse( state, property, params, newValue ) {
-	const prevProperties = get( state, property, {} );
-	const query = getSerializedProductsQuery( params );
-	return {
-		...prevProperties,
-		[ query ]: newValue,
-	};
+function setLoading( state, params, newStatus ) {
+	const queries = ( state.queries && { ...state.queries } ) || {};
+	const key = getSerializedProductsQuery( params );
+	queries[ key ] = { ...( queries[ key ] || {} ), isLoading: newStatus };
+	return queries;
 }
 
 /**
@@ -96,34 +93,32 @@ export function productUpdated( state, action ) {
  * @return {Object}        Updated state
  */
 export function productsRequestSuccess( state = {}, action ) {
-	const isLoading = setQueryResponse( state, 'isLoading', action.params, false );
-	const totalPages = setQueryResponse( state, 'totalPages', action.params, action.totalPages );
-	const totalProducts = setQueryResponse(
-		state,
-		'totalProducts',
-		action.params,
-		action.totalProducts
-	);
-
 	let products = get( state, 'products', [] );
 	action.products.forEach( function( product ) {
 		products = updateCachedProduct( products, product );
 	} );
 
-	const queries = setQueryResponse(
-		state,
-		'queries',
-		action.params,
-		action.products.map( p => p.id )
-	);
+	const ids = action.products.map( p => p.id );
+	const isLoading = false;
+	const totalPages = get( action, 'totalPages', 0 );
+	const totalProducts = get( action, 'totalProducts', 0 );
+
+	const query = getSerializedProductsQuery( action.params );
+	const prevQueries = get( state, 'queries', {} );
+	const queries = {
+		...prevQueries,
+		[ query ]: {
+			ids,
+			isLoading,
+			totalPages,
+			totalProducts,
+		},
+	};
 
 	return {
 		...state,
 		products,
 		queries,
-		isLoading,
-		totalPages,
-		totalProducts,
 	};
 }
 
@@ -151,8 +146,8 @@ export function productsDeleteSuccess( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export function productsRequest( state = {}, action ) {
-	const isLoading = setQueryResponse( state, 'isLoading', action.params, true );
-	return { ...state, isLoading };
+	const queries = setLoading( state, action.params, true );
+	return { ...state, queries };
 }
 
 /**
@@ -163,6 +158,6 @@ export function productsRequest( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export function productsRequestFailure( state = {}, action ) {
-	const isLoading = setQueryResponse( state, 'isLoading', action.params, false );
-	return { ...state, isLoading };
+	const queries = setLoading( state, action.params, false );
+	return { ...state, queries };
 }
