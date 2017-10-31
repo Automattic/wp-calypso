@@ -7,8 +7,9 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 
 /**
@@ -28,7 +29,6 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
-import page from 'page';
 import ProgressBar from 'components/progress-bar';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
