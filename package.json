@@ -214,7 +214,6 @@
     "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
-    "preshrinkwrap": "npm prune",
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && ( check-node-version --package || exit 0 )",
     "start": "npm run -s build",
