@@ -12,6 +12,7 @@ import { pick } from 'lodash';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import activate from './activate';
 import restoreHandler from './to';
+import backupHandler from './downloads';
 import restoreStatusHandler from './restore-status';
 import { REWIND_STATUS_REQUEST } from 'state/action-types';
 import { rewindStatusError, updateRewindStatus } from 'state/activity-log/actions';
@@ -52,4 +53,10 @@ const statusHandler = {
 	],
 };
 
-export default mergeHandlers( activate, restoreHandler, restoreStatusHandler, statusHandler );
+export default mergeHandlers(
+	activate,
+	restoreHandler,
+	restoreStatusHandler,
+	statusHandler,
+	backupHandler
+);

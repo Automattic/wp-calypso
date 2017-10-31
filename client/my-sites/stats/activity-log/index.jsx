@@ -42,6 +42,9 @@ import {
 	rewindRequestDismiss as rewindRequestDismissAction,
 	rewindRequestRestore as rewindRequestRestoreAction,
 	rewindRestore as rewindRestoreAction,
+	rewindRequestBackup,
+	rewindBackupDismiss,
+	rewindBackup,
 } from 'state/activity-log/actions';
 import {
 	canCurrentUser,
@@ -54,6 +57,7 @@ import {
 	getSiteTimezoneValue,
 	getRewindStartDate,
 	isRewindActive as isRewindActiveSelector,
+	getRequestedBackup,
 } from 'state/selectors';
 
 /**
@@ -207,6 +211,7 @@ class ActivityLog extends Component {
 		} ),
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestedRestoreActivity: PropTypes.shape( {
+			rewindId: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
 		} ),
 		requestedRestoreActivityId: PropTypes.string,
@@ -217,6 +222,8 @@ class ActivityLog extends Component {
 			error: PropTypes.string.isRequired,
 			message: PropTypes.string.isRequired,
 		} ),
+		requestBackup: PropTypes.func.isRequired,
+		createBackup: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteTitle: PropTypes.string,
 		slug: PropTypes.string,
@@ -254,31 +261,76 @@ class ActivityLog extends Component {
 		this.handlePeriodChange( ...args );
 	};
 
-	handleRequestRestore = ( activityId, from ) => {
-		const { recordTracksEvent, rewindRequestRestore, siteId } = this.props;
-
-		recordTracksEvent( 'calypso_activitylog_restore_request', { from } );
-		rewindRequestRestore( siteId, activityId );
+	/**
+	 * The link to download a backup in ellipsis menu in ActivityLogDay > ActivityLogItem,
+	 * or the rewind buttons and links use this method display a certain dialog.
+	 *
+	 * @param {string} activityId Id of the activity up to the one we're downloading.
+	 * @param {string} from       Context for tracking.
+	 * @param {string} type       Type of dialog to show.
+	 */
+	handleRequestDialog = ( activityId, from, type ) => {
+		const { recordTracksEvent, rewindRequestRestore, requestBackup, siteId } = this.props;
+		recordTracksEvent( `calypso_activitylog_${ type }_request`, { from } );
+		switch ( type ) {
+			case 'restore':
+				rewindRequestRestore( siteId, activityId );
+				break;
+			case 'backup':
+				requestBackup( siteId, activityId );
+				break;
+		}
 	};
 
-	handleRestoreDialogClose = () => {
-		const { recordTracksEvent, rewindRequestDismiss, siteId } = this.props;
-		recordTracksEvent( 'calypso_activitylog_restore_cancel' );
-		rewindRequestDismiss( siteId );
+	/**
+	 * Close Restore, Backup, or Transfer confirmation dialog.
+	 * @param {string} type Type of dialog to close.
+	 */
+	handleCloseDialog = type => {
+		const { recordTracksEvent, rewindRequestDismiss, dismissBackup, siteId } = this.props;
+		recordTracksEvent( `calypso_activitylog_${ type }_cancel` );
+		switch ( type ) {
+			case 'restore':
+				rewindRequestDismiss( siteId );
+				break;
+			case 'backup':
+				dismissBackup( siteId );
+				break;
+		}
 	};
 
-	handleRestoreDialogConfirm = () => {
-		const { recordTracksEvent, requestedRestoreActivity, rewindRestore, siteId } = this.props;
-		const { rewindId } = requestedRestoreActivity;
+	/**
+	 * Proceed with Restore, Backup, or Transfer since user confirmed it.
+	 * @param {string} type Type of dialog to close.
+	 */
+	handleConfirmDialog = type => {
+		const {
+			recordTracksEvent,
+			requestedRestoreActivity,
+			requestedBackup,
+			rewindRestore,
+			createBackup,
+			siteId,
+		} = this.props;
+		let actionId = null;
 
-		debug( 'Restore requested for after activity %o', requestedRestoreActivity );
-		recordTracksEvent( 'calypso_activitylog_restore_confirm', { rewindId } );
-		rewindRestore( siteId, rewindId );
+		debug( `${ type } requested for after activity %o`, requestedRestoreActivity );
+		switch ( type ) {
+			case 'restore':
+				actionId = requestedRestoreActivity.rewindId;
+				rewindRestore( siteId, actionId );
+				break;
+			case 'backup':
+				actionId = requestedBackup.rewindId;
+				createBackup( siteId, actionId );
+				break;
+		}
 		scrollTo( {
 			x: 0,
 			y: 0,
 			duration: 250,
 		} );
+		recordTracksEvent( `calypso_activitylog_${ type }_confirm`, { actionId } );
 	};
 
 	/**
@@ -322,7 +374,7 @@ class ActivityLog extends Component {
 						<ErrorBanner
 							errorCode={ errorCode }
 							failureReason={ failureReason }
-							requestRestore={ this.handleRequestRestore }
+							requestDialog={ this.handleRequestDialog }
 							siteId={ siteId }
 							siteTitle={ siteTitle }
 							timestamp={ timestamp }
@@ -414,6 +466,8 @@ class ActivityLog extends Component {
 			moment,
 			requestedRestoreActivity,
 			requestedRestoreActivityId,
+			requestedBackup,
+			requestedBackupId,
 			siteId,
 			slug,
 			startDate,
@@ -437,13 +491,25 @@ class ActivityLog extends Component {
 
 		const disableRestore = this.isRestoreInProgress();
 
-		const rewindConfirmDialog = requestedRestoreActivity && (
+		const restoreConfirmDialog = requestedRestoreActivity && (
 			<ActivityLogConfirmDialog
 				applySiteOffset={ this.applySiteOffset }
 				key="activity-rewind-dialog"
-				onClose={ this.handleRestoreDialogClose }
-				onConfirm={ this.handleRestoreDialogConfirm }
+				onClose={ this.handleCloseDialog }
+				onConfirm={ this.handleConfirmDialog }
 				timestamp={ requestedRestoreActivity.activityTs }
+			/>
+		);
+
+		const backupConfirmDialog = requestedBackup && (
+			<ActivityLogConfirmDialog
+				applySiteOffset={ this.applySiteOffset }
+				key="activity-backup-dialog"
+				onClose={ this.handleCloseDialog }
+				onConfirm={ this.handleConfirmDialog }
+				timestamp={ requestedBackup.activityTs }
+				type={ 'backup' }
+				icon={ 'cloud-download' }
 			/>
 		);
 
@@ -530,12 +596,15 @@ class ActivityLog extends Component {
 												key={ start.format() }
 												applySiteOffset={ this.applySiteOffset }
 												requestedRestoreActivityId={ requestedRestoreActivityId }
-												rewindConfirmDialog={ rewindConfirmDialog }
+												requestedBackupId={ requestedBackupId }
+												restoreConfirmDialog={ restoreConfirmDialog }
+												backupConfirmDialog={ backupConfirmDialog }
 												disableRestore={ disableRestore }
 												hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 												isRewindActive={ isRewindActive }
 												logs={ events }
-												requestRestore={ this.handleRequestRestore }
+												requestDialog={ this.handleRequestDialog }
+												closeDialog={ this.handleCloseDialog }
 												siteId={ siteId }
 												tsEndOfSiteDay={ start.valueOf() }
 												isToday={ isToday }
@@ -558,6 +627,7 @@ export default connect(
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreActivityId = getRequestedRewind( state, siteId );
+		const requestedBackupId = getRequestedBackup( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -570,6 +640,8 @@ export default connect(
 			),
 			requestedRestoreActivity: getActivityLog( state, siteId, requestedRestoreActivityId ),
 			requestedRestoreActivityId,
+			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
+			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			rewindStartDate: getRewindStartDate( state, siteId ),
@@ -587,5 +659,8 @@ export default connect(
 		rewindRequestDismiss: rewindRequestDismissAction,
 		rewindRequestRestore: rewindRequestRestoreAction,
 		rewindRestore: rewindRestoreAction,
+		requestBackup: rewindRequestBackup,
+		dismissBackup: rewindBackupDismiss,
+		createBackup: rewindBackup,
 	}
 )( localize( ActivityLog ) );
