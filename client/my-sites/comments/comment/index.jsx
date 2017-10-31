@@ -30,8 +30,8 @@ export class Comment extends Component {
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
-		togglePersisted: PropTypes.func,
 		toggleSelected: PropTypes.func,
+		updatePersisted: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -96,7 +96,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			removeFromPersisted,
 			siteId,
-			togglePersisted,
+			updatePersisted,
 		} = this.props;
 		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
 
@@ -129,7 +129,7 @@ export class Comment extends Component {
 
 						<CommentContent { ...{ commentId, isExpanded } } />
 
-						<CommentActions { ...{ commentId, removeFromPersisted, togglePersisted } } />
+						<CommentActions { ...{ commentId, removeFromPersisted, updatePersisted } } />
 
 						{ isExpanded && (
 							<CommentReply

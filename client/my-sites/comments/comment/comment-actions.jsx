@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -31,19 +32,18 @@ const commentActions = {
 };
 
 export class CommentActions extends Component {
+	static propTypes = {
+		commentId: PropTypes.number,
+		removeFromPersisted: PropTypes.func,
+		updatePersisted: PropTypes.func,
+	};
+
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
 	setStatus = status => {
-		const {
-			changeStatus,
-			commentId,
-			commentIsLiked,
-			commentStatus,
-			postId,
-			siteId,
-			unlike,
-		} = this.props;
-		const alsoUnlike = commentIsLiked && 'approved' !== commentStatus;
+		const { changeStatus, commentId, commentIsLiked, postId, siteId, unlike } = this.props;
+
+		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
 		changeStatus( siteId, postId, commentId, status, { alsoUnlike } );
 
@@ -52,8 +52,27 @@ export class CommentActions extends Component {
 		}
 	};
 
+	toggleApproved = () => {
+		const { commentId, commentIsApproved, commentStatus, updatePersisted } = this.props;
+
+		this.setStatus( commentIsApproved ? 'unapproved' : 'approved' );
+
+		if ( includes( [ 'approved', 'unapproved' ], commentStatus ) ) {
+			updatePersisted( commentId );
+		}
+	};
+
 	toggleLike = () => {
-		const { commentId, commentIsLiked, commentStatus, like, postId, siteId, unlike } = this.props;
+		const {
+			commentId,
+			commentIsLiked,
+			commentStatus,
+			like,
+			postId,
+			siteId,
+			unlike,
+			updatePersisted,
+		} = this.props;
 
 		if ( commentIsLiked ) {
 			return unlike( siteId, postId, commentId );
@@ -65,18 +84,60 @@ export class CommentActions extends Component {
 
 		if ( alsoApprove ) {
 			this.setStatus( 'approved' );
+			updatePersisted( commentId );
 		}
 	};
 
+	setSpam = () => this.setStatus( 'spam' );
+
+	setTrash = () => this.setStatus( 'trash' );
+
 	render() {
-		const { commentIsLiked, translate } = this.props;
+		const { commentIsApproved, commentIsLiked, translate } = this.props;
 
 		return (
 			<div className="comment__actions">
+				{ this.hasAction( 'approve' ) && (
+					<Button
+						borderless
+						className={ classNames( 'comment__action comment__action-approve', {
+							'is-approved': commentIsApproved,
+						} ) }
+						onClick={ this.toggleApproved }
+					>
+						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
+						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
+					</Button>
+				) }
+
+				{ this.hasAction( 'spam' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-spam"
+						onClick={ this.setSpam }
+					>
+						<Gridicon icon="spam" />
+						<span>{ translate( 'Spam' ) }</span>
+					</Button>
+				) }
+
+				{ this.hasAction( 'trash' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-trash"
+						onClick={ this.setTrash }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Trash' ) }</span>
+					</Button>
+				) }
+
 				{ this.hasAction( 'like' ) && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action', { 'is-liked': commentIsLiked } ) }
+						className={ classNames( 'comment__action comment__action-like', {
+							'is-liked': commentIsLiked,
+						} ) }
 						onClick={ this.toggleLike }
 					>
 						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
@@ -91,10 +152,12 @@ export class CommentActions extends Component {
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
+	const commentStatus = get( comment, 'status' );
 
 	return {
+		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
-		commentStatus: get( comment, 'status' ),
+		commentStatus,
 		postId: get( comment, 'post.ID' ),
 		siteId,
 	};
