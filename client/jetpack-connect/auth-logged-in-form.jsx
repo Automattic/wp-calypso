@@ -451,7 +451,7 @@ class LoggedInForm extends Component {
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
-				<Gridicon size={ 18 } icon="arrow-left" />
+				<Gridicon size={ 18 } icon="arrow-left" />{' '}
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
 				} ) }
