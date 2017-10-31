@@ -16,7 +16,7 @@ export function createPromotionFromProduct( product ) {
 }
 
 export function createProductUpdateFromPromotion( promotion ) {
-	const { productIds } = promotion.appliesTo;
+	const { productIds } = promotion.appliesTo || {};
 	const id = productIds && productIds[ 0 ];
 
 	if ( ! id ) {
@@ -62,6 +62,8 @@ export function createPromotionFromCoupon( coupon ) {
 }
 
 export function createCouponUpdateFromPromotion( promotion ) {
+	const { appliesTo } = promotion;
+
 	if ( ! promotion.couponCode ) {
 		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
 	}
@@ -69,6 +71,9 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	const amount = ( 'percent' === promotion.type
 		? promotion.percentDiscount
 		: promotion.fixedDiscount );
+
+	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
+	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
 
 	return {
 		id: promotion.couponId, // May not be present in case of create.
@@ -82,8 +87,8 @@ export function createCouponUpdateFromPromotion( promotion ) {
 		free_shipping: promotion.freeShipping,
 		minimum_amount: promotion.minimumAmount,
 		maximum_amount: promotion.maximumAmount,
-		product_ids: promotion.appliesTo.productIds,
-		product_categories: promotion.appliesTo.productCategoryIds,
+		product_ids: productIds,
+		product_categories: productCategoryIds,
 	};
 }
 
