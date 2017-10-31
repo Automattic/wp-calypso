@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { uniqueId } from 'lodash';
+import { uniqueId, get, find } from 'lodash';
 import warn from 'lib/warn';
 
 /**
@@ -34,11 +34,37 @@ export default class PromotionForm extends React.PureComponent {
 			id: PropTypes.isRequired,
 		} ),
 		editPromotion: PropTypes.func.isRequired,
+		products: PropTypes.array,
+		productCategories: PropTypes.array,
 	};
 
+	calculatePromotionName = ( promotion ) => {
+		const { products } = this.props;
+
+		switch ( promotion.type ) {
+			case 'fixed_discount':
+			case 'fixed_cart':
+			case 'percent':
+				return promotion.couponCode;
+			case 'product_sale':
+				const productIds = get( promotion, [ 'appliesTo', 'productIds' ], [] );
+				const productId = ( productIds.length > 0 ? productIds[ 0 ] : null );
+				const product = productId && find( products, { id: productId } );
+				return ( product ? product.name : '' );
+		}
+	}
+
+	editPromotionWithNameUpdate = ( siteId, promotion, data ) => {
+		const name = this.calculatePromotionName( { ...promotion, ...data } );
+		const adjustedData = { ...data, name };
+
+		return this.props.editPromotion( siteId, promotion, adjustedData );
+	}
+
 	renderFormCards( promotion ) {
-		const { siteId, currency, editPromotion } = this.props;
+		const { siteId, currency } = this.props;
 		const model = promotionModels[ promotion.type ];
+		const editPromotion = this.editPromotionWithNameUpdate;
 
 		if ( ! model ) {
 			warn( 'No model found for promotion type: ' + promotion.type );
