@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 export class CommentConfirmation extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		undo: PropTypes.func,
 	};
 
 	render() {
-		const { commentIsSpam, commentIsTrash, translate } = this.props;
+		const { commentIsSpam, commentIsTrash, undo, translate } = this.props;
 
 		return (
 			<div className="comment__confirmation">
@@ -38,7 +39,7 @@ export class CommentConfirmation extends Component {
 							<Gridicon icon="trash" size={ 18 } />
 						</div>
 					) }
-					<a onClick={ noop }>{ translate( 'Undo?' ) }</a>
+					<a onClick={ undo }>{ translate( 'Undo?' ) }</a>
 				</div>
 			</div>
 		);

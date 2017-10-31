@@ -8,13 +8,14 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import CommentConfirmation from 'my-sites/comments/comment/comment-confirmation';
+import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -47,6 +48,10 @@ export class CommentActions extends Component {
 		updatePersisted: PropTypes.func,
 	};
 
+	state = {
+		previousCommentData: {},
+	};
+
 	delete = () => {
 		const { deletePermanently, commentId, postId, removeFromPersisted, siteId } = this.props;
 
@@ -55,18 +60,24 @@ export class CommentActions extends Component {
 		removeFromPersisted( commentId );
 	};
 
+	deletePreviousCommentData = () => this.setState( { previousCommentData: {} } );
+
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
 	setSpam = () => {
 		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+
 		if ( isExpanded ) {
 			toggleExpanded();
 		}
+
 		this.setStatus( 'spam' );
+
+		this.storePreviousCommentData();
 		updatePersisted( commentId );
 	};
 
-	setStatus = status => {
+	setStatus = ( status, options = { isUndo: false } ) => {
 		const {
 			changeStatus,
 			commentId,
@@ -76,11 +87,13 @@ export class CommentActions extends Component {
 			siteId,
 			unlike,
 		} = this.props;
+		const { isUndo } = options;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
 		changeStatus( siteId, postId, commentId, status, {
 			alsoUnlike,
+			isUndo,
 			previousStatus: commentStatus,
 		} );
 
@@ -91,12 +104,19 @@ export class CommentActions extends Component {
 
 	setTrash = () => {
 		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+
 		if ( isExpanded ) {
 			toggleExpanded();
 		}
+
 		this.setStatus( 'trash' );
+
+		this.storePreviousCommentData();
 		updatePersisted( commentId );
 	};
+
+	storePreviousCommentData = () =>
+		this.setState( { previousCommentData: this.props.minimumComment } );
 
 	toggleApproved = () => {
 		const { commentId, commentIsApproved, commentStatus, updatePersisted } = this.props;
@@ -134,11 +154,30 @@ export class CommentActions extends Component {
 		}
 	};
 
+	undo = () => {
+		const { previousCommentData } = this.state;
+		if ( isEmpty( previousCommentData ) ) {
+			return;
+		}
+
+		const { commentId, like, postId, removeFromPersisted, siteId } = this.props;
+		const { isLiked, status } = previousCommentData;
+
+		this.setStatus( status, { isUndo: true } );
+
+		if ( isLiked ) {
+			like( siteId, postId, commentId, { alsoApprove: 'approved' === status } );
+		}
+
+		this.deletePreviousCommentData();
+		removeFromPersisted( commentId );
+	};
+
 	render() {
 		const { commentId, commentIsApproved, commentIsLiked, isPersistent, translate } = this.props;
 
 		if ( isPersistent ) {
-			return <CommentConfirmation { ...{ commentId } } />;
+			return <CommentConfirmation { ...{ commentId } } undo={ this.undo } />;
 		}
 
 		return (
@@ -215,6 +254,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,
+		minimumComment: getMinimumComment( comment ),
 		postId: get( comment, 'post.ID' ),
 		siteId,
 	};
