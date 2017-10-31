@@ -106,6 +106,7 @@ export class CommentNavigation extends Component {
 		const {
 			doSearch,
 			hasSearch,
+			hasComments,
 			isBulkEdit,
 			isCommentsTreeSupported,
 			isSelectedAll,
@@ -208,7 +209,8 @@ export class CommentNavigation extends Component {
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
 					{ isEnabled( 'comments/management/sorting' ) &&
-					isCommentsTreeSupported && (
+					isCommentsTreeSupported &&
+					hasComments && (
 						<SegmentedControl compact className="comment-navigation__sort-buttons">
 							<ControlItem
 								onClick={ setSortOrder( NEWEST_FIRST ) }
@@ -229,9 +231,11 @@ export class CommentNavigation extends Component {
 						</SegmentedControl>
 					) }
 
-					<Button compact onClick={ toggleBulkEdit }>
-						{ translate( 'Bulk Edit' ) }
-					</Button>
+					{ hasComments && (
+						<Button compact onClick={ toggleBulkEdit }>
+							{ translate( 'Bulk Edit' ) }
+						</Button>
+					) }
 				</CommentNavigationTab>
 
 				{ hasSearch && (
@@ -257,6 +261,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 
 	return {
 		visibleComments,
+		hasComments: visibleComments.length > 0,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
