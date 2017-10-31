@@ -5,12 +5,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { uniqueId } from 'lodash';
+import warn from 'lib/warn';
 
 /**
  * Internal dependencies
  */
 import PromotionFormCard from './promotion-form-card';
 import PromotionFormTypeCard from './promotion-form-type-card';
+import promotionModels from './promotion-models';
 
 function renderPlaceholder() {
 	const { className } = this.props;
@@ -34,8 +36,31 @@ export default class PromotionForm extends React.PureComponent {
 		editPromotion: PropTypes.func.isRequired,
 	};
 
-	render() {
+	renderFormCards( promotion ) {
 		const { siteId, currency, editPromotion } = this.props;
+		const model = promotionModels[ promotion.type ];
+
+		if ( ! model ) {
+			warn( 'No model found for promotion type: ' + promotion.type );
+			return null;
+		}
+
+		return Object.keys( model ).map( ( key ) => {
+			const cardModel = model[ key ];
+			return (
+				<PromotionFormCard key={ key } { ...{
+					cardModel,
+					siteId,
+					currency,
+					promotion,
+					editPromotion,
+				} } />
+			);
+		} );
+	}
+
+	render() {
+		const { siteId, editPromotion } = this.props;
 
 		if ( ! siteId ) {
 			return renderPlaceholder();
@@ -47,13 +72,7 @@ export default class PromotionForm extends React.PureComponent {
 		return (
 			<div className={ classNames( 'promotions__form', this.props.className ) }>
 				<PromotionFormTypeCard { ...{ siteId, promotion, editPromotion } } />
-
-				<PromotionFormCard { ...{
-					siteId,
-					currency,
-					promotion,
-					editPromotion,
-				} } />
+				{ this.renderFormCards( promotion ) }
 			</div>
 		);
 	}
