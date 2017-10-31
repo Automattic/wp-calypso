@@ -78,6 +78,7 @@ const endDate = {
 const productSaleModel = {
 	productAndSalePrice: {
 		labelText: translate( 'Product & Sale Price' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			salePrice: {
 				component: CurrencyField,
@@ -98,6 +99,7 @@ const productSaleModel = {
 	},
 	conditions: {
 		labelText: translate( 'Conditions', { context: 'noun' } ),
+		cssClass: 'promotions__promotion-form-card-conditions',
 		fields: {
 			startDate,
 			endDate,
@@ -110,6 +112,7 @@ const productSaleModel = {
  */
 const couponConditions = {
 	labelText: translate( 'Conditions', { context: 'noun' } ),
+	cssClass: 'promotions__promotion-form-card-conditions',
 	fields: {
 		endDate,
 		minimumAmount: {
@@ -153,6 +156,7 @@ const couponConditions = {
 const fixedProductModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			fixedDiscount: {
@@ -171,6 +175,7 @@ const fixedProductModel = {
 const fixedCartModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			fixedDiscount: {
@@ -189,6 +194,7 @@ const fixedCartModel = {
 const percentCartModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			percentDiscount: {
