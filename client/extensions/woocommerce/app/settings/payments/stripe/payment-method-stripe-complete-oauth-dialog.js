@@ -79,17 +79,21 @@ class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	};
 
 	onClose = () => {
-		const { site } = this.props;
+		const { error, site } = this.props;
+		const oauthCompleted = isEmpty( error );
 		this.props.clearError();
 
 		// Important - when the user closes the dialog (which should only happen
 		// in case of error), let's clear the query params by calling page
 		// with the payment settings path
-		const paymentsSettings = getLink( '/store/settings/payments/:site', site );
-		page( paymentsSettings );
+		const paymentsSettingsLink = getLink( '/store/settings/payments/:site', site );
+		const paymentsSettingsQuery = oauthCompleted ? '?oauth_complete=1' : '';
+		page( paymentsSettingsLink + paymentsSettingsQuery );
 
-		// Let's make sure state reflects that the dialog is closed
-		this.props.onCancel();
+		// Lastly, in the case of an error, let's make sure state reflects that the dialog is closed
+		if ( ! oauthCompleted ) {
+			this.props.onCancel();
+		}
 	};
 
 	getButtons = () => {
