@@ -34,32 +34,23 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  *
  * @param {Array} logs activity log items
  * @param {Number} activityId selected rewind operation
- * @returns {[Array, Array, Array]} [ before, at, after ]
+ * @returns {[Array, ?Object, Array]} [ before, above, after ]
  */
 const splitByRewind = ( logs, activityId ) => {
 	const rewindIndex = findIndex( logs, log => log.activityId === activityId );
 
 	// no dialog is open
 	if ( -1 === rewindIndex ) {
-		return [ logs, [], [] ];
+		return [ logs, null, [] ];
 	}
 
-	// dialog is open at first item
+	// first event is rewind
 	if ( 0 === rewindIndex ) {
-		return [ [], [], logs ];
-	}
-
-	// first item is immediately before
-	if ( 1 === rewindIndex ) {
-		return [ [], [ logs[ 0 ] ], logs.slice( 1 ) ];
+		return [ [], null, logs ];
 	}
 
 	// everything else is standard
-	return [
-		logs.slice( 0, rewindIndex - 1 ),
-		[ logs[ rewindIndex ] ],
-		logs.slice( rewindIndex + 1 ),
-	];
+	return [ logs.slice( 0, rewindIndex - 1 ), logs[ rewindIndex - 1 ], logs.slice( rewindIndex ) ];
 };
 
 class ActivityLogDay extends Component {
@@ -234,7 +225,7 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const [ newer, ontop, older ] = splitByRewind(
+		const [ newer, above, older ] = splitByRewind(
 			rewriteStream( logs ),
 			requestedRestoreActivityId
 		);
@@ -267,9 +258,11 @@ class ActivityLogDay extends Component {
 					onClose={ this.handleCloseDay( hasConfirmDialog ) }
 				>
 					{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
-					{ ontop.map( log => (
-						<LogItem { ...{ key: log.activityId, log, extraClasses: 'is-before-dialog' } } />
-					) ) }
+					{ above && (
+						<LogItem
+							{ ...{ key: above.activityId, log: above, extraClasses: 'is-before-dialog' } }
+						/>
+					) }
 					{ older.length > 0 && rewindConfirmDialog }
 					{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
 				</FoldableCard>
