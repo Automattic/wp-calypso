@@ -136,6 +136,7 @@
 		"posts/post-type-list": false,
 		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
+		"privacy-policy": true,
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
