@@ -174,9 +174,16 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { commentId, commentIsApproved, commentIsLiked, isPersistent, translate } = this.props;
+		const {
+			commentId,
+			commentIsApproved,
+			commentIsLiked,
+			commentStatus,
+			isPersistent,
+			translate,
+		} = this.props;
 
-		if ( isPersistent ) {
+		if ( isPersistent && ! includes( [ 'approved', 'unapproved' ], commentStatus ) ) {
 			return <CommentConfirmation { ...{ commentId } } undo={ this.undo } />;
 		}
 
