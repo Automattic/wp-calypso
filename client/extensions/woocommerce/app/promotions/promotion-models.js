@@ -120,7 +120,7 @@ const couponConditions = {
 		},
 		maximumAmount: {
 			component: CurrencyField,
-			labelText: translate( 'The total discount cannot exceed a certain amount' ),
+			labelText: translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ),
 			isEnableable: true,
 			defaultValue: 100,
 		},
