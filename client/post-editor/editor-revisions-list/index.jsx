@@ -37,17 +37,10 @@ class EditorRevisionsList extends PureComponent {
 		this.props.selectPostRevision( firstRevision.id );
 	};
 
-	componentWillMount() {
-		this.trySelectingFirstRevision();
-	}
-
-	componentDidMount() {
-		// Make sure that scroll position in the editor is not preserved.
-		window.scrollTo( 0, 0 );
-	}
-
-	componentWillUpdate() {
-		this.trySelectingFirstRevision();
+	componentWillReceiveProps( { selectedRevisionId } ) {
+		if ( ! selectedRevisionId || ! this.props.selectedRevisionId ) {
+			this.trySelectingFirstRevision();
+		}
 	}
 
 	render() {
