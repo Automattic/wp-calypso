@@ -27,7 +27,7 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
-import { getSite, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
@@ -279,7 +279,6 @@ export class CommentDetail extends Component {
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
-			site,
 			siteBlacklist,
 			siteId,
 			translate,
@@ -333,7 +332,6 @@ export class CommentDetail extends Component {
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
-					site={ site }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
@@ -464,8 +462,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		postUrl: isJetpack ? get( comment, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
-		site: getSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		siteId: get( comment, 'siteId', siteId ),
 	};
 };
 
