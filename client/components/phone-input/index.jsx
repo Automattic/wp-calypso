@@ -225,6 +225,7 @@ class PhoneInput extends React.PureComponent {
 		} else {
 			inputValue = '+' + this.getCountry( newCountryCode ).dialCode + nationalNumber;
 		}
+
 		this.props.onChange( {
 			countryCode: newCountryCode,
 			value: this.format( inputValue, newCountryCode ),

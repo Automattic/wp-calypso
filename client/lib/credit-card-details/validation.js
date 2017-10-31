@@ -8,8 +8,42 @@ import creditcards from 'creditcards';
 import { capitalize, compact, inRange, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
 
-function creditCardFieldRules() {
+/**
+ * Internal dependencies
+ */
+import { isEbanx } from 'lib/credit-card-details/payment-processors';
+
+function ebanxFieldRules() {
 	return {
+		document: {
+			description: i18n.translate( 'Taxpayer Identification Number' ),
+			rules: [ 'required' ],
+		},
+
+		'street-number': {
+			description: i18n.translate( 'Street Number' ),
+			rules: [ 'required' ],
+		},
+
+		address: {
+			description: i18n.translate( 'Address' ),
+			rules: [ 'required' ],
+		},
+
+		state: {
+			description: i18n.translate( 'State' ),
+			rules: [ 'required' ],
+		},
+
+		city: {
+			description: i18n.translate( 'City' ),
+			rules: [ 'required' ],
+		},
+	};
+}
+
+function creditCardFieldRules( additionalFieldRules = {} ) {
+	return Object.assign( {
 		name: {
 			description: i18n.translate( 'Name on Card', {
 				context: 'Upgrades: Card holder name label on credit card form',
@@ -48,7 +82,12 @@ function creditCardFieldRules() {
 			} ),
 			rules: [ 'required' ],
 		},
-	};
+
+		'phone-number': {
+			description: i18n.translate( 'Phone Number' ),
+			rules: [ 'required' ],
+		},
+	}, additionalFieldRules );
 }
 
 function parseExpiration( value ) {
@@ -116,7 +155,7 @@ validators.validExpirationDate = {
 };
 
 function validateCardDetails( cardDetails ) {
-	const rules = creditCardFieldRules(),
+	const rules = creditCardFieldRules( getAdditionalFieldRules( cardDetails ) ),
 		errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
 			const field = rules[ fieldName ],
 				newErrors = getErrors( field, cardDetails[ fieldName ], cardDetails );
@@ -177,6 +216,20 @@ function getErrors( field, value, cardDetails ) {
 	);
 }
 
+/**
+ *
+ * @param {object} cardDetails - a map of credit card field key value pairs
+ * @returns {object|null} If match is found,
+ * an object containing rule sets for specific credit card processing providers,
+ * otherwise `null`
+ */
+function getAdditionalFieldRules( { country } ) {
+	if ( isEbanx( country ) ) {
+		return ebanxFieldRules();
+	}
+	return null;
+}
+
 function getValidator( rule ) {
 	if ( isArray( rule ) ) {
 		return validators[ rule[ 0 ] ].apply( null, rule.slice( 1 ) );
@@ -186,6 +239,6 @@ function getValidator( rule ) {
 }
 
 export default {
-	getCreditCardType: getCreditCardType,
-	validateCardDetails: validateCardDetails,
+	getCreditCardType,
+	validateCardDetails,
 };
