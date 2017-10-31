@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
+import sinon, { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -13,29 +13,25 @@ import { openEditorSidebar, closeEditorSidebar, setNestedSidebar } from '../acti
 import { EDITOR_NESTED_SIDEBAR_SET, LAYOUT_FOCUS_SET } from 'state/action-types';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.reset();
-	} );
-
 	describe( '#openEditorSidebar', () => {
 		test( 'should dispatch setLayoutFocus action with a value of "sidebar"', () => {
+			const dispatch = spy();
 			const expectedAction = { area: 'sidebar', type: LAYOUT_FOCUS_SET };
 
-			openEditorSidebar()( spy );
+			openEditorSidebar()( dispatch );
 
-			expect( spy ).to.have.been.calledWith( expectedAction );
+			expect( dispatch ).to.have.been.calledWith( sinon.match( expectedAction ) );
 		} );
 	} );
 
 	describe( '#closeEditorSidebar', () => {
 		test( 'should dispatch setLayoutFocus action with a value of "content"', () => {
+			const dispatch = spy();
 			const expectedAction = { area: 'content', type: LAYOUT_FOCUS_SET };
 
-			closeEditorSidebar()( spy );
+			closeEditorSidebar()( dispatch );
 
-			expect( spy ).to.have.been.calledWith( expectedAction );
+			expect( dispatch ).to.have.been.calledWith( sinon.match( expectedAction ) );
 		} );
 	} );
 
