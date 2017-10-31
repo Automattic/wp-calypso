@@ -144,11 +144,7 @@ class PostTypeList extends Component {
 	maybeLoadNextPage() {
 		const { scrollContainer, lastPageToRequest, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
-		if (
-			! scrollContainer ||
-			isRequestingPosts ||
-			maxRequestedPage >= lastPageToRequest
-		) {
+		if ( ! scrollContainer || isRequestingPosts || maxRequestedPage >= lastPageToRequest ) {
 			return;
 		}
 
@@ -173,11 +169,8 @@ class PostTypeList extends Component {
 
 	renderMaxPagesNotice() {
 		const { siteId, totalPageCount, totalPostCount } = this.props;
-		const isTruncated = (
-			null === siteId &&
-			this.hasListFullyLoaded() &&
-			totalPageCount > MAX_ALL_SITES_PAGES
-		);
+		const isTruncated =
+			null === siteId && this.hasListFullyLoaded() && totalPageCount > MAX_ALL_SITES_PAGES;
 
 		if ( ! isTruncated ) {
 			return null;
@@ -219,13 +212,10 @@ class PostTypeList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ query && range( 1, maxRequestedPage + 1 ).map( page => (
-					<QueryPosts
-						key={ `query-${ page }` }
-						siteId={ siteId }
-						query={ { ...query, page } }
-					/>
-				) ) }
+				{ query &&
+					range( 1, maxRequestedPage + 1 ).map( page => (
+						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
+					) ) }
 				{ posts && posts.map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
@@ -241,11 +231,8 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
 	const totalPageCount = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
-	const lastPageToRequest = (
-		siteId === null
-			? Math.min( MAX_ALL_SITES_PAGES, totalPageCount )
-			: totalPageCount
-	);
+	const lastPageToRequest =
+		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
 
 	return {
 		siteId,
