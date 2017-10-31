@@ -469,6 +469,7 @@
 
 .jetpack-connect__plans-nav-buttons {
 	text-align: center;
+	margin-bottom: 17px;
 
 	.button .gridicon {
 		padding-left: 4px;
@@ -491,10 +492,6 @@
 }
 
 .jetpack-connect__plans {
-	.plans-wrapper {
-		padding-bottom: 0;
-	}
-
 	.plan-features__header-figure {
 		height: 32px;
 		width: 32px;
@@ -503,14 +500,6 @@
 	.plan-features__header-timeframe {
 		height: 20px;
 		margin-top: 11px;
-	}
-
-	.plan-features__graphic {
-		display: none;
-	}
-
-	.plan-features__pricing {
-		padding-top: 16px;
 	}
 
 	.plan-price.is-original {
@@ -541,4 +530,24 @@
 
 .jetpack-connect__auth-form-header-image {
 	text-align: center;
+}
+
+@media ( max-height: 920px ) {
+	.jetpack-connect__plans-nav-buttons {
+		margin-bottom: 0;
+	}
+
+	.jetpack-connect__plans {
+		.plans-wrapper {
+			padding-bottom: 0;
+		}
+
+		.plan-features__graphic {
+			display: none;
+		}
+
+		.plan-features__pricing {
+			padding-top: 16px;
+		}
+	}
 }
