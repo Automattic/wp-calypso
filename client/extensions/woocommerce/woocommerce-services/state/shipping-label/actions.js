@@ -779,7 +779,7 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 		};
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE, labelId, response, error } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE, orderId, siteId, labelId, response, error } );
 				if ( error ) {
 					dispatch( NoticeActions.errorNotice( error.toString() ) );
 				}
