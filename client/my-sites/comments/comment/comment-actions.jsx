@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { get, includes, isEmpty } from 'lodash';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
@@ -246,10 +247,21 @@ export class CommentActions extends Component {
 					) }
 				</div>
 
-				{ isPersistent &&
-				! includes( [ 'approved', 'unapproved' ], commentStatus ) && (
-					<CommentConfirmation { ...{ commentId } } undo={ this.undo } />
-				) }
+				<ReactCSSTransitionGroup
+					className="comment__confirmation-transition"
+					transitionEnterTimeout={ 150 }
+					transitionLeaveTimeout={ 150 }
+					transitionName="comment__confirmation-transition"
+				>
+					{ isPersistent &&
+					! includes( [ 'approved', 'unapproved' ], commentStatus ) && (
+						<CommentConfirmation
+							{ ...{ commentId } }
+							key="comment__confirmation"
+							undo={ this.undo }
+						/>
+					) }
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

@@ -485,6 +485,21 @@
 	}
 }
 
+.comment__confirmation-transition-enter {
+	opacity: 0.01;
+}
+.comment__confirmation-transition-enter-active {
+	opacity: 1;
+	transition: opacity 0.15s linear;
+}
+.comment__confirmation-transition-leave {
+	opacity: 1;
+}
+.comment__confirmation-transition-leave-active {
+	opacity: 0.01;
+	transition: opacity 0.15s linear;
+}
+
 // Collapsed View
 
 .card.comment.is-collapsed {

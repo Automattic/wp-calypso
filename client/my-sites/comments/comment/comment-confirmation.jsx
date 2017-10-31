@@ -26,21 +26,23 @@ export class CommentConfirmation extends Component {
 
 		return (
 			<div className="comment__confirmation">
-				<div className="comment__confirmation-alert">
-					{ commentIsSpam && (
-						<div>
-							{ translate( 'Marked as Spam' ) }
-							<Gridicon icon="spam" size={ 18 } />
-						</div>
-					) }
-					{ commentIsTrash && (
-						<div>
-							{ translate( 'Moved to Trash' ) }
-							<Gridicon icon="trash" size={ 18 } />
-						</div>
-					) }
-					<a onClick={ undo }>{ translate( 'Undo?' ) }</a>
-				</div>
+				{ ( commentIsSpam || commentIsTrash ) && (
+					<div className="comment__confirmation-alert">
+						{ commentIsSpam && (
+							<div>
+								{ translate( 'Marked as Spam' ) }
+								<Gridicon icon="spam" size={ 18 } />
+							</div>
+						) }
+						{ commentIsTrash && (
+							<div>
+								{ translate( 'Moved to Trash' ) }
+								<Gridicon icon="trash" size={ 18 } />
+							</div>
+						) }
+						<a onClick={ undo }>{ translate( 'Undo?' ) }</a>
+					</div>
+				) }
 			</div>
 		);
 	}
