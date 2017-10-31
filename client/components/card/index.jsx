@@ -48,7 +48,9 @@ class Card extends Component {
 			linkIndicator = (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 			);
-		} else {
+		}
+
+		if ( href ) {
 			omitProps.push( 'href', 'target' );
 		}
 
