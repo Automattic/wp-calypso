@@ -49,6 +49,33 @@ export function getIsDeauthorizing( state, siteId = getSelectedSiteId( state ) )
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we are presently attempting to complete the OAuth connection
+ */
+export function getIsOAuthConnecting( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isOAuthConnecting' ], false );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether we are presently requesting oauth initialization
+ */
+export function getIsOAuthInitializing( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'isOAuthInitializing' ], false );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {String} URL to which to navigate to kick off the OAuth flow at Stripe
+ */
+export function getOAuthURL( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'oauthUrl' ], '' );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether we are presently requesting connect account details from the server
  */
 export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
@@ -62,5 +89,13 @@ export function getIsRequesting( state, siteId = getSelectedSiteId( state ) ) {
  */
 export function getStripeConnectAccount( state, siteId = getSelectedSiteId( state ) ) {
 	const rawSettings = getRawSettings( state, siteId );
-	return omit( rawSettings, [ 'error', 'isCreating', 'isDeauthorizing', 'isRequesting' ] );
+	return omit( rawSettings, [
+		'error',
+		'isCreating',
+		'isDeauthorizing',
+		'isOAuthConnecting',
+		'isOAuthInitializing',
+		'isRequesting',
+		'oauthUrl',
+	] );
 }

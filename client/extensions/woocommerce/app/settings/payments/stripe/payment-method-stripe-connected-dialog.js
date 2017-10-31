@@ -25,7 +25,7 @@ import {
 	getStripeConnectAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils.js';
+import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 

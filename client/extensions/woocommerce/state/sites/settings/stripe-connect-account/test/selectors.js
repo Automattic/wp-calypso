@@ -8,7 +8,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getError, getIsCreating, getIsDeauthorizing, getIsRequesting, getStripeConnectAccount } from '../selectors';
+import {
+	getError,
+	getIsCreating,
+	getIsDeauthorizing,
+	getIsOAuthConnecting,
+	getIsOAuthInitializing,
+	getIsRequesting,
+	getOAuthURL,
+	getStripeConnectAccount,
+} from '../selectors';
 
 const uninitializedState = {
 	extensions: {
@@ -170,6 +179,112 @@ const deauthorizedState = {
 	},
 };
 
+const oauthInitializingState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: '',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: true,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const oauthConnectingState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: '',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: false,
+							isOAuthConnecting: true,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const oauthConnectedState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: 'acct_14qyt6Alijdnw0EA',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: false,
+							isOAuthConnecting: false,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: '',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
+const oauthInitializedState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						stripeConnectAccount: {
+							connectedUserID: '',
+							displayName: '',
+							email: '',
+							firstName: '',
+							isActivated: false,
+							isDeauthorizing: false,
+							isOAuthInitializing: false,
+							isRequesting: false,
+							logo: '',
+							lastName: '',
+							oauthUrl: 'https://connect.stripe.com/oauth/authorize',
+						},
+					},
+				},
+			},
+		},
+	},
+};
+
 describe( 'selectors', () => {
 	describe( '#getIsCreating', () => {
 		test( 'should be false when state is uninitialized.', () => {
@@ -242,6 +357,50 @@ describe( 'selectors', () => {
 
 		test( 'should be false when deauthorization has completed.', () => {
 			expect( getIsDeauthorizing( deauthorizedState, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getIsOAuthInitializing', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( getIsOAuthInitializing( uninitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when initializing.', () => {
+			expect( getIsOAuthInitializing( oauthInitializingState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when initialization has completed.', () => {
+			expect( getIsOAuthInitializing( oauthInitializedState, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getIsOAuthConnecting', () => {
+		test( 'should be false when woocommerce state is not available.', () => {
+			expect( getIsOAuthConnecting( uninitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when connecting.', () => {
+			expect( getIsOAuthConnecting( oauthConnectingState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when connection has completed.', () => {
+			expect( getIsOAuthConnecting( oauthConnectedState, 123 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getOAuthURL', () => {
+		test( 'should be empty when woocommerce state is not available.', () => {
+			expect( getOAuthURL( uninitializedState, 123 ) ).to.eql( '' );
+		} );
+
+		test( 'should be empty when initializing.', () => {
+			expect( getOAuthURL( oauthInitializingState, 123 ) ).to.be.eql( '' );
+		} );
+
+		test( 'should have a URL when initialization has completed.', () => {
+			expect( getOAuthURL( oauthInitializedState, 123 ) ).to.eql(
+				'https://connect.stripe.com/oauth/authorize'
+			);
 		} );
 	} );
 } );

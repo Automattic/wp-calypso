@@ -20,13 +20,17 @@ import {
 import {
 	clearError,
 	createAccount,
+	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import Dialog from 'components/dialog';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 import {
 	getError,
 	getIsCreating,
+	getIsOAuthInitializing,
+	getOAuthURL,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getLink, getOrigin } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
@@ -41,7 +45,6 @@ class PaymentMethodStripeSetupDialog extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			createAllowed: true,
 			createSelected: true,
 		};
 	}
@@ -59,28 +62,43 @@ class PaymentMethodStripeSetupDialog extends Component {
 	};
 
 	onSelectConnect = () => {
-		const { isCreating } = this.props;
+		const { isCreating, isOAuthInitializing, oauthUrl, siteId, siteSlug } = this.props;
 		if ( isCreating ) {
 			return;
 		}
 		this.setState( { createSelected: false } );
+
+		// See if we still need to initialize OAuth, and if so, do so
+		if ( ! isOAuthInitializing && 0 === oauthUrl.length ) {
+			const origin = getOrigin();
+			const path = getLink( '/store/settings/payments/:site', { slug: siteSlug } );
+			const returnUrl = `${ origin }${ path }`;
+			this.props.oauthInit( siteId, returnUrl );
+		}
 	};
 
 	onConnect = () => {
-		const { country, email, siteId } = this.props;
-		this.props.createAccount( siteId, email, country );
+		const { country, email, oauthUrl, siteId } = this.props;
+
+		if ( this.state.createSelected ) {
+			this.props.createAccount( siteId, email, country );
+		} else {
+			window.location = oauthUrl;
+		}
 	};
 
 	getButtons = () => {
-		const { isCreating, isLoadingAddress, onCancel, onUserRequestsKeyFlow, translate } = this.props;
-		const { createAllowed, createSelected } = this.state;
+		const {
+			isCreating,
+			isLoadingAddress,
+			isOAuthInitializing,
+			onCancel,
+			onUserRequestsKeyFlow,
+			translate,
+		} = this.props;
 
 		const buttons = [];
-		const isBusy = isCreating || isLoadingAddress;
-
-		// connect/OAuth is coming in next PR, so enable the connect button for create only for now
-		const connectButtonDisabled =
-			isBusy || ! createSelected || ( createSelected && ! createAllowed );
+		const isBusy = isCreating || isLoadingAddress || isOAuthInitializing;
 
 		// Allow them to switch to key based flow if they want
 		buttons.push( {
@@ -101,7 +119,7 @@ class PaymentMethodStripeSetupDialog extends Component {
 		// And then the connect button itself
 		buttons.push( {
 			action: 'connect',
-			disabled: connectButtonDisabled,
+			disabled: isBusy,
 			isPrimary: true,
 			label: translate( 'Connect' ),
 			onClick: this.onConnect,
@@ -146,9 +164,12 @@ function mapStateToProps( state ) {
 	const email = getCurrentUserEmail( state );
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID || false;
+	const siteSlug = site.slug || '';
 
 	const error = getError( state, siteId );
 	const isCreating = getIsCreating( state, siteId );
+	const isOAuthInitializing = getIsOAuthInitializing( state, siteId );
+	const oauthUrl = getOAuthURL( state, siteId );
 
 	const isLoadingAddress = areSettingsGeneralLoading( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
@@ -160,7 +181,10 @@ function mapStateToProps( state ) {
 		error,
 		isCreating,
 		isLoadingAddress,
+		isOAuthInitializing,
+		oauthUrl,
 		siteId,
+		siteSlug,
 	};
 }
 
@@ -169,6 +193,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			clearError,
 			createAccount,
+			oauthInit,
 		},
 		dispatch
 	);
