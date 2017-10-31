@@ -316,7 +316,7 @@ export const oauthConnect = (
 	dispatch( connectAction );
 
 	return request( siteId )
-		.post( 'connect/stripe/oauth/connect', { stripeCode, stripeState }, 'wc/v1' )
+		.post( 'connect/stripe/oauth/connect', { code: stripeCode, state: stripeState }, 'wc/v1' )
 		.then( data => {
 			dispatch( oauthConnectSuccess( siteId, connectAction, data ) );
 			if ( successAction ) {
