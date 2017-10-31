@@ -425,7 +425,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				abtest( 'signupSurveyStep' );
+				return;
 			}
 		}
 	},
