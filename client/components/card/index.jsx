@@ -18,15 +18,26 @@ class Card extends Component {
 		compact: PropTypes.bool,
 		children: PropTypes.node,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
+		showLinkIndicator: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		tagName: 'div',
 		highlight: false,
+		showLinkIndicator: true,
 	};
 
 	render() {
-		const { children, compact, highlight, href, onClick, tagName, target } = this.props;
+		const {
+			children,
+			compact,
+			highlight,
+			href,
+			onClick,
+			showLinkIndicator,
+			tagName,
+			target,
+		} = this.props;
 
 		const highlightClass = highlight ? 'is-' + highlight : false;
 
@@ -44,7 +55,7 @@ class Card extends Component {
 		const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 		let linkIndicator;
-		if ( href || onClick ) {
+		if ( showLinkIndicator && ( href || onClick ) ) {
 			linkIndicator = (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 			);
