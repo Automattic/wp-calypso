@@ -4,8 +4,7 @@
  * @format
  */
 
-import { assign, filter, map, pick, sortBy, transform } from 'lodash';
-import sanitizeHtml from 'sanitize-html';
+import { assign, filter, map, pick, sortBy, startsWith, transform } from 'lodash';
 
 /**
  * Internal dependencies
@@ -148,41 +147,136 @@ const PluginUtils = {
 	},
 
 	sanitizeSectionContent: content => {
-		return sanitizeHtml( content, {
-			allowedTags: [
-				'h4',
-				'h5',
-				'h6',
-				'blockquote',
-				'code',
-				'b',
-				'i',
-				'em',
-				'strong',
-				'a',
-				'p',
-				'img',
-				'ul',
-				'ol',
-				'li',
-			],
-			allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
-			allowedSchemes: [ 'http', 'https' ],
-			transformTags: {
-				h1: 'h3',
-				h2: 'h3',
-				a: ( tagName, attribs ) => {
-					return {
-						tagName: 'a',
-						attribs: {
-							...pick( attribs, [ 'href' ] ),
-							target: '_blank',
-							rel: 'external noopener noreferrer',
-						},
-					};
-				},
-			},
-		} );
+		const isAllowedTag = name => {
+			switch ( name ) {
+				case '#text':
+				case 'a':
+				case 'b':
+				case 'blockquote':
+				case 'code':
+				case 'div':
+				case 'em':
+				case 'h1':
+				case 'h2':
+				case 'h3':
+				case 'h4':
+				case 'h5':
+				case 'h6':
+				case 'i':
+				case 'img':
+				case 'li':
+				case 'ol':
+				case 'p':
+				case 'span':
+				case 'strong':
+				case 'ul':
+					return true;
+				default:
+					return false;
+			}
+		};
+
+		const isAllowedAttr = ( tag, name ) =>
+			( 'a' === tag && 'href' === name ) ||
+			( 'iframe' === tag &&
+				( 'class' === name ||
+					'type' === name ||
+					'height' === name ||
+					'width' === name ||
+					'src' === name ) ) ||
+			( 'img' === tag && ( 'alt' === name || 'src' === name ) );
+
+		const parser = new DOMParser();
+		const doc = parser.parseFromString( `<div>${ content }</div>`, 'text/html' );
+
+		const walker = doc.createTreeWalker(
+			doc.body,
+			NodeFilter.SHOW_ALL,
+			{ acceptNode: () => NodeFilter.FILTER_ACCEPT },
+			false
+		);
+
+		const removeList = [];
+
+		const isValidUrl = url => {
+			const link = document.createElement( 'a' );
+			link.href = url;
+
+			return (
+				( startsWith( url, 'http://' ) || startsWith( url, 'https://' ) ) &&
+				link.host !== window.location.host
+			);
+		};
+
+		const isValidYoutube = node => {
+			if ( node.nodeName.toLowerCase() !== 'iframe' ) {
+				return false;
+			}
+
+			if ( node.getAttribute( 'class' ) !== 'youtube-player' ) {
+				return false;
+			}
+
+			if ( node.getAttribute( 'type' ) !== 'text/html' ) {
+				return false;
+			}
+
+			const link = document.createElement( 'a' );
+			link.href = node.getAttribute( 'src' );
+
+			return (
+				isValidUrl( node.getAttribute( 'src' ) ) &&
+				( link.protocol === 'http:' || link.protocol === 'https:' ) &&
+				( link.hostname === 'youtube.com' || link.hostname === 'www.youtube.com' )
+			);
+		};
+
+		while ( walker.nextNode() ) {
+			const node = walker.currentNode;
+			const tag = node.nodeName.toLowerCase();
+
+			if ( ! isAllowedTag( tag ) && ! isValidYoutube( node ) ) {
+				removeList.push( node );
+				continue;
+			}
+
+			if ( node.attributes ) {
+				for ( let i = 0; i < node.attributes.length; i++ ) {
+					const { name, value } = node.attributes[ i ];
+
+					if ( ! isAllowedAttr( tag, name ) ) {
+						node.removeAttribute( name );
+						continue;
+					}
+
+					if (
+						( ( 'src' === name || 'href' === name ) && isValidUrl( value ) ) ||
+						( 'iframe' === tag && 'type' === name && isValidYoutube( node ) )
+					) {
+						continue;
+					}
+
+					node.setAttribute( name, encodeURIComponent( value ) );
+				}
+			}
+
+			if ( 'a' === tag ) {
+				node.setAttribute( 'target', '_blank' );
+				node.setAttribute( 'rel', 'external noopener noreferrer' );
+			}
+		}
+
+		for ( let i = 0; i < removeList.length; i++ ) {
+			const node = removeList[ i ];
+
+			try {
+				node.parentNode.removeChild( node );
+			} catch ( e ) {
+				// already remove in earlier iteration
+			}
+		}
+
+		return doc.body.innerHTML.replace( /<h[12]/, '<h3' );
 	},
 
 	normalizePluginData: function( plugin, pluginData ) {
