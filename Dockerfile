@@ -1,4 +1,4 @@
-FROM       node:6.11.5
+FROM       node:8.9.1
 MAINTAINER Automattic
 
 WORKDIR    /calypso
