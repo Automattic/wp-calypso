@@ -31,12 +31,14 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import {
+	getPromotionEdits,
 	getPromotionWithLocalEdits,
 	getPromotionableProducts,
 } from 'woocommerce/state/selectors/promotions';
 import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
+import { ProtectFormGuard } from 'lib/protect-form';
 
 class PromotionUpdate extends React.Component {
 	static propTypes = {
@@ -98,12 +100,15 @@ class PromotionUpdate extends React.Component {
 
 	onTrash = () => {
 		const { translate, site, promotion, deletePromotion: dispatchDelete } = this.props;
-		const areYouSure = translate( 'Are you sure you want to delete this promotion?' );
+		const areYouSure = translate( 'Are you sure you want to permanently delete this promotion?' );
 		accept( areYouSure, accepted => {
 			if ( ! accepted ) {
 				return;
 			}
+
 			const successAction = dispatch => {
+				this.props.clearPromotionEdits( site.ID );
+
 				dispatch( successNotice( translate( 'Promotion successfully deleted.' ) ) );
 				debounce( () => {
 					page.redirect( getLink( '/store/promotions/:site/', site ) );
@@ -136,6 +141,8 @@ class PromotionUpdate extends React.Component {
 		};
 
 		const successAction = dispatch => {
+			this.props.clearPromotionEdits( site.ID );
+
 			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
 		};
@@ -155,11 +162,19 @@ class PromotionUpdate extends React.Component {
 	};
 
 	render() {
-		const { site, currency, className, promotion, products, productCategories } = this.props;
+		const {
+			site,
+			currency,
+			className,
+			promotion,
+			products,
+			productCategories,
+			hasEdits,
+		} = this.props;
 		const { busy } = this.state;
 
 		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
-		const saveEnabled = isValid && ! busy;
+		const saveEnabled = isValid && ! busy && hasEdits;
 
 		return (
 			<Main className={ className }>
@@ -170,6 +185,7 @@ class PromotionUpdate extends React.Component {
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ busy }
 				/>
+				<ProtectFormGuard isChanged={ hasEdits } />
 				<PromotionForm
 					siteId={ site && site.ID }
 					currency={ currency }
@@ -191,8 +207,10 @@ function mapStateToProps( state, ownProps ) {
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const products = getPromotionableProducts( state, site.ID );
 	const productCategories = getProductCategories( state, site.ID );
+	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
 
 	return {
+		hasEdits,
 		site,
 		promotion,
 		currency,
