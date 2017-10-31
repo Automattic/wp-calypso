@@ -15,12 +15,14 @@ import { head, map } from 'lodash';
  */
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
+import LoadButton from './load-button';
 import { getPostRevisionsSelectedRevisionId } from 'state/selectors';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
 		postId: PropTypes.number,
+		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
 		selectedRevisionId: PropTypes.number,
 	};
@@ -44,7 +46,7 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	render() {
-		const { revisions, selectedRevisionId } = this.props;
+		const { postId, revisions, selectedRevisionId, siteId } = this.props;
 		return (
 			<div className="editor-revisions-list">
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
@@ -62,6 +64,7 @@ class EditorRevisionsList extends PureComponent {
 						} ) }
 					</ul>
 				</div>
+				<LoadButton postId={ postId } selectedRevisionId={ selectedRevisionId } siteId={ siteId } />
 			</div>
 		);
 	}

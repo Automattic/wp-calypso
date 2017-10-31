@@ -27,7 +27,7 @@ const EditorDiffViewer = ( { revisionChanges } ) => (
 
 EditorDiffViewer.propTypes = {
 	postId: PropTypes.number.isRequired,
-	selectedRevisionId: PropTypes.number.isRequired,
+	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 
 	// connected

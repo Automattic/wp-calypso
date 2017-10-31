@@ -39,9 +39,11 @@ class HistoryButton extends PureComponent {
 					{ translate( 'History' ) }
 				</button>
 				<Popover
-					isVisible={ this.state.isPopoverVisible }
+					className="editor-ground-control__popover"
 					context={ this.refs && this.refs.historyPopoverButton }
+					isVisible={ this.state.isPopoverVisible }
 					onClose={ this.toggleShowingPopover }
+					position="bottom"
 				>
 					<EditorRevisions />
 				</Popover>
