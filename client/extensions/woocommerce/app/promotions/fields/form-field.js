@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -46,13 +47,18 @@ const FormField = ( {
 		);
 	}
 
+	const childrenClassNames = classNames(
+		'fields__fieldset-children',
+		{ 'fields__fieldset-children-enableable': enableCheckbox }
+	);
+
 	return (
 		<FormFieldset className="fields__fieldset">
 			<FormLabel id={ fieldName + '-label' } required={ isRequired }>
 				{ enableCheckbox }
 				{ labelText }
 			</FormLabel>
-			<div className="fields__fieldset-children">
+			<div className={ childrenClassNames }>
 				{ showChildren && children }
 				{ explanation }
 			</div>
