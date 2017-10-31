@@ -5,6 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -22,8 +23,10 @@ const Troubleshoot = ( { siteUrl, trackDebugClick, trackSupportClick, translate 
 	<LoggedOutFormLinks>
 		<LoggedOutFormLinkItem
 			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
+			icon
 			onClick={ trackDebugClick }
 		>
+			<Gridicon size={ 18 } icon="offline" />
 			{ translate( 'Diagnose a connection problem' ) }
 		</LoggedOutFormLinkItem>
 		<JetpackConnectHappychatButton
