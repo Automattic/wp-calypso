@@ -41,11 +41,22 @@ export class CommentActions extends Component {
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
 	setStatus = status => {
-		const { changeStatus, commentId, commentIsLiked, postId, siteId, unlike } = this.props;
+		const {
+			changeStatus,
+			commentId,
+			commentIsLiked,
+			commentStatus,
+			postId,
+			siteId,
+			unlike,
+		} = this.props;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
-		changeStatus( siteId, postId, commentId, status, { alsoUnlike } );
+		changeStatus( siteId, postId, commentId, status, {
+			alsoUnlike,
+			previousStatus: commentStatus,
+		} );
 
 		if ( alsoUnlike ) {
 			unlike( siteId, postId, commentId );
@@ -164,7 +175,13 @@ const mapStateToProps = ( state, { commentId } ) => {
 };
 
 const mapDispatchToProps = dispatch => ( {
-	changeStatus: ( siteId, postId, commentId, status, analytics = { alsoUnlike: false } ) =>
+	changeStatus: (
+		siteId,
+		postId,
+		commentId,
+		status,
+		analytics = { alsoUnlike: false, isUndo: false }
+	) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
