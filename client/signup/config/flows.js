@@ -69,6 +69,7 @@ const flows = {
 		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true,
+			enableStore: true,
 		},
 	},
 
@@ -361,7 +362,8 @@ const Flows = {
 		// Replace design-type step with Store NUX flow steps if exists.
 		// Otherwise use Pressable store step for new English users as before
 		if ( includes( flow.steps, 'design-type' ) ) {
-			const storeNuxFlow = Flows.getFlows()[ 'store-nux' ];
+			const enableStore = includes( flow.steps, 'plans' ) || ( flow.meta && flow.meta.enableStore );
+			const storeNuxFlow = enableStore ? Flows.getFlows()[ 'store-nux' ] : undefined;
 			const isNewEnglishUser = ! user.get() && 'en' === i18n.getLocaleSlug();
 			if ( storeNuxFlow || isNewEnglishUser ) {
 				const steps = storeNuxFlow
