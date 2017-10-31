@@ -24,6 +24,7 @@ export class CommentsManagement extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
 		page: PropTypes.number,
+		postId: PropTypes.number,
 		showPermissionError: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteFragment: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -38,9 +39,10 @@ export class CommentsManagement extends Component {
 
 	render() {
 		const {
-			showPermissionError,
-			page,
 			changePage,
+			page,
+			postId,
+			showPermissionError,
 			siteId,
 			siteFragment,
 			status,
@@ -65,12 +67,13 @@ export class CommentsManagement extends Component {
 				) }
 				{ ! showPermissionError && (
 					<CommentList
-						page={ page }
 						changePage={ changePage }
+						order={ 'desc' }
+						page={ page }
+						postId={ postId }
 						siteId={ siteId }
 						siteFragment={ siteFragment }
 						status={ status }
-						order={ 'desc' }
 					/>
 				) }
 			</Main>

@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, orderBy, size, slice, uniq } from 'lodash';
+import { each, filter, find, get, map, orderBy, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -27,7 +27,8 @@ import { removeNotice, successNotice } from 'state/notices/actions';
 import Comment from 'my-sites/comments/comment';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentNavigation from '../comment-navigation';
+import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
@@ -189,7 +190,7 @@ export class CommentList extends Component {
 	};
 
 	setBulkStatus = status => () => {
-		const { recordBulkAction, status: listStatus } = this.props;
+		const { postId, recordBulkAction, status: listStatus } = this.props;
 		const { selectedComments } = this.state;
 
 		this.props.removeNotice( 'comment-notice-bulk' );
@@ -212,7 +213,7 @@ export class CommentList extends Component {
 			} );
 		} );
 
-		recordBulkAction( status, selectedComments.length, listStatus );
+		recordBulkAction( status, selectedComments.length, listStatus, !! postId ? 'post' : 'site' );
 
 		this.showBulkNotice( status );
 
@@ -408,6 +409,7 @@ export class CommentList extends Component {
 			isCommentsTreeSupported,
 			isLoading,
 			page,
+			postId,
 			siteBlacklist,
 			siteId,
 			siteFragment,
@@ -440,10 +442,13 @@ export class CommentList extends Component {
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
+				{ !! postId && <CommentListHeader postId={ postId } /> }
+
 				<CommentNavigation
 					commentsPage={ commentsPage }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
+					postId={ postId }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
 					setSortOrder={ this.setSortOrder }
@@ -530,8 +535,12 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status } ) => {
-	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
+const mapStateToProps = ( state, { postId, siteId, status } ) => {
+	const siteCommentsTree = getSiteCommentsTree( state, siteId, status );
+	const comments = !! postId
+		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
+		: map( siteCommentsTree, 'commentId' );
+
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,

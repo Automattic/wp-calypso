@@ -82,10 +82,15 @@ export class CommentNavigation extends Component {
 		return navItems;
 	};
 
-	getStatusPath = status =>
-		'unapproved' !== status
-			? `/comments/${ status }/${ this.props.siteFragment }`
-			: `/comments/pending/${ this.props.siteFragment }`;
+	getStatusPath = status => {
+		const { postId } = this.props;
+
+		const appendPostId = !! postId ? `/${ postId }` : '';
+
+		return 'unapproved' !== status
+			? `/comments/${ status }/${ this.props.siteFragment }${ appendPostId }`
+			: `/comments/pending/${ this.props.siteFragment }${ appendPostId }`;
+	};
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
