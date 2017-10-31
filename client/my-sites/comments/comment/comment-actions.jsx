@@ -128,6 +128,10 @@ export class CommentActions extends Component {
 		}
 	};
 
+	setSpam = () => this.setStatus( 'spam' );
+
+	setTrash = () => this.setStatus( 'trash' );
+
 	render() {
 		const { commentIsApproved, commentIsLiked, translate } = this.props;
 
