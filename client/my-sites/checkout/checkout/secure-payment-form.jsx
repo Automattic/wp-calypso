@@ -263,12 +263,20 @@ const SecurePaymentForm = createReactClass( {
 				return this.renderFreeCartPaymentBox();
 
 			case 'credit-card':
-				this.renderGreatChoiceHeader();
-				return this.renderCreditCardPaymentBox();
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderCreditCardPaymentBox() }
+					</div>
+				);
 
 			case 'paypal':
-				this.renderGreatChoiceHeader();
-				return this.renderPayPalPaymentBox();
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderPayPalPaymentBox() }
+					</div>
+				);
 
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
