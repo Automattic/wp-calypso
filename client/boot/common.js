@@ -135,10 +135,8 @@ export const locales = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 	}
 
-	// When the user is not bootstrapped, we also bootstrap the
-	// user locale strings, unless the locale was already set in the initial store during SSR
-	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
-	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && isDefaultLocale( currentLocaleSlug ) ) {
+	// Use current user's locale if it was not bootstrapped
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && currentUser.get() ) {
 		switchUserLocale( currentUser, reduxStore );
 	}
 };

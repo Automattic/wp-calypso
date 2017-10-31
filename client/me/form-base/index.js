@@ -12,6 +12,9 @@ const debug = debugFactory( 'calypso:me:form-base' );
  * Internal dependencies
  */
 import notices from 'notices';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 export default {
 	componentDidMount: function() {
@@ -90,9 +93,11 @@ export default {
 					this.props.markSaved && this.props.markSaved();
 
 					if ( this.state && this.state.redirect ) {
-						// Sometimes changes in settings require a url refresh to update the UI.
-						// For example when the user changes the language.
-						window.location = this.state.redirect + '?updated=success';
+						user.clear( () => {
+							// Sometimes changes in settings require a url refresh to update the UI.
+							// For example when the user changes the language.
+							window.location = this.state.redirect + '?updated=success';
+						} );
 						return;
 					}
 
