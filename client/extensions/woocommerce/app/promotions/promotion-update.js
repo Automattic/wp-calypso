@@ -19,7 +19,11 @@ import Main from 'components/main';
 import accept from 'lib/accept';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { fetchPromotions, updatePromotion, deletePromotion } from 'woocommerce/state/sites/promotions/actions';
+import {
+	fetchPromotions,
+	updatePromotion,
+	deletePromotion,
+} from 'woocommerce/state/sites/promotions/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
@@ -30,6 +34,7 @@ import {
 	getPromotionWithLocalEdits,
 	getPromotionableProducts,
 } from 'woocommerce/state/selectors/promotions';
+import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 
@@ -50,6 +55,14 @@ class PromotionUpdate extends React.Component {
 		fetchProductCategories: PropTypes.func.isRequired,
 		updatePromotion: PropTypes.func.isRequired,
 		deletePromotion: PropTypes.func.isRequired,
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			busy: false,
+		};
 	}
 
 	componentDidMount() {
@@ -64,8 +77,8 @@ class PromotionUpdate extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchProductCategories( newSiteId );
 			this.props.fetchPromotions( newSiteId );
@@ -87,11 +100,11 @@ class PromotionUpdate extends React.Component {
 			if ( ! accepted ) {
 				return;
 			}
-			const successAction = () => {
+			const successAction = dispatch => {
+				dispatch( successNotice( translate( 'Promotion successfully deleted.' ) ) );
 				debounce( () => {
 					page.redirect( getLink( '/store/promotions/:site/', site ) );
 				}, 1000 )();
-				return successNotice( translate( 'Promotion successfully deleted.' ) );
 			};
 			const failureAction = () => {
 				return errorNotice(
@@ -100,14 +113,16 @@ class PromotionUpdate extends React.Component {
 			};
 			dispatchDelete( site.ID, promotion, successAction, failureAction );
 		} );
-	}
+	};
 
 	onSave = () => {
 		const { site, promotion, translate } = this.props;
 
+		this.setState( () => ( { busy: true } ) );
+
 		const getSuccessNotice = () => {
 			return successNotice(
-				translate( '%(promotion)s promotion successfully created.', {
+				translate( '%(promotion)s promotion successfully updated.', {
 					args: { promotion: promotion.name },
 				} ),
 				{
@@ -117,34 +132,31 @@ class PromotionUpdate extends React.Component {
 			);
 		};
 
-		const successAction = () => {
+		const successAction = dispatch => {
+			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
-			return getSuccessNotice( promotion );
 		};
 
-		const failureAction = errorNotice(
-			translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
-				args: { promotion: promotion.name },
-			} )
-		);
+		const failureAction = dispatch => {
+			dispatch(
+				errorNotice(
+					translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
+						args: { promotion: promotion.name },
+					} )
+				)
+			);
+			this.setState( () => ( { busy: false } ) );
+		};
 
 		this.props.updatePromotion( site.ID, promotion, successAction, failureAction );
-	}
-
-	isPromotionValid() {
-		const { promotion } = this.props;
-
-		// TODO: Update with complete info.
-		return promotion && promotion.id && promotion.type;
-	}
+	};
 
 	render() {
 		const { site, currency, className, promotion, products, productCategories } = this.props;
+		const { busy } = this.state;
 
-		// TODO: Update with real info.
-		const isValid = 'undefined' !== typeof site && this.isPromotionValid();
-		const isBusy = false;
-		const saveEnabled = isValid && ! isBusy;
+		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
+		const saveEnabled = isValid && ! busy;
 
 		return (
 			<Main className={ className }>
@@ -153,7 +165,7 @@ class PromotionUpdate extends React.Component {
 					promotion={ promotion }
 					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
-					isBusy={ isBusy }
+					isBusy={ busy }
 				/>
 				<PromotionForm
 					siteId={ site && site.ID }
@@ -171,9 +183,9 @@ class PromotionUpdate extends React.Component {
 function mapStateToProps( state, ownProps ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currencySettings = getPaymentCurrencySettings( state );
-	const currency = ( currencySettings ? currencySettings.value : null );
+	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = ownProps.params.promotion;
-	const promotion = ( promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null );
+	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const products = getPromotionableProducts( state, site.ID );
 	const productCategories = getProductCategories( state, site.ID );
 

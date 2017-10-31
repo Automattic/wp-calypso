@@ -34,6 +34,9 @@ const PromotionFormTypeCard = ( {
 } ) => {
 	const promotionType = ( promotion && promotion.type ? promotion.type : '' );
 
+	const productTypesDisabled = ( promotion.couponId );
+	const couponTypesDisabled = ( promotion.productId );
+
 	const onTypeSelect = ( e ) => {
 		const type = e.target.value;
 		editPromotion( siteId, promotion, { type } );
@@ -44,10 +47,18 @@ const PromotionFormTypeCard = ( {
 			<SectionHeader label={ translate( 'Promotion type' ) } />
 			<Card className="promotions__promotion-form-type-card">
 				<FormSelect value={ promotionType } onChange={ onTypeSelect }>
-					<option value="product_sale">{ translate( 'Individual Product Sale' ) }</option>
-					<option value="fixed_product">{ translate( 'Product Discount' ) }</option>
-					<option value="fixed_cart">{ translate( 'Cart Discount' ) }</option>
-					<option value="percent">{ translate( 'Percent Cart Discount' ) }</option>
+					<option value="product_sale" disabled={ productTypesDisabled }>
+						{ translate( 'Individual Product Sale' ) }
+					</option>
+					<option value="fixed_product" disabled={ couponTypesDisabled }>
+						{ translate( 'Product Discount' ) }
+					</option>
+					<option value="fixed_cart" disabled={ couponTypesDisabled }>
+						{ translate( 'Cart Discount' ) }
+					</option>
+					<option value="percent" disabled={ couponTypesDisabled }>
+						{ translate( 'Percent Cart Discount' ) }
+					</option>
 				</FormSelect>
 				<FormSettingExplanation>
 					{ getExplanation( promotionType, translate ) }

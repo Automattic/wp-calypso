@@ -4,11 +4,12 @@
  * @format
  */
 import { trim } from 'lodash';
+import warn from 'lib/warn';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import debugFactory from 'debug';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
@@ -101,7 +102,7 @@ export function couponDeleteSuccess( { dispatch }, action ) {
 }
 
 function apiError( { dispatch }, action, error ) {
-	debug( 'API Error: ', error );
+	warn( 'Coupon API Error: ', error );
 
 	if ( action.failureAction ) {
 		dispatch( action.failureAction );

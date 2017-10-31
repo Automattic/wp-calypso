@@ -54,6 +54,7 @@ const _request = ( method, path, siteId, body, action, namespace ) => {
 			requestBody = {
 				path,
 				body: body && JSON.stringify( body ),
+				json: true,
 			};
 	}
 

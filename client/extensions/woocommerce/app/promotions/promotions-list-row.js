@@ -19,8 +19,12 @@ function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {
 		case 'product_sale':
 			return translate( 'Product Sale' );
-		case 'coupon':
-			return translate( 'Coupon' );
+		case 'fixed_cart':
+			return translate( 'Cart Discount' );
+		case 'fixed_product':
+			return translate( 'Product Discount' );
+		case 'percent':
+			return translate( 'Percent Discount' );
 	}
 }
 
@@ -30,22 +34,22 @@ function getTimeframeText( promotion, translate, moment ) {
 	if ( promotion.startDate && promotion.endDate ) {
 		return translate( '%(startDate)s - %(endDate)s', {
 			args: {
-				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
-				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+				startDate: moment( promotion.startDate ).format( 'll' ),
+				endDate: moment( promotion.endDate ).format( 'll' ),
 			},
 		} );
 	}
 	if ( promotion.endDate ) {
 		return translate( 'Ends on %(endDate)s', {
 			args: {
-				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+				endDate: moment( promotion.endDate ).format( 'll' ),
 			},
 		} );
 	}
 	if ( promotion.startDate ) {
 		return translate( '%(startDate)s - No expiration date', {
 			args: {
-				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
+				startDate: moment( promotion.startDate ).format( 'll' ),
 			},
 		} );
 	}

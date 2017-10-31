@@ -122,6 +122,10 @@ export function promotionUpdate( { dispatch }, action ) {
 	switch ( promotion.type ) {
 		case 'product_sale':
 			const product = createProductUpdateFromPromotion( promotion );
+			if ( product.id !== promotion.productId ) {
+				// This product sale is changing product, so remove it from the previous one.
+				dispatch( clearProductSale( siteId, promotion.productId, null, action.failureAction ) );
+			}
 			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
 			break;
 		case 'fixed_cart':
@@ -138,19 +142,8 @@ export function promotionDelete( { dispatch }, action ) {
 
 	switch ( promotion.type ) {
 		case 'product_sale':
-			const product = createProductUpdateFromPromotion( promotion );
-
-			const productUpdateData = {
-				id: product.id,
-				sale_price: null,
-				date_on_sale_from: null,
-				date_on_sale_from_gmt: null,
-				date_on_sale_to: null,
-				date_on_sale_to_gmt: null,
-			};
-
 			dispatch(
-				updateProduct( siteId, productUpdateData, action.successAction, action.failureAction )
+				clearProductSale( siteId, promotion.productId, action.successAction, action.failureAction )
 			);
 			break;
 		case 'fixed_cart':
@@ -161,4 +154,15 @@ export function promotionDelete( { dispatch }, action ) {
 			);
 			break;
 	}
+}
+
+function clearProductSale( siteId, productId, successAction, failureAction ) {
+	const productUpdateData = {
+		id: productId,
+		sale_price: '',
+		date_on_sale_from: null,
+		date_on_sale_to: null,
+	};
+
+	return updateProduct( siteId, productUpdateData, successAction, failureAction );
 }

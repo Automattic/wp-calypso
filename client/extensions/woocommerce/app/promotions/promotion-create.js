@@ -26,6 +26,7 @@ import {
 	getCurrentlyEditingPromotionId,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
+import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -47,6 +48,14 @@ class PromotionCreate extends React.Component {
 		fetchPromotions: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			busy: false,
+		};
+	}
 
 	componentDidMount() {
 		const { site } = this.props;
@@ -79,6 +88,8 @@ class PromotionCreate extends React.Component {
 	onSave = () => {
 		const { site, promotion, translate } = this.props;
 
+		this.setState( () => ( { busy: true } ) );
+
 		const getSuccessNotice = () => {
 			return successNotice(
 				translate( '%(promotion)s promotion successfully created.', {
@@ -91,33 +102,31 @@ class PromotionCreate extends React.Component {
 			);
 		};
 
-		const successAction = () => {
+		const successAction = dispatch => {
+			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
-			return getSuccessNotice( promotion );
 		};
 
-		const failureAction = errorNotice(
-			translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
-				args: { promotion: promotion.name },
-			} )
-		);
+		const failureAction = dispatch => {
+			dispatch(
+				errorNotice(
+					translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
+						args: { promotion: promotion.name },
+					} )
+				)
+			);
+			this.setState( () => ( { busy: false } ) );
+		};
 
 		this.props.createPromotion( site.ID, promotion, successAction, failureAction );
-	}
-
-	isPromotionValid() {
-		const { promotion } = this.props;
-
-		// TODO: Update with complete info.
-		return promotion && promotion.id && promotion.type;
-	}
+	};
 
 	render() {
 		const { site, currency, className, promotion } = this.props;
+		const { busy } = this.state;
 
-		const isValid = 'undefined' !== typeof site && this.isPromotionValid();
-		const isBusy = false;
-		const saveEnabled = isValid && ! isBusy;
+		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
+		const saveEnabled = isValid && ! busy;
 
 		return (
 			<Main className={ className }>
@@ -125,7 +134,7 @@ class PromotionCreate extends React.Component {
 					site={ site }
 					promotion={ promotion }
 					onSave={ saveEnabled ? this.onSave : false }
-					isBusy={ isBusy }
+					isBusy={ busy }
 				/>
 				<PromotionForm
 					siteId={ site && site.ID }

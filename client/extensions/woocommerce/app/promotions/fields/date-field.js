@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,18 +12,18 @@ import DatePicker from 'components/date-picker';
 import FormField from './form-field';
 
 const DateField = ( props ) => {
-	const { fieldName, explanationText, value, edit } = props;
+	const { fieldName, explanationText, value, edit, moment } = props;
 	const selectedDay = ( value ? new Date( value ) : new Date() );
 
 	const onSelectDay = ( day ) => {
-		edit( fieldName, day.toISOString() );
+		edit( fieldName, moment( day ).format( 'YYYY-MM-DDTHH:mm:ss' ) );
 	};
 
 	return (
 		<FormField { ...props }>
 			<DatePicker
 				aria-describedby={ explanationText && fieldName + '-description' }
-				initialMonth={ selectedDay }
+				calendarViewDate={ selectedDay }
 				selectedDay={ selectedDay }
 				onSelectDay={ onSelectDay }
 			/>
@@ -37,5 +38,5 @@ DateField.PropTypes = {
 	edit: PropTypes.func.isRequired,
 };
 
-export default DateField;
+export default localize( DateField );
 
