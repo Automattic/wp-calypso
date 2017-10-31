@@ -22,11 +22,8 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
-const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => {
-	return () => {
-		analytics.tracks.recordEvent( eventName );
-	};
-};
+const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => () =>
+	analytics.tracks.recordEvent( eventName );
 
 const JetpackConnectHappychatButton = ( {
 	children,
@@ -63,6 +60,7 @@ const JetpackConnectHappychatButton = ( {
 };
 
 JetpackConnectHappychatButton.propTypes = {
+	eventName: PropTypes.string,
 	label: PropTypes.string,
 };
 
