@@ -104,14 +104,23 @@ export function productsRequestSuccess( state = {}, action ) {
 		action.params,
 		action.totalProducts
 	);
+
 	let products = get( state, 'products', [] );
 	action.products.forEach( function( product ) {
 		products = updateCachedProduct( products, product );
 	} );
 
+	const queries = setQueryResponse(
+		state,
+		'queries',
+		action.params,
+		action.products.map( p => p.id )
+	);
+
 	return {
 		...state,
 		products,
+		queries,
 		isLoading,
 		totalPages,
 		totalProducts,

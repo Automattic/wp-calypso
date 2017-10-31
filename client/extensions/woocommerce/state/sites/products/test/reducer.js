@@ -85,6 +85,7 @@ describe( 'reducer', () => {
 			};
 			const newState = productsRequestSuccess( undefined, action );
 			expect( newState.products ).to.eql( products );
+			expect( newState.queries[ '{}' ] ).to.eql( [ 15, 389 ] );
 		} );
 		test( 'should add new products onto the existing list', () => {
 			const additionalProducts = [ product ];
@@ -102,6 +103,7 @@ describe( 'reducer', () => {
 			};
 			const newState = productsRequestSuccess( originalState, action );
 			expect( newState.products ).to.eql( [ ...products, ...additionalProducts ] );
+			expect( newState.queries[ '{"page":2}' ] ).to.eql( [ 31 ] );
 		} );
 		test( 'should store the search result products in state', () => {
 			const action = {
@@ -114,6 +116,7 @@ describe( 'reducer', () => {
 			};
 			const newState = productsRequestSuccess( undefined, action );
 			expect( newState.products ).to.eql( products );
+			expect( newState.queries[ '{"search":"testing"}' ] ).to.eql( [ 15, 389 ] );
 		} );
 		test( 'should add new search result products onto the existing list', () => {
 			const additionalProducts = [ product ];
@@ -131,6 +134,30 @@ describe( 'reducer', () => {
 			};
 			const newState = productsRequestSuccess( originalState, action );
 			expect( newState.products ).to.eql( [ ...products, ...additionalProducts ] );
+			expect( newState.queries[ '{"page":2,"search":"testing"}' ] ).to.eql( [ 31 ] );
+		} );
+		test( 'should store the search result products in state alongside other product list queries', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				siteId: 123,
+				params: { page: 1, per_page: 10, search: 'testing' },
+				totalPages: 3,
+				totalProducts: 28,
+				products: [ product ],
+			};
+			const originalState = {
+				products,
+				isLoading: {
+					'{}': [ 15, 389 ],
+				},
+				queries: {
+					'{}': [ 15, 389 ],
+				},
+			};
+			const newState = productsRequestSuccess( originalState, action );
+			expect( newState.products ).to.eql( [ ...products, product ] );
+			expect( newState.queries[ '{}' ] ).to.eql( [ 15, 389 ] );
+			expect( newState.queries[ '{"search":"testing"}' ] ).to.eql( [ 31 ] );
 		} );
 
 		test( 'should store the total number of pages', () => {
