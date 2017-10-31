@@ -16,12 +16,10 @@ import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities } from 'lib/formatting';
-import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
@@ -41,23 +39,16 @@ export class CommentAuthor extends Component {
 			gravatarUser,
 			isExpanded,
 			moment,
-			site,
 			translate,
 		} = this.props;
 
-		const localizedDate = convertDateToUserLocation(
-			commentDate || moment(),
-			timezone( site ),
-			gmtOffset( site )
-		);
-
-		const formattedDate = localizedDate.format( 'll LT' );
+		const formattedDate = moment( commentDate ).format( 'll LT' );
 
 		const relativeDate = moment()
 			.subtract( 1, 'month' )
-			.isBefore( localizedDate )
-			? localizedDate.fromNow()
-			: localizedDate.format( 'll' );
+			.isBefore( commentDate )
+			? moment( commentDate ).fromNow()
+			: moment( commentDate ).format( 'll' );
 
 		return (
 			<div className="comment__author">
@@ -99,7 +90,6 @@ export class CommentAuthor extends Component {
 }
 
 const mapStateToProps = ( state, { commentId } ) => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 
@@ -115,7 +105,6 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentType: get( comment, 'type', 'comment' ),
 		commentUrl: get( comment, 'URL' ),
 		gravatarUser,
-		site,
 	};
 };
 
