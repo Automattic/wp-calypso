@@ -38,6 +38,7 @@ module.exports = {
 		'no-dupe-args': 2,
 		'no-dupe-keys': 2,
 		'no-duplicate-case': 2,
+		'no-duplicate-imports': 2,
 		'no-else-return': 2,
 		'no-empty': [ 2, { allowEmptyCatch: true } ],
 		'no-extra-semi': 2,
