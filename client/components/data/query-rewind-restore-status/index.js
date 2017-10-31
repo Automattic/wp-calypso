@@ -20,7 +20,7 @@ class QueryRewindRestoreStatus extends PureComponent {
 		queryDelay: PropTypes.number.isRequired,
 		restoreId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-		timestamp: PropTypes.number.isRequired,
+		timestamp: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {

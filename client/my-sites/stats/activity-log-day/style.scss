@@ -97,12 +97,16 @@
 		height: 16px;
 		left: 33px;
 		width: 2px;
-		background-color: lighten( $gray, 20% );
+		border-left: 2px solid lighten( $gray, 20% );
 
 		@include breakpoint( "<480px" ) {
 			left: 29px;
 		}
 	}
+}
+
+.activity-log-item.is-discarded:before {
+	border-left-style: dotted;
 }
 
 .activity-log-day.is-empty:before {

@@ -13,6 +13,25 @@ import ActivityLogBanner from './index';
 import ProgressBar from 'components/progress-bar';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 
+/**
+ * Normalize timestamp values
+ *
+ * Some timestamps are in seconds instead
+ * of in milliseconds and this will make
+ * sure they are all reported in ms
+ *
+ * The chosen comparison date is older than
+ * WordPress so no backups should already
+ * exist prior to that date 😉
+ *
+ * @param {Number} ts timestamp in 's' or 'ms'
+ * @returns {Number} timestamp in 'ms'
+ */
+const ms = ts =>
+	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
+		? ts * 1000 // convert s -> ms
+		: ts;
+
 function ProgressBanner( {
 	applySiteOffset,
 	moment,
@@ -42,7 +61,7 @@ function ProgressBanner( {
 				{ translate(
 					"We're in the process of restoring your site back to %s. " +
 						"You'll be notified once it's complete.",
-					{ args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ) }
+					{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
 				) }
 			</p>
 
@@ -59,7 +78,7 @@ ProgressBanner.propTypes = {
 	percent: PropTypes.number.isRequired,
 	siteId: PropTypes.number,
 	status: PropTypes.oneOf( [ 'queued', 'running' ] ).isRequired,
-	timestamp: PropTypes.number.isRequired,
+	timestamp: PropTypes.string.isRequired,
 };
 
 export default localize( ProgressBanner );

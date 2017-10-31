@@ -21,7 +21,7 @@ class SuccessBanner extends PureComponent {
 		applySiteOffset: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteUrl: PropTypes.string.isRequired,
-		timestamp: PropTypes.number.isRequired,
+		timestamp: PropTypes.string.isRequired,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
