@@ -16,6 +16,8 @@ export const settingLabels = {
 	achievement: () => i18n.translate( 'Site achievements' ),
 	mentions: () => i18n.translate( 'Username mentions' ),
 	scheduled_publicize: () => i18n.translate( 'Post Publicized' ),
+
+	store_order: () => i18n.translate( 'New order' ),
 };
 
 export const getLabelForStream = stream =>
