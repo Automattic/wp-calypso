@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import debugFactory from 'debug';
 import { isNumber, toArray } from 'lodash';
 
 /**
@@ -31,6 +31,12 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
+import { bumpStat } from 'state/analytics/actions';
+
+/**
+ * Module constants
+ */
+const debug = debugFactory( 'calypso:posts:actions' );
 
 /**
  * Returns an action object to be used in signalling that a post object has
@@ -66,11 +72,8 @@ export function receivePosts( posts ) {
  */
 export function requestSitePosts( siteId, query = {} ) {
 	if ( ! siteId ) {
-		console.warn( // eslint-disable-line no-console
-			'requestSitePosts called with invalid siteId',
-			{ siteId, query }
-		);
-		return null;
+		debug( 'requestSitePosts called with invalid siteId', { siteId, query } );
+		return bumpStat( 'calypso_request_site_posts_error', 'invalid_site_id' );
 	}
 
 	return requestPosts( siteId, query );
