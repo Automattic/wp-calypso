@@ -183,69 +183,72 @@ export class CommentActions extends Component {
 			translate,
 		} = this.props;
 
-		if ( isPersistent && ! includes( [ 'approved', 'unapproved' ], commentStatus ) ) {
-			return <CommentConfirmation { ...{ commentId } } undo={ this.undo } />;
-		}
-
 		return (
-			<div className="comment__actions">
-				{ this.hasAction( 'approve' ) && (
-					<Button
-						borderless
-						className={ classNames( 'comment__action comment__action-approve', {
-							'is-approved': commentIsApproved,
-						} ) }
-						onClick={ this.toggleApproved }
-					>
-						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
-						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
-					</Button>
-				) }
+			<div>
+				<div className="comment__actions">
+					{ this.hasAction( 'approve' ) && (
+						<Button
+							borderless
+							className={ classNames( 'comment__action comment__action-approve', {
+								'is-approved': commentIsApproved,
+							} ) }
+							onClick={ this.toggleApproved }
+						>
+							<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
+							<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'spam' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-spam"
-						onClick={ this.setSpam }
-					>
-						<Gridicon icon="spam" />
-						<span>{ translate( 'Spam' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'spam' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-spam"
+							onClick={ this.setSpam }
+						>
+							<Gridicon icon="spam" />
+							<span>{ translate( 'Spam' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'trash' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-trash"
-						onClick={ this.setTrash }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Trash' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'trash' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-trash"
+							onClick={ this.setTrash }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Trash' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'delete' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-delete"
-						onClick={ this.delete }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Delete Permanently' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'delete' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-delete"
+							onClick={ this.delete }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Delete Permanently' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'like' ) && (
-					<Button
-						borderless
-						className={ classNames( 'comment__action comment__action-like', {
-							'is-liked': commentIsLiked,
-						} ) }
-						onClick={ this.toggleLike }
-					>
-						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
-						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
-					</Button>
+					{ this.hasAction( 'like' ) && (
+						<Button
+							borderless
+							className={ classNames( 'comment__action comment__action-like', {
+								'is-liked': commentIsLiked,
+							} ) }
+							onClick={ this.toggleLike }
+						>
+							<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
+							<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
+						</Button>
+					) }
+				</div>
+
+				{ isPersistent &&
+				! includes( [ 'approved', 'unapproved' ], commentStatus ) && (
+					<CommentConfirmation { ...{ commentId } } undo={ this.undo } />
 				) }
 			</div>
 		);
