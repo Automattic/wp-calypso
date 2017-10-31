@@ -1,7 +1,7 @@
 
 .promotion-applies-to-field {
 	.search {
-		margin-bottom: 1px;
+		margin-bottom: 0;
 		border: 1px solid lighten( $gray, 20% );
 		z-index: 0; // Keeps search from overlapping header above.
 		box-sizing: border-box;
