@@ -12,7 +12,7 @@ import {
 	getOAuthParamsFromLocation,
 	hasOAuthParamsInLocation,
 	hasStripeKeyPairForMode,
-} from './stripe/payment-method-stripe-utils.js';
+} from './stripe/payment-method-stripe-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
