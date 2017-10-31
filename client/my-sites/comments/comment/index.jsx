@@ -26,8 +26,11 @@ export class Comment extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
+		isPersistent: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
+		removeFromPersisted: PropTypes.func,
+		togglePersisted: PropTypes.func,
 		toggleSelected: PropTypes.func,
 	};
 
@@ -91,7 +94,9 @@ export class Comment extends Component {
 			isLoading,
 			isSelected,
 			refreshCommentData,
+			removeFromPersisted,
 			siteId,
+			togglePersisted,
 		} = this.props;
 		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
 
@@ -124,7 +129,7 @@ export class Comment extends Component {
 
 						<CommentContent { ...{ commentId, isExpanded } } />
 
-						<CommentActions { ...{ commentId } } />
+						<CommentActions { ...{ commentId, removeFromPersisted, togglePersisted } } />
 
 						{ isExpanded && (
 							<CommentReply

@@ -472,11 +472,14 @@ export class CommentList extends Component {
 								commentId={ commentId }
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
+								isPersistent={ this.isCommentPersisted( commentId ) }
 								isSelected={ this.isCommentSelected( commentId ) }
 								refreshCommentData={
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 								}
+								removeFromPersisted={ this.removeFromPersistedComments }
+								togglePersisted={ this.updatePersistedComments }
 								toggleSelected={ this.toggleCommentSelected }
 							/>
 						) ) }
