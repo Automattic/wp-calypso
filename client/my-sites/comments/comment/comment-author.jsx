@@ -83,12 +83,14 @@ export class CommentAuthor extends Component {
 								{ isExpanded ? formattedDate : relativeDate }
 							</ExternalLink>
 						</span>
-						<span className="comment__author-url">
-							<span className="comment__author-url-separator">&middot;</span>
-							<ExternalLink href={ authorUrl }>
-								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-							</ExternalLink>
-						</span>
+						{ authorUrl && (
+							<span className="comment__author-url">
+								<span className="comment__author-url-separator">&middot;</span>
+								<ExternalLink href={ authorUrl }>
+									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+								</ExternalLink>
+							</span>
+						) }
 					</div>
 				</div>
 			</div>
