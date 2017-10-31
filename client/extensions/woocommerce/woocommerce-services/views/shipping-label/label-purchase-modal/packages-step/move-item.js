@@ -104,8 +104,9 @@ const MoveItemDialog = ( props ) => {
 	const onClose = () => props.closeItemMove( orderId, siteId );
 
 	const buttons = [
-		{ label: translate( 'Cancel' ), onClick: onClose },
+		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
 		{
+			action: 'move',
 			label: translate( 'Move' ),
 			isPrimary: true,
 			disabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization

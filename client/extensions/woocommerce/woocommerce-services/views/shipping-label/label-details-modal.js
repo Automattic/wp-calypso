@@ -20,7 +20,7 @@ const DetailsDialog = ( props ) => {
 
 	const onClose = () => props.closeDetailsDialog( orderId, siteId );
 	const buttons = [
-		{ label: translate( 'Close' ), onClick: onClose },
+		{ action: 'close', label: translate( 'Close' ), onClick: onClose },
 	];
 
 	return (
@@ -42,7 +42,7 @@ const DetailsDialog = ( props ) => {
 				<dt>{ translate( 'Items' ) }</dt>
 				<dd>
 					<ul>
-						{ productNames.map( productName => <li>{ productName }</li> ) }
+						{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
 					</ul>
 				</dd>
 			</dl>
