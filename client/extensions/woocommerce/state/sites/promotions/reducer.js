@@ -3,15 +3,17 @@
  *
  * @format
  */
-
-import { fill } from 'lodash';
+import { fill, findIndex } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_COUPON_DELETED,
+	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_UPDATED,
+	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { createPromotionFromProduct, createPromotionFromCoupon } from './helpers';
@@ -23,9 +25,41 @@ const initialState = {
 };
 
 export default createReducer( initialState, {
+	[ WOOCOMMERCE_COUPON_DELETED ]: couponDeleted,
+	[ WOOCOMMERCE_COUPON_UPDATED ]: couponUpdated,
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: couponsUpdated,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
 } );
+
+function couponDeleted( state, action ) {
+	const { couponId } = action;
+	const { coupons } = state;
+
+	const newCoupons = coupons.filter( coupon => couponId !== coupon.id );
+
+	if ( newCoupons.length !== coupons.length ) {
+		const promotions = calculatePromotions( newCoupons, state.products );
+
+		return { ...state, coupons: newCoupons, promotions };
+	}
+	return state;
+}
+
+function couponUpdated( state, action ) {
+	const { coupon } = action;
+	const { coupons } = state;
+	const index = findIndex( coupons, { id: coupon.id } );
+
+	if ( -1 < index ) {
+		const newCoupons = [ ...coupons ];
+		newCoupons[ index ] = coupon;
+		const promotions = calculatePromotions( newCoupons, state.products );
+
+		return { ...state, coupons: newCoupons, promotions };
+	}
+	return state;
+}
 
 function couponsUpdated( state, action ) {
 	const { params, totalCoupons } = action;
@@ -49,6 +83,21 @@ function couponsUpdated( state, action ) {
 		return { ...state, coupons: newCoupons, promotions };
 	}
 
+	return state;
+}
+
+function productUpdated( state, action ) {
+	const { data: product } = action;
+	const { products } = state;
+	const index = findIndex( products, { id: product.id } );
+
+	if ( -1 < index ) {
+		const newProducts = [ ...products ];
+		newProducts[ index ] = product;
+		const promotions = calculatePromotions( state.coupons, newProducts );
+
+		return { ...state, products: newProducts, promotions };
+	}
 	return state;
 }
 
