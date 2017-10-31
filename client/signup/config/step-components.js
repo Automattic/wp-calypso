@@ -25,7 +25,7 @@ import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 export default {
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
-	'design-type-with-atomic-store': DesignTypeWithAtomicStoreComponent,
+	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
@@ -33,7 +33,7 @@ export default {
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
-	'plans-atomic-store': PlansAtomicStoreComponent,
+	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,
