@@ -273,15 +273,9 @@ export const PostEditor = createReactClass( {
 	},
 
 	toggleSidebar: function() {
-		if ( this.props.layoutFocus === 'sidebar' ) {
-			this.props.closeEditorSidebar();
-			recordStat( 'close-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'close' );
-		} else {
-			this.props.openEditorSidebar();
-			recordStat( 'open-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'open' );
-		}
+		this.props.layoutFocus === 'sidebar'
+			? this.props.closeEditorSidebar()
+			: this.props.openEditorSidebar();
 	},
 
 	selectRevision: function( selectedRevisionId ) {
