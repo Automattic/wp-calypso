@@ -8,7 +8,11 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import config from 'config';
 import { connect } from 'react-redux';
-import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils.js';
+import {
+	getOAuthParamsFromLocation,
+	hasOAuthParamsInLocation,
+	hasStripeKeyPairForMode,
+} from './stripe/payment-method-stripe-utils.js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -23,6 +27,7 @@ import {
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
+import PaymentMethodStripeCompleteOAuthDialog from './stripe/payment-method-stripe-complete-oauth-dialog';
 import PaymentMethodStripePlaceholderDialog from './stripe/payment-method-stripe-placeholder-dialog';
 import PaymentMethodStripeSetupDialog from './stripe/payment-method-stripe-setup-dialog';
 
@@ -66,7 +71,7 @@ class PaymentMethodStripe extends Component {
 
 	componentDidMount() {
 		const { siteId } = this.props;
-		if ( siteId ) {
+		if ( siteId && ! hasOAuthParamsInLocation() ) {
 			this.props.fetchAccountDetails( siteId );
 		}
 	}
@@ -75,7 +80,7 @@ class PaymentMethodStripe extends Component {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId;
 
-		if ( siteId !== newSiteId ) {
+		if ( siteId !== newSiteId && ! hasOAuthParamsInLocation() ) {
 			this.props.fetchAccountDetails( newSiteId );
 		}
 	}
@@ -110,8 +115,18 @@ class PaymentMethodStripe extends Component {
 	// And render brings it all together
 
 	render() {
-		const { domain, isRequesting, method, onCancel, onDone, stripeConnectAccount } = this.props;
+		const {
+			domain,
+			isRequesting,
+			method,
+			onCancel,
+			onDone,
+			siteId,
+			siteSlug,
+			stripeConnectAccount,
+		} = this.props;
 		const { connectedUserID } = stripeConnectAccount;
+		const oauthParams = getOAuthParamsFromLocation();
 
 		const connectFlowsEnabled = config.isEnabled(
 			'woocommerce/extension-settings-stripe-connect-flows'
@@ -137,9 +152,14 @@ class PaymentMethodStripe extends Component {
 				dialog = 'connected';
 			}
 
-			// Still waiting for a response? You get a placeholder
+			// But if we are still waiting for account details to arrive, well then you get a placeholder
 			if ( isRequesting ) {
 				dialog = 'placeholder';
+			}
+
+			// In the middle of OAuth?
+			if ( hasOAuthParamsInLocation() ) {
+				dialog = 'oauth';
 			}
 		}
 
@@ -160,6 +180,16 @@ class PaymentMethodStripe extends Component {
 					onDone={ onDone }
 					onEditField={ this.onEditFieldHandler }
 					stripeConnectAccount={ stripeConnectAccount }
+				/>
+			);
+		} else if ( 'oauth' === dialog ) {
+			return (
+				<PaymentMethodStripeCompleteOAuthDialog
+					oauthCode={ oauthParams.code }
+					oauthState={ oauthParams.state }
+					onCancel={ onCancel }
+					siteId={ siteId }
+					siteSlug={ siteSlug }
 				/>
 			);
 		} else if ( 'placeholder' === dialog ) {
@@ -185,6 +215,7 @@ class PaymentMethodStripe extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID || false;
+	const siteSlug = site.slug || '';
 	const domain = site.domain || '';
 	const isRequesting = getIsRequesting( state, siteId );
 	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
@@ -192,6 +223,7 @@ function mapStateToProps( state ) {
 		domain,
 		isRequesting,
 		siteId,
+		siteSlug,
 		stripeConnectAccount,
 	};
 }

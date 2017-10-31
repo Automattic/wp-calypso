@@ -338,10 +338,10 @@ function oauthConnectSuccess( siteId, action, { account_id } ) {
 	};
 }
 
-function oauthConnectFailure( siteId, action, { message } ) {
+function oauthConnectFailure( siteId, action, { error, message } ) {
 	return {
 		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
-		error: message,
+		error: message || error,
 		siteId,
 	};
 }
