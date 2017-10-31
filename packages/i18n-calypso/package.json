@@ -1,6 +1,6 @@
 {
   "name": "i18n-calypso",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "index.js",
   "repository": {
@@ -31,14 +31,14 @@
     "lodash.flatten": "^4.4.0",
     "lru": "^3.1.0",
     "moment-timezone": "0.5.11",
-    "react": "0.14.8 || ^15.5.0",
+    "react": "0.14.8 || ^15.5.0 || ^16.0.0",
     "xgettext-js": "1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "enzyme": "2.9.1",
     "mocha": "^2.4.5",
-    "react-dom": "0.14.8 || ^15.5.0",
+    "react-dom": "0.14.8 || ^15.5.0 || ^16.0.0",
     "react-test-env": "0.1.1",
     "react-test-renderer": "^15.5.0",
     "rewire": "^2.5.1"

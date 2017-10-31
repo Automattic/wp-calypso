@@ -1,3 +1,7 @@
+1.8.2
+------
+Change localize hoc's React.createClass --> es6 classes for React 16 compat.
+
 1.8.1
 -----
 Fix a control sequence escaping error in POT files, see [#41](https://github.com/Automattic/i18n-calypso/pull/41).

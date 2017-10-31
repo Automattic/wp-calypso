@@ -16,28 +16,27 @@ module.exports = function( i18n ) {
 	return function( ComposedComponent ) {
 		var componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		var component = React.createClass( {
-			displayName: 'Localized(' + componentName + ')',
-
-			componentDidMount: function() {
+		class component extends React.Component {
+			componentDidMount() {
 				this.boundForceUpdate = this.forceUpdate.bind( this );
 				i18n.stateObserver.addListener( 'change', this.boundForceUpdate );
-			},
+			}
 
-			componentWillUnmount: function() {
+			componentWillUnmount() {
 				// in some cases, componentWillUnmount is called before componentDidMount
 				// Supposedly fixed in React 15.1.0: https://github.com/facebook/react/issues/2410
 				if ( this.boundForceUpdate ) {
 					i18n.stateObserver.removeListener( 'change', this.boundForceUpdate );
 				}
-			},
+			}
 
-			render: function() {
+			render() {
 				var props = assign( {}, this.props, i18nProps );
 				return React.createElement( ComposedComponent, props );
 			}
-		} );
+		}
 		component._composedComponent = ComposedComponent;
+		component.displayName = 'Localized(' + componentName + ')'
 		return component;
 	};
 };

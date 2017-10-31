@@ -16,20 +16,20 @@ describe( 'localize()', function() {
 	useFakeDom();
 
 	it( 'should be named using the variable name of the composed component', function() {
-		var MyComponent = React.createClass( {
-			render: emptyRender
-		} );
+		class MyComponent extends React.Component {
+			render() {
+				return emptyRender();
+			}
+		}
 
 		var LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'Localized()' );
+		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should be named using the displayName of the composed component', function() {
-		var MyComponent = React.createClass( {
-			displayName: 'MyComponent',
-			render: emptyRender
-		} );
+		var MyComponent = () => emptyRender();
+		MyComponent.displayName = 'MyComponent';
 
 		var LocalizedComponent = localize( MyComponent );
 
@@ -45,9 +45,7 @@ describe( 'localize()', function() {
 	} );
 
 	it( 'should provide translate, moment, and numberFormat props to rendered child', function() {
-		var MyComponent = React.createClass( {
-			render: emptyRender
-		} );
+		var MyComponent = () => emptyRender();
 		var LocalizedComponent = localize( MyComponent );
 
 		var mounted = mount( React.createElement( LocalizedComponent ) );
