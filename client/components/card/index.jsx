@@ -52,7 +52,7 @@ class Card extends Component {
 			highlightClass
 		);
 
-		const omitProps = [ 'compact', 'highlight', 'tagName' ];
+		const omitProps = [ 'compact', 'highlight', 'tagName', 'showLinkIndicator' ];
 
 		let linkIndicator;
 		if ( showLinkIndicator && ( href || onClick ) ) {
