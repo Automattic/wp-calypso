@@ -19,8 +19,9 @@ class Tooltip extends React.Component {
 		this.state = { show: false };
 	}
 
-	open = () => {
-		this.setState( { show: true } );
+	open = ( e ) => {
+		const isTruncated = e.target.offsetWidth < e.target.scrollWidth;
+		this.setState( { show: isTruncated } );
 	}
 
 	close = () => {
@@ -29,7 +30,8 @@ class Tooltip extends React.Component {
 
 	render() {
 		return (
-			<span
+			<div
+				className={ this.props.divClassName }
 				ref="tooltip-reference"
 				onMouseEnter={ this.open }
 				onMouseLeave={ this.close }
@@ -44,7 +46,7 @@ class Tooltip extends React.Component {
 				>
 					<div>{ this.props.listName }</div>
 				</TooltipComponent>
-			</span>
+			</div>
 		);
 	}
 
@@ -64,18 +66,19 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 			isCompact
 			showDismiss={ false }
 			text={ translate(
-				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list synced.{{/div_info}}{{/div}}',
+				'{{div}}{{tooltip}}%(mailingListname)s{{/tooltip}} {{div_info}}list synced.{{/div_info}}{{/div}}',
 				{
 					components: {
 						div: <div className="mailchimp__sync-notice-content" />,
-						div_name: <span className="mailchimp__sync-notice-list" />,
 						div_info: <span className="mailchimp__sync-notice-info" />,
+						tooltip: <Tooltip
+							divClassName="mailchimp__sync-notice-list"
+							listName={ syncState.mailchimp_list_name + ' very long list name ' } />,
 					},
-					args: { mailingListname: syncState.mailchimp_list_name }
+					args: { mailingListname: syncState.mailchimp_list_name + ' very long list name ' }
 				} ) }
 		/>
 	);
-
 	const syncing = () => (
 		<Notice
 			className="mailchimp__sync-notice-syncing"
@@ -83,12 +86,14 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 			isCompact
 			showDismiss={ false }
 			text={ translate(
-				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list is being synced.{{/div_info}}{{/div}}',
+				'{{div}}{{tooltip}}%(mailingListname)s{{/tooltip}} {{div_info}}list is being synced.{{/div_info}}{{/div}}',
 				{
 					components: {
 						div: <div className="mailchimp__sync-notice-content" />,
-						div_name: <span className="mailchimp__sync-notice-list" />,
 						div_info: <span className="mailchimp__sync-notice-info" />,
+						tooltip: <Tooltip
+							divClassName="mailchimp__sync-notice-list"
+							listName={ syncState.mailchimp_list_name } />,
 					},
 					args: { mailingListname: syncState.mailchimp_list_name }
 				} ) }
@@ -128,11 +133,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 				} ) }
 			</div>
 			<span className="mailchimp__sync-status">
-				<Tooltip
-					listName={ syncState.mailchimp_list_name }
-				>
-					{ notice }
-				</Tooltip>
+				{ notice }
 				<a className="mailchimp__resync-link" onClick={ onResyncClick }>
 					{ translate( 'Resync', { comment: 'to synchronize again' } ) }
 				</a>
