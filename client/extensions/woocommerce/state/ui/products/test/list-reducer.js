@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 			};
 			const newState = productsRequestSuccess( undefined, action );
 			expect( newState.currentPage ).to.eql( 2 );
-			expect( newState.currentSearch ).to.be.null;
+			expect( newState.currentSearch ).to.eql( '' );
 			expect( newState.requestedPage ).to.be.null;
 			expect( newState.requestedSearch ).to.be.null;
 		} );
@@ -68,7 +68,7 @@ describe( 'reducer', () => {
 				params: { search: 'example' },
 			};
 			const newState = productsRequestSuccess( undefined, action );
-			expect( newState.currentPage ).to.be.null;
+			expect( newState.currentPage ).to.eql( 1 );
 			expect( newState.currentSearch ).to.eql( 'example' );
 			expect( newState.requestedPage ).to.be.null;
 			expect( newState.requestedSearch ).to.be.null;
@@ -83,11 +83,11 @@ describe( 'reducer', () => {
 				requestedPage: 2,
 				requestedSearch: null,
 				currentPage: 1,
-				currentSearch: null,
+				currentSearch: '',
 			};
 			const newState = productsRequestSuccess( originalState, action );
 			expect( newState.currentPage ).to.eql( 2 );
-			expect( newState.currentSearch ).to.be.null;
+			expect( newState.currentSearch ).to.eql( '' );
 			expect( newState.requestedPage ).to.be.null;
 			expect( newState.requestedSearch ).to.be.null;
 		} );

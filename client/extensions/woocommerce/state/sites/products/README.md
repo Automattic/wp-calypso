@@ -70,6 +70,10 @@ Whether the product list on a given page is currently being retrieved from the s
 
 Get the products that belong to a given request query. Optional `siteId`, will default to currently selected site.
 
+### `getProduct( state, productId: number, siteId: number )`
+
+Get a single product matching a given product ID. Optional `siteId`, will default to currently selected site.
+
 ### `getTotalProductsPages( state, params, siteId: number )`
 
 Gets the total number of pages of products available for a request query. Optional `siteId`, will default to currently selected site.

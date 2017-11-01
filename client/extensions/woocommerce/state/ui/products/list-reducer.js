@@ -10,6 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { DEFAULT_QUERY } from 'woocommerce/state/sites/products/utils';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -21,8 +22,9 @@ export default createReducer( null, {
 } );
 
 export function productsRequestSuccess( state = {}, action ) {
-	const page = get( action, 'params.page', null );
-	const search = get( action, 'params.search', null );
+	// If not set in the action, default to the defaults
+	const page = get( action, 'params.page', DEFAULT_QUERY.page );
+	const search = get( action, 'params.search', DEFAULT_QUERY.search );
 
 	return {
 		...state,
