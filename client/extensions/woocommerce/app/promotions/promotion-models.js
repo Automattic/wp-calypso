@@ -29,18 +29,54 @@ const couponCodeField = {
 };
 
 /**
- * "Applies to" field reused for all coupon promotion types.
+ * Coupon "Applies to" card.
  */
-const appliesToCouponField = {
-	component: (
-		<PromotionAppliesToField
-			selectionTypes={ [
-				{ labelText: translate( 'All Products' ), type: 'all' },
-				{ labelText: translate( 'Specific Products' ), type: 'productIds' },
-				{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
-			] }
-		/>
-	),
+const appliesToCoupon = {
+	labelText: translate( 'Applies to' ),
+	cssClass: 'promotions__promotion-form-card-applies-to',
+	fields: {
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [
+						{ labelText: translate( 'All Products' ), type: 'all' },
+						{ labelText: translate( 'Specific Products' ), type: 'productIds' },
+						{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
+					] }
+				/>
+			),
+		},
+	},
+};
+
+/**
+ * Coupon "Applies when" card.
+ */
+const appliesWhenCoupon = {
+	labelText: translate( 'Applies when' ),
+	cssClass: 'promotions__promotion-form-card-applies-to',
+	fields: {
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [
+						{
+							labelText: translate( 'Any product is in the cart' ),
+							type: 'all'
+						},
+						{
+							labelText: translate( 'A specific product is in the cart' ),
+							type: 'productIds'
+						},
+						{
+							labelText: translate( 'A product from a specific category is in the cart' ),
+							type: 'productCategoryIds'
+						},
+					] }
+				/>
+			),
+		},
+	},
 };
 
 /**
@@ -152,13 +188,7 @@ const couponConditions = {
  * Promotion Type: Fixed Product Discount (e.g. $5 off any t-shirt)
  */
 const fixedProductModel = {
-	appliesTo: {
-		labelText: translate( 'Applies to' ),
-		cssClass: 'promotions__promotion-form-card-applies-to',
-		fields: {
-			appliesTo: appliesToCouponField,
-		},
-	},
+	appliesToCoupon,
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
@@ -177,13 +207,7 @@ const fixedProductModel = {
  * Promotion Type: Fixed Cart Discount (e.g. $10 off my cart)
  */
 const fixedCartModel = {
-	appliesTo: {
-		labelText: translate( 'Applies to' ),
-		cssClass: 'promotions__promotion-form-card-applies-to',
-		fields: {
-			appliesTo: appliesToCouponField,
-		},
-	},
+	appliesWhenCoupon,
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
@@ -202,13 +226,7 @@ const fixedCartModel = {
  * Promotion Type: Percentage Cart Discount (e.g. 10% off my cart)
  */
 const percentCartModel = {
-	appliesTo: {
-		labelText: translate( 'Applies to' ),
-		cssClass: 'promotions__promotion-form-card-applies-to',
-		fields: {
-			appliesTo: appliesToCouponField,
-		},
-	},
+	appliesWhenCoupon,
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
