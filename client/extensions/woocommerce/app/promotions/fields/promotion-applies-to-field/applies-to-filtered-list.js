@@ -10,6 +10,7 @@ import warn from 'lib/warn';
 /**
  * Internal dependencies
  */
+import formatCurrency from 'lib/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -118,6 +119,7 @@ class AppliesToFilteredList extends React.Component {
 		edit: PropTypes.func.isRequired,
 		products: PropTypes.array,
 		productCategories: PropTypes.array,
+		currency: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -196,9 +198,12 @@ class AppliesToFilteredList extends React.Component {
 		);
 	}
 
-	renderProductList( singular ) {
+	renderProductList( singular, currency ) {
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = ( singular ? this.renderProductRadio : this.renderProductCheckbox );
+		const renderFunc = ( singular
+			? this.renderProductRadio( currency )
+			: this.renderProductCheckbox( currency )
+		);
 
 		return (
 			<div className="promotion-applies-to-field__list">
@@ -216,24 +221,26 @@ class AppliesToFilteredList extends React.Component {
 		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onCategoryCheckbox );
 	}
 
-	renderProductCheckbox = ( product ) => {
+	renderProductCheckbox = ( currency ) => ( product ) => {
 		const { value } = this.props;
-		const { name, id, images } = product;
+		const { name, regular_price, id, images } = product;
+		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
 		const selected = isProductSelected( value, id );
 		const image = images && images[ 0 ];
 		const imageSrc = image && image.src;
 
-		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onProductCheckbox );
+		return renderRow( FormCheckbox, nameWithPrice, id, imageSrc, selected, this.onProductCheckbox );
 	}
 
-	renderProductRadio = ( product ) => {
+	renderProductRadio = ( currency ) => ( product ) => {
 		const { value } = this.props;
-		const { name, id, images } = product;
+		const { name, regular_price, id, images } = product;
+		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
 		const selected = isProductSelected( value, product.id );
 		const image = images && images[ 0 ];
 		const imageSrc = image && image.src;
 
-		return renderRow( FormRadio, name, id, imageSrc, selected, this.onProductRadio );
+		return renderRow( FormRadio, nameWithPrice, id, imageSrc, selected, this.onProductRadio );
 	}
 
 	onSearch = ( searchFilter ) => {
