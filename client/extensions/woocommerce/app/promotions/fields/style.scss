@@ -75,6 +75,10 @@
 
 	select + .promotion-applies-to-field__filtered-list {
 		margin-top: 16px;
+
+		&:empty {
+			margin-top: 0;
+		}
 	}
 
 	.promotion-applies-to-field__list {
