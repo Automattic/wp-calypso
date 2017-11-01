@@ -37,6 +37,8 @@ class PaymentBox extends PureComponent {
 
 	getPaymentProviderName( method ) {
 		switch ( method ) {
+			case 'ideal':
+				return 'iDEAL';
 			case 'credit-card':
 				return translate( 'Credit or debit card' );
 			case 'paypal':
@@ -62,6 +64,13 @@ class PaymentBox extends PureComponent {
 				return (
 					<div className="checkout__provider">
 						<Gridicon icon="credit-card" className="checkout__credit-card" />
+						{ this.getPaymentProviderName( method ) }
+					</div>
+				);
+			case 'ideal':
+				return (
+					<div className="checkout__provider">
+						<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
 						{ this.getPaymentProviderName( method ) }
 					</div>
 				);
