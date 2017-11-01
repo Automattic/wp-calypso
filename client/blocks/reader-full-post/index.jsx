@@ -70,6 +70,7 @@ import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
+import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -439,7 +440,7 @@ export class FullPostView extends React.Component {
 							) }
 
 							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
-								{ shouldShowComments( post ) ? (
+								{ shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
 										ref="commentsList"
@@ -449,8 +450,9 @@ export class FullPostView extends React.Component {
 										startingCommentId={ startingCommentId }
 										commentCount={ commentCount }
 										maxDepth={ 1 }
+										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 									/>
-								) : null }
+								) }
 							</div>
 
 							{ showRelatedPosts && (
