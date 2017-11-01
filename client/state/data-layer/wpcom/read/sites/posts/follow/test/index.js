@@ -27,7 +27,18 @@ describe( 'conversation-follow', () => {
 					previousState: CONVERSATION_FOLLOW_STATUS_MUTING,
 				},
 			} );
-			requestConversationFollow( { dispatch }, action );
+			const getState = () => {
+				return {
+					reader: {
+						conversations: {
+							items: {
+								'123-456': 'M',
+							},
+						},
+					},
+				};
+			};
+			requestConversationFollow( { dispatch, getState }, action );
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{

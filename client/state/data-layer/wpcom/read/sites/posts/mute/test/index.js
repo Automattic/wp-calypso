@@ -27,7 +27,18 @@ describe( 'conversation-mute', () => {
 					previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 				},
 			} );
-			requestConversationMute( { dispatch }, action );
+			const getState = () => {
+				return {
+					reader: {
+						conversations: {
+							items: {
+								'123-456': 'F',
+							},
+						},
+					},
+				};
+			};
+			requestConversationMute( { dispatch, getState }, action );
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
