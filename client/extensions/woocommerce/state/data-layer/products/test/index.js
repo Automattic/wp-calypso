@@ -9,13 +9,20 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { handleProductCreate, handleProductUpdate, handleProductRequest } from '../';
-import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 import {
 	createProduct,
 	updateProduct,
 	fetchProduct,
+	fetchProducts,
 } from 'woocommerce/state/sites/products/actions';
+import {
+	handleProductCreate,
+	handleProductUpdate,
+	handleProductRequest,
+	productsRequest,
+} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCreate', () => {
@@ -293,6 +300,33 @@ describe( 'handlers', () => {
 					sentData: undefined,
 					receivedData: 'RECEIVED_DATA',
 				} )
+			);
+		} );
+	} );
+
+	describe( '#productsRequest', () => {
+		test( 'should dispatch a get action', () => {
+			const dispatch = spy();
+
+			const action = fetchProducts( 123, {} );
+
+			productsRequest( { dispatch }, action );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'GET',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: null,
+						query: {
+							json: true,
+							path: '/wc/v3/products&page=1&per_page=10&_envelope&_method=GET',
+						},
+					},
+					action
+				)
 			);
 		} );
 	} );

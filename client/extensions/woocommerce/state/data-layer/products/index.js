@@ -1,24 +1,43 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { omitBy } from 'lodash';
+import qs from 'querystring';
+import warn from 'lib/warn';
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import { dispatchWithProps } from 'woocommerce/state/helpers';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productUpdated } from 'woocommerce/state/sites/products/actions';
+import { productUpdated, productsUpdated } from 'woocommerce/state/sites/products/actions';
+import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_REQUEST,
+	WOOCOMMERCE_PRODUCTS_REQUEST,
 } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],
 	[ WOOCOMMERCE_PRODUCT_UPDATE ]: [ handleProductUpdate ],
 	[ WOOCOMMERCE_PRODUCT_REQUEST ]: [ handleProductRequest ],
+	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: [
+		dispatchRequest( productsRequest, receivedProducts, apiError ),
+	],
 };
+
+function apiError( { dispatch }, action, error ) {
+	warn( 'Products API Error: ', error );
+
+	if ( action.failureAction ) {
+		dispatch( action.failureAction );
+	}
+}
 
 /**
  * Wraps an action with a product update action.
@@ -81,4 +100,20 @@ export function handleProductRequest( { dispatch }, action ) {
 
 	const updatedSuccessAction = updatedAction( siteId, action, successAction );
 	dispatch( get( siteId, 'products/' + productId, updatedSuccessAction, failureAction ) );
+}
+
+export function productsRequest( { dispatch }, action ) {
+	const { siteId, params } = action;
+	const queryString = qs.stringify( omitBy( params, val => '' === val ) );
+
+	dispatch( request( siteId, action ).getWithHeaders( `products?${ queryString }` ) );
+}
+
+function receivedProducts( { dispatch }, action, { data } ) {
+	const { siteId, params } = action;
+	const { body, headers } = data;
+	const totalPages = Number( headers[ 'X-WP-TotalPages' ] );
+	const totalProducts = Number( headers[ 'X-WP-Total' ] );
+
+	dispatch( productsUpdated( siteId, params, body, totalPages, totalProducts ) );
 }
