@@ -135,7 +135,6 @@ class PromotionUpdate extends React.Component {
 					args: { promotion: promotion.name },
 				} ),
 				{
-					displayOnNextPage: true,
 					duration: 8000,
 				}
 			);
@@ -143,9 +142,8 @@ class PromotionUpdate extends React.Component {
 
 		const successAction = dispatch => {
 			this.props.clearPromotionEdits( site.ID );
-
 			dispatch( getSuccessNotice( promotion ) );
-			page.redirect( getLink( '/store/promotions/:site', site ) );
+			this.setState( () => ( { busy: false } ) );
 		};
 
 		const failureAction = dispatch => {
