@@ -11,12 +11,10 @@ import { spy, match } from 'sinon';
  */
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import {
-	fetchCoupons,
-	couponsUpdated,
-	createCoupon,
-	updateCoupon,
-	deleteCoupon,
-} from '../actions';
+	WOOCOMMERCE_COUPON_UPDATED,
+	WOOCOMMERCE_COUPON_DELETED,
+} from 'woocommerce/state/action-types';
+import { fetchCoupons, couponsUpdated, createCoupon, updateCoupon, deleteCoupon } from '../actions';
 import {
 	requestCoupons,
 	requestCouponsSuccess,
@@ -121,34 +119,71 @@ describe( 'handlers', () => {
 				dispatch: spy(),
 			};
 
-			const coupon = { id: { placeholder: 'coupon:5' }, code: '10off', amount: '10', discount_type: 'percent' };
+			const coupon = {
+				id: { placeholder: 'coupon:5' },
+				code: '10off',
+				amount: '10',
+				discount_type: 'percent',
+			};
 			const action = createCoupon( siteId, coupon, successAction, failureAction );
 
 			couponCreate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				body: {
-					path: '/wc/v3/coupons&_method=POST',
-					body: JSON.stringify( coupon ),
-				}
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					body: {
+						path: '/wc/v3/coupons&_method=POST',
+						body: JSON.stringify( coupon ),
+					},
+				} )
+			);
 		} );
 	} );
 
 	describe( '#couponCreateSuccess', () => {
+		it( 'should dispatch a coupon update action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const coupon = {
+				id: { placeholder: 'coupon:5' },
+				code: '10off',
+				amount: '10',
+				discount_type: 'percent',
+			};
+			const action = createCoupon( siteId, coupon, successAction, failureAction );
+
+			couponCreateSuccess( store, action, { data: { ...coupon, id: 12 } } );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_COUPON_UPDATED,
+					siteId,
+					coupon,
+				} )
+			);
+		} );
+
 		it( 'should dispatch a success action', () => {
 			const store = {
 				dispatch: spy(),
 			};
 
-			const coupon = { id: { placeholder: 'coupon:5' }, code: '10off', amount: '10', discount_type: 'percent' };
+			const coupon = {
+				id: { placeholder: 'coupon:5' },
+				code: '10off',
+				amount: '10',
+				discount_type: 'percent',
+			};
 			const action = createCoupon( siteId, coupon, successAction, failureAction );
 
 			couponCreateSuccess( store, action, { data: { ...coupon, id: 12 } } );
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: successAction.type,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: successAction.type,
+				} )
+			);
 		} );
 	} );
 
@@ -163,17 +198,37 @@ describe( 'handlers', () => {
 
 			couponUpdate( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				body: {
-					path: '/wc/v3/coupons/5&_method=PUT',
-					body: JSON.stringify( coupon ),
-				}
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					body: {
+						path: '/wc/v3/coupons/5&_method=PUT',
+						body: JSON.stringify( coupon ),
+					},
+				} )
+			);
 		} );
 	} );
 
 	describe( '#couponUpdateSuccess', () => {
+		it( 'should dispatch a coupon update action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const coupon = { id: 5, code: '15off', amount: '15', discount_type: 'percent' };
+			const action = updateCoupon( siteId, coupon, successAction, failureAction );
+
+			couponUpdateSuccess( store, action, { data: { ...coupon, id: 12 } } );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_COUPON_UPDATED,
+					siteId,
+					coupon,
+				} )
+			);
+		} );
+
 		it( 'should dispatch a success action', () => {
 			const store = {
 				dispatch: spy(),
@@ -183,9 +238,11 @@ describe( 'handlers', () => {
 			const action = updateCoupon( siteId, coupon, successAction, failureAction );
 
 			couponUpdateSuccess( store, action, { data: { ...coupon, id: 12 } } );
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: successAction.type,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: successAction.type,
+				} )
+			);
 		} );
 	} );
 
@@ -200,16 +257,36 @@ describe( 'handlers', () => {
 
 			couponDelete( store, action );
 
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: WPCOM_HTTP_REQUEST,
-				body: {
-					path: '/wc/v3/coupons/15&_method=DELETE',
-				}
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WPCOM_HTTP_REQUEST,
+					body: {
+						path: '/wc/v3/coupons/15&_method=DELETE',
+					},
+				} )
+			);
 		} );
 	} );
 
 	describe( '#couponDeleteSuccess', () => {
+		it( 'should dispatch a coupon deleted action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const couponId = 15;
+			const action = deleteCoupon( siteId, couponId, successAction, failureAction );
+
+			couponDeleteSuccess( store, action );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_COUPON_DELETED,
+					siteId,
+					couponId,
+				} )
+			);
+		} );
+
 		it( 'should dispatch a success action', () => {
 			const store = {
 				dispatch: spy(),
@@ -219,9 +296,11 @@ describe( 'handlers', () => {
 			const action = deleteCoupon( siteId, couponId, successAction, failureAction );
 
 			couponDeleteSuccess( store, action );
-			expect( store.dispatch ).to.have.been.calledWith( match( {
-				type: successAction.type,
-			} ) );
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: successAction.type,
+				} )
+			);
 		} );
 	} );
 } );
