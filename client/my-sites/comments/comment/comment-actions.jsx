@@ -34,7 +34,6 @@ const commentActions = {
 export class CommentActions extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isExpanded: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
 		updatePersisted: PropTypes.func,
 	};
@@ -117,17 +116,7 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const {
-			commentIsApproved,
-			commentIsLiked,
-			commentIsPending,
-			isExpanded,
-			translate,
-		} = this.props;
-
-		if ( ! isExpanded && ! commentIsPending ) {
-			return null;
-		}
+		const { commentIsApproved, commentIsLiked, translate } = this.props;
 
 		return (
 			<div className="comment__actions">
@@ -191,7 +180,6 @@ const mapStateToProps = ( state, { commentId } ) => {
 	return {
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
-		commentIsPending: 'unapproved' === commentStatus,
 		commentStatus,
 		postId: get( comment, 'post.ID' ),
 		siteId,
