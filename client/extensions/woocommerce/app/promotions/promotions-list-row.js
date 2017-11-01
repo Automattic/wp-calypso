@@ -18,13 +18,13 @@ import TableItem from 'woocommerce/components/table/table-item';
 function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {
 		case 'fixed_product':
-			return translate( 'Product Discount Coupon' );
+			return translate( 'Product discount coupon' );
 		case 'fixed_cart':
-			return translate( 'Cart Discount Coupon' );
+			return translate( 'Cart discount coupon' );
 		case 'percent':
-			return translate( 'Percent Cart Discount Coupon' );
+			return translate( 'Percent cart discount coupon' );
 		case 'product_sale':
-			return translate( 'Specific Product Sale' );
+			return translate( 'Individual product sale' );
 	}
 }
 
