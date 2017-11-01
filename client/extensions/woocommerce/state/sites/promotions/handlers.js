@@ -9,9 +9,19 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { fetchCoupons } from 'woocommerce/state/sites/coupons/actions';
+import { createProductUpdateFromPromotion, createCouponUpdateFromPromotion } from './helpers';
+import {
+	fetchCoupons,
+	createCoupon,
+	updateCoupon,
+	deleteCoupon,
+} from 'woocommerce/state/sites/coupons/actions';
+import { updateProduct } from 'woocommerce/state/sites/products/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import {
+	WOOCOMMERCE_PROMOTION_CREATE,
+	WOOCOMMERCE_PROMOTION_UPDATE,
+	WOOCOMMERCE_PROMOTION_DELETE,
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_UPDATED,
@@ -24,6 +34,9 @@ const debug = debugFactory( 'woocommerce:promotions' );
 const itemsPerPage = 30;
 
 export default {
+	[ WOOCOMMERCE_PROMOTION_CREATE ]: [ promotionCreate ],
+	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
+	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
 	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: [ productsRequestSuccess ],
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: [ couponsUpdated ],
@@ -83,5 +96,69 @@ export function couponsUpdated( { dispatch }, action ) {
 			const offset = params.offset + coupons.length;
 			dispatch( fetchCoupons( siteId, { offset, per_page: params.per_page } ) );
 		}
+	}
+}
+
+export function promotionCreate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( createCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
+	}
+}
+
+export function promotionUpdate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( updateCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
+	}
+}
+
+export function promotionDelete( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+
+			const productUpdateData = {
+				id: product.id,
+				sale_price: null,
+				date_on_sale_from: null,
+				date_on_sale_from_gmt: null,
+				date_on_sale_to: null,
+				date_on_sale_to_gmt: null,
+			};
+
+			dispatch(
+				updateProduct( siteId, productUpdateData, action.successAction, action.failureAction )
+			);
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+			dispatch(
+				deleteCoupon( siteId, promotion.couponId, action.successAction, action.failureAction )
+			);
+			break;
 	}
 }
