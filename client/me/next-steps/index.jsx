@@ -26,13 +26,11 @@ const sites = sitesFactory();
 const NextSteps = createReactClass( {
 	displayName: 'NextSteps',
 
-	mixins: [ observe( 'trophiesData', 'sites' ) ],
+	mixins: [ observe( 'sites' ) ],
 
 	getDefaultProps: function() {
 		return { sites: sites };
 	},
-
-	userState: {},
 
 	componentWillUnmount: function() {
 		window.scrollTo( 0, 0 );
@@ -44,26 +42,6 @@ const NextSteps = createReactClass( {
 			link: event.tracks,
 			is_welcome: this.props.isWelcome,
 		} );
-	},
-
-	setUserStateFromTrophiesData: function() {
-		this.userState = { userHasPosted: this.hasUserPosted() };
-	},
-
-	hasUserPosted: function() {
-		if ( this.props.trophiesData.hasLoadedFromServer() ) {
-			return this.props.trophiesData.get().trophies.some( function( trophy ) {
-				return 'post-milestone' === trophy.type;
-			} );
-		}
-	},
-
-	// This can be used to update the copy of the steps depending on whether
-	// the user has already done the action
-	renderPostComponent: function() {
-		if ( this.props.trophiesData.hasLoadedFromServer() ) {
-			return <div>{ this.userState.userHasPosted ? 'You have posted' : 'Create a post' }</div>;
-		}
 	},
 
 	renderMeSidebar: function() {
@@ -196,8 +174,6 @@ const NextSteps = createReactClass( {
 
 	render: function() {
 		var classes = 'main main-column next-steps';
-
-		this.setUserStateFromTrophiesData();
 
 		if ( this.props.isWelcome ) {
 			classes += ' is-single-page';
