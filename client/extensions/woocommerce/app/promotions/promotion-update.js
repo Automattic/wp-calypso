@@ -99,7 +99,7 @@ class PromotionUpdate extends React.Component {
 	onTrash = () => {
 		const { translate, site, promotion, deletePromotion: dispatchDelete } = this.props;
 		const areYouSure = translate( 'Are you sure you want to delete this promotion?' );
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, accepted => {
 			if ( ! accepted ) {
 				return;
 			}
