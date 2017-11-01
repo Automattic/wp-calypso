@@ -77,12 +77,12 @@ const endDate = {
  */
 const productSaleModel = {
 	productAndSalePrice: {
-		labelText: translate( 'Product & Sale Price' ),
+		labelText: translate( 'Product & sale price' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			salePrice: {
 				component: CurrencyField,
-				labelText: translate( 'Product Sale Price' ),
+				labelText: translate( 'Product sale price' ),
 				isRequired: true,
 			},
 			appliesTo: {

@@ -16,7 +16,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 function getExplanation( promotionType, translate ) {
 	switch ( promotionType ) {
 		case 'product_sale':
-			return translate( 'Put a product on sale for all customers.' );
+			return translate( 'Place a single product on sale for all customers.' );
 		case 'fixed_product':
 			return translate( 'Issue a coupon with a discount for one or more products.' );
 		case 'fixed_cart':
@@ -47,17 +47,17 @@ const PromotionFormTypeCard = ( {
 			<SectionHeader label={ translate( 'Promotion type' ) } />
 			<Card className="promotions__promotion-form-type-card">
 				<FormSelect value={ promotionType } onChange={ onTypeSelect }>
-					<option value="product_sale" disabled={ productTypesDisabled }>
-						{ translate( 'Individual Product Sale' ) }
-					</option>
 					<option value="fixed_product" disabled={ couponTypesDisabled }>
-						{ translate( 'Product Discount' ) }
+						{ translate( 'Product discount coupon' ) }
 					</option>
 					<option value="fixed_cart" disabled={ couponTypesDisabled }>
-						{ translate( 'Cart Discount' ) }
+						{ translate( 'Cart discount coupon' ) }
 					</option>
 					<option value="percent" disabled={ couponTypesDisabled }>
-						{ translate( 'Percent Cart Discount' ) }
+						{ translate( 'Percent cart discount coupon' ) }
+					</option>
+					<option value="product_sale" disabled={ productTypesDisabled }>
+						{ translate( 'Individual product sale' ) }
 					</option>
 				</FormSelect>
 				<FormSettingExplanation>
@@ -80,4 +80,3 @@ PromotionFormTypeCard.PropTypes = {
 };
 
 export default localize( PromotionFormTypeCard );
-

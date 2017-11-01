@@ -93,7 +93,7 @@ export default class PromotionForm extends React.PureComponent {
 		}
 
 		const promotion = this.props.promotion ||
-			{ id: { placeholder: uniqueId( 'promotion_' ) }, type: 'percent' };
+			{ id: { placeholder: uniqueId( 'promotion_' ) }, type: 'fixed_product' };
 
 		return (
 			<div className={ classNames( 'promotions__form', this.props.className ) }>
