@@ -36,7 +36,7 @@ import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 class DesignTypeWithAtomicStoreStep extends Component {
 	state = {
 		showStore: false,
-		pendingClickWithDesignType: null,
+		pendingStoreClick: false,
 	};
 	setPressableStore = ref => ( this.pressableStore = ref );
 
@@ -97,13 +97,13 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	handleNextStep = designType => {
-		if ( ! this.props.countryCode ) {
+		if ( designType === DESIGN_TYPE_STORE && ! this.props.countryCode ) {
 			// if we don't know the country code, we can't proceed. Continue after the code arrives
-			this.setState( { pendingClickWithDesignType: designType } );
+			this.setState( { pendingStoreClick: true } );
 			return;
 		}
 
-		this.setState( { pendingClickWithDesignType: null } );
+		this.setState( { pendingStoreClick: false } );
 
 		this.props.setDesignType( designType );
 
@@ -136,7 +136,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 	renderChoice = choice => {
 		const buttonClassName = classNames( 'button design-type-with-atomic-store__cta is-compact', {
-			'is-busy': this.state.pendingClickWithDesignType === choice.type,
+			'is-busy': choice.type === DESIGN_TYPE_STORE && this.state.pendingStoreClick,
 		} );
 
 		return (
@@ -222,11 +222,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		// If geoip data arrived, check if there is a pending click on a design type choice and
+		// If geoip data arrived, check if there is a pending click on a "store" choice and
 		// process it -- all data are available now to proceed.
-		const { pendingClickWithDesignType } = this.state;
-		if ( pendingClickWithDesignType && ! prevProps.countryCode && this.props.countryCode ) {
-			this.handleNextStep( pendingClickWithDesignType );
+		if ( this.state.pendingStoreClick && ! prevProps.countryCode && this.props.countryCode ) {
+			this.handleNextStep( DESIGN_TYPE_STORE );
 		}
 	}
 
