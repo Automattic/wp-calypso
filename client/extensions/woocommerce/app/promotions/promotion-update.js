@@ -44,6 +44,7 @@ class PromotionUpdate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		currency: PropTypes.string,
+		hasEdits: PropTypes.bool.isRequired,
 		products: PropTypes.array,
 		productCategories: PropTypes.array,
 		site: PropTypes.shape( {
