@@ -9,6 +9,7 @@ import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -28,6 +29,8 @@ import QueryReaderTeams from 'components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
+import ConversationFollowButton from 'blocks/conversation-follow-button';
+import { shouldShowComments } from 'blocks/comments/helper';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -120,10 +123,17 @@ class ReaderPostOptionsMenu extends React.Component {
 
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
+		const { ID: postId, site_ID: siteId } = post;
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
+		const showConversationFollow =
+			config.isEnabled( 'reader/conversations' ) &&
+			siteId &&
+			! post.is_external &&
+			shouldShowComments( post ) &&
+			! isDiscoverPost;
 
 		let isBlockPossible = false;
 
@@ -157,7 +167,20 @@ class ReaderPostOptionsMenu extends React.Component {
 					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 					{ this.props.showFollow && (
-						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
+						<FollowButton
+							tagName={ PopoverMenuItem }
+							siteUrl={ followUrl }
+							followLabel={ showConversationFollow ? translate( 'Follow Site' ) : null }
+							followingLabel={ showConversationFollow ? translate( 'Following Site' ) : null }
+						/>
+					) }
+
+					{ showConversationFollow && (
+						<ConversationFollowButton
+							tagName={ PopoverMenuItem }
+							siteId={ siteId }
+							postId={ postId }
+						/>
 					) }
 
 					{ post.URL && (
