@@ -172,12 +172,7 @@ class CrossPost extends PureComponent {
 		}
 
 		return (
-			<Card
-				tagName="article"
-				onClick={ this.handleCardClick }
-				className={ articleClasses }
-				showLinkIndicator={ false }
-			>
+			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
 				<ReaderAvatar
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
