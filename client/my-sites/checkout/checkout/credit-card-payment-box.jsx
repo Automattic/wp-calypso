@@ -36,14 +36,12 @@ import CartToggle from './cart-toggle';
 export class CreditCardPaymentBox extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		transactionStep: PropTypes.object.isRequired,
 		cards: PropTypes.array,
 		countriesList: PropTypes.object,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
-		onToggle: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -51,7 +49,6 @@ export class CreditCardPaymentBox extends React.Component {
 		countriesList: {},
 		initialCard: null,
 		onSubmit: noop,
-		onToggle: noop,
 	};
 
 	constructor( props ) {
@@ -129,7 +126,7 @@ export class CreditCardPaymentBox extends React.Component {
 	};
 
 	paymentButtons = () => {
-		const cart = this.props.cart,
+		const { cart, transactionStep, translate } = this.props,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
 			showPaymentChatButton =
 				config.isEnabled( 'upgrades/presale-chat' ) &&
@@ -139,12 +136,12 @@ export class CreditCardPaymentBox extends React.Component {
 
 		return (
 			<div className={ paymentButtonClasses }>
-				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
+				<PayButton cart={ cart } transactionStep={ transactionStep } />
 
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ this.props.translate( 'Secure Payment' ) }
+						{ translate( 'Secure Payment' ) }
 					</div>
 				</div>
 
@@ -155,8 +152,8 @@ export class CreditCardPaymentBox extends React.Component {
 				{ showPaymentChatButton && (
 					<PaymentChatButton
 						paymentType="credits"
-						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep }
+						cart={ cart }
+						transactionStep={ transactionStep }
 					/>
 				) }
 			</div>
@@ -181,15 +178,15 @@ export class CreditCardPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart } = this.props;
+		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
 		return (
 			<form autoComplete="off" onSubmit={ this.submit }>
 				<CreditCardSelector
-					cards={ this.props.cards }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.props.initialCard }
-					transaction={ this.props.transaction }
+					cards={ cards }
+					countriesList={ countriesList }
+					initialCard={ initialCard }
+					transaction={ transaction }
 				/>
 
 				<TermsOfService

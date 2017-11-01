@@ -14,13 +14,10 @@ import React from 'react';
  * Internal dependencies
  */
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
-import { isPayPalExpressEnabled } from 'lib/cart-values';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
-jest.mock( 'lib/analytics', () => {} );
 jest.mock( 'lib/cart-values', () => ( {
-	isPayPalExpressEnabled: jest.fn( false ),
 	cartItems: {
 		hasRenewableSubscription: jest.fn( false ),
 	},
@@ -35,10 +32,8 @@ describe( 'Credit Card Payment Box', () => {
 		cart: {},
 		countriesList: {},
 		initialCard: {},
-		selectedSite: {},
 		transactionStep: {},
 		onSubmit: noop,
-		onToggle: noop,
 		translate: identity,
 	};
 
@@ -107,16 +102,5 @@ describe( 'Credit Card Payment Box', () => {
 		expect( tickSpy.mock.calls.length ).toBe( 1 );
 		expect( setInterval.mock.calls.length ).toBe( 1 );
 		setInterval.mockClear();
-	} );
-
-	test( 'should display PayPal payment button when PayPal express is not enabled', () => {
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		expect( wrapper.find( '.credit-card-payment-box__switch-link' ) ).toHaveLength( 0 );
-	} );
-
-	test( 'should display PayPal payment button when PayPal express is enabled', () => {
-		isPayPalExpressEnabled.mockReturnValue( true );
-		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
-		expect( wrapper.find( '.credit-card-payment-box__switch-link' ) ).toHaveLength( 1 );
 	} );
 } );
