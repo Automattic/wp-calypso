@@ -52,7 +52,7 @@ export class Notices extends Component {
 				);
 			case HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED:
 				return translate(
-					'Your user is not authorized to chat at the moment. Would you mind contacting support by other means?'
+					'You are not authorized to chat at the moment. Would you mind contacting support by other means?'
 				);
 		}
 
