@@ -112,6 +112,7 @@
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
+		"upgrades/netherlands-ideal": true,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
