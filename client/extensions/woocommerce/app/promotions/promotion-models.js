@@ -8,6 +8,9 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import CurrencyField from './fields/currency-field';
+import DateField from './fields/date-field';
+import FormField from './fields/form-field';
+import NumberField from './fields/number-field';
 import PercentField from './fields/percent-field';
 import TextField from './fields/text-field';
 import PromotionAppliesToField from './fields/promotion-applies-to-field';
@@ -52,11 +55,30 @@ const fixedDiscountField = {
 };
 
 /**
+ * General purpose start date condition.
+ */
+const startDate = {
+	component: DateField,
+	labelText: translate( 'Start Date' ),
+	isEnableable: true,
+};
+
+/**
+ * General purpose end date condition.
+ */
+const endDate = {
+	component: DateField,
+	labelText: translate( 'End Date' ),
+	isEnableable: true,
+};
+
+/**
  * Promotion Type: Product Sale (e.g. $5 off the "I <3 Robots" t-shirt)
  */
 const productSaleModel = {
 	productAndSalePrice: {
 		labelText: translate( 'Product & Sale Price' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			salePrice: {
 				component: CurrencyField,
@@ -75,6 +97,57 @@ const productSaleModel = {
 			},
 		}
 	},
+	conditions: {
+		labelText: translate( 'Conditions', { context: 'noun' } ),
+		cssClass: 'promotions__promotion-form-card-conditions',
+		fields: {
+			startDate,
+			endDate,
+		}
+	},
+};
+
+/**
+ * Conditions for all coupon types.
+ */
+const couponConditions = {
+	labelText: translate( 'Conditions', { context: 'noun' } ),
+	cssClass: 'promotions__promotion-form-card-conditions',
+	fields: {
+		endDate,
+		minimumAmount: {
+			component: CurrencyField,
+			labelText: translate( 'This promotion requires a minimum purchase' ),
+			isEnableable: true,
+			defaultValue: 10,
+		},
+		maximumAmount: {
+			component: CurrencyField,
+			labelText: translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ),
+			isEnableable: true,
+			defaultValue: 100,
+		},
+		usageLimit: {
+			component: NumberField,
+			labelText: translate( 'Limit number of times this promotion can be used in total' ),
+			isEnableable: true,
+			defaultValue: 10,
+			minValue: 0,
+		},
+		usageLimitPerUser: {
+			component: NumberField,
+			labelText: translate( 'Limit total times each customer can use this promotion' ),
+			isEnableable: true,
+			defaultValue: 1,
+			minValue: 0,
+		},
+		individualUse: {
+			component: FormField,
+			labelText: translate( 'Cannot be combined with any other promotion' ),
+			isEnableable: true,
+			defaultValue: true,
+		},
+	},
 };
 
 /**
@@ -83,6 +156,7 @@ const productSaleModel = {
 const fixedProductModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			fixedDiscount: {
@@ -92,6 +166,7 @@ const fixedProductModel = {
 			appliesTo: appliesToCouponField,
 		},
 	},
+	conditions: couponConditions,
 };
 
 /**
@@ -100,6 +175,7 @@ const fixedProductModel = {
 const fixedCartModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			fixedDiscount: {
@@ -108,7 +184,8 @@ const fixedCartModel = {
 			},
 			appliesTo: appliesToCouponField,
 		},
-	}
+	},
+	conditions: couponConditions,
 };
 
 /**
@@ -117,6 +194,7 @@ const fixedCartModel = {
 const percentCartModel = {
 	couponCodeAndDiscount: {
 		labelText: translate( 'Coupon Code & Discount' ),
+		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
 			couponCode: couponCodeField,
 			percentDiscount: {
@@ -126,7 +204,8 @@ const percentCartModel = {
 			},
 			appliesTo: appliesToCouponField,
 		},
-	}
+	},
+	conditions: couponConditions,
 };
 
 /**
@@ -140,4 +219,3 @@ export default {
 	fixed_cart: fixedCartModel,
 	percent: percentCartModel,
 };
-

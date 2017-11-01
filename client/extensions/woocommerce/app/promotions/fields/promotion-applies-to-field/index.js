@@ -15,13 +15,9 @@ import AppliesToFilteredList from './applies-to-filtered-list';
 class PromotionAppliesToField extends React.Component {
 	static propTypes = {
 		selectionTypes: PropTypes.array.isRequired,
-		singular: PropTypes.bool,
-		fieldName: PropTypes.string.isRequired,
-		labelText: PropTypes.string.isRequired,
-		explanationText: PropTypes.string,
-		isRequired: PropTypes.bool,
 		value: PropTypes.object,
 		edit: PropTypes.func.isRequired,
+		singular: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -108,10 +104,6 @@ class PromotionAppliesToField extends React.Component {
 
 	render() {
 		const {
-			fieldName,
-			labelText,
-			explanationText,
-			isRequired,
 			value,
 			edit,
 			singular,
@@ -120,12 +112,7 @@ class PromotionAppliesToField extends React.Component {
 
 		return (
 			<div className="promotion-applies-to-field">
-				<FormField
-					fieldName={ fieldName }
-					labelText={ labelText }
-					explanationText={ explanationText }
-					isRequired={ isRequired }
-				>
+				<FormField { ...this.props }>
 					{ this.renderTypeSelect() }
 					<AppliesToFilteredList
 						appliesToType={ appliesToType }

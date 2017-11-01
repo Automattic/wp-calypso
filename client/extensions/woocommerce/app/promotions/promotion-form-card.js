@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,10 +33,15 @@ const PromotionFormCard = ( {
 		return renderField( fieldName, fieldModel, promotion, edit, currency );
 	} );
 
+	const classes = classNames(
+		'promotions__promotion-form-card',
+		{ [ cardModel.cssClass ]: cardModel.cssClass }
+	);
+
 	return (
 		<div>
 			<SectionHeader label={ cardModel.labelText } />
-			<Card className="promotions__promotion-form-card">
+			<Card className={ classes }>
 				{ fields }
 			</Card>
 		</div>
