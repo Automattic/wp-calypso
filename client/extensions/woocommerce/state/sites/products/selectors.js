@@ -26,6 +26,15 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array}  The entire list of products for this site
+ */
+export const getAllProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], [] );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the products list for a requested page has been successfully loaded from the server

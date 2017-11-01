@@ -9,6 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getAllProducts,
 	getProduct,
 	getProducts,
 	areProductsLoaded,
@@ -37,7 +38,7 @@ const loadingState = {
 								isLoading: true,
 							},
 						},
-						products: {},
+						products: [],
 					},
 				},
 			},
@@ -99,6 +100,20 @@ describe( 'selectors', () => {
 		test( 'should return undefined if the product is not present.', () => {
 			const nonexistentId = 250002;
 			expect( getProduct( loadedState, nonexistentId, 123 ) ).to.be.undefined;
+		} );
+	} );
+
+	describe( '#getAllProducts', () => {
+		test( 'should get an empty array when woocommerce state is not available.', () => {
+			expect( getAllProducts( preInitializedState, 123 ) ).to.eql( [] );
+		} );
+
+		test( 'should get an empty array if no products have loaded yet.', () => {
+			expect( getAllProducts( loadingState, 123 ) ).to.eql( [] );
+		} );
+
+		test( 'should return all loaded products for a given site.', () => {
+			expect( getAllProducts( loadedState, 123 ) ).to.eql( products );
 		} );
 	} );
 
