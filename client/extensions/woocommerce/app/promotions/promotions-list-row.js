@@ -19,8 +19,12 @@ function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {
 		case 'product_sale':
 			return translate( 'Product Sale' );
-		case 'coupon':
-			return translate( 'Coupon' );
+		case 'fixed_cart':
+			return translate( 'Cart Discount' );
+		case 'fixed_product':
+			return translate( 'Product Discount' );
+		case 'percent':
+			return translate( 'Percent Discount' );
 	}
 }
 
@@ -30,22 +34,22 @@ function getTimeframeText( promotion, translate, moment ) {
 	if ( promotion.startDate && promotion.endDate ) {
 		return translate( '%(startDate)s - %(endDate)s', {
 			args: {
-				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
-				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+				startDate: moment( promotion.startDate ).format( 'll' ),
+				endDate: moment( promotion.endDate ).format( 'll' ),
 			},
 		} );
 	}
 	if ( promotion.endDate ) {
 		return translate( 'Ends on %(endDate)s', {
 			args: {
-				endDate: moment( promotion.endDate + 'Z' ).format( 'll' ),
+				endDate: moment( promotion.endDate ).format( 'll' ),
 			},
 		} );
 	}
 	if ( promotion.startDate ) {
 		return translate( '%(startDate)s - No expiration date', {
 			args: {
-				startDate: moment( promotion.startDate + 'Z' ).format( 'll' ),
+				startDate: moment( promotion.startDate ).format( 'll' ),
 			},
 		} );
 	}
@@ -54,8 +58,7 @@ function getTimeframeText( promotion, translate, moment ) {
 
 const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
 	return (
-		// TODO: Replace with individual update link for promotion.
-		<TableRow href={ getLink( '/store/promotions/:site', site ) }>
+		<TableRow href={ getLink( '/store/promotion/:site/' + promotion.id, site ) }>
 			<TableItem isTitle className="promotions__list-promotion">
 				<span className="promotions__list-name">{ promotion.name }</span>
 			</TableItem>

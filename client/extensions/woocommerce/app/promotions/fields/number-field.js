@@ -12,7 +12,7 @@ import FormField from './form-field';
 
 const NumberField = ( props ) => {
 	const { fieldName, explanationText, placeholderText, value, edit, minValue, maxValue } = props;
-	const renderedValue = ( 'undefined' !== typeof value ? value : '' );
+	const renderedValue = ( 'undefined' !== typeof value && null !== value ? value : '' );
 
 	const onChange = ( e ) => {
 		const newValue = e.target.value;
@@ -24,7 +24,7 @@ const NumberField = ( props ) => {
 			return;
 		}
 
-		edit( fieldName, newValue );
+		edit( fieldName, String( newValue ) );
 	};
 
 	return (
