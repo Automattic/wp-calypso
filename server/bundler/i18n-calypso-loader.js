@@ -4,8 +4,6 @@
  */
 
 module.exports = function( content ) {
-	this.cacheable && this.cacheable();
-
 	if ( this.resource.endsWith( 'node_modules/i18n-calypso/lib/index.js' ) ) {
 		const newContent = content.replace(
 			'	moment.locale( this.state.localeSlug );',
