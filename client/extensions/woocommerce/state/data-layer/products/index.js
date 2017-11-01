@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { omitBy } from 'lodash';
 import qs from 'querystring';
 import warn from 'lib/warn';
@@ -13,7 +14,11 @@ import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productUpdated, productsUpdated } from 'woocommerce/state/sites/products/actions';
+import {
+	fetchProducts,
+	productUpdated,
+	productsUpdated,
+} from 'woocommerce/state/sites/products/actions';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
@@ -21,6 +26,8 @@ import {
 	WOOCOMMERCE_PRODUCT_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 } from 'woocommerce/state/action-types';
+
+const debug = debugFactory( 'woocommerce:products' );
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CREATE ]: [ handleProductCreate ],
@@ -116,4 +123,17 @@ function receivedProducts( { dispatch }, action, { data } ) {
 	const totalProducts = Number( headers[ 'X-WP-Total' ] );
 
 	dispatch( productsUpdated( siteId, params, body, totalPages, totalProducts ) );
+
+	if ( undefined !== params.offset ) {
+		debug(
+			`Products ${ params.offset + 1 }-${ params.offset +
+				body.length } out of ${ totalProducts } received.`
+		);
+
+		const remainder = totalProducts - params.offset - body.length;
+		if ( remainder ) {
+			const offset = params.offset + body.length;
+			dispatch( fetchProducts( siteId, { ...params, offset } ) );
+		}
+	}
 }
