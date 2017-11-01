@@ -55,6 +55,11 @@ class PostCommentList extends React.Component {
 		commentCount: PropTypes.number,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
+		commentsFilter: PropTypes.string,
+
+		// To display comments with a different status but not fetch them
+		// e.g. Reader full post view showing unapproved comments made to a moderated site
+		commentsFilterDisplay: PropTypes.string,
 
 		// connect()ed props:
 		commentsTree: PropTypes.object,
@@ -453,7 +458,7 @@ export default connect(
 			state,
 			ownProps.post.site_ID,
 			ownProps.post.ID,
-			ownProps.commentsFilter
+			ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter
 		),
 		commentsFetchingStatus: commentsFetchingStatus(
 			state,
