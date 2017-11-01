@@ -34,8 +34,8 @@ const PromotionFormTypeCard = ( {
 } ) => {
 	const promotionType = ( promotion && promotion.type ? promotion.type : '' );
 
-	const productTypesDisabled = ( promotion.couponId );
-	const couponTypesDisabled = ( promotion.productId );
+	const productTypesDisabled = Boolean( promotion.couponId );
+	const couponTypesDisabled = Boolean( promotion.productId );
 
 	const onTypeSelect = ( e ) => {
 		const type = e.target.value;
