@@ -3,12 +3,10 @@
  *
  * @format
  */
-
-import { property, sortBy } from 'lodash';
-import { localize } from 'i18n-calypso';
 import React from 'react';
-
 import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
+import { property, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
