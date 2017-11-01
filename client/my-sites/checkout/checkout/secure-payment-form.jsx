@@ -29,7 +29,6 @@ import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -58,9 +57,6 @@ const SecurePaymentForm = createReactClass( {
 
 	getVisiblePaymentBox( cart, paymentMethods ) {
 		let i;
-		const primary = 0,
-			secondary = 1;
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -72,17 +68,12 @@ const SecurePaymentForm = createReactClass( {
 			return this.state.userSelectedPaymentBox;
 		}
 
-		if ( tabsEnabled ) {
-			for ( i = 0; i < paymentMethods.length; i++ ) {
-				if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
-					return paymentMethods[ i ];
-				}
+		for ( i = 0; i < paymentMethods.length; i++ ) {
+			if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
+				return paymentMethods[ i ];
 			}
-		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ primary ] ) ) ) {
-			return paymentMethods[ primary ];
-		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ secondary ] ) ) ) {
-			return paymentMethods[ secondary ];
 		}
+
 		return null;
 	},
 
@@ -192,13 +183,11 @@ const SecurePaymentForm = createReactClass( {
 	},
 
 	renderCreditCardPaymentBox() {
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
-				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
-				title={ this.props.translate( 'Secure Payment' ) }
+				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
@@ -211,20 +200,17 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
-					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
 				/>
 			</PaymentBox>
 		);
 	},
 
 	renderPayPalPaymentBox() {
-		const tabsEnabled = abtest( 'checkoutPaymentMethodTabs' ) === 'tabs';
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
 				cart={ this.props.cart }
-				title={ this.props.translate( 'Secure Payment with PayPal' ) }
-				paymentMethods={ tabsEnabled ? this.props.paymentMethods : null }
+				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
@@ -234,7 +220,6 @@ const SecurePaymentForm = createReactClass( {
 					countriesList={ countriesListForPayments }
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
-					onToggle={ tabsEnabled ? null : this.selectPaymentBox }
 				/>
 			</PaymentBox>
 		);
@@ -278,15 +263,38 @@ const SecurePaymentForm = createReactClass( {
 				return this.renderFreeCartPaymentBox();
 
 			case 'credit-card':
-				return this.renderCreditCardPaymentBox();
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderCreditCardPaymentBox() }
+					</div>
+				);
 
 			case 'paypal':
-				return this.renderPayPalPaymentBox();
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderPayPalPaymentBox() }
+					</div>
+				);
 
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;
 		}
+	},
+
+	renderGreatChoiceHeader() {
+		const formatHeaderClass = 'formatted-header',
+			formatHeaderTitleClass = 'formatted-header__title';
+
+		return (
+			<header className={ formatHeaderClass }>
+				<h1 className={ formatHeaderTitleClass }>
+					{ this.props.translate( 'Great choice! How would you like to pay?' ) }
+				</h1>
+			</header>
+		);
 	},
 
 	render() {
