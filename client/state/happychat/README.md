@@ -27,7 +27,7 @@ Happychat state shape:
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `connectChat()`
+  ### `initConnection()`
 
 Opens Happychat Socket.IO client connection. _Note: Most use cases should use the Query Component
 [`<HappychatConnection />`](../../components/happychat/connection.jsx) instead of dispatching
