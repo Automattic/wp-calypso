@@ -41,6 +41,9 @@ import PromotionForm from './promotion-form';
 class PromotionUpdate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
+		currency: PropTypes.string,
+		products: PropTypes.array,
+		productCategories: PropTypes.array,
 		site: PropTypes.shape( {
 			ID: PropTypes.number,
 			slug: PropTypes.string,

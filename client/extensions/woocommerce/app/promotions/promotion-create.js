@@ -34,6 +34,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 class PromotionCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
+		currency: PropTypes.string,
 		site: PropTypes.shape( {
 			ID: PropTypes.number,
 			slug: PropTypes.string,
