@@ -16,7 +16,7 @@ export default function( message, callback, confirmButtonText, cancelButtonText,
 	var wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 
-	function onClose( result ) {
+	function onClose( result, action ) {
 		if ( wrapper ) {
 			ReactDom.unmountComponentAtNode( wrapper );
 			document.body.removeChild( wrapper );
@@ -24,7 +24,7 @@ export default function( message, callback, confirmButtonText, cancelButtonText,
 		}
 
 		if ( callback ) {
-			callback( result );
+			callback( result, action );
 		}
 	}
 
