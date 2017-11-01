@@ -3,102 +3,69 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
+// actions
+import {
+	initConnection,
+	sendMessage,
+	sendNotTyping,
+	sendTyping,
+} from 'state/happychat/connection/actions';
+import { setCurrentMessage } from 'state/happychat/ui/actions';
 import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
+// selectors
+import { getCurrentUser } from 'state/current-user/selectors';
+import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
+import { getHappychatAuth } from 'state/happychat/utils';
+import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
+import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import HappychatConnection from './connection';
-import Title from './title';
-import Composer from './composer';
-import Notices from './notices';
-import Timeline from './timeline';
-
-/*
- * Main chat UI component
- */
-export class Happychat extends Component {
-	componentDidMount() {
-		this.props.setFocused();
-	}
-
-	componentWillUnmount() {
-		this.props.setBlurred();
-	}
-
-	// transform-class-properties syntax so this is bound within the function
-	onCloseChatTitle = () => {
-		const { onMinimizeChat, onMinimizedChat, onCloseChat } = this.props;
-		onMinimizeChat();
-		setTimeout( () => {
-			onMinimizedChat();
-			onCloseChat();
-		}, 500 );
-	};
-
-	render() {
-		const { isChatOpen, isMinimizing } = this.props;
-
-		return (
-			<div className="happychat">
-				<HappychatConnection />
-				<div
-					className={ classnames( 'happychat__container', {
-						'is-open': isChatOpen,
-						'is-minimizing': isMinimizing,
-					} ) }
-				>
-					<Title onCloseChat={ this.onCloseChatTitle } />
-					<Timeline />
-					<Notices />
-					<Composer />
-				</div>
-			</div>
-		);
-	}
-}
-
-Happychat.propTypes = {
-	isChatOpen: PropTypes.bool,
-	isMinimizing: PropTypes.bool,
-	onCloseChat: PropTypes.func,
-	onMinimizeChat: PropTypes.func,
-	onMinimizedChat: PropTypes.func,
-	setBlurred: PropTypes.func,
-	setFocused: PropTypes.func,
-};
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
+import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
+import { canUserSendMessages } from 'state/happychat/selectors';
+// components
+import { Happychat } from './main';
 
 const mapState = state => {
+	const currentUser = getCurrentUser( state );
 	return {
+		chatStatus: getHappychatChatStatus( state ),
+		connectionStatus: getHappychatConnectionStatus( state ),
+		currentUserEmail: currentUser.email,
+		disabled: ! canUserSendMessages( state ),
+		getAuth: getHappychatAuth( state ),
 		isChatOpen: isHappychatOpen( state ),
+		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
+		isCurrentUser: ( { user_id, source } ) => {
+			return user_id.toString() === currentUser.ID.toString() && source === 'customer';
+		},
+		isHappychatEnabled: config.isEnabled( 'happychat' ),
 		isMinimizing: isHappychatMinimizing( state ),
+		isServerReachable: isHappychatServerReachable( state ),
+		message: getCurrentMessage( state ),
+		timeline: getHappychatTimeline( state ),
 	};
 };
 
-const mapDispatch = dispatch => {
-	return {
-		onCloseChat() {
-			dispatch( closeChat() );
-		},
-		onMinimizeChat() {
-			dispatch( minimizeChat() );
-		},
-		onMinimizedChat() {
-			dispatch( minimizedChat() );
-		},
-		setBlurred() {
-			dispatch( blur() );
-		},
-		setFocused() {
-			dispatch( focus() );
-		},
-	};
+const mapDispatch = {
+	onBlurred: blur,
+	onCloseChat: closeChat,
+	onFocused: focus,
+	onInitConnection: initConnection,
+	onMinimizeChat: minimizeChat,
+	onMinimizedChat: minimizedChat,
+	onSendMessage: sendMessage,
+	onSendNotTyping: sendNotTyping,
+	onSendTyping: sendTyping,
+	onSetCurrentMessage: setCurrentMessage,
 };
 
-export default connect( mapState, mapDispatch )( Happychat );
+export default connect( mapState, mapDispatch )( localize( Happychat ) );

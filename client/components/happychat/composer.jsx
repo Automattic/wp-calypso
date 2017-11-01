@@ -7,18 +7,11 @@ import classNames from 'classnames';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { get, isEmpty, throttle } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { sendMessage } from 'state/happychat/connection/actions';
-import { setCurrentMessage } from 'state/happychat/ui/actions';
-import { sendTyping, sendNotTyping } from 'state/happychat/connection/actions';
-import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import { canUserSendMessages } from 'state/happychat/selectors';
 import scrollbleed from './scrollbleed';
 
 /*
@@ -33,8 +26,8 @@ export const Composer = createReactClass( {
 		message: PropTypes.string,
 		onFocus: PropTypes.func,
 		onSendMessage: PropTypes.func,
-		onSendTyping: PropTypes.func,
 		onSendNotTyping: PropTypes.func,
+		onSendTyping: PropTypes.func,
 		onSetCurrentMessage: PropTypes.func,
 		translate: PropTypes.func, // localize HOC
 	},
@@ -104,17 +97,3 @@ export const Composer = createReactClass( {
 		);
 	},
 } );
-
-const mapState = state => ( {
-	disabled: ! canUserSendMessages( state ),
-	message: getCurrentMessage( state ),
-} );
-
-const mapDispatch = {
-	onSendTyping: sendTyping,
-	onSendNotTyping: sendNotTyping,
-	onSendMessage: sendMessage,
-	onSetCurrentMessage: setCurrentMessage,
-};
-
-export default connect( mapState, mapDispatch )( localize( Composer ) );

@@ -31,12 +31,12 @@ export class HappychatButton extends Component {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
 		getAuth: PropTypes.func,
-		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,
 		isChatAvailable: PropTypes.bool,
 		isConnectionUninitialized: PropTypes.bool,
 		onClick: PropTypes.func,
-		openChat: PropTypes.func,
+		onInitConnection: PropTypes.func,
+		onOpenChat: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
@@ -44,12 +44,12 @@ export class HappychatButton extends Component {
 		allowMobileRedirect: false,
 		borderless: true,
 		getAuth: noop,
-		initConnection: noop,
 		isChatActive: false,
 		isChatAvailable: false,
 		isConnectionUninitialized: false,
 		onClick: noop,
-		openChat: noop,
+		onInitConnection: noop,
+		onOpenChat: noop,
 		translate: identity,
 	};
 
@@ -59,7 +59,7 @@ export class HappychatButton extends Component {
 			// page componet instead of the sidebar
 			page( '/me/chat' );
 		} else {
-			this.props.openChat();
+			this.props.onOpenChat();
 		}
 
 		this.props.onClick( event );
@@ -67,7 +67,7 @@ export class HappychatButton extends Component {
 
 	componentDidMount() {
 		if ( this.props.isConnectionUninitialized ) {
-			this.props.initConnection( this.props.getAuth() );
+			this.props.onInitConnection( this.props.getAuth() );
 		}
 	}
 
@@ -114,7 +114,7 @@ export default connect(
 		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 	} ),
 	{
-		openChat,
-		initConnection,
+		onOpenChat: openChat,
+		onInitConnection: initConnection,
 	}
 )( localize( HappychatButton ) );
