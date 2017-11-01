@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { property, sortBy } from 'lodash';
 
@@ -16,19 +17,10 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import steps from './steps';
 import analytics from 'lib/analytics';
 import productsValues from 'lib/products-values';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
+import { getSites } from 'state/selectors';
 
 const NextSteps = createReactClass( {
 	displayName: 'NextSteps',
-
-	mixins: [ observe( 'sites' ) ],
-
-	getDefaultProps: function() {
-		return { sites: sites };
-	},
 
 	componentWillUnmount: function() {
 		window.scrollTo( 0, 0 );
@@ -109,7 +101,7 @@ const NextSteps = createReactClass( {
 	},
 
 	newestSite: function() {
-		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
+		return sortBy( this.props.sites, property( 'ID' ) ).pop();
 	},
 
 	outroMessage: function() {
@@ -137,7 +129,7 @@ const NextSteps = createReactClass( {
 	},
 
 	userHasPurchasedAPlan: function() {
-		return this.props.sites.get().some( function( site ) {
+		return this.props.sites.some( function( site ) {
 			return productsValues.isPlan( site.plan );
 		} );
 	},
@@ -191,4 +183,6 @@ const NextSteps = createReactClass( {
 	},
 } );
 
-export default localize( NextSteps );
+export default connect( state => ( {
+	sites: getSites( state ),
+} ) )( localize( NextSteps ) );
