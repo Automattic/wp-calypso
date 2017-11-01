@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import PriceInput from 'woocommerce/components/price-input';
 import FormField from './form-field';
 
@@ -17,21 +16,14 @@ const CurrencyField = ( props ) => {
 
 	const onChange = ( e ) => {
 		const newValue = e.target.value;
-		if ( 0 === newValue.length ) {
-			edit( fieldName, '' );
-			return;
-		}
-
-		const numberValue = Number( newValue );
-		if ( 0 <= Number( newValue ) ) {
-			const formattedValue = getCurrencyFormatDecimal( numberValue, currency );
-			edit( fieldName, String( formattedValue ) );
-		}
+		edit( fieldName, String( newValue ) );
 	};
 
 	return (
 		<FormField { ...props } >
 			<PriceInput
+				noWrap
+				size="4"
 				htmlFor={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				currency={ currency }
