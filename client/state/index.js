@@ -176,7 +176,8 @@ export function createReduxStore( initialState = {} ) {
 		require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && require( './data-layer/extensions-middleware.js' ).default,
 		noticesMiddleware,
-		isBrowser && require( './happychat/middleware.js' ).default(),
+		isBrowser && require( './happychat/middleware.js' ).default,
+		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser &&

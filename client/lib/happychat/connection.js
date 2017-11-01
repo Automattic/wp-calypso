@@ -1,17 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import IO from 'socket.io-client';
-import { v4 as uuid } from 'uuid';
 import { isString } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
 import {
 	receiveChatEvent,
 	receiveError,
@@ -98,44 +95,6 @@ class Connection {
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
-		);
-	}
-
-	sendEvent( message ) {
-		this.openSocket.then(
-			socket =>
-				socket.emit( 'message', {
-					text: message,
-					id: uuid(),
-					type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
-					meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT },
-				} ),
-			e => debug( 'failed to send message', e )
-		);
-	}
-
-	/**
-	 * Update chat preferences (locale and groups)
-	 * @param {string} locale representing the user selected locale
-	 * @param {array} groups of string happychat groups (wp.com, jpop) based on the site selected
-	 */
-	setPreferences( locale, groups ) {
-		this.openSocket.then(
-			socket => socket.emit( 'preferences', { locale, groups } ),
-			e => debug( 'failed to send preferences', e )
-		);
-	}
-
-	sendLog( message ) {
-		this.openSocket.then(
-			socket =>
-				socket.emit( 'message', {
-					text: message,
-					id: uuid(),
-					type: HAPPYCHAT_MESSAGE_TYPES.LOG,
-					meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG },
-				} ),
-			e => debug( 'failed to send message', e )
 		);
 	}
 
