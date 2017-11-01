@@ -1,3 +1,7 @@
+1.8.3
+------
+Change localize hoc's es6 class --> [create-react-class](https://www.npmjs.com/package/create-react-class) so that the code is still technically es5 and will not need a build step.
+
 1.8.2
 ------
 Change localize hoc's React.createClass --> es6 classes for React 16 compat.
