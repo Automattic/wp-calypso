@@ -16,7 +16,6 @@ import {
 	receiveChatEvent,
 	requestChatTranscript,
 	setConnected,
-	setConnecting,
 	setDisconnected,
 	setHappychatAvailable,
 	setReconnecting,
@@ -31,35 +30,45 @@ const buildConnection = socket =>
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
 class Connection {
-	init( url, dispatch, { signer_user_id, jwt, locale, groups, geoLocation } ) {
+	/**
+	 * Init the SockeIO connection: check user authorization and bind socket events
+	 *
+	 * @param  { Function } dispatch Redux dispatch function
+	 * @param  { Promise } auth Authentication promise, will return the user info upon fulfillment
+	 * @return { Promise } Fulfilled (returns the opened socket)
+	 *                   	 or rejected (returns an error message)
+	 */
+	init( dispatch, auth ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
 		}
+		this.dispatch = dispatch;
 
-		dispatch( setConnecting() );
-
-		const socket = buildConnection( url );
 		this.openSocket = new Promise( ( resolve, reject ) => {
-			socket
-				.once( 'connect', () => debug( 'connected' ) )
-				.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
-				.on( 'init', () => {
-					dispatch( setConnected( { signer_user_id, locale, groups, geoLocation } ) );
-					// TODO: There's no need to dispatch a separate action to request a transcript.
-					// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
-					dispatch( requestChatTranscript() );
-					resolve( socket );
+			auth
+				.then( ( { url, user: { signer_user_id, jwt, locale, groups, geoLocation } } ) => {
+					const socket = buildConnection( url );
+
+					socket
+						.once( 'connect', () => debug( 'connected' ) )
+						.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
+						.on( 'init', () => {
+							dispatch( setConnected( { signer_user_id, locale, groups, geoLocation } ) );
+							dispatch( requestChatTranscript() );
+							resolve( socket );
+						} )
+						.on( 'unauthorized', () => {
+							socket.close();
+							reject( 'user is not authorized' );
+						} )
+						.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
+						.on( 'reconnecting', () => dispatch( setReconnecting() ) )
+						.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
+						.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) )
+						.on( 'message', message => dispatch( receiveChatEvent( message ) ) );
 				} )
-				.on( 'unauthorized', () => {
-					socket.close();
-					reject( 'user is not authorized' );
-				} )
-				.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
-				.on( 'reconnecting', () => dispatch( setReconnecting() ) )
-				.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-				.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) )
-				.on( 'message', message => dispatch( receiveChatEvent( message ) ) );
+				.catch( e => reject( e ) );
 		} );
 
 		return this.openSocket;

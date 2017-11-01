@@ -4,9 +4,9 @@
  */
 import {
 	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_DISCONNECTED,
+	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_RECONNECTING,
 } from 'state/action-types';
 import {
@@ -38,7 +38,7 @@ const error = ( state = null, action ) => {
  */
 const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTING:
+		case HAPPYCHAT_IO_INIT:
 			return HAPPYCHAT_CONNECTION_STATUS_CONNECTING;
 		case HAPPYCHAT_CONNECTED:
 			return HAPPYCHAT_CONNECTION_STATUS_CONNECTED;

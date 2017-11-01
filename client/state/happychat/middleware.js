@@ -1,21 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import moment from 'moment';
 import { has, isEmpty, throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
 import {
 	ANALYTICS_EVENT_RECORD,
-	HAPPYCHAT_CONNECT,
-	HAPPYCHAT_INITIALIZE,
 	// new happychat action types
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
@@ -54,10 +49,8 @@ import { getGroups } from './selectors';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { getHelpSelectedSite } from 'state/help/selectors';
+import buildConnection from 'lib/happychat/connection';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:actions' );
 
@@ -69,30 +62,6 @@ const sendTyping = throttle(
 	{ leading: true, trailing: false }
 );
 
-// Promise based interface for wpcom.request
-const request = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		wpcom.request( ...args, ( error, response ) => {
-			if ( error ) {
-				return reject( error );
-			}
-			resolve( response );
-		} );
-	} );
-
-const sign = payload =>
-	request( {
-		method: 'POST',
-		path: '/jwt/sign',
-		body: { payload: JSON.stringify( payload ) },
-	} );
-
-const startSession = () =>
-	request( {
-		method: 'POST',
-		path: '/happychat/session',
-	} );
-
 export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	const state = getState();
 
@@ -102,38 +71,6 @@ export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 
 		connection.setPreferences( locale, groups );
 	}
-};
-
-export const connectChat = ( connection, { getState, dispatch } ) => {
-	const state = getState();
-	if ( ! isHappychatConnectionUninitialized( state ) ) {
-		// If chat has already initialized, do nothing
-		return;
-	}
-
-	const url = config( 'happychat_url' );
-
-	const user = getCurrentUser( state );
-	const locale = getCurrentUserLocale( state );
-	let groups = getGroups( state );
-	const selectedSite = getHelpSelectedSite( state );
-	if ( selectedSite && selectedSite.ID ) {
-		groups = getGroups( state, selectedSite.ID );
-	}
-
-	const happychatUser = {
-		signer_user_id: user.ID,
-		locale,
-		groups,
-	};
-
-	return startSession()
-		.then( ( { session_id, geo_location } ) => {
-			happychatUser.geoLocation = geo_location;
-			return sign( { user, session_id } );
-		} )
-		.then( ( { jwt } ) => connection.init( url, dispatch, { jwt, ...happychatUser } ) )
-		.catch( e => debug( 'failed to start Happychat session', e, e.stack ) );
 };
 
 export const requestTranscript = ( connection, { dispatch } ) => {
@@ -202,13 +139,6 @@ export const sendInfo = ( connection, { getState }, action ) => {
 
 	debug( 'sending info message', info );
 	connection.sendInfo( info );
-};
-
-export const connectIfRecentlyActive = ( connection, store ) => {
-	if ( wasHappychatRecentlyActive( store.getState() ) ) {
-		return connectChat( connection, store );
-	}
-	return Promise.resolve(); // for testing purposes we need to return a promise
 };
 
 export const sendRouteSetEventMessage = ( connection, { getState }, action ) => {
@@ -320,13 +250,12 @@ export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
 	if ( connection == null ) {
-		connection = require( './common' ).connection;
+		connection = buildConnection();
 	}
 
 	// This is a placeholder to make sure connectionNG is never used,
 	// but doesn't give a compilation error either.
 	const connectionNG = {
-		init: () => {},
 		send: () => {},
 		request: () => {},
 	};
@@ -336,14 +265,6 @@ export default function( connection = null ) {
 		sendActionLogsAndEvents( connection, store, action );
 
 		switch ( action.type ) {
-			case HAPPYCHAT_CONNECT:
-				connectChat( connection, store );
-				break;
-
-			case HAPPYCHAT_INITIALIZE:
-				connectIfRecentlyActive( connection, store );
-				break;
-
 			case HELP_CONTACT_FORM_SITE_SELECT:
 				updateChatPreferences( connection, store, action.siteId );
 				break;
@@ -368,11 +289,11 @@ export default function( connection = null ) {
 				sendRouteSetEventMessage( connection, store, action );
 				break;
 
-			// NEW SOCKET API SURFACE
 			case HAPPYCHAT_IO_INIT:
-				connectionNG.init( store.dispatch, action.config );
+				connection.init( store.dispatch, action.auth );
 				break;
 
+			// NEW SOCKET API SURFACE - still not in use
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
 			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
 			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:

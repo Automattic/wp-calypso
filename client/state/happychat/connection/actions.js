@@ -9,11 +9,8 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import {
-	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_DISCONNECTED,
-	HAPPYCHAT_INITIALIZE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SEND_MESSAGE,
@@ -45,13 +42,7 @@ import {
 } from 'state/action-types';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
 
-export const connectChat = () => ( { type: HAPPYCHAT_CONNECT } );
-
-export const initialize = () => ( { type: HAPPYCHAT_INITIALIZE } );
-
 export const setConnected = user => ( { type: HAPPYCHAT_CONNECTED, user } );
-
-export const setConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 
 export const setDisconnected = errorStatus => ( { type: HAPPYCHAT_DISCONNECTED, errorStatus } );
 
