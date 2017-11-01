@@ -6,6 +6,11 @@
 	--masterbar-item-hover-background: lighten( $blue-wordpress, 5% );
 	--masterbar-item-active-background: darken( $blue-wordpress, 17% );
 	--masterbar-item-new-color: $blue-wordpress;
+	--masterbar-item-new-editor-background: darken( $blue-wordpress, 17% );
+	--masterbar-item-new-editor-hover-background: darken( $blue-wordpress, 13% );
+	--masterbar-toggle-drafts-editor-background: darken( $blue-wordpress, 12% );
+	--masterbar-toggle-drafts-editor-border: darken( $blue-wordpress, 5% );
+	--masterbar-toggle-drafts-editor-hover-background: darken( $blue-wordpress, 17% );
 }
 
 //additional color schemes
@@ -17,6 +22,11 @@
 		--masterbar-item-hover-background: lighten( $gray, 30% );
 		--masterbar-item-active-background: lighten( $gray, 10% );
 		--masterbar-item-new-color: $gray-text;
+		--masterbar-item-new-editor-background: darken( $gray, 20% );
+		--masterbar-item-new-editor-hover-background: darken( $gray, 10% );
+		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
+		--masterbar-toggle-drafts-editor-border: lighten( $gray, 20% );
+		--masterbar-toggle-drafts-editor-hover-background: darken( $gray, 10% );
 	}
 
 	&.is-dark {
@@ -26,5 +36,10 @@
 		--masterbar-item-hover-background: darken( $gray, 10% );
 		--masterbar-item-active-background: $gray-text-min;
 		--masterbar-item-new-color: $gray-dark;
+		--masterbar-item-new-editor-background: $gray-text-min;
+		--masterbar-item-new-editor-hover-background: lighten( $gray-text-min, 5% );
+		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
+		--masterbar-toggle-drafts-editor-border: $gray-dark;
+		--masterbar-toggle-drafts-editor-hover-background: lighten( $gray-text-min, 5% );
 	}
 }
