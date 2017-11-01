@@ -16,8 +16,6 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	// NEW ACTION TYPES
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
@@ -77,14 +75,6 @@ export const sendUserInfo = ( howCanWeHelp, howYouFeel, site ) => {
 };
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
-
-export const requestChatTranscript = () => ( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
-
-export const receiveChatTranscript = ( messages, timestamp ) => ( {
-	type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
-	messages,
-	timestamp,
-} );
 
 // === NEW ACTION CREATORS =====================================================
 // === NEW ACTION CREATORS =====================================================

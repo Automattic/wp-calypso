@@ -14,7 +14,8 @@ import { isString } from 'lodash';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
 import {
 	receiveChatEvent,
-	requestChatTranscript,
+	receiveError,
+	requestTranscript,
 	setConnected,
 	setDisconnected,
 	setHappychatAvailable,
@@ -55,7 +56,7 @@ class Connection {
 						.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
 						.on( 'init', () => {
 							dispatch( setConnected( { signer_user_id, locale, groups, geoLocation } ) );
-							dispatch( requestChatTranscript() );
+							dispatch( requestTranscript() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
@@ -149,23 +150,67 @@ class Connection {
 		);
 	}
 
-	transcript( timestamp ) {
-		return this.openSocket.then( socket =>
-			Promise.race( [
-				new Promise( ( resolve, reject ) => {
-					socket.emit( 'transcript', timestamp || null, ( e, result ) => {
-						if ( e ) {
-							return reject( new Error( e ) );
-						}
-						resolve( result );
-					} );
-				} ),
-				new Promise( ( resolve, reject ) =>
-					setTimeout( () => {
-						reject( Error( 'timeout' ) );
-					}, 10000 )
-				),
-			] )
+	/**
+	 *
+	 * Given a Redux action and a timeout, emits a SocketIO event that request
+	 * some info to the Happychat server.
+	 *
+	 * The request can have three states, and will dispatch an action accordingly:
+	 *
+	 * - request was succesful: would dispatch action.callback
+	 * - request was unsucessful: would dispatch receiveError
+	 * - request timeout: would dispatch action.callbackTimeout
+	 *
+	 * @param  { Object } action A Redux action with props
+	 *                  	{
+	 *                  		event: SocketIO event name,
+	 *                  		payload: contents to be sent,
+	 *                  		callback: a Redux action creator,
+	 *                  		callbackTimeout: a Redux action creator,
+	 *                  	}
+	 * @param  { Number } timeout How long (in milliseconds) has the server to respond
+	 * @return { Promise } Fulfilled (returns the transcript response)
+	 *                     or rejected (returns an error message)
+	 */
+	request( action, timeout ) {
+		if ( ! this.openSocket ) {
+			return;
+		}
+
+		return this.openSocket.then(
+			socket => {
+				const promiseRace = Promise.race( [
+					new Promise( ( resolve, reject ) => {
+						socket.emit( action.event, action.payload, ( e, result ) => {
+							if ( e ) {
+								return reject( new Error( e ) ); // request failed
+							}
+							return resolve( result ); // request succesful
+						} );
+					} ),
+					new Promise( ( resolve, reject ) =>
+						setTimeout( () => {
+							return reject( new Error( 'timeout' ) ); // request timeout
+						}, timeout )
+					),
+				] );
+
+				// dispatch the request state upon promise race resolution
+				promiseRace.then(
+					result => this.dispatch( action.callback( result ) ),
+					e =>
+						e.message === 'timeout'
+							? this.dispatch( action.callbackTimeout() )
+							: this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) )
+				);
+
+				return promiseRace;
+			},
+			e => {
+				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				// so we can relay the error message, for testing purposes
+				return Promise.reject( e );
+			}
 		);
 	}
 }
