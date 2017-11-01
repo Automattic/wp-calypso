@@ -65,12 +65,12 @@ class EditorRevisions extends Component {
 			<div className="editor-revisions__wrapper">
 				<QueryPostRevisions postId={ postId } siteId={ siteId } />
 				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
-				<EditorRevisionsList postId={ postId } revisions={ revisions } siteId={ siteId } />
 				<EditorDiffViewer
 					postId={ postId }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
 				/>
+				<EditorRevisionsList postId={ postId } revisions={ revisions } siteId={ siteId } />
 			</div>
 		);
 	};

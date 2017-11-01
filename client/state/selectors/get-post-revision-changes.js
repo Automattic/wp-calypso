@@ -12,7 +12,6 @@ import { findIndex, get, isUndefined, map, omitBy } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { diffWords } from 'lib/text-utils';
 import getPostRevisions from 'state/selectors/get-post-revisions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 const diffKey = ( key, obj1, obj2 ) =>
 	map( diffWords( get( obj1, key, '' ), get( obj2, key, '' ) ), change =>
@@ -21,8 +20,7 @@ const diffKey = ( key, obj1, obj2 ) =>
 
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
-		const _siteId = siteId || getSelectedSiteId( state );
-		const orderedRevisions = getPostRevisions( state, _siteId, postId, 'display' );
+		const orderedRevisions = getPostRevisions( state, siteId, postId, 'display' );
 		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
 		if ( revisionIndex === -1 ) {
 			return { content: [], title: [] };

@@ -1,4 +1,5 @@
 /** @format */
+// @TODO we should decouple from accordion styles
 @import 'components/accordion/style';
 
 .editor-revisions-list {
@@ -60,25 +61,24 @@
 	color: $gray-text-min;
 }
 
-.editor-ground-control__popover {
-	// @TODO at wider viewports, move this left some
-	//margin-left: -4vw;
-	width: 93vw;
-
-	.popover__arrow {
-		// The initial render causes this to be off, just hiding for now
-		display: none;
-	}
-}
-
 .editor-revisions__wrapper {
 	display: flex;
+	height: 96vh;
+	width: 75vw;
 	justify-content: space-between;
+	overflow-y: hidden;
+}
 
-	.editor-revisions-list {
-		min-width: 200px;
-		max-width: 250px;
-	}
+.editor-revisions-list {
+	border-left: 1px solid darken($sidebar-bg-color, 5%);
+	min-width: 200px;
+	max-width: 250px;
+	overflow-y: scroll;
+}
+
+.editor-diff-viewer {
+	min-width: 300px;
+	overflow-y: scroll;
 }
 
 .editor-revisions-list__revision {
@@ -104,7 +104,6 @@
 .editor-revisions-list__list,
 .editor-revisions-list__header {
 	background: $white;
-	border-top: 1px solid darken($sidebar-bg-color, 5%);
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	font-size: 13px;
 }
@@ -117,10 +116,6 @@
 
 .editor-revisions-list__header {
 	padding: 1rem;
-
-	.gridicons-history {
-		margin-right: 5px;
-	}
 }
 
 .editor-revisions-list__load-revision {

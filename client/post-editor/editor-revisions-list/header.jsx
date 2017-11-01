@@ -7,11 +7,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 const EditorRevisionsListHeader = ( { numRevisions, translate } ) => (
 	<div className="editor-revisions-list__header">
-		<Gridicon icon="history" size={ 18 } />
 		{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
 			count: numRevisions,
 			args: { revisions: numRevisions },

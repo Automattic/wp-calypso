@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost } from 'state/posts/actions';
 import { getPostRevision } from 'state/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { edit as libPostsEdit } from 'lib/posts/actions';
+import libPostsActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
@@ -27,11 +27,17 @@ class LoadButton extends PureComponent {
 	};
 
 	loadRevision = () => {
-		const { revision /*, siteId, postId, selectedRevisionId*/ } = this.props;
-		//		console.log( { loading: 'libPostsEdit', siteId, postId, revision, selectedRevisionId } );
-		libPostsEdit( {
+		const { revision, postId, siteId } = this.props;
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		libPostsActions.edit( {
 			content: revision.content,
 			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+
+		this.props.editPost( siteId, postId, {
+			content: revision.content,
 			title: revision.title,
 		} );
 
@@ -43,7 +49,11 @@ class LoadButton extends PureComponent {
 	};
 
 	render() {
-		return <Button onClick={ this.loadRevision }>{ this.props.translate( 'Load' ) }</Button>;
+		return (
+			<Button primary onClick={ this.loadRevision }>
+				{ this.props.translate( 'Load' ) }
+			</Button>
+		);
 	}
 }
 export default flow(
