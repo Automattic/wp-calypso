@@ -9,8 +9,6 @@ This module is used to manage products for a site.
 
 Create a product on the remote site via API. May also call action creator callbacks: successAction on successful product creation, or failureAction on an error.
 
-## Actions
-
 ### `fetchProducts( siteId: number, params )`
 
 Pull products from the remote site. Does not run if a specific server page is already loading. Params passed here go through to the API endpoint for things like `page`, `offset`, or `search`. Defaults: `page: 1`, `per_page: 10`

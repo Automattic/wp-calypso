@@ -39,7 +39,6 @@ const loadedListState = {
 							currentSearch: 'example',
 							requestedPage: 3,
 							requestedSearch: 'test',
-							productIds: [ 15, 389 ],
 						},
 					},
 					401: {

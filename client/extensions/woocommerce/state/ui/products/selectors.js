@@ -33,7 +33,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
 }
 
 /**
- * Gets a product with local edits overlayed on top of fetched data.
+ * Gets a product with local edits overlaid on top of fetched data.
  *
  * @param {Object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
