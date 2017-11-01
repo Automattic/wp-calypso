@@ -47,13 +47,13 @@ function getTimeframeText( promotion, translate, moment ) {
 		} );
 	}
 	if ( promotion.startDate ) {
-		return translate( '%(startDate)s - No expiration date', {
+		return translate( '%(startDate)s - No end date', {
 			args: {
 				startDate: moment( promotion.startDate ).format( 'll' ),
 			},
 		} );
 	}
-	return translate( 'No expiration date' );
+	return translate( 'No end date' );
 }
 
 const PromotionsListRow = ( { site, promotion, translate, moment } ) => {

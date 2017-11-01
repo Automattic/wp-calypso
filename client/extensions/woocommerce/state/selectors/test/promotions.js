@@ -76,7 +76,8 @@ describe( 'promotions', () => {
 
 	describe( '#getPromotionsPage', () => {
 		test( 'should return only promotions for a given page.', () => {
-			const page = getPromotionsPage( rootState, 123, 1, 2 );
+			const promotions = getPromotions( rootState, 123 );
+			const page = getPromotionsPage( promotions, 1, 2 );
 
 			expect( page ).to.exist;
 			expect( page.length ).to.equal( 2 );
@@ -85,7 +86,8 @@ describe( 'promotions', () => {
 		} );
 
 		test( 'should advance the offset for pages > 1.', () => {
-			const page = getPromotionsPage( rootState, 123, 2, 2 );
+			const promotions = getPromotions( rootState, 123 );
+			const page = getPromotionsPage( promotions, 2, 2 );
 
 			expect( page ).to.exist;
 			expect( page.length ).to.equal( 1 );
@@ -117,11 +119,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					creates: [
-						{ id: 'coupon:4', type: 'empty4' },
-					],
+					creates: [ { id: 'coupon:4', type: 'empty4' } ],
 					currentlyEditingId: 'coupon:4',
-				}
+				},
 			};
 
 			const id = getCurrentlyEditingPromotionId( editedState, 123 );
@@ -140,11 +140,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [
-						{ id: 'coupon:3', type: 'empty33' },
-					],
+					updates: [ { id: 'coupon:3', type: 'empty33' } ],
 					currentlyEditingId: 'coupon:3',
-				}
+				},
 			};
 
 			const edits = getPromotionEdits( editedState, 'coupon:3', 123 );
@@ -174,11 +172,9 @@ describe( 'promotions', () => {
 			const editedState = cloneDeep( rootState );
 			editedState.extensions.woocommerce.ui.promotions.edits = {
 				[ 123 ]: {
-					updates: [
-						{ id: 'coupon:3', type: 'empty33' },
-					],
+					updates: [ { id: 'coupon:3', type: 'empty33' } ],
 					currentlyEditingId: 'coupon:3',
-				}
+				},
 			};
 
 			const editedPromotion = getPromotionWithLocalEdits( editedState, 'coupon:3', 123 );
