@@ -16,7 +16,7 @@
 import middleware from '../middleware';
 import {
 	initConnection,
-	// requestTranscript,
+	requestTranscript,
 	// sendEvent,
 	// sendLog,
 	// sendMessage,
@@ -50,7 +50,7 @@ describe( 'middleware', () => {
 		connection = {
 			init: jest.fn(),
 			// send: jest.fn(),
-			// request: jest.fn(),
+			request: jest.fn(),
 		};
 
 		store = {
@@ -113,15 +113,15 @@ describe( 'middleware', () => {
 	// 		expect( connection.send ).toHaveBeenCalledWith( action );
 	// 	} );
 	// } );
-	//
-	// describe( 'connection.request actions are connected', () => {
-	// 	test( 'HAPPYCHAT_IO_REQUEST_TRANSCRIPT', () => {
-	// 		const action = requestTranscript( 20, 30 );
-	// 		actionMiddleware( action );
-	// 		expect( connection.request ).toHaveBeenCalledWith( action, action.timeout );
-	// 	} );
-	// } );
-	//
+
+	describe( 'connection.request actions are connected', () => {
+		test( 'HAPPYCHAT_IO_REQUEST_TRANSCRIPT', () => {
+			const action = requestTranscript( 20, 30 );
+			actionMiddleware( action );
+			expect( connection.request ).toHaveBeenCalledWith( action, action.timeout );
+		} );
+	} );
+
 	// describe( 'Calypso actions are converted to SocketIO actions', () => {
 	// 	describe( 'HELP_CONTACT_FORM_SITE_SELECT', () => {
 	// 		test( 'should dispatch a sendPreferences action if happychat client is connected', () => {

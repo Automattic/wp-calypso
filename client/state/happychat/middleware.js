@@ -24,7 +24,6 @@ import {
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 	COMMENTS_CHANGE_STATUS,
@@ -44,7 +43,6 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
-import { receiveChatTranscript } from './connection/actions';
 import { getGroups } from './selectors';
 import getGeoLocation from 'state/happychat/selectors/get-geolocation';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
@@ -71,18 +69,6 @@ export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 
 		connection.setPreferences( locale, groups );
 	}
-};
-
-export const requestTranscript = ( connection, { dispatch } ) => {
-	debug( 'requesting current session transcript' );
-
-	// passing a null timestamp will request the latest session's transcript
-	return connection
-		.transcript( null )
-		.then(
-			result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
-			e => debug( 'failed to get transcript', e )
-		);
 };
 
 const onMessageChange = ( connection, message ) => {
@@ -257,7 +243,6 @@ export default function( connection = null ) {
 	// but doesn't give a compilation error either.
 	const connectionNG = {
 		send: () => {},
-		request: () => {},
 	};
 
 	return store => next => action => {
@@ -281,16 +266,16 @@ export default function( connection = null ) {
 				onMessageChange( connection, action.message );
 				break;
 
-			case HAPPYCHAT_TRANSCRIPT_REQUEST:
-				requestTranscript( connection, store );
-				break;
-
 			case ROUTE_SET:
 				sendRouteSetEventMessage( connection, store, action );
 				break;
 
 			case HAPPYCHAT_IO_INIT:
 				connection.init( store.dispatch, action.auth );
+				break;
+
+			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
+				connection.request( action, action.timeout );
 				break;
 
 			// NEW SOCKET API SURFACE - still not in use
@@ -303,9 +288,6 @@ export default function( connection = null ) {
 				connectionNG.send( action );
 				break;
 
-			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
-				connectionNG.request( action, action.timeout );
-				break;
 			// END OF NEW SOCKET API SURFACE
 		}
 		return next( action );

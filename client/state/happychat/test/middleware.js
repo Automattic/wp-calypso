@@ -13,7 +13,6 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import middleware, {
-	requestTranscript,
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
@@ -33,7 +32,6 @@ import {
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -135,33 +133,6 @@ describe( 'middleware', () => {
 			const connection = { notTyping: spy() };
 			middleware( connection )( { getState: noop } )( noop )( action );
 			expect( connection.notTyping ).to.have.been.calledOnce;
-		} );
-	} );
-
-	describe( 'HAPPYCHAT_TRANSCRIPT_REQUEST action', () => {
-		test( 'should fetch transcript from connection and dispatch receive action', () => {
-			const state = deepFreeze( {
-				happychat: {
-					chat: { timeline: [] },
-				},
-			} );
-			const response = {
-				messages: [ { text: 'hello' } ],
-				timestamp: 100000,
-			};
-
-			const connection = { transcript: stub().returns( Promise.resolve( response ) ) };
-			const dispatch = stub();
-			const getState = stub().returns( state );
-
-			return requestTranscript( connection, { getState, dispatch } ).then( () => {
-				expect( connection.transcript ).to.have.been.called;
-
-				expect( dispatch ).to.have.been.calledWith( {
-					type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
-					...response,
-				} );
-			} );
 		} );
 	} );
 
