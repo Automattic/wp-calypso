@@ -14,11 +14,11 @@ import validator from 'is-my-json-valid';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_IO_RECEIVE_MESSAGE,
+	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_SET_CHAT_STATUS,
 } from 'state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
@@ -30,7 +30,7 @@ import { timelineSchema } from './schema';
 export const lastActivityTimestamp = ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
-		case HAPPYCHAT_RECEIVE_EVENT:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			return Date.now();
 	}
 	return state;
@@ -55,7 +55,7 @@ lastActivityTimestamp.schema = { type: 'number' };
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_SET_CHAT_STATUS:
+		case HAPPYCHAT_IO_RECEIVE_STATUS:
 			return action.status;
 	}
 	return state;
@@ -71,20 +71,20 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
  */
 const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_RECEIVE_EVENT:
-			const event = action.event;
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
+			const { message } = action;
 			return Object.assign(
 				{},
 				{
-					id: event.id,
-					source: event.source,
-					message: event.text,
-					name: event.user.name,
-					image: event.user.avatarURL,
-					timestamp: event.timestamp,
-					user_id: event.user.id,
-					type: get( event, 'type', 'message' ),
-					links: get( event, 'meta.links' ),
+					id: message.id,
+					source: message.source,
+					message: message.text,
+					name: message.user.name,
+					image: message.user.avatarURL,
+					timestamp: message.timestamp,
+					user_id: message.user.id,
+					type: get( message, 'type', 'message' ),
+					links: get( message, 'meta.links' ),
 				}
 			);
 	}
@@ -112,9 +112,9 @@ export const timeline = ( state = [], action ) => {
 				return state;
 			}
 			return [];
-		case HAPPYCHAT_RECEIVE_EVENT:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
-			if ( get( action, 'event.meta.forOperator', false ) ) {
+			if ( get( action, 'message.meta.forOperator', false ) ) {
 				return state;
 			}
 			const event = timelineEvent( {}, action );

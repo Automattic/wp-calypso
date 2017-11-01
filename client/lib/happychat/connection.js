@@ -10,15 +10,18 @@ import { isString } from 'lodash';
  * Internal dependencies
  */
 import {
-	receiveChatEvent,
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
 	receiveError,
+	receiveInit,
+	receiveMessage,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
+	receiveUnauthorized,
 	requestTranscript,
-	setConnected,
-	setDisconnected,
-	setHappychatAvailable,
-	setReconnecting,
 } from 'state/happychat/connection/actions';
-import { setHappychatChatStatus } from 'state/happychat/chat/actions';
 
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
@@ -49,22 +52,26 @@ class Connection {
 					const socket = buildConnection( url );
 
 					socket
-						.once( 'connect', () => debug( 'connected' ) )
-						.on( 'token', handler => handler( { signer_user_id, jwt, locale, groups } ) )
+						.once( 'connect', () => dispatch( receiveConnect() ) )
+						.on( 'token', handler => {
+							dispatch( receiveToken() );
+							handler( { signer_user_id, jwt, locale, groups } );
+						} )
 						.on( 'init', () => {
-							dispatch( setConnected( { signer_user_id, locale, groups, geoLocation } ) );
+							dispatch( receiveInit( { signer_user_id, locale, groups, geoLocation } ) );
 							dispatch( requestTranscript() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
+							dispatch( receiveUnauthorized( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
-						.on( 'reconnecting', () => dispatch( setReconnecting() ) )
-						.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-						.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) )
-						.on( 'message', message => dispatch( receiveChatEvent( message ) ) );
+						.on( 'disconnect', reason => dispatch( receiveDisconnect( reason ) ) )
+						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
+						.on( 'status', status => dispatch( receiveStatus( status ) ) )
+						.on( 'accept', accept => dispatch( receiveAccept( accept ) ) )
+						.on( 'message', message => dispatch( receiveMessage( message ) ) );
 				} )
 				.catch( e => reject( e ) );
 		} );

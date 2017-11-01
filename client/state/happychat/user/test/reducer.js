@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_CONNECTED, DESERIALIZE } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_INIT, DESERIALIZE } from 'state/action-types';
 import { geoLocation } from '../reducer';
 
 describe( '#geoLocation()', () => {
@@ -20,7 +20,7 @@ describe( '#geoLocation()', () => {
 
 	test( 'should set the current user geolocation', () => {
 		const state = geoLocation( null, {
-			type: HAPPYCHAT_CONNECTED,
+			type: HAPPYCHAT_IO_RECEIVE_INIT,
 			user: {
 				geoLocation: {
 					country_long: 'Romania',

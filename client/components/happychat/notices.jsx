@@ -12,10 +12,15 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import {
-	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
-	HAPPYCHAT_CHAT_STATUS_PENDING,
-	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
+	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
+	HAPPYCHAT_CHAT_STATUS_MISSED,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
+	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
+	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'state/happychat/constants';
 import { localize } from 'i18n-calypso';
 import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
@@ -36,15 +41,23 @@ export class Notices extends Component {
 		}
 
 		switch ( connectionStatus ) {
-			case 'uninitialized':
+			case HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED:
 				return translate( 'Waiting to connect you with a Happiness Engineer…' );
-			case 'connecting':
+			case HAPPYCHAT_CONNECTION_STATUS_CONNECTING:
 				return translate( 'Connecting you with a Happiness Engineer…' );
-			case 'reconnecting':
-			// Fall through to the same notice as `disconnected`
-			case 'disconnected':
+			case HAPPYCHAT_CONNECTION_STATUS_RECONNECTING:
+			case HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED:
 				return translate(
 					"We're having trouble connecting to chat. Please bear with us while we try to reconnect…"
+				);
+			case HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED:
+				return translate(
+					'Chat is not available at the moment. For help, please contact us in {{link}}Support{{/link}}',
+					{
+						components: {
+							link: <a href="https://wordpress.com/help/contact" />,
+						},
+					}
 				);
 		}
 

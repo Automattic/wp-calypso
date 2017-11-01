@@ -10,9 +10,9 @@ import { expect } from 'chai';
  */
 import { lastActivityTimestamp } from '../reducer';
 import {
+	HAPPYCHAT_IO_RECEIVE_INIT,
+	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_CONNECTED,
 } from 'state/action-types';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
@@ -28,8 +28,8 @@ describe( 'reducers', () => {
 			expect( result ).to.be.null;
 		} );
 
-		test( 'should update on HAPPYCHAT_RECEIVE_EVENT', () => {
-			const result = lastActivityTimestamp( null, { type: HAPPYCHAT_RECEIVE_EVENT } );
+		test( 'should update on HAPPYCHAT_IO_RECEIVE_MESSAGE', () => {
+			const result = lastActivityTimestamp( null, { type: HAPPYCHAT_IO_RECEIVE_MESSAGE } );
 			expect( result ).to.equal( NOW );
 		} );
 
@@ -39,7 +39,7 @@ describe( 'reducers', () => {
 		} );
 
 		test( 'should not update on other actions', () => {
-			const result = lastActivityTimestamp( null, { type: HAPPYCHAT_CONNECTED } );
+			const result = lastActivityTimestamp( null, { type: HAPPYCHAT_IO_RECEIVE_INIT } );
 			expect( result ).to.equal( null );
 		} );
 	} );
