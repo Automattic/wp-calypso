@@ -31,7 +31,7 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { bumpStat } from 'state/analytics/actions';
+import { mc } from 'lib/analytics';
 
 /**
  * Module constants
@@ -72,8 +72,9 @@ export function receivePosts( posts ) {
  */
 export function requestSitePosts( siteId, query = {} ) {
 	if ( ! siteId ) {
-		debug( 'requestSitePosts called with invalid siteId', { siteId, query } );
-		return bumpStat( 'calypso_request_site_posts_error', 'invalid_site_id' );
+		debug( 'requestSitePosts called without siteId', { siteId, query } );
+		mc.bumpStat( 'calypso_missing_site_id', 'requestSitePosts' );
+		return null;
 	}
 
 	return requestPosts( siteId, query );
