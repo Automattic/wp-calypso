@@ -119,26 +119,22 @@ const couponConditions = {
 			component: CurrencyField,
 			labelText: translate( 'This promotion requires a minimum purchase' ),
 			isEnableable: true,
-			defaultValue: 10,
 		},
 		maximumAmount: {
 			component: CurrencyField,
 			labelText: translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ),
 			isEnableable: true,
-			defaultValue: 100,
 		},
 		usageLimit: {
 			component: NumberField,
 			labelText: translate( 'Limit number of times this promotion can be used in total' ),
 			isEnableable: true,
-			defaultValue: 10,
 			minValue: 0,
 		},
 		usageLimitPerUser: {
 			component: NumberField,
 			labelText: translate( 'Limit total times each customer can use this promotion' ),
 			isEnableable: true,
-			defaultValue: 1,
 			minValue: 0,
 		},
 		individualUse: {

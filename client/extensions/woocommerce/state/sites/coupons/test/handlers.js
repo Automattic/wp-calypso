@@ -261,7 +261,7 @@ describe( 'handlers', () => {
 				match( {
 					type: WPCOM_HTTP_REQUEST,
 					body: {
-						path: '/wc/v3/coupons/15&_method=DELETE',
+						path: '/wc/v3/coupons/15&force=true&_method=DELETE',
 					},
 				} )
 			);

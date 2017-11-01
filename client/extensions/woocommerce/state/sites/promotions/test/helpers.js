@@ -28,8 +28,8 @@ describe( 'helpers', () => {
 			expect( promotion.type ).to.equal( 'product_sale' );
 			expect( promotion.name ).to.equal( product1.name );
 			expect( promotion.salePrice ).to.equal( product1.sale_price );
-			expect( promotion.startDate ).to.equal( product1.date_on_sale_from_gmt );
-			expect( promotion.endDate ).to.equal( product1.date_on_sale_to_gmt );
+			expect( promotion.startDate ).to.equal( product1.date_on_sale_from );
+			expect( promotion.endDate ).to.equal( product1.date_on_sale_to );
 		} );
 
 		test( 'should set appliesTo.productIds', () => {
@@ -58,8 +58,8 @@ describe( 'helpers', () => {
 
 			expect( productData ).to.exist;
 			expect( productData.id ).to.equal( 52 );
-			expect( productData.date_on_sale_from_gmt ).to.equal( promotion.startDate );
-			expect( productData.date_on_sale_to_gmt ).to.equal( promotion.endDate );
+			expect( productData.date_on_sale_from ).to.equal( promotion.startDate );
+			expect( productData.date_on_sale_to ).to.equal( promotion.endDate );
 		} );
 
 		test( 'should throw if promotion does not apply to product', () => {
@@ -85,8 +85,8 @@ describe( 'helpers', () => {
 			expect( promotion.name ).to.equal( coupon1.code );
 			expect( promotion.type ).to.equal( 'percent' );
 			expect( promotion.couponCode ).to.equal( coupon1.code );
-			expect( promotion.startDate ).to.equal( coupon1.date_created_gmt );
-			expect( promotion.endDate ).to.equal( coupon1.date_expires_gmt );
+			expect( promotion.startDate ).to.equal( coupon1.date_created );
+			expect( promotion.endDate ).to.equal( coupon1.date_expires );
 		} );
 
 		test( 'should set cart percent discount', () => {
@@ -250,7 +250,7 @@ describe( 'helpers', () => {
 
 			expect( couponData ).to.exist;
 			expect( couponData.id ).to.equal( 25 );
-			expect( couponData.date_expires_gmt ).to.equal( promotion.endDate );
+			expect( couponData.date_expires ).to.equal( promotion.endDate );
 			expect( couponData.individual_use ).to.equal( promotion.individualUse );
 			expect( couponData.usage_limit ).to.equal( promotion.usageLimit );
 			expect( couponData.usage_limit_per_user ).to.equal( promotion.usageLimitPerUser );

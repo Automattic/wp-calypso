@@ -179,8 +179,9 @@ describe( 'reducer', () => {
 		const state4 = reducer( state3, productsAction2 );
 
 		expect( state4.promotions ).to.exist;
+		expect( state4.promotions.length ).to.equal( 10 );
 		expect( state4.promotions[ 0 ].type ).to.equal( 'product_sale' );
-		expect( state4.promotions[ 0 ].id ).to.exist;
+		expect( state4.promotions[ 0 ].id ).to.equal( 'p2' );
 		expect( state4.promotions[ 0 ].name ).to.equal( products1[ 0 ].name );
 		expect( state4.promotions[ 1 ].type ).to.equal( 'percent' );
 		expect( state4.promotions[ 1 ].id ).to.exist;

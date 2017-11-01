@@ -154,7 +154,7 @@ describe( 'handlers', () => {
 				discount_type: 'percent',
 				amount: '10',
 				product_ids: [ 1, 2 ],
-				date_expires_gmt: '2017-12-15T12:15:02',
+				date_expires: '2017-12-15T12:15:02',
 			};
 
 			const action = createPromotion( siteId, promotion, successAction, failureAction );
@@ -186,8 +186,8 @@ describe( 'handlers', () => {
 			const expectedProductData = {
 				id: 12,
 				sale_price: '9.99',
-				date_on_sale_from_gmt: '2017-10-15T12:15:02',
-				date_on_sale_to_gmt: '2017-11-15T12:15:02',
+				date_on_sale_from: '2017-10-15T12:15:02',
+				date_on_sale_to: '2017-11-15T12:15:02',
 			};
 
 			const action = createPromotion( siteId, promotion, successAction, failureAction );
@@ -309,15 +309,14 @@ describe( 'handlers', () => {
 				appliesTo: { productIds: [ 12 ] },
 				salePrice: '10',
 				endDate: '2017-12-01T05:25:00',
+				productId: 12,
 			};
 
 			const expectedProductData = {
 				id: 12,
 				date_on_sale_from: null,
-				date_on_sale_from_gmt: null,
 				date_on_sale_to: null,
-				date_on_sale_to_gmt: null,
-				sale_price: null,
+				sale_price: '',
 			};
 
 			const action = deletePromotion( siteId, promotion, successAction, failureAction );
