@@ -47,17 +47,17 @@ const PromotionFormTypeCard = ( {
 			<SectionHeader label={ translate( 'Promotion type' ) } />
 			<Card className="promotions__promotion-form-type-card">
 				<FormSelect value={ promotionType } onChange={ onTypeSelect }>
-					<option value="product_sale" disabled={ productTypesDisabled }>
-						{ translate( 'Individual Product Sale' ) }
-					</option>
 					<option value="fixed_product" disabled={ couponTypesDisabled }>
-						{ translate( 'Product Discount' ) }
+						{ translate( 'Product Discount Coupon' ) }
 					</option>
 					<option value="fixed_cart" disabled={ couponTypesDisabled }>
-						{ translate( 'Cart Discount' ) }
+						{ translate( 'Cart Discount Coupon' ) }
 					</option>
 					<option value="percent" disabled={ couponTypesDisabled }>
-						{ translate( 'Percent Cart Discount' ) }
+						{ translate( 'Percent Cart Discount Coupon' ) }
+					</option>
+					<option value="product_sale" disabled={ productTypesDisabled }>
+						{ translate( 'Specific Product Sale' ) }
 					</option>
 				</FormSelect>
 				<FormSettingExplanation>
