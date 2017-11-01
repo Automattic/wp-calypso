@@ -129,7 +129,9 @@ export class Comment extends Component {
 
 						<CommentContent { ...{ commentId, isExpanded } } />
 
-						<CommentActions { ...{ commentId, removeFromPersisted, updatePersisted } } />
+						<CommentActions
+							{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+						/>
 
 						{ isExpanded && (
 							<CommentReply
