@@ -18,6 +18,8 @@ import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import { NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
+import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
 
 export const getPublishButtonStatus = ( site, post, savedPost ) => {
@@ -145,6 +147,7 @@ export class EditorPublishButton extends Component {
 
 	isEnabled() {
 		return (
+			this.props.nestedSidebarTarget !== NESTED_SIDEBAR_REVISIONS &&
 			! this.props.isPublishing &&
 			! this.props.isSaveBlocked &&
 			this.props.hasContent &&
@@ -174,9 +177,11 @@ export default connect( state => {
 	const postId = getEditorPostId( state );
 	const privatePost = isEditedPostPrivate( state, siteId, postId );
 	const privatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
+	const nestedSidebarTarget = getNestedSidebarTarget( state );
 
 	return {
 		privatePost,
 		privatePostPasswordValid,
+		nestedSidebarTarget,
 	};
 } )( localize( EditorPublishButton ) );
