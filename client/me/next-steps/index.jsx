@@ -12,12 +12,15 @@ import { property, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import NextStepsBox from './next-steps-box';
 import productsValues from 'lib/products-values';
 import steps from './steps';
 import { getSites } from 'state/selectors';
+import {
+	recordGoogleEvent as recordGoogleEventAction,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 
 const NextSteps = createReactClass( {
 	displayName: 'NextSteps',
@@ -27,8 +30,10 @@ const NextSteps = createReactClass( {
 	},
 
 	recordEvent: function( event ) {
-		analytics.ga.recordEvent( 'Me > Next > Welcome Message', event.action );
-		analytics.tracks.recordEvent( 'calypso_me_next_welcome_click', {
+		const { recordGoogleEvent, recordTracksEvent } = this.props;
+
+		recordGoogleEvent( 'Me > Next > Welcome Message', event.action );
+		recordTracksEvent( 'calypso_me_next_welcome_click', {
 			link: event.tracks,
 			is_welcome: this.props.isWelcome,
 		} );
@@ -183,6 +188,12 @@ const NextSteps = createReactClass( {
 	},
 } );
 
-export default connect( state => ( {
-	sites: getSites( state ),
-} ) )( localize( NextSteps ) );
+export default connect(
+	state => ( {
+		sites: getSites( state ),
+	} ),
+	{
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( NextSteps ) );
