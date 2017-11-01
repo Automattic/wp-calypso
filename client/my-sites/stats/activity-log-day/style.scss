@@ -1,77 +1,21 @@
 // Activity Log
 .activity-log-day {
-	position: relative;
-	z-index: 2;
+	background: none;
+	box-shadow: none;
 
-	.card {
-		background: transparent;
-
-		.foldable-card__content {
-			padding: 0 0 16px;
-			background: transparent;
-		}
-	}
-
-	&.is-empty {
-		.card {
-			box-shadow: none;
-		}
-
-		.foldable-card__header {
-			background: $gray-light;
-			min-height: initial;
-			padding-bottom: 4px;
-			padding-top: 4px;
-		}
-	}
-
-	.foldable-card__header {
+	> .foldable-card__header {
 		background: $white;
-
-		.foldable-card__secondary {
-			flex: 2;
-		}
-	}
-
-	.foldable-card__main {
-		@include breakpoint( "<480px" ) {
-			flex: 3 1;
-		}
-	}
-
-	.foldable-card.card.is-expanded {
-		box-shadow: none;
-		margin: 0;
-
-		.foldable-card__header {
-			box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 			0 1px 2px lighten( $gray, 30% );
-		}
 	}
-}
 
-.activity-log-day__day {
-	font-weight: 600;
-}
-
-.activity-log-day__rewind-button {
-	em {
-		font-style: normal;
-
-		@include breakpoint( "<960px" ) {
-			display: none;
-		}
+	> .foldable-card__content.foldable-card__content { // Sad panda specificity override
+		padding: 24px 0 16px;
+		background: transparent;
 	}
-}
-
-.activity-log-day__events {
-	font-size: 12px;
-	color: $gray;
 }
 
 .activity-log-day__placeholder {
-	@extend .activity-log-day;
-
 	.activity-log-day__day,
 	.activity-log-day__events {
 		@include placeholder();
@@ -87,64 +31,17 @@
 	}
 }
 
-.activity-log-day, .activity-log-item {
-	position: relative;
+.activity-log-day__day {
+	font-weight: 600;
+}
 
-	&:before {
-		content: "";
-		position: absolute;
-		top: 73px;
-		height: 16px;
-		left: 33px;
-		width: 2px;
-		border-left: 2px solid lighten( $gray, 20% );
-
-		@include breakpoint( "<480px" ) {
-			left: 29px;
-		}
+.activity-log-day__rewind-button-extra-text {
+	@include breakpoint( "<960px" ) {
+		display: none;
 	}
 }
 
-.activity-log-item.is-discarded:before {
-	border-left-style: dotted;
-}
-
-.activity-log-day.is-empty:before {
-	top: 48px;
-}
-
-.activity-log-day:last-of-type:before {
-	width: 0;
-}
-
-.activity-log-item:before {
-	bottom: -16px;
-	height: auto;
-
-	@include breakpoint( "<480px" ) {
-		left: 21px;
-	}
-}
-
-.activity-log-item__restore-confirm:before {
-	bottom: 0;
-	height: auto;
-	top: 57px;
-}
-
-.activity-log-item.is-before-dialog:before {
-	content: none;
-}
-.has-rewind-dialog .activity-log-item__restore-confirm:first-child:after {
-	content: " ";
-	position: absolute;
-	top: -24px;
-	left: 33px;
-	height: 20px;
-	width: 4px;
-	background: $gray-light;
-
-	@include breakpoint( "<480px" ) {
-		left: 21px;
-	}
+.activity-log-day__events {
+	font-size: 12px;
+	color: $gray-text-min;
 }

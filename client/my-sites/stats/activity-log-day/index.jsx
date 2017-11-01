@@ -157,8 +157,8 @@ class ActivityLogDay extends Component {
 				primary={ 'primary' === type }
 			>
 				<Gridicon icon="history" size={ 18 } />{' '}
-				{ this.props.translate( 'Rewind {{em}}to this day{{/em}}', {
-					components: { em: <em /> },
+				{ this.props.translate( 'Rewind {{span}}to this day{{/span}}', {
+					components: { span: <span className="activity-log-day__rewind-button-extra-text" /> },
 				} ) }
 			</Button>
 		);
@@ -243,26 +243,23 @@ class ActivityLogDay extends Component {
 		);
 
 		return (
-			<div
+			<FoldableCard
 				className={ classNames( 'activity-log-day', {
 					'has-rewind-dialog': hasConfirmDialog,
 				} ) }
+				clickableHeader={ true }
+				expanded={ isToday || dayExpanded }
+				expandedSummary={ rewindButton }
+				summary={ rewindButton }
+				header={ this.renderEventsHeading() }
+				onOpen={ this.trackOpenDay }
+				onClose={ this.handleCloseDay( hasConfirmDialog ) }
 			>
-				<FoldableCard
-					clickableHeader={ true }
-					expanded={ isToday || dayExpanded }
-					expandedSummary={ rewindButton }
-					summary={ rewindButton }
-					header={ this.renderEventsHeading() }
-					onOpen={ this.trackOpenDay }
-					onClose={ this.handleCloseDay( hasConfirmDialog ) }
-				>
-					{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
-					{ above && <LogItem { ...{ key: above.activityId, log: above, hasBreak: true } } /> }
-					{ older.length > 0 && rewindConfirmDialog }
-					{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
-				</FoldableCard>
-			</div>
+				{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
+				{ above && <LogItem { ...{ key: above.activityId, log: above, hasBreak: true } } /> }
+				{ older.length > 0 && rewindConfirmDialog }
+				{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
+			</FoldableCard>
 		);
 	}
 }

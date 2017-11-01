@@ -1,39 +1,18 @@
 .activity-log-item {
 	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-	align-content: flex-start;
-	align-items: center;
 	position: relative;
 
 	@include breakpoint( "<480px" ) {
 		margin-left: 8px;
 	}
 
-	// TODO: Remove when foldable cards become "expandable"
-	.foldable-card__header.is-clickable {
-		cursor: default;
-	}
-
-	&:first-of-type {
-		margin-top: 24px;
-	}
-
 	.card {
 		flex: 1;
+		margin-top: 8px;
 		margin-bottom: 16px;
-		background: $white;
-	}
-
-	.activity-log-item__card .foldable-card__content {
-		padding: 16px;
-		font-size: 14px;
-		color: darken( $gray, 20% );
 	}
 
 	.foldable-card {
-
 		.foldable-card__expand .gridicon {
 			transform: none;
 		}
@@ -51,6 +30,11 @@
 		@include breakpoint( "<480px" ) {
 			padding: 12px;
 		}
+
+		// TODO: Remove when foldable cards become "expandable"
+		.is-clickable {
+			cursor: default;
+		}
 	}
 
 	.foldable-card__main {
@@ -59,10 +43,42 @@
 
 	&.is-discarded {
 		margin-left: 80px;
+
+		@include breakpoint( "<480px" ) {
+			margin-left: 60px;
+		}
+
+		&:before {
+			content: '';
+			position: absolute;
+				top: 0;
+				left: 33px;
+			height: 100%;
+			border-left: 2px dotted lighten( $gray, 20% );
+
+			@include breakpoint( "<480px" ) {
+				left: 22px;
+			}
+		}
+
+		&:last-of-type {
+			&:before {
+				display: none;
+			}
+		}
+	}
+}
+
+.activity-log-item__card {
+	.foldable-card__content {
+		padding: 16px;
+		font-size: 14px;
+		color: darken( $gray, 20% );
 	}
 
-	&.is-discarded * {
-		background-color: unset;
+	.is-discarded & {
+		background: none;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
@@ -72,6 +88,7 @@
 	text-align: center;
 	margin: -2px 22px 0 10px;
 	padding: 4px 0 6px;
+	z-index: 1;
 
 	@include breakpoint( "<480px" ) {
 		margin: -2px 8px 0 0px;
@@ -80,7 +97,7 @@
 
 .activity-log-item__time {
 	font-size: 11px;
-	color: $gray;
+	color: $gray-text-min;
 	text-transform: uppercase;
 	white-space: nowrap;
 
@@ -116,6 +133,12 @@
 	&.is-error {
 		background: $alert-red;
 	}
+
+	.is-discarded & {
+		color: $gray-text;
+		background: none;
+		border: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	}
 }
 
 .activity-log-item__card-header {
@@ -143,6 +166,7 @@
 	.jetpack-logo {
 		float: left;
 		margin-right: 16px;
+		fill: darken( $gray, 10% );
 
 		@include breakpoint( "<960px" ) {
 			width: 24px;
@@ -151,8 +175,16 @@
 		}
 	}
 
-	.jetpack-logo path {
-		fill: $green-jetpack;
+	.gravatar {
+		.is-discarded & {
+			filter: grayscale(1);
+		}
+	}
+
+	.jetpack-logo {
+		.is-discarded & {
+			opacity: .75;
+		}
 	}
 }
 
@@ -167,7 +199,7 @@
 .activity-log-item__actor-role {
 	text-transform: capitalize;
 	font-size: 12px;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .activity-log-item__title {
