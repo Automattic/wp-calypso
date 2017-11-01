@@ -31,12 +31,12 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { mc } from 'lib/analytics';
 
 /**
  * Module constants
  */
 const debug = debugFactory( 'calypso:posts:actions' );
+const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Returns an action object to be used in signalling that a post object has
@@ -73,7 +73,7 @@ export function receivePosts( posts ) {
 export function requestSitePosts( siteId, query = {} ) {
 	if ( ! siteId ) {
 		debug( 'requestSitePosts called without siteId', { siteId, query } );
-		mc.bumpStat( 'calypso_missing_site_id', 'requestSitePosts' );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'requestSitePosts' );
 		return null;
 	}
 

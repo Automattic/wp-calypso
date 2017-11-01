@@ -24,12 +24,12 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
-import { mc } from 'lib/analytics';
 
 /**
  * Module constants
  */
 const debug = debugFactory( 'calypso:posts:selectors' );
+const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
@@ -115,7 +115,7 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
 export const getSitePost = createSelector( ( state, siteId, postId ) => {
 	if ( ! siteId ) {
 		debug( 'getSitePost called without siteId', { siteId, postId } );
-		mc.bumpStat( 'calypso_missing_site_id', 'getSitePost' );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'getSitePost' );
 		return null;
 	}
 
@@ -314,7 +314,7 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
 export function isRequestingSitePost( state, siteId, postId ) {
 	if ( ! siteId ) {
 		debug( 'isRequestingSitePost called without siteId', { siteId, postId } );
-		mc.bumpStat( 'calypso_missing_site_id', 'isRequestingSitePost' );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'isRequestingSitePost' );
 		return null;
 	}
 

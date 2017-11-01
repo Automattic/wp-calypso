@@ -53,12 +53,12 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { mc } from 'lib/analytics';
 
 /**
  * Module constants
  */
 const debug = debugFactory( 'calypso:posts:reducer' );
+const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -169,7 +169,7 @@ export const queries = ( () => {
 				'state.posts.queries#applyToManager called without siteId',
 				{ siteId, method, args }
 			);
-			mc.bumpStat( 'calypso_missing_site_id', 'state.posts.queries' );
+			mc && mc.bumpStat( 'calypso_missing_site_id', 'state.posts.queries' );
 			return state;
 		}
 
