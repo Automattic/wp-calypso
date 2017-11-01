@@ -32,15 +32,11 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
  */
 export const areProductsLoaded = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	const key = getSerializedProductsQuery( params );
-	const isLoading = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'isLoading',
-		key,
-	] );
+	const isLoading = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'isLoading' ],
+		null
+	);
 	// Strict check because it could also be undefined.
 	return false === isLoading;
 };
@@ -53,17 +49,13 @@ export const areProductsLoaded = ( state, params = {}, siteId = getSelectedSiteI
  */
 export const areProductsLoading = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	const key = getSerializedProductsQuery( params );
-	const isLoadingKey = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'isLoading',
-		key,
-	] );
+	const isLoading = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'isLoading' ],
+		null
+	);
 	// Strict check because it could also be undefined.
-	return true === isLoadingKey;
+	return true === isLoading;
 };
 
 /**
@@ -85,9 +77,10 @@ export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( sta
 	);
 	const productIdsOnPage = get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'ids' ],
 		[]
 	);
+
 	if ( productIdsOnPage.length ) {
 		return productIdsOnPage.map( id => find( products, { id } ) );
 	}
@@ -108,7 +101,7 @@ export const getTotalProductsPages = (
 	const key = getSerializedProductsQuery( params );
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalPages', key ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'totalPages' ],
 		0
 	);
 };
@@ -123,7 +116,7 @@ export const getTotalProducts = ( state, params = {}, siteId = getSelectedSiteId
 	const key = getSerializedProductsQuery( params );
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalProducts', key ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'totalProducts' ],
 		0
 	);
 };

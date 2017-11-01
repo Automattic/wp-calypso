@@ -29,9 +29,13 @@ const loadingState = {
 			sites: {
 				123: {
 					products: {
-						isLoading: {
-							'{}': true,
-							'{"search":"testing"}': true,
+						queries: {
+							'{}': {
+								isLoading: true,
+							},
+							'{"search":"testing"}': {
+								isLoading: true,
+							},
 						},
 						products: {},
 					},
@@ -51,28 +55,29 @@ const loadedState = {
 							'{"search":"testing"}': false,
 						},
 						queries: {
-							'{}': [ 15, 389 ],
-							'{"search":"testing"}': [ 15 ],
+							'{}': {
+								ids: [ 15, 389 ],
+								isLoading: false,
+								totalPages: 3,
+								totalProducts: 30,
+							},
+							'{"search":"testing"}': {
+								ids: [ 15 ],
+								isLoading: false,
+								totalPages: 2,
+								totalProducts: 16,
+							},
 						},
 						products,
-						totalPages: {
-							'{}': 3,
-							'{"search":"testing"}': 2,
-						},
-						totalProducts: {
-							'{}': 30,
-							'{"search":"testing"}': 16,
-						},
 					},
 				},
 				401: {
 					products: {
-						isLoading: {
-							'{}': true,
-							'{"search":"testing"}': true,
+						queries: {
+							'{}': { isLoading: true },
+							'{"search":"testing"}': { isLoading: true },
 						},
-						products: {},
-						totalPages: 1,
+						products: [],
 					},
 				},
 			},
@@ -181,8 +186,9 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should be the list of products if the search result is loaded.', () => {
-			expect( getProducts( loadedState, { search: 'testing' }, 123 ).length ).to.eql( 1 );
-			expect( getProducts( loadedState, { search: 'testing' }, 123 ) ).to.eql( [ products[ 0 ] ] );
+			const selectedProducts = getProducts( loadedState, { search: 'testing' }, 123 );
+			expect( selectedProducts.length ).to.eql( 1 );
+			expect( selectedProducts ).to.eql( [ products[ 0 ] ] );
 		} );
 
 		test( 'should be an empty array when products are loaded only for a different site.', () => {
