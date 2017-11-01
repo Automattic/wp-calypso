@@ -4,7 +4,7 @@
  * @format
  */
 
-import { get, toPairs } from 'lodash';
+import { get, noop, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -155,6 +155,7 @@ export const handleProductGet = dispatchRequestEx( {
 		),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
+	onError: noop,
 } );
 
 export const handleProductList = dispatchRequestEx( {
@@ -172,6 +173,7 @@ export const handleProductList = dispatchRequestEx( {
 		),
 	fromApi: customPostsToProducts,
 	onSuccess: replaceProductList,
+	onError: noop,
 } );
 
 export const handleProductListAdd = dispatchRequestEx( {
@@ -186,6 +188,7 @@ export const handleProductListAdd = dispatchRequestEx( {
 		),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
+	onError: noop,
 } );
 
 export const handleProductListEdit = dispatchRequestEx( {
@@ -200,6 +203,7 @@ export const handleProductListEdit = dispatchRequestEx( {
 		),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
+	onError: noop,
 } );
 
 export const handleProductListDelete = dispatchRequestEx( {
@@ -212,6 +216,7 @@ export const handleProductListDelete = dispatchRequestEx( {
 			action
 		),
 	onSuccess: deleteProduct,
+	onError: noop,
 } );
 
 export default {
