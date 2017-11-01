@@ -75,7 +75,6 @@ export default {
 	nextSteps( context ) {
 		const analyticsBasePath = route.sectionify( context.path ),
 			NextSteps = require( './next-steps' ),
-			trophiesData = require( 'lib/trophies-data' ),
 			isWelcome = 'welcome' === context.params.welcome;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -91,7 +90,6 @@ export default {
 			React.createElement( NextSteps, {
 				path: context.path,
 				isWelcome: isWelcome,
-				trophiesData: trophiesData,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
