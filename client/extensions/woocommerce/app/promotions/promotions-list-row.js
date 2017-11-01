@@ -17,14 +17,14 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {
-		case 'product_sale':
-			return translate( 'Product Sale' );
-		case 'fixed_cart':
-			return translate( 'Cart Discount' );
 		case 'fixed_product':
-			return translate( 'Product Discount' );
+			return translate( 'Product discount coupon' );
+		case 'fixed_cart':
+			return translate( 'Cart discount coupon' );
 		case 'percent':
-			return translate( 'Percent Discount' );
+			return translate( 'Percent cart discount coupon' );
+		case 'product_sale':
+			return translate( 'Individual product sale' );
 	}
 }
 
@@ -47,13 +47,13 @@ function getTimeframeText( promotion, translate, moment ) {
 		} );
 	}
 	if ( promotion.startDate ) {
-		return translate( '%(startDate)s - No expiration date', {
+		return translate( '%(startDate)s - No end date', {
 			args: {
 				startDate: moment( promotion.startDate ).format( 'll' ),
 			},
 		} );
 	}
-	return translate( 'No expiration date' );
+	return translate( 'No end date' );
 }
 
 const PromotionsListRow = ( { site, promotion, translate, moment } ) => {
