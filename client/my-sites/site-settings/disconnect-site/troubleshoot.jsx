@@ -23,11 +23,9 @@ const Troubleshoot = ( { siteUrl, trackDebugClick, trackSupportClick, translate 
 	<LoggedOutFormLinks>
 		<LoggedOutFormLinkItem
 			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
-			icon
 			onClick={ trackDebugClick }
 		>
-			<Gridicon size={ 18 } icon="offline" />
-			{ translate( 'Diagnose a connection problem' ) }
+			<Gridicon size={ 18 } icon="offline" /> { translate( 'Diagnose a connection problem' ) }
 		</LoggedOutFormLinkItem>
 		<JetpackConnectHappychatButton
 			label={ translate( 'Get help from our Happiness Engineers' ) }
