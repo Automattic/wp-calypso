@@ -9,18 +9,21 @@ import { EventEmitter } from 'events';
  * Internal dependencies
  */
 import {
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
 	receiveError,
+	receiveInit,
+	receiveMessage,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
 	receiveTranscript,
 	receiveTranscriptTimeout,
+	receiveUnauthorized,
 	requestTranscript,
 	sendTyping,
-	setConnected,
-	setDisconnected,
-	setReconnecting,
-	setHappychatAvailable,
-	receiveChatEvent,
 } from 'state/happychat/connection/actions';
-import { setHappychatChatStatus } from 'state/happychat/chat/actions';
 import buildConnection from '../connection';
 
 describe( 'connection', () => {
@@ -50,27 +53,26 @@ describe( 'connection', () => {
 				openSocket = connection.init( dispatch, config );
 			} );
 
-			// TODO: to be enabled when corresponding connection changes land
-			// test( 'connect event', () => {
-			// 	socket.emit( 'connect' );
-			// 	expect( dispatch ).toHaveBeenCalledTimes( 1 );
-			// 	expect( dispatch ).toHaveBeenCalledWith( receiveConnect() );
-			// } );
-			//
-			// test( 'token event', () => {
-			// 	const callback = jest.fn();
-			// 	socket.emit( 'token', callback );
-			// 	expect( dispatch ).toHaveBeenCalledTimes( 1 );
-			// 	expect( dispatch ).toHaveBeenCalledWith( receiveToken() );
-			// 	expect( callback ).toHaveBeenCalledTimes( 1 );
-			// 	expect( callback ).toHaveBeenCalledWith( { signer_user_id, jwt, locale, groups } );
-			// } );
+			test( 'connect event', () => {
+				socket.emit( 'connect' );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( receiveConnect() );
+			} );
+
+			test( 'token event', () => {
+				const callback = jest.fn();
+				socket.emit( 'token', callback );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( receiveToken() );
+				expect( callback ).toHaveBeenCalledTimes( 1 );
+				expect( callback ).toHaveBeenCalledWith( { signer_user_id, jwt, locale, groups } );
+			} );
 
 			test( 'init event', () => {
 				socket.emit( 'init' );
 				expect( dispatch ).toHaveBeenCalledTimes( 2 );
 				expect( dispatch.mock.calls[ 0 ][ 0 ] ).toEqual(
-					setConnected( { signer_user_id, locale, groups, geoLocation } )
+					receiveInit( { signer_user_id, locale, groups, geoLocation } )
 				);
 				expect( dispatch.mock.calls[ 1 ][ 0 ] ).toEqual( requestTranscript() );
 				return expect( openSocket ).resolves.toBe( socket );
@@ -79,11 +81,10 @@ describe( 'connection', () => {
 			test( 'unauthorized event', () => {
 				socket.close = jest.fn();
 				openSocket.catch( () => {
-					// TODO: to be enabled when corresponding connection changes land
-					// expect( dispatch ).toHaveBeenCalledTimes( 1 );
-					// expect( dispatch ).toHaveBeenCalledWith(
-					// 	receiveUnauthorized( 'User is not authorized' )
-					// );
+					expect( dispatch ).toHaveBeenCalledTimes( 1 );
+					expect( dispatch ).toHaveBeenCalledWith(
+						receiveUnauthorized( 'User is not authorized' )
+					);
 					expect( socket.close ).toHaveBeenCalled();
 				} );
 				socket.emit( 'unauthorized' );
@@ -93,34 +94,34 @@ describe( 'connection', () => {
 				const error = 'testing reasons';
 				socket.emit( 'disconnect', error );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith( setDisconnected( error ) );
+				expect( dispatch ).toHaveBeenCalledWith( receiveDisconnect( error ) );
 			} );
 
 			test( 'reconnecting event', () => {
 				socket.emit( 'reconnecting' );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith( setReconnecting() );
+				expect( dispatch ).toHaveBeenCalledWith( receiveReconnecting() );
 			} );
 
 			test( 'status event', () => {
 				const status = 'testing status';
 				socket.emit( 'status', status );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith( setHappychatChatStatus( status ) );
+				expect( dispatch ).toHaveBeenCalledWith( receiveStatus( status ) );
 			} );
 
 			test( 'accept event', () => {
 				const isAvailable = true;
 				socket.emit( 'accept', isAvailable );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith( setHappychatAvailable( isAvailable ) );
+				expect( dispatch ).toHaveBeenCalledWith( receiveAccept( isAvailable ) );
 			} );
 
 			test( 'message event', () => {
 				const message = 'testing msg';
 				socket.emit( 'message', message );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
-				expect( dispatch ).toHaveBeenCalledWith( receiveChatEvent( message ) );
+				expect( dispatch ).toHaveBeenCalledWith( receiveMessage( message ) );
 			} );
 		} );
 
