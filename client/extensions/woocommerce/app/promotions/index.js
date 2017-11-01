@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +35,14 @@ class Promotions extends Component {
 		fetchPromotions: PropTypes.func.isRequired,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			searchFilter: '',
+		};
+	}
+
 	componentDidMount() {
 		const { site } = this.props;
 		if ( site && site.ID ) {
@@ -53,13 +60,16 @@ class Promotions extends Component {
 		}
 	}
 
+	onSearch = searchFilter => {
+		this.setState( () => ( { searchFilter } ) );
+	};
+
 	renderSearchCard() {
 		const { site, promotions, translate } = this.props;
 
-		// TODO: Implement onSearch
 		return (
 			<SearchCard
-				onSearch={ noop }
+				onSearch={ this.onSearch }
 				delaySearch
 				delayTimeout={ 400 }
 				disabled={ ! site || ! promotions }
@@ -86,10 +96,12 @@ class Promotions extends Component {
 	}
 
 	renderContent() {
+		const { searchFilter } = this.state;
+
 		return (
 			<div>
 				{ this.renderSearchCard() }
-				<PromotionsList />
+				<PromotionsList searchFilter={ searchFilter } />
 			</div>
 		);
 	}

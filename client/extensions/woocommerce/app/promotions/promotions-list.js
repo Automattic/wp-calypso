@@ -23,8 +23,18 @@ import PromotionsListTable from './promotions-list-table';
 import PromotionsListPagination from './promotions-list-pagination';
 import { setPromotionsPage } from 'woocommerce/state/ui/promotions/actions';
 
+function promotionContainsString( promotion, textString ) {
+	const matchString = textString.trim().toLocaleLowerCase();
+
+	if ( -1 < promotion.name.toLocaleLowerCase().indexOf( matchString ) ) {
+		// found in promotion name
+		return true;
+	}
+	return false;
+}
+
 const PromotionsList = props => {
-	const { site, promotions, promotionsPage, currentPage, perPage } = props;
+	const { site, filteredPromotions, promotionsPage, currentPage, perPage } = props;
 
 	const switchPage = index => {
 		if ( site ) {
@@ -37,8 +47,8 @@ const PromotionsList = props => {
 			<PromotionsListTable site={ site } promotions={ promotionsPage } />
 			<PromotionsListPagination
 				site={ site }
-				promotionsLoaded={ promotions && promotions.length >= 0 }
-				totalPromotions={ promotions && promotions.length }
+				promotionsLoaded={ filteredPromotions && filteredPromotions.length >= 0 }
+				totalPromotions={ filteredPromotions && filteredPromotions.length }
 				currentPage={ currentPage }
 				perPage={ perPage }
 				onSwitchPage={ switchPage }
@@ -48,23 +58,31 @@ const PromotionsList = props => {
 };
 
 PromotionsList.propTypes = {
+	searchFilter: PropTypes.string,
 	site: PropTypes.object,
 	promotions: PropTypes.array,
+	filteredPromotions: PropTypes.array,
 	currentPage: PropTypes.number,
 	perPage: PropTypes.number,
 	promotionsPage: PropTypes.array,
 };
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, ownProps ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currentPage = site && getPromotionsCurrentPage( state );
 	const perPage = site && getPromotionsPerPage( state );
 	const promotions = site && getPromotions( state, site.ID );
-	const promotionsPage = site && getPromotionsPage( state, site.ID, currentPage, perPage );
+	const filteredPromotions =
+		promotions &&
+		promotions.filter( promotion => {
+			return promotionContainsString( promotion, ownProps.searchFilter );
+		} );
+	const promotionsPage = site && getPromotionsPage( filteredPromotions, currentPage, perPage );
 
 	return {
 		site,
 		promotions,
+		filteredPromotions,
 		promotionsPage,
 		currentPage,
 		perPage,

@@ -26,13 +26,11 @@ export function getPromotion(
 }
 
 export function getPromotionsPage(
-	rootState,
-	siteId = getSelectedSiteWithFallback( rootState ),
+	promotions,
 	page,
 	perPage
 ) {
 	const offset = ( page - 1 ) * perPage;
-	const promotions = getPromotions( rootState, siteId );
 	return promotions ? promotions.slice( offset, offset + perPage ) : null;
 }
 
