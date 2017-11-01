@@ -81,16 +81,22 @@ export class EmbedDialog extends React.Component {
 	}
 
 	componentWillUpdate = ( newProps, newState ) => {
-		if ( this.props.embedUrl !== newProps.embedUrl ) {
+		let updateURL = false;
+		if (
+			this.props.embedUrl !== newProps.embedUrl ||
+			this.props.isVisible !== newProps.isVisible
+		) {
 			this.setState( {
 				embedUrl: newProps.embedUrl,
 			} );
+
+			updateURL = true;
 		}
 
 		if ( newProps.isVisible ) {
 			// Refresh the preview
 			this.debouncedFetchEmbedPreviewMarkup( newState.embedUrl );
-			if ( newState.isLoading === false && this.state.isLoading === true ) {
+			if ( ( newState.isLoading === false && this.state.isLoading === true ) || updateURL ) {
 				this.setHtml();
 			}
 		}
