@@ -5,19 +5,16 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { noop } from 'lodash';
-import moment from 'moment';
-import { spy, stub } from 'sinon';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import middleware, {
+import {
 	sendActionLogsAndEvents,
 	sendAnalyticsLogEvent,
 	sendRouteSetEventMessage,
 	updateChatPreferences,
-	sendInfo,
 } from '../middleware';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -26,98 +23,10 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 } from '../constants';
-import {
-	ANALYTICS_EVENT_RECORD,
-	HAPPYCHAT_BLUR,
-	HAPPYCHAT_SEND_USER_INFO,
-	HAPPYCHAT_SEND_MESSAGE,
-} from 'state/action-types';
+import { ANALYTICS_EVENT_RECORD, HAPPYCHAT_BLUR } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {
-	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
-		const state = {
-			happychat: {
-				user: {
-					geoLocation: {
-						city: 'Timisoara',
-					},
-				},
-			},
-		};
-
-		const previousWindow = global.window;
-		const previousScreen = global.screen;
-		const previousNavigator = global.navigator;
-
-		beforeAll( () => {
-			global.window = {
-				innerWidth: 'windowInnerWidth',
-				innerHeight: 'windowInnerHeight',
-			};
-			global.screen = {
-				width: 'screenWidth',
-				height: 'screenHeight',
-			};
-			global.navigator = {
-				userAgent: 'navigatorUserAgent',
-			};
-		} );
-
-		afterAll( () => {
-			global.window = previousWindow;
-			global.screen = previousScreen;
-			global.navigator = previousNavigator;
-		} );
-
-		test( 'should send relevant browser information to the connection', () => {
-			const expectedInfo = {
-				howCanWeHelp: 'howCanWeHelp',
-				howYouFeel: 'howYouFeel',
-				siteId: 'siteId',
-				siteUrl: 'siteUrl',
-				localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
-				screenSize: {
-					width: 'screenWidth',
-					height: 'screenHeight',
-				},
-				browserSize: {
-					width: 'windowInnerWidth',
-					height: 'windowInnerHeight',
-				},
-				userAgent: 'navigatorUserAgent',
-				geoLocation: state.happychat.user.geoLocation,
-			};
-
-			const getState = () => state;
-			const connection = { sendInfo: spy() };
-			const action = {
-				type: HAPPYCHAT_SEND_USER_INFO,
-				site: {
-					ID: 'siteId',
-					URL: 'siteUrl',
-				},
-				howCanWeHelp: 'howCanWeHelp',
-				howYouFeel: 'howYouFeel',
-			};
-			sendInfo( connection, { getState }, action );
-
-			expect( connection.sendInfo ).to.have.been.calledOnce;
-			expect( connection.sendInfo ).to.have.been.calledWithMatch( expectedInfo );
-		} );
-	} );
-
-	describe( 'HAPPYCHAT_SEND_MESSAGE action', () => {
-		test( 'should send the message through the connection', () => {
-			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'Hello world' };
-			const connection = {
-				send: spy(),
-			};
-			middleware( connection )( { getState: noop } )( noop )( action );
-			expect( connection.send ).to.have.been.calledWith( action.message );
-		} );
-	} );
-
 	describe( 'HELP_CONTACT_FORM_SITE_SELECT action', () => {
 		test( 'should send the locale and groups through the connection and send a preferences signal', () => {
 			const state = {

@@ -87,7 +87,7 @@ class Connection {
 	 * @return { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
-	sendNG( action ) {
+	send( action ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
@@ -98,13 +98,6 @@ class Connection {
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
-		);
-	}
-
-	send( message, meta = {} ) {
-		this.openSocket.then(
-			socket => socket.emit( 'message', { text: message, id: uuid(), meta } ),
-			e => debug( 'failed to send message', e )
 		);
 	}
 
@@ -141,22 +134,6 @@ class Connection {
 					id: uuid(),
 					type: HAPPYCHAT_MESSAGE_TYPES.LOG,
 					meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG },
-				} ),
-			e => debug( 'failed to send message', e )
-		);
-	}
-
-	/**
-	 * Send customer and browser information
-	 * @param { Object } info selected form fields, customer date time, user agent and browser info
-	 */
-	sendInfo( info ) {
-		this.openSocket.then(
-			socket =>
-				socket.emit( 'message', {
-					id: uuid(),
-					meta: { ...info, forOperator: true },
-					type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_INFO,
 				} ),
 			e => debug( 'failed to send message', e )
 		);

@@ -16,7 +16,7 @@ import {
 	DESERIALIZE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
-	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_CHAT_STATUS,
 } from 'state/action-types';
@@ -29,7 +29,7 @@ import { timelineSchema } from './schema';
 
 export const lastActivityTimestamp = ( state = null, action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_SEND_MESSAGE:
+		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 		case HAPPYCHAT_RECEIVE_EVENT:
 			return Date.now();
 	}

@@ -37,6 +37,6 @@ this action directly._
 
 Updates the pending message that the user is composing in the Happychat client.
 
-### `sendChatMessage( message: String )`
+### `sendMessage( message: String )`
 
 Sends the message as a chat message to the Happychat service.
