@@ -26,7 +26,7 @@ export default function transformer( file, api ) {
 ```
 
 A nifty tool to explore AST structures is [AST explorer](https://astexplorer.net/).
-You can choose "esprima" as a parser as that's what Recast uses internally.
+You can choose "recast" as a parser and "jscodeshift" from "Transform" menu.
 
 ## How to run our codemods
 
