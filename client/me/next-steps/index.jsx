@@ -12,11 +12,11 @@ import { property, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import NextStepsBox from './next-steps-box';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import steps from './steps';
 import analytics from 'lib/analytics';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import NextStepsBox from './next-steps-box';
 import productsValues from 'lib/products-values';
+import steps from './steps';
 import { getSites } from 'state/selectors';
 
 const NextSteps = createReactClass( {
