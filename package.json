@@ -162,7 +162,7 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "6.11.2",
+    "node": "6.11.5",
     "npm": "3.10.10"
   },
   "scripts": {
