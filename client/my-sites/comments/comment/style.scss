@@ -11,6 +11,12 @@
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
 		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
 	}
+
+	a[disabled] {
+		color: $gray-text-min;
+		cursor: default;
+		pointer-events: none;
+	}
 }
 
 // `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.

@@ -74,11 +74,7 @@ export class Comment extends Component {
 		}
 	};
 
-	toggleSelected = () => {
-		if ( this.props.isBulkMode ) {
-			this.props.toggleSelected( this.props.minimumComment );
-		}
-	};
+	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
 	render() {
 		const {
@@ -103,7 +99,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
-				onClick={ this.toggleSelected }
+				onClick={ isBulkMode ? this.toggleSelected : false }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
 				tabIndex="0"
@@ -117,7 +113,7 @@ export class Comment extends Component {
 							toggleExpanded={ this.toggleExpanded }
 						/>
 
-						<CommentContent { ...{ commentId, isExpanded } } />
+						<CommentContent { ...{ commentId, isBulkMode, isExpanded } } />
 					</div>
 				) }
 			</Card>

@@ -37,7 +37,7 @@ export class CommentHeader extends PureComponent {
 					</label>
 				) }
 
-				<CommentAuthor { ...{ commentId, isExpanded } } />
+				<CommentAuthor { ...{ commentId, isBulkMode, isExpanded } } />
 
 				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
 
