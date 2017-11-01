@@ -184,6 +184,7 @@ class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
+			price,
 		} = this.props;
 
 		const classes = classNames(
@@ -225,11 +226,14 @@ class Banner extends Component {
 			);
 		}
 
+		const showLinkIndicator = ! callToAction && ! disableHref && ! dismissPreferenceName && ! price;
+
 		return (
 			<Card
 				className={ classes }
 				href={ disableHref || callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
+				showLinkIndicator={ showLinkIndicator }
 			>
 				{ this.getIcon() }
 				{ this.getContent() }
