@@ -45,6 +45,11 @@ const appliesToCoupon = {
 					] }
 				/>
 			),
+			// TODO: Remove this text after variable products are supported.
+			explanationText: translate(
+				'Note: Variable products cannot be selected directly, ' +
+				'only via Product Categories or All Products.'
+			),
 		},
 	},
 };
@@ -74,6 +79,33 @@ const appliesWhenCoupon = {
 						},
 					] }
 				/>
+			),
+			// TODO: Remove this text after variable products are supported.
+			explanationText: translate(
+				'Note: Variable products cannot be selected directly, ' +
+				'only via Product Categories or All Products.'
+			),
+		},
+	},
+};
+
+/**
+ * Product sale "Applies to" card.
+ */
+const appliesToProductSale = {
+	labelText: translate( 'Applies to product' ),
+	cssClass: 'promotions__promotion-form-card-applies-to',
+	fields: {
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [ { type: 'productIds' } ] }
+					singular={ true }
+				/>
+			),
+			// TODO: Remove this text after variable products are supported.
+			explanationText: translate(
+				'Note: Variable products cannot be selected.'
 			),
 		},
 	},
@@ -110,20 +142,7 @@ const endDate = {
  * Promotion Type: Product Sale (e.g. $5 off the "I <3 Robots" t-shirt)
  */
 const productSaleModel = {
-	appliesTo: {
-		labelText: translate( 'Applies to product' ),
-		cssClass: 'promotions__promotion-form-card-applies-to',
-		fields: {
-			appliesTo: {
-				component: (
-					<PromotionAppliesToField
-						selectionTypes={ [ { type: 'productIds' } ] }
-						singular={ true }
-					/>
-				),
-			},
-		},
-	},
+	appliesToProductSale,
 	productAndSalePrice: {
 		labelText: translate( 'Product & Sale Price' ),
 		cssClass: 'promotions__promotion-form-card-primary',

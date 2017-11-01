@@ -287,8 +287,13 @@ function mapStateToProps( state ) {
 	const products = getPromotionableProducts( state, siteId );
 	const productCategories = getProductCategories( state, siteId );
 
+	// TODO: This is temporary until we can support variable products.
+	const nonVariableProducts = products && products.filter(
+		( product ) => 'variable' !== product.type
+	);
+
 	return {
-		products,
+		products: nonVariableProducts,
 		productCategories,
 	};
 }
