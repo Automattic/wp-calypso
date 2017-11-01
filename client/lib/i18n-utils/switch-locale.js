@@ -50,9 +50,10 @@ export default function switchLocale( localeSlug ) {
 		if ( typeof document !== 'undefined' ) {
 			document.documentElement.lang = localeSlug;
 			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-			const cssUrl = language.rtl
-				? window.app.staticUrls[ 'style-rtl.css' ]
-				: window.app.staticUrls[ 'style.css' ];
+
+			const directionFlag = language.rtl ? '-rtl' : '';
+			const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
+			const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
 			switchCSS( 'main-css', cssUrl );
 		}
 	} );
