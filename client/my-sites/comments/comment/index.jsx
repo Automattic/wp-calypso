@@ -16,6 +16,7 @@ import Card from 'components/card';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import QueryComment from 'components/data/query-comment';
+import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -47,25 +48,35 @@ export class Comment extends Component {
 	storeCardRef = card => ( this.commentCard = card );
 
 	keyDownHandler = event => {
+		const { isBulkMode } = this.props;
+		const { isEditMode, isExpanded } = this.state;
+
 		const commentHasFocus =
 			document &&
 			this.commentCard &&
 			document.activeElement === ReactDom.findDOMNode( this.commentCard );
-		if ( this.state.isEditMode || ( this.state.isExpanded && ! commentHasFocus ) ) {
+
+		if ( isEditMode || ( isExpanded && ! commentHasFocus ) ) {
 			return;
 		}
+
 		switch ( event.keyCode ) {
-			case 32: // space
 			case 13: // enter
+			case 32: // space
 				event.preventDefault();
-				this.toggleExpanded();
-				break;
+				return isBulkMode ? this.toggleSelected() : this.toggleExpanded();
 		}
 	};
 
 	toggleExpanded = () => {
 		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
 			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+		}
+	};
+
+	toggleSelected = () => {
+		if ( this.props.isBulkMode ) {
+			this.props.toggleSelected( this.props.minimumComment );
 		}
 	};
 
@@ -78,7 +89,6 @@ export class Comment extends Component {
 			isSelected,
 			refreshCommentData,
 			siteId,
-			toggleSelected,
 		} = this.props;
 		const { isEditMode, isExpanded } = this.state;
 
@@ -93,6 +103,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
+				onClick={ this.toggleSelected }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
 				tabIndex="0"
@@ -102,7 +113,7 @@ export class Comment extends Component {
 				{ ! isEditMode && (
 					<div className="comment__detail">
 						<CommentHeader
-							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected, toggleSelected } }
+							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected } }
 							toggleExpanded={ this.toggleExpanded }
 						/>
 
@@ -120,6 +131,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	return {
 		commentStatus: get( comment, 'status' ),
 		isLoading: isUndefined( comment ),
+		minimumComment: getMinimumComment( comment ),
 		siteId,
 	};
 };
