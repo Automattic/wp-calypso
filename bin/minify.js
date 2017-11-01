@@ -12,12 +12,20 @@ const os = require( 'os' );
 /**
  * Internal dependencies
  */
-const files = fs
-	.readdirSync( './public' )
+
+const walkDir = ( dir ) => fs
+	.readdirSync( dir )
+	.reduce( ( files, file ) =>
+		fs.statSync( path.join( dir, file ) ).isDirectory() ?
+			files.concat( walkDir( path.join( dir, file ) ) ) :
+			files.concat( path.join( dir, file ) ),
+		[] )
 	.filter( filename => (
 		filename.endsWith( '.js' ) &&
 		! filename.endsWith( '.min.js' )
 	) );
+
+const files = walkDir( './public' );
 
 function minifyFile( file, callback ) {
 	console.log( `minifying: ${file}` );
@@ -25,10 +33,10 @@ function minifyFile( file, callback ) {
 	const child = cp.spawn(
 		path.join( 'node_modules', '.bin', 'uglifyjs' ),
 		[
-			path.join( 'public', file ),
+			file,
 			'--mangle',
 			'--compress',
-			'--output', path.join( 'public', file.replace( '.js', '.min.js' ) )
+			'--output', file.replace( '.js', '.min.js' )
 		],
 		// have to pipe stderr to parent, otherwise large bundles will never finish
 		// see https://github.com/nodejs/node-v0.x-archive/issues/6764
