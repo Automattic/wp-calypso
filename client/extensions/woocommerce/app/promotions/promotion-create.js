@@ -37,6 +37,7 @@ class PromotionCreate extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		currency: PropTypes.string,
+		hasEdits: PropTypes.bool.isRequired,
 		site: PropTypes.shape( {
 			ID: PropTypes.number,
 			slug: PropTypes.string,
