@@ -1,7 +1,7 @@
 //default color scheme
 :root {
 	--masterbar-color: $white;
-	--masterbar-background-color: $blue-wordpress;
+	--masterbar-background: $blue-wordpress;
 	--masterbar-border-color: darken( $blue-wordpress, 4% );
 	--masterbar-item-hover-background: lighten( $blue-wordpress, 5% );
 	--masterbar-item-active-background: darken( $blue-wordpress, 17% );
@@ -9,7 +9,7 @@
 	--masterbar-item-new-editor-background: darken( $blue-wordpress, 17% );
 	--masterbar-item-new-editor-hover-background: darken( $blue-wordpress, 13% );
 	--masterbar-toggle-drafts-editor-background: darken( $blue-wordpress, 12% );
-	--masterbar-toggle-drafts-editor-border: darken( $blue-wordpress, 5% );
+	--masterbar-toggle-drafts-editor-border-color: darken( $blue-wordpress, 5% );
 	--masterbar-toggle-drafts-editor-hover-background: darken( $blue-wordpress, 17% );
 }
 
@@ -17,7 +17,7 @@
 .color-scheme {
 	&.is-light {
 		--masterbar-color: $gray-text;
-		--masterbar-background-color: lighten( $gray, 20% );
+		--masterbar-background: lighten( $gray, 20% );
 		--masterbar-border-color: lighten( $gray, 10% );
 		--masterbar-item-hover-background: lighten( $gray, 30% );
 		--masterbar-item-active-background: lighten( $gray, 10% );
@@ -25,13 +25,13 @@
 		--masterbar-item-new-editor-background: darken( $gray, 20% );
 		--masterbar-item-new-editor-hover-background: darken( $gray, 10% );
 		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
-		--masterbar-toggle-drafts-editor-border: lighten( $gray, 20% );
+		--masterbar-toggle-drafts-editor-border-color: lighten( $gray, 20% );
 		--masterbar-toggle-drafts-editor-hover-background: darken( $gray, 10% );
 	}
 
 	&.is-dark {
 		--masterbar-color: $white;
-		--masterbar-background-color: $gray-dark;
+		--masterbar-background: $gray-dark;
 		--masterbar-border-color: darken( $gray, 10% );
 		--masterbar-item-hover-background: darken( $gray, 10% );
 		--masterbar-item-active-background: $gray-text-min;
@@ -39,7 +39,7 @@
 		--masterbar-item-new-editor-background: $gray-text-min;
 		--masterbar-item-new-editor-hover-background: lighten( $gray-text-min, 5% );
 		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
-		--masterbar-toggle-drafts-editor-border: $gray-dark;
+		--masterbar-toggle-drafts-editor-border-color: $gray-dark;
 		--masterbar-toggle-drafts-editor-hover-background: lighten( $gray-text-min, 5% );
 	}
 }
