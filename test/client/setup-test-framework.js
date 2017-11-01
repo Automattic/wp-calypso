@@ -2,9 +2,15 @@
  * External dependencies
  */
 import { disableNetConnect } from 'nock';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
 // It disables all network requests for all tests.
 disableNetConnect();
+
+// configure enzyme for React 16
+// from docs: http://airbnb.io/enzyme/docs/installation/index.html
+configure( { adapter: new Adapter() } );
 
 // It "mocks" enzyme, so that we can delay loading of
 // the utility functions until enzyme is imported in tests.
