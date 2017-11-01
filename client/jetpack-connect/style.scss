@@ -99,10 +99,6 @@
 	.button {
 		width: 100%;
 	}
-
-	.logged-out-form__links .gridicon {
-		top: 2px;
-	}
 }
 
 .jetpack-connect__back-button {
@@ -465,15 +461,6 @@
 .jetpack-connect__sso .email-verification-gate .notice__text {
 	word-wrap: break-word;
 	word-break: break-word;
-}
-
-.jetpack-connect__help-button {
-	.gridicon {
-		width: 18px;
-		height: 18px;
-		position: relative;
-		top: 4px;
-	}
 }
 
 .jetpack-connect__error-details {
