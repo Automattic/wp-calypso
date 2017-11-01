@@ -12,10 +12,7 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	fetchProductSearchResults,
-	clearProductSearch,
-} from 'woocommerce/state/sites/products/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import ProductSearchResults from './results';
 import SearchCard from 'components/search-card';
 
@@ -33,19 +30,16 @@ class ProductSearch extends Component {
 
 		if ( trim( query ) === '' ) {
 			this.setState( { query: '' } );
-			this.props.clearProductSearch( siteId );
 			return;
 		}
 
 		this.setState( { query } );
-		this.props.fetchProductSearchResults( siteId, 1, query );
+		this.props.fetchProducts( siteId, { search: query } );
 	};
 
 	handleSelect = product => {
-		const { siteId } = this.props;
 		// Clear the search field
 		this.setState( { query: '' } );
-		this.props.clearProductSearch( siteId );
 		this.refs.searchCard.clear();
 
 		// Pass products back to parent component
@@ -70,12 +64,6 @@ class ProductSearch extends Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			fetchProductSearchResults,
-			clearProductSearch,
-		},
-		dispatch
-	)
-)( localize( ProductSearch ) );
+export default connect( null, dispatch => bindActionCreators( { fetchProducts }, dispatch ) )(
+	localize( ProductSearch )
+);
