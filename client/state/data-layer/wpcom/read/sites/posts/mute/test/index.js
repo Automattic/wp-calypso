@@ -56,7 +56,7 @@ describe( 'conversation-mute', () => {
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
-						status: 'is-success',
+						status: 'is-plain',
 					} ),
 				} )
 			);
