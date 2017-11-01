@@ -66,7 +66,7 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
 		return callback();
 	}
 
-	loadCSS( cssUrl, ( error, newLink ) => {
+	loadCSS( cssUrl, currentLink, ( error, newLink ) => {
 		if ( currentLink && currentLink.parentElement ) {
 			currentLink.parentElement.removeChild( currentLink );
 		}
@@ -80,9 +80,10 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
 /**
  * Loads a css stylesheet into the page
  * @param {string} cssUrl - a url to a css resource to be inserted into the page
+ * @param {Element} currentLink - a <link> DOM element that we want to use as a reference for stylesheet order
  * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
  */
-function loadCSS( cssUrl, callback = noop ) {
+function loadCSS( cssUrl, currentLink = null, callback = noop ) {
 	const link = Object.assign( document.createElement( 'link' ), {
 		rel: 'stylesheet',
 		type: 'text/css',
@@ -102,5 +103,5 @@ function loadCSS( cssUrl, callback = noop ) {
 		setTimeout( onload, 500 );
 	}
 
-	document.head.appendChild( link );
+	document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
 }
