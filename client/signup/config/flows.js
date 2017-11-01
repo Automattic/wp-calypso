@@ -69,6 +69,7 @@ const flows = {
 		lastModified: '2016-06-02',
 		meta: {
 			skipBundlingPlan: true,
+			enableStore: true,
 		},
 	},
 
@@ -302,22 +303,6 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function filterDesignTypeInFlow( flow ) {
-	if ( ! flow ) {
-		return;
-	}
-
-	if ( ! includes( flow.steps, 'design-type' ) ) {
-		return flow;
-	}
-
-	return assign( {}, flow, {
-		steps: flow.steps.map(
-			stepName => ( stepName === 'design-type' ? 'design-type-with-store' : stepName )
-		),
-	} );
-}
-
 /**
  * Properly filter the current flow.
  *
@@ -374,13 +359,24 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user.get() ) {
-			flow = removeUserStepFromFlow( flow );
+		// Replace design-type step with Store NUX flow steps if exists.
+		// Otherwise use Pressable store step for new English users as before
+		if ( includes( flow.steps, 'design-type' ) ) {
+			const enableStore = includes( flow.steps, 'plans' ) || ( flow.meta && flow.meta.enableStore );
+			const storeNuxFlow = enableStore ? Flows.getFlows()[ 'store-nux' ] : undefined;
+			const isNewEnglishUser = ! user.get() && 'en' === i18n.getLocaleSlug();
+			if ( storeNuxFlow || isNewEnglishUser ) {
+				const steps = storeNuxFlow
+					? storeNuxFlow.steps.slice()
+					: flow.steps.map(
+							stepName => ( stepName === 'design-type' ? 'design-type-with-store' : stepName )
+						);
+				flow = assign( {}, flow, { steps } );
+			}
 		}
 
-		// Show design type with store option only to new users with EN locale.
-		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
-			flow = filterDesignTypeInFlow( flow );
+		if ( user.get() ) {
+			flow = removeUserStepFromFlow( flow );
 		}
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
