@@ -13,8 +13,6 @@ import {
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SET_AVAILABLE,
 	// NEW ACTION TYPES
 	HAPPYCHAT_IO_INIT,
@@ -50,29 +48,6 @@ export const setHappychatAvailable = isAvailable => ( {
 	type: HAPPYCHAT_SET_AVAILABLE,
 	isAvailable,
 } );
-
-export const sendChatMessage = ( message, meta ) => ( {
-	type: HAPPYCHAT_SEND_MESSAGE,
-	message,
-	meta,
-} );
-
-/**
- * Returns an action object that sends information about the customer to happychat
- *
- * @param  { String } howCanWeHelp Selected value of `How can we help?` form input
- * @param  { String } howYouFeel Selected value of `Mind sharing how you feel?` form input
- * @param  { Object } site Selected site info
- * @return { Object } Action object
- */
-export const sendUserInfo = ( howCanWeHelp, howYouFeel, site ) => {
-	return {
-		type: HAPPYCHAT_SEND_USER_INFO,
-		howCanWeHelp,
-		howYouFeel,
-		site,
-	};
-};
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
@@ -284,8 +259,7 @@ export const sendLog = message => ( {
  * @param  { Object } info Selected user info
  * @return { Object } Action object
  */
-// TODO: rename to sendUserInfo when this substitutes old action
-export const sendUserInfoNG = info => ( {
+export const sendUserInfo = info => ( {
 	type: HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	event: 'message',
 	payload: {

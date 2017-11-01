@@ -240,7 +240,7 @@ describe( 'connection', () => {
 
 			socket.emit = jest.fn();
 			const action = sendTyping( 'my msg' );
-			return connection.sendNG( action ).then( () => {
+			return connection.send( action ).then( () => {
 				expect( socket.emit ).toHaveBeenCalledWith( action.event, action.payload );
 			} );
 		} );
@@ -306,7 +306,7 @@ describe( 'connection', () => {
 		test( 'connection.send should dispatch receiveError action', () => {
 			socket.emit = jest.fn();
 			const action = sendTyping( 'content' );
-			return connection.sendNG( action ).catch( e => {
+			return connection.send( action ).catch( e => {
 				expect( dispatch ).toHaveBeenCalledWith(
 					receiveError( 'failed to send ' + action.event + ': ' + e )
 				);
