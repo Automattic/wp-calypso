@@ -156,7 +156,7 @@ class SourcePaymentBox extends PureComponent {
 		) );
 
 		return [
-			<option value="" key="-">{ translate( 'Please select your bank…' ) }</option>,
+			<option value="" key="-">{ translate( 'Please select your bank.' ) }</option>,
 			...idealBanksOptions
 		];
 	}
@@ -178,7 +178,7 @@ class SourcePaymentBox extends PureComponent {
 						onChange={ this.handleChange }
 						label={ translate( 'Your Name' ) }
 						eventFormName="Checkout Form" />
-					<div className="checkout-field">
+					<div className="checkout__checkout-field">
 						<FormLabel htmlFor="ideal-bank">
 							{ translate( 'Bank' ) }
 						</FormLabel>

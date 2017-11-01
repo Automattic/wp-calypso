@@ -231,7 +231,6 @@ const SecurePaymentForm = createReactClass( {
 			<PaymentBox
 				classSet="source-payment-box"
 				cart={ this.props.cart }
-				title="Secure Payment with iDEAL"
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
@@ -301,7 +300,12 @@ const SecurePaymentForm = createReactClass( {
 				);
 
 			case 'ideal':
-				return this.renderSourcePaymentBox( visiblePaymentBox );
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderSourcePaymentBox( visiblePaymentBox ) }
+					</div>
+				);
 
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
