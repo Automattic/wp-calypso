@@ -22,8 +22,8 @@ import {
 	// sendMessage,
 	// sendUserInfo,
 	// sendPreferences,
-	// sendTyping,
-	// sendNotTyping,
+	sendTyping,
+	sendNotTyping,
 } from 'state/happychat/connection/actions';
 // import { selectSiteId } from 'state/help/actions';
 // import { setRoute } from 'state/ui/actions';
@@ -50,6 +50,7 @@ describe( 'middleware', () => {
 		connection = {
 			init: jest.fn(),
 			// send: jest.fn(),
+			sendNG: jest.fn(),
 			request: jest.fn(),
 		};
 
@@ -69,50 +70,50 @@ describe( 'middleware', () => {
 		} );
 	} );
 
-	// TODO: to be enabled when the corresponding changes are merged
-	// describe( 'connection.send actions are connected', () => {
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_EVENT', () => {
-	// 		const action = sendEvent( 'msg' );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_LOG', () => {
-	// 		const action = sendLog( 'msg' );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
-	// 		const action = sendMessage( 'msg' );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO', () => {
-	// 		const action = sendUserInfo( { user: 'user' } );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_PREFERENCES', () => {
-	// 		const action = sendPreferences( 'locale', [] );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendTyping)', () => {
-	// 		const action = sendTyping( 'msg' );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	//
-	// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendNotTyping)', () => {
-	// 		const action = sendNotTyping( 'msg' );
-	// 		actionMiddleware( action );
-	// 		expect( connection.send ).toHaveBeenCalledWith( action );
-	// 	} );
-	// } );
+	// TODO: to be fully enabled when the corresponding changes are merged
+	describe( 'connection.send actions are connected', () => {
+		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_EVENT', () => {
+		// 		const action = sendEvent( 'msg' );
+		// 		actionMiddleware( action );
+		// 		expect( connection.send ).toHaveBeenCalledWith( action );
+		// 	} );
+		//
+		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_LOG', () => {
+		// 		const action = sendLog( 'msg' );
+		// 		actionMiddleware( action );
+		// 		expect( connection.send ).toHaveBeenCalledWith( action );
+		// 	} );
+		//
+		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
+		// 		const action = sendMessage( 'msg' );
+		// 		actionMiddleware( action );
+		// 		expect( connection.send ).toHaveBeenCalledWith( action );
+		// 	} );
+		//
+		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO', () => {
+		// 		const action = sendUserInfo( { user: 'user' } );
+		// 		actionMiddleware( action );
+		// 		expect( connection.send ).toHaveBeenCalledWith( action );
+		// 	} );
+		//
+		// 	test( 'HAPPYCHAT_IO_SEND_MESSAGE_PREFERENCES', () => {
+		// 		const action = sendPreferences( 'locale', [] );
+		// 		actionMiddleware( action );
+		// 		expect( connection.send ).toHaveBeenCalledWith( action );
+		// 	} );
+
+		test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendTyping)', () => {
+			const action = sendTyping( 'msg' );
+			actionMiddleware( action );
+			expect( connection.sendNG ).toHaveBeenCalledWith( action );
+		} );
+
+		test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendNotTyping)', () => {
+			const action = sendNotTyping( 'msg' );
+			actionMiddleware( action );
+			expect( connection.sendNG ).toHaveBeenCalledWith( action );
+		} );
+	} );
 
 	describe( 'connection.request actions are connected', () => {
 		test( 'HAPPYCHAT_IO_REQUEST_TRANSCRIPT', () => {

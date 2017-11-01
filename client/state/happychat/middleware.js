@@ -4,7 +4,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import { has, isEmpty, throttle } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,6 @@ import {
 	// end of new happychat action types
 	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_SET_CURRENT_MESSAGE,
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 	COMMENTS_CHANGE_STATUS,
@@ -52,14 +51,6 @@ import buildConnection from 'lib/happychat/connection';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:actions' );
 
-const sendTyping = throttle(
-	( connection, message ) => {
-		connection.typing( message );
-	},
-	1000,
-	{ leading: true, trailing: false }
-);
-
 export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	const state = getState();
 
@@ -71,18 +62,9 @@ export const updateChatPreferences = ( connection, { getState }, siteId ) => {
 	}
 };
 
-const onMessageChange = ( connection, message ) => {
-	if ( isEmpty( message ) ) {
-		connection.notTyping();
-	} else {
-		sendTyping( connection, message );
-	}
-};
-
 const sendMessage = ( connection, { message, meta } ) => {
 	debug( 'sending message', message );
 	connection.send( message, meta );
-	connection.notTyping();
 };
 
 export const sendInfo = ( connection, { getState }, action ) => {
@@ -262,10 +244,6 @@ export default function( connection = null ) {
 				sendMessage( connection, action );
 				break;
 
-			case HAPPYCHAT_SET_CURRENT_MESSAGE:
-				onMessageChange( connection, action.message );
-				break;
-
 			case ROUTE_SET:
 				sendRouteSetEventMessage( connection, store, action );
 				break;
@@ -278,13 +256,16 @@ export default function( connection = null ) {
 				connection.request( action, action.timeout );
 				break;
 
+			case HAPPYCHAT_IO_SEND_TYPING:
+				connection.sendNG( action );
+				break;
+
 			// NEW SOCKET API SURFACE - still not in use
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
 			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
 			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
-			case HAPPYCHAT_IO_SEND_TYPING:
 				connectionNG.send( action );
 				break;
 
