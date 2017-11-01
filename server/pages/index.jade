@@ -240,7 +240,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		script.
 			(function() {
-				if ( window.console ) {
+				if ( window.console && window.configData && 'development' !== window.configData.env ) {
 					console.log( "%cSTOP!", "color:#f00;font-size:xx-large" );
 					console.log(
 						"%cWait! This browser feature runs code that can alter your website or its security, " +
