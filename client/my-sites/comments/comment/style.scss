@@ -326,6 +326,11 @@
 // Bulk Mode View
 
 .card.comment.is-bulk-mode {
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+		z-index: z-index('root', '.comment-detail.card.is-collapsed:hover');
+	}
+
 	.comment__header .comment__author {
 		padding-left: 0;
 	}
