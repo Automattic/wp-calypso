@@ -36,7 +36,7 @@ import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatConnection from 'components/happychat/connection-connected';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
