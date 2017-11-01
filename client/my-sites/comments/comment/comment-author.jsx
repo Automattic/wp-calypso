@@ -24,7 +24,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 export class CommentAuthor extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isBulkMode: PropTypes.bool,
 		isExpanded: PropTypes.bool,
 	};
 
@@ -38,7 +37,6 @@ export class CommentAuthor extends Component {
 			commentType,
 			commentUrl,
 			gravatarUser,
-			isBulkMode,
 			isExpanded,
 			moment,
 			translate,
@@ -67,19 +65,19 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ ! isExpanded && <CommentPostLink { ...{ commentId } } disabled={ isBulkMode } /> }
+						{ ! isExpanded && <CommentPostLink { ...{ commentId } } /> }
 					</div>
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<ExternalLink href={ commentUrl } disabled={ isBulkMode }>
+							<ExternalLink href={ commentUrl }>
 								{ isExpanded ? formattedDate : relativeDate }
 							</ExternalLink>
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
 								<span className="comment__author-url-separator">&middot;</span>
-								<ExternalLink href={ authorUrl } disabled={ isBulkMode }>
+								<ExternalLink href={ authorUrl }>
 									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
 								</ExternalLink>
 							</span>

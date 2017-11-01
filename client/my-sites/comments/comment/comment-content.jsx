@@ -24,7 +24,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 export class CommentContent extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isBulkMode: PropTypes.bool,
 		isExpanded: PropTypes.bool,
 	};
 
@@ -32,7 +31,7 @@ export class CommentContent extends Component {
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, isBulkMode, isExpanded, parentCommentContent, translate } = this.props;
+		const { commentUrl, isExpanded, parentCommentContent, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -42,7 +41,7 @@ export class CommentContent extends Component {
 			<div className="comment__in-reply-to">
 				{ ! isExpanded && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
-				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick } disabled={ isBulkMode }>
+				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick }>
 					<Emojify>{ parentCommentContent }</Emojify>
 				</a>
 			</div>
@@ -50,14 +49,7 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const {
-			commentContent,
-			commentId,
-			commentStatus,
-			isBulkMode,
-			isExpanded,
-			translate,
-		} = this.props;
+		const { commentContent, commentId, commentStatus, isExpanded, translate } = this.props;
 		return (
 			<div className="comment__content">
 				{ ! isExpanded && (
@@ -73,7 +65,7 @@ export class CommentContent extends Component {
 				{ isExpanded && (
 					<div className="comment__content-full">
 						<div className="comment__content-info">
-							<CommentPostLink { ...{ commentId } } disabled={ isBulkMode } />
+							<CommentPostLink { ...{ commentId } } />
 
 							{ 'unapproved' === commentStatus && (
 								<div className="comment__status-label">{ translate( 'Pending' ) }</div>

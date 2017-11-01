@@ -11,12 +11,6 @@
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
 		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
 	}
-
-	a[disabled] {
-		color: $gray-text-min;
-		cursor: default;
-		pointer-events: none;
-	}
 }
 
 // `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
@@ -329,6 +323,12 @@
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 		z-index: z-index('root', '.comment-detail.card.is-collapsed:hover');
+	}
+
+	a {
+		color: $gray-text-min;
+		cursor: default;
+		pointer-events: none;
 	}
 
 	.comment__header .comment__author {

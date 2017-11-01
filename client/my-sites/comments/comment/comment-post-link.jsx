@@ -18,7 +18,6 @@ import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const CommentPostLink = ( {
-	disabled,
 	isPostTitleLoaded,
 	postId,
 	postTitle,
@@ -32,7 +31,7 @@ const CommentPostLink = ( {
 
 		<Gridicon icon="chevron-right" size={ 18 } />
 
-		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` } disabled={ disabled }>
+		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
 			{ postTitle || translate( 'Untitled' ) }
 		</a>
 	</div>
