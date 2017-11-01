@@ -19,7 +19,6 @@ import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
-import { abtest } from 'lib/abtest';
 
 class PaymentBox extends PureComponent {
 	constructor() {
@@ -99,55 +98,25 @@ class PaymentBox extends PureComponent {
 		} );
 	}
 
-	getCardTitle() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
-			const formatHeaderClass = 'formatted-header',
-				formatHeaderTitleClass = 'formatted-header__title';
-
-			return (
-				<header className={ formatHeaderClass }>
-					<h1 className={ formatHeaderTitleClass }>
-						{ this.props.paymentMethods ? (
-							translate( 'Great choice! How would you like to pay?' )
-						) : (
-							this.props.title
-						) }
-					</h1>
-				</header>
-			);
-		}
-
-		return <SectionHeader label={ this.props.title } />;
-	}
-
-	getSectionNav() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
-			const titleText = this.props.currentPaymentMethod
-				? translate( 'Pay with %(paymentMethod)s', {
-						args: {
-							paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
-						},
-					} )
-				: translate( 'Loading…' );
-
-			return (
-				<SectionNav selectedText={ titleText }>
-					<NavTabs>{ this.getPaymentMethods() }</NavTabs>
-				</SectionNav>
-			);
-		}
-
-		return null;
-	}
-
 	render() {
 		const cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
+		const titleText = this.props.currentPaymentMethod
+			? translate( 'Pay with %(paymentMethod)s', {
+					args: {
+						paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
+					},
+				} )
+			: translate( 'Loading…' );
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
-				{ this.getCardTitle() }
-				{ this.getSectionNav() }
+				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
+
+				<SectionNav selectedText={ titleText }>
+					<NavTabs>{ this.getPaymentMethods() }</NavTabs>
+				</SectionNav>
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">

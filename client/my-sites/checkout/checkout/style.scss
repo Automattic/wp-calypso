@@ -718,7 +718,7 @@
 }
 
 @include breakpoint( ">660px" ) {
-	.payment-box__payment-buttons-test {
+	.payment-box__payment-buttons {
 		display: flex;
 		align-items: center;
 	}
