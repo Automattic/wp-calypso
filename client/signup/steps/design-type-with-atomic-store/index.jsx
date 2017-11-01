@@ -174,7 +174,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
-				{ ! countryCode && <QueryGeo /> }
+				{ this.state.pendingStoreClick && ! countryCode && <QueryGeo /> }
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
