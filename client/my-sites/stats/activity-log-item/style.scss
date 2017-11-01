@@ -37,8 +37,8 @@
 		}
 	}
 
-	.foldable-card__main {
-		flex: 5 1;
+	.foldable-card__secondary {
+		flex-grow: 0;
 	}
 
 	&.is-discarded {
@@ -66,19 +66,6 @@
 				display: none;
 			}
 		}
-	}
-}
-
-.activity-log-item__card {
-	.foldable-card__content {
-		padding: 16px;
-		font-size: 14px;
-		color: darken( $gray, 20% );
-	}
-
-	.is-discarded & {
-		background: none;
-		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
@@ -141,10 +128,23 @@
 	}
 }
 
+.activity-log-item__card {
+	.foldable-card__content {
+		padding: 16px;
+		font-size: 14px;
+		color: darken( $gray, 20% );
+	}
+
+	.is-discarded & {
+		background: none;
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
+	}
+}
+
 .activity-log-item__card-header {
 	display: flex;
-	flex: 1;
-	align-items: center;
+	flex-wrap: wrap;
+	margin-right: 32px;
 
 	@include breakpoint( "<960px" ) {
 		flex-direction: column;
@@ -154,23 +154,20 @@
 
 .activity-log-item__actor {
 	display: flex;
-	flex: 3 1;
-	align-items: center;
+	flex-shrink: 0;
 	margin-right: 32px;
-
-	@include breakpoint( "<960px" ) {
-		order: 2;
-	}
 
 	.gravatar,
 	.jetpack-logo {
 		float: left;
+		width: 40px;
+		height: 40px;
 		margin-right: 16px;
 		fill: darken( $gray, 10% );
 
 		@include breakpoint( "<960px" ) {
-			width: 24px;
-			height: 24px;
+			width: 32px;
+			height: 32px;
 			margin-right: 8px;
 		}
 	}
@@ -192,7 +189,8 @@
 	font-size: 14px;
 
 	@include breakpoint( "<960px" ) {
-		font-size: 13px;
+		margin-top: 2px;
+		line-height: 1;
 	}
 }
 
@@ -203,23 +201,11 @@
 }
 
 .activity-log-item__title {
-	flex: 4 1;
+	flex: 1 1 50%;
 	font-size: 14px;
 	word-break: break-word;
 
 	@include breakpoint( "<960px" ) {
-		margin-bottom: 16px;
+		margin-top: 8px;
 	}
-}
-
-.activity-log-item__action {
-	flex-basis: 25%;
-	text-align:right;
-}
-
-.activity-log-item__id {
-	margin-top: 8px;
-	font-size: 11px;
-	font-style: italic;
-	color: lighten( $gray, 20% );
 }
