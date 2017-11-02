@@ -88,7 +88,7 @@ const mapDispatchToProps = { bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'duplicate',
 		dispatchProps.bumpAnalyticsStat
 	);

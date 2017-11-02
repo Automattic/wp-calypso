@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,7 +78,7 @@ const mapDispatchToProps = { toggleSharePanel, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'share',
 		dispatchProps.bumpAnalyticsStat
 	);

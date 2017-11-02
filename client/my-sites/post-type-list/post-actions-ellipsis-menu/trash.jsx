@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -100,12 +101,12 @@ const mapDispatchToProps = { trashPost, deletePost, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpTrashStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'trash',
 		dispatchProps.bumpAnalyticsStat
 	);
 	const bumpDeleteStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'delete',
 		dispatchProps.bumpAnalyticsStat
 	);
