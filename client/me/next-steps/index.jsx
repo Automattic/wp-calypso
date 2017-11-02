@@ -41,28 +41,28 @@ class NextSteps extends React.Component {
 		}
 	}
 
-	bloggingUniversityLinkRecordEvent = () => {
+	recordBloggingUniversityLinkClick = () => {
 		this.recordEvent( {
 			tracks: 'blogging_course',
 			action: 'Clicked Blogging University Link',
 		} );
 	};
 
-	docsLinkRecordEvent = () => {
+	recordDocsLinkClick = () => {
 		this.recordEvent( {
 			tracks: 'documentation',
 			action: 'Clicked Documentation Link',
 		} );
 	};
 
-	dismissLinkRecordEvent = () => {
+	recordDismissLinkClick = () => {
 		this.recordEvent( {
 			tracks: 'dismiss',
 			action: 'Clicked Dismiss Link',
 		} );
 	};
 
-	introMessage() {
+	renderIntroMessage() {
 		if ( this.props.isWelcome ) {
 			return (
 				<div className="next-steps__intro">
@@ -81,7 +81,7 @@ class NextSteps extends React.Component {
 											href="https://bloggingu.wordpress.com/"
 											target="_blank"
 											rel="noopener noreferrer"
-											onClick={ this.bloggingUniversityLinkRecordEvent }
+											onClick={ this.recordBloggingUniversityLinkClick }
 										/>
 									),
 									docsLink: (
@@ -89,7 +89,7 @@ class NextSteps extends React.Component {
 											href="http://en.support.wordpress.com/"
 											target="_blank"
 											rel="noopener noreferrer"
-											onClick={ this.docsLinkRecordEvent }
+											onClick={ this.recordDocsLinkClick }
 										/>
 									),
 								},
@@ -101,7 +101,7 @@ class NextSteps extends React.Component {
 		}
 	}
 
-	outroMessage() {
+	renderOutroMessage() {
 		if ( this.props.isWelcome ) {
 			const { newestSite } = this.props;
 			const dismissLink = '/stats/insights/' + ( newestSite ? newestSite.slug : '' );
@@ -113,7 +113,7 @@ class NextSteps extends React.Component {
 							'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.',
 							{
 								components: {
-									a: <a href={ dismissLink } onClick={ this.dismissLinkRecordEvent } />,
+									a: <a href={ dismissLink } onClick={ this.recordDismissLinkClick } />,
 								},
 							}
 						) }
@@ -159,11 +159,11 @@ class NextSteps extends React.Component {
 			<div className={ classes }>
 				{ this.renderMeSidebar() }
 
-				{ this.introMessage() }
+				{ this.renderIntroMessage() }
 
 				{ this.renderSteps() }
 
-				{ this.outroMessage() }
+				{ this.renderOutroMessage() }
 			</div>
 		);
 	}
