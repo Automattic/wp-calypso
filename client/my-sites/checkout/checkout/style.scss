@@ -720,7 +720,7 @@
 		margin-left:8px;
 	}
 
-	&.ideal {
+	&.ideal, &.giropay {
 		margin-left: 1em;
 	}
 
@@ -924,6 +924,11 @@
 
 	.checkout__paypal {
 		width: 80px;
+	}
+
+	.checkout__giropay {
+	  width: 80px;
+      margin: -10px 0;
 	}
 
   	.checkout__ideal {

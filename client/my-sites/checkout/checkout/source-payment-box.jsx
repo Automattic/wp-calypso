@@ -66,6 +66,8 @@ class SourcePaymentBox extends PureComponent {
 	paymentMethodByType( paymentType ) {
 		if ( paymentType === 'ideal' ) {
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
+		} else if ( paymentType === 'giropay' ) {
+			return 'WPCOM_Billing_Stripe_Source_Giropay';
 		}
 		return 'WPCOM_Billing_Stripe_Source';
 	}
@@ -161,6 +163,24 @@ class SourcePaymentBox extends PureComponent {
 		];
 	}
 
+	renderAdditionalFields() {
+		if ( 'ideal' === this.props.paymentType ) {
+			return (
+				<div className="checkout__checkout-field">
+					<FormLabel htmlFor="ideal-bank">
+						{ translate( 'Bank' ) }
+					</FormLabel>
+					<FormSelect
+						name="ideal-bank"
+						onChange={ this.handleChange }
+					>
+						{ this.renderBankOptions() }
+					</FormSelect>
+				</div>
+			);
+		}
+	}
+
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -178,17 +198,8 @@ class SourcePaymentBox extends PureComponent {
 						onChange={ this.handleChange }
 						label={ translate( 'Your Name' ) }
 						eventFormName="Checkout Form" />
-					<div className="checkout__checkout-field">
-						<FormLabel htmlFor="ideal-bank">
-							{ translate( 'Bank' ) }
-						</FormLabel>
-						<FormSelect
-							name="ideal-bank"
-							onChange={ this.handleChange }
-						>
-							{ this.renderBankOptions() }
-						</FormSelect>
-					</div>
+
+					{ this.renderAdditionalFields() }
 				</div>
 
 				<TermsOfService
@@ -221,6 +232,8 @@ class SourcePaymentBox extends PureComponent {
 		switch ( this.props.paymentType ) {
 			case 'ideal':
 				return 'iDEAL';
+			case 'giropay':
+				return 'Giropay';
 		}
 
 		return this.props.paymentType;

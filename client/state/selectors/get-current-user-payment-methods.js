@@ -22,14 +22,12 @@ import { getGeoCountryShort } from 'state/geo/selectors';
 const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 
 const paymentMethods = {
-	byLocale: {
-		'de-DE': [ 'paypal', 'credit-card' ],
-		'en-DE': [ 'paypal', 'credit-card' ],
-	},
+	byLocale: {},
 
 	byCountry: {
 		US: DEFAULT_PAYMENT_METHODS,
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
+		DE: [ 'credit-card', 'giropay', 'paypal' ],
 	},
 
 	byWpcomLang: {},

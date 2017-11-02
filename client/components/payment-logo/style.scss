@@ -41,4 +41,9 @@
 		background-image: url( '/calypso/images/upgrades/ideal.svg' );
 		height: 30px;
 	}
+
+	&.is-giropay {
+		background-image: url( '/calypso/images/upgrades/giropay.svg' );
+		height: 60px;
+	}
 }
