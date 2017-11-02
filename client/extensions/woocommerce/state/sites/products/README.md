@@ -9,14 +9,9 @@ This module is used to manage products for a site.
 
 Create a product on the remote site via API. May also call action creator callbacks: successAction on successful product creation, or failureAction on an error.
 
-## Actions
-
 ### `fetchProducts( siteId: number, params )`
 
-Pull products from the remote site. Does not run if a specific server page is already loading.
-Params passed here go through to the API endpoint for things like `page` or `offset`
-Default `per_page` is 10 if none is specified.
-
+Pull products from the remote site. Does not run if a specific server page is already loading. Params passed here go through to the API endpoint for things like `page`, `offset`, or `search`. Defaults: `page: 1`, `per_page: 10`
 
 ## Reducer
 
@@ -27,10 +22,23 @@ Products are collected in `products`, `isLoading` indicates which pages are bein
 ```js
 {
 	"products": {
-		// Keyed by page number
-		"isLoading": {
-			1: false,
-			2: true
+		"queries": {
+			// Keyed by request parameters
+			'{}': {
+				"id": [ 31, 32, 33, … ]
+				"isLoading": false,
+				"totalPages": 2,
+				"totalProducts": 18,
+			},
+			'{"page":2}': {
+				"isLoading": true,
+			},
+			'{"search":"test"}': {
+				"id": [ 32, 43 … ]
+				"isLoading": false,
+				"totalPages": 2,
+				"totalProducts": 18,
+			}
 		},
 		"products": { [
 			{
@@ -41,9 +49,7 @@ Products are collected in `products`, `isLoading` indicates which pages are bein
 				"date_created": "2013-06-07T10:49:51",
 				…
 			},
-		] },
-		// The total number of pages for this site's products.
-		"totalPages": 6
+		] }
 	}
 }
 ```
@@ -58,6 +64,18 @@ Whether the product list on a given page has been successfully loaded from the s
 
 Whether the product list on a given page is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
-### `getTotalProductsPages( state, siteId: number )`
+### `getProducts( state, params, siteId: number )`
 
-Gets the total number of pages of products available on a site. Optional `siteId`, will default to currently selected site.
+Get the products that belong to a given request query. Optional `siteId`, will default to currently selected site.
+
+### `getProduct( state, productId: number, siteId: number )`
+
+Get a single product matching a given product ID. Optional `siteId`, will default to currently selected site.
+
+### `getTotalProductsPages( state, params, siteId: number )`
+
+Gets the total number of pages of products available for a request query. Optional `siteId`, will default to currently selected site.
+
+### `getTotalProducts( state, params, siteId: number )`
+
+Gets the total number of products available for a request query. Optional `siteId`, will default to currently selected site.
