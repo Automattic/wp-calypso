@@ -27,11 +27,6 @@ export function isPostNotFound( post ) {
 }
 
 export function showSelectedPost( { store, replaceHistory, postKey, comments } ) {
-	console.log( 'store', store );
-	console.log( 'replaceHistory', replaceHistory );
-	console.log( 'postKey', postKey );
-	console.log( 'comments', comments );
-
 	if ( ! postKey ) {
 		return;
 	}
@@ -101,7 +96,6 @@ export function handleGapClicked( postKey, storeId ) {
 }
 
 export function showFullPost( { post, replaceHistory, comments } ) {
-	console.log( 'comments ara h kya?', comments );
 	const hashtag = comments ? '#comments' : '';
 	let query = '';
 	if ( post.referral ) {

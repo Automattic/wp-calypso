@@ -91,11 +91,7 @@ export class FullPostView extends React.Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
-		////////////////////////////////////////////////////
-
 		this.checkForCommentAnchor();
-
-		//////////////////////////////////////
 
 		// If we have a comment anchor, scroll to comments
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
@@ -122,23 +118,14 @@ export class FullPostView extends React.Component {
 			this.scrollToComments();
 		}
 	}
-	/////////////////////////////////////////////////////
+
 	componentWillReceiveProps( newProps ) {
-		console.log( 'newProps', newProps );
-		console.log( 'does this work??' );
 		//newProps.shouldShowComments=true;
-		console.log( 'xxxxxxxxxxxxx', newProps.shouldShowComments );
 		if ( newProps.shouldShowComments ) {
-			console.log( 'shud show coments???', shouldShowComments );
 			this.hasScrolledToCommentAnchor = false;
 			this.checkForCommentAnchor();
-		} else {
-			console.log( 'Yo comments' );
-			//this.hasScrolledToCommentAnchor = false;
-			//this.checkForCommentAnchor();
 		}
 	}
-	////////////////////////////////////////////////////////////
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
@@ -272,13 +259,10 @@ export class FullPostView extends React.Component {
 
 	goToNextPost = () => {
 		const store = getLastStore();
-		console.log( 'cccc', store, 'dddd' );
 		if ( store ) {
 			if ( ! store.getSelectedPostKey() ) {
-				console.log( 'No store' );
 				store.selectItem( keyForPost( this.props.post ), store.id );
 			}
-			console.log( 'Yes store' );
 			FeedStreamStoreActions.selectNextItem( store.getID() );
 			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
 		}
@@ -286,13 +270,10 @@ export class FullPostView extends React.Component {
 
 	goToPreviousPost = () => {
 		const store = getLastStore();
-		console.log( 'cccc2', store, 'dddd2' );
 		if ( store ) {
 			if ( ! store.getSelectedPostKey() ) {
-				console.log( 'No store 2' );
 				store.selectItem( keyForPost( this.props.post ), store.id );
 			}
-			console.log( 'yes store 2' );
 			FeedStreamStoreActions.selectPrevItem( store.getID() );
 			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
 		}
