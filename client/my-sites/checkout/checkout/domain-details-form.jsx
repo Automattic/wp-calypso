@@ -13,6 +13,7 @@ import {
 	camelCase,
 	deburr,
 	first,
+	get,
 	head,
 	includes,
 	indexOf,
@@ -55,6 +56,7 @@ import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
 } from 'components/domains/registrant-extra-info';
 import config from 'config';
+import { getGeo } from 'state/geo/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
@@ -85,7 +87,7 @@ export class DomainDetailsForm extends PureComponent {
 		this.state = {
 			form: null,
 			submissionCount: 0,
-			phoneCountryCode: 'US',
+			phoneCountryCode: get( this.props, 'geo.country_short', 'US' ),
 			steps,
 			currentStep: first( steps ),
 		};
@@ -115,6 +117,7 @@ export class DomainDetailsForm extends PureComponent {
 	componentDidUpdate( prevProps, prevState ) {
 		const previousFormValues = formState.getAllFieldValues( prevState.form );
 		const currentFormValues = formState.getAllFieldValues( this.state.form );
+
 		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
 			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
@@ -122,7 +125,16 @@ export class DomainDetailsForm extends PureComponent {
 
 	loadFormStateFromRedux = fn => {
 		// only load the properties relevant to the main form fields
-		fn( null, pick( this.props.contactDetails, this.fieldNames ) );
+		const formStateFromRedux = pick( this.props.contactDetails, this.fieldNames );
+		const { geo } = this.props;
+		if ( ! formStateFromRedux.countryCode ) {
+			formStateFromRedux.countryCode = get( geo, 'country_short', '' );
+		}
+		if ( ! formStateFromRedux.city ) {
+			formStateFromRedux.city = get( geo, 'city', '' );
+		}
+
+		fn( null, formStateFromRedux );
 	};
 
 	sanitize = ( fieldValues, onComplete ) => {
@@ -581,6 +593,12 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
-	updateContactDetailsCache,
-} )( localize( DomainDetailsFormContainer ) );
+export default connect(
+	state => ( {
+		contactDetails: getContactDetailsCache( state ),
+		geo: getGeo( state ),
+	} ),
+	{
+		updateContactDetailsCache,
+	}
+)( localize( DomainDetailsFormContainer ) );
