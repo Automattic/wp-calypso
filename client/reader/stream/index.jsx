@@ -202,7 +202,10 @@ class ReaderStream extends React.Component {
 		this.props.resetCardExpansions();
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
+		console.log( 'Hey whatsupp' );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
+		console.log( 'Hey all gud' );
+
 		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
@@ -211,7 +214,7 @@ class ReaderStream extends React.Component {
 			history.scrollRestoration = 'manual';
 		}
 	}
-
+	// cnotrol is not comming to mount or unmount
 	componentWillUnmount() {
 		this.props.postsStore.off( 'change', this.updateState );
 		this.props.recommendationsStore &&
@@ -219,6 +222,7 @@ class ReaderStream extends React.Component {
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
+
 		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
 		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
@@ -228,7 +232,10 @@ class ReaderStream extends React.Component {
 		}
 	}
 
+	//mentioned in coments on github
+
 	componentWillReceiveProps( nextProps ) {
+		console.log( 'coming here' );
 		if ( nextProps.postsStore !== this.props.postsStore ) {
 			this.props.postsStore.off( 'change', this.updateState );
 			this.props.recommendationsStore &&
