@@ -107,7 +107,11 @@ export class CommentReply extends Component {
 		// Only show the scrollbar if the textarea content exceeds the max height
 		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
 
-		const buttonClasses = classNames( 'comment-detail__reply-submit', {
+		const wrapperClasses = classNames( 'comment__reply-wrapper', {
+			'has-focus': isReplyMode,
+		} );
+
+		const buttonClasses = classNames( 'comment__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasReplyContent,
 			'is-visible': isReplyMode || hasReplyContent,
@@ -115,7 +119,7 @@ export class CommentReply extends Component {
 
 		const gravatarClasses = classNames( { 'is-visible': ! isReplyMode } );
 
-		const textareaClasses = classNames( {
+		const textareaClasses = classNames( 'comment__reply-textarea', {
 			'has-content': hasReplyContent,
 			'has-focus': isReplyMode,
 			'has-scrollbar': hasScrollbar,
@@ -123,29 +127,36 @@ export class CommentReply extends Component {
 
 		// Without focus, force the textarea to collapse even if it was manually resized
 		const textareaStyle = {
-			height: isReplyMode ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
+			height: isReplyMode || hasReplyContent ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
 		};
 
 		return (
 			<form className="comment__reply">
-				<AutoDirection>
-					<textarea
-						className={ textareaClasses }
-						onBlur={ exitReplyMode }
-						onChange={ this.updateTextarea }
-						onFocus={ enterReplyMode }
-						onKeyDown={ this.keyDownHandler }
-						ref={ this.storeTextareaRef }
-						style={ textareaStyle }
-						value={ replyContent }
-					/>
-				</AutoDirection>
+				<div className={ wrapperClasses }>
+					<AutoDirection>
+						<textarea
+							className={ textareaClasses }
+							onBlur={ exitReplyMode }
+							onChange={ this.updateTextarea }
+							onFocus={ enterReplyMode }
+							onKeyDown={ this.keyDownHandler }
+							placeholder={ this.getPlaceholder() }
+							ref={ this.storeTextareaRef }
+							style={ textareaStyle }
+							value={ replyContent }
+						/>
+					</AutoDirection>
 
-				<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
+					<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
 
-				<button className={ buttonClasses } disabled={ ! hasReplyContent } onClick={ this.submit }>
-					{ translate( 'Send' ) }
-				</button>
+					<button
+						className={ buttonClasses }
+						disabled={ ! hasReplyContent }
+						onClick={ this.submit }
+					>
+						{ translate( 'Send' ) }
+					</button>
+				</div>
 			</form>
 		);
 	}
