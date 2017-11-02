@@ -43,7 +43,7 @@ const renderSummary = ( {
 	let str = city + ', ';
 	if ( state ) {
 		const statesMap = ( countriesData[ country ] || {} ).states || {};
-		str += ( statesMap[ state ] || state ) + '\xa0 ';
+		str += ( statesMap[ state ] || state ) + '\xa0 ';  // append two spaces: non-breaking and normal
 	}
 	str += ( 'US' === country ? postcode.split( '-' )[ 0 ] : postcode );
 	if ( showCountry ) {
