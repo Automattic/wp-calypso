@@ -131,9 +131,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			designType,
 		} );
 
-		// If the user chooses `store` as design type, redirect to the `store-nux` flow
-		const nextFlow = designType === DESIGN_TYPE_STORE ? 'store-nux' : undefined;
-		this.props.goToNextStep( nextFlow );
+		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
+		// For other choices, continue with the current flow.
+		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		this.props.goToNextStep( nextFlowName );
 	};
 
 	renderChoice = choice => {
