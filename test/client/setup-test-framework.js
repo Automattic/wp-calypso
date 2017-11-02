@@ -26,8 +26,8 @@ jest.mock( 'enzyme', () => {
 		const chaiEnzyme = require.requireActual( 'chai-enzyme' );
 		chai.use( chaiEnzyme() );
 
-		// configure enzyme for React 16, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = require.requireActual( 'enzyme-adapter-react-16' );
+		// configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
+		const Adapter = require.requireActual( 'enzyme-adapter-react-15' );
 		actualEnzyme.configure( { adapter: new Adapter() } );
 
 		// configure snapshot serializer for enzyme
