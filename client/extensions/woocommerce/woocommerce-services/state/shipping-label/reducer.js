@@ -718,7 +718,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE ] = ( state, { res
 		refundDialog: null,
 		labels: [ ...state.labels ],
 	};
-	newState.refundDialog = null;
 	newState.labels[ labelIndex ] = labelData;
 
 	return newState;

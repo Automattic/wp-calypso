@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -104,11 +103,23 @@ const MoveItemDialog = ( props ) => {
 
 	const onClose = () => props.closeItemMove( orderId, siteId );
 
+	const buttons = [
+		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
+		{
+			action: 'move',
+			label: translate( 'Move' ),
+			isPrimary: true,
+			disabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
+			onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
+		},
+	];
+
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
 				isFullScreen={ false }
 				onClickOutside={ onClose }
 				onClose={ onClose }
+				buttons={ buttons }
 				additionalClassNames="wcc-root packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
@@ -118,15 +129,6 @@ const MoveItemDialog = ( props ) => {
 				{ renderNewPackageOption() }
 				{ renderIndividualOption() }
 			</div>
-			<ActionButtons buttons={ [
-				{
-					label: translate( 'Move' ),
-					isPrimary: true,
-					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
-					onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
-				},
-				{ label: translate( 'Cancel' ), onClick: onClose },
-			] } />
 		</Dialog>
 	);
 };

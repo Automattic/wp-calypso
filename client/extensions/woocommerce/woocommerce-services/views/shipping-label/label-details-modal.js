@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -20,11 +19,16 @@ const DetailsDialog = ( props ) => {
 	const { orderId, siteId, isVisible, labelIndex, serviceName, packageName, productNames, translate } = props;
 
 	const onClose = () => props.closeDetailsDialog( orderId, siteId );
+	const buttons = [
+		{ action: 'close', label: translate( 'Close' ), onClick: onClose },
+	];
+
 	return (
 		<Dialog
 			additionalClassNames="label-details-modal woocommerce"
 			isVisible={ isVisible }
-			onClose={ onClose }>
+			onClose={ onClose }
+			buttons={ buttons }>
 			<FormSectionHeading>
 				{ translate( 'Label #%(labelIndex)s details', { args: { labelIndex: labelIndex + 1 } } ) }
 			</FormSectionHeading>
@@ -38,16 +42,10 @@ const DetailsDialog = ( props ) => {
 				<dt>{ translate( 'Items' ) }</dt>
 				<dd>
 					<ul>
-						{ productNames.map( productName => <li>{ productName }</li> ) }
+						{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }
 					</ul>
 				</dd>
 			</dl>
-			<ActionButtons buttons={ [
-				{
-					onClick: onClose,
-					label: translate( 'Close' ),
-				},
-			] } />
 		</Dialog>
 	);
 };
