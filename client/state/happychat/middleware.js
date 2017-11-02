@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { noop } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -17,6 +22,8 @@ import {
 } from 'state/action-types';
 import { sendEvent } from 'state/happychat/connection/actions';
 import buildConnection from 'lib/happychat/connection';
+import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
+import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 
 const eventMessage = {
 	HAPPYCHAT_BLUR: 'Stopped looking at Happychat',
@@ -51,9 +58,15 @@ export const socketMiddleware = ( connection = null ) => {
 
 			case HAPPYCHAT_BLUR:
 			case HAPPYCHAT_FOCUS:
-				store.dispatch( sendEvent( eventMessage[ action.type ] ) );
+				const state = store.getState();
+				isHappychatClientConnected( state ) &&
+				isHappychatChatAssigned( state ) &&
+				eventMessage[ action.type ]
+					? store.dispatch( sendEvent( eventMessage[ action.type ] ) )
+					: noop;
 				break;
 		}
+
 		return next( action );
 	};
 };
