@@ -440,6 +440,12 @@ class SiteVerification extends Component {
 	}
 }
 
+const trackSiteVerificationUpdated = service =>
+	recordTracksEvent( 'calypso_seo_tools_site_verification_updated', {
+		service,
+	} );
+const trackFormSubmitted = partial( recordTracksEvent, 'calypso_seo_settings_form_submit' );
+
 export default connect(
 	state => {
 		const site = getSelectedSite( state );
@@ -459,11 +465,8 @@ export default connect(
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,
-		trackSiteVerificationUpdated: service =>
-			recordTracksEvent( 'calypso_seo_tools_site_verification_updated', {
-				service,
-			} ),
-		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
+		trackSiteVerificationUpdated,
+		trackFormSubmitted,
 		activateModule,
 	},
 	undefined,

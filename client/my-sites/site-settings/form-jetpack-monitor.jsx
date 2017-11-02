@@ -165,6 +165,8 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	}
 }
 
+const trackEvent = partial( recordGoogleEvent, 'Site Settings' );
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -181,7 +183,7 @@ export default connect(
 		};
 	},
 	{
-		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
+		trackEvent,
 		updateSiteMonitorSettings,
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );

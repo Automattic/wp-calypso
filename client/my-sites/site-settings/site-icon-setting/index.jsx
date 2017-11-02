@@ -341,6 +341,12 @@ class SiteIconSetting extends Component {
 	}
 }
 
+const onEditSelectedMedia = partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR );
+const onCancelEditingIcon = partial( setEditorMediaModalView, ModalViews.LIST );
+const removeSiteIcon = partialRight( saveSiteSettings, { site_icon: '' } );
+const recordEvent = action => recordGoogleEvent( 'Site Settings', action );
+const updateSiteIcon = ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } );
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -361,13 +367,13 @@ export default connect(
 		};
 	},
 	{
-		recordEvent: action => recordGoogleEvent( 'Site Settings', action ),
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
+		recordEvent,
+		onEditSelectedMedia,
+		onCancelEditingIcon,
 		resetAllImageEditorState,
 		saveSiteSettings,
-		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
-		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
+		updateSiteIcon,
+		removeSiteIcon,
 		receiveMedia,
 		deleteMedia,
 		errorNotice,

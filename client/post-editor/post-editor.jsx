@@ -9,7 +9,7 @@ import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { debounce, throttle, get } from 'lodash';
+import { debounce, throttle, get, partial } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -1384,6 +1384,9 @@ export const PostEditor = createReactClass( {
 	},
 } );
 
+const setEditorModePreference = partial( savePreference, 'editor-mode' );
+const setEditorSidebar = partial( savePreference, 'editor-sidebar' );
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -1416,8 +1419,8 @@ export default connect(
 				receivePost,
 				editPost,
 				savePostSuccess,
-				setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
-				setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
+				setEditorModePreference,
+				setEditorSidebar,
 				setLayoutFocus,
 				setNextLayoutFocus,
 				saveConfirmationSidebarPreference,

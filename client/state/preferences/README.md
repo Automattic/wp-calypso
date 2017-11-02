@@ -9,6 +9,8 @@ They are persisted in `calypso_preferences` key of `/me/settings`.
 1. Render `QueryPreferences` from `components/data/query-preferences`
 2. Connect your component specifying proper option keys:
 ```es6
+const saveEditorModePreference = savePreference.bind( null, 'editor-mode' );
+
 export default connect(
 	( state ) => {
 		return {
@@ -17,7 +19,7 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			saveEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+			saveEditorModePreference,
 		}, dispatch );
 	},
 )( PostEditor );

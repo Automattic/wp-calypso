@@ -219,6 +219,11 @@ class ProductPurchaseFeaturesList extends Component {
 	}
 }
 
+const recordBusinessOnboardingClick = partial(
+	recordTracksEvent,
+	'calypso_plan_features_onboarding_click'
+);
+
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state ),
@@ -230,9 +235,6 @@ export default connect(
 		};
 	},
 	{
-		recordBusinessOnboardingClick: partial(
-			recordTracksEvent,
-			'calypso_plan_features_onboarding_click'
-		),
+		recordBusinessOnboardingClick,
 	}
 )( ProductPurchaseFeaturesList );
