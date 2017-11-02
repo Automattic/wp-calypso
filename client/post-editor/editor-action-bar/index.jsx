@@ -21,7 +21,7 @@ import EditorActionBarViewLabel from './view-label';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 
 class EditorActionBar extends Component {
 	static propTypes = {
@@ -52,11 +52,7 @@ class EditorActionBar extends Component {
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__cell is-left">
 					{ ! this.props.hasEditorNestedSidebar && (
-						<EditorStatusLabel
-							post={ this.props.savedPost }
-							advancedStatus
-							type={ this.props.type }
-						/>
+						<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
 					) }
 				</div>
 				<div className="editor-action-bar__cell is-center">
@@ -105,10 +101,12 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const post = getEditedPost( state, siteId, postId );
+	const type = getEditedPostValue( state, siteId, postId, 'type' );
 
 	return {
 		siteId,
 		postId,
 		post,
+		type,
 	};
 } )( EditorActionBar );
