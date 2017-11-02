@@ -75,40 +75,29 @@ export class EmbedDialog extends React.Component {
 
 		if ( ! this.isURLInCache( this.state.embedUrl ) ) {
 			this.setState( { isLoading: true } );
-			// Prepare the initial markup before the first render()
+
+			// There is no need to use the debounced function here, since this action is not based on user input
 			this.fetchEmbedPreviewMarkup( this.state.embedUrl );
 		}
 	}
 
-	componentWillUpdate = ( newProps, newState ) => {
-		let updateURL = false;
-		if (
-			this.props.embedUrl !== newProps.embedUrl ||
-			this.props.isVisible !== newProps.isVisible
-		) {
+	componentWillReceiveProps = newProps => {
+		if ( this.state.embedUrl !== newProps.embedUrl ) {
 			this.setState( {
 				embedUrl: newProps.embedUrl,
 			} );
-
-			updateURL = true;
-		}
-
-		if ( newProps.isVisible ) {
-			// Refresh the preview
-			this.debouncedFetchEmbedPreviewMarkup( newState.embedUrl );
-			if ( ( newState.isLoading === false && this.state.isLoading === true ) || updateURL ) {
-				this.setHtml();
-			}
 		}
 	};
 
 	componentDidUpdate = ( prevProps, prevState ) => {
-		if (
-			this.state.isLoading === false &&
-			prevState.isLoading === false &&
-			this.state.embedUrl !== prevState.embedUrl &&
-			this.isURLInCache( this.state.embedUrl )
-		) {
+		// New URL typed, fetch it from the API
+		if ( this.state.embedUrl !== prevState.embedUrl ) {
+			this.setState( { isLoading: true } );
+			this.debouncedFetchEmbedPreviewMarkup( this.state.embedUrl );
+		}
+
+		// Loading has finished, update the iFrame HTML
+		if ( this.state.isLoading === false && this.state.isLoading !== prevState.isLoading ) {
 			this.setHtml();
 		}
 	};
@@ -120,6 +109,7 @@ export class EmbedDialog extends React.Component {
 	fetchEmbedPreviewMarkup = url => {
 		// Use cached data if it's available
 		if ( this.isURLInCache( url ) || url.trim() === '' ) {
+			this.setState( { isLoading: false } );
 			return;
 		}
 
@@ -136,7 +126,7 @@ export class EmbedDialog extends React.Component {
 				} else {
 					cachedMarkup = {
 						renderMarkup: error,
-						error: true,
+						isError: true,
 					};
 
 					// todo handle errors
@@ -157,10 +147,6 @@ export class EmbedDialog extends React.Component {
 
 	onChangeEmbedUrl = event => {
 		this.setState( { embedUrl: event.target.value } );
-
-		if ( ! this.isURLInCache( event.target.value ) ) {
-			this.setState( { isLoading: true } );
-		}
 	};
 
 	onUpdate = () => {
@@ -220,6 +206,12 @@ export class EmbedDialog extends React.Component {
 			return;
 		}
 
+		const embedData = this.state.previewMarkup[ embedURL ];
+
+		if ( embedData.isError ) {
+			return;
+		}
+
 		const iframe = ReactDom.findDOMNode( this.iframe );
 
 		iframe.removeAttribute( 'sandbox' );
@@ -230,7 +222,6 @@ export class EmbedDialog extends React.Component {
 
 		this.setState( { iframeLoading: true } );
 
-		const embedData = this.state.previewMarkup[ embedURL ];
 		const content = pick( embedData, [ 'result', 'scripts', 'styles' ] );
 
 		content.body = content.result; // generateEmbedFrameMarkup required `body`, which in this call is named `result`
@@ -272,7 +263,7 @@ export class EmbedDialog extends React.Component {
 		const isLoading = this.state.isLoading || this.state.iframeLoading;
 		const isURLInCache = this.isURLInCache( this.state.embedUrl );
 		const cachedMarkup = isURLInCache ? this.state.previewMarkup[ this.state.embedUrl ] : null;
-		const isError = cachedMarkup && cachedMarkup.error;
+		const isError = cachedMarkup && cachedMarkup.isError;
 
 		const statusClassNames = classNames( 'embed__status', {
 			isError,
