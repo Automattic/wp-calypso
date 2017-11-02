@@ -268,10 +268,8 @@ class ActivityLogDay extends Component {
 }
 
 export default connect(
-	( state, { tsEndOfSiteDay, siteId } ) => {
-		const now = Date.now();
+	( state, { siteId } ) => {
 		return {
-			isToday: now <= tsEndOfSiteDay && tsEndOfSiteDay - DAY_IN_MILLISECONDS <= now,
 			requestedRewind: getRequestedRewind( state, siteId ),
 		};
 	},
