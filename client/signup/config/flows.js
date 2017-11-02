@@ -5,6 +5,7 @@
  */
 
 import { assign, includes, reject } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -310,14 +311,22 @@ function filterDesignTypeInFlow( flow ) {
 		return flow;
 	}
 
+	let newDesignType;
+	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+		// Show store option to everyone if Atomic Store is enabled
+		newDesignType = 'design-type-with-store-nux';
+	} else if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
+		// Show design type with store option only to new users with EN locale
+		newDesignType = 'design-type-with-store';
+	}
+
+	if ( ! newDesignType ) {
+		// nothing to change
+		return flow;
+	}
+
 	return assign( {}, flow, {
-		steps: flow.steps.map( stepName => {
-			if ( stepName === 'design-type' ) {
-				const isAtomicStore = config.isEnabled( 'signup/atomic-store-flow' );
-				return isAtomicStore ? 'design-type-with-store-nux' : 'design-type-with-store';
-			}
-			return stepName;
-		} ),
+		steps: flow.steps.map( stepName => ( stepName === 'design-type' ? newDesignType : stepName ) ),
 	} );
 }
 
