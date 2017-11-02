@@ -63,14 +63,16 @@ class NextSteps extends React.Component {
 	}
 
 	renderIntroMessage() {
-		if ( this.props.isWelcome ) {
+		const { isWelcome, translate } = this.props;
+
+		if ( isWelcome ) {
 			return (
 				<div className="next-steps__intro">
 					<h3 className="next-steps__title">
-						{ this.props.translate( 'Thanks for signing up for WordPress.com.' ) }
+						{ translate( 'Thanks for signing up for WordPress.com.' ) }
 					</h3>
 					<p className="next-steps__intro">
-						{ this.props.translate(
+						{ translate(
 							'Next you can take any of the following steps, ' +
 								'join a {{bloggingUniversityLink}}guided blogging course{{/bloggingUniversityLink}}, ' +
 								'or check out our {{docsLink}}support documentation{{/docsLink}}.',
@@ -102,14 +104,15 @@ class NextSteps extends React.Component {
 	}
 
 	renderOutroMessage() {
-		if ( this.props.isWelcome ) {
-			const { newestSite } = this.props;
+		const { isWelcome, newestSite, translate } = this.props;
+
+		if ( isWelcome ) {
 			const dismissLink = '/stats/insights/' + ( newestSite ? newestSite.slug : '' );
 
 			return (
 				<div className="next-steps__outro">
 					<p>
-						{ this.props.translate(
+						{ translate(
 							'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.',
 							{
 								components: {
