@@ -130,12 +130,13 @@ class NextSteps extends React.Component {
 	}
 
 	userHasPurchasedAPlan() {
-		return this.props.sites.some( function( site ) {
+		return this.props.sites.some( site => {
 			return productsValues.isPlan( site.plan );
 		} );
 	}
 
 	renderSteps() {
+		const { isWelcome } = this.props;
 		const site = this.newestSite();
 		let sequence = steps.defaultSequence;
 
@@ -145,21 +146,19 @@ class NextSteps extends React.Component {
 
 		return (
 			<div className="next-steps__steps">
-				{ sequence.map(
-					function( stepName, index ) {
-						const step = steps.definitions( site )[ stepName ];
+				{ sequence.map( ( stepName, index ) => {
+					const step = steps.definitions( site )[ stepName ];
 
-						return (
-							<NextStepsBox
-								key={ stepName }
-								stepName={ stepName }
-								step={ step }
-								primary={ index === 0 }
-								isWelcome={ this.props.isWelcome }
-							/>
-						);
-					}.bind( this )
-				) }
+					return (
+						<NextStepsBox
+							key={ stepName }
+							stepName={ stepName }
+							step={ step }
+							primary={ index === 0 }
+							isWelcome={ isWelcome }
+						/>
+					);
+				} ) }
 			</div>
 		);
 	}
