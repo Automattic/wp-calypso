@@ -123,11 +123,13 @@ export class Comment extends Component {
 
 						<CommentContent { ...{ commentId, isExpanded } } />
 
-						<CommentReply
-							{ ...{ commentId, isReplyMode } }
-							enterReplyMode={ this.enterReplyMode }
-							exitReplyMode={ this.exitReplyMode }
-						/>
+						{ isExpanded && (
+							<CommentReply
+								{ ...{ commentId, isReplyMode } }
+								enterReplyMode={ this.enterReplyMode }
+								exitReplyMode={ this.exitReplyMode }
+							/>
+						) }
 					</div>
 				) }
 			</Card>
