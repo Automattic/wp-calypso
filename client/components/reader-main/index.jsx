@@ -24,11 +24,11 @@ import SyncReaderFollows from 'components/data/sync-reader-follows';
  * 2. navigate to another reader page (mount new ReaderMain, 2 ref)
  * 3. dismount old ReaderMain from the first step (dismount, 1 ref)
  */
-let numReaderMains = 0;
+let activeReaderMainRefCount = 0;
 const setIsReaderPage = add => {
 	if ( add ) {
 		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
-	} else if ( numReaderMains === 0 ) {
+	} else if ( activeReaderMainRefCount === 0 ) {
 		document.querySelector( 'body' ).classList.remove( 'is-reader-page' );
 	}
 };
@@ -41,12 +41,12 @@ const setIsReaderPage = add => {
  */
 export default class ReaderMain extends React.Component {
 	componentWillMount() {
-		numReaderMains++;
+		activeReaderMainRefCount++;
 		setIsReaderPage( true );
 	}
 
 	componentWillUnmount() {
-		numReaderMains--;
+		activeReaderMainRefCount--;
 		setIsReaderPage( false );
 	}
 
