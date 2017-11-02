@@ -1,7 +1,7 @@
 .embed__modal {
 	&.dialog.card {
 		width: 80%;
-		max-width: 690px;
+		max-width: 740px;
 	}
 
 	.dialog__content {
@@ -75,10 +75,6 @@
 
 		}
 	}
-
-
-
-
 
 	.dialog__action-buttons {
 		border-top: none; /* When there is no preview, this border looks bad. When there is a preview, it's not needed because of .embed__preview's background. */
