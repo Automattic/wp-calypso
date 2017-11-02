@@ -17,19 +17,19 @@ disableNetConnect();
 let mockEnzymeSetup = false;
 
 jest.mock( 'enzyme', () => {
-	const chai = require( 'chai' );
-	const Adapter = require.requireActual( 'enzyme-adapter-react-16' );
-
 	const actualEnzyme = require.requireActual( 'enzyme' );
 	if ( ! mockEnzymeSetup ) {
-		const chaiEnzyme = require( 'chai-enzyme' );
-		if ( typeof chaiEnzyme === 'function' && ! mockEnzymeSetup ) {
-			mockEnzymeSetup = true;
-			chai.use( chaiEnzyme() );
-		}
+		mockEnzymeSetup = true;
+
+		// configure custom enzyme matchers for chai
+		const chai = require.requireActual( 'chai' );
+		const chaiEnzyme = require.requireActual( 'chai-enzyme' );
+		chai.use( chaiEnzyme() );
+
+		// configure enzyme for React 16, from docs: http://airbnb.io/enzyme/docs/installation/index.html
+		const Adapter = require.requireActual( 'enzyme-adapter-react-16' );
+		actualEnzyme.configure( { adapter: new Adapter() } );
 	}
-	// configure enzyme for React 16, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-	Adapter.apply && actualEnzyme.configure( { adapter: new Adapter() } );
 	return actualEnzyme;
 } );
 
@@ -38,16 +38,15 @@ jest.mock( 'enzyme', () => {
 let mockSinonSetup = false;
 
 jest.mock( 'sinon', () => {
-	const chai = require( 'chai' );
-
 	const actualSinon = require.requireActual( 'sinon' );
 	if ( ! mockSinonSetup ) {
+		mockSinonSetup = true;
+
+		// configure custom sinon matchers for chai
+		const chai = require.requireActual( 'chai' );
 		const sinonChai = require.requireActual( 'sinon-chai' );
-		if ( typeof sinonChai === 'function' && ! mockSinonSetup ) {
-			mockSinonSetup = true;
-			chai.use( sinonChai );
-			actualSinon.assert.expose( chai.assert, { prefix: '' } );
-		}
+		chai.use( sinonChai );
+		actualSinon.assert.expose( chai.assert, { prefix: '' } );
 	}
 	return actualSinon;
 } );
