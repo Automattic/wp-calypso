@@ -38,9 +38,7 @@ const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = url.parse( context.canonicalPath, true );
-		context.pathname = parsed.pathname;
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.path = parsed.path;
 		context.query = parsed.query;
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
