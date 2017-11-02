@@ -9,12 +9,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchProducts,
-	fetchProductSearchResults,
-	clearProductSearch,
-	deleteProduct,
-} from '../actions';
+import { fetchProducts, deleteProduct } from '../actions';
 import product from './fixtures/product';
 import products from './fixtures/products';
 import useNock from 'test/helpers/use-nock';
@@ -25,10 +20,6 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -58,17 +49,53 @@ describe( 'actions', () => {
 						error: 'rest_invalid_param',
 						status: 400,
 					},
+				} )
+				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( {
+					path: '/wc/v3/products&page=1&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
+				.reply( 200, {
+					data: {
+						body: products,
+						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 28 },
+						status: 200,
+					},
+				} )
+				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( {
+					path: '/wc/v3/products&page=2&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
+				.reply( 200, {
+					data: {
+						body: [ product ],
+						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 28 },
+						status: 200,
+					},
+				} )
+				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
+				.query( {
+					path: '/wc/v3/products&page=invalid&per_page=10&search=testing&_envelope&_method=get',
+					json: true,
+				} )
+				.reply( 200, {
+					data: {
+						message: 'Invalid parameter(s): page',
+						error: 'rest_invalid_param',
+						status: 400,
+					},
 				} );
 		} );
 
-		test( 'should dispatch an action', () => {
+		test( 'should dispatch an action for the default product list', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST,
 				siteId,
-				params: { page: 1, per_page: 10 },
+				params: {},
 			} );
 		} );
 
@@ -81,7 +108,7 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 					siteId,
-					params: { page: 1, per_page: 10 },
+					params: {},
 					totalPages: 3,
 					totalProducts: 30,
 					products,
@@ -110,7 +137,7 @@ describe( 'actions', () => {
 							[ siteId ]: {
 								products: {
 									isLoading: {
-										[ JSON.stringify( { page: 1, per_page: 10 } ) ]: true,
+										'{}': true,
 									},
 								},
 							},
@@ -122,104 +149,49 @@ describe( 'actions', () => {
 			fetchProducts( siteId, { page: 1 } )( dispatch, getState );
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
-	} );
-	describe( '#fetchProductSearchResults()', () => {
-		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
-					path: '/wc/v3/products&page=1&per_page=10&search=testing&_envelope&_method=get',
-					json: true,
-				} )
-				.reply( 200, {
-					data: {
-						body: products,
-						headers: { 'X-WP-Total': 28 },
-						status: 200,
-					},
-				} )
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
-					path: '/wc/v3/products&page=2&per_page=10&search=testing&_envelope&_method=get',
-					json: true,
-				} )
-				.reply( 200, {
-					data: {
-						body: [ product ],
-						headers: { 'X-WP-Total': 28 },
-						status: 200,
-					},
-				} )
-				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( {
-					path: '/wc/v3/products&page=invalid&per_page=10&search=testing&_envelope&_method=get',
-					json: true,
-				} )
-				.reply( 200, {
-					data: {
-						message: 'Invalid parameter(s): page',
-						error: 'rest_invalid_param',
-						status: 400,
-					},
-				} );
-		} );
-
-		test( 'should dispatch an action', () => {
+		test( 'should dispatch a success action with search results when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
-				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
-				siteId,
-				params: { page: 1, per_page: 10, search: 'testing' },
-				query: 'testing',
-			} );
-		} );
-
-		test( 'should dispatch a success action with results when request completes', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
+			const response = fetchProducts( siteId, { search: 'testing' } )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
+					type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 					siteId,
-					params: { page: 1, per_page: 10, search: 'testing' },
+					params: { search: 'testing' },
+					totalPages: 3,
 					totalProducts: 28,
 					products,
-					query: 'testing',
 				} );
 			} );
 		} );
 
-		test( 'should dispatch a failure action with the error when a the request fails', () => {
+		test( 'should dispatch a failure action with the error when the search request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchProductSearchResults( 234, 'invalid', 'testing' )( dispatch, getState );
+			const response = fetchProducts( 234, { page: 'invalid', search: 'testing' } )(
+				dispatch,
+				getState
+			);
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
+					type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 					siteId: 234,
 				} );
 			} );
 		} );
 
-		test( 'should not dispatch if results are already loading for this page', () => {
+		test( 'should not dispatch if a search query is already loading for this term', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
 						sites: {
 							[ siteId ]: {
 								products: {
-									search: {
-										isLoading: {
-											1: true,
-										},
+									isLoading: {
+										'{"search":"testing"}': true,
 									},
 								},
 							},
@@ -228,55 +200,14 @@ describe( 'actions', () => {
 				},
 			} );
 			const dispatch = spy();
-			fetchProductSearchResults( siteId, 1, 'testing' )( dispatch, getState );
+			fetchProducts( siteId, { search: 'testing' } )( dispatch, getState );
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
 
-		test( 'should get query from state if no new query is passed', () => {
-			const getState = () => ( {
-				extensions: {
-					woocommerce: {
-						sites: {
-							[ siteId ]: {
-								products: {
-									search: {
-										isLoading: {
-											[ JSON.stringify( { page: 1, per_page: 10 } ) ]: false,
-										},
-										query: 'testing',
-										totalProducts: 28,
-									},
-								},
-							},
-						},
-					},
-				},
-			} );
-			const dispatch = spy();
-			const response = fetchProductSearchResults( siteId, 2 )( dispatch, getState );
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-					siteId,
-					params: { page: 2, per_page: 10, search: 'testing' },
-					totalProducts: 28,
-					products: [ product ],
-					query: 'testing',
-				} );
-			} );
-		} );
+		// @todo Need to revisit this use case
+		// test( 'should get query from state if no new query is passed', () => {} );
 	} );
-	describe( '#clearProductSearch()', () => {
-		const siteId = '123';
-		test( 'should dispatch an action', () => {
-			const dispatch = spy();
-			dispatch( clearProductSearch( siteId ) );
-			expect( dispatch ).to.have.been.calledWith( {
-				type: WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
-				siteId,
-			} );
-		} );
-	} );
+
 	describe( '#deleteProduct()', () => {
 		const siteId = '123';
 

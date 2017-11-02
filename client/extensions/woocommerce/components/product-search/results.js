@@ -14,10 +14,10 @@ import Gridicon from 'gridicons';
  */
 import CompactCard from 'components/card/compact';
 import {
-	areProductSearchResultsLoaded,
-	areProductSearchResultsLoading,
+	areProductsLoaded,
+	areProductsLoading,
+	getProducts,
 } from 'woocommerce/state/sites/products/selectors';
-import { getProductSearchResults } from 'woocommerce/state/ui/products/selectors';
 import ProductItem from './item';
 
 class ProductSearchResults extends Component {
@@ -92,14 +92,12 @@ class ProductSearchResults extends Component {
 
 export default connect( ( state, props ) => {
 	const query = {
-		page: 1,
-		per_page: 10,
 		search: props.search,
 	};
 
 	return {
-		isLoaded: areProductSearchResultsLoaded( state, query ),
-		isLoading: areProductSearchResultsLoading( state, query ),
-		products: getProductSearchResults( state ) || [],
+		isLoaded: areProductsLoaded( state, query ),
+		isLoading: areProductsLoading( state, query ),
+		products: getProducts( state, query ) || [],
 	};
 } )( localize( ProductSearchResults ) );
