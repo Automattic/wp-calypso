@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { get, includes, isUndefined, map } from 'lodash';
+import { filter, get, includes, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComment } from 'state/selectors';
+import { getSiteComment, getSiteCommentsTree } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
 const bulkActions = {
@@ -59,23 +59,42 @@ export class CommentNavigation extends Component {
 
 	changeFilter = status => () => this.props.recordChangeFilter( status );
 
+	commentsCountByStatus = status => {
+		const { siteCommentsTree } = this.props;
+
+		const filteredComments =
+			'all' === status
+				? filter( siteCommentsTree, comment =>
+						includes( [ 'approved', 'unapproved' ], comment.status )
+					)
+				: filter( siteCommentsTree, comment => status === comment.status );
+
+		return filteredComments.length;
+	};
+
 	getNavItems = () => {
 		const { translate } = this.props;
+
 		const navItems = {
 			all: {
 				label: translate( 'All' ),
+				count: this.commentsCountByStatus( 'all' ),
 			},
 			unapproved: {
 				label: translate( 'Pending' ),
+				count: this.commentsCountByStatus( 'unapproved' ),
 			},
 			approved: {
 				label: translate( 'Approved' ),
+				count: this.commentsCountByStatus( 'approved' ),
 			},
 			spam: {
 				label: translate( 'Spam' ),
+				count: this.commentsCountByStatus( 'spam' ),
 			},
 			trash: {
 				label: translate( 'Trash' ),
+				count: this.commentsCountByStatus( 'trash' ),
 			},
 		};
 
@@ -195,7 +214,7 @@ export class CommentNavigation extends Component {
 		return (
 			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
 				<NavTabs selectedText={ navItems[ queryStatus ].label }>
-					{ map( navItems, ( { label }, status ) => (
+					{ map( navItems, ( { label, count }, status ) => (
 						<NavItem
 							key={ status }
 							onClick={ this.changeFilter( status ) }
@@ -203,6 +222,8 @@ export class CommentNavigation extends Component {
 							selected={ queryStatus === status }
 						>
 							{ label }
+							{ isEnabled( 'comments/management/m3-design' ) &&
+							!! count && <Count count={ count } /> }
 						</NavItem>
 					) ) }
 				</NavTabs>
@@ -260,6 +281,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	} );
 
 	return {
+		siteCommentsTree: getSiteCommentsTree( state, siteId ),
 		visibleComments,
 		hasComments: visibleComments.length > 0,
 		isCommentsTreeSupported:
