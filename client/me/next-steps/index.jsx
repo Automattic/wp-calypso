@@ -4,6 +4,7 @@
  * @format
  */
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { property, sortBy } from 'lodash';
@@ -164,11 +165,9 @@ class NextSteps extends React.Component {
 	}
 
 	render() {
-		let classes = 'main main-column next-steps';
-
-		if ( this.props.isWelcome ) {
-			classes += ' is-single-page';
-		}
+		const classes = classNames( 'main', 'main-column', 'next-steps', {
+			'is-single-page': this.props.isWelcome,
+		} );
 
 		return (
 			<div className={ classes }>
