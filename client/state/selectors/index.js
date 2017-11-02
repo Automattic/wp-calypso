@@ -167,6 +167,7 @@ export hasSitePendingAutomatedTransfer from './has-site-pending-automated-transf
 export hasMainCredentials from './has-main-credentials';
 export hasUnsavedUserSettings from './has-unsaved-user-settings';
 export hasUserAskedADirectlyQuestion from './has-user-asked-a-directly-question';
+export hasUserPurchasedAPlan from './has-user-purchased-a-plan';
 export hasUserSettings from './has-user-settings';
 export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-options-ready';
 export isAccountRecoveryResetPasswordSucceeded from './is-account-recovery-reset-password-succeeded';
