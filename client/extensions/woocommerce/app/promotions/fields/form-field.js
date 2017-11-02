@@ -52,12 +52,16 @@ const FormField = ( {
 		{ 'fields__fieldset-children-enableable': enableCheckbox }
 	);
 
+	const formLabel = ( enableCheckbox || labelText ) && (
+		<FormLabel id={ fieldName + '-label' } required={ isRequired }>
+			{ enableCheckbox }
+			{ labelText }
+		</FormLabel>
+	);
+
 	return (
 		<FormFieldset className="fields__fieldset">
-			<FormLabel id={ fieldName + '-label' } required={ isRequired }>
-				{ enableCheckbox }
-				{ labelText }
-			</FormLabel>
+			{ formLabel }
 			<div className={ childrenClassNames }>
 				{ showChildren && children }
 				{ explanation }
@@ -68,7 +72,7 @@ const FormField = ( {
 
 FormField.PropTypes = {
 	fieldName: PropTypes.string.isRequired,
-	labelText: PropTypes.string.isRequired,
+	labelText: PropTypes.string,
 	explanationText: PropTypes.string,
 	isRequired: PropTypes.bool,
 	isEnableable: PropTypes.bool,
