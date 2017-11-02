@@ -248,6 +248,7 @@
     "deep-freeze": "0.0.1",
     "enzyme": "3.1.0",
     "enzyme-adapter-react-15": "1.0.3",
+    "enzyme-to-json": "3.1.4",
     "esformatter": "0.7.3",
     "esformatter-braces": "1.2.1",
     "esformatter-collapse-objects-a8c": "0.1.0",

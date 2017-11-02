@@ -29,6 +29,10 @@ jest.mock( 'enzyme', () => {
 		// configure enzyme for React 16, from docs: http://airbnb.io/enzyme/docs/installation/index.html
 		const Adapter = require.requireActual( 'enzyme-adapter-react-16' );
 		actualEnzyme.configure( { adapter: new Adapter() } );
+
+		// configure snapshot serializer for enzyme
+		const { createSerializer } = require.requireActual( 'enzyme-to-json' );
+		expect.addSnapshotSerializer( createSerializer( { mode: 'deep' } ) );
 	}
 	return actualEnzyme;
 } );

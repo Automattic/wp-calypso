@@ -1,505 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Card should be linkable 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Card
-    highlight={false}
-    href="/test"
-    tagName="div"
-  >
-    This is a linked card
-  </Card>,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "host",
-    "props": Object {
-      "children": Array [
-        <t
-          className="card__link-indicator"
-          icon="chevron-right"
-          size={24}
-        />,
-        "This is a linked card",
-      ],
-      "className": "card is-card-link",
-      "href": "/test",
-    },
-    "ref": null,
-    "rendered": Array [
-      Object {
-        "instance": null,
-        "key": null,
-        "nodeType": "class",
-        "props": Object {
-          "className": "card__link-indicator",
-          "icon": "chevron-right",
-          "size": 24,
-        },
-        "ref": null,
-        "rendered": null,
-        "type": [Function],
-      },
-      "This is a linked card",
-    ],
-    "type": "a",
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "host",
-      "props": Object {
-        "children": Array [
-          <t
-            className="card__link-indicator"
-            icon="chevron-right"
-            size={24}
-          />,
-          "This is a linked card",
-        ],
-        "className": "card is-card-link",
-        "href": "/test",
-      },
-      "ref": null,
-      "rendered": Array [
-        Object {
-          "instance": null,
-          "key": null,
-          "nodeType": "class",
-          "props": Object {
-            "className": "card__link-indicator",
-            "icon": "chevron-right",
-            "size": 24,
-          },
-          "ref": null,
-          "rendered": null,
-          "type": [Function],
-        },
-        "This is a linked card",
-      ],
-      "type": "a",
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<a
+  className="card is-card-link"
+  href="/test"
+>
+  <t
+    className="card__link-indicator"
+    icon="chevron-right"
+    size={24}
+  />
+  This is a linked card
+</a>
 `;
 
 exports[`Card should have \`card\` class 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Card
-    highlight={false}
-    tagName="div"
-  />,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "host",
-    "props": Object {
-      "children": Array [
-        undefined,
-        undefined,
-      ],
-      "className": "card",
-    },
-    "ref": null,
-    "rendered": Array [
-      undefined,
-      undefined,
-    ],
-    "type": "div",
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "host",
-      "props": Object {
-        "children": Array [
-          undefined,
-          undefined,
-        ],
-        "className": "card",
-      },
-      "ref": null,
-      "rendered": Array [
-        undefined,
-        undefined,
-      ],
-      "type": "div",
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<div
+  className="card"
+/>
 `;
 
 exports[`Card should have custom class of \`test__ace\` 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Card
-    className="test__ace"
-    highlight={false}
-    tagName="div"
-  />,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "host",
-    "props": Object {
-      "children": Array [
-        undefined,
-        undefined,
-      ],
-      "className": "card test__ace",
-    },
-    "ref": null,
-    "rendered": Array [
-      undefined,
-      undefined,
-    ],
-    "type": "div",
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "host",
-      "props": Object {
-        "children": Array [
-          undefined,
-          undefined,
-        ],
-        "className": "card test__ace",
-      },
-      "ref": null,
-      "rendered": Array [
-        undefined,
-        undefined,
-      ],
-      "type": "div",
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<div
+  className="card test__ace"
+/>
 `;
 
 exports[`Card should render children 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <Card
-    highlight={false}
-    tagName="div"
-  >
-    This is a card
-  </Card>,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "host",
-    "props": Object {
-      "children": Array [
-        undefined,
-        "This is a card",
-      ],
-      "className": "card",
-    },
-    "ref": null,
-    "rendered": Array [
-      undefined,
-      "This is a card",
-    ],
-    "type": "div",
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "host",
-      "props": Object {
-        "children": Array [
-          undefined,
-          "This is a card",
-        ],
-        "className": "card",
-      },
-      "ref": null,
-      "rendered": Array [
-        undefined,
-        "This is a card",
-      ],
-      "type": "div",
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<div
+  className="card"
+>
+  This is a card
+</div>
 `;
 
 exports[`CompactCard should have \`is-compact\` class 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <CompactCard />,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "class",
-    "props": Object {
-      "children": undefined,
-      "className": "is-compact",
-      "highlight": false,
-      "tagName": "div",
-    },
-    "ref": null,
-    "rendered": null,
-    "type": [Function],
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "class",
-      "props": Object {
-        "children": undefined,
-        "className": "is-compact",
-        "highlight": false,
-        "tagName": "div",
-      },
-      "ref": null,
-      "rendered": null,
-      "type": [Function],
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<Card
+  className="is-compact"
+  highlight={false}
+  tagName="div"
+/>
 `;
 
 exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <CompactCard
-    className="test__ace"
-  />,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "class",
-    "props": Object {
-      "children": undefined,
-      "className": "test__ace is-compact",
-      "highlight": false,
-      "tagName": "div",
-    },
-    "ref": null,
-    "rendered": null,
-    "type": [Function],
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "class",
-      "props": Object {
-        "children": undefined,
-        "className": "test__ace is-compact",
-        "highlight": false,
-        "tagName": "div",
-      },
-      "ref": null,
-      "rendered": null,
-      "type": [Function],
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<Card
+  className="test__ace is-compact"
+  highlight={false}
+  tagName="div"
+/>
 `;
 
 exports[`CompactCard should render children 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <CompactCard>
-    This is a compact card
-  </CompactCard>,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "class",
-    "props": Object {
-      "children": "This is a compact card",
-      "className": "is-compact",
-      "highlight": false,
-      "tagName": "div",
-    },
-    "ref": null,
-    "rendered": "This is a compact card",
-    "type": [Function],
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "class",
-      "props": Object {
-        "children": "This is a compact card",
-        "className": "is-compact",
-        "highlight": false,
-        "tagName": "div",
-      },
-      "ref": null,
-      "rendered": "This is a compact card",
-      "type": [Function],
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<Card
+  className="is-compact"
+  highlight={false}
+  tagName="div"
+>
+  This is a compact card
+</Card>
 `;
 
 exports[`CompactCard should use the card component 1`] = `
-ShallowWrapper {
-  "length": 1,
-  Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <CompactCard />,
-  Symbol(enzyme.__renderer__): Object {
-    "batchedUpdates": [Function],
-    "getNode": [Function],
-    "render": [Function],
-    "simulateEvent": [Function],
-    "unmount": [Function],
-  },
-  Symbol(enzyme.__node__): Object {
-    "instance": null,
-    "key": null,
-    "nodeType": "class",
-    "props": Object {
-      "children": undefined,
-      "className": "is-compact",
-      "highlight": false,
-      "tagName": "div",
-    },
-    "ref": null,
-    "rendered": null,
-    "type": [Function],
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": null,
-      "nodeType": "class",
-      "props": Object {
-        "children": undefined,
-        "className": "is-compact",
-        "highlight": false,
-        "tagName": "div",
-      },
-      "ref": null,
-      "rendered": null,
-      "type": [Function],
-    },
-  ],
-  Symbol(enzyme.__options__): Object {
-    "adapter": ReactSixteenAdapter {
-      "options": Object {
-        "enableComponentDidUpdateOnSetState": true,
-      },
-    },
-  },
-}
+<Card
+  className="is-compact"
+  highlight={false}
+  tagName="div"
+/>
 `;
