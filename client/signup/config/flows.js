@@ -302,9 +302,24 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
-function filterDesignTypeInFlow( flow ) {
+function filterDesignTypeInFlow( flowName, flow ) {
 	if ( ! flow ) {
 		return;
+	}
+
+	// If Atomic Store is enable, replace 'design-type-with-store' with 'design-type-with-store-nux'
+	// in flows other than 'pressable'.
+	if (
+		config.isEnabled( 'signup/atomic-store-flow' ) &&
+		flowName !== 'pressable' &&
+		includes( flow.steps, 'design-type-with-store' )
+	) {
+		return assign( {}, flow, {
+			steps: flow.steps.map(
+				stepName =>
+					stepName === 'design-type-with-store' ? 'design-type-with-store-nux' : stepName
+			),
+		} );
 	}
 
 	if ( ! includes( flow.steps, 'design-type' ) ) {
@@ -391,7 +406,7 @@ const Flows = {
 		}
 
 		// Maybe modify the design type step to a variant with store
-		flow = filterDesignTypeInFlow( flow );
+		flow = filterDesignTypeInFlow( flowName, flow );
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
