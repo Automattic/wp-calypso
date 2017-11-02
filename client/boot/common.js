@@ -42,7 +42,7 @@ const setupContextMiddleware = reduxStore => {
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
 
 		// allow external urls to pass through, by not rewriting context.path in this case
-		if ( ! startsWith( context.path, 'http' ) ) {
+		if ( /^(?!https?:\/\/)/.test( context.path ) ) {
 			context.path = parsed.path;
 		}
 
