@@ -323,21 +323,6 @@ export class EmbedDialog extends React.Component {
 				</div>
 			</Dialog>
 		);
-
-		{
-			/* todo
-
-			test various embed services, both whitelisted and generic oembed
-				not embedding correctly in editor, before preview, but maybe these aren't supposed to be handled by wpcom-view/embed?
-					shortcodes: vr, archiveorg, twitch
-					oembed: eventbrite, bandcamp,
-
-			bug: open the dialog, everything looks good. then click cancel button, then open it again. now it doesn't render at all.
-				only happens with some services, like pinterest & fb, maybe others from embedcotainer?
-				might need to EmbedContainer::embedPinterest() detect if already loaded and return early, or could need something totally different.
-
-		*/
-		}
 	}
 }
 
