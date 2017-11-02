@@ -70,6 +70,7 @@ export getMediaUrl from './get-media-url';
 export getMenuItemTypes from './get-menu-item-types';
 export getMenusUrl from './get-menus-url';
 export getNetworkSites from './get-network-sites';
+export getNewestSite from './get-newest-site';
 export getOriginalUserSetting from './get-original-user-setting';
 export getParentComment from './get-parent-comment';
 export getPastBillingTransaction from './get-past-billing-transaction';
