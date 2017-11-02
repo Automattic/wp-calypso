@@ -53,6 +53,7 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import {
 	hasFeature,
+	isRequestingSitePlans as siteIsRequestingPlans,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'state/sites/plans/selectors';
@@ -537,6 +538,7 @@ class PostShare extends Component {
 		const {
 			hasRepublicizeFeature,
 			hasFetchedConnections,
+			isRequestingSitePlans,
 			postId,
 			siteId,
 			siteSlug,
@@ -550,7 +552,7 @@ class PostShare extends Component {
 		}
 
 		const classes = classNames( 'post-share__wrapper', {
-			'is-placeholder': ! hasFetchedConnections,
+			'is-placeholder': ! hasFetchedConnections || isRequestingSitePlans,
 			'has-connections': this.hasConnections(),
 			'has-republicize-scheduling-feature': hasRepublicizeFeature,
 		} );
@@ -626,6 +628,7 @@ export default connect(
 			planSlug,
 			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
+			isRequestingSitePlans: siteIsRequestingPlans( state, siteId ),
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
