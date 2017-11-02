@@ -31,7 +31,7 @@ class Tooltip extends React.Component {
 	render() {
 		return (
 			<div
-				className={ this.props.divClassName }
+				className="mailchimp__sync-notice-list"
 				ref="tooltip-reference"
 				onMouseEnter={ this.open }
 				onMouseLeave={ this.close }
@@ -71,11 +71,9 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 					components: {
 						div: <div className="mailchimp__sync-notice-content" />,
 						div_info: <span className="mailchimp__sync-notice-info" />,
-						tooltip: <Tooltip
-							divClassName="mailchimp__sync-notice-list"
-							listName={ syncState.mailchimp_list_name + ' very long list name ' } />,
+						tooltip: <Tooltip listName={ syncState.mailchimp_list_name } />,
 					},
-					args: { mailingListname: syncState.mailchimp_list_name + ' very long list name ' }
+					args: { mailingListname: syncState.mailchimp_list_name }
 				} ) }
 		/>
 	);
@@ -91,9 +89,7 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 					components: {
 						div: <div className="mailchimp__sync-notice-content" />,
 						div_info: <span className="mailchimp__sync-notice-info" />,
-						tooltip: <Tooltip
-							divClassName="mailchimp__sync-notice-list"
-							listName={ syncState.mailchimp_list_name } />,
+						tooltip: <Tooltip listName={ syncState.mailchimp_list_name } />,
 					},
 					args: { mailingListname: syncState.mailchimp_list_name }
 				} ) }
