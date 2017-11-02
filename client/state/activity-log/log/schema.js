@@ -20,7 +20,7 @@ const activityItemSchema = {
 		activityDate: { type: 'string' },
 		activityGroup: { type: 'string' },
 		activityIcon: { type: 'string' },
-		activityId: { type: 'string' },
+		activityId: { type: [ 'undefined', 'string' ] },
 		activityIsRewindable: { type: 'boolean' },
 		activityName: { type: 'string' },
 		activityStatus: {
