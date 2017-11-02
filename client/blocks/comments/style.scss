@@ -44,7 +44,6 @@
 		textarea {
 			max-height: 400px;
 			min-height: 33px;
-			word-break: break-word;
 			margin: 0;
 			padding: 5px 60px 5px 5px;
 			font-size: 14px;
@@ -52,6 +51,7 @@
 			line-height: 21px;
 			white-space: pre-wrap;
 			word-wrap: break-word;
+			word-break: break-word;
 		}
 
 		textarea {
