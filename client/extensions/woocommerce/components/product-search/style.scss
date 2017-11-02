@@ -1,14 +1,6 @@
+/** @format */
 .product-search {
 	position: relative;
-
-	.search-card {
-		box-shadow: none;
-		border: 1px solid darken( $gray-light, 10% );
-	}
-
-	div.has-focus {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
-	}
 }
 
 .product-search__results {
@@ -18,7 +10,7 @@
 	width: 100%;
 	max-height: 275px;
 	overflow-y: scroll;
-	border-bottom: 1px solid darken( $gray-light, 10% );
+	border-bottom: 1px solid darken($gray-light, 10%);
 
 	&.is-placeholder {
 		overflow-y: visible;
@@ -85,7 +77,7 @@
 	display: flex;
 	cursor: pointer;
 	box-shadow: none;
-	border: 1px solid darken( $gray-light, 10% );
+	border: 1px solid darken($gray-light, 10%);
 	border-bottom-width: 0;
 	margin: 0;
 	padding: 10px;
@@ -103,6 +95,10 @@
 	.product-search__value-emphasis {
 		font-weight: bold;
 	}
+
+	&.is-selected {
+		font-style: italic;
+	}
 }
 
 .product-search__image {
@@ -114,7 +110,7 @@
 	margin-right: 10px;
 
 	&:empty {
-		border: 1px solid darken( $gray-light, 10% );
+		border: 1px solid darken($gray-light, 10%);
 		box-sizing: border-box;
 	}
 

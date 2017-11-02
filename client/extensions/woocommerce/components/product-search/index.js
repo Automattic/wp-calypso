@@ -5,9 +5,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { trim } from 'lodash';
+import { debounce, find, get, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,66 +16,138 @@ import {
 	fetchProductSearchResults,
 	clearProductSearch,
 } from 'woocommerce/state/sites/products/actions';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import ProductSearchField from './search';
 import ProductSearchResults from './results';
-import SearchCard from 'components/search-card';
 
 class ProductSearch extends Component {
 	static propTypes = {
-		onSelect: PropTypes.func.isRequired,
+		clearProductSearch: PropTypes.func,
+		disabled: PropTypes.bool,
+		fetchProductSearchResults: PropTypes.func.isRequired,
+		maxLength: PropTypes.number,
+		onChange: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
-		query: '',
+		currentSearch: '',
+		isActive: false,
+		tokenInputHasFocus: false,
+		tokens: [],
 	};
 
-	handleSearch = query => {
-		const { siteId } = this.props;
+	componentDidMount() {
+		this.debouncedSearch = debounce( this.fetchSearch, 500 );
+	}
 
-		if ( trim( query ) === '' ) {
-			this.setState( { query: '' } );
-			this.props.clearProductSearch( siteId );
+	componentWillUnmount() {
+		const { siteId } = this.props;
+		this.props.clearProductSearch( siteId );
+	}
+
+	handleSearch = query => {
+		this.setState( { currentSearch: query } );
+		// Query is just empty spaces, don't trigger the search
+		if ( '' === trim( query ) ) {
 			return;
 		}
+		this.debouncedSearch( query );
+	};
 
-		this.setState( { query } );
+	fetchSearch = query => {
+		const { siteId } = this.props;
 		this.props.fetchProductSearchResults( siteId, 1, query );
 	};
 
-	handleSelect = product => {
-		const { siteId } = this.props;
-		// Clear the search field
-		this.setState( { query: '' } );
-		this.props.clearProductSearch( siteId );
-		this.refs.searchCard.clear();
+	onFocus = () => {
+		if ( this.state.tokens.length >= this.props.maxLength ) {
+			return;
+		}
+		this.setState( { isActive: true, tokenInputHasFocus: true } );
+	};
 
-		// Pass products back to parent component
-		this.props.onSelect( product );
+	onBlur = () => {
+		this.setState( { isActive: false, tokenInputHasFocus: false } );
+	};
+
+	hasToken = token => {
+		const match = { id: token.id };
+		if ( token.variation ) {
+			match.variation = token.variation;
+		}
+		return !! find( this.state.tokens, match );
+	};
+
+	addToken = token => {
+		if ( this.hasToken( token ) ) {
+			return;
+		}
+		this.setState(
+			prevState => {
+				const tokens = [ ...prevState.tokens, token ];
+				let isActive = true;
+				if ( tokens.length >= this.props.maxLength ) {
+					isActive = false;
+				}
+				return {
+					currentSearch: '',
+					isActive,
+					tokenInputHasFocus: isActive,
+					tokens,
+				};
+			},
+			() => this.props.onChange( this.state.tokens )
+		);
+	};
+
+	updateTokens = tokens => {
+		this.setState( { tokens }, () => this.props.onChange( this.state.tokens ) );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { currentSearch, tokens } = this.state;
+		const classes = classNames( {
+			'product-search': true,
+			'token-field': true,
+			'is-active': this.state.isActive,
+			'is-disabled': this.props.disabled,
+		} );
 
 		return (
-			<div className="product-search">
-				<SearchCard
-					ref="searchCard"
-					onSearch={ this.handleSearch }
-					delaySearch
-					delayTimeout={ 400 }
-					placeholder={ translate( 'Search products…' ) }
+			<div className={ classes }>
+				<ProductSearchField
+					currentSearch={ this.state.currentSearch }
+					disabled={ this.props.disabled }
+					hasFocus={ this.state.tokenInputHasFocus }
+					maxLength={ this.props.maxLength }
+					onBlur={ this.onBlur }
+					onChange={ this.updateTokens }
+					onFocus={ this.onFocus }
+					onInputChange={ this.handleSearch }
+					placeholder={ this.props.placeholder }
+					value={ tokens }
 				/>
-				<ProductSearchResults search={ this.state.query } onSelect={ this.handleSelect } />
+				<ProductSearchResults
+					isSelected={ this.hasToken }
+					onSelect={ this.addToken }
+					search={ currentSearch }
+				/>
 			</div>
 		);
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			fetchProductSearchResults,
-			clearProductSearch,
-		},
-		dispatch
-	)
-)( localize( ProductSearch ) );
+export default connect(
+	state => ( {
+		siteId: get( getSelectedSiteWithFallback( state ), 'ID' ),
+	} ),
+	dispatch =>
+		bindActionCreators(
+			{
+				fetchProductSearchResults,
+				clearProductSearch,
+			},
+			dispatch
+		)
+)( ProductSearch );

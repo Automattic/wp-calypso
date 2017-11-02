@@ -22,6 +22,7 @@ import ProductItem from './item';
 
 class ProductSearchResults extends Component {
 	static propTypes = {
+		isSelected: PropTypes.func.isRequired,
 		onSelect: PropTypes.func.isRequired,
 		search: PropTypes.string.isRequired,
 	};
@@ -62,8 +63,8 @@ class ProductSearchResults extends Component {
 	};
 
 	render() {
-		const { isLoaded, isLoading, onSelect, products, search } = this.props;
-		if ( ! isLoaded && ! search ) {
+		const { isLoaded, isLoading, products, search } = this.props;
+		if ( ! isLoaded || ! search ) {
 			return null;
 		}
 
@@ -80,7 +81,13 @@ class ProductSearchResults extends Component {
 			<div className={ classes }>
 				{ products.length ? (
 					products.map( p => (
-						<ProductItem key={ p.id } onClick={ onSelect } product={ p } search={ search } />
+						<ProductItem
+							key={ p.id }
+							onClick={ this.props.onSelect }
+							product={ p }
+							search={ search }
+							isSelected={ this.props.isSelected }
+						/>
 					) )
 				) : (
 					this.renderNotFound()
