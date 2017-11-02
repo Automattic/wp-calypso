@@ -35,12 +35,6 @@ class NextSteps extends React.Component {
 		} );
 	};
 
-	renderMeSidebar() {
-		if ( ! this.props.isWelcome ) {
-			return <MeSidebarNavigation />;
-		}
-	}
-
 	recordBloggingUniversityLinkClick = () => {
 		this.recordEvent( {
 			tracks: 'blogging_course',
@@ -61,6 +55,12 @@ class NextSteps extends React.Component {
 			action: 'Clicked Dismiss Link',
 		} );
 	};
+
+	renderMeSidebar() {
+		if ( ! this.props.isWelcome ) {
+			return <MeSidebarNavigation />;
+		}
+	}
 
 	renderIntroMessage() {
 		if ( this.props.isWelcome ) {
