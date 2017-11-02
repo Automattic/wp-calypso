@@ -302,47 +302,39 @@ function removeUserStepFromFlow( flow ) {
 	} );
 }
 
+function replaceStepInFlow( flow, oldStepName, newStepName ) {
+	// no change
+	if ( ! includes( flow.steps, oldStepName ) ) {
+		return flow;
+	}
+
+	return assign( {}, flow, {
+		steps: flow.steps.map( stepName => ( stepName === oldStepName ? newStepName : stepName ) ),
+	} );
+}
+
 function filterDesignTypeInFlow( flowName, flow ) {
 	if ( ! flow ) {
 		return;
 	}
 
-	// If Atomic Store is enable, replace 'design-type-with-store' with 'design-type-with-store-nux'
-	// in flows other than 'pressable'.
-	if (
-		config.isEnabled( 'signup/atomic-store-flow' ) &&
-		flowName !== 'pressable' &&
-		includes( flow.steps, 'design-type-with-store' )
-	) {
-		return assign( {}, flow, {
-			steps: flow.steps.map(
-				stepName =>
-					stepName === 'design-type-with-store' ? 'design-type-with-store-nux' : stepName
-			),
-		} );
-	}
-
-	if ( ! includes( flow.steps, 'design-type' ) ) {
-		return flow;
-	}
-
-	let newDesignType;
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
+		// If Atomic Store is enabled, replace 'design-type-with-store' with
+		// 'design-type-with-store-nux' in flows other than 'pressable'.
+		if ( flowName !== 'pressable' && includes( flow.steps, 'design-type-with-store' ) ) {
+			return replaceStepInFlow( flow, 'design-type-with-store', 'design-type-with-store-nux' );
+		}
+
 		// Show store option to everyone if Atomic Store is enabled
-		newDesignType = 'design-type-with-store-nux';
-	} else if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
-		// Show design type with store option only to new users with EN locale
-		newDesignType = 'design-type-with-store';
+		return replaceStepInFlow( flow, 'design-type', 'design-type-with-store-nux' );
 	}
 
-	if ( ! newDesignType ) {
-		// nothing to change
-		return flow;
+	// Show design type with store option only to new users with EN locale
+	if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
+		return replaceStepInFlow( flow, 'design-type', 'design-type-with-store' );
 	}
 
-	return assign( {}, flow, {
-		steps: flow.steps.map( stepName => ( stepName === 'design-type' ? newDesignType : stepName ) ),
-	} );
+	return flow;
 }
 
 /**
