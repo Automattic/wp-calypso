@@ -29,7 +29,6 @@ export default class EditorSidebar extends Component {
 		onPublish: PropTypes.func,
 		onTrashingPost: PropTypes.func,
 		site: PropTypes.object,
-		type: PropTypes.string,
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
@@ -58,7 +57,6 @@ export default class EditorSidebar extends Component {
 			post,
 			savedPost,
 			site,
-			type,
 			setPostDate,
 			isPostPrivate,
 			confirmationSidebarStatus,
@@ -79,20 +77,13 @@ export default class EditorSidebar extends Component {
 					nestedSidebar={ nestedSidebar }
 					toggleSidebar={ this.headerToggleSidebar }
 				/>
-				<EditorActionBar
-					isNew={ isNew }
-					post={ post }
-					savedPost={ savedPost }
-					site={ site }
-					type={ type }
-				/>
+				<EditorActionBar isNew={ isNew } post={ post } savedPost={ savedPost } site={ site } />
 				<SidebarRegion className="editor-sidebar__parent-region">
 					<EditorDrawer
 						site={ site }
 						savedPost={ savedPost }
 						post={ post }
 						isNew={ isNew }
-						type={ type }
 						setPostDate={ setPostDate }
 						onPrivatePublish={ onPublish }
 						onSave={ onSave }

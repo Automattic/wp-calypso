@@ -49,7 +49,7 @@ import {
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
@@ -98,6 +98,7 @@ export const PostEditor = createReactClass( {
 		translate: PropTypes.func.isRequired,
 		hasBrokenPublicizeConnection: PropTypes.bool,
 		editPost: PropTypes.func,
+		type: PropTypes.string,
 	},
 
 	_previewWindow: null,
@@ -369,7 +370,6 @@ export const PostEditor = createReactClass( {
 						user={ this.props.user }
 						userUtils={ this.props.userUtils }
 						toggleSidebar={ this.toggleSidebar }
-						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
 						nestedSidebar={ this.state.nestedSidebar }
@@ -384,7 +384,6 @@ export const PostEditor = createReactClass( {
 								onPrivatePublish={ this.onPublish }
 								savedPost={ this.state.savedPost }
 								site={ site }
-								type={ this.props.type }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
 								postAuthor={ this.state.post ? this.state.post.author : null }
 								hasEditorNestedSidebar={ this.state.nestedSidebar !== NESTED_SIDEBAR_NONE }
@@ -397,7 +396,7 @@ export const PostEditor = createReactClass( {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								<StatusLabel post={ this.state.savedPost } type={ this.props.type } />
+								<StatusLabel post={ this.state.savedPost } />
 							</div>
 							<div
 								className={ classNames( 'post-editor__inner-content', {
@@ -474,7 +473,6 @@ export const PostEditor = createReactClass( {
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
-						type={ this.props.type }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
@@ -1389,10 +1387,12 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const userId = getCurrentUserId( state );
+		const type = getEditedPostValue( state, siteId, postId, 'type' );
 
 		return {
 			siteId,
 			postId,
+			type,
 			selectedSite: getSelectedSite( state ),
 			selectedSiteDomain: getSiteDomain( state, siteId ),
 			editorModePreference: getPreference( state, 'editor-mode' ),

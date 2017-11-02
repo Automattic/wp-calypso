@@ -16,6 +16,8 @@ import Gridicon from 'gridicons';
  */
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
@@ -147,9 +149,13 @@ class EditorMoreOptionsCopyPost extends Component {
 }
 
 export default connect( state => {
+	const postId = getEditorPostId( state );
 	const siteId = getSelectedSiteId( state );
+	const type = getEditedPostValue( state, siteId, postId, 'type' );
+
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		type,
 	};
 } )( localize( EditorMoreOptionsCopyPost ) );
