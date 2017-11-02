@@ -18,6 +18,14 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { defaultDateFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 
+import DateTimeFormatEditor from 'components/date-time-format-editor';
+
+const getValidTokens = translate => ( {
+	Y: translate( 'Year' ),
+	M: translate( 'Month' ),
+	D: translate( 'Day' ),
+} );
+
 export const DateFormatOption = ( {
 	dateFormat,
 	disabled,
@@ -68,6 +76,15 @@ export const DateFormatOption = ( {
 				</FormSettingExplanation>
 			</span>
 		</FormLabel>
+		<div>
+			<DateTimeFormatEditor
+				disabled={ disabled }
+				placeholder={ 'YYYY-MM-DD' }
+				titleFormats={ dateFormat || '' }
+				tokens={ getValidTokens( translate ) }
+				type={ { label: 'Date Format Custom', value: 'date_format_custom' } }
+			/>
+		</div>
 	</FormFieldset>
 );
 
