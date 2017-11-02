@@ -97,7 +97,9 @@ export class Comment extends Component {
 				ref={ this.storeCardRef }
 				tabIndex="0"
 			>
-				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
+				{ refreshCommentData && (
+					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
+				) }
 
 				{ ! isEditMode && (
 					<div className="comment__detail">
