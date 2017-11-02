@@ -144,7 +144,7 @@ const PostTypeFilter = createReactClass( {
 
 	render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
-		
+
 		if ( ! query ) {
 			return null;
 		}

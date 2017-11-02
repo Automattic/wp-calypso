@@ -25,11 +25,10 @@ import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuDuplicate( {
 	translate,
-	siteId,
 	canEdit,
+	status,
 	duplicateUrl,
 	bumpStat,
-	status,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
@@ -47,7 +46,6 @@ function PostActionsEllipsisMenuDuplicate( {
 PostActionsEllipsisMenuDuplicate.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	duplicateUrl: PropTypes.string,
@@ -72,7 +70,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		status: post.status,
-		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
 	};

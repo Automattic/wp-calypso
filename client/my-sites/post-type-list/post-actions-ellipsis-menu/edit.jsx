@@ -24,11 +24,9 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 
 function PostActionsEllipsisMenuEdit( {
 	translate,
-	siteId,
 	canEdit,
 	status,
 	editUrl,
-	isKnownType,
 	bumpStat,
 } ) {
 	if ( 'trash' === status || ! canEdit ) {
@@ -45,7 +43,6 @@ function PostActionsEllipsisMenuEdit( {
 PostActionsEllipsisMenuEdit.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	editUrl: PropTypes.string,
@@ -69,7 +66,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	return {
-		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
