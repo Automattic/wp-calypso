@@ -7,6 +7,7 @@
 import { mergeHandlers } from 'state/action-watchers/utils';
 import accountRecovery from './account-recovery';
 import activityLog from './activity-log';
+import concierge from './concierge';
 import comments from './comments';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
@@ -25,6 +26,7 @@ import login2fa from './login-2fa';
 export const handlers = mergeHandlers(
 	accountRecovery,
 	activityLog,
+	concierge,
 	comments,
 	domains,
 	gravatarUpload,
