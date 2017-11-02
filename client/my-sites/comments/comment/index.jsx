@@ -38,7 +38,7 @@ export class Comment extends Component {
 	state = {
 		isEditMode: false,
 		isExpanded: false,
-		isReplyMode: false,
+		hasReplyFocus: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -49,9 +49,9 @@ export class Comment extends Component {
 
 	storeCardRef = card => ( this.commentCard = card );
 
-	enterReplyMode = () => this.setState( { isReplyMode: true } );
+	blurReply = () => this.setState( { hasReplyFocus: false } );
 
-	exitReplyMode = () => this.setState( { isReplyMode: false } );
+	focusReply = () => this.setState( { hasReplyFocus: true } );
 
 	keyDownHandler = event => {
 		const { isBulkMode } = this.props;
@@ -92,7 +92,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			siteId,
 		} = this.props;
-		const { isEditMode, isExpanded, isReplyMode } = this.state;
+		const { isEditMode, isExpanded, hasReplyFocus } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
@@ -125,9 +125,9 @@ export class Comment extends Component {
 
 						{ isExpanded && (
 							<CommentReply
-								{ ...{ commentId, isReplyMode } }
-								enterReplyMode={ this.enterReplyMode }
-								exitReplyMode={ this.exitReplyMode }
+								{ ...{ commentId, hasReplyFocus } }
+								blurReply={ this.blurReply }
+								focusReply={ this.focusReply }
 							/>
 						) }
 					</div>

@@ -34,9 +34,9 @@ const TEXTAREA_VERTICAL_BORDER = 2;
 export class CommentReply extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		enterReplyMode: PropTypes.func,
-		exitReplyMode: PropTypes.func,
-		isReplyMode: PropTypes.bool,
+		blurReply: PropTypes.func,
+		focusReply: PropTypes.func,
+		hasReplyFocus: PropTypes.bool,
 	};
 
 	state = {
@@ -45,7 +45,7 @@ export class CommentReply extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.isReplyMode ) {
+		if ( this.props.hasReplyFocus ) {
 			this.textarea.focus();
 		}
 	}
@@ -100,7 +100,7 @@ export class CommentReply extends Component {
 	};
 
 	render() {
-		const { currentUser, enterReplyMode, exitReplyMode, isReplyMode, translate } = this.props;
+		const { blurReply, currentUser, focusReply, hasReplyFocus, translate } = this.props;
 		const { replyContent, textareaHeight } = this.state;
 
 		const hasReplyContent = replyContent.trim().length > 0;
@@ -108,26 +108,26 @@ export class CommentReply extends Component {
 		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
 
 		const wrapperClasses = classNames( 'comment__reply-wrapper', {
-			'has-focus': isReplyMode,
+			'has-focus': hasReplyFocus,
 		} );
 
 		const buttonClasses = classNames( 'comment__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasReplyContent,
-			'is-visible': isReplyMode || hasReplyContent,
+			'is-visible': hasReplyFocus || hasReplyContent,
 		} );
 
-		const gravatarClasses = classNames( { 'is-visible': ! isReplyMode } );
+		const gravatarClasses = classNames( { 'is-visible': ! hasReplyFocus } );
 
 		const textareaClasses = classNames( 'comment__reply-textarea', {
 			'has-content': hasReplyContent,
-			'has-focus': isReplyMode,
+			'has-focus': hasReplyFocus,
 			'has-scrollbar': hasScrollbar,
 		} );
 
 		// Without focus, force the textarea to collapse even if it was manually resized
 		const textareaStyle = {
-			height: isReplyMode || hasReplyContent ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
+			height: hasReplyFocus || hasReplyContent ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
 		};
 
 		return (
@@ -136,9 +136,9 @@ export class CommentReply extends Component {
 					<AutoDirection>
 						<textarea
 							className={ textareaClasses }
-							onBlur={ exitReplyMode }
+							onBlur={ blurReply }
 							onChange={ this.updateTextarea }
-							onFocus={ enterReplyMode }
+							onFocus={ focusReply }
 							onKeyDown={ this.keyDownHandler }
 							placeholder={ this.getPlaceholder() }
 							ref={ this.storeTextareaRef }
