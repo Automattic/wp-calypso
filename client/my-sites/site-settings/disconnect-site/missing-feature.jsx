@@ -50,7 +50,7 @@ class MissingFeature extends PureComponent {
 
 		return (
 			<div className="disconnect-site__missing-feature">
-				<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
+				<SectionHeader label={ translate( 'Which feature were you looking for?' ) } />
 				<Card>
 					<TokenField
 						onChange={ this.handleTokenChange }
