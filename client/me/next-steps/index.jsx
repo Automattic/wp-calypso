@@ -4,7 +4,6 @@
  * @format
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { property, sortBy } from 'lodash';
@@ -22,14 +21,12 @@ import {
 	recordTracksEvent as recordTracksEventAction,
 } from 'state/analytics/actions';
 
-const NextSteps = createReactClass( {
-	displayName: 'NextSteps',
-
-	componentWillUnmount: function() {
+class NextSteps extends React.Component {
+	componentWillUnmount() {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
-	recordEvent: function( event ) {
+	recordEvent = event => {
 		const { recordGoogleEvent, recordTracksEvent } = this.props;
 
 		recordGoogleEvent( 'Me > Next > Welcome Message', event.action );
@@ -37,36 +34,36 @@ const NextSteps = createReactClass( {
 			link: event.tracks,
 			is_welcome: this.props.isWelcome,
 		} );
-	},
+	};
 
-	renderMeSidebar: function() {
+	renderMeSidebar() {
 		if ( ! this.props.isWelcome ) {
 			return <MeSidebarNavigation />;
 		}
-	},
+	}
 
-	bloggingUniversityLinkRecordEvent: function() {
+	bloggingUniversityLinkRecordEvent = () => {
 		this.recordEvent( {
 			tracks: 'blogging_course',
 			action: 'Clicked Blogging University Link',
 		} );
-	},
+	};
 
-	docsLinkRecordEvent: function() {
+	docsLinkRecordEvent = () => {
 		this.recordEvent( {
 			tracks: 'documentation',
 			action: 'Clicked Documentation Link',
 		} );
-	},
+	};
 
-	dismissLinkRecordEvent: function() {
+	dismissLinkRecordEvent = () => {
 		this.recordEvent( {
 			tracks: 'dismiss',
 			action: 'Clicked Dismiss Link',
 		} );
-	},
+	};
 
-	introMessage: function() {
+	introMessage() {
 		if ( this.props.isWelcome ) {
 			return (
 				<div className="next-steps__intro">
@@ -103,13 +100,13 @@ const NextSteps = createReactClass( {
 				</div>
 			);
 		}
-	},
+	}
 
-	newestSite: function() {
+	newestSite() {
 		return sortBy( this.props.sites, property( 'ID' ) ).pop();
-	},
+	}
 
-	outroMessage: function() {
+	outroMessage() {
 		var site, dismissLink;
 
 		if ( this.props.isWelcome ) {
@@ -131,15 +128,15 @@ const NextSteps = createReactClass( {
 				</div>
 			);
 		}
-	},
+	}
 
-	userHasPurchasedAPlan: function() {
+	userHasPurchasedAPlan() {
 		return this.props.sites.some( function( site ) {
 			return productsValues.isPlan( site.plan );
 		} );
-	},
+	}
 
-	renderSteps: function() {
+	renderSteps() {
 		var site = this.newestSite(),
 			sequence = steps.defaultSequence;
 
@@ -165,9 +162,9 @@ const NextSteps = createReactClass( {
 				) }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		var classes = 'main main-column next-steps';
 
 		if ( this.props.isWelcome ) {
@@ -185,8 +182,8 @@ const NextSteps = createReactClass( {
 				{ this.outroMessage() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => ( {
